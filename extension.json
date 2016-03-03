@@ -1,0 +1,17 @@
+{
+  "name": "adobe-analytics",
+  "version": "0.0.1",
+  "displayName": "Adobe Analytics",
+  "description": "Adobe Analytics extension for Turbine integration.",
+  "icon": "https://placeholdit.imgix.net/~text?txtsize=16&txt=64%C3%9764&w=64&h=64",
+  "author": {
+    "name": "Adobe Systems",
+    "email": "DTM-Engineering@adobe.com"
+  },
+  "viewBasePath": "dist",
+  "libBasePath": "src/lib",
+  "events": [],
+  "conditions": [],
+  "dataElements": [],
+  "resources": []
+}

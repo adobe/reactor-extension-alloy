@@ -1,0 +1,28 @@
+{
+  "name": "@reactor/reactor-extension-adobeanalytics",
+  "version": "0.0.1",
+  "description": "Adobe Analytics extension for Turbine",
+  "author": {
+    "name": "DTM",
+    "email": "DTM-Engineering@adobe.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.corp.adobe.com:reactor/reactor-extension-adobeanalytics.git"
+  },
+  "publishConfig": {
+    "registry": "https://artifactory.corp.adobe.com/artifactory/api/npm/npm-mcps-release-local"
+  },
+  "keywords": [
+    "turbine",
+    "extension",
+    "adobe analytics",
+    "site catalyst"
+  ],
+  "devDependencies": {
+    "@reactor/turbine": "^7.0.0",
+    "@reactor/reactor-gulp-packager": "^1.0.0",
+    "@reactor/reactor-gulp-sandbox": "^1.0.0",
+    "@reactor/reactor-gulp-testrunner": "^1.0.0"
+  }
+}
