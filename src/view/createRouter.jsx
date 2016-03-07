@@ -2,7 +2,7 @@
 import React from 'react';
 import { Router, Route, hashHistory } from 'react-router';
 import ExtensionConfiguration from './extensionConfiguration/extensionConfiguration';
-import ConfigureBeacon from './actions/configureBeacon';
+import SetVariables from './actions/setVariables';
 import SendBeacon from './actions/sendBeacon';
 
 export default (setFormConfigForCurrentRoute) => {
@@ -13,7 +13,7 @@ export default (setFormConfigForCurrentRoute) => {
   return (
     <Router history={hashHistory}>
       <Route path="/configuration" component={ExtensionConfiguration} onEnter={onEnter}/>
-      <Route path="/actions/configureBeacon" component={ConfigureBeacon} onEnter={onEnter}/>
+      <Route path="/actions/setVariables" component={SetVariables} onEnter={onEnter}/>
       <Route path="/actions/sendBeacon" component={SendBeacon} onEnter={onEnter}/>
     </Router>
   );

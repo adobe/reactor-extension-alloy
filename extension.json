@@ -16,10 +16,10 @@
   },
   "actions": [
     {
-      "name": "configure-beacon",
-      "displayName": "Configure Beacon",
-      "libPath": "actions/configureBeacon.js",
-      "viewPath": "index.html#/actions/configureBeacon",
+      "name": "set-variables",
+      "displayName": "Set Variables",
+      "libPath": "actions/setVariables.js",
+      "viewPath": "index.html#/actions/setVariables",
       "schema": {}
     },
     {

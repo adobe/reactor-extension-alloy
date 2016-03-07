@@ -1,9 +1,9 @@
 import React from 'react';
 import extensionViewReduxForm from '../extensionViewReduxForm';
 
-class ConfigureBeacon extends React.Component {
+class SetVariables extends React.Component {
   render() {
-    return <div>Configure Beacon</div>;
+    return <div>Set Variables</div>;
   }
 }
 
@@ -16,5 +16,5 @@ const formConfig = {
   }
 };
 
-export default extensionViewReduxForm(formConfig)(ConfigureBeacon);
+export default extensionViewReduxForm(formConfig)(SetVariables);
 
