@@ -10,8 +10,24 @@
   },
   "viewBasePath": "dist",
   "libBasePath": "src/lib",
-  "events": [],
-  "conditions": [],
-  "dataElements": [],
-  "resources": []
+  "configuration": {
+    "viewPath": "index.html#/configuration",
+    "schema": {}
+  },
+  "actions": [
+    {
+      "name": "configure-beacon",
+      "displayName": "Configure Beacon",
+      "libPath": "actions/configureBeacon.js",
+      "viewPath": "index.html#/actions/configureBeacon",
+      "schema": {}
+    },
+    {
+      "name": "send-beacon",
+      "displayName": "Send Beacon",
+      "libPath": "actions/sendBeacon.js",
+      "viewPath": "index.html#/actions/sendBeacon",
+      "schema": {}
+    }
+  ]
 }
