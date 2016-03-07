@@ -1,4 +1,4 @@
-# reactor-extension-adobeanalytics
+# extension-adobeanalytics
 
 This is the Adobe Analytics extension for Turbine.
 
@@ -9,4 +9,4 @@ This is the Adobe Analytics extension for Turbine.
 4. After navigating into the project directory, install project dependencies by running `npm install`.
 5. Test the project by running `gulp test`.
 
-See the [turbine-gulp-sandbox README](https://git.corp.adobe.com/Activation/turbine-gulp-sandbox/blob/master/README.md) and the [turbine-gulp-testrunner README](https://git.corp.adobe.com/Activation/turbine-gulp-testrunner/blob/master/README.md) for more information on how to build and test this project.
+See the [extension-support-sandbox README](https://git.corp.adobe.com/Activation/extension-support-sandbox/blob/master/README.md) and the [extension-support-testrunner README](https://git.corp.adobe.com/Activation/extension-support-testrunner/blob/master/README.md) for more information on how to build and test this project.
