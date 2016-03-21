@@ -21,8 +21,8 @@
   ],
   "devDependencies": {
     "@reactor/extension-support-packager": "^1.0.0",
-    "@reactor/extension-support-sandbox": "^1.0.0",
-    "@reactor/extension-support-testrunner": "^1.0.0",
+    "@reactor/extension-support-sandbox": "^2.0.0",
+    "@reactor/extension-support-testrunner": "^2.0.0",
     "@reactor/turbine": "^7.0.0",
     "babel-core": "^6.6.5",
     "babel-loader": "^6.2.4",
@@ -36,6 +36,11 @@
     "yargs": "^4.2.0"
   },
   "dependencies": {
+    "@coralui/coralui-support-react": "^3.0.1",
+    "@coralui/coralui-support-reduxform": "^1.0.1",
+    "@reactor/react-components": "^1.0.0",
+    "coralui-support-react": "https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/Coral/coralui-support-react.git",
+    "coralui-support-reduxform": "https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com:Coral/coralui-support-reduxform.git",
     "css-loader": "^0.23.1",
     "gulp-notify": "^2.2.0",
     "gulp-plumber": "^1.1.0",
