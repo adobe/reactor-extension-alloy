@@ -1,8 +1,10 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import extensionViewReduxForm from '../extensionViewReduxForm';
+import reduceReducers from 'reduce-reducers';
 import General from './general';
 import Cookies, { formConfig as cookiesFormConfig } from './cookies';
+import ReferrersCampaigns, { formConfig as referrersCampaignsFormConfig } from './referrersCampaigns';
 
 class ExtensionConfiguration extends React.Component {
   render() {
@@ -30,6 +32,14 @@ class ExtensionConfiguration extends React.Component {
         </Coral.Accordion>
         <Coral.Accordion variant="quiet">
           <Coral.Accordion.Item>
+            <Coral.Accordion.Item.Label>Referrers & Campaigns</Coral.Accordion.Item.Label>
+            <Coral.Accordion.Item.Content>
+              <ReferrersCampaigns fields={this.props.fields}/>
+            </Coral.Accordion.Item.Content>
+          </Coral.Accordion.Item>
+        </Coral.Accordion>
+        <Coral.Accordion variant="quiet">
+          <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>Cookies</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
               <Cookies fields={this.props.fields}/>
@@ -42,9 +52,16 @@ class ExtensionConfiguration extends React.Component {
 }
 
 const formConfig = {
-  fields: cookiesFormConfig.fields,
-  settingsToFormValues: cookiesFormConfig.settingsToFormValues,
-  formValuesToSettings: cookiesFormConfig.formValuesToSettings,
+  fields: cookiesFormConfig.fields
+    .concat(referrersCampaignsFormConfig.fields),
+  settingsToFormValues: reduceReducers(
+    cookiesFormConfig.settingsToFormValues,
+    referrersCampaignsFormConfig.settingsToFormValues
+  ),
+  formValuesToSettings: reduceReducers(
+    cookiesFormConfig.formValuesToSettings,
+    referrersCampaignsFormConfig.formValuesToSettings
+  ),
   validate: cookiesFormConfig.validate
 };
 
