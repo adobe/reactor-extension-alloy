@@ -19,6 +19,10 @@
     "adobe analytics",
     "site catalyst"
   ],
+  "scripts": {
+    "ci-job": "xvfb-run gulp test --ci --browser all && gulp lint && gulp package && npm run plato",
+    "plato": "plato -r -d platoReport src"
+  },
   "devDependencies": {
     "@reactor/extension-support-packager": "^1.0.0",
     "@reactor/extension-support-sandbox": "^2.0.0",
