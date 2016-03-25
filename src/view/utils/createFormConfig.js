@@ -1,30 +1,44 @@
 /**
- * Creates a values object that only contains properties pertaining to the specified fields.
+ * Copies only certain properties from one object to a new object and returns the new object.
  * @private
- * @param {Object} values
- * @param {Array} fields
+ * @param {Object} src
+ * @param {Array} propNames
  * @returns {Object}
  */
-const getValueSubset = (values, fields) => {
-  const valueSubset = {};
+const getObjectSubset = (src, propNames) => {
+  var dest = {};
 
-  fields.forEach(field => {
-    // Handle the case where field uses array notation (e.g., eVars[].id).
-    var firstPathSegment = field.split('.')[0];
-    firstPathSegment = firstPathSegment.match(/(.*?)(\[\])?$/)[1];
-    if (!valueSubset.hasOwnProperty(firstPathSegment)) {
-      valueSubset[firstPathSegment] = values[firstPathSegment];
-    }
+  propNames.forEach(propName => {
+    dest[propName] = src[propName];
   });
 
-  return valueSubset;
+  return dest;
+};
+
+/**
+ * Get relevant value property names based on the redux-form fields a form requests.
+ * @param {string[]} fields
+ * @returns {string[]}
+ */
+const getRelevantValueNames = fields => {
+  return fields.reduce((relevantValueNames, field) => {
+    // Handle the case where field uses array notation (e.g., eVars[].id).
+    let valueName = field.split('.')[0];
+    valueName = valueName.match(/(.*?)(\[\])?$/)[1];
+
+    if (relevantValueNames.indexOf(valueName) === -1) {
+      relevantValueNames.push(valueName);
+    }
+
+    return relevantValueNames;
+  }, []);
 };
 
 /**
  * Creates a form configuration from one or more options objects.
  * @param {Object[]} formsOptions Array of options objects. Each object typically corresponds to a
  * component class.
- * @param {String[]} formsOptions[].fields Names of fields the component needs. These should follow
+ * @param {string[]} formsOptions[].fields Names of fields the component needs. These should follow
  * redux-form semantics.
  * @param {Function} [formsOptions[].settingsToFormValues] A function that takes data being passed to into
  * the extension (which includes previously saved settings) and populates an object with default
@@ -36,9 +50,18 @@ const getValueSubset = (values, fields) => {
  * @returns {*}
  */
 module.exports = (...formsOptions) => {
-  const fields = formsOptions.reduce((fields, formOptions) => {
-    return fields.concat(formOptions.fields);
-  }, []);
+  let fields = [];
+
+  /**
+   * An array of arrays where each sub-array contains a list of value names pertaining to a form.
+   * @type {Array}
+   */
+  const relevantValueNamesByFormIndex = [];
+
+  formsOptions.forEach(formOptions => {
+    fields = fields.concat(formOptions.fields);
+    relevantValueNamesByFormIndex.push(getRelevantValueNames(formOptions.fields));
+  });
 
   return {
     fields,
@@ -50,21 +73,25 @@ module.exports = (...formsOptions) => {
       }, values);
     },
     formValuesToSettings(settings, values) {
-      return formsOptions.reduce((settings, formOptions) => {
-        // Only pass the values that pertain to the fields the form requested.
-        const valueSubset = getValueSubset(values, formOptions.fields);
-        return formOptions.formValuesToSettings ?
-          formOptions.formValuesToSettings(settings, valueSubset) :
-          settings;
+      return formsOptions.reduce((settings, formOptions, index) => {
+        if (formOptions.formValuesToSettings) {
+          // Only pass the values that pertain to the fields the form requested.
+          const valuesSubset = getObjectSubset(values, relevantValueNamesByFormIndex[index]);
+          return formOptions.formValuesToSettings(settings, valuesSubset);
+        }
+
+        return settings;
       }, settings);
     },
     validate(errors, values) {
-      return formsOptions.reduce((errors, formOptions) => {
-        // Only pass the values that pertain to the fields the form requested.
-        const valueSubset = getValueSubset(values, formOptions.fields);
-        return formOptions.validate ?
-          formOptions.validate(errors, valueSubset) :
-          errors;
+      return formsOptions.reduce((errors, formOptions, index) => {
+        if (formOptions.validate) {
+          // Only pass the values that pertain to the fields the form requested.
+          const valueSubset = getObjectSubset(values, relevantValueNamesByFormIndex[index]);
+          return formOptions.validate(errors, valueSubset);
+        }
+
+        return errors;
       }, errors);
     }
   }
