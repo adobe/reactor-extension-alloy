@@ -67,42 +67,53 @@ export const formConfig = {
     'cookieLifetime',
     'cookieLifetimeSeconds'
   ],
-  settingsToFormValues: (values, options) => {
+  settingsToFormValues(values, options) {
     const { settings } = options;
 
     values = {
-      ...values
+      ...values,
+      visitorID: settings.visitorID,
+      visitorNamespace: settings.visitorNamespace,
+      cookieDomainPeriods: settings.cookieDomainPeriods,
+      fpCookieDomainPeriods: settings.fpCookieDomainPeriods,
+      transactionID: settings.transactionID
     };
 
-    if (settings.hasOwnProperty('cookieLifetime') &&
-        settings.cookieLifetime !== '' &&
-        settings.cookieLifetime !== 'NONE' &&
-        settings.cookieLifetime !== 'SESSION') {
-      values.cookieLifetimeSeconds = settings.cookieLifetime;
-      values.cookieLifetime = 'SECONDS';
-    }
-
-    if (!values.hasOwnProperty('cookieLifetime') || values.cookieLifetime === '') {
-      values.cookieLifetime = 'DEFAULT'
+    if (settings.hasOwnProperty('cookieLifetime') && settings.cookieLifetime.trim() !== '') {
+      switch (settings.cookieLifetime) {
+        case 'NONE':
+        case 'SESSION':
+          values.cookieLifetime = settings.cookieLifetime;
+          break;
+        default:
+          values.cookieLifetimeSeconds = settings.cookieLifetime;
+          values.cookieLifetime = 'SECONDS';
+      }
     }
 
     return values;
   },
-  formValuesToSettings: (settings, values) => {
+  formValuesToSettings(settings, values) {
     settings = {
-      ...settings
+      ...settings,
+      visitorID: values.visitorID,
+      visitorNamespace: values.visitorNamespace,
+      cookieDomainPeriods: values.cookieDomainPeriods,
+      fpCookieDomainPeriods: values.fpCookieDomainPeriods,
+      transactionID: values.transactionID
     };
 
-    switch (settings.cookieLifetime) {
-      case 'SECONDS':
-        settings.cookieLifetime = settings.cookieLifetimeSeconds || '';
+    switch (values.cookieLifetime) {
+      case 'NONE':
+      case 'SESSION':
+        settings.cookieLifetime = values.cookieLifetime;
         break;
-      case 'DEFAULT':
-        delete settings.cookieLifetime;
+      case 'SECONDS':
+        if (values.cookieLifetimeSeconds && values.cookieLifetimeSeconds.trim().length > 0) {
+          settings.cookieLifetime = values.cookieLifetimeSeconds.trim();
+        }
         break;
     }
-
-    delete settings.cookieLifetimeSeconds;
 
     return settings;
   },

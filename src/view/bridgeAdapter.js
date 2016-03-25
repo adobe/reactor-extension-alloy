@@ -1,31 +1,9 @@
 import { actionCreators } from './reduxActions/bridgeAdapterActions';
 import { handleSubmit } from './extensionViewReduxForm';
 import { getValues, reset } from 'redux-form';
-import reduceReducers from 'reduce-reducers';
-
-/**
- * Assigns everything inside settings to state.
- */
-const settingsToFormValuesBaseReducer = (values, options) => {
-  const { settings } = options;
-  return {
-    ...values,
-    ...settings
-  };
-};
-
-/**
- * Assigns everything inside state to settings.
- */
-const formValuesToSettingsBaseReducer = (settings, values) => {
-  return {
-    ...settings,
-    ...values
-  };
-};
 
 export default (extensionBridge, store) => {
-  let reducersForRoute;
+  let currentRouteFormSettings;
 
   extensionBridge.register({
     init(options = {}) {
@@ -35,7 +13,7 @@ export default (extensionBridge, store) => {
         settingsIsNew: !options.settings
       };
 
-      const initialValues = reducersForRoute.settingsToFormValues({}, options);
+      const initialValues = currentRouteFormSettings.settingsToFormValues({}, options);
 
       store.dispatch(actionCreators.init({
         propertySettings: options.propertySettings,
@@ -51,7 +29,7 @@ export default (extensionBridge, store) => {
     },
     getSettings() {
       const values = getValues(store.getState().form.default) || {};
-      return reducersForRoute.formValuesToSettings({}, values);
+      return currentRouteFormSettings.formValuesToSettings({}, values);
     },
     validate() {
       let valid = false;
@@ -63,21 +41,6 @@ export default (extensionBridge, store) => {
   });
 
   return formSettings => {
-    const settingsToFormValuesReducers = [ settingsToFormValuesBaseReducer ];
-
-    if (formSettings.settingsToFormValues) {
-      settingsToFormValuesReducers.push(formSettings.settingsToFormValues);
-    }
-
-    const formValuesToSettingsReducers = [ formValuesToSettingsBaseReducer ];
-
-    if (formSettings.formValuesToSettings) {
-      formValuesToSettingsReducers.push(formSettings.formValuesToSettings);
-    }
-
-    reducersForRoute = {
-      settingsToFormValues: reduceReducers(...settingsToFormValuesReducers),
-      formValuesToSettings: reduceReducers(...formValuesToSettingsReducers)
-    };
+    currentRouteFormSettings = formSettings;
   };
 };

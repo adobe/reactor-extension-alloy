@@ -34,35 +34,35 @@ export const formConfig = {
     'campaignType',
     'campaignValue'
   ],
-  settingsToFormValues: (values, options) => {
-    const { settings } = options;
+  settingsToFormValues(values, options) {
+    const { referrer, campaign } = options.settings;
 
     values = {
-      ...values
+      ...values,
+      referrer
     };
 
-    if (settings.hasOwnProperty('campaign')) {
-      values.campaignType = settings.campaign.type;
-      values.campaignValue = settings.campaign.value;
-      delete values.campaign;
+    if (campaign) {
+      values.campaignType = campaign.type;
+      values.campaignValue = campaign.value;
     }
 
     return values;
   },
-  formValuesToSettings: (settings, values) => {
+  formValuesToSettings(settings, values) {
+    const { referrer, campaignType, campaignValue } = values;
+
     settings = {
-      ...settings
+      ...settings,
+      referrer
     };
 
-    if (values.campaignValue) {
+    if (campaignValue) {
       settings.campaign = {
-        type: values.campaignType,
-        value: values.campaignValue
+        type: campaignType,
+        value: campaignValue
       }
     }
-
-    delete settings.campaignType;
-    delete settings.campaignValue;
 
     return settings;
   }
