@@ -1,5 +1,6 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
+import createFormConfig from '../utils/createFormConfig';
 import extensionViewReduxForm from '../extensionViewReduxForm';
 
 class LibraryManagement extends React.Component {
@@ -32,13 +33,13 @@ class LibraryManagement extends React.Component {
   }
 }
 
-const formConfig = {
+const formConfig = createFormConfig({
   fields: [],
   formValuesToSettings(settings, values) {
     return {
       //browsers: values.browsers || [] // An array is required.
     };
   }
-};
+});
 
 export default extensionViewReduxForm(formConfig)(ExtensionConfiguration);

@@ -1,5 +1,6 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
+import createFormConfig from '../utils/createFormConfig';
 import { ValidationWrapper } from '@reactor/react-components';
 import { isNumber } from '../utils/validators';
 
@@ -57,7 +58,7 @@ export default class Cookies extends React.Component {
   }
 }
 
-export const formConfig = {
+export const formConfig = createFormConfig({
   fields: [
     'visitorID',
     'visitorNamespace',
@@ -68,7 +69,7 @@ export const formConfig = {
     'cookieLifetimeSeconds'
   ],
   settingsToFormValues(values, options) {
-    const { settings } = options;
+    const {settings} = options;
 
     values = {
       ...values,
@@ -128,5 +129,5 @@ export const formConfig = {
 
     return errors;
   }
-};
+});
 

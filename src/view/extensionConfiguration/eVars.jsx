@@ -1,5 +1,6 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
+import createFormConfig from '../utils/createFormConfig';
 import { DataElementField } from '@reactor/react-components';
 import createId from '../utils/createId';
 
@@ -102,7 +103,7 @@ export default class EVars extends React.Component {
   }
 }
 
-export const formConfig = {
+export const formConfig = createFormConfig({
   fields: [
     'eVars[].id',
     'eVars[].name',
@@ -168,5 +169,5 @@ export const formConfig = {
 
     return errors;
   }
-};
+});
 

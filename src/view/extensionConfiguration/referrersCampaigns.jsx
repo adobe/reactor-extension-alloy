@@ -1,5 +1,6 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
+import createFormConfig from '../utils/createFormConfig';
 import { DataElementField } from '@reactor/react-components';
 
 export default class ReferrersCampaigns extends React.Component {
@@ -28,7 +29,7 @@ export default class ReferrersCampaigns extends React.Component {
   }
 }
 
-export const formConfig = {
+export const formConfig = createFormConfig({
   fields: [
     'referrer',
     'campaignType',
@@ -66,5 +67,5 @@ export const formConfig = {
 
     return settings;
   }
-};
+});
 

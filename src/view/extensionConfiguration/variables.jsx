@@ -1,9 +1,8 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
-import reduceReducers from 'reduce-reducers';
+import createFormConfig from '../utils/createFormConfig';
 import { DataElementField } from '@reactor/react-components';
 import EVars, { formConfig as eVarFormConfig } from './eVars';
-import createFormConfig from '../utils/createFormConfig';
 
 const DYNAMIC_VARIABLE_PREFIX_DEFAULT = 'D=';
 

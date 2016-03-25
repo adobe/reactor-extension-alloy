@@ -1,7 +1,7 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import extensionViewReduxForm from '../extensionViewReduxForm';
-import reduceReducers from 'reduce-reducers';
+import createFormConfig from '../utils/createFormConfig';
 import General from './general';
 import Cookies, { formConfig as cookiesFormConfig } from './cookies';
 import ReferrersCampaigns, { formConfig as referrersCampaignsFormConfig } from './referrersCampaigns';
@@ -355,25 +355,10 @@ class ExtensionConfiguration extends React.Component {
   }
 }
 
-const formConfig = {
-  fields: cookiesFormConfig.fields
-    .concat(referrersCampaignsFormConfig.fields)
-    .concat(variablesFormConfig.fields),
-  settingsToFormValues: reduceReducers(
-    cookiesFormConfig.settingsToFormValues,
-    referrersCampaignsFormConfig.settingsToFormValues,
-    variablesFormConfig.settingsToFormValues
-  ),
-  formValuesToSettings: reduceReducers(
-    cookiesFormConfig.formValuesToSettings,
-    referrersCampaignsFormConfig.formValuesToSettings,
-    variablesFormConfig.formValuesToSettings
-  ),
-  validate: reduceReducers(
-    cookiesFormConfig.validate,
-    variablesFormConfig.validate
-  )
-};
+const formConfig = createFormConfig(
+  cookiesFormConfig,
+  referrersCampaignsFormConfig,
+  variablesFormConfig);
 
 export default extensionViewReduxForm(formConfig)(ExtensionConfiguration);
 
