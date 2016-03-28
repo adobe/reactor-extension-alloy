@@ -98,7 +98,8 @@ export default class EVars extends React.Component {
               eVar.type.value !== 'alias' ?
                 <Coral.Textfield {...eVar.value}/> :
                 <Coral.Autocomplete
-                  placeholder="Select Variable">
+                  placeholder="Select Variable"
+                  onChange={eVar.value.onChange}>
                   {aliasOptions}
                 </Coral.Autocomplete>
             }

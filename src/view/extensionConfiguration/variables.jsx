@@ -26,6 +26,11 @@ export default class Variables extends React.Component {
         <EVars fields={this.props.fields}/>
 
         <section>
+          <h4 className="coral-Heading coral-Heading--4">Props</h4>
+          <span>Coming soon...</span>
+        </section>
+
+        <section>
           <h4 className="coral-Heading coral-Heading--4">Dynamic Variable Prefix</h4>
           <label>
             <span className="u-label">Prefix</span>
