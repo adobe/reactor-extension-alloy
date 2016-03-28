@@ -15,56 +15,50 @@ const loadPhases = {
   PAGEBOTTOM: 'pagebottom'
 };
 
-class LoadPhase extends React.Component {
-  render() {
-    const { loadPhase } = this.props.fields.libraryCode;
+const LoadPhase = props => {
+  const { loadPhase } = props.fields.libraryCode;
 
-    return (
-      <div className={this.props.className}>
-        <span className="u-label">Load library at:</span>
-        <Coral.Radio
-          {...loadPhase}
-          value={loadPhases.PAGETOP}
-          checked={loadPhase.value === loadPhases.PAGETOP}>Page Top</Coral.Radio>
-        <Coral.Radio
-          {...loadPhase}
-          value={loadPhases.PAGEBOTTOM}
-          checked={loadPhase.value === loadPhases.PAGEBOTTOM}>Page Bottom</Coral.Radio>
-      </div>
-    );
-  }
-}
+  return (
+    <div className={props.className}>
+      <span className="u-label">Load library at:</span>
+      <Coral.Radio
+        {...loadPhase}
+        value={loadPhases.PAGETOP}
+        checked={loadPhase.value === loadPhases.PAGETOP}>Page Top</Coral.Radio>
+      <Coral.Radio
+        {...loadPhase}
+        value={loadPhases.PAGEBOTTOM}
+        checked={loadPhase.value === loadPhases.PAGEBOTTOM}>Page Bottom</Coral.Radio>
+    </div>
+  );
+};
 
-class TrackerVariableName extends React.Component {
-  render() {
-    const { trackerVariableName } = this.props.fields.libraryCode;
+const TrackerVariableName = props => {
+  const { trackerVariableName } = props.fields.libraryCode;
 
-    return (
-      <ValidationWrapper
-        className={this.props.className}
-        error={trackerVariableName.touched && trackerVariableName.error}>
-        <label>
-          <span className="u-label">Tracker is accessible on the global variable named:</span>
-          <Coral.Textfield {...trackerVariableName}/>
-        </label>
-      </ValidationWrapper>
-    );
-  }
-}
+  return (
+    <ValidationWrapper
+      className={props.className}
+      error={trackerVariableName.touched && trackerVariableName.error}>
+      <label>
+        <span className="u-label">Tracker is accessible on the global variable named:</span>
+        <Coral.Textfield {...trackerVariableName}/>
+      </label>
+    </ValidationWrapper>
+  );
+};
 
-class SkipSetAccount extends React.Component {
-  render() {
-    const { skipSetAccount } = this.props.fields.libraryCode;
+const SkipSetAccount = props => {
+  const { skipSetAccount } = props.fields.libraryCode;
 
-    return (
-      <Coral.Checkbox
-        {...skipSetAccount}
-        className={this.props.className}>
-        Use report suites that have been set within the code
-      </Coral.Checkbox>
-    );
-  }
-}
+  return (
+    <Coral.Checkbox
+      {...skipSetAccount}
+      className={props.className}>
+      Use report suites that have been set within the code
+    </Coral.Checkbox>
+  );
+};
 
 export default class LibraryManagement extends React.Component {
   onOpenEditor = () => {
