@@ -3,6 +3,7 @@ import Coral from '@coralui/coralui-support-reduxform';
 import extensionViewReduxForm from '../extensionViewReduxForm';
 import createFormConfig from '../utils/createFormConfig';
 import General from './general';
+import LibraryManagement, { formConfig as libraryManagementFormConfig } from './libraryManagement';
 import Cookies, { formConfig as cookiesFormConfig } from './cookies';
 import ReferrersCampaigns, { formConfig as referrersCampaignsFormConfig } from './referrersCampaigns';
 import Variables, { formConfig as variablesFormConfig } from './variables';
@@ -323,7 +324,9 @@ class ExtensionConfiguration extends React.Component {
         <Coral.Accordion variant="quiet">
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>Library Management</Coral.Accordion.Item.Label>
-            <Coral.Accordion.Item.Content>Content.</Coral.Accordion.Item.Content>
+            <Coral.Accordion.Item.Content>
+              <LibraryManagement fields={this.props.fields}/>
+            </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
         <Coral.Accordion variant="quiet">
@@ -356,6 +359,7 @@ class ExtensionConfiguration extends React.Component {
 }
 
 const formConfig = createFormConfig(
+  libraryManagementFormConfig,
   cookiesFormConfig,
   referrersCampaignsFormConfig,
   variablesFormConfig);
