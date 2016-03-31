@@ -12,7 +12,460 @@
   "libBasePath": "src/lib",
   "configuration": {
     "viewPath": "index.html#/configuration",
-    "schema": {}
+    "schema": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "euComplianceEnabled": {
+          "type": "boolean"
+        },
+        "libraryCode": {
+          "type": "object",
+          "oneOf": [
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "managed"
+                  ]
+                },
+                "loadPhase": {
+                  "$ref": "#/definitions/loadPhase"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "loadPhase"
+              ]
+            },
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "preinstalled"
+                  ]
+                },
+                "trackerVariableName": {
+                  "$ref": "#/definitions/trackerVariableName"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "trackerVariableName"
+              ]
+            },
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "remote"
+                  ]
+                },
+                "httpUrl": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^http://"
+                },
+                "httpsUrl": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https://"
+                },
+                "reportSuitesPreconfigured": {
+                  "$ref": "#/definitions/reportSuitesPreconfigured"
+                },
+                "loadPhase": {
+                  "$ref": "#/definitions/loadPhase"
+                },
+                "trackerVariableName": {
+                  "$ref": "#/definitions/trackerVariableName"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "httpUrl",
+                "httpsUrl",
+                "reportSuitesPreconfigured",
+                "loadPhase",
+                "trackerVariableName"
+              ]
+            },
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "custom"
+                  ]
+                },
+                "script": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "reportSuitesPreconfigured": {
+                  "$ref": "#/definitions/reportSuitesPreconfigured"
+                },
+                "loadPhase": {
+                  "$ref": "#/definitions/loadPhase"
+                },
+                "trackerVariableName": {
+                  "$ref": "#/definitions/trackerVariableName"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "script",
+                "reportSuitesPreconfigured",
+                "loadPhase",
+                "trackerVariableName"
+              ]
+            }
+          ]
+        },
+        "trackerProperties": {
+          "properties": {
+            "charSet": {
+              "type": "string",
+              "minLength": 1
+            },
+            "currencyCode": {
+              "type": "string",
+              "minLength": 1
+            },
+            "trackingServer": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^http://"
+            },
+            "trackingServerSecure": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://"
+            },
+            "dc": {
+              "type": "string",
+              "enum": [
+                "122",
+                "112"
+              ]
+            },
+            "server": {
+              "type": "string",
+              "format": "uri"
+            },
+            "dynamicVariablePrefix": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pageName": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pageURL": {
+              "type": "string",
+              "format": "uri"
+            },
+            "channel": {
+              "type": "string",
+              "minLength": 1
+            },
+            "trackInlineStats": {
+              "type": "boolean"
+            },
+            "trackDownloadLinks": {
+              "type": "boolean"
+            },
+            "linkDownloadFileTypes": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^\\w+$"
+              }
+            },
+            "trackExternalLinks": {
+              "type": "boolean"
+            },
+            "linkExternalFilters": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[!-~]+$"
+              }
+            },
+            "linkInternalFilters": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[!-~]+$"
+              }
+            },
+            "linkLeaveQueryString": {
+              "type": "boolean"
+            },
+            "referrer": {
+              "type": "string",
+              "format": "uri"
+            },
+            "campaign": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "value",
+                    "queryParam"
+                  ]
+                },
+                "value": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "value"
+              ]
+            },
+            "visitorID": {
+              "type": "string",
+              "pattern": "^[^-]{1,100}$"
+            },
+            "visitorNamespace": {
+              "type": "string",
+              "pattern": "^\\w+$"
+            },
+            "cookieDomainPeriods": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "fpCookieDomainPeriods": {
+              "type": "string",
+              "pattern": "^\\d+$"
+            },
+            "transactionID": {
+              "type": "string",
+              "minLength": 1
+            },
+            "cookieLifetime": {
+              "type": "string",
+              "pattern": "^(SESSION|NONE|\\d+)$"
+            },
+            "hierarchies": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "pattern": "^hierarchy[1-5]$"
+                  },
+                  "levels": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 1,
+                    "maxItems": 4
+                  },
+                  "delimiter": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "levels",
+                  "delimiter"
+                ]
+              }
+            },
+            "eVars": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "oneOf": [
+                  {
+                    "properties": {
+                      "name": {
+                        "$ref": "#/definitions/eVarName"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "value"
+                        ]
+                      },
+                      "value": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "name",
+                      "type",
+                      "value"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "name": {
+                        "$ref": "#/definitions/eVarName"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "alias"
+                        ]
+                      },
+                      "value": {
+                        "type": "string",
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions/eVarName"
+                          },
+                          {
+                            "$ref": "#/definitions/propName"
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "name",
+                      "type",
+                      "value"
+                    ]
+                  }
+                ]
+              }
+            },
+            "props": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "oneOf": [
+                  {
+                    "properties": {
+                      "name": {
+                        "$ref": "#/definitions/propName"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "value"
+                        ]
+                      },
+                      "value": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "name",
+                      "type",
+                      "value"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "name": {
+                        "$ref": "#/definitions/propName"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "alias"
+                        ]
+                      },
+                      "value": {
+                        "type": "string",
+                        "oneOf": [
+                          {
+                            "$ref": "#/definitions/eVarName"
+                          },
+                          {
+                            "$ref": "#/definitions/propName"
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": [
+                      "name",
+                      "type",
+                      "value"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "customSetup": {
+          "type": "object",
+          "properties": {
+            "loadPhase": {
+              "type": "string",
+              "enum": [
+                "beforeSettings",
+                "afterSettings"
+              ]
+            },
+            "script": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "loadPhase",
+            "script"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "libraryCode"
+      ],
+      "definitions": {
+        "loadPhase": {
+          "type": "string",
+          "enum": [
+            "pageTop",
+            "pageBottom"
+          ]
+        },
+        "trackerVariableName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reportSuitesPreconfigured": {
+          "type": "boolean"
+        },
+        "eVarName": {
+          "type": "string",
+          "pattern": "^eVar(\\d+)$"
+        },
+        "propName": {
+          "type": "string",
+          "pattern": "^prop(\\d+)$"
+        }
+      }
+    }
   },
   "actions": [
     {

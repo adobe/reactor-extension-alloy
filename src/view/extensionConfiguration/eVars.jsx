@@ -72,10 +72,11 @@ export default class EVars extends React.Component {
           key={eVar.id.value}
           className={classNames({ 'u-gapBottom': index !== eVars.length - 1 })}
           onFocus={this.onRowFocus.bind(this, index)}>
-          <ValidationWrapper error={eVar.name.touched && eVar.name.error}>
+          <ValidationWrapper
+            error={eVar.name.touched && eVar.name.error}
+            className="u-gapRight">
             <Coral.Autocomplete
               placeholder="Select eVar"
-              className="u-gapRight"
               onChange={eVar.name.onChange}>
               {eVarOptions}
             </Coral.Autocomplete>
@@ -211,7 +212,7 @@ export const formConfig = createFormConfig({
           if (!match || varNumber < 1 ||
             (match[1] === 'eVar' && varNumber > MAX_EVARS) ||
             (match[1] === 'prop' && varNumber > MAX_PROPS)) {
-            eVarErrors.name = 'Please enter a valid value';
+            eVarErrors.value = 'Please enter a valid value';
           }
         }
       } else if (eVar.name) {
