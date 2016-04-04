@@ -7,6 +7,7 @@ import LibraryManagement, { formConfig as libraryManagementFormConfig } from './
 import Cookies, { formConfig as cookiesFormConfig } from './cookies';
 import ReferrersCampaigns, { formConfig as referrersCampaignsFormConfig } from './referrersCampaigns';
 import Variables, { formConfig as variablesFormConfig } from './variables';
+import LinkTracking, { formConfig as linkTrackingFormConfig } from './linkTracking';
 
 class ExtensionConfiguration extends React.Component {
   showSuggestions = event => {
@@ -339,6 +340,14 @@ class ExtensionConfiguration extends React.Component {
         </Coral.Accordion>
         <Coral.Accordion variant="quiet">
           <Coral.Accordion.Item>
+            <Coral.Accordion.Item.Label>Link Tracking</Coral.Accordion.Item.Label>
+            <Coral.Accordion.Item.Content>
+              <LinkTracking fields={this.props.fields}/>
+            </Coral.Accordion.Item.Content>
+          </Coral.Accordion.Item>
+        </Coral.Accordion>
+        <Coral.Accordion variant="quiet">
+          <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>Referrers & Campaigns</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
               <ReferrersCampaigns fields={this.props.fields}/>
@@ -362,7 +371,8 @@ const formConfig = createFormConfig(
   libraryManagementFormConfig,
   cookiesFormConfig,
   referrersCampaignsFormConfig,
-  variablesFormConfig);
+  variablesFormConfig,
+  linkTrackingFormConfig);
 
 export default extensionViewReduxForm(formConfig)(ExtensionConfiguration);
 

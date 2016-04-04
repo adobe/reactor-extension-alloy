@@ -40,8 +40,8 @@
     "yargs": "^4.2.0"
   },
   "dependencies": {
-    "@coralui/coralui-support-react": "^3.0.1",
-    "@coralui/coralui-support-reduxform": "^1.0.1",
+    "@coralui/coralui-support-react": "^4.0.0-alpha.2",
+    "@coralui/coralui-support-reduxform": "^1.1.0",
     "@reactor/react-components": "^1.0.0",
     "css-loader": "^0.23.1",
     "gulp-notify": "^2.2.0",
