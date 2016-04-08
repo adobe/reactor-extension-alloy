@@ -461,6 +461,15 @@
           "pattern": "^prop(\\d+)$"
         }
       }
+    },
+    "transform": {
+      "libraryCode.script": {
+        "type": "file",
+        "extension": "js"
+      },
+      "customSetup.script": {
+        "type": "unquoted"
+      }
     }
   },
   "actions": [
