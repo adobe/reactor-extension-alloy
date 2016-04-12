@@ -11,8 +11,8 @@ const libTypes = {
 };
 
 const loadPhases = {
-  PAGETOP: 'pagetop',
-  PAGEBOTTOM: 'pagebottom'
+  PAGE_TOP: 'pageTop',
+  PAGE_BOTTOM: 'pageBottom'
 };
 
 const LoadPhase = props => {
@@ -23,12 +23,12 @@ const LoadPhase = props => {
       <span className="u-label">Load library at:</span>
       <Coral.Radio
         {...loadPhase}
-        value={loadPhases.PAGETOP}
-        checked={loadPhase.value === loadPhases.PAGETOP}>Page Top</Coral.Radio>
+        value={loadPhases.PAGE_TOP}
+        checked={loadPhase.value === loadPhases.PAGE_TOP}>Page Top</Coral.Radio>
       <Coral.Radio
         {...loadPhase}
-        value={loadPhases.PAGEBOTTOM}
-        checked={loadPhase.value === loadPhases.PAGEBOTTOM}>Page Bottom</Coral.Radio>
+        value={loadPhases.PAGE_BOTTOM}
+        checked={loadPhase.value === loadPhases.PAGE_BOTTOM}>Page Bottom</Coral.Radio>
     </div>
   );
 };
@@ -49,11 +49,11 @@ const TrackerVariableName = props => {
 };
 
 const SkipSetAccount = props => {
-  const { skipSetAccount } = props.fields.libraryCode;
+  const { reportSuitesPreconfigured } = props.fields.libraryCode;
 
   return (
     <Coral.Checkbox
-      {...skipSetAccount}
+      {...reportSuitesPreconfigured}
       className={props.className}>
       Use report suites that have been set within the code
     </Coral.Checkbox>
@@ -183,7 +183,7 @@ export const formConfig = createFormConfig({
     'libraryCode.type',
     'libraryCode.trackerVariableName',
     'libraryCode.loadPhase',
-    'libraryCode.skipSetAccount',
+    'libraryCode.reportSuitesPreconfigured',
     'libraryCode.httpUrl',
     'libraryCode.httpsUrl',
     'libraryCode.script'
@@ -193,7 +193,7 @@ export const formConfig = createFormConfig({
       type,
       trackerVariableName,
       loadPhase,
-      skipSetAccount,
+      reportSuitesPreconfigured,
       httpUrl,
       httpsUrl,
       script
@@ -204,8 +204,8 @@ export const formConfig = createFormConfig({
       libraryCode: {
         type: type || libTypes.MANAGED,
         trackerVariableName: trackerVariableName || 's',
-        loadPhase: loadPhase || loadPhases.PAGEBOTTOM,
-        skipSetAccount,
+        loadPhase: loadPhase || loadPhases.PAGE_BOTTOM,
+        reportSuitesPreconfigured,
         httpUrl,
         httpsUrl,
         script
@@ -217,7 +217,7 @@ export const formConfig = createFormConfig({
       type,
       trackerVariableName,
       loadPhase,
-      skipSetAccount,
+      reportSuitesPreconfigured,
       httpUrl,
       httpsUrl,
       script
@@ -238,12 +238,12 @@ export const formConfig = createFormConfig({
     if (type === libTypes.REMOTE) {
       libraryCodeSettings.httpUrl = forcePrefix(httpUrl || '', 'http://');
       libraryCodeSettings.httpsUrl = forcePrefix(httpsUrl || '', 'https://');
-      libraryCodeSettings.skipSetAccount = skipSetAccount;
+      libraryCodeSettings.reportSuitesPreconfigured = reportSuitesPreconfigured;
     }
 
     if (type === libTypes.CUSTOM) {
       libraryCodeSettings.script = script;
-      libraryCodeSettings.skipSetAccount = skipSetAccount;
+      libraryCodeSettings.reportSuitesPreconfigured = reportSuitesPreconfigured;
     }
 
     return {
