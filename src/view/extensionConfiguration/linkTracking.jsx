@@ -39,7 +39,8 @@ export default class LinkTracking extends React.Component {
           { trackDownloadLinks.checked ?
             <div>
               <TagListEditor
-                tags={linkDownloadFileTypes}
+                onChange={linkDownloadFileTypes.onChange}
+                value={linkDownloadFileTypes.value}
                 title="Download Extensions"
                 tooltip="Some tooltip"/>
             </div> : null
@@ -55,11 +56,13 @@ export default class LinkTracking extends React.Component {
           { trackExternalLinks.checked ?
             <div>
               <TagListEditor
-                tags={linkExternalFilters}
+                onChange={linkExternalFilters.onChange}
+                value={linkExternalFilters.value}
                 title="Track"
                 tooltip="Some tooltip"/>
               <TagListEditor
-                tags={linkInternalFilters}
+                onChange={linkInternalFilters.onChange}
+                value={linkInternalFilters.value}
                 title="Never Track"
                 tooltip="Some tooltip"/>
             </div> : null
@@ -79,10 +82,10 @@ export const formConfig = createFormConfig({
   fields: [
     'trackInlineStats',
     'trackDownloadLinks',
-    'linkDownloadFileTypes[]',
+    'linkDownloadFileTypes',
     'trackExternalLinks',
-    'linkExternalFilters[]',
-    'linkInternalFilters[]',
+    'linkExternalFilters',
+    'linkInternalFilters',
     'linkLeaveQueryString'
 
   ],

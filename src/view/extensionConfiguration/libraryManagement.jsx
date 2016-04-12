@@ -1,7 +1,9 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
-import createFormConfig from '../utils/createFormConfig';
 import { ValidationWrapper, ErrorTip } from '@reactor/react-components';
+
+import ReportSuite from './components/reportSuite';
+import createFormConfig from '../utils/createFormConfig';
 
 const libTypes = {
   MANAGED: 'managed',
@@ -13,6 +15,32 @@ const libTypes = {
 const loadPhases = {
   PAGE_TOP: 'pageTop',
   PAGE_BOTTOM: 'pageBottom'
+};
+
+const ReportSuites = props => {
+  return (
+    <section className="ReportSuites-container">
+      <h4 className="coral-Heading coral-Heading--4">
+        Report Suites
+        <Coral.Icon id="ReportSuiteTooltip" icon="infoCircle" size="XS" className="u-gapLeft"/>
+      </h4>
+      <Coral.Tooltip placement="right" target="#ReportSuiteTooltip">
+        Some tooltip
+      </Coral.Tooltip>
+
+      <section className="ReportSuites-fieldsContainer">
+        <ReportSuite
+          label="Production Report Suite(s)"
+          {...props.productionAccounts}/>
+        <ReportSuite
+          label="Staging Report Suite(s)"
+          {...props.stagingAccounts}/>
+        <ReportSuite
+          label="Development Report Suite(s)"
+          {...props.developmentAccounts}/>
+      </section>
+    </section>
+  );
 };
 
 const LoadPhase = props => {
@@ -48,15 +76,20 @@ const TrackerVariableName = props => {
   );
 };
 
-const SkipSetAccount = props => {
-  const { reportSuitesPreconfigured } = props.fields.libraryCode;
+const OverwriteReportSuites = props => {
+  const { libraryCode } = props.fields;
 
   return (
-    <Coral.Checkbox
-      {...reportSuitesPreconfigured}
-      className={props.className}>
-      Use report suites that have been set within the code
-    </Coral.Checkbox>
+    <div>
+      <Coral.Checkbox
+        {...libraryCode.showReportSuites}>
+        Set the following report suites on tracker
+      </Coral.Checkbox>
+      {
+        libraryCode.showReportSuites.value ?
+          <ReportSuites {...libraryCode}/> : null
+      }
+    </div>
   );
 };
 
@@ -65,6 +98,7 @@ export default class LibraryManagement extends React.Component {
     let scriptField = this.props.fields.libraryCode.script;
     window.extensionBridge.openCodeEditor(scriptField.value, scriptField.onChange);
   };
+
 
   render() {
     const {
@@ -79,38 +113,43 @@ export default class LibraryManagement extends React.Component {
         <Coral.Radio
           {...type}
           value={libTypes.MANAGED}
-          checked={type.value === libTypes.MANAGED}
-          className="u-block">
+          checked={type.value === libTypes.MANAGED}>
           Manage the library for me
         </Coral.Radio>
         {
           type.value === libTypes.MANAGED ?
             <div className="LibraryManagement-optionSubset">
+              <ReportSuites {...this.props.fields.libraryCode}/>
               <LoadPhase fields={this.props.fields}/>
-            </div>: null
+            </div> : null
         }
 
-        <Coral.Radio
-          {...type}
-          value={libTypes.PREINSTALLED}
-          checked={type.value === libTypes.PREINSTALLED}
-          className="u-block">
-          Use the library already installed on the page
-        </Coral.Radio>
+        <div>
+          <Coral.Radio
+            {...type}
+            value={libTypes.PREINSTALLED}
+            checked={type.value === libTypes.PREINSTALLED}>
+            Use the library already installed on the page
+          </Coral.Radio>
+        </div>
         {
           type.value === libTypes.PREINSTALLED ?
             <div className="LibraryManagement-optionSubset">
+              <OverwriteReportSuites
+                fields={this.props.fields}
+                className="u-block u-gapBottom"/>
               <TrackerVariableName fields={this.props.fields}/>
             </div> : null
         }
 
-        <Coral.Radio
-          {...type}
-          value={libTypes.REMOTE}
-          checked={type.value === libTypes.REMOTE}
-          className="u-block">
-          Load the library from a custom URL
-        </Coral.Radio>
+        <div>
+          <Coral.Radio
+            {...type}
+            value={libTypes.REMOTE}
+            checked={type.value === libTypes.REMOTE}>
+            Load the library from a custom URL
+          </Coral.Radio>
+        </div>
         {
           type.value === libTypes.REMOTE ?
             <div className="LibraryManagement-optionSubset">
@@ -131,7 +170,7 @@ export default class LibraryManagement extends React.Component {
                   </label>
                  </ValidationWrapper>
               </div>
-              <SkipSetAccount
+              <OverwriteReportSuites
                 fields={this.props.fields}
                 className="u-block u-gapBottom"/>
               <TrackerVariableName
@@ -141,13 +180,14 @@ export default class LibraryManagement extends React.Component {
             </div> : null
         }
 
-        <Coral.Radio
-          {...type}
-          value={libTypes.CUSTOM}
-          checked={type.value === libTypes.CUSTOM}
-          className="u-block">
-          Let me provide custom library code
-        </Coral.Radio>
+        <div>
+          <Coral.Radio
+            {...type}
+            value={libTypes.CUSTOM}
+            checked={type.value === libTypes.CUSTOM}>
+            Let me provide custom library code
+          </Coral.Radio>
+        </div>
         {
           type.value === libTypes.CUSTOM ?
             <div className="LibraryManagement-optionSubset">
@@ -160,7 +200,7 @@ export default class LibraryManagement extends React.Component {
                     <ErrorTip ref="scriptErrorIcon" message={script.error}/> : null
                 }
               </div>
-              <SkipSetAccount
+              <OverwriteReportSuites
                 fields={this.props.fields}
                 className="u-block u-gapBottom"/>
               <TrackerVariableName
@@ -175,12 +215,16 @@ export default class LibraryManagement extends React.Component {
 }
 
 const forcePrefix = (str, prefix) => {
-  return str.indexOf(prefix) === 0 ? str : prefix + str;
+  return !str || str.indexOf(prefix) === 0 ? str : prefix + str;
 };
 
 export const formConfig = createFormConfig({
   fields: [
     'libraryCode.type',
+    'libraryCode.productionAccounts',
+    'libraryCode.stagingAccounts',
+    'libraryCode.developmentAccounts',
+    'libraryCode.showReportSuites',
     'libraryCode.trackerVariableName',
     'libraryCode.loadPhase',
     'libraryCode.reportSuitesPreconfigured',
@@ -190,6 +234,9 @@ export const formConfig = createFormConfig({
   ],
   settingsToFormValues(values, options) {
     const {
+      productionAccounts,
+      stagingAccounts,
+      developmentAccounts,
       type,
       trackerVariableName,
       loadPhase,
@@ -199,6 +246,12 @@ export const formConfig = createFormConfig({
       script
     } = options.settings.libraryCode || {};
 
+    const reportSuitesDefined = [productionAccounts, stagingAccounts, developmentAccounts]
+      .some(reportSuites => {
+        return reportSuites && reportSuites.length;
+      });
+    const showReportSuites = (type !== libTypes.MANAGED) && reportSuitesDefined;
+
     return {
       ...values,
       libraryCode: {
@@ -206,6 +259,10 @@ export const formConfig = createFormConfig({
         trackerVariableName: trackerVariableName || 's',
         loadPhase: loadPhase || loadPhases.PAGE_BOTTOM,
         reportSuitesPreconfigured,
+        productionAccounts,
+        stagingAccounts,
+        developmentAccounts,
+        showReportSuites,
         httpUrl,
         httpsUrl,
         script
@@ -226,6 +283,12 @@ export const formConfig = createFormConfig({
     const libraryCodeSettings = {
       type
     };
+
+    ['productionAccounts', 'stagingAccounts', 'developmentAccounts'].forEach(account => {
+      if (values.libraryCode[account] && values.libraryCode[account].length > 0) {
+        libraryCodeSettings[account] = values.libraryCode[account];
+      }
+    });
 
     if (type !== libTypes.PREINSTALLED) {
       libraryCodeSettings.loadPhase = loadPhase;
@@ -253,6 +316,8 @@ export const formConfig = createFormConfig({
   },
   validate(errors, values) {
     const {
+      productionAccounts,
+      showReportSuites,
       type,
       trackerVariableName,
       httpUrl,
@@ -261,6 +326,13 @@ export const formConfig = createFormConfig({
     } = values.libraryCode;
 
     const libraryCodeErrors = {};
+
+    const reportSuitesAreRequired =
+      (type !== libTypes.MANAGED && showReportSuites) || type === libTypes.MANAGED;
+    const productionAccountsAreMissing = !productionAccounts  || productionAccounts.length === 0;
+    if (reportSuitesAreRequired && productionAccountsAreMissing) {
+      libraryCodeErrors.productionAccounts = 'Please specify a report suite';
+    }
 
     if (type !== libTypes.MANAGED && !trackerVariableName) {
       libraryCodeErrors.trackerVariableName = 'Please specify a variable name';

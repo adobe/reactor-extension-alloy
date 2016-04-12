@@ -6,25 +6,27 @@ export default class TagListEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: '',
+      newValue: '',
       error: ''
     };
   }
 
   add = () => {
-    if (!this.state.value) {
+    if (!this.state.newValue) {
       this.setState({
         error: 'Please provide a value'
       });
-    } else if (this.valueAlreadyExists(this.props.tags, this.state.value)) {
+    } else if (this.valueAlreadyExists(this.props.value || [], this.state.newValue)) {
       this.setState({
         error: 'Value already exists'
       });
     } else {
-      this.props.tags.addField(this.state.value);
+      const values = this.props.value || [];
+      values.push(this.state.newValue);
+      this.props.onChange(values);
 
       this.setState({
-        value: '',
+        newValue: '',
         error: ''
       });
     }
@@ -32,23 +34,10 @@ export default class TagListEditor extends React.Component {
     this.refs.valueField.coralComponent.focus();
   };
 
-  onTagListChange = (event) => {
-    const currentTagValues = event.target.values;
-    const tags = this.props.tags;
-
-    for (let i = 0; i < tags.length; i++) {
-      let tag = tags[i];
-      if (currentTagValues.indexOf(tag.value) === -1) {
-        tags.removeField(i);
-        return;
-      }
-    }
-  };
-
-  onValueChange = event => {
-    const value = event.target ? event.target.value : event;
+  onNewValueChange = event => {
+    const newValue = event.target ? event.target.value : event;
     this.setState({
-      value
+      newValue
     });
   };
 
@@ -60,7 +49,7 @@ export default class TagListEditor extends React.Component {
 
   openSelectorCallback = dataElementName => {
     this.setState({
-      value: this.state.value + '%' + dataElementName + '%'
+      newValue: this.state.newValue + '%' + dataElementName + '%'
     });
   };
 
@@ -68,12 +57,13 @@ export default class TagListEditor extends React.Component {
     window.extensionBridge.openDataElementSelector(this.openSelectorCallback);
   };
 
-  valueAlreadyExists = (tagFields, value) => {
-    return tagFields.some(tagField => tagField.value === value);
+  valueAlreadyExists = (values, newValue) => {
+    return values.some(value => value === newValue);
   };
 
   render() {
-    const { tags } = this.props;
+    const value = this.props.value || [];
+
     return (
       <div className="TagListEditor">
         <label className="u-label">{ this.props.title }</label>
@@ -91,9 +81,9 @@ export default class TagListEditor extends React.Component {
             <Coral.Textfield
               ref="valueField"
               className="TagListEditor-valueInput"
-              onKeyUp={this.onValueChange}
+              onKeyUp={this.onNewValueChange}
               onKeyPress={this.handleKeyPress}
-              value={this.state.value}
+              value={this.state.newValue}
             />
           </ValidationWrapper>
           <DataElementSelectorButton onClick={this.openSelector} />
@@ -101,15 +91,15 @@ export default class TagListEditor extends React.Component {
           <div className="u-gapTop">
             <Coral.TagList
               ref="tagList"
-              onChange={this.onTagListChange}>
-              {tags.map((field) => {
+              onChange={this.props.onChange}>
+              {value.map((tag) => {
                 return (
                   <Coral.Tag
                     className="TagListEditor-tag"
-                    key={field.value}
-                    value={field.value}
-                    title={field.value}>
-                    {field.value}
+                    key={tag}
+                    value={tag}
+                    title={tag}>
+                    {tag}
                   </Coral.Tag>
                 );
               })}

@@ -32,12 +32,50 @@
                 },
                 "loadPhase": {
                   "$ref": "#/definitions/loadPhase"
+                },
+                "productionAccounts": {
+                  "$ref": "#/definitions/mandatoryAccountsList"
+                },
+                "stagingAccounts": {
+                  "$ref": "#/definitions/accountsList"
+                },
+                "developmentAccounts": {
+                  "$ref": "#/definitions/accountsList"
                 }
               },
               "additionalProperties": false,
               "required": [
                 "type",
-                "loadPhase"
+                "loadPhase",
+                "productionAccounts"
+              ]
+            },
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "preinstalled"
+                  ]
+                },
+                "trackerVariableName": {
+                  "$ref": "#/definitions/trackerVariableName"
+                },
+                "productionAccounts": {
+                  "$ref": "#/definitions/mandatoryAccountsList"
+                },
+                "stagingAccounts": {
+                  "$ref": "#/definitions/accountsList"
+                },
+                "developmentAccounts": {
+                  "$ref": "#/definitions/accountsList"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "trackerVariableName",
+                "productionAccounts"
               ]
             },
             {
@@ -74,8 +112,14 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "reportSuitesPreconfigured": {
-                  "$ref": "#/definitions/reportSuitesPreconfigured"
+                "productionAccounts": {
+                  "$ref": "#/definitions/mandatoryAccountsList"
+                },
+                "stagingAccounts": {
+                  "$ref": "#/definitions/accountsList"
+                },
+                "developmentAccounts": {
+                  "$ref": "#/definitions/accountsList"
                 },
                 "loadPhase": {
                   "$ref": "#/definitions/loadPhase"
@@ -89,7 +133,39 @@
                 "type",
                 "httpUrl",
                 "httpsUrl",
-                "reportSuitesPreconfigured",
+                "productionAccounts",
+                "loadPhase",
+                "trackerVariableName"
+              ]
+            },
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "remote"
+                  ]
+                },
+                "httpUrl": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "httpsUrl": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "loadPhase": {
+                  "$ref": "#/definitions/loadPhase"
+                },
+                "trackerVariableName": {
+                  "$ref": "#/definitions/trackerVariableName"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "httpUrl",
+                "httpsUrl",
                 "loadPhase",
                 "trackerVariableName"
               ]
@@ -106,8 +182,14 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "reportSuitesPreconfigured": {
-                  "$ref": "#/definitions/reportSuitesPreconfigured"
+                "productionAccounts": {
+                  "$ref": "#/definitions/mandatoryAccountsList"
+                },
+                "stagingAccounts": {
+                  "$ref": "#/definitions/accountsList"
+                },
+                "developmentAccounts": {
+                  "$ref": "#/definitions/accountsList"
                 },
                 "loadPhase": {
                   "$ref": "#/definitions/loadPhase"
@@ -120,7 +202,34 @@
               "required": [
                 "type",
                 "script",
-                "reportSuitesPreconfigured",
+                "productionAccounts",
+                "loadPhase",
+                "trackerVariableName"
+              ]
+            },
+            {
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "custom"
+                  ]
+                },
+                "script": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "loadPhase": {
+                  "$ref": "#/definitions/loadPhase"
+                },
+                "trackerVariableName": {
+                  "$ref": "#/definitions/trackerVariableName"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "type",
+                "script",
                 "loadPhase",
                 "trackerVariableName"
               ]
@@ -449,9 +558,6 @@
           "type": "string",
           "minLength": 1
         },
-        "reportSuitesPreconfigured": {
-          "type": "boolean"
-        },
         "eVarName": {
           "type": "string",
           "pattern": "^eVar(\\d+)$"
@@ -459,6 +565,21 @@
         "propName": {
           "type": "string",
           "pattern": "^prop(\\d+)$"
+        },
+        "accountsList": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "mandatoryAccountsList": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
