@@ -42,7 +42,7 @@ export default class ReportSuite extends React.Component {
 
   render() {
     return (
-      <div className="ReportSuites-autocompleteField">
+      <div className="ReportSuite-autocompleteField">
         <label className="u-label">{this.props.label}</label>
         <div>
           <ValidationWrapper
@@ -51,6 +51,7 @@ export default class ReportSuite extends React.Component {
             <Coral.Autocomplete
               placeholder="Add Report Suite(s)"
               ref="autocomplete"
+              className="ReportSuite-autocomplete"
               onCoralAutocompleteShowSuggestions={showSuggestions}
               onChange={this.props.onChange}
               values={this.props.value}
