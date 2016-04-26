@@ -17,6 +17,12 @@ const loadPhases = {
   PAGE_BOTTOM: 'pageBottom'
 };
 
+const environments = [
+  'production',
+  'staging',
+  'development'
+];
+
 const ReportSuites = props => {
   return (
     <section className="ReportSuites-container">
@@ -31,13 +37,13 @@ const ReportSuites = props => {
       <section className="ReportSuites-fieldsContainer">
         <ReportSuite
           label="Production Report Suite(s)"
-          {...props.productionAccounts}/>
+          {...props.production}/>
         <ReportSuite
           label="Staging Report Suite(s)"
-          {...props.stagingAccounts}/>
+          {...props.staging}/>
         <ReportSuite
           label="Development Report Suite(s)"
-          {...props.developmentAccounts}/>
+          {...props.development}/>
       </section>
     </section>
   );
@@ -87,7 +93,7 @@ const OverwriteReportSuites = props => {
       </Coral.Checkbox>
       {
         libraryCode.showReportSuites.value ?
-          <ReportSuites {...libraryCode}/> : null
+          <ReportSuites {...libraryCode.accounts}/> : null
       }
     </div>
   );
@@ -119,7 +125,7 @@ export default class LibraryManagement extends React.Component {
         {
           type.value === libTypes.MANAGED ?
             <div className="LibraryManagement-optionSubset">
-              <ReportSuites {...this.props.fields.libraryCode}/>
+              <ReportSuites {...this.props.fields.libraryCode.accounts}/>
               <LoadPhase fields={this.props.fields}/>
             </div> : null
         }
@@ -221,9 +227,9 @@ const forcePrefix = (str, prefix) => {
 export const formConfig = createFormConfig({
   fields: [
     'libraryCode.type',
-    'libraryCode.productionAccounts',
-    'libraryCode.stagingAccounts',
-    'libraryCode.developmentAccounts',
+    'libraryCode.accounts.production',
+    'libraryCode.accounts.staging',
+    'libraryCode.accounts.development',
     'libraryCode.showReportSuites',
     'libraryCode.trackerVariableName',
     'libraryCode.loadPhase',
@@ -234,9 +240,7 @@ export const formConfig = createFormConfig({
   ],
   settingsToFormValues(values, options) {
     const {
-      productionAccounts,
-      stagingAccounts,
-      developmentAccounts,
+      accounts,
       type,
       trackerVariableName,
       loadPhase,
@@ -246,11 +250,7 @@ export const formConfig = createFormConfig({
       script
     } = options.settings.libraryCode || {};
 
-    const reportSuitesDefined = [productionAccounts, stagingAccounts, developmentAccounts]
-      .some(reportSuites => {
-        return reportSuites && reportSuites.length;
-      });
-    const showReportSuites = (type !== libTypes.MANAGED) && reportSuitesDefined;
+    const showReportSuites = Boolean(type !== libTypes.MANAGED && accounts);
 
     return {
       ...values,
@@ -259,9 +259,7 @@ export const formConfig = createFormConfig({
         trackerVariableName: trackerVariableName || 's',
         loadPhase: loadPhase || loadPhases.PAGE_BOTTOM,
         reportSuitesPreconfigured,
-        productionAccounts,
-        stagingAccounts,
-        developmentAccounts,
+        accounts,
         showReportSuites,
         httpUrl,
         httpsUrl,
@@ -284,11 +282,17 @@ export const formConfig = createFormConfig({
       type
     };
 
-    ['productionAccounts', 'stagingAccounts', 'developmentAccounts'].forEach(account => {
-      if (values.libraryCode[account] && values.libraryCode[account].length > 0) {
-        libraryCodeSettings[account] = values.libraryCode[account];
+    const accounts = {};
+    for (let environment of environments) {
+      const accountsForEnvironment = values.libraryCode.accounts[environment];
+      if (accountsForEnvironment && accountsForEnvironment.length > 0) {
+        accounts[environment] = accountsForEnvironment;
       }
-    });
+    }
+
+    if (Object.keys(accounts).length) {
+      libraryCodeSettings.accounts = accounts;
+    }
 
     if (type !== libTypes.PREINSTALLED) {
       libraryCodeSettings.loadPhase = loadPhase;
@@ -316,7 +320,7 @@ export const formConfig = createFormConfig({
   },
   validate(errors, values) {
     const {
-      productionAccounts,
+      accounts,
       showReportSuites,
       type,
       trackerVariableName,
@@ -329,9 +333,11 @@ export const formConfig = createFormConfig({
 
     const reportSuitesAreRequired =
       (type !== libTypes.MANAGED && showReportSuites) || type === libTypes.MANAGED;
-    const productionAccountsAreMissing = !productionAccounts  || productionAccounts.length === 0;
+    const productionAccountsAreMissing = !accounts.production || accounts.production.length === 0;
     if (reportSuitesAreRequired && productionAccountsAreMissing) {
-      libraryCodeErrors.productionAccounts = 'Please specify a report suite';
+      libraryCodeErrors.accounts = {
+        production: 'Please specify a report suite'
+      };
     }
 
     if (type !== libTypes.MANAGED && !trackerVariableName) {

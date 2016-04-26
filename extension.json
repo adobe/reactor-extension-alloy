@@ -33,21 +33,15 @@
                 "loadPhase": {
                   "$ref": "#/definitions/loadPhase"
                 },
-                "productionAccounts": {
-                  "$ref": "#/definitions/mandatoryAccountsList"
-                },
-                "stagingAccounts": {
-                  "$ref": "#/definitions/accountsList"
-                },
-                "developmentAccounts": {
-                  "$ref": "#/definitions/accountsList"
+                "accounts": {
+                  "$ref": "#/definitions/accounts"
                 }
               },
               "additionalProperties": false,
               "required": [
                 "type",
                 "loadPhase",
-                "productionAccounts"
+                "accounts"
               ]
             },
             {
@@ -61,33 +55,8 @@
                 "trackerVariableName": {
                   "$ref": "#/definitions/trackerVariableName"
                 },
-                "productionAccounts": {
-                  "$ref": "#/definitions/mandatoryAccountsList"
-                },
-                "stagingAccounts": {
-                  "$ref": "#/definitions/accountsList"
-                },
-                "developmentAccounts": {
-                  "$ref": "#/definitions/accountsList"
-                }
-              },
-              "additionalProperties": false,
-              "required": [
-                "type",
-                "trackerVariableName",
-                "productionAccounts"
-              ]
-            },
-            {
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "enum": [
-                    "preinstalled"
-                  ]
-                },
-                "trackerVariableName": {
-                  "$ref": "#/definitions/trackerVariableName"
+                "accounts": {
+                  "$ref": "#/definitions/accounts"
                 }
               },
               "additionalProperties": false,
@@ -112,47 +81,8 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "productionAccounts": {
-                  "$ref": "#/definitions/mandatoryAccountsList"
-                },
-                "stagingAccounts": {
-                  "$ref": "#/definitions/accountsList"
-                },
-                "developmentAccounts": {
-                  "$ref": "#/definitions/accountsList"
-                },
-                "loadPhase": {
-                  "$ref": "#/definitions/loadPhase"
-                },
-                "trackerVariableName": {
-                  "$ref": "#/definitions/trackerVariableName"
-                }
-              },
-              "additionalProperties": false,
-              "required": [
-                "type",
-                "httpUrl",
-                "httpsUrl",
-                "productionAccounts",
-                "loadPhase",
-                "trackerVariableName"
-              ]
-            },
-            {
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "enum": [
-                    "remote"
-                  ]
-                },
-                "httpUrl": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "httpsUrl": {
-                  "type": "string",
-                  "minLength": 1
+                "accounts": {
+                  "$ref": "#/definitions/accounts"
                 },
                 "loadPhase": {
                   "$ref": "#/definitions/loadPhase"
@@ -182,42 +112,8 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "productionAccounts": {
-                  "$ref": "#/definitions/mandatoryAccountsList"
-                },
-                "stagingAccounts": {
-                  "$ref": "#/definitions/accountsList"
-                },
-                "developmentAccounts": {
-                  "$ref": "#/definitions/accountsList"
-                },
-                "loadPhase": {
-                  "$ref": "#/definitions/loadPhase"
-                },
-                "trackerVariableName": {
-                  "$ref": "#/definitions/trackerVariableName"
-                }
-              },
-              "additionalProperties": false,
-              "required": [
-                "type",
-                "script",
-                "productionAccounts",
-                "loadPhase",
-                "trackerVariableName"
-              ]
-            },
-            {
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "enum": [
-                    "custom"
-                  ]
-                },
-                "script": {
-                  "type": "string",
-                  "minLength": 1
+                "accounts": {
+                  "$ref": "#/definitions/accounts"
                 },
                 "loadPhase": {
                   "$ref": "#/definitions/loadPhase"
@@ -566,14 +462,24 @@
           "type": "string",
           "pattern": "^prop(\\d+)$"
         },
-        "accountsList": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
+        "accounts": {
+          "properties": {
+            "production": {
+              "$ref": "#/definitions/accountsList"
+            },
+            "staging": {
+              "$ref": "#/definitions/accountsList"
+            },
+            "development": {
+              "$ref": "#/definitions/accountsList"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "production"
+          ]
         },
-        "mandatoryAccountsList": {
+        "accountsList": {
           "minItems": 1,
           "type": "array",
           "items": {
