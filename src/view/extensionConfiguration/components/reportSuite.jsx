@@ -6,21 +6,25 @@ import {ValidationWrapper} from '@reactor/react-components';
 import {DataElementSelectorButton} from '@reactor/react-components';
 
 const showSuggestions = event => {
-  const autocomplete = event.target;
-  autocomplete.addSuggestions([
-    {
-      value: 'Report suite 1',
-      content: 'Report suite 1'
-    },
-    {
-      value: 'Report suite 2',
-      content: 'Report suite 2'
-    },
-    {
-      value: 'Report suite 3',
-      content: 'Report suite 3'
-    }
-  ]);
+  event.preventDefault();
+
+  setTimeout(() => {
+    const autocomplete = event.target;
+    autocomplete.addSuggestions([
+      {
+        value: 'Report suite 1',
+        content: 'Report suite 1'
+      },
+      {
+        value: 'Report suite 2',
+        content: 'Report suite 2'
+      },
+      {
+        value: 'Report suite 3',
+        content: 'Report suite 3'
+      }
+    ]);
+  });
 };
 
 export default class ReportSuite extends React.Component {
