@@ -495,7 +495,7 @@
         "extension": "js"
       },
       "customSetup.script": {
-        "type": "unquoted"
+        "type": "function"
       }
     }
   },
