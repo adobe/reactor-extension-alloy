@@ -40,13 +40,13 @@ const getRelevantValueNames = fields => {
  * component class.
  * @param {string[]} formsOptions[].fields Names of fields the component needs. These should follow
  * redux-form semantics.
- * @param {Function} [formsOptions[].settingsToFormValues] A function that takes data being passed to into
- * the extension (which includes previously saved settings) and populates an object with default
- * form values.
- * @param {Function} [formsOptions[].formValuesToSettings] A function that takes current form values and
- * populates a settings object to be saved.
- * @param {Function} [formsOptions[].validate] A function that takes current form values and populates
- * an errors object according to redux-form spec.
+ * @param {Function} [formsOptions[].settingsToFormValues] A function that takes data being passed
+ * to into the extension (which includes previously saved settings) and populates an object with
+ * default form values.
+ * @param {Function} [formsOptions[].formValuesToSettings] A function that takes current form values
+ * and populates a settings object to be saved.
+ * @param {Function} [formsOptions[].validate] A function that takes current form values and
+ * populates an errors object according to redux-form spec.
  * @returns {*}
  */
 module.exports = (...formsOptions) => {

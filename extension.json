@@ -32,12 +32,16 @@
                 },
                 "loadPhase": {
                   "$ref": "#/definitions/loadPhase"
+                },
+                "accounts": {
+                  "$ref": "#/definitions/accounts"
                 }
               },
               "additionalProperties": false,
               "required": [
                 "type",
-                "loadPhase"
+                "loadPhase",
+                "accounts"
               ]
             },
             {
@@ -50,6 +54,9 @@
                 },
                 "trackerVariableName": {
                   "$ref": "#/definitions/trackerVariableName"
+                },
+                "accounts": {
+                  "$ref": "#/definitions/accounts"
                 }
               },
               "additionalProperties": false,
@@ -74,8 +81,8 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "reportSuitesPreconfigured": {
-                  "$ref": "#/definitions/reportSuitesPreconfigured"
+                "accounts": {
+                  "$ref": "#/definitions/accounts"
                 },
                 "loadPhase": {
                   "$ref": "#/definitions/loadPhase"
@@ -89,7 +96,6 @@
                 "type",
                 "httpUrl",
                 "httpsUrl",
-                "reportSuitesPreconfigured",
                 "loadPhase",
                 "trackerVariableName"
               ]
@@ -106,8 +112,8 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "reportSuitesPreconfigured": {
-                  "$ref": "#/definitions/reportSuitesPreconfigured"
+                "accounts": {
+                  "$ref": "#/definitions/accounts"
                 },
                 "loadPhase": {
                   "$ref": "#/definitions/loadPhase"
@@ -120,7 +126,6 @@
               "required": [
                 "type",
                 "script",
-                "reportSuitesPreconfigured",
                 "loadPhase",
                 "trackerVariableName"
               ]
@@ -449,9 +454,6 @@
           "type": "string",
           "minLength": 1
         },
-        "reportSuitesPreconfigured": {
-          "type": "boolean"
-        },
         "eVarName": {
           "type": "string",
           "pattern": "^eVar(\\d+)$"
@@ -459,6 +461,31 @@
         "propName": {
           "type": "string",
           "pattern": "^prop(\\d+)$"
+        },
+        "accounts": {
+          "properties": {
+            "production": {
+              "$ref": "#/definitions/accountsList"
+            },
+            "staging": {
+              "$ref": "#/definitions/accountsList"
+            },
+            "development": {
+              "$ref": "#/definitions/accountsList"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "production"
+          ]
+        },
+        "accountsList": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -468,7 +495,7 @@
         "extension": "js"
       },
       "customSetup.script": {
-        "type": "unquoted"
+        "type": "function"
       }
     }
   },
