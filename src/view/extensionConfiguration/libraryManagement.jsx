@@ -282,16 +282,19 @@ export const formConfig = createFormConfig({
       type
     };
 
-    const accounts = {};
-    for (let environment of environments) {
-      const accountsForEnvironment = values.libraryCode.accounts[environment];
-      if (accountsForEnvironment && accountsForEnvironment.length > 0) {
-        accounts[environment] = accountsForEnvironment;
-      }
-    }
+    if (values.libraryCode.accounts) {
+      const accounts = {};
 
-    if (Object.keys(accounts).length) {
-      libraryCodeSettings.accounts = accounts;
+      for (let environment of environments) {
+        const accountsForEnvironment = values.libraryCode.accounts[environment];
+        if (accountsForEnvironment && accountsForEnvironment.length > 0) {
+          accounts[environment] = accountsForEnvironment;
+        }
+      }
+
+      if (Object.keys(accounts).length) {
+        libraryCodeSettings.accounts = accounts;
+      }
     }
 
     if (type !== libTypes.PREINSTALLED) {
