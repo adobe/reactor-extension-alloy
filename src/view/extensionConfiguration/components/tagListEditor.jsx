@@ -6,28 +6,20 @@ export default class TagListEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      newValue: '',
-      error: ''
+      newValue: ''
     };
   }
 
   add = () => {
-    if (!this.state.newValue) {
-      this.setState({
-        error: 'Please provide a value'
-      });
-    } else if (this.valueAlreadyExists(this.props.value || [], this.state.newValue)) {
-      this.setState({
-        error: 'Value already exists'
-      });
-    } else {
-      const values = this.props.value || [];
-      values.push(this.state.newValue);
-      this.props.onChange(values);
+    if (this.state.newValue) {
+      if (!this.valueAlreadyExists(this.props.value || [], this.state.newValue)) {
+        const values = this.props.value || [];
+        values.push(this.state.newValue);
+        this.props.onChange(values);
+      }
 
       this.setState({
-        newValue: '',
-        error: ''
+        newValue: ''
       });
     }
 
@@ -77,15 +69,13 @@ export default class TagListEditor extends React.Component {
             </span> : null
         }
         <div>
-          <ValidationWrapper ref="validationWrapper" error={this.state.error}>
-            <Coral.Textfield
-              ref="valueField"
-              className="TagListEditor-valueInput"
-              onKeyUp={this.onNewValueChange}
-              onKeyPress={this.handleKeyPress}
-              value={this.state.newValue}
-            />
-          </ValidationWrapper>
+          <Coral.Textfield
+            ref="valueField"
+            className="TagListEditor-valueInput"
+            onKeyUp={this.onNewValueChange}
+            onKeyPress={this.handleKeyPress}
+            value={this.state.newValue}
+          />
           <DataElementSelectorButton onClick={this.openSelector} />
           <Coral.Button onClick={this.add}>Add</Coral.Button>
           <div className="u-gapTop">
