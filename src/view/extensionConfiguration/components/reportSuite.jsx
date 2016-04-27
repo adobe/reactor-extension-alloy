@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import Coral from '@coralui/coralui-support-reduxform';
-import {ValidationWrapper} from '@reactor/react-components';
-
-import {DataElementSelectorButton} from '@reactor/react-components';
+import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 
 const showSuggestions = event => {
   event.preventDefault();
