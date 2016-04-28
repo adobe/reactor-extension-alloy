@@ -16,9 +16,9 @@ export default class EVars extends React.Component {
     for (var i = 0; i < MAX_EVARS; i++) {
       var value = 'eVar' + (i + 1);
       options.push(
-        <Coral.Autocomplete.Item key={value} value={value} selected={selectedValue === value}>
+        <Coral.Select.Item key={value} value={value} selected={selectedValue === value}>
           {value}
-        </Coral.Autocomplete.Item>
+        </Coral.Select.Item>
       );
     }
 
@@ -31,9 +31,9 @@ export default class EVars extends React.Component {
     for (var i = 0; i < MAX_PROPS; i++) {
       var value = 'prop' + (i + 1);
       options.push(
-        <Coral.Autocomplete.Item key={value} value={value} selected={selectedValue === value}>
+        <Coral.Select.Item key={value} value={value} selected={selectedValue === value}>
           {value}
-        </Coral.Autocomplete.Item>
+        </Coral.Select.Item>
       )
     }
 
@@ -42,24 +42,18 @@ export default class EVars extends React.Component {
     return options;
   };
 
-  onRowFocus = focusIndex => {
-    if (focusIndex === this.props.fields.eVars.length - 1) {
-      this.createEmptyRow();
-    }
-  };
-
   createEmptyRow = () => {
-    this.props.fields.eVars.addField({
+    this.props.fields.trackerProperties.eVars.addField({
       id: createId()
     });
   };
 
   removeEVar = index => {
-    this.props.fields.eVars.removeField(index);
+    this.props.fields.trackerProperties.eVars.removeField(index);
   };
 
   render() {
-    const eVars = this.props.fields.eVars;
+    const eVars = this.props.fields.trackerProperties.eVars;
 
     const rows = eVars.map((eVar, index) => {
       // We have to set "selected" on the individual options instead of the top-level selects
@@ -70,19 +64,19 @@ export default class EVars extends React.Component {
       return (
         <div
           key={eVar.id.value}
-          className={classNames({ 'u-gapBottom': index !== eVars.length - 1 })}
-          onFocus={this.onRowFocus.bind(this, index)}>
+          className="u-gapBottom2x">
           <ValidationWrapper
             error={eVar.name.touched && eVar.name.error}
-            className="u-gapRight">
-            <Coral.Autocomplete
+            className="u-gapRight2x">
+            <Coral.Select
+              className="Variables-smallField"
               placeholder="Select eVar"
               onChange={eVar.name.onChange}>
               {eVarOptions}
-            </Coral.Autocomplete>
+            </Coral.Select>
           </ValidationWrapper>
           <Coral.Select
-            className="u-gapRight"
+            className="Variables-smallField u-gapRight2x"
             onChange={eVar.type.onChange}>
             <Coral.Select.Item
               value="value">
@@ -97,19 +91,21 @@ export default class EVars extends React.Component {
           <ValidationWrapper error={eVar.value.touched && eVar.value.error}>
             {
               eVar.type.value !== 'alias' ?
-                <Coral.Textfield {...eVar.value}/> :
-                <Coral.Autocomplete
+                <Coral.Textfield
+                  className="Variables-smallField"
+                  {...eVar.value}/> :
+                <Coral.Select
+                  className="Variables-smallField"
                   placeholder="Select Variable"
                   onChange={eVar.value.onChange}>
                   {aliasOptions}
-                </Coral.Autocomplete>
+                </Coral.Select>
             }
           </ValidationWrapper>
           {
             index !== eVars.length - 1 ?
               <Coral.Button
                 ref="removeButton"
-                className="u-gapBottom"
                 variant="quiet"
                 icon="close"
                 iconsize="S"
@@ -123,6 +119,7 @@ export default class EVars extends React.Component {
       <section>
         <h4 className="coral-Heading coral-Heading--4">eVars</h4>
         {rows}
+        <Coral.Button onClick={this.createEmptyRow}>Add eVar</Coral.Button>
       </section>
     );
   }
@@ -130,17 +127,26 @@ export default class EVars extends React.Component {
 
 export const formConfig = createFormConfig({
   fields: [
-    'eVars[].id',
-    'eVars[].name',
-    'eVars[].type',
-    'eVars[].value'
+    'trackerProperties.eVars[].id',
+    'trackerProperties.eVars[].name',
+    'trackerProperties.eVars[].type',
+    'trackerProperties.eVars[].value'
   ],
   settingsToFormValues(values, options) {
-    let {
-      eVars
-    } = options.settings;
+    values = {
+      ...values,
+    };
+
+    let eVars;
+
+    if (options.settings.trackerProperties) {
+      eVars = options.settings.trackerProperties.eVars;
+    }
 
     eVars = eVars ? eVars.slice() : [];
+
+    // Add an extra object which will ensures that there is an empty row available for the user
+    // to configure their next eVar.
     eVars.push({});
 
     eVars.forEach(eVar => {
@@ -148,10 +154,8 @@ export const formConfig = createFormConfig({
       eVar.type = eVar.type || 'value'
     });
 
-    values = {
-      ...values,
-      eVars
-    };
+    values.trackerProperties = values.trackerProperties || {};
+    values.trackerProperties.eVars = eVars;
 
     return values;
   },
@@ -159,8 +163,8 @@ export const formConfig = createFormConfig({
     settings = {
       ...settings
     };
-    
-    const eVars = values.eVars.filter(eVar => {
+
+    const eVars = values.trackerProperties.eVars.filter(eVar => {
       return eVar.name;
     }).map(eVar => {
       // Everything but id.
@@ -172,7 +176,8 @@ export const formConfig = createFormConfig({
     });
 
     if (eVars.length) {
-      settings.eVars = eVars;
+      settings.trackerProperties = settings.trackerProperties || {};
+      settings.trackerProperties.eVars = eVars;
     }
 
     return settings;
@@ -182,9 +187,12 @@ export const formConfig = createFormConfig({
       ...errors
     };
 
+
+    errors.trackerProperties = errors.trackerProperties || {};
+
     const configuredEVarNames = [];
 
-    errors.eVars = values.eVars.map(eVar => {
+    errors.trackerProperties.eVars = values.trackerProperties.eVars.map(eVar => {
       const eVarErrors = {};
 
       if (eVar.name) {
@@ -201,7 +209,7 @@ export const formConfig = createFormConfig({
           eVarErrors.name = 'Please enter a valid name';
         }
       } else if (eVar.value) {
-        eVarErrors.name = 'Please enter a name';
+        eVarErrors.name = 'Please enter a name'; // TODO: This would change if we proceeded with Selects
       }
 
       if (eVar.value) {
