@@ -2,7 +2,7 @@ import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import createFormConfig from '../utils/createFormConfig';
 import { DataElementField } from '@reactor/react-components';
-import EVars, { formConfig as eVarFormConfig } from './eVars';
+import VariablesEditor, { getFormConfig as getVariableEditorFormConfig } from './variablesEditor';
 
 const DYNAMIC_VARIABLE_PREFIX_DEFAULT = 'D=';
 
@@ -16,26 +16,22 @@ export default class Variables extends React.Component {
     return (
       <div>
         <section>
-          <h4 className="coral-Heading coral-Heading--4">Tracking Server</h4>
+          <h4 className="coral-Heading coral-Heading--4">Server</h4>
           <label>
             <span className="u-label">Server</span>
             <Coral.Textfield {...server}/>
           </label>
         </section>
 
-        <EVars fields={this.props.fields}/>
+        <h4 className="coral-Heading coral-Heading--4">eVars</h4>
+        <VariablesEditor varType="eVar" varTypePlural="eVars" fields={this.props.fields}/>
 
-        <section>
-          <h4 className="coral-Heading coral-Heading--4">Props</h4>
-          <span>Coming soon...</span>
-        </section>
+        <h4 className="coral-Heading coral-Heading--4">Props</h4>
+        <VariablesEditor varType="prop" varTypePlural="props" fields={this.props.fields}/>
 
         <section>
           <h4 className="coral-Heading coral-Heading--4">Dynamic Variable Prefix</h4>
-          <label>
-            <span className="u-label">Prefix</span>
-            <Coral.Textfield {...dynamicVariablePrefix}/>
-          </label>
+          <Coral.Textfield {...dynamicVariablePrefix}/>
         </section>
       </div>
     );
@@ -43,7 +39,8 @@ export default class Variables extends React.Component {
 }
 
 export const formConfig = createFormConfig(
-  eVarFormConfig,
+  getVariableEditorFormConfig('eVar', 'eVars'),
+  getVariableEditorFormConfig('prop', 'props'),
   {
     fields: [
       'server',
@@ -70,11 +67,14 @@ export const formConfig = createFormConfig(
       } = values;
 
       var settings = {
-        ...settings,
-        server
+        ...settings
       };
 
-      if (dynamicVariablePrefix !== DYNAMIC_VARIABLE_PREFIX_DEFAULT) {
+      if (server) {
+        settings.server = server;
+      }
+
+      if (dynamicVariablePrefix && dynamicVariablePrefix !== DYNAMIC_VARIABLE_PREFIX_DEFAULT) {
         settings.dynamicVariablePrefix = dynamicVariablePrefix;
       }
 
