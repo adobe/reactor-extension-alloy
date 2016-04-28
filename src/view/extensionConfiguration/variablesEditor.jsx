@@ -97,7 +97,7 @@ export default class VariablesEditor extends React.Component {
                 ref="removeButton"
                 variant="quiet"
                 icon="close"
-                iconsize="S"
+                iconSize="XS"
                 onClick={this.removeVariable.bind(this, index)}/> : null
           }
         </div>
