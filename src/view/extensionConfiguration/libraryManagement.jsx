@@ -160,21 +160,20 @@ export default class LibraryManagement extends React.Component {
           type.value === libTypes.REMOTE ?
             <div className="LibraryManagement-optionSubset">
               <div className="u-gapBottom">
-                <ValidationWrapper
-                  error={httpUrl.touched && httpUrl.error}
-                  className="u-gapRight">
-                  <label>
-                    <span className="u-label">HTTP URL:</span>
+                <label>
+                  <span className="u-label">HTTP URL:</span>
+                  <ValidationWrapper
+                    error={httpUrl.touched && httpUrl.error}>
                     <Coral.Textfield {...httpUrl} placeholder="http://"/>
-                  </label>
-                </ValidationWrapper>
-                <ValidationWrapper
-                  error={httpsUrl.touched && httpsUrl.error}>
-                  <label>
-                    <span className="u-label">HTTPS URL:</span>
+                  </ValidationWrapper>
+                </label>
+                <label>
+                  <span className="u-label">HTTPS URL:</span>
+                  <ValidationWrapper
+                    error={httpsUrl.touched && httpsUrl.error}>
                     <Coral.Textfield {...httpsUrl} placeholder="https://"/>
-                  </label>
-                 </ValidationWrapper>
+                  </ValidationWrapper>
+                </label>
               </div>
               <OverwriteReportSuites
                 fields={this.props.fields}
