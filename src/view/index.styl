@@ -1,12 +1,15 @@
-$gap = 8px;
+$rem-size = 16px; // The size of one rem in pixels
+$px = 0rem + (1 / $rem-size);
+
+$gap = 8*$px;
 
 body {
-  padding: 12px;
+  padding: 12*$px;
 }
 
-.u-label {
-  display: block;
-  line-height: 36px !important;
+.Label {
+  display: inline-block;
+  line-height: 36*$px !important;
 }
 
 .u-gapLeft {
@@ -57,19 +60,10 @@ body {
   visibility: hidden !important;
 }
 
-.u-tooltipMaxWidth {
-  max-width: 300px !important;
-}
-
-.u-smallTextfield {
-  width: 6rem;
-}
-
 .u-noWrap {
   white-space: nowrap;
 }
 
 .coral-Heading {
-  margin-top: 16px;
-  margin-bottom: 10px;
+  line-height: 36*$px !important;
 }

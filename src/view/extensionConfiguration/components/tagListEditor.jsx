@@ -1,5 +1,5 @@
 import Coral from '@coralui/coralui-support-reduxform';
-import { DataElementSelectorButton, ValidationWrapper } from '@reactor/react-components';
+import { DataElementSelectorButton, ValidationWrapper, InfoTip } from '@reactor/react-components';
 import React from 'react';
 
 export default class TagListEditor extends React.Component {
@@ -58,15 +58,9 @@ export default class TagListEditor extends React.Component {
 
     return (
       <div className="TagListEditor">
-        <label className="u-label">{ this.props.title }</label>
+        <label className="Label">{ this.props.title }</label>
         {
-          this.props.tooltip ?
-            <span>
-              <Coral.Icon icon="infoCircle" size="XS"></Coral.Icon>
-              <Coral.Tooltip placement="right" target="_prev">
-                {this.props.tooltip}
-              </Coral.Tooltip>
-            </span> : null
+          this.props.tooltip ? <InfoTip>{this.props.tooltip}</InfoTip> : null
         }
         <div>
           <Coral.Textfield

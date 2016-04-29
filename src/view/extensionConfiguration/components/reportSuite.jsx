@@ -45,7 +45,7 @@ export default class ReportSuite extends React.Component {
   render() {
     return (
       <div className="ReportSuite-autocompleteField">
-        <label className="u-label">{this.props.label}</label>
+        <label className="Label">{this.props.label}</label>
         <div>
           <ValidationWrapper
             ref="validationWrapper"

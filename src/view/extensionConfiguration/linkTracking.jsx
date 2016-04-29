@@ -46,7 +46,7 @@ export default class LinkTracking extends React.Component {
             </div> : null
           }
         </section>
-        <section className="LinkTracking-section">
+        <section className="LinkTracking-section u-gapTop">
           <h4 className="coral-Heading coral-Heading--4">Outbound Links</h4>
           <Coral.Checkbox
             ref="trackOutboundLinksCheckbox"

@@ -1,6 +1,6 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
-import { ValidationWrapper, ErrorTip } from '@reactor/react-components';
+import { ValidationWrapper, ErrorTip, InfoTip } from '@reactor/react-components';
 
 import ReportSuite from './components/reportSuite';
 import createFormConfig from '../utils/createFormConfig';
@@ -28,11 +28,8 @@ const ReportSuites = props => {
     <section className="ReportSuites-container">
       <h4 className="coral-Heading coral-Heading--4">
         Report Suites
-        <Coral.Icon id="ReportSuiteTooltip" icon="infoCircle" size="XS" className="u-gapLeft"/>
+        <InfoTip>Some tooltip</InfoTip>
       </h4>
-      <Coral.Tooltip placement="right" target="#ReportSuiteTooltip">
-        Some tooltip
-      </Coral.Tooltip>
 
       <section className="ReportSuites-fieldsContainer">
         <ReportSuite
@@ -54,15 +51,17 @@ const LoadPhase = props => {
 
   return (
     <div className={props.className}>
-      <span className="u-label">Load library at:</span>
-      <Coral.Radio
-        {...loadPhase}
-        value={loadPhases.PAGE_TOP}
-        checked={loadPhase.value === loadPhases.PAGE_TOP}>Page Top</Coral.Radio>
-      <Coral.Radio
-        {...loadPhase}
-        value={loadPhases.PAGE_BOTTOM}
-        checked={loadPhase.value === loadPhases.PAGE_BOTTOM}>Page Bottom</Coral.Radio>
+      <label>Load library at:</label>
+      <div>
+        <Coral.Radio
+          {...loadPhase}
+          value={loadPhases.PAGE_TOP}
+          checked={loadPhase.value === loadPhases.PAGE_TOP}>Page Top</Coral.Radio>
+        <Coral.Radio
+          {...loadPhase}
+          value={loadPhases.PAGE_BOTTOM}
+          checked={loadPhase.value === loadPhases.PAGE_BOTTOM}>Page Bottom</Coral.Radio>
+      </div>
     </div>
   );
 };
@@ -75,8 +74,8 @@ const TrackerVariableName = props => {
       className={props.className}
       error={trackerVariableName.touched && trackerVariableName.error}>
       <label>
-        <span className="u-label">Tracker is accessible on the global variable named:</span>
-        <Coral.Textfield {...trackerVariableName}/>
+        <span className="Label">Tracker is accessible on the global variable named:</span>
+        <Coral.Textfield className="u-gapLeft" {...trackerVariableName}/>
       </label>
     </ValidationWrapper>
   );
@@ -86,7 +85,7 @@ const OverwriteReportSuites = props => {
   const { libraryCode } = props.fields;
 
   return (
-    <div>
+    <div className={props.className}>
       <Coral.Checkbox
         {...libraryCode.showReportSuites}>
         Set the following report suites on tracker
@@ -143,7 +142,7 @@ export default class LibraryManagement extends React.Component {
             <div className="LibraryManagement-optionSubset">
               <OverwriteReportSuites
                 fields={this.props.fields}
-                className="u-block u-gapBottom"/>
+                className="u-gapBottom"/>
               <TrackerVariableName fields={this.props.fields}/>
             </div> : null
         }
@@ -161,18 +160,22 @@ export default class LibraryManagement extends React.Component {
             <div className="LibraryManagement-optionSubset">
               <div className="u-gapBottom">
                 <label>
-                  <span className="u-label">HTTP URL:</span>
-                  <ValidationWrapper
-                    error={httpUrl.touched && httpUrl.error}>
-                    <Coral.Textfield {...httpUrl} placeholder="http://"/>
-                  </ValidationWrapper>
+                  <span className="Label">HTTP URL:</span>
+                  <div>
+                    <ValidationWrapper
+                      error={httpUrl.touched && httpUrl.error}>
+                      <Coral.Textfield {...httpUrl} placeholder="http://"/>
+                    </ValidationWrapper>
+                  </div>
                 </label>
                 <label>
-                  <span className="u-label">HTTPS URL:</span>
-                  <ValidationWrapper
-                    error={httpsUrl.touched && httpsUrl.error}>
-                    <Coral.Textfield {...httpsUrl} placeholder="https://"/>
-                  </ValidationWrapper>
+                  <span className="Label u-gapTop">HTTPS URL:</span>
+                  <div>
+                    <ValidationWrapper
+                      error={httpsUrl.touched && httpsUrl.error}>
+                      <Coral.Textfield {...httpsUrl} placeholder="https://"/>
+                    </ValidationWrapper>
+                  </div>
                 </label>
               </div>
               <OverwriteReportSuites
