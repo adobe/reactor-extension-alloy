@@ -1,28 +1,47 @@
-$gap = 8px;
+$rem-size = 16px; // The size of one rem in pixels
+$px = 0rem + (1 / $rem-size);
+
+$gap = 8*$px;
 
 body {
-  padding: 12px;
+  padding: 12*$px;
 }
 
-.u-label {
-  line-height: 36px !important;
-  margin-right: $gap !important;
+.Label {
+  display: inline-block;
+  line-height: 36*$px !important;
 }
 
 .u-gapLeft {
   margin-left: $gap !important;
 }
 
+.u-gapLeft2x {
+  margin-left: $gap*2 !important;
+}
+
 .u-gapRight {
   margin-right: $gap !important;
+}
+
+.u-gapRight2x {
+  margin-right: $gap*2 !important;
 }
 
 .u-gapTop {
   margin-top: $gap !important;
 }
 
+.u-gapTop2x {
+  margin-top: $gap*2 !important;
+}
+
 .u-gapBottom {
   margin-bottom: $gap !important;
+}
+
+.u-gapBottom2x {
+  margin-bottom: $gap*2 !important;
 }
 
 .u-block {
@@ -34,15 +53,11 @@ body {
 }
 
 .u-italic {
-  font-style: italic
+  font-style: italic !important;
 }
 
-.u-tooltipMaxWidth {
-  max-width: 300px !important;
-}
-
-.u-smallTextfield {
-  width: 6rem;
+.u-hidden {
+  visibility: hidden !important;
 }
 
 .u-noWrap {
@@ -50,6 +65,5 @@ body {
 }
 
 .coral-Heading {
-  margin-top: 16px;
-  margin-bottom: 10px;
+  line-height: 36*$px !important;
 }
