@@ -64,7 +64,8 @@ var webpackConfig = {
   stylus: {
     use: [require('nib')()],
     import: [
-      path.resolve('./node_modules/nib/lib/nib/index')
+      path.resolve('./node_modules/nib/lib/nib/index'),
+      path.resolve('./src/view/sharedVariables')
     ]
   }
 };
