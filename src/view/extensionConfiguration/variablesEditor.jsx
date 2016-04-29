@@ -17,7 +17,7 @@ export default class VariablesEditor extends React.Component {
     const options = [];
     const numItems = maxItems[varType];
 
-    for (var i = 0; i < numItems; i++) {
+    for (let i = 0; i < numItems; i++) {
       const value = varType + (i + 1);
       options.push(<Coral.Select.Item key={value} value={value}>{value}</Coral.Select.Item>);
     }
