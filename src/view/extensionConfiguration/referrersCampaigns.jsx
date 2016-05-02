@@ -2,16 +2,11 @@ import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import createFormConfig from '../utils/createFormConfig';
 import { DataElementSelectorButton } from '@reactor/react-components';
+import createDataElementSelectorCallback from '../utils/createDataElementSelectorCallback';
 
 export default class ReferrersCampaigns extends React.Component {
   openSelector = field => {
-    window.extensionBridge.openDataElementSelector(dataElementName => {
-      // Input value might be undefined.
-      let inputValue = field.value || '';
-      inputValue += '%' + dataElementName + '%';
-
-      field.onChange(inputValue);
-    });
+    window.extensionBridge.openDataElementSelector(createDataElementSelectorCallback(field));
   };
 
   render() {
