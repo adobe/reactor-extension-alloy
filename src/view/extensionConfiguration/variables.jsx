@@ -11,7 +11,7 @@ export default class Variables extends React.Component {
     const {
       server,
       dynamicVariablePrefix
-    } = this.props.fields;
+    } = this.props.fields.trackerProperties;
 
     return (
       <div>
@@ -50,42 +50,52 @@ export const formConfig = createFormConfig(
   getVariableEditorFormConfig('prop', 'props'),
   {
     fields: [
-      'server',
-      'dynamicVariablePrefix'
+      'trackerProperties.server',
+      'trackerProperties.dynamicVariablePrefix'
     ],
     settingsToFormValues: (values, options) => {
-      let {
+      const {
         server,
         dynamicVariablePrefix
-      } = options.settings;
+      } = options.settings.trackerProperties || {};
+      
+      let trackerProperties = values.trackerProperties || {};
 
-      values = {
-        ...values,
+      trackerProperties = {
+        ...trackerProperties,
         server,
         dynamicVariablePrefix: dynamicVariablePrefix || DYNAMIC_VARIABLE_PREFIX_DEFAULT
       };
 
-      return values;
+      return {
+        ...values,
+        trackerProperties
+      };
     },
     formValuesToSettings: (settings, values) => {
       let {
         server,
         dynamicVariablePrefix
-      } = values;
+      } = values.trackerProperties;
 
-      var settings = {
-        ...settings
+      let trackerProperties = settings.trackerProperties || {};
+
+      trackerProperties = {
+        ...trackerProperties
       };
 
       if (server) {
-        settings.server = server;
+        trackerProperties.server = server;
       }
 
       if (dynamicVariablePrefix && dynamicVariablePrefix !== DYNAMIC_VARIABLE_PREFIX_DEFAULT) {
-        settings.dynamicVariablePrefix = dynamicVariablePrefix;
+        trackerProperties.dynamicVariablePrefix = dynamicVariablePrefix;
       }
 
-      return settings;
+      return {
+        ...settings,
+        trackerProperties
+      };
     }
   }
 );

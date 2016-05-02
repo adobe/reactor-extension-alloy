@@ -61,46 +61,52 @@ export const formConfig = createFormConfig({
       campaign 
     } = options.settings.trackerProperties || {};
 
-    values = {
-      ...values
+    let trackerProperties = values.trackerProperties || {};
+
+    trackerProperties = {
+      ...trackerProperties
     };
 
-    values.trackerProperties = values.trackerProperties || {};
-
     if (referrer) {
-      values.trackerProperties.referrer = referrer;
+      trackerProperties.referrer = referrer;
     }
 
     if (campaign) {
-      values.trackerProperties.campaign = {
+      trackerProperties.campaign = {
         type: campaign.type,
         value: campaign.value
       };
     }
 
-    return values;
+    return {
+      ...values,
+      trackerProperties
+    };
   },
   formValuesToSettings(settings, values) {
     const { referrer, campaign } = values.trackerProperties;
 
-    settings = {
-      ...settings
+    let trackerProperties = settings.trackerProperties || {};
+
+    trackerProperties = {
+      ...trackerProperties
     };
-
-    settings.trackerProperties = settings.trackerProperties || {};
-
+    
     if (referrer) {
-      settings.trackerProperties.referrer = referrer;
+      trackerProperties.referrer = referrer;
     }
 
     if (campaign && campaign.value) {
-      settings.trackerProperties.campaign = {
+      trackerProperties.campaign = {
         type: campaign.type || 'value',
         value: campaign.value
       }
     }
 
-    return settings;
+    return {
+      ...settings,
+      trackerProperties
+    };
   }
 });
 
