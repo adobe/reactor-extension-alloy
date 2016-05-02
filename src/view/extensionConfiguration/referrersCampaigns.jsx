@@ -2,40 +2,43 @@ import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import createFormConfig from '../utils/createFormConfig';
 import { DataElementSelectorButton } from '@reactor/react-components';
+import createDataElementSelectorCallback from '../utils/createDataElementSelectorCallback';
 
 export default class ReferrersCampaigns extends React.Component {
-  openSelectorCallback = dataElementName => {
-    // Input value might be undefined.
-    let inputValue = this.props.fields.campaignValue.value || '';
-    inputValue += '%' + dataElementName + '%';
-
-    this.props.fields.campaignValue.onChange(inputValue);
-  };
-
-  openSelector = () => {
-    window.extensionBridge.openDataElementSelector(this.openSelectorCallback);
+  openSelector = field => {
+    window.extensionBridge.openDataElementSelector(createDataElementSelectorCallback(field));
   };
 
   render() {
     const {
       referrer,
-      campaignType,
-      campaignValue
-    } = this.props.fields;
+      campaign
+    } = this.props.fields.trackerProperties;
 
     return (
       <div>
         <label>
-          Referrer
-          <Coral.Textfield {...referrer}/>
+          <span className="Label">Referrer</span>
+          <div>
+            <Coral.Textfield className="ReferrersCampaigns-server" {...referrer}/>
+            <DataElementSelectorButton onClick={this.openSelector.bind(this, referrer)}/>
+          </div>
         </label>
-        <label htmlFor="campaignValue">Campaign</label>
-        <Coral.Select {...campaignType}>
-          <Coral.Select.Item value="value">Value</Coral.Select.Item>
-          <Coral.Select.Item value="queryParam">Query Param</Coral.Select.Item>
-        </Coral.Select>
-        <Coral.Textfield id="campaignValue" {...campaignValue}/>
-        <DataElementSelectorButton onClick={this.openSelector}/>
+
+        <label htmlFor="campaignValue">
+          <span className="Label">Campaign</span>
+        </label>
+        <div>
+          <Coral.Select className="ReferrersCampaigns-campaignType" {...campaign.type}>
+            <Coral.Select.Item value="value">Value</Coral.Select.Item>
+            <Coral.Select.Item value="queryParam">Query Param</Coral.Select.Item>
+          </Coral.Select>
+          <Coral.Textfield
+            id="campaignValue"
+            className="ReferrersCampaigns-campaignValue u-gapLeft"
+            {...campaign.value}/>
+          <DataElementSelectorButton onClick={this.openSelector.bind(this, campaign.value)}/>
+        </div>
       </div>
     );
   }
@@ -43,41 +46,62 @@ export default class ReferrersCampaigns extends React.Component {
 
 export const formConfig = createFormConfig({
   fields: [
-    'referrer',
-    'campaignType',
-    'campaignValue'
+    'trackerProperties.referrer',
+    'trackerProperties.campaign.type',
+    'trackerProperties.campaign.value'
   ],
   settingsToFormValues(values, options) {
-    const { referrer, campaign } = options.settings;
+    const { 
+      referrer, 
+      campaign 
+    } = options.settings.trackerProperties || {};
 
-    values = {
-      ...values,
-      referrer
+    let trackerProperties = values.trackerProperties || {};
+
+    trackerProperties = {
+      ...trackerProperties
     };
 
-    if (campaign) {
-      values.campaignType = campaign.type;
-      values.campaignValue = campaign.value;
+    if (referrer) {
+      trackerProperties.referrer = referrer;
     }
 
-    return values;
+    if (campaign) {
+      trackerProperties.campaign = {
+        type: campaign.type,
+        value: campaign.value
+      };
+    }
+
+    return {
+      ...values,
+      trackerProperties
+    };
   },
   formValuesToSettings(settings, values) {
-    const { referrer, campaignType, campaignValue } = values;
+    const { referrer, campaign } = values.trackerProperties;
 
-    settings = {
-      ...settings,
-      referrer
+    let trackerProperties = settings.trackerProperties || {};
+
+    trackerProperties = {
+      ...trackerProperties
     };
+    
+    if (referrer) {
+      trackerProperties.referrer = referrer;
+    }
 
-    if (campaignValue) {
-      settings.campaign = {
-        type: campaignType,
-        value: campaignValue
+    if (campaign && campaign.value) {
+      trackerProperties.campaign = {
+        type: campaign.type || 'value',
+        value: campaign.value
       }
     }
 
-    return settings;
+    return {
+      ...settings,
+      trackerProperties
+    };
   }
 });
 

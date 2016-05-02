@@ -5,6 +5,7 @@ import { ValidationWrapper } from '@reactor/react-components';
 import { DataElementSelectorButton } from '@reactor/react-components';
 import classNames from 'classnames';
 import createId from '../utils/createId';
+import createDataElementSelectorCallback from '../utils/createDataElementSelectorCallback';
 
 // TODO: Replace with actual values from user's product level.
 const maxItems = {
@@ -37,7 +38,7 @@ export default class VariablesEditor extends React.Component {
   };
 
   openDataElementSelector = field => {
-    window.extensionBridge.openDataElementSelector(field.value.onChange);
+    window.extensionBridge.openDataElementSelector(createDataElementSelectorCallback(field));
   };
 
   render() {
@@ -89,7 +90,7 @@ export default class VariablesEditor extends React.Component {
             }
             <DataElementSelectorButton
               className={classNames({'u-hidden': variable.type.value !== 'value'})}
-              onClick={this.openDataElementSelector.bind(this, variable)}/>
+              onClick={this.openDataElementSelector.bind(this, variable.value)}/>
           </ValidationWrapper>
           {
             index !== variables.length - 1 ?
@@ -122,16 +123,8 @@ export const getFormConfig = (varType, varTypePlural) => {
       `trackerProperties.${varTypePlural}[].value`
     ],
     settingsToFormValues(values, options) {
-      values = {
-        ...values
-      };
-
-      let variables;
-
-      if (options.settings.trackerProperties) {
-        variables = options.settings.trackerProperties[varTypePlural];
-      }
-
+      let variables = (options.settings.trackerProperties || {})[varTypePlural];
+      
       variables = variables ? variables.slice() : [];
 
       // Add an extra object which will ensures that there is an empty row available for the user
@@ -143,17 +136,20 @@ export const getFormConfig = (varType, varTypePlural) => {
         variable.type = variable.type || 'value'
       });
 
-      values.trackerProperties = values.trackerProperties || {};
-      values.trackerProperties[varTypePlural] = variables;
+      const trackerProperties = values.trackerProperties || {};
+      trackerProperties[varTypePlural] = variables;
 
-      return values;
+      return {
+        ...values,
+        trackerProperties
+      };
     },
     formValuesToSettings(settings, values) {
-      settings = {
-        ...settings
-      };
+      const {
+        trackerProperties
+      } = values;
 
-      const variables = values.trackerProperties[varTypePlural].filter(variable => {
+      const variables = trackerProperties[varTypePlural].filter(variable => {
         return variable.name;
       }).map(variable => {
         // Everything but id.
@@ -163,6 +159,10 @@ export const getFormConfig = (varType, varTypePlural) => {
           value: variable.value
         };
       });
+
+      settings = {
+        ...settings
+      };
 
       if (variables.length) {
         settings.trackerProperties = settings.trackerProperties || {};

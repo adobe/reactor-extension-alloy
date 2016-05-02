@@ -1,6 +1,7 @@
 import Coral from '@coralui/coralui-support-reduxform';
 import { DataElementSelectorButton, ValidationWrapper, InfoTip } from '@reactor/react-components';
 import React from 'react';
+import addDataElementToken from '../../utils/addDataElementToken';
 
 export default class TagListEditor extends React.Component {
   constructor(props) {
@@ -41,7 +42,7 @@ export default class TagListEditor extends React.Component {
 
   openSelectorCallback = dataElementName => {
     this.setState({
-      newValue: this.state.newValue + '%' + dataElementName + '%'
+      newValue: addDataElementToken(this.state.newValue, dataElementName)
     });
   };
 

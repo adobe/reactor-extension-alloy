@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
+import addDataElementToken from '../../utils/addDataElementToken';
 
 const showSuggestions = event => {
   event.preventDefault();
@@ -33,7 +34,7 @@ export default class ReportSuite extends React.Component {
 
   openSelectorCallback = dataElementName => {
     const input = this.getAutocompleteInput();
-    input.value += '%' + dataElementName + '%';
+    input.value = addDataElementToken(input.value, dataElementName);
 
     input.focus();
   };
