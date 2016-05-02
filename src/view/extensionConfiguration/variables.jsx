@@ -73,7 +73,7 @@ export const formConfig = createFormConfig(
       };
     },
     formValuesToSettings: (settings, values) => {
-      let {
+      const {
         server,
         dynamicVariablePrefix
       } = values.trackerProperties;
