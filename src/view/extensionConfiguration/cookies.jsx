@@ -1,8 +1,15 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import createFormConfig from '../utils/createFormConfig';
-import { ValidationWrapper } from '@reactor/react-components';
-import { isNumber } from '../utils/validators';
+import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
+import openDataElementSelector from '../utils/openDataElementSelector';
+
+const cookieLifetimePeriod = {
+  DEFAULT: 'DEFAULT',
+  NONE: 'NONE',
+  SESSION: 'SESSION',
+  SECONDS: 'SECONDS'
+};
 
 export default class Cookies extends React.Component {
   render() {
@@ -14,45 +21,75 @@ export default class Cookies extends React.Component {
       transactionID,
       cookieLifetime,
       cookieLifetimeSeconds
-    } = this.props.fields;
+    } = this.props.fields.trackerProperties;
 
     return (
-      <div>
-        <label>
-          Visitor Id
-          <Coral.Textfield {...visitorID}/>
-        </label>
-        <label>
-          Visitor Namespace
-          <Coral.Textfield {...visitorNamespace}/>
-        </label>
-        <label>
-          Domain Periods
-          <Coral.Textfield {...cookieDomainPeriods}/>
-        </label>
-        <label>
-          First-party Domain Periods
-          <Coral.Textfield {...fpCookieDomainPeriods}/>
-        </label>
-        <label>
-          Transaction ID
-          <Coral.Textfield {...transactionID}/>
-        </label>
-        <label>
-          Cookie Lifetime
-          <Coral.Select {...cookieLifetime}>
-            <Coral.Select.Item value="DEFAULT">Default</Coral.Select.Item>
-            <Coral.Select.Item value="NONE">None</Coral.Select.Item>
-            <Coral.Select.Item value="SESSION">Session</Coral.Select.Item>
-            <Coral.Select.Item value="SECONDS">Seconds</Coral.Select.Item>
-          </Coral.Select>
-        </label>
-        {
-          cookieLifetime.value === 'SECONDS' ?
-            <ValidationWrapper error={cookieLifetimeSeconds.touched && cookieLifetimeSeconds.error}>
-              <Coral.Textfield {...cookieLifetimeSeconds}/>
-            </ValidationWrapper> : null
-        }
+      <div className="Cookies">
+        <div className="Cookies-column">
+          <label>
+            <span className="Label">Visitor ID</span>
+            <div>
+              <Coral.Textfield className="Cookies-field" {...visitorID}/>
+              <DataElementSelectorButton
+                onClick={openDataElementSelector.bind(this, visitorID)}/>
+            </div>
+          </label>
+          <label>
+            <span className="Label">Domain Periods</span>
+            <div>
+              <Coral.Textfield className="Cookies-field" {...cookieDomainPeriods}/>
+              <DataElementSelectorButton
+                onClick={openDataElementSelector.bind(this, cookieDomainPeriods)}/>
+            </div>
+          </label>
+          <label>
+            <span className="Label">Transaction ID</span>
+            <div>
+              <Coral.Textfield className="Cookies-field" {...transactionID}/>
+              <DataElementSelectorButton
+                onClick={openDataElementSelector.bind(this, transactionID)}/>
+            </div>
+          </label>
+        </div>
+        <div className="Cookies-column">
+          <label>
+            <span className="Label">Visitor Namespace</span>
+            <div>
+              <Coral.Textfield className="Cookies-field" {...visitorNamespace}/>
+              <DataElementSelectorButton
+                onClick={openDataElementSelector.bind(this, visitorNamespace)}/>
+            </div>
+          </label>
+          <label>
+            <span className="Label">First-party Domain Periods</span>
+            <div>
+              <Coral.Textfield className="Cookies-field" {...fpCookieDomainPeriods}/>
+              <DataElementSelectorButton
+                onClick={openDataElementSelector.bind(this, fpCookieDomainPeriods)}/>
+            </div>
+          </label>
+          <label>
+            <span className="Label">Cookie Lifetime</span>
+            <div>
+              <Coral.Select className="Cookies-cookieLifetime u-gapRight" {...cookieLifetime}>
+                <Coral.Select.Item value={cookieLifetimePeriod.DEFAULT}>Default</Coral.Select.Item>
+                <Coral.Select.Item value={cookieLifetimePeriod.NONE}>None</Coral.Select.Item>
+                <Coral.Select.Item value={cookieLifetimePeriod.SESSION}>Session</Coral.Select.Item>
+                <Coral.Select.Item value={cookieLifetimePeriod.SECONDS}>Seconds</Coral.Select.Item>
+              </Coral.Select>
+              {
+                cookieLifetime.value === cookieLifetimePeriod.SECONDS ?
+                  <ValidationWrapper
+                      error={cookieLifetimeSeconds.touched && cookieLifetimeSeconds.error}>
+                    <Coral.Textfield className="Cookies-cookieLifetimeSeconds"
+                      {...cookieLifetimeSeconds}/>
+                    <DataElementSelectorButton
+                      onClick={openDataElementSelector.bind(this, cookieLifetimeSeconds)}/>
+                  </ValidationWrapper> : null
+              }
+             </div>
+          </label>
+        </div>
       </div>
     );
   }
@@ -60,74 +97,105 @@ export default class Cookies extends React.Component {
 
 export const formConfig = createFormConfig({
   fields: [
-    'visitorID',
-    'visitorNamespace',
-    'cookieDomainPeriods',
-    'fpCookieDomainPeriods',
-    'transactionID',
-    'cookieLifetime',
-    'cookieLifetimeSeconds'
+    'trackerProperties.visitorID',
+    'trackerProperties.visitorNamespace',
+    'trackerProperties.cookieDomainPeriods',
+    'trackerProperties.fpCookieDomainPeriods',
+    'trackerProperties.transactionID',
+    'trackerProperties.cookieLifetime',
+    'trackerProperties.cookieLifetimeSeconds'
   ],
   settingsToFormValues(values, options) {
-    const {settings} = options;
+    const {
+      visitorID,
+      visitorNamespace,
+      cookieDomainPeriods,
+      fpCookieDomainPeriods,
+      transactionID,
+      cookieLifetime
+    } = options.settings.trackerProperties || {};
 
-    values = {
-      ...values,
-      visitorID: settings.visitorID,
-      visitorNamespace: settings.visitorNamespace,
-      cookieDomainPeriods: settings.cookieDomainPeriods,
-      fpCookieDomainPeriods: settings.fpCookieDomainPeriods,
-      transactionID: settings.transactionID
+    let trackerProperties = values.trackerProperties || {};
+
+    trackerProperties = {
+      ...trackerProperties,
+      visitorID,
+      visitorNamespace,
+      cookieDomainPeriods,
+      fpCookieDomainPeriods,
+      transactionID
     };
 
-    if (settings.hasOwnProperty('cookieLifetime') && settings.cookieLifetime.trim() !== '') {
-      switch (settings.cookieLifetime) {
-        case 'NONE':
-        case 'SESSION':
-          values.cookieLifetime = settings.cookieLifetime;
+    if (cookieLifetime) {
+      switch (cookieLifetime) {
+        case cookieLifetimePeriod.NONE:
+        case cookieLifetimePeriod.SESSION:
+          trackerProperties.cookieLifetime = cookieLifetime;
           break;
         default:
-          values.cookieLifetimeSeconds = settings.cookieLifetime;
-          values.cookieLifetime = 'SECONDS';
+          trackerProperties.cookieLifetimeSeconds = cookieLifetime;
+          trackerProperties.cookieLifetime = cookieLifetimePeriod.SECONDS;
       }
     }
 
-    return values;
+    return {
+      ...values,
+      trackerProperties
+    };
   },
   formValuesToSettings(settings, values) {
-    settings = {
-      ...settings,
-      visitorID: values.visitorID,
-      visitorNamespace: values.visitorNamespace,
-      cookieDomainPeriods: values.cookieDomainPeriods,
-      fpCookieDomainPeriods: values.fpCookieDomainPeriods,
-      transactionID: values.transactionID
+    const {
+      visitorID,
+      visitorNamespace,
+      cookieDomainPeriods,
+      fpCookieDomainPeriods,
+      transactionID,
+      cookieLifetime,
+      cookieLifetimeSeconds
+    } = values.trackerProperties;
+
+    let trackerProperties = settings.trackerProperties || {};
+
+    trackerProperties = {
+      ...trackerProperties
     };
 
-    switch (values.cookieLifetime) {
-      case 'NONE':
-      case 'SESSION':
-        settings.cookieLifetime = values.cookieLifetime;
+    if (visitorID) {
+      trackerProperties.visitorID = visitorID;
+    }
+
+    if (visitorNamespace) {
+      trackerProperties.visitorNamespace = visitorNamespace;
+    }
+
+    if (cookieDomainPeriods) {
+      trackerProperties.cookieDomainPeriods = cookieDomainPeriods;
+    }
+
+    if (fpCookieDomainPeriods) {
+      trackerProperties.fpCookieDomainPeriods = fpCookieDomainPeriods;
+    }
+
+    if (transactionID) {
+      trackerProperties.transactionID = transactionID;
+    }
+
+    switch (cookieLifetime) {
+      case cookieLifetimePeriod.NONE:
+      case cookieLifetimePeriod.SESSION:
+        trackerProperties.cookieLifetime = cookieLifetime;
         break;
-      case 'SECONDS':
-        if (values.cookieLifetimeSeconds && values.cookieLifetimeSeconds.trim().length > 0) {
-          settings.cookieLifetime = values.cookieLifetimeSeconds.trim();
+      case cookieLifetimePeriod.SECONDS:
+        if (cookieLifetimeSeconds && cookieLifetimeSeconds.trim().length > 0) {
+          trackerProperties.cookieLifetime = cookieLifetimeSeconds.trim();
         }
         break;
     }
 
-    return settings;
-  },
-  validate(errors, values) {
-    errors = {
-      ...errors
+    return {
+      ...settings,
+      trackerProperties
     };
-
-    if (values.cookieLifetime === 'SECONDS' && !isNumber(values.cookieLifetimeSeconds)) {
-      errors.cookieLifetimeSeconds = 'Please specify a number of seconds.';
-    }
-
-    return errors;
   }
 });
 

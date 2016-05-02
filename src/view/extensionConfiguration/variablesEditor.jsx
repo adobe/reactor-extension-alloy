@@ -5,7 +5,7 @@ import { ValidationWrapper } from '@reactor/react-components';
 import { DataElementSelectorButton } from '@reactor/react-components';
 import classNames from 'classnames';
 import createId from '../utils/createId';
-import createDataElementSelectorCallback from '../utils/createDataElementSelectorCallback';
+import openDataElementSelector from '../utils/openDataElementSelector';
 
 // TODO: Replace with actual values from user's product level.
 const maxItems = {
@@ -35,10 +35,6 @@ export default class VariablesEditor extends React.Component {
 
   removeVariable = index => {
     this.props.fields.trackerProperties[this.props.varTypePlural].removeField(index);
-  };
-
-  openDataElementSelector = field => {
-    window.extensionBridge.openDataElementSelector(createDataElementSelectorCallback(field));
   };
 
   render() {
@@ -90,7 +86,7 @@ export default class VariablesEditor extends React.Component {
             }
             <DataElementSelectorButton
               className={classNames({'u-hidden': variable.type.value !== 'value'})}
-              onClick={this.openDataElementSelector.bind(this, variable.value)}/>
+              onClick={openDataElementSelector.bind(this, variable.value)}/>
           </ValidationWrapper>
           {
             index !== variables.length - 1 ?

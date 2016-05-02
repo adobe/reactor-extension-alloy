@@ -257,7 +257,7 @@
             },
             "cookieLifetime": {
               "type": "string",
-              "pattern": "^(SESSION|NONE|\\d+)$"
+              "minLength": 1
             },
             "hierarchies": {
               "type": "array",

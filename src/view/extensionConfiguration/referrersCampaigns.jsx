@@ -2,13 +2,9 @@ import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import createFormConfig from '../utils/createFormConfig';
 import { DataElementSelectorButton } from '@reactor/react-components';
-import createDataElementSelectorCallback from '../utils/createDataElementSelectorCallback';
+import openDataElementSelector from '../utils/openDataElementSelector';
 
 export default class ReferrersCampaigns extends React.Component {
-  openSelector = field => {
-    window.extensionBridge.openDataElementSelector(createDataElementSelectorCallback(field));
-  };
-
   render() {
     const {
       referrer,
@@ -21,7 +17,7 @@ export default class ReferrersCampaigns extends React.Component {
           <span className="Label">Referrer</span>
           <div>
             <Coral.Textfield className="ReferrersCampaigns-server" {...referrer}/>
-            <DataElementSelectorButton onClick={this.openSelector.bind(this, referrer)}/>
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, referrer)}/>
           </div>
         </label>
 
@@ -37,7 +33,7 @@ export default class ReferrersCampaigns extends React.Component {
             id="campaignValue"
             className="ReferrersCampaigns-campaignValue u-gapLeft"
             {...campaign.value}/>
-          <DataElementSelectorButton onClick={this.openSelector.bind(this, campaign.value)}/>
+          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, campaign.value)}/>
         </div>
       </div>
     );
