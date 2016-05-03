@@ -16,30 +16,28 @@ export default class Variables extends React.Component {
     return (
       <div>
         <section>
-          <h4 className="coral-Heading coral-Heading--4 u-gapBottom">eVars</h4>
+          <h4 className="coral-Heading coral-Heading--4">eVars</h4>
           <VariablesEditor varType="eVar" varTypePlural="eVars" fields={this.props.fields}/>
         </section>
 
         <section>
-          <h4 className="coral-Heading coral-Heading--4 u-gapTop u-gapBottom">Props</h4>
+          <h4 className="coral-Heading coral-Heading--4 u-gapTop">Props</h4>
           <VariablesEditor varType="prop" varTypePlural="props" fields={this.props.fields}/>
         </section>
 
-        <section>
-          <label>
-            <span className="Label u-gapTop">Dynamic Variable Prefix</span>
-            <div>
-              <Coral.Textfield {...dynamicVariablePrefix}/>
-            </div>
-          </label>
+        <label>
+          <span className="Label u-gapTop">Dynamic Variable Prefix</span>
+          <div>
+            <Coral.Textfield {...dynamicVariablePrefix}/>
+          </div>
+        </label>
 
-          <label>
-            <span className="Label u-gapTop">Server</span>
-            <div>
-              <Coral.Textfield {...server}/>
-            </div>
-          </label>
-        </section>
+        <label>
+          <span className="Label u-gapTop">Server</span>
+          <div>
+            <Coral.Textfield {...server}/>
+          </div>
+        </label>
       </div>
     );
   }

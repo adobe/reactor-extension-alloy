@@ -22,7 +22,7 @@ export default class ReferrersCampaigns extends React.Component {
         </label>
 
         <label htmlFor="campaignValue">
-          <span className="Label">Campaign</span>
+          <span className="Label u-gapTop">Campaign</span>
         </label>
         <div>
           <Coral.Select className="ReferrersCampaigns-campaignType" {...campaign.type}>

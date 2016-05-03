@@ -35,7 +35,7 @@ export default class Cookies extends React.Component {
             </div>
           </label>
           <label>
-            <span className="Label">Domain Periods</span>
+            <span className="Label u-gapTop">Domain Periods</span>
             <div>
               <Coral.Textfield className="Cookies-field" {...cookieDomainPeriods}/>
               <DataElementSelectorButton
@@ -43,7 +43,7 @@ export default class Cookies extends React.Component {
             </div>
           </label>
           <label>
-            <span className="Label">Transaction ID</span>
+            <span className="Label u-gapTop">Transaction ID</span>
             <div>
               <Coral.Textfield className="Cookies-field" {...transactionID}/>
               <DataElementSelectorButton
@@ -61,7 +61,7 @@ export default class Cookies extends React.Component {
             </div>
           </label>
           <label>
-            <span className="Label">First-party Domain Periods</span>
+            <span className="Label u-gapTop">First-party Domain Periods</span>
             <div>
               <Coral.Textfield className="Cookies-field" {...fpCookieDomainPeriods}/>
               <DataElementSelectorButton
@@ -69,7 +69,7 @@ export default class Cookies extends React.Component {
             </div>
           </label>
           <label>
-            <span className="Label">Cookie Lifetime</span>
+            <span className="Label u-gapTop">Cookie Lifetime</span>
             <div>
               <Coral.Select className="Cookies-cookieLifetime u-gapRight" {...cookieLifetime}>
                 <Coral.Select.Item value={cookieLifetimePeriod.DEFAULT}>Default</Coral.Select.Item>
