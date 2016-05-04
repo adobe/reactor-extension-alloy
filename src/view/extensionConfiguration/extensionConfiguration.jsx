@@ -8,6 +8,7 @@ import Cookies, { formConfig as cookiesFormConfig } from './cookies';
 import ReferrersCampaigns, { formConfig as referrersCampaignsFormConfig } from './referrersCampaigns';
 import Variables, { formConfig as variablesFormConfig } from './variables';
 import LinkTracking, { formConfig as linkTrackingFormConfig } from './linkTracking';
+import PageviewsAndContent, { formConfig as pageviewsAndContentFormConfig } from './pageviewsAndContent';
 
 class ExtensionConfiguration extends React.Component {
   render() {
@@ -26,6 +27,14 @@ class ExtensionConfiguration extends React.Component {
             <Coral.Accordion.Item.Label>General</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
               <General/>
+            </Coral.Accordion.Item.Content>
+          </Coral.Accordion.Item>
+        </Coral.Accordion>
+        <Coral.Accordion variant="quiet">
+          <Coral.Accordion.Item>
+            <Coral.Accordion.Item.Label>Pageviews & Content</Coral.Accordion.Item.Label>
+            <Coral.Accordion.Item.Content>
+              <PageviewsAndContent fields={this.props.fields}/>
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
@@ -69,10 +78,11 @@ class ExtensionConfiguration extends React.Component {
 const formConfig = createFormConfig(
   libraryManagementFormConfig,
   generalFormConfig,
-  cookiesFormConfig,
-  referrersCampaignsFormConfig,
   variablesFormConfig,
-  linkTrackingFormConfig);
+  pageviewsAndContentFormConfig,
+  linkTrackingFormConfig,
+  referrersCampaignsFormConfig,
+  cookiesFormConfig);
 
 export default extensionViewReduxForm(formConfig)(ExtensionConfiguration);
 

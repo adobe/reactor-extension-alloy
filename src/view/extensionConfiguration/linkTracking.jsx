@@ -100,22 +100,18 @@ export const formConfig = createFormConfig({
       linkLeaveQueryString
     } = options.settings.trackerProperties || {};
 
-    let trackerProperties = values.trackerProperties || {};
-    
-    trackerProperties = {
-      ...trackerProperties,
-      'trackInlineStats': trackInlineStats != null ? trackInlineStats : true,
-      'trackDownloadLinks': trackDownloadLinks != null ? trackDownloadLinks : true,
-      'linkDownloadFileTypes': linkDownloadFileTypes || DEFAULT_DOWNLOAD_LINKS,
-      'trackExternalLinks': trackExternalLinks != null ? trackExternalLinks : true,
-      linkExternalFilters,
-      'linkInternalFilters': linkInternalFilters || DEFAULT_INTERNAL_FILTERS,
-      linkLeaveQueryString
-    };
-
     return {
       ...values,
-      trackerProperties
+      trackerProperties: {
+        ...values.trackerProperties,
+        'trackInlineStats': trackInlineStats != null ? trackInlineStats : true,
+        'trackDownloadLinks': trackDownloadLinks != null ? trackDownloadLinks : true,
+        'linkDownloadFileTypes': linkDownloadFileTypes || DEFAULT_DOWNLOAD_LINKS,
+        'trackExternalLinks': trackExternalLinks != null ? trackExternalLinks : true,
+        linkExternalFilters,
+        'linkInternalFilters': linkInternalFilters || DEFAULT_INTERNAL_FILTERS,
+        linkLeaveQueryString
+      }
     };
   },
   formValuesToSettings(settings, values) {
@@ -129,10 +125,8 @@ export const formConfig = createFormConfig({
       linkLeaveQueryString
     } = values.trackerProperties;
     
-    let trackerProperties = settings.trackerProperties || {};
-
-    trackerProperties = {
-      ...trackerProperties,
+    const trackerProperties = {
+      ...settings.trackerProperties,
       trackInlineStats,
       trackDownloadLinks,
       trackExternalLinks,

@@ -266,9 +266,9 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "pattern": "^hierarchy[1-5]$"
+                    "pattern": "^hier[1-5]$"
                   },
-                  "levels": {
+                  "sections": {
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -279,14 +279,13 @@
                   },
                   "delimiter": {
                     "type": "string",
-                    "minLength": 1,
-                    "maxLength": 1
+                    "minLength": 1
                   }
                 },
                 "additionalProperties": false,
                 "required": [
                   "name",
-                  "levels",
+                  "sections",
                   "delimiter"
                 ]
               }
