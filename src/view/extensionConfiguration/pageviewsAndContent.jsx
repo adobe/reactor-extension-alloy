@@ -68,18 +68,14 @@ export const formConfig = createFormConfig(
         channel
       } = options.settings.trackerProperties || {};
 
-      let trackerProperties = values.trackerProperties || {};
-
-      trackerProperties = {
-        ...trackerProperties,
-        pageName,
-        pageURL,
-        channel
-      };
-
       return {
         ...values,
-        trackerProperties
+        trackerProperties: {
+          ...values.trackerProperties,
+          pageName,
+          pageURL,
+          channel
+        }
       };
     },
     formValuesToSettings(settings, values) {
@@ -89,10 +85,8 @@ export const formConfig = createFormConfig(
         channel
       } = values.trackerProperties;
 
-      let trackerProperties = settings.trackerProperties || {};
-
-      trackerProperties = {
-        ...trackerProperties
+      const trackerProperties = {
+        ...settings.trackerProperties
       };
 
       if (pageName) {

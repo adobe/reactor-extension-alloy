@@ -52,10 +52,8 @@ export const formConfig = createFormConfig({
       campaign 
     } = options.settings.trackerProperties || {};
 
-    let trackerProperties = values.trackerProperties || {};
-
-    trackerProperties = {
-      ...trackerProperties
+    const trackerProperties = {
+      ...values.trackerProperties
     };
 
     if (referrer) {
@@ -77,10 +75,8 @@ export const formConfig = createFormConfig({
   formValuesToSettings(settings, values) {
     const { referrer, campaign } = values.trackerProperties;
 
-    let trackerProperties = settings.trackerProperties || {};
-
-    trackerProperties = {
-      ...trackerProperties
+    const trackerProperties = {
+      ...settings.trackerProperties
     };
     
     if (referrer) {

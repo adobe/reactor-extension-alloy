@@ -132,12 +132,6 @@ export const formConfig = createFormConfig({
       hierarchies
     } = options.settings.trackerProperties || {};
 
-    let trackerProperties = values.trackerProperties || {};
-
-    trackerProperties = {
-      ...trackerProperties
-    };
-
     hierarchies = hierarchies ? hierarchies.slice() : [];
 
     // Add an extra object which will ensures that there is an empty row available for the user
@@ -146,11 +140,12 @@ export const formConfig = createFormConfig({
 
     hierarchies.forEach(setDefaultsForHierarchy);
 
-    trackerProperties.hierarchies = hierarchies;
-
     return {
       ...values,
-      trackerProperties
+      trackerProperties: {
+        ...values.trackerProperties,
+        hierarchies
+      }
     };
   },
   formValuesToSettings(settings, values) {
@@ -158,10 +153,8 @@ export const formConfig = createFormConfig({
       hierarchies
     } = values.trackerProperties;
 
-    let trackerProperties = settings.trackerProperties || {};
-
-    trackerProperties = {
-      ...trackerProperties
+    const trackerProperties = {
+      ...settings.trackerProperties
     };
 
     hierarchies = hierarchies
@@ -187,18 +180,13 @@ export const formConfig = createFormConfig({
     };
   },
   validate(errors, values) {
-    errors = {
-      ...errors
-    };
-
     const {
       hierarchies
     } = values.trackerProperties;
 
     const configuredHierarchyNames = [];
 
-    errors.trackerProperties = errors.trackerProperties || {};
-    errors.trackerProperties.hierarchies = hierarchies.map(hierarchy => {
+    const hierarchiesErrors = hierarchies.map(hierarchy => {
       const hierarchyErrors = {};
 
       // If a hierarchy has no populated sections then it won't get saved anyway so we can
@@ -218,7 +206,13 @@ export const formConfig = createFormConfig({
       return hierarchyErrors;
     });
 
-    return errors;
+    return {
+      ...errors,
+      trackerProperties: {
+        ...errors.trackerProperties,
+        hierarchies: hierarchiesErrors
+      }
+    };
   }
 });
 

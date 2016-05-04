@@ -57,17 +57,13 @@ export const formConfig = createFormConfig(
         dynamicVariablePrefix
       } = options.settings.trackerProperties || {};
       
-      let trackerProperties = values.trackerProperties || {};
-
-      trackerProperties = {
-        ...trackerProperties,
-        server,
-        dynamicVariablePrefix: dynamicVariablePrefix || DYNAMIC_VARIABLE_PREFIX_DEFAULT
-      };
-
       return {
         ...values,
-        trackerProperties
+        trackerProperties: {
+          ...values.trackerProperties,
+          server,
+          dynamicVariablePrefix: dynamicVariablePrefix || DYNAMIC_VARIABLE_PREFIX_DEFAULT
+        }
       };
     },
     formValuesToSettings: (settings, values) => {
@@ -76,10 +72,8 @@ export const formConfig = createFormConfig(
         dynamicVariablePrefix
       } = values.trackerProperties;
 
-      let trackerProperties = settings.trackerProperties || {};
-
-      trackerProperties = {
-        ...trackerProperties
+      const trackerProperties = {
+        ...settings.trackerProperties
       };
 
       if (server) {

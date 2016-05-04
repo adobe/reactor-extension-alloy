@@ -132,12 +132,12 @@ export const getFormConfig = (varType, varTypePlural) => {
         variable.type = variable.type || 'value'
       });
 
-      const trackerProperties = values.trackerProperties || {};
-      trackerProperties[varTypePlural] = variables;
-
       return {
         ...values,
-        trackerProperties
+        trackerProperties: {
+          ...values.trackerProperties,
+          [varTypePlural]: variables
+        }
       };
     },
     formValuesToSettings(settings, values) {
@@ -161,22 +161,19 @@ export const getFormConfig = (varType, varTypePlural) => {
       };
 
       if (variables.length) {
-        settings.trackerProperties = settings.trackerProperties || {};
-        settings.trackerProperties[varTypePlural] = variables;
+        settings.trackerProperties = {
+          ...settings.trackerProperties,
+          [varTypePlural]: variables
+        };
       }
 
       return settings;
     },
     validate(errors, values) {
-      errors = {
-        ...errors
-      };
-
       const variables = values.trackerProperties[varTypePlural];
       const configuredVariableNames = [];
 
-      errors.trackerProperties = errors.trackerProperties || {};
-      errors.trackerProperties[varTypePlural] = variables.map(variable => {
+      const variablesErrors = variables.map(variable => {
         const variableErrors = {};
 
         if (variable.name) {
@@ -196,7 +193,13 @@ export const getFormConfig = (varType, varTypePlural) => {
         return variableErrors;
       });
 
-      return errors;
+      return {
+        ...errors,
+        trackerProperties: {
+          ...errors.trackerProperties,
+          [varTypePlural]: variablesErrors
+        }
+      };
     }
   });
 };

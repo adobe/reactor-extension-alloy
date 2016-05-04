@@ -115,10 +115,8 @@ export const formConfig = createFormConfig({
       cookieLifetime
     } = options.settings.trackerProperties || {};
 
-    let trackerProperties = values.trackerProperties || {};
-
-    trackerProperties = {
-      ...trackerProperties,
+    const trackerProperties = {
+      ...values.trackerProperties,
       visitorID,
       visitorNamespace,
       cookieDomainPeriods,
@@ -154,10 +152,8 @@ export const formConfig = createFormConfig({
       cookieLifetimeSeconds
     } = values.trackerProperties;
 
-    let trackerProperties = settings.trackerProperties || {};
-
-    trackerProperties = {
-      ...trackerProperties
+    const trackerProperties = {
+      ...settings.trackerProperties
     };
 
     if (visitorID) {
