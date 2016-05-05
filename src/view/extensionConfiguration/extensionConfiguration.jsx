@@ -1,7 +1,7 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import extensionViewReduxForm from '../extensionViewReduxForm';
-import createFormConfig from '../utils/createFormConfig';
+import mergeFormConfigs from '../utils/mergeFormConfigs';
 import General, { formConfig as generalFormConfig } from './general';
 import LibraryManagement, { formConfig as libraryManagementFormConfig } from './libraryManagement';
 import Cookies, { formConfig as cookiesFormConfig } from './cookies';
@@ -26,7 +26,7 @@ class ExtensionConfiguration extends React.Component {
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>General</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
-              <General/>
+              <General fields={this.props.fields}/>
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
@@ -75,8 +75,11 @@ class ExtensionConfiguration extends React.Component {
   }
 }
 
-const formConfig = createFormConfig(
+const formConfig = mergeFormConfigs(
   libraryManagementFormConfig,
+  // It is important for generalFormConfig to come after libraryManagementFormConfig because
+  // validation inside generalFormConfig depends on what libraryManagementFormConfig
+  // outputs to the settings object.
   generalFormConfig,
   variablesFormConfig,
   pageviewsAndContentFormConfig,

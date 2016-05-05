@@ -1,7 +1,8 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
-import createFormConfig from '../utils/createFormConfig';
-import { DataElementField } from '@reactor/react-components';
+import mergeFormConfigs from '../utils/mergeFormConfigs';
+import openDataElementSelector from '../utils/openDataElementSelector';
+import { DataElementSelectorButton } from '@reactor/react-components';
 import VariablesEditor, { getFormConfig as getVariableEditorFormConfig } from './variablesEditor';
 
 const DYNAMIC_VARIABLE_PREFIX_DEFAULT = 'D=';
@@ -28,14 +29,18 @@ export default class Variables extends React.Component {
         <label>
           <span className="Label u-gapTop">Dynamic Variable Prefix</span>
           <div>
-            <Coral.Textfield {...dynamicVariablePrefix}/>
+            <Coral.Textfield className="Field--large" {...dynamicVariablePrefix}/>
+            <DataElementSelectorButton
+              onClick={openDataElementSelector.bind(this, dynamicVariablePrefix)}/>
           </div>
         </label>
 
         <label>
           <span className="Label u-gapTop">Server</span>
           <div>
-            <Coral.Textfield {...server}/>
+            <Coral.Textfield className="Field--large" {...server}/>
+            <DataElementSelectorButton
+              onClick={openDataElementSelector.bind(this, server)}/>
           </div>
         </label>
       </div>
@@ -43,7 +48,7 @@ export default class Variables extends React.Component {
   }
 }
 
-export const formConfig = createFormConfig(
+export const formConfig = mergeFormConfigs(
   getVariableEditorFormConfig('eVar', 'eVars'),
   getVariableEditorFormConfig('prop', 'props'),
   {

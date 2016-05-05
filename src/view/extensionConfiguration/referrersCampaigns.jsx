@@ -1,6 +1,5 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
-import createFormConfig from '../utils/createFormConfig';
 import { DataElementSelectorButton } from '@reactor/react-components';
 import openDataElementSelector from '../utils/openDataElementSelector';
 
@@ -40,7 +39,7 @@ export default class ReferrersCampaigns extends React.Component {
   }
 }
 
-export const formConfig = createFormConfig({
+export const formConfig = {
   fields: [
     'trackerProperties.referrer',
     'trackerProperties.campaign.type',
@@ -95,5 +94,5 @@ export const formConfig = createFormConfig({
       trackerProperties
     };
   }
-});
+};
 

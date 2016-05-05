@@ -1,6 +1,6 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
-import createFormConfig from '../utils/createFormConfig';
+import mergeFormConfigs from '../utils/mergeFormConfigs';
 import { DataElementSelectorButton } from '@reactor/react-components';
 import openDataElementSelector from '../utils/openDataElementSelector';
 import HierarchiesEditor, { formConfig as hierarchiesEditorFormConfig } from './components/hierarchiesEditor';
@@ -19,7 +19,7 @@ export default class PageviewsAndContent extends React.Component {
           <span className="Label">Page Name</span>
           <div>
             <Coral.Textfield
-              className="PageviewsAndContent-field"
+              className="Field--large"
               placeholder="Name"
               {...pageName}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageName)}/>
@@ -29,7 +29,7 @@ export default class PageviewsAndContent extends React.Component {
           <span className="Label u-gapTop">Page URL</span>
           <div>
             <Coral.Textfield
-              className="PageviewsAndContent-field"
+              className="Field--large"
               placeholder="Page URL"
               {...pageURL}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageURL)}/>
@@ -39,7 +39,7 @@ export default class PageviewsAndContent extends React.Component {
           <span className="Label u-gapTop">Channel</span>
           <div>
             <Coral.Textfield
-              className="PageviewsAndContent-field"
+              className="Field--large"
               placeholder="Channel"
               {...channel}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, channel)}/>
@@ -53,7 +53,7 @@ export default class PageviewsAndContent extends React.Component {
   }
 }
 
-export const formConfig = createFormConfig(
+export const formConfig = mergeFormConfigs(
   hierarchiesEditorFormConfig,
   {
     fields: [

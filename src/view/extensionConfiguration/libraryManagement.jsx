@@ -1,9 +1,9 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper, ErrorTip, InfoTip } from '@reactor/react-components';
+import ENVIRONMENTS from '../enums/environments';
 
 import ReportSuite from './components/reportSuite';
-import createFormConfig from '../utils/createFormConfig';
 
 const libTypes = {
   MANAGED: 'managed',
@@ -16,12 +16,6 @@ const loadPhases = {
   PAGE_TOP: 'pageTop',
   PAGE_BOTTOM: 'pageBottom'
 };
-
-const environments = [
-  'production',
-  'staging',
-  'development'
-];
 
 const ReportSuites = props => {
   return (
@@ -123,7 +117,7 @@ export default class LibraryManagement extends React.Component {
         </Coral.Radio>
         {
           type.value === libTypes.MANAGED ?
-            <div className="LibraryManagement-optionSubset">
+            <div className="FieldSubset">
               <ReportSuites {...this.props.fields.libraryCode.accounts}/>
               <LoadPhase fields={this.props.fields}/>
             </div> : null
@@ -139,7 +133,7 @@ export default class LibraryManagement extends React.Component {
         </div>
         {
           type.value === libTypes.PREINSTALLED ?
-            <div className="LibraryManagement-optionSubset">
+            <div className="FieldSubset">
               <OverwriteReportSuites
                 fields={this.props.fields}
                 className="u-gapBottom"/>
@@ -157,7 +151,7 @@ export default class LibraryManagement extends React.Component {
         </div>
         {
           type.value === libTypes.REMOTE ?
-            <div className="LibraryManagement-optionSubset">
+            <div className="FieldSubset">
               <div className="u-gapBottom">
                 <label>
                   <span className="Label">HTTP URL:</span>
@@ -198,7 +192,7 @@ export default class LibraryManagement extends React.Component {
         </div>
         {
           type.value === libTypes.CUSTOM ?
-            <div className="LibraryManagement-optionSubset">
+            <div className="FieldSubset">
               <div className="u-gapBottom">
                 <Coral.Button ref="openEditorButton" icon="code" onClick={this.onOpenEditor}>
                   Open Editor
@@ -226,7 +220,7 @@ const forcePrefix = (str, prefix) => {
   return !str || str.indexOf(prefix) === 0 ? str : prefix + str;
 };
 
-export const formConfig = createFormConfig({
+export const formConfig = {
   fields: [
     'libraryCode.type',
     'libraryCode.accounts.production',
@@ -287,7 +281,7 @@ export const formConfig = createFormConfig({
     if (values.libraryCode.accounts) {
       const accounts = {};
 
-      for (let environment of environments) {
+      for (let environment of ENVIRONMENTS) {
         const accountsForEnvironment = values.libraryCode.accounts[environment];
         if (accountsForEnvironment && accountsForEnvironment.length > 0) {
           accounts[environment] = accountsForEnvironment;
@@ -368,4 +362,4 @@ export const formConfig = createFormConfig({
       libraryCode: libraryCodeErrors
     };
   }
-});
+};
