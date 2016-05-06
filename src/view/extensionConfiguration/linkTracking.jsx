@@ -2,7 +2,6 @@ import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper } from '@reactor/react-components';
 
-import createFormConfig from '../utils/createFormConfig';
 import TagListEditor from './components/tagListEditor';
 
 const DEFAULT_DOWNLOAD_LINKS = ['doc', 'docx', 'eps', 'jpg', 'png', 'svg', 'xls', 'ppt', 'pptx',
@@ -78,7 +77,7 @@ export default class LinkTracking extends React.Component {
   }
 }
 
-export const formConfig = createFormConfig({
+export const formConfig = {
   fields: [
     'trackerProperties.trackInlineStats',
     'trackerProperties.trackDownloadLinks',
@@ -147,5 +146,5 @@ export const formConfig = createFormConfig({
       trackerProperties
     };
   }
-});
+};
 

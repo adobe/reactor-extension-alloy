@@ -1,6 +1,5 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
-import createFormConfig from '../utils/createFormConfig';
 import { ValidationWrapper } from '@reactor/react-components';
 import { DataElementSelectorButton } from '@reactor/react-components';
 import classNames from 'classnames';
@@ -111,7 +110,7 @@ export default class VariablesEditor extends React.Component {
 }
 
 export const getFormConfig = (varType, varTypePlural) => {
-  return createFormConfig({
+  return {
     fields: [
       `trackerProperties.${varTypePlural}[].id`,
       `trackerProperties.${varTypePlural}[].name`,
@@ -201,6 +200,6 @@ export const getFormConfig = (varType, varTypePlural) => {
         }
       };
     }
-  });
+  };
 };
 

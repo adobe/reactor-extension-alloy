@@ -1,20 +1,18 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import extensionViewReduxForm from '../extensionViewReduxForm';
-import createFormConfig from '../utils/createFormConfig';
+import mergeFormConfigs from '../utils/mergeFormConfigs';
 import General, { formConfig as generalFormConfig } from './general';
 import LibraryManagement, { formConfig as libraryManagementFormConfig } from './libraryManagement';
 import Cookies, { formConfig as cookiesFormConfig } from './cookies';
-import ReferrersCampaigns, { formConfig as referrersCampaignsFormConfig } from './referrersCampaigns';
 import Variables, { formConfig as variablesFormConfig } from './variables';
 import LinkTracking, { formConfig as linkTrackingFormConfig } from './linkTracking';
-import PageviewsAndContent, { formConfig as pageviewsAndContentFormConfig } from './pageviewsAndContent';
 
 class ExtensionConfiguration extends React.Component {
   render() {
     return (
       <div>
-        <Coral.Accordion variant="quiet">
+        <Coral.Accordion className="Accordion" variant="quiet">
           <Coral.Accordion.Item defaultSelected>
             <Coral.Accordion.Item.Label>Library Management</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
@@ -22,23 +20,15 @@ class ExtensionConfiguration extends React.Component {
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
-        <Coral.Accordion variant="quiet">
+        <Coral.Accordion className="Accordion" variant="quiet">
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>General</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
-              <General/>
+              <General fields={this.props.fields}/>
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
-        <Coral.Accordion variant="quiet">
-          <Coral.Accordion.Item>
-            <Coral.Accordion.Item.Label>Pageviews & Content</Coral.Accordion.Item.Label>
-            <Coral.Accordion.Item.Content>
-              <PageviewsAndContent fields={this.props.fields}/>
-            </Coral.Accordion.Item.Content>
-          </Coral.Accordion.Item>
-        </Coral.Accordion>
-        <Coral.Accordion variant="quiet">
+        <Coral.Accordion className="Accordion" variant="quiet">
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>Global Variables</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
@@ -46,7 +36,7 @@ class ExtensionConfiguration extends React.Component {
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
-        <Coral.Accordion variant="quiet">
+        <Coral.Accordion className="Accordion" variant="quiet">
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>Link Tracking</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
@@ -54,15 +44,7 @@ class ExtensionConfiguration extends React.Component {
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
-        <Coral.Accordion variant="quiet">
-          <Coral.Accordion.Item>
-            <Coral.Accordion.Item.Label>Referrers & Campaigns</Coral.Accordion.Item.Label>
-            <Coral.Accordion.Item.Content>
-              <ReferrersCampaigns fields={this.props.fields}/>
-            </Coral.Accordion.Item.Content>
-          </Coral.Accordion.Item>
-        </Coral.Accordion>
-        <Coral.Accordion variant="quiet">
+        <Coral.Accordion className="Accordion" variant="quiet">
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>Cookies</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
@@ -75,13 +57,14 @@ class ExtensionConfiguration extends React.Component {
   }
 }
 
-const formConfig = createFormConfig(
+const formConfig = mergeFormConfigs(
   libraryManagementFormConfig,
+  // It is important for generalFormConfig to come after libraryManagementFormConfig because
+  // validation inside generalFormConfig depends on what libraryManagementFormConfig
+  // outputs to the settings object.
   generalFormConfig,
   variablesFormConfig,
-  pageviewsAndContentFormConfig,
   linkTrackingFormConfig,
-  referrersCampaignsFormConfig,
   cookiesFormConfig);
 
 export default extensionViewReduxForm(formConfig)(ExtensionConfiguration);

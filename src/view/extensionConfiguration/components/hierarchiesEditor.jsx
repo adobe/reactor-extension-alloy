@@ -1,6 +1,5 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
-import createFormConfig from '../../utils/createFormConfig';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import openDataElementSelector from '../../utils/openDataElementSelector';
 import createId from '../../utils/createId';
@@ -120,7 +119,7 @@ export default class PageviewsAndContent extends React.Component {
   }
 }
 
-export const formConfig = createFormConfig({
+export const formConfig = {
   fields: [
     'trackerProperties.hierarchies[].id',
     'trackerProperties.hierarchies[].name',
@@ -214,5 +213,5 @@ export const formConfig = createFormConfig({
       }
     };
   }
-});
+};
 

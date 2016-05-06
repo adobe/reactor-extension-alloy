@@ -1,6 +1,5 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
-import createFormConfig from '../utils/createFormConfig';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import openDataElementSelector from '../utils/openDataElementSelector';
 
@@ -95,7 +94,7 @@ export default class Cookies extends React.Component {
   }
 }
 
-export const formConfig = createFormConfig({
+export const formConfig = {
   fields: [
     'trackerProperties.visitorID',
     'trackerProperties.visitorNamespace',
@@ -193,5 +192,5 @@ export const formConfig = createFormConfig({
       trackerProperties
     };
   }
-});
+};
 
