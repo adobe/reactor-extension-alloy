@@ -12,7 +12,7 @@ class ExtensionConfiguration extends React.Component {
   render() {
     return (
       <div>
-        <Coral.Accordion variant="quiet">
+        <Coral.Accordion className="Accordion" variant="quiet">
           <Coral.Accordion.Item defaultSelected>
             <Coral.Accordion.Item.Label>Library Management</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
@@ -20,7 +20,7 @@ class ExtensionConfiguration extends React.Component {
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
-        <Coral.Accordion variant="quiet">
+        <Coral.Accordion className="Accordion" variant="quiet">
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>General</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
@@ -28,7 +28,7 @@ class ExtensionConfiguration extends React.Component {
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
-        <Coral.Accordion variant="quiet">
+        <Coral.Accordion className="Accordion" variant="quiet">
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>Global Variables</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
@@ -36,7 +36,7 @@ class ExtensionConfiguration extends React.Component {
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
-        <Coral.Accordion variant="quiet">
+        <Coral.Accordion className="Accordion" variant="quiet">
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>Link Tracking</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
@@ -44,7 +44,7 @@ class ExtensionConfiguration extends React.Component {
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
-        <Coral.Accordion variant="quiet">
+        <Coral.Accordion className="Accordion" variant="quiet">
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>Cookies</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>

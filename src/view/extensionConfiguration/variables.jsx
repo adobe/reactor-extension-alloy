@@ -49,7 +49,6 @@ export default class Variables extends React.Component {
           <div>
             <Coral.Textfield
               className="Field--large"
-              placeholder="Name"
               {...pageName}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageName)}/>
           </div>
@@ -60,7 +59,6 @@ export default class Variables extends React.Component {
           <div>
             <Coral.Textfield
               className="Field--large"
-              placeholder="Page URL"
               {...pageURL}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageURL)}/>
           </div>
@@ -71,7 +69,6 @@ export default class Variables extends React.Component {
           <div>
             <Coral.Textfield
               className="Field--large"
-              placeholder="Server"
               {...server}/>
             <DataElementSelectorButton
               onClick={openDataElementSelector.bind(this, server)}/>
@@ -83,7 +80,6 @@ export default class Variables extends React.Component {
           <div>
             <Coral.Textfield
               className="Field--large"
-              placeholder="Channel"
               {...channel}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, channel)}/>
           </div>
@@ -92,7 +88,9 @@ export default class Variables extends React.Component {
         <label>
           <span className="Label u-gapTop">Referrer</span>
           <div>
-            <Coral.Textfield className="Field--large" {...referrer}/>
+            <Coral.Textfield
+              className="Field--large"
+              {...referrer}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, referrer)}/>
           </div>
         </label>
