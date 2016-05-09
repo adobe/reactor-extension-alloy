@@ -45,17 +45,19 @@ const LoadPhase = props => {
 
   return (
     <div className={props.className}>
-      <label>Load library at:</label>
-      <div>
-        <Coral.Radio
-          {...loadPhase}
-          value={loadPhases.PAGE_TOP}
-          checked={loadPhase.value === loadPhases.PAGE_TOP}>Page Top</Coral.Radio>
-        <Coral.Radio
-          {...loadPhase}
-          value={loadPhases.PAGE_BOTTOM}
-          checked={loadPhase.value === loadPhases.PAGE_BOTTOM}>Page Bottom</Coral.Radio>
-      </div>
+      <fieldset>
+        <legend><span className="Label">Load library at:</span></legend>
+        <div>
+          <Coral.Radio
+            {...loadPhase}
+            value={loadPhases.PAGE_TOP}
+            checked={loadPhase.value === loadPhases.PAGE_TOP}>Page Top</Coral.Radio>
+          <Coral.Radio
+            {...loadPhase}
+            value={loadPhases.PAGE_BOTTOM}
+            checked={loadPhase.value === loadPhases.PAGE_BOTTOM}>Page Bottom</Coral.Radio>
+        </div>
+      </fieldset>
     </div>
   );
 };
