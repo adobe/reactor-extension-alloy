@@ -13,7 +13,7 @@ class ExtensionConfiguration extends React.Component {
   render() {
     return (
       <div>
-        <Coral.Accordion className="Accordion" variant="quiet">
+        <Coral.Accordion className="Accordion Accordion--first" variant="quiet">
           <Coral.Accordion.Item defaultSelected>
             <Coral.Accordion.Item.Label>Library Management</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
@@ -53,7 +53,7 @@ class ExtensionConfiguration extends React.Component {
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
-        <Coral.Accordion className="Accordion" variant="quiet">
+        <Coral.Accordion className="Accordion Accordion--last" variant="quiet">
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>Customize Page Code</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>

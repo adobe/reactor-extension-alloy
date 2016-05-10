@@ -32,6 +32,17 @@ fieldset {
   margin-bottom: -1px;
 }
 
+// We can't use :first-child and :last-child pseudo-selectors because the Accordions are wrapped
+// by a coralreactwrapper element:
+// https://git.corp.adobe.com/Coral/coralui-support-react#limitations
+.Accordion--first {
+  border-top: 0;
+}
+
+.Accordion--last {
+  border-bottom: 0;
+}
+
 .u-gapLeft {
   margin-left: $gap !important;
 }
