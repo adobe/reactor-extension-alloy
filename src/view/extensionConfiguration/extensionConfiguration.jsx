@@ -2,17 +2,18 @@ import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import extensionViewReduxForm from '../extensionViewReduxForm';
 import mergeFormConfigs from '../utils/mergeFormConfigs';
-import General, { formConfig as generalFormConfig } from './general';
 import LibraryManagement, { formConfig as libraryManagementFormConfig } from './libraryManagement';
-import Cookies, { formConfig as cookiesFormConfig } from './cookies';
+import General, { formConfig as generalFormConfig } from './general';
 import Variables, { formConfig as variablesFormConfig } from './variables';
 import LinkTracking, { formConfig as linkTrackingFormConfig } from './linkTracking';
+import Cookies, { formConfig as cookiesFormConfig } from './cookies';
+import CustomSetup, { formConfig as customSetupFormConfig } from './customSetup.jsx';
 
 class ExtensionConfiguration extends React.Component {
   render() {
     return (
       <div>
-        <Coral.Accordion className="Accordion" variant="quiet">
+        <Coral.Accordion className="Accordion Accordion--first" variant="quiet">
           <Coral.Accordion.Item defaultSelected>
             <Coral.Accordion.Item.Label>Library Management</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
@@ -52,6 +53,14 @@ class ExtensionConfiguration extends React.Component {
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
+        <Coral.Accordion className="Accordion Accordion--last" variant="quiet">
+          <Coral.Accordion.Item>
+            <Coral.Accordion.Item.Label>Customize Page Code</Coral.Accordion.Item.Label>
+            <Coral.Accordion.Item.Content>
+              <CustomSetup fields={this.props.fields}/>
+            </Coral.Accordion.Item.Content>
+          </Coral.Accordion.Item>
+        </Coral.Accordion>
       </div>
     );
   }
@@ -59,13 +68,11 @@ class ExtensionConfiguration extends React.Component {
 
 const formConfig = mergeFormConfigs(
   libraryManagementFormConfig,
-  // It is important for generalFormConfig to come after libraryManagementFormConfig because
-  // validation inside generalFormConfig depends on what libraryManagementFormConfig
-  // outputs to the settings object.
   generalFormConfig,
   variablesFormConfig,
   linkTrackingFormConfig,
-  cookiesFormConfig);
+  cookiesFormConfig,
+  customSetupFormConfig);
 
 export default extensionViewReduxForm(formConfig)(ExtensionConfiguration);
 
