@@ -9,8 +9,6 @@ var propRegExp = /prop([0-9]+)/;
 var linkTrackVarsKeys = new RegExp('^(eVar[0-9]+)|(prop[0-9]+)|(hier[0-9]+)|campaign|purchaseID|' +
   'channel|server|state|zip|pageType$');
 
-var dynamicVariablePrefix = 'D=';
-
 var buildLinkTrackVars = function(tracker, newTrackerProperties, addEvents) {
   var linkTrackVarsValues = Object.keys(newTrackerProperties)
     .filter(linkTrackVarsKeys.test.bind(linkTrackVarsKeys));
@@ -40,13 +38,14 @@ var buildLinkTrackEvents = function(tracker, eventsData) {
   }).join(',');
 };
 
-
-var commaJoin = function(store, keyName, value) {
-  store[keyName] = value.join(',');
+var commaJoin = function(store, keyName, trackerProperties) {
+  store[keyName] = trackerProperties[keyName].join(',');
 };
 
-var variablesTransform = function(store, keyName, values) {
-  values.forEach(function(variableData) {
+var variablesTransform = function(store, keyName, trackerProperties) {
+  var dynamicVariablePrefix = trackerProperties.dynamicVariablePrefix || 'D=';
+
+  trackerProperties[keyName].forEach(function(variableData) {
     var value;
     if (variableData.type === 'value') {
       value = variableData.value;
@@ -72,22 +71,22 @@ var transformers = {
   linkDownloadFileTypes: commaJoin,
   linkExternalFilters: commaJoin,
   linkInternalFilters: commaJoin,
-  hierarchies: function(store, keyName, values) {
-    values.forEach(function(hierarchyData) {
+  hierarchies: function(store, keyName, trackerProperties) {
+    trackerProperties[keyName].forEach(function(hierarchyData) {
       store[hierarchyData.name] = hierarchyData.sections.join(hierarchyData.delimiter);
     });
   },
   props: variablesTransform,
   eVars: variablesTransform,
-  campaign: function(store, keyName, data) {
-    if (data.type === 'queryParam') {
-      store[keyName] = getQueryParam(data.value);
+  campaign: function(store, keyName, trackerProperties) {
+    if (trackerProperties[keyName].type === 'queryParam') {
+      store[keyName] = getQueryParam(trackerProperties[keyName].value);
     } else {
-      store[keyName] = data.value;
+      store[keyName] = trackerProperties[keyName].value;
     }
   },
-  events: function(store, keyName, values) {
-    var events = values.map(function(data) {
+  events: function(store, keyName, trackerProperties) {
+    var events = trackerProperties[keyName].map(function(data) {
       if (data.value) {
         return [data.name, data.value].join(':');
       } else {
@@ -101,17 +100,13 @@ var transformers = {
 
 module.exports = function(tracker, trackerProperties) {
   var newProperties = {};
-  
-  if (trackerProperties.dynamicVariablePrefix) {
-    dynamicVariablePrefix = trackerProperties.dynamicVariablePrefix;
-  }
 
   Object.keys(trackerProperties).forEach(function(propertyName) {
     var transform = transformers[propertyName];
     var value = trackerProperties[propertyName];
 
     if (transform) {
-      transform(newProperties, propertyName, value);
+      transform(newProperties, propertyName, trackerProperties);
     } else {
       newProperties[propertyName] = value;
     }
