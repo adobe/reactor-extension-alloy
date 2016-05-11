@@ -30,10 +30,13 @@ var isVisitorIdInstalled = function() {
 };
 
 var linkVisitorId = function(tracker) {
-  if (isVisitorIdInstalled) {
+  if (isVisitorIdInstalled && getVisitorIdInstance) {
     return getVisitorIdInstance().then(function(visitorIdInstance) {
       logger.info('Setting Visitor ID instance on the tracker.');
       tracker.visitor = visitorIdInstance;
+      return tracker;
+    }, function() {
+      logger.error('Cannot link Visitor ID instance.');
       return tracker;
     });
   }
