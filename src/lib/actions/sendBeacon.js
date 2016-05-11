@@ -39,7 +39,7 @@ var sendBeacon = function(tracker, settings, targetElement) {
   }
 };
 
-module.exports = function(settings, event, targetElement) {
+module.exports = function(settings, targetElement) {
   var configurations = settings.extensionConfigurationIds ||
     Object.keys(getExtension('adobe-analytics').getConfigurations());
 

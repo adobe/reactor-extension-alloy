@@ -7,7 +7,7 @@ var adobeAnalyticsExtension = getExtension('adobe-analytics');
 var getTracker = adobeAnalyticsExtension.getHelper('get-tracker');
 var applyTrackerVariables = adobeAnalyticsExtension.getHelper('apply-tracker-variables');
 
-module.exports = function(settings, event, targetElement) {
+module.exports = function(settings, targetElement, event) {
   var configurations = settings.extensionConfigurationIds ||
     Object.keys(adobeAnalyticsExtension.getConfigurations());
 
