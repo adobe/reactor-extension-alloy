@@ -9,6 +9,12 @@ var window = require('window');
 var APP_MEASUREMENT_URL =
   'https://assets.adobedtm.com/activation/libs/app-measurement/1.6/AppMeasurement.js';
 
+var LIB_TYPES = {
+  MANAGED: 'managed',
+  PREINSTALLED: 'preinstalled',
+  REMOTE: 'remote',
+  CUSTOM: 'custom'
+};
 
 var loadAppMeasurementScript = function(url) {
   logger.info('Loading AppMeasurement script from: ' + url + '.');
@@ -117,21 +123,21 @@ module.exports = function(configuration) {
   var url;
 
   switch (configuration.libraryCode.type) {
-    case 'managed':
+    case LIB_TYPES.MANAGED:
       return loadManagedLibrary(configuration);
       break;
 
-    case 'preinstalled':
+    case LIB_TYPES.PREINSTALLED:
       return detectPreinstalledLibrary(configuration);
       break;
 
-    case 'custom':
+    case LIB_TYPES.CUSTOM:
       url = configuration.libraryCode.script;
 
       return loadRemoteLibrary(url, configuration);
       break;
 
-    case 'remote':
+    case LIB_TYPES.REMOTE:
       url = window.location.protocol === 'https:' ?
         configuration.libraryCode.httpsUrl : configuration.libraryCode.httpUrl;
 
