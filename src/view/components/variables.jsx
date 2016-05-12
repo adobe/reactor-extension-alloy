@@ -22,17 +22,13 @@ export default class Variables extends React.Component {
 
     return (
       <div>
-        <section>
-          <h4 className="coral-Heading coral-Heading--4">eVars</h4>
-          <VariablesEditor varType="eVar" varTypePlural="eVars" fields={this.props.fields}/>
-        </section>
+        <span className="Label">eVars</span>
+        <VariablesEditor varType="eVar" varTypePlural="eVars" fields={this.props.fields}/>
 
-        <section>
-          <h4 className="coral-Heading coral-Heading--4 u-gapTop">Props</h4>
-          <VariablesEditor varType="prop" varTypePlural="props" fields={this.props.fields}/>
-        </section>
+        <span className="Label u-gapTop">Props</span>
+        <VariablesEditor varType="prop" varTypePlural="props" fields={this.props.fields}/>
 
-        <h4 className="coral-Heading coral-Heading--4 u-gapTop">Hierarchy</h4>
+        <span className="Label u-gapTop">Hierarchy</span>
         <HierarchiesEditor fields={this.props.fields}/>
 
         <label>
