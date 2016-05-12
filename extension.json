@@ -508,6 +508,14 @@
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
         "properties": {
+          "extensionConfigurationIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          },
           "trackerProperties": {
             "properties": {
               "server": {
@@ -774,6 +782,9 @@
         "oneOf": [
           {
             "properties": {
+              "extensionConfigurationIds": {
+                "$ref": "#/definitions/extensionConfigurationIds"
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -788,6 +799,9 @@
           },
           {
             "properties": {
+              "extensionConfigurationIds": {
+                "$ref": "#/definitions/extensionConfigurationIds"
+              },
               "type": {
                 "type": "string",
                 "enum": [
@@ -812,7 +826,17 @@
             ],
             "additionalProperties": false
           }
-        ]
+        ],
+        "definitions": {
+          "extensionConfigurationIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        }
       }
     }
   ],

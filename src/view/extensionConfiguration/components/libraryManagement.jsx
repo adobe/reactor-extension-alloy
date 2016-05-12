@@ -1,9 +1,9 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper, ErrorTip, InfoTip } from '@reactor/react-components';
-import ENVIRONMENTS from '../enums/environments';
+import ENVIRONMENTS from '../../enums/environments';
 
-import ReportSuite from './components/reportSuite';
+import ReportSuite from './reportSuite';
 
 const libTypes = {
   MANAGED: 'managed',

@@ -4,7 +4,7 @@ import mergeFormConfigs from '../utils/mergeFormConfigs';
 import openDataElementSelector from '../utils/openDataElementSelector';
 import { DataElementSelectorButton } from '@reactor/react-components';
 import VariablesEditor, { getFormConfig as getVariableEditorFormConfig } from './variablesEditor';
-import HierarchiesEditor, { formConfig as hierarchiesFormConfig } from './components/hierarchiesEditor';
+import HierarchiesEditor, { formConfig as hierarchiesFormConfig } from './hierarchiesEditor';
 
 const DYNAMIC_VARIABLE_PREFIX_DEFAULT = 'D=';
 

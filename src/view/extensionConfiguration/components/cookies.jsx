@@ -1,7 +1,7 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
-import openDataElementSelector from '../utils/openDataElementSelector';
+import openDataElementSelector from '../../utils/openDataElementSelector';
 
 const cookieLifetimePeriod = {
   DEFAULT: 'DEFAULT',
