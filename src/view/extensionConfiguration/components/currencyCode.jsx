@@ -50,7 +50,7 @@ export default class CurrencyCode extends React.Component {
           {
             currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHOD.PRESET ?
               <div className="FieldSubset">
-                <Coral.Select className="Field--large" {...currencyCode}>
+                <Coral.Select className="Field--long" {...currencyCode}>
                   {presetOptions}
                 </Coral.Select>
               </div> : null

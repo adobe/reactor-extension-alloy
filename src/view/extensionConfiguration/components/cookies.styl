@@ -1,20 +1,19 @@
+$col-width = 380*$px;
+
 .Cookies {
-  clearfix();
+  display: flex;
+  flex-wrap: wrap;
+  // To remove the extra space caused from the margin-bottom on each field.
+  margin-bottom: -8px;
+  max-width: $col-width*2;
 }
 
 .Cookies-field {
-  width: 250*$px;
+  width: $col-width;
+  margin-bottom: 8*$px;
 }
 
-.Cookies-column {
-  float: left;
-  width: 350*$px;
-}
-
-.Cookies-cookieLifetime {
-  width: 115*$px;
-}
-
+.Cookies-cookieLifetime,
 .Cookies-cookieLifetimeSeconds {
-  width: 127*$px;
+  width: 156*$px;
 }

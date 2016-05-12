@@ -26,7 +26,7 @@ class ConfigurationSelector extends React.Component {
     return (
       <div>
         <h4 className="coral-Heading coral-Heading--4">
-          Set variables for trackers corresponding to:
+          Apply variables for the following extension configurations
         </h4>
         <div>
           <Coral.Radio

@@ -22,23 +22,19 @@ export default class Variables extends React.Component {
 
     return (
       <div>
-        <section>
-          <h4 className="coral-Heading coral-Heading--4">eVars</h4>
-          <VariablesEditor varType="eVar" varTypePlural="eVars" fields={this.props.fields}/>
-        </section>
+        <span className="Label">eVars</span>
+        <VariablesEditor varType="eVar" varTypePlural="eVars" fields={this.props.fields}/>
 
-        <section>
-          <h4 className="coral-Heading coral-Heading--4 u-gapTop">Props</h4>
-          <VariablesEditor varType="prop" varTypePlural="props" fields={this.props.fields}/>
-        </section>
+        <span className="Label u-gapTop">Props</span>
+        <VariablesEditor varType="prop" varTypePlural="props" fields={this.props.fields}/>
 
-        <h4 className="coral-Heading coral-Heading--4 u-gapTop">Hierarchy</h4>
+        <span className="Label u-gapTop">Hierarchy</span>
         <HierarchiesEditor fields={this.props.fields}/>
 
         <label>
           <span className="Label u-gapTop">Dynamic Variable Prefix</span>
           <div>
-            <Coral.Textfield className="Field--large" {...dynamicVariablePrefix}/>
+            <Coral.Textfield className="Field--long" {...dynamicVariablePrefix}/>
             <DataElementSelectorButton
               onClick={openDataElementSelector.bind(this, dynamicVariablePrefix)}/>
           </div>
@@ -48,7 +44,7 @@ export default class Variables extends React.Component {
           <span className="Label u-gapTop">Page Name</span>
           <div>
             <Coral.Textfield
-              className="Field--large"
+              className="Field--long"
               {...pageName}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageName)}/>
           </div>
@@ -58,7 +54,7 @@ export default class Variables extends React.Component {
           <span className="Label u-gapTop">Page URL</span>
           <div>
             <Coral.Textfield
-              className="Field--large"
+              className="Field--long"
               {...pageURL}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageURL)}/>
           </div>
@@ -68,7 +64,7 @@ export default class Variables extends React.Component {
           <span className="Label u-gapTop">Server</span>
           <div>
             <Coral.Textfield
-              className="Field--large"
+              className="Field--long"
               {...server}/>
             <DataElementSelectorButton
               onClick={openDataElementSelector.bind(this, server)}/>
@@ -79,7 +75,7 @@ export default class Variables extends React.Component {
           <span className="Label u-gapTop">Channel</span>
           <div>
             <Coral.Textfield
-              className="Field--large"
+              className="Field--long"
               {...channel}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, channel)}/>
           </div>
@@ -89,7 +85,7 @@ export default class Variables extends React.Component {
           <span className="Label u-gapTop">Referrer</span>
           <div>
             <Coral.Textfield
-              className="Field--large"
+              className="Field--long"
               {...referrer}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, referrer)}/>
           </div>

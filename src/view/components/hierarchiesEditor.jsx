@@ -40,13 +40,11 @@ export default class PageviewsAndContent extends React.Component {
       } = hierarchy;
 
       return (
-        <div key={id.value} className="u-gapBottom2x">
+        <div key={id.value} className="HierarchiesEditor-hierarchy">
           <ValidationWrapper
             error={name.touched && name.error}
-            className="u-gapRight">
-            <Coral.Select
-              className="HierarchiesEditor-name"
-              {...name}>
+            className="u-gapRight2x">
+            <Coral.Select {...name} className="Field--short">
               <Coral.Select.Item value="hier1">Hierarchy 1</Coral.Select.Item>
               <Coral.Select.Item value="hier2">Hierarchy 2</Coral.Select.Item>
               <Coral.Select.Item value="hier3">Hierarchy 3</Coral.Select.Item>
@@ -55,46 +53,16 @@ export default class PageviewsAndContent extends React.Component {
             </Coral.Select>
           </ValidationWrapper>
 
-          <Coral.Textfield
-            className="HierarchiesEditor-section"
-            {...sections[0]}/>
-          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[0])}/>
-          <Coral.Icon
-            className="HierarchiesEditor-chevron"
-            icon="chevronRight"
-            size="XS"/>
-
-          <Coral.Textfield
-            className="HierarchiesEditor-section"
-            {...sections[1]}/>
-          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[1])}/>
-          <Coral.Icon
-            className="HierarchiesEditor-chevron"
-            icon="chevronRight"
-            size="XS"/>
-
-          <Coral.Textfield
-            className="HierarchiesEditor-section"
-            {...sections[2]}/>
-          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[2])}/>
-          <Coral.Icon
-            className="HierarchiesEditor-chevron"
-            icon="chevronRight"
-            size="XS"/>
-
-          <Coral.Textfield
-            className="HierarchiesEditor-section"
-            {...sections[3]}/>
-          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[3])}/>
-
-          <span className="u-gapRight">Delimiter</span>
-          <ValidationWrapper
-            error={delimiter.touched && delimiter.error}
-            className="u-gapRight">
-            <Coral.Textfield
-              className="HierarchiesEditor-delimiter"
-              {...delimiter}/>
-          </ValidationWrapper>
+          <label>
+            <span className="Label u-gapRight">Delimiter</span>
+            <ValidationWrapper
+              error={delimiter.touched && delimiter.error}
+              className="u-gapRight">
+              <Coral.Textfield
+                className="Field--short"
+                {...delimiter}/>
+            </ValidationWrapper>
+          </label>
 
           {
             index !== hierarchies.length - 1 ?
@@ -105,6 +73,36 @@ export default class PageviewsAndContent extends React.Component {
                 iconSize="XS"
                 onClick={this.removeHierarchy.bind(this, index)}/> : null
           }
+
+          <div className="HierarchiesEditor-section">
+            <Coral.Textfield
+              {...sections[0]}/>
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[0])}/>
+          </div>
+
+          <div className="HierarchiesEditor-section">
+            <span 
+              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--2"/>
+            <Coral.Textfield
+              {...sections[1]}/>
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[1])}/>
+          </div>
+
+          <div className="HierarchiesEditor-section">
+            <span
+              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--3"/>
+            <Coral.Textfield
+              {...sections[2]}/>
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[2])}/>
+          </div>
+
+          <div className="HierarchiesEditor-section">
+            <span
+              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--4"/>
+            <Coral.Textfield
+              {...sections[3]}/>
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[3])}/>
+          </div>
         </div>
       );
     });

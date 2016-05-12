@@ -52,14 +52,14 @@ export default class VariablesEditor extends React.Component {
             error={variable.name.touched && variable.name.error}
             className="u-gapRight2x">
             <Coral.Select
-              className="VariablesEditor-smallField"
+              className="Field--short"
               placeholder={namePlaceholder}
               {...variable.name}>
               {nameOptions}
             </Coral.Select>
           </ValidationWrapper>
           <Coral.Select
-            className="VariablesEditor-smallField u-gapRight2x"
+            className="Field--short u-gapRight2x"
             {...variable.type}>
             <Coral.Select.Item
               value="value">
@@ -74,10 +74,10 @@ export default class VariablesEditor extends React.Component {
             {
               variable.type.value === 'value' ?
                 <Coral.Textfield
-                  className="VariablesEditor-smallField"
+                  className="Field--short"
                   {...variable.value}/> :
                 <Coral.Select
-                  className="VariablesEditor-smallField"
+                  className="Field--short"
                   placeholder="Select variable"
                   {...variable.value}>
                   {valueOptions}
