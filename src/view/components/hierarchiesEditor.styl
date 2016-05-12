@@ -1,17 +1,32 @@
-.HierarchiesEditor-name {
-  width: 110*$px;
+$nest-indicator-base-inset = 12*$px;
+$nest-indicator-extra-inset = 40*$px;
+
+.HierarchiesEditor-hierarchy {
+  margin-bottom: 36*$px;
 }
 
 .HierarchiesEditor-section {
-  width: 120*$px;
+  margin-top: 8px;
 }
 
-.HierarchiesEditor-chevron {
-  margin: 11*$px 12*$px 0 2*$px;
-  color: #C4C4C4;
+.HierarchiesEditor-nestIndicator {
+  display: inline-block;
+  border: 2px solid #717171;
+  border-top: 0;
+  border-right: 0;
+  width: 16*$px;
+  height: 16*$px;
+  margin-right: 12*$px;
 }
 
-.HierarchiesEditor-delimiter {
-  min-width: 50*$px; // Overriding CoralUI
-  width: 50*$px;
+.HierarchiesEditor-nestIndicator--2 {
+  margin-left: $nest-indicator-base-inset;
+}
+
+.HierarchiesEditor-nestIndicator--3 {
+  margin-left: $nest-indicator-base-inset + $nest-indicator-extra-inset;
+}
+
+.HierarchiesEditor-nestIndicator--4 {
+  margin-left: $nest-indicator-base-inset + ($nest-indicator-extra-inset * 2);
 }
