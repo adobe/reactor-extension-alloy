@@ -24,70 +24,68 @@ export default class Cookies extends React.Component {
 
     return (
       <div className="Cookies">
-        <div className="Cookies-column">
-          <label>
-            <span className="Label">Visitor ID</span>
-            <div>
-              <Coral.Textfield className="Field--long" {...visitorID}/>
-              <DataElementSelectorButton
-                onClick={openDataElementSelector.bind(this, visitorID)}/>
-            </div>
-          </label>
-          <label>
-            <span className="Label u-gapTop">Domain Periods</span>
-            <div>
-              <Coral.Textfield className="Field--long" {...cookieDomainPeriods}/>
-              <DataElementSelectorButton
-                onClick={openDataElementSelector.bind(this, cookieDomainPeriods)}/>
-            </div>
-          </label>
-          <label>
-            <span className="Label u-gapTop">Transaction ID</span>
-            <div>
-              <Coral.Textfield className="Field--long" {...transactionID}/>
-              <DataElementSelectorButton
-                onClick={openDataElementSelector.bind(this, transactionID)}/>
-            </div>
-          </label>
-        </div>
-        <div className="Cookies-column">
-          <label>
-            <span className="Label">Visitor Namespace</span>
-            <div>
-              <Coral.Textfield className="Field--long" {...visitorNamespace}/>
-              <DataElementSelectorButton
-                onClick={openDataElementSelector.bind(this, visitorNamespace)}/>
-            </div>
-          </label>
-          <label>
-            <span className="Label u-gapTop">First-party Domain Periods</span>
-            <div>
-              <Coral.Textfield className="Field--long" {...fpCookieDomainPeriods}/>
-              <DataElementSelectorButton
-                onClick={openDataElementSelector.bind(this, fpCookieDomainPeriods)}/>
-            </div>
-          </label>
-          <label>
-            <span className="Label u-gapTop">Cookie Lifetime</span>
-            <div>
-              <Coral.Select className="Cookies-cookieLifetime u-gapRight" {...cookieLifetime}>
-                <Coral.Select.Item value={cookieLifetimePeriod.DEFAULT}>Default</Coral.Select.Item>
-                <Coral.Select.Item value={cookieLifetimePeriod.NONE}>None</Coral.Select.Item>
-                <Coral.Select.Item value={cookieLifetimePeriod.SESSION}>Session</Coral.Select.Item>
-                <Coral.Select.Item value={cookieLifetimePeriod.SECONDS}>Seconds</Coral.Select.Item>
-              </Coral.Select>
-              {
-                cookieLifetime.value === cookieLifetimePeriod.SECONDS ?
-                  <ValidationWrapper
-                      error={cookieLifetimeSeconds.touched && cookieLifetimeSeconds.error}>
-                    <Coral.Textfield className="Cookies-cookieLifetimeSeconds"
-                      {...cookieLifetimeSeconds}/>
-                    <DataElementSelectorButton
-                      onClick={openDataElementSelector.bind(this, cookieLifetimeSeconds)}/>
-                  </ValidationWrapper> : null
-              }
-             </div>
-          </label>
+        <label className="Cookies-field">
+          <span className="Label">Visitor ID</span>
+          <div>
+            <Coral.Textfield className="Field--long" {...visitorID}/>
+            <DataElementSelectorButton
+              onClick={openDataElementSelector.bind(this, visitorID)}/>
+          </div>
+        </label>
+        <label className="Cookies-field">
+          <span className="Label">Visitor Namespace</span>
+          <div>
+            <Coral.Textfield className="Field--long" {...visitorNamespace}/>
+            <DataElementSelectorButton
+              onClick={openDataElementSelector.bind(this, visitorNamespace)}/>
+          </div>
+        </label>
+        <label className="Cookies-field">
+          <span className="Label">Domain Periods</span>
+          <div>
+            <Coral.Textfield className="Field--long" {...cookieDomainPeriods}/>
+            <DataElementSelectorButton
+              onClick={openDataElementSelector.bind(this, cookieDomainPeriods)}/>
+          </div>
+        </label>
+        <label className="Cookies-field">
+          <span className="Label">First-party Domain Periods</span>
+          <div>
+            <Coral.Textfield className="Field--long" {...fpCookieDomainPeriods}/>
+            <DataElementSelectorButton
+              onClick={openDataElementSelector.bind(this, fpCookieDomainPeriods)}/>
+          </div>
+        </label>
+        <label className="Cookies-field">
+          <span className="Label">Transaction ID</span>
+          <div>
+            <Coral.Textfield className="Field--long" {...transactionID}/>
+            <DataElementSelectorButton
+              onClick={openDataElementSelector.bind(this, transactionID)}/>
+          </div>
+        </label>
+        <div className="Cookies-field">
+          <label className="Label" htmlFor="cookieLifetimeField">Cookie Lifetime</label>
+          <div>
+            <Coral.Select id="cookieLifetimeField"
+              className="Cookies-cookieLifetime u-gapRight"
+              {...cookieLifetime}>
+              <Coral.Select.Item value={cookieLifetimePeriod.DEFAULT}>Default</Coral.Select.Item>
+              <Coral.Select.Item value={cookieLifetimePeriod.NONE}>None</Coral.Select.Item>
+              <Coral.Select.Item value={cookieLifetimePeriod.SESSION}>Session</Coral.Select.Item>
+              <Coral.Select.Item value={cookieLifetimePeriod.SECONDS}>Seconds</Coral.Select.Item>
+            </Coral.Select>
+            {
+              cookieLifetime.value === cookieLifetimePeriod.SECONDS ?
+                <ValidationWrapper
+                    error={cookieLifetimeSeconds.touched && cookieLifetimeSeconds.error}>
+                  <Coral.Textfield className="Cookies-cookieLifetimeSeconds"
+                    {...cookieLifetimeSeconds}/>
+                  <DataElementSelectorButton
+                    onClick={openDataElementSelector.bind(this, cookieLifetimeSeconds)}/>
+                </ValidationWrapper> : null
+            }
+           </div>
         </div>
       </div>
     );
