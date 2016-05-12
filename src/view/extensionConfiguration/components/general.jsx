@@ -1,11 +1,11 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
-import mergeFormConfigs from '../utils/mergeFormConfigs';
+import mergeFormConfigs from '../../utils/mergeFormConfigs';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
-import openDataElementSelector from '../utils/openDataElementSelector';
-import CharSet, { formConfig as charSetFormConfig } from './components/charSet';
-import CurrencyCode, { formConfig as currencyCodeFormConfig } from './components/currencyCode';
-import ENVIRONMENTS from '../enums/environments';
+import openDataElementSelector from '../../utils/openDataElementSelector';
+import CharSet, { formConfig as charSetFormConfig } from './charSet';
+import CurrencyCode, { formConfig as currencyCodeFormConfig } from './currencyCode';
+import ENVIRONMENTS from '../../enums/environments';
 
 // Array instead of object because order is important.
 const DATA_CENTERS = [

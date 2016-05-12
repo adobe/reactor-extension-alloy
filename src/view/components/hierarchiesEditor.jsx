@@ -1,8 +1,8 @@
 import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
-import openDataElementSelector from '../../utils/openDataElementSelector';
-import createId from '../../utils/createId';
+import openDataElementSelector from '../utils/openDataElementSelector';
+import createId from '../utils/createId';
 
 const setDefaultsForHierarchy = hierarchy => {
   hierarchy.id = hierarchy.id || createId();

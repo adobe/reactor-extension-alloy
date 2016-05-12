@@ -2,12 +2,12 @@ import React from 'react';
 import Coral from '@coralui/coralui-support-reduxform';
 import extensionViewReduxForm from '../extensionViewReduxForm';
 import mergeFormConfigs from '../utils/mergeFormConfigs';
-import LibraryManagement, { formConfig as libraryManagementFormConfig } from './libraryManagement';
-import General, { formConfig as generalFormConfig } from './general';
-import Variables, { formConfig as variablesFormConfig } from './variables';
-import LinkTracking, { formConfig as linkTrackingFormConfig } from './linkTracking';
-import Cookies, { formConfig as cookiesFormConfig } from './cookies';
-import CustomSetup, { formConfig as customSetupFormConfig } from './customSetup.jsx';
+import LibraryManagement, { formConfig as libraryManagementFormConfig } from './components/libraryManagement';
+import General, { formConfig as generalFormConfig } from './components/general';
+import Variables, { formConfig as variablesFormConfig } from '../components/variables';
+import LinkTracking, { formConfig as linkTrackingFormConfig } from './components/linkTracking';
+import Cookies, { formConfig as cookiesFormConfig } from './components/cookies';
+import CustomSetup, { formConfig as customSetupFormConfig } from './components/customSetup.jsx';
 
 class ExtensionConfiguration extends React.Component {
   render() {

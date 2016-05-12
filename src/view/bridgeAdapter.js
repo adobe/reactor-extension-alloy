@@ -17,6 +17,7 @@ export default (extensionBridge, store) => {
 
       store.dispatch(actionCreators.init({
         propertySettings: options.propertySettings,
+        extensionConfigurations: options.extensionConfigurations,
 
         // initialValues will get set on the state and eventually picked up by redux-form.
         // See extensionViewReduxForm for how they get from the state into redux-form.
