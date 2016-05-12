@@ -66,7 +66,7 @@ export default class TagListEditor extends React.Component {
         <div>
           <Coral.Textfield
             ref="valueField"
-            className="TagListEditor-valueInput"
+            className="Field--long"
             onKeyUp={this.onNewValueChange}
             onKeyPress={this.handleKeyPress}
             value={this.state.newValue}

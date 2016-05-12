@@ -62,7 +62,7 @@ export default class General extends React.Component {
           <div>
             <ValidationWrapper
               error={trackingServer.touched && trackingServer.error}>
-              <Coral.Textfield className="Field--large" {...trackingServer}/>
+              <Coral.Textfield className="Field--long" {...trackingServer}/>
             </ValidationWrapper>
             <DataElementSelectorButton
               onClick={openDataElementSelector.bind(this, trackingServer)}/>
@@ -73,7 +73,7 @@ export default class General extends React.Component {
           <div>
             <ValidationWrapper
               error={trackingServerSecure.touched && trackingServerSecure.error}>
-              <Coral.Textfield className="Field--large" {...trackingServerSecure}/>
+              <Coral.Textfield className="Field--long" {...trackingServerSecure}/>
             </ValidationWrapper>
             <DataElementSelectorButton
               onClick={openDataElementSelector.bind(this, trackingServerSecure)}/>

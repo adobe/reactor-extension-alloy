@@ -160,7 +160,10 @@ export default class LibraryManagement extends React.Component {
                   <div>
                     <ValidationWrapper
                       error={httpUrl.touched && httpUrl.error}>
-                      <Coral.Textfield {...httpUrl} placeholder="http://"/>
+                      <Coral.Textfield
+                        {...httpUrl}
+                        className="Field--long"
+                        placeholder="http://"/>
                     </ValidationWrapper>
                   </div>
                 </label>
@@ -169,7 +172,10 @@ export default class LibraryManagement extends React.Component {
                   <div>
                     <ValidationWrapper
                       error={httpsUrl.touched && httpsUrl.error}>
-                      <Coral.Textfield {...httpsUrl} placeholder="https://"/>
+                      <Coral.Textfield
+                        {...httpsUrl}
+                        className="Field--long"
+                        placeholder="https://"/>
                     </ValidationWrapper>
                   </div>
                 </label>

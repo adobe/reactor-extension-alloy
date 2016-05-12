@@ -28,7 +28,7 @@ export default class Cookies extends React.Component {
           <label>
             <span className="Label">Visitor ID</span>
             <div>
-              <Coral.Textfield className="Cookies-field" {...visitorID}/>
+              <Coral.Textfield className="Field--long" {...visitorID}/>
               <DataElementSelectorButton
                 onClick={openDataElementSelector.bind(this, visitorID)}/>
             </div>
@@ -36,7 +36,7 @@ export default class Cookies extends React.Component {
           <label>
             <span className="Label u-gapTop">Domain Periods</span>
             <div>
-              <Coral.Textfield className="Cookies-field" {...cookieDomainPeriods}/>
+              <Coral.Textfield className="Field--long" {...cookieDomainPeriods}/>
               <DataElementSelectorButton
                 onClick={openDataElementSelector.bind(this, cookieDomainPeriods)}/>
             </div>
@@ -44,7 +44,7 @@ export default class Cookies extends React.Component {
           <label>
             <span className="Label u-gapTop">Transaction ID</span>
             <div>
-              <Coral.Textfield className="Cookies-field" {...transactionID}/>
+              <Coral.Textfield className="Field--long" {...transactionID}/>
               <DataElementSelectorButton
                 onClick={openDataElementSelector.bind(this, transactionID)}/>
             </div>
@@ -54,7 +54,7 @@ export default class Cookies extends React.Component {
           <label>
             <span className="Label">Visitor Namespace</span>
             <div>
-              <Coral.Textfield className="Cookies-field" {...visitorNamespace}/>
+              <Coral.Textfield className="Field--long" {...visitorNamespace}/>
               <DataElementSelectorButton
                 onClick={openDataElementSelector.bind(this, visitorNamespace)}/>
             </div>
@@ -62,7 +62,7 @@ export default class Cookies extends React.Component {
           <label>
             <span className="Label u-gapTop">First-party Domain Periods</span>
             <div>
-              <Coral.Textfield className="Cookies-field" {...fpCookieDomainPeriods}/>
+              <Coral.Textfield className="Field--long" {...fpCookieDomainPeriods}/>
               <DataElementSelectorButton
                 onClick={openDataElementSelector.bind(this, fpCookieDomainPeriods)}/>
             </div>
