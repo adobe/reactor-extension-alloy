@@ -35,5 +35,5 @@ module.exports = (...formConfigs) => {
           errors;
       }, errors);
     }
-  }
+  };
 };

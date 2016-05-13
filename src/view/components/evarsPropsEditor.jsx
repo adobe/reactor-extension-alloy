@@ -125,7 +125,7 @@ export const getFormConfig = (varType, varTypePlural) => {
 
       variables.forEach(variable => {
         variable.id = createId();
-        variable.type = variable.type || 'value'
+        variable.type = variable.type || 'value';
       });
 
       return {
