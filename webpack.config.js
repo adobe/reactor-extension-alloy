@@ -16,7 +16,6 @@ module.exports = {
       {
         test: /\.jsx?$/,
         include: /src\/view/,
-        exclude: /__tests__/,
         loader: 'babel-loader',
         query: {
           presets: ['react', 'es2015', 'stage-0']

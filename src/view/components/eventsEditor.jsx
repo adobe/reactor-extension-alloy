@@ -19,7 +19,7 @@ const CONTEXT_EVENTS = [
 
 export default class EventsEditor extends React.Component {
   createOption = value => {
-    return <Coral.Select.Item key={value} value={value}>{value}</Coral.Select.Item>
+    return <Coral.Select.Item key={value} value={value}>{value}</Coral.Select.Item>;
   };
 
   createOptions = () => {
@@ -91,9 +91,9 @@ export default class EventsEditor extends React.Component {
 
 export const formConfig = {
   fields: [
-    `trackerProperties.events[].id`,
-    `trackerProperties.events[].name`,
-    `trackerProperties.events[].value`
+    'trackerProperties.events[].id',
+    'trackerProperties.events[].name',
+    'trackerProperties.events[].value'
   ],
   settingsToFormValues(values, options) {
     let {
@@ -133,7 +133,7 @@ export const formConfig = {
       };
 
       if (event.value) {
-        trimmedEvent.value = event.value
+        trimmedEvent.value = event.value;
       }
 
       return trimmedEvent;

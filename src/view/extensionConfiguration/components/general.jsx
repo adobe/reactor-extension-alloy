@@ -48,7 +48,8 @@ export default class General extends React.Component {
 
     return (
       <div>
-        <Coral.Checkbox {...euComplianceEnabled}>Enable EU compliance for Adobe Analytics</Coral.Checkbox>
+        <Coral.Checkbox
+          {...euComplianceEnabled}>Enable EU compliance for Adobe Analytics</Coral.Checkbox>
         <div>
           <h4 className="coral-Heading coral-Heading--4 u-gapTop">Character Set</h4>
           <CharSet fields={this.props.fields}/>

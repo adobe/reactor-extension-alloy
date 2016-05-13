@@ -215,7 +215,7 @@ export const formConfig = mergeFormConfigs(
         trackerProperties.campaign = {
           type: campaign.type,
           value: campaign.value
-        }
+        };
       }
 
       return {
