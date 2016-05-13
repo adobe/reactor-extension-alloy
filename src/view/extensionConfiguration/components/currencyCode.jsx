@@ -4,7 +4,7 @@ import { DataElementSelectorButton } from '@reactor/react-components';
 import openDataElementSelector from '../../utils/openDataElementSelector';
 import CURRENCY_CODE_PRESETS from '../../enums/currencyCodes';
 
-const CURRENCY_CODE_INPUT_METHOD = {
+const CURRENCY_CODE_INPUT_METHODS = {
   PRESET: 'preset',
   CUSTOM: 'custom'
 };
@@ -18,7 +18,9 @@ export default class CurrencyCode extends React.Component {
       currencyCode
     } = this.props.fields.trackerProperties;
 
-    currencyCode.onChange(value === CURRENCY_CODE_INPUT_METHOD.PRESET ? CURRENCY_CODE_DEFAULT : '');
+    currencyCode.onChange(
+      value === CURRENCY_CODE_INPUT_METHODS.PRESET ? CURRENCY_CODE_DEFAULT : ''
+    );
     currencyCodeInputMethod.onChange(value);
   };
 
@@ -43,12 +45,12 @@ export default class CurrencyCode extends React.Component {
           <Coral.Radio
             {...currencyCodeInputMethod}
             onChange={this.onTypeChange}
-            value={CURRENCY_CODE_INPUT_METHOD.PRESET}
-            checked={currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHOD.PRESET}>
+            value={CURRENCY_CODE_INPUT_METHODS.PRESET}
+            checked={currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.PRESET}>
             Preset
           </Coral.Radio>
           {
-            currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHOD.PRESET ?
+            currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.PRESET ?
               <div className="FieldSubset">
                 <Coral.Select className="Field--long" {...currencyCode}>
                   {presetOptions}
@@ -60,12 +62,12 @@ export default class CurrencyCode extends React.Component {
           <Coral.Radio
             {...currencyCodeInputMethod}
             onChange={this.onTypeChange}
-            value={CURRENCY_CODE_INPUT_METHOD.CUSTOM}
-            checked={currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHOD.CUSTOM}>
+            value={CURRENCY_CODE_INPUT_METHODS.CUSTOM}
+            checked={currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM}>
             Custom
           </Coral.Radio>
           {
-            currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHOD.CUSTOM ?
+            currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
               <div className="FieldSubset">
                 <Coral.Textfield {...currencyCode}/>
                 <DataElementSelectorButton
@@ -90,8 +92,8 @@ export const formConfig = {
 
     const currencyCodeInputMethod =
       !currencyCode || CURRENCY_CODE_PRESETS.indexOf(currencyCode) !== -1 ?
-        CURRENCY_CODE_INPUT_METHOD.PRESET :
-        CURRENCY_CODE_INPUT_METHOD.CUSTOM;
+        CURRENCY_CODE_INPUT_METHODS.PRESET :
+        CURRENCY_CODE_INPUT_METHODS.CUSTOM;
 
     return {
       ...values,

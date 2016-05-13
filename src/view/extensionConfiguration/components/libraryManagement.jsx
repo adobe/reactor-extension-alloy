@@ -5,14 +5,14 @@ import ENVIRONMENTS from '../../enums/environments';
 
 import ReportSuite from './reportSuite';
 
-const libTypes = {
+const LIB_TYPES = {
   MANAGED: 'managed',
   PREINSTALLED: 'preinstalled',
   REMOTE: 'remote',
   CUSTOM: 'custom'
 };
 
-const loadPhases = {
+const LOAD_PHASES = {
   PAGE_TOP: 'pageTop',
   PAGE_BOTTOM: 'pageBottom'
 };
@@ -50,12 +50,12 @@ const LoadPhase = props => {
         <div>
           <Coral.Radio
             {...loadPhase}
-            value={loadPhases.PAGE_TOP}
-            checked={loadPhase.value === loadPhases.PAGE_TOP}>Page Top</Coral.Radio>
+            value={LOAD_PHASES.PAGE_TOP}
+            checked={loadPhase.value === LOAD_PHASES.PAGE_TOP}>Page Top</Coral.Radio>
           <Coral.Radio
             {...loadPhase}
-            value={loadPhases.PAGE_BOTTOM}
-            checked={loadPhase.value === loadPhases.PAGE_BOTTOM}>Page Bottom</Coral.Radio>
+            value={LOAD_PHASES.PAGE_BOTTOM}
+            checked={loadPhase.value === LOAD_PHASES.PAGE_BOTTOM}>Page Bottom</Coral.Radio>
         </div>
       </fieldset>
     </div>
@@ -113,12 +113,12 @@ export default class LibraryManagement extends React.Component {
       <div>
         <Coral.Radio
           {...type}
-          value={libTypes.MANAGED}
-          checked={type.value === libTypes.MANAGED}>
+          value={LIB_TYPES.MANAGED}
+          checked={type.value === LIB_TYPES.MANAGED}>
           Manage the library for me
         </Coral.Radio>
         {
-          type.value === libTypes.MANAGED ?
+          type.value === LIB_TYPES.MANAGED ?
             <div className="FieldSubset">
               <ReportSuites {...this.props.fields.libraryCode.accounts}/>
               <LoadPhase fields={this.props.fields}/>
@@ -128,13 +128,13 @@ export default class LibraryManagement extends React.Component {
         <div>
           <Coral.Radio
             {...type}
-            value={libTypes.PREINSTALLED}
-            checked={type.value === libTypes.PREINSTALLED}>
+            value={LIB_TYPES.PREINSTALLED}
+            checked={type.value === LIB_TYPES.PREINSTALLED}>
             Use the library already installed on the page
           </Coral.Radio>
         </div>
         {
-          type.value === libTypes.PREINSTALLED ?
+          type.value === LIB_TYPES.PREINSTALLED ?
             <div className="FieldSubset">
               <OverwriteReportSuites
                 fields={this.props.fields}
@@ -146,13 +146,13 @@ export default class LibraryManagement extends React.Component {
         <div>
           <Coral.Radio
             {...type}
-            value={libTypes.REMOTE}
-            checked={type.value === libTypes.REMOTE}>
+            value={LIB_TYPES.REMOTE}
+            checked={type.value === LIB_TYPES.REMOTE}>
             Load the library from a custom URL
           </Coral.Radio>
         </div>
         {
-          type.value === libTypes.REMOTE ?
+          type.value === LIB_TYPES.REMOTE ?
             <div className="FieldSubset">
               <div className="u-gapBottom">
                 <label>
@@ -193,13 +193,13 @@ export default class LibraryManagement extends React.Component {
         <div>
           <Coral.Radio
             {...type}
-            value={libTypes.CUSTOM}
-            checked={type.value === libTypes.CUSTOM}>
+            value={LIB_TYPES.CUSTOM}
+            checked={type.value === LIB_TYPES.CUSTOM}>
             Let me provide custom library code
           </Coral.Radio>
         </div>
         {
-          type.value === libTypes.CUSTOM ?
+          type.value === LIB_TYPES.CUSTOM ?
             <div className="FieldSubset">
               <div className="u-gapBottom">
                 <Coral.Button ref="openEditorButton" icon="code" onClick={this.onOpenEditor}>
@@ -254,14 +254,14 @@ export const formConfig = {
       script
     } = options.settings.libraryCode || {};
 
-    const showReportSuites = Boolean(type !== libTypes.MANAGED && accounts);
+    const showReportSuites = Boolean(type !== LIB_TYPES.MANAGED && accounts);
 
     return {
       ...values,
       libraryCode: {
-        type: type || libTypes.MANAGED,
+        type: type || LIB_TYPES.MANAGED,
         trackerVariableName: trackerVariableName || 's',
-        loadPhase: loadPhase || loadPhases.PAGE_BOTTOM,
+        loadPhase: loadPhase || LOAD_PHASES.PAGE_BOTTOM,
         reportSuitesPreconfigured,
         accounts,
         showReportSuites,
@@ -301,21 +301,21 @@ export const formConfig = {
       }
     }
 
-    if (type !== libTypes.PREINSTALLED) {
+    if (type !== LIB_TYPES.PREINSTALLED) {
       libraryCodeSettings.loadPhase = loadPhase;
     }
 
-    if (type !== libTypes.MANAGED) {
+    if (type !== LIB_TYPES.MANAGED) {
       libraryCodeSettings.trackerVariableName = trackerVariableName;
     }
 
-    if (type === libTypes.REMOTE) {
+    if (type === LIB_TYPES.REMOTE) {
       libraryCodeSettings.httpUrl = forcePrefix(httpUrl || '', 'http://');
       libraryCodeSettings.httpsUrl = forcePrefix(httpsUrl || '', 'https://');
       libraryCodeSettings.reportSuitesPreconfigured = reportSuitesPreconfigured;
     }
 
-    if (type === libTypes.CUSTOM) {
+    if (type === LIB_TYPES.CUSTOM) {
       libraryCodeSettings.script = script;
       libraryCodeSettings.reportSuitesPreconfigured = reportSuitesPreconfigured;
     }
@@ -339,7 +339,7 @@ export const formConfig = {
     const libraryCodeErrors = {};
 
     const reportSuitesAreRequired =
-      (type !== libTypes.MANAGED && showReportSuites) || type === libTypes.MANAGED;
+      (type !== LIB_TYPES.MANAGED && showReportSuites) || type === LIB_TYPES.MANAGED;
     const productionAccountsAreMissing = !accounts.production || accounts.production.length === 0;
     if (reportSuitesAreRequired && productionAccountsAreMissing) {
       libraryCodeErrors.accounts = {
@@ -347,11 +347,11 @@ export const formConfig = {
       };
     }
 
-    if (type !== libTypes.MANAGED && !trackerVariableName) {
+    if (type !== LIB_TYPES.MANAGED && !trackerVariableName) {
       libraryCodeErrors.trackerVariableName = 'Please specify a variable name';
     }
 
-    if (type === libTypes.REMOTE) {
+    if (type === LIB_TYPES.REMOTE) {
       if (!httpUrl) {
         libraryCodeErrors.httpUrl = 'Please specify an HTTP URL';
       }
@@ -361,7 +361,7 @@ export const formConfig = {
       }
     }
 
-    if (type === libTypes.CUSTOM && !script) {
+    if (type === LIB_TYPES.CUSTOM && !script) {
       libraryCodeErrors.script = 'Please provide custom code';
     }
 
