@@ -44,7 +44,7 @@ export default class PageviewsAndContent extends React.Component {
           <ValidationWrapper
             error={name.touched && name.error}
             className="u-gapRight2x">
-            <Coral.Select {...name} className="Field--short">
+            <Coral.Select {...name} ref={`hierarchiesSelect${index}`} className="Field--short">
               <Coral.Select.Item value="hier1">Hierarchy 1</Coral.Select.Item>
               <Coral.Select.Item value="hier2">Hierarchy 2</Coral.Select.Item>
               <Coral.Select.Item value="hier3">Hierarchy 3</Coral.Select.Item>
@@ -60,6 +60,7 @@ export default class PageviewsAndContent extends React.Component {
               className="u-gapRight">
               <Coral.Textfield
                 className="Field--short"
+                ref={`delimiter${index}`}
                 {...delimiter}/>
             </ValidationWrapper>
           </label>
@@ -76,6 +77,7 @@ export default class PageviewsAndContent extends React.Component {
 
           <div className="HierarchiesEditor-section">
             <Coral.Textfield
+              ref={`section0${index}`}
               {...sections[0]}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[0])}/>
           </div>
@@ -84,6 +86,7 @@ export default class PageviewsAndContent extends React.Component {
             <span 
               className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--2"/>
             <Coral.Textfield
+              ref={`section1${index}`}
               {...sections[1]}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[1])}/>
           </div>
@@ -92,6 +95,7 @@ export default class PageviewsAndContent extends React.Component {
             <span
               className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--3"/>
             <Coral.Textfield
+              ref={`section2${index}`}
               {...sections[2]}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[2])}/>
           </div>
@@ -100,6 +104,7 @@ export default class PageviewsAndContent extends React.Component {
             <span
               className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--4"/>
             <Coral.Textfield
+              ref={`section3${index}`}
               {...sections[3]}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[3])}/>
           </div>
