@@ -12,7 +12,7 @@ const maxItems = {
   prop: 75
 };
 
-export default class VariablesEditor extends React.Component {
+export default class EvarsPropsEditor extends React.Component {
   createOptions = varType => {
     const options = [];
     const numItems = maxItems[varType];
@@ -87,15 +87,12 @@ export default class VariablesEditor extends React.Component {
               className={classNames({'u-hidden': variable.type.value !== 'value'})}
               onClick={openDataElementSelector.bind(this, variable.value)}/>
           </ValidationWrapper>
-          {
-            index !== variables.length - 1 ?
-              <Coral.Button
-                ref="removeButton"
-                variant="quiet"
-                icon="close"
-                iconSize="XS"
-                onClick={this.removeVariable.bind(this, index)}/> : null
-          }
+          <Coral.Button
+            ref="removeButton"
+            variant="quiet"
+            icon="close"
+            iconSize="XS"
+            onClick={this.removeVariable.bind(this, index)}/>
         </div>
       );
     });

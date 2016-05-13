@@ -3,7 +3,8 @@ import Coral from '@coralui/coralui-support-reduxform';
 import mergeFormConfigs from '../utils/mergeFormConfigs';
 import openDataElementSelector from '../utils/openDataElementSelector';
 import { DataElementSelectorButton } from '@reactor/react-components';
-import VariablesEditor, { getFormConfig as getVariableEditorFormConfig } from './variablesEditor';
+import EvarsPropsEditor, { getFormConfig as getEvarsPropsEditorFormConfig } from './evarsPropsEditor';
+import EventsEditor, { formConfig as eventsFormConfig } from './eventsEditor';
 import HierarchiesEditor, { formConfig as hierarchiesFormConfig } from './hierarchiesEditor';
 
 const DYNAMIC_VARIABLE_PREFIX_DEFAULT = 'D=';
@@ -11,34 +12,51 @@ const DYNAMIC_VARIABLE_PREFIX_DEFAULT = 'D=';
 export default class Variables extends React.Component {
   render() {
     const {
-      dynamicVariablePrefix,
-      pageName,
-      pageURL,
-      server,
-      channel,
-      referrer,
-      campaign,
-    } = this.props.fields.trackerProperties;
+      showDynamicVariablePrefix = true,
+      showEvents = true,
+      fields: {
+        trackerProperties: {
+          dynamicVariablePrefix,
+          pageName,
+          pageURL,
+          server,
+          channel,
+          referrer,
+          campaign
+        }
+      }
+    } = this.props;
 
     return (
       <div>
         <span className="Label">eVars</span>
-        <VariablesEditor varType="eVar" varTypePlural="eVars" fields={this.props.fields}/>
+        <EvarsPropsEditor varType="eVar" varTypePlural="eVars" fields={this.props.fields}/>
 
         <span className="Label u-gapTop">Props</span>
-        <VariablesEditor varType="prop" varTypePlural="props" fields={this.props.fields}/>
+        <EvarsPropsEditor varType="prop" varTypePlural="props" fields={this.props.fields}/>
+
+        {
+          showEvents ?
+            <div>
+              <span className="Label u-gapTop">Events</span>
+              <EventsEditor fields={this.props.fields}/>
+            </div> : null
+        }
 
         <span className="Label u-gapTop">Hierarchy</span>
         <HierarchiesEditor fields={this.props.fields}/>
 
-        <label>
-          <span className="Label u-gapTop">Dynamic Variable Prefix</span>
-          <div>
-            <Coral.Textfield className="Field--long" {...dynamicVariablePrefix}/>
-            <DataElementSelectorButton
-              onClick={openDataElementSelector.bind(this, dynamicVariablePrefix)}/>
-          </div>
-        </label>
+        {
+          showDynamicVariablePrefix ?
+            <label>
+              <span className="Label u-gapTop">Dynamic Variable Prefix</span>
+              <div>
+                <Coral.Textfield className="Field--long" {...dynamicVariablePrefix}/>
+                <DataElementSelectorButton
+                  onClick={openDataElementSelector.bind(this, dynamicVariablePrefix)}/>
+              </div>
+            </label> : null
+        }
 
         <label>
           <span className="Label u-gapTop">Page Name</span>
@@ -111,8 +129,9 @@ export default class Variables extends React.Component {
 }
 
 export const formConfig = mergeFormConfigs(
-  getVariableEditorFormConfig('eVar', 'eVars'),
-  getVariableEditorFormConfig('prop', 'props'),
+  getEvarsPropsEditorFormConfig('eVar', 'eVars'),
+  getEvarsPropsEditorFormConfig('prop', 'props'),
+  eventsFormConfig,
   hierarchiesFormConfig,
   {
     fields: [

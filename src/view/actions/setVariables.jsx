@@ -10,7 +10,7 @@ class SetVariables extends React.Component {
       <div>
         <ConfigurationSelector fields={this.props.fields}/>
         <h4 className="coral-Heading coral-Heading--4 u-gapTop">Variables</h4>
-        <Variables fields={this.props.fields}/>
+        <Variables fields={this.props.fields} showDynamicVariablePrefix={false}/>
       </div>
     );
   }
