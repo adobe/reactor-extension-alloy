@@ -33,7 +33,7 @@ class ExtensionConfiguration extends React.Component {
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>Global Variables</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
-              <Variables fields={this.props.fields}/>
+              <Variables fields={this.props.fields} showEvents={false}/>
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
