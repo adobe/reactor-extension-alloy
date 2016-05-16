@@ -3,7 +3,7 @@ import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import openDataElementSelector from '../../utils/openDataElementSelector';
 
-const cookieLifetimePeriod = {
+const COOKIE_LIFETIME_PERIODS = {
   DEFAULT: 'DEFAULT',
   NONE: 'NONE',
   SESSION: 'SESSION',
@@ -70,13 +70,13 @@ export default class Cookies extends React.Component {
             <Coral.Select id="cookieLifetimeField"
               className="Cookies-cookieLifetime u-gapRight"
               {...cookieLifetime}>
-              <Coral.Select.Item value={cookieLifetimePeriod.DEFAULT}>Default</Coral.Select.Item>
-              <Coral.Select.Item value={cookieLifetimePeriod.NONE}>None</Coral.Select.Item>
-              <Coral.Select.Item value={cookieLifetimePeriod.SESSION}>Session</Coral.Select.Item>
-              <Coral.Select.Item value={cookieLifetimePeriod.SECONDS}>Seconds</Coral.Select.Item>
+              <Coral.Select.Item value={COOKIE_LIFETIME_PERIODS.DEFAULT}>Default</Coral.Select.Item>
+              <Coral.Select.Item value={COOKIE_LIFETIME_PERIODS.NONE}>None</Coral.Select.Item>
+              <Coral.Select.Item value={COOKIE_LIFETIME_PERIODS.SESSION}>Session</Coral.Select.Item>
+              <Coral.Select.Item value={COOKIE_LIFETIME_PERIODS.SECONDS}>Seconds</Coral.Select.Item>
             </Coral.Select>
             {
-              cookieLifetime.value === cookieLifetimePeriod.SECONDS ?
+              cookieLifetime.value === COOKIE_LIFETIME_PERIODS.SECONDS ?
                 <ValidationWrapper
                     error={cookieLifetimeSeconds.touched && cookieLifetimeSeconds.error}>
                   <Coral.Textfield className="Cookies-cookieLifetimeSeconds"
@@ -123,13 +123,13 @@ export const formConfig = {
 
     if (cookieLifetime) {
       switch (cookieLifetime) {
-        case cookieLifetimePeriod.NONE:
-        case cookieLifetimePeriod.SESSION:
+        case COOKIE_LIFETIME_PERIODS.NONE:
+        case COOKIE_LIFETIME_PERIODS.SESSION:
           trackerProperties.cookieLifetime = cookieLifetime;
           break;
         default:
           trackerProperties.cookieLifetimeSeconds = cookieLifetime;
-          trackerProperties.cookieLifetime = cookieLifetimePeriod.SECONDS;
+          trackerProperties.cookieLifetime = COOKIE_LIFETIME_PERIODS.SECONDS;
       }
     }
 
@@ -174,11 +174,11 @@ export const formConfig = {
     }
 
     switch (cookieLifetime) {
-      case cookieLifetimePeriod.NONE:
-      case cookieLifetimePeriod.SESSION:
+      case COOKIE_LIFETIME_PERIODS.NONE:
+      case COOKIE_LIFETIME_PERIODS.SESSION:
         trackerProperties.cookieLifetime = cookieLifetime;
         break;
-      case cookieLifetimePeriod.SECONDS:
+      case COOKIE_LIFETIME_PERIODS.SECONDS:
         if (cookieLifetimeSeconds && cookieLifetimeSeconds.trim().length > 0) {
           trackerProperties.cookieLifetime = cookieLifetimeSeconds.trim();
         }
