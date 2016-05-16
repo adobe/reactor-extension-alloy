@@ -68,7 +68,7 @@ export default class PageviewsAndContent extends React.Component {
           {
             index !== hierarchies.length - 1 ?
               <Coral.Button
-                ref="removeButton"
+                ref={`removeButton${index}`}
                 variant="quiet"
                 icon="close"
                 iconSize="XS"
@@ -116,7 +116,7 @@ export default class PageviewsAndContent extends React.Component {
       <div>
         { hierarchyRows }
         <Coral.Button
-          onClick={this.createEmptyRow}>Add hierarchy</Coral.Button>
+          onClick={this.createEmptyRow} ref="addButton">Add hierarchy</Coral.Button>
       </div>
     );
   }
