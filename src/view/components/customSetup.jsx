@@ -90,7 +90,7 @@ export const formConfig = {
       customSetup.script = script;
     }
 
-    if (loadPhase && loadPhase !== LOAD_PHASE_DEFAULT) {
+    if (loadPhase && loadPhase !== LOAD_PHASE_DEFAULT && script) {
       customSetup.loadPhase = loadPhase;
     }
 
