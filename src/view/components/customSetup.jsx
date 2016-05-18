@@ -82,20 +82,16 @@ export const formConfig = {
       loadPhase
     } = values.customSetup;
 
-    const customSetup = {
-      ...settings.customSetup
-    };
-
     if (script) {
-      customSetup.script = script;
-    }
+      const customSetup = {
+        script
+      };
 
-    if (loadPhase && loadPhase !== LOAD_PHASE_DEFAULT && script) {
-      customSetup.loadPhase = loadPhase;
-    }
+      if (loadPhase && loadPhase !== LOAD_PHASE_DEFAULT) {
+        customSetup.loadPhase = loadPhase;
+      }
 
-    if (Object.keys(customSetup).length > 0) {
-      return {
+      settings = {
         ...settings,
         customSetup
       };
