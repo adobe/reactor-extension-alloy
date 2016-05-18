@@ -1,5 +1,5 @@
 import React from 'react';
-import { reduxForm, getValues } from 'redux-form';
+import { reduxForm } from 'redux-form';
 
 /**
  * The handleSubmit function for the most recently updated form. This is exposed as a workaround
