@@ -255,6 +255,14 @@
               "type": "string",
               "minLength": 1
             },
+            "state": {
+              "type": "string",
+              "minLength": 1
+            },
+            "zip": {
+              "type": "string",
+              "minLength": 1
+            },
             "cookieLifetime": {
               "type": "string",
               "minLength": 1
@@ -563,6 +571,14 @@
                 "minLength": 1
               },
               "transactionID": {
+                "type": "string",
+                "minLength": 1
+              },
+              "state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "zip": {
                 "type": "string",
                 "minLength": 1
               },
