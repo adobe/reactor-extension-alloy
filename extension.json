@@ -432,7 +432,6 @@
           },
           "additionalProperties": false,
           "required": [
-            "loadPhase",
             "script"
           ]
         }
@@ -567,7 +566,6 @@
                 "type": "string",
                 "minLength": 1
               },
-
               "hierarchies": {
                 "type": "array",
                 "items": {

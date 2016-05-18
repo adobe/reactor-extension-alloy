@@ -22,7 +22,10 @@ export default class Variables extends React.Component {
           server,
           channel,
           referrer,
-          campaign
+          campaign,
+          transactionID,
+          state,
+          zip
         }
       }
     } = this.props;
@@ -123,6 +126,36 @@ export default class Variables extends React.Component {
             {...campaign.value}/>
           <DataElementSelectorButton onClick={openDataElementSelector.bind(this, campaign.value)}/>
         </div>
+
+        <label>
+          <span className="Label u-gapTop">Transaction ID</span>
+          <div>
+            <Coral.Textfield
+              className="Field--long"
+              {...transactionID}/>
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, transactionID)}/>
+          </div>
+        </label>
+
+        <label>
+          <span className="Label u-gapTop">State</span>
+          <div>
+            <Coral.Textfield
+              className="Field--long"
+              {...state}/>
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, state)}/>
+          </div>
+        </label>
+
+        <label>
+          <span className="Label u-gapTop">Zip</span>
+          <div>
+            <Coral.Textfield
+              className="Field--long"
+              {...zip}/>
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, zip)}/>
+          </div>
+        </label>
       </div>
     );
   }
@@ -142,7 +175,10 @@ export const formConfig = mergeFormConfigs(
       'trackerProperties.channel',
       'trackerProperties.referrer',
       'trackerProperties.campaign.type',
-      'trackerProperties.campaign.value'
+      'trackerProperties.campaign.value',
+      'trackerProperties.transactionID',
+      'trackerProperties.state',
+      'trackerProperties.zip'
     ],
     settingsToFormValues: (values, options) => {
       const {
@@ -152,7 +188,10 @@ export const formConfig = mergeFormConfigs(
         server,
         channel,
         referrer,
-        campaign
+        campaign,
+        transactionID,
+        state,
+        zip
       } = options.settings.trackerProperties || {};
 
       return {
@@ -168,7 +207,10 @@ export const formConfig = mergeFormConfigs(
           campaign: {
             type: campaign && campaign.type ? campaign.type : 'value',
             value: campaign && campaign.value ? campaign.value : ''
-          }
+          },
+          transactionID,
+          state,
+          zip
         }
       };
     },
@@ -180,7 +222,10 @@ export const formConfig = mergeFormConfigs(
         server,
         channel,
         referrer,
-        campaign
+        campaign,
+        transactionID,
+        state,
+        zip
       } = values.trackerProperties;
 
       const trackerProperties = {
@@ -216,6 +261,18 @@ export const formConfig = mergeFormConfigs(
           type: campaign.type,
           value: campaign.value
         };
+      }
+
+      if (transactionID) {
+        trackerProperties.transactionID = transactionID;
+      }
+
+      if (state) {
+        trackerProperties.state = state;
+      }
+
+      if (zip) {
+        trackerProperties.zip = zip;
       }
 
       return {

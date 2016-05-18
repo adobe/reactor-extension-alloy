@@ -17,7 +17,6 @@ export default class Cookies extends React.Component {
       visitorNamespace,
       cookieDomainPeriods,
       fpCookieDomainPeriods,
-      transactionID,
       cookieLifetime,
       cookieLifetimeSeconds
     } = this.props.fields.trackerProperties;
@@ -56,14 +55,6 @@ export default class Cookies extends React.Component {
               onClick={openDataElementSelector.bind(this, fpCookieDomainPeriods)}/>
           </div>
         </label>
-        <label className="Cookies-field">
-          <span className="Label">Transaction ID</span>
-          <div>
-            <Coral.Textfield className="Field--long" {...transactionID}/>
-            <DataElementSelectorButton
-              onClick={openDataElementSelector.bind(this, transactionID)}/>
-          </div>
-        </label>
         <div className="Cookies-field">
           <label className="Label" htmlFor="cookieLifetimeField">Cookie Lifetime</label>
           <div>
@@ -98,7 +89,6 @@ export const formConfig = {
     'trackerProperties.visitorNamespace',
     'trackerProperties.cookieDomainPeriods',
     'trackerProperties.fpCookieDomainPeriods',
-    'trackerProperties.transactionID',
     'trackerProperties.cookieLifetime',
     'trackerProperties.cookieLifetimeSeconds'
   ],
@@ -108,7 +98,6 @@ export const formConfig = {
       visitorNamespace,
       cookieDomainPeriods,
       fpCookieDomainPeriods,
-      transactionID,
       cookieLifetime
     } = options.settings.trackerProperties || {};
 
@@ -117,8 +106,7 @@ export const formConfig = {
       visitorID,
       visitorNamespace,
       cookieDomainPeriods,
-      fpCookieDomainPeriods,
-      transactionID
+      fpCookieDomainPeriods
     };
 
     if (cookieLifetime) {
@@ -144,7 +132,6 @@ export const formConfig = {
       visitorNamespace,
       cookieDomainPeriods,
       fpCookieDomainPeriods,
-      transactionID,
       cookieLifetime,
       cookieLifetimeSeconds
     } = values.trackerProperties;
@@ -167,10 +154,6 @@ export const formConfig = {
 
     if (fpCookieDomainPeriods) {
       trackerProperties.fpCookieDomainPeriods = fpCookieDomainPeriods;
-    }
-
-    if (transactionID) {
-      trackerProperties.transactionID = transactionID;
     }
 
     switch (cookieLifetime) {
