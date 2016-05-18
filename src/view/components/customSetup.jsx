@@ -31,7 +31,7 @@ export default class CustomSetup extends React.Component {
           onClick={this.onOpenEditor.bind(this, script)}>
           Open Editor
         </Coral.Button>
-        { showLoadPhase ?
+        { showLoadPhase && script.length ?
             <div>
               <fieldset>
                 <legend><span className="Label u-gapTop">Execute custom code</span></legend>
