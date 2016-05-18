@@ -12,6 +12,7 @@ class SetVariables extends React.Component {
         <ConfigurationSelector className="u-gapBottom" fields={this.props.fields}/>
         <h4 className="coral-Heading coral-Heading--4">Variables</h4>
         <Variables fields={this.props.fields} showDynamicVariablePrefix={false}/>
+        <h4 className="u-gapTop2x coral-Heading coral-Heading--4">Custom Page Code</h4>
         <CustomSetup fields={this.props.fields} showLoadPhase={false}/>
       </div>
     );
