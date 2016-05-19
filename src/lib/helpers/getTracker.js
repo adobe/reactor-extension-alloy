@@ -9,6 +9,8 @@ var Promise = require('promise');
 var propertySettings =  require('property-settings');
 var window = require('window');
 
+var BEFORE_SETTINGS_LOAD_PHASE = 'beforeSettings';
+
 var adobeAnalyticsExtension = getExtension('adobe-analytics');
 var applyTrackerVariables = adobeAnalyticsExtension.getHelper('apply-tracker-variables');
 var loadLibrary = adobeAnalyticsExtension.getHelper('load-library');
@@ -59,14 +61,14 @@ var updateTrackerVersion = function(tracker) {
 };
 
 var updateTrackerVariables = function(trackerProperties, customSetup, tracker) {
-  if (customSetup.loadPhase === 'beforeSettings') {
+  if (customSetup.loadPhase === BEFORE_SETTINGS_LOAD_PHASE && customSetup.script) {
     logger.info('Calling custom script before settings.');
     customSetup.script.call(window, null, tracker);
   }
 
   applyTrackerVariables(tracker, trackerProperties);
 
-  if (customSetup.loadPhase === 'afterSettings') {
+  if (customSetup.loadPhase !== BEFORE_SETTINGS_LOAD_PHASE && customSetup.script) {
     logger.info('Calling custom script after settings.');
     customSetup.script.call(window, null, tracker);
   }

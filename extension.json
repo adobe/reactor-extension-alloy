@@ -255,6 +255,14 @@
               "type": "string",
               "minLength": 1
             },
+            "state": {
+              "type": "string",
+              "minLength": 1
+            },
+            "zip": {
+              "type": "string",
+              "minLength": 1
+            },
             "cookieLifetime": {
               "type": "string",
               "minLength": 1
@@ -432,7 +440,6 @@
           },
           "additionalProperties": false,
           "required": [
-            "loadPhase",
             "script"
           ]
         }
@@ -567,7 +574,14 @@
                 "type": "string",
                 "minLength": 1
               },
-
+              "state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "zip": {
+                "type": "string",
+                "minLength": 1
+              },
               "hierarchies": {
                 "type": "array",
                 "items": {
