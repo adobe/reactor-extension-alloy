@@ -1,15 +1,14 @@
 'use strict';
 
-var getExtension = require('get-extension');
 var logger = require('logger');
 
-var adobeAnalyticsExtension = getExtension('adobe-analytics');
-var getTracker = adobeAnalyticsExtension.getHelper('get-tracker');
-var applyTrackerVariables = adobeAnalyticsExtension.getHelper('apply-tracker-variables');
+var getTracker = require('../helpers/getTracker.js');
+var applyTrackerVariables = require('../helpers/applyTrackerVariables.js');
+var getExtensionConfigurations = require('get-extension-configurations');
 
 module.exports = function(settings, targetElement, event) {
   var configurations = settings.extensionConfigurationIds ||
-    Object.keys(adobeAnalyticsExtension.getConfigurations());
+    Object.keys(getExtensionConfigurations());
 
   configurations.forEach(function(configurationId) {
     getTracker(configurationId).then(function(tracker) {

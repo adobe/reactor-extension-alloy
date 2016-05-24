@@ -853,19 +853,5 @@
         }
       }
     }
-  ],
-  "helpers": [
-    {
-      "name": "get-tracker",
-      "libPath": "helpers/getTracker.js"
-    },
-    {
-      "name": "apply-tracker-variables",
-      "libPath": "helpers/applyTrackerVariables.js"
-    },
-    {
-      "name": "load-library",
-      "libPath": "helpers/loadLibrary.js"
-    }
   ]
 }

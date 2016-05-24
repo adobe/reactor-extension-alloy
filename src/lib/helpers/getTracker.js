@@ -3,19 +3,19 @@
 var buildInfo = require('build-info');
 var cookie = require('cookie');
 var document = require('document');
-var getExtension = require('get-extension');
 var logger = require('logger');
 var Promise = require('promise');
 var propertySettings =  require('property-settings');
 var window = require('window');
+var getExtensionConfigurations = require('get-extension-configurations');
+var getSharedModule = require('get-shared-module');
+
+var applyTrackerVariables = require('./applyTrackerVariables.js');
+var loadLibrary = require('./loadLibrary.js');
 
 var BEFORE_SETTINGS_LOAD_PHASE = 'beforeSettings';
 
-var adobeAnalyticsExtension = getExtension('adobe-analytics');
-var applyTrackerVariables = adobeAnalyticsExtension.getHelper('apply-tracker-variables');
-var loadLibrary = adobeAnalyticsExtension.getHelper('load-library');
-var visitorIdExtension = getExtension('visitor-id');
-var getVisitorIdInstance = visitorIdExtension.getHelper('get-visitor-id-instance');
+var getVisitorIdInstance = getSharedModule('visitor-id', 'get-visitor-id-instance');
 
 var checkEuCompliance = function(euComplianceRequired) {
   if (!euComplianceRequired) {
@@ -109,7 +109,7 @@ var createPromiseStore = function(configurations) {
 
   return store;
 };
-var store = createPromiseStore(adobeAnalyticsExtension.getConfigurations());
+var store = createPromiseStore(getExtensionConfigurations());
 
 module.exports = function(extensionConfigurationId) {
   return store[extensionConfigurationId];

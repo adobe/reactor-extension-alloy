@@ -1,8 +1,8 @@
 'use strict';
 
-var getExtension = require('get-extension');
-var getTracker = getExtension('adobe-analytics').getHelper('get-tracker');
 var logger = require('logger');
+var getExtensionConfigurations = require('get-extension-configurations');
+var getTracker = require('../helpers/getTracker.js');
 
 var isLink = function(element) {
   return element && element.nodeName && element.nodeName.toLowerCase() === 'a';
@@ -41,7 +41,7 @@ var sendBeacon = function(tracker, settings, targetElement) {
 
 module.exports = function(settings, targetElement) {
   var configurations = settings.extensionConfigurationIds ||
-    Object.keys(getExtension('adobe-analytics').getConfigurations());
+    Object.keys(getExtensionConfigurations());
 
   configurations.forEach(function(configurationId) {
     getTracker(configurationId).then(function(tracker) {
