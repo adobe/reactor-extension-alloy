@@ -55,9 +55,11 @@ export default class EventsEditor extends React.Component {
           key={event.id.value}
           className="u-gapBottom2x">
           <ValidationWrapper
+            ref={`eventNameWrapper${index}`}
             error={event.name.touched && event.name.error}
             className="u-gapRight2x">
             <Coral.Select
+              ref={`eventNameSelect${index}`}
               className="Field--short"
               placeholder={namePlaceholder}
               {...event.name}>
@@ -66,12 +68,13 @@ export default class EventsEditor extends React.Component {
           </ValidationWrapper>
           <span className="Label u-gapRight">Serialize from value</span>
           <Coral.Textfield
+            ref={`eventValueInput${index}`}
             className="Field--short"
             {...event.value}/>
           <DataElementSelectorButton
             onClick={openDataElementSelector.bind(this, event.value)}/>
           <Coral.Button
-            ref="removeButton"
+            ref={`removeButton${index}`}
             variant="quiet"
             icon="close"
             iconSize="XS"
@@ -83,7 +86,7 @@ export default class EventsEditor extends React.Component {
     return (
       <section>
         {rows}
-        <Coral.Button onClick={this.createEmptyRow}>Add event</Coral.Button>
+        <Coral.Button ref="addEventButton" onClick={this.createEmptyRow}>Add event</Coral.Button>
       </section>
     );
   }
