@@ -10,7 +10,8 @@ import createRouter from './createRouter';
 
 window.extensionBridge = window.extensionBridge || {
   register: function() {},
-  openDataElementSelector: function() {}
+  openDataElementSelector: function() {},
+  openCodeEditor: function() {}
 };
 
 const finalCreateStore = compose(

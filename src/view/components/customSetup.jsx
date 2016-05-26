@@ -26,6 +26,7 @@ export default class CustomSetup extends React.Component {
     return (
       <div>
         <Coral.Button
+          ref="codeButton"
           className="u-gapTop"
           icon="code"
           onClick={this.onOpenEditor.bind(this, script)}>
@@ -37,12 +38,14 @@ export default class CustomSetup extends React.Component {
                 <legend><span className="Label u-gapTop">Execute custom code</span></legend>
                 <div>
                   <Coral.Radio
+                    ref="loadPhaseBeforeRadio"
                     {...loadPhase}
                     value={LOAD_PHASES.BEFORE_SETTINGS}
                     checked={loadPhase.value === LOAD_PHASES.BEFORE_SETTINGS}>
                     Before other settings are applied
                   </Coral.Radio>
                   <Coral.Radio
+                    ref="loadPhaseAfterRadio"
                     {...loadPhase}
                     value={LOAD_PHASES.AFTER_SETTINGS}
                     checked={loadPhase.value === LOAD_PHASES.AFTER_SETTINGS}>
