@@ -27,7 +27,7 @@ export const createExtensionBridge = () => {
   };
 };
 
-export const getFormInstance = (FormComponent, extensionBridge) => {
+export const getFormInstance = (FormComponent, extensionBridge, props = {}) => {
   const store = createStore(reducer, {});
   const setFormConfigForCurrentRoute = bridgeAdapter(extensionBridge, store);
 
@@ -35,7 +35,7 @@ export const getFormInstance = (FormComponent, extensionBridge) => {
 
   const providerInstance = TestUtils.renderIntoDocument(
     <Provider store={store}>
-      <FormComponent />
+      <FormComponent {...props} />
     </Provider>
   );
 

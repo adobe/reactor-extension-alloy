@@ -49,9 +49,11 @@ export default class EvarsPropsEditor extends React.Component {
           key={variable.id.value}
           className="u-gapBottom2x">
           <ValidationWrapper
+            ref={`nameWrapper${index}`}
             error={variable.name.touched && variable.name.error}
             className="u-gapRight2x">
             <Coral.Select
+              ref={`nameSelect${index}`}
               className="Field--short"
               placeholder={namePlaceholder}
               {...variable.name}>
@@ -60,7 +62,8 @@ export default class EvarsPropsEditor extends React.Component {
           </ValidationWrapper>
           <Coral.Select
             className="Field--short u-gapRight2x"
-            {...variable.type}>
+            {...variable.type}
+            ref={`typeSelect${index}`}>
             <Coral.Select.Item
               value="value">
               Set as
@@ -70,13 +73,17 @@ export default class EvarsPropsEditor extends React.Component {
               Duplicate from
             </Coral.Select.Item>
           </Coral.Select>
-          <ValidationWrapper error={variable.value.touched && variable.value.error}>
+          <ValidationWrapper
+            ref={`valueWrapper${index}`}
+            error={variable.value.touched && variable.value.error}>
             {
               variable.type.value === 'value' ?
                 <Coral.Textfield
+                  ref={`valueTextfield${index}`}
                   className="Field--short"
                   {...variable.value}/> :
                 <Coral.Select
+                  ref={`valueSelect${index}`}
                   className="Field--short"
                   placeholder="Select variable"
                   {...variable.value}>
@@ -88,7 +95,7 @@ export default class EvarsPropsEditor extends React.Component {
               onClick={openDataElementSelector.bind(this, variable.value)}/>
           </ValidationWrapper>
           <Coral.Button
-            ref="removeButton"
+            ref={`removeButton${index}`}
             variant="quiet"
             icon="close"
             iconSize="XS"
@@ -100,7 +107,11 @@ export default class EvarsPropsEditor extends React.Component {
     return (
       <section>
         {rows}
-        <Coral.Button onClick={this.createEmptyRow}>Add {this.props.varType}</Coral.Button>
+        <Coral.Button
+          ref="addEventButton"
+          onClick={this.createEmptyRow}>
+          Add {this.props.varType}
+        </Coral.Button>
       </section>
     );
   }
@@ -116,7 +127,7 @@ export const getFormConfig = (varType, varTypePlural) => {
     ],
     settingsToFormValues(values, options) {
       let variables = (options.settings.trackerProperties || {})[varTypePlural];
-      
+
       variables = variables ? variables.slice() : [];
 
       // Add an extra object which will ensures that there is an empty row available for the user
