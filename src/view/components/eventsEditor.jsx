@@ -68,7 +68,7 @@ export default class EventsEditor extends React.Component {
           </ValidationWrapper>
           <span className="Label u-gapRight">Serialize from value</span>
           <Coral.Textfield
-            ref={`eventValueInput${index}`}
+            ref={`eventValueTextField${index}`}
             className="Field--short"
             {...event.value}/>
           <DataElementSelectorButton
