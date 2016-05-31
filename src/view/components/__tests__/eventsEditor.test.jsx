@@ -28,11 +28,11 @@ describe('events editor', () => {
 
     const {
       eventNameSelect0,
-      eventValueInput0
+      eventValueTextField0
     } = instance.refs;
 
     expect(eventNameSelect0.props.value).toBe('prodView');
-    expect(eventValueInput0.props.value).toBe('a');
+    expect(eventValueTextField0.props.value).toBe('a');
   });
 
   it('sets settings from form values', () => {
@@ -40,11 +40,11 @@ describe('events editor', () => {
 
     const {
       eventNameSelect0,
-      eventValueInput0
+      eventValueTextField0
     } = instance.refs;
 
     eventNameSelect0.props.onChange('event1');
-    eventValueInput0.props.onChange('b');
+    eventValueTextField0.props.onChange('b');
 
     const { events } = extensionBridge.getSettings().trackerProperties;
     expect(events[0].name).toBe('event1');
@@ -60,22 +60,22 @@ describe('events editor', () => {
 
     let {
       eventNameSelect1,
-      eventValueInput1
+      eventValueTextField1
     } = instance.refs;
 
     expect(eventNameSelect1).toBeUndefined();
-    expect(eventValueInput1).toBeUndefined();
+    expect(eventValueTextField1).toBeUndefined();
 
     addEventButton.props.onClick();
 
 
     ({
       eventNameSelect1,
-      eventValueInput1
+      eventValueTextField1
     } = instance.refs);
 
     expect(eventNameSelect1).toBeDefined();
-    expect(eventValueInput1).toBeDefined();
+    expect(eventValueTextField1).toBeDefined();
   });
 
   it('deletes a row when the remove button is clicked', () => {
@@ -94,11 +94,11 @@ describe('events editor', () => {
 
     let {
       eventNameSelect1,
-      eventValueInput1
+      eventValueTextField1
     } = instance.refs;
 
     expect(eventNameSelect1).toBeDefined();
-    expect(eventValueInput1).toBeDefined();
+    expect(eventValueTextField1).toBeDefined();
 
     const {
       removeButton1
@@ -109,11 +109,11 @@ describe('events editor', () => {
 
     ({
       eventNameSelect1,
-      eventValueInput1
+      eventValueTextField1
     } = instance.refs);
 
     expect(eventNameSelect1).toBeUndefined();
-    expect(eventValueInput1).toBeUndefined();
+    expect(eventValueTextField1).toBeUndefined();
   });
 
   it('shows an error when two events having the same name are added', () => {
