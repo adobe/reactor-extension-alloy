@@ -9,7 +9,7 @@ import LinkTracking, { formConfig as linkTrackingFormConfig } from './components
 import Cookies, { formConfig as cookiesFormConfig } from './components/cookies';
 import CustomSetup, { formConfig as customSetupFormConfig } from '../components/customSetup.jsx';
 
-class ExtensionConfiguration extends React.Component {
+export class ExtensionConfiguration extends React.Component {
   render() {
     return (
       <div>
@@ -25,7 +25,7 @@ class ExtensionConfiguration extends React.Component {
           <Coral.Accordion.Item>
             <Coral.Accordion.Item.Label>General</Coral.Accordion.Item.Label>
             <Coral.Accordion.Item.Content>
-              <General fields={this.props.fields}/>
+              <General ref='general' fields={this.props.fields}/>
             </Coral.Accordion.Item.Content>
           </Coral.Accordion.Item>
         </Coral.Accordion>
@@ -66,7 +66,7 @@ class ExtensionConfiguration extends React.Component {
   }
 }
 
-const formConfig = mergeFormConfigs(
+export const formConfig = mergeFormConfigs(
   libraryManagementFormConfig,
   generalFormConfig,
   variablesFormConfig,
