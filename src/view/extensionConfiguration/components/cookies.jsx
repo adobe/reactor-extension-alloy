@@ -64,7 +64,7 @@ export default class Cookies extends React.Component {
               onClick={openDataElementSelector.bind(this, fpCookieDomainPeriods)}/>
           </div>
         </label>
-        <div className='Cookies-field'>
+        <div className='u-gapBottom'>
           <label className='Label' htmlFor='cookieLifetimeField'>Cookie Lifetime</label>
           <div>
             <Coral.Select
