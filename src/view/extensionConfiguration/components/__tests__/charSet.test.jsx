@@ -1,5 +1,5 @@
 import extensionViewReduxForm from '../../../extensionViewReduxForm';
-import charSet, { formConfig } from '../charSet';
+import CharSet, { formConfig } from '../charSet';
 import { getFormInstance, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
 
 describe('char set', () => {
@@ -7,7 +7,7 @@ describe('char set', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig)(charSet);
+    const FormComponent = extensionViewReduxForm(formConfig)(CharSet);
     extensionBridge = createExtensionBridge();
     instance = getFormInstance(FormComponent, extensionBridge);
   });
