@@ -1,5 +1,5 @@
 import extensionViewReduxForm from '../../../extensionViewReduxForm';
-import cookies, { formConfig } from '../cookies';
+import Cookies, { formConfig } from '../cookies';
 import { getFormInstance, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
 
 describe('cookies', () => {
@@ -7,7 +7,7 @@ describe('cookies', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig)(cookies);
+    const FormComponent = extensionViewReduxForm(formConfig)(Cookies);
     extensionBridge = createExtensionBridge();
     instance = getFormInstance(FormComponent, extensionBridge);
   });

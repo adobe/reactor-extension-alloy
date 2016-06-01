@@ -1,5 +1,5 @@
 import extensionViewReduxForm from '../../../extensionViewReduxForm';
-import currencyCode, { formConfig } from '../currencyCode';
+import CurrencyCode, { formConfig } from '../currencyCode';
 import { getFormInstance, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
 
 describe('currency code', () => {
@@ -7,7 +7,7 @@ describe('currency code', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig)(currencyCode);
+    const FormComponent = extensionViewReduxForm(formConfig)(CurrencyCode);
     extensionBridge = createExtensionBridge();
     instance = getFormInstance(FormComponent, extensionBridge);
   });
