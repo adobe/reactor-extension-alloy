@@ -43,6 +43,7 @@ export default class CurrencyCode extends React.Component {
       <div>
         <div>
           <Coral.Radio
+            ref='presetCurrencyCodeInputMethodRadio'
             {...currencyCodeInputMethod}
             onChange={this.onTypeChange}
             value={CURRENCY_CODE_INPUT_METHODS.PRESET}
@@ -51,8 +52,11 @@ export default class CurrencyCode extends React.Component {
           </Coral.Radio>
           {
             currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.PRESET ?
-              <div className="FieldSubset">
-                <Coral.Select className="Field--long" {...currencyCode}>
+              <div className='FieldSubset'>
+                <Coral.Select
+                  ref='currencyCodePresetSelect'
+                  className='Field--long'
+                  {...currencyCode}>
                   {presetOptions}
                 </Coral.Select>
               </div> : null
@@ -60,6 +64,7 @@ export default class CurrencyCode extends React.Component {
         </div>
         <div>
           <Coral.Radio
+            ref='customCurrencyCodeInputMethodRadio'
             {...currencyCodeInputMethod}
             onChange={this.onTypeChange}
             value={CURRENCY_CODE_INPUT_METHODS.CUSTOM}
@@ -68,8 +73,8 @@ export default class CurrencyCode extends React.Component {
           </Coral.Radio>
           {
             currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
-              <div className="FieldSubset">
-                <Coral.Textfield {...currencyCode}/>
+              <div className='FieldSubset'>
+                <Coral.Textfield ref='currencyCustomTextfield' {...currencyCode}/>
                 <DataElementSelectorButton
                   onClick={openDataElementSelector.bind(this, currencyCode)}/>
               </div> : null
@@ -91,7 +96,9 @@ export const formConfig = {
     } = options.settings.trackerProperties || {};
 
     const currencyCodeInputMethod =
-      !currencyCode || CURRENCY_CODE_PRESETS.indexOf(currencyCode) !== -1 ?
+      !currencyCode || CURRENCY_CODE_PRESETS.map((currency) => {
+        return currency.value;
+      }).indexOf(currencyCode) !== -1 ?
         CURRENCY_CODE_INPUT_METHODS.PRESET :
         CURRENCY_CODE_INPUT_METHODS.CUSTOM;
 
