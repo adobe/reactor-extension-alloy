@@ -53,7 +53,7 @@ export default class ReportSuite extends React.Component {
             error={this.props.touched && this.props.error}>
             <Coral.Autocomplete
               placeholder="Add Report Suite(s)"
-              ref="autocomplete"
+              ref={`${this.props.refPrefix}ReportSuiteAutocomplete`}
               className="Field--long"
               onCoralAutocompleteShowSuggestions={showSuggestions}
               onChange={this.props.onChange}

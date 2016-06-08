@@ -27,12 +27,15 @@ const ReportSuites = props => {
 
       <section className="ReportSuites-fieldsContainer">
         <ReportSuite
+          refPrefix="production"
           label="Production Report Suite(s)"
           {...props.production}/>
         <ReportSuite
+          refPrefix="staging"
           label="Staging Report Suite(s)"
           {...props.staging}/>
         <ReportSuite
+          refPrefix="development"
           label="Development Report Suite(s)"
           {...props.development}/>
       </section>
@@ -100,7 +103,6 @@ export default class LibraryManagement extends React.Component {
     window.extensionBridge.openCodeEditor(scriptField.value, scriptField.onChange);
   };
 
-
   render() {
     const {
       type,
@@ -159,6 +161,7 @@ export default class LibraryManagement extends React.Component {
                   <span className="Label">HTTP URL:</span>
                   <div>
                     <ValidationWrapper
+                      ref="httpUrlWrapper"
                       error={httpUrl.touched && httpUrl.error}>
                       <Coral.Textfield
                         {...httpUrl}
@@ -171,6 +174,7 @@ export default class LibraryManagement extends React.Component {
                   <span className="Label u-gapTop">HTTPS URL:</span>
                   <div>
                     <ValidationWrapper
+                      ref="httpsUrlWrapper"
                       error={httpsUrl.touched && httpsUrl.error}>
                       <Coral.Textfield
                         {...httpsUrl}
