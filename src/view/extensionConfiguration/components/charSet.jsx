@@ -36,7 +36,7 @@ export default class CharSet extends React.Component {
       <div>
         <div>
           <Coral.Radio
-            ref='presetCharSetInputMethodRadio'
+            ref="presetCharSetInputMethodRadio"
             {...charSetInputMethod}
             onChange={this.onTypeChange}
             value={CHAR_SET_INPUT_METHOD.PRESET}
@@ -45,8 +45,8 @@ export default class CharSet extends React.Component {
           </Coral.Radio>
           {
             charSetInputMethod.value === CHAR_SET_INPUT_METHOD.PRESET ?
-              <div className='FieldSubset'>
-                <Coral.Select ref='charSetPresetSelect' {...charSet}>
+              <div className="FieldSubset">
+                <Coral.Select ref="charSetPresetSelect" {...charSet}>
                   {presetOptions}
                 </Coral.Select>
               </div> : null
@@ -54,7 +54,7 @@ export default class CharSet extends React.Component {
         </div>
         <div>
           <Coral.Radio
-            ref='customCharSetInputMethodRadio'
+            ref="customCharSetInputMethodRadio"
             {...charSetInputMethod}
             onChange={this.onTypeChange}
             value={CHAR_SET_INPUT_METHOD.CUSTOM}
@@ -63,8 +63,8 @@ export default class CharSet extends React.Component {
           </Coral.Radio>
           {
             charSetInputMethod.value === CHAR_SET_INPUT_METHOD.CUSTOM ?
-              <div className='FieldSubset'>
-                <Coral.Textfield ref='charSetCustomTextfield' {...charSet}/>
+              <div className="FieldSubset">
+                <Coral.Textfield ref="charSetCustomTextfield" {...charSet}/>
                 <DataElementSelectorButton
                   onClick={openDataElementSelector.bind(this, charSet)}/>
               </div> : null

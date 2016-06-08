@@ -43,7 +43,7 @@ export default class CurrencyCode extends React.Component {
       <div>
         <div>
           <Coral.Radio
-            ref='presetCurrencyCodeInputMethodRadio'
+            ref="presetCurrencyCodeInputMethodRadio"
             {...currencyCodeInputMethod}
             onChange={this.onTypeChange}
             value={CURRENCY_CODE_INPUT_METHODS.PRESET}
@@ -52,10 +52,10 @@ export default class CurrencyCode extends React.Component {
           </Coral.Radio>
           {
             currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.PRESET ?
-              <div className='FieldSubset'>
+              <div className="FieldSubset">
                 <Coral.Select
-                  ref='currencyCodePresetSelect'
-                  className='Field--long'
+                  ref="currencyCodePresetSelect"
+                  className="Field--long"
                   {...currencyCode}>
                   {presetOptions}
                 </Coral.Select>
@@ -64,7 +64,7 @@ export default class CurrencyCode extends React.Component {
         </div>
         <div>
           <Coral.Radio
-            ref='customCurrencyCodeInputMethodRadio'
+            ref="customCurrencyCodeInputMethodRadio"
             {...currencyCodeInputMethod}
             onChange={this.onTypeChange}
             value={CURRENCY_CODE_INPUT_METHODS.CUSTOM}
@@ -73,8 +73,8 @@ export default class CurrencyCode extends React.Component {
           </Coral.Radio>
           {
             currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
-              <div className='FieldSubset'>
-                <Coral.Textfield ref='currencyCustomTextfield' {...currencyCode}/>
+              <div className="FieldSubset">
+                <Coral.Textfield ref="currencyCustomTextfield" {...currencyCode}/>
                 <DataElementSelectorButton
                   onClick={openDataElementSelector.bind(this, currencyCode)}/>
               </div> : null

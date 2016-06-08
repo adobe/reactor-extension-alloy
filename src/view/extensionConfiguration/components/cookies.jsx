@@ -22,54 +22,54 @@ export default class Cookies extends React.Component {
     } = this.props.fields.trackerProperties;
 
     return (
-      <div className='Cookies'>
-        <label className='Cookies-field'>
-          <span className='Label'>Visitor ID</span>
+      <div className="Cookies">
+        <label className="Cookies-field">
+          <span className="Label">Visitor ID</span>
           <div>
-            <Coral.Textfield ref='visitorIDTextfield' className='Field--long' {...visitorID}/>
+            <Coral.Textfield ref="visitorIDTextfield" className="Field--long" {...visitorID}/>
             <DataElementSelectorButton
               onClick={openDataElementSelector.bind(this, visitorID)}/>
           </div>
         </label>
-        <label className='Cookies-field'>
-          <span className='Label'>Visitor Namespace</span>
+        <label className="Cookies-field">
+          <span className="Label">Visitor Namespace</span>
           <div>
             <Coral.Textfield
-              ref='visitorNamespaceTextfield'
-              className='Field--long'
+              ref="visitorNamespaceTextfield"
+              className="Field--long"
               {...visitorNamespace}/>
             <DataElementSelectorButton
               onClick={openDataElementSelector.bind(this, visitorNamespace)}/>
           </div>
         </label>
-        <label className='Cookies-field'>
-          <span className='Label'>Domain Periods</span>
+        <label className="Cookies-field">
+          <span className="Label">Domain Periods</span>
           <div>
             <Coral.Textfield
-              ref='cookieDomainPeriodsTextfield'
-              className='Field--long'
+              ref="cookieDomainPeriodsTextfield"
+              className="Field--long"
               {...cookieDomainPeriods}/>
             <DataElementSelectorButton
               onClick={openDataElementSelector.bind(this, cookieDomainPeriods)}/>
           </div>
         </label>
-        <label className='Cookies-field'>
-          <span className='Label'>First-party Domain Periods</span>
+        <label className="Cookies-field">
+          <span className="Label">First-party Domain Periods</span>
           <div>
             <Coral.Textfield
-              ref='fpCookieDomainPeriodsTextfield'
-              className='Field--long'
+              ref="fpCookieDomainPeriodsTextfield"
+              className="Field--long"
               {...fpCookieDomainPeriods}/>
             <DataElementSelectorButton
               onClick={openDataElementSelector.bind(this, fpCookieDomainPeriods)}/>
           </div>
         </label>
-        <div className='u-gapBottom'>
-          <label className='Label' htmlFor='cookieLifetimeField'>Cookie Lifetime</label>
+        <div className="u-gapBottom">
+          <label className="Label" htmlFor="cookieLifetimeField">Cookie Lifetime</label>
           <div>
             <Coral.Select
-              ref='cookieLifetimeSelect'
-              className='Cookies-cookieLifetime u-gapRight'
+              ref="cookieLifetimeSelect"
+              className="Cookies-cookieLifetime u-gapRight"
               {...cookieLifetime}>
               <Coral.Select.Item value={COOKIE_LIFETIME_PERIODS.DEFAULT}>Default</Coral.Select.Item>
               <Coral.Select.Item value={COOKIE_LIFETIME_PERIODS.NONE}>None</Coral.Select.Item>
@@ -79,11 +79,11 @@ export default class Cookies extends React.Component {
             {
               cookieLifetime.value === COOKIE_LIFETIME_PERIODS.SECONDS ?
                 <ValidationWrapper
-                    ref='cookieLifetimeSecondsWrapper'
+                    ref="cookieLifetimeSecondsWrapper"
                     error={cookieLifetimeSeconds.touched && cookieLifetimeSeconds.error}>
                   <Coral.Textfield
-                    ref='cookieLifetimeSecondsTextfield'
-                    className='Cookies-cookieLifetimeSeconds'
+                    ref="cookieLifetimeSecondsTextfield"
+                    className="Cookies-cookieLifetimeSeconds"
                     {...cookieLifetimeSeconds}/>
                   <DataElementSelectorButton
                     onClick={openDataElementSelector.bind(this, cookieLifetimeSeconds)}/>

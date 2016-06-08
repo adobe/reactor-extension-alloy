@@ -49,26 +49,26 @@ export default class General extends React.Component {
     return (
       <div>
         <Coral.Checkbox
-          ref='euComplianceEnabledCheckbox'
+          ref="euComplianceEnabledCheckbox"
           {...euComplianceEnabled}>
           Enable EU compliance for Adobe Analytics
         </Coral.Checkbox>
         <div>
-          <h4 className='coral-Heading coral-Heading--4 u-gapTop'>Character Set</h4>
+          <h4 className="coral-Heading coral-Heading--4 u-gapTop">Character Set</h4>
           <CharSet fields={this.props.fields}/>
         </div>
         <div>
-          <h4 className='coral-Heading coral-Heading--4 u-gapTop'>Currency Code</h4>
+          <h4 className="coral-Heading coral-Heading--4 u-gapTop">Currency Code</h4>
           <CurrencyCode fields={this.props.fields}/>
         </div>
         <div>
-          <span className='Label u-gapTop'>Tracking Server</span>
+          <span className="Label u-gapTop">Tracking Server</span>
           <div>
             <ValidationWrapper
               error={trackingServer.touched && trackingServer.error}>
               <Coral.Textfield
-                ref='trackingServerTextfield'
-                className='Field--long'
+                ref="trackingServerTextfield"
+                className="Field--long"
                 {...trackingServer}/>
             </ValidationWrapper>
             <DataElementSelectorButton
@@ -76,13 +76,13 @@ export default class General extends React.Component {
           </div>
         </div>
         <div>
-          <span className='Label u-gapTop'>SSL Tracking Server</span>
+          <span className="Label u-gapTop">SSL Tracking Server</span>
           <div>
             <ValidationWrapper
               error={trackingServerSecure.touched && trackingServerSecure.error}>
               <Coral.Textfield
-                ref='trackingServerSecureTextfield'
-                className='Field--long'
+                ref="trackingServerSecureTextfield"
+                className="Field--long"
                 {...trackingServerSecure}/>
             </ValidationWrapper>
             <DataElementSelectorButton
@@ -90,11 +90,11 @@ export default class General extends React.Component {
           </div>
         </div>
         <div>
-          <span className='Label u-gapTop'>Data Center</span>
+          <span className="Label u-gapTop">Data Center</span>
           <div>
             <Coral.Select
-              ref='dcSelect'
-              placeholder='Select a data center'
+              ref="dcSelect"
+              placeholder="Select a data center"
               {...dc}>
               {dataCenterOptions}
             </Coral.Select>
