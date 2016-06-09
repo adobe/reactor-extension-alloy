@@ -54,10 +54,12 @@ describe('general', () => {
 
     const { euComplianceEnabled } = extensionBridge.getSettings();
     const {
-      trackingServer,
-      trackingServerSecure,
-      dc
-    } = extensionBridge.getSettings().trackerProperties;
+      trackerProperties: {
+        trackingServer,
+        trackingServerSecure,
+        dc
+      }
+    } = extensionBridge.getSettings();
 
     expect(euComplianceEnabled).toBe(true);
     expect(trackingServer).toBe('someserver');

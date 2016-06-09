@@ -24,7 +24,7 @@ export default class LinkTracking extends React.Component {
     return (
       <div>
         <Coral.Checkbox
-          ref="enableClickMapCheckbox"
+          ref="enableTrackInlineStatsCheckbox"
           {...trackInlineStats}>
           Enable ClickMap
         </Coral.Checkbox>
@@ -38,6 +38,7 @@ export default class LinkTracking extends React.Component {
           { trackDownloadLinks.checked ?
             <div>
               <TagListEditor
+                ref="linkDownloadFileTypesTagListEditor"
                 onChange={linkDownloadFileTypes.onChange}
                 value={linkDownloadFileTypes.value}
                 title="Download Extensions"
@@ -58,10 +59,12 @@ export default class LinkTracking extends React.Component {
                 onChange={linkExternalFilters.onChange}
                 value={linkExternalFilters.value}
                 title="Track"
+                ref="linkExternalFiltersTagListEditor"
                 tooltip="Some tooltip"/>
               <TagListEditor
                 onChange={linkInternalFilters.onChange}
                 value={linkInternalFilters.value}
+                ref="linkInternalFiltersTagListEditor"
                 title="Never Track"
                 tooltip="Some tooltip"/>
             </div> : null
@@ -123,7 +126,7 @@ export const formConfig = {
       linkInternalFilters,
       linkLeaveQueryString
     } = values.trackerProperties;
-    
+
     const trackerProperties = {
       ...settings.trackerProperties,
       trackInlineStats,

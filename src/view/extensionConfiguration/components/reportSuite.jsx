@@ -28,7 +28,8 @@ const showSuggestions = event => {
 
 export default class ReportSuite extends React.Component {
   getAutocompleteInput = () => {
-    const node = ReactDom.findDOMNode(this.refs.autocomplete);
+    const ref = `${this.props.refPrefix}ReportSuiteAutocomplete`;
+    const node = ReactDom.findDOMNode(this.refs[ref]);
     return node.querySelector('.coral-Autocomplete-input');
   };
 
@@ -62,7 +63,9 @@ export default class ReportSuite extends React.Component {
               onBlur={this.props.onBlur}
               multiple>
             </Coral.Autocomplete>
-            <DataElementSelectorButton onClick={this.openSelector}/>
+            <DataElementSelectorButton
+              ref={`${this.props.refPrefix}ReportSuiteButton`}
+              onClick={this.openSelector} />
           </ValidationWrapper>
         </div>
       </div>
