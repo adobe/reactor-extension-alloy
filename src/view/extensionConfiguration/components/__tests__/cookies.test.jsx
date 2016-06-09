@@ -42,6 +42,38 @@ describe('cookies', () => {
     expect(cookieLifetimeSecondsTextfield.props.value).toBe('10');
   });
 
+  it('sets SESSION cookie lifetime form values from settings', () => {
+    extensionBridge.init({
+      settings: {
+        trackerProperties: {
+          cookieLifetime: 'SESSION'
+        }
+      }
+    });
+
+    const {
+      cookieLifetimeSelect
+    } = instance.refs;
+
+    expect(cookieLifetimeSelect.props.value).toBe('SESSION');
+  });
+
+  it('sets NONE cookie lifetime form values from settings', () => {
+    extensionBridge.init({
+      settings: {
+        trackerProperties: {
+          cookieLifetime: 'NONE'
+        }
+      }
+    });
+
+    const {
+      cookieLifetimeSelect
+    } = instance.refs;
+
+    expect(cookieLifetimeSelect.props.value).toBe('NONE');
+  });
+
   it('sets settings from form values', () => {
     extensionBridge.init();
 
@@ -75,6 +107,34 @@ describe('cookies', () => {
     expect(cookieDomainPeriods).toBe('cookie domain periods');
     expect(fpCookieDomainPeriods).toBe('fp cookie domain periods');
     expect(cookieLifetime).toBe('11');
+  });
+
+  it('sets SESSION cookie lifetime settings from form values', () => {
+    extensionBridge.init();
+
+    const { cookieLifetimeSelect } = instance.refs;
+
+    cookieLifetimeSelect.props.onChange('SESSION');
+
+    const {
+      cookieLifetime
+    } = extensionBridge.getSettings().trackerProperties;
+
+    expect(cookieLifetime).toBe('SESSION');
+  });
+
+  it('sets NONE cookie lifetime settings from form values', () => {
+    extensionBridge.init();
+
+    const { cookieLifetimeSelect } = instance.refs;
+
+    cookieLifetimeSelect.props.onChange('NONE');
+
+    const {
+      cookieLifetime
+    } = extensionBridge.getSettings().trackerProperties;
+
+    expect(cookieLifetime).toBe('NONE');
   });
 
   it('sets error if the number of seconds for cookie lifetime is not provided', () => {

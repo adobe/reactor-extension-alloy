@@ -24,7 +24,7 @@ export default class TagListEditor extends React.Component {
       });
     }
 
-    this.refs.valueField.coralComponent.focus();
+    this.refs.valueTextfield.coralComponent.focus();
   };
 
   onNewValueChange = event => {
@@ -65,14 +65,14 @@ export default class TagListEditor extends React.Component {
         }
         <div>
           <Coral.Textfield
-            ref="valueField"
+            ref="valueTextfield"
             className="Field--long"
             onKeyUp={this.onNewValueChange}
             onKeyPress={this.handleKeyPress}
             value={this.state.newValue}
           />
-          <DataElementSelectorButton onClick={this.openSelector} />
-          <Coral.Button onClick={this.add}>Add</Coral.Button>
+          <DataElementSelectorButton ref="valueButton" onClick={this.openSelector} />
+          <Coral.Button ref="addButton" onClick={this.add}>Add</Coral.Button>
           <div className="u-gapTop">
             <Coral.TagList
               ref="tagList"

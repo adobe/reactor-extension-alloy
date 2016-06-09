@@ -41,12 +41,19 @@ const getCheckbox = (instance, name) => {
 
 describe('libary management', () => {
   let extensionBridge;
+  let backupExtensionBridge;
   let instance;
 
   beforeAll(() => {
     const FormComponent = extensionViewReduxForm(formConfig)(LibraryManagement);
     extensionBridge = createExtensionBridge();
     instance = getFormInstance(FormComponent, extensionBridge);
+
+    backupExtensionBridge = window.extensionBridge;
+  });
+
+  afterAll(() => {
+    window.extensionBridge = backupExtensionBridge;
   });
 
   it('sets form values from managed type settings', () => {
