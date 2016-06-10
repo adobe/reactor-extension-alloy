@@ -17,7 +17,7 @@ const LINK_TYPES = {
   EXIT: 'e'
 };
 
-class SendBeacon extends React.Component {
+export class SendBeacon extends React.Component {
   render() {
     const {
       type,
@@ -46,6 +46,7 @@ class SendBeacon extends React.Component {
           <Coral.Radio
             {...type}
             value="page"
+            ref="pageViewTypeRadio"
             checked={type.value === TYPES.PAGE}>
             Increment a pageview<span className="SendBeacon-trackerApi"> - s.t()</span>
           </Coral.Radio>
@@ -54,6 +55,7 @@ class SendBeacon extends React.Component {
           <Coral.Radio
             {...type}
             value="link"
+            ref="linkTypeRadio"
             checked={type.value === TYPES.LINK}>
             Do not increment a pageview<span className="SendBeacon-trackerApi"> - s.tl()</span>
           </Coral.Radio>
@@ -64,7 +66,7 @@ class SendBeacon extends React.Component {
                   <label>
                     <span className="Label">Link Type</span>
                     <div>
-                      <Coral.Select className="Field--short" {...linkType}>
+                      <Coral.Select ref="linkTypeSelect" className="Field--short" {...linkType}>
                         <Coral.Select.Item value={LINK_TYPES.CUSTOM}>
                           Custom Link
                         </Coral.Select.Item>
@@ -82,8 +84,12 @@ class SendBeacon extends React.Component {
                   <label>
                     <span className="Label">{linkNameLabel}</span>
                     <div>
-                      <Coral.Textfield className="Field--long" {...linkName}/>
+                      <Coral.Textfield
+                        ref="linkNameTextfield"
+                        className="Field--long"
+                        {...linkName}/>
                       <DataElementSelectorButton
+                        ref="linkNameButton"
                         onClick={openDataElementSelector.bind(this, linkName)}/>
                     </div>
                   </label>
@@ -96,7 +102,7 @@ class SendBeacon extends React.Component {
   }
 }
 
-const formConfig = mergeFormConfigs(
+export const formConfig = mergeFormConfigs(
   configurationSelectorFormConfig, {
     fields: [
       'type',
