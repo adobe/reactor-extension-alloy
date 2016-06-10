@@ -8,7 +8,7 @@ var SELECTION_TYPES = {
   SUBSET: 'subset'
 };
 
-class ConfigurationSelector extends React.Component {
+export class ConfigurationSelector extends React.Component {
   render() {
     const {
       availableExtensionConfigurations,
@@ -19,9 +19,9 @@ class ConfigurationSelector extends React.Component {
     } = this.props;
 
 
-    if (!availableExtensionConfigurations.length) {
+    if (!availableExtensionConfigurations || !availableExtensionConfigurations.length) {
       return (
-        <Coral.Alert variant="warning" className={this.props.className}>
+        <Coral.Alert ref="noConfiguraionAlert" variant="warning" className={this.props.className}>
           <Coral.Alert.Content>
             Setting variables will only take effect once you have configured the
             Adobe Analytics extension.
@@ -48,6 +48,7 @@ class ConfigurationSelector extends React.Component {
             <Coral.Radio
               {...extensionConfigurationSelectionType}
               value={SELECTION_TYPES.ALL}
+              ref="allExtensionConfigurationRadio"
               checked={extensionConfigurationSelectionType.value === SELECTION_TYPES.ALL}>
               All extension configurations
             </Coral.Radio>
@@ -56,6 +57,7 @@ class ConfigurationSelector extends React.Component {
             <Coral.Radio
               {...extensionConfigurationSelectionType}
               value={SELECTION_TYPES.SUBSET}
+              ref="subsetExtensionConfigurationRadio"
               checked={extensionConfigurationSelectionType.value === SELECTION_TYPES.SUBSET}>
               Specific extension configurations
             </Coral.Radio>
@@ -63,9 +65,11 @@ class ConfigurationSelector extends React.Component {
               extensionConfigurationSelectionType.value === SELECTION_TYPES.SUBSET ?
                 <div className="FieldSubset u-gapTop">
                   <ValidationWrapper
+                    ref="extensionConfigurationIdsWrapper"
                     error={extensionConfigurationIds.touched && extensionConfigurationIds.error}>
                     <Coral.Select
                       {...extensionConfigurationIds}
+                      ref="extensionConfigurationIdsSelect"
                       placeholder="Select Configuration"
                       multiple>
                       {selectOptions}
@@ -80,7 +84,7 @@ class ConfigurationSelector extends React.Component {
   }
 }
 
-const stateToProps = state => {
+export const stateToProps = state => {
   return {
     availableExtensionConfigurations: state.extensionConfigurations || []
   };
