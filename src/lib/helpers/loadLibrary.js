@@ -5,6 +5,7 @@ var loadScript = require('load-script');
 var logger = require('logger');
 var pageBottom = require('page-bottom');
 var window = require('window');
+var Promise = require('promise');
 
 var APP_MEASUREMENT_URL =
   'https://assets.adobedtm.com/activation/libs/app-measurement/1.6/AppMeasurement.js';
@@ -121,30 +122,33 @@ var loadRemoteLibrary = function(url, configuration) {
 
 module.exports = function(configuration) {
   var url;
+  var libraryPromise;
 
   switch (configuration.libraryCode.type) {
     case LIB_TYPES.MANAGED:
-      return loadManagedLibrary(configuration);
+      libraryPromise = loadManagedLibrary(configuration);
       break;
 
     case LIB_TYPES.PREINSTALLED:
-      return detectPreinstalledLibrary(configuration);
+      libraryPromise = detectPreinstalledLibrary(configuration);
       break;
 
     case LIB_TYPES.CUSTOM:
       url = configuration.libraryCode.script;
 
-      return loadRemoteLibrary(url, configuration);
+      libraryPromise = loadRemoteLibrary(url, configuration);
       break;
 
     case LIB_TYPES.REMOTE:
       url = window.location.protocol === 'https:' ?
         configuration.libraryCode.httpsUrl : configuration.libraryCode.httpUrl;
 
-      return loadRemoteLibrary(url, configuration);
+      libraryPromise = loadRemoteLibrary(url, configuration);
       break;
 
     default:
       throw new Error('Cannot load library. Type not supported.');
   }
+
+  return libraryPromise;
 };
