@@ -2,6 +2,7 @@
 
 var publicRequire = require('../../__tests__/helpers/publicRequire');
 var Promise = publicRequire('promise');
+var loadLibraryInjector = require('inject!../loadLibrary');
 
 var getLoggerMockObject = function() {
   return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
@@ -21,7 +22,6 @@ var getLoadLibrary = function(mocks) {
     'page-bottom': (mocks && mocks['page-bottom']) || Promise.resolve('pageBottom')
   });
 };
-var loadLibraryInjector = require('inject!../loadLibrary');
 
 describe('load library', function() {
   it('throws an error for unknown type', function() {
