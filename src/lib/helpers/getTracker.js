@@ -66,7 +66,7 @@ var updateTrackerVariables = function(trackerProperties, customSetup, tracker) {
     customSetup.script.call(window, null, tracker);
   }
 
-  applyTrackerVariables(tracker, trackerProperties);
+  applyTrackerVariables(tracker, trackerProperties || {});
 
   if (customSetup.loadPhase !== BEFORE_SETTINGS_LOAD_PHASE && customSetup.script) {
     logger.info('Calling custom script after settings.');
