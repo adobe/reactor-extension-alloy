@@ -21,7 +21,7 @@ var buildLinkTrackVars = function(tracker, newTrackerProperties, addEvents) {
   linkTrackVarsValues = linkTrackVarsValues.concat((tracker.linkTrackVars || '').split(','));
 
   return linkTrackVarsValues.filter(function(value) {
-    return value !== 'None';
+    return value !== 'None' && value;
   }).join(',');
 };
 
