@@ -146,8 +146,29 @@ describe('get tracker', function() {
     });
   });
 
-  xit('adds VisitorID instance to the tracker when needed', function() {
-    // TODO: After DTM-8106 is fixed we can create this test.
+  it('adds VisitorID instance to the tracker when needed', function() {
+    var loadLibrarySpy = jasmine.createSpy('load-library')
+      .and.returnValue(Promise.resolve({
+      }));
+
+    var getTracker = getTrackerModule({
+      'get-extension-configurations': function() {
+        return {
+          EC1: {}
+        };
+      },
+      'get-shared-module': function() {
+        return function() {
+          return Promise.resolve('visitor id instance');
+        };
+      },
+      './loadLibrary.js': loadLibrarySpy
+    });
+
+    getTracker('EC1').then(function(tracker) {
+      expect(tracker.visitor).toBe('visitor id instance');
+      done();
+    });
   });
 
   describe('updates the version of the tracker', function() {
