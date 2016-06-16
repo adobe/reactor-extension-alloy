@@ -27,15 +27,14 @@ var checkEuCompliance = function(euComplianceRequired) {
   return euCookieValue === 'true';
 };
 
-var isVisitorIdInstalled = function() {
-  return Object.keys(visitorIdExtension.getConfigurations()).length > 0;
-};
-
 var linkVisitorId = function(tracker) {
-  if (isVisitorIdInstalled && getVisitorIdInstance) {
+  if (getVisitorIdInstance) {
     return getVisitorIdInstance().then(function(visitorIdInstance) {
-      logger.info('Setting Visitor ID instance on the tracker.');
-      tracker.visitor = visitorIdInstance;
+      if (visitorIdInstance) {
+        logger.info('Setting Visitor ID instance on the tracker.');
+        tracker.visitor = visitorIdInstance;
+      }
+
       return tracker;
     }, function() {
       logger.error('Cannot link Visitor ID instance.');
