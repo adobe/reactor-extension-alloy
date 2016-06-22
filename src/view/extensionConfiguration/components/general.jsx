@@ -1,25 +1,27 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
-import mergeFormConfigs from '../../utils/mergeFormConfigs';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
+import Checkbox from '@coralui/react-coral/lib/Checkbox';
+import Select from '@coralui/react-coral/lib/Select';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+
+import mergeFormConfigs from '../../utils/mergeFormConfigs';
 import openDataElementSelector from '../../utils/openDataElementSelector';
 import CharSet, { formConfig as charSetFormConfig } from './charSet';
 import CurrencyCode, { formConfig as currencyCodeFormConfig } from './currencyCode';
 import ENVIRONMENTS from '../../enums/environments';
 
-// Array instead of object because order is important.
-const DATA_CENTERS = [
+const dataCenterOptions = [
   {
-    value: 'default',
-    label: 'Default'
+    label: 'Default',
+    value: 'default'
   },
   {
-    value: 112,
-    label: 'San Jose'
+    label: 'San Jose',
+    value: '112'
   },
   {
-    value: 122,
-    label: 'Dallas'
+    label: 'Dallas',
+    value: '122'
   }
 ];
 
@@ -36,23 +38,12 @@ export default class General extends React.Component {
       }
     } = this.props.fields;
 
-    const dataCenterOptions = DATA_CENTERS.map(dataCenter => {
-      return (
-        <Coral.Select.Item
-          key={dataCenter.value}
-          value={dataCenter.value}>
-          {dataCenter.label}
-        </Coral.Select.Item>
-      );
-    });
-
     return (
       <div>
-        <Coral.Checkbox
-          ref="euComplianceEnabledCheckbox"
+        <Checkbox
           {...euComplianceEnabled}>
           Enable EU compliance for Adobe Analytics
-        </Coral.Checkbox>
+        </Checkbox>
         <div>
           <h4 className="coral-Heading coral-Heading--4 u-gapTop">Character Set</h4>
           <CharSet fields={this.props.fields}/>
@@ -65,9 +56,9 @@ export default class General extends React.Component {
           <span className="Label u-gapTop">Tracking Server</span>
           <div>
             <ValidationWrapper
+              type="trackingServer"
               error={trackingServer.touched && trackingServer.error}>
-              <Coral.Textfield
-                ref="trackingServerTextfield"
+              <Textfield
                 className="Field--long"
                 {...trackingServer}/>
             </ValidationWrapper>
@@ -79,9 +70,9 @@ export default class General extends React.Component {
           <span className="Label u-gapTop">SSL Tracking Server</span>
           <div>
             <ValidationWrapper
+              type="trackingServerSecure"
               error={trackingServerSecure.touched && trackingServerSecure.error}>
-              <Coral.Textfield
-                ref="trackingServerSecureTextfield"
+              <Textfield
                 className="Field--long"
                 {...trackingServerSecure}/>
             </ValidationWrapper>
@@ -92,12 +83,10 @@ export default class General extends React.Component {
         <div>
           <span className="Label u-gapTop">Data Center</span>
           <div>
-            <Coral.Select
-              ref="dcSelect"
+            <Select
               placeholder="Select a data center"
-              {...dc}>
-              {dataCenterOptions}
-            </Coral.Select>
+              {...dc}
+              options={dataCenterOptions}/>
           </div>
         </div>
       </div>
@@ -169,7 +158,7 @@ export const formConfig = mergeFormConfigs(
         trackerProperties
       };
     },
-    validate(errors, values) {
+    validate(errors, values = { libraryCode: {} }) {
       const trackerPropertiesErrors = {
         ...errors.trackerProperties
       };

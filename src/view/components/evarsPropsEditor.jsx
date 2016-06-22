@@ -1,8 +1,12 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper } from '@reactor/react-components';
 import { DataElementSelectorButton } from '@reactor/react-components';
 import classNames from 'classnames';
+import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import Button from '@coralui/react-coral/lib/Button';
+import Select from '@coralui/react-coral/lib/Select';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+
 import createId from '../utils/createId';
 import openDataElementSelector from '../utils/openDataElementSelector';
 
@@ -12,6 +16,14 @@ const maxItems = {
   prop: 75
 };
 
+const typeOptions = [{
+  label: 'Set as',
+  value: 'value'
+},{
+  label: 'Duplicate From',
+  value: 'alias'
+}];
+
 export default class EvarsPropsEditor extends React.Component {
   createOptions = varType => {
     const options = [];
@@ -19,7 +31,10 @@ export default class EvarsPropsEditor extends React.Component {
 
     for (let i = 0; i < numItems; i++) {
       const value = varType + (i + 1);
-      options.push(<Coral.Select.Item key={value} value={value}>{value}</Coral.Select.Item>);
+      options.push({
+        label: value,
+        value
+      });
     }
 
     return options;
@@ -49,54 +64,42 @@ export default class EvarsPropsEditor extends React.Component {
           key={variable.id.value}
           className="u-gapBottom2x">
           <ValidationWrapper
-            ref={`nameWrapper${index}`}
+            type="name"
             error={variable.name.touched && variable.name.error}
             className="u-gapRight2x">
-            <Coral.Select
-              ref={`nameSelect${index}`}
+            <Autocomplete
               className="Field--short"
               placeholder={namePlaceholder}
-              {...variable.name}>
-              {nameOptions}
-            </Coral.Select>
+              {...variable.name}
+              onBlur={() => variable.name.onBlur(variable.name.value)}
+              options={nameOptions}/>
           </ValidationWrapper>
-          <Coral.Select
+          <Select
             className="Field--short u-gapRight2x"
             {...variable.type}
-            ref={`typeSelect${index}`}>
-            <Coral.Select.Item
-              value="value">
-              Set as
-            </Coral.Select.Item>
-            <Coral.Select.Item
-              value="alias">
-              Duplicate from
-            </Coral.Select.Item>
-          </Coral.Select>
+            options={typeOptions}/>
           <ValidationWrapper
-            ref={`valueWrapper${index}`}
+            type="value"
             error={variable.value.touched && variable.value.error}>
             {
               variable.type.value === 'value' ?
-                <Coral.Textfield
-                  ref={`valueTextfield${index}`}
+                <Textfield
                   className="Field--short"
                   {...variable.value}/> :
-                <Coral.Select
-                  ref={`valueSelect${index}`}
+                <Autocomplete
                   className="Field--short"
                   placeholder="Select variable"
-                  {...variable.value}>
-                  {valueOptions}
-                </Coral.Select>
+                  {...variable.value}
+                  onBlur={() => variable.value.onBlur(variable.value.value)}
+                  options={valueOptions}/>
             }
             <DataElementSelectorButton
               className={classNames({'u-hidden': variable.type.value !== 'value'})}
               onClick={openDataElementSelector.bind(this, variable.value)}/>
           </ValidationWrapper>
-          <Coral.Button
-            ref={`removeButton${index}`}
-            variant="quiet"
+          <Button
+            variant="minimal"
+            square
             icon="close"
             iconSize="XS"
             onClick={this.removeVariable.bind(this, index)}/>
@@ -107,11 +110,10 @@ export default class EvarsPropsEditor extends React.Component {
     return (
       <section>
         {rows}
-        <Coral.Button
-          ref="addEventButton"
+        <Button
           onClick={this.createEmptyRow}>
           Add {this.props.varType}
-        </Coral.Button>
+        </Button>
       </section>
     );
   }
@@ -176,8 +178,8 @@ export const getFormConfig = (varType, varTypePlural) => {
 
       return settings;
     },
-    validate(errors, values) {
-      const variables = values.trackerProperties[varTypePlural];
+    validate(errors, values = { trackerProperties: {} }) {
+      const variables = values.trackerProperties[varTypePlural] || [];
       const configuredVariableNames = [];
 
       const variablesErrors = variables.map(variable => {

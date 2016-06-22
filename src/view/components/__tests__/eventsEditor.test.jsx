@@ -1,6 +1,28 @@
+import { mount } from 'enzyme';
+import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import Button from '@coralui/react-coral/lib/Button';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+import { ValidationWrapper } from '@reactor/react-components';
+
 import extensionViewReduxForm from '../../extensionViewReduxForm';
 import eventsEditor, { formConfig } from '../eventsEditor';
-import { getFormInstance, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
+import { getFormComponent, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
+
+const getReactComponents = (wrapper) => {
+  const eventNameAutocompletes = wrapper.find(Autocomplete);
+  const eventValueTextfields = wrapper.find(Textfield);
+  const addEventButton = wrapper.find(Button).last().node;
+  const removeButtons = wrapper.find(Button).filterWhere(n => n.prop('icon') === 'close');
+  const nameWrappers = wrapper.find(ValidationWrapper);
+
+  return {
+    eventNameAutocompletes,
+    eventValueTextfields,
+    addEventButton,
+    removeButtons,
+    nameWrappers
+  };
+};
 
 describe('events editor', () => {
   let extensionBridge;
@@ -9,7 +31,7 @@ describe('events editor', () => {
   beforeAll(() => {
     const FormComponent = extensionViewReduxForm(formConfig)(eventsEditor);
     extensionBridge = createExtensionBridge();
-    instance = getFormInstance(FormComponent, extensionBridge);
+    instance = mount(getFormComponent(FormComponent, extensionBridge));
   });
 
   it('sets form values from settings', () => {
@@ -27,24 +49,24 @@ describe('events editor', () => {
     });
 
     const {
-      eventNameSelect0,
-      eventValueTextField0
-    } = instance.refs;
+      eventNameAutocompletes,
+      eventValueTextfields
+    } = getReactComponents(instance);
 
-    expect(eventNameSelect0.props.value).toBe('prodView');
-    expect(eventValueTextField0.props.value).toBe('a');
+    expect(eventNameAutocompletes.nodes[0].props.value).toBe('prodView');
+    expect(eventValueTextfields.nodes[0].props.value).toBe('a');
   });
 
   it('sets settings from form values', () => {
     extensionBridge.init();
 
     const {
-      eventNameSelect0,
-      eventValueTextField0
-    } = instance.refs;
+      eventNameAutocompletes,
+      eventValueTextfields
+    } = getReactComponents(instance);
 
-    eventNameSelect0.props.onChange('event1');
-    eventValueTextField0.props.onChange('b');
+    eventNameAutocompletes.nodes[0].props.onChange('event1');
+    eventValueTextfields.nodes[0].props.onChange('b');
 
     const { events } = extensionBridge.getSettings().trackerProperties;
     expect(events[0].name).toBe('event1');
@@ -56,26 +78,25 @@ describe('events editor', () => {
 
     const {
       addEventButton
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     let {
-      eventNameSelect1,
-      eventValueTextField1
-    } = instance.refs;
+      eventNameAutocompletes,
+      eventValueTextfields
+    } = getReactComponents(instance);
 
-    expect(eventNameSelect1).toBeUndefined();
-    expect(eventValueTextField1).toBeUndefined();
+    expect(eventNameAutocompletes.length).toBe(1);
+    expect(eventValueTextfields.length).toBe(1);
 
     addEventButton.props.onClick();
 
-
     ({
-      eventNameSelect1,
-      eventValueTextField1
-    } = instance.refs);
+      eventNameAutocompletes,
+      eventValueTextfields
+    } = getReactComponents(instance));
 
-    expect(eventNameSelect1).toBeDefined();
-    expect(eventValueTextField1).toBeDefined();
+    expect(eventNameAutocompletes.length).toBe(2);
+    expect(eventValueTextfields.length).toBe(2);
   });
 
   it('deletes a row when the remove button is clicked', () => {
@@ -93,27 +114,29 @@ describe('events editor', () => {
     });
 
     let {
-      eventNameSelect1,
-      eventValueTextField1
-    } = instance.refs;
+      eventNameAutocompletes,
+      eventValueTextfields
+    } = getReactComponents(instance);
 
-    expect(eventNameSelect1).toBeDefined();
-    expect(eventValueTextField1).toBeDefined();
+    expect(eventNameAutocompletes.length).toBe(2);
+    expect(eventValueTextfields.length).toBe(2);
 
     const {
-      removeButton1
-    } = instance.refs;
+      removeButtons
+    } = getReactComponents(instance);
 
-    removeButton1.props.onClick();
-
+    removeButtons.nodes[1].props.onClick();
 
     ({
-      eventNameSelect1,
-      eventValueTextField1
-    } = instance.refs);
+      eventNameAutocompletes,
+      eventValueTextfields
+    } = getReactComponents(instance));
 
-    expect(eventNameSelect1).toBeUndefined();
-    expect(eventValueTextField1).toBeUndefined();
+    expect(eventNameAutocompletes.length).toBe(1);
+    expect(eventValueTextfields.length).toBe(1);
+
+    expect(eventNameAutocompletes.nodes[0].props.name).toContain('events[0]');
+    expect(eventValueTextfields.nodes[0].props.name).toContain('events[0]');
   });
 
   it('shows an error when two events having the same name are added', () => {
@@ -136,8 +159,8 @@ describe('events editor', () => {
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { eventNameWrapper1 } = instance.refs;
-    expect(eventNameWrapper1.props.error).toEqual(jasmine.any(String));
+    const { nameWrappers } = getReactComponents(instance);
+    expect(nameWrappers.nodes[1].props.error).toEqual(jasmine.any(String));
   });
 
   it('shows an error when an event doesn\'t have a name', () => {
@@ -156,7 +179,7 @@ describe('events editor', () => {
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { eventNameWrapper0 } = instance.refs;
-    expect(eventNameWrapper0.props.error).toEqual(jasmine.any(String));
+    const { nameWrappers } = getReactComponents(instance);
+    expect(nameWrappers.nodes[0].props.error).toEqual(jasmine.any(String));
   });
 });

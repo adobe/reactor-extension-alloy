@@ -1,8 +1,11 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper, ErrorTip, InfoTip } from '@reactor/react-components';
-import ENVIRONMENTS from '../../enums/environments';
+import Button from '@coralui/react-coral/lib/Button';
+import Checkbox from '@coralui/react-coral/lib/Checkbox';
+import Radio from '@coralui/react-coral/lib/Radio';
+import Textfield from '@coralui/react-coral/lib/Textfield';
 
+import ENVIRONMENTS from '../../enums/environments';
 import ReportSuite from './reportSuite';
 
 const LIB_TYPES = {
@@ -27,15 +30,12 @@ const ReportSuites = props => {
 
       <section className="ReportSuites-fieldsContainer">
         <ReportSuite
-          refPrefix="production"
           label="Production Report Suite(s)"
           {...props.production}/>
         <ReportSuite
-          refPrefix="staging"
           label="Staging Report Suite(s)"
           {...props.staging}/>
         <ReportSuite
-          refPrefix="development"
           label="Development Report Suite(s)"
           {...props.development}/>
       </section>
@@ -51,14 +51,14 @@ const LoadPhase = props => {
       <fieldset>
         <legend><span className="Label">Load library at:</span></legend>
         <div>
-          <Coral.Radio
+          <Radio
             {...loadPhase}
             value={LOAD_PHASES.PAGE_TOP}
-            checked={loadPhase.value === LOAD_PHASES.PAGE_TOP}>Page Top</Coral.Radio>
-          <Coral.Radio
+            checked={loadPhase.value === LOAD_PHASES.PAGE_TOP}>Page Top</Radio>
+          <Radio
             {...loadPhase}
             value={LOAD_PHASES.PAGE_BOTTOM}
-            checked={loadPhase.value === LOAD_PHASES.PAGE_BOTTOM}>Page Bottom</Coral.Radio>
+            checked={loadPhase.value === LOAD_PHASES.PAGE_BOTTOM}>Page Bottom</Radio>
         </div>
       </fieldset>
     </div>
@@ -74,7 +74,7 @@ const TrackerVariableName = props => {
       error={trackerVariableName.touched && trackerVariableName.error}>
       <label>
         <span className="Label">Tracker is accessible on the global variable named:</span>
-        <Coral.Textfield className="u-gapLeft" {...trackerVariableName}/>
+        <Textfield className="u-gapLeft" {...trackerVariableName}/>
       </label>
     </ValidationWrapper>
   );
@@ -85,10 +85,10 @@ const OverwriteReportSuites = props => {
 
   return (
     <div className={props.className}>
-      <Coral.Checkbox
+      <Checkbox
         {...libraryCode.showReportSuites}>
         Set the following report suites on tracker
-      </Coral.Checkbox>
+      </Checkbox>
       {
         libraryCode.showReportSuites.value ?
           <ReportSuites {...libraryCode.accounts}/> : null
@@ -113,12 +113,12 @@ export default class LibraryManagement extends React.Component {
 
     return (
       <div>
-        <Coral.Radio
+        <Radio
           {...type}
           value={LIB_TYPES.MANAGED}
           checked={type.value === LIB_TYPES.MANAGED}>
           Manage the library for me
-        </Coral.Radio>
+        </Radio>
         {
           type.value === LIB_TYPES.MANAGED ?
             <div className="FieldSubset">
@@ -128,12 +128,12 @@ export default class LibraryManagement extends React.Component {
         }
 
         <div>
-          <Coral.Radio
+          <Radio
             {...type}
             value={LIB_TYPES.PREINSTALLED}
             checked={type.value === LIB_TYPES.PREINSTALLED}>
             Use the library already installed on the page
-          </Coral.Radio>
+          </Radio>
         </div>
         {
           type.value === LIB_TYPES.PREINSTALLED ?
@@ -146,12 +146,12 @@ export default class LibraryManagement extends React.Component {
         }
 
         <div>
-          <Coral.Radio
+          <Radio
             {...type}
             value={LIB_TYPES.REMOTE}
             checked={type.value === LIB_TYPES.REMOTE}>
             Load the library from a custom URL
-          </Coral.Radio>
+          </Radio>
         </div>
         {
           type.value === LIB_TYPES.REMOTE ?
@@ -161,9 +161,9 @@ export default class LibraryManagement extends React.Component {
                   <span className="Label">HTTP URL:</span>
                   <div>
                     <ValidationWrapper
-                      ref="httpUrlWrapper"
+                      type="httpUrl"
                       error={httpUrl.touched && httpUrl.error}>
-                      <Coral.Textfield
+                      <Textfield
                         {...httpUrl}
                         className="Field--long"
                         placeholder="http://"/>
@@ -174,9 +174,9 @@ export default class LibraryManagement extends React.Component {
                   <span className="Label u-gapTop">HTTPS URL:</span>
                   <div>
                     <ValidationWrapper
-                      ref="httpsUrlWrapper"
+                      type="httpsUrl"
                       error={httpsUrl.touched && httpsUrl.error}>
-                      <Coral.Textfield
+                      <Textfield
                         {...httpsUrl}
                         className="Field--long"
                         placeholder="https://"/>
@@ -195,23 +195,23 @@ export default class LibraryManagement extends React.Component {
         }
 
         <div>
-          <Coral.Radio
+          <Radio
             {...type}
             value={LIB_TYPES.CUSTOM}
             checked={type.value === LIB_TYPES.CUSTOM}>
             Let me provide custom library code
-          </Coral.Radio>
+          </Radio>
         </div>
         {
           type.value === LIB_TYPES.CUSTOM ?
             <div className="FieldSubset">
               <div className="u-gapBottom">
-                <Coral.Button ref="openEditorButton" icon="code" onClick={this.onOpenEditor}>
+                <Button icon="code" onClick={this.onOpenEditor}>
                   Open Editor
-                </Coral.Button>
+                </Button>
                 {
                   script.touched && script.error ?
-                    <ErrorTip ref="scriptErrorIcon" message={script.error}/> : null
+                    <ErrorTip message={script.error}/> : null
                 }
               </div>
               <OverwriteReportSuites
@@ -283,14 +283,17 @@ export const formConfig = {
       reportSuitesPreconfigured,
       httpUrl,
       httpsUrl,
-      script
+      script,
+      showReportSuites
     } = values.libraryCode || {};
 
     const libraryCodeSettings = {
       type
     };
 
-    if (values.libraryCode.accounts) {
+    const exportReportSuites =
+      (type !== LIB_TYPES.MANAGED && showReportSuites) || type === LIB_TYPES.MANAGED;
+    if (exportReportSuites && values.libraryCode.accounts) {
       const accounts = {};
 
       for (let environment of ENVIRONMENTS) {
@@ -329,7 +332,7 @@ export const formConfig = {
       libraryCode: libraryCodeSettings
     };
   },
-  validate(errors, values) {
+  validate(errors, values = { libraryCode: { accounts: {} } }) {
     const {
       accounts,
       showReportSuites,

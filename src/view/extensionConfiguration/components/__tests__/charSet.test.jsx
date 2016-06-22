@@ -1,6 +1,25 @@
+import { mount } from 'enzyme';
+import Radio from '@coralui/react-coral/lib/Radio';
+import Select from '@coralui/react-coral/lib/Select';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+
 import extensionViewReduxForm from '../../../extensionViewReduxForm';
 import CharSet, { formConfig } from '../charSet';
-import { getFormInstance, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
+import { getFormComponent, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
+
+const getReactComponents = (wrapper) => {
+  const charSetPresetSelect = wrapper.find(Select).node;
+  const charSetCustomTextfield =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('charSet')).node;
+  const customCharSetInputMethodRadio =
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom').node;
+
+  return {
+    charSetPresetSelect,
+    charSetCustomTextfield,
+    customCharSetInputMethodRadio
+  };
+};
 
 describe('char set', () => {
   let extensionBridge;
@@ -9,7 +28,7 @@ describe('char set', () => {
   beforeAll(() => {
     const FormComponent = extensionViewReduxForm(formConfig)(CharSet);
     extensionBridge = createExtensionBridge();
-    instance = getFormInstance(FormComponent, extensionBridge);
+    instance = mount(getFormComponent(FormComponent, extensionBridge));
   });
 
   it('sets preset form values from settings', () => {
@@ -21,7 +40,7 @@ describe('char set', () => {
       }
     });
 
-    const { charSetPresetSelect } = instance.refs;
+    const { charSetPresetSelect } = getReactComponents(instance);
     expect(charSetPresetSelect.props.value).toBe('UTF-8');
   });
 
@@ -34,14 +53,14 @@ describe('char set', () => {
       }
     });
 
-    const { charSetCustomTextfield } = instance.refs;
+    const { charSetCustomTextfield } = getReactComponents(instance);
     expect(charSetCustomTextfield.props.value).toBe('another non preset value');
   });
 
   it('sets settings from preset form values', () => {
     extensionBridge.init();
 
-    const { charSetPresetSelect } = instance.refs;
+    const { charSetPresetSelect } = getReactComponents(instance);
 
     charSetPresetSelect.props.onChange('UTF-8');
 
@@ -52,10 +71,10 @@ describe('char set', () => {
   it('sets settings from custom form values', () => {
     extensionBridge.init();
 
-    const { customCharSetInputMethodRadio } = instance.refs;
+    const { customCharSetInputMethodRadio } = getReactComponents(instance);
     customCharSetInputMethodRadio.props.onChange('custom');
 
-    const { charSetCustomTextfield } = instance.refs;
+    const { charSetCustomTextfield } = getReactComponents(instance);
     charSetCustomTextfield.props.onChange('some custom');
 
     const { charSet } = extensionBridge.getSettings().trackerProperties;
@@ -65,7 +84,7 @@ describe('char set', () => {
   it('doesn\'t set the trackerSettings property when default value is selected', () => {
     extensionBridge.init();
 
-    const { charSetPresetSelect } = instance.refs;
+    const { charSetPresetSelect } = getReactComponents(instance);
 
     charSetPresetSelect.props.onChange('ASCII');
 

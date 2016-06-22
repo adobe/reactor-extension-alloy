@@ -1,6 +1,8 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
+import Select from '@coralui/react-coral/lib/Select';
+import Textfield from '@coralui/react-coral/lib/Textfield';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
+
 import openDataElementSelector from '../../utils/openDataElementSelector';
 
 const COOKIE_LIFETIME_PERIODS = {
@@ -9,6 +11,20 @@ const COOKIE_LIFETIME_PERIODS = {
   SESSION: 'SESSION',
   SECONDS: 'SECONDS'
 };
+
+const cookieLifetimeOptions = [{
+  label: 'Default',
+  value: COOKIE_LIFETIME_PERIODS.DEFAULT
+},{
+  label: 'None',
+  value: COOKIE_LIFETIME_PERIODS.NONE
+},{
+  label: 'Session',
+  value: COOKIE_LIFETIME_PERIODS.SESSION
+},{
+  label: 'Seconds',
+  value: COOKIE_LIFETIME_PERIODS.SECONDS
+}];
 
 export default class Cookies extends React.Component {
   render() {
@@ -26,7 +42,7 @@ export default class Cookies extends React.Component {
         <label className="Cookies-field">
           <span className="Label">Visitor ID</span>
           <div>
-            <Coral.Textfield ref="visitorIDTextfield" className="Field--long" {...visitorID}/>
+            <Textfield className="Field--long" {...visitorID}/>
             <DataElementSelectorButton
               onClick={openDataElementSelector.bind(this, visitorID)}/>
           </div>
@@ -34,8 +50,7 @@ export default class Cookies extends React.Component {
         <label className="Cookies-field">
           <span className="Label">Visitor Namespace</span>
           <div>
-            <Coral.Textfield
-              ref="visitorNamespaceTextfield"
+            <Textfield
               className="Field--long"
               {...visitorNamespace}/>
             <DataElementSelectorButton
@@ -45,8 +60,7 @@ export default class Cookies extends React.Component {
         <label className="Cookies-field">
           <span className="Label">Domain Periods</span>
           <div>
-            <Coral.Textfield
-              ref="cookieDomainPeriodsTextfield"
+            <Textfield
               className="Field--long"
               {...cookieDomainPeriods}/>
             <DataElementSelectorButton
@@ -56,8 +70,7 @@ export default class Cookies extends React.Component {
         <label className="Cookies-field">
           <span className="Label">First-party Domain Periods</span>
           <div>
-            <Coral.Textfield
-              ref="fpCookieDomainPeriodsTextfield"
+            <Textfield
               className="Field--long"
               {...fpCookieDomainPeriods}/>
             <DataElementSelectorButton
@@ -67,22 +80,15 @@ export default class Cookies extends React.Component {
         <div className="u-gapBottom">
           <label className="Label" htmlFor="cookieLifetimeField">Cookie Lifetime</label>
           <div>
-            <Coral.Select
-              ref="cookieLifetimeSelect"
+            <Select
               className="Cookies-cookieLifetime u-gapRight"
-              {...cookieLifetime}>
-              <Coral.Select.Item value={COOKIE_LIFETIME_PERIODS.DEFAULT}>Default</Coral.Select.Item>
-              <Coral.Select.Item value={COOKIE_LIFETIME_PERIODS.NONE}>None</Coral.Select.Item>
-              <Coral.Select.Item value={COOKIE_LIFETIME_PERIODS.SESSION}>Session</Coral.Select.Item>
-              <Coral.Select.Item value={COOKIE_LIFETIME_PERIODS.SECONDS}>Seconds</Coral.Select.Item>
-            </Coral.Select>
+              {...cookieLifetime}
+              options={cookieLifetimeOptions}/>
             {
               cookieLifetime.value === COOKIE_LIFETIME_PERIODS.SECONDS ?
                 <ValidationWrapper
-                    ref="cookieLifetimeSecondsWrapper"
                     error={cookieLifetimeSeconds.touched && cookieLifetimeSeconds.error}>
-                  <Coral.Textfield
-                    ref="cookieLifetimeSecondsTextfield"
+                  <Textfield
                     className="Cookies-cookieLifetimeSeconds"
                     {...cookieLifetimeSeconds}/>
                   <DataElementSelectorButton
@@ -186,7 +192,7 @@ export const formConfig = {
       trackerProperties
     };
   },
-  validate(errors, values) {
+  validate(errors, values = { trackerProperties: {} }) {
     const { cookieLifetime, cookieLifetimeSeconds } = values.trackerProperties;
 
     if (cookieLifetime === COOKIE_LIFETIME_PERIODS.SECONDS &&

@@ -1,5 +1,5 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
+import * as Coral from '@coralui/react-coral';
 import extensionViewReduxForm from '../extensionViewReduxForm';
 import mergeFormConfigs from '../utils/mergeFormConfigs';
 import LibraryManagement, { formConfig as libraryManagementFormConfig } from './components/libraryManagement';
@@ -13,53 +13,29 @@ export class ExtensionConfiguration extends React.Component {
   render() {
     return (
       <div>
-        <Coral.Accordion className="Accordion Accordion--first" variant="quiet">
-          <Coral.Accordion.Item defaultSelected>
-            <Coral.Accordion.Item.Label>Library Management</Coral.Accordion.Item.Label>
-            <Coral.Accordion.Item.Content>
-              <LibraryManagement fields={this.props.fields}/>
-            </Coral.Accordion.Item.Content>
-          </Coral.Accordion.Item>
-        </Coral.Accordion>
-        <Coral.Accordion className="Accordion" variant="quiet">
-          <Coral.Accordion.Item>
-            <Coral.Accordion.Item.Label>General</Coral.Accordion.Item.Label>
-            <Coral.Accordion.Item.Content>
-              <General ref='general' fields={this.props.fields}/>
-            </Coral.Accordion.Item.Content>
-          </Coral.Accordion.Item>
-        </Coral.Accordion>
-        <Coral.Accordion className="Accordion" variant="quiet">
-          <Coral.Accordion.Item>
-            <Coral.Accordion.Item.Label>Global Variables</Coral.Accordion.Item.Label>
-            <Coral.Accordion.Item.Content>
-              <Variables fields={this.props.fields} showEvents={false}/>
-            </Coral.Accordion.Item.Content>
-          </Coral.Accordion.Item>
-        </Coral.Accordion>
-        <Coral.Accordion className="Accordion" variant="quiet">
-          <Coral.Accordion.Item>
-            <Coral.Accordion.Item.Label>Link Tracking</Coral.Accordion.Item.Label>
-            <Coral.Accordion.Item.Content>
-              <LinkTracking fields={this.props.fields}/>
-            </Coral.Accordion.Item.Content>
-          </Coral.Accordion.Item>
-        </Coral.Accordion>
-        <Coral.Accordion className="Accordion" variant="quiet">
-          <Coral.Accordion.Item>
-            <Coral.Accordion.Item.Label>Cookies</Coral.Accordion.Item.Label>
-            <Coral.Accordion.Item.Content>
-              <Cookies fields={this.props.fields}/>
-            </Coral.Accordion.Item.Content>
-          </Coral.Accordion.Item>
-        </Coral.Accordion>
-        <Coral.Accordion className="Accordion Accordion--last" variant="quiet">
-          <Coral.Accordion.Item>
-            <Coral.Accordion.Item.Label>Customize Page Code</Coral.Accordion.Item.Label>
-            <Coral.Accordion.Item.Content>
-              <CustomSetup fields={this.props.fields}/>
-            </Coral.Accordion.Item.Content>
-          </Coral.Accordion.Item>
+        <Coral.Accordion
+          multiselectable
+          variant="quiet"
+          defaultSelectedKey="0"
+          className="Accordion--first">
+          <Coral.AccordionItem header="Library Management">
+            <LibraryManagement fields={this.props.fields}/>
+          </Coral.AccordionItem>
+          <Coral.AccordionItem header="General">
+            <General ref='general' fields={this.props.fields}/>
+          </Coral.AccordionItem>
+          <Coral.AccordionItem header="Global Variables">
+            <Variables fields={this.props.fields} showEvents={false}/>
+          </Coral.AccordionItem>
+          <Coral.AccordionItem header="Link Tracking">
+            <LinkTracking fields={this.props.fields}/>
+          </Coral.AccordionItem>
+          <Coral.AccordionItem header="Cookies">
+            <Cookies fields={this.props.fields}/>
+          </Coral.AccordionItem>
+          <Coral.AccordionItem header="Customize Page Code">
+            <CustomSetup fields={this.props.fields}/>
+          </Coral.AccordionItem>
         </Coral.Accordion>
       </div>
     );
@@ -72,7 +48,8 @@ export const formConfig = mergeFormConfigs(
   variablesFormConfig,
   linkTrackingFormConfig,
   cookiesFormConfig,
-  customSetupFormConfig);
+  customSetupFormConfig
+);
 
 export default extensionViewReduxForm(formConfig)(ExtensionConfiguration);
 

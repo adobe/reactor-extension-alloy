@@ -1,6 +1,29 @@
+import { mount } from 'enzyme';
+import { DataElementSelectorButton } from '@reactor/react-components';
+import Radio from '@coralui/react-coral/lib/Radio';
+import Select from '@coralui/react-coral/lib/Select';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+
 import extensionViewReduxForm from '../../extensionViewReduxForm';
 import { SendBeacon, formConfig } from '../sendBeacon';
-import { getFormInstance, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
+import { getFormComponent, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
+
+const getReactComponents = (wrapper) => {
+  const pageViewTypeRadio = wrapper.find(Radio).filterWhere(n => n.prop('value') === 'page').node;
+  const linkTypeRadio = wrapper.find(Radio).filterWhere(n => n.prop('value') === 'link').node;
+  const linkTypeSelect = wrapper.find(Select).filterWhere(n => n.prop('name') === 'linkType').node;
+  const linkNameTextfield =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name') === 'linkName').node;
+  const linkNameButton = wrapper.find(DataElementSelectorButton).node;
+
+  return {
+    pageViewTypeRadio,
+    linkTypeRadio,
+    linkTypeSelect,
+    linkNameTextfield,
+    linkNameButton
+  };
+};
 
 describe('send beacon', () => {
   let extensionBridge;
@@ -9,7 +32,7 @@ describe('send beacon', () => {
   beforeAll(() => {
     const FormComponent = extensionViewReduxForm(formConfig)(SendBeacon);
     extensionBridge = createExtensionBridge();
-    instance = getFormInstance(FormComponent, extensionBridge);
+    instance = mount(getFormComponent(FormComponent, extensionBridge));
   });
 
   it('sets page view form values from settings', () => {
@@ -19,10 +42,7 @@ describe('send beacon', () => {
       }
     });
 
-    const {
-      pageViewTypeRadio
-    } = instance.refs;
-
+    const { pageViewTypeRadio } = getReactComponents(instance);
     expect(pageViewTypeRadio.props.checked).toBe(true);
   });
 
@@ -40,7 +60,7 @@ describe('send beacon', () => {
       linkTypeRadio,
       linkTypeSelect,
       linkNameTextfield
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     expect(linkTypeRadio.props.checked).toBe(true);
     expect(linkTypeSelect.props.value).toBe('d');
@@ -53,7 +73,7 @@ describe('send beacon', () => {
     const {
       pageViewTypeRadio,
       linkTypeRadio
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     linkTypeRadio.props.onChange('link');
     pageViewTypeRadio.props.onChange('page');
@@ -70,14 +90,14 @@ describe('send beacon', () => {
 
     const {
       linkTypeRadio
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     linkTypeRadio.props.onChange('link');
 
     const {
       linkTypeSelect, 
       linkNameTextfield
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     linkTypeSelect.props.onChange('e');
     linkNameTextfield.props.onChange('some text');
@@ -98,7 +118,7 @@ describe('send beacon', () => {
 
     const {
       pageViewTypeRadio
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     const {
       type
@@ -111,14 +131,14 @@ describe('send beacon', () => {
   it('opens the data element selector from data element button', () => {
     const {
       linkTypeRadio
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     linkTypeRadio.props.onChange('link');
 
     const {
       linkNameTextfield,
       linkNameButton
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     spyOn(window.extensionBridge, 'openDataElementSelector').and.callFake(callback => {
       callback('foo');
@@ -129,5 +149,4 @@ describe('send beacon', () => {
     expect(window.extensionBridge.openDataElementSelector).toHaveBeenCalled();
     expect(linkNameTextfield.props.value).toBe('%foo%');
   });
-
 });

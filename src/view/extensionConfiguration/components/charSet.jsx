@@ -1,6 +1,9 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
 import { DataElementSelectorButton } from '@reactor/react-components';
+import Radio from '@coralui/react-coral/lib/Radio';
+import Select from '@coralui/react-coral/lib/Select';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+
 import openDataElementSelector from '../../utils/openDataElementSelector';
 import CHAR_SET_PRESETS from '../../enums/charSets';
 
@@ -28,43 +31,40 @@ export default class CharSet extends React.Component {
       charSet
     } = this.props.fields.trackerProperties;
 
-    const presetOptions = CHAR_SET_PRESETS.map(preset => {
-      return <Coral.Select.Item key={preset}>{preset}</Coral.Select.Item>;
-    });
+    const presetOptions = CHAR_SET_PRESETS.map(preset => ({
+      label: preset,
+      value: preset
+    }));
 
     return (
       <div>
         <div>
-          <Coral.Radio
-            ref="presetCharSetInputMethodRadio"
+          <Radio
             {...charSetInputMethod}
             onChange={this.onTypeChange}
             value={CHAR_SET_INPUT_METHOD.PRESET}
             checked={charSetInputMethod.value === CHAR_SET_INPUT_METHOD.PRESET}>
             Preset
-          </Coral.Radio>
+          </Radio>
           {
             charSetInputMethod.value === CHAR_SET_INPUT_METHOD.PRESET ?
               <div className="FieldSubset">
-                <Coral.Select ref="charSetPresetSelect" {...charSet}>
-                  {presetOptions}
-                </Coral.Select>
+                <Select {...charSet} options={presetOptions}/>
               </div> : null
           }
         </div>
         <div>
-          <Coral.Radio
-            ref="customCharSetInputMethodRadio"
+          <Radio
             {...charSetInputMethod}
             onChange={this.onTypeChange}
             value={CHAR_SET_INPUT_METHOD.CUSTOM}
             checked={charSetInputMethod.value === CHAR_SET_INPUT_METHOD.CUSTOM}>
             Custom
-          </Coral.Radio>
+          </Radio>
           {
             charSetInputMethod.value === CHAR_SET_INPUT_METHOD.CUSTOM ?
               <div className="FieldSubset">
-                <Coral.Textfield ref="charSetCustomTextfield" {...charSet}/>
+                <Textfield {...charSet}/>
                 <DataElementSelectorButton
                   onClick={openDataElementSelector.bind(this, charSet)}/>
               </div> : null

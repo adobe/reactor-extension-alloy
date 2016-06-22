@@ -1,6 +1,9 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
+import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import Button from '@coralui/react-coral/lib/Button';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+
 import createId from '../utils/createId';
 import openDataElementSelector from '../utils/openDataElementSelector';
 
@@ -18,9 +21,10 @@ const CONTEXT_EVENTS = [
 ];
 
 export default class EventsEditor extends React.Component {
-  createOption = value => {
-    return <Coral.Select.Item key={value} value={value}>{value}</Coral.Select.Item>;
-  };
+  createOption = value => ({
+    label: value,
+    value
+  });
 
   createOptions = () => {
     const options = CONTEXT_EVENTS.map(this.createOption);
@@ -55,29 +59,26 @@ export default class EventsEditor extends React.Component {
           key={event.id.value}
           className="u-gapBottom2x">
           <ValidationWrapper
-            ref={`eventNameWrapper${index}`}
             error={event.name.touched && event.name.error}
             className="u-gapRight2x">
-            <Coral.Select
-              ref={`eventNameSelect${index}`}
+            <Autocomplete
               className="Field--short"
               placeholder={namePlaceholder}
-              {...event.name}>
-              {nameOptions}
-            </Coral.Select>
+              {...event.name}
+              onBlur={() => event.name.onBlur(event.name.value)}
+              options={nameOptions}/>
           </ValidationWrapper>
           <span className="Label u-gapRight">Serialize from value</span>
-          <Coral.Textfield
-            ref={`eventValueTextField${index}`}
+          <Textfield
             className="Field--short"
             {...event.value}/>
           <DataElementSelectorButton
             onClick={openDataElementSelector.bind(this, event.value)}/>
-          <Coral.Button
-            ref={`removeButton${index}`}
-            variant="quiet"
+          <Button
+            variant="minimal"
             icon="close"
             iconSize="XS"
+            square
             onClick={this.removeEvent.bind(this, index)}/>
         </div>
       );
@@ -86,7 +87,7 @@ export default class EventsEditor extends React.Component {
     return (
       <section>
         {rows}
-        <Coral.Button ref="addEventButton" onClick={this.createEmptyRow}>Add event</Coral.Button>
+        <Button onClick={this.createEmptyRow}>Add event</Button>
       </section>
     );
   }
@@ -155,8 +156,8 @@ export const formConfig = {
 
     return settings;
   },
-  validate(errors, values) {
-    const events = values.trackerProperties.events;
+  validate(errors, values = { trackerProperties: {} }) {
+    const events = values.trackerProperties.events || [];
     const configuredEventNames = [];
 
     const eventsErrors = events.map(event => {

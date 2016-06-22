@@ -1,7 +1,9 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper } from '@reactor/react-components';
 import { connect } from 'react-redux';
+import Alert from '@coralui/react-coral/lib/Alert';
+import Radio from '@coralui/react-coral/lib/Radio';
+import Select from '@coralui/react-coral/lib/Select';
 
 var SELECTION_TYPES = {
   ALL: 'all',
@@ -21,22 +23,19 @@ export class ConfigurationSelector extends React.Component {
 
     if (!availableExtensionConfigurations || !availableExtensionConfigurations.length) {
       return (
-        <Coral.Alert ref="noConfiguraionAlert" variant="warning" className={this.props.className}>
-          <Coral.Alert.Content>
-            Setting variables will only take effect once you have configured the
-            Adobe Analytics extension.
-          </Coral.Alert.Content>
-        </Coral.Alert>
+        <Alert variant="warning" className={this.props.className}>
+          Setting variables will only take effect once you have configured the
+          Adobe Analytics extension.
+        </Alert>
       );
     } else if (availableExtensionConfigurations.length === 1) {
       return null;
     } else {
       const selectOptions = availableExtensionConfigurations.map(extensionConfiguration => {
-        return (
-          <Coral.Select.Item key={extensionConfiguration.id} value={extensionConfiguration.id}>
-            {extensionConfiguration.name}
-          </Coral.Select.Item>
-        );
+        return {
+          label: extensionConfiguration.name,
+          value: extensionConfiguration.id
+        };
       });
 
       return (
@@ -45,35 +44,33 @@ export class ConfigurationSelector extends React.Component {
             Apply variables for the following extension configurations
           </h4>
           <div>
-            <Coral.Radio
+            <Radio
               {...extensionConfigurationSelectionType}
               value={SELECTION_TYPES.ALL}
-              ref="allExtensionConfigurationRadio"
               checked={extensionConfigurationSelectionType.value === SELECTION_TYPES.ALL}>
               All extension configurations
-            </Coral.Radio>
+            </Radio>
           </div>
           <div>
-            <Coral.Radio
+            <Radio
               {...extensionConfigurationSelectionType}
               value={SELECTION_TYPES.SUBSET}
-              ref="subsetExtensionConfigurationRadio"
               checked={extensionConfigurationSelectionType.value === SELECTION_TYPES.SUBSET}>
               Specific extension configurations
-            </Coral.Radio>
+            </Radio>
             {
               extensionConfigurationSelectionType.value === SELECTION_TYPES.SUBSET ?
                 <div className="FieldSubset u-gapTop">
                   <ValidationWrapper
-                    ref="extensionConfigurationIdsWrapper"
                     error={extensionConfigurationIds.touched && extensionConfigurationIds.error}>
-                    <Coral.Select
+                    <Select
                       {...extensionConfigurationIds}
-                      ref="extensionConfigurationIdsSelect"
+                      onBlur={
+                        () => extensionConfigurationIds.onBlur(extensionConfigurationIds.value)
+                      }
                       placeholder="Select Configuration"
-                      multiple>
-                      {selectOptions}
-                    </Coral.Select>
+                      options={selectOptions}
+                      multiple />
                   </ValidationWrapper>
                 </div> : null
             }
@@ -125,6 +122,8 @@ export const formConfig = {
     } = values;
 
     if (extensionConfigurationSelectionType === SELECTION_TYPES.SUBSET) {
+      extensionConfigurationIds = extensionConfigurationIds.map((item) => item.value);
+
       settings = {
         ...settings,
         extensionConfigurationIds
@@ -133,7 +132,7 @@ export const formConfig = {
 
     return settings;
   },
-  validate(errors, values) {
+  validate(errors, values = {}) {
     const {
       extensionConfigurationSelectionType,
       extensionConfigurationIds

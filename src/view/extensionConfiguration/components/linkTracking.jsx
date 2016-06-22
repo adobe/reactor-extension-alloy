@@ -1,6 +1,5 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
-import { ValidationWrapper } from '@reactor/react-components';
+import Checkbox from '@coralui/react-coral/lib/Checkbox';
 
 import TagListEditor from './tagListEditor';
 
@@ -23,22 +22,19 @@ export default class LinkTracking extends React.Component {
 
     return (
       <div>
-        <Coral.Checkbox
-          ref="enableTrackInlineStatsCheckbox"
+        <Checkbox
           {...trackInlineStats}>
           Enable ClickMap
-        </Coral.Checkbox>
+        </Checkbox>
         <section className="LinkTracking-section">
           <h4 className="coral-Heading coral-Heading--4">Downloads</h4>
-          <Coral.Checkbox
-            ref="trackDownloadLinksCheckbox"
+          <Checkbox
             {...trackDownloadLinks}>
             Track download links
-          </Coral.Checkbox>
+          </Checkbox>
           { trackDownloadLinks.checked ?
             <div>
               <TagListEditor
-                ref="linkDownloadFileTypesTagListEditor"
                 onChange={linkDownloadFileTypes.onChange}
                 value={linkDownloadFileTypes.value}
                 title="Download Extensions"
@@ -48,33 +44,29 @@ export default class LinkTracking extends React.Component {
         </section>
         <section className="LinkTracking-section u-gapTop">
           <h4 className="coral-Heading coral-Heading--4">Outbound Links</h4>
-          <Coral.Checkbox
-            ref="trackOutboundLinksCheckbox"
+          <Checkbox
             {...trackExternalLinks}>
             Track outbound links
-          </Coral.Checkbox>
+          </Checkbox>
           { trackExternalLinks.checked ?
             <div>
               <TagListEditor
                 onChange={linkExternalFilters.onChange}
                 value={linkExternalFilters.value}
                 title="Track"
-                ref="linkExternalFiltersTagListEditor"
                 tooltip="Some tooltip"/>
               <TagListEditor
                 onChange={linkInternalFilters.onChange}
                 value={linkInternalFilters.value}
-                ref="linkInternalFiltersTagListEditor"
                 title="Never Track"
                 tooltip="Some tooltip"/>
             </div> : null
           }
         </section>
-        <Coral.Checkbox
-          ref="keepUrlParametersCheckbox"
+        <Checkbox
           {...linkLeaveQueryString}>
           Keep URL Parameters
-        </Coral.Checkbox>
+        </Checkbox>
       </div>
     );
   }

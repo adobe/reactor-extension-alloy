@@ -1,5 +1,6 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
+import Radio from '@coralui/react-coral/lib/Radio';
+import Button from '@coralui/react-coral/lib/Button';
 
 var LOAD_PHASES = {
   BEFORE_SETTINGS: 'beforeSettings',
@@ -25,32 +26,29 @@ export default class CustomSetup extends React.Component {
 
     return (
       <div>
-        <Coral.Button
-          ref="codeButton"
+        <Button
           className="u-gapTop"
           icon="code"
           onClick={this.onOpenEditor.bind(this, script)}>
           Open Editor
-        </Coral.Button>
+        </Button>
         { showLoadPhase && script.value ?
             <div>
               <fieldset>
                 <legend><span className="Label u-gapTop">Execute custom code</span></legend>
                 <div>
-                  <Coral.Radio
-                    ref="loadPhaseBeforeRadio"
+                  <Radio
                     {...loadPhase}
                     value={LOAD_PHASES.BEFORE_SETTINGS}
                     checked={loadPhase.value === LOAD_PHASES.BEFORE_SETTINGS}>
                     Before other settings are applied
-                  </Coral.Radio>
-                  <Coral.Radio
-                    ref="loadPhaseAfterRadio"
+                  </Radio>
+                  <Radio
                     {...loadPhase}
                     value={LOAD_PHASES.AFTER_SETTINGS}
                     checked={loadPhase.value === LOAD_PHASES.AFTER_SETTINGS}>
                     After other settings are applied
-                  </Coral.Radio>
+                  </Radio>
                 </div>
               </fieldset>
             </div> : null

@@ -1,5 +1,7 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
+import Select from '@coralui/react-coral/lib/Select';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+
 import mergeFormConfigs from '../utils/mergeFormConfigs';
 import openDataElementSelector from '../utils/openDataElementSelector';
 import { DataElementSelectorButton } from '@reactor/react-components';
@@ -8,6 +10,14 @@ import EventsEditor, { formConfig as eventsFormConfig } from './eventsEditor';
 import HierarchiesEditor, { formConfig as hierarchiesFormConfig } from './hierarchiesEditor';
 
 const DYNAMIC_VARIABLE_PREFIX_DEFAULT = 'D=';
+
+const campaignTypeOptions = [{
+  label: 'Value',
+  value: 'value'
+},{
+  label: 'Query Parameter',
+  value: 'queryParam'
+}];
 
 export default class Variables extends React.Component {
   render() {
@@ -54,9 +64,8 @@ export default class Variables extends React.Component {
             <label>
               <span className="Label u-gapTop">Dynamic Variable Prefix</span>
               <div>
-                <Coral.Textfield
+                <Textfield
                   className="Field--long"
-                  ref="dynamicVariablePrefixTextField"
                   {...dynamicVariablePrefix}/>
                 <DataElementSelectorButton
                   onClick={openDataElementSelector.bind(this, dynamicVariablePrefix)}/>
@@ -67,9 +76,8 @@ export default class Variables extends React.Component {
         <label>
           <span className="Label u-gapTop">Page Name</span>
           <div>
-            <Coral.Textfield
+            <Textfield
               className="Field--long"
-              ref="pageNameTextField"
               {...pageName}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageName)}/>
           </div>
@@ -78,9 +86,8 @@ export default class Variables extends React.Component {
         <label>
           <span className="Label u-gapTop">Page URL</span>
           <div>
-            <Coral.Textfield
+            <Textfield
               className="Field--long"
-              ref="pageURLTextField"
               {...pageURL}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageURL)}/>
           </div>
@@ -89,9 +96,8 @@ export default class Variables extends React.Component {
         <label>
           <span className="Label u-gapTop">Server</span>
           <div>
-            <Coral.Textfield
+            <Textfield
               className="Field--long"
-              ref="serverTextField"
               {...server}/>
             <DataElementSelectorButton
               onClick={openDataElementSelector.bind(this, server)}/>
@@ -101,9 +107,8 @@ export default class Variables extends React.Component {
         <label>
           <span className="Label u-gapTop">Channel</span>
           <div>
-            <Coral.Textfield
+            <Textfield
               className="Field--long"
-              ref="channelTextField"
               {...channel}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, channel)}/>
           </div>
@@ -112,9 +117,8 @@ export default class Variables extends React.Component {
         <label>
           <span className="Label u-gapTop">Referrer</span>
           <div>
-            <Coral.Textfield
+            <Textfield
               className="Field--long"
-              ref="referrerTextField"
               {...referrer}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, referrer)}/>
           </div>
@@ -124,16 +128,12 @@ export default class Variables extends React.Component {
           <span className="Label u-gapTop">Campaign</span>
         </label>
         <div>
-          <Coral.Select className="Variables-campaignType"
-            ref="campaignSelect"
-            {...campaign.type}>
-            <Coral.Select.Item value="value">Value</Coral.Select.Item>
-            <Coral.Select.Item value="queryParam">Query Param</Coral.Select.Item>
-          </Coral.Select>
-          <Coral.Textfield
+          <Select className="Variables-campaignType"
+            options={campaignTypeOptions}
+            {...campaign.type}/>
+          <Textfield
             id="campaignValue"
             className="Variables-campaignValue u-gapLeft"
-            ref="campaignTextField"
             {...campaign.value}/>
           <DataElementSelectorButton onClick={openDataElementSelector.bind(this, campaign.value)}/>
         </div>
@@ -141,9 +141,8 @@ export default class Variables extends React.Component {
         <label>
           <span className="Label u-gapTop">Transaction ID</span>
           <div>
-            <Coral.Textfield
+            <Textfield
               className="Field--long"
-              ref="transactionIDTextField"
               {...transactionID}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, transactionID)}/>
           </div>
@@ -152,9 +151,8 @@ export default class Variables extends React.Component {
         <label>
           <span className="Label u-gapTop">State</span>
           <div>
-            <Coral.Textfield
+            <Textfield
               className="Field--long"
-              ref="stateTextField"
               {...state}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, state)}/>
           </div>
@@ -163,9 +161,8 @@ export default class Variables extends React.Component {
         <label>
           <span className="Label u-gapTop">Zip</span>
           <div>
-            <Coral.Textfield
+            <Textfield
               className="Field--long"
-              ref="zipTextField"
               {...zip}/>
             <DataElementSelectorButton onClick={openDataElementSelector.bind(this, zip)}/>
           </div>
