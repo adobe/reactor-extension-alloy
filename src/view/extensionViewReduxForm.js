@@ -1,3 +1,4 @@
+/* eslint import/no-mutable-exports: 0 */
 import React from 'react';
 import { reduxForm } from 'redux-form';
 
@@ -66,7 +67,7 @@ export default (config, mapStateToProps, mapDispatchToProps, mergeProps, options
 
       render() {
         // This has a ref so we can access it from tests.
-        return <WrappedComponent ref="extensionViewWrappedComponent" {...this.props}/>;
+        return <WrappedComponent {...this.props} />;
       }
     }
 

@@ -10,16 +10,16 @@ import createId from '../utils/createId';
 const hierarchiesOptions = [{
   label: 'Hierarchy 1',
   value: 'hier1'
-},{
+}, {
   label: 'Hierarchy 2',
   value: 'hier2'
-},{
+}, {
   label: 'Hierarchy 3',
   value: 'hier3'
-},{
+}, {
   label: 'Hierarchy 4',
   value: 'hier4'
-},{
+}, {
   label: 'Hierarchy 5',
   value: 'hier5'
 }];
@@ -63,21 +63,25 @@ export default class HierarchiesEditor extends React.Component {
         <div key={id.value} className="HierarchiesEditor-hierarchy">
           <ValidationWrapper
             error={name.touched && name.error}
-            className="u-gapRight2x">
+            className="u-gapRight2x"
+          >
             <Select
               {...name}
               className="Field--short"
-              options={hierarchiesOptions}/>
+              options={hierarchiesOptions}
+            />
           </ValidationWrapper>
 
           <label>
             <span className="Label u-gapRight">Delimiter</span>
             <ValidationWrapper
               error={delimiter.touched && delimiter.error}
-              className="u-gapRight">
+              className="u-gapRight"
+            >
               <Textfield
                 className="Field--short"
-                {...delimiter}/>
+                {...delimiter}
+              />
             </ValidationWrapper>
           </label>
 
@@ -88,37 +92,45 @@ export default class HierarchiesEditor extends React.Component {
                 icon="close"
                 square
                 iconSize="XS"
-                onClick={this.removeHierarchy.bind(this, index)}/> : null
+                onClick={this.removeHierarchy.bind(this, index)}
+              /> : null
           }
 
           <div className="HierarchiesEditor-section">
             <Textfield
-              {...sections[0]}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[0])}/>
+              {...sections[0]}
+            />
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[0])} />
           </div>
 
           <div className="HierarchiesEditor-section">
             <span
-              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--2"/>
+              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--2"
+            />
             <Textfield
-              {...sections[1]}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[1])}/>
+              {...sections[1]}
+            />
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[1])} />
           </div>
 
           <div className="HierarchiesEditor-section">
             <span
-              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--3"/>
+              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--3"
+            />
             <Textfield
-              {...sections[2]}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[2])}/>
+              {...sections[2]}
+            />
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[2])} />
           </div>
 
           <div className="HierarchiesEditor-section">
             <span
-              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--4"/>
+              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--4"
+            />
             <Textfield
-              {...sections[3]}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[3])}/>
+              {...sections[3]}
+            />
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[3])} />
           </div>
         </div>
       );
@@ -126,7 +138,7 @@ export default class HierarchiesEditor extends React.Component {
 
     return (
       <div>
-        { hierarchyRows }
+        {hierarchyRows}
         <Button onClick={this.createEmptyRow}>Add hierarchy</Button>
       </div>
     );
@@ -171,17 +183,13 @@ export const formConfig = {
     };
 
     hierarchies = hierarchies
-      .filter(hierarchy => {
-        return hierarchy.sections.some(section => section);
-      })
-      .map(hierarchy => {
-        return {
-          // Exclude ID since it was only used for rendering the view.
-          name: hierarchy.name,
-          sections: hierarchy.sections.filter(section => section),
-          delimiter: hierarchy.delimiter
-        };
-      });
+      .filter(hierarchy => hierarchy.sections.some(section => section))
+      .map(hierarchy => ({
+        // Exclude ID since it was only used for rendering the view.
+        name: hierarchy.name,
+        sections: hierarchy.sections.filter(section => section),
+        delimiter: hierarchy.delimiter
+      }));
 
     if (hierarchies.length) {
       trackerProperties.hierarchies = hierarchies;

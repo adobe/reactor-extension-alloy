@@ -94,8 +94,7 @@ describe('send beacon', () => {
 
     linkTypeRadio.props.onChange('link');
 
-    const {
-      linkTypeSelect, 
+    const { linkTypeSelect,
       linkNameTextfield
     } = getReactComponents(instance);
 

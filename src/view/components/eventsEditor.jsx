@@ -30,7 +30,7 @@ export default class EventsEditor extends React.Component {
     const options = CONTEXT_EVENTS.map(this.createOption);
 
     for (let i = 0; i < MAX_EVENTS; i++) {
-      const value = 'event' + (i + 1);
+      const value = `event${i + 1}`;
       options.push(this.createOption(value));
     }
 
@@ -57,29 +57,35 @@ export default class EventsEditor extends React.Component {
       return (
         <div
           key={event.id.value}
-          className="u-gapBottom2x">
+          className="u-gapBottom2x"
+        >
           <ValidationWrapper
             error={event.name.touched && event.name.error}
-            className="u-gapRight2x">
+            className="u-gapRight2x"
+          >
             <Autocomplete
               className="Field--short"
               placeholder={namePlaceholder}
               {...event.name}
               onBlur={() => event.name.onBlur(event.name.value)}
-              options={nameOptions}/>
+              options={nameOptions}
+            />
           </ValidationWrapper>
           <span className="Label u-gapRight">Serialize from value</span>
           <Textfield
             className="Field--short"
-            {...event.value}/>
+            {...event.value}
+          />
           <DataElementSelectorButton
-            onClick={openDataElementSelector.bind(this, event.value)}/>
+            onClick={openDataElementSelector.bind(this, event.value)}
+          />
           <Button
             variant="minimal"
             icon="close"
             iconSize="XS"
             square
-            onClick={this.removeEvent.bind(this, index)}/>
+            onClick={this.removeEvent.bind(this, index)}
+          />
         </div>
       );
     });
@@ -127,12 +133,10 @@ export const formConfig = {
       trackerProperties
     } = values;
 
-    const events = trackerProperties.events.filter(event => {
-      return event.name;
-    }).map(event => {
+    const events = trackerProperties.events.filter(event => event.name).map(event => {
       // Goals are to exclude ID and exclude value if it's an empty string.
 
-      var trimmedEvent = {
+      const trimmedEvent = {
         name: event.name
       };
 

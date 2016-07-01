@@ -107,7 +107,7 @@ describe('events editor', () => {
     extensionBridge.init();
 
     const {
-      typeSelects,
+      typeSelects
     } = getReactComponents(instance);
 
     typeSelects.nodes[0].props.onChange('alias');

@@ -23,86 +23,89 @@ const LINK_TYPES = {
 const linkTypeOptions = [{
   label: 'Custom Link',
   value: LINK_TYPES.CUSTOM
-},{
+}, {
   label: 'Download Link',
   value: LINK_TYPES.DOWNLOAD
-},{
+}, {
   label: 'Exit Link',
   value: LINK_TYPES.EXIT
 }];
 
-export class SendBeacon extends React.Component {
-  render() {
-    const {
-      type,
-      linkType,
-      linkName
-    } = this.props.fields;
+export function SendBeacon({ ...props }) {
+  const {
+    type,
+    linkType,
+    linkName
+  } = props.fields;
 
-    let linkNameLabel;
+  let linkNameLabel;
 
-    switch (linkType.value) {
-      case LINK_TYPES.DOWNLOAD:
-        linkNameLabel = 'File Name';
-        break;
-      case LINK_TYPES.EXIT:
-        linkNameLabel = 'Destination URL';
-        break;
-      default:
-        linkNameLabel = 'Link Name';
-    }
-
-    return (
-      <div>
-        <ConfigurationSelector className="u-gapBottom" fields={this.props.fields}/>
-        <h4 className="coral-Heading coral-Heading--4">Tracking</h4>
-        <div>
-          <Radio
-            {...type}
-            value="page"
-            checked={type.value === TYPES.PAGE}>
-            Increment a pageview<span className="SendBeacon-trackerApi"> - s.t()</span>
-          </Radio>
-        </div>
-        <div>
-          <Radio
-            {...type}
-            value="link"
-            checked={type.value === TYPES.LINK}>
-            Do not increment a pageview<span className="SendBeacon-trackerApi"> - s.tl()</span>
-          </Radio>
-          {
-            type.value === TYPES.LINK ?
-              <div className="FieldSubset SendBeacon-linkDetails">
-                <div className="SendBeacon-linkType u-gapRight">
-                  <label>
-                    <span className="Label">Link Type</span>
-                    <div>
-                      <Select
-                        className="Field--short"
-                        options={linkTypeOptions}
-                        {...linkType} />
-                    </div>
-                  </label>
-                </div>
-                <div className="SendBeacon-linkName">
-                  <label>
-                    <span className="Label">{linkNameLabel}</span>
-                    <div>
-                      <Textfield
-                        className="Field--long"
-                        {...linkName}/>
-                      <DataElementSelectorButton
-                        onClick={openDataElementSelector.bind(this, linkName)}/>
-                    </div>
-                  </label>
-                </div>
-              </div> : null
-            }
-        </div>
-      </div>
-    );
+  switch (linkType.value) {
+    case LINK_TYPES.DOWNLOAD:
+      linkNameLabel = 'File Name';
+      break;
+    case LINK_TYPES.EXIT:
+      linkNameLabel = 'Destination URL';
+      break;
+    default:
+      linkNameLabel = 'Link Name';
   }
+
+  return (
+    <div>
+      <ConfigurationSelector className="u-gapBottom" fields={props.fields} />
+      <h4 className="coral-Heading coral-Heading--4">Tracking</h4>
+      <div>
+        <Radio
+          {...type}
+          value="page"
+          checked={type.value === TYPES.PAGE}
+        >
+          Increment a pageview<span className="SendBeacon-trackerApi"> - s.t()</span>
+        </Radio>
+      </div>
+      <div>
+        <Radio
+          {...type}
+          value="link"
+          checked={type.value === TYPES.LINK}
+        >
+          Do not increment a pageview<span className="SendBeacon-trackerApi"> - s.tl()</span>
+        </Radio>
+        {
+          type.value === TYPES.LINK ?
+            <div className="FieldSubset SendBeacon-linkDetails">
+              <div className="SendBeacon-linkType u-gapRight">
+                <label>
+                  <span className="Label">Link Type</span>
+                  <div>
+                    <Select
+                      className="Field--short"
+                      options={linkTypeOptions}
+                      {...linkType}
+                    />
+                  </div>
+                </label>
+              </div>
+              <div className="SendBeacon-linkName">
+                <label>
+                  <span className="Label">{linkNameLabel}</span>
+                  <div>
+                    <Textfield
+                      className="Field--long"
+                      {...linkName}
+                    />
+                    <DataElementSelectorButton
+                      onClick={openDataElementSelector.bind(this, linkName)}
+                    />
+                  </div>
+                </label>
+              </div>
+            </div> : null
+          }
+      </div>
+    </div>
+  );
 }
 
 export const formConfig = mergeFormConfigs(

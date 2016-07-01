@@ -14,162 +14,176 @@ const DYNAMIC_VARIABLE_PREFIX_DEFAULT = 'D=';
 const campaignTypeOptions = [{
   label: 'Value',
   value: 'value'
-},{
+}, {
   label: 'Query Parameter',
   value: 'queryParam'
 }];
 
-export default class Variables extends React.Component {
-  render() {
-    const {
-      showDynamicVariablePrefix = true,
-      showEvents = true,
-      fields: {
-        trackerProperties: {
-          dynamicVariablePrefix,
-          pageName,
-          pageURL,
-          server,
-          channel,
-          referrer,
-          campaign,
-          transactionID,
-          state,
-          zip
-        }
+export default function Variables({ ...props }) {
+  const {
+    showDynamicVariablePrefix = true,
+    showEvents = true,
+    fields: {
+      trackerProperties: {
+        dynamicVariablePrefix,
+        pageName,
+        pageURL,
+        server,
+        channel,
+        referrer,
+        campaign,
+        transactionID,
+        state,
+        zip
       }
-    } = this.props;
+    }
+  } = props;
 
-    return (
-      <div>
-        <span className="Label">eVars</span>
-        <EvarsPropsEditor varType="eVar" varTypePlural="eVars" fields={this.props.fields}/>
+  return (
+    <div>
+      <span className="Label">eVars</span>
+      <EvarsPropsEditor varType="eVar" varTypePlural="eVars" fields={props.fields} />
 
-        <span className="Label u-gapTop">Props</span>
-        <EvarsPropsEditor varType="prop" varTypePlural="props" fields={this.props.fields}/>
+      <span className="Label u-gapTop">Props</span>
+      <EvarsPropsEditor varType="prop" varTypePlural="props" fields={props.fields} />
 
-        {
-          showEvents ?
+      {
+        showEvents ?
+          <div>
+            <span className="Label u-gapTop">Events</span>
+            <EventsEditor fields={props.fields} />
+          </div> : null
+      }
+
+      <span className="Label u-gapTop">Hierarchy</span>
+      <HierarchiesEditor fields={props.fields} />
+
+      {
+        showDynamicVariablePrefix ?
+          <label>
+            <span className="Label u-gapTop">Dynamic Variable Prefix</span>
             <div>
-              <span className="Label u-gapTop">Events</span>
-              <EventsEditor fields={this.props.fields}/>
-            </div> : null
-        }
+              <Textfield
+                className="Field--long"
+                {...dynamicVariablePrefix}
+              />
+              <DataElementSelectorButton
+                onClick={openDataElementSelector.bind(this, dynamicVariablePrefix)}
+              />
+            </div>
+          </label> : null
+      }
 
-        <span className="Label u-gapTop">Hierarchy</span>
-        <HierarchiesEditor fields={this.props.fields}/>
-
-        {
-          showDynamicVariablePrefix ?
-            <label>
-              <span className="Label u-gapTop">Dynamic Variable Prefix</span>
-              <div>
-                <Textfield
-                  className="Field--long"
-                  {...dynamicVariablePrefix}/>
-                <DataElementSelectorButton
-                  onClick={openDataElementSelector.bind(this, dynamicVariablePrefix)}/>
-              </div>
-            </label> : null
-        }
-
-        <label>
-          <span className="Label u-gapTop">Page Name</span>
-          <div>
-            <Textfield
-              className="Field--long"
-              {...pageName}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageName)}/>
-          </div>
-        </label>
-
-        <label>
-          <span className="Label u-gapTop">Page URL</span>
-          <div>
-            <Textfield
-              className="Field--long"
-              {...pageURL}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageURL)}/>
-          </div>
-        </label>
-
-        <label>
-          <span className="Label u-gapTop">Server</span>
-          <div>
-            <Textfield
-              className="Field--long"
-              {...server}/>
-            <DataElementSelectorButton
-              onClick={openDataElementSelector.bind(this, server)}/>
-          </div>
-        </label>
-
-        <label>
-          <span className="Label u-gapTop">Channel</span>
-          <div>
-            <Textfield
-              className="Field--long"
-              {...channel}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, channel)}/>
-          </div>
-        </label>
-
-        <label>
-          <span className="Label u-gapTop">Referrer</span>
-          <div>
-            <Textfield
-              className="Field--long"
-              {...referrer}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, referrer)}/>
-          </div>
-        </label>
-
-        <label htmlFor="campaignValue">
-          <span className="Label u-gapTop">Campaign</span>
-        </label>
+      <label>
+        <span className="Label u-gapTop">Page Name</span>
         <div>
-          <Select className="Variables-campaignType"
-            options={campaignTypeOptions}
-            {...campaign.type}/>
           <Textfield
-            id="campaignValue"
-            className="Variables-campaignValue u-gapLeft"
-            {...campaign.value}/>
-          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, campaign.value)}/>
+            className="Field--long"
+            {...pageName}
+          />
+          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageName)} />
         </div>
+      </label>
 
-        <label>
-          <span className="Label u-gapTop">Transaction ID</span>
-          <div>
-            <Textfield
-              className="Field--long"
-              {...transactionID}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, transactionID)}/>
-          </div>
-        </label>
+      <label>
+        <span className="Label u-gapTop">Page URL</span>
+        <div>
+          <Textfield
+            className="Field--long"
+            {...pageURL}
+          />
+          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageURL)} />
+        </div>
+      </label>
 
-        <label>
-          <span className="Label u-gapTop">State</span>
-          <div>
-            <Textfield
-              className="Field--long"
-              {...state}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, state)}/>
-          </div>
-        </label>
+      <label>
+        <span className="Label u-gapTop">Server</span>
+        <div>
+          <Textfield
+            className="Field--long"
+            {...server}
+          />
+          <DataElementSelectorButton
+            onClick={openDataElementSelector.bind(this, server)}
+          />
+        </div>
+      </label>
 
-        <label>
-          <span className="Label u-gapTop">Zip</span>
-          <div>
-            <Textfield
-              className="Field--long"
-              {...zip}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, zip)}/>
-          </div>
-        </label>
+      <label>
+        <span className="Label u-gapTop">Channel</span>
+        <div>
+          <Textfield
+            className="Field--long"
+            {...channel}
+          />
+          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, channel)} />
+        </div>
+      </label>
+
+      <label>
+        <span className="Label u-gapTop">Referrer</span>
+        <div>
+          <Textfield
+            className="Field--long"
+            {...referrer}
+          />
+          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, referrer)} />
+        </div>
+      </label>
+
+      <label htmlFor="campaignValue">
+        <span className="Label u-gapTop">Campaign</span>
+      </label>
+      <div>
+        <Select
+          className="Variables-campaignType"
+          options={campaignTypeOptions}
+          {...campaign.type}
+        />
+        <Textfield
+          id="campaignValue"
+          className="Variables-campaignValue u-gapLeft"
+          {...campaign.value}
+        />
+        <DataElementSelectorButton onClick={openDataElementSelector.bind(this, campaign.value)} />
       </div>
-    );
-  }
+
+      <label>
+        <span className="Label u-gapTop">Transaction ID</span>
+        <div>
+          <Textfield
+            className="Field--long"
+            {...transactionID}
+          />
+          <DataElementSelectorButton
+            onClick={openDataElementSelector.bind(this, transactionID)}
+          />
+        </div>
+      </label>
+
+      <label>
+        <span className="Label u-gapTop">State</span>
+        <div>
+          <Textfield
+            className="Field--long"
+            {...state}
+          />
+          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, state)} />
+        </div>
+      </label>
+
+      <label>
+        <span className="Label u-gapTop">Zip</span>
+        <div>
+          <Textfield
+            className="Field--long"
+            {...zip}
+          />
+          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, zip)} />
+        </div>
+      </label>
+    </div>
+  );
 }
 
 export const formConfig = mergeFormConfigs(

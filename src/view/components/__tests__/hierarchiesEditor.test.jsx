@@ -1,12 +1,10 @@
 import { mount } from 'enzyme';
-import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import Button from '@coralui/react-coral/lib/Button';
 import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 
-import HierarchiesEditor from '../hierarchiesEditor';
 import extensionViewReduxForm from '../../extensionViewReduxForm';
-import hierarchiesEditor, { formConfig } from '../hierarchiesEditor';
+import HierarchiesEditor, { formConfig } from '../hierarchiesEditor';
 import { getFormComponent, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
 
 const getReactComponents = (wrapper) => {
@@ -39,7 +37,7 @@ describe('hierarchies editor', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig)(hierarchiesEditor);
+    const FormComponent = extensionViewReduxForm(formConfig)(HierarchiesEditor);
     extensionBridge = createExtensionBridge();
     instance = mount(getFormComponent(FormComponent, extensionBridge));
   });
@@ -139,7 +137,7 @@ describe('hierarchies editor', () => {
                 'd'
               ],
               delimiter: ':'
-            },{
+            }, {
               name: 'hier4',
               sections: [
                 'aa',

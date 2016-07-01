@@ -12,9 +12,8 @@ const pushIfNotExist = (arr, value) => {
   }
 };
 
-const getUpdateReportSuiteOptions = (reportSuites, newValue) => {
-  return reportSuites.filter((rs) => rs.value !== newValue);
-};
+const getUpdateReportSuiteOptions =
+  (reportSuites, newValue) => reportSuites.filter((rs) => rs.value !== newValue);
 
 export default class ReportSuite extends React.Component {
   constructor(props) {
@@ -62,8 +61,9 @@ export default class ReportSuite extends React.Component {
     this.onChange(newValue);
   };
 
-  openSelector = () => {
-    window.extensionBridge.openDataElementSelector(this.openSelectorCallback);
+  onRemove = (removedValue) => {
+    this.state.reportSuites.push({ value: removedValue });
+    this.props.onChange(this.props.value.filter((value) => value !== removedValue));
   };
 
   openSelectorCallback = dataElementName => {
@@ -71,9 +71,8 @@ export default class ReportSuite extends React.Component {
     this.onChange(newValue);
   };
 
-  onRemove = (removedValue) => {
-    this.state.reportSuites.push({ value:  removedValue});
-    this.props.onChange(this.props.value.filter((value) => value !== removedValue));
+  openSelector = () => {
+    window.extensionBridge.openDataElementSelector(this.openSelectorCallback);
   };
 
   render() {
@@ -84,7 +83,8 @@ export default class ReportSuite extends React.Component {
         <label className="Label">{this.props.label}</label>
         <div>
           <ValidationWrapper
-            error={this.props.touched && this.props.error}>
+            error={this.props.touched && this.props.error}
+          >
             <Autocomplete
               name={this.props.name}
               labelKey="value"
@@ -98,20 +98,21 @@ export default class ReportSuite extends React.Component {
           </ValidationWrapper>
           <div>
             <TagList className="coral-Autocomplete-tagList" onClose={this.onRemove}>
-              {values.map((tag) => {
-                return (
+              {values.map(
+                (tag) => (
                   <Tag
                     className="TagListEditor-tag"
                     key={tag}
-                    title={tag}>
+                    title={tag}
+                  >
                     {tag}
                   </Tag>
-                );
-              })}
+                )
+              )}
             </TagList>
           </div>
         </div>
       </div>
     );
   }
-};
+}

@@ -20,28 +20,29 @@ const LOAD_PHASES = {
   PAGE_BOTTOM: 'pageBottom'
 };
 
-const ReportSuites = props => {
-  return (
-    <section className="ReportSuites-container">
-      <h4 className="coral-Heading coral-Heading--4">
-        Report Suites
-        <InfoTip>Some tooltip</InfoTip>
-      </h4>
+const ReportSuites = props => (
+  <section className="ReportSuites-container">
+    <h4 className="coral-Heading coral-Heading--4">
+      Report Suites
+      <InfoTip>Some tooltip</InfoTip>
+    </h4>
 
-      <section className="ReportSuites-fieldsContainer">
-        <ReportSuite
-          label="Production Report Suite(s)"
-          {...props.production}/>
-        <ReportSuite
-          label="Staging Report Suite(s)"
-          {...props.staging}/>
-        <ReportSuite
-          label="Development Report Suite(s)"
-          {...props.development}/>
-      </section>
+    <section className="ReportSuites-fieldsContainer">
+      <ReportSuite
+        label="Production Report Suite(s)"
+        {...props.production}
+      />
+      <ReportSuite
+        label="Staging Report Suite(s)"
+        {...props.staging}
+      />
+      <ReportSuite
+        label="Development Report Suite(s)"
+        {...props.development}
+      />
     </section>
-  );
-};
+  </section>
+);
 
 const LoadPhase = props => {
   const { loadPhase } = props.fields.libraryCode;
@@ -54,11 +55,13 @@ const LoadPhase = props => {
           <Radio
             {...loadPhase}
             value={LOAD_PHASES.PAGE_TOP}
-            checked={loadPhase.value === LOAD_PHASES.PAGE_TOP}>Page Top</Radio>
+            checked={loadPhase.value === LOAD_PHASES.PAGE_TOP}
+          >Page Top</Radio>
           <Radio
             {...loadPhase}
             value={LOAD_PHASES.PAGE_BOTTOM}
-            checked={loadPhase.value === LOAD_PHASES.PAGE_BOTTOM}>Page Bottom</Radio>
+            checked={loadPhase.value === LOAD_PHASES.PAGE_BOTTOM}
+          >Page Bottom</Radio>
         </div>
       </fieldset>
     </div>
@@ -71,10 +74,11 @@ const TrackerVariableName = props => {
   return (
     <ValidationWrapper
       className={props.className}
-      error={trackerVariableName.touched && trackerVariableName.error}>
+      error={trackerVariableName.touched && trackerVariableName.error}
+    >
       <label>
         <span className="Label">Tracker is accessible on the global variable named:</span>
-        <Textfield className="u-gapLeft" {...trackerVariableName}/>
+        <Textfield className="u-gapLeft" {...trackerVariableName} />
       </label>
     </ValidationWrapper>
   );
@@ -86,12 +90,13 @@ const OverwriteReportSuites = props => {
   return (
     <div className={props.className}>
       <Checkbox
-        {...libraryCode.showReportSuites}>
+        {...libraryCode.showReportSuites}
+      >
         Set the following report suites on tracker
       </Checkbox>
       {
         libraryCode.showReportSuites.value ?
-          <ReportSuites {...libraryCode.accounts}/> : null
+          <ReportSuites {...libraryCode.accounts} /> : null
       }
     </div>
   );
@@ -99,7 +104,7 @@ const OverwriteReportSuites = props => {
 
 export default class LibraryManagement extends React.Component {
   onOpenEditor = () => {
-    let scriptField = this.props.fields.libraryCode.script;
+    const scriptField = this.props.fields.libraryCode.script;
     window.extensionBridge.openCodeEditor(scriptField.value, scriptField.onChange);
   };
 
@@ -116,14 +121,15 @@ export default class LibraryManagement extends React.Component {
         <Radio
           {...type}
           value={LIB_TYPES.MANAGED}
-          checked={type.value === LIB_TYPES.MANAGED}>
+          checked={type.value === LIB_TYPES.MANAGED}
+        >
           Manage the library for me
         </Radio>
         {
           type.value === LIB_TYPES.MANAGED ?
             <div className="FieldSubset">
-              <ReportSuites {...this.props.fields.libraryCode.accounts}/>
-              <LoadPhase fields={this.props.fields}/>
+              <ReportSuites {...this.props.fields.libraryCode.accounts} />
+              <LoadPhase fields={this.props.fields} />
             </div> : null
         }
 
@@ -131,7 +137,8 @@ export default class LibraryManagement extends React.Component {
           <Radio
             {...type}
             value={LIB_TYPES.PREINSTALLED}
-            checked={type.value === LIB_TYPES.PREINSTALLED}>
+            checked={type.value === LIB_TYPES.PREINSTALLED}
+          >
             Use the library already installed on the page
           </Radio>
         </div>
@@ -140,8 +147,9 @@ export default class LibraryManagement extends React.Component {
             <div className="FieldSubset">
               <OverwriteReportSuites
                 fields={this.props.fields}
-                className="u-gapBottom"/>
-              <TrackerVariableName fields={this.props.fields}/>
+                className="u-gapBottom"
+              />
+              <TrackerVariableName fields={this.props.fields} />
             </div> : null
         }
 
@@ -149,7 +157,8 @@ export default class LibraryManagement extends React.Component {
           <Radio
             {...type}
             value={LIB_TYPES.REMOTE}
-            checked={type.value === LIB_TYPES.REMOTE}>
+            checked={type.value === LIB_TYPES.REMOTE}
+          >
             Load the library from a custom URL
           </Radio>
         </div>
@@ -162,11 +171,13 @@ export default class LibraryManagement extends React.Component {
                   <div>
                     <ValidationWrapper
                       type="httpUrl"
-                      error={httpUrl.touched && httpUrl.error}>
+                      error={httpUrl.touched && httpUrl.error}
+                    >
                       <Textfield
                         {...httpUrl}
                         className="Field--long"
-                        placeholder="http://"/>
+                        placeholder="http://"
+                      />
                     </ValidationWrapper>
                   </div>
                 </label>
@@ -175,22 +186,26 @@ export default class LibraryManagement extends React.Component {
                   <div>
                     <ValidationWrapper
                       type="httpsUrl"
-                      error={httpsUrl.touched && httpsUrl.error}>
+                      error={httpsUrl.touched && httpsUrl.error}
+                    >
                       <Textfield
                         {...httpsUrl}
                         className="Field--long"
-                        placeholder="https://"/>
+                        placeholder="https://"
+                      />
                     </ValidationWrapper>
                   </div>
                 </label>
               </div>
               <OverwriteReportSuites
                 fields={this.props.fields}
-                className="u-block u-gapBottom"/>
+                className="u-block u-gapBottom"
+              />
               <TrackerVariableName
                 fields={this.props.fields}
-                className="u-block u-gapBottom"/>
-              <LoadPhase fields={this.props.fields}/>
+                className="u-block u-gapBottom"
+              />
+              <LoadPhase fields={this.props.fields} />
             </div> : null
         }
 
@@ -198,7 +213,8 @@ export default class LibraryManagement extends React.Component {
           <Radio
             {...type}
             value={LIB_TYPES.CUSTOM}
-            checked={type.value === LIB_TYPES.CUSTOM}>
+            checked={type.value === LIB_TYPES.CUSTOM}
+          >
             Let me provide custom library code
           </Radio>
         </div>
@@ -211,16 +227,18 @@ export default class LibraryManagement extends React.Component {
                 </Button>
                 {
                   script.touched && script.error ?
-                    <ErrorTip message={script.error}/> : null
+                    <ErrorTip message={script.error} /> : null
                 }
               </div>
               <OverwriteReportSuites
                 fields={this.props.fields}
-                className="u-block u-gapBottom"/>
+                className="u-block u-gapBottom"
+              />
               <TrackerVariableName
                 fields={this.props.fields}
-                className="u-block u-gapBottom"/>
-              <LoadPhase fields={this.props.fields}/>
+                className="u-block u-gapBottom"
+              />
+              <LoadPhase fields={this.props.fields} />
             </div> : null
         }
       </div>
@@ -228,9 +246,7 @@ export default class LibraryManagement extends React.Component {
   }
 }
 
-const forcePrefix = (str, prefix) => {
-  return !str || str.indexOf(prefix) === 0 ? str : prefix + str;
-};
+const forcePrefix = (str, prefix) => (!str || str.indexOf(prefix) === 0 ? str : prefix + str);
 
 export const formConfig = {
   fields: [
@@ -296,7 +312,7 @@ export const formConfig = {
     if (exportReportSuites && values.libraryCode.accounts) {
       const accounts = {};
 
-      for (let environment of ENVIRONMENTS) {
+      for (const environment of ENVIRONMENTS) {
         const accountsForEnvironment = values.libraryCode.accounts[environment];
         if (accountsForEnvironment && accountsForEnvironment.length > 0) {
           accounts[environment] = accountsForEnvironment;

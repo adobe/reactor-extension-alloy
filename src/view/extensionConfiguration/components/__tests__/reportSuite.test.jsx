@@ -17,7 +17,7 @@ describe('report suite', () => {
   let onChangeSpy = jasmine.createSpy('onChange');
 
   beforeAll(() => {
-    instance = mount(<ReportSuite onChange={onChangeSpy}/>);
+    instance = mount(<ReportSuite onChange={onChangeSpy} />);
   });
 
   it('opens the data element selector from data element button', () => {

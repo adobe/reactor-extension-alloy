@@ -15,6 +15,17 @@ export default class TagListEditor extends React.Component {
     };
   }
 
+  onRemove = (removedValue) => {
+    this.props.onChange(this.props.value.filter((value) => value !== removedValue));
+  };
+
+  onNewValueChange = event => {
+    const newValue = event.target ? event.target.value : event;
+    this.setState({
+      newValue
+    });
+  };
+
   add = () => {
     if (this.state.newValue) {
       if (!this.valueAlreadyExists(this.props.value || [], this.state.newValue)) {
@@ -27,17 +38,6 @@ export default class TagListEditor extends React.Component {
         newValue: ''
       });
     }
-  };
-
-  onRemove = (removedValue) => {
-    this.props.onChange(this.props.value.filter((value) => value !== removedValue));
-  };
-
-  onNewValueChange = event => {
-    const newValue = event.target ? event.target.value : event;
-    this.setState({
-      newValue
-    });
   };
 
   handleKeyPress = event => {
@@ -56,16 +56,14 @@ export default class TagListEditor extends React.Component {
     window.extensionBridge.openDataElementSelector(this.openSelectorCallback);
   };
 
-  valueAlreadyExists = (values, newValue) => {
-    return values.some(value => value === newValue);
-  };
+  valueAlreadyExists = (values, newValue) => values.some(value => value === newValue);
 
   render() {
     const value = this.props.value || [];
 
     return (
       <div className="TagListEditor">
-        <label className="Label">{ this.props.title }</label>
+        <label className="Label">{this.props.title}</label>
         {
           this.props.tooltip ? <InfoTip>{this.props.tooltip}</InfoTip> : null
         }
@@ -80,12 +78,11 @@ export default class TagListEditor extends React.Component {
           <Button type="addButton" onClick={this.add}>Add</Button>
           <div className="u-gapTop">
             <TagList
-              onClose={this.onRemove}>
-              {value.map((tag) => {
-                return (
-                  <Tag className="TagListEditor-tag" key={tag} title={tag}>{tag}</Tag>
-                );
-              })}
+              onClose={this.onRemove}
+            >
+              {value.map(
+                (tag) => (<Tag className="TagListEditor-tag" key={tag} title={tag}>{tag}</Tag>)
+              )}
             </TagList>
           </div>
         </div>

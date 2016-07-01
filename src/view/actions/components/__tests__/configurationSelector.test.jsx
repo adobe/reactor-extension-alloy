@@ -36,8 +36,8 @@ describe('configuration selector', () => {
   it('sets page view form values from settings', () => {
     extensionBridge.init({
       extensionConfigurations: [
-        {id: 'EC1'},
-        {id: 'EC2'}
+        { id: 'EC1' },
+        { id: 'EC2' }
       ],
       settings: {
         extensionConfigurationIds: ['EC1', 'EC2']
@@ -56,8 +56,8 @@ describe('configuration selector', () => {
   it('sets form values from settings', () => {
     extensionBridge.init({
       extensionConfigurations: [
-        {id: 'EC1'},
-        {id: 'EC2'}
+        { id: 'EC1' },
+        { id: 'EC2' }
       ]
     });
 
@@ -74,8 +74,8 @@ describe('configuration selector', () => {
   it('sets error if no configuration id is selected', () => {
     extensionBridge.init({
       extensionConfigurations: [
-        {id: 'EC1'},
-        {id: 'EC2'}
+        { id: 'EC1' },
+        { id: 'EC2' }
       ]
     });
 
@@ -98,7 +98,7 @@ describe('configuration selector', () => {
   it('does not render anything when only 1 configuration is available', () => {
     extensionBridge.init({
       extensionConfigurations: [
-        {id: 'EC1'}
+        { id: 'EC1' }
       ]
     });
 

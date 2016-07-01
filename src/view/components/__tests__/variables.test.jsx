@@ -142,7 +142,7 @@ describe('variables', () => {
     expect(trackerProperties.server).toBe('server_value');
     expect(trackerProperties.channel).toBe('channel_value');
     expect(trackerProperties.referrer).toBe('referrer_value');
-    expect(trackerProperties.campaign).toEqual({type: 'value', value: 'campaign_value'});
+    expect(trackerProperties.campaign).toEqual({ type: 'value', value: 'campaign_value' });
     expect(trackerProperties.transactionID).toBe('transactionID_value');
     expect(trackerProperties.state).toBe('state_value');
     expect(trackerProperties.zip).toBe('zip_value');

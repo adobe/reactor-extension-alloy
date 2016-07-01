@@ -9,37 +9,36 @@ import LinkTracking, { formConfig as linkTrackingFormConfig } from './components
 import Cookies, { formConfig as cookiesFormConfig } from './components/cookies';
 import CustomSetup, { formConfig as customSetupFormConfig } from '../components/customSetup.jsx';
 
-export class ExtensionConfiguration extends React.Component {
-  render() {
-    return (
-      <div>
-        <Coral.Accordion
-          multiselectable
-          variant="quiet"
-          defaultSelectedKey="0"
-          className="Accordion--first">
-          <Coral.AccordionItem header="Library Management">
-            <LibraryManagement fields={this.props.fields}/>
-          </Coral.AccordionItem>
-          <Coral.AccordionItem header="General">
-            <General ref='general' fields={this.props.fields}/>
-          </Coral.AccordionItem>
-          <Coral.AccordionItem header="Global Variables">
-            <Variables fields={this.props.fields} showEvents={false}/>
-          </Coral.AccordionItem>
-          <Coral.AccordionItem header="Link Tracking">
-            <LinkTracking fields={this.props.fields}/>
-          </Coral.AccordionItem>
-          <Coral.AccordionItem header="Cookies">
-            <Cookies fields={this.props.fields}/>
-          </Coral.AccordionItem>
-          <Coral.AccordionItem header="Customize Page Code">
-            <CustomSetup fields={this.props.fields}/>
-          </Coral.AccordionItem>
-        </Coral.Accordion>
-      </div>
-    );
-  }
+export function ExtensionConfiguration({ ...props }) {
+  return (
+    <div>
+      <Coral.Accordion
+        multiselectable
+        variant="quiet"
+        defaultSelectedKey="0"
+        className="Accordion--first"
+      >
+        <Coral.AccordionItem header="Library Management">
+          <LibraryManagement fields={props.fields} />
+        </Coral.AccordionItem>
+        <Coral.AccordionItem header="General">
+          <General fields={props.fields} />
+        </Coral.AccordionItem>
+        <Coral.AccordionItem header="Global Variables">
+          <Variables fields={props.fields} showEvents={false} />
+        </Coral.AccordionItem>
+        <Coral.AccordionItem header="Link Tracking">
+          <LinkTracking fields={props.fields} />
+        </Coral.AccordionItem>
+        <Coral.AccordionItem header="Cookies">
+          <Cookies fields={props.fields} />
+        </Coral.AccordionItem>
+        <Coral.AccordionItem header="Customize Page Code">
+          <CustomSetup fields={props.fields} />
+        </Coral.AccordionItem>
+      </Coral.Accordion>
+    </div>
+  );
 }
 
 export const formConfig = mergeFormConfigs(

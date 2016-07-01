@@ -45,7 +45,8 @@ export default class CurrencyCode extends React.Component {
             {...currencyCodeInputMethod}
             onChange={this.onTypeChange}
             value={CURRENCY_CODE_INPUT_METHODS.PRESET}
-            checked={currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.PRESET}>
+            checked={currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.PRESET}
+          >
             Preset
           </Radio>
           {
@@ -54,7 +55,8 @@ export default class CurrencyCode extends React.Component {
                 <Select
                   className="Field--long"
                   {...currencyCode}
-                  options={presetOptions} />
+                  options={presetOptions}
+                />
               </div> : null
           }
         </div>
@@ -63,15 +65,17 @@ export default class CurrencyCode extends React.Component {
             {...currencyCodeInputMethod}
             onChange={this.onTypeChange}
             value={CURRENCY_CODE_INPUT_METHODS.CUSTOM}
-            checked={currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM}>
+            checked={currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM}
+          >
             Custom
           </Radio>
           {
             currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
               <div className="FieldSubset">
-                <Textfield {...currencyCode}/>
+                <Textfield {...currencyCode} />
                 <DataElementSelectorButton
-                  onClick={openDataElementSelector.bind(this, currencyCode)}/>
+                  onClick={openDataElementSelector.bind(this, currencyCode)}
+                />
               </div> : null
           }
         </div>
@@ -91,11 +95,10 @@ export const formConfig = {
     } = options.settings.trackerProperties || {};
 
     const currencyCodeInputMethod =
-      !currencyCode || CURRENCY_CODE_PRESETS.map((currency) => {
-        return currency.value;
-      }).indexOf(currencyCode) !== -1 ?
-        CURRENCY_CODE_INPUT_METHODS.PRESET :
-        CURRENCY_CODE_INPUT_METHODS.CUSTOM;
+      !currencyCode || CURRENCY_CODE_PRESETS.map((currency) => currency.value)
+        .indexOf(currencyCode) !== -1 ?
+          CURRENCY_CODE_INPUT_METHODS.PRESET :
+          CURRENCY_CODE_INPUT_METHODS.CUSTOM;
 
     return {
       ...values,

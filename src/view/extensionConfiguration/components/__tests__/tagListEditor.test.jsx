@@ -24,7 +24,7 @@ describe('tag list editor', () => {
   let instance;
 
   beforeAll(() => {
-    instance =  mount(<TagListEditor />);
+    instance = mount(<TagListEditor />);
   });
 
   it('opens the data element selector from data element button', () => {
@@ -42,13 +42,13 @@ describe('tag list editor', () => {
 
   it('adds a new tag when the add button is clicked', () => {
     const spy = jasmine.createSpy('onChange');
-    instance =  mount(
-      <TagListEditor onChange={spy}/>
+    instance = mount(
+      <TagListEditor onChange={spy} />
     );
 
     const {
       addButton,
-      valueTextfield,
+      valueTextfield
     } = getReactComponents(instance);
 
     valueTextfield.props.onChange('somevalue');
@@ -60,8 +60,8 @@ describe('tag list editor', () => {
 
   it('adds a new tag when the enter key is pressed', () => {
     const spy = jasmine.createSpy();
-    instance =  mount(
-      <TagListEditor onChange={spy}/>
+    instance = mount(
+      <TagListEditor onChange={spy} />
     );
 
     const {
@@ -75,7 +75,7 @@ describe('tag list editor', () => {
       }
     });
 
-    valueTextfieldWrapper.simulate('keypress', {key: "Enter", keyCode: 13, which: 13});
+    valueTextfieldWrapper.simulate('keypress', { key: 'Enter', keyCode: 13, which: 13 });
     expect(spy).toHaveBeenCalledWith(['somevalue']);
   });
 });

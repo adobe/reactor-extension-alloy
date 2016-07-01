@@ -3,7 +3,7 @@ import Button from '@coralui/react-coral/lib/Button';
 import Radio from '@coralui/react-coral/lib/Radio';
 
 import extensionViewReduxForm from '../../extensionViewReduxForm';
-import customSetup, { formConfig } from '../customSetup';
+import CustomSetup, { formConfig } from '../customSetup';
 import { getFormComponent, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
 
 const getReactComponents = (wrapper) => {
@@ -25,7 +25,7 @@ describe('customSetup', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig)(customSetup);
+    const FormComponent = extensionViewReduxForm(formConfig)(CustomSetup);
     extensionBridge = createExtensionBridge();
     instance = mount(getFormComponent(FormComponent, extensionBridge));
   });

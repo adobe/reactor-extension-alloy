@@ -12,14 +12,14 @@ export const createExtensionBridge = () => {
     register(options) {
       registeredOptions = options;
     },
-    init() {
-      return registeredOptions.init.apply(this, arguments);
+    init(...args) {
+      return registeredOptions.init.apply(this, args);
     },
-    validate() {
-      return registeredOptions.validate.apply(this, arguments);
+    validate(...args) {
+      return registeredOptions.validate.apply(this, args);
     },
-    getSettings() {
-      return registeredOptions.getSettings.apply(this, arguments);
+    getSettings(...args) {
+      return registeredOptions.getSettings.apply(this, args);
     },
     openCodeEditor() {},
     openRegexTester() {},
