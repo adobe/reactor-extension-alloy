@@ -1,7 +1,8 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
+import Radio from '@coralui/react-coral/lib/Radio';
+import Button from '@coralui/react-coral/lib/Button';
 
-var LOAD_PHASES = {
+const LOAD_PHASES = {
   BEFORE_SETTINGS: 'beforeSettings',
   AFTER_SETTINGS: 'afterSettings'
 };
@@ -20,40 +21,40 @@ export default class CustomSetup extends React.Component {
     } = this.props.fields.customSetup;
 
     const {
-      showLoadPhase = true,
+      showLoadPhase = true
     } = this.props;
 
     return (
       <div>
-        <Coral.Button
-          ref="codeButton"
+        <Button
           className="u-gapTop"
           icon="code"
-          onClick={this.onOpenEditor.bind(this, script)}>
+          onClick={this.onOpenEditor.bind(this, script)}
+        >
           Open Editor
-        </Coral.Button>
-        { showLoadPhase && script.value ?
-            <div>
-              <fieldset>
-                <legend><span className="Label u-gapTop">Execute custom code</span></legend>
-                <div>
-                  <Coral.Radio
-                    ref="loadPhaseBeforeRadio"
-                    {...loadPhase}
-                    value={LOAD_PHASES.BEFORE_SETTINGS}
-                    checked={loadPhase.value === LOAD_PHASES.BEFORE_SETTINGS}>
-                    Before other settings are applied
-                  </Coral.Radio>
-                  <Coral.Radio
-                    ref="loadPhaseAfterRadio"
-                    {...loadPhase}
-                    value={LOAD_PHASES.AFTER_SETTINGS}
-                    checked={loadPhase.value === LOAD_PHASES.AFTER_SETTINGS}>
-                    After other settings are applied
-                  </Coral.Radio>
-                </div>
-              </fieldset>
-            </div> : null
+        </Button>
+        {showLoadPhase && script.value ?
+          <div>
+            <fieldset>
+              <legend><span className="Label u-gapTop">Execute custom code</span></legend>
+              <div>
+                <Radio
+                  {...loadPhase}
+                  value={LOAD_PHASES.BEFORE_SETTINGS}
+                  checked={loadPhase.value === LOAD_PHASES.BEFORE_SETTINGS}
+                >
+                  Before other settings are applied
+                </Radio>
+                <Radio
+                  {...loadPhase}
+                  value={LOAD_PHASES.AFTER_SETTINGS}
+                  checked={loadPhase.value === LOAD_PHASES.AFTER_SETTINGS}
+                >
+                  After other settings are applied
+                </Radio>
+              </div>
+            </fieldset>
+          </div> : null
         }
       </div>
     );
@@ -74,7 +75,7 @@ export const formConfig = {
     return {
       ...values,
       customSetup: {
-        script: script,
+        script,
         loadPhase: loadPhase || LOAD_PHASES.AFTER_SETTINGS
       }
     };

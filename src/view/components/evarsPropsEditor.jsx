@@ -1,8 +1,11 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
-import { ValidationWrapper } from '@reactor/react-components';
-import { DataElementSelectorButton } from '@reactor/react-components';
+import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import classNames from 'classnames';
+import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import Button from '@coralui/react-coral/lib/Button';
+import Select from '@coralui/react-coral/lib/Select';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+
 import createId from '../utils/createId';
 import openDataElementSelector from '../utils/openDataElementSelector';
 
@@ -12,6 +15,14 @@ const maxItems = {
   prop: 75
 };
 
+const typeOptions = [{
+  label: 'Set as',
+  value: 'value'
+}, {
+  label: 'Duplicate From',
+  value: 'alias'
+}];
+
 export default class EvarsPropsEditor extends React.Component {
   createOptions = varType => {
     const options = [];
@@ -19,7 +30,10 @@ export default class EvarsPropsEditor extends React.Component {
 
     for (let i = 0; i < numItems; i++) {
       const value = varType + (i + 1);
-      options.push(<Coral.Select.Item key={value} value={value}>{value}</Coral.Select.Item>);
+      options.push({
+        label: value,
+        value
+      });
     }
 
     return options;
@@ -42,64 +56,61 @@ export default class EvarsPropsEditor extends React.Component {
     const rows = variables.map((variable, index) => {
       const nameOptions = this.createOptions(this.props.varType);
       const valueOptions = this.createOptions('eVar').concat(this.createOptions('prop'));
-      const namePlaceholder = 'Select ' + this.props.varType;
+      const namePlaceholder = `Select ${this.props.varType}`;
 
       return (
         <div
           key={variable.id.value}
-          className="u-gapBottom2x">
+          className="u-gapBottom2x"
+        >
           <ValidationWrapper
-            ref={`nameWrapper${index}`}
+            type="name"
             error={variable.name.touched && variable.name.error}
-            className="u-gapRight2x">
-            <Coral.Select
-              ref={`nameSelect${index}`}
+            className="u-gapRight2x"
+          >
+            <Autocomplete
               className="Field--short"
               placeholder={namePlaceholder}
-              {...variable.name}>
-              {nameOptions}
-            </Coral.Select>
+              {...variable.name}
+              onBlur={() => variable.name.onBlur(variable.name.value)}
+              options={nameOptions}
+            />
           </ValidationWrapper>
-          <Coral.Select
+          <Select
             className="Field--short u-gapRight2x"
             {...variable.type}
-            ref={`typeSelect${index}`}>
-            <Coral.Select.Item
-              value="value">
-              Set as
-            </Coral.Select.Item>
-            <Coral.Select.Item
-              value="alias">
-              Duplicate from
-            </Coral.Select.Item>
-          </Coral.Select>
+            options={typeOptions}
+          />
           <ValidationWrapper
-            ref={`valueWrapper${index}`}
-            error={variable.value.touched && variable.value.error}>
+            type="value"
+            error={variable.value.touched && variable.value.error}
+          >
             {
               variable.type.value === 'value' ?
-                <Coral.Textfield
-                  ref={`valueTextfield${index}`}
+                <Textfield
                   className="Field--short"
-                  {...variable.value}/> :
-                <Coral.Select
-                  ref={`valueSelect${index}`}
+                  {...variable.value}
+                /> :
+                <Autocomplete
                   className="Field--short"
                   placeholder="Select variable"
-                  {...variable.value}>
-                  {valueOptions}
-                </Coral.Select>
+                  {...variable.value}
+                  onBlur={() => variable.value.onBlur(variable.value.value)}
+                  options={valueOptions}
+                />
             }
             <DataElementSelectorButton
-              className={classNames({'u-hidden': variable.type.value !== 'value'})}
-              onClick={openDataElementSelector.bind(this, variable.value)}/>
+              className={classNames({ 'u-hidden': variable.type.value !== 'value' })}
+              onClick={openDataElementSelector.bind(this, variable.value)}
+            />
           </ValidationWrapper>
-          <Coral.Button
-            ref={`removeButton${index}`}
-            variant="quiet"
+          <Button
+            variant="minimal"
+            square
             icon="close"
             iconSize="XS"
-            onClick={this.removeVariable.bind(this, index)}/>
+            onClick={this.removeVariable.bind(this, index)}
+          />
         </div>
       );
     });
@@ -107,107 +118,103 @@ export default class EvarsPropsEditor extends React.Component {
     return (
       <section>
         {rows}
-        <Coral.Button
-          ref="addEventButton"
-          onClick={this.createEmptyRow}>
+        <Button
+          onClick={this.createEmptyRow}
+        >
           Add {this.props.varType}
-        </Coral.Button>
+        </Button>
       </section>
     );
   }
 }
 
-export const getFormConfig = (varType, varTypePlural) => {
-  return {
-    fields: [
-      `trackerProperties.${varTypePlural}[].id`,
-      `trackerProperties.${varTypePlural}[].name`,
-      `trackerProperties.${varTypePlural}[].type`,
-      `trackerProperties.${varTypePlural}[].value`
-    ],
-    settingsToFormValues(values, options) {
-      let variables = (options.settings.trackerProperties || {})[varTypePlural];
+export const getFormConfig = (varType, varTypePlural) => ({
+  fields: [
+    `trackerProperties.${varTypePlural}[].id`,
+    `trackerProperties.${varTypePlural}[].name`,
+    `trackerProperties.${varTypePlural}[].type`,
+    `trackerProperties.${varTypePlural}[].value`
+  ],
+  settingsToFormValues(values, options) {
+    let variables = (options.settings.trackerProperties || {})[varTypePlural];
 
-      variables = variables ? variables.slice() : [];
+    variables = variables ? variables.slice() : [];
 
-      // Add an extra object which will ensures that there is an empty row available for the user
-      // to configure their next variable.
-      variables.push({});
+    // Add an extra object which will ensures that there is an empty row available for the user
+    // to configure their next variable.
+    variables.push({});
 
-      variables.forEach(variable => {
-        variable.id = createId();
-        variable.type = variable.type || 'value';
-      });
+    variables.forEach(variable => {
+      variable.id = createId();
+      variable.type = variable.type || 'value';
+    });
 
-      return {
-        ...values,
-        trackerProperties: {
-          ...values.trackerProperties,
-          [varTypePlural]: variables
-        }
-      };
-    },
-    formValuesToSettings(settings, values) {
-      const {
-        trackerProperties
-      } = values;
-
-      const variables = trackerProperties[varTypePlural].filter(variable => {
-        return variable.name;
-      }).map(variable => {
-        // Everything but id.
-        return {
-          name: variable.name,
-          type: variable.type,
-          value: variable.value
-        };
-      });
-
-      settings = {
-        ...settings
-      };
-
-      if (variables.length) {
-        settings.trackerProperties = {
-          ...settings.trackerProperties,
-          [varTypePlural]: variables
-        };
+    return {
+      ...values,
+      trackerProperties: {
+        ...values.trackerProperties,
+        [varTypePlural]: variables
       }
+    };
+  },
+  formValuesToSettings(settings, values) {
+    const {
+      trackerProperties
+    } = values;
 
-      return settings;
-    },
-    validate(errors, values) {
-      const variables = values.trackerProperties[varTypePlural];
-      const configuredVariableNames = [];
+    const variables = trackerProperties[varTypePlural]
+      .filter(variable => variable.name)
+      .map(variable => ({
+        // Everything but id.
+        name: variable.name,
+        type: variable.type,
+        value: variable.value
+      }));
 
-      const variablesErrors = variables.map(variable => {
-        const variableErrors = {};
+    settings = {
+      ...settings
+    };
 
-        if (variable.name) {
-          if (configuredVariableNames.indexOf(variable.name) === -1) {
-            configuredVariableNames.push(variable.name);
-          } else {
-            variableErrors.name = 'This ' + varType + ' is already configured';
-          }
-        } else if (variable.value) {
-          variableErrors.name = 'Please provide a name';
-        }
-
-        if (!variable.value && variable.name) {
-          variableErrors.value = 'Please provide a value';
-        }
-
-        return variableErrors;
-      });
-
-      return {
-        ...errors,
-        trackerProperties: {
-          ...errors.trackerProperties,
-          [varTypePlural]: variablesErrors
-        }
+    if (variables.length) {
+      settings.trackerProperties = {
+        ...settings.trackerProperties,
+        [varTypePlural]: variables
       };
     }
-  };
-};
+
+    return settings;
+  },
+  validate(errors, values = { trackerProperties: {} }) {
+    const variables = values.trackerProperties[varTypePlural] || [];
+    const configuredVariableNames = [];
+
+    const variablesErrors = variables.map(variable => {
+      const variableErrors = {};
+
+      if (variable.name) {
+        if (configuredVariableNames.indexOf(variable.name) === -1) {
+          configuredVariableNames.push(variable.name);
+        } else {
+          variableErrors.name = `This ${varType} is already configured`;
+        }
+      } else if (variable.value) {
+        variableErrors.name = 'Please provide a name';
+      }
+
+      if (!variable.value && variable.name) {
+        variableErrors.value = 'Please provide a value';
+      }
+
+      return variableErrors;
+    });
+
+    return {
+      ...errors,
+      trackerProperties: {
+        ...errors.trackerProperties,
+        [varTypePlural]: variablesErrors
+      }
+    };
+  }
+});
 

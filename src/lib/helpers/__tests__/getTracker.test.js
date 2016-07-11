@@ -146,7 +146,7 @@ describe('get tracker', function() {
     });
   });
 
-  it('adds VisitorID instance to the tracker when needed', function() {
+  it('adds VisitorID instance to the tracker when needed', function(done) {
     var loadLibrarySpy = jasmine.createSpy('load-library')
       .and.returnValue(Promise.resolve({
       }));

@@ -1,5 +1,9 @@
-import Coral from '@coralui/coralui-support-reduxform';
-import { DataElementSelectorButton, ValidationWrapper, InfoTip } from '@reactor/react-components';
+import Button from '@coralui/react-coral/lib/Button';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+import Tag from '@coralui/react-coral/lib/Tag';
+import TagList from '@coralui/react-coral/lib/TagList';
+
+import { DataElementSelectorButton, InfoTip } from '@reactor/react-components';
 import React from 'react';
 import addDataElementToken from '../../utils/addDataElementToken';
 
@@ -10,6 +14,17 @@ export default class TagListEditor extends React.Component {
       newValue: ''
     };
   }
+
+  onRemove = (removedValue) => {
+    this.props.onChange(this.props.value.filter((value) => value !== removedValue));
+  };
+
+  onNewValueChange = event => {
+    const newValue = event.target ? event.target.value : event;
+    this.setState({
+      newValue
+    });
+  };
 
   add = () => {
     if (this.state.newValue) {
@@ -23,19 +38,10 @@ export default class TagListEditor extends React.Component {
         newValue: ''
       });
     }
-
-    this.refs.valueTextfield.coralComponent.focus();
-  };
-
-  onNewValueChange = event => {
-    const newValue = event.target ? event.target.value : event;
-    this.setState({
-      newValue
-    });
   };
 
   handleKeyPress = event => {
-    if (event.keyCode === 13 && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+    if (event.key === 'Enter') {
       this.add();
     }
   };
@@ -50,45 +56,34 @@ export default class TagListEditor extends React.Component {
     window.extensionBridge.openDataElementSelector(this.openSelectorCallback);
   };
 
-  valueAlreadyExists = (values, newValue) => {
-    return values.some(value => value === newValue);
-  };
+  valueAlreadyExists = (values, newValue) => values.some(value => value === newValue);
 
   render() {
     const value = this.props.value || [];
 
     return (
       <div className="TagListEditor">
-        <label className="Label">{ this.props.title }</label>
+        <label className="Label">{this.props.title}</label>
         {
           this.props.tooltip ? <InfoTip>{this.props.tooltip}</InfoTip> : null
         }
         <div>
-          <Coral.Textfield
-            ref="valueTextfield"
+          <Textfield
             className="Field--long"
-            onKeyUp={this.onNewValueChange}
+            onChange={this.onNewValueChange}
             onKeyPress={this.handleKeyPress}
             value={this.state.newValue}
           />
-          <DataElementSelectorButton ref="valueButton" onClick={this.openSelector} />
-          <Coral.Button ref="addButton" onClick={this.add}>Add</Coral.Button>
+          <DataElementSelectorButton onClick={this.openSelector} />
+          <Button type="addButton" onClick={this.add}>Add</Button>
           <div className="u-gapTop">
-            <Coral.TagList
-              ref="tagList"
-              onChange={this.props.onChange}>
-              {value.map((tag) => {
-                return (
-                  <Coral.Tag
-                    className="TagListEditor-tag"
-                    key={tag}
-                    value={tag}
-                    title={tag}>
-                    {tag}
-                  </Coral.Tag>
-                );
-              })}
-            </Coral.TagList>
+            <TagList
+              onClose={this.onRemove}
+            >
+              {value.map(
+                (tag) => (<Tag className="TagListEditor-tag" key={tag} title={tag}>{tag}</Tag>)
+              )}
+            </TagList>
           </div>
         </div>
       </div>

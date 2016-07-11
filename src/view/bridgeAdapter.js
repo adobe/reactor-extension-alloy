@@ -36,7 +36,9 @@ export default (extensionBridge, store) => {
       let valid = false;
       // handleSubmit comes from redux-form. The function passed in will only be called if the
       // form passes validation.
-      handleSubmit(() => valid = true)();
+      handleSubmit(() => {
+        valid = true;
+      })();
       return valid;
     }
   });

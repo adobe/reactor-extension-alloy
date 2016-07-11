@@ -1,10 +1,13 @@
-import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
 import { DataElementSelectorButton } from '@reactor/react-components';
-import openDataElementSelector from '../utils/openDataElementSelector';
+import React from 'react';
+import Radio from '@coralui/react-coral/lib/Radio';
+import Select from '@coralui/react-coral/lib/Select';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+
+import ConfigurationSelector, { formConfig as configurationSelectorFormConfig } from './components/configurationSelector';
 import extensionViewReduxForm from '../extensionViewReduxForm';
 import mergeFormConfigs from '../utils/mergeFormConfigs';
-import ConfigurationSelector, { formConfig as configurationSelectorFormConfig } from './components/configurationSelector';
+import openDataElementSelector from '../utils/openDataElementSelector';
 
 const TYPES = {
   PAGE: 'page',
@@ -17,89 +20,92 @@ const LINK_TYPES = {
   EXIT: 'e'
 };
 
-export class SendBeacon extends React.Component {
-  render() {
-    const {
-      type,
-      linkType,
-      linkName
-    } = this.props.fields;
+const linkTypeOptions = [{
+  label: 'Custom Link',
+  value: LINK_TYPES.CUSTOM
+}, {
+  label: 'Download Link',
+  value: LINK_TYPES.DOWNLOAD
+}, {
+  label: 'Exit Link',
+  value: LINK_TYPES.EXIT
+}];
 
-    let linkNameLabel;
+export function SendBeacon({ ...props }) {
+  const {
+    type,
+    linkType,
+    linkName
+  } = props.fields;
 
-    switch (linkType.value) {
-      case LINK_TYPES.DOWNLOAD:
-        linkNameLabel = 'File Name';
-        break;
-      case LINK_TYPES.EXIT:
-        linkNameLabel = 'Destination URL';
-        break;
-      default:
-        linkNameLabel = 'Link Name';
-    }
+  let linkNameLabel;
 
-    return (
-      <div>
-        <ConfigurationSelector className="u-gapBottom" fields={this.props.fields}/>
-        <h4 className="coral-Heading coral-Heading--4">Tracking</h4>
-        <div>
-          <Coral.Radio
-            {...type}
-            value="page"
-            ref="pageViewTypeRadio"
-            checked={type.value === TYPES.PAGE}>
-            Increment a pageview<span className="SendBeacon-trackerApi"> - s.t()</span>
-          </Coral.Radio>
-        </div>
-        <div>
-          <Coral.Radio
-            {...type}
-            value="link"
-            ref="linkTypeRadio"
-            checked={type.value === TYPES.LINK}>
-            Do not increment a pageview<span className="SendBeacon-trackerApi"> - s.tl()</span>
-          </Coral.Radio>
-          {
-            type.value === TYPES.LINK ?
-              <div className="FieldSubset SendBeacon-linkDetails">
-                <div className="SendBeacon-linkType u-gapRight">
-                  <label>
-                    <span className="Label">Link Type</span>
-                    <div>
-                      <Coral.Select ref="linkTypeSelect" className="Field--short" {...linkType}>
-                        <Coral.Select.Item value={LINK_TYPES.CUSTOM}>
-                          Custom Link
-                        </Coral.Select.Item>
-                        <Coral.Select.Item value={LINK_TYPES.DOWNLOAD}>
-                          Download Link
-                        </Coral.Select.Item>
-                        <Coral.Select.Item value={LINK_TYPES.EXIT}>
-                          Exit Link
-                        </Coral.Select.Item>
-                      </Coral.Select>
-                    </div>
-                  </label>
-                </div>
-                <div className="SendBeacon-linkName">
-                  <label>
-                    <span className="Label">{linkNameLabel}</span>
-                    <div>
-                      <Coral.Textfield
-                        ref="linkNameTextfield"
-                        className="Field--long"
-                        {...linkName}/>
-                      <DataElementSelectorButton
-                        ref="linkNameButton"
-                        onClick={openDataElementSelector.bind(this, linkName)}/>
-                    </div>
-                  </label>
-                </div>
-              </div> : null
-            }
-        </div>
-      </div>
-    );
+  switch (linkType.value) {
+    case LINK_TYPES.DOWNLOAD:
+      linkNameLabel = 'File Name';
+      break;
+    case LINK_TYPES.EXIT:
+      linkNameLabel = 'Destination URL';
+      break;
+    default:
+      linkNameLabel = 'Link Name';
   }
+
+  return (
+    <div>
+      <ConfigurationSelector className="u-gapBottom" fields={props.fields} />
+      <h4 className="coral-Heading coral-Heading--4">Tracking</h4>
+      <div>
+        <Radio
+          {...type}
+          value="page"
+          checked={type.value === TYPES.PAGE}
+        >
+          Increment a pageview<span className="SendBeacon-trackerApi"> - s.t()</span>
+        </Radio>
+      </div>
+      <div>
+        <Radio
+          {...type}
+          value="link"
+          checked={type.value === TYPES.LINK}
+        >
+          Do not increment a pageview<span className="SendBeacon-trackerApi"> - s.tl()</span>
+        </Radio>
+        {
+          type.value === TYPES.LINK ?
+            <div className="FieldSubset SendBeacon-linkDetails">
+              <div className="SendBeacon-linkType u-gapRight">
+                <label>
+                  <span className="Label">Link Type</span>
+                  <div>
+                    <Select
+                      className="Field--short"
+                      options={linkTypeOptions}
+                      {...linkType}
+                    />
+                  </div>
+                </label>
+              </div>
+              <div className="SendBeacon-linkName">
+                <label>
+                  <span className="Label">{linkNameLabel}</span>
+                  <div>
+                    <Textfield
+                      className="Field--long"
+                      {...linkName}
+                    />
+                    <DataElementSelectorButton
+                      onClick={openDataElementSelector.bind(this, linkName)}
+                    />
+                  </div>
+                </label>
+              </div>
+            </div> : null
+          }
+      </div>
+    </div>
+  );
 }
 
 export const formConfig = mergeFormConfigs(

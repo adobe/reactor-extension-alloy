@@ -1,42 +1,81 @@
+import { mount } from 'enzyme';
+import Checkbox from '@coralui/react-coral/lib/Checkbox';
+import Radio from '@coralui/react-coral/lib/Radio';
+import Tag from '@coralui/react-coral/lib/Tag';
+import Button from '@coralui/react-coral/lib/Button';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+import { ValidationWrapper, ErrorTip } from '@reactor/react-components';
+
+import ReportSuite from './../reportSuite';
 import extensionViewReduxForm from '../../../extensionViewReduxForm';
 import LibraryManagement, { formConfig } from '../libraryManagement';
-import ReportSuite from '../reportSuite';
-import Coral from '@coralui/coralui-support-reduxform';
+import { getFormComponent, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
 
-import { getFormInstance, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
-import TestUtils from 'react-addons-test-utils';
+const getReactComponents = (wrapper) => {
+  const productionReportSuitesAutocompleteWrapper =
+    wrapper.find(ReportSuite).filterWhere(n => n.prop('name').includes('production'));
+  const stagingReportSuitesAutocompleteWrapper =
+    wrapper.find(ReportSuite).filterWhere(n => n.prop('name').includes('staging'));
+  const developmentReportSuitesAutocompleteWrapper =
+    wrapper.find(ReportSuite).filterWhere(n => n.prop('name').includes('development'));
 
-const getReportSuiteComponents = (instance) => {
-  const components = TestUtils.scryRenderedComponentsWithType(instance, ReportSuite);
+  const productionReportSuites =
+    productionReportSuitesAutocompleteWrapper.find(Tag).nodes.map(n => n.props.children);
+  const stagingReportSuites =
+    stagingReportSuitesAutocompleteWrapper.find(Tag).nodes.map(n => n.props.children);
+  const developmentReportSuites =
+    developmentReportSuitesAutocompleteWrapper.find(Tag).nodes.map(n => n.props.children);
+
+  const productionReportSuitesAutocomplete = productionReportSuitesAutocompleteWrapper.node;
+  const stagingReportSuitesAutocomplete = stagingReportSuitesAutocompleteWrapper.node;
+  const developmentReportSuitesAutocomplete = developmentReportSuitesAutocompleteWrapper.node;
+
+  const pageBottomLoadPhaseRadio =
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'pageBottom').node;
+  const typePreinstalledRadio =
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'preinstalled').node;
+  const typeRemoteRadio =
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'remote').node;
+  const typeCustomRadio =
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom').node;
+
+  const trackerVariableNameTextfield =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('trackerVariableName')).node;
+  const httpUrlTextfield =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('httpUrl')).node;
+  const httpsUrlTextfield =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('httpsUrl')).node;
+  const showReportSuitesCheckbox =
+    wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('showReportSuites')).node;
+
+  const httpUrlWrapper =
+    wrapper.find(ValidationWrapper).filterWhere(n => n.prop('type') === 'httpUrl').node;
+  const httpsUrlWrapper =
+    wrapper.find(ValidationWrapper).filterWhere(n => n.prop('type') === 'httpsUrl').node;
+
+  const openEditorButton = wrapper.find(Button).filterWhere(n => n.prop('icon') === 'code').node;
+  const scriptErrorIcon = wrapper.find(ErrorTip).node;
+
   return {
-    productionReportSuiteAutocomplete: components.filter((component) => {
-      return component.props.refPrefix === 'production';
-    })[0],
-    stagingReportSuiteAutocomplete: components.filter((component) => {
-      return component.props.refPrefix === 'staging';
-    })[0],
-    developmentReportSuiteAutocomplete: components.filter((component) => {
-      return component.props.refPrefix === 'development';
-    })[0]
+    productionReportSuitesAutocomplete,
+    stagingReportSuitesAutocomplete,
+    developmentReportSuitesAutocomplete,
+    productionReportSuites,
+    stagingReportSuites,
+    developmentReportSuites,
+    pageBottomLoadPhaseRadio,
+    trackerVariableNameTextfield,
+    httpUrlTextfield,
+    httpsUrlTextfield,
+    showReportSuitesCheckbox,
+    typePreinstalledRadio,
+    typeRemoteRadio,
+    typeCustomRadio,
+    openEditorButton,
+    httpUrlWrapper,
+    httpsUrlWrapper,
+    scriptErrorIcon
   };
-};
-
-const getRadio = (instance, name, value) => {
-  return TestUtils.scryRenderedComponentsWithType(instance, Coral.Radio).filter((component) => {
-    return component.props.name === name && component.props.value === value;
-  })[0];
-};
-
-const getTextfield = (instance, name) => {
-  return TestUtils.scryRenderedComponentsWithType(instance, Coral.Textfield).filter((component) => {
-    return component.props.name === name;
-  })[0];
-};
-
-const getCheckbox = (instance, name) => {
-  return TestUtils.scryRenderedComponentsWithType(instance, Coral.Checkbox).filter((component) => {
-    return component.props.name === name;
-  })[0];
 };
 
 describe('libary management', () => {
@@ -47,7 +86,7 @@ describe('libary management', () => {
   beforeAll(() => {
     const FormComponent = extensionViewReduxForm(formConfig)(LibraryManagement);
     extensionBridge = createExtensionBridge();
-    instance = getFormInstance(FormComponent, extensionBridge);
+    instance = mount(getFormComponent(FormComponent, extensionBridge));
 
     backupExtensionBridge = window.extensionBridge;
   });
@@ -81,16 +120,15 @@ describe('libary management', () => {
     });
 
     const {
-      productionReportSuiteAutocomplete,
-      stagingReportSuiteAutocomplete,
-      developmentReportSuiteAutocomplete
-    } = getReportSuiteComponents(instance);
+      productionReportSuites,
+      stagingReportSuites,
+      developmentReportSuites,
+      pageBottomLoadPhaseRadio
+    } = getReactComponents(instance);
 
-    const pageBottomLoadPhaseRadio = getRadio(instance, 'libraryCode.loadPhase', 'pageBottom');
-
-    expect(productionReportSuiteAutocomplete.props.value).toEqual(['aaa', 'bbb']);
-    expect(stagingReportSuiteAutocomplete.props.value).toEqual(['ccc', 'ddd']);
-    expect(developmentReportSuiteAutocomplete.props.value).toEqual(['eee', 'fff']);
+    expect(productionReportSuites).toEqual(['aaa', 'bbb']);
+    expect(stagingReportSuites).toEqual(['ccc', 'ddd']);
+    expect(developmentReportSuites).toEqual(['eee', 'fff']);
     expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
   });
 
@@ -119,17 +157,16 @@ describe('libary management', () => {
     });
 
     const {
-      productionReportSuiteAutocomplete,
-      stagingReportSuiteAutocomplete,
-      developmentReportSuiteAutocomplete
-    } = getReportSuiteComponents(instance);
+      productionReportSuites,
+      stagingReportSuites,
+      developmentReportSuites,
+      trackerVariableNameTextfield,
+      showReportSuitesCheckbox
+    } = getReactComponents(instance);
 
-    const trackerVariableNameTextfield = getTextfield(instance, 'libraryCode.trackerVariableName');
-    const showReportSuitesCheckbox = getCheckbox(instance, 'libraryCode.showReportSuites');
-
-    expect(productionReportSuiteAutocomplete.props.value).toEqual(['aaa', 'bbb']);
-    expect(stagingReportSuiteAutocomplete.props.value).toEqual(['ccc', 'ddd']);
-    expect(developmentReportSuiteAutocomplete.props.value).toEqual(['eee', 'fff']);
+    expect(productionReportSuites).toEqual(['aaa', 'bbb']);
+    expect(stagingReportSuites).toEqual(['ccc', 'ddd']);
+    expect(developmentReportSuites).toEqual(['eee', 'fff']);
     expect(trackerVariableNameTextfield.props.value).toBe('d');
     expect(showReportSuitesCheckbox.props.value).toBe(true);
   });
@@ -162,20 +199,19 @@ describe('libary management', () => {
     });
 
     const {
-      productionReportSuiteAutocomplete,
-      stagingReportSuiteAutocomplete,
-      developmentReportSuiteAutocomplete
-    } = getReportSuiteComponents(instance);
+      productionReportSuites,
+      stagingReportSuites,
+      developmentReportSuites,
+      showReportSuitesCheckbox,
+      trackerVariableNameTextfield,
+      pageBottomLoadPhaseRadio,
+      httpUrlTextfield,
+      httpsUrlTextfield
+    } = getReactComponents(instance);
 
-    const pageBottomLoadPhaseRadio = getRadio(instance, 'libraryCode.loadPhase', 'pageBottom');
-    const showReportSuitesCheckbox = getCheckbox(instance, 'libraryCode.showReportSuites');
-    const trackerVariableNameTextfield = getTextfield(instance, 'libraryCode.trackerVariableName');
-    const httpUrlTextfield = getTextfield(instance, 'libraryCode.httpUrl');
-    const httpsUrlTextfield = getTextfield(instance, 'libraryCode.httpsUrl');
-
-    expect(productionReportSuiteAutocomplete.props.value).toEqual(['aaa', 'bbb']);
-    expect(stagingReportSuiteAutocomplete.props.value).toEqual(['ccc', 'ddd']);
-    expect(developmentReportSuiteAutocomplete.props.value).toEqual(['eee', 'fff']);
+    expect(productionReportSuites).toEqual(['aaa', 'bbb']);
+    expect(stagingReportSuites).toEqual(['ccc', 'ddd']);
+    expect(developmentReportSuites).toEqual(['eee', 'fff']);
 
     expect(showReportSuitesCheckbox.props.value).toBe(true);
     expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
@@ -211,18 +247,17 @@ describe('libary management', () => {
     });
 
     const {
-      productionReportSuiteAutocomplete,
-      stagingReportSuiteAutocomplete,
-      developmentReportSuiteAutocomplete
-    } = getReportSuiteComponents(instance);
+      productionReportSuites,
+      stagingReportSuites,
+      developmentReportSuites,
+      pageBottomLoadPhaseRadio,
+      showReportSuitesCheckbox,
+      trackerVariableNameTextfield
+    } = getReactComponents(instance);
 
-    const pageBottomLoadPhaseRadio = getRadio(instance, 'libraryCode.loadPhase', 'pageBottom');
-    const showReportSuitesCheckbox = getCheckbox(instance, 'libraryCode.showReportSuites');
-    const trackerVariableNameTextfield = getTextfield(instance, 'libraryCode.trackerVariableName');
-
-    expect(productionReportSuiteAutocomplete.props.value).toEqual(['aaa', 'bbb']);
-    expect(stagingReportSuiteAutocomplete.props.value).toEqual(['ccc', 'ddd']);
-    expect(developmentReportSuiteAutocomplete.props.value).toEqual(['eee', 'fff']);
+    expect(productionReportSuites).toEqual(['aaa', 'bbb']);
+    expect(stagingReportSuites).toEqual(['ccc', 'ddd']);
+    expect(developmentReportSuites).toEqual(['eee', 'fff']);
 
     expect(showReportSuitesCheckbox.props.value).toBe(true);
     expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
@@ -234,16 +269,15 @@ describe('libary management', () => {
     extensionBridge.init();
 
     const {
-      productionReportSuiteAutocomplete,
-      stagingReportSuiteAutocomplete,
-      developmentReportSuiteAutocomplete
-    } = getReportSuiteComponents(instance);
+      productionReportSuitesAutocomplete,
+      stagingReportSuitesAutocomplete,
+      developmentReportSuitesAutocomplete,
+      pageBottomLoadPhaseRadio
+    } = getReactComponents(instance);
 
-    const pageBottomLoadPhaseRadio = getRadio(instance, 'libraryCode.loadPhase', 'pageBottom');
-
-    productionReportSuiteAutocomplete.props.onChange(['aa', 'bb']);
-    stagingReportSuiteAutocomplete.props.onChange(['cc', 'dd']);
-    developmentReportSuiteAutocomplete.props.onChange(['ee', 'ff']);
+    productionReportSuitesAutocomplete.props.onChange(['aa', 'bb']);
+    stagingReportSuitesAutocomplete.props.onChange(['cc', 'dd']);
+    developmentReportSuitesAutocomplete.props.onChange(['ee', 'ff']);
     pageBottomLoadPhaseRadio.props.onChange('pageBottom');
 
     const {
@@ -264,22 +298,22 @@ describe('libary management', () => {
   it('sets settings from already installed form values', () => {
     extensionBridge.init();
 
-    const typeRadio = getRadio(instance, 'libraryCode.type', 'preinstalled');
-    typeRadio.props.onChange('preinstalled');
+    const { typePreinstalledRadio } = getReactComponents(instance);
+    typePreinstalledRadio.props.onChange('preinstalled');
 
-    const showReportSuitesCheckbox = getCheckbox(instance, 'libraryCode.showReportSuites');
+    const { showReportSuitesCheckbox } = getReactComponents(instance);
     showReportSuitesCheckbox.props.onChange(true);
 
     const {
-      productionReportSuiteAutocomplete,
-      stagingReportSuiteAutocomplete,
-      developmentReportSuiteAutocomplete
-    } = getReportSuiteComponents(instance);
-    const trackerVariableNameTextfield = getTextfield(instance, 'libraryCode.trackerVariableName');
+      productionReportSuitesAutocomplete,
+      stagingReportSuitesAutocomplete,
+      developmentReportSuitesAutocomplete,
+      trackerVariableNameTextfield
+    } = getReactComponents(instance);
 
-    productionReportSuiteAutocomplete.props.onChange(['aa', 'bb']);
-    stagingReportSuiteAutocomplete.props.onChange(['cc', 'dd']);
-    developmentReportSuiteAutocomplete.props.onChange(['ee', 'ff']);
+    productionReportSuitesAutocomplete.props.onChange(['aa', 'bb']);
+    stagingReportSuitesAutocomplete.props.onChange(['cc', 'dd']);
+    developmentReportSuitesAutocomplete.props.onChange(['ee', 'ff']);
     trackerVariableNameTextfield.props.onChange('d');
 
     const {
@@ -300,26 +334,25 @@ describe('libary management', () => {
   it('sets settings from remote form values', () => {
     extensionBridge.init();
 
-    const typeRadio = getRadio(instance, 'libraryCode.type', 'remote');
-    typeRadio.props.onChange('remote');
+    const { typeRemoteRadio } = getReactComponents(instance);
+    typeRemoteRadio.props.onChange('remote');
 
-    const showReportSuitesCheckbox = getCheckbox(instance, 'libraryCode.showReportSuites');
+    const { showReportSuitesCheckbox } = getReactComponents(instance);
     showReportSuitesCheckbox.props.onChange(true);
 
     const {
-      productionReportSuiteAutocomplete,
-      stagingReportSuiteAutocomplete,
-      developmentReportSuiteAutocomplete
-    } = getReportSuiteComponents(instance);
-    const trackerVariableNameTextfield = getTextfield(instance, 'libraryCode.trackerVariableName');
-    const httpUrlTextfield = getTextfield(instance, 'libraryCode.httpUrl');
-    const httpsUrlTextfield = getTextfield(instance, 'libraryCode.httpsUrl');
-    const pageBottomLoadPhaseRadio = getRadio(instance, 'libraryCode.loadPhase', 'pageBottom');
+      productionReportSuitesAutocomplete,
+      stagingReportSuitesAutocomplete,
+      developmentReportSuitesAutocomplete,
+      trackerVariableNameTextfield,
+      httpUrlTextfield,
+      httpsUrlTextfield,
+      pageBottomLoadPhaseRadio
+    } = getReactComponents(instance);
 
-
-    productionReportSuiteAutocomplete.props.onChange(['aa', 'bb']);
-    stagingReportSuiteAutocomplete.props.onChange(['cc', 'dd']);
-    developmentReportSuiteAutocomplete.props.onChange(['ee', 'ff']);
+    productionReportSuitesAutocomplete.props.onChange(['aa', 'bb']);
+    stagingReportSuitesAutocomplete.props.onChange(['cc', 'dd']);
+    developmentReportSuitesAutocomplete.props.onChange(['ee', 'ff']);
 
     trackerVariableNameTextfield.props.onChange('d');
     httpUrlTextfield.props.onChange('http://someurl.com');
@@ -350,24 +383,23 @@ describe('libary management', () => {
   it('sets settings from custom form values', () => {
     extensionBridge.init();
 
-    const typeRadio = getRadio(instance, 'libraryCode.type', 'custom');
-    typeRadio.props.onChange('custom');
+    const { typeCustomRadio } = getReactComponents(instance);
+    typeCustomRadio.props.onChange('custom');
 
-    const showReportSuitesCheckbox = getCheckbox(instance, 'libraryCode.showReportSuites');
+    const { showReportSuitesCheckbox } = getReactComponents(instance);
     showReportSuitesCheckbox.props.onChange(true);
 
     const {
-      productionReportSuiteAutocomplete,
-      stagingReportSuiteAutocomplete,
-      developmentReportSuiteAutocomplete
-    } = getReportSuiteComponents(instance);
-    const trackerVariableNameTextfield = getTextfield(instance, 'libraryCode.trackerVariableName');
-    const pageBottomLoadPhaseRadio = getRadio(instance, 'libraryCode.loadPhase', 'pageBottom');
+      productionReportSuitesAutocomplete,
+      stagingReportSuitesAutocomplete,
+      developmentReportSuitesAutocomplete,
+      trackerVariableNameTextfield,
+      pageBottomLoadPhaseRadio
+    } = getReactComponents(instance);
 
-
-    productionReportSuiteAutocomplete.props.onChange(['aa', 'bb']);
-    stagingReportSuiteAutocomplete.props.onChange(['cc', 'dd']);
-    developmentReportSuiteAutocomplete.props.onChange(['ee', 'ff']);
+    productionReportSuitesAutocomplete.props.onChange(['aa', 'bb']);
+    stagingReportSuitesAutocomplete.props.onChange(['cc', 'dd']);
+    developmentReportSuitesAutocomplete.props.onChange(['ee', 'ff']);
 
     trackerVariableNameTextfield.props.onChange('d');
     pageBottomLoadPhaseRadio.props.onChange('pageBottom');
@@ -405,7 +437,7 @@ describe('libary management', () => {
       })
     };
 
-    const { openEditorButton } = instance.refs;
+    const { openEditorButton } = getReactComponents(instance);
     openEditorButton.props.onClick();
 
     expect(window.extensionBridge.openCodeEditor)
@@ -421,10 +453,10 @@ describe('libary management', () => {
   it('sets the http:// prefix if the http url  does not contain it', () => {
     extensionBridge.init();
 
-    const typeRadio = getRadio(instance, 'libraryCode.type', 'remote');
-    typeRadio.props.onChange('remote');
+    const { typeRemoteRadio } = getReactComponents(instance);
+    typeRemoteRadio.props.onChange('remote');
 
-    const httpUrlTextfield = getTextfield(instance, 'libraryCode.httpUrl');
+    const { httpUrlTextfield } = getReactComponents(instance);
     httpUrlTextfield.props.onChange('someurl.com');
 
     const {
@@ -437,10 +469,10 @@ describe('libary management', () => {
   it('sets the https:// prefix if the https url  does not contain it', () => {
     extensionBridge.init();
 
-    const typeRadio = getRadio(instance, 'libraryCode.type', 'remote');
-    typeRadio.props.onChange('remote');
+    const { typeRemoteRadio } = getReactComponents(instance);
+    typeRemoteRadio.props.onChange('remote');
 
-    const httpsUrlTextfield = getTextfield(instance, 'libraryCode.httpsUrl');
+    const { httpsUrlTextfield } = getReactComponents(instance);
     httpsUrlTextfield.props.onChange('someurl.com');
 
     const {
@@ -453,10 +485,10 @@ describe('libary management', () => {
   it('sets error if the http url is not provided', () => {
     extensionBridge.init();
 
-    const typeRadio = getRadio(instance, 'libraryCode.type', 'remote');
-    typeRadio.props.onChange('remote');
+    const { typeRemoteRadio } = getReactComponents(instance);
+    typeRemoteRadio.props.onChange('remote');
 
-    const { httpUrlWrapper } = instance.refs;
+    const { httpUrlWrapper } = getReactComponents(instance);
 
     expect(extensionBridge.validate()).toBe(false);
     expect(httpUrlWrapper.props.error).toEqual(jasmine.any(String));
@@ -465,10 +497,10 @@ describe('libary management', () => {
   it('sets error if the https url is not provided', () => {
     extensionBridge.init();
 
-    const typeRadio = getRadio(instance, 'libraryCode.type', 'remote');
-    typeRadio.props.onChange('remote');
+    const { typeRemoteRadio } = getReactComponents(instance);
+    typeRemoteRadio.props.onChange('remote');
 
-    const { httpsUrlWrapper } = instance.refs;
+    const { httpsUrlWrapper } = getReactComponents(instance);
 
     expect(extensionBridge.validate()).toBe(false);
     expect(httpsUrlWrapper.props.error).toEqual(jasmine.any(String));
@@ -477,12 +509,12 @@ describe('libary management', () => {
   it('sets error if script is empty', () => {
     extensionBridge.init();
 
-    const typeRadio = getRadio(instance, 'libraryCode.type', 'custom');
-    typeRadio.props.onChange('custom');
+    const { typeCustomRadio } = getReactComponents(instance);
+    typeCustomRadio.props.onChange('custom');
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { scriptErrorIcon } = instance.refs;
+    const { scriptErrorIcon } = getReactComponents(instance);
 
     expect(scriptErrorIcon.props.message).toBeDefined();
   });

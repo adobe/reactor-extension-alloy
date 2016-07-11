@@ -1,18 +1,34 @@
+import { mount } from 'enzyme';
 import React from 'react';
+import Button from '@coralui/react-coral/lib/Button';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+import { DataElementSelectorButton } from '@reactor/react-components';
+
 import TagListEditor from '../tagListEditor';
-import TestUtils from 'react-addons-test-utils';
+
+const getReactComponents = (wrapper) => {
+  const valueTextfieldWrapper = wrapper.find(Textfield);
+  const valueTextfield = valueTextfieldWrapper.node;
+  const valueButton = wrapper.find(DataElementSelectorButton).node;
+  const addButton = wrapper.find(Button).filterWhere(n => n.prop('type') === 'addButton').node;
+
+  return {
+    valueTextfieldWrapper,
+    valueTextfield,
+    valueButton,
+    addButton
+  };
+};
 
 describe('tag list editor', () => {
   let instance;
 
   beforeAll(() => {
-    instance =  TestUtils.renderIntoDocument(
-      <TagListEditor />
-    );
+    instance = mount(<TagListEditor />);
   });
 
   it('opens the data element selector from data element button', () => {
-    const { valueTextfield, valueButton } = instance.refs;
+    const { valueTextfield, valueButton } = getReactComponents(instance);
 
     spyOn(window.extensionBridge, 'openDataElementSelector').and.callFake(callback => {
       callback('foo');
@@ -25,17 +41,17 @@ describe('tag list editor', () => {
   });
 
   it('adds a new tag when the add button is clicked', () => {
-    const spy = jasmine.createSpy();
-    instance =  TestUtils.renderIntoDocument(
-      <TagListEditor onChange={spy}/>
+    const spy = jasmine.createSpy('onChange');
+    instance = mount(
+      <TagListEditor onChange={spy} />
     );
 
     const {
       addButton,
-      valueTextfield,
-    } = instance.refs;
+      valueTextfield
+    } = getReactComponents(instance);
 
-    valueTextfield.props.onKeyUp('somevalue');
+    valueTextfield.props.onChange('somevalue');
     addButton.props.onClick();
 
     expect(spy).toHaveBeenCalledWith(['somevalue']);
@@ -44,39 +60,22 @@ describe('tag list editor', () => {
 
   it('adds a new tag when the enter key is pressed', () => {
     const spy = jasmine.createSpy();
-    instance =  TestUtils.renderIntoDocument(
-      <TagListEditor onChange={spy}/>
+    instance = mount(
+      <TagListEditor onChange={spy} />
     );
 
     const {
-      valueTextfield
-    } = instance.refs;
+      valueTextfield,
+      valueTextfieldWrapper
+    } = getReactComponents(instance);
 
-    valueTextfield.props.onKeyUp({
+    valueTextfield.props.onChange({
       target: {
         value: 'somevalue'
       }
     });
-    valueTextfield.props.onKeyPress({
-      keyCode: 13
-    });
 
+    valueTextfieldWrapper.simulate('keypress', { key: 'Enter', keyCode: 13, which: 13 });
     expect(spy).toHaveBeenCalledWith(['somevalue']);
-  });
-
-  it('deletes a tag when the remove button is clicked', () => {
-    const spy = jasmine.createSpy();
-    instance =  TestUtils.renderIntoDocument(
-      <TagListEditor onChange={spy}/>
-    );
-
-    const {
-      tagList
-    } = instance.refs;
-
-    tagList.props.onChange('somevalue');
-
-
-    expect(spy).toHaveBeenCalledWith('somevalue');
   });
 });

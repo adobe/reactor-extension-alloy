@@ -1,30 +1,37 @@
+import { mount } from 'enzyme';
+import { DataElementSelectorButton } from '@reactor/react-components';
+
 import React from 'react';
-import ReactDom from 'react-dom';
 import ReportSuite from '../reportSuite';
-import TestUtils from 'react-addons-test-utils';
+
+const getReactComponents = (wrapper) => {
+  const reportSuiteDataElementButton = wrapper.find(DataElementSelectorButton).node;
+
+  return {
+    reportSuiteDataElementButton
+  };
+};
 
 describe('report suite', () => {
   let instance;
+  let onChangeSpy = jasmine.createSpy('onChange');
 
   beforeAll(() => {
-    instance =  TestUtils.renderIntoDocument(
-      <ReportSuite refPrefix="some" />
-    );
+    instance = mount(<ReportSuite onChange={onChangeSpy} />);
   });
 
   it('opens the data element selector from data element button', () => {
-    const { someReportSuiteAutocomplete, someReportSuiteButton } = instance.refs;
+    const {
+      reportSuiteDataElementButton
+    } = getReactComponents(instance);
 
     spyOn(window.extensionBridge, 'openDataElementSelector').and.callFake(callback => {
       callback('foo');
     });
 
-    someReportSuiteButton.props.onClick();
-
-    const autoCompleteDomNode = ReactDom.findDOMNode(someReportSuiteAutocomplete);
-    const autoCompleteInput = autoCompleteDomNode.querySelector('.coral-Autocomplete-input');
+    reportSuiteDataElementButton.props.onClick();
 
     expect(window.extensionBridge.openDataElementSelector).toHaveBeenCalled();
-    expect(autoCompleteInput.value).toBe('%foo%');
+    expect(onChangeSpy).toHaveBeenCalledWith(['%foo%']);
   });
 });

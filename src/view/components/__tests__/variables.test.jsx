@@ -1,6 +1,49 @@
+import { mount } from 'enzyme';
+import Select from '@coralui/react-coral/lib/Select';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+
 import extensionViewReduxForm from '../../extensionViewReduxForm';
 import variables, { formConfig } from '../variables';
-import { getFormInstance, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
+import { getFormComponent, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
+
+const getReactComponents = (wrapper) => {
+  const dynamicVariablePrefixTextField =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('dynamicVariablePrefix')).node;
+  const pageNameTextField =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('pageName')).node;
+  const pageURLTextField =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('pageURL')).node;
+  const serverTextField =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('server')).node;
+  const channelTextField =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('channel')).node;
+  const referrerTextField =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('referrer')).node;
+  const campaignSelect =
+    wrapper.find(Select).filterWhere(n => n.prop('name').includes('campaign.type')).node;
+  const campaignTextField =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('campaign.value')).node;
+  const transactionIDTextField =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('transactionID')).node;
+  const stateTextField =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('state')).node;
+  const zipTextField =
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('zip')).node;
+
+  return {
+    dynamicVariablePrefixTextField,
+    pageNameTextField,
+    pageURLTextField,
+    serverTextField,
+    channelTextField,
+    referrerTextField,
+    campaignSelect,
+    campaignTextField,
+    transactionIDTextField,
+    stateTextField,
+    zipTextField
+  };
+};
 
 describe('variables', () => {
   let extensionBridge;
@@ -9,7 +52,7 @@ describe('variables', () => {
   beforeAll(() => {
     const FormComponent = extensionViewReduxForm(formConfig)(variables);
     extensionBridge = createExtensionBridge();
-    instance = getFormInstance(FormComponent, extensionBridge);
+    instance = mount(getFormComponent(FormComponent, extensionBridge));
   });
 
   it('sets form values from settings', () => {
@@ -23,7 +66,7 @@ describe('variables', () => {
           channel: 'channel_value',
           referrer: 'referrer_value',
           campaign: {
-            type: 'campaign_type',
+            type: 'value',
             value: 'campaign_value'
           },
           transactionID: 'transactionID_value',
@@ -45,7 +88,7 @@ describe('variables', () => {
       transactionIDTextField,
       stateTextField,
       zipTextField
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     expect(dynamicVariablePrefixTextField.props.value).toBe('D=dynamicVariable_value');
     expect(pageNameTextField.props.value).toBe('pageName_value');
@@ -53,7 +96,7 @@ describe('variables', () => {
     expect(serverTextField.props.value).toBe('server_value');
     expect(channelTextField.props.value).toBe('channel_value');
     expect(referrerTextField.props.value).toBe('referrer_value');
-    expect(campaignSelect.props.value).toBe('campaign_type');
+    expect(campaignSelect.props.value).toBe('value');
     expect(campaignTextField.props.value).toBe('campaign_value');
     expect(transactionIDTextField.props.value).toBe('transactionID_value');
     expect(stateTextField.props.value).toBe('state_value');
@@ -75,7 +118,7 @@ describe('variables', () => {
       transactionIDTextField,
       stateTextField,
       zipTextField
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     dynamicVariablePrefixTextField.props.onChange('D=dynamicVariable_value');
     pageNameTextField.props.onChange('pageName_value');
@@ -83,7 +126,7 @@ describe('variables', () => {
     serverTextField.props.onChange('server_value');
     channelTextField.props.onChange('channel_value');
     referrerTextField.props.onChange('referrer_value');
-    campaignSelect.props.onChange('campaign_type');
+    campaignSelect.props.onChange('value');
     campaignTextField.props.onChange('campaign_value');
     transactionIDTextField.props.onChange('transactionID_value');
     stateTextField.props.onChange('state_value');
@@ -99,7 +142,7 @@ describe('variables', () => {
     expect(trackerProperties.server).toBe('server_value');
     expect(trackerProperties.channel).toBe('channel_value');
     expect(trackerProperties.referrer).toBe('referrer_value');
-    expect(trackerProperties.campaign).toEqual({type: 'campaign_type', value: 'campaign_value'});
+    expect(trackerProperties.campaign).toEqual({ type: 'value', value: 'campaign_value' });
     expect(trackerProperties.transactionID).toBe('transactionID_value');
     expect(trackerProperties.state).toBe('state_value');
     expect(trackerProperties.zip).toBe('zip_value');

@@ -9,9 +9,9 @@ import reducer from './reduxActions/reducer';
 import createRouter from './createRouter';
 
 window.extensionBridge = window.extensionBridge || {
-  register: function() {},
-  openDataElementSelector: function() {},
-  openCodeEditor: function() {}
+  register() {},
+  openDataElementSelector() {},
+  openCodeEditor() {}
 };
 
 const finalCreateStore = compose(

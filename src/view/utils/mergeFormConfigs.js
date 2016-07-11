@@ -1,8 +1,9 @@
+/* eslint arrow-body-style: 0, no-shadow: 0 */
 /**
  * Merges multiple form configurations into one.
  */
 module.exports = (...formConfigs) => {
-  let fields = [];
+  const fields = [];
 
   formConfigs.forEach(formConfig => {
     formConfig.fields.forEach(field => {

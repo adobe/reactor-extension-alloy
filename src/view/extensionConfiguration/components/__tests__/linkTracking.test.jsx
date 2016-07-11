@@ -1,6 +1,38 @@
+import { mount } from 'enzyme';
+import Checkbox from '@coralui/react-coral/lib/Checkbox';
+
 import extensionViewReduxForm from '../../../extensionViewReduxForm';
 import LinkTracking, { formConfig } from '../linkTracking';
-import { getFormInstance, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
+import TagListEditor from '../tagListEditor';
+import { getFormComponent, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
+
+const getReactComponents = (wrapper) => {
+  const enableTrackInlineStatsCheckbox =
+    wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('trackInlineStats')).node;
+  const trackDownloadLinksCheckbox =
+    wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('trackDownloadLinks')).node;
+  const trackOutboundLinksCheckbox =
+    wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('trackExternalLinks')).node;
+  const keepUrlParametersCheckbox =
+    wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('linkLeaveQueryString')).node;
+
+  const linkDownloadFileTypesTagListEditor =
+    wrapper.find(TagListEditor).filterWhere(n => n.prop('title') === 'Download Extensions').node;
+  const linkExternalFiltersTagListEditor =
+    wrapper.find(TagListEditor).filterWhere(n => n.prop('title') === 'Track').node;
+  const linkInternalFiltersTagListEditor =
+    wrapper.find(TagListEditor).filterWhere(n => n.prop('title') === 'Never Track').node;
+
+  return {
+    enableTrackInlineStatsCheckbox,
+    trackDownloadLinksCheckbox,
+    trackOutboundLinksCheckbox,
+    linkDownloadFileTypesTagListEditor,
+    linkExternalFiltersTagListEditor,
+    linkInternalFiltersTagListEditor,
+    keepUrlParametersCheckbox
+  };
+};
 
 describe('link tracking', () => {
   let extensionBridge;
@@ -9,7 +41,7 @@ describe('link tracking', () => {
   beforeAll(() => {
     const FormComponent = extensionViewReduxForm(formConfig)(LinkTracking);
     extensionBridge = createExtensionBridge();
-    instance = getFormInstance(FormComponent, extensionBridge);
+    instance = mount(getFormComponent(FormComponent, extensionBridge));
   });
 
   it('sets form values from settings', () => {
@@ -35,7 +67,7 @@ describe('link tracking', () => {
       linkExternalFiltersTagListEditor,
       linkInternalFiltersTagListEditor,
       keepUrlParametersCheckbox
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     expect(enableTrackInlineStatsCheckbox.props.value).toBe(false);
     expect(trackDownloadLinksCheckbox.props.value).toBe(true);
@@ -55,7 +87,7 @@ describe('link tracking', () => {
       trackDownloadLinksCheckbox,
       trackOutboundLinksCheckbox,
       keepUrlParametersCheckbox
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     enableTrackInlineStatsCheckbox.props.onChange(false);
     trackDownloadLinksCheckbox.props.onChange(true);
@@ -66,7 +98,7 @@ describe('link tracking', () => {
       linkDownloadFileTypesTagListEditor,
       linkExternalFiltersTagListEditor,
       linkInternalFiltersTagListEditor
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     linkDownloadFileTypesTagListEditor.props.onChange(['avi', 'exe']);
     linkInternalFiltersTagListEditor.props.onChange(['tel:', 'mailto:']);
@@ -102,7 +134,7 @@ describe('link tracking', () => {
       trackOutboundLinksCheckbox,
       linkDownloadFileTypesTagListEditor,
       linkInternalFiltersTagListEditor
-    } = instance.refs;
+    } = getReactComponents(instance);
 
     expect(enableTrackInlineStatsCheckbox.props.value).toBe(true);
     expect(trackDownloadLinksCheckbox.props.value).toBe(true);

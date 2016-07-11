@@ -1,8 +1,28 @@
 import React from 'react';
-import Coral from '@coralui/coralui-support-reduxform';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
+import Button from '@coralui/react-coral/lib/Button';
+import Select from '@coralui/react-coral/lib/Select';
+import Textfield from '@coralui/react-coral/lib/Textfield';
+
 import openDataElementSelector from '../utils/openDataElementSelector';
 import createId from '../utils/createId';
+
+const hierarchiesOptions = [{
+  label: 'Hierarchy 1',
+  value: 'hier1'
+}, {
+  label: 'Hierarchy 2',
+  value: 'hier2'
+}, {
+  label: 'Hierarchy 3',
+  value: 'hier3'
+}, {
+  label: 'Hierarchy 4',
+  value: 'hier4'
+}, {
+  label: 'Hierarchy 5',
+  value: 'hier5'
+}];
 
 const setDefaultsForHierarchy = hierarchy => {
   hierarchy.id = hierarchy.id || createId();
@@ -17,7 +37,7 @@ const setDefaultsForHierarchy = hierarchy => {
   return hierarchy;
 };
 
-export default class PageviewsAndContent extends React.Component {
+export default class HierarchiesEditor extends React.Component {
   createEmptyRow = () => {
     this.props.fields.trackerProperties.hierarchies.addField(setDefaultsForHierarchy({}));
   };
@@ -43,70 +63,74 @@ export default class PageviewsAndContent extends React.Component {
         <div key={id.value} className="HierarchiesEditor-hierarchy">
           <ValidationWrapper
             error={name.touched && name.error}
-            className="u-gapRight2x">
-            <Coral.Select {...name} ref={`hierarchiesSelect${index}`} className="Field--short">
-              <Coral.Select.Item value="hier1">Hierarchy 1</Coral.Select.Item>
-              <Coral.Select.Item value="hier2">Hierarchy 2</Coral.Select.Item>
-              <Coral.Select.Item value="hier3">Hierarchy 3</Coral.Select.Item>
-              <Coral.Select.Item value="hier4">Hierarchy 4</Coral.Select.Item>
-              <Coral.Select.Item value="hier5">Hierarchy 5</Coral.Select.Item>
-            </Coral.Select>
+            className="u-gapRight2x"
+          >
+            <Select
+              {...name}
+              className="Field--short"
+              options={hierarchiesOptions}
+            />
           </ValidationWrapper>
 
           <label>
             <span className="Label u-gapRight">Delimiter</span>
             <ValidationWrapper
               error={delimiter.touched && delimiter.error}
-              className="u-gapRight">
-              <Coral.Textfield
+              className="u-gapRight"
+            >
+              <Textfield
                 className="Field--short"
-                ref={`delimiter${index}`}
-                {...delimiter}/>
+                {...delimiter}
+              />
             </ValidationWrapper>
           </label>
 
           {
             index !== hierarchies.length - 1 ?
-              <Coral.Button
-                ref={`removeButton${index}`}
-                variant="quiet"
+              <Button
+                variant="minimal"
                 icon="close"
+                square
                 iconSize="XS"
-                onClick={this.removeHierarchy.bind(this, index)}/> : null
+                onClick={this.removeHierarchy.bind(this, index)}
+              /> : null
           }
 
           <div className="HierarchiesEditor-section">
-            <Coral.Textfield
-              ref={`section0${index}`}
-              {...sections[0]}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[0])}/>
-          </div>
-
-          <div className="HierarchiesEditor-section">
-            <span 
-              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--2"/>
-            <Coral.Textfield
-              ref={`section1${index}`}
-              {...sections[1]}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[1])}/>
+            <Textfield
+              {...sections[0]}
+            />
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[0])} />
           </div>
 
           <div className="HierarchiesEditor-section">
             <span
-              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--3"/>
-            <Coral.Textfield
-              ref={`section2${index}`}
-              {...sections[2]}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[2])}/>
+              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--2"
+            />
+            <Textfield
+              {...sections[1]}
+            />
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[1])} />
           </div>
 
           <div className="HierarchiesEditor-section">
             <span
-              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--4"/>
-            <Coral.Textfield
-              ref={`section3${index}`}
-              {...sections[3]}/>
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[3])}/>
+              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--3"
+            />
+            <Textfield
+              {...sections[2]}
+            />
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[2])} />
+          </div>
+
+          <div className="HierarchiesEditor-section">
+            <span
+              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--4"
+            />
+            <Textfield
+              {...sections[3]}
+            />
+            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[3])} />
           </div>
         </div>
       );
@@ -114,9 +138,8 @@ export default class PageviewsAndContent extends React.Component {
 
     return (
       <div>
-        { hierarchyRows }
-        <Coral.Button
-          onClick={this.createEmptyRow} ref="addButton">Add hierarchy</Coral.Button>
+        {hierarchyRows}
+        <Button onClick={this.createEmptyRow}>Add hierarchy</Button>
       </div>
     );
   }
@@ -160,17 +183,13 @@ export const formConfig = {
     };
 
     hierarchies = hierarchies
-      .filter(hierarchy => {
-        return hierarchy.sections.some(section => section);
-      })
-      .map(hierarchy => {
-        return {
-          // Exclude ID since it was only used for rendering the view.
-          name: hierarchy.name,
-          sections: hierarchy.sections.filter(section => section),
-          delimiter: hierarchy.delimiter
-        };
-      });
+      .filter(hierarchy => hierarchy.sections.some(section => section))
+      .map(hierarchy => ({
+        // Exclude ID since it was only used for rendering the view.
+        name: hierarchy.name,
+        sections: hierarchy.sections.filter(section => section),
+        delimiter: hierarchy.delimiter
+      }));
 
     if (hierarchies.length) {
       trackerProperties.hierarchies = hierarchies;
@@ -181,7 +200,7 @@ export const formConfig = {
       trackerProperties
     };
   },
-  validate(errors, values) {
+  validate(errors, values = { trackerProperties: { hierarchies: [] } }) {
     const {
       hierarchies
     } = values.trackerProperties;
