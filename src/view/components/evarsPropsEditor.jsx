@@ -1,9 +1,6 @@
 import React from 'react';
-import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
-import classNames from 'classnames';
-import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import { ReduxFormAutocomplete as Autocomplete, ReduxFormSelect as Select, ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import Button from '@coralui/react-coral/lib/Button';
-import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 
 import createId from '../utils/createId';
@@ -53,67 +50,71 @@ export default class EvarsPropsEditor extends React.Component {
   render() {
     const variables = this.props.fields.trackerProperties[this.props.varTypePlural];
 
-    const rows = variables.map((variable, index) => {
-      const nameOptions = this.createOptions(this.props.varType);
-      const valueOptions = this.createOptions('eVar').concat(this.createOptions('prop'));
-      const namePlaceholder = `Select ${this.props.varType}`;
+    if (!this.optionsCache || this.cachedVarType !== this.props.varType) {
+      this.optionsCache = {
+        nameOptions: this.createOptions(this.props.varType),
+        valueOptions: this.createOptions('eVar').concat(this.createOptions('prop')),
+        namePlaceholder: `Select ${this.props.varType}`
+      };
 
-      return (
-        <div
-          key={variable.id.value}
-          className="u-gapBottom2x"
+      this.cachedVarType = this.props.varType;
+    }
+
+    const rows = variables.map((variable, index) => (
+      <div
+        key={variable.id.value}
+        className="u-gapBottom2x"
+      >
+        <ValidationWrapper
+          type="name"
+          error={variable.name.touched && variable.name.error}
+          className="u-gapRight2x"
         >
-          <ValidationWrapper
-            type="name"
-            error={variable.name.touched && variable.name.error}
-            className="u-gapRight2x"
-          >
-            <Autocomplete
-              className="Field--short"
-              placeholder={namePlaceholder}
-              {...variable.name}
-              onBlur={() => variable.name.onBlur(variable.name.value)}
-              options={nameOptions}
-            />
-          </ValidationWrapper>
-          <Select
-            className="Field--short u-gapRight2x"
-            {...variable.type}
-            options={typeOptions}
+          <Autocomplete
+            {...variable.name}
+            className="Field--short"
+            placeholder={this.optionsCache.namePlaceholder}
+            options={this.optionsCache.nameOptions}
           />
-          <ValidationWrapper
-            type="value"
-            error={variable.value.touched && variable.value.error}
-          >
-            {
-              variable.type.value === 'value' ?
-                <Textfield
-                  className="Field--short"
-                  {...variable.value}
-                /> :
-                <Autocomplete
-                  className="Field--short"
-                  placeholder="Select variable"
-                  {...variable.value}
-                  onBlur={() => variable.value.onBlur(variable.value.value)}
-                  options={valueOptions}
-                />
-            }
+        </ValidationWrapper>
+        <Select
+          className="Field--short u-gapRight2x"
+          {...variable.type}
+          options={typeOptions}
+        />
+        <ValidationWrapper
+          type="value"
+          error={variable.value.touched && variable.value.error}
+        >
+          {
+            variable.type.value === 'value' ?
+              <Textfield
+                className="Field--short"
+                {...variable.value}
+              /> :
+              <Autocomplete
+                className="Field--short"
+                placeholder="Select variable"
+                {...variable.value}
+                options={this.optionsCache.valueOptions}
+              />
+          }
+        </ValidationWrapper>
+        {
+          variable.type.value === 'value' ?
             <DataElementSelectorButton
-              className={classNames({ 'u-hidden': variable.type.value !== 'value' })}
               onClick={openDataElementSelector.bind(this, variable.value)}
-            />
-          </ValidationWrapper>
-          <Button
-            variant="minimal"
-            square
-            icon="close"
-            iconSize="XS"
-            onClick={this.removeVariable.bind(this, index)}
-          />
-        </div>
-      );
-    });
+            /> : null
+        }
+        <Button
+          variant="minimal"
+          square
+          icon="close"
+          iconSize="XS"
+          onClick={this.removeVariable.bind(this, index)}
+        />
+      </div>
+    ));
 
     return (
       <section>

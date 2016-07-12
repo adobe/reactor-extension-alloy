@@ -62,7 +62,23 @@ export default class ReportSuite extends React.Component {
   };
 
   onRemove = (removedValue) => {
-    this.state.reportSuites.push({ value: removedValue });
+    if (!removedValue.match(/^%.*%$/g)) {
+      this.state.reportSuites.push({ value: removedValue });
+      this.state.reportSuites.sort((a, b) => {
+        const aValue = a.value.toLowerCase();
+        const bValue = b.value.toLowerCase();
+
+        if (aValue < bValue) {
+          return -1;
+        }
+
+        if (aValue > bValue) {
+          return 1;
+        }
+
+        return 0;
+      });
+    }
     this.props.onChange(this.props.value.filter((value) => value !== removedValue));
   };
 
