@@ -96,35 +96,35 @@ export default class ReportSuite extends React.Component {
 
     return (
       <div className="ReportSuite-autocompleteField">
-        <label className="Label">{this.props.label}</label>
+        <label className="Label">{ this.props.label }</label>
         <div>
           <ValidationWrapper
-            error={this.props.touched && this.props.error}
+            error={ this.props.touched && this.props.error }
           >
             <Autocomplete
-              name={this.props.name}
+              name={ this.props.name }
               labelKey="value"
-              onChange={this.onAutocompleteChange}
+              onChange={ this.onAutocompleteChange }
               placeholder="Add Report Suite(s)"
               className="Field--long"
-              options={this.state.reportSuites}
+              options={ this.state.reportSuites }
               multiple
             />
-            <DataElementSelectorButton onClick={this.openSelector} />
+            <DataElementSelectorButton onClick={ this.openSelector } />
           </ValidationWrapper>
           <div>
-            <TagList className="coral-Autocomplete-tagList" onClose={this.onRemove}>
-              {values.map(
+            <TagList className="coral-Autocomplete-tagList" onClose={ this.onRemove }>
+              { values.map(
                 (tag) => (
                   <Tag
                     className="TagListEditor-tag"
-                    key={tag}
-                    title={tag}
+                    key={ tag }
+                    title={ tag }
                   >
-                    {tag}
+                    { tag }
                   </Tag>
                 )
-              )}
+              ) }
             </TagList>
           </div>
         </div>

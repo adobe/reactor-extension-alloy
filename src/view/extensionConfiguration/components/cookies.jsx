@@ -41,9 +41,9 @@ export default function Cookies({ ...props }) {
       <label className="Cookies-field">
         <span className="Label">Visitor ID</span>
         <div>
-          <Textfield className="Field--long" {...visitorID} />
+          <Textfield className="Field--long" { ...visitorID } />
           <DataElementSelectorButton
-            onClick={openDataElementSelector.bind(this, visitorID)}
+            onClick={ openDataElementSelector.bind(this, visitorID) }
           />
         </div>
       </label>
@@ -52,10 +52,10 @@ export default function Cookies({ ...props }) {
         <div>
           <Textfield
             className="Field--long"
-            {...visitorNamespace}
+            { ...visitorNamespace }
           />
           <DataElementSelectorButton
-            onClick={openDataElementSelector.bind(this, visitorNamespace)}
+            onClick={ openDataElementSelector.bind(this, visitorNamespace) }
           />
         </div>
       </label>
@@ -64,10 +64,10 @@ export default function Cookies({ ...props }) {
         <div>
           <Textfield
             className="Field--long"
-            {...cookieDomainPeriods}
+            { ...cookieDomainPeriods }
           />
           <DataElementSelectorButton
-            onClick={openDataElementSelector.bind(this, cookieDomainPeriods)}
+            onClick={ openDataElementSelector.bind(this, cookieDomainPeriods) }
           />
         </div>
       </label>
@@ -76,10 +76,10 @@ export default function Cookies({ ...props }) {
         <div>
           <Textfield
             className="Field--long"
-            {...fpCookieDomainPeriods}
+            { ...fpCookieDomainPeriods }
           />
           <DataElementSelectorButton
-            onClick={openDataElementSelector.bind(this, fpCookieDomainPeriods)}
+            onClick={ openDataElementSelector.bind(this, fpCookieDomainPeriods) }
           />
         </div>
       </label>
@@ -88,20 +88,20 @@ export default function Cookies({ ...props }) {
         <div>
           <Select
             className="Cookies-cookieLifetime u-gapRight"
-            {...cookieLifetime}
-            options={cookieLifetimeOptions}
+            { ...cookieLifetime }
+            options={ cookieLifetimeOptions }
           />
           {
             cookieLifetime.value === COOKIE_LIFETIME_PERIODS.SECONDS ?
               <ValidationWrapper
-                error={cookieLifetimeSeconds.touched && cookieLifetimeSeconds.error}
+                error={ cookieLifetimeSeconds.touched && cookieLifetimeSeconds.error }
               >
                 <Textfield
                   className="Cookies-cookieLifetimeSeconds"
-                  {...cookieLifetimeSeconds}
+                  { ...cookieLifetimeSeconds }
                 />
                 <DataElementSelectorButton
-                  onClick={openDataElementSelector.bind(this, cookieLifetimeSeconds)}
+                  onClick={ openDataElementSelector.bind(this, cookieLifetimeSeconds) }
                 />
               </ValidationWrapper> : null
           }

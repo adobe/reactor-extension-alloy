@@ -40,32 +40,32 @@ export default function General({ ...props }) {
   return (
     <div>
       <Checkbox
-        {...euComplianceEnabled}
+        { ...euComplianceEnabled }
       >
         Enable EU compliance for Adobe Analytics
       </Checkbox>
       <div>
         <h4 className="coral-Heading coral-Heading--4 u-gapTop">Character Set</h4>
-        <CharSet fields={props.fields} />
+        <CharSet fields={ props.fields } />
       </div>
       <div>
         <h4 className="coral-Heading coral-Heading--4 u-gapTop">Currency Code</h4>
-        <CurrencyCode fields={props.fields} />
+        <CurrencyCode fields={ props.fields } />
       </div>
       <div>
         <span className="Label u-gapTop">Tracking Server</span>
         <div>
           <ValidationWrapper
             type="trackingServer"
-            error={trackingServer.touched && trackingServer.error}
+            error={ trackingServer.touched && trackingServer.error }
           >
             <Textfield
               className="Field--long"
-              {...trackingServer}
+              { ...trackingServer }
             />
           </ValidationWrapper>
           <DataElementSelectorButton
-            onClick={openDataElementSelector.bind(this, trackingServer)}
+            onClick={ openDataElementSelector.bind(this, trackingServer) }
           />
         </div>
       </div>
@@ -74,15 +74,15 @@ export default function General({ ...props }) {
         <div>
           <ValidationWrapper
             type="trackingServerSecure"
-            error={trackingServerSecure.touched && trackingServerSecure.error}
+            error={ trackingServerSecure.touched && trackingServerSecure.error }
           >
             <Textfield
               className="Field--long"
-              {...trackingServerSecure}
+              { ...trackingServerSecure }
             />
           </ValidationWrapper>
           <DataElementSelectorButton
-            onClick={openDataElementSelector.bind(this, trackingServerSecure)}
+            onClick={ openDataElementSelector.bind(this, trackingServerSecure) }
           />
         </div>
       </div>
@@ -91,8 +91,8 @@ export default function General({ ...props }) {
         <div>
           <Select
             placeholder="Select a data center"
-            {...dc}
-            options={dataCenterOptions}
+            { ...dc }
+            options={ dataCenterOptions }
           />
         </div>
       </div>

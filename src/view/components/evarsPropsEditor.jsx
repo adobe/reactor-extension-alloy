@@ -62,48 +62,48 @@ export default class EvarsPropsEditor extends React.Component {
 
     const rows = variables.map((variable, index) => (
       <div
-        key={variable.id.value}
+        key={ variable.id.value }
         className="u-gapBottom2x"
       >
         <ValidationWrapper
           type="name"
-          error={variable.name.touched && variable.name.error}
+          error={ variable.name.touched && variable.name.error }
           className="u-gapRight2x"
         >
           <Autocomplete
-            {...variable.name}
+            { ...variable.name }
             className="Field--short"
-            placeholder={this.optionsCache.namePlaceholder}
-            options={this.optionsCache.nameOptions}
+            placeholder={ this.optionsCache.namePlaceholder }
+            options={ this.optionsCache.nameOptions }
           />
         </ValidationWrapper>
         <Select
           className="Field--short u-gapRight2x"
-          {...variable.type}
-          options={typeOptions}
+          { ...variable.type }
+          options={ typeOptions }
         />
         <ValidationWrapper
           type="value"
-          error={variable.value.touched && variable.value.error}
+          error={ variable.value.touched && variable.value.error }
         >
           {
             variable.type.value === 'value' ?
               <Textfield
                 className="Field--short"
-                {...variable.value}
+                { ...variable.value }
               /> :
               <Autocomplete
                 className="Field--short"
                 placeholder="Select variable"
-                {...variable.value}
-                options={this.optionsCache.valueOptions}
+                { ...variable.value }
+                options={ this.optionsCache.valueOptions }
               />
           }
         </ValidationWrapper>
         {
           variable.type.value === 'value' ?
             <DataElementSelectorButton
-              onClick={openDataElementSelector.bind(this, variable.value)}
+              onClick={ openDataElementSelector.bind(this, variable.value) }
             /> : null
         }
         <Button
@@ -111,18 +111,18 @@ export default class EvarsPropsEditor extends React.Component {
           square
           icon="close"
           iconSize="XS"
-          onClick={this.removeVariable.bind(this, index)}
+          onClick={ this.removeVariable.bind(this, index) }
         />
       </div>
     ));
 
     return (
       <section>
-        {rows}
+        { rows }
         <Button
-          onClick={this.createEmptyRow}
+          onClick={ this.createEmptyRow }
         >
-          Add {this.props.varType}
+          Add { this.props.varType }
         </Button>
       </section>
     );

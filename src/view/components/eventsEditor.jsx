@@ -56,35 +56,35 @@ export default class EventsEditor extends React.Component {
 
       return (
         <div
-          key={event.id.value}
+          key={ event.id.value }
           className="u-gapBottom2x"
         >
           <ValidationWrapper
-            error={event.name.touched && event.name.error}
+            error={ event.name.touched && event.name.error }
             className="u-gapRight2x"
           >
             <Autocomplete
               className="Field--short"
-              placeholder={namePlaceholder}
-              {...event.name}
-              onBlur={() => event.name.onBlur(event.name.value)}
-              options={nameOptions}
+              placeholder={ namePlaceholder }
+              { ...event.name }
+              onBlur={ () => event.name.onBlur(event.name.value) }
+              options={ nameOptions }
             />
           </ValidationWrapper>
           <span className="Label u-gapRight">Serialize from value</span>
           <Textfield
             className="Field--short"
-            {...event.value}
+            { ...event.value }
           />
           <DataElementSelectorButton
-            onClick={openDataElementSelector.bind(this, event.value)}
+            onClick={ openDataElementSelector.bind(this, event.value) }
           />
           <Button
             variant="minimal"
             icon="close"
             iconSize="XS"
             square
-            onClick={this.removeEvent.bind(this, index)}
+            onClick={ this.removeEvent.bind(this, index) }
           />
         </div>
       );
@@ -92,8 +92,8 @@ export default class EventsEditor extends React.Component {
 
     return (
       <section>
-        {rows}
-        <Button onClick={this.createEmptyRow}>Add event</Button>
+        { rows }
+        <Button onClick={ this.createEmptyRow }>Add event</Button>
       </section>
     );
   }

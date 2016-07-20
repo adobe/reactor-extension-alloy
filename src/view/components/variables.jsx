@@ -42,21 +42,21 @@ export default function Variables({ ...props }) {
   return (
     <div>
       <span className="Label">eVars</span>
-      <EvarsPropsEditor varType="eVar" varTypePlural="eVars" fields={props.fields} />
+      <EvarsPropsEditor varType="eVar" varTypePlural="eVars" fields={ props.fields } />
 
       <span className="Label u-gapTop">Props</span>
-      <EvarsPropsEditor varType="prop" varTypePlural="props" fields={props.fields} />
+      <EvarsPropsEditor varType="prop" varTypePlural="props" fields={ props.fields } />
 
       {
         showEvents ?
           <div>
             <span className="Label u-gapTop">Events</span>
-            <EventsEditor fields={props.fields} />
+            <EventsEditor fields={ props.fields } />
           </div> : null
       }
 
       <span className="Label u-gapTop">Hierarchy</span>
-      <HierarchiesEditor fields={props.fields} />
+      <HierarchiesEditor fields={ props.fields } />
 
       {
         showDynamicVariablePrefix ?
@@ -65,10 +65,10 @@ export default function Variables({ ...props }) {
             <div>
               <Textfield
                 className="Field--long"
-                {...dynamicVariablePrefix}
+                { ...dynamicVariablePrefix }
               />
               <DataElementSelectorButton
-                onClick={openDataElementSelector.bind(this, dynamicVariablePrefix)}
+                onClick={ openDataElementSelector.bind(this, dynamicVariablePrefix) }
               />
             </div>
           </label> : null
@@ -79,9 +79,9 @@ export default function Variables({ ...props }) {
         <div>
           <Textfield
             className="Field--long"
-            {...pageName}
+            { ...pageName }
           />
-          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageName)} />
+          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, pageName) } />
         </div>
       </label>
 
@@ -90,9 +90,9 @@ export default function Variables({ ...props }) {
         <div>
           <Textfield
             className="Field--long"
-            {...pageURL}
+            { ...pageURL }
           />
-          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, pageURL)} />
+          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, pageURL) } />
         </div>
       </label>
 
@@ -101,10 +101,10 @@ export default function Variables({ ...props }) {
         <div>
           <Textfield
             className="Field--long"
-            {...server}
+            { ...server }
           />
           <DataElementSelectorButton
-            onClick={openDataElementSelector.bind(this, server)}
+            onClick={ openDataElementSelector.bind(this, server) }
           />
         </div>
       </label>
@@ -114,9 +114,9 @@ export default function Variables({ ...props }) {
         <div>
           <Textfield
             className="Field--long"
-            {...channel}
+            { ...channel }
           />
-          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, channel)} />
+          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, channel) } />
         </div>
       </label>
 
@@ -125,9 +125,9 @@ export default function Variables({ ...props }) {
         <div>
           <Textfield
             className="Field--long"
-            {...referrer}
+            { ...referrer }
           />
-          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, referrer)} />
+          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, referrer) } />
         </div>
       </label>
 
@@ -137,15 +137,15 @@ export default function Variables({ ...props }) {
       <div>
         <Select
           className="Variables-campaignType"
-          options={campaignTypeOptions}
-          {...campaign.type}
+          options={ campaignTypeOptions }
+          { ...campaign.type }
         />
         <Textfield
           id="campaignValue"
           className="Variables-campaignValue u-gapLeft"
-          {...campaign.value}
+          { ...campaign.value }
         />
-        <DataElementSelectorButton onClick={openDataElementSelector.bind(this, campaign.value)} />
+        <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, campaign.value) } />
       </div>
 
       <label>
@@ -153,10 +153,10 @@ export default function Variables({ ...props }) {
         <div>
           <Textfield
             className="Field--long"
-            {...transactionID}
+            { ...transactionID }
           />
           <DataElementSelectorButton
-            onClick={openDataElementSelector.bind(this, transactionID)}
+            onClick={ openDataElementSelector.bind(this, transactionID) }
           />
         </div>
       </label>
@@ -166,9 +166,9 @@ export default function Variables({ ...props }) {
         <div>
           <Textfield
             className="Field--long"
-            {...state}
+            { ...state }
           />
-          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, state)} />
+          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, state) } />
         </div>
       </label>
 
@@ -177,9 +177,9 @@ export default function Variables({ ...props }) {
         <div>
           <Textfield
             className="Field--long"
-            {...zip}
+            { ...zip }
           />
-          <DataElementSelectorButton onClick={openDataElementSelector.bind(this, zip)} />
+          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, zip) } />
         </div>
       </label>
     </div>

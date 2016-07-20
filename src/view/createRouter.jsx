@@ -11,10 +11,10 @@ export default (setFormConfigForCurrentRoute) => {
   };
 
   return (
-    <Router history={hashHistory}>
-      <Route path="/configuration" component={ExtensionConfiguration} onEnter={onEnter} />
-      <Route path="/actions/setVariables" component={SetVariables} onEnter={onEnter} />
-      <Route path="/actions/sendBeacon" component={SendBeacon} onEnter={onEnter} />
+    <Router history={ hashHistory }>
+      <Route path="/configuration" component={ ExtensionConfiguration } onEnter={ onEnter } />
+      <Route path="/actions/setVariables" component={ SetVariables } onEnter={ onEnter } />
+      <Route path="/actions/sendBeacon" component={ SendBeacon } onEnter={ onEnter } />
     </Router>
   );
 };

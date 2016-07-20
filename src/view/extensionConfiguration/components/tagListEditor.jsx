@@ -63,26 +63,28 @@ export default class TagListEditor extends React.Component {
 
     return (
       <div className="TagListEditor">
-        <label className="Label">{this.props.title}</label>
+        <label className="Label">{ this.props.title }</label>
         {
-          this.props.tooltip ? <InfoTip>{this.props.tooltip}</InfoTip> : null
+          this.props.tooltip ? <InfoTip>{ this.props.tooltip }</InfoTip> : null
         }
         <div>
           <Textfield
             className="Field--long"
-            onChange={this.onNewValueChange}
-            onKeyPress={this.handleKeyPress}
-            value={this.state.newValue}
+            onChange={ this.onNewValueChange }
+            onKeyPress={ this.handleKeyPress }
+            value={ this.state.newValue }
           />
-          <DataElementSelectorButton onClick={this.openSelector} />
-          <Button type="addButton" onClick={this.add}>Add</Button>
+          <DataElementSelectorButton onClick={ this.openSelector } />
+          <Button type="addButton" onClick={ this.add }>Add</Button>
           <div className="u-gapTop">
             <TagList
-              onClose={this.onRemove}
+              onClose={ this.onRemove }
             >
-              {value.map(
-                (tag) => (<Tag className="TagListEditor-tag" key={tag} title={tag}>{tag}</Tag>)
-              )}
+              { value.map(
+                (tag) => (
+                  <Tag className="TagListEditor-tag" key={ tag } title={ tag }>{ tag }</Tag>
+                )
+              ) }
             </TagList>
           </div>
         </div>

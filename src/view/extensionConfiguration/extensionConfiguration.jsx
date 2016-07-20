@@ -19,22 +19,22 @@ export function ExtensionConfiguration({ ...props }) {
         className="Accordion--first"
       >
         <Coral.AccordionItem header="Library Management">
-          <LibraryManagement fields={props.fields} />
+          <LibraryManagement fields={ props.fields } />
         </Coral.AccordionItem>
         <Coral.AccordionItem header="General">
-          <General fields={props.fields} />
+          <General fields={ props.fields } />
         </Coral.AccordionItem>
         <Coral.AccordionItem header="Global Variables">
-          <Variables fields={props.fields} showEvents={false} />
+          <Variables fields={ props.fields } showEvents={ false } />
         </Coral.AccordionItem>
         <Coral.AccordionItem header="Link Tracking">
-          <LinkTracking fields={props.fields} />
+          <LinkTracking fields={ props.fields } />
         </Coral.AccordionItem>
         <Coral.AccordionItem header="Cookies">
-          <Cookies fields={props.fields} />
+          <Cookies fields={ props.fields } />
         </Coral.AccordionItem>
         <Coral.AccordionItem header="Customize Page Code">
-          <CustomSetup fields={props.fields} />
+          <CustomSetup fields={ props.fields } />
         </Coral.AccordionItem>
       </Coral.Accordion>
     </div>

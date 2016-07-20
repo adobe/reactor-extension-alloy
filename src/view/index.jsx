@@ -24,8 +24,8 @@ const router = createRouter(setFormConfigForCurrentRoute);
 
 ReactDOM.render((
   <div>
-    <Provider store={store}>
-      {router}
+    <Provider store={ store }>
+      { router }
     </Provider>
   </div>
 ), document.getElementById('content'));

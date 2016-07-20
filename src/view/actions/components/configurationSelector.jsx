@@ -23,7 +23,7 @@ export class ConfigurationSelector extends React.Component {
 
     if (!availableExtensionConfigurations || !availableExtensionConfigurations.length) {
       return (
-        <Alert variant="warning" className={this.props.className}>
+        <Alert variant="warning" className={ this.props.className }>
           Setting variables will only take effect once you have configured the
           Adobe Analytics extension.
         </Alert>
@@ -38,24 +38,24 @@ export class ConfigurationSelector extends React.Component {
     }));
 
     return (
-      <div className={this.props.className}>
+      <div className={ this.props.className }>
         <h4 className="coral-Heading coral-Heading--4">
           Apply variables for the following extension configurations
         </h4>
         <div>
           <Radio
-            {...extensionConfigurationSelectionType}
-            value={SELECTION_TYPES.ALL}
-            checked={extensionConfigurationSelectionType.value === SELECTION_TYPES.ALL}
+            { ...extensionConfigurationSelectionType }
+            value={ SELECTION_TYPES.ALL }
+            checked={ extensionConfigurationSelectionType.value === SELECTION_TYPES.ALL }
           >
             All extension configurations
           </Radio>
         </div>
         <div>
           <Radio
-            {...extensionConfigurationSelectionType}
-            value={SELECTION_TYPES.SUBSET}
-            checked={extensionConfigurationSelectionType.value === SELECTION_TYPES.SUBSET}
+            { ...extensionConfigurationSelectionType }
+            value={ SELECTION_TYPES.SUBSET }
+            checked={ extensionConfigurationSelectionType.value === SELECTION_TYPES.SUBSET }
           >
             Specific extension configurations
           </Radio>
@@ -63,15 +63,15 @@ export class ConfigurationSelector extends React.Component {
             extensionConfigurationSelectionType.value === SELECTION_TYPES.SUBSET ?
               <div className="FieldSubset u-gapTop">
                 <ValidationWrapper
-                  error={extensionConfigurationIds.touched && extensionConfigurationIds.error}
+                  error={ extensionConfigurationIds.touched && extensionConfigurationIds.error }
                 >
                   <Select
-                    {...extensionConfigurationIds}
+                    { ...extensionConfigurationIds }
                     onBlur={
                       () => extensionConfigurationIds.onBlur(extensionConfigurationIds.value)
                     }
                     placeholder="Select Configuration"
-                    options={selectOptions}
+                    options={ selectOptions }
                     multiple
                   />
                 </ValidationWrapper>

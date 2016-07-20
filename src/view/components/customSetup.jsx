@@ -29,26 +29,26 @@ export default class CustomSetup extends React.Component {
         <Button
           className="u-gapTop"
           icon="code"
-          onClick={this.onOpenEditor.bind(this, source)}
+          onClick={ this.onOpenEditor.bind(this, source) }
         >
           Open Editor
         </Button>
-        {showLoadPhase && source.value ?
+        { showLoadPhase && source.value ?
           <div>
             <fieldset>
               <legend><span className="Label u-gapTop">Execute custom code</span></legend>
               <div>
                 <Radio
-                  {...loadPhase}
-                  value={LOAD_PHASES.BEFORE_SETTINGS}
-                  checked={loadPhase.value === LOAD_PHASES.BEFORE_SETTINGS}
+                  { ...loadPhase }
+                  value={ LOAD_PHASES.BEFORE_SETTINGS }
+                  checked={ loadPhase.value === LOAD_PHASES.BEFORE_SETTINGS }
                 >
                   Before other settings are applied
                 </Radio>
                 <Radio
-                  {...loadPhase}
-                  value={LOAD_PHASES.AFTER_SETTINGS}
-                  checked={loadPhase.value === LOAD_PHASES.AFTER_SETTINGS}
+                  { ...loadPhase }
+                  value={ LOAD_PHASES.AFTER_SETTINGS }
+                  checked={ loadPhase.value === LOAD_PHASES.AFTER_SETTINGS }
                 >
                   After other settings are applied
                 </Radio>

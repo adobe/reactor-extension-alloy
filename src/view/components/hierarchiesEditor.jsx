@@ -60,27 +60,27 @@ export default class HierarchiesEditor extends React.Component {
       } = hierarchy;
 
       return (
-        <div key={id.value} className="HierarchiesEditor-hierarchy">
+        <div key={ id.value } className="HierarchiesEditor-hierarchy">
           <ValidationWrapper
-            error={name.touched && name.error}
+            error={ name.touched && name.error }
             className="u-gapRight2x"
           >
             <Select
-              {...name}
+              { ...name }
               className="Field--short"
-              options={hierarchiesOptions}
+              options={ hierarchiesOptions }
             />
           </ValidationWrapper>
 
           <label>
             <span className="Label u-gapRight">Delimiter</span>
             <ValidationWrapper
-              error={delimiter.touched && delimiter.error}
+              error={ delimiter.touched && delimiter.error }
               className="u-gapRight"
             >
               <Textfield
                 className="Field--short"
-                {...delimiter}
+                { ...delimiter }
               />
             </ValidationWrapper>
           </label>
@@ -92,15 +92,17 @@ export default class HierarchiesEditor extends React.Component {
                 icon="close"
                 square
                 iconSize="XS"
-                onClick={this.removeHierarchy.bind(this, index)}
+                onClick={ this.removeHierarchy.bind(this, index) }
               /> : null
           }
 
           <div className="HierarchiesEditor-section">
             <Textfield
-              {...sections[0]}
+              { ...sections[0] }
             />
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[0])} />
+            <DataElementSelectorButton
+              onClick={ openDataElementSelector.bind(this, sections[0]) }
+            />
           </div>
 
           <div className="HierarchiesEditor-section">
@@ -108,9 +110,11 @@ export default class HierarchiesEditor extends React.Component {
               className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--2"
             />
             <Textfield
-              {...sections[1]}
+              { ...sections[1] }
             />
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[1])} />
+            <DataElementSelectorButton
+              onClick={ openDataElementSelector.bind(this, sections[1]) }
+            />
           </div>
 
           <div className="HierarchiesEditor-section">
@@ -118,9 +122,11 @@ export default class HierarchiesEditor extends React.Component {
               className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--3"
             />
             <Textfield
-              {...sections[2]}
+              { ...sections[2] }
             />
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[2])} />
+            <DataElementSelectorButton
+              onClick={ openDataElementSelector.bind(this, sections[2]) }
+            />
           </div>
 
           <div className="HierarchiesEditor-section">
@@ -128,9 +134,11 @@ export default class HierarchiesEditor extends React.Component {
               className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--4"
             />
             <Textfield
-              {...sections[3]}
+              { ...sections[3] }
             />
-            <DataElementSelectorButton onClick={openDataElementSelector.bind(this, sections[3])} />
+            <DataElementSelectorButton
+              onClick={ openDataElementSelector.bind(this, sections[3]) }
+            />
           </div>
         </div>
       );
@@ -138,8 +146,8 @@ export default class HierarchiesEditor extends React.Component {
 
     return (
       <div>
-        {hierarchyRows}
-        <Button onClick={this.createEmptyRow}>Add hierarchy</Button>
+        { hierarchyRows }
+        <Button onClick={ this.createEmptyRow }>Add hierarchy</Button>
       </div>
     );
   }

@@ -43,7 +43,7 @@ describe('tag list editor', () => {
   it('adds a new tag when the add button is clicked', () => {
     const spy = jasmine.createSpy('onChange');
     instance = mount(
-      <TagListEditor onChange={spy} />
+      <TagListEditor onChange={ spy } />
     );
 
     const {
@@ -61,7 +61,7 @@ describe('tag list editor', () => {
   it('adds a new tag when the enter key is pressed', () => {
     const spy = jasmine.createSpy();
     instance = mount(
-      <TagListEditor onChange={spy} />
+      <TagListEditor onChange={ spy } />
     );
 
     const {

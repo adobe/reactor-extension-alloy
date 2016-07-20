@@ -34,8 +34,8 @@ export const getFormComponent = (FormComponent, extensionBridge, props = {}) => 
   setFormConfigForCurrentRoute(FormComponent.formConfig);
 
   return (
-    <Provider store={store}>
-      <FormComponent {...props} />
+    <Provider store={ store }>
+      <FormComponent { ...props } />
     </Provider>
   );
 };

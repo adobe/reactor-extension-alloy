@@ -22,22 +22,22 @@ export default function LinkTracking({ ...props }) {
   return (
     <div>
       <Checkbox
-        {...trackInlineStats}
+        { ...trackInlineStats }
       >
         Enable ClickMap
       </Checkbox>
       <section className="LinkTracking-section">
         <h4 className="coral-Heading coral-Heading--4">Downloads</h4>
         <Checkbox
-          {...trackDownloadLinks}
+          { ...trackDownloadLinks }
         >
           Track download links
         </Checkbox>
-        {trackDownloadLinks.checked ?
+        { trackDownloadLinks.checked ?
           <div>
             <TagListEditor
-              onChange={linkDownloadFileTypes.onChange}
-              value={linkDownloadFileTypes.value}
+              onChange={ linkDownloadFileTypes.onChange }
+              value={ linkDownloadFileTypes.value }
               title="Download Extensions"
               tooltip="Some tooltip"
             />
@@ -47,21 +47,21 @@ export default function LinkTracking({ ...props }) {
       <section className="LinkTracking-section u-gapTop">
         <h4 className="coral-Heading coral-Heading--4">Outbound Links</h4>
         <Checkbox
-          {...trackExternalLinks}
+          { ...trackExternalLinks }
         >
           Track outbound links
         </Checkbox>
-        {trackExternalLinks.checked ?
+        { trackExternalLinks.checked ?
           <div>
             <TagListEditor
-              onChange={linkExternalFilters.onChange}
-              value={linkExternalFilters.value}
+              onChange={ linkExternalFilters.onChange }
+              value={ linkExternalFilters.value }
               title="Track"
               tooltip="Some tooltip"
             />
             <TagListEditor
-              onChange={linkInternalFilters.onChange}
-              value={linkInternalFilters.value}
+              onChange={ linkInternalFilters.onChange }
+              value={ linkInternalFilters.value }
               title="Never Track"
               tooltip="Some tooltip"
             />
@@ -69,7 +69,7 @@ export default function LinkTracking({ ...props }) {
         }
       </section>
       <Checkbox
-        {...linkLeaveQueryString}
+        { ...linkLeaveQueryString }
       >
         Keep URL Parameters
       </Checkbox>

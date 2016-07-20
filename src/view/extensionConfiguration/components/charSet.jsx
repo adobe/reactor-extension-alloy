@@ -40,35 +40,35 @@ export default class CharSet extends React.Component {
       <div>
         <div>
           <Radio
-            {...charSetInputMethod}
-            onChange={this.onTypeChange}
-            value={CHAR_SET_INPUT_METHOD.PRESET}
-            checked={charSetInputMethod.value === CHAR_SET_INPUT_METHOD.PRESET}
+            { ...charSetInputMethod }
+            onChange={ this.onTypeChange }
+            value={ CHAR_SET_INPUT_METHOD.PRESET }
+            checked={ charSetInputMethod.value === CHAR_SET_INPUT_METHOD.PRESET }
           >
             Preset
           </Radio>
           {
             charSetInputMethod.value === CHAR_SET_INPUT_METHOD.PRESET ?
               <div className="FieldSubset">
-                <Select {...charSet} options={presetOptions} />
+                <Select { ...charSet } options={ presetOptions } />
               </div> : null
           }
         </div>
         <div>
           <Radio
-            {...charSetInputMethod}
-            onChange={this.onTypeChange}
-            value={CHAR_SET_INPUT_METHOD.CUSTOM}
-            checked={charSetInputMethod.value === CHAR_SET_INPUT_METHOD.CUSTOM}
+            { ...charSetInputMethod }
+            onChange={ this.onTypeChange }
+            value={ CHAR_SET_INPUT_METHOD.CUSTOM }
+            checked={ charSetInputMethod.value === CHAR_SET_INPUT_METHOD.CUSTOM }
           >
             Custom
           </Radio>
           {
             charSetInputMethod.value === CHAR_SET_INPUT_METHOD.CUSTOM ?
               <div className="FieldSubset">
-                <Textfield {...charSet} />
+                <Textfield { ...charSet } />
                 <DataElementSelectorButton
-                  onClick={openDataElementSelector.bind(this, charSet)}
+                  onClick={ openDataElementSelector.bind(this, charSet) }
                 />
               </div> : null
           }

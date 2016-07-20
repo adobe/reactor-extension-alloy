@@ -30,15 +30,15 @@ const ReportSuites = props => (
     <section className="ReportSuites-fieldsContainer">
       <ReportSuite
         label="Production Report Suite(s)"
-        {...props.production}
+        { ...props.production }
       />
       <ReportSuite
         label="Staging Report Suite(s)"
-        {...props.staging}
+        { ...props.staging }
       />
       <ReportSuite
         label="Development Report Suite(s)"
-        {...props.development}
+        { ...props.development }
       />
     </section>
   </section>
@@ -48,19 +48,19 @@ const LoadPhase = props => {
   const { loadPhase } = props.fields.libraryCode;
 
   return (
-    <div className={props.className}>
+    <div className={ props.className }>
       <fieldset>
         <legend><span className="Label">Load library at:</span></legend>
         <div>
           <Radio
-            {...loadPhase}
-            value={LOAD_PHASES.PAGE_TOP}
-            checked={loadPhase.value === LOAD_PHASES.PAGE_TOP}
+            { ...loadPhase }
+            value={ LOAD_PHASES.PAGE_TOP }
+            checked={ loadPhase.value === LOAD_PHASES.PAGE_TOP }
           >Page Top</Radio>
           <Radio
-            {...loadPhase}
-            value={LOAD_PHASES.PAGE_BOTTOM}
-            checked={loadPhase.value === LOAD_PHASES.PAGE_BOTTOM}
+            { ...loadPhase }
+            value={ LOAD_PHASES.PAGE_BOTTOM }
+            checked={ loadPhase.value === LOAD_PHASES.PAGE_BOTTOM }
           >Page Bottom</Radio>
         </div>
       </fieldset>
@@ -73,12 +73,12 @@ const TrackerVariableName = props => {
 
   return (
     <ValidationWrapper
-      className={props.className}
-      error={trackerVariableName.touched && trackerVariableName.error}
+      className={ props.className }
+      error={ trackerVariableName.touched && trackerVariableName.error }
     >
       <label>
         <span className="Label">Tracker is accessible on the global variable named:</span>
-        <Textfield className="u-gapLeft" {...trackerVariableName} />
+        <Textfield className="u-gapLeft" { ...trackerVariableName } />
       </label>
     </ValidationWrapper>
   );
@@ -88,15 +88,15 @@ const OverwriteReportSuites = props => {
   const { libraryCode } = props.fields;
 
   return (
-    <div className={props.className}>
+    <div className={ props.className }>
       <Checkbox
-        {...libraryCode.showReportSuites}
+        { ...libraryCode.showReportSuites }
       >
         Set the following report suites on tracker
       </Checkbox>
       {
         libraryCode.showReportSuites.value ?
-          <ReportSuites {...libraryCode.accounts} /> : null
+          <ReportSuites { ...libraryCode.accounts } /> : null
       }
     </div>
   );
@@ -119,25 +119,25 @@ export default class LibraryManagement extends React.Component {
     return (
       <div>
         <Radio
-          {...type}
-          value={LIB_TYPES.MANAGED}
-          checked={type.value === LIB_TYPES.MANAGED}
+          { ...type }
+          value={ LIB_TYPES.MANAGED }
+          checked={ type.value === LIB_TYPES.MANAGED }
         >
           Manage the library for me
         </Radio>
         {
           type.value === LIB_TYPES.MANAGED ?
             <div className="FieldSubset">
-              <ReportSuites {...this.props.fields.libraryCode.accounts} />
-              <LoadPhase fields={this.props.fields} />
+              <ReportSuites { ...this.props.fields.libraryCode.accounts } />
+              <LoadPhase fields={ this.props.fields } />
             </div> : null
         }
 
         <div>
           <Radio
-            {...type}
-            value={LIB_TYPES.PREINSTALLED}
-            checked={type.value === LIB_TYPES.PREINSTALLED}
+            { ...type }
+            value={ LIB_TYPES.PREINSTALLED }
+            checked={ type.value === LIB_TYPES.PREINSTALLED }
           >
             Use the library already installed on the page
           </Radio>
@@ -146,18 +146,18 @@ export default class LibraryManagement extends React.Component {
           type.value === LIB_TYPES.PREINSTALLED ?
             <div className="FieldSubset">
               <OverwriteReportSuites
-                fields={this.props.fields}
+                fields={ this.props.fields }
                 className="u-gapBottom"
               />
-              <TrackerVariableName fields={this.props.fields} />
+              <TrackerVariableName fields={ this.props.fields } />
             </div> : null
         }
 
         <div>
           <Radio
-            {...type}
-            value={LIB_TYPES.REMOTE}
-            checked={type.value === LIB_TYPES.REMOTE}
+            { ...type }
+            value={ LIB_TYPES.REMOTE }
+            checked={ type.value === LIB_TYPES.REMOTE }
           >
             Load the library from a custom URL
           </Radio>
@@ -171,10 +171,10 @@ export default class LibraryManagement extends React.Component {
                   <div>
                     <ValidationWrapper
                       type="httpUrl"
-                      error={httpUrl.touched && httpUrl.error}
+                      error={ httpUrl.touched && httpUrl.error }
                     >
                       <Textfield
-                        {...httpUrl}
+                        { ...httpUrl }
                         className="Field--long"
                         placeholder="http://"
                       />
@@ -186,10 +186,10 @@ export default class LibraryManagement extends React.Component {
                   <div>
                     <ValidationWrapper
                       type="httpsUrl"
-                      error={httpsUrl.touched && httpsUrl.error}
+                      error={ httpsUrl.touched && httpsUrl.error }
                     >
                       <Textfield
-                        {...httpsUrl}
+                        { ...httpsUrl }
                         className="Field--long"
                         placeholder="https://"
                       />
@@ -198,22 +198,22 @@ export default class LibraryManagement extends React.Component {
                 </label>
               </div>
               <OverwriteReportSuites
-                fields={this.props.fields}
+                fields={ this.props.fields }
                 className="u-block u-gapBottom"
               />
               <TrackerVariableName
-                fields={this.props.fields}
+                fields={ this.props.fields }
                 className="u-block u-gapBottom"
               />
-              <LoadPhase fields={this.props.fields} />
+              <LoadPhase fields={ this.props.fields } />
             </div> : null
         }
 
         <div>
           <Radio
-            {...type}
-            value={LIB_TYPES.CUSTOM}
-            checked={type.value === LIB_TYPES.CUSTOM}
+            { ...type }
+            value={ LIB_TYPES.CUSTOM }
+            checked={ type.value === LIB_TYPES.CUSTOM }
           >
             Let me provide custom library code
           </Radio>
@@ -222,23 +222,23 @@ export default class LibraryManagement extends React.Component {
           type.value === LIB_TYPES.CUSTOM ?
             <div className="FieldSubset">
               <div className="u-gapBottom">
-                <Button icon="code" onClick={this.onOpenEditor}>
+                <Button icon="code" onClick={ this.onOpenEditor }>
                   Open Editor
                 </Button>
                 {
                   source.touched && source.error ?
-                    <ErrorTip>{source.error}</ErrorTip> : null
+                    <ErrorTip>{ source.error }</ErrorTip> : null
                 }
               </div>
               <OverwriteReportSuites
-                fields={this.props.fields}
+                fields={ this.props.fields }
                 className="u-block u-gapBottom"
               />
               <TrackerVariableName
-                fields={this.props.fields}
+                fields={ this.props.fields }
                 className="u-block u-gapBottom"
               />
-              <LoadPhase fields={this.props.fields} />
+              <LoadPhase fields={ this.props.fields } />
             </div> : null
         }
       </div>

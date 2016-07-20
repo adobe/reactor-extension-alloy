@@ -42,10 +42,10 @@ export default class CurrencyCode extends React.Component {
       <div>
         <div>
           <Radio
-            {...currencyCodeInputMethod}
-            onChange={this.onTypeChange}
-            value={CURRENCY_CODE_INPUT_METHODS.PRESET}
-            checked={currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.PRESET}
+            { ...currencyCodeInputMethod }
+            onChange={ this.onTypeChange }
+            value={ CURRENCY_CODE_INPUT_METHODS.PRESET }
+            checked={ currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.PRESET }
           >
             Preset
           </Radio>
@@ -54,27 +54,27 @@ export default class CurrencyCode extends React.Component {
               <div className="FieldSubset">
                 <Select
                   className="Field--long"
-                  {...currencyCode}
-                  options={presetOptions}
+                  { ...currencyCode }
+                  options={ presetOptions }
                 />
               </div> : null
           }
         </div>
         <div>
           <Radio
-            {...currencyCodeInputMethod}
-            onChange={this.onTypeChange}
-            value={CURRENCY_CODE_INPUT_METHODS.CUSTOM}
-            checked={currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM}
+            { ...currencyCodeInputMethod }
+            onChange={ this.onTypeChange }
+            value={ CURRENCY_CODE_INPUT_METHODS.CUSTOM }
+            checked={ currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM }
           >
             Custom
           </Radio>
           {
             currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
               <div className="FieldSubset">
-                <Textfield {...currencyCode} />
+                <Textfield { ...currencyCode } />
                 <DataElementSelectorButton
-                  onClick={openDataElementSelector.bind(this, currencyCode)}
+                  onClick={ openDataElementSelector.bind(this, currencyCode) }
                 />
               </div> : null
           }

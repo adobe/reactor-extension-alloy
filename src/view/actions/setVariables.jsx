@@ -8,11 +8,11 @@ import CustomSetup, { formConfig as customSetupConfig } from '../components/cust
 export function SetVariables({ ...props }) {
   return (
     <div>
-      <ConfigurationSelector className="u-gapBottom" fields={props.fields} />
+      <ConfigurationSelector className="u-gapBottom" fields={ props.fields } />
       <h4 className="coral-Heading coral-Heading--4">Variables</h4>
-      <Variables fields={props.fields} showDynamicVariablePrefix={false} />
+      <Variables fields={ props.fields } showDynamicVariablePrefix={ false } />
       <h4 className="u-gapTop2x coral-Heading coral-Heading--4">Custom Page Code</h4>
-      <CustomSetup fields={props.fields} showLoadPhase={false} />
+      <CustomSetup fields={ props.fields } showLoadPhase={ false } />
     </div>
   );
 }

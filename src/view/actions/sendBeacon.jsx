@@ -53,22 +53,22 @@ export function SendBeacon({ ...props }) {
 
   return (
     <div>
-      <ConfigurationSelector className="u-gapBottom" fields={props.fields} />
+      <ConfigurationSelector className="u-gapBottom" fields={ props.fields } />
       <h4 className="coral-Heading coral-Heading--4">Tracking</h4>
       <div>
         <Radio
-          {...type}
+          { ...type }
           value="page"
-          checked={type.value === TYPES.PAGE}
+          checked={ type.value === TYPES.PAGE }
         >
           Increment a pageview<span className="SendBeacon-trackerApi"> - s.t()</span>
         </Radio>
       </div>
       <div>
         <Radio
-          {...type}
+          { ...type }
           value="link"
-          checked={type.value === TYPES.LINK}
+          checked={ type.value === TYPES.LINK }
         >
           Do not increment a pageview<span className="SendBeacon-trackerApi"> - s.tl()</span>
         </Radio>
@@ -81,22 +81,22 @@ export function SendBeacon({ ...props }) {
                   <div>
                     <Select
                       className="Field--short"
-                      options={linkTypeOptions}
-                      {...linkType}
+                      options={ linkTypeOptions }
+                      { ...linkType }
                     />
                   </div>
                 </label>
               </div>
               <div className="SendBeacon-linkName">
                 <label>
-                  <span className="Label">{linkNameLabel}</span>
+                  <span className="Label">{ linkNameLabel }</span>
                   <div>
                     <Textfield
                       className="Field--long"
-                      {...linkName}
+                      { ...linkName }
                     />
                     <DataElementSelectorButton
-                      onClick={openDataElementSelector.bind(this, linkName)}
+                      onClick={ openDataElementSelector.bind(this, linkName) }
                     />
                   </div>
                 </label>
