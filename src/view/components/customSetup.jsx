@@ -16,7 +16,7 @@ export default class CustomSetup extends React.Component {
 
   render() {
     const {
-      script,
+      source,
       loadPhase
     } = this.props.fields.customSetup;
 
@@ -29,11 +29,11 @@ export default class CustomSetup extends React.Component {
         <Button
           className="u-gapTop"
           icon="code"
-          onClick={this.onOpenEditor.bind(this, script)}
+          onClick={this.onOpenEditor.bind(this, source)}
         >
           Open Editor
         </Button>
-        {showLoadPhase && script.value ?
+        {showLoadPhase && source.value ?
           <div>
             <fieldset>
               <legend><span className="Label u-gapTop">Execute custom code</span></legend>
@@ -63,32 +63,32 @@ export default class CustomSetup extends React.Component {
 
 export const formConfig = {
   fields: [
-    'customSetup.script',
+    'customSetup.source',
     'customSetup.loadPhase'
   ],
   settingsToFormValues(values, options) {
     const {
-      script,
+      source,
       loadPhase
     } = options.settings.customSetup || {};
 
     return {
       ...values,
       customSetup: {
-        script,
+        source,
         loadPhase: loadPhase || LOAD_PHASES.AFTER_SETTINGS
       }
     };
   },
   formValuesToSettings(settings, values) {
     const {
-      script,
+      source,
       loadPhase
     } = values.customSetup;
 
-    if (script) {
+    if (source) {
       const customSetup = {
-        script
+        source
       };
 
       if (loadPhase && loadPhase !== LOAD_PHASE_DEFAULT) {

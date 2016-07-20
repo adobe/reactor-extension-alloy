@@ -124,7 +124,7 @@ describe('set variables', function() {
         a: 'b'
       },
       customSetup: {
-        script: function(e, tracker) {
+        source: function(e, tracker) {
           tracker.a = 'custom';
         }
       }

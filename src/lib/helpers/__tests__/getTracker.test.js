@@ -259,7 +259,7 @@ describe('get tracker', function() {
             },
             customSetup: {
               loadPhase: 'beforeSettings',
-              script: function(e, tracker) {
+              source: function(e, tracker) {
                 tracker.prop1 = 'b';
               }
             }
@@ -289,7 +289,7 @@ describe('get tracker', function() {
               prop1: 'a'
             },
             customSetup: {
-              script: function(e, tracker) {
+              source: function(e, tracker) {
                 tracker.prop1 = 'b';
               }
             }

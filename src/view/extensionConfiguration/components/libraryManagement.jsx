@@ -104,8 +104,8 @@ const OverwriteReportSuites = props => {
 
 export default class LibraryManagement extends React.Component {
   onOpenEditor = () => {
-    const scriptField = this.props.fields.libraryCode.script;
-    window.extensionBridge.openCodeEditor(scriptField.value, scriptField.onChange);
+    const sourceField = this.props.fields.libraryCode.source;
+    window.extensionBridge.openCodeEditor(sourceField.value, sourceField.onChange);
   };
 
   render() {
@@ -113,7 +113,7 @@ export default class LibraryManagement extends React.Component {
       type,
       httpUrl,
       httpsUrl,
-      script
+      source
     } = this.props.fields.libraryCode;
 
     return (
@@ -226,8 +226,8 @@ export default class LibraryManagement extends React.Component {
                   Open Editor
                 </Button>
                 {
-                  script.touched && script.error ?
-                    <ErrorTip message={script.error} /> : null
+                  source.touched && source.error ?
+                    <ErrorTip message={source.error} /> : null
                 }
               </div>
               <OverwriteReportSuites
@@ -260,7 +260,7 @@ export const formConfig = {
     'libraryCode.reportSuitesPreconfigured',
     'libraryCode.httpUrl',
     'libraryCode.httpsUrl',
-    'libraryCode.script'
+    'libraryCode.source'
   ],
   settingsToFormValues(values, options) {
     const {
@@ -271,7 +271,7 @@ export const formConfig = {
       reportSuitesPreconfigured,
       httpUrl,
       httpsUrl,
-      script
+      source
     } = options.settings.libraryCode || {};
 
     const showReportSuites = Boolean(type !== LIB_TYPES.MANAGED && accounts);
@@ -287,7 +287,7 @@ export const formConfig = {
         showReportSuites,
         httpUrl,
         httpsUrl,
-        script
+        source
       }
     };
   },
@@ -299,7 +299,7 @@ export const formConfig = {
       reportSuitesPreconfigured,
       httpUrl,
       httpsUrl,
-      script,
+      source,
       showReportSuites
     } = values.libraryCode || {};
 
@@ -339,7 +339,7 @@ export const formConfig = {
     }
 
     if (type === LIB_TYPES.CUSTOM) {
-      libraryCodeSettings.script = script;
+      libraryCodeSettings.source = source;
       libraryCodeSettings.reportSuitesPreconfigured = reportSuitesPreconfigured;
     }
 
@@ -356,7 +356,7 @@ export const formConfig = {
       trackerVariableName,
       httpUrl,
       httpsUrl,
-      script
+      source
     } = values.libraryCode;
 
     const libraryCodeErrors = {};
@@ -384,8 +384,8 @@ export const formConfig = {
       }
     }
 
-    if (type === LIB_TYPES.CUSTOM && !script) {
-      libraryCodeErrors.script = 'Please provide custom code';
+    if (type === LIB_TYPES.CUSTOM && !source) {
+      libraryCodeErrors.source = 'Please provide custom code';
     }
 
     return {
