@@ -13,8 +13,8 @@ module.exports = function(settings, targetElement, event) {
   configurations.forEach(function(configurationId) {
     getTracker(configurationId).then(function(tracker) {
       applyTrackerVariables(tracker, settings.trackerProperties);
-      if (settings.customSetup && settings.customSetup.script) {
-        settings.customSetup.script.call(targetElement, event, tracker);
+      if (settings.customSetup && settings.customSetup.source) {
+        settings.customSetup.source.call(targetElement, event, tracker);
       }
     }, function(errorMessage) {
       logger.error(

@@ -134,7 +134,7 @@ module.exports = function(configuration) {
       break;
 
     case LIB_TYPES.CUSTOM:
-      url = configuration.libraryCode.script;
+      url = configuration.libraryCode.source;
 
       libraryPromise = loadRemoteLibrary(url, configuration);
       break;

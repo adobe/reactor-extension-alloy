@@ -108,7 +108,7 @@
                     "custom"
                   ]
                 },
-                "script": {
+                "source": {
                   "type": "string",
                   "minLength": 1
                 },
@@ -125,7 +125,7 @@
               "additionalProperties": false,
               "required": [
                 "type",
-                "script",
+                "source",
                 "loadPhase",
                 "trackerVariableName"
               ]
@@ -433,14 +433,14 @@
                 "afterSettings"
               ]
             },
-            "script": {
+            "source": {
               "type": "string",
               "minLength": 1
             }
           },
           "additionalProperties": false,
           "required": [
-            "script"
+            "source"
           ]
         }
       },
@@ -496,11 +496,11 @@
       }
     },
     "transform": {
-      "libraryCode.script": {
+      "libraryCode.source": {
         "type": "file",
         "extension": "js"
       },
-      "customSetup.script": {
+      "customSetup.source": {
         "type": "function"
       }
     }
@@ -761,14 +761,14 @@
           "customSetup": {
             "type": "object",
             "properties": {
-              "script": {
+              "source": {
                 "type": "string",
                 "minLength": 1
               }
             },
             "additionalProperties": false,
             "required": [
-              "script"
+              "source"
             ]
           }
         },

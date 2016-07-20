@@ -30,10 +30,10 @@ describe('customSetup', () => {
     instance = mount(getFormComponent(FormComponent, extensionBridge));
   });
 
-  it('opens code editor with script value when button is clicked and stores result', () => {
+  it('opens code editor with source value when button is clicked and stores result', () => {
     const { codeButton } = getReactComponents(instance);
 
-    spyOn(window.extensionBridge, 'openCodeEditor').and.callFake((script, callback) => {
+    spyOn(window.extensionBridge, 'openCodeEditor').and.callFake((source, callback) => {
       callback('foo');
     });
 
@@ -41,7 +41,7 @@ describe('customSetup', () => {
     const { customSetup } = extensionBridge.getSettings();
 
     expect(window.extensionBridge.openCodeEditor).toHaveBeenCalled();
-    expect(customSetup.script).toBe('foo');
+    expect(customSetup.source).toBe('foo');
   });
 
   it('radio buttons are not visible if code editor has not been used', () => {
@@ -56,7 +56,7 @@ describe('customSetup', () => {
     extensionBridge.init({
       settings: {
         customSetup: {
-          script: 'true'
+          source: 'true'
         }
       }
     });
@@ -70,7 +70,7 @@ describe('customSetup', () => {
     extensionBridge.init({
       settings: {
         customSetup: {
-          script: 'true',
+          source: 'true',
           loadPhase: 'beforeSettings'
         }
       }
@@ -84,7 +84,7 @@ describe('customSetup', () => {
     extensionBridge.init({
       settings: {
         customSetup: {
-          script: 'true'
+          source: 'true'
         }
       }
     });

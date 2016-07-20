@@ -54,7 +54,7 @@ const getReactComponents = (wrapper) => {
     wrapper.find(ValidationWrapper).filterWhere(n => n.prop('type') === 'httpsUrl').node;
 
   const openEditorButton = wrapper.find(Button).filterWhere(n => n.prop('icon') === 'code').node;
-  const scriptErrorIcon = wrapper.find(ErrorTip).node;
+  const sourceErrorIcon = wrapper.find(ErrorTip).node;
 
   return {
     productionReportSuitesAutocomplete,
@@ -74,7 +74,7 @@ const getReactComponents = (wrapper) => {
     openEditorButton,
     httpUrlWrapper,
     httpsUrlWrapper,
-    scriptErrorIcon
+    sourceErrorIcon
   };
 };
 
@@ -421,18 +421,18 @@ describe('libary management', () => {
     expect(loadPhase).toBe('pageBottom');
   });
 
-  it('opens code editor with script value when button is clicked and stores result', () => {
+  it('opens code editor with source value when button is clicked and stores result', () => {
     extensionBridge.init({
       settings: {
         libraryCode: {
           type: 'custom',
-          script: 'foo'
+          source: 'foo'
         }
       }
     });
 
     window.extensionBridge = {
-      openCodeEditor: jasmine.createSpy().and.callFake((script, callback) => {
+      openCodeEditor: jasmine.createSpy().and.callFake((source, callback) => {
         callback('bar');
       })
     };
@@ -445,7 +445,7 @@ describe('libary management', () => {
     expect(extensionBridge.validate()).toBe(true);
 
     const settings = extensionBridge.getSettings();
-    expect(settings.libraryCode.script).toEqual('bar');
+    expect(settings.libraryCode.source).toEqual('bar');
 
     delete window.extensionBridge;
   });
@@ -506,7 +506,7 @@ describe('libary management', () => {
     expect(httpsUrlWrapper.props.error).toEqual(jasmine.any(String));
   });
 
-  it('sets error if script is empty', () => {
+  it('sets error if source is empty', () => {
     extensionBridge.init();
 
     const { typeCustomRadio } = getReactComponents(instance);
@@ -514,8 +514,8 @@ describe('libary management', () => {
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { scriptErrorIcon } = getReactComponents(instance);
+    const { sourceErrorIcon } = getReactComponents(instance);
 
-    expect(scriptErrorIcon.props.message).toBeDefined();
+    expect(sourceErrorIcon.props.message).toBeDefined();
   });
 });
