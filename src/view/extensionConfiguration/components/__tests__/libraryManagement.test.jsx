@@ -515,7 +515,6 @@ describe('libary management', () => {
     expect(extensionBridge.validate()).toBe(false);
 
     const { sourceErrorIcon } = getReactComponents(instance);
-
-    expect(sourceErrorIcon.props.message).toBeDefined();
+    expect(sourceErrorIcon.props.children).toBeDefined();
   });
 });

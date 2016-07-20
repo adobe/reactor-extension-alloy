@@ -227,7 +227,7 @@ export default class LibraryManagement extends React.Component {
                 </Button>
                 {
                   source.touched && source.error ?
-                    <ErrorTip message={source.error} /> : null
+                    <ErrorTip>{source.error}</ErrorTip> : null
                 }
               </div>
               <OverwriteReportSuites
