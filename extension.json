@@ -495,15 +495,17 @@
         }
       }
     },
-    "transform": {
-      "libraryCode.source": {
+    "transform": [
+      {
         "type": "file",
+        "propertyPath": "libraryCode.source",
         "extension": "js"
       },
-      "customSetup.source": {
-        "type": "function"
+      {
+        "type": "function",
+        "propertyPath": "customSetup.source"
       }
-    }
+    ]
   },
   "actions": [
     {
@@ -783,7 +785,13 @@
             "pattern": "^prop(\\d+)$"
           }
         }
-      }
+      },
+      "transform": [
+        {
+          "type": "function",
+          "propertyPath": "customSetup.source"
+        }
+      ]
     },
     {
       "name": "send-beacon",
