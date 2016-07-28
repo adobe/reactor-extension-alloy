@@ -56,14 +56,3 @@ gulp.task('buildView', ['buildJS', 'copyHTML']);
 require('@reactor/extension-support-packager')(gulp, {
   dependencyTasks: ['buildView']
 });
-
-require('@reactor/extension-support-testrunner')(gulp);
-
-var sandboxDependencyTasks = ['buildView'];
-if (argv.watch && !argv.withoutWatch) {
-  sandboxDependencyTasks.push('watch');
-}
-
-require('@reactor/extension-support-sandbox')(gulp, {
-  dependencyTasks: sandboxDependencyTasks
-});
