@@ -28,6 +28,12 @@ describe('customSetup', () => {
     const FormComponent = extensionViewReduxForm(formConfig)(CustomSetup);
     extensionBridge = createExtensionBridge();
     instance = mount(getFormComponent(FormComponent, extensionBridge));
+
+    window.extensionBridge = extensionBridge;
+  });
+
+  afterAll(() => {
+    delete window.extensionBridge;
   });
 
   it('opens code editor with source value when button is clicked and stores result', () => {

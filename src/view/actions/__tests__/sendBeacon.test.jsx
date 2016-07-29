@@ -33,6 +33,12 @@ describe('send beacon', () => {
     const FormComponent = extensionViewReduxForm(formConfig)(SendBeacon);
     extensionBridge = createExtensionBridge();
     instance = mount(getFormComponent(FormComponent, extensionBridge));
+
+    window.extensionBridge = extensionBridge;
+  });
+
+  afterAll(() => {
+    delete window.extensionBridge;
   });
 
   it('sets page view form values from settings', () => {

@@ -8,12 +8,6 @@ import { Provider } from 'react-redux';
 import reducer from './reduxActions/reducer';
 import createRouter from './createRouter';
 
-window.extensionBridge = window.extensionBridge || {
-  register() {},
-  openDataElementSelector() {},
-  openCodeEditor() {}
-};
-
 const finalCreateStore = compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f
 )(createStore);
