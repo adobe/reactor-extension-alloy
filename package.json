@@ -23,6 +23,7 @@
     "test": "reactor-testrunner",
     "lint": "reactor-testrunner lint",
     "sandbox": "(gulp buildView watch &) && reactor-sandbox",
+    "bootstrap": "reactor-sandbox init",
     "ci-job": "xvfb-run reactor-testrunner --ci --browser all && reactor-testrunner lint && gulp package"
   },
   "devDependencies": {
