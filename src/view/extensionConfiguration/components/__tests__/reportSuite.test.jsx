@@ -18,7 +18,15 @@ describe('report suite', () => {
 
   beforeAll(() => {
     instance = mount(<ReportSuite onChange={ onChangeSpy } />);
+    window.extensionBridge = {
+      openDataElementSelector: () => {}
+    };
   });
+
+  afterAll(() => {
+    delete window.extensionBridge;
+  });
+
 
   it('opens the data element selector from data element button', () => {
     const {

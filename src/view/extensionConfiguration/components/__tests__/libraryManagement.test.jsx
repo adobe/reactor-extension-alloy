@@ -80,19 +80,12 @@ const getReactComponents = (wrapper) => {
 
 describe('libary management', () => {
   let extensionBridge;
-  let backupExtensionBridge;
   let instance;
 
   beforeAll(() => {
     const FormComponent = extensionViewReduxForm(formConfig)(LibraryManagement);
     extensionBridge = createExtensionBridge();
     instance = mount(getFormComponent(FormComponent, extensionBridge));
-
-    backupExtensionBridge = window.extensionBridge;
-  });
-
-  afterAll(() => {
-    window.extensionBridge = backupExtensionBridge;
   });
 
   it('sets form values from managed type settings', () => {

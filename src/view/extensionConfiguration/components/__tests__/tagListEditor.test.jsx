@@ -25,6 +25,13 @@ describe('tag list editor', () => {
 
   beforeAll(() => {
     instance = mount(<TagListEditor />);
+    window.extensionBridge = {
+      openDataElementSelector: () => {}
+    };
+  });
+
+  afterAll(() => {
+    delete window.extensionBridge;
   });
 
   it('opens the data element selector from data element button', () => {
