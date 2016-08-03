@@ -53,6 +53,3 @@ gulp.task('watch', function() {
 
 gulp.task('buildView', ['buildJS', 'copyHTML']);
 
-require('@reactor/extension-support-packager')(gulp, {
-  dependencyTasks: ['buildView']
-});
