@@ -25,21 +25,23 @@ describe('tag list editor', () => {
 
   beforeAll(() => {
     instance = mount(<TagListEditor />);
-    window.extensionBridge = {
-      openDataElementSelector: () => {}
-    };
   });
 
-  afterAll(() => {
+  beforeEach(() => {
+    window.extensionBridge = {};
+  });
+
+  afterEach(() => {
     delete window.extensionBridge;
   });
 
   it('opens the data element selector from data element button', () => {
     const { valueTextfield, valueButton } = getReactComponents(instance);
 
-    spyOn(window.extensionBridge, 'openDataElementSelector').and.callFake(callback => {
-      callback('foo');
-    });
+    window.extensionBridge.openDataElementSelector = jasmine.createSpy('openDataElementSelector')
+      .and.callFake(callback => {
+        callback('foo');
+      });
 
     valueButton.props.onClick();
 
@@ -66,7 +68,7 @@ describe('tag list editor', () => {
 
 
   it('adds a new tag when the enter key is pressed', () => {
-    const spy = jasmine.createSpy();
+    const spy = jasmine.createSpy('onChange');
     instance = mount(
       <TagListEditor onChange={ spy } />
     );

@@ -18,24 +18,25 @@ describe('report suite', () => {
 
   beforeAll(() => {
     instance = mount(<ReportSuite onChange={ onChangeSpy } />);
-    window.extensionBridge = {
-      openDataElementSelector: () => {}
-    };
   });
 
-  afterAll(() => {
+  beforeEach(() => {
+    window.extensionBridge = {};
+  });
+
+  afterEach(() => {
     delete window.extensionBridge;
   });
-
 
   it('opens the data element selector from data element button', () => {
     const {
       reportSuiteDataElementButton
     } = getReactComponents(instance);
 
-    spyOn(window.extensionBridge, 'openDataElementSelector').and.callFake(callback => {
-      callback('foo');
-    });
+    window.extensionBridge.openDataElementSelector = jasmine.createSpy('openDataElementSelector')
+      .and.callFake(callback => {
+        callback('foo');
+      });
 
     reportSuiteDataElementButton.props.onClick();
 
