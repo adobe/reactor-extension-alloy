@@ -8,8 +8,7 @@
     "name": "Adobe Systems",
     "email": "DTM-Engineering@adobe.com"
   },
-  "viewBasePath": "dist",
-  "libBasePath": "src/lib",
+  "viewBasePath": "dist/",
   "configuration": {
     "viewPath": "index.html#/configuration",
     "schema": {
@@ -511,7 +510,7 @@
     {
       "name": "set-variables",
       "displayName": "Set Variables",
-      "libPath": "actions/setVariables.js",
+      "libPath": "src/lib/actions/setVariables.js",
       "viewPath": "index.html#/actions/setVariables",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
@@ -796,7 +795,7 @@
     {
       "name": "send-beacon",
       "displayName": "Send Beacon",
-      "libPath": "actions/sendBeacon.js",
+      "libPath": "src/lib/actions/sendBeacon.js",
       "viewPath": "index.html#/actions/sendBeacon",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
