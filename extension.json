@@ -495,7 +495,7 @@
         }
       }
     },
-    "transform": [
+    "transforms": [
       {
         "type": "file",
         "propertyPath": "libraryCode.source",
@@ -786,7 +786,7 @@
           }
         }
       },
-      "transform": [
+      "transforms": [
         {
           "type": "function",
           "propertyPath": "customSetup.source"
