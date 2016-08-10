@@ -3,7 +3,7 @@
 var buildInfo = require('build-info');
 var loadScript = require('load-script');
 var logger = require('logger');
-var pageBottom = require('page-bottom');
+var onPageBottom = require('on-page-bottom');
 var window = require('window');
 var Promise = require('promise');
 
@@ -24,8 +24,11 @@ var loadAppMeasurementScript = function(url) {
 
 var waitForPageLoadingPhase = function(loadPhase) {
   if (loadPhase === 'pageBottom') {
-    return pageBottom.then(function() {
-      logger.info('Loading AppMeasurement script at the bottom of the page.');
+    return new Promise(function(resolve) {
+      onPageBottom(function() {
+        logger.info('Loading AppMeasurement script at the bottom of the page.');
+        resolve();
+      })
     });
   } else {
     logger.info('Loading AppMeasurement script at the top of the page.');

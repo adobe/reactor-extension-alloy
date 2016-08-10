@@ -19,7 +19,7 @@ var getLoadLibrary = function(mocks) {
     'window': (mocks && mocks['window']) || {
       's_gi':  function() {}
     },
-    'page-bottom': (mocks && mocks['page-bottom']) || Promise.resolve('pageBottom')
+    'on-page-bottom': (mocks && mocks['on-page-bottom']) || function(callback) { callback() }
   });
 };
 
@@ -79,11 +79,12 @@ describe('load library', function() {
     });
 
     it('loads library at page bottom', function(done) {
-      var pageBottomSpy = jasmine.createSpyObj('page-bottom', ['then']);
-      pageBottomSpy.then.and.returnValue(Promise.resolve());
+      var onPageBottomSpy = jasmine.createSpy('on-page-bottom').and.callFake(function(callback) {
+        callback();
+      });
 
       var loadLibrary = getLoadLibrary({
-        'page-bottom': pageBottomSpy
+        'on-page-bottom': onPageBottomSpy
       });
 
       loadLibrary({
@@ -95,7 +96,7 @@ describe('load library', function() {
           }
         }
       }).then(function() {
-        expect(pageBottomSpy.then).toHaveBeenCalled();
+        expect(onPageBottomSpy).toHaveBeenCalled();
         done();
       });
     });
@@ -291,11 +292,12 @@ describe('load library', function() {
     });
 
     it('loads library at page bottom', function(done) {
-      var pageBottomSpy = jasmine.createSpyObj('page-bottom', ['then']);
-      pageBottomSpy.then.and.returnValue(Promise.resolve());
+      var onPageBottomSpy = jasmine.createSpy('on-page-bottom').and.callFake(function(callback) {
+        callback();
+      });
 
       var loadLibrary = getLoadLibrary({
-        'page-bottom': pageBottomSpy,
+        'on-page-bottom': onPageBottomSpy,
         'window': {
           's': function() {}
         }
@@ -311,7 +313,7 @@ describe('load library', function() {
           }
         }
       }).then(function() {
-        expect(pageBottomSpy.then).toHaveBeenCalled();
+        expect(onPageBottomSpy).toHaveBeenCalled();
         done();
       });
     });
@@ -438,11 +440,12 @@ describe('load library', function() {
     });
 
     it('loads library at page bottom', function(done) {
-      var pageBottomSpy = jasmine.createSpyObj('page-bottom', ['then']);
-      pageBottomSpy.then.and.returnValue(Promise.resolve());
+      var onPageBottomSpy = jasmine.createSpy('on-page-bottom').and.callFake(function(callback) {
+        callback();
+      });
 
       var loadLibrary = getLoadLibrary({
-        'page-bottom': pageBottomSpy,
+        'on-page-bottom': onPageBottomSpy,
         'window': {
           location: {
             protocol: 'http:'
@@ -461,7 +464,7 @@ describe('load library', function() {
           }
         }
       }).then(function() {
-        expect(pageBottomSpy.then).toHaveBeenCalled();
+        expect(onPageBottomSpy).toHaveBeenCalled();
         done();
       });
     });
