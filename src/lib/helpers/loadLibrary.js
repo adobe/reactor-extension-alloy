@@ -20,6 +20,17 @@ var loadAppMeasurementScript = function(url) {
   return loadScript(url);
 };
 
+var appMeasurementLoadPromise = null;
+var loadManagedAppMeasurementScript = function(url) {
+  if (appMeasurementLoadPromise) {
+    logger.info('AppMeasurement script is already loading in the page.');
+    return appMeasurementLoadPromise;
+  }
+
+  appMeasurementLoadPromise = loadAppMeasurementScript(url);
+  return appMeasurementLoadPromise;
+};
+
 var waitForPageLoadingPhase = function(loadPhase) {
   if (loadPhase === 'pageBottom') {
     return new Promise(function(resolve) {
@@ -57,7 +68,7 @@ var createTracker = function(accounts) {
 
 var loadManagedLibrary = function(configuration) {
   return waitForPageLoadingPhase(configuration.libraryCode.loadPhase || 'pageBottom')
-    .then(loadAppMeasurementScript.bind(null, getHostedLibFileUrl('AppMeasurement.js')))
+    .then(loadManagedAppMeasurementScript.bind(null, getHostedLibFileUrl('AppMeasurement.js')))
     .then(createTracker.bind(null, configuration.libraryCode.accounts));
 };
 

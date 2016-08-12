@@ -164,6 +164,35 @@ describe('load library', function() {
         done();
       });
     });
+
+    it('loads managed script only once', function(done) {
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
+      var loadLibrary = getLoadLibrary({
+        'load-script': loadScriptSpy
+      });
+
+      loadLibrary({
+        libraryCode: {
+          type: 'managed',
+          accounts: {
+            production: ['aa']
+          }
+        }
+      }).then(function() {
+        loadLibrary({
+          libraryCode: {
+            type: 'managed',
+            accounts: {
+              production: ['aa']
+            }
+          }
+        }).then(function() {
+          expect(loadScriptSpy.calls.count()).toEqual(1);
+          done();
+        });
+      });
+    });
   });
 
   describe('for preinstalled type', function() {
