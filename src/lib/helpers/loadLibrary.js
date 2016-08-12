@@ -54,22 +54,22 @@ var getReportSuites = function(reportSuitesData) {
   return reportSuiteValues.join(',');
 };
 
-var createTracker = function(accounts) {
-  if (!window.s_gi) {
+var createTracker = function() {
+  if (!window.AppMeasurement) {
     throw new Error(
-      'Cannot create tracker. `s_gi` method not found.'
+      'Cannot create tracker. `AppMeasurement` method not found.'
     );
   }
 
-  var reportSuites = getReportSuites(accounts);
-  logger.info('Creating tracker with the following report suite(s): "' + reportSuites + '".');
-  return window.s_gi(reportSuites);
+  logger.info('Creating AppMeasurement tracker.');
+  return new window.AppMeasurement();
 };
 
 var loadManagedLibrary = function(configuration) {
   return waitForPageLoadingPhase(configuration.libraryCode.loadPhase || 'pageBottom')
     .then(loadManagedAppMeasurementScript.bind(null, getHostedLibFileUrl('AppMeasurement.js')))
-    .then(createTracker.bind(null, configuration.libraryCode.accounts));
+    .then(createTracker)
+    .then(setReportSuitesOnTracker.bind(null, configuration));
 };
 
 var setReportSuitesOnTracker = function(configuration, tracker) {
