@@ -8,6 +8,9 @@
     "name": "Adobe Systems",
     "email": "DTM-Engineering@adobe.com"
   },
+  "hostedLibFiles": [
+    "src/lib/hosted/AppMeasurement.js"
+  ],
   "viewBasePath": "dist/",
   "configuration": {
     "viewPath": "index.html#/configuration",
