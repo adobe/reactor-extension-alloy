@@ -6,9 +6,7 @@ var logger = require('logger');
 var onPageBottom = require('on-page-bottom');
 var window = require('window');
 var Promise = require('promise');
-
-var APP_MEASUREMENT_URL =
-  'https://assets.adobedtm.com/activation/libs/app-measurement/1.6/AppMeasurement.js';
+var getHostedLibFileUrl = require('get-hosted-lib-file-url');
 
 var LIB_TYPES = {
   MANAGED: 'managed',
@@ -28,7 +26,7 @@ var waitForPageLoadingPhase = function(loadPhase) {
       onPageBottom(function() {
         logger.info('Loading AppMeasurement script at the bottom of the page.');
         resolve();
-      })
+      });
     });
   } else {
     logger.info('Loading AppMeasurement script at the top of the page.');
@@ -59,7 +57,7 @@ var createTracker = function(accounts) {
 
 var loadManagedLibrary = function(configuration) {
   return waitForPageLoadingPhase(configuration.libraryCode.loadPhase || 'pageBottom')
-    .then(loadAppMeasurementScript.bind(null, APP_MEASUREMENT_URL))
+    .then(loadAppMeasurementScript.bind(null, getHostedLibFileUrl('AppMeasurement.js')))
     .then(createTracker.bind(null, configuration.libraryCode.accounts));
 };
 

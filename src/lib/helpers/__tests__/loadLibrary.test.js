@@ -19,7 +19,8 @@ var getLoadLibrary = function(mocks) {
     'window': (mocks && mocks['window']) || {
       's_gi':  function() {}
     },
-    'on-page-bottom': (mocks && mocks['on-page-bottom']) || function(callback) { callback() }
+    'on-page-bottom': (mocks && mocks['on-page-bottom']) || function(callback) { callback(); },
+    'get-hosted-lib-file-url': function() {}
   });
 };
 
