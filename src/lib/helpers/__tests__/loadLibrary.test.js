@@ -13,13 +13,14 @@ var getLoadLibrary = function(mocks) {
     'build-info': (mocks && mocks['build-info']) || {
       'environment': 'production'
     },
-    'logger': (mocks && mocks.logger) || getLoggerMockObject(),
+    logger: (mocks && mocks.logger) || getLoggerMockObject(),
     'load-script': (mocks && mocks['load-script']) || function() {},
-    'promise': Promise,
-    'window': (mocks && mocks['window']) || {
-      's_gi':  function() {}
+    promise: Promise,
+    window: (mocks && mocks['window']) || {
+      'AppMeasurement':  function() {}
     },
-    'on-page-bottom': (mocks && mocks['on-page-bottom']) || function(callback) { callback() }
+    'on-page-bottom': (mocks && mocks['on-page-bottom']) || function(callback) { callback(); },
+    'get-hosted-lib-file-url': function() {}
   });
 };
 
@@ -101,8 +102,13 @@ describe('load library', function() {
       });
     });
 
-    it('calls window.s_gi to initialize the library', function(done) {
-      var windowSpy = jasmine.createSpyObj('window', ['s_gi']);
+    it('calls window.AppMeasurement to initialize the library', function(done) {
+      var AppMeasuremenTrackerSpy = jasmine.createSpyObj('AppMeasurement', ['sa']);
+      var windowSpy = {
+        AppMeasurement: function() {
+          return AppMeasuremenTrackerSpy;
+        }
+      };
 
       var loadLibrary = getLoadLibrary({
         'window': windowSpy
@@ -116,12 +122,12 @@ describe('load library', function() {
           }
         }
       }).then(function() {
-        expect(windowSpy.s_gi).toHaveBeenCalledWith('aa');
+        expect(AppMeasuremenTrackerSpy.sa).toHaveBeenCalledWith('aa');
         done();
       });
     });
 
-    it('throws an error if window,s_gi is not defined', function(done) {
+    it('throws an error if window.AppMeasurement is not defined', function(done) {
       var loadLibrary = getLoadLibrary({
         'window': {}
       });
@@ -134,14 +140,19 @@ describe('load library', function() {
           }
         }
       }).catch(function(e) {
-        expect(e).toEqual(jasmine.stringMatching('`s_gi` method not found.'));
+        expect(e).toEqual(jasmine.stringMatching('`AppMeasurement` method not found.'));
         done();
       });
     });
 
-    it('calls window.s_gi with specified build info environment report suites to initialize the ' +
-      'library', function(done) {
-      var windowSpy = jasmine.createSpyObj('window', ['s_gi']);
+    it('calls window.AppMeasurement with specified build info environment report suites to ' +
+      'initialize the library', function(done) {
+      var AppMeasuremenTrackerSpy = jasmine.createSpyObj('AppMeasurement', ['sa']);
+      var windowSpy = {
+        AppMeasurement: function() {
+          return AppMeasuremenTrackerSpy;
+        }
+      };
 
       var loadLibrary = getLoadLibrary({
         'window': windowSpy,
@@ -159,8 +170,37 @@ describe('load library', function() {
           }
         }
       }).then(function() {
-        expect(windowSpy.s_gi).toHaveBeenCalledWith('bb');
+        expect(AppMeasuremenTrackerSpy.sa).toHaveBeenCalledWith('bb');
         done();
+      });
+    });
+
+    it('loads managed script only once', function(done) {
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
+      var loadLibrary = getLoadLibrary({
+        'load-script': loadScriptSpy
+      });
+
+      loadLibrary({
+        libraryCode: {
+          type: 'managed',
+          accounts: {
+            production: ['aa']
+          }
+        }
+      }).then(function() {
+        loadLibrary({
+          libraryCode: {
+            type: 'managed',
+            accounts: {
+              production: ['aa']
+            }
+          }
+        }).then(function() {
+          expect(loadScriptSpy.calls.count()).toEqual(1);
+          done();
+        });
       });
     });
   });

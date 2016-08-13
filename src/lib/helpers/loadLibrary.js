@@ -6,9 +6,7 @@ var logger = require('logger');
 var onPageBottom = require('on-page-bottom');
 var window = require('window');
 var Promise = require('promise');
-
-var APP_MEASUREMENT_URL =
-  'https://assets.adobedtm.com/activation/libs/app-measurement/1.6/AppMeasurement.js';
+var getHostedLibFileUrl = require('get-hosted-lib-file-url');
 
 var LIB_TYPES = {
   MANAGED: 'managed',
@@ -22,13 +20,24 @@ var loadAppMeasurementScript = function(url) {
   return loadScript(url);
 };
 
+var appMeasurementLoadPromise = null;
+var loadManagedAppMeasurementScript = function(url) {
+  if (appMeasurementLoadPromise) {
+    logger.info('AppMeasurement script is already loading in the page.');
+    return appMeasurementLoadPromise;
+  }
+
+  appMeasurementLoadPromise = loadAppMeasurementScript(url);
+  return appMeasurementLoadPromise;
+};
+
 var waitForPageLoadingPhase = function(loadPhase) {
   if (loadPhase === 'pageBottom') {
     return new Promise(function(resolve) {
       onPageBottom(function() {
         logger.info('Loading AppMeasurement script at the bottom of the page.');
         resolve();
-      })
+      });
     });
   } else {
     logger.info('Loading AppMeasurement script at the top of the page.');
@@ -45,22 +54,22 @@ var getReportSuites = function(reportSuitesData) {
   return reportSuiteValues.join(',');
 };
 
-var createTracker = function(accounts) {
-  if (!window.s_gi) {
+var createTracker = function() {
+  if (!window.AppMeasurement) {
     throw new Error(
-      'Cannot create tracker. `s_gi` method not found.'
+      'Cannot create tracker. `AppMeasurement` method not found.'
     );
   }
 
-  var reportSuites = getReportSuites(accounts);
-  logger.info('Creating tracker with the following report suite(s): "' + reportSuites + '".');
-  return window.s_gi(reportSuites);
+  logger.info('Creating AppMeasurement tracker.');
+  return new window.AppMeasurement();
 };
 
 var loadManagedLibrary = function(configuration) {
   return waitForPageLoadingPhase(configuration.libraryCode.loadPhase || 'pageBottom')
-    .then(loadAppMeasurementScript.bind(null, APP_MEASUREMENT_URL))
-    .then(createTracker.bind(null, configuration.libraryCode.accounts));
+    .then(loadManagedAppMeasurementScript.bind(null, getHostedLibFileUrl('AppMeasurement.js')))
+    .then(createTracker)
+    .then(setReportSuitesOnTracker.bind(null, configuration));
 };
 
 var setReportSuitesOnTracker = function(configuration, tracker) {
