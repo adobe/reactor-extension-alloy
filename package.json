@@ -31,8 +31,8 @@
   "devDependencies": {
     "@reactor/extension-dtm": "^1.0.0",
     "@reactor/extension-support-packager": "^2.2.1",
-    "@reactor/extension-support-sandbox": "^7.2.0",
-    "@reactor/extension-support-testrunner": "^5.3.0",
+    "@reactor/extension-support-sandbox": "^7.2.1",
+    "@reactor/extension-support-testrunner": "^6.1.1",
     "@reactor/turbine": "^14.2.0",
     "babel-core": "^6.13.2",
     "babel-loader": "^6.2.4",
