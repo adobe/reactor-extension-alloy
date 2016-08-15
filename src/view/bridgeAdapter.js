@@ -1,6 +1,6 @@
+import { getValues, reset } from 'redux-form';
 import { actionCreators } from './reduxActions/bridgeAdapterActions';
 import { handleSubmit } from './extensionViewReduxForm';
-import { getValues, reset } from 'redux-form';
 
 export default (extensionBridge, store) => {
   let currentRouteFormSettings;
