@@ -1,21 +1,26 @@
 'use strict';
 
-var path = require('path');
-var argv = require('yargs')
-  .default('watch', true)
-  .alias('source-maps', 'with-source-maps')
-  .argv;
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  entry: './src/view/index.jsx',
+  plugins: [
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'src/view/index.html'
+    })
+  ],
   output: {
+    path: 'dist/',
     filename: 'view.js'
   },
-  devtool: argv.sourceMaps ? '#inline-source-map' : false,
   module: {
     loaders: [
       {
         test: /\.jsx?$/,
         include: /src\/view/,
+        exclude: /__tests__/,
         loader: 'babel-loader',
         query: {
           presets: ['react', 'es2015', 'stage-0']

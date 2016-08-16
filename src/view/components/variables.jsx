@@ -1,10 +1,10 @@
 import React from 'react';
 import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
+import { DataElementSelectorButton } from '@reactor/react-components';
 
 import mergeFormConfigs from '../utils/mergeFormConfigs';
 import openDataElementSelector from '../utils/openDataElementSelector';
-import { DataElementSelectorButton } from '@reactor/react-components';
 import EvarsPropsEditor, { getFormConfig as getEvarsPropsEditorFormConfig } from './evarsPropsEditor';
 import EventsEditor, { formConfig as eventsFormConfig } from './eventsEditor';
 import HierarchiesEditor, { formConfig as hierarchiesFormConfig } from './hierarchiesEditor';
