@@ -19,7 +19,7 @@ var getTrackerModule = function(mocks) {
     './loadLibrary.js': (mocks && mocks['./loadLibrary.js']) || function() {
       return Promise.resolve('library');
     },
-    './versionGenerator.js': (mocks && mocks['./generateVersion.js']) || function() {},
+    './generateVersion.js': (mocks && mocks['./generateVersion.js']) || function() {},
     './applyTrackerVariables.js': applyTrackerVariablesInjector({
       'logger': getLoggerMockObject()
     }),
@@ -185,7 +185,7 @@ describe('get tracker', function() {
             EC1: {}
           };
         },
-        './versionGenerator.js': function() {
+        './generateVersion.js': function() {
           return 'DEBA';
         },
         './loadLibrary.js': loadLibrarySpy
@@ -209,7 +209,7 @@ describe('get tracker', function() {
             EC1: {}
           };
         },
-        './versionGenerator.js': function() {
+        './generateVersion.js': function() {
           return 'DEBA';
         },
         './loadLibrary.js': loadLibrarySpy
