@@ -14,7 +14,7 @@ const getReactComponents = (wrapper) => {
 
 describe('report suite', () => {
   let instance;
-  let onChangeSpy = jasmine.createSpy('onChange');
+  const onChangeSpy = jasmine.createSpy('onChange');
 
   beforeAll(() => {
     instance = mount(<ReportSuite onChange={ onChangeSpy } />);

@@ -12,6 +12,7 @@ var getSharedModule = require('get-shared-module');
 
 var applyTrackerVariables = require('./applyTrackerVariables.js');
 var loadLibrary = require('./loadLibrary.js');
+var versionGenerator = require('./versionGenerator.js');
 
 var BEFORE_SETTINGS_LOAD_PHASE = 'beforeSettings';
 
@@ -46,7 +47,7 @@ var linkVisitorId = function(tracker) {
 };
 
 var updateTrackerVersion = function(tracker) {
-  var version = 'D' + buildInfo.appVersion;
+  var version = versionGenerator(buildInfo.turbineBuildDate);
   logger.info('Setting version on tracker: "' + version + '".');
 
   if (typeof tracker.tagContainerMarker !== 'undefined') {
