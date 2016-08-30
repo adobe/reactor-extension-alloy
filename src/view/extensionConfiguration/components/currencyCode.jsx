@@ -1,8 +1,7 @@
 import React from 'react';
-import Select from '@coralui/react-coral/lib/Select';
 import Radio from '@coralui/react-coral/lib/Radio';
 import Textfield from '@coralui/react-coral/lib/Textfield';
-import { DataElementSelectorButton } from '@reactor/react-components';
+import { ReduxFormAutocomplete as Autocomplete, DataElementSelectorButton } from '@reactor/react-components';
 
 import openDataElementSelector from '../../utils/openDataElementSelector';
 import CURRENCY_CODE_PRESETS from '../../enums/currencyCodes';
@@ -52,9 +51,9 @@ export default class CurrencyCode extends React.Component {
           {
             currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.PRESET ?
               <div className="FieldSubset">
-                <Select
-                  className="Field--long"
+                <Autocomplete
                   { ...currencyCode }
+                  className="Field--long"
                   options={ presetOptions }
                 />
               </div> : null
