@@ -19,11 +19,12 @@ var getTrackerModule = function(mocks) {
     './loadLibrary.js': (mocks && mocks['./loadLibrary.js']) || function() {
       return Promise.resolve('library');
     },
+    './versionGenerator.js': (mocks && mocks['./versionGenerator.js']) || function() {},
     './applyTrackerVariables.js': applyTrackerVariablesInjector({
       'logger': getLoggerMockObject()
     }),
     'build-info': (mocks && mocks['build-info']) || {
-      'appVersion': 'AAA'
+      'turbineBuildDate': '2016-07-01T18:10:34Z'
     },
     'property-settings': (mocks && mocks['property-settings']) || {}
   });
@@ -184,8 +185,8 @@ describe('get tracker', function() {
             EC1: {}
           };
         },
-        'build-info': {
-          appVersion: 'EBA'
+        './versionGenerator.js': function() {
+          return 'DEBA';
         },
         './loadLibrary.js': loadLibrarySpy
       });
@@ -208,8 +209,8 @@ describe('get tracker', function() {
             EC1: {}
           };
         },
-        'build-info': {
-          appVersion: 'EBA'
+        './versionGenerator.js': function() {
+          return 'DEBA';
         },
         './loadLibrary.js': loadLibrarySpy
       });
