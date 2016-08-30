@@ -15,7 +15,7 @@ export function ExtensionConfiguration({ ...props }) {
       <Coral.Accordion
         multiselectable
         variant="quiet"
-        defaultSelectedKey="0"
+        defaultSelectedIndex="0"
         className="Accordion--first"
       >
         <Coral.AccordionItem header="Library Management">
