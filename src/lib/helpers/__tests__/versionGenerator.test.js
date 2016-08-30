@@ -1,6 +1,6 @@
 'use strict';
 
-var versionGenerator = require('../versionGenerator');
+var versionGenerator = require('../generateVersion');
 
 describe('version generator', function() {
   it('generates the correct version', function() {

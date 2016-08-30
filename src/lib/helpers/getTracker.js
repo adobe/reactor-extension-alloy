@@ -12,7 +12,7 @@ var getSharedModule = require('get-shared-module');
 
 var applyTrackerVariables = require('./applyTrackerVariables.js');
 var loadLibrary = require('./loadLibrary.js');
-var versionGenerator = require('./versionGenerator.js');
+var versionGenerator = require('./generateVersion.js');
 
 var BEFORE_SETTINGS_LOAD_PHASE = 'beforeSettings';
 

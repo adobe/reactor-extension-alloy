@@ -19,7 +19,7 @@ var getTrackerModule = function(mocks) {
     './loadLibrary.js': (mocks && mocks['./loadLibrary.js']) || function() {
       return Promise.resolve('library');
     },
-    './versionGenerator.js': (mocks && mocks['./versionGenerator.js']) || function() {},
+    './versionGenerator.js': (mocks && mocks['./generateVersion.js']) || function() {},
     './applyTrackerVariables.js': applyTrackerVariablesInjector({
       'logger': getLoggerMockObject()
     }),
