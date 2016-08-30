@@ -1,8 +1,7 @@
 import { mount } from 'enzyme';
-import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import { ReduxFormAutocomplete as Autocomplete, ValidationWrapper } from '@reactor/react-components';
 import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
-import { ValidationWrapper } from '@reactor/react-components';
 
 import extensionViewReduxForm from '../../extensionViewReduxForm';
 import eventsEditor, { formConfig } from '../eventsEditor';

@@ -1,6 +1,5 @@
 import React from 'react';
-import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
-import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import { ReduxFormAutocomplete as Autocomplete, ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 
@@ -64,10 +63,9 @@ export default class EventsEditor extends React.Component {
             className="u-gapRight2x"
           >
             <Autocomplete
+              { ...event.name }
               className="Field--short"
               placeholder={ namePlaceholder }
-              { ...event.name }
-              onBlur={ () => event.name.onBlur(event.name.value) }
               options={ nameOptions }
             />
           </ValidationWrapper>
