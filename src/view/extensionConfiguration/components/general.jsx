@@ -1,7 +1,6 @@
 import React from 'react';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import Checkbox from '@coralui/react-coral/lib/Checkbox';
-import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 
 import mergeFormConfigs from '../../utils/mergeFormConfigs';
@@ -10,30 +9,12 @@ import CharSet, { formConfig as charSetFormConfig } from './charSet';
 import CurrencyCode, { formConfig as currencyCodeFormConfig } from './currencyCode';
 import ENVIRONMENTS from '../../enums/environments';
 
-const dataCenterOptions = [
-  {
-    label: 'Default',
-    value: 'default'
-  },
-  {
-    label: 'San Jose',
-    value: '112'
-  },
-  {
-    label: 'Dallas',
-    value: '122'
-  }
-];
-
-const DATA_CENTER_DEFAULT = 'default';
-
 export default function General({ ...props }) {
   const {
     euComplianceEnabled,
     trackerProperties: {
       trackingServer,
-      trackingServerSecure,
-      dc
+      trackingServerSecure
     }
   } = props.fields;
 
@@ -86,16 +67,6 @@ export default function General({ ...props }) {
           />
         </div>
       </div>
-      <div>
-        <span className="Label u-gapTop">Data Center</span>
-        <div>
-          <Select
-            placeholder="Select a data center"
-            { ...dc }
-            options={ dataCenterOptions }
-          />
-        </div>
-      </div>
     </div>
   );
 }
@@ -107,8 +78,7 @@ export const formConfig = mergeFormConfigs(
     fields: [
       'euComplianceEnabled',
       'trackerProperties.trackingServer',
-      'trackerProperties.trackingServerSecure',
-      'trackerProperties.dc'
+      'trackerProperties.trackingServerSecure'
     ],
     settingsToFormValues(values, options) {
       const {
@@ -117,8 +87,7 @@ export const formConfig = mergeFormConfigs(
 
       const {
         trackingServer,
-        trackingServerSecure,
-        dc
+        trackingServerSecure
       } = options.settings.trackerProperties || {};
 
       return {
@@ -127,8 +96,7 @@ export const formConfig = mergeFormConfigs(
         trackerProperties: {
           ...values.trackerProperties,
           trackingServer,
-          trackingServerSecure,
-          dc: dc || DATA_CENTER_DEFAULT
+          trackingServerSecure
         }
       };
     },
@@ -137,8 +105,7 @@ export const formConfig = mergeFormConfigs(
         euComplianceEnabled,
         trackerProperties: {
           trackingServer,
-          trackingServerSecure,
-          dc
+          trackingServerSecure
         }
       } = values;
 
@@ -152,10 +119,6 @@ export const formConfig = mergeFormConfigs(
 
       if (trackingServerSecure) {
         trackerProperties.trackingServerSecure = trackingServerSecure;
-      }
-
-      if (dc && dc !== DATA_CENTER_DEFAULT) {
-        trackerProperties.dc = dc;
       }
 
       return {

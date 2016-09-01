@@ -1,6 +1,5 @@
 import { mount } from 'enzyme';
 import Checkbox from '@coralui/react-coral/lib/Checkbox';
-import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 
 import extensionViewReduxForm from '../../../extensionViewReduxForm';
@@ -17,13 +16,11 @@ const getReactComponents = (wrapper) => {
     wrapper.find(Textfield).filterWhere(
       n => n.prop('name') === 'trackerProperties.trackingServerSecure'
     ).node;
-  const dcSelect = wrapper.find(Select).filterWhere(n => n.prop('name').includes('dc')).node;
 
   return {
     euComplianceEnabledCheckbox,
     trackingServerTextfield,
-    trackingServerSecureTextfield,
-    dcSelect
+    trackingServerSecureTextfield
   };
 };
 
@@ -43,8 +40,7 @@ describe('general', () => {
         euComplianceEnabled: true,
         trackerProperties: {
           trackingServer: 'someserver',
-          trackingServerSecure: 'somesecureserver',
-          dc: '112'
+          trackingServerSecure: 'somesecureserver'
         }
       }
     });
@@ -52,14 +48,12 @@ describe('general', () => {
     const {
       euComplianceEnabledCheckbox,
       trackingServerTextfield,
-      trackingServerSecureTextfield,
-      dcSelect
+      trackingServerSecureTextfield
     } = getReactComponents(instance);
 
     expect(euComplianceEnabledCheckbox.props.value).toBe(true);
     expect(trackingServerTextfield.props.value).toBe('someserver');
     expect(trackingServerSecureTextfield.props.value).toBe('somesecureserver');
-    expect(dcSelect.props.value).toBe('112');
   });
 
   it('sets settings from form values', () => {
@@ -68,27 +62,23 @@ describe('general', () => {
     const {
       euComplianceEnabledCheckbox,
       trackingServerTextfield,
-      trackingServerSecureTextfield,
-      dcSelect
+      trackingServerSecureTextfield
     } = getReactComponents(instance);
 
     euComplianceEnabledCheckbox.props.onChange(true);
     trackingServerTextfield.props.onChange('someserver');
     trackingServerSecureTextfield.props.onChange('somesecureserver');
-    dcSelect.props.onChange('112');
 
     const { euComplianceEnabled } = extensionBridge.getSettings();
     const {
       trackerProperties: {
         trackingServer,
-        trackingServerSecure,
-        dc
+        trackingServerSecure
       }
     } = extensionBridge.getSettings();
 
     expect(euComplianceEnabled).toBe(true);
     expect(trackingServer).toBe('someserver');
     expect(trackingServerSecure).toBe('somesecureserver');
-    expect(dc).toBe('112');
   });
 });
