@@ -152,13 +152,6 @@
               "type": "string",
               "minLength": 1
             },
-            "dc": {
-              "type": "string",
-              "enum": [
-                "122",
-                "112"
-              ]
-            },
             "server": {
               "type": "string",
               "minLength": 1
