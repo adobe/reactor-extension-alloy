@@ -108,6 +108,7 @@ export default class ReportSuite extends React.Component {
               placeholder="Add Report Suite(s)"
               className="Field--long"
               options={ this.state.reportSuites }
+              allowCreate
               multiple
             />
             <DataElementSelectorButton onClick={ this.openSelector } />
