@@ -148,6 +148,7 @@ describe('get tracker', function() {
   });
 
   it('adds VisitorID instance to the tracker when needed', function(done) {
+    var mcidInstance = {};
     var loadLibrarySpy = jasmine.createSpy('load-library')
       .and.returnValue(Promise.resolve({
       }));
@@ -159,15 +160,13 @@ describe('get tracker', function() {
         };
       },
       'get-shared-module': function() {
-        return function() {
-          return Promise.resolve('visitor id instance');
-        };
+        return mcidInstance;
       },
       './loadLibrary.js': loadLibrarySpy
     });
 
     getTracker('EC1').then(function(tracker) {
-      expect(tracker.visitor).toBe('visitor id instance');
+      expect(tracker.visitor).toBe(mcidInstance);
       done();
     });
   });

@@ -23,6 +23,16 @@ module.exports = {
   ],
   dataElements: {},
   extensions: {
+    "adobe-mcid": {
+      displayName: 'Adobe MCID',
+      configurations: {
+        ECx: {
+          settings: {
+            "mcOrgId": "93B41AC151F037F00A490D4D@AdobeOrg"
+          }
+        }
+      }
+    },
     "adobe-analytics": {
       displayName: 'Adobe Analytics',
       configurations: {

@@ -17,7 +17,7 @@ var generateVersion = require('./generateVersion.js');
 var version = generateVersion(buildInfo.turbineBuildDate);
 var BEFORE_SETTINGS_LOAD_PHASE = 'beforeSettings';
 
-var getVisitorIdInstance = getSharedModule('visitor-id', 'get-visitor-id-instance');
+var mcidInstance = getSharedModule('adobe-mcid', 'mcid-instance');
 
 var checkEuCompliance = function(euComplianceRequired) {
   if (!euComplianceRequired) {
@@ -30,18 +30,9 @@ var checkEuCompliance = function(euComplianceRequired) {
 };
 
 var linkVisitorId = function(tracker) {
-  if (getVisitorIdInstance) {
-    return getVisitorIdInstance().then(function(visitorIdInstance) {
-      if (visitorIdInstance) {
-        logger.info('Setting Visitor ID instance on the tracker.');
-        tracker.visitor = visitorIdInstance;
-      }
-
-      return tracker;
-    }, function() {
-      logger.error('Cannot link Visitor ID instance.');
-      return tracker;
-    });
+  if (mcidInstance) {
+    logger.info('Setting MCID instance on the tracker.');
+    tracker.visitor = mcidInstance;
   }
 
   return tracker;
