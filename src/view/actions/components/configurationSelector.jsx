@@ -67,9 +67,9 @@ export class ConfigurationSelector extends React.Component {
                 >
                   <Select
                     { ...extensionConfigurationIds }
-                    onBlur={
-                      () => extensionConfigurationIds.onBlur(extensionConfigurationIds.value)
-                    }
+                    onChange={ newValues => {
+                      extensionConfigurationIds.onChange(newValues.map(item => item.value));
+                    } }
                     placeholder="Select Configuration"
                     options={ selectOptions }
                     multiple
@@ -119,12 +119,9 @@ export const formConfig = {
     };
   },
   formValuesToSettings(settings, values) {
-    const { extensionConfigurationSelectionType } = values;
-    let { extensionConfigurationIds } = values;
+    const { extensionConfigurationSelectionType, extensionConfigurationIds } = values;
 
     if (extensionConfigurationSelectionType === SELECTION_TYPES.SUBSET) {
-      extensionConfigurationIds = extensionConfigurationIds.map(item => item.value);
-
       settings = {
         ...settings,
         extensionConfigurationIds

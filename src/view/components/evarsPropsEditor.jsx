@@ -1,7 +1,8 @@
 import React from 'react';
-import { ReduxFormAutocomplete as Autocomplete, ReduxFormSelect as Select, ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
+import { ReduxFormAutocomplete as Autocomplete, ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
+import Select from '@coralui/react-coral/lib/Select';
 
 import createId from '../utils/createId';
 import openDataElementSelector from '../utils/openDataElementSelector';
