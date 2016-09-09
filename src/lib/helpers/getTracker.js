@@ -24,7 +24,7 @@ var checkEuCompliance = function(euComplianceRequired) {
     return true;
   }
 
-  var cookieName = propertySettings.euCookieName || 'sat_track';
+  var cookieName = propertySettings.euCookieName;
   var euCookieValue = cookie.parse(document.cookie)[cookieName];
   return euCookieValue === 'true';
 };

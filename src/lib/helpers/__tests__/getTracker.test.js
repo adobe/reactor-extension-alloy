@@ -102,6 +102,9 @@ describe('get tracker', function() {
             }
           };
         },
+        'property-settings': {
+          'euCookieName': 'sat_track'
+        },
         'cookie': cookieSpy,
         './loadLibrary.js': loadLibrarySpy
       });
