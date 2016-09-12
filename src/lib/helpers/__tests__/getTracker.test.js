@@ -116,38 +116,6 @@ describe('get tracker', function() {
         done();
       });
     });
-
-    it('does load a library if EU compliance is acknowledged by the user when cookie name is not ' +
-      'the default one', function(done) {
-      var loadLibrarySpy = jasmine.createSpy('load-library')
-        .and.returnValue(Promise.resolve('loaded'));
-      var cookieSpy = jasmine.createSpyObj('cookie', ['parse']);
-      cookieSpy.parse.and.returnValue({
-        'somename': 'true'
-      });
-
-      var getTracker = getTrackerModule({
-        'get-extension-configurations': function() {
-          return {
-            EC1: {
-              euComplianceEnabled: true
-            }
-          };
-        },
-        'property-settings': {
-          euCookieName: 'somename'
-        },
-        'cookie': cookieSpy,
-        './loadLibrary.js': loadLibrarySpy
-      });
-
-      getTracker('EC1').then(function() {
-        expect(loadLibrarySpy).toHaveBeenCalledWith({
-          euComplianceEnabled: true
-        });
-        done();
-      });
-    });
   });
 
   it('adds VisitorID instance to the tracker when needed', function(done) {
