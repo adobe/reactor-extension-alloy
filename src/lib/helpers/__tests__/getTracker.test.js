@@ -230,7 +230,7 @@ describe('get tracker', function() {
             },
             customSetup: {
               loadPhase: 'beforeSettings',
-              source: function(e, tracker) {
+              source: function(tracker) {
                 tracker.prop1 = 'b';
               }
             }
@@ -260,7 +260,7 @@ describe('get tracker', function() {
               prop1: 'a'
             },
             customSetup: {
-              source: function(e, tracker) {
+              source: function(tracker) {
                 tracker.prop1 = 'b';
               }
             }
