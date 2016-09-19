@@ -498,7 +498,10 @@
       },
       {
         "type": "function",
-        "propertyPath": "customSetup.source"
+        "propertyPath": "customSetup.source",
+        "parameters": [
+          "s"
+        ]
       }
     ]
   },
@@ -784,7 +787,10 @@
       "transforms": [
         {
           "type": "function",
-          "propertyPath": "customSetup.source"
+          "propertyPath": "customSetup.source",
+          "parameters": [
+            "s"
+          ]
         }
       ]
     },
