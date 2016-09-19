@@ -54,14 +54,14 @@ var updateTrackerVersion = function(tracker) {
 var updateTrackerVariables = function(trackerProperties, customSetup, tracker) {
   if (customSetup.loadPhase === BEFORE_SETTINGS_LOAD_PHASE && customSetup.source) {
     logger.info('Calling custom script before settings.');
-    customSetup.source.call(window, null, tracker);
+    customSetup.source.call(window, tracker);
   }
 
   applyTrackerVariables(tracker, trackerProperties || {});
 
   if (customSetup.loadPhase !== BEFORE_SETTINGS_LOAD_PHASE && customSetup.source) {
     logger.info('Calling custom script after settings.');
-    customSetup.source.call(window, null, tracker);
+    customSetup.source.call(window, tracker);
   }
 
   return tracker;
