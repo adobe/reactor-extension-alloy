@@ -26,6 +26,15 @@ export default class CustomSetup extends React.Component {
 
     return (
       <div>
+        <p>
+          Use the editor below to customize the page code. The following variables are available for
+          use within your custom code:
+        </p>
+
+        <ul>
+          <li><i>s</i> - The tracker object.</li>
+        </ul>
+
         <Button
           className="u-gapTop"
           icon="code"
