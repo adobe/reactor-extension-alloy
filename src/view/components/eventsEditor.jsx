@@ -1,10 +1,10 @@
 import React from 'react';
-import { ReduxFormAutocomplete as Autocomplete, ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
+import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import { FieldArray } from 'redux-form';
 
-import createId from '../utils/createId';
-import openDataElementSelector from '../utils/openDataElementSelector';
+import Field from './field';
 
 // TODO: Replace with actual values from user's product level.
 const MAX_EVENTS = 100;
@@ -19,104 +19,82 @@ const CONTEXT_EVENTS = [
   'purchase'
 ];
 
-export default class EventsEditor extends React.Component {
-  createOption = value => ({
-    label: value,
-    value
-  });
+const createOption = value => ({
+  label: value,
+  value
+});
 
-  createOptions = () => {
-    const options = CONTEXT_EVENTS.map(this.createOption);
+const nameOptions = CONTEXT_EVENTS.map(createOption);
 
-    for (let i = 0; i < MAX_EVENTS; i++) {
-      const value = `event${i + 1}`;
-      options.push(this.createOption(value));
-    }
-
-    return options;
-  };
-
-  createEmptyRow = () => {
-    this.props.fields.trackerProperties.events.addField({
-      id: createId()
-    });
-  };
-
-  removeEvent = index => {
-    this.props.fields.trackerProperties.events.removeField(index);
-  };
-
-  render() {
-    const events = this.props.fields.trackerProperties.events;
-
-    const rows = events.map((event, index) => {
-      const nameOptions = this.createOptions();
-      const namePlaceholder = 'Select event';
-
-      return (
-        <div
-          key={ event.id.value }
-          className="u-gapBottom2x"
-        >
-          <ValidationWrapper
-            error={ event.name.touched && event.name.error }
-            className="u-gapRight2x"
-          >
-            <Autocomplete
-              { ...event.name }
-              className="Field--short"
-              placeholder={ namePlaceholder }
-              options={ nameOptions }
-            />
-          </ValidationWrapper>
-          <span className="Label u-gapRight">Serialize from value</span>
-          <Textfield
-            className="Field--short"
-            { ...event.value }
-          />
-          <DataElementSelectorButton
-            onClick={ openDataElementSelector.bind(this, event.value) }
-          />
-          <Button
-            variant="minimal"
-            icon="close"
-            iconSize="XS"
-            square
-            onClick={ this.removeEvent.bind(this, index) }
-          />
-        </div>
-      );
-    });
-
-    return (
-      <section>
-        { rows }
-        <Button onClick={ this.createEmptyRow }>Add event</Button>
-      </section>
-    );
-  }
+for (let i = 0; i < MAX_EVENTS; i++) {
+  nameOptions.push(createOption(`event${i + 1}`));
 }
 
+const createEmptyRow = () => ({});
+
+const renderEvents = ({ fields }) => {
+  const rows = fields.map((field, index) => (
+    <div
+      key={ index }
+      className="u-gapBottom2x"
+    >
+      <Field
+        name={ `${field}.name` }
+        className="u-gapRight2x"
+        component={ Autocomplete }
+        componentClassName="Field--short"
+        placeholder="Select event"
+        options={ nameOptions }
+        supportValidation
+      />
+
+      <span className="Label u-gapRight">Serialize from value</span>
+
+      <Field
+        name={ `${field}.value` }
+        component={ Textfield }
+        componentClassName="Field--short"
+        supportDataElement
+      />
+
+      <Button
+        variant="minimal"
+        icon="close"
+        iconSize="XS"
+        square
+        onClick={ fields.remove.bind(this, index) }
+      />
+    </div>
+  ));
+
+  return (
+    <section>
+      { rows }
+      <Button onClick={ () => fields.push(createEmptyRow()) }>Add event</Button>
+    </section>
+  );
+};
+
+export default () => (
+  <FieldArray
+    name="trackerProperties.events"
+    component={ renderEvents }
+  />
+);
+
 export const formConfig = {
-  fields: [
-    'trackerProperties.events[].id',
-    'trackerProperties.events[].name',
-    'trackerProperties.events[].value'
-  ],
-  settingsToFormValues(values, options) {
+  settingsToFormValues(values, settings) {
     let {
       events
-    } = options.settings.trackerProperties || {};
+    } = settings.trackerProperties || {};
 
     events = events ? events.slice() : [];
 
     // Add an extra object which will ensures that there is an empty row available for the user
     // to configure their next variable.
-    events.push({});
+    events.push(createEmptyRow());
 
-    events.forEach(event => {
-      event.id = createId();
-    });
+    events.map(event => ({ ...event }));
 
     return {
       ...values,
@@ -131,19 +109,21 @@ export const formConfig = {
       trackerProperties
     } = values;
 
-    const events = trackerProperties.events.filter(event => event.name).map(event => {
-      // Goals are to exclude ID and exclude value if it's an empty string.
+    const events = trackerProperties.events
+      .filter(event => event.name)
+      .map(event => {
+        // Goals are to exclude value if it's an empty string.
 
-      const trimmedEvent = {
-        name: event.name
-      };
+        const trimmedEvent = {
+          name: event.name
+        };
 
-      if (event.value) {
-        trimmedEvent.value = event.value;
-      }
+        if (event.value) {
+          trimmedEvent.value = event.value;
+        }
 
-      return trimmedEvent;
-    });
+        return trimmedEvent;
+      });
 
     settings = {
       ...settings
@@ -159,7 +139,8 @@ export const formConfig = {
     return settings;
   },
   validate(errors, values = { trackerProperties: {} }) {
-    const events = values.trackerProperties.events || [];
+    const trackerProperties = values.trackerProperties || {};
+    const events = trackerProperties.events || [];
     const configuredEventNames = [];
 
     const eventsErrors = events.map(event => {

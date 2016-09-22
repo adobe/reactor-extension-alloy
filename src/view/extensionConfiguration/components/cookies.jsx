@@ -1,9 +1,12 @@
 import React from 'react';
 import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
-import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
+import { connect } from 'react-redux';
+import { formValueSelector } from 'redux-form';
 
-import openDataElementSelector from '../../utils/openDataElementSelector';
+import Field from '../../components/field';
+
+import './cookies.styl';
 
 const COOKIE_LIFETIME_PERIODS = {
   DEFAULT: 'DEFAULT',
@@ -26,108 +29,94 @@ const cookieLifetimeOptions = [{
   value: COOKIE_LIFETIME_PERIODS.SECONDS
 }];
 
-export default function Cookies({ ...props }) {
-  const {
-    visitorID,
-    visitorNamespace,
-    cookieDomainPeriods,
-    fpCookieDomainPeriods,
-    cookieLifetime,
-    cookieLifetimeSeconds
-  } = props.fields.trackerProperties;
+const Cookies = ({ cookieLifetime }) => (
+  <div className="Cookies">
+    <label className="Cookies-field">
+      <span className="Label">Visitor ID</span>
+      <div>
+        <Field
+          name="trackerProperties.visitorID"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
+        />
+      </div>
+    </label>
+    <label className="Cookies-field">
+      <span className="Label">Visitor Namespace</span>
+      <div>
+        <Field
+          name="trackerProperties.visitorNamespace"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
+        />
+      </div>
+    </label>
+    <label className="Cookies-field">
+      <span className="Label">Domain Periods</span>
+      <div>
+        <Field
+          name="trackerProperties.cookieDomainPeriods"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
+        />
+      </div>
+    </label>
+    <label className="Cookies-field">
+      <span className="Label">First-party Domain Periods</span>
+      <div>
+        <Field
+          name="trackerProperties.fpCookieDomainPeriods"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
+        />
+      </div>
+    </label>
+    <div className="u-gapBottom">
+      <label className="Label" htmlFor="cookieLifetimeField">Cookie Lifetime</label>
+      <div>
+        <Field
+          id="cookieLifetimeField"
+          name="trackerProperties.cookieLifetime"
+          component={ Select }
+          componentClassName="Cookies-cookieLifetime"
+          className="u-gapRight"
+          options={ cookieLifetimeOptions }
+        />
 
-  return (
-    <div className="Cookies">
-      <label className="Cookies-field">
-        <span className="Label">Visitor ID</span>
-        <div>
-          <Textfield className="Field--long" { ...visitorID } />
-          <DataElementSelectorButton
-            onClick={ openDataElementSelector.bind(this, visitorID) }
-          />
-        </div>
-      </label>
-      <label className="Cookies-field">
-        <span className="Label">Visitor Namespace</span>
-        <div>
-          <Textfield
-            className="Field--long"
-            { ...visitorNamespace }
-          />
-          <DataElementSelectorButton
-            onClick={ openDataElementSelector.bind(this, visitorNamespace) }
-          />
-        </div>
-      </label>
-      <label className="Cookies-field">
-        <span className="Label">Domain Periods</span>
-        <div>
-          <Textfield
-            className="Field--long"
-            { ...cookieDomainPeriods }
-          />
-          <DataElementSelectorButton
-            onClick={ openDataElementSelector.bind(this, cookieDomainPeriods) }
-          />
-        </div>
-      </label>
-      <label className="Cookies-field">
-        <span className="Label">First-party Domain Periods</span>
-        <div>
-          <Textfield
-            className="Field--long"
-            { ...fpCookieDomainPeriods }
-          />
-          <DataElementSelectorButton
-            onClick={ openDataElementSelector.bind(this, fpCookieDomainPeriods) }
-          />
-        </div>
-      </label>
-      <div className="u-gapBottom">
-        <label className="Label" htmlFor="cookieLifetimeField">Cookie Lifetime</label>
-        <div>
-          <Select
-            className="Cookies-cookieLifetime u-gapRight"
-            { ...cookieLifetime }
-            options={ cookieLifetimeOptions }
-          />
-          {
-            cookieLifetime.value === COOKIE_LIFETIME_PERIODS.SECONDS ?
-              <ValidationWrapper
-                error={ cookieLifetimeSeconds.touched && cookieLifetimeSeconds.error }
-              >
-                <Textfield
-                  className="Cookies-cookieLifetimeSeconds"
-                  { ...cookieLifetimeSeconds }
-                />
-                <DataElementSelectorButton
-                  onClick={ openDataElementSelector.bind(this, cookieLifetimeSeconds) }
-                />
-              </ValidationWrapper> : null
-          }
-        </div>
+        {
+          cookieLifetime === COOKIE_LIFETIME_PERIODS.SECONDS ?
+            <Field
+              name="trackerProperties.cookieLifetimeSeconds"
+              component={ Textfield }
+              componentClassName="Cookies-cookieLifetimeSeconds"
+              supportValidation
+              supportDataElement
+            /> : null
+        }
       </div>
     </div>
-  );
-}
+  </div>
+);
+
+export default connect(
+  state => ({
+    cookieLifetime: formValueSelector('default')(state, 'trackerProperties.cookieLifetime'),
+  })
+)(Cookies);
 
 export const formConfig = {
-  fields: [
-    'trackerProperties.visitorID',
-    'trackerProperties.visitorNamespace',
-    'trackerProperties.cookieDomainPeriods',
-    'trackerProperties.fpCookieDomainPeriods',
-    'trackerProperties.cookieLifetime',
-    'trackerProperties.cookieLifetimeSeconds'
-  ],
-  settingsToFormValues(values, options) {
+  settingsToFormValues(values, settings) {
     const {
       visitorID,
       visitorNamespace,
       cookieDomainPeriods,
       fpCookieDomainPeriods,
       cookieLifetime
-    } = options.settings.trackerProperties || {};
+    } = settings.trackerProperties || {};
 
     const trackerProperties = {
       ...values.trackerProperties,
@@ -201,8 +190,8 @@ export const formConfig = {
       trackerProperties
     };
   },
-  validate(errors, values = { trackerProperties: {} }) {
-    const { cookieLifetime, cookieLifetimeSeconds } = values.trackerProperties;
+  validate(errors, values) {
+    const { cookieLifetime, cookieLifetimeSeconds } = values.trackerProperties || {};
 
     if (cookieLifetime === COOKIE_LIFETIME_PERIODS.SECONDS &&
       (!cookieLifetimeSeconds || cookieLifetimeSeconds.trim().length === 0)) {

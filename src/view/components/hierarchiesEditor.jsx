@@ -1,11 +1,14 @@
 import React from 'react';
-import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import Button from '@coralui/react-coral/lib/Button';
 import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
+import { FieldArray } from 'redux-form';
 
-import openDataElementSelector from '../utils/openDataElementSelector';
-import createId from '../utils/createId';
+import Field from './field';
+
+import './hierarchiesEditor.styl';
+
+const MAX_HIERARCHY_SECTIONS = 4;
 
 const hierarchiesOptions = [{
   label: 'Hierarchy 1',
@@ -25,151 +28,110 @@ const hierarchiesOptions = [{
 }];
 
 const setDefaultsForHierarchy = hierarchy => {
-  hierarchy.id = hierarchy.id || createId();
   hierarchy.name = hierarchy.name || 'hier1';
   hierarchy.delimiter = hierarchy.delimiter || ',';
   hierarchy.sections = hierarchy.sections || [];
 
-  for (let i = hierarchy.sections.length; i < 5; i++) {
+  for (let i = hierarchy.sections.length; i < MAX_HIERARCHY_SECTIONS; i++) {
     hierarchy.sections.push('');
   }
 
   return hierarchy;
 };
 
-export default class HierarchiesEditor extends React.Component {
-  createEmptyRow = () => {
-    this.props.fields.trackerProperties.hierarchies.addField(setDefaultsForHierarchy({}));
-  };
+const createEmptyRow = () => setDefaultsForHierarchy({});
 
-  removeHierarchy = index => {
-    this.props.fields.trackerProperties.hierarchies.removeField(index);
-  };
+const renderHierarchySections = ({ fields }) => {
+  const rows = fields.map((field, index) => (
+    <div key={ index } className="HierarchiesEditor-section">
+      {
+        index > 0 ?
+          <span
+            className={
+              `HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--${index + 1}`
+            }
+          /> : null
+      }
 
-  render() {
-    const {
-      hierarchies
-    } = this.props.fields.trackerProperties;
+      <Field
+        name={ `${field}` }
+        component={ Textfield }
+        supportDataElement
+      />
+    </div>
+  ));
 
-    const hierarchyRows = hierarchies.map((hierarchy, index) => {
-      const {
-        id,
-        name,
-        sections,
-        delimiter
-      } = hierarchy;
+  return (
+    <div>
+      { rows }
+    </div>
+  );
+};
 
-      return (
-        <div key={ id.value } className="HierarchiesEditor-hierarchy">
-          <ValidationWrapper
-            error={ name.touched && name.error }
-            className="u-gapRight2x"
-          >
-            <Select
-              { ...name }
-              className="Field--short"
-              options={ hierarchiesOptions }
-            />
-          </ValidationWrapper>
+const renderHierarchies = ({ fields }) => {
+  const rows = fields.map((field, index) => (
+    <div key={ index } className="HierarchiesEditor-hierarchy">
+      <Field
+        name={ `${field}.name` }
+        className="u-gapRight2x"
+        component={ Select }
+        componentClassName="Field--short"
+        options={ hierarchiesOptions }
+        supportValidation
+      />
 
-          <label>
-            <span className="Label u-gapRight">Delimiter</span>
-            <ValidationWrapper
-              error={ delimiter.touched && delimiter.error }
-              className="u-gapRight"
-            >
-              <Textfield
-                className="Field--short"
-                { ...delimiter }
-              />
-            </ValidationWrapper>
-          </label>
+      <label>
+        <span className="Label u-gapRight">Delimiter</span>
+        <Field
+          name={ `${field}.delimiter` }
+          className="u-gapRight"
+          component={ Textfield }
+          componentClassName="Field--short"
+          supportValidation
+        />
+      </label>
 
-          {
-            index !== hierarchies.length - 1 ?
-              <Button
-                variant="minimal"
-                icon="close"
-                square
-                iconSize="XS"
-                onClick={ this.removeHierarchy.bind(this, index) }
-              /> : null
-          }
+      <Button
+        variant="minimal"
+        icon="close"
+        square
+        iconSize="XS"
+        onClick={ fields.remove.bind(this, index) }
+      />
 
-          <div className="HierarchiesEditor-section">
-            <Textfield
-              { ...sections[0] }
-            />
-            <DataElementSelectorButton
-              onClick={ openDataElementSelector.bind(this, sections[0]) }
-            />
-          </div>
+      <FieldArray
+        name={ `${field}.sections` }
+        component={ renderHierarchySections }
+      />
+    </div>
+  ));
 
-          <div className="HierarchiesEditor-section">
-            <span
-              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--2"
-            />
-            <Textfield
-              { ...sections[1] }
-            />
-            <DataElementSelectorButton
-              onClick={ openDataElementSelector.bind(this, sections[1]) }
-            />
-          </div>
+  return (
+    <div>
+      { rows }
+      <Button onClick={ () => fields.push(createEmptyRow()) }>Add hierarchy</Button>
+    </div>
+  );
+};
 
-          <div className="HierarchiesEditor-section">
-            <span
-              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--3"
-            />
-            <Textfield
-              { ...sections[2] }
-            />
-            <DataElementSelectorButton
-              onClick={ openDataElementSelector.bind(this, sections[2]) }
-            />
-          </div>
-
-          <div className="HierarchiesEditor-section">
-            <span
-              className="HierarchiesEditor-nestIndicator HierarchiesEditor-nestIndicator--4"
-            />
-            <Textfield
-              { ...sections[3] }
-            />
-            <DataElementSelectorButton
-              onClick={ openDataElementSelector.bind(this, sections[3]) }
-            />
-          </div>
-        </div>
-      );
-    });
-
-    return (
-      <div>
-        { hierarchyRows }
-        <Button onClick={ this.createEmptyRow }>Add hierarchy</Button>
-      </div>
-    );
-  }
-}
+export default () => (
+  <FieldArray
+    name="trackerProperties.hierarchies"
+    component={ renderHierarchies }
+  />
+);
 
 export const formConfig = {
-  fields: [
-    'trackerProperties.hierarchies[].id',
-    'trackerProperties.hierarchies[].name',
-    'trackerProperties.hierarchies[].sections[]',
-    'trackerProperties.hierarchies[].delimiter'
-  ],
-  settingsToFormValues(values, options) {
+  settingsToFormValues(values, settings) {
     let {
       hierarchies
-    } = options.settings.trackerProperties || {};
+    } = settings.trackerProperties || {};
 
     hierarchies = hierarchies ? hierarchies.slice() : [];
 
     // Add an extra object which will ensures that there is an empty row available for the user
     // to configure their next hierarchy.
-    hierarchies.push({});
+    hierarchies.push(createEmptyRow());
 
     hierarchies.forEach(setDefaultsForHierarchy);
 
@@ -193,10 +155,11 @@ export const formConfig = {
     hierarchies = hierarchies
       .filter(hierarchy => hierarchy.sections.some(section => section))
       .map(hierarchy => ({
-        // Exclude ID since it was only used for rendering the view.
-        name: hierarchy.name,
+        ...hierarchy,
+        // Notice we're cutting out unfilled sections. So if a user provides a value for
+        // section 1 and section 4, we're collapsing it down to section 1 and section 2.
+        // This was what was done before Reactor and seems reasonable.
         sections: hierarchy.sections.filter(section => section),
-        delimiter: hierarchy.delimiter
       }));
 
     if (hierarchies.length) {
@@ -208,10 +171,9 @@ export const formConfig = {
       trackerProperties
     };
   },
-  validate(errors, values = { trackerProperties: { hierarchies: [] } }) {
-    const {
-      hierarchies
-    } = values.trackerProperties;
+  validate(errors, values) {
+    const trackerProperties = values.trackerProperties || {};
+    const hierarchies = trackerProperties.hierarchies || [];
 
     const configuredHierarchyNames = [];
 

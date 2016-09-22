@@ -13,7 +13,7 @@
   ],
   "viewBasePath": "dist/",
   "configuration": {
-    "viewPath": "index.html#/configuration",
+    "viewPath": "extensionConfiguration.html",
     "schema": {
       "$schema": "http://json-schema.org/draft-04/schema#",
       "type": "object",
@@ -510,7 +510,7 @@
       "name": "set-variables",
       "displayName": "Set Variables",
       "libPath": "src/lib/actions/setVariables.js",
-      "viewPath": "index.html#/actions/setVariables",
+      "viewPath": "setVariables.html",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
@@ -798,7 +798,7 @@
       "name": "send-beacon",
       "displayName": "Send Beacon",
       "libPath": "src/lib/actions/sendBeacon.js",
-      "viewPath": "index.html#/actions/sendBeacon",
+      "viewPath": "sendBeacon.html",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",

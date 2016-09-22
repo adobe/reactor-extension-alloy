@@ -2,12 +2,15 @@ import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 import Tag from '@coralui/react-coral/lib/Tag';
 import TagList from '@coralui/react-coral/lib/TagList';
+import { Field } from 'redux-form';
 
 import { DataElementSelectorButton, InfoTip } from '@reactor/react-components';
 import React from 'react';
 import addDataElementToken from '../../utils/addDataElementToken';
 
-export default class TagListEditor extends React.Component {
+import './tagListEditor.styl';
+
+class TagListEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,7 +19,14 @@ export default class TagListEditor extends React.Component {
   }
 
   onRemove = (removedValue) => {
-    this.props.onChange(this.props.value.filter((value) => value !== removedValue));
+    const {
+      input: {
+        value,
+        onChange
+      }
+    } = this.props;
+
+    onChange(value.filter((value) => value !== removedValue));
   };
 
   onNewValueChange = event => {
@@ -27,11 +37,18 @@ export default class TagListEditor extends React.Component {
   };
 
   add = () => {
+    const {
+      input: {
+        value,
+        onChange
+      }
+    } = this.props;
+
     if (this.state.newValue) {
-      if (!this.valueAlreadyExists(this.props.value || [], this.state.newValue)) {
-        const values = this.props.value || [];
+      const values = value || [];
+      if (!this.valueAlreadyExists(values, this.state.newValue)) {
         values.push(this.state.newValue);
-        this.props.onChange(values);
+        onChange(values);
       }
 
       this.setState({
@@ -59,13 +76,19 @@ export default class TagListEditor extends React.Component {
   valueAlreadyExists = (values, newValue) => values.some(value => value === newValue);
 
   render() {
-    const value = this.props.value || [];
+    const {
+      title,
+      tooltip,
+      input: {
+        value
+      }
+    } = this.props;
 
     return (
       <div className="TagListEditor">
-        <label className="Label">{ this.props.title }</label>
+        <label className="Label">{ title }</label>
         {
-          this.props.tooltip ? <InfoTip>{ this.props.tooltip }</InfoTip> : null
+          tooltip ? <InfoTip>{ tooltip }</InfoTip> : null
         }
         <div>
           <Textfield
@@ -80,11 +103,11 @@ export default class TagListEditor extends React.Component {
             <TagList
               onClose={ this.onRemove }
             >
-              { value.map(
-                (tag) => (
-                  <Tag className="TagListEditor-tag" key={ tag } title={ tag }>{ tag }</Tag>
-                )
-              ) }
+              {
+                value ? value.map(
+                  tag => <Tag className="TagListEditor-tag" key={ tag } title={ tag }>{ tag }</Tag>
+                ) : null
+              }
             </TagList>
           </div>
         </div>
@@ -92,3 +115,5 @@ export default class TagListEditor extends React.Component {
     );
   }
 }
+
+export default props => <Field { ...props } component={ TagListEditor } />;

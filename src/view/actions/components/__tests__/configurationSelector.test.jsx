@@ -1,12 +1,10 @@
 import { mount } from 'enzyme';
-import Alert from '@coralui/react-coral/lib/Alert';
-import Radio from '@coralui/react-coral/lib/Radio';
-import Select from '@coralui/react-coral/lib/Select';
+import { Alert, Radio, Select } from '@coralui/react-coral';
 import { ValidationWrapper } from '@reactor/react-components';
 
-import extensionViewReduxForm from '../../../extensionViewReduxForm';
-import { ConfigurationSelector, formConfig, stateToProps } from '../configurationSelector';
-import { getFormComponent, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
+import ConfigurationSelector, { formConfig } from '../configurationSelector';
+import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
+import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const subsetExtensionConfigurationRadio =
@@ -28,12 +26,11 @@ describe('configuration selector', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig, stateToProps)(ConfigurationSelector);
     extensionBridge = createExtensionBridge();
-    instance = mount(getFormComponent(FormComponent, extensionBridge));
+    instance = mount(bootstrap(ConfigurationSelector, formConfig, extensionBridge));
   });
 
-  it('sets page view form values from settings', () => {
+  it('sets form values from settings', () => {
     extensionBridge.init({
       extensionConfigurations: [
         { id: 'EC1' },
@@ -53,7 +50,7 @@ describe('configuration selector', () => {
     expect(extensionConfigurationIdsSelect.props.value).toEqual(['EC1', 'EC2']);
   });
 
-  it('sets form values from settings', () => {
+  it('sets settings from form values', () => {
     extensionBridge.init({
       extensionConfigurations: [
         { id: 'EC1' },
@@ -88,7 +85,7 @@ describe('configuration selector', () => {
     expect(extensionConfigurationIdsWrapper.props.error).toEqual(jasmine.any(String));
   });
 
-  it('shows an warning when no extension configuration are present', () => {
+  it('shows a warning when no extension configuration is present', () => {
     extensionBridge.init();
     const { noConfiguraionAlert } = getReactComponents(instance);
 

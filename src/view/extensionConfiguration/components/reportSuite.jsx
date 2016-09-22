@@ -3,53 +3,50 @@ import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
 import Tag from '@coralui/react-coral/lib/Tag';
 import TagList from '@coralui/react-coral/lib/TagList';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
+import { Field } from 'redux-form';
 
 import addDataElementToken from '../../utils/addDataElementToken';
 
-const pushIfNotExist = (arr, value) => {
-  if (arr.indexOf(value) === -1) {
-    arr.push(value);
+import './reportSuite.styl';
+
+const reportSuites = [
+  {
+    value: 'Report suite 1'
+  }, {
+    value: 'Report suite 2'
+  }, {
+    value: 'Report suite 3'
+  }, {
+    value: 'Report suite 4'
+  }, {
+    value: 'Report suite 5'
+  }, {
+    value: 'Report suite 6'
+  }, {
+    value: 'Report suite 7'
+  }, {
+    value: 'Report suite 8'
+  }, {
+    value: 'Report suite 9'
   }
-};
+];
 
-const getUpdateReportSuiteOptions =
-  (reportSuites, newValue) => reportSuites.filter((rs) => rs.value !== newValue);
-
-export default class ReportSuite extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      reportSuites: [
-        {
-          value: 'Report suite 1'
-        }, {
-          value: 'Report suite 2'
-        }, {
-          value: 'Report suite 3'
-        }, {
-          value: 'Report suite 4'
-        }, {
-          value: 'Report suite 5'
-        }, {
-          value: 'Report suite 6'
-        }, {
-          value: 'Report suite 7'
-        }, {
-          value: 'Report suite 8'
-        }, {
-          value: 'Report suite 9'
-        }
-      ]
-    };
-  }
-
+class ReportSuite extends React.Component {
   onChange = (newValue) => {
-    const values = this.props.value || [];
+    const {
+      input: {
+        onChange,
+        value
+      }
+    } = this.props;
 
-    pushIfNotExist(values, newValue);
-    this.state.reportSuites = getUpdateReportSuiteOptions(this.state.reportSuites, newValue);
-    this.props.onChange(values);
+    const values = value ? value.slice() : [];
+
+    if (values.indexOf(newValue) === -1) {
+      values.push(newValue);
+    }
+
+    onChange(values);
   };
 
   onAutocompleteChange = (newValueArr) => {
@@ -62,9 +59,34 @@ export default class ReportSuite extends React.Component {
   };
 
   onRemove = (removedValue) => {
-    if (!removedValue.match(/^%.*%$/g)) {
-      this.state.reportSuites.push({ value: removedValue });
-      this.state.reportSuites.sort((a, b) => {
+    const {
+      input: {
+        onChange,
+        value
+      }
+    } = this.props;
+
+    const values = value.slice() || [];
+    const removedValueIndex = values.indexOf(removedValue);
+
+    if (removedValueIndex !== -1) {
+      values.splice(removedValueIndex, 1);
+    }
+
+    onChange(values);
+  };
+
+  openDataElementSelector = () => {
+    window.extensionBridge.openDataElementSelector(dataElementName => {
+      this.onChange(addDataElementToken('', dataElementName));
+    });
+  };
+
+  getReportSuiteOptions = () => {
+    const selectedValues = this.props.input.value;
+    return reportSuites
+      .filter(rs => selectedValues.indexOf(rs.value) === -1)
+      .sort((a, b) => {
         const aValue = a.value.toLowerCase();
         const bValue = b.value.toLowerCase();
 
@@ -78,45 +100,44 @@ export default class ReportSuite extends React.Component {
 
         return 0;
       });
-    }
-    this.props.onChange(this.props.value.filter((value) => value !== removedValue));
-  };
-
-  openSelectorCallback = dataElementName => {
-    const newValue = addDataElementToken('', dataElementName);
-    this.onChange(newValue);
-  };
-
-  openSelector = () => {
-    window.extensionBridge.openDataElementSelector(this.openSelectorCallback);
   };
 
   render() {
-    const values = this.props.value || [];
+    const {
+      input: {
+        value
+      },
+      meta: {
+        touched,
+        error
+      },
+      label
+    } = this.props;
+
+    const values = value || [];
 
     return (
       <div className="ReportSuite-autocompleteField">
-        <label className="Label">{ this.props.label }</label>
+        <label className="Label">{ label }</label>
         <div>
           <ValidationWrapper
-            error={ this.props.touched && this.props.error }
+            error={ touched && error }
           >
             <Autocomplete
-              name={ this.props.name }
               labelKey="value"
               onChange={ this.onAutocompleteChange }
               placeholder="Add Report Suite(s)"
               className="Field--long"
-              options={ this.state.reportSuites }
+              options={ this.getReportSuiteOptions() }
               allowCreate
               multiple
             />
-            <DataElementSelectorButton onClick={ this.openSelector } />
+            <DataElementSelectorButton onClick={ this.openDataElementSelector } />
           </ValidationWrapper>
           <div>
             <TagList className="coral-Autocomplete-tagList" onClose={ this.onRemove }>
-              { values.map(
-                (tag) => (
+              {
+                values.map(tag =>
                   <Tag
                     className="TagListEditor-tag"
                     key={ tag }
@@ -125,7 +146,7 @@ export default class ReportSuite extends React.Component {
                     { tag }
                   </Tag>
                 )
-              ) }
+              }
             </TagList>
           </div>
         </div>
@@ -133,3 +154,5 @@ export default class ReportSuite extends React.Component {
     );
   }
 }
+
+export default props => <Field { ...props } component={ ReportSuite } />;

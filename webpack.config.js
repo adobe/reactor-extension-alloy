@@ -1,19 +1,26 @@
-'use strict';
-
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const entries = {
+  extensionConfiguration: './src/view/extensionConfiguration/index.js',
+  sendBeacon: './src/view/actions/sendBeacon/index.js',
+  setVariables: './src/view/actions/setVariables/index.js'
+};
+
+var plugins = Object.keys(entries).map(chunkName => (
+  new HtmlWebpackPlugin({
+    chunks: [chunkName],
+    filename: chunkName + '.html',
+    template: 'src/view/template.html'
+  })
+));
+
 module.exports = {
-  entry: './src/view/index.jsx',
-  plugins: [
-    new HtmlWebpackPlugin({
-      filename: 'index.html',
-      template: 'src/view/index.html'
-    })
-  ],
+  entry: entries,
+  plugins: plugins,
   output: {
     path: 'dist/',
-    filename: 'view.js'
+    filename: '[name].js'
   },
   module: {
     loaders: [
@@ -27,9 +34,9 @@ module.exports = {
         }
       },
       {
-        test: /\.pattern$/,
+        test: /\.styl/,
         include: /src\/view/,
-        loader: 'style-loader!css-loader?sourceMap!stylus-loader!import-glob-loader'
+        loader: 'style-loader!css-loader!stylus-loader'
       }
     ]
   },
@@ -50,8 +57,8 @@ module.exports = {
   stylus: {
     use: [require('nib')()],
     import: [
-      path.resolve('./node_modules/nib/lib/nib/index'),
-      path.resolve('./src/view/sharedVariables')
+      path.resolve('~nib/lib/nib/index'),
+      path.resolve('./src/view/units')
     ]
   }
 };

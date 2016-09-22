@@ -1,49 +1,52 @@
-import { getValues, reset } from 'redux-form';
+import { getFormValues, initialize, change } from 'redux-form';
 import { actionCreators } from './reduxActions/bridgeAdapterActions';
-import { handleSubmit } from './extensionViewReduxForm';
 
-export default (extensionBridge, store) => {
-  let currentRouteFormSettings;
-
+export default (extensionBridge, store, formConfig, handleSubmit) => {
   extensionBridge.register({
     init(options = {}) {
-      options = {
-        ...options,
-        settings: options.settings || {},
-        settingsIsNew: !options.settings
-      };
+      let {
+        settings,
+        ...meta
+      } = options;
 
-      const initialValues = currentRouteFormSettings.settingsToFormValues({}, options);
+      meta.isNew = !settings;
+      settings = settings || {};
 
-      store.dispatch(actionCreators.init({
-        propertySettings: options.propertySettings,
-        extensionConfigurations: options.extensionConfigurations,
+      // Populate the state with all the metadata coming in. This includes things like
+      // extension configurations, tokens, org ID, etc. We need to populate state with this
+      // information before passing it to settingsToFormValues below.
+      store.dispatch(actionCreators.populateMeta(meta));
 
-        // initialValues will get set on the state and eventually picked up by redux-form.
-        // See extensionViewReduxForm for how they get from the state into redux-form.
-        initialValues
-      }));
+      // Tell redux-form to initialize our form to the initialValues provided above.
+      const initialValues = formConfig.settingsToFormValues({}, settings, store.getState().meta);
+      store.dispatch(initialize('default', initialValues));
 
-      // Tell redux-form to reset our form to the initialValues provided above. This dispatch
-      // must come after the above dispatch.
-      store.dispatch(reset('default'));
+      // The view won't render until the state says that init is complete so in order to avoid
+      // useless renders we want to do this as late as possible (after initializing
+      // redux-form values above).
+      store.dispatch(actionCreators.markInitComplete());
     },
     getSettings() {
-      const values = getValues(store.getState().form.default) || {};
-      return currentRouteFormSettings.formValuesToSettings({}, values);
+      const state = store.getState();
+      const values = getFormValues('default')(state);
+      return formConfig.formValuesToSettings({}, values, state.meta);
     },
     validate() {
+      // Workaround for https://github.com/erikras/redux-form/issues/1477
+      // Without this workaround, if the user hasn't changed the form and by default the form
+      // is invalid, it will incorrectly report that it is valid.
+      store.dispatch(change('default', '__bogusname__', '__bogusvalue__'));
+
       let valid = false;
       // handleSubmit comes from redux-form. The function passed in will only be called if the
       // form passes validation.
+      // Calling handleSubmit marks all fields as touched whereas
+      // using the isValid state reducer provided by redux-form would not.
       handleSubmit(() => {
         valid = true;
       })();
+
       return valid;
     }
   });
-
-  return formSettings => {
-    currentRouteFormSettings = formSettings;
-  };
 };
