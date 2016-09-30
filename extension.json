@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "displayName": "Adobe Analytics",
   "description": "Adobe Analytics extension for Turbine integration.",
-  "icon": "https://placeholdit.imgix.net/~text?txtsize=16&txt=64%C3%9764&w=64&h=64",
+  "icon": "http://assets.adobedtm.com/activation/reactor/icons/mc_analytics.svg",
   "author": {
     "name": "Adobe Systems",
     "email": "DTM-Engineering@adobe.com"
