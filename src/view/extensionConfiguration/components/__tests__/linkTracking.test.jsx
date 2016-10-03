@@ -1,10 +1,10 @@
 import { mount } from 'enzyme';
 import Checkbox from '@coralui/react-coral/lib/Checkbox';
 
-import extensionViewReduxForm from '../../../extensionViewReduxForm';
 import LinkTracking, { formConfig } from '../linkTracking';
 import TagListEditor from '../tagListEditor';
-import { getFormComponent, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
+import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
+import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const enableTrackInlineStatsCheckbox =
@@ -16,12 +16,11 @@ const getReactComponents = (wrapper) => {
   const keepUrlParametersCheckbox =
     wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('linkLeaveQueryString')).node;
 
-  const linkDownloadFileTypesTagListEditor =
-    wrapper.find(TagListEditor).filterWhere(n => n.prop('title') === 'Download Extensions').node;
-  const linkExternalFiltersTagListEditor =
-    wrapper.find(TagListEditor).filterWhere(n => n.prop('title') === 'Track').node;
-  const linkInternalFiltersTagListEditor =
-    wrapper.find(TagListEditor).filterWhere(n => n.prop('title') === 'Never Track').node;
+  const [
+    linkDownloadFileTypesTagListEditor,
+    linkExternalFiltersTagListEditor,
+    linkInternalFiltersTagListEditor
+  ] = wrapper.find(TagListEditor).nodes;
 
   return {
     enableTrackInlineStatsCheckbox,
@@ -39,9 +38,8 @@ describe('link tracking', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig)(LinkTracking);
     extensionBridge = createExtensionBridge();
-    instance = mount(getFormComponent(FormComponent, extensionBridge));
+    instance = mount(bootstrap(LinkTracking, formConfig, extensionBridge));
   });
 
   it('sets form values from settings', () => {
@@ -72,9 +70,9 @@ describe('link tracking', () => {
     expect(enableTrackInlineStatsCheckbox.props.value).toBe(false);
     expect(trackDownloadLinksCheckbox.props.value).toBe(true);
     expect(trackOutboundLinksCheckbox.props.value).toBe(true);
-    expect(linkDownloadFileTypesTagListEditor.props.value).toEqual(['avi', 'exe']);
-    expect(linkInternalFiltersTagListEditor.props.value).toEqual(['tel:', 'mailto:']);
-    expect(linkExternalFiltersTagListEditor.props.value)
+    expect(linkDownloadFileTypesTagListEditor.props.input.value).toEqual(['avi', 'exe']);
+    expect(linkInternalFiltersTagListEditor.props.input.value).toEqual(['tel:', 'mailto:']);
+    expect(linkExternalFiltersTagListEditor.props.input.value)
       .toEqual(['http://someurl.com', 'http://someurl2.com']);
     expect(keepUrlParametersCheckbox.props.value).toBe(true);
   });
@@ -100,9 +98,9 @@ describe('link tracking', () => {
       linkInternalFiltersTagListEditor
     } = getReactComponents(instance);
 
-    linkDownloadFileTypesTagListEditor.props.onChange(['avi', 'exe']);
-    linkInternalFiltersTagListEditor.props.onChange(['tel:', 'mailto:']);
-    linkExternalFiltersTagListEditor.props.onChange(['http://someurl.com', 'http://someurl2.com']);
+    linkDownloadFileTypesTagListEditor.props.input.onChange(['avi', 'exe']);
+    linkInternalFiltersTagListEditor.props.input.onChange(['tel:', 'mailto:']);
+    linkExternalFiltersTagListEditor.props.input.onChange(['http://someurl.com', 'http://someurl2.com']);
 
     const {
       trackerProperties: {
@@ -139,7 +137,7 @@ describe('link tracking', () => {
     expect(enableTrackInlineStatsCheckbox.props.value).toBe(true);
     expect(trackDownloadLinksCheckbox.props.value).toBe(true);
     expect(trackOutboundLinksCheckbox.props.value).toBe(true);
-    expect(linkDownloadFileTypesTagListEditor.props.value.length).toBeGreaterThan(0);
-    expect(linkInternalFiltersTagListEditor.props.value.length).toBeGreaterThan(0);
+    expect(linkDownloadFileTypesTagListEditor.props.input.value.length).toBeGreaterThan(0);
+    expect(linkInternalFiltersTagListEditor.props.input.value.length).toBeGreaterThan(0);
   });
 });

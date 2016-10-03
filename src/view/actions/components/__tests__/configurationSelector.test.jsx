@@ -3,8 +3,8 @@ import { Alert, Radio, Select } from '@coralui/react-coral';
 import { ValidationWrapper } from '@reactor/react-components';
 
 import ConfigurationSelector, { formConfig } from '../configurationSelector';
-import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
-import bootstrap from '../../bootstrap';
+import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
+import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const subsetExtensionConfigurationRadio =

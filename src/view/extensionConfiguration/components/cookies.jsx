@@ -4,7 +4,7 @@ import Textfield from '@coralui/react-coral/lib/Textfield';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 
-import Field from '../../components/field';
+import CoralField from '../../components/coralField';
 
 import './cookies.styl';
 
@@ -34,7 +34,7 @@ const Cookies = ({ cookieLifetime }) => (
     <label className="Cookies-field">
       <span className="Label">Visitor ID</span>
       <div>
-        <Field
+        <CoralField
           name="trackerProperties.visitorID"
           component={ Textfield }
           componentClassName="Field--long"
@@ -45,7 +45,7 @@ const Cookies = ({ cookieLifetime }) => (
     <label className="Cookies-field">
       <span className="Label">Visitor Namespace</span>
       <div>
-        <Field
+        <CoralField
           name="trackerProperties.visitorNamespace"
           component={ Textfield }
           componentClassName="Field--long"
@@ -56,7 +56,7 @@ const Cookies = ({ cookieLifetime }) => (
     <label className="Cookies-field">
       <span className="Label">Domain Periods</span>
       <div>
-        <Field
+        <CoralField
           name="trackerProperties.cookieDomainPeriods"
           component={ Textfield }
           componentClassName="Field--long"
@@ -67,7 +67,7 @@ const Cookies = ({ cookieLifetime }) => (
     <label className="Cookies-field">
       <span className="Label">First-party Domain Periods</span>
       <div>
-        <Field
+        <CoralField
           name="trackerProperties.fpCookieDomainPeriods"
           component={ Textfield }
           componentClassName="Field--long"
@@ -78,7 +78,7 @@ const Cookies = ({ cookieLifetime }) => (
     <div className="u-gapBottom">
       <label className="Label" htmlFor="cookieLifetimeField">Cookie Lifetime</label>
       <div>
-        <Field
+        <CoralField
           id="cookieLifetimeField"
           name="trackerProperties.cookieLifetime"
           component={ Select }
@@ -89,7 +89,7 @@ const Cookies = ({ cookieLifetime }) => (
 
         {
           cookieLifetime === COOKIE_LIFETIME_PERIODS.SECONDS ?
-            <Field
+            <CoralField
               name="trackerProperties.cookieLifetimeSeconds"
               component={ Textfield }
               componentClassName="Cookies-cookieLifetimeSeconds"
@@ -104,7 +104,7 @@ const Cookies = ({ cookieLifetime }) => (
 
 export default connect(
   state => ({
-    cookieLifetime: formValueSelector('default')(state, 'trackerProperties.cookieLifetime'),
+    cookieLifetime: formValueSelector('default')(state, 'trackerProperties.cookieLifetime')
   })
 )(Cookies);
 

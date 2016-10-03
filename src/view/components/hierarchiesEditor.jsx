@@ -4,7 +4,7 @@ import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 import { FieldArray } from 'redux-form';
 
-import Field from './field';
+import CoralField from './coralField';
 
 import './hierarchiesEditor.styl';
 
@@ -53,7 +53,7 @@ const renderHierarchySections = ({ fields }) => {
           /> : null
       }
 
-      <Field
+      <CoralField
         name={ `${field}` }
         component={ Textfield }
         supportDataElement
@@ -70,8 +70,8 @@ const renderHierarchySections = ({ fields }) => {
 
 const renderHierarchies = ({ fields }) => {
   const rows = fields.map((field, index) => (
-    <div key={ index } className="HierarchiesEditor-hierarchy">
-      <Field
+    <div data-row key={ index } className="HierarchiesEditor-hierarchy">
+      <CoralField
         name={ `${field}.name` }
         className="u-gapRight2x"
         component={ Select }
@@ -82,7 +82,7 @@ const renderHierarchies = ({ fields }) => {
 
       <label>
         <span className="Label u-gapRight">Delimiter</span>
-        <Field
+        <CoralField
           name={ `${field}.delimiter` }
           className="u-gapRight"
           component={ Textfield }
@@ -159,7 +159,7 @@ export const formConfig = {
         // Notice we're cutting out unfilled sections. So if a user provides a value for
         // section 1 and section 4, we're collapsing it down to section 1 and section 2.
         // This was what was done before Reactor and seems reasonable.
-        sections: hierarchy.sections.filter(section => section),
+        sections: hierarchy.sections.filter(section => section)
       }));
 
     if (hierarchies.length) {

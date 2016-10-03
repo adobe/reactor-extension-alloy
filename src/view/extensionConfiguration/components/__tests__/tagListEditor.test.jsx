@@ -7,13 +7,11 @@ import { DataElementSelectorButton } from '@reactor/react-components';
 import TagListEditor from '../tagListEditor';
 
 const getReactComponents = (wrapper) => {
-  const valueTextfieldWrapper = wrapper.find(Textfield);
-  const valueTextfield = valueTextfieldWrapper.node;
+  const valueTextfield = wrapper.find(Textfield).node;
   const valueButton = wrapper.find(DataElementSelectorButton).node;
-  const addButton = wrapper.find(Button).filterWhere(n => n.prop('type') === 'addButton').node;
+  const addButton = wrapper.find(Button).filterWhere(n => n.prop('children') === 'Add').node;
 
   return {
-    valueTextfieldWrapper,
     valueTextfield,
     valueButton,
     addButton
@@ -22,12 +20,27 @@ const getReactComponents = (wrapper) => {
 
 describe('tag list editor', () => {
   let instance;
+  let onChangeSpy;
 
-  beforeAll(() => {
-    instance = mount(<TagListEditor />);
+  beforeEach(() => {
+    onChangeSpy = jasmine.createSpy('onChange');
+
+    const props = {
+      input: {
+        value: [],
+        onChange: onChangeSpy
+      },
+      meta: {
+        touched: false,
+        error: null
+      }
+    };
+
+    instance = mount(<TagListEditor { ...props } />);
   });
 
   beforeEach(() => {
+    onChangeSpy.calls.reset();
     window.extensionBridge = {};
   });
 
@@ -50,11 +63,6 @@ describe('tag list editor', () => {
   });
 
   it('adds a new tag when the add button is clicked', () => {
-    const spy = jasmine.createSpy('onChange');
-    instance = mount(
-      <TagListEditor onChange={ spy } />
-    );
-
     const {
       addButton,
       valueTextfield
@@ -63,19 +71,13 @@ describe('tag list editor', () => {
     valueTextfield.props.onChange('somevalue');
     addButton.props.onClick();
 
-    expect(spy).toHaveBeenCalledWith(['somevalue']);
+    expect(onChangeSpy).toHaveBeenCalledWith(['somevalue']);
   });
 
 
   it('adds a new tag when the enter key is pressed', () => {
-    const spy = jasmine.createSpy('onChange');
-    instance = mount(
-      <TagListEditor onChange={ spy } />
-    );
-
     const {
-      valueTextfield,
-      valueTextfieldWrapper
+      valueTextfield
     } = getReactComponents(instance);
 
     valueTextfield.props.onChange({
@@ -84,7 +86,7 @@ describe('tag list editor', () => {
       }
     });
 
-    valueTextfieldWrapper.simulate('keypress', { key: 'Enter', keyCode: 13, which: 13 });
-    expect(spy).toHaveBeenCalledWith(['somevalue']);
+    valueTextfield.props.onKeyPress({ key: 'Enter', keyCode: 13, which: 13 });
+    expect(onChangeSpy).toHaveBeenCalledWith(['somevalue']);
   });
 });

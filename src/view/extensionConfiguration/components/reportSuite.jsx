@@ -3,7 +3,6 @@ import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
 import Tag from '@coralui/react-coral/lib/Tag';
 import TagList from '@coralui/react-coral/lib/TagList';
 import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
-import { Field } from 'redux-form';
 
 import addDataElementToken from '../../utils/addDataElementToken';
 
@@ -31,7 +30,7 @@ const reportSuites = [
   }
 ];
 
-class ReportSuite extends React.Component {
+export default class ReportSuite extends React.Component {
   onChange = (newValue) => {
     const {
       input: {
@@ -76,12 +75,6 @@ class ReportSuite extends React.Component {
     onChange(values);
   };
 
-  openDataElementSelector = () => {
-    window.extensionBridge.openDataElementSelector(dataElementName => {
-      this.onChange(addDataElementToken('', dataElementName));
-    });
-  };
-
   getReportSuiteOptions = () => {
     const selectedValues = this.props.input.value;
     return reportSuites
@@ -100,6 +93,12 @@ class ReportSuite extends React.Component {
 
         return 0;
       });
+  };
+
+  openDataElementSelector = () => {
+    window.extensionBridge.openDataElementSelector(dataElementName => {
+      this.onChange(addDataElementToken('', dataElementName));
+    });
   };
 
   render() {
@@ -154,5 +153,3 @@ class ReportSuite extends React.Component {
     );
   }
 }
-
-export default props => <Field { ...props } component={ ReportSuite } />;

@@ -5,12 +5,12 @@ import Radio from '@coralui/react-coral/lib/Radio';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 import Heading from '@coralui/react-coral/lib/Heading';
 import { connect } from 'react-redux';
-import { formValueSelector } from 'redux-form';
+import { formValueSelector, Field } from 'redux-form';
 
 import ENVIRONMENTS from '../../enums/environments';
 import ReportSuite from './reportSuite';
 import CodeField from '../../components/codeField';
-import Field from '../../components/field';
+import CoralField from '../../components/coralField';
 
 import './libraryManagement.styl';
 
@@ -34,17 +34,22 @@ const ReportSuites = () => (
     </Heading>
 
     <section className="ReportSuites-fieldsContainer">
-      <ReportSuite
+      <Field
         name="libraryCode.accounts.production"
         label="Production Report Suite(s)"
+        component={ ReportSuite }
       />
-      <ReportSuite
+
+      <Field
         name="libraryCode.accounts.staging"
         label="Staging Report Suite(s)"
+        component={ ReportSuite }
       />
-      <ReportSuite
+
+      <Field
         name="libraryCode.accounts.development"
         label="Development Report Suite(s)"
+        component={ ReportSuite }
       />
     </section>
   </section>
@@ -55,21 +60,21 @@ const LoadPhase = ({ className }) => (
     <fieldset>
       <legend><span className="Label">Load library at:</span></legend>
       <div>
-        <Field
+        <CoralField
           name="libraryCode.loadPhase"
           component={ Radio }
           value={ LOAD_PHASES.PAGE_TOP }
         >
           Page Top
-        </Field>
+        </CoralField>
 
-        <Field
+        <CoralField
           name="libraryCode.loadPhase"
           component={ Radio }
           value={ LOAD_PHASES.PAGE_BOTTOM }
         >
           Page Bottom
-        </Field>
+        </CoralField>
       </div>
     </fieldset>
   </div>
@@ -79,7 +84,7 @@ const TrackerVariableName = ({ className }) => (
   <div className={ className }>
     <label>
       <span className="Label">Tracker is accessible on the global variable named:</span>
-      <Field
+      <CoralField
         name="libraryCode.trackerVariableName"
         component={ Textfield }
         componentClassName="u-gapLeft"
@@ -91,12 +96,12 @@ const TrackerVariableName = ({ className }) => (
 
 let OverwriteReportSuites = ({ className, showReportSuites }) => (
   <div className={ className }>
-    <Field
+    <CoralField
       name="libraryCode.showReportSuites"
       component={ Checkbox }
     >
       Set the following report suites on tracker
-    </Field>
+    </CoralField>
 
     {
       showReportSuites ? <ReportSuites /> : null
@@ -112,13 +117,13 @@ OverwriteReportSuites = connect(
 
 const LibraryManagement = ({ type }) => (
   <div>
-    <Field
+    <CoralField
       name="libraryCode.type"
       component={ Radio }
       value={ LIB_TYPES.MANAGED }
     >
       Manage the library for me
-    </Field>
+    </CoralField>
 
     {
       type === LIB_TYPES.MANAGED ?
@@ -129,13 +134,13 @@ const LibraryManagement = ({ type }) => (
     }
 
     <div>
-      <Field
+      <CoralField
         name="libraryCode.type"
         component={ Radio }
         value={ LIB_TYPES.PREINSTALLED }
       >
         Use the library already installed on the page
-      </Field>
+      </CoralField>
     </div>
     {
       type === LIB_TYPES.PREINSTALLED ?
@@ -146,13 +151,13 @@ const LibraryManagement = ({ type }) => (
     }
 
     <div>
-      <Field
+      <CoralField
         name="libraryCode.type"
         component={ Radio }
         value={ LIB_TYPES.REMOTE }
       >
         Load the library from a custom URL
-      </Field>
+      </CoralField>
     </div>
     {
       type === LIB_TYPES.REMOTE ?
@@ -161,7 +166,7 @@ const LibraryManagement = ({ type }) => (
             <label>
               <span className="Label">HTTP URL:</span>
               <div>
-                <Field
+                <CoralField
                   name="libraryCode.httpUrl"
                   component={ Textfield }
                   componentClassName="Field--long"
@@ -173,7 +178,7 @@ const LibraryManagement = ({ type }) => (
             <label>
               <span className="Label u-gapTop">HTTPS URL:</span>
               <div>
-                <Field
+                <CoralField
                   name="libraryCode.httpsUrl"
                   component={ Textfield }
                   componentClassName="Field--long"
@@ -190,13 +195,13 @@ const LibraryManagement = ({ type }) => (
     }
 
     <div>
-      <Field
+      <CoralField
         name="libraryCode.type"
         component={ Radio }
         value={ LIB_TYPES.CUSTOM }
       >
         Let me provide custom library code
-      </Field>
+      </CoralField>
     </div>
     {
       type === LIB_TYPES.CUSTOM ?

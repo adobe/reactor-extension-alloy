@@ -1,46 +1,45 @@
 import { mount } from 'enzyme';
-import { ReduxFormAutocomplete as Autocomplete, ValidationWrapper } from '@reactor/react-components';
+import { ValidationWrapper } from '@reactor/react-components';
+import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
 import Button from '@coralui/react-coral/lib/Button';
 import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 
-import extensionViewReduxForm from '../../extensionViewReduxForm';
-import evarsPropsEditor, { getFormConfig } from '../evarsPropsEditor';
-import { getFormComponent, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
+import EvarsPropsEditor, { getFormConfig } from '../evarsPropsEditor';
+import CoralField from '../../components/coralField';
+import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
+import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const nameAutocompletes =
-    wrapper.find(Autocomplete).filterWhere(n => n.prop('placeholder') === 'Select eVar');
-  const typeSelects = wrapper.find(Select);
-  const valueTextfields = wrapper.find(Textfield);
-  const valueAutocompletes =
-    wrapper.find(Autocomplete).filterWhere(n => n.prop('placeholder') === 'Select variable');
-  const addEventButton = wrapper.find(Button).last().node;
-  const removeButtons = wrapper.find(Button).filterWhere(n => n.prop('icon') === 'close');
-  const nameWrappers = wrapper.find(ValidationWrapper).filterWhere(n => n.prop('type') === 'name');
-  const valueWrappers =
-    wrapper.find(ValidationWrapper).filterWhere(n => n.prop('type') === 'value');
+  const rows = wrapper.find('[data-row]').map(row => ({
+    nameAutocomplete: row.find(Autocomplete)
+      .filterWhere(n => n.prop('placeholder') === 'Select eVar').node,
+    nameWrapper: row.find(CoralField).filterWhere(n => n.prop('name').includes('.name'))
+      .find(ValidationWrapper).node,
+    typeSelect: row.find(Select).node,
+    valueTextfield: row.find(Textfield).node || row.find(Autocomplete)
+      .filterWhere(n => n.prop('placeholder') === 'Select variable').node,
+    valueWrapper: row.find(CoralField).filterWhere(n => n.prop('name').includes('.value'))
+      .find(ValidationWrapper).node,
+    removeButton: row.find(Button)
+      .filterWhere(n => n.prop('icon') === 'close').node
+  }));
+
+  const addRowButton = wrapper.find(Button).last().node;
 
   return {
-    nameAutocompletes,
-    typeSelects,
-    valueTextfields,
-    valueAutocompletes,
-    addEventButton,
-    removeButtons,
-    nameWrappers,
-    valueWrappers
+    rows,
+    addRowButton
   };
 };
 
-describe('events editor', () => {
+describe('evars props editor', () => {
   let extensionBridge;
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(getFormConfig('eVar', 'eVars'))(evarsPropsEditor);
     extensionBridge = createExtensionBridge();
-    instance = mount(getFormComponent(FormComponent, extensionBridge, {
+    instance = mount(bootstrap(EvarsPropsEditor, getFormConfig('eVar', 'eVars'), extensionBridge, {
       varType: 'eVar',
       varTypePlural: 'eVars'
     }));
@@ -66,34 +65,25 @@ describe('events editor', () => {
       }
     });
 
-    const {
-      nameAutocompletes,
-      typeSelects,
-      valueTextfields,
-      valueAutocompletes
-    } = getReactComponents(instance);
+    const { rows } = getReactComponents(instance);
 
-    expect(nameAutocompletes.nodes[0].props.value).toBe('eVar1');
-    expect(typeSelects.nodes[0].props.value).toBe('value');
-    expect(valueTextfields.nodes[0].props.value).toBe('eVar1Value');
+    expect(rows[0].nameAutocomplete.props.value).toBe('eVar1');
+    expect(rows[0].typeSelect.props.value).toBe('value');
+    expect(rows[0].valueTextfield.props.value).toBe('eVar1Value');
 
-    expect(nameAutocompletes.nodes[1].props.value).toBe('eVar2');
-    expect(typeSelects.nodes[1].props.value).toBe('alias');
-    expect(valueAutocompletes.nodes[0].props.value).toBe('eVar1');
+    expect(rows[1].nameAutocomplete.props.value).toBe('eVar2');
+    expect(rows[1].typeSelect.props.value).toBe('alias');
+    expect(rows[1].valueTextfield.props.value).toBe('eVar1');
   });
 
   it('sets settings from form values for value type', () => {
     extensionBridge.init();
 
-    const {
-      nameAutocompletes,
-      typeSelects,
-      valueTextfields
-    } = getReactComponents(instance);
+    const { rows } = getReactComponents(instance);
 
-    nameAutocompletes.nodes[0].props.onChange('eVar1');
-    typeSelects.nodes[0].props.onChange('value');
-    valueTextfields.nodes[0].props.onChange('some value');
+    rows[0].nameAutocomplete.props.onChange({ value: 'eVar1' });
+    rows[0].typeSelect.props.onChange({ value: 'value' });
+    rows[0].valueTextfield.props.onChange('some value');
 
     const { eVars } = extensionBridge.getSettings().trackerProperties;
     expect(eVars[0].name).toBe('eVar1');
@@ -105,19 +95,14 @@ describe('events editor', () => {
   it('sets settings from form values for alias type', () => {
     extensionBridge.init();
 
-    const {
-      typeSelects
-    } = getReactComponents(instance);
+    let { rows } = getReactComponents(instance);
 
-    typeSelects.nodes[0].props.onChange('alias');
+    rows[0].typeSelect.props.onChange({ value: 'alias' });
 
-    const {
-      nameAutocompletes,
-      valueAutocompletes
-    } = getReactComponents(instance);
+    ({ rows } = getReactComponents(instance));
 
-    nameAutocompletes.nodes[0].props.onChange('eVar2');
-    valueAutocompletes.nodes[0].props.onChange('eVar1');
+    rows[0].nameAutocomplete.props.onChange({ value: 'eVar2' });
+    rows[0].valueTextfield.props.onChange({ value: 'eVar1' });
 
     const { eVars } = extensionBridge.getSettings().trackerProperties;
     expect(eVars[0].name).toBe('eVar2');
@@ -128,31 +113,15 @@ describe('events editor', () => {
   it('adds a new row when the add button is clicked', () => {
     extensionBridge.init();
 
-    const {
-      addEventButton
-    } = getReactComponents(instance);
+    let components = getReactComponents(instance);
 
-    let {
-      nameAutocompletes,
-      typeSelects,
-      valueTextfields
-    } = getReactComponents(instance);
+    expect(components.rows.length).toBe(1);
 
-    expect(nameAutocompletes.length).toBe(1);
-    expect(typeSelects.length).toBe(1);
-    expect(valueTextfields.length).toBe(1);
+    components.addRowButton.props.onClick();
 
-    addEventButton.props.onClick();
+    components = getReactComponents(instance);
 
-    ({
-      nameAutocompletes,
-      typeSelects,
-      valueTextfields
-    } = getReactComponents(instance));
-
-    expect(nameAutocompletes.length).toBe(2);
-    expect(typeSelects.length).toBe(2);
-    expect(valueTextfields.length).toBe(2);
+    expect(components.rows.length).toBe(2);
   });
 
   it('deletes a row when the remove button is clicked', () => {
@@ -170,38 +139,20 @@ describe('events editor', () => {
       }
     });
 
-    let {
-      nameAutocompletes,
-      typeSelects,
-      valueTextfields
-    } = getReactComponents(instance);
+    let { rows } = getReactComponents(instance);
 
-    expect(nameAutocompletes.length).toBe(2);
-    expect(typeSelects.length).toBe(2);
-    expect(valueTextfields.length).toBe(2);
+    expect(rows.length).toBe(2);
 
-    const {
-      removeButtons
-    } = getReactComponents(instance);
+    rows[1].removeButton.props.onClick();
 
-    removeButtons.nodes[1].props.onClick();
+    ({ rows } = getReactComponents(instance));
 
-    ({
-      nameAutocompletes,
-      typeSelects,
-      valueTextfields
-    } = getReactComponents(instance));
+    expect(rows.length).toBe(1);
 
-    expect(nameAutocompletes.length).toBe(1);
-    expect(typeSelects.length).toBe(1);
-    expect(valueTextfields.length).toBe(1);
-
-    expect(nameAutocompletes.nodes[0].props.name).toContain('eVars[0]');
-    expect(typeSelects.nodes[0].props.name).toContain('eVars[0]');
-    expect(valueTextfields.nodes[0].props.name).toContain('eVars[0]');
+    expect(rows[0].nameAutocomplete.props.value).toContain('eVar1');
   });
 
-  it('shows an error when two events having the same name are added', () => {
+  it('shows an error when two evars having the same name are added', () => {
     extensionBridge.init({
       settings: {
         trackerProperties: {
@@ -223,8 +174,9 @@ describe('events editor', () => {
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { nameWrappers } = getReactComponents(instance);
-    expect(nameWrappers.nodes[1].props.error).toEqual(jasmine.any(String));
+    const { rows } = getReactComponents(instance);
+
+    expect(rows[1].nameWrapper.props.error).toEqual(jasmine.any(String));
   });
 
   it('shows an error when an event doesn\'t have a name', () => {
@@ -244,8 +196,8 @@ describe('events editor', () => {
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { nameWrappers } = getReactComponents(instance);
-    expect(nameWrappers.nodes[0].props.error).toEqual(jasmine.any(String));
+    const { rows } = getReactComponents(instance);
+    expect(rows[0].nameWrapper.props.error).toEqual(jasmine.any(String));
   });
 
   it('shows an error when an event doesn\'t have a value', () => {
@@ -265,7 +217,7 @@ describe('events editor', () => {
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { valueWrappers } = getReactComponents(instance);
-    expect(valueWrappers.nodes[0].props.error).toEqual(jasmine.any(String));
+    const { rows } = getReactComponents(instance);
+    expect(rows[0].valueWrapper.props.error).toEqual(jasmine.any(String));
   });
 });

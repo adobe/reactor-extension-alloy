@@ -6,7 +6,7 @@ import { reduxForm } from 'redux-form';
 import reducer from './reduxActions/reducer';
 import bridgeAdapter from './bridgeAdapter';
 
-module.exports = (View, formConfig, extensionBridge = window.extensionBridge) => {
+module.exports = (View, formConfig, extensionBridge = window.extensionBridge, props) => {
   const finalCreateStore = compose(
     window.devToolsExtension ? window.devToolsExtension() : f => f
   )(createStore);
@@ -23,7 +23,7 @@ module.exports = (View, formConfig, extensionBridge = window.extensionBridge) =>
 
     render() {
       // No need to render until the extension bridge passes initialization information.
-      return this.props.initializedByBridge ? <View { ...this.props } /> : null;
+      return this.props.initializedByBridge ? <View { ...this.props } { ...props } /> : null;
     }
   }
 

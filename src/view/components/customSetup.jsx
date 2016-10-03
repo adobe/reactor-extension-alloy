@@ -2,7 +2,7 @@ import React from 'react';
 import Radio from '@coralui/react-coral/lib/Radio';
 import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
-import Field from './field';
+import CoralField from './coralField';
 import CodeField from './codeField';
 
 const LOAD_PHASES = {
@@ -12,7 +12,7 @@ const LOAD_PHASES = {
 
 const LOAD_PHASE_DEFAULT = LOAD_PHASES.AFTER_SETTINGS;
 
-const CustomSetup = ({ showLoadPhase, source }) => (
+const CustomSetup = ({ showLoadPhase = true, source }) => (
   <div>
     <p>
       Use the editor below to customize the page code. The following variables are available for
@@ -23,28 +23,28 @@ const CustomSetup = ({ showLoadPhase, source }) => (
       <li><i>s</i> - The tracker object.</li>
     </ul>
 
-    <CodeField name="customSetup.source"/>
+    <CodeField name="customSetup.source" />
 
     { showLoadPhase && source ?
       <div>
         <fieldset>
           <legend><span className="Label u-gapTop">Execute custom code</span></legend>
           <div>
-            <Field
+            <CoralField
               name="customSetup.loadPhase"
               component={ Radio }
               value={ LOAD_PHASES.BEFORE_SETTINGS }
             >
               Before other settings are applied
-            </Field>
+            </CoralField>
 
-            <Field
+            <CoralField
               name="customSetup.loadPhase"
               component={ Radio }
               value={ LOAD_PHASES.AFTER_SETTINGS }
             >
               After other settings are applied
-            </Field>
+            </CoralField>
           </div>
         </fieldset>
       </div> : null

@@ -7,16 +7,16 @@ import { mergeConfigs } from '../../utils/formConfigUtils';
 import CharSet, { formConfig as charSetFormConfig } from './charSet';
 import CurrencyCode, { formConfig as currencyCodeFormConfig } from './currencyCode';
 import ENVIRONMENTS from '../../enums/environments';
-import Field from '../../components/field';
+import CoralField from '../../components/coralField';
 
 export default () => (
   <div>
-    <Field
+    <CoralField
       name="euComplianceEnabled"
       component={ Checkbox }
     >
       Enable EU compliance for Adobe Analytics
-    </Field>
+    </CoralField>
     <div>
       <Heading size="4">Character Set</Heading>
       <CharSet />
@@ -28,7 +28,7 @@ export default () => (
     <div>
       <span className="Label u-gapTop">Tracking Server</span>
       <div>
-        <Field
+        <CoralField
           name="trackerProperties.trackingServer"
           component={ Textfield }
           componentClassName="Field--long"
@@ -40,7 +40,7 @@ export default () => (
     <div>
       <span className="Label u-gapTop">SSL Tracking Server</span>
       <div>
-        <Field
+        <CoralField
           name="trackerProperties.trackingServerSecure"
           component={ Textfield }
           componentClassName="Field--long"

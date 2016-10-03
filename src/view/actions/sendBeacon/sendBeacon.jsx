@@ -5,7 +5,7 @@ import Textfield from '@coralui/react-coral/lib/Textfield';
 import Heading from '@coralui/react-coral/lib/Heading';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
-import Field from '../../components/field';
+import CoralField from '../../components/coralField';
 
 import ConfigurationSelector, { formConfig as configurationSelectorFormConfig } from '../components/configurationSelector';
 import { mergeConfigs } from '../../utils/formConfigUtils';
@@ -34,7 +34,7 @@ const linkTypeOptions = [{
   value: LINK_TYPES.EXIT
 }];
 
-let SendBeacon = ({ type, linkType }) => {
+const SendBeacon = ({ type, linkType }) => {
   let linkNameLabel;
 
   switch (linkType) {
@@ -53,22 +53,22 @@ let SendBeacon = ({ type, linkType }) => {
       <ConfigurationSelector className="u-gapBottom" />
       <Heading size="4">Tracking</Heading>
       <div>
-        <Field
+        <CoralField
           name="type"
           component={ Radio }
           value={ TYPES.PAGE }
         >
           Increment a pageview<span className="SendBeacon-trackerApi"> - s.t()</span>
-        </Field>
+        </CoralField>
       </div>
       <div>
-        <Field
+        <CoralField
           name="type"
           component={ Radio }
           value={ TYPES.LINK }
         >
           Do not increment a pageview<span className="SendBeacon-trackerApi"> - s.tl()</span>
-        </Field>
+        </CoralField>
         {
           type === TYPES.LINK ?
             <div className="FieldSubset SendBeacon-linkDetails">
@@ -76,7 +76,7 @@ let SendBeacon = ({ type, linkType }) => {
                 <label>
                   <span className="Label">Link Type</span>
                   <div>
-                    <Field
+                    <CoralField
                       name="linkType"
                       component={ Select }
                       componentClassName="Field--short"
@@ -89,7 +89,7 @@ let SendBeacon = ({ type, linkType }) => {
                 <label>
                   <span className="Label">{ linkNameLabel }</span>
                   <div>
-                    <Field
+                    <CoralField
                       name="linkName"
                       component={ Textfield }
                       componentClassName="Field--long"

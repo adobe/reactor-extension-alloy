@@ -2,7 +2,6 @@ import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 import Tag from '@coralui/react-coral/lib/Tag';
 import TagList from '@coralui/react-coral/lib/TagList';
-import { Field } from 'redux-form';
 
 import { DataElementSelectorButton, InfoTip } from '@reactor/react-components';
 import React from 'react';
@@ -10,7 +9,7 @@ import addDataElementToken from '../../utils/addDataElementToken';
 
 import './tagListEditor.styl';
 
-class TagListEditor extends React.Component {
+export default class TagListEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,7 +17,7 @@ class TagListEditor extends React.Component {
     };
   }
 
-  onRemove = (removedValue) => {
+  onRemove = removedValue => {
     const {
       input: {
         value,
@@ -26,7 +25,7 @@ class TagListEditor extends React.Component {
       }
     } = this.props;
 
-    onChange(value.filter((value) => value !== removedValue));
+    onChange(value.filter(val => val !== removedValue));
   };
 
   onNewValueChange = event => {
@@ -98,7 +97,7 @@ class TagListEditor extends React.Component {
             value={ this.state.newValue }
           />
           <DataElementSelectorButton onClick={ this.openSelector } />
-          <Button type="addButton" onClick={ this.add }>Add</Button>
+          <Button onClick={ this.add }>Add</Button>
           <div className="u-gapTop">
             <TagList
               onClose={ this.onRemove }
@@ -115,5 +114,3 @@ class TagListEditor extends React.Component {
     );
   }
 }
-
-export default props => <Field { ...props } component={ TagListEditor } />;

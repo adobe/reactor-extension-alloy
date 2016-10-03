@@ -2,9 +2,9 @@ import { mount } from 'enzyme';
 import Button from '@coralui/react-coral/lib/Button';
 import Radio from '@coralui/react-coral/lib/Radio';
 
-import extensionViewReduxForm from '../../extensionViewReduxForm';
 import CustomSetup, { formConfig } from '../customSetup';
-import { getFormComponent, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
+import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
+import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const codeButton = wrapper.find(Button).node;
@@ -25,29 +25,8 @@ describe('customSetup', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig)(CustomSetup);
     extensionBridge = createExtensionBridge();
-    instance = mount(getFormComponent(FormComponent, extensionBridge));
-
-    window.extensionBridge = extensionBridge;
-  });
-
-  afterAll(() => {
-    delete window.extensionBridge;
-  });
-
-  it('opens code editor with source value when button is clicked and stores result', () => {
-    const { codeButton } = getReactComponents(instance);
-
-    spyOn(window.extensionBridge, 'openCodeEditor').and.callFake((source, callback) => {
-      callback('foo');
-    });
-
-    codeButton.props.onClick();
-    const { customSetup } = extensionBridge.getSettings();
-
-    expect(window.extensionBridge.openCodeEditor).toHaveBeenCalled();
-    expect(customSetup.source).toBe('foo');
+    instance = mount(bootstrap(CustomSetup, formConfig, extensionBridge));
   });
 
   it('radio buttons are not visible if code editor has not been used', () => {

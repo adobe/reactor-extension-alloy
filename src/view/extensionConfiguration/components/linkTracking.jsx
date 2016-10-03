@@ -2,10 +2,10 @@ import React from 'react';
 import Checkbox from '@coralui/react-coral/lib/Checkbox';
 import Heading from '@coralui/react-coral/lib/Heading';
 import { connect } from 'react-redux';
-import { formValueSelector } from 'redux-form';
+import { formValueSelector, Field } from 'redux-form';
 
 import TagListEditor from './tagListEditor';
-import Field from '../../components/field';
+import CoralField from '../../components/coralField';
 
 import './linkTracking.styl';
 
@@ -16,25 +16,26 @@ const DEFAULT_INTERNAL_FILTERS = ['javascript:', 'tel:', 'mailto:'];
 
 const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
   <div>
-    <Field
+    <CoralField
       name="trackerProperties.trackInlineStats"
       component={ Checkbox }
     >
       Enable ClickMap
-    </Field>
+    </CoralField>
 
     <section className="LinkTracking-section">
       <Heading size="4">Downloads</Heading>
-      <Field
+      <CoralField
         name="trackerProperties.trackDownloadLinks"
         component={ Checkbox }
       >
         Track download links
-      </Field>
+      </CoralField>
       { trackDownloadLinks ?
         <div>
-          <TagListEditor
+          <Field
             name="trackerProperties.linkDownloadFileTypes"
+            component={ TagListEditor }
             title="Download Extensions"
             tooltip="Some tooltip"
           />
@@ -43,33 +44,35 @@ const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
     </section>
     <section className="LinkTracking-section u-gapTop">
       <h4 className="coral-Heading coral-Heading--4">Outbound Links</h4>
-      <Field
+      <CoralField
         name="trackerProperties.trackExternalLinks"
         component={ Checkbox }
       >
         Track outbound links
-      </Field>
+      </CoralField>
       { trackExternalLinks ?
         <div>
-          <TagListEditor
+          <Field
             name="trackerProperties.linkExternalFilters"
+            component={ TagListEditor }
             title="Track"
             tooltip="Some tooltip"
           />
-          <TagListEditor
+          <Field
             name="trackerProperties.linkInternalFilters"
+            component={ TagListEditor }
             title="Never Track"
             tooltip="Some tooltip"
           />
         </div> : null
       }
     </section>
-    <Field
+    <CoralField
       name="trackerProperties.linkLeaveQueryString"
       component={ Checkbox }
     >
       Keep URL Parameters
-    </Field>
+    </CoralField>
   </div>
 );
 

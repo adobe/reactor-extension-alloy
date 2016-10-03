@@ -4,7 +4,7 @@ import Variables, { formConfig as variablesFormConfig } from '../../components/v
 import ConfigurationSelector, { formConfig as configurationSelectorFormConfig } from '../components/configurationSelector';
 import CustomSetup, { formConfig as customSetupConfig } from '../../components/customSetup';
 
-export default ({ ...props }) => (
+export default () => (
   <div>
     <ConfigurationSelector className="u-gapBottom" />
     <h4 className="coral-Heading coral-Heading--4">Variables</h4>

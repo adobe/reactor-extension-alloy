@@ -5,7 +5,7 @@ import Textfield from '@coralui/react-coral/lib/Textfield';
 import { change, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 
-import Field from '../../components/field';
+import CoralField from '../../components/coralField';
 import CHAR_SET_PRESETS from '../../enums/charSets';
 
 const CHAR_SET_INPUT_METHOD = {
@@ -23,7 +23,7 @@ const presetOptions = CHAR_SET_PRESETS.map(preset => ({
 const CharSet = ({ dispatch, charSetInputMethod }) => (
   <div>
     <div>
-      <Field
+      <CoralField
         name="trackerProperties.charSetInputMethod"
         component={ Radio }
         value={ CHAR_SET_INPUT_METHOD.PRESET }
@@ -32,12 +32,12 @@ const CharSet = ({ dispatch, charSetInputMethod }) => (
         }
       >
         Preset
-      </Field>
+      </CoralField>
 
       {
         charSetInputMethod === CHAR_SET_INPUT_METHOD.PRESET ?
           <div className="FieldSubset">
-            <Field
+            <CoralField
               name="trackerProperties.charSet"
               component={ Select }
               options={ presetOptions }
@@ -46,7 +46,7 @@ const CharSet = ({ dispatch, charSetInputMethod }) => (
       }
     </div>
     <div>
-      <Field
+      <CoralField
         name="trackerProperties.charSetInputMethod"
         component={ Radio }
         value={ CHAR_SET_INPUT_METHOD.CUSTOM }
@@ -55,12 +55,12 @@ const CharSet = ({ dispatch, charSetInputMethod }) => (
         }
       >
         Custom
-      </Field>
+      </CoralField>
 
       {
         charSetInputMethod === CHAR_SET_INPUT_METHOD.CUSTOM ?
           <div className="FieldSubset">
-            <Field
+            <CoralField
               name="trackerProperties.charSet"
               component={ Textfield }
               supportDataElement

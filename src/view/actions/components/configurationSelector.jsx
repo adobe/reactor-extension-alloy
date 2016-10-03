@@ -5,7 +5,7 @@ import Alert from '@coralui/react-coral/lib/Alert';
 import Radio from '@coralui/react-coral/lib/Radio';
 import Select from '@coralui/react-coral/lib/Select';
 import Heading from '@coralui/react-coral/lib/Heading';
-import Field from '../../components/field';
+import CoralField from '../../components/coralField';
 
 const SELECTION_TYPES = {
   ALL: 'all',
@@ -39,27 +39,27 @@ export class ConfigurationSelector extends React.Component {
       <div className={ this.props.className }>
         <Heading size="4">{ this.props.heading }</Heading>
         <div>
-          <Field
+          <CoralField
             name="extensionConfigurationSelectionType"
             component={ Radio }
             value={ SELECTION_TYPES.ALL }
           >
             All extension configurations
-          </Field>
+          </CoralField>
         </div>
         <div>
-          <Field
+          <CoralField
             name="extensionConfigurationSelectionType"
             component={ Radio }
             value={ SELECTION_TYPES.SUBSET }
           >
             Specific extension configurations
-          </Field>
+          </CoralField>
 
           {
             extensionConfigurationSelectionType === SELECTION_TYPES.SUBSET ?
               <div className="FieldSubset u-gapTop">
-                <Field
+                <CoralField
                   name="extensionConfigurationIds"
                   component={ Select }
                   placeholder="Select Configuration"

@@ -2,9 +2,9 @@ import { mount } from 'enzyme';
 import Checkbox from '@coralui/react-coral/lib/Checkbox';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 
-import extensionViewReduxForm from '../../../extensionViewReduxForm';
 import General, { formConfig } from '../general';
-import { getFormComponent, createExtensionBridge } from '../../../__tests__/helpers/formTestUtils';
+import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
+import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const euComplianceEnabledCheckbox = wrapper.find(Checkbox).node;
@@ -29,9 +29,8 @@ describe('general', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig)(General);
     extensionBridge = createExtensionBridge();
-    instance = mount(getFormComponent(FormComponent, extensionBridge));
+    instance = mount(bootstrap(General, formConfig, extensionBridge));
   });
 
   it('sets form values from settings', () => {

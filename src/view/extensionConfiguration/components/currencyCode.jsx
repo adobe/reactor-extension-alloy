@@ -5,7 +5,7 @@ import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
 import { connect } from 'react-redux';
 
 import { change, formValueSelector } from 'redux-form';
-import Field from '../../components/field';
+import CoralField from '../../components/coralField';
 import CURRENCY_CODE_PRESETS from '../../enums/currencyCodes';
 
 const CURRENCY_CODE_INPUT_METHODS = {
@@ -23,7 +23,7 @@ const presetOptions = CURRENCY_CODE_PRESETS.map(preset => ({
 const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
   <div>
     <div>
-      <Field
+      <CoralField
         name="trackerProperties.currencyCodeInputMethod"
         component={ Radio }
         value={ CURRENCY_CODE_INPUT_METHODS.PRESET }
@@ -32,12 +32,12 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
         }
       >
         Preset
-      </Field>
+      </CoralField>
 
       {
         currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.PRESET ?
           <div className="FieldSubset">
-            <Field
+            <CoralField
               name="trackerProperties.currencyCode"
               component={ Autocomplete }
               componentClassName="Field--long"
@@ -47,7 +47,7 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
       }
     </div>
     <div>
-      <Field
+      <CoralField
         name="trackerProperties.currencyCodeInputMethod"
         component={ Radio }
         value={ CURRENCY_CODE_INPUT_METHODS.CUSTOM }
@@ -56,12 +56,12 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
         }
       >
         Custom
-      </Field>
+      </CoralField>
 
       {
         currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
           <div className="FieldSubset">
-            <Field
+            <CoralField
               name="trackerProperties.currencyCode"
               component={ Textfield }
               supportDataElement

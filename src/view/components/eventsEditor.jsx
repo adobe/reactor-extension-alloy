@@ -4,7 +4,7 @@ import Textfield from '@coralui/react-coral/lib/Textfield';
 import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
 import { FieldArray } from 'redux-form';
 
-import Field from './field';
+import CoralField from './coralField';
 
 // TODO: Replace with actual values from user's product level.
 const MAX_EVENTS = 100;
@@ -35,10 +35,11 @@ const createEmptyRow = () => ({});
 const renderEvents = ({ fields }) => {
   const rows = fields.map((field, index) => (
     <div
+      data-row
       key={ index }
       className="u-gapBottom2x"
     >
-      <Field
+      <CoralField
         name={ `${field}.name` }
         className="u-gapRight2x"
         component={ Autocomplete }
@@ -50,7 +51,7 @@ const renderEvents = ({ fields }) => {
 
       <span className="Label u-gapRight">Serialize from value</span>
 
-      <Field
+      <CoralField
         name={ `${field}.value` }
         component={ Textfield }
         componentClassName="Field--short"

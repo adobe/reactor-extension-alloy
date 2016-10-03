@@ -6,7 +6,7 @@ import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
 import { FieldArray, formValueSelector, change } from 'redux-form';
 import { connect } from 'react-redux';
 
-import Field from './field';
+import CoralField from './coralField';
 
 // TODO: Replace with actual values from user's product level.
 const maxItems = {
@@ -50,7 +50,7 @@ const nameOptionsCache = {};
 
 let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, dispatch }) => {
   if (!nameOptionsCache[varType]) {
-    nameOptionsCache[varType] = createOptions(varType)
+    nameOptionsCache[varType] = createOptions(varType);
   }
 
   const nameOptions = nameOptionsCache[varType];
@@ -61,10 +61,11 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
 
     return (
       <div
+        data-row
         key={ index }
         className="u-gapBottom2x"
       >
-        <Field
+        <CoralField
           name={ `${field}.name` }
           className="u-gapRight2x"
           component={ Autocomplete }
@@ -74,7 +75,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
           supportValidation
         />
 
-        <Field
+        <CoralField
           // Because of https://github.com/erikras/redux-form/issues/1785 we have to
           // set all the same props for all types. It will throw a warning though, sadly. :(
           name={ `${field}.type` }
@@ -85,7 +86,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
           onChange={ () => dispatch(change('default', `${field}.value`, '')) }
         />
 
-        <Field
+        <CoralField
           name={ `${field}.value` }
           component={ type === TYPES.VALUE ? Textfield : Autocomplete }
           componentClassName="Field--short"
