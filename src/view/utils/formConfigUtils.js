@@ -1,4 +1,3 @@
-/* eslint arrow-body-style: 0, no-shadow: 0 */
 import deep from 'deep-get-set';
 import deepExtend from 'deep-extend';
 
@@ -54,32 +53,44 @@ export const deepSetIfUndefined = (obj, path, value) => {
  */
 export const deepAssign = deepExtend;
 
+const isFunction = value => typeof value === 'function';
+
 /**
  * Merges multiple form config objects.
  *
  * @param formConfigs Form config objects
  * @returns {Object}
  */
-export const mergeConfigs = (...formConfigs) => ({
-  settingsToFormValues(values, settings, meta) {
-    return formConfigs.reduce((accValues, formConfig) => {
-      return formConfig.settingsToFormValues ?
-        formConfig.settingsToFormValues(accValues, settings, meta) :
-        accValues;
-    }, values);
-  },
-  formValuesToSettings(settings, values, meta) {
-    return formConfigs.reduce((accSettings, formConfig) => {
-      return formConfig.formValuesToSettings ?
-        formConfig.formValuesToSettings(accSettings, values, meta) :
-        accSettings;
-    }, settings);
-  },
-  validate(errors, values, meta) {
-    return formConfigs.reduce((accErrors, formConfig) => {
-      return formConfig.validate ?
-        formConfig.validate(accErrors, values, meta) :
-        accErrors;
-    }, errors);
-  }
-});
+export const mergeConfigs = (...formConfigs) => {
+  const settingsToFormValuesFunctions = formConfigs
+    .map(formConfig => formConfig.settingsToFormValues)
+    .filter(isFunction);
+
+  const formValuesToSettingsFunctions = formConfigs
+    .map(formConfig => formConfig.formValuesToSettings)
+    .filter(isFunction);
+
+  const validateFunctions = formConfigs
+    .map(formConfig => formConfig.validate)
+    .filter(isFunction);
+
+  return {
+    settingsToFormValues(values, settings, state) {
+      return settingsToFormValuesFunctions.reduce(
+        (reducedValues, settingsToFormValues) =>
+          settingsToFormValues(reducedValues, settings, state)
+        , values);
+    },
+    formValuesToSettings(settings, values, state) {
+      return formValuesToSettingsFunctions.reduce(
+        (reducedSettings, formValuesToSettings) =>
+          formValuesToSettings(reducedSettings, values, state)
+        , settings);
+    },
+    validate(errors, values, state) {
+      return validateFunctions.reduce(
+        (reducedErrors, validate) => validate(reducedErrors, values, state)
+        , errors);
+    }
+  };
+};
