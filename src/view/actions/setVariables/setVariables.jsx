@@ -3,6 +3,7 @@ import { mergeConfigs } from '../../utils/formConfigUtils';
 import Variables, { formConfig as variablesFormConfig } from '../../components/variables';
 import ConfigurationSelector, { formConfig as configurationSelectorFormConfig } from '../components/configurationSelector';
 import CustomSetup, { formConfig as customSetupConfig } from '../../components/customSetup';
+import Heading from '@coralui/react-coral/lib/Heading';
 
 export default () => (
   <div>
@@ -10,9 +11,9 @@ export default () => (
       className="u-gapBottom"
       heading="Apply variables for each of the following extension configurations:"
     />
-    <h4 className="coral-Heading coral-Heading--4">Variables</h4>
+    <Heading size="4">Variables</Heading>
     <Variables showDynamicVariablePrefix={ false } />
-    <h4 className="u-gapTop2x coral-Heading coral-Heading--4">Custom Page Code</h4>
+    <Heading size="4">Custom Page Code</Heading>
     <CustomSetup showLoadPhase={ false } />
   </div>
 );

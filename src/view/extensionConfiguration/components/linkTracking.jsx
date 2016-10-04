@@ -43,7 +43,7 @@ const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
       }
     </section>
     <section className="LinkTracking-section u-gapTop">
-      <h4 className="coral-Heading coral-Heading--4">Outbound Links</h4>
+      <Heading size="4">Outbound Links</Heading>
       <CoralField
         name="trackerProperties.trackExternalLinks"
         component={ Checkbox }
