@@ -1,5 +1,6 @@
 import React from 'react';
-import * as Coral from '@coralui/react-coral';
+import Accordion from '@coralui/react-coral/lib/Accordion';
+import AccordionItem from '@coralui/react-coral/lib/AccordionItem';
 import { mergeConfigs } from '../utils/formConfigUtils';
 import LibraryManagement, { formConfig as libraryManagementFormConfig } from './components/libraryManagement';
 import General, { formConfig as generalFormConfig } from './components/general';
@@ -10,31 +11,31 @@ import CustomSetup, { formConfig as customSetupFormConfig } from '../components/
 
 export default () => (
   <div>
-    <Coral.Accordion
+    <Accordion
       multiselectable
       variant="quiet"
       defaultSelectedIndex="0"
       className="Accordion--first"
     >
-      <Coral.AccordionItem header="Library Management">
+      <AccordionItem header="Library Management">
         <LibraryManagement />
-      </Coral.AccordionItem>
-      <Coral.AccordionItem header="General">
+      </AccordionItem>
+      <AccordionItem header="General">
         <General />
-      </Coral.AccordionItem>
-      <Coral.AccordionItem header="Global Variables">
+      </AccordionItem>
+      <AccordionItem header="Global Variables">
         <Variables showEvents={ false } />
-      </Coral.AccordionItem>
-      <Coral.AccordionItem header="Link Tracking">
+      </AccordionItem>
+      <AccordionItem header="Link Tracking">
         <LinkTracking />
-      </Coral.AccordionItem>
-      <Coral.AccordionItem header="Cookies">
+      </AccordionItem>
+      <AccordionItem header="Cookies">
         <Cookies />
-      </Coral.AccordionItem>
-      <Coral.AccordionItem header="Customize Page Code">
+      </AccordionItem>
+      <AccordionItem header="Customize Page Code">
         <CustomSetup />
-      </Coral.AccordionItem>
-    </Coral.Accordion>
+      </AccordionItem>
+    </Accordion>
   </div>
 );
 

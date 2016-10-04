@@ -1,5 +1,7 @@
 import { mount } from 'enzyme';
-import { Alert, Radio, Select } from '@coralui/react-coral';
+import Alert from '@coralui/react-coral/lib/Alert';
+import Radio from '@coralui/react-coral/lib/Radio';
+import Select from '@coralui/react-coral/lib/Select';
 import { ValidationWrapper } from '@reactor/react-components';
 
 import ConfigurationSelector, { formConfig } from '../configurationSelector';
