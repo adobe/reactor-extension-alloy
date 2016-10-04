@@ -50,7 +50,10 @@ const SendBeacon = ({ type, linkType }) => {
 
   return (
     <div>
-      <ConfigurationSelector className="u-gapBottom" />
+      <ConfigurationSelector
+        className="u-gapBottom"
+        heading="Send a beacon for each of the following extension configurations:"
+      />
       <Heading size="4">Tracking</Heading>
       <div>
         <CoralField

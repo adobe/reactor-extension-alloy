@@ -37,7 +37,7 @@ export class ConfigurationSelector extends React.Component {
 
     return (
       <div className={ this.props.className }>
-        <Heading size="4">{ this.props.heading }</Heading>
+        { this.props.heading ? <Heading size="4">{ this.props.heading }</Heading> : null }
         <div>
           <CoralField
             name="extensionConfigurationSelectionType"
