@@ -1,9 +1,9 @@
 import React from 'react';
+import Heading from '@coralui/react-coral/lib/Heading';
 import { mergeConfigs } from '../../utils/formConfigUtils';
 import Variables, { formConfig as variablesFormConfig } from '../../components/variables';
 import ConfigurationSelector, { formConfig as configurationSelectorFormConfig } from '../components/configurationSelector';
 import CustomSetup, { formConfig as customSetupConfig } from '../../components/customSetup';
-import Heading from '@coralui/react-coral/lib/Heading';
 
 export default () => (
   <div>
