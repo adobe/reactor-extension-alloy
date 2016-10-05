@@ -4,9 +4,9 @@ import Radio from '@coralui/react-coral/lib/Radio';
 import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 
-import extensionViewReduxForm from '../../extensionViewReduxForm';
-import { SendBeacon, formConfig } from '../sendBeacon';
-import { getFormComponent, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
+import SendBeacon, { formConfig } from '../sendBeacon';
+import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
+import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const pageViewTypeRadio = wrapper.find(Radio).filterWhere(n => n.prop('value') === 'page').node;
@@ -30,15 +30,8 @@ describe('send beacon', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig)(SendBeacon);
     extensionBridge = createExtensionBridge();
-    instance = mount(getFormComponent(FormComponent, extensionBridge));
-
-    window.extensionBridge = extensionBridge;
-  });
-
-  afterAll(() => {
-    delete window.extensionBridge;
+    instance = mount(bootstrap(SendBeacon, formConfig, extensionBridge));
   });
 
   it('sets page view form values from settings', () => {
@@ -104,7 +97,7 @@ describe('send beacon', () => {
       linkNameTextfield
     } = getReactComponents(instance);
 
-    linkTypeSelect.props.onChange('e');
+    linkTypeSelect.props.onChange({ value: 'e' });
     linkNameTextfield.props.onChange('some text');
 
     const {
@@ -131,27 +124,5 @@ describe('send beacon', () => {
 
     expect(pageViewTypeRadio.props.checked).toBe(true);
     expect(type).toBe('page');
-  });
-
-  it('opens the data element selector from data element button', () => {
-    const {
-      linkTypeRadio
-    } = getReactComponents(instance);
-
-    linkTypeRadio.props.onChange('link');
-
-    const {
-      linkNameTextfield,
-      linkNameButton
-    } = getReactComponents(instance);
-
-    spyOn(window.extensionBridge, 'openDataElementSelector').and.callFake(callback => {
-      callback('foo');
-    });
-
-    linkNameButton.props.onClick();
-
-    expect(window.extensionBridge.openDataElementSelector).toHaveBeenCalled();
-    expect(linkNameTextfield.props.value).toBe('%foo%');
   });
 });

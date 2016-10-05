@@ -1,11 +1,12 @@
 import React from 'react';
-import { ReduxFormAutocomplete as Autocomplete, ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 import Select from '@coralui/react-coral/lib/Select';
+import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import { FieldArray, formValueSelector, change } from 'redux-form';
+import { connect } from 'react-redux';
 
-import createId from '../utils/createId';
-import openDataElementSelector from '../utils/openDataElementSelector';
+import CoralField from './coralField';
 
 // TODO: Replace with actual values from user's product level.
 const maxItems = {
@@ -13,143 +14,138 @@ const maxItems = {
   prop: 75
 };
 
+const TYPES = {
+  VALUE: 'value',
+  ALIAS: 'alias'
+};
+
 const typeOptions = [{
   label: 'Set as',
-  value: 'value'
+  value: TYPES.VALUE
 }, {
   label: 'Duplicate From',
-  value: 'alias'
+  value: TYPES.ALIAS
 }];
 
-export default class EvarsPropsEditor extends React.Component {
-  createOptions = varType => {
-    const options = [];
-    const numItems = maxItems[varType];
+const createEmptyRow = () => ({ type: 'value' });
 
-    for (let i = 0; i < numItems; i++) {
-      const value = varType + (i + 1);
-      options.push({
-        label: value,
-        value
-      });
-    }
+const createOptions = varType => {
+  const options = [];
+  const numItems = maxItems[varType];
 
-    return options;
-  };
-
-  createEmptyRow = () => {
-    this.props.fields.trackerProperties[this.props.varTypePlural].addField({
-      id: createId(),
-      type: 'value'
+  for (let i = 0; i < numItems; i++) {
+    const value = varType + (i + 1);
+    options.push({
+      label: value,
+      value
     });
-  };
+  }
 
-  removeVariable = index => {
-    this.props.fields.trackerProperties[this.props.varTypePlural].removeField(index);
-  };
+  return options;
+};
 
-  render() {
-    const variables = this.props.fields.trackerProperties[this.props.varTypePlural];
+const valueOptions = createOptions('eVar').concat(createOptions('prop'));
 
-    if (!this.optionsCache || this.cachedVarType !== this.props.varType) {
-      this.optionsCache = {
-        nameOptions: this.createOptions(this.props.varType),
-        valueOptions: this.createOptions('eVar').concat(this.createOptions('prop')),
-        namePlaceholder: `Select ${this.props.varType}`
-      };
+const nameOptionsCache = {};
 
-      this.cachedVarType = this.props.varType;
-    }
+let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, dispatch }) => {
+  if (!nameOptionsCache[varType]) {
+    nameOptionsCache[varType] = createOptions(varType);
+  }
 
-    const rows = variables.map((variable, index) => (
+  const nameOptions = nameOptionsCache[varType];
+  const variables = trackerProperties[varTypePlural];
+
+  const rows = fields.map((field, index) => {
+    const { type } = variables[index];
+
+    return (
       <div
-        key={ variable.id.value }
+        data-row
+        key={ index }
         className="u-gapBottom2x"
       >
-        <ValidationWrapper
-          type="name"
-          error={ variable.name.touched && variable.name.error }
+        <CoralField
+          name={ `${field}.name` }
           className="u-gapRight2x"
-        >
-          <Autocomplete
-            { ...variable.name }
-            className="Field--short"
-            placeholder={ this.optionsCache.namePlaceholder }
-            options={ this.optionsCache.nameOptions }
-          />
-        </ValidationWrapper>
-        <Select
-          className="Field--short u-gapRight2x"
-          { ...variable.type }
-          options={ typeOptions }
+          component={ Autocomplete }
+          componentClassName="Field--short"
+          placeholder={ `Select ${varType}` }
+          options={ nameOptions }
+          supportValidation
         />
-        <ValidationWrapper
-          type="value"
-          error={ variable.value.touched && variable.value.error }
-        >
-          {
-            variable.type.value === 'value' ?
-              <Textfield
-                className="Field--short"
-                { ...variable.value }
-              /> :
-              <Autocomplete
-                className="Field--short"
-                placeholder="Select variable"
-                { ...variable.value }
-                options={ this.optionsCache.valueOptions }
-              />
-          }
-        </ValidationWrapper>
-        {
-          variable.type.value === 'value' ?
-            <DataElementSelectorButton
-              onClick={ openDataElementSelector.bind(this, variable.value) }
-            /> : null
-        }
+
+        <CoralField
+          // Because of https://github.com/erikras/redux-form/issues/1785 we have to
+          // set all the same props for all types. It will throw a warning though, sadly. :(
+          name={ `${field}.type` }
+          className="u-gapRight2x"
+          component={ Select }
+          componentClassName="Field--short"
+          options={ typeOptions }
+          onChange={ () => dispatch(change('default', `${field}.value`, '')) }
+        />
+
+        <CoralField
+          name={ `${field}.value` }
+          component={ type === TYPES.VALUE ? Textfield : Autocomplete }
+          componentClassName="Field--short"
+          placeholder={ type === TYPES.VALUE ? '' : 'Select variable' }
+          options={ valueOptions }
+          supportValidation
+          supportDataElement={ type === TYPES.VALUE }
+        />
+
         <Button
           variant="minimal"
           square
           icon="close"
           iconSize="XS"
-          onClick={ this.removeVariable.bind(this, index) }
+          onClick={ fields.remove.bind(this, index) }
         />
       </div>
-    ));
-
-    return (
-      <section>
-        { rows }
-        <Button
-          onClick={ this.createEmptyRow }
-        >
-          Add { this.props.varType }
-        </Button>
-      </section>
     );
-  }
-}
+  });
+
+  return (
+    <section>
+      { rows }
+      <Button
+        onClick={ () => fields.push(createEmptyRow()) }
+      >
+        Add { varType }
+      </Button>
+    </section>
+  );
+};
+
+renderVariables = connect(
+  state => ({ trackerProperties: formValueSelector('default')(state, 'trackerProperties') })
+)(renderVariables);
+
+export default ({ varType, varTypePlural }) => (
+  <FieldArray
+    name={ `trackerProperties.${varTypePlural}` }
+    component={ renderVariables }
+    varType={ varType }
+    varTypePlural={ varTypePlural }
+  />
+);
 
 export const getFormConfig = (varType, varTypePlural) => ({
-  fields: [
-    `trackerProperties.${varTypePlural}[].id`,
-    `trackerProperties.${varTypePlural}[].name`,
-    `trackerProperties.${varTypePlural}[].type`,
-    `trackerProperties.${varTypePlural}[].value`
-  ],
-  settingsToFormValues(values, options) {
-    let variables = (options.settings.trackerProperties || {})[varTypePlural];
+  settingsToFormValues(values, settings) {
+    let variables = (settings.trackerProperties || {})[varTypePlural];
 
     variables = variables ? variables.slice() : [];
 
     // Add an extra object which will ensures that there is an empty row available for the user
     // to configure their next variable.
-    variables.push({});
+    variables.push(createEmptyRow());
 
-    variables.forEach(variable => {
-      variable.id = createId();
-      variable.type = variable.type || 'value';
-    });
+    variables.map(variable => ({
+      ...variable,
+      type: variable.type || 'value'
+    }));
 
     return {
       ...values,
@@ -166,12 +162,7 @@ export const getFormConfig = (varType, varTypePlural) => ({
 
     const variables = trackerProperties[varTypePlural]
       .filter(variable => variable.name)
-      .map(variable => ({
-        // Everything but id.
-        name: variable.name,
-        type: variable.type,
-        value: variable.value
-      }));
+      .map(variable => ({ ...variable }));
 
     settings = {
       ...settings
@@ -186,8 +177,9 @@ export const getFormConfig = (varType, varTypePlural) => ({
 
     return settings;
   },
-  validate(errors, values = { trackerProperties: {} }) {
-    const variables = values.trackerProperties[varTypePlural] || [];
+  validate(errors, values) {
+    const trackerProperties = values.trackerProperties || {};
+    const variables = trackerProperties[varTypePlural] || [];
     const configuredVariableNames = [];
 
     const variablesErrors = variables.map(variable => {

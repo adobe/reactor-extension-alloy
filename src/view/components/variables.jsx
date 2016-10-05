@@ -1,13 +1,14 @@
 import React from 'react';
 import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
-import { DataElementSelectorButton } from '@reactor/react-components';
 
-import mergeFormConfigs from '../utils/mergeFormConfigs';
-import openDataElementSelector from '../utils/openDataElementSelector';
+import { mergeConfigs } from '../utils/formConfigUtils';
 import EvarsPropsEditor, { getFormConfig as getEvarsPropsEditorFormConfig } from './evarsPropsEditor';
 import EventsEditor, { formConfig as eventsFormConfig } from './eventsEditor';
 import HierarchiesEditor, { formConfig as hierarchiesFormConfig } from './hierarchiesEditor';
+import CoralField from './coralField';
+
+import './variables.styl';
 
 const DYNAMIC_VARIABLE_PREFIX_DEFAULT = 'D=';
 
@@ -19,193 +20,164 @@ const campaignTypeOptions = [{
   value: 'queryParam'
 }];
 
-export default function Variables({ ...props }) {
-  const {
-    showDynamicVariablePrefix = true,
-    showEvents = true,
-    fields: {
-      trackerProperties: {
-        dynamicVariablePrefix,
-        pageName,
-        pageURL,
-        server,
-        channel,
-        referrer,
-        campaign,
-        transactionID,
-        state,
-        zip
-      }
+export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
+  <div>
+    <span className="Label">eVars</span>
+    <EvarsPropsEditor varType="eVar" varTypePlural="eVars" />
+
+    <span className="Label u-gapTop">Props</span>
+    <EvarsPropsEditor varType="prop" varTypePlural="props" />
+
+    {
+      showEvents ?
+        <div>
+          <span className="Label u-gapTop">Events</span>
+          <EventsEditor />
+        </div> : null
     }
-  } = props;
 
-  return (
-    <div>
-      <span className="Label">eVars</span>
-      <EvarsPropsEditor varType="eVar" varTypePlural="eVars" fields={ props.fields } />
+    <span className="Label u-gapTop">Hierarchy</span>
+    <HierarchiesEditor />
 
-      <span className="Label u-gapTop">Props</span>
-      <EvarsPropsEditor varType="prop" varTypePlural="props" fields={ props.fields } />
-
-      {
-        showEvents ?
+    {
+      showDynamicVariablePrefix ?
+        <label>
+          <span className="Label u-gapTop">Dynamic Variable Prefix</span>
           <div>
-            <span className="Label u-gapTop">Events</span>
-            <EventsEditor fields={ props.fields } />
-          </div> : null
-      }
+            <CoralField
+              name="trackerProperties.dynamicVariablePrefix"
+              component={ Textfield }
+              componentClassName="Field--long"
+              supportDataElement
+            />
+          </div>
+        </label> : null
+    }
 
-      <span className="Label u-gapTop">Hierarchy</span>
-      <HierarchiesEditor fields={ props.fields } />
-
-      {
-        showDynamicVariablePrefix ?
-          <label>
-            <span className="Label u-gapTop">Dynamic Variable Prefix</span>
-            <div>
-              <Textfield
-                className="Field--long"
-                { ...dynamicVariablePrefix }
-              />
-              <DataElementSelectorButton
-                onClick={ openDataElementSelector.bind(this, dynamicVariablePrefix) }
-              />
-            </div>
-          </label> : null
-      }
-
-      <label>
-        <span className="Label u-gapTop">Page Name</span>
-        <div>
-          <Textfield
-            className="Field--long"
-            { ...pageName }
-          />
-          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, pageName) } />
-        </div>
-      </label>
-
-      <label>
-        <span className="Label u-gapTop">Page URL</span>
-        <div>
-          <Textfield
-            className="Field--long"
-            { ...pageURL }
-          />
-          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, pageURL) } />
-        </div>
-      </label>
-
-      <label>
-        <span className="Label u-gapTop">Server</span>
-        <div>
-          <Textfield
-            className="Field--long"
-            { ...server }
-          />
-          <DataElementSelectorButton
-            onClick={ openDataElementSelector.bind(this, server) }
-          />
-        </div>
-      </label>
-
-      <label>
-        <span className="Label u-gapTop">Channel</span>
-        <div>
-          <Textfield
-            className="Field--long"
-            { ...channel }
-          />
-          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, channel) } />
-        </div>
-      </label>
-
-      <label>
-        <span className="Label u-gapTop">Referrer</span>
-        <div>
-          <Textfield
-            className="Field--long"
-            { ...referrer }
-          />
-          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, referrer) } />
-        </div>
-      </label>
-
-      <label htmlFor="campaignValue">
-        <span className="Label u-gapTop">Campaign</span>
-      </label>
+    <label>
+      <span className="Label u-gapTop">Page Name</span>
       <div>
-        <Select
-          className="Variables-campaignType"
-          options={ campaignTypeOptions }
-          { ...campaign.type }
+        <CoralField
+          name="trackerProperties.pageName"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
         />
-        <Textfield
-          id="campaignValue"
-          className="Variables-campaignValue u-gapLeft"
-          { ...campaign.value }
-        />
-        <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, campaign.value) } />
       </div>
+    </label>
 
-      <label>
-        <span className="Label u-gapTop">Transaction ID</span>
-        <div>
-          <Textfield
-            className="Field--long"
-            { ...transactionID }
-          />
-          <DataElementSelectorButton
-            onClick={ openDataElementSelector.bind(this, transactionID) }
-          />
-        </div>
-      </label>
+    <label>
+      <span className="Label u-gapTop">Page URL</span>
+      <div>
+        <CoralField
+          name="trackerProperties.pageURL"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
+        />
+      </div>
+    </label>
 
-      <label>
-        <span className="Label u-gapTop">State</span>
-        <div>
-          <Textfield
-            className="Field--long"
-            { ...state }
-          />
-          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, state) } />
-        </div>
-      </label>
+    <label>
+      <span className="Label u-gapTop">Server</span>
+      <div>
+        <CoralField
+          name="trackerProperties.server"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
+        />
+      </div>
+    </label>
 
-      <label>
-        <span className="Label u-gapTop">Zip</span>
-        <div>
-          <Textfield
-            className="Field--long"
-            { ...zip }
-          />
-          <DataElementSelectorButton onClick={ openDataElementSelector.bind(this, zip) } />
-        </div>
-      </label>
+    <label>
+      <span className="Label u-gapTop">Channel</span>
+      <div>
+        <CoralField
+          name="trackerProperties.channel"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
+        />
+      </div>
+    </label>
+
+    <label>
+      <span className="Label u-gapTop">Referrer</span>
+      <div>
+        <CoralField
+          name="trackerProperties.referrer"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
+        />
+      </div>
+    </label>
+
+    <label htmlFor="campaignValue">
+      <span className="Label u-gapTop">Campaign</span>
+    </label>
+    <div>
+      <CoralField
+        name="trackerProperties.campaign.type"
+        component={ Select }
+        componentClassName="Variables-campaignType"
+        options={ campaignTypeOptions }
+      />
+
+      <CoralField
+        name="trackerProperties.campaign.value"
+        className="u-gapLeft"
+        component={ Textfield }
+        componentClassName="Variables-campaignValue"
+        supportDataElement
+      />
     </div>
-  );
-}
 
-export const formConfig = mergeFormConfigs(
+    <label>
+      <span className="Label u-gapTop">Transaction ID</span>
+      <div>
+        <CoralField
+          name="trackerProperties.transactionID"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
+        />
+      </div>
+    </label>
+
+    <label>
+      <span className="Label u-gapTop">State</span>
+      <div>
+        <CoralField
+          name="trackerProperties.state"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
+        />
+      </div>
+    </label>
+
+    <label>
+      <span className="Label u-gapTop">Zip</span>
+      <div>
+        <CoralField
+          name="trackerProperties.zip"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportDataElement
+        />
+      </div>
+    </label>
+  </div>;
+
+export const formConfig = mergeConfigs(
   getEvarsPropsEditorFormConfig('eVar', 'eVars'),
   getEvarsPropsEditorFormConfig('prop', 'props'),
   eventsFormConfig,
   hierarchiesFormConfig,
   {
-    fields: [
-      'trackerProperties.dynamicVariablePrefix',
-      'trackerProperties.pageName',
-      'trackerProperties.pageURL',
-      'trackerProperties.server',
-      'trackerProperties.channel',
-      'trackerProperties.referrer',
-      'trackerProperties.campaign.type',
-      'trackerProperties.campaign.value',
-      'trackerProperties.transactionID',
-      'trackerProperties.state',
-      'trackerProperties.zip'
-    ],
-    settingsToFormValues: (values, options) => {
+    settingsToFormValues: (values, settings) => {
       const {
         dynamicVariablePrefix,
         pageName,
@@ -217,7 +189,7 @@ export const formConfig = mergeFormConfigs(
         transactionID,
         state,
         zip
-      } = options.settings.trackerProperties || {};
+      } = settings.trackerProperties || {};
 
       return {
         ...values,

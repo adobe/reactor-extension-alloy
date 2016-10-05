@@ -1,9 +1,11 @@
 import React from 'react';
 import Radio from '@coralui/react-coral/lib/Radio';
 import Textfield from '@coralui/react-coral/lib/Textfield';
-import { ReduxFormAutocomplete as Autocomplete, DataElementSelectorButton } from '@reactor/react-components';
+import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import { connect } from 'react-redux';
 
-import openDataElementSelector from '../../utils/openDataElementSelector';
+import { change, formValueSelector } from 'redux-form';
+import CoralField from '../../components/coralField';
 import CURRENCY_CODE_PRESETS from '../../enums/currencyCodes';
 
 const CURRENCY_CODE_INPUT_METHODS = {
@@ -13,85 +15,75 @@ const CURRENCY_CODE_INPUT_METHODS = {
 
 const CURRENCY_CODE_DEFAULT = 'USD';
 
-export default class CurrencyCode extends React.Component {
-  onTypeChange = value => {
-    const {
-      currencyCodeInputMethod,
-      currencyCode
-    } = this.props.fields.trackerProperties;
+const presetOptions = CURRENCY_CODE_PRESETS.map(preset => ({
+  label: `${preset.value} - ${preset.label}`,
+  value: preset.value
+}));
 
-    currencyCode.onChange(
-      value === CURRENCY_CODE_INPUT_METHODS.PRESET ? CURRENCY_CODE_DEFAULT : ''
-    );
-    currencyCodeInputMethod.onChange(value);
-  };
+const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
+  <div>
+    <div>
+      <CoralField
+        name="trackerProperties.currencyCodeInputMethod"
+        component={ Radio }
+        value={ CURRENCY_CODE_INPUT_METHODS.PRESET }
+        onChange={
+          () => dispatch(change('default', 'trackerProperties.currencyCode', CURRENCY_CODE_DEFAULT))
+        }
+      >
+        Preset
+      </CoralField>
 
-  render() {
-    const {
-      currencyCodeInputMethod,
-      currencyCode
-    } = this.props.fields.trackerProperties;
+      {
+        currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.PRESET ?
+          <div className="FieldSubset">
+            <CoralField
+              name="trackerProperties.currencyCode"
+              component={ Autocomplete }
+              componentClassName="Field--long"
+              options={ presetOptions }
+            />
+          </div> : null
+      }
+    </div>
+    <div>
+      <CoralField
+        name="trackerProperties.currencyCodeInputMethod"
+        component={ Radio }
+        value={ CURRENCY_CODE_INPUT_METHODS.CUSTOM }
+        onChange={
+          () => dispatch(change('default', 'trackerProperties.currencyCode', ''))
+        }
+      >
+        Custom
+      </CoralField>
 
-    const presetOptions = CURRENCY_CODE_PRESETS.map(preset => ({
-      label: `${preset.value} - ${preset.label}`,
-      value: preset.value
-    }));
+      {
+        currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
+          <div className="FieldSubset">
+            <CoralField
+              name="trackerProperties.currencyCode"
+              component={ Textfield }
+              supportDataElement
+            />
+          </div> : null
+      }
+    </div>
+  </div>
+);
 
-    return (
-      <div>
-        <div>
-          <Radio
-            { ...currencyCodeInputMethod }
-            onChange={ this.onTypeChange }
-            value={ CURRENCY_CODE_INPUT_METHODS.PRESET }
-            checked={ currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.PRESET }
-          >
-            Preset
-          </Radio>
-          {
-            currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.PRESET ?
-              <div className="FieldSubset">
-                <Autocomplete
-                  { ...currencyCode }
-                  className="Field--long"
-                  options={ presetOptions }
-                />
-              </div> : null
-          }
-        </div>
-        <div>
-          <Radio
-            { ...currencyCodeInputMethod }
-            onChange={ this.onTypeChange }
-            value={ CURRENCY_CODE_INPUT_METHODS.CUSTOM }
-            checked={ currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM }
-          >
-            Custom
-          </Radio>
-          {
-            currencyCodeInputMethod.value === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
-              <div className="FieldSubset">
-                <Textfield { ...currencyCode } />
-                <DataElementSelectorButton
-                  onClick={ openDataElementSelector.bind(this, currencyCode) }
-                />
-              </div> : null
-          }
-        </div>
-      </div>
-    );
-  }
-}
+export default connect(
+  state => ({
+    currencyCodeInputMethod:
+      formValueSelector('default')(state, 'trackerProperties.currencyCodeInputMethod')
+  })
+)(CurrencyCode);
 
 export const formConfig = {
-  fields: [
-    'trackerProperties.currencyCodeInputMethod',
-    'trackerProperties.currencyCode'
-  ],
-  settingsToFormValues(values, options) {
+  settingsToFormValues(values, settings) {
     const {
       currencyCode
-    } = options.settings.trackerProperties || {};
+    } = settings.trackerProperties || {};
 
     const currencyCodeInputMethod =
       !currencyCode || CURRENCY_CODE_PRESETS.map((currency) => currency.value)

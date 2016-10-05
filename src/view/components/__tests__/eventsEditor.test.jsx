@@ -1,25 +1,28 @@
 import { mount } from 'enzyme';
-import { ReduxFormAutocomplete as Autocomplete, ValidationWrapper } from '@reactor/react-components';
+import { ValidationWrapper } from '@reactor/react-components';
 import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
+import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
 
-import extensionViewReduxForm from '../../extensionViewReduxForm';
-import eventsEditor, { formConfig } from '../eventsEditor';
-import { getFormComponent, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
+import EventsEditor, { formConfig } from '../eventsEditor';
+import CoralField from '../../components/coralField';
+import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
+import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const eventNameAutocompletes = wrapper.find(Autocomplete);
-  const eventValueTextfields = wrapper.find(Textfield);
-  const addEventButton = wrapper.find(Button).last().node;
-  const removeButtons = wrapper.find(Button).filterWhere(n => n.prop('icon') === 'close');
-  const nameWrappers = wrapper.find(ValidationWrapper);
+  const rows = wrapper.find('[data-row]').map(row => ({
+    nameAutocomplete: row.find(Autocomplete).node,
+    valueTextfield: row.find(Textfield).node,
+    removeButton: row.find(Button).last().node,
+    nameWrapper: row.find(CoralField).filterWhere(n => n.prop('name').includes('.name'))
+      .find(ValidationWrapper).node
+  }));
+
+  const addRowButton = wrapper.find(Button).last().node;
 
   return {
-    eventNameAutocompletes,
-    eventValueTextfields,
-    addEventButton,
-    removeButtons,
-    nameWrappers
+    rows,
+    addRowButton
   };
 };
 
@@ -28,9 +31,8 @@ describe('events editor', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig)(eventsEditor);
     extensionBridge = createExtensionBridge();
-    instance = mount(getFormComponent(FormComponent, extensionBridge));
+    instance = mount(bootstrap(EventsEditor, formConfig, extensionBridge));
   });
 
   it('sets form values from settings', () => {
@@ -47,25 +49,19 @@ describe('events editor', () => {
       }
     });
 
-    const {
-      eventNameAutocompletes,
-      eventValueTextfields
-    } = getReactComponents(instance);
+    const { rows } = getReactComponents(instance);
 
-    expect(eventNameAutocompletes.nodes[0].props.value).toBe('prodView');
-    expect(eventValueTextfields.nodes[0].props.value).toBe('a');
+    expect(rows[0].nameAutocomplete.props.value).toBe('prodView');
+    expect(rows[0].valueTextfield.props.value).toBe('a');
   });
 
   it('sets settings from form values', () => {
     extensionBridge.init();
 
-    const {
-      eventNameAutocompletes,
-      eventValueTextfields
-    } = getReactComponents(instance);
+    const { rows } = getReactComponents(instance);
 
-    eventNameAutocompletes.nodes[0].props.onChange('event1');
-    eventValueTextfields.nodes[0].props.onChange('b');
+    rows[0].nameAutocomplete.props.onChange({ value: 'event1' });
+    rows[0].valueTextfield.props.onChange('b');
 
     const { events } = extensionBridge.getSettings().trackerProperties;
     expect(events[0].name).toBe('event1');
@@ -75,27 +71,15 @@ describe('events editor', () => {
   it('adds a new row when the add button is clicked', () => {
     extensionBridge.init();
 
-    const {
-      addEventButton
-    } = getReactComponents(instance);
+    let components = getReactComponents(instance);
 
-    let {
-      eventNameAutocompletes,
-      eventValueTextfields
-    } = getReactComponents(instance);
+    expect(components.rows.length).toBe(1);
 
-    expect(eventNameAutocompletes.length).toBe(1);
-    expect(eventValueTextfields.length).toBe(1);
+    components.addRowButton.props.onClick();
 
-    addEventButton.props.onClick();
+    components = getReactComponents(instance);
 
-    ({
-      eventNameAutocompletes,
-      eventValueTextfields
-    } = getReactComponents(instance));
-
-    expect(eventNameAutocompletes.length).toBe(2);
-    expect(eventValueTextfields.length).toBe(2);
+    expect(components.rows.length).toBe(2);
   });
 
   it('deletes a row when the remove button is clicked', () => {
@@ -112,30 +96,16 @@ describe('events editor', () => {
       }
     });
 
-    let {
-      eventNameAutocompletes,
-      eventValueTextfields
-    } = getReactComponents(instance);
+    let { rows } = getReactComponents(instance);
 
-    expect(eventNameAutocompletes.length).toBe(2);
-    expect(eventValueTextfields.length).toBe(2);
+    expect(rows.length).toBe(2);
 
-    const {
-      removeButtons
-    } = getReactComponents(instance);
+    rows[1].removeButton.props.onClick();
 
-    removeButtons.nodes[1].props.onClick();
+    ({ rows } = getReactComponents(instance));
 
-    ({
-      eventNameAutocompletes,
-      eventValueTextfields
-    } = getReactComponents(instance));
-
-    expect(eventNameAutocompletes.length).toBe(1);
-    expect(eventValueTextfields.length).toBe(1);
-
-    expect(eventNameAutocompletes.nodes[0].props.name).toContain('events[0]');
-    expect(eventValueTextfields.nodes[0].props.name).toContain('events[0]');
+    expect(rows.length).toBe(1);
+    expect(rows[0].nameAutocomplete.props.value).toBe('prodView');
   });
 
   it('shows an error when two events having the same name are added', () => {
@@ -158,8 +128,8 @@ describe('events editor', () => {
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { nameWrappers } = getReactComponents(instance);
-    expect(nameWrappers.nodes[1].props.error).toEqual(jasmine.any(String));
+    const { rows } = getReactComponents(instance);
+    expect(rows[1].nameWrapper.props.error).toEqual(jasmine.any(String));
   });
 
   it('shows an error when an event doesn\'t have a name', () => {
@@ -178,7 +148,7 @@ describe('events editor', () => {
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { nameWrappers } = getReactComponents(instance);
-    expect(nameWrappers.nodes[0].props.error).toEqual(jasmine.any(String));
+    const { rows } = getReactComponents(instance);
+    expect(rows[0].nameWrapper.props.error).toEqual(jasmine.any(String));
   });
 });

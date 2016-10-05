@@ -2,9 +2,9 @@ import { mount } from 'enzyme';
 import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 
-import extensionViewReduxForm from '../../extensionViewReduxForm';
-import variables, { formConfig } from '../variables';
-import { getFormComponent, createExtensionBridge } from '../../__tests__/helpers/formTestUtils';
+import Variables, { formConfig } from '../variables';
+import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
+import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const dynamicVariablePrefixTextField =
@@ -50,9 +50,8 @@ describe('variables', () => {
   let instance;
 
   beforeAll(() => {
-    const FormComponent = extensionViewReduxForm(formConfig)(variables);
     extensionBridge = createExtensionBridge();
-    instance = mount(getFormComponent(FormComponent, extensionBridge));
+    instance = mount(bootstrap(Variables, formConfig, extensionBridge));
   });
 
   it('sets form values from settings', () => {

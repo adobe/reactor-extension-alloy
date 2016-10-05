@@ -17,10 +17,22 @@ describe('report suite', () => {
   const onChangeSpy = jasmine.createSpy('onChange');
 
   beforeAll(() => {
-    instance = mount(<ReportSuite onChange={ onChangeSpy } />);
+    const props = {
+      input: {
+        value: [],
+        onChange: onChangeSpy
+      },
+      meta: {
+        touched: false,
+        error: null
+      }
+    };
+
+    instance = mount(<ReportSuite { ...props } />);
   });
 
   beforeEach(() => {
+    onChangeSpy.calls.reset();
     window.extensionBridge = {};
   });
 

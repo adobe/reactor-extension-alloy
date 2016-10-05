@@ -1,93 +1,92 @@
 import React from 'react';
 import Checkbox from '@coralui/react-coral/lib/Checkbox';
+import Heading from '@coralui/react-coral/lib/Heading';
+import { connect } from 'react-redux';
+import { formValueSelector, Field } from 'redux-form';
 
 import TagListEditor from './tagListEditor';
+import CoralField from '../../components/coralField';
+
+import './linkTracking.styl';
 
 const DEFAULT_DOWNLOAD_LINKS = ['doc', 'docx', 'eps', 'jpg', 'png', 'svg', 'xls', 'ppt', 'pptx',
   'pdf', 'xlsx', 'tab', 'csv', 'zip', 'txt', 'vsd', 'vxd', 'xml', 'js', 'css', 'rar', 'exe', 'wma',
   'mov', 'avi', 'wmv', 'mp3', 'wav', 'm4v'];
 const DEFAULT_INTERNAL_FILTERS = ['javascript:', 'tel:', 'mailto:'];
 
-export default function LinkTracking({ ...props }) {
-  const {
-    trackInlineStats,
-    trackDownloadLinks,
-    linkDownloadFileTypes,
-    trackExternalLinks,
-    linkExternalFilters,
-    linkInternalFilters,
-    linkLeaveQueryString
-  } = props.fields.trackerProperties;
+const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
+  <div>
+    <CoralField
+      name="trackerProperties.trackInlineStats"
+      component={ Checkbox }
+    >
+      Enable ClickMap
+    </CoralField>
 
-  return (
-    <div>
-      <Checkbox
-        { ...trackInlineStats }
+    <section className="LinkTracking-section">
+      <Heading size="4">Downloads</Heading>
+      <CoralField
+        name="trackerProperties.trackDownloadLinks"
+        component={ Checkbox }
       >
-        Enable ClickMap
-      </Checkbox>
-      <section className="LinkTracking-section">
-        <h4 className="coral-Heading coral-Heading--4">Downloads</h4>
-        <Checkbox
-          { ...trackDownloadLinks }
-        >
-          Track download links
-        </Checkbox>
-        { trackDownloadLinks.checked ?
-          <div>
-            <TagListEditor
-              onChange={ linkDownloadFileTypes.onChange }
-              value={ linkDownloadFileTypes.value }
-              title="Download Extensions"
-              tooltip="Some tooltip"
-            />
-          </div> : null
-        }
-      </section>
-      <section className="LinkTracking-section u-gapTop">
-        <h4 className="coral-Heading coral-Heading--4">Outbound Links</h4>
-        <Checkbox
-          { ...trackExternalLinks }
-        >
-          Track outbound links
-        </Checkbox>
-        { trackExternalLinks.checked ?
-          <div>
-            <TagListEditor
-              onChange={ linkExternalFilters.onChange }
-              value={ linkExternalFilters.value }
-              title="Track"
-              tooltip="Some tooltip"
-            />
-            <TagListEditor
-              onChange={ linkInternalFilters.onChange }
-              value={ linkInternalFilters.value }
-              title="Never Track"
-              tooltip="Some tooltip"
-            />
-          </div> : null
-        }
-      </section>
-      <Checkbox
-        { ...linkLeaveQueryString }
+        Track download links
+      </CoralField>
+      { trackDownloadLinks ?
+        <div>
+          <Field
+            name="trackerProperties.linkDownloadFileTypes"
+            component={ TagListEditor }
+            title="Download Extensions"
+            tooltip="Some tooltip"
+          />
+        </div> : null
+      }
+    </section>
+    <section className="LinkTracking-section u-gapTop">
+      <Heading size="4">Outbound Links</Heading>
+      <CoralField
+        name="trackerProperties.trackExternalLinks"
+        component={ Checkbox }
       >
-        Keep URL Parameters
-      </Checkbox>
-    </div>
-  );
-}
+        Track outbound links
+      </CoralField>
+      { trackExternalLinks ?
+        <div>
+          <Field
+            name="trackerProperties.linkExternalFilters"
+            component={ TagListEditor }
+            title="Track"
+            tooltip="Some tooltip"
+          />
+          <Field
+            name="trackerProperties.linkInternalFilters"
+            component={ TagListEditor }
+            title="Never Track"
+            tooltip="Some tooltip"
+          />
+        </div> : null
+      }
+    </section>
+    <CoralField
+      name="trackerProperties.linkLeaveQueryString"
+      component={ Checkbox }
+    >
+      Keep URL Parameters
+    </CoralField>
+  </div>
+);
+
+export default connect(
+  state => ({
+    trackDownloadLinks:
+      formValueSelector('default')(state, 'trackerProperties.trackDownloadLinks'),
+    trackExternalLinks:
+      formValueSelector('default')(state, 'trackerProperties.trackExternalLinks')
+  })
+)(LinkTracking);
 
 export const formConfig = {
-  fields: [
-    'trackerProperties.trackInlineStats',
-    'trackerProperties.trackDownloadLinks',
-    'trackerProperties.linkDownloadFileTypes',
-    'trackerProperties.trackExternalLinks',
-    'trackerProperties.linkExternalFilters',
-    'trackerProperties.linkInternalFilters',
-    'trackerProperties.linkLeaveQueryString'
-  ],
-  settingsToFormValues(values, options) {
+  settingsToFormValues(values, settings) {
     const {
       trackInlineStats,
       trackDownloadLinks,
@@ -96,7 +95,7 @@ export const formConfig = {
       linkExternalFilters,
       linkInternalFilters,
       linkLeaveQueryString
-    } = options.settings.trackerProperties || {};
+    } = settings.trackerProperties || {};
 
     return {
       ...values,

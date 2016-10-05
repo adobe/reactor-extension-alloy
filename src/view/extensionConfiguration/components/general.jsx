@@ -1,94 +1,70 @@
 import React from 'react';
-import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
 import Checkbox from '@coralui/react-coral/lib/Checkbox';
 import Textfield from '@coralui/react-coral/lib/Textfield';
+import Heading from '@coralui/react-coral/lib/Heading';
 
-import mergeFormConfigs from '../../utils/mergeFormConfigs';
-import openDataElementSelector from '../../utils/openDataElementSelector';
+import { mergeConfigs } from '../../utils/formConfigUtils';
 import CharSet, { formConfig as charSetFormConfig } from './charSet';
 import CurrencyCode, { formConfig as currencyCodeFormConfig } from './currencyCode';
 import ENVIRONMENTS from '../../enums/environments';
+import CoralField from '../../components/coralField';
 
-export default function General({ ...props }) {
-  const {
-    euComplianceEnabled,
-    trackerProperties: {
-      trackingServer,
-      trackingServerSecure
-    }
-  } = props.fields;
-
-  return (
+export default () => (
+  <div>
+    <CoralField
+      name="euComplianceEnabled"
+      component={ Checkbox }
+    >
+      Enable EU compliance for Adobe Analytics
+    </CoralField>
     <div>
-      <Checkbox
-        { ...euComplianceEnabled }
-      >
-        Enable EU compliance for Adobe Analytics
-      </Checkbox>
+      <Heading size="4">Character Set</Heading>
+      <CharSet />
+    </div>
+    <div>
+      <Heading size="4">Currency Code</Heading>
+      <CurrencyCode />
+    </div>
+    <div>
+      <span className="Label u-gapTop">Tracking Server</span>
       <div>
-        <h4 className="coral-Heading coral-Heading--4 u-gapTop">Character Set</h4>
-        <CharSet fields={ props.fields } />
-      </div>
-      <div>
-        <h4 className="coral-Heading coral-Heading--4 u-gapTop">Currency Code</h4>
-        <CurrencyCode fields={ props.fields } />
-      </div>
-      <div>
-        <span className="Label u-gapTop">Tracking Server</span>
-        <div>
-          <ValidationWrapper
-            type="trackingServer"
-            error={ trackingServer.touched && trackingServer.error }
-          >
-            <Textfield
-              className="Field--long"
-              { ...trackingServer }
-            />
-          </ValidationWrapper>
-          <DataElementSelectorButton
-            onClick={ openDataElementSelector.bind(this, trackingServer) }
-          />
-        </div>
-      </div>
-      <div>
-        <span className="Label u-gapTop">SSL Tracking Server</span>
-        <div>
-          <ValidationWrapper
-            type="trackingServerSecure"
-            error={ trackingServerSecure.touched && trackingServerSecure.error }
-          >
-            <Textfield
-              className="Field--long"
-              { ...trackingServerSecure }
-            />
-          </ValidationWrapper>
-          <DataElementSelectorButton
-            onClick={ openDataElementSelector.bind(this, trackingServerSecure) }
-          />
-        </div>
+        <CoralField
+          name="trackerProperties.trackingServer"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportValidation
+          supportDataElement
+        />
       </div>
     </div>
-  );
-}
+    <div>
+      <span className="Label u-gapTop">SSL Tracking Server</span>
+      <div>
+        <CoralField
+          name="trackerProperties.trackingServerSecure"
+          component={ Textfield }
+          componentClassName="Field--long"
+          supportValidation
+          supportDataElement
+        />
+      </div>
+    </div>
+  </div>
+);
 
-export const formConfig = mergeFormConfigs(
+export const formConfig = mergeConfigs(
   charSetFormConfig,
   currencyCodeFormConfig,
   {
-    fields: [
-      'euComplianceEnabled',
-      'trackerProperties.trackingServer',
-      'trackerProperties.trackingServerSecure'
-    ],
-    settingsToFormValues(values, options) {
+    settingsToFormValues(values, settings) {
       const {
         euComplianceEnabled
-      } = options.settings;
+      } = settings;
 
       const {
         trackingServer,
         trackingServerSecure
-      } = options.settings.trackerProperties || {};
+      } = settings.trackerProperties || {};
 
       return {
         ...values,

@@ -1,9 +1,11 @@
 import React from 'react';
-import { ValidationWrapper } from '@reactor/react-components';
 import { connect } from 'react-redux';
+import { formValueSelector } from 'redux-form';
 import Alert from '@coralui/react-coral/lib/Alert';
 import Radio from '@coralui/react-coral/lib/Radio';
 import Select from '@coralui/react-coral/lib/Select';
+import Heading from '@coralui/react-coral/lib/Heading';
+import CoralField from '../../components/coralField';
 
 const SELECTION_TYPES = {
   ALL: 'all',
@@ -14,18 +16,14 @@ export class ConfigurationSelector extends React.Component {
   render() {
     const {
       availableExtensionConfigurations,
-      fields: {
-        extensionConfigurationSelectionType,
-        extensionConfigurationIds
-      }
+      extensionConfigurationSelectionType
     } = this.props;
 
 
     if (!availableExtensionConfigurations || !availableExtensionConfigurations.length) {
       return (
         <Alert variant="warning" className={ this.props.className }>
-          Setting variables will only take effect once you have configured the
-          Adobe Analytics extension.
+          This feature will only take effect once you have created an extension configuration.
         </Alert>
       );
     } else if (availableExtensionConfigurations.length === 1) {
@@ -39,42 +37,36 @@ export class ConfigurationSelector extends React.Component {
 
     return (
       <div className={ this.props.className }>
-        <h4 className="coral-Heading coral-Heading--4">
-          Apply variables for the following extension configurations
-        </h4>
+        { this.props.heading ? <Heading size="4">{ this.props.heading }</Heading> : null }
         <div>
-          <Radio
-            { ...extensionConfigurationSelectionType }
+          <CoralField
+            name="extensionConfigurationSelectionType"
+            component={ Radio }
             value={ SELECTION_TYPES.ALL }
-            checked={ extensionConfigurationSelectionType.value === SELECTION_TYPES.ALL }
           >
             All extension configurations
-          </Radio>
+          </CoralField>
         </div>
         <div>
-          <Radio
-            { ...extensionConfigurationSelectionType }
+          <CoralField
+            name="extensionConfigurationSelectionType"
+            component={ Radio }
             value={ SELECTION_TYPES.SUBSET }
-            checked={ extensionConfigurationSelectionType.value === SELECTION_TYPES.SUBSET }
           >
             Specific extension configurations
-          </Radio>
+          </CoralField>
+
           {
-            extensionConfigurationSelectionType.value === SELECTION_TYPES.SUBSET ?
+            extensionConfigurationSelectionType === SELECTION_TYPES.SUBSET ?
               <div className="FieldSubset u-gapTop">
-                <ValidationWrapper
-                  error={ extensionConfigurationIds.touched && extensionConfigurationIds.error }
-                >
-                  <Select
-                    { ...extensionConfigurationIds }
-                    onChange={ newValues => {
-                      extensionConfigurationIds.onChange(newValues.map(item => item.value));
-                    } }
-                    placeholder="Select Configuration"
-                    options={ selectOptions }
-                    multiple
-                  />
-                </ValidationWrapper>
+                <CoralField
+                  name="extensionConfigurationIds"
+                  component={ Select }
+                  placeholder="Select Configuration"
+                  options={ selectOptions }
+                  multiple
+                  supportValidation
+                />
               </div> : null
           }
         </div>
@@ -84,28 +76,17 @@ export class ConfigurationSelector extends React.Component {
 }
 
 export const stateToProps = state => ({
-  availableExtensionConfigurations: state.extensionConfigurations || []
+  availableExtensionConfigurations: state.meta.extensionConfigurations || [],
+  extensionConfigurationSelectionType:
+    formValueSelector('default')(state, 'extensionConfigurationSelectionType')
 });
 
 export default connect(stateToProps)(ConfigurationSelector);
 
 export const formConfig = {
-  fields: [
-    'extensionConfigurationSelectionType',
-    'extensionConfigurationIds'
-  ],
-  settingsToFormValues(values, options) {
-    const {
-      extensionConfigurations: availableExtensionConfigurations
-    } = options;
-
-    let {
-      settings: {
-        extensionConfigurationIds = []
-      }
-    } = options;
-
-    extensionConfigurationIds = extensionConfigurationIds.filter(
+  settingsToFormValues(values, settings, meta) {
+    const availableExtensionConfigurations = meta.extensionConfigurations || [];
+    const extensionConfigurationIds = (settings.extensionConfigurationIds || []).filter(
       id => availableExtensionConfigurations.some(
         availableConfiguration => availableConfiguration.id === id
       )

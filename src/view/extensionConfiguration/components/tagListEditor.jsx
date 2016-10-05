@@ -7,6 +7,8 @@ import { DataElementSelectorButton, InfoTip } from '@reactor/react-components';
 import React from 'react';
 import addDataElementToken from '../../utils/addDataElementToken';
 
+import './tagListEditor.styl';
+
 export default class TagListEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -15,8 +17,15 @@ export default class TagListEditor extends React.Component {
     };
   }
 
-  onRemove = (removedValue) => {
-    this.props.onChange(this.props.value.filter((value) => value !== removedValue));
+  onRemove = removedValue => {
+    const {
+      input: {
+        value,
+        onChange
+      }
+    } = this.props;
+
+    onChange(value.filter(val => val !== removedValue));
   };
 
   onNewValueChange = event => {
@@ -27,11 +36,18 @@ export default class TagListEditor extends React.Component {
   };
 
   add = () => {
+    const {
+      input: {
+        value,
+        onChange
+      }
+    } = this.props;
+
     if (this.state.newValue) {
-      if (!this.valueAlreadyExists(this.props.value || [], this.state.newValue)) {
-        const values = this.props.value || [];
+      const values = value || [];
+      if (!this.valueAlreadyExists(values, this.state.newValue)) {
         values.push(this.state.newValue);
-        this.props.onChange(values);
+        onChange(values);
       }
 
       this.setState({
@@ -59,13 +75,19 @@ export default class TagListEditor extends React.Component {
   valueAlreadyExists = (values, newValue) => values.some(value => value === newValue);
 
   render() {
-    const value = this.props.value || [];
+    const {
+      title,
+      tooltip,
+      input: {
+        value
+      }
+    } = this.props;
 
     return (
       <div className="TagListEditor">
-        <label className="Label">{ this.props.title }</label>
+        <label className="Label">{ title }</label>
         {
-          this.props.tooltip ? <InfoTip>{ this.props.tooltip }</InfoTip> : null
+          tooltip ? <InfoTip>{ tooltip }</InfoTip> : null
         }
         <div>
           <Textfield
@@ -75,16 +97,16 @@ export default class TagListEditor extends React.Component {
             value={ this.state.newValue }
           />
           <DataElementSelectorButton onClick={ this.openSelector } />
-          <Button type="addButton" onClick={ this.add }>Add</Button>
+          <Button onClick={ this.add }>Add</Button>
           <div className="u-gapTop">
             <TagList
               onClose={ this.onRemove }
             >
-              { value.map(
-                (tag) => (
-                  <Tag className="TagListEditor-tag" key={ tag } title={ tag }>{ tag }</Tag>
-                )
-              ) }
+              {
+                value ? value.map(
+                  tag => <Tag className="TagListEditor-tag" key={ tag } title={ tag }>{ tag }</Tag>
+                ) : null
+              }
             </TagList>
           </div>
         </div>

@@ -1,12 +1,18 @@
 import React from 'react';
-import { ValidationWrapper, ErrorTip, InfoTip } from '@reactor/react-components';
-import Button from '@coralui/react-coral/lib/Button';
+import { InfoTip } from '@reactor/react-components';
 import Checkbox from '@coralui/react-coral/lib/Checkbox';
 import Radio from '@coralui/react-coral/lib/Radio';
 import Textfield from '@coralui/react-coral/lib/Textfield';
+import Heading from '@coralui/react-coral/lib/Heading';
+import { connect } from 'react-redux';
+import { formValueSelector, Field } from 'redux-form';
 
 import ENVIRONMENTS from '../../enums/environments';
 import ReportSuite from './reportSuite';
+import CodeField from '../../components/codeField';
+import CoralField from '../../components/coralField';
+
+import './libraryManagement.styl';
 
 const LIB_TYPES = {
   MANAGED: 'managed',
@@ -20,259 +26,217 @@ const LOAD_PHASES = {
   PAGE_BOTTOM: 'pageBottom'
 };
 
-const ReportSuites = props => (
+const ReportSuites = () => (
   <section className="ReportSuites-container">
-    <h4 className="coral-Heading coral-Heading--4">
+    <Heading size="4">
       Report Suites
       <InfoTip>Some tooltip</InfoTip>
-    </h4>
+    </Heading>
 
     <section className="ReportSuites-fieldsContainer">
-      <ReportSuite
+      <Field
+        name="libraryCode.accounts.production"
         label="Production Report Suite(s)"
-        { ...props.production }
+        component={ ReportSuite }
       />
-      <ReportSuite
+
+      <Field
+        name="libraryCode.accounts.staging"
         label="Staging Report Suite(s)"
-        { ...props.staging }
+        component={ ReportSuite }
       />
-      <ReportSuite
+
+      <Field
+        name="libraryCode.accounts.development"
         label="Development Report Suite(s)"
-        { ...props.development }
+        component={ ReportSuite }
       />
     </section>
   </section>
 );
 
-const LoadPhase = props => {
-  const { loadPhase } = props.fields.libraryCode;
-
-  return (
-    <div className={ props.className }>
-      <fieldset>
-        <legend><span className="Label">Load library at:</span></legend>
-        <div>
-          <Radio
-            { ...loadPhase }
-            value={ LOAD_PHASES.PAGE_TOP }
-            checked={ loadPhase.value === LOAD_PHASES.PAGE_TOP }
-          >Page Top</Radio>
-          <Radio
-            { ...loadPhase }
-            value={ LOAD_PHASES.PAGE_BOTTOM }
-            checked={ loadPhase.value === LOAD_PHASES.PAGE_BOTTOM }
-          >Page Bottom</Radio>
-        </div>
-      </fieldset>
-    </div>
-  );
-};
-
-const TrackerVariableName = props => {
-  const { trackerVariableName } = props.fields.libraryCode;
-
-  return (
-    <ValidationWrapper
-      className={ props.className }
-      error={ trackerVariableName.touched && trackerVariableName.error }
-    >
-      <label>
-        <span className="Label">Tracker is accessible on the global variable named:</span>
-        <Textfield className="u-gapLeft" { ...trackerVariableName } />
-      </label>
-    </ValidationWrapper>
-  );
-};
-
-const OverwriteReportSuites = props => {
-  const { libraryCode } = props.fields;
-
-  return (
-    <div className={ props.className }>
-      <Checkbox
-        { ...libraryCode.showReportSuites }
-      >
-        Set the following report suites on tracker
-      </Checkbox>
-      {
-        libraryCode.showReportSuites.value ?
-          <ReportSuites { ...libraryCode.accounts } /> : null
-      }
-    </div>
-  );
-};
-
-export default class LibraryManagement extends React.Component {
-  onOpenEditor = () => {
-    const sourceField = this.props.fields.libraryCode.source;
-    window.extensionBridge.openCodeEditor(sourceField.value, sourceField.onChange);
-  };
-
-  render() {
-    const {
-      type,
-      httpUrl,
-      httpsUrl,
-      source
-    } = this.props.fields.libraryCode;
-
-    return (
+const LoadPhase = ({ className }) => (
+  <div className={ className }>
+    <fieldset>
+      <legend><span className="Label">Load library at:</span></legend>
       <div>
-        <Radio
-          { ...type }
-          value={ LIB_TYPES.MANAGED }
-          checked={ type.value === LIB_TYPES.MANAGED }
+        <CoralField
+          name="libraryCode.loadPhase"
+          component={ Radio }
+          value={ LOAD_PHASES.PAGE_TOP }
         >
-          Manage the library for me
-        </Radio>
-        {
-          type.value === LIB_TYPES.MANAGED ?
-            <div className="FieldSubset">
-              <ReportSuites { ...this.props.fields.libraryCode.accounts } />
-              <LoadPhase fields={ this.props.fields } />
-            </div> : null
-        }
+          Page Top
+        </CoralField>
 
-        <div>
-          <Radio
-            { ...type }
-            value={ LIB_TYPES.PREINSTALLED }
-            checked={ type.value === LIB_TYPES.PREINSTALLED }
-          >
-            Use the library already installed on the page
-          </Radio>
-        </div>
-        {
-          type.value === LIB_TYPES.PREINSTALLED ?
-            <div className="FieldSubset">
-              <OverwriteReportSuites
-                fields={ this.props.fields }
-                className="u-gapBottom"
-              />
-              <TrackerVariableName fields={ this.props.fields } />
-            </div> : null
-        }
-
-        <div>
-          <Radio
-            { ...type }
-            value={ LIB_TYPES.REMOTE }
-            checked={ type.value === LIB_TYPES.REMOTE }
-          >
-            Load the library from a custom URL
-          </Radio>
-        </div>
-        {
-          type.value === LIB_TYPES.REMOTE ?
-            <div className="FieldSubset">
-              <div className="u-gapBottom">
-                <label>
-                  <span className="Label">HTTP URL:</span>
-                  <div>
-                    <ValidationWrapper
-                      type="httpUrl"
-                      error={ httpUrl.touched && httpUrl.error }
-                    >
-                      <Textfield
-                        { ...httpUrl }
-                        className="Field--long"
-                        placeholder="http://"
-                      />
-                    </ValidationWrapper>
-                  </div>
-                </label>
-                <label>
-                  <span className="Label u-gapTop">HTTPS URL:</span>
-                  <div>
-                    <ValidationWrapper
-                      type="httpsUrl"
-                      error={ httpsUrl.touched && httpsUrl.error }
-                    >
-                      <Textfield
-                        { ...httpsUrl }
-                        className="Field--long"
-                        placeholder="https://"
-                      />
-                    </ValidationWrapper>
-                  </div>
-                </label>
-              </div>
-              <OverwriteReportSuites
-                fields={ this.props.fields }
-                className="u-block u-gapBottom"
-              />
-              <TrackerVariableName
-                fields={ this.props.fields }
-                className="u-block u-gapBottom"
-              />
-              <LoadPhase fields={ this.props.fields } />
-            </div> : null
-        }
-
-        <div>
-          <Radio
-            { ...type }
-            value={ LIB_TYPES.CUSTOM }
-            checked={ type.value === LIB_TYPES.CUSTOM }
-          >
-            Let me provide custom library code
-          </Radio>
-        </div>
-        {
-          type.value === LIB_TYPES.CUSTOM ?
-            <div className="FieldSubset">
-              <div className="u-gapBottom">
-                <Button icon="code" onClick={ this.onOpenEditor }>
-                  Open Editor
-                </Button>
-                {
-                  source.touched && source.error ?
-                    <ErrorTip>{ source.error }</ErrorTip> : null
-                }
-              </div>
-              <OverwriteReportSuites
-                fields={ this.props.fields }
-                className="u-block u-gapBottom"
-              />
-              <TrackerVariableName
-                fields={ this.props.fields }
-                className="u-block u-gapBottom"
-              />
-              <LoadPhase fields={ this.props.fields } />
-            </div> : null
-        }
+        <CoralField
+          name="libraryCode.loadPhase"
+          component={ Radio }
+          value={ LOAD_PHASES.PAGE_BOTTOM }
+        >
+          Page Bottom
+        </CoralField>
       </div>
-    );
-  }
-}
+    </fieldset>
+  </div>
+);
 
-const forcePrefix = (str, prefix) => (!str || str.indexOf(prefix) === 0 ? str : prefix + str);
+const TrackerVariableName = ({ className }) => (
+  <div className={ className }>
+    <label>
+      <span className="Label">Tracker is accessible on the global variable named:</span>
+      <CoralField
+        name="libraryCode.trackerVariableName"
+        component={ Textfield }
+        componentClassName="u-gapLeft"
+        supportValidation
+      />
+    </label>
+  </div>
+);
+
+let OverwriteReportSuites = ({ className, showReportSuites }) => (
+  <div className={ className }>
+    <CoralField
+      name="libraryCode.showReportSuites"
+      component={ Checkbox }
+    >
+      Set the following report suites on tracker
+    </CoralField>
+
+    {
+      showReportSuites ? <ReportSuites /> : null
+    }
+  </div>
+);
+
+OverwriteReportSuites = connect(
+  state => ({
+    showReportSuites: formValueSelector('default')(state, 'libraryCode.showReportSuites')
+  })
+)(OverwriteReportSuites);
+
+const LibraryManagement = ({ type }) => (
+  <div>
+    <CoralField
+      name="libraryCode.type"
+      component={ Radio }
+      value={ LIB_TYPES.MANAGED }
+    >
+      Manage the library for me
+    </CoralField>
+
+    {
+      type === LIB_TYPES.MANAGED ?
+        <div className="FieldSubset">
+          <ReportSuites />
+          <LoadPhase />
+        </div> : null
+    }
+
+    <div>
+      <CoralField
+        name="libraryCode.type"
+        component={ Radio }
+        value={ LIB_TYPES.PREINSTALLED }
+      >
+        Use the library already installed on the page
+      </CoralField>
+    </div>
+    {
+      type === LIB_TYPES.PREINSTALLED ?
+        <div className="FieldSubset">
+          <OverwriteReportSuites className="u-gapBottom" />
+          <TrackerVariableName />
+        </div> : null
+    }
+
+    <div>
+      <CoralField
+        name="libraryCode.type"
+        component={ Radio }
+        value={ LIB_TYPES.REMOTE }
+      >
+        Load the library from a custom URL
+      </CoralField>
+    </div>
+    {
+      type === LIB_TYPES.REMOTE ?
+        <div className="FieldSubset">
+          <div className="u-gapBottom">
+            <label>
+              <span className="Label">HTTP URL:</span>
+              <div>
+                <CoralField
+                  name="libraryCode.httpUrl"
+                  component={ Textfield }
+                  componentClassName="Field--long"
+                  placeholder="http://"
+                  supportValidation
+                />
+              </div>
+            </label>
+            <label>
+              <span className="Label u-gapTop">HTTPS URL:</span>
+              <div>
+                <CoralField
+                  name="libraryCode.httpsUrl"
+                  component={ Textfield }
+                  componentClassName="Field--long"
+                  placeholder="https://"
+                  supportValidation
+                />
+              </div>
+            </label>
+          </div>
+          <OverwriteReportSuites className="u-block u-gapBottom" />
+          <TrackerVariableName className="u-block u-gapBottom" />
+          <LoadPhase />
+        </div> : null
+    }
+
+    <div>
+      <CoralField
+        name="libraryCode.type"
+        component={ Radio }
+        value={ LIB_TYPES.CUSTOM }
+      >
+        Let me provide custom library code
+      </CoralField>
+    </div>
+    {
+      type === LIB_TYPES.CUSTOM ?
+        <div className="FieldSubset">
+          <div className="u-gapBottom">
+            <CodeField name="libraryCode.source" />
+          </div>
+          <OverwriteReportSuites className="u-block u-gapBottom" />
+          <TrackerVariableName className="u-block u-gapBottom" />
+          <LoadPhase />
+        </div> : null
+    }
+  </div>
+);
+
+export default connect(
+  state => ({
+    type: formValueSelector('default')(state, 'libraryCode.type')
+  })
+)(LibraryManagement);
+
+const forceProtocolPrefix = (str, prefix) =>
+  (!str || str.indexOf(prefix) === 0 ? str : prefix + str);
 
 export const formConfig = {
-  fields: [
-    'libraryCode.type',
-    'libraryCode.accounts.production',
-    'libraryCode.accounts.staging',
-    'libraryCode.accounts.development',
-    'libraryCode.showReportSuites',
-    'libraryCode.trackerVariableName',
-    'libraryCode.loadPhase',
-    'libraryCode.reportSuitesPreconfigured',
-    'libraryCode.httpUrl',
-    'libraryCode.httpsUrl',
-    'libraryCode.source'
-  ],
-  settingsToFormValues(values, options) {
+  settingsToFormValues(values, settings) {
     const {
       accounts,
       type,
       trackerVariableName,
       loadPhase,
-      reportSuitesPreconfigured,
       httpUrl,
       httpsUrl,
       source
-    } = options.settings.libraryCode || {};
+    } = settings.libraryCode || {};
 
     const showReportSuites = Boolean(type !== LIB_TYPES.MANAGED && accounts);
 
@@ -282,7 +246,6 @@ export const formConfig = {
         type: type || LIB_TYPES.MANAGED,
         trackerVariableName: trackerVariableName || 's',
         loadPhase: loadPhase || LOAD_PHASES.PAGE_BOTTOM,
-        reportSuitesPreconfigured,
         accounts,
         showReportSuites,
         httpUrl,
@@ -296,7 +259,6 @@ export const formConfig = {
       type,
       trackerVariableName,
       loadPhase,
-      reportSuitesPreconfigured,
       httpUrl,
       httpsUrl,
       source,
@@ -333,14 +295,12 @@ export const formConfig = {
     }
 
     if (type === LIB_TYPES.REMOTE) {
-      libraryCodeSettings.httpUrl = forcePrefix(httpUrl || '', 'http://');
-      libraryCodeSettings.httpsUrl = forcePrefix(httpsUrl || '', 'https://');
-      libraryCodeSettings.reportSuitesPreconfigured = reportSuitesPreconfigured;
+      libraryCodeSettings.httpUrl = forceProtocolPrefix(httpUrl || '', 'http://');
+      libraryCodeSettings.httpsUrl = forceProtocolPrefix(httpsUrl || '', 'https://');
     }
 
     if (type === LIB_TYPES.CUSTOM) {
       libraryCodeSettings.source = source;
-      libraryCodeSettings.reportSuitesPreconfigured = reportSuitesPreconfigured;
     }
 
     return {
@@ -348,16 +308,16 @@ export const formConfig = {
       libraryCode: libraryCodeSettings
     };
   },
-  validate(errors, values = { libraryCode: { accounts: {} } }) {
+  validate(errors, values) {
     const {
-      accounts,
+      accounts = {},
       showReportSuites,
       type,
       trackerVariableName,
       httpUrl,
       httpsUrl,
       source
-    } = values.libraryCode;
+    } = values.libraryCode || {};
 
     const libraryCodeErrors = {};
 
