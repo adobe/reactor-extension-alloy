@@ -60,7 +60,7 @@
     "reduce-reducers": "^0.1.2",
     "redux": "^3.5.2",
     "redux-actions": "^0.10.1",
-    "redux-form": "6.0.5",
+    "redux-form": "6.1.0",
     "style-loader": "^0.13.1",
     "stylus-loader": "^2.2.0"
   }

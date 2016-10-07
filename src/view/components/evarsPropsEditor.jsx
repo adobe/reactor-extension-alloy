@@ -58,6 +58,21 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
   const rows = fields.map((field, index) => {
     const { type } = variables[index];
 
+    let valueFieldProps;
+
+    if (type === TYPES.VALUE) {
+      valueFieldProps = {
+        inputComponent: Textfield,
+        supportDataElement: true
+      };
+    } else {
+      valueFieldProps = {
+        inputComponent: Autocomplete,
+        placeholder: 'Select variable',
+        options: valueOptions
+      };
+    }
+
     return (
       <div
         data-row
@@ -87,11 +102,8 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
           // set all the same props for all types. It will throw a warning though, sadly. :(
           name={ `${field}.value` }
           component={ DecoratedInput }
-          inputComponent={ type === TYPES.VALUE ? Textfield : Autocomplete }
           inputClassName="Field--short"
-          placeholder={ type === TYPES.VALUE ? '' : 'Select variable' }
-          options={ valueOptions }
-          supportDataElement={ type === TYPES.VALUE }
+          { ...valueFieldProps }
         />
 
         <Button
