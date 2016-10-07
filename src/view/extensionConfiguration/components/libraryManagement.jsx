@@ -10,7 +10,7 @@ import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInp
 
 import ENVIRONMENTS from '../../enums/environments';
 import ReportSuite from './reportSuite';
-import CodeField from '../../components/codeField';
+import EditorButton from '../../components/editorButton';
 
 import './libraryManagement.styl';
 
@@ -213,7 +213,10 @@ const LibraryManagement = ({ type }) => (
       type === LIB_TYPES.CUSTOM ?
         <div className="FieldSubset">
           <div className="u-gapBottom">
-            <CodeField name="libraryCode.source" />
+            <Field
+              name="libraryCode.source"
+              component={ EditorButton }
+            />
           </div>
           <OverwriteReportSuites className="u-block u-gapBottom" />
           <TrackerVariableName className="u-block u-gapBottom" />

@@ -2,7 +2,7 @@ import React from 'react';
 import Radio from '@coralui/redux-form-react-coral/lib/Radio';
 import { Field, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
-import CodeField from './codeField';
+import EditorButton from './editorButton';
 
 const LOAD_PHASES = {
   BEFORE_SETTINGS: 'beforeSettings',
@@ -22,7 +22,10 @@ const CustomSetup = ({ showLoadPhase = true, source }) => (
       <li><i>s</i> - The tracker object.</li>
     </ul>
 
-    <CodeField name="customSetup.source" />
+    <Field
+      name="customSetup.source"
+      component={ EditorButton }
+    />
 
     { showLoadPhase && source ?
       <div>

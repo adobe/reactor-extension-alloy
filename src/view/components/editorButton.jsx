@@ -1,5 +1,4 @@
 import React from 'react';
-import { Field as ReduxFormField } from 'redux-form';
 import Button from '@coralui/react-coral/lib/Button';
 import { ErrorTip } from '@reactor/react-components';
 
@@ -26,7 +25,13 @@ class EditorButton extends React.Component {
 
     return (
       <span>
-        <Button icon="code" className={ className } onClick={ this.onClick }>Open Editor</Button>
+        <Button
+          icon="code"
+          className={ className }
+          onClick={ this.onClick }
+        >
+          Open Editor
+        </Button>
 
         {
           touched && error ? <ErrorTip>{ error }</ErrorTip> : null
@@ -36,8 +41,4 @@ class EditorButton extends React.Component {
   }
 }
 
-const CodeField = props => (
-  <ReduxFormField component={ EditorButton } { ...props } />
-);
-
-export default CodeField;
+export default EditorButton;
