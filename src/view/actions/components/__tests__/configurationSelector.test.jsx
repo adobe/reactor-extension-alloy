@@ -2,7 +2,7 @@ import { mount } from 'enzyme';
 import Alert from '@coralui/react-coral/lib/Alert';
 import Radio from '@coralui/react-coral/lib/Radio';
 import Select from '@coralui/react-coral/lib/Select';
-import { ValidationWrapper } from '@reactor/react-components';
+import ErrorTip from '@reactor/react-components/lib/errorTip';
 
 import ConfigurationSelector, { formConfig } from '../configurationSelector';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
@@ -12,13 +12,13 @@ const getReactComponents = (wrapper) => {
   const subsetExtensionConfigurationRadio =
     wrapper.find(Radio).filterWhere(n => n.prop('value') === 'subset').node;
   const extensionConfigurationIdsSelect = wrapper.find(Select).node;
-  const extensionConfigurationIdsWrapper = wrapper.find(ValidationWrapper).node;
+  const extensionConfigurationIdsErrorTip = wrapper.find(ErrorTip).node;
   const noConfiguraionAlert = wrapper.find(Alert).node;
 
   return {
     subsetExtensionConfigurationRadio,
     extensionConfigurationIdsSelect,
-    extensionConfigurationIdsWrapper,
+    extensionConfigurationIdsErrorTip,
     noConfiguraionAlert
   };
 };
@@ -81,10 +81,11 @@ describe('configuration selector', () => {
     const { subsetExtensionConfigurationRadio } = getReactComponents(instance);
     subsetExtensionConfigurationRadio.props.onChange('subset');
 
-    const { extensionConfigurationIdsWrapper } = getReactComponents(instance);
-
     expect(extensionBridge.validate()).toBe(false);
-    expect(extensionConfigurationIdsWrapper.props.error).toEqual(jasmine.any(String));
+
+    const { extensionConfigurationIdsErrorTip } = getReactComponents(instance);
+
+    expect(extensionConfigurationIdsErrorTip).toBeDefined();
   });
 
   it('shows a warning when no extension configuration is present', () => {

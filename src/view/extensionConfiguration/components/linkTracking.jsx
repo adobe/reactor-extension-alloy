@@ -1,11 +1,10 @@
 import React from 'react';
-import Checkbox from '@coralui/react-coral/lib/Checkbox';
+import Checkbox from '@coralui/redux-form-react-coral/lib/Checkbox';
 import Heading from '@coralui/react-coral/lib/Heading';
 import { connect } from 'react-redux';
 import { formValueSelector, Field } from 'redux-form';
 
 import TagListEditor from './tagListEditor';
-import CoralField from '../../components/coralField';
 
 import './linkTracking.styl';
 
@@ -16,21 +15,21 @@ const DEFAULT_INTERNAL_FILTERS = ['javascript:', 'tel:', 'mailto:'];
 
 const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
   <div>
-    <CoralField
+    <Field
       name="trackerProperties.trackInlineStats"
       component={ Checkbox }
     >
       Enable ClickMap
-    </CoralField>
+    </Field>
 
     <section className="LinkTracking-section">
       <Heading size="4">Downloads</Heading>
-      <CoralField
+      <Field
         name="trackerProperties.trackDownloadLinks"
         component={ Checkbox }
       >
         Track download links
-      </CoralField>
+      </Field>
       { trackDownloadLinks ?
         <div>
           <Field
@@ -44,12 +43,12 @@ const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
     </section>
     <section className="LinkTracking-section u-gapTop">
       <Heading size="4">Outbound Links</Heading>
-      <CoralField
+      <Field
         name="trackerProperties.trackExternalLinks"
         component={ Checkbox }
       >
         Track outbound links
-      </CoralField>
+      </Field>
       { trackExternalLinks ?
         <div>
           <Field
@@ -67,12 +66,12 @@ const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
         </div> : null
       }
     </section>
-    <CoralField
+    <Field
       name="trackerProperties.linkLeaveQueryString"
       component={ Checkbox }
     >
       Keep URL Parameters
-    </CoralField>
+    </Field>
   </div>
 );
 

@@ -1,12 +1,11 @@
 import React from 'react';
 import Button from '@coralui/react-coral/lib/Button';
-import Textfield from '@coralui/react-coral/lib/Textfield';
-import Select from '@coralui/react-coral/lib/Select';
-import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
-import { FieldArray, formValueSelector, change } from 'redux-form';
+import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
+import Select from '@coralui/redux-form-react-coral/lib/Select';
+import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
+import { Field, FieldArray, formValueSelector, change } from 'redux-form';
 import { connect } from 'react-redux';
-
-import CoralField from './coralField';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 
 // TODO: Replace with actual values from user's product level.
 const maxItems = {
@@ -59,41 +58,52 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
   const rows = fields.map((field, index) => {
     const { type } = variables[index];
 
+    let valueFieldProps;
+
+    if (type === TYPES.VALUE) {
+      valueFieldProps = {
+        inputComponent: Textfield,
+        supportDataElement: true
+      };
+    } else {
+      valueFieldProps = {
+        inputComponent: Autocomplete,
+        placeholder: 'Select variable',
+        options: valueOptions
+      };
+    }
+
     return (
       <div
         data-row
         key={ index }
         className="u-gapBottom2x"
       >
-        <CoralField
+        <Field
           name={ `${field}.name` }
           className="u-gapRight2x"
-          component={ Autocomplete }
-          componentClassName="Field--short"
+          component={ DecoratedInput }
+          inputComponent={ Autocomplete }
+          inputClassName="Field--short"
           placeholder={ `Select ${varType}` }
           options={ nameOptions }
-          supportValidation
         />
 
-        <CoralField
-          // Because of https://github.com/erikras/redux-form/issues/1785 we have to
-          // set all the same props for all types. It will throw a warning though, sadly. :(
+        <Field
           name={ `${field}.type` }
-          className="u-gapRight2x"
+          className="u-gapRight2x Field--short"
           component={ Select }
-          componentClassName="Field--short"
           options={ typeOptions }
           onChange={ () => dispatch(change('default', `${field}.value`, '')) }
         />
 
-        <CoralField
+        <Field
+          // Because of https://github.com/erikras/redux-form/issues/1785 we have to
+          // set all the same props for all types. It will throw a warning though, sadly. :(
           name={ `${field}.value` }
-          component={ type === TYPES.VALUE ? Textfield : Autocomplete }
-          componentClassName="Field--short"
-          placeholder={ type === TYPES.VALUE ? '' : 'Select variable' }
-          options={ valueOptions }
-          supportValidation
-          supportDataElement={ type === TYPES.VALUE }
+          component={ DecoratedInput }
+          inputClassName="Field--short"
+          { ...valueFieldProps }
         />
 
         <Button

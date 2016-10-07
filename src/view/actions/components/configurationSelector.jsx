@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { formValueSelector } from 'redux-form';
+import { Field, formValueSelector } from 'redux-form';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 import Alert from '@coralui/react-coral/lib/Alert';
-import Radio from '@coralui/react-coral/lib/Radio';
-import Select from '@coralui/react-coral/lib/Select';
+import Radio from '@coralui/redux-form-react-coral/lib/Radio';
+import Select from '@coralui/redux-form-react-coral/lib/Select';
 import Heading from '@coralui/react-coral/lib/Heading';
-import CoralField from '../../components/coralField';
 
 const SELECTION_TYPES = {
   ALL: 'all',
@@ -39,33 +39,35 @@ export class ConfigurationSelector extends React.Component {
       <div className={ this.props.className }>
         { this.props.heading ? <Heading size="4">{ this.props.heading }</Heading> : null }
         <div>
-          <CoralField
+          <Field
             name="extensionConfigurationSelectionType"
             component={ Radio }
+            type="radio"
             value={ SELECTION_TYPES.ALL }
           >
             All extension configurations
-          </CoralField>
+          </Field>
         </div>
         <div>
-          <CoralField
+          <Field
             name="extensionConfigurationSelectionType"
             component={ Radio }
+            type="radio"
             value={ SELECTION_TYPES.SUBSET }
           >
             Specific extension configurations
-          </CoralField>
+          </Field>
 
           {
             extensionConfigurationSelectionType === SELECTION_TYPES.SUBSET ?
               <div className="FieldSubset u-gapTop">
-                <CoralField
+                <Field
                   name="extensionConfigurationIds"
-                  component={ Select }
+                  component={ DecoratedInput }
+                  inputComponent={ Select }
                   placeholder="Select Configuration"
                   options={ selectOptions }
                   multiple
-                  supportValidation
                 />
               </div> : null
           }

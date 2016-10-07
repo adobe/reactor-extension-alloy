@@ -3,13 +3,13 @@ import Checkbox from '@coralui/react-coral/lib/Checkbox';
 import Radio from '@coralui/react-coral/lib/Radio';
 import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
-import { ValidationWrapper, ErrorTip } from '@reactor/react-components';
+import ErrorTip from '@reactor/react-components/lib/errorTip';
+import { Field } from 'redux-form';
 
 import ReportSuite from './../reportSuite';
 import LibraryManagement, { formConfig } from '../libraryManagement';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
 import bootstrap from '../../../bootstrap';
-import CoralField from '../../../components/coralField';
 
 const getReactComponents = (wrapper) => {
   const [
@@ -29,22 +29,22 @@ const getReactComponents = (wrapper) => {
 
   const trackerVariableNameTextfield =
     wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('trackerVariableName')).node;
-  const httpUrlTextfield =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('httpUrl')).node;
-  const httpsUrlTextfield =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('httpsUrl')).node;
+
+  const httpUrlField = wrapper.find(Field).filterWhere(n => n.prop('name').includes('httpUrl'));
+  const httpUrlTextfield = httpUrlField.find(Textfield).node;
+  const httpUrlErrorTip = httpUrlField.find(ErrorTip).node;
+
+  const httpsUrlField = wrapper.find(Field).filterWhere(n => n.prop('name').includes('httpsUrl'));
+  const httpsUrlTextfield = httpsUrlField.find(Textfield).node;
+  const httpsUrlErrorTip = httpsUrlField.find(ErrorTip).node;
+
   const showReportSuitesCheckbox =
     wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('showReportSuites')).node;
 
-  const httpUrlWrapper =
-    wrapper.find(CoralField).filterWhere(n => n.prop('name').includes('httpUrl'))
-      .find(ValidationWrapper).node;
-  const httpsUrlWrapper =
-    wrapper.find(CoralField).filterWhere(n => n.prop('name').includes('httpsUrl'))
-      .find(ValidationWrapper).node;
 
-  const openEditorButton = wrapper.find(Button).filterWhere(n => n.prop('icon') === 'code').node;
-  const sourceErrorIcon = wrapper.find(ErrorTip).node;
+  const sourceField = wrapper.find(Field).filterWhere(n => n.prop('name') === 'libraryCode.source');
+  const openEditorButton = sourceField.find(Button).node;
+  const sourceErrorTip = wrapper.find(ErrorTip).node;
 
   return {
     productionReportSuite,
@@ -53,15 +53,15 @@ const getReactComponents = (wrapper) => {
     pageBottomLoadPhaseRadio,
     trackerVariableNameTextfield,
     httpUrlTextfield,
+    httpUrlErrorTip,
     httpsUrlTextfield,
+    httpsUrlErrorTip,
     showReportSuitesCheckbox,
     typePreinstalledRadio,
     typeRemoteRadio,
     typeCustomRadio,
     openEditorButton,
-    httpUrlWrapper,
-    httpsUrlWrapper,
-    sourceErrorIcon
+    sourceErrorTip
   };
 };
 
@@ -467,10 +467,11 @@ describe('libary management', () => {
     const { typeRemoteRadio } = getReactComponents(instance);
     typeRemoteRadio.props.onChange('remote');
 
-    const { httpUrlWrapper } = getReactComponents(instance);
-
     expect(extensionBridge.validate()).toBe(false);
-    expect(httpUrlWrapper.props.error).toEqual(jasmine.any(String));
+
+    const { httpUrlErrorTip } = getReactComponents(instance);
+
+    expect(httpUrlErrorTip).toBeDefined();
   });
 
   it('sets error if the https url is not provided', () => {
@@ -479,10 +480,11 @@ describe('libary management', () => {
     const { typeRemoteRadio } = getReactComponents(instance);
     typeRemoteRadio.props.onChange('remote');
 
-    const { httpsUrlWrapper } = getReactComponents(instance);
-
     expect(extensionBridge.validate()).toBe(false);
-    expect(httpsUrlWrapper.props.error).toEqual(jasmine.any(String));
+
+    const { httpsUrlErrorTip } = getReactComponents(instance);
+
+    expect(httpsUrlErrorTip).toBeDefined();
   });
 
   it('sets error if source is empty', () => {
@@ -493,7 +495,7 @@ describe('libary management', () => {
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { sourceErrorIcon } = getReactComponents(instance);
-    expect(sourceErrorIcon.props.children).toBeDefined();
+    const { sourceErrorTip } = getReactComponents(instance);
+    expect(sourceErrorTip).toBeDefined();
   });
 });

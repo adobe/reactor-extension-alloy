@@ -1,10 +1,9 @@
 import React from 'react';
 import Button from '@coralui/react-coral/lib/Button';
-import Select from '@coralui/react-coral/lib/Select';
-import Textfield from '@coralui/react-coral/lib/Textfield';
-import { FieldArray } from 'redux-form';
-
-import CoralField from './coralField';
+import Select from '@coralui/redux-form-react-coral/lib/Select';
+import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
+import { Field, FieldArray } from 'redux-form';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 
 import './hierarchiesEditor.styl';
 
@@ -53,9 +52,10 @@ const renderHierarchySections = ({ fields }) => {
           /> : null
       }
 
-      <CoralField
+      <Field
         name={ `${field}` }
-        component={ Textfield }
+        component={ DecoratedInput }
+        inputComponent={ Textfield }
         supportDataElement
       />
     </div>
@@ -71,23 +71,23 @@ const renderHierarchySections = ({ fields }) => {
 const renderHierarchies = ({ fields }) => {
   const rows = fields.map((field, index) => (
     <div data-row key={ index } className="HierarchiesEditor-hierarchy">
-      <CoralField
+      <Field
         name={ `${field}.name` }
         className="u-gapRight2x"
-        component={ Select }
-        componentClassName="Field--short"
+        component={ DecoratedInput }
+        inputComponent={ Select }
+        inputClassName="Field--short"
         options={ hierarchiesOptions }
-        supportValidation
       />
 
       <label>
         <span className="Label u-gapRight">Delimiter</span>
-        <CoralField
+        <Field
           name={ `${field}.delimiter` }
           className="u-gapRight"
-          component={ Textfield }
-          componentClassName="Field--short"
-          supportValidation
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--short"
         />
       </label>
 

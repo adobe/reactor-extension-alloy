@@ -1,22 +1,24 @@
 import { mount } from 'enzyme';
-import { ValidationWrapper } from '@reactor/react-components';
+import ErrorTip from '@reactor/react-components/lib/errorTip';
 import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import { Field } from 'redux-form';
 
 import EventsEditor, { formConfig } from '../eventsEditor';
-import CoralField from '../../components/coralField';
 import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
 import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const rows = wrapper.find('[data-row]').map(row => ({
-    nameAutocomplete: row.find(Autocomplete).node,
-    valueTextfield: row.find(Textfield).node,
-    removeButton: row.find(Button).last().node,
-    nameWrapper: row.find(CoralField).filterWhere(n => n.prop('name').includes('.name'))
-      .find(ValidationWrapper).node
-  }));
+  const rows = wrapper.find('[data-row]').map(row => {
+    const nameField = row.find(Field).filterWhere(n => n.prop('name').includes('.name'));
+    return {
+      nameAutocomplete: nameField.find(Autocomplete).node,
+      nameErrorTip: nameField.find(ErrorTip).node,
+      valueTextfield: row.find(Textfield).node,
+      removeButton: row.find(Button).last().node
+    };
+  });
 
   const addRowButton = wrapper.find(Button).last().node;
 
@@ -129,7 +131,7 @@ describe('events editor', () => {
     expect(extensionBridge.validate()).toBe(false);
 
     const { rows } = getReactComponents(instance);
-    expect(rows[1].nameWrapper.props.error).toEqual(jasmine.any(String));
+    expect(rows[1].nameErrorTip).toBeDefined();
   });
 
   it('shows an error when an event doesn\'t have a name', () => {
@@ -149,6 +151,6 @@ describe('events editor', () => {
     expect(extensionBridge.validate()).toBe(false);
 
     const { rows } = getReactComponents(instance);
-    expect(rows[0].nameWrapper.props.error).toEqual(jasmine.any(String));
+    expect(rows[0].nameErrorTip).toBeDefined();
   });
 });

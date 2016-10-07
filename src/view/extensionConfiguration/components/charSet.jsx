@@ -1,11 +1,11 @@
 import React from 'react';
-import Radio from '@coralui/react-coral/lib/Radio';
-import Select from '@coralui/react-coral/lib/Select';
-import Textfield from '@coralui/react-coral/lib/Textfield';
-import { change, formValueSelector } from 'redux-form';
+import Radio from '@coralui/redux-form-react-coral/lib/Radio';
+import Select from '@coralui/redux-form-react-coral/lib/Select';
+import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
+import { Field, change, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 
-import CoralField from '../../components/coralField';
 import CHAR_SET_PRESETS from '../../enums/charSets';
 
 const CHAR_SET_INPUT_METHOD = {
@@ -23,21 +23,22 @@ const presetOptions = CHAR_SET_PRESETS.map(preset => ({
 const CharSet = ({ dispatch, charSetInputMethod }) => (
   <div>
     <div>
-      <CoralField
+      <Field
         name="trackerProperties.charSetInputMethod"
         component={ Radio }
+        type="radio"
         value={ CHAR_SET_INPUT_METHOD.PRESET }
         onChange={
           () => dispatch(change('default', 'trackerProperties.charSet', CHAR_SET_DEFAULT))
         }
       >
         Preset
-      </CoralField>
+      </Field>
 
       {
         charSetInputMethod === CHAR_SET_INPUT_METHOD.PRESET ?
           <div className="FieldSubset">
-            <CoralField
+            <Field
               name="trackerProperties.charSet"
               component={ Select }
               options={ presetOptions }
@@ -46,23 +47,25 @@ const CharSet = ({ dispatch, charSetInputMethod }) => (
       }
     </div>
     <div>
-      <CoralField
+      <Field
         name="trackerProperties.charSetInputMethod"
         component={ Radio }
+        type="radio"
         value={ CHAR_SET_INPUT_METHOD.CUSTOM }
         onChange={
           () => dispatch(change('default', 'trackerProperties.charSet', ''))
         }
       >
         Custom
-      </CoralField>
+      </Field>
 
       {
         charSetInputMethod === CHAR_SET_INPUT_METHOD.CUSTOM ?
           <div className="FieldSubset">
-            <CoralField
+            <Field
               name="trackerProperties.charSet"
-              component={ Textfield }
+              component={ DecoratedInput }
+              inputComponent={ Textfield }
               supportDataElement
             />
           </div> : null

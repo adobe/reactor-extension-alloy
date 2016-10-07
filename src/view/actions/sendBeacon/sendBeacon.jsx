@@ -1,11 +1,11 @@
 import React from 'react';
-import Radio from '@coralui/react-coral/lib/Radio';
-import Select from '@coralui/react-coral/lib/Select';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Radio from '@coralui/redux-form-react-coral/lib/Radio';
+import Select from '@coralui/redux-form-react-coral/lib/Select';
+import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
 import Heading from '@coralui/react-coral/lib/Heading';
 import { connect } from 'react-redux';
-import { formValueSelector } from 'redux-form';
-import CoralField from '../../components/coralField';
+import { Field, formValueSelector } from 'redux-form';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 
 import ConfigurationSelector, { formConfig as configurationSelectorFormConfig } from '../components/configurationSelector';
 import { mergeConfigs } from '../../utils/formConfigUtils';
@@ -56,22 +56,24 @@ const SendBeacon = ({ type, linkType }) => {
       />
       <Heading size="4">Tracking</Heading>
       <div>
-        <CoralField
+        <Field
           name="type"
           component={ Radio }
+          type="radio"
           value={ TYPES.PAGE }
         >
           Increment a pageview<span className="SendBeacon-trackerApi"> - s.t()</span>
-        </CoralField>
+        </Field>
       </div>
       <div>
-        <CoralField
+        <Field
           name="type"
           component={ Radio }
+          type="radio"
           value={ TYPES.LINK }
         >
           Do not increment a pageview<span className="SendBeacon-trackerApi"> - s.tl()</span>
-        </CoralField>
+        </Field>
         {
           type === TYPES.LINK ?
             <div className="FieldSubset SendBeacon-linkDetails">
@@ -79,10 +81,10 @@ const SendBeacon = ({ type, linkType }) => {
                 <label>
                   <span className="Label">Link Type</span>
                   <div>
-                    <CoralField
+                    <Field
                       name="linkType"
                       component={ Select }
-                      componentClassName="Field--short"
+                      className="Field--short"
                       options={ linkTypeOptions }
                     />
                   </div>
@@ -92,10 +94,11 @@ const SendBeacon = ({ type, linkType }) => {
                 <label>
                   <span className="Label">{ linkNameLabel }</span>
                   <div>
-                    <CoralField
+                    <Field
                       name="linkName"
-                      component={ Textfield }
-                      componentClassName="Field--long"
+                      component={ DecoratedInput }
+                      inputComponent={ Textfield }
+                      inputClassName="Field--long"
                       supportDataElement
                     />
                   </div>

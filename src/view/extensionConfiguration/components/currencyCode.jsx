@@ -1,11 +1,11 @@
 import React from 'react';
-import Radio from '@coralui/react-coral/lib/Radio';
-import Textfield from '@coralui/react-coral/lib/Textfield';
-import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
+import Radio from '@coralui/redux-form-react-coral/lib/Radio';
+import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
+import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 import { connect } from 'react-redux';
+import { Field, change, formValueSelector } from 'redux-form';
 
-import { change, formValueSelector } from 'redux-form';
-import CoralField from '../../components/coralField';
 import CURRENCY_CODE_PRESETS from '../../enums/currencyCodes';
 
 const CURRENCY_CODE_INPUT_METHODS = {
@@ -23,47 +23,50 @@ const presetOptions = CURRENCY_CODE_PRESETS.map(preset => ({
 const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
   <div>
     <div>
-      <CoralField
+      <Field
         name="trackerProperties.currencyCodeInputMethod"
         component={ Radio }
+        type="radio"
         value={ CURRENCY_CODE_INPUT_METHODS.PRESET }
         onChange={
           () => dispatch(change('default', 'trackerProperties.currencyCode', CURRENCY_CODE_DEFAULT))
         }
       >
         Preset
-      </CoralField>
+      </Field>
 
       {
         currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.PRESET ?
           <div className="FieldSubset">
-            <CoralField
+            <Field
               name="trackerProperties.currencyCode"
               component={ Autocomplete }
-              componentClassName="Field--long"
+              inputClassName="Field--long"
               options={ presetOptions }
             />
           </div> : null
       }
     </div>
     <div>
-      <CoralField
+      <Field
         name="trackerProperties.currencyCodeInputMethod"
         component={ Radio }
+        type="radio"
         value={ CURRENCY_CODE_INPUT_METHODS.CUSTOM }
         onChange={
           () => dispatch(change('default', 'trackerProperties.currencyCode', ''))
         }
       >
         Custom
-      </CoralField>
+      </Field>
 
       {
         currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
           <div className="FieldSubset">
-            <CoralField
+            <Field
               name="trackerProperties.currencyCode"
-              component={ Textfield }
+              component={ DecoratedInput }
+              inputComponent={ Textfield }
               supportDataElement
             />
           </div> : null
