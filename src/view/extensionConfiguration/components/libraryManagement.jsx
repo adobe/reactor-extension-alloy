@@ -7,10 +7,10 @@ import Heading from '@coralui/react-coral/lib/Heading';
 import { connect } from 'react-redux';
 import { formValueSelector, Field } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import EditorButton from '@reactor/react-components/lib/reduxForm/editorButton';
 
 import ENVIRONMENTS from '../../enums/environments';
 import ReportSuite from './reportSuite';
-import EditorButton from '../../components/editorButton';
 
 import './libraryManagement.styl';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import Radio from '@coralui/redux-form-react-coral/lib/Radio';
 import { Field, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
-import EditorButton from './editorButton';
+import EditorButton from '@reactor/react-components/lib/reduxForm/editorButton';
 
 const LOAD_PHASES = {
   BEFORE_SETTINGS: 'beforeSettings',
