@@ -1,16 +1,16 @@
 import React from 'react';
 import { InfoTip } from '@reactor/react-components';
-import Checkbox from '@coralui/react-coral/lib/Checkbox';
-import Radio from '@coralui/react-coral/lib/Radio';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Checkbox from '@coralui/redux-form-react-coral/lib/Checkbox';
+import Radio from '@coralui/redux-form-react-coral/lib/Radio';
+import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
 import Heading from '@coralui/react-coral/lib/Heading';
 import { connect } from 'react-redux';
 import { formValueSelector, Field } from 'redux-form';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 
 import ENVIRONMENTS from '../../enums/environments';
 import ReportSuite from './reportSuite';
 import CodeField from '../../components/codeField';
-import CoralField from '../../components/coralField';
 
 import './libraryManagement.styl';
 
@@ -60,21 +60,23 @@ const LoadPhase = ({ className }) => (
     <fieldset>
       <legend><span className="Label">Load library at:</span></legend>
       <div>
-        <CoralField
+        <Field
           name="libraryCode.loadPhase"
           component={ Radio }
+          type="radio"
           value={ LOAD_PHASES.PAGE_TOP }
         >
           Page Top
-        </CoralField>
+        </Field>
 
-        <CoralField
+        <Field
           name="libraryCode.loadPhase"
           component={ Radio }
+          type="radio"
           value={ LOAD_PHASES.PAGE_BOTTOM }
         >
           Page Bottom
-        </CoralField>
+        </Field>
       </div>
     </fieldset>
   </div>
@@ -84,11 +86,11 @@ const TrackerVariableName = ({ className }) => (
   <div className={ className }>
     <label>
       <span className="Label">Tracker is accessible on the global variable named:</span>
-      <CoralField
+      <Field
         name="libraryCode.trackerVariableName"
-        component={ Textfield }
-        componentClassName="u-gapLeft"
-        supportValidation
+        component={ DecoratedInput }
+        inputComponent={ Textfield }
+        inputClassName="u-gapLeft"
       />
     </label>
   </div>
@@ -96,12 +98,12 @@ const TrackerVariableName = ({ className }) => (
 
 let OverwriteReportSuites = ({ className, showReportSuites }) => (
   <div className={ className }>
-    <CoralField
+    <Field
       name="libraryCode.showReportSuites"
       component={ Checkbox }
     >
       Set the following report suites on tracker
-    </CoralField>
+    </Field>
 
     {
       showReportSuites ? <ReportSuites /> : null
@@ -117,13 +119,14 @@ OverwriteReportSuites = connect(
 
 const LibraryManagement = ({ type }) => (
   <div>
-    <CoralField
+    <Field
       name="libraryCode.type"
       component={ Radio }
+      type="radio"
       value={ LIB_TYPES.MANAGED }
     >
       Manage the library for me
-    </CoralField>
+    </Field>
 
     {
       type === LIB_TYPES.MANAGED ?
@@ -134,13 +137,14 @@ const LibraryManagement = ({ type }) => (
     }
 
     <div>
-      <CoralField
+      <Field
         name="libraryCode.type"
         component={ Radio }
+        type="radio"
         value={ LIB_TYPES.PREINSTALLED }
       >
         Use the library already installed on the page
-      </CoralField>
+      </Field>
     </div>
     {
       type === LIB_TYPES.PREINSTALLED ?
@@ -151,13 +155,14 @@ const LibraryManagement = ({ type }) => (
     }
 
     <div>
-      <CoralField
+      <Field
         name="libraryCode.type"
         component={ Radio }
+        type="radio"
         value={ LIB_TYPES.REMOTE }
       >
         Load the library from a custom URL
-      </CoralField>
+      </Field>
     </div>
     {
       type === LIB_TYPES.REMOTE ?
@@ -166,24 +171,24 @@ const LibraryManagement = ({ type }) => (
             <label>
               <span className="Label">HTTP URL:</span>
               <div>
-                <CoralField
+                <Field
                   name="libraryCode.httpUrl"
-                  component={ Textfield }
-                  componentClassName="Field--long"
+                  component={ DecoratedInput }
+                  inputComponent={ Textfield }
+                  inputClassName="Field--long"
                   placeholder="http://"
-                  supportValidation
                 />
               </div>
             </label>
             <label>
               <span className="Label u-gapTop">HTTPS URL:</span>
               <div>
-                <CoralField
+                <Field
                   name="libraryCode.httpsUrl"
-                  component={ Textfield }
-                  componentClassName="Field--long"
+                  component={ DecoratedInput }
+                  inputComponent={ Textfield }
+                  inputClassName="Field--long"
                   placeholder="https://"
-                  supportValidation
                 />
               </div>
             </label>
@@ -195,13 +200,14 @@ const LibraryManagement = ({ type }) => (
     }
 
     <div>
-      <CoralField
+      <Field
         name="libraryCode.type"
         component={ Radio }
+        type="radio"
         value={ LIB_TYPES.CUSTOM }
       >
         Let me provide custom library code
-      </CoralField>
+      </Field>
     </div>
     {
       type === LIB_TYPES.CUSTOM ?

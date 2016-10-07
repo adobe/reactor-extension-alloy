@@ -2,7 +2,7 @@ import React from 'react';
 import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
 import Tag from '@coralui/react-coral/lib/Tag';
 import TagList from '@coralui/react-coral/lib/TagList';
-import { ValidationWrapper, DataElementSelectorButton } from '@reactor/react-components';
+import { ErrorTip, DataElementSelectorButton } from '@reactor/react-components';
 
 import addDataElementToken from '../../utils/addDataElementToken';
 
@@ -119,20 +119,18 @@ export default class ReportSuite extends React.Component {
       <div className="ReportSuite-autocompleteField">
         <label className="Label">{ label }</label>
         <div>
-          <ValidationWrapper
-            error={ touched && error }
-          >
-            <Autocomplete
-              labelKey="value"
-              onChange={ this.onAutocompleteChange }
-              placeholder="Add Report Suite(s)"
-              className="Field--long"
-              options={ this.getReportSuiteOptions() }
-              allowCreate
-              multiple
-            />
-            <DataElementSelectorButton onClick={ this.openDataElementSelector } />
-          </ValidationWrapper>
+          <Autocomplete
+            labelKey="value"
+            onChange={ this.onAutocompleteChange }
+            placeholder="Add Report Suite(s)"
+            className="Field--long"
+            options={ this.getReportSuiteOptions() }
+            allowCreate
+            multiple
+            invalid={ Boolean(touched && error) }
+          />
+          { touched && error ? <ErrorTip>{ error }</ErrorTip> : null }
+          <DataElementSelectorButton onClick={ this.openDataElementSelector } />
           <div>
             <TagList className="coral-Autocomplete-tagList" onClose={ this.onRemove }>
               {

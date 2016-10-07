@@ -1,10 +1,9 @@
 import React from 'react';
 import Button from '@coralui/react-coral/lib/Button';
-import Textfield from '@coralui/react-coral/lib/Textfield';
-import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
-import { FieldArray } from 'redux-form';
-
-import CoralField from './coralField';
+import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
+import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
+import { Field, FieldArray } from 'redux-form';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 
 // TODO: Replace with actual values from user's product level.
 const MAX_EVENTS = 100;
@@ -39,22 +38,23 @@ const renderEvents = ({ fields }) => {
       key={ index }
       className="u-gapBottom2x"
     >
-      <CoralField
+      <Field
         name={ `${field}.name` }
         className="u-gapRight2x"
-        component={ Autocomplete }
-        componentClassName="Field--short"
+        component={ DecoratedInput }
+        inputComponent={ Autocomplete }
+        inputClassName="Field--short"
         placeholder="Select event"
         options={ nameOptions }
-        supportValidation
       />
 
       <span className="Label u-gapRight">Serialize from value</span>
 
-      <CoralField
+      <Field
         name={ `${field}.value` }
-        component={ Textfield }
-        componentClassName="Field--short"
+        component={ DecoratedInput }
+        inputComponent={ Textfield }
+        inputClassName="Field--short"
         supportDataElement
       />
 

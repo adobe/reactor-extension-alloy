@@ -1,12 +1,13 @@
 import React from 'react';
-import Select from '@coralui/react-coral/lib/Select';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Select from '@coralui/redux-form-react-coral/lib/Select';
+import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
+import { Field } from 'redux-form';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 
 import { mergeConfigs } from '../utils/formConfigUtils';
 import EvarsPropsEditor, { getFormConfig as getEvarsPropsEditorFormConfig } from './evarsPropsEditor';
 import EventsEditor, { formConfig as eventsFormConfig } from './eventsEditor';
 import HierarchiesEditor, { formConfig as hierarchiesFormConfig } from './hierarchiesEditor';
-import CoralField from './coralField';
 
 import './variables.styl';
 
@@ -44,10 +45,11 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
         <label>
           <span className="Label u-gapTop">Dynamic Variable Prefix</span>
           <div>
-            <CoralField
+            <Field
               name="trackerProperties.dynamicVariablePrefix"
-              component={ Textfield }
-              componentClassName="Field--long"
+              component={ DecoratedInput }
+              inputComponent={ Textfield }
+              inputClassName="Field--long"
               supportDataElement
             />
           </div>
@@ -57,10 +59,11 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
     <label>
       <span className="Label u-gapTop">Page Name</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.pageName"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -69,10 +72,11 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
     <label>
       <span className="Label u-gapTop">Page URL</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.pageURL"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -81,10 +85,11 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
     <label>
       <span className="Label u-gapTop">Server</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.server"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -93,10 +98,11 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
     <label>
       <span className="Label u-gapTop">Channel</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.channel"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -105,10 +111,11 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
     <label>
       <span className="Label u-gapTop">Referrer</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.referrer"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -118,18 +125,19 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <span className="Label u-gapTop">Campaign</span>
     </label>
     <div>
-      <CoralField
+      <Field
         name="trackerProperties.campaign.type"
+        className="Variables-campaignType"
         component={ Select }
-        componentClassName="Variables-campaignType"
         options={ campaignTypeOptions }
       />
 
-      <CoralField
+      <Field
         name="trackerProperties.campaign.value"
         className="u-gapLeft"
-        component={ Textfield }
-        componentClassName="Variables-campaignValue"
+        component={ DecoratedInput }
+        inputComponent={ Textfield }
+        inputClassName="Variables-campaignValue"
         supportDataElement
       />
     </div>
@@ -137,10 +145,11 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
     <label>
       <span className="Label u-gapTop">Transaction ID</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.transactionID"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -149,10 +158,11 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
     <label>
       <span className="Label u-gapTop">State</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.state"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -161,10 +171,11 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
     <label>
       <span className="Label u-gapTop">Zip</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.zip"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>

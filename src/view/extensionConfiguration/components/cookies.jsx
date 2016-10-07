@@ -1,10 +1,9 @@
 import React from 'react';
-import Select from '@coralui/react-coral/lib/Select';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Select from '@coralui/redux-form-react-coral/lib/Select';
+import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
 import { connect } from 'react-redux';
-import { formValueSelector } from 'redux-form';
-
-import CoralField from '../../components/coralField';
+import { Field, formValueSelector } from 'redux-form';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 
 import './cookies.styl';
 
@@ -34,10 +33,11 @@ const Cookies = ({ cookieLifetime }) => (
     <label className="Cookies-field">
       <span className="Label">Visitor ID</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.visitorID"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -45,10 +45,11 @@ const Cookies = ({ cookieLifetime }) => (
     <label className="Cookies-field">
       <span className="Label">Visitor Namespace</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.visitorNamespace"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -56,10 +57,11 @@ const Cookies = ({ cookieLifetime }) => (
     <label className="Cookies-field">
       <span className="Label">Domain Periods</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.cookieDomainPeriods"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -67,10 +69,11 @@ const Cookies = ({ cookieLifetime }) => (
     <label className="Cookies-field">
       <span className="Label">First-party Domain Periods</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.fpCookieDomainPeriods"
-          component={ Textfield }
-          componentClassName="Field--long"
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -78,22 +81,22 @@ const Cookies = ({ cookieLifetime }) => (
     <div className="u-gapBottom">
       <label className="Label" htmlFor="cookieLifetimeField">Cookie Lifetime</label>
       <div>
-        <CoralField
+        <Field
           id="cookieLifetimeField"
           name="trackerProperties.cookieLifetime"
           component={ Select }
-          componentClassName="Cookies-cookieLifetime"
+          inputClassName="Cookies-cookieLifetime"
           className="u-gapRight"
           options={ cookieLifetimeOptions }
         />
 
         {
           cookieLifetime === COOKIE_LIFETIME_PERIODS.SECONDS ?
-            <CoralField
+            <Field
               name="trackerProperties.cookieLifetimeSeconds"
-              component={ Textfield }
-              componentClassName="Cookies-cookieLifetimeSeconds"
-              supportValidation
+              component={ DecoratedInput }
+              inputComponent={ Textfield }
+              inputClassName="Cookies-cookieLifetimeSeconds"
               supportDataElement
             /> : null
         }

@@ -1,29 +1,28 @@
 import { mount } from 'enzyme';
-import { ValidationWrapper } from '@reactor/react-components';
 import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
 import Button from '@coralui/react-coral/lib/Button';
 import Select from '@coralui/react-coral/lib/Select';
 import Textfield from '@coralui/react-coral/lib/Textfield';
+import { Field } from 'redux-form';
+import ErrorTip from '@reactor/react-components/lib/errorTip';
 
 import EvarsPropsEditor, { getFormConfig } from '../evarsPropsEditor';
-import CoralField from '../../components/coralField';
 import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
 import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const rows = wrapper.find('[data-row]').map(row => ({
-    nameAutocomplete: row.find(Autocomplete)
-      .filterWhere(n => n.prop('placeholder') === 'Select eVar').node,
-    nameWrapper: row.find(CoralField).filterWhere(n => n.prop('name').includes('.name'))
-      .find(ValidationWrapper).node,
-    typeSelect: row.find(Select).node,
-    valueTextfield: row.find(Textfield).node || row.find(Autocomplete)
-      .filterWhere(n => n.prop('placeholder') === 'Select variable').node,
-    valueWrapper: row.find(CoralField).filterWhere(n => n.prop('name').includes('.value'))
-      .find(ValidationWrapper).node,
-    removeButton: row.find(Button)
-      .filterWhere(n => n.prop('icon') === 'close').node
-  }));
+  const rows = wrapper.find('[data-row]').map(row => {
+    const nameField = row.find(Field).filterWhere(n => n.prop('name').includes('.name'));
+    const valueField = row.find(Field).filterWhere(n => n.prop('name').includes('.value'));
+    return {
+      nameAutocomplete: nameField.find(Autocomplete).node,
+      nameErrorTip: nameField.find(ErrorTip).node,
+      typeSelect: row.find(Select).node,
+      valueTextfield: valueField.find(Textfield).node || valueField.find(Autocomplete).node,
+      valueErrorTip: valueField.find(ErrorTip).node,
+      removeButton: row.find(Button).filterWhere(n => n.prop('icon') === 'close').node
+    };
+  });
 
   const addRowButton = wrapper.find(Button).last().node;
 
@@ -176,7 +175,7 @@ describe('evars props editor', () => {
 
     const { rows } = getReactComponents(instance);
 
-    expect(rows[1].nameWrapper.props.error).toEqual(jasmine.any(String));
+    expect(rows[1].nameErrorTip).toBeDefined();
   });
 
   it('shows an error when an event doesn\'t have a name', () => {
@@ -197,7 +196,7 @@ describe('evars props editor', () => {
     expect(extensionBridge.validate()).toBe(false);
 
     const { rows } = getReactComponents(instance);
-    expect(rows[0].nameWrapper.props.error).toEqual(jasmine.any(String));
+    expect(rows[0].nameErrorTip).toBeDefined();
   });
 
   it('shows an error when an event doesn\'t have a value', () => {
@@ -218,6 +217,6 @@ describe('evars props editor', () => {
     expect(extensionBridge.validate()).toBe(false);
 
     const { rows } = getReactComponents(instance);
-    expect(rows[0].valueWrapper.props.error).toEqual(jasmine.any(String));
+    expect(rows[0].valueErrorTip).toBeDefined();
   });
 });

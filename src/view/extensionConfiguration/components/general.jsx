@@ -1,22 +1,23 @@
 import React from 'react';
-import Checkbox from '@coralui/react-coral/lib/Checkbox';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Checkbox from '@coralui/redux-form-react-coral/lib/Checkbox';
+import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
 import Heading from '@coralui/react-coral/lib/Heading';
+import { Field } from 'redux-form';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 
 import { mergeConfigs } from '../../utils/formConfigUtils';
 import CharSet, { formConfig as charSetFormConfig } from './charSet';
 import CurrencyCode, { formConfig as currencyCodeFormConfig } from './currencyCode';
 import ENVIRONMENTS from '../../enums/environments';
-import CoralField from '../../components/coralField';
 
 export default () => (
   <div>
-    <CoralField
+    <Field
       name="euComplianceEnabled"
       component={ Checkbox }
     >
       Enable EU compliance for Adobe Analytics
-    </CoralField>
+    </Field>
     <div>
       <Heading size="4">Character Set</Heading>
       <CharSet />
@@ -28,11 +29,11 @@ export default () => (
     <div>
       <span className="Label u-gapTop">Tracking Server</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.trackingServer"
-          component={ Textfield }
-          componentClassName="Field--long"
-          supportValidation
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
@@ -40,11 +41,11 @@ export default () => (
     <div>
       <span className="Label u-gapTop">SSL Tracking Server</span>
       <div>
-        <CoralField
+        <Field
           name="trackerProperties.trackingServerSecure"
-          component={ Textfield }
-          componentClassName="Field--long"
-          supportValidation
+          component={ DecoratedInput }
+          inputComponent={ Textfield }
+          inputClassName="Field--long"
           supportDataElement
         />
       </div>
