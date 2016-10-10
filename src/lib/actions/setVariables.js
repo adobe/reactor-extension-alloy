@@ -7,10 +7,14 @@ var applyTrackerVariables = require('../helpers/applyTrackerVariables.js');
 var getExtensionConfigurations = require('get-extension-configurations');
 
 module.exports = function(settings, targetElement, event) {
-  var configurations = settings.extensionConfigurationIds ||
-    Object.keys(getExtensionConfigurations());
+  var extensionConfigurations = getExtensionConfigurations();
+  if (settings.extensionConfigurationIds) {
+    extensionConfigurations = extensionConfigurations.filter(function(extensionsConfiguration) {
+      return settings.extensionConfigurationIds.indexOf(extensionsConfiguration.id) !== -1;
+    });
+  }
 
-  configurations.forEach(function(configurationId) {
+  extensionConfigurations.forEach(function(configurationId) {
     getTracker(configurationId).then(function(tracker) {
       applyTrackerVariables(tracker, settings.trackerProperties);
       if (settings.customSetup && settings.customSetup.source) {

@@ -11,8 +11,12 @@ var getLoggerMockObject = function() {
 var getSetVariables = function(mocks) {
   return setVariablesInjector({
     'logger': (mocks && mocks.logger) || getLoggerMockObject(),
-    'get-extension-configurations': (mocks && mocks['get-extension-configurations'])
-      || function() {},
+    'get-extension-configurations': (mocks && mocks['get-extension-configurations']) || function() {
+      return [{
+        id: 'EX1',
+        name: 'EX1'
+      }];
+    },
     '../helpers/getTracker.js': (mocks && mocks['../helpers/getTracker.js']) ||
     function() {
       return Promise.resolve({});
@@ -56,6 +60,15 @@ describe('set variables', function() {
       '../helpers/applyTrackerVariables.js': applyTrackerVariablesSpy,
       '../helpers/getTracker.js': function() {
         return Promise.resolve(tracker);
+      },
+      'get-extension-configurations': function() {
+        return [{
+          id: 'EX1',
+          name: 'EX1'
+        },{
+          id: 'EX2',
+          name: 'EX2'
+        }];
       }
     });
 
@@ -79,11 +92,16 @@ describe('set variables', function() {
 
       var setVariables = getSetVariables({
         'get-extension-configurations': function() {
-          return {
-            'EX1': {},
-            'EX2': {},
-            'EX3': {}
-          };
+          return [{
+            id: 'EX1',
+            name: 'EX1'
+          },{
+            id: 'EX2',
+            name: 'EX2'
+          },{
+            id: 'EX3',
+            name: 'EX3'
+          }];
         },
         '../helpers/applyTrackerVariables.js': applyTrackerVariablesSpy,
         '../helpers/getTracker.js': function() {
