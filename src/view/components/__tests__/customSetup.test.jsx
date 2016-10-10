@@ -7,14 +7,14 @@ import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge
 import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const codeButton = wrapper.find(Button).node;
+  const openEditorButton = wrapper.find(Button).node;
   const loadPhaseBeforeRadio =
     wrapper.find(Radio).filterWhere(n => n.prop('value') === 'beforeSettings').node;
   const loadPhaseAfterRadio =
     wrapper.find(Radio).filterWhere(n => n.prop('value') === 'afterSettings').node;
 
   return {
-    codeButton,
+    openEditorButton,
     loadPhaseBeforeRadio,
     loadPhaseAfterRadio
   };
@@ -25,8 +25,13 @@ describe('customSetup', () => {
   let instance;
 
   beforeAll(() => {
-    extensionBridge = createExtensionBridge();
+    extensionBridge = window.extensionBridge = createExtensionBridge();
+    spyOn(extensionBridge, 'openCodeEditor').and.callFake((code, cb) => cb(`${code} bar`));
     instance = mount(bootstrap(CustomSetup, formConfig, extensionBridge));
+  });
+
+  afterAll(() => {
+    delete window.extensionBridge;
   });
 
   it('radio buttons are not visible if code editor has not been used', () => {
@@ -80,5 +85,27 @@ describe('customSetup', () => {
 
     const { customSetup } = extensionBridge.getSettings();
     expect(customSetup.loadPhase).toBe('beforeSettings');
+  });
+
+  it('allows user to provide custom code', () => {
+    extensionBridge.init({
+      settings: {
+        customSetup: {
+          source: 'foo'
+        }
+      }
+    });
+
+    const {
+      openEditorButton
+    } = getReactComponents(instance);
+
+    openEditorButton.props.onClick();
+
+    expect(extensionBridge.getSettings()).toEqual({
+      customSetup: {
+        source: 'foo bar'
+      }
+    });
   });
 });
