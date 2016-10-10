@@ -40,10 +40,14 @@ var sendBeacon = function(tracker, settings, targetElement) {
 };
 
 module.exports = function(settings, targetElement) {
-  var configurations = settings.extensionConfigurationIds ||
-    Object.keys(getExtensionConfigurations());
+  var extensionConfigurations = getExtensionConfigurations();
+  if (settings.extensionConfigurationIds) {
+    extensionConfigurations = extensionConfigurations.filter(function(extensionsConfiguration) {
+      return settings.extensionConfigurationIds.indexOf(extensionsConfiguration.id) !== -1;
+    });
+  }
 
-  configurations.forEach(function(configurationId) {
+  extensionConfigurations.forEach(function(configurationId) {
     getTracker(configurationId).then(function(tracker) {
       logger.info('Firing page view beacon for configuration "' + configurationId + '".');
       sendBeacon(tracker, settings, targetElement);
@@ -56,6 +60,4 @@ module.exports = function(settings, targetElement) {
       );
     });
   });
-
-
 };

@@ -35,8 +35,10 @@ module.exports = {
     },
     "adobe-analytics": {
       displayName: 'Adobe Analytics',
-      configurations: {
-        ECa: {
+      configurations: [
+        {
+          id: 'EXa',
+          name: 'EXa',
           settings: {
             "libraryCode": {
               "type": "managed",
@@ -63,7 +65,9 @@ module.exports = {
             }
           }
         },
-        ECb: {
+        {
+          id: 'EXb',
+          name: 'EXb',
           settings: {
             "libraryCode": {
               "type": "managed",
@@ -76,7 +80,7 @@ module.exports = {
             }
           }
         }
-      },
+      ],
       // This will be populated automatically based on features found in extension.json.
       modules: {}
     }
