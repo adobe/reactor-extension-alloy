@@ -88,11 +88,10 @@ var createPromiseStore = function(configurations) {
   var store = {};
 
   configurations.forEach(function(configuration) {
-    var configurationId = configuration.id;
-    store[configurationId] =  new Promise(function(resolve, reject) {
+    store[configuration.id] =  new Promise(function(resolve, reject) {
       logger.info(
         'Initializing Adobe Analytics extension for configuration "' +
-        configurationId +
+        configuration.name +
         '".'
       );
 

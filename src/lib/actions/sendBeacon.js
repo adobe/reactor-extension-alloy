@@ -48,15 +48,13 @@ module.exports = function(settings, targetElement) {
   }
 
   extensionConfigurations.forEach(function(configuration) {
-    var configurationId = configuration.id;
-
-    getTracker(configurationId).then(function(tracker) {
-      logger.info('Firing page view beacon for configuration "' + configurationId + '".');
+    getTracker(configuration.id).then(function(tracker) {
+      logger.info('Firing page view beacon for configuration "' + configuration.name + '".');
       sendBeacon(tracker, settings, targetElement);
     }, function(errorMessage) {
       logger.error(
         'Cannot send beacon for configuration "' +
-        configurationId +
+        configuration.name +
         '": ' +
         errorMessage
       );
