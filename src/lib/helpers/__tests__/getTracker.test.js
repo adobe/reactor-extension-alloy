@@ -34,9 +34,9 @@ describe('get tracker', function() {
   it('returns a promise', function() {
     var getTracker = getTrackerModule({
       'get-extension-configurations': function() {
-        return {
-          EC1: {}
-        };
+        return [{
+          id: 'EC1'
+        }];
       }
     });
 
@@ -51,11 +51,12 @@ describe('get tracker', function() {
 
     var getTracker = getTrackerModule({
       'get-extension-configurations': function() {
-        return {
-          EC1: {
+        return [{
+          id: 'EC1',
+          settings: {
             prop: 1
           }
-        };
+        }];
       },
       './loadLibrary.js': loadLibrarySpy
     });
@@ -72,11 +73,12 @@ describe('get tracker', function() {
     it('does not load a library if EU compliance is not acknowledged', function(done) {
       var getTracker = getTrackerModule({
         'get-extension-configurations': function() {
-          return {
-            EC1: {
+          return [{
+            id: 'EC1',
+            settings: {
               euComplianceEnabled: true
             }
-          };
+          }];
         }
       });
 
@@ -96,11 +98,12 @@ describe('get tracker', function() {
 
       var getTracker = getTrackerModule({
         'get-extension-configurations': function() {
-          return {
-            EC1: {
+          return [{
+            id: 'EC1',
+            settings: {
               euComplianceEnabled: true
             }
-          };
+          }];
         },
         'property-settings': {
           'euCookieName': 'sat_track'
@@ -126,9 +129,9 @@ describe('get tracker', function() {
 
     var getTracker = getTrackerModule({
       'get-extension-configurations': function() {
-        return {
-          EC1: {}
-        };
+        return [{
+          id: 'EC1'
+        }];
       },
       'get-shared-module': function() {
         return mcidInstance;
@@ -151,9 +154,9 @@ describe('get tracker', function() {
 
       var getTracker = getTrackerModule({
         'get-extension-configurations': function() {
-          return {
-            EC1: {}
-          };
+          return [{
+            id: 'EC1'
+          }];
         },
         './generateVersion.js': function() {
           return 'DEBA';
@@ -175,9 +178,9 @@ describe('get tracker', function() {
 
       var getTracker = getTrackerModule({
         'get-extension-configurations': function() {
-          return {
-            EC1: {}
-          };
+          return [{
+            id: 'EC1'
+          }];
         },
         './generateVersion.js': function() {
           return 'DEBA';
@@ -199,13 +202,14 @@ describe('get tracker', function() {
 
     var getTracker = getTrackerModule({
       'get-extension-configurations': function() {
-        return {
-          EC1: {
+        return [{
+          id: 'EC1',
+          settings: {
             trackerProperties: {
               prop1: 'a'
             }
           }
-        };
+        }];
       },
       './loadLibrary.js': loadLibrarySpy
     });
@@ -223,8 +227,9 @@ describe('get tracker', function() {
 
     var getTracker = getTrackerModule({
       'get-extension-configurations': function() {
-        return {
-          EC1: {
+        return [{
+          id: 'EC1',
+          settings: {
             trackerProperties: {
               prop1: 'a'
             },
@@ -235,7 +240,7 @@ describe('get tracker', function() {
               }
             }
           }
-        };
+        }];
       },
       './loadLibrary.js': loadLibrarySpy
     });
@@ -254,8 +259,9 @@ describe('get tracker', function() {
 
     var getTracker = getTrackerModule({
       'get-extension-configurations': function() {
-        return {
-          EC1: {
+        return [{
+          id: 'EC1',
+          settings: {
             trackerProperties: {
               prop1: 'a'
             },
@@ -265,7 +271,7 @@ describe('get tracker', function() {
               }
             }
           }
-        };
+        }];
       },
       './loadLibrary.js': loadLibrarySpy
     });

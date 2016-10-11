@@ -14,7 +14,8 @@ module.exports = function(settings, targetElement, event) {
     });
   }
 
-  extensionConfigurations.forEach(function(configurationId) {
+  extensionConfigurations.forEach(function(configuration) {
+    var configurationId = configuration.id;
     getTracker(configurationId).then(function(tracker) {
       applyTrackerVariables(tracker, settings.trackerProperties);
       if (settings.customSetup && settings.customSetup.source) {

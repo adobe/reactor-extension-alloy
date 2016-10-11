@@ -47,7 +47,9 @@ module.exports = function(settings, targetElement) {
     });
   }
 
-  extensionConfigurations.forEach(function(configurationId) {
+  extensionConfigurations.forEach(function(configuration) {
+    var configurationId = configuration.id;
+
     getTracker(configurationId).then(function(tracker) {
       logger.info('Firing page view beacon for configuration "' + configurationId + '".');
       sendBeacon(tracker, settings, targetElement);
