@@ -15,8 +15,7 @@ module.exports = function(settings, targetElement, event) {
   }
 
   extensionConfigurations.forEach(function(configuration) {
-    var configurationId = configuration.id;
-    getTracker(configurationId).then(function(tracker) {
+    getTracker(configuration.id).then(function(tracker) {
       applyTrackerVariables(tracker, settings.trackerProperties);
       if (settings.customSetup && settings.customSetup.source) {
         settings.customSetup.source.call(targetElement, event, tracker);
@@ -24,7 +23,7 @@ module.exports = function(settings, targetElement, event) {
     }, function(errorMessage) {
       logger.error(
         'Cannot set variables on the tracker for configuration "' +
-        configurationId +
+        configuration.name +
         '": ' +
         errorMessage
       );
