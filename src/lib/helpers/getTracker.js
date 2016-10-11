@@ -68,14 +68,16 @@ var updateTrackerVariables = function(trackerProperties, customSetup, tracker) {
 };
 
 var initialize = function(configuration) {
-  if (checkEuCompliance(configuration.euComplianceEnabled || false)) {
-    return loadLibrary(configuration)
+  var configurationSettings = configuration.settings || {};
+
+  if (checkEuCompliance(configurationSettings.euComplianceEnabled || false)) {
+    return loadLibrary(configurationSettings)
       .then(linkVisitorId)
       .then(updateTrackerVersion)
       .then(updateTrackerVariables.bind(
         null,
-        configuration.trackerProperties,
-        configuration.customSetup || {}
+        configurationSettings.trackerProperties,
+        configurationSettings.customSetup || {}
       ));
   } else {
     return Promise.reject('EU compliance was not acknowledged by the user.');
@@ -85,7 +87,8 @@ var initialize = function(configuration) {
 var createPromiseStore = function(configurations) {
   var store = {};
 
-  Object.keys(configurations).forEach(function(configurationId) {
+  configurations.forEach(function(configuration) {
+    var configurationId = configuration.id;
     store[configurationId] =  new Promise(function(resolve, reject) {
       logger.info(
         'Initializing Adobe Analytics extension for configuration "' +
@@ -93,7 +96,7 @@ var createPromiseStore = function(configurations) {
         '".'
       );
 
-      initialize(configurations[configurationId])
+      initialize(configuration)
         .then(resolve, reject);
     });
   });
