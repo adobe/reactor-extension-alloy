@@ -1,5 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WebpackShellPlugin = require('webpack-shell-plugin');
+const argv = require('yargs').argv;
 
 const entries = {
   extensionConfiguration: './src/view/extensionConfiguration/index.js',
@@ -7,13 +9,24 @@ const entries = {
   setVariables: './src/view/actions/setVariables/index.js'
 };
 
-var plugins = Object.keys(entries).map(chunkName => (
+const plugins = Object.keys(entries).map(chunkName => (
   new HtmlWebpackPlugin({
     chunks: [chunkName],
     filename: chunkName + '.html',
     template: 'src/view/template.html'
   })
 ));
+
+if (argv.runSandbox) {
+  // This allows us to run the sandbox after the initial build takes place. By not starting up the
+  // sandbox while simultaneously building the view, we ensure:
+  // (1) Whatever we see in the browser contains the latest view files.
+  // (2) The sandbox can validate our extension.json and find that the view files it references
+  // actually exist because they have already been built.
+  plugins.push(new WebpackShellPlugin({
+    onBuildEnd: ['./node_modules/.bin/reactor-sandbox']
+  }));
+}
 
 module.exports = {
   entry: entries,
