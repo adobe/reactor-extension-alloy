@@ -1,7 +1,7 @@
 {
   "name": "@reactor/extension-adobeanalytics",
   "version": "0.0.1",
-  "description": "Adobe Analytics extension for Reactor",
+  "description": "Adobe Analytics extension for Reactor.",
   "author": {
     "name": "DTM",
     "email": "DTM-Engineering@adobe.com"
