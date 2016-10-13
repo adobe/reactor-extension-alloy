@@ -48,7 +48,7 @@ const renderEvents = ({ fields }) => {
         options={ nameOptions }
       />
 
-      <span className="Label u-gapRight">Serialize from value</span>
+      <span className="Label u-gapRight">Serialize from value (optional)</span>
 
       <Field
         name={ `${field}.value` }
