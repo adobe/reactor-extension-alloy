@@ -30,16 +30,14 @@ plugins.push(
     {
       name: 'react',
       var: 'React',
-      url: `//unpkg.com/react@${reactVersion}/dist/
-        react${argv.production ? '.min' : ''}.js`
+      url: `//unpkg.com/react@${reactVersion}/dist/react${argv.production ? '.min' : ''}.js`
     },
     // If we load react from a CDN, we have to do the same for react-dom without janky business. :(
     // https://github.com/webpack/webpack/issues/1275#issuecomment-176255624
     {
       name: 'react-dom',
       var: 'ReactDOM',
-      url: `//unpkg.com/react-dom@${reactDOMVersion}/dist/
-        react-dom${argv.production ? '.min' : ''}.js`
+      url: `//unpkg.com/react-dom@${reactDOMVersion}/dist/react-dom${argv.production ? '.min' : ''}.js`
     }
   ])
 );
