@@ -1,27 +1,23 @@
 'use strict';
 
-var publicRequire = require('../../__tests__/helpers/publicRequire');
-var Promise = publicRequire('promise');
+var Promise = require('@reactor/turbine/lib/require')('promise');
 var loadLibraryInjector = require('inject!../loadLibrary');
 
-var getLoggerMockObject = function() {
-  return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
-};
-
 var getLoadLibrary = function(mocks) {
-  return loadLibraryInjector({
-    'build-info': (mocks && mocks['build-info']) || {
-      'environment': 'production'
-    },
-    logger: (mocks && mocks.logger) || getLoggerMockObject(),
-    'load-script': (mocks && mocks['load-script']) || function() {},
-    promise: Promise,
-    window: (mocks && mocks['window']) || {
+  mocks = mocks || {};
+
+  mocks['window'] = mocks['window'] ||
+    {
       'AppMeasurement':  function() {}
-    },
-    'on-page-bottom': (mocks && mocks['on-page-bottom']) || function(callback) { callback(); },
-    'get-hosted-lib-file-url': function() {}
-  });
+    };
+
+  mocks['on-page-bottom'] = mocks['on-page-bottom'] ||
+    function(callback) { callback(); };
+
+  mocks['load-script'] = mocks['load-script'] ||
+    function() {};
+
+  return loadLibraryInjector(mocks);
 };
 
 describe('load library', function() {

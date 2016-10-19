@@ -1,18 +1,9 @@
 'use strict';
 
-var publicRequire = require('../../__tests__/helpers/publicRequire');
 var applyTrackerVariablesInjector = require('inject!../applyTrackerVariables');
 
-var getLoggerMockObject = function() {
-  return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
-};
-
 var getApplyTrackerVariables = function(mocks) {
-  return applyTrackerVariablesInjector({
-    'logger': (mocks && mocks.logger) || getLoggerMockObject(),
-    'window': (mocks && mocks['window']) || {},
-    'get-query-param': (mocks && mocks['get-query-param']) || function() {}
-  });
+  return applyTrackerVariablesInjector(mocks || {});
 };
 
 describe('apply tracker variables', function() {

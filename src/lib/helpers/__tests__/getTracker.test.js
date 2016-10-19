@@ -1,33 +1,10 @@
 'use strict';
 
-var publicRequire = require('../../__tests__/helpers/publicRequire');
-var Promise = publicRequire('promise');
+var Promise = require('@reactor/turbine/lib/require')('promise');
 var getTrackerInjector = require('inject!../getTracker');
-var applyTrackerVariablesInjector = require('inject!../applyTrackerVariables');
-
-var getLoggerMockObject = function() {
-  return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
-};
 
 var getTrackerModule = function(mocks) {
-  return getTrackerInjector({
-    'promise': Promise,
-    'logger': (mocks && mocks.logger) || getLoggerMockObject(),
-    'cookie': (mocks && mocks['cookie']) || publicRequire('cookie'),
-    'get-shared-module': (mocks && mocks['get-shared-module']) || function() {},
-    'get-extension-configurations': mocks['get-extension-configurations'],
-    './loadLibrary.js': (mocks && mocks['./loadLibrary.js']) || function() {
-      return Promise.resolve('library');
-    },
-    './generateVersion.js': (mocks && mocks['./generateVersion.js']) || function() {},
-    './applyTrackerVariables.js': applyTrackerVariablesInjector({
-      'logger': getLoggerMockObject()
-    }),
-    'build-info': (mocks && mocks['build-info']) || {
-      'turbineBuildDate': '2016-07-01T18:10:34Z'
-    },
-    'property-settings': (mocks && mocks['property-settings']) || {}
-  });
+  return getTrackerInjector(mocks || {});
 };
 
 describe('get tracker', function() {

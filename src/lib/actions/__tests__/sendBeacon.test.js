@@ -1,27 +1,24 @@
 'use strict';
 
-var publicRequire = require('../../__tests__/helpers/publicRequire');
 var sendBeaconInjector = require('inject!../sendBeacon');
-var Promise = publicRequire('promise');
+var Promise = require('@reactor/turbine/lib/require')('promise');
 
 var getLoggerMockObject = function() {
   return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
 };
 
 var getSendBeacon = function(mocks) {
-  return sendBeaconInjector({
-    'logger': (mocks && mocks.logger) || getLoggerMockObject(),
-    'get-extension-configurations': (mocks && mocks['get-extension-configurations']) || function() {
+  mocks = mocks || {};
+
+  mocks['get-extension-configurations'] = mocks['get-extension-configurations'] ||
+    function() {
       return [{
         id: 'EX1',
         name: 'EX1'
       }];
-    },
-    '../helpers/getTracker.js': (mocks && mocks['../helpers/getTracker.js']) ||
-    function() {
-      return Promise.resolve({});
-    }
-  });
+    };
+
+  return sendBeaconInjector(mocks);
 };
 
 describe('send beacon', function() {
