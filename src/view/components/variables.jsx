@@ -40,146 +40,148 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
     <span className="Label u-gapTop">Hierarchy</span>
     <HierarchiesEditor />
 
-    {
-      showDynamicVariablePrefix ?
-        <label>
-          <span className="Label u-gapTop">Dynamic Variable Prefix</span>
-          <div>
-            <Field
-              name="trackerProperties.dynamicVariablePrefix"
-              component={ DecoratedInput }
-              inputComponent={ Textfield }
-              inputClassName="Field--long"
-              supportDataElement
-            />
-          </div>
-        </label> : null
-    }
+    <div className="ColumnGrid">
+      <label className="ColumnGrid-cell">
+        <span className="Label u-gapTop">Page Name</span>
+        <div>
+          <Field
+            name="trackerProperties.pageName"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
 
-    <label>
-      <span className="Label u-gapTop">Page Name</span>
-      <div>
-        <Field
-          name="trackerProperties.pageName"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
+      <label className="ColumnGrid-cell">
+        <span className="Label u-gapTop">Page URL</span>
+        <div>
+          <Field
+            name="trackerProperties.pageURL"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
 
-    <label>
-      <span className="Label u-gapTop">Page URL</span>
-      <div>
-        <Field
-          name="trackerProperties.pageURL"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
+      <label className="ColumnGrid-cell">
+        <span className="Label u-gapTop">Server</span>
+        <div>
+          <Field
+            name="trackerProperties.server"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
 
-    <label>
-      <span className="Label u-gapTop">Server</span>
-      <div>
-        <Field
-          name="trackerProperties.server"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
+      <label className="ColumnGrid-cell">
+        <span className="Label u-gapTop">Channel</span>
+        <div>
+          <Field
+            name="trackerProperties.channel"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
 
-    <label>
-      <span className="Label u-gapTop">Channel</span>
-      <div>
-        <Field
-          name="trackerProperties.channel"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
+      <label className="ColumnGrid-cell">
+        <span className="Label u-gapTop">Referrer</span>
+        <div>
+          <Field
+            name="trackerProperties.referrer"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
 
-    <label>
-      <span className="Label u-gapTop">Referrer</span>
-      <div>
-        <Field
-          name="trackerProperties.referrer"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
+      <label className="ColumnGrid-cell" htmlFor="campaignValue">
+        <span className="Label u-gapTop">Campaign</span>
+        <div>
+          <Field
+            name="trackerProperties.campaign.type"
+            className="Variables-campaignType"
+            component={ Select }
+            options={ campaignTypeOptions }
+          />
 
-    <label htmlFor="campaignValue">
-      <span className="Label u-gapTop">Campaign</span>
-    </label>
-    <div>
-      <Field
-        name="trackerProperties.campaign.type"
-        className="Variables-campaignType"
-        component={ Select }
-        options={ campaignTypeOptions }
-      />
+          <Field
+            name="trackerProperties.campaign.value"
+            className="u-gapLeft"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Variables-campaignValue"
+            supportDataElement
+          />
+        </div>
+      </label>
 
-      <Field
-        name="trackerProperties.campaign.value"
-        className="u-gapLeft"
-        component={ DecoratedInput }
-        inputComponent={ Textfield }
-        inputClassName="Variables-campaignValue"
-        supportDataElement
-      />
+      <label className="ColumnGrid-cell">
+        <span className="Label u-gapTop">State</span>
+        <div>
+          <Field
+            name="trackerProperties.state"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
+
+      <label className="ColumnGrid-cell">
+        <span className="Label u-gapTop">Zip</span>
+        <div>
+          <Field
+            name="trackerProperties.zip"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
+
+      <label className="ColumnGrid-cell">
+        <span className="Label u-gapTop">Transaction ID</span>
+        <div>
+          <Field
+            name="trackerProperties.transactionID"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
+
+      {
+        showDynamicVariablePrefix ?
+          <label className="ColumnGrid-cell">
+            <span className="Label u-gapTop">Dynamic Variable Prefix</span>
+            <div>
+              <Field
+                name="trackerProperties.dynamicVariablePrefix"
+                component={ DecoratedInput }
+                inputComponent={ Textfield }
+                inputClassName="Field--long"
+                supportDataElement
+              />
+            </div>
+          </label> : null
+      }
     </div>
-
-    <label>
-      <span className="Label u-gapTop">Transaction ID</span>
-      <div>
-        <Field
-          name="trackerProperties.transactionID"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
-
-    <label>
-      <span className="Label u-gapTop">State</span>
-      <div>
-        <Field
-          name="trackerProperties.state"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
-
-    <label>
-      <span className="Label u-gapTop">Zip</span>
-      <div>
-        <Field
-          name="trackerProperties.zip"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
   </div>;
 
 export const formConfig = mergeConfigs(

@@ -30,8 +30,8 @@ const cookieLifetimeOptions = [{
 
 const Cookies = ({ cookieLifetime }) => (
   <div>
-    <div className="Cookies">
-      <label className="Cookies-field">
+    <div className="ColumnGrid">
+      <label className="ColumnGrid-cell">
         <span className="Label">Visitor ID</span>
         <div>
           <Field
@@ -43,7 +43,7 @@ const Cookies = ({ cookieLifetime }) => (
           />
         </div>
       </label>
-      <label className="Cookies-field">
+      <label className="ColumnGrid-cell">
         <span className="Label">Visitor Namespace</span>
         <div>
           <Field
@@ -55,7 +55,7 @@ const Cookies = ({ cookieLifetime }) => (
           />
         </div>
       </label>
-      <label className="Cookies-field">
+      <label className="ColumnGrid-cell">
         <span className="Label">Domain Periods</span>
         <div>
           <Field
@@ -67,7 +67,7 @@ const Cookies = ({ cookieLifetime }) => (
           />
         </div>
       </label>
-      <label className="Cookies-field">
+      <label className="ColumnGrid-cell">
         <span className="Label">First-party Domain Periods</span>
         <div>
           <Field
@@ -80,7 +80,7 @@ const Cookies = ({ cookieLifetime }) => (
         </div>
       </label>
     </div>
-    <div className="u-gapBottom">
+    <div>
       <label className="Label" htmlFor="cookieLifetimeField">Cookie Lifetime</label>
       <div>
         <Field
