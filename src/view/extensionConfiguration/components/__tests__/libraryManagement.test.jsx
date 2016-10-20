@@ -105,9 +105,9 @@ describe('libary management', () => {
       pageBottomLoadPhaseRadio
     } = getReactComponents(instance);
 
-    expect(productionReportSuite.props.input.value).toEqual(['aaa', 'bbb']);
-    expect(stagingReportSuite.props.input.value).toEqual(['ccc', 'ddd']);
-    expect(developmentReportSuite.props.input.value).toEqual(['eee', 'fff']);
+    expect(productionReportSuite.props.input.value).toEqual([{ value: 'aaa' }, { value: 'bbb' }]);
+    expect(stagingReportSuite.props.input.value).toEqual([{ value: 'ccc' }, { value: 'ddd' }]);
+    expect(developmentReportSuite.props.input.value).toEqual([{ value: 'eee' }, { value: 'fff' }]);
     expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
   });
 
@@ -143,9 +143,9 @@ describe('libary management', () => {
       showReportSuitesCheckbox
     } = getReactComponents(instance);
 
-    expect(productionReportSuite.props.input.value).toEqual(['aaa', 'bbb']);
-    expect(stagingReportSuite.props.input.value).toEqual(['ccc', 'ddd']);
-    expect(developmentReportSuite.props.input.value).toEqual(['eee', 'fff']);
+    expect(productionReportSuite.props.input.value).toEqual([{ value: 'aaa' }, { value: 'bbb' }]);
+    expect(stagingReportSuite.props.input.value).toEqual([{ value: 'ccc' }, { value: 'ddd' }]);
+    expect(developmentReportSuite.props.input.value).toEqual([{ value: 'eee' }, { value: 'fff' }]);
     expect(trackerVariableNameTextfield.props.value).toBe('d');
     expect(showReportSuitesCheckbox.props.value).toBe(true);
   });
@@ -188,9 +188,9 @@ describe('libary management', () => {
       httpsUrlTextfield
     } = getReactComponents(instance);
 
-    expect(productionReportSuite.props.input.value).toEqual(['aaa', 'bbb']);
-    expect(stagingReportSuite.props.input.value).toEqual(['ccc', 'ddd']);
-    expect(developmentReportSuite.props.input.value).toEqual(['eee', 'fff']);
+    expect(productionReportSuite.props.input.value).toEqual([{ value: 'aaa' }, { value: 'bbb' }]);
+    expect(stagingReportSuite.props.input.value).toEqual([{ value: 'ccc' }, { value: 'ddd' }]);
+    expect(developmentReportSuite.props.input.value).toEqual([{ value: 'eee' }, { value: 'fff' }]);
 
     expect(showReportSuitesCheckbox.props.value).toBe(true);
     expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
@@ -234,9 +234,9 @@ describe('libary management', () => {
       trackerVariableNameTextfield
     } = getReactComponents(instance);
 
-    expect(productionReportSuite.props.input.value).toEqual(['aaa', 'bbb']);
-    expect(stagingReportSuite.props.input.value).toEqual(['ccc', 'ddd']);
-    expect(developmentReportSuite.props.input.value).toEqual(['eee', 'fff']);
+    expect(productionReportSuite.props.input.value).toEqual([{ value: 'aaa' }, { value: 'bbb' }]);
+    expect(stagingReportSuite.props.input.value).toEqual([{ value: 'ccc' }, { value: 'ddd' }]);
+    expect(developmentReportSuite.props.input.value).toEqual([{ value: 'eee' }, { value: 'fff' }]);
 
     expect(showReportSuitesCheckbox.props.value).toBe(true);
     expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
@@ -254,9 +254,9 @@ describe('libary management', () => {
       pageBottomLoadPhaseRadio
     } = getReactComponents(instance);
 
-    productionReportSuite.props.input.onChange(['aa', 'bb']);
-    stagingReportSuite.props.input.onChange(['cc', 'dd']);
-    developmentReportSuite.props.input.onChange(['ee', 'ff']);
+    productionReportSuite.props.input.onChange([{ value: 'aa' }, { value: 'bb' }]);
+    stagingReportSuite.props.input.onChange([{ value: 'cc' }, { value: 'dd' }]);
+    developmentReportSuite.props.input.onChange([{ value: 'ee' }, { value: 'ff' }]);
     pageBottomLoadPhaseRadio.props.onChange('pageBottom');
 
     const {
@@ -290,9 +290,9 @@ describe('libary management', () => {
       trackerVariableNameTextfield
     } = getReactComponents(instance);
 
-    productionReportSuite.props.input.onChange(['aa', 'bb']);
-    stagingReportSuite.props.input.onChange(['cc', 'dd']);
-    developmentReportSuite.props.input.onChange(['ee', 'ff']);
+    productionReportSuite.props.input.onChange([{ value: 'aa' }, { value: 'bb' }]);
+    stagingReportSuite.props.input.onChange([{ value: 'cc' }, { value: 'dd' }]);
+    developmentReportSuite.props.input.onChange([{ value: 'ee' }, { value: 'ff' }]);
     trackerVariableNameTextfield.props.onChange('d');
 
     const {
@@ -329,10 +329,9 @@ describe('libary management', () => {
       pageBottomLoadPhaseRadio
     } = getReactComponents(instance);
 
-    productionReportSuite.props.input.onChange(['aa', 'bb']);
-    stagingReportSuite.props.input.onChange(['cc', 'dd']);
-    developmentReportSuite.props.input.onChange(['ee', 'ff']);
-
+    productionReportSuite.props.input.onChange([{ value: 'aa' }, { value: 'bb' }]);
+    stagingReportSuite.props.input.onChange([{ value: 'cc' }, { value: 'dd' }]);
+    developmentReportSuite.props.input.onChange([{ value: 'ee' }, { value: 'ff' }]);
     trackerVariableNameTextfield.props.onChange('d');
     httpUrlTextfield.props.onChange('http://someurl.com');
     httpsUrlTextfield.props.onChange('https://someurl.com');
@@ -376,10 +375,9 @@ describe('libary management', () => {
       pageBottomLoadPhaseRadio
     } = getReactComponents(instance);
 
-    productionReportSuite.props.input.onChange(['aa', 'bb']);
-    stagingReportSuite.props.input.onChange(['cc', 'dd']);
-    developmentReportSuite.props.input.onChange(['ee', 'ff']);
-
+    productionReportSuite.props.input.onChange([{ value: 'aa' }, { value: 'bb' }]);
+    stagingReportSuite.props.input.onChange([{ value: 'cc' }, { value: 'dd' }]);
+    developmentReportSuite.props.input.onChange([{ value: 'ee' }, { value: 'ff' }]);
     trackerVariableNameTextfield.props.onChange('d');
     pageBottomLoadPhaseRadio.props.onChange('pageBottom');
 

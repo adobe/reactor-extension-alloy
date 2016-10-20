@@ -1,7 +1,5 @@
 import React from 'react';
 import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
-import Tag from '@coralui/react-coral/lib/Tag';
-import TagList from '@coralui/react-coral/lib/TagList';
 import { ErrorTip, DataElementSelectorButton } from '@reactor/react-components';
 
 import addDataElementToken from '../../utils/addDataElementToken';
@@ -31,73 +29,42 @@ const reportSuites = [
 ];
 
 export default class ReportSuite extends React.Component {
-  onChange = (newValue) => {
+  onChange = (newValueArr) => {
     const {
       input: {
-        onChange,
-        value
+        onChange
       }
     } = this.props;
 
-    const values = value ? value.slice() : [];
-
-    if (values.indexOf(newValue) === -1) {
-      values.push(newValue);
-    }
-
-    onChange(values);
-  };
-
-  onAutocompleteChange = (newValueArr) => {
-    if (!newValueArr.length) {
-      return;
-    }
-
-    const newValue = newValueArr.shift().value;
-    this.onChange(newValue);
-  };
-
-  onRemove = (removedValue) => {
-    const {
-      input: {
-        onChange,
-        value
-      }
-    } = this.props;
-
-    const values = value.slice() || [];
-    const removedValueIndex = values.indexOf(removedValue);
-
-    if (removedValueIndex !== -1) {
-      values.splice(removedValueIndex, 1);
-    }
-
-    onChange(values);
-  };
-
-  getReportSuiteOptions = () => {
-    const selectedValues = this.props.input.value;
-    return reportSuites
-      .filter(rs => selectedValues.indexOf(rs.value) === -1)
-      .sort((a, b) => {
-        const aValue = a.value.toLowerCase();
-        const bValue = b.value.toLowerCase();
-
-        if (aValue < bValue) {
-          return -1;
-        }
-
-        if (aValue > bValue) {
-          return 1;
-        }
-
-        return 0;
-      });
+    onChange(newValueArr);
   };
 
   openDataElementSelector = () => {
     window.extensionBridge.openDataElementSelector(dataElementName => {
-      this.onChange(addDataElementToken('', dataElementName));
+      const dataElementDoesNotExist =
+        reportSuites.filter((rs) => rs.value === dataElementName).length === 0;
+
+      if (dataElementDoesNotExist) {
+        const {
+          input: {
+            onChange,
+            value
+          }
+        } = this.props;
+
+        reportSuites.push({
+          value: addDataElementToken('', dataElementName)
+        });
+
+        const newValue = value || [];
+
+        newValue.push({
+          value: addDataElementToken('', dataElementName)
+        });
+
+        onChange(newValue);
+        this.forceUpdate();
+      }
     });
   };
 
@@ -113,39 +80,23 @@ export default class ReportSuite extends React.Component {
       label
     } = this.props;
 
-    const values = value || [];
-
     return (
       <div className="ReportSuite-autocompleteField">
         <label className="Label">{ label }</label>
         <div>
           <Autocomplete
             labelKey="value"
-            onChange={ this.onAutocompleteChange }
+            onChange={ this.onChange }
+            value={ value }
             placeholder="Add Report Suite(s)"
             className="Field--long"
-            options={ this.getReportSuiteOptions() }
+            options={ reportSuites }
             allowCreate
             multiple
             invalid={ Boolean(touched && error) }
           />
           { touched && error ? <ErrorTip>{ error }</ErrorTip> : null }
           <DataElementSelectorButton onClick={ this.openDataElementSelector } />
-          <div>
-            <TagList className="coral-Autocomplete-tagList" onClose={ this.onRemove }>
-              {
-                values.map(tag =>
-                  <Tag
-                    className="TagListEditor-tag"
-                    key={ tag }
-                    title={ tag }
-                  >
-                    { tag }
-                  </Tag>
-                )
-              }
-            </TagList>
-          </div>
         </div>
       </div>
     );

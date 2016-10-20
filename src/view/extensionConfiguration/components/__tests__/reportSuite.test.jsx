@@ -53,6 +53,6 @@ describe('report suite', () => {
     reportSuiteDataElementButton.props.onClick();
 
     expect(window.extensionBridge.openDataElementSelector).toHaveBeenCalled();
-    expect(onChangeSpy).toHaveBeenCalledWith(['%foo%']);
+    expect(onChangeSpy).toHaveBeenCalledWith([{ value: '%foo%' }]);
   });
 });

@@ -249,6 +249,15 @@ export const formConfig = {
 
     const showReportSuites = Boolean(type !== LIB_TYPES.MANAGED && accounts);
 
+    if (accounts) {
+      for (const environment of ENVIRONMENTS) {
+        const accountsForEnvironment = accounts[environment];
+        if (accountsForEnvironment && accountsForEnvironment.length > 0) {
+          accounts[environment] = accountsForEnvironment.map(i => ({ value: i }));
+        }
+      }
+    }
+
     return {
       ...values,
       libraryCode: {
@@ -286,7 +295,7 @@ export const formConfig = {
       for (const environment of ENVIRONMENTS) {
         const accountsForEnvironment = values.libraryCode.accounts[environment];
         if (accountsForEnvironment && accountsForEnvironment.length > 0) {
-          accounts[environment] = accountsForEnvironment;
+          accounts[environment] = accountsForEnvironment.map(i => i.value);
         }
       }
 
