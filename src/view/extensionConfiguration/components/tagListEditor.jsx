@@ -66,6 +66,7 @@ export default class TagListEditor extends React.Component {
     this.setState({
       newValue: addDataElementToken(this.state.newValue, dataElementName)
     });
+    this.add();
   };
 
   openSelector = () => {
@@ -80,35 +81,37 @@ export default class TagListEditor extends React.Component {
       tooltip,
       input: {
         value
-      }
+      },
+      inputClassName,
+      className
     } = this.props;
 
     return (
-      <div className="TagListEditor">
+      <div className={ `TagListEditor ${className}` }>
         <label className="Label">{ title }</label>
         {
           tooltip ? <InfoTip>{ tooltip }</InfoTip> : null
         }
-        <div>
+        <div className="TagListEditor-inputControls">
           <Textfield
-            className="Field--long"
+            className={ inputClassName || 'Field--long' }
             onChange={ this.onNewValueChange }
             onKeyPress={ this.handleKeyPress }
             value={ this.state.newValue }
           />
           <DataElementSelectorButton onClick={ this.openSelector } />
           <Button onClick={ this.add }>Add</Button>
-          <div className="u-gapTop">
-            <TagList
-              onClose={ this.onRemove }
-            >
-              {
-                value ? value.map(
-                  tag => <Tag className="TagListEditor-tag" key={ tag } title={ tag }>{ tag }</Tag>
-                ) : null
-              }
-            </TagList>
-          </div>
+        </div>
+        <div className="u-gapTop TagListEditor-tagContainer">
+          <TagList
+            onClose={ this.onRemove }
+          >
+            {
+              value ? value.map(
+                tag => <Tag className="TagListEditor-tag" key={ tag } title={ tag }>{ tag }</Tag>
+              ) : null
+            }
+          </TagList>
         </div>
       </div>
     );

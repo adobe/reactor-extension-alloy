@@ -10,11 +10,13 @@ const getReactComponents = (wrapper) => {
   const valueTextfield = wrapper.find(Textfield).node;
   const valueButton = wrapper.find(DataElementSelectorButton).node;
   const addButton = wrapper.find(Button).filterWhere(n => n.prop('children') === 'Add').node;
+  const dataElementSelectorButton = wrapper.find(Button).node;
 
   return {
     valueTextfield,
     valueButton,
-    addButton
+    addButton,
+    dataElementSelectorButton
   };
 };
 
@@ -49,7 +51,7 @@ describe('tag list editor', () => {
   });
 
   it('opens the data element selector from data element button', () => {
-    const { valueTextfield, valueButton } = getReactComponents(instance);
+    const { valueButton } = getReactComponents(instance);
 
     window.extensionBridge.openDataElementSelector = jasmine.createSpy('openDataElementSelector')
       .and.callFake(callback => {
@@ -59,7 +61,19 @@ describe('tag list editor', () => {
     valueButton.props.onClick();
 
     expect(window.extensionBridge.openDataElementSelector).toHaveBeenCalled();
-    expect(valueTextfield.props.value).toBe('%foo%');
+  });
+
+  it('adds a new tag after selecting a data element from the modal', () => {
+    const { dataElementSelectorButton } = getReactComponents(instance);
+
+    window.extensionBridge.openDataElementSelector = jasmine.createSpy('openDataElementSelector')
+      .and.callFake(callback => {
+        callback('foo');
+      });
+
+    dataElementSelectorButton.props.onClick();
+
+    expect(onChangeSpy).toHaveBeenCalledWith(['%foo%']);
   });
 
   it('adds a new tag when the add button is clicked', () => {

@@ -29,56 +29,58 @@ const cookieLifetimeOptions = [{
 }];
 
 const Cookies = ({ cookieLifetime }) => (
-  <div className="Cookies">
-    <label className="Cookies-field">
-      <span className="Label">Visitor ID</span>
-      <div>
-        <Field
-          name="trackerProperties.visitorID"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
-    <label className="Cookies-field">
-      <span className="Label">Visitor Namespace</span>
-      <div>
-        <Field
-          name="trackerProperties.visitorNamespace"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
-    <label className="Cookies-field">
-      <span className="Label">Domain Periods</span>
-      <div>
-        <Field
-          name="trackerProperties.cookieDomainPeriods"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
-    <label className="Cookies-field">
-      <span className="Label">First-party Domain Periods</span>
-      <div>
-        <Field
-          name="trackerProperties.fpCookieDomainPeriods"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
-      </div>
-    </label>
-    <div className="u-gapBottom">
+  <div>
+    <div className="ColumnGrid">
+      <label className="ColumnGrid-cell">
+        <span className="Label">Visitor ID</span>
+        <div>
+          <Field
+            name="trackerProperties.visitorID"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
+      <label className="ColumnGrid-cell">
+        <span className="Label">Visitor Namespace</span>
+        <div>
+          <Field
+            name="trackerProperties.visitorNamespace"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
+      <label className="ColumnGrid-cell">
+        <span className="Label">Domain Periods</span>
+        <div>
+          <Field
+            name="trackerProperties.cookieDomainPeriods"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
+      <label className="ColumnGrid-cell">
+        <span className="Label">First-party Domain Periods</span>
+        <div>
+          <Field
+            name="trackerProperties.fpCookieDomainPeriods"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
+    </div>
+    <div>
       <label className="Label" htmlFor="cookieLifetimeField">Cookie Lifetime</label>
       <div>
         <Field

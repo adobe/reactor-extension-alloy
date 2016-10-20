@@ -1,22 +1,40 @@
 import { mount } from 'enzyme';
 import Checkbox from '@coralui/react-coral/lib/Checkbox';
+import Tag from '@coralui/react-coral/lib/Tag';
 import Radio from '@coralui/react-coral/lib/Radio';
 import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 import ErrorTip from '@reactor/react-components/lib/errorTip';
 import { Field } from 'redux-form';
 
-import ReportSuite from './../reportSuite';
+import TagListEditor from './../tagListEditor';
 import LibraryManagement, { formConfig } from '../libraryManagement';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
 import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const [
-    productionReportSuite,
-    stagingReportSuite,
-    developmentReportSuite
-  ] = wrapper.find(ReportSuite).nodes;
+  const productionReportSuite = wrapper.find(TagListEditor)
+    .filterWhere(n => n.prop('title').includes('Production'));
+  const stagingReportSuite = wrapper.find(TagListEditor)
+    .filterWhere(n => n.prop('title').includes('Staging'));
+  const developmentReportSuite = wrapper.find(TagListEditor)
+    .filterWhere(n => n.prop('title').includes('Development'));
+
+  const productionReportSuites = productionReportSuite.find(Tag).nodes.map(n => n.props.children);
+  const stagingReportSuites = stagingReportSuite.find(Tag).nodes.map(n => n.props.children);
+  const developmentReportSuites = developmentReportSuite.find(Tag).nodes.map(n => n.props.children);
+
+  const productionReportSuitesAddButton = productionReportSuite.find(Button)
+    .filterWhere(n => n.prop('children') === 'Add').node;
+  const stagingReportSuitesAddButton = stagingReportSuite.find(Button)
+    .filterWhere(n => n.prop('children') === 'Add').node;
+  const developmentReportSuitesAddButton = developmentReportSuite.find(Button)
+    .filterWhere(n => n.prop('children') === 'Add').node;
+
+
+  const productionReportSuiteTextfield = productionReportSuite.find(Textfield).node;
+  const stagingReportSuiteTextfield = stagingReportSuite.find(Textfield).node;
+  const developmentReportSuiteTextfield = developmentReportSuite.find(Textfield).node;
 
   const pageBottomLoadPhaseRadio =
     wrapper.find(Radio).filterWhere(n => n.prop('value') === 'pageBottom').node;
@@ -27,8 +45,8 @@ const getReactComponents = (wrapper) => {
   const typeCustomRadio =
     wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom').node;
 
-  const trackerVariableNameTextfield =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('trackerVariableName')).node;
+  const trackerVariableNameTextfield = wrapper.find(Field)
+    .filterWhere(n => n.prop('name').includes('trackerVariableName')).find(Textfield).node;
 
   const httpUrlField = wrapper.find(Field).filterWhere(n => n.prop('name').includes('httpUrl'));
   const httpUrlTextfield = httpUrlField.find(Textfield).node;
@@ -47,9 +65,15 @@ const getReactComponents = (wrapper) => {
   const sourceErrorTip = wrapper.find(ErrorTip).node;
 
   return {
-    productionReportSuite,
-    stagingReportSuite,
-    developmentReportSuite,
+    productionReportSuites,
+    stagingReportSuites,
+    developmentReportSuites,
+    productionReportSuiteTextfield,
+    stagingReportSuiteTextfield,
+    developmentReportSuiteTextfield,
+    productionReportSuitesAddButton,
+    stagingReportSuitesAddButton,
+    developmentReportSuitesAddButton,
     pageBottomLoadPhaseRadio,
     trackerVariableNameTextfield,
     httpUrlTextfield,
@@ -99,15 +123,15 @@ describe('libary management', () => {
     });
 
     const {
-      productionReportSuite,
-      stagingReportSuite,
-      developmentReportSuite,
+      productionReportSuites,
+      stagingReportSuites,
+      developmentReportSuites,
       pageBottomLoadPhaseRadio
     } = getReactComponents(instance);
 
-    expect(productionReportSuite.props.input.value).toEqual([{ value: 'aaa' }, { value: 'bbb' }]);
-    expect(stagingReportSuite.props.input.value).toEqual([{ value: 'ccc' }, { value: 'ddd' }]);
-    expect(developmentReportSuite.props.input.value).toEqual([{ value: 'eee' }, { value: 'fff' }]);
+    expect(productionReportSuites).toEqual(['aaa', 'bbb']);
+    expect(stagingReportSuites).toEqual(['ccc', 'ddd']);
+    expect(developmentReportSuites).toEqual(['eee', 'fff']);
     expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
   });
 
@@ -136,16 +160,16 @@ describe('libary management', () => {
     });
 
     const {
-      productionReportSuite,
-      stagingReportSuite,
-      developmentReportSuite,
+      productionReportSuites,
+      stagingReportSuites,
+      developmentReportSuites,
       trackerVariableNameTextfield,
       showReportSuitesCheckbox
     } = getReactComponents(instance);
 
-    expect(productionReportSuite.props.input.value).toEqual([{ value: 'aaa' }, { value: 'bbb' }]);
-    expect(stagingReportSuite.props.input.value).toEqual([{ value: 'ccc' }, { value: 'ddd' }]);
-    expect(developmentReportSuite.props.input.value).toEqual([{ value: 'eee' }, { value: 'fff' }]);
+    expect(productionReportSuites).toEqual(['aaa', 'bbb']);
+    expect(stagingReportSuites).toEqual(['ccc', 'ddd']);
+    expect(developmentReportSuites).toEqual(['eee', 'fff']);
     expect(trackerVariableNameTextfield.props.value).toBe('d');
     expect(showReportSuitesCheckbox.props.value).toBe(true);
   });
@@ -178,9 +202,9 @@ describe('libary management', () => {
     });
 
     const {
-      productionReportSuite,
-      stagingReportSuite,
-      developmentReportSuite,
+      productionReportSuites,
+      stagingReportSuites,
+      developmentReportSuites,
       showReportSuitesCheckbox,
       trackerVariableNameTextfield,
       pageBottomLoadPhaseRadio,
@@ -188,9 +212,9 @@ describe('libary management', () => {
       httpsUrlTextfield
     } = getReactComponents(instance);
 
-    expect(productionReportSuite.props.input.value).toEqual([{ value: 'aaa' }, { value: 'bbb' }]);
-    expect(stagingReportSuite.props.input.value).toEqual([{ value: 'ccc' }, { value: 'ddd' }]);
-    expect(developmentReportSuite.props.input.value).toEqual([{ value: 'eee' }, { value: 'fff' }]);
+    expect(productionReportSuites).toEqual(['aaa', 'bbb']);
+    expect(stagingReportSuites).toEqual(['ccc', 'ddd']);
+    expect(developmentReportSuites).toEqual(['eee', 'fff']);
 
     expect(showReportSuitesCheckbox.props.value).toBe(true);
     expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
@@ -226,17 +250,17 @@ describe('libary management', () => {
     });
 
     const {
-      productionReportSuite,
-      stagingReportSuite,
-      developmentReportSuite,
+      productionReportSuites,
+      stagingReportSuites,
+      developmentReportSuites,
       pageBottomLoadPhaseRadio,
       showReportSuitesCheckbox,
       trackerVariableNameTextfield
     } = getReactComponents(instance);
 
-    expect(productionReportSuite.props.input.value).toEqual([{ value: 'aaa' }, { value: 'bbb' }]);
-    expect(stagingReportSuite.props.input.value).toEqual([{ value: 'ccc' }, { value: 'ddd' }]);
-    expect(developmentReportSuite.props.input.value).toEqual([{ value: 'eee' }, { value: 'fff' }]);
+    expect(productionReportSuites).toEqual(['aaa', 'bbb']);
+    expect(stagingReportSuites).toEqual(['ccc', 'ddd']);
+    expect(developmentReportSuites).toEqual(['eee', 'fff']);
 
     expect(showReportSuitesCheckbox.props.value).toBe(true);
     expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
@@ -248,15 +272,30 @@ describe('libary management', () => {
     extensionBridge.init();
 
     const {
-      productionReportSuite,
-      stagingReportSuite,
-      developmentReportSuite,
+      productionReportSuiteTextfield,
+      productionReportSuitesAddButton,
+      stagingReportSuiteTextfield,
+      stagingReportSuitesAddButton,
+      developmentReportSuiteTextfield,
+      developmentReportSuitesAddButton,
       pageBottomLoadPhaseRadio
     } = getReactComponents(instance);
 
-    productionReportSuite.props.input.onChange([{ value: 'aa' }, { value: 'bb' }]);
-    stagingReportSuite.props.input.onChange([{ value: 'cc' }, { value: 'dd' }]);
-    developmentReportSuite.props.input.onChange([{ value: 'ee' }, { value: 'ff' }]);
+    productionReportSuiteTextfield.props.onChange('aa');
+    productionReportSuitesAddButton.props.onClick();
+    productionReportSuiteTextfield.props.onChange('bb');
+    productionReportSuitesAddButton.props.onClick();
+
+    stagingReportSuiteTextfield.props.onChange('cc');
+    stagingReportSuitesAddButton.props.onClick();
+    stagingReportSuiteTextfield.props.onChange('dd');
+    stagingReportSuitesAddButton.props.onClick();
+
+    developmentReportSuiteTextfield.props.onChange('ee');
+    developmentReportSuitesAddButton.props.onClick();
+    developmentReportSuiteTextfield.props.onChange('ff');
+    developmentReportSuitesAddButton.props.onClick();
+
     pageBottomLoadPhaseRadio.props.onChange('pageBottom');
 
     const {
@@ -284,15 +323,30 @@ describe('libary management', () => {
     showReportSuitesCheckbox.props.onChange(true);
 
     const {
-      productionReportSuite,
-      stagingReportSuite,
-      developmentReportSuite,
+      productionReportSuiteTextfield,
+      productionReportSuitesAddButton,
+      stagingReportSuiteTextfield,
+      stagingReportSuitesAddButton,
+      developmentReportSuiteTextfield,
+      developmentReportSuitesAddButton,
       trackerVariableNameTextfield
     } = getReactComponents(instance);
 
-    productionReportSuite.props.input.onChange([{ value: 'aa' }, { value: 'bb' }]);
-    stagingReportSuite.props.input.onChange([{ value: 'cc' }, { value: 'dd' }]);
-    developmentReportSuite.props.input.onChange([{ value: 'ee' }, { value: 'ff' }]);
+    productionReportSuiteTextfield.props.onChange('aa');
+    productionReportSuitesAddButton.props.onClick();
+    productionReportSuiteTextfield.props.onChange('bb');
+    productionReportSuitesAddButton.props.onClick();
+
+    stagingReportSuiteTextfield.props.onChange('cc');
+    stagingReportSuitesAddButton.props.onClick();
+    stagingReportSuiteTextfield.props.onChange('dd');
+    stagingReportSuitesAddButton.props.onClick();
+
+    developmentReportSuiteTextfield.props.onChange('ee');
+    developmentReportSuitesAddButton.props.onClick();
+    developmentReportSuiteTextfield.props.onChange('ff');
+    developmentReportSuitesAddButton.props.onClick();
+
     trackerVariableNameTextfield.props.onChange('d');
 
     const {
@@ -320,18 +374,33 @@ describe('libary management', () => {
     showReportSuitesCheckbox.props.onChange(true);
 
     const {
-      productionReportSuite,
-      stagingReportSuite,
-      developmentReportSuite,
+      productionReportSuiteTextfield,
+      productionReportSuitesAddButton,
+      stagingReportSuiteTextfield,
+      stagingReportSuitesAddButton,
+      developmentReportSuiteTextfield,
+      developmentReportSuitesAddButton,
       trackerVariableNameTextfield,
       httpUrlTextfield,
       httpsUrlTextfield,
       pageBottomLoadPhaseRadio
     } = getReactComponents(instance);
 
-    productionReportSuite.props.input.onChange([{ value: 'aa' }, { value: 'bb' }]);
-    stagingReportSuite.props.input.onChange([{ value: 'cc' }, { value: 'dd' }]);
-    developmentReportSuite.props.input.onChange([{ value: 'ee' }, { value: 'ff' }]);
+    productionReportSuiteTextfield.props.onChange('aa');
+    productionReportSuitesAddButton.props.onClick();
+    productionReportSuiteTextfield.props.onChange('bb');
+    productionReportSuitesAddButton.props.onClick();
+
+    stagingReportSuiteTextfield.props.onChange('cc');
+    stagingReportSuitesAddButton.props.onClick();
+    stagingReportSuiteTextfield.props.onChange('dd');
+    stagingReportSuitesAddButton.props.onClick();
+
+    developmentReportSuiteTextfield.props.onChange('ee');
+    developmentReportSuitesAddButton.props.onClick();
+    developmentReportSuiteTextfield.props.onChange('ff');
+    developmentReportSuitesAddButton.props.onClick();
+
     trackerVariableNameTextfield.props.onChange('d');
     httpUrlTextfield.props.onChange('http://someurl.com');
     httpsUrlTextfield.props.onChange('https://someurl.com');
@@ -368,16 +437,31 @@ describe('libary management', () => {
     showReportSuitesCheckbox.props.onChange(true);
 
     const {
-      productionReportSuite,
-      stagingReportSuite,
-      developmentReportSuite,
+      productionReportSuiteTextfield,
+      productionReportSuitesAddButton,
+      stagingReportSuiteTextfield,
+      stagingReportSuitesAddButton,
+      developmentReportSuiteTextfield,
+      developmentReportSuitesAddButton,
       trackerVariableNameTextfield,
       pageBottomLoadPhaseRadio
     } = getReactComponents(instance);
 
-    productionReportSuite.props.input.onChange([{ value: 'aa' }, { value: 'bb' }]);
-    stagingReportSuite.props.input.onChange([{ value: 'cc' }, { value: 'dd' }]);
-    developmentReportSuite.props.input.onChange([{ value: 'ee' }, { value: 'ff' }]);
+    productionReportSuiteTextfield.props.onChange('aa');
+    productionReportSuitesAddButton.props.onClick();
+    productionReportSuiteTextfield.props.onChange('bb');
+    productionReportSuitesAddButton.props.onClick();
+
+    stagingReportSuiteTextfield.props.onChange('cc');
+    stagingReportSuitesAddButton.props.onClick();
+    stagingReportSuiteTextfield.props.onChange('dd');
+    stagingReportSuitesAddButton.props.onClick();
+
+    developmentReportSuiteTextfield.props.onChange('ee');
+    developmentReportSuitesAddButton.props.onClick();
+    developmentReportSuiteTextfield.props.onChange('ff');
+    developmentReportSuitesAddButton.props.onClick();
+
     trackerVariableNameTextfield.props.onChange('d');
     pageBottomLoadPhaseRadio.props.onChange('pageBottom');
 

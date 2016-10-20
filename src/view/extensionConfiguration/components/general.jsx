@@ -18,37 +18,39 @@ export default () => (
     >
       Enable EU compliance for Adobe Analytics
     </Field>
-    <div>
-      <Heading size="4">Character Set</Heading>
-      <CharSet />
-    </div>
-    <div>
-      <Heading size="4">Currency Code</Heading>
-      <CurrencyCode />
-    </div>
-    <div>
-      <span className="Label u-gapTop">Tracking Server</span>
-      <div>
-        <Field
-          name="trackerProperties.trackingServer"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
+    <div className="ColumnGrid">
+      <div className="ColumnGrid-cell">
+        <Heading size="4">Character Set</Heading>
+        <CharSet />
       </div>
-    </div>
-    <div>
-      <span className="Label u-gapTop">SSL Tracking Server</span>
-      <div>
-        <Field
-          name="trackerProperties.trackingServerSecure"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
-          inputClassName="Field--long"
-          supportDataElement
-        />
+      <div className="ColumnGrid-cell">
+        <Heading size="4">Currency Code</Heading>
+        <CurrencyCode />
       </div>
+      <label className="ColumnGrid-cell">
+        <span className="Label u-gapTop">Tracking Server</span>
+        <div>
+          <Field
+            name="trackerProperties.trackingServer"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
+      <label className="ColumnGrid-cell">
+        <span className="Label u-gapTop">SSL Tracking Server</span>
+        <div>
+          <Field
+            name="trackerProperties.trackingServerSecure"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            inputClassName="Field--long"
+            supportDataElement
+          />
+        </div>
+      </label>
     </div>
   </div>
 );

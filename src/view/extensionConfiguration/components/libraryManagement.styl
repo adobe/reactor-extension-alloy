@@ -1,7 +1,13 @@
-.ReportSuites-container {
-  margin-bottom: 16*$px;
+.ReportSuites-fieldsContainer {
+  display: flex;
 }
 
-.ReportSuites-fieldsContainer {
-  clearfix()
+@media all and (max-width: 1300px) {
+  .ReportSuites-fieldsContainer {
+    flex-direction: column;
+  }
+}
+
+.ReportSuites-editor {
+  margin-bottom: 8*$px;
 }

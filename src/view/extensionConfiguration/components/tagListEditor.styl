@@ -1,11 +1,27 @@
+// Layout sorcery based on http://stackoverflow.com/a/12747183/459966
+// We want the input controls (texfield, data element selector button, add button) to be on the same
+// line we want the tag list editor to never be wider than the aggregate width of those things.
+// If there is an abundance of labels, they should wrap rather than making the TagListEditor
+// wider.
 .TagListEditor {
-  float: left;
-  margin-right: 50px;
-  width: 480px;
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 40*$px;
+}
+
+.TagListEditor-inputControls {
+  white-space: nowrap;
+  display: table-row;
+  width: 1px;
+}
+
+.TagListEditor-tagContainer {
+  display: table-cell;
+  width: 1px;
 }
 
 .TagListEditor-tag .coral-Tag-label {
-  max-width:430px;
+  max-width: 300*$px;
   display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
