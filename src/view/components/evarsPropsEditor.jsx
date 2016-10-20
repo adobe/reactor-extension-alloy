@@ -6,6 +6,7 @@ import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
 import { Field, FieldArray, formValueSelector, change } from 'redux-form';
 import { connect } from 'react-redux';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import LIMITS, { LIMITS_LEVELS_LABELS } from './accessLevelLimits';
 
 // TODO: Replace with actual values from user's product level.
 const maxItems = {
@@ -34,8 +35,21 @@ const createOptions = varType => {
 
   for (let i = 0; i < numItems; i++) {
     const value = varType + (i + 1);
+    let label = value;
+    const accessLevels = [];
+
+    Object.keys(LIMITS_LEVELS_LABELS).forEach(accessLevel => {
+      if (i + 1 <= LIMITS[varType][accessLevel]) {
+        accessLevels.push(LIMITS_LEVELS_LABELS[accessLevel]);
+      }
+    });
+
+    if (accessLevels.length !== Object.keys(LIMITS_LEVELS_LABELS).length) {
+      label += ` (${accessLevels.join(', ')})`;
+    }
+
     options.push({
-      label: value,
+      label,
       value
     });
   }
@@ -84,7 +98,6 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
           className="u-gapRight2x"
           component={ DecoratedInput }
           inputComponent={ Autocomplete }
-          inputClassName="Field--short"
           placeholder={ `Select ${varType}` }
           options={ nameOptions }
         />

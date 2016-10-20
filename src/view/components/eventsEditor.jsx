@@ -4,9 +4,10 @@ import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
 import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
 import { Field, FieldArray } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import LIMITS, { LIMITS_LEVELS_LABELS } from './accessLevelLimits';
 
 // TODO: Replace with actual values from user's product level.
-const MAX_EVENTS = 100;
+const MAX_EVENTS = 1000;
 
 const CONTEXT_EVENTS = [
   'prodView',
@@ -18,16 +19,35 @@ const CONTEXT_EVENTS = [
   'purchase'
 ];
 
-const createOption = value => ({
-  label: value,
-  value
-});
+const createOptions = numItems => {
+  const options = [];
 
-const nameOptions = CONTEXT_EVENTS.map(createOption);
+  for (let i = 0; i < numItems; i++) {
+    const value = `event${i + 1}`;
+    let label = value;
+    const accessLevels = [];
 
-for (let i = 0; i < MAX_EVENTS; i++) {
-  nameOptions.push(createOption(`event${i + 1}`));
-}
+    Object.keys(LIMITS_LEVELS_LABELS).forEach(accessLevel => {
+      if (i + 1 <= LIMITS.event[accessLevel]) {
+        accessLevels.push(LIMITS_LEVELS_LABELS[accessLevel]);
+      }
+    });
+
+    if (accessLevels.length !== Object.keys(LIMITS_LEVELS_LABELS).length) {
+      label += ` (${accessLevels.join(', ')})`;
+    }
+
+    options.push({
+      label,
+      value
+    });
+  }
+
+  return options;
+};
+
+let nameOptions = CONTEXT_EVENTS.map(value => ({ label: value, value }));
+nameOptions = nameOptions.concat(createOptions(MAX_EVENTS));
 
 const createEmptyRow = () => ({});
 
@@ -43,7 +63,6 @@ const renderEvents = ({ fields }) => {
         className="u-gapRight2x"
         component={ DecoratedInput }
         inputComponent={ Autocomplete }
-        inputClassName="Field--short"
         placeholder="Select event"
         options={ nameOptions }
       />
