@@ -6,9 +6,6 @@ import { Field, FieldArray } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 import LIMITS, { LIMITS_LEVELS_LABELS } from './accessLevelLimits';
 
-// TODO: Replace with actual values from user's product level.
-const MAX_EVENTS = 1000;
-
 const CONTEXT_EVENTS = [
   'prodView',
   'scOpen',
@@ -47,7 +44,7 @@ const createOptions = numItems => {
 };
 
 let nameOptions = CONTEXT_EVENTS.map(value => ({ label: value, value }));
-nameOptions = nameOptions.concat(createOptions(MAX_EVENTS));
+nameOptions = nameOptions.concat(createOptions(LIMITS.event.PREMIUM));
 
 const createEmptyRow = () => ({});
 

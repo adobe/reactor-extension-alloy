@@ -8,12 +8,6 @@ import { connect } from 'react-redux';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 import LIMITS, { LIMITS_LEVELS_LABELS } from './accessLevelLimits';
 
-// TODO: Replace with actual values from user's product level.
-const maxItems = {
-  eVar: 250,
-  prop: 75
-};
-
 const TYPES = {
   VALUE: 'value',
   ALIAS: 'alias'
@@ -31,7 +25,7 @@ const createEmptyRow = () => ({ type: 'value' });
 
 const createOptions = varType => {
   const options = [];
-  const numItems = maxItems[varType];
+  const numItems = LIMITS[varType].PREMIUM;
 
   for (let i = 0; i < numItems; i++) {
     const value = varType + (i + 1);
