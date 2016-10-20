@@ -26,7 +26,7 @@ const LOAD_PHASES = {
 };
 
 const ReportSuites = () => (
-  <section className="ReportSuites-container">
+  <section>
     <Heading size="4">
       Report Suites
       <InfoTip>Some tooltip</InfoTip>
