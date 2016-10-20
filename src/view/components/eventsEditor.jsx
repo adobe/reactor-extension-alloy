@@ -4,7 +4,7 @@ import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
 import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
 import { Field, FieldArray } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
-import LIMITS, { LIMITS_LEVELS_LABELS } from './accessLevelLimits';
+import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from './accessLevelLimits';
 
 const CONTEXT_EVENTS = [
   'prodView',
@@ -44,7 +44,7 @@ const createOptions = numItems => {
 };
 
 let nameOptions = CONTEXT_EVENTS.map(value => ({ label: value, value }));
-nameOptions = nameOptions.concat(createOptions(LIMITS.event.PREMIUM));
+nameOptions = nameOptions.concat(createOptions(maxLevel('event')));
 
 const createEmptyRow = () => ({});
 

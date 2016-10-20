@@ -1,7 +1,7 @@
 /**
  * The max number of dimensions and metrics based on the account level.
  */
-export default {
+const LIMITS = {
   eVar: {
     POINT_PRODUCT: 75,
     STANDARD: 100,
@@ -24,3 +24,7 @@ export const LIMITS_LEVELS_LABELS = {
   STANDARD: 'Standard',
   PREMIUM: 'Premium'
 };
+
+export const maxLevel = (type) => Math.max(...Object.keys(LIMITS[type]).map(e => LIMITS[type][e]));
+
+export default LIMITS;

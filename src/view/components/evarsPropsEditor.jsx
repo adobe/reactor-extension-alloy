@@ -6,7 +6,7 @@ import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
 import { Field, FieldArray, formValueSelector, change } from 'redux-form';
 import { connect } from 'react-redux';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
-import LIMITS, { LIMITS_LEVELS_LABELS } from './accessLevelLimits';
+import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from './accessLevelLimits';
 
 const TYPES = {
   VALUE: 'value',
@@ -25,7 +25,7 @@ const createEmptyRow = () => ({ type: 'value' });
 
 const createOptions = varType => {
   const options = [];
-  const numItems = LIMITS[varType].PREMIUM;
+  const numItems = maxLevel(varType);
 
   for (let i = 0; i < numItems; i++) {
     const value = varType + (i + 1);
