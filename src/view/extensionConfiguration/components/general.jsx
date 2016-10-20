@@ -11,7 +11,7 @@ import CurrencyCode, { formConfig as currencyCodeFormConfig } from './currencyCo
 import ENVIRONMENTS from '../../enums/environments';
 
 export default () => (
-  <div className="General">
+  <div>
     <Field
       name="euComplianceEnabled"
       component={ Checkbox }
