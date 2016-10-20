@@ -8,9 +8,8 @@ import { connect } from 'react-redux';
 import { formValueSelector, Field } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 import EditorButton from '@reactor/react-components/lib/reduxForm/editorButton';
-
+import TagListEditor from './tagListEditor';
 import ENVIRONMENTS from '../../enums/environments';
-import ReportSuite from './reportSuite';
 
 import './libraryManagement.styl';
 
@@ -36,20 +35,23 @@ const ReportSuites = () => (
     <section className="ReportSuites-fieldsContainer">
       <Field
         name="libraryCode.accounts.production"
-        label="Production Report Suite(s)"
-        component={ ReportSuite }
+        component={ TagListEditor }
+        inputClassName="Field--normal"
+        title="Production Report Suite(s)"
       />
 
       <Field
         name="libraryCode.accounts.staging"
-        label="Staging Report Suite(s)"
-        component={ ReportSuite }
+        component={ TagListEditor }
+        inputClassName="Field--normal"
+        title="Staging Report Suite(s)"
       />
 
       <Field
         name="libraryCode.accounts.development"
-        label="Development Report Suite(s)"
-        component={ ReportSuite }
+        component={ TagListEditor }
+        inputClassName="Field--normal"
+        title="Development Report Suite(s)"
       />
     </section>
   </section>
@@ -249,15 +251,6 @@ export const formConfig = {
 
     const showReportSuites = Boolean(type !== LIB_TYPES.MANAGED && accounts);
 
-    if (accounts) {
-      for (const environment of ENVIRONMENTS) {
-        const accountsForEnvironment = accounts[environment];
-        if (accountsForEnvironment && accountsForEnvironment.length > 0) {
-          accounts[environment] = accountsForEnvironment.map(i => ({ value: i }));
-        }
-      }
-    }
-
     return {
       ...values,
       libraryCode: {
@@ -295,7 +288,7 @@ export const formConfig = {
       for (const environment of ENVIRONMENTS) {
         const accountsForEnvironment = values.libraryCode.accounts[environment];
         if (accountsForEnvironment && accountsForEnvironment.length > 0) {
-          accounts[environment] = accountsForEnvironment.map(i => i.value);
+          accounts[environment] = accountsForEnvironment;
         }
       }
 

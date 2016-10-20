@@ -80,7 +80,8 @@ export default class TagListEditor extends React.Component {
       tooltip,
       input: {
         value
-      }
+      },
+      inputClassName
     } = this.props;
 
     return (
@@ -91,7 +92,7 @@ export default class TagListEditor extends React.Component {
         }
         <div>
           <Textfield
-            className="Field--long"
+            className={ inputClassName || 'Field--long' }
             onChange={ this.onNewValueChange }
             onKeyPress={ this.handleKeyPress }
             value={ this.state.newValue }
