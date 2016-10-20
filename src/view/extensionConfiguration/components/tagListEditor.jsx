@@ -81,11 +81,12 @@ export default class TagListEditor extends React.Component {
       input: {
         value
       },
-      inputClassName
+      inputClassName,
+      className
     } = this.props;
 
     return (
-      <div className="TagListEditor">
+      <div className={ `TagListEditor ${className}` }>
         <label className="Label">{ title }</label>
         {
           tooltip ? <InfoTip>{ tooltip }</InfoTip> : null

@@ -36,6 +36,7 @@ const ReportSuites = () => (
       <Field
         name="libraryCode.accounts.production"
         component={ TagListEditor }
+        className="ReportSuites-editor"
         inputClassName="Field--normal"
         title="Production Report Suite(s)"
       />
@@ -43,6 +44,7 @@ const ReportSuites = () => (
       <Field
         name="libraryCode.accounts.staging"
         component={ TagListEditor }
+        className="ReportSuites-editor"
         inputClassName="Field--normal"
         title="Staging Report Suite(s)"
       />
@@ -50,6 +52,7 @@ const ReportSuites = () => (
       <Field
         name="libraryCode.accounts.development"
         component={ TagListEditor }
+        className="ReportSuites-editor"
         inputClassName="Field--normal"
         title="Development Report Suite(s)"
       />
