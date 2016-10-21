@@ -10,6 +10,7 @@ import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInp
 import EditorButton from '@reactor/react-components/lib/reduxForm/editorButton';
 import TagListEditor from './tagListEditor';
 import ENVIRONMENTS from '../../enums/environments';
+import COMPONENT_NAMES from '../../enums/componentNames';
 
 import './libraryManagement.styl';
 
@@ -333,6 +334,9 @@ export const formConfig = {
       source
     } = values.libraryCode || {};
 
+    const componentsWithErrors = errors.componentsWithErrors ?
+      errors.componentsWithErrors.slice() : [];
+
     const libraryCodeErrors = {};
 
     const reportSuitesAreRequired =
@@ -362,8 +366,13 @@ export const formConfig = {
       libraryCodeErrors.source = 'Please provide custom code';
     }
 
+    if (Object.keys(libraryCodeErrors).length) {
+      componentsWithErrors.push(COMPONENT_NAMES.LIBRARY_MANAGEMENT);
+    }
+
     return {
       ...errors,
+      componentsWithErrors,
       libraryCode: libraryCodeErrors
     };
   }

@@ -65,6 +65,7 @@
     "redux-actions": "^0.12.0",
     "redux-form": "6.1.0",
     "style-loader": "^0.13.1",
-    "stylus-loader": "^2.3.1"
+    "stylus-loader": "^2.3.1",
+    "tiny-emitter": "^1.1.0"
   }
 }

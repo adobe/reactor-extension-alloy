@@ -22,8 +22,12 @@ module.exports = (View, formConfig, extensionBridge = window.extensionBridge, pr
     }
 
     render() {
+      const { error } = this.props;
+
       // No need to render until the extension bridge passes initialization information.
-      return this.props.initializedByBridge ? <View { ...this.props } { ...props } /> : null;
+      return this.props.initializedByBridge ?
+        <View componentsWithErrors={ error } { ...this.props } { ...props } /> :
+        null;
     }
   }
 
@@ -37,7 +41,16 @@ module.exports = (View, formConfig, extensionBridge = window.extensionBridge, pr
     // Note that there's no technical reason why config.validate must be a reducer. It does
     // maintain some consistency with settingsToFormValues and formValuesToSettings.
     validate: formConfig.validate ?
-      values => formConfig.validate({}, values, store.getState().meta) :
+      values => {
+        const errors = formConfig.validate({}, values, store.getState().meta);
+
+        return {
+          ...errors,
+          // A general form-wide error can be returned via the special _error key.
+          // From: http://redux-form.com/6.0.5/examples/submitValidation/
+          _error: errors.componentsWithErrors
+        };
+      } :
       undefined
   })(ReduxView);
 

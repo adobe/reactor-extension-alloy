@@ -6,7 +6,8 @@ import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
 import { Field, FieldArray, formValueSelector, change } from 'redux-form';
 import { connect } from 'react-redux';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
-import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from './accessLevelLimits';
+import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from '../enums/accessLevelLimits';
+import COMPONENT_NAMES from '../enums/componentNames';
 
 const TYPES = {
   VALUE: 'value',
@@ -198,6 +199,8 @@ export const getFormConfig = (varType, varTypePlural) => ({
     const trackerProperties = values.trackerProperties || {};
     const variables = trackerProperties[varTypePlural] || [];
     const configuredVariableNames = [];
+    const componentsWithErrors = errors.componentsWithErrors ?
+      errors.componentsWithErrors.slice() : [];
 
     const variablesErrors = variables.map(variable => {
       const variableErrors = {};
@@ -219,8 +222,13 @@ export const getFormConfig = (varType, varTypePlural) => ({
       return variableErrors;
     });
 
+    if (Object.keys(variablesErrors.filter(r => r.name || r.value)).length) {
+      componentsWithErrors.push(COMPONENT_NAMES[varTypePlural.toUpperCase()]);
+    }
+
     return {
       ...errors,
+      componentsWithErrors,
       trackerProperties: {
         ...errors.trackerProperties,
         [varTypePlural]: variablesErrors

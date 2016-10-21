@@ -1,5 +1,6 @@
 import { getFormValues, initialize, change } from 'redux-form';
 import { actionCreators } from './reduxActions/bridgeAdapterActions';
+import eventBus from './utils/eventBus';
 
 export default (extensionBridge, store, formConfig, handleSubmit) => {
   extensionBridge.register({
@@ -45,6 +46,8 @@ export default (extensionBridge, store, formConfig, handleSubmit) => {
       handleSubmit(() => {
         valid = true;
       })();
+
+      eventBus.emit('validationOccurred');
 
       return valid;
     }
