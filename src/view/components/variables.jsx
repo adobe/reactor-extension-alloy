@@ -3,11 +3,11 @@ import Select from '@coralui/redux-form-react-coral/lib/Select';
 import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
 import { Field } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
-
 import { mergeConfigs } from '../utils/formConfigUtils';
 import EvarsPropsEditor, { getFormConfig as getEvarsPropsEditorFormConfig } from './evarsPropsEditor';
 import EventsEditor, { formConfig as eventsFormConfig } from './eventsEditor';
 import HierarchiesEditor, { formConfig as hierarchiesFormConfig } from './hierarchiesEditor';
+import COMPONENT_NAMES from '../enums/componentNames';
 
 import './variables.styl';
 
@@ -288,6 +288,20 @@ export const formConfig = mergeConfigs(
       return {
         ...settings,
         trackerProperties
+      };
+    },
+    validate(errors) {
+      const componentsWithErrors = errors.componentsWithErrors ?
+        errors.componentsWithErrors.slice() : [];
+
+      if ([COMPONENT_NAMES.EVARS, COMPONENT_NAMES.PROPS]
+          .filter(componentName => componentsWithErrors.indexOf(componentName) !== -1).length) {
+        componentsWithErrors.push(COMPONENT_NAMES.VARIABLES);
+      }
+
+      return {
+        ...errors,
+        componentsWithErrors
       };
     }
   }

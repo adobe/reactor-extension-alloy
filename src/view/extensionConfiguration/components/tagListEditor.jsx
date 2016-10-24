@@ -2,8 +2,7 @@ import Button from '@coralui/react-coral/lib/Button';
 import Textfield from '@coralui/react-coral/lib/Textfield';
 import Tag from '@coralui/react-coral/lib/Tag';
 import TagList from '@coralui/react-coral/lib/TagList';
-
-import { DataElementSelectorButton, InfoTip } from '@reactor/react-components';
+import { DataElementSelectorButton, ErrorTip, InfoTip } from '@reactor/react-components';
 import React from 'react';
 import addDataElementToken from '../../utils/addDataElementToken';
 
@@ -83,7 +82,11 @@ export default class TagListEditor extends React.Component {
         value
       },
       inputClassName,
-      className
+      className,
+      meta: {
+        touched,
+        error
+     }
     } = this.props;
 
     return (
@@ -101,6 +104,7 @@ export default class TagListEditor extends React.Component {
           />
           <DataElementSelectorButton onClick={ this.openSelector } />
           <Button onClick={ this.add }>Add</Button>
+          { touched && error ? <ErrorTip>{ error }</ErrorTip> : null }
         </div>
         <div className="u-gapTop TagListEditor-tagContainer">
           <TagList

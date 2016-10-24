@@ -4,7 +4,7 @@ import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
 import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
 import { Field, FieldArray } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
-import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from './accessLevelLimits';
+import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from '../enums/accessLevelLimits';
 
 const CONTEXT_EVENTS = [
   'prodView',
