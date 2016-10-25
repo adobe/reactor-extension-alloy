@@ -9,6 +9,7 @@ import { mergeConfigs } from '../../utils/formConfigUtils';
 import CharSet, { formConfig as charSetFormConfig } from './charSet';
 import CurrencyCode, { formConfig as currencyCodeFormConfig } from './currencyCode';
 import ENVIRONMENTS from '../../enums/environments';
+import COMPONENT_NAMES from '../../enums/componentNames';
 
 export default () => (
   <div>
@@ -113,6 +114,9 @@ export const formConfig = mergeConfigs(
 
       let trackingServersRequired = false;
 
+      const componentsWithErrors = errors.componentsWithErrors ?
+        errors.componentsWithErrors.slice() : [];
+
       if (values.libraryCode && values.libraryCode.accounts) {
         const accounts = values.libraryCode.accounts;
         trackingServersRequired = ENVIRONMENTS.some(environment => {
@@ -136,8 +140,13 @@ export const formConfig = mergeConfigs(
         }
       }
 
+      if (Object.keys(trackerPropertiesErrors).length) {
+        componentsWithErrors.push(COMPONENT_NAMES.GENERAL);
+      }
+
       return {
         ...errors,
+        componentsWithErrors,
         trackerProperties: trackerPropertiesErrors
       };
     }
