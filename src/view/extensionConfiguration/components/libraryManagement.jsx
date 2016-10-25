@@ -35,11 +35,11 @@ const ReportSuites = () => (
 
     <section className="ReportSuites-fieldsContainer">
       <Field
-        name="libraryCode.accounts.production"
+        name="libraryCode.accounts.development"
         component={ TagListEditor }
         className="ReportSuites-editor"
         inputClassName="Field--normal"
-        title="Production Report Suite(s)"
+        title="Development Report Suite(s)"
       />
 
       <Field
@@ -51,11 +51,11 @@ const ReportSuites = () => (
       />
 
       <Field
-        name="libraryCode.accounts.development"
+        name="libraryCode.accounts.production"
         component={ TagListEditor }
         className="ReportSuites-editor"
         inputClassName="Field--normal"
-        title="Development Report Suite(s)"
+        title="Production Report Suite(s)"
       />
     </section>
   </section>
