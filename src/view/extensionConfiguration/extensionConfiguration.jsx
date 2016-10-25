@@ -13,6 +13,7 @@ import COMPONENT_NAMES from '../enums/componentNames';
 
 const componentsToBeCheckedForErrors = {
   [COMPONENT_NAMES.LIBRARY_MANAGEMENT]: 0,
+  [COMPONENT_NAMES.GENERAL]: 1,
   [COMPONENT_NAMES.VARIABLES]: 2
 };
 
