@@ -9,12 +9,16 @@ var getTrackerModule = function(mocks) {
 
 describe('get tracker', function() {
   it('returns a promise', function() {
+    var loadLibrarySpy = jasmine.createSpy('load-library')
+      .and.returnValue(Promise.resolve('loaded'));
+
     var getTracker = getTrackerModule({
       'get-extension-configurations': function() {
         return [{
           id: 'EC1'
         }];
-      }
+      },
+      './loadLibrary.js': loadLibrarySpy
     });
 
     var getTrackerPromise = getTracker('EC1');
