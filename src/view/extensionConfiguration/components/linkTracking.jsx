@@ -36,7 +36,8 @@ const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
             name="trackerProperties.linkDownloadFileTypes"
             component={ TagListEditor }
             title="Download Extensions"
-            tooltip="Some tooltip"
+            tooltip="If your site contains links to files with any of these extensions, the URLs of
+              these links will appear in the File Downloads report."
           />
         </div> : null
       }
@@ -55,13 +56,13 @@ const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
             name="trackerProperties.linkExternalFilters"
             component={ TagListEditor }
             title="Track"
-            tooltip="Some tooltip"
+            tooltip="Links defined here will not be treated as exit links."
           />
           <Field
             name="trackerProperties.linkInternalFilters"
             component={ TagListEditor }
             title="Never Track"
-            tooltip="Some tooltip"
+            tooltip="Links containing the following filters will be treated as exit links."
           />
         </div> : null
       }
