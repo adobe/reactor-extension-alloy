@@ -11,12 +11,19 @@ import CustomSetup, { formConfig as customSetupFormConfig } from '../components/
 import eventBus from '../utils/eventBus';
 import COMPONENT_NAMES from '../enums/componentNames';
 
-const componentsToBeCheckedForErrors = {
+const accordionIndexes = {
   [COMPONENT_NAMES.LIBRARY_MANAGEMENT]: 0,
   [COMPONENT_NAMES.GENERAL]: 1,
   [COMPONENT_NAMES.VARIABLES]: 2,
   [COMPONENT_NAMES.COOKIES]: 4
 };
+
+const onlyUnique = (value, index, self) => self.indexOf(value) === index;
+
+const getIndexesOfComponentsWithErrors = componentsWithErrors =>
+  Object.keys(accordionIndexes).map(componentName => (
+    componentsWithErrors.indexOf(componentName) !== -1 ? accordionIndexes[componentName] : null
+  ));
 
 export default class ExtensionConfiguration extends React.Component {
   constructor() {
@@ -45,12 +52,9 @@ export default class ExtensionConfiguration extends React.Component {
     const { componentsWithErrors } = this.props;
     let { selectedIndexes } = this.state;
 
-    selectedIndexes = selectedIndexes.concat(Object.keys(componentsToBeCheckedForErrors).map(
-      (componentName) => (
-        componentsWithErrors.indexOf(componentName) !== -1 ?
-        componentsToBeCheckedForErrors[componentName] : null
-      )
-    )).filter((value, index, self) => self.indexOf(value) === index);
+    selectedIndexes = selectedIndexes
+      .concat(getIndexesOfComponentsWithErrors(componentsWithErrors))
+      .filter(onlyUnique);
 
     this.setState({
       selectedIndexes
