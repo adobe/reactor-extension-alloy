@@ -213,7 +213,7 @@ export const formConfig = {
       };
     }
 
-    if (errors.trackerProperties.cookieLifetimeSeconds) {
+    if (errors.trackerProperties && errors.trackerProperties.cookieLifetimeSeconds) {
       componentsWithErrors.push(COMPONENT_NAMES.COOKIES);
     }
 
