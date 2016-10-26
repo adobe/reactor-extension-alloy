@@ -14,7 +14,8 @@ import COMPONENT_NAMES from '../enums/componentNames';
 const componentsToBeCheckedForErrors = {
   [COMPONENT_NAMES.LIBRARY_MANAGEMENT]: 0,
   [COMPONENT_NAMES.GENERAL]: 1,
-  [COMPONENT_NAMES.VARIABLES]: 2
+  [COMPONENT_NAMES.VARIABLES]: 2,
+  [COMPONENT_NAMES.COOKIES]: 4
 };
 
 export default class ExtensionConfiguration extends React.Component {

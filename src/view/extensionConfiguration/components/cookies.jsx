@@ -4,6 +4,7 @@ import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
 import { connect } from 'react-redux';
 import { Field, formValueSelector } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import COMPONENT_NAMES from '../../enums/componentNames';
 
 import './cookies.styl';
 
@@ -198,6 +199,9 @@ export const formConfig = {
   validate(errors, values) {
     const { cookieLifetime, cookieLifetimeSeconds } = values.trackerProperties || {};
 
+    const componentsWithErrors = errors.componentsWithErrors ?
+      errors.componentsWithErrors.slice() : [];
+
     if (cookieLifetime === COOKIE_LIFETIME_PERIODS.SECONDS &&
       (!cookieLifetimeSeconds || cookieLifetimeSeconds.trim().length === 0)) {
       errors = {
@@ -209,7 +213,14 @@ export const formConfig = {
       };
     }
 
-    return errors;
+    if (errors.trackerProperties && errors.trackerProperties.cookieLifetimeSeconds) {
+      componentsWithErrors.push(COMPONENT_NAMES.COOKIES);
+    }
+
+    return {
+      ...errors,
+      componentsWithErrors
+    };
   }
 };
 
