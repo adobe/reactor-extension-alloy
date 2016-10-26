@@ -25,8 +25,14 @@ export default class ExtensionConfiguration extends React.Component {
     this.state = {
       selectedIndexes: [0]
     };
+  }
 
-    eventBus.on('validationOccurred', this.validationOccurred.bind(this));
+  componentDidMount() {
+    eventBus.on('validationOccurred', this.validationOccurred, this);
+  }
+
+  componentWillUnmount() {
+    eventBus.off('validationOccurred', this.validationOccurred);
   }
 
   onAccordionChange(newSelectedIndexes) {
