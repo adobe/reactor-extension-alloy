@@ -29,7 +29,8 @@ export default (extensionBridge, store, formConfig, handleSubmit) => {
     },
     getSettings() {
       const state = store.getState();
-      const values = getFormValues('default')(state);
+      // This sometimes returns undefined: https://github.com/erikras/redux-form/issues/2017
+      const values = getFormValues('default')(state) || {};
       return formConfig.formValuesToSettings({}, values, state.meta);
     },
     validate() {
