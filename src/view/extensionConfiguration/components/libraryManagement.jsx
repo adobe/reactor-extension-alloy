@@ -344,7 +344,7 @@ export const formConfig = {
     const productionAccountsAreMissing = !accounts.production || accounts.production.length === 0;
     if (reportSuitesAreRequired && productionAccountsAreMissing) {
       libraryCodeErrors.accounts = {
-        production: 'Please specify a report suite'
+        production: 'Please specify a production report suite'
       };
     }
 
