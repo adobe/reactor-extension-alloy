@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "displayName": "Adobe Analytics",
   "description": "Adobe Analytics extension for Reactor.",
-  "icon": "http://assets.adobedtm.com/activation/reactor/icons/mc_analytics.svg",
+  "icon": "resources/icons/mc_analytics.svg",
   "author": {
     "name": "Adobe Systems",
     "email": "DTM-Engineering@adobe.com"
