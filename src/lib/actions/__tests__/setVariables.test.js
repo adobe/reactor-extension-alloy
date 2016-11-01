@@ -23,15 +23,15 @@ var getSetVariables = function(mocks) {
 
 describe('set variables', function() {
   it('applies the variables for a configuration', function(done) {
-    var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables.js');
+    var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables');
     var tracker = {};
     var trackerProperties = {
       a: 'b'
     };
 
     var setVariables = getSetVariables({
-      '../helpers/applyTrackerVariables.js': applyTrackerVariablesSpy,
-      '../helpers/getTracker.js': function() {
+      '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
+      '../helpers/getTracker': function() {
         return Promise.resolve(tracker);
       }
     });
@@ -48,12 +48,12 @@ describe('set variables', function() {
   });
 
   it('applies the variables for multiple configurations', function(done) {
-    var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables.js');
+    var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables');
     var tracker = {};
 
     var setVariables = getSetVariables({
-      '../helpers/applyTrackerVariables.js': applyTrackerVariablesSpy,
-      '../helpers/getTracker.js': function() {
+      '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
+      '../helpers/getTracker': function() {
         return Promise.resolve(tracker);
       },
       'get-extension-configurations': function() {
@@ -82,7 +82,7 @@ describe('set variables', function() {
 
   it('applies the variables for all the configurations when extensionConfigurationIds is missing',
     function(done) {
-      var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables.js');
+      var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables');
       var tracker = {};
 
       var setVariables = getSetVariables({
@@ -98,8 +98,8 @@ describe('set variables', function() {
             name: 'EX3'
           }];
         },
-        '../helpers/applyTrackerVariables.js': applyTrackerVariablesSpy,
-        '../helpers/getTracker.js': function() {
+        '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
+        '../helpers/getTracker': function() {
           return Promise.resolve(tracker);
         }
       });
@@ -118,15 +118,15 @@ describe('set variables', function() {
 
   it('calls the custom setup method when available', function(done) {
     var applyTrackerVariablesSpy =
-      jasmine.createSpy('../helpers/applyTrackerVariables.js').and.callFake(function(s, props) {
+      jasmine.createSpy('../helpers/applyTrackerVariables').and.callFake(function(s, props) {
         s.a = props.a;
       });
 
     var tracker = {};
 
     var setVariables = getSetVariables({
-      '../helpers/applyTrackerVariables.js': applyTrackerVariablesSpy,
-      '../helpers/getTracker.js': function() {
+      '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
+      '../helpers/getTracker': function() {
         return Promise.resolve(tracker);
       }
     });
@@ -152,7 +152,7 @@ describe('set variables', function() {
   it('logs an error when getTracker throws an error', function(done) {
     var loggerSpy = getLoggerMockObject();
     var setVariables = getSetVariables({
-      '../helpers/getTracker.js': function() {
+      '../helpers/getTracker': function() {
         return Promise.reject('some error');
       },
       logger: loggerSpy

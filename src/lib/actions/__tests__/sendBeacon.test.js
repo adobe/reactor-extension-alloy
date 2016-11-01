@@ -28,7 +28,7 @@ describe('send beacon', function() {
     };
 
     var sendBeacon = getSendBeacon({
-      '../helpers/getTracker.js': function() {
+      '../helpers/getTracker': function() {
         return Promise.resolve(tracker);
       }
     });
@@ -50,7 +50,7 @@ describe('send beacon', function() {
     };
 
     var sendBeacon = getSendBeacon({
-      '../helpers/getTracker.js': function() {
+      '../helpers/getTracker': function() {
         return Promise.resolve(tracker);
       },
       'get-extension-configurations': function() {
@@ -94,7 +94,7 @@ describe('send beacon', function() {
             name: 'EX3'
           }];
         },
-        '../helpers/getTracker.js': function() {
+        '../helpers/getTracker': function() {
           return Promise.resolve(tracker);
         }
       });
@@ -112,7 +112,7 @@ describe('send beacon', function() {
   it('logs an error when getTracker throws an error', function(done) {
     var loggerSpy = getLoggerMockObject();
     var sendBeacon = getSendBeacon({
-      '../helpers/getTracker.js': function() {
+      '../helpers/getTracker': function() {
         return Promise.reject('some error');
       },
       logger: loggerSpy
@@ -134,7 +134,7 @@ describe('send beacon', function() {
     };
 
     var sendBeacon = getSendBeacon({
-      '../helpers/getTracker.js': function() {
+      '../helpers/getTracker': function() {
         return Promise.resolve(tracker);
       }
     });
@@ -156,7 +156,7 @@ describe('send beacon', function() {
     };
 
     var sendBeacon = getSendBeacon({
-      '../helpers/getTracker.js': function() {
+      '../helpers/getTracker': function() {
         return Promise.resolve(tracker);
       }
     });
@@ -183,7 +183,7 @@ describe('send beacon', function() {
     };
 
     var sendBeacon = getSendBeacon({
-      '../helpers/getTracker.js': function() {
+      '../helpers/getTracker': function() {
         return Promise.resolve(tracker);
       }
     });

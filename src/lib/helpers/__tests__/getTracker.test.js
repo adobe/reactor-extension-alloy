@@ -18,7 +18,7 @@ describe('get tracker', function() {
           id: 'EC1'
         }];
       },
-      './loadLibrary.js': loadLibrarySpy
+      './loadLibrary': loadLibrarySpy
     });
 
     var getTrackerPromise = getTracker('EC1');
@@ -39,7 +39,7 @@ describe('get tracker', function() {
           }
         }];
       },
-      './loadLibrary.js': loadLibrarySpy
+      './loadLibrary': loadLibrarySpy
     });
 
     getTracker('EC1').then(function() {
@@ -90,7 +90,7 @@ describe('get tracker', function() {
           'euCookieName': 'sat_track'
         },
         'cookie': cookieSpy,
-        './loadLibrary.js': loadLibrarySpy
+        './loadLibrary': loadLibrarySpy
       });
 
       getTracker('EC1').then(function() {
@@ -117,7 +117,7 @@ describe('get tracker', function() {
       'get-shared-module': function() {
         return mcidInstance;
       },
-      './loadLibrary.js': loadLibrarySpy
+      './loadLibrary': loadLibrarySpy
     });
 
     getTracker('EC1').then(function(tracker) {
@@ -139,10 +139,10 @@ describe('get tracker', function() {
             id: 'EC1'
           }];
         },
-        './generateVersion.js': function() {
+        './generateVersion': function() {
           return 'DEBA';
         },
-        './loadLibrary.js': loadLibrarySpy
+        './loadLibrary': loadLibrarySpy
       });
 
       getTracker('EC1').then(function(tracker) {
@@ -163,10 +163,10 @@ describe('get tracker', function() {
             id: 'EC1'
           }];
         },
-        './generateVersion.js': function() {
+        './generateVersion': function() {
           return 'DEBA';
         },
-        './loadLibrary.js': loadLibrarySpy
+        './loadLibrary': loadLibrarySpy
       });
 
       getTracker('EC1').then(function(tracker) {
@@ -192,7 +192,7 @@ describe('get tracker', function() {
           }
         }];
       },
-      './loadLibrary.js': loadLibrarySpy
+      './loadLibrary': loadLibrarySpy
     });
 
     getTracker('EC1').then(function(tracker) {
@@ -223,7 +223,7 @@ describe('get tracker', function() {
           }
         }];
       },
-      './loadLibrary.js': loadLibrarySpy
+      './loadLibrary': loadLibrarySpy
     });
 
     getTracker('EC1').then(function(tracker) {
@@ -254,7 +254,7 @@ describe('get tracker', function() {
           }
         }];
       },
-      './loadLibrary.js': loadLibrarySpy
+      './loadLibrary': loadLibrarySpy
     });
 
     getTracker('EC1').then(function(tracker) {
