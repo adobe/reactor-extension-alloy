@@ -2,8 +2,8 @@
 
 var logger = require('logger');
 
-var getTracker = require('../helpers/getTracker.js');
-var applyTrackerVariables = require('../helpers/applyTrackerVariables.js');
+var getTracker = require('../helpers/getTracker');
+var applyTrackerVariables = require('../helpers/applyTrackerVariables');
 var getExtensionConfigurations = require('get-extension-configurations');
 
 module.exports = function(settings, targetElement, event) {

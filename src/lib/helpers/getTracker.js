@@ -10,9 +10,9 @@ var window = require('window');
 var getExtensionConfigurations = require('get-extension-configurations');
 var getSharedModule = require('get-shared-module');
 
-var applyTrackerVariables = require('./applyTrackerVariables.js');
-var loadLibrary = require('./loadLibrary.js');
-var generateVersion = require('./generateVersion.js');
+var applyTrackerVariables = require('./applyTrackerVariables');
+var loadLibrary = require('./loadLibrary');
+var generateVersion = require('./generateVersion');
 
 var version = generateVersion(buildInfo.turbineBuildDate);
 var BEFORE_SETTINGS_LOAD_PHASE = 'beforeSettings';

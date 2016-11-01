@@ -2,7 +2,7 @@
 
 var logger = require('logger');
 var getExtensionConfigurations = require('get-extension-configurations');
-var getTracker = require('../helpers/getTracker.js');
+var getTracker = require('../helpers/getTracker');
 
 var isLink = function(element) {
   return element && element.nodeName && element.nodeName.toLowerCase() === 'a';
