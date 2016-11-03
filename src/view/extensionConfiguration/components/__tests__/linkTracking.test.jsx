@@ -122,22 +122,4 @@ describe('link tracking', () => {
     expect(linkExternalFilters).toEqual(['http://someurl.com', 'http://someurl2.com']);
     expect(linkLeaveQueryString).toBe(true);
   });
-
-  it('has the correct default values', () => {
-    extensionBridge.init();
-
-    const {
-      enableTrackInlineStatsCheckbox,
-      trackDownloadLinksCheckbox,
-      trackOutboundLinksCheckbox,
-      linkDownloadFileTypesTagListEditor,
-      linkInternalFiltersTagListEditor
-    } = getReactComponents(instance);
-
-    expect(enableTrackInlineStatsCheckbox.props.value).toBe(true);
-    expect(trackDownloadLinksCheckbox.props.value).toBe(true);
-    expect(trackOutboundLinksCheckbox.props.value).toBe(true);
-    expect(linkDownloadFileTypesTagListEditor.props.input.value.length).toBeGreaterThan(0);
-    expect(linkInternalFiltersTagListEditor.props.input.value.length).toBeGreaterThan(0);
-  });
 });

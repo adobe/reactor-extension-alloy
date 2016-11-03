@@ -11,7 +11,6 @@ import './linkTracking.styl';
 const DEFAULT_DOWNLOAD_LINKS = ['doc', 'docx', 'eps', 'jpg', 'png', 'svg', 'xls', 'ppt', 'pptx',
   'pdf', 'xlsx', 'tab', 'csv', 'zip', 'txt', 'vsd', 'vxd', 'xml', 'js', 'css', 'rar', 'exe', 'wma',
   'mov', 'avi', 'wmv', 'mp3', 'wav', 'm4v'];
-const DEFAULT_INTERNAL_FILTERS = ['javascript:', 'tel:', 'mailto:'];
 
 const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
   <div>
@@ -106,7 +105,7 @@ export const formConfig = {
         linkDownloadFileTypes: linkDownloadFileTypes || DEFAULT_DOWNLOAD_LINKS,
         trackExternalLinks: trackExternalLinks != null ? trackExternalLinks : true,
         linkExternalFilters,
-        linkInternalFilters: linkInternalFilters || DEFAULT_INTERNAL_FILTERS,
+        linkInternalFilters,
         linkLeaveQueryString
       }
     };
