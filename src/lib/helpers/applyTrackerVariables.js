@@ -9,6 +9,10 @@ var propRegExp = /prop([0-9]+)/;
 var linkTrackVarsKeys = new RegExp('^(eVar[0-9]+)|(prop[0-9]+)|(hier[0-9]+)|campaign|purchaseID|' +
   'channel|server|state|zip|pageType$');
 
+var onlyUnique = function(value, index, self) {
+  return self.indexOf(value) === index;
+};
+
 var buildLinkTrackVars = function(tracker, newTrackerProperties, addEvents) {
   var linkTrackVarsValues = Object.keys(newTrackerProperties)
     .filter(linkTrackVarsKeys.test.bind(linkTrackVarsKeys));
@@ -20,8 +24,8 @@ var buildLinkTrackVars = function(tracker, newTrackerProperties, addEvents) {
   // Merge with the values already set on tracker.
   linkTrackVarsValues = linkTrackVarsValues.concat((tracker.linkTrackVars || '').split(','));
 
-  return linkTrackVarsValues.filter(function(value) {
-    return value !== 'None' && value;
+  return linkTrackVarsValues.filter(function(value, index, self) {
+    return value !== 'None' && value && onlyUnique(value, index, self);
   }).join(',');
 };
 
@@ -33,8 +37,8 @@ var buildLinkTrackEvents = function(tracker, eventsData) {
   // Merge with the values already set on tracker.
   linkTrackEventsValues = linkTrackEventsValues.concat((tracker.linkTrackEvents || '').split(','));
 
-  return linkTrackEventsValues.filter(function(value) {
-    return value !== 'None';
+  return linkTrackEventsValues.filter(function(value, index, self) {
+    return value !== 'None'  && onlyUnique(value, index, self);
   }).join(',');
 };
 

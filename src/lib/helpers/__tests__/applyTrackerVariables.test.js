@@ -184,4 +184,44 @@ describe('apply tracker variables', function() {
 
     expect(tracker.a).toBe('b');
   });
+
+  it('sets a filtered list inside linkTrackVars', function() {
+    tracker.linkTrackVars = 'eVar1';
+
+    applyTrackerVariables(tracker, {
+      eVars: [
+        {
+          name: 'eVar1',
+          type: 'value',
+          value: '1'
+        },
+        {
+          name: 'eVar2',
+          type: 'alias',
+          value: 'eVar1'
+        }
+      ]
+    });
+
+    expect(tracker.linkTrackVars).toBe('eVar1,eVar2');
+  });
+
+  it('sets a filtered list inside linkTrackEvents', function() {
+    tracker.linkTrackEvents = 'event1';
+
+    applyTrackerVariables(tracker, {
+      events: [
+        {
+          name: 'event1',
+          value: '1'
+        },
+        {
+          name: 'event2',
+          value: '2'
+        }
+      ]
+    });
+
+    expect(tracker.linkTrackEvents).toBe('event1,event2');
+  });
 });
