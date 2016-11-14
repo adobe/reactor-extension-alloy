@@ -17,7 +17,7 @@ export const filterObject = (obj = {}, propertyPaths = []) => {
 
   const result = {};
 
-  propertyPaths.forEach(propertyPath => {
+  propertyPaths.forEach((propertyPath) => {
     const value = deep(obj, propertyPath);
 
     if (value !== undefined) {

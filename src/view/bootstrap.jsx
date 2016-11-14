@@ -41,7 +41,7 @@ module.exports = (View, formConfig, extensionBridge = window.extensionBridge, pr
     // Note that there's no technical reason why config.validate must be a reducer. It does
     // maintain some consistency with settingsToFormValues and formValuesToSettings.
     validate: formConfig.validate ?
-      values => {
+      (values) => {
         const errors = formConfig.validate({}, values, store.getState().meta);
 
         return {

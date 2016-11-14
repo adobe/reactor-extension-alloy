@@ -11,9 +11,9 @@ const getReactComponents = (wrapper) => {
   const rows = wrapper.find('[data-row]').map(row => ({
     nameTextfield: row.find(Select).node,
     sectionTextfields: row.find(Textfield)
-      .filterWhere(n => n.prop('name').includes('sections')).nodes,
+      .filterWhere(n => n.prop('name').indexOf('sections') !== -1).nodes,
     delimiterTextfields: row.find(Textfield)
-      .filterWhere(n => n.prop('name').includes('delimiter')).node,
+      .filterWhere(n => n.prop('name').indexOf('delimiter') !== -1).node,
     removeButton: row.find(Button).node
   }));
 

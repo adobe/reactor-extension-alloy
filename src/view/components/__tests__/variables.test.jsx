@@ -7,28 +7,28 @@ import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge
 import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const dynamicVariablePrefixTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('dynamicVariablePrefix')).node;
+  const dynamicVariablePrefixTextField = wrapper.find(Textfield)
+      .filterWhere(n => n.prop('name').indexOf('dynamicVariablePrefix') !== -1).node;
   const pageNameTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('pageName')).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('pageName') !== -1).node;
   const pageURLTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('pageURL')).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('pageURL') !== -1).node;
   const serverTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('server')).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('server') !== -1).node;
   const channelTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('channel')).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('channel') !== -1).node;
   const referrerTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('referrer')).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('referrer') !== -1).node;
   const campaignSelect =
-    wrapper.find(Select).filterWhere(n => n.prop('name').includes('campaign.type')).node;
+    wrapper.find(Select).filterWhere(n => n.prop('name').indexOf('campaign.type') !== -1).node;
   const campaignTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('campaign.value')).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('campaign.value') !== -1).node;
   const transactionIDTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('transactionID')).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('transactionID') !== -1).node;
   const stateTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('state')).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('state') !== -1).node;
   const zipTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('zip')).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('zip') !== -1).node;
 
   return {
     dynamicVariablePrefixTextField,

@@ -16,7 +16,7 @@ export default class TagListEditor extends React.Component {
     };
   }
 
-  onRemove = removedValue => {
+  onRemove = (removedValue) => {
     const {
       input: {
         value,
@@ -27,7 +27,7 @@ export default class TagListEditor extends React.Component {
     onChange(value.filter(val => val !== removedValue));
   };
 
-  onNewValueChange = event => {
+  onNewValueChange = (event) => {
     const newValue = event.target ? event.target.value : event;
     this.setState({
       newValue
@@ -55,13 +55,13 @@ export default class TagListEditor extends React.Component {
     }
   };
 
-  handleKeyPress = event => {
+  handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       this.add();
     }
   };
 
-  openSelectorCallback = dataElementName => {
+  openSelectorCallback = (dataElementName) => {
     this.setState({
       newValue: addDataElementToken(this.state.newValue, dataElementName)
     });

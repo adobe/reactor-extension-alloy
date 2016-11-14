@@ -54,7 +54,7 @@ describe('tag list editor', () => {
     const { valueButton } = getReactComponents(instance);
 
     window.extensionBridge.openDataElementSelector = jasmine.createSpy('openDataElementSelector')
-      .and.callFake(callback => {
+      .and.callFake((callback) => {
         callback('foo');
       });
 
@@ -67,7 +67,7 @@ describe('tag list editor', () => {
     const { dataElementSelectorButton } = getReactComponents(instance);
 
     window.extensionBridge.openDataElementSelector = jasmine.createSpy('openDataElementSelector')
-      .and.callFake(callback => {
+      .and.callFake((callback) => {
         callback('foo');
       });
 

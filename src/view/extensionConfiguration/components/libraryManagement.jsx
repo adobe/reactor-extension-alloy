@@ -289,12 +289,12 @@ export const formConfig = {
     if (exportReportSuites && values.libraryCode.accounts) {
       const accounts = {};
 
-      for (const environment of ENVIRONMENTS) {
+      ENVIRONMENTS.forEach((environment) => {
         const accountsForEnvironment = values.libraryCode.accounts[environment];
         if (accountsForEnvironment && accountsForEnvironment.length > 0) {
           accounts[environment] = accountsForEnvironment;
         }
-      }
+      });
 
       if (Object.keys(accounts).length) {
         libraryCodeSettings.accounts = accounts;

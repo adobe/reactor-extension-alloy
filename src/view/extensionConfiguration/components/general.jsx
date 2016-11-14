@@ -119,7 +119,7 @@ export const formConfig = mergeConfigs(
 
       if (values.libraryCode && values.libraryCode.accounts) {
         const accounts = values.libraryCode.accounts;
-        trackingServersRequired = ENVIRONMENTS.some(environment => {
+        trackingServersRequired = ENVIRONMENTS.some((environment) => {
           const accountsForEnvironment = accounts[environment];
           return accountsForEnvironment && accountsForEnvironment.length > 1;
         });

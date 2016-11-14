@@ -8,13 +8,13 @@ import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const enableTrackInlineStatsCheckbox =
-    wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('trackInlineStats')).node;
-  const trackDownloadLinksCheckbox =
-    wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('trackDownloadLinks')).node;
-  const trackOutboundLinksCheckbox =
-    wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('trackExternalLinks')).node;
-  const keepUrlParametersCheckbox =
-    wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('linkLeaveQueryString')).node;
+    wrapper.find(Checkbox).filterWhere(n => n.prop('name').indexOf('trackInlineStats') !== -1).node;
+  const trackDownloadLinksCheckbox = wrapper.find(Checkbox)
+    .filterWhere(n => n.prop('name').indexOf('trackDownloadLinks') !== -1).node;
+  const trackOutboundLinksCheckbox = wrapper.find(Checkbox)
+    .filterWhere(n => n.prop('name').indexOf('trackExternalLinks') !== -1).node;
+  const keepUrlParametersCheckbox = wrapper.find(Checkbox)
+    .filterWhere(n => n.prop('name').indexOf('linkLeaveQueryString') !== -1).node;
 
   const [
     linkDownloadFileTypesTagListEditor,

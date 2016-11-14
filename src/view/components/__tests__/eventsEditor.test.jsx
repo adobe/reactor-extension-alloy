@@ -10,8 +10,8 @@ import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge
 import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const rows = wrapper.find('[data-row]').map(row => {
-    const nameField = row.find(Field).filterWhere(n => n.prop('name').includes('.name'));
+  const rows = wrapper.find('[data-row]').map((row) => {
+    const nameField = row.find(Field).filterWhere(n => n.prop('name').indexOf('.name') !== -1);
     return {
       nameAutocomplete: nameField.find(Autocomplete).node,
       nameErrorTip: nameField.find(ErrorTip).node,

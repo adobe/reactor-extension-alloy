@@ -25,6 +25,6 @@ export const LIMITS_LEVELS_LABELS = {
   PREMIUM: 'Premium'
 };
 
-export const maxLevel = (type) => Math.max(...Object.keys(LIMITS[type]).map(e => LIMITS[type][e]));
+export const maxLevel = type => Math.max(...Object.keys(LIMITS[type]).map(e => LIMITS[type][e]));
 
 export default LIMITS;

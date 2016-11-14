@@ -10,15 +10,15 @@ import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const cookieLifetimeSecondsField = wrapper.find(Field)
-    .filterWhere(n => n.prop('name').includes('cookieLifetimeSeconds'));
+    .filterWhere(n => n.prop('name').indexOf('cookieLifetimeSeconds') !== -1);
   const visitorIDTextfield =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('visitorID')).node;
-  const visitorNamespaceTextfield =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('visitorNamespace')).node;
-  const cookieDomainPeriodsTextfield =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('cookieDomainPeriods')).node;
-  const fpcookieDomainPeriodsTextfield =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('fpCookieDomainPeriods')).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('visitorID') !== -1).node;
+  const visitorNamespaceTextfield = wrapper.find(Textfield)
+    .filterWhere(n => n.prop('name').indexOf('visitorNamespace') !== -1).node;
+  const cookieDomainPeriodsTextfield = wrapper.find(Textfield)
+    .filterWhere(n => n.prop('name').indexOf('cookieDomainPeriods') !== -1).node;
+  const fpcookieDomainPeriodsTextfield = wrapper.find(Textfield)
+    .filterWhere(n => n.prop('name').indexOf('fpCookieDomainPeriods') !== -1).node;
   const cookieLifetimeSelect =
     wrapper.find(Select).node;
   const cookieLifetimeSecondsTextfield = cookieLifetimeSecondsField.find(Textfield).node;

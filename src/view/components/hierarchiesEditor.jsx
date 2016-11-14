@@ -26,7 +26,7 @@ const hierarchiesOptions = [{
   value: 'hier5'
 }];
 
-const setDefaultsForHierarchy = hierarchy => {
+const setDefaultsForHierarchy = (hierarchy) => {
   hierarchy.name = hierarchy.name || 'hier1';
   hierarchy.delimiter = hierarchy.delimiter || ',';
   hierarchy.sections = hierarchy.sections || [];
@@ -177,7 +177,7 @@ export const formConfig = {
 
     const configuredHierarchyNames = [];
 
-    const hierarchiesErrors = hierarchies.map(hierarchy => {
+    const hierarchiesErrors = hierarchies.map((hierarchy) => {
       const hierarchyErrors = {};
 
       // If a hierarchy has no populated sections then it won't get saved anyway so we can

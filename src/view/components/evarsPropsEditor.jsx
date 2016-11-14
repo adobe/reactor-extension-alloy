@@ -24,7 +24,7 @@ const typeOptions = [{
 
 const createEmptyRow = () => ({ type: 'value' });
 
-const createOptions = varType => {
+const createOptions = (varType) => {
   const options = [];
   const numItems = maxLevel(varType);
 
@@ -33,7 +33,7 @@ const createOptions = varType => {
     let label = value;
     const accessLevels = [];
 
-    Object.keys(LIMITS_LEVELS_LABELS).forEach(accessLevel => {
+    Object.keys(LIMITS_LEVELS_LABELS).forEach((accessLevel) => {
       if (i + 1 <= LIMITS[varType][accessLevel]) {
         accessLevels.push(LIMITS_LEVELS_LABELS[accessLevel]);
       }
@@ -202,7 +202,7 @@ export const getFormConfig = (varType, varTypePlural) => ({
     const componentsWithErrors = errors.componentsWithErrors ?
       errors.componentsWithErrors.slice() : [];
 
-    const variablesErrors = variables.map(variable => {
+    const variablesErrors = variables.map((variable) => {
       const variableErrors = {};
 
       if (variable.name) {

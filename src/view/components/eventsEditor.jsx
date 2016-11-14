@@ -16,7 +16,7 @@ const CONTEXT_EVENTS = [
   'purchase'
 ];
 
-const createOptions = numItems => {
+const createOptions = (numItems) => {
   const options = [];
 
   for (let i = 0; i < numItems; i++) {
@@ -24,7 +24,7 @@ const createOptions = numItems => {
     let label = value;
     const accessLevels = [];
 
-    Object.keys(LIMITS_LEVELS_LABELS).forEach(accessLevel => {
+    Object.keys(LIMITS_LEVELS_LABELS).forEach((accessLevel) => {
       if (i + 1 <= LIMITS.event[accessLevel]) {
         accessLevels.push(LIMITS_LEVELS_LABELS[accessLevel]);
       }
@@ -128,7 +128,7 @@ export const formConfig = {
 
     const events = trackerProperties.events
       .filter(event => event.name)
-      .map(event => {
+      .map((event) => {
         // Goals are to exclude value if it's an empty string.
 
         const trimmedEvent = {
@@ -160,7 +160,7 @@ export const formConfig = {
     const events = trackerProperties.events || [];
     const configuredEventNames = [];
 
-    const eventsErrors = events.map(event => {
+    const eventsErrors = events.map((event) => {
       const eventErrors = {};
 
       if (event.name) {

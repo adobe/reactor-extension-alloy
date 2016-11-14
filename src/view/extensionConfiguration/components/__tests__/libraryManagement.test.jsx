@@ -14,11 +14,11 @@ import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const productionReportSuite = wrapper.find(TagListEditor)
-    .filterWhere(n => n.prop('title').includes('Production'));
+    .filterWhere(n => n.prop('title').indexOf('Production') !== -1);
   const stagingReportSuite = wrapper.find(TagListEditor)
-    .filterWhere(n => n.prop('title').includes('Staging'));
+    .filterWhere(n => n.prop('title').indexOf('Staging') !== -1);
   const developmentReportSuite = wrapper.find(TagListEditor)
-    .filterWhere(n => n.prop('title').includes('Development'));
+    .filterWhere(n => n.prop('title').indexOf('Development') !== -1);
 
   const productionReportSuites = productionReportSuite.find(Tag).nodes.map(n => n.props.children);
   const stagingReportSuites = stagingReportSuite.find(Tag).nodes.map(n => n.props.children);
@@ -46,18 +46,20 @@ const getReactComponents = (wrapper) => {
     wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom').node;
 
   const trackerVariableNameTextfield = wrapper.find(Field)
-    .filterWhere(n => n.prop('name').includes('trackerVariableName')).find(Textfield).node;
+    .filterWhere(n => n.prop('name').indexOf('trackerVariableName') !== -1).find(Textfield).node;
 
-  const httpUrlField = wrapper.find(Field).filterWhere(n => n.prop('name').includes('httpUrl'));
+  const httpUrlField = wrapper.find(Field)
+    .filterWhere(n => n.prop('name').indexOf('httpUrl') !== -1);
   const httpUrlTextfield = httpUrlField.find(Textfield).node;
   const httpUrlErrorTip = httpUrlField.find(ErrorTip).node;
 
-  const httpsUrlField = wrapper.find(Field).filterWhere(n => n.prop('name').includes('httpsUrl'));
+  const httpsUrlField = wrapper.find(Field)
+    .filterWhere(n => n.prop('name').indexOf('httpsUrl') !== -1);
   const httpsUrlTextfield = httpsUrlField.find(Textfield).node;
   const httpsUrlErrorTip = httpsUrlField.find(ErrorTip).node;
 
   const showReportSuitesCheckbox =
-    wrapper.find(Checkbox).filterWhere(n => n.prop('name').includes('showReportSuites')).node;
+    wrapper.find(Checkbox).filterWhere(n => n.prop('name').indexOf('showReportSuites') !== -1).node;
 
 
   const sourceField = wrapper.find(Field).filterWhere(n => n.prop('name') === 'libraryCode.source');

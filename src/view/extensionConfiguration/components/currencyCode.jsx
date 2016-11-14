@@ -89,7 +89,7 @@ export const formConfig = {
     } = settings.trackerProperties || {};
 
     const currencyCodeInputMethod =
-      !currencyCode || CURRENCY_CODE_PRESETS.map((currency) => currency.value)
+      !currencyCode || CURRENCY_CODE_PRESETS.map(currency => currency.value)
         .indexOf(currencyCode) !== -1 ?
           CURRENCY_CODE_INPUT_METHODS.PRESET :
           CURRENCY_CODE_INPUT_METHODS.CUSTOM;

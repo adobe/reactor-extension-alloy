@@ -10,7 +10,7 @@ import bootstrap from '../../../bootstrap';
 const getReactComponents = (wrapper) => {
   const presetSelect = wrapper.find(Select).node;
   const customTextfield =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').includes('charSet')).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('charSet') !== -1).node;
   const customInputMethodRadio =
     wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom').node;
 
