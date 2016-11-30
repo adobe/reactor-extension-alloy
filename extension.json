@@ -493,8 +493,7 @@
     "transforms": [
       {
         "type": "file",
-        "propertyPath": "libraryCode.source",
-        "extension": "js"
+        "propertyPath": "libraryCode.source"
       },
       {
         "type": "function",
