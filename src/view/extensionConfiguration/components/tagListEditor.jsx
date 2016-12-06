@@ -43,7 +43,7 @@ export default class TagListEditor extends React.Component {
     } = this.props;
 
     if (this.state.newValue) {
-      const values = value || [];
+      const values = value ? value.slice() : [];
       if (!this.valueAlreadyExists(values, this.state.newValue)) {
         values.push(this.state.newValue);
         onChange(values);
