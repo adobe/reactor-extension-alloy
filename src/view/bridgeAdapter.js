@@ -1,8 +1,8 @@
-import { getFormValues, initialize, change } from 'redux-form';
+import { getFormValues, initialize, change, submit, isValid } from 'redux-form';
 import { actionCreators } from './reduxActions/bridgeAdapterActions';
 import eventBus from './utils/eventBus';
 
-export default (extensionBridge, store, formConfig, handleSubmit) => {
+export default (extensionBridge, store, formConfig) => {
   extensionBridge.register({
     init(options = {}) {
       let {
@@ -39,14 +39,9 @@ export default (extensionBridge, store, formConfig, handleSubmit) => {
       // is invalid, it will incorrectly report that it is valid.
       store.dispatch(change('default', '__bogusname__', '__bogusvalue__'));
 
-      let valid = false;
-      // handleSubmit comes from redux-form. The function passed in will only be called if the
-      // form passes validation.
-      // Calling handleSubmit marks all fields as touched whereas
-      // using the isValid state reducer provided by redux-form would not.
-      handleSubmit(() => {
-        valid = true;
-      })();
+      store.dispatch(submit('default'));
+
+      const valid = isValid('default')(store.getState());
 
       eventBus.emit('validationOccurred');
 

@@ -6,30 +6,16 @@ import { reduxForm } from 'redux-form';
 import reducer from './reduxActions/reducer';
 import bridgeAdapter from './bridgeAdapter';
 
-module.exports = (View, formConfig, extensionBridge = window.extensionBridge, props) => {
+module.exports = (View, formConfig, extensionBridge = window.extensionBridge, viewProps) => {
   const finalCreateStore = compose(
     window.devToolsExtension ? window.devToolsExtension() : f => f
   )(createStore);
 
   const store = finalCreateStore(reducer, {});
 
-  let handleSubmit;
-
-  class ViewWrapper extends React.Component {
-    componentDidUpdate() {
-      // Sadly, redux-form provides no other way to access this function.
-      handleSubmit = this.props.handleSubmit;
-    }
-
-    render() {
-      const { error } = this.props;
-
-      // No need to render until the extension bridge passes initialization information.
-      return this.props.initializedByBridge ?
-        <View componentsWithErrors={ error } { ...this.props } { ...props } /> :
-        null;
-    }
-  }
+  const ViewWrapper = props => (props.initializedByBridge ?
+    <View { ...props } componentsWithErrors={ props.error || [] } /> :
+    null);
 
   const ReduxView = connect(
     ({ initializedByBridge }) => ({ initializedByBridge })
@@ -48,19 +34,22 @@ module.exports = (View, formConfig, extensionBridge = window.extensionBridge, pr
           ...errors,
           // A general form-wide error can be returned via the special _error key.
           // From: http://redux-form.com/6.0.5/examples/submitValidation/
-          _error: errors.componentsWithErrors
+          // If there are no components with errors, we need to set it to undefined instead of an
+          // empty array or redux-form will consider the form invalid.
+          _error: errors.componentsWithErrors && errors.componentsWithErrors.length ?
+            errors.componentsWithErrors : undefined
         };
       } :
-      undefined
+      undefined,
+    // ReduxForm will complain with we try to "submit" the form and don't have onSubmit defined.
+    onSubmit: () => {}
   })(ReduxView);
 
-  // We can't pass in handleSubmit directly because it will likely be undefined until
-  // the view renders.
-  bridgeAdapter(extensionBridge, store, formConfig, cb => handleSubmit(cb));
+  bridgeAdapter(extensionBridge, store, formConfig);
 
   return (
     <Provider store={ store }>
-      <ReduxFormView />
+      <ReduxFormView { ...viewProps } />
     </Provider>
   );
 };
