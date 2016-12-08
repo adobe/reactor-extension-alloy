@@ -1,3 +1,5 @@
+/* eslint dot-notation: 0 */
+
 import { getFormValues, initialize, change, submit, isValid } from 'redux-form';
 import { actionCreators } from './reduxActions/bridgeAdapterActions';
 import eventBus from './utils/eventBus';
@@ -31,6 +33,9 @@ export default (extensionBridge, store, formConfig) => {
       const state = store.getState();
       // This sometimes returns undefined: https://github.com/erikras/redux-form/issues/2017
       const values = getFormValues('default')(state) || {};
+
+      delete values['__bogusname__'];
+
       return formConfig.formValuesToSettings({}, values, state.meta);
     },
     validate() {
