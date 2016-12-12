@@ -860,6 +860,26 @@
           }
         }
       }
+    },
+    {
+      "name": "clear-variables",
+      "displayName": "Clear Variables",
+      "libPath": "src/lib/actions/clearVariables.js",
+      "viewPath": "clearVariables.html",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "extensionConfigurationIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minItems": 1
+          }
+        }
+      }
     }
   ]
 }
