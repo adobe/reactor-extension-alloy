@@ -27,9 +27,11 @@ describe('send beacon', function() {
       t: jasmine.createSpy('t')
     };
 
+    var promise = Promise.resolve(tracker);
+
     var sendBeacon = getSendBeacon({
       '../helpers/getTracker': function() {
-        return Promise.resolve(tracker);
+        return promise;
       }
     });
 
@@ -38,10 +40,10 @@ describe('send beacon', function() {
       type: 'page'
     });
 
-    setTimeout(function() {
+    promise.then(function() {
       expect(tracker.t).toHaveBeenCalledTimes(1);
       done();
-    }, 20);
+    });
   });
 
   it('sends the beacon for multiple configurations', function(done) {
@@ -49,9 +51,11 @@ describe('send beacon', function() {
       t: jasmine.createSpy('t')
     };
 
+    var promise = Promise.resolve(tracker);
+
     var sendBeacon = getSendBeacon({
       '../helpers/getTracker': function() {
-        return Promise.resolve(tracker);
+        return promise;
       },
       'get-extension-configurations': function() {
         return [{
@@ -69,10 +73,10 @@ describe('send beacon', function() {
       type: 'page'
     });
 
-    setTimeout(function() {
+    promise.then(function() {
       expect(tracker.t).toHaveBeenCalledTimes(2);
       done();
-    }, 20);
+    });
   });
 
   it('sends the beacon for all the configurations when extensionConfigurationIds is missing',
@@ -80,6 +84,8 @@ describe('send beacon', function() {
       var tracker = {
         t: jasmine.createSpy('t')
       };
+
+      var promise = Promise.resolve(tracker);
 
       var sendBeacon = getSendBeacon({
         'get-extension-configurations': function() {
@@ -95,7 +101,7 @@ describe('send beacon', function() {
           }];
         },
         '../helpers/getTracker': function() {
-          return Promise.resolve(tracker);
+          return promise;
         }
       });
 
@@ -103,17 +109,18 @@ describe('send beacon', function() {
         type: 'page'
       });
 
-      setTimeout(function() {
+      promise.then(function() {
         expect(tracker.t).toHaveBeenCalledTimes(3);
         done();
-      }, 20);
+      });
     });
 
   it('logs an error when getTracker throws an error', function(done) {
     var loggerSpy = getLoggerMockObject();
+    var promise = Promise.reject('some error');
     var sendBeacon = getSendBeacon({
       '../helpers/getTracker': function() {
-        return Promise.reject('some error');
+        return promise;
       },
       logger: loggerSpy
     });
@@ -122,10 +129,10 @@ describe('send beacon', function() {
       extensionConfigurationIds: ['EX1']
     });
 
-    setTimeout(function() {
+    promise.then(null, function() {
       expect(loggerSpy.error).toHaveBeenCalled();
       done();
-    }, 20);
+    });
   });
 
   it('sends the custom link beacon for a configuration', function(done) {
@@ -133,9 +140,11 @@ describe('send beacon', function() {
       tl: jasmine.createSpy('tl')
     };
 
+    var promise = Promise.resolve(tracker);
+
     var sendBeacon = getSendBeacon({
       '../helpers/getTracker': function() {
-        return Promise.resolve(tracker);
+        return promise;
       }
     });
 
@@ -143,11 +152,11 @@ describe('send beacon', function() {
       extensionConfigurationIds: ['EX1']
     });
 
-    setTimeout(function() {
+    promise.then(function() {
       expect(tracker.tl.calls.count()).toBe(1);
       expect(tracker.tl).toHaveBeenCalledWith('true', 'o', 'link clicked');
       done();
-    }, 20);
+    });
   });
 
   it('sends the custom link beacon using the link name and link type provided', function(done) {
@@ -155,9 +164,11 @@ describe('send beacon', function() {
       tl: jasmine.createSpy('tl')
     };
 
+    var promise = Promise.resolve(tracker);
+
     var sendBeacon = getSendBeacon({
       '../helpers/getTracker': function() {
-        return Promise.resolve(tracker);
+        return promise;
       }
     });
 
@@ -167,11 +178,11 @@ describe('send beacon', function() {
       linkType: 'c'
     });
 
-    setTimeout(function() {
+    promise.then(function() {
       expect(tracker.tl.calls.count()).toBe(1);
       expect(tracker.tl).toHaveBeenCalledWith('true', 'c', 'some name');
       done();
-    }, 20);
+    });
   });
 
   it('sends the custom link beacon using the target element when possible', function(done) {
@@ -182,9 +193,11 @@ describe('send beacon', function() {
       tl: jasmine.createSpy('tl')
     };
 
+    var promise = Promise.resolve(tracker);
+
     var sendBeacon = getSendBeacon({
       '../helpers/getTracker': function() {
-        return Promise.resolve(tracker);
+        return promise;
       }
     });
 
@@ -192,10 +205,10 @@ describe('send beacon', function() {
       extensionConfigurationIds: ['EX1']
     }, targetElement);
 
-    setTimeout(function() {
+    promise.then(function() {
       expect(tracker.tl.calls.count()).toBe(1);
       expect(tracker.tl).toHaveBeenCalledWith(targetElement, 'o', 'link');
       done();
-    }, 20);
+    });
   });
 });

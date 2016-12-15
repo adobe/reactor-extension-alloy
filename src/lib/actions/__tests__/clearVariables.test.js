@@ -23,9 +23,11 @@ describe('clear variables', function() {
       clearVars: jasmine.createSpy('clearVars')
     };
 
+    var promise = Promise.resolve(tracker);
+
     var clearVariables = getClearVariables({
       '../helpers/getTracker': function() {
-        return Promise.resolve(tracker);
+        return promise;
       }
     });
 
@@ -33,10 +35,10 @@ describe('clear variables', function() {
       extensionConfigurationIds: ['EX1']
     });
 
-    setTimeout(function() {
+    promise.then(function() {
       expect(tracker.clearVars).toHaveBeenCalledTimes(1);
       done();
-    }, 20);
+    });
   });
 
   it('sends the beacon for multiple configurations', function(done) {
@@ -44,9 +46,11 @@ describe('clear variables', function() {
       clearVars: jasmine.createSpy('clearVars')
     };
 
+    var promise = Promise.resolve(tracker);
+
     var clearVariables = getClearVariables({
       '../helpers/getTracker': function() {
-        return Promise.resolve(tracker);
+        return promise;
       },
       'get-extension-configurations': function() {
         return [{
@@ -63,10 +67,10 @@ describe('clear variables', function() {
       extensionConfigurationIds: ['EX1', 'EX2']
     });
 
-    setTimeout(function() {
+    promise.then(function() {
       expect(tracker.clearVars).toHaveBeenCalledTimes(2);
       done();
-    }, 20);
+    });
   });
 
   it('sends the beacon for all the configurations when extensionConfigurationIds is missing',
@@ -74,6 +78,7 @@ describe('clear variables', function() {
       var tracker = {
         clearVars: jasmine.createSpy('clearVars')
       };
+      var promise = Promise.resolve(tracker);
 
       var clearVariables = getClearVariables({
         'get-extension-configurations': function() {
@@ -89,15 +94,15 @@ describe('clear variables', function() {
           }];
         },
         '../helpers/getTracker': function() {
-          return Promise.resolve(tracker);
+          return promise;
         }
       });
 
       clearVariables({});
 
-      setTimeout(function() {
+      promise.then(function() {
         expect(tracker.clearVars).toHaveBeenCalledTimes(3);
         done();
-      }, 20);
+      });
     });
 });

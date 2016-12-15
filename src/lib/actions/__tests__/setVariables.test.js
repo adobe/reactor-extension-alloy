@@ -29,10 +29,12 @@ describe('set variables', function() {
       a: 'b'
     };
 
+    var promise = Promise.resolve(tracker);
+
     var setVariables = getSetVariables({
       '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
       '../helpers/getTracker': function() {
-        return Promise.resolve(tracker);
+        return promise;
       }
     });
 
@@ -41,20 +43,22 @@ describe('set variables', function() {
       trackerProperties: trackerProperties
     });
 
-    setTimeout(function() {
+    promise.then(function() {
       expect(applyTrackerVariablesSpy).toHaveBeenCalledWith(tracker, trackerProperties);
       done();
-    }, 20);
+    });
   });
 
   it('applies the variables for multiple configurations', function(done) {
     var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables');
     var tracker = {};
 
+    var promise = Promise.resolve(tracker);
+
     var setVariables = getSetVariables({
       '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
       '../helpers/getTracker': function() {
-        return Promise.resolve(tracker);
+        return promise;
       },
       'get-extension-configurations': function() {
         return [{
@@ -72,9 +76,9 @@ describe('set variables', function() {
       trackerProperties: {
         a: 'b'
       }
-    }, 20);
+    });
 
-    setTimeout(function() {
+    promise.then(function() {
       expect(applyTrackerVariablesSpy.calls.count()).toBe(2);
       done();
     });
@@ -84,6 +88,8 @@ describe('set variables', function() {
     function(done) {
       var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables');
       var tracker = {};
+
+      var promise = Promise.resolve(tracker);
 
       var setVariables = getSetVariables({
         'get-extension-configurations': function() {
@@ -100,7 +106,7 @@ describe('set variables', function() {
         },
         '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
         '../helpers/getTracker': function() {
-          return Promise.resolve(tracker);
+          return promise;
         }
       });
 
@@ -110,10 +116,10 @@ describe('set variables', function() {
         }
       });
 
-      setTimeout(function() {
+      promise.then(function() {
         expect(applyTrackerVariablesSpy.calls.count()).toBe(3);
         done();
-      }, 20);
+      });
     });
 
   it('calls the custom setup method when available', function(done) {
@@ -124,10 +130,12 @@ describe('set variables', function() {
 
     var tracker = {};
 
+    var promise = Promise.resolve(tracker);
+
     var setVariables = getSetVariables({
       '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
       '../helpers/getTracker': function() {
-        return Promise.resolve(tracker);
+        return promise;
       }
     });
 
@@ -143,17 +151,18 @@ describe('set variables', function() {
       }
     });
 
-    setTimeout(function() {
+    promise.then(function() {
       expect(tracker.a).toBe('custom');
       done();
-    }, 20);
+    });
   });
 
   it('logs an error when getTracker throws an error', function(done) {
     var loggerSpy = getLoggerMockObject();
+    var promise = Promise.reject('some error');
     var setVariables = getSetVariables({
       '../helpers/getTracker': function() {
-        return Promise.reject('some error');
+        return promise;
       },
       logger: loggerSpy
     });
@@ -162,9 +171,9 @@ describe('set variables', function() {
       extensionConfigurationIds: ['EX1']
     });
 
-    setTimeout(function() {
+    promise.then(null, function() {
       expect(loggerSpy.error).toHaveBeenCalled();
       done();
-    }, 20);
+    });
   });
 });
