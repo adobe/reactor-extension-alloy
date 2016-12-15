@@ -44,7 +44,7 @@ describe('set variables', function() {
     setTimeout(function() {
       expect(applyTrackerVariablesSpy).toHaveBeenCalledWith(tracker, trackerProperties);
       done();
-    });
+    }, 20);
   });
 
   it('applies the variables for multiple configurations', function(done) {
@@ -72,7 +72,7 @@ describe('set variables', function() {
       trackerProperties: {
         a: 'b'
       }
-    });
+    }, 20);
 
     setTimeout(function() {
       expect(applyTrackerVariablesSpy.calls.count()).toBe(2);
@@ -113,7 +113,7 @@ describe('set variables', function() {
       setTimeout(function() {
         expect(applyTrackerVariablesSpy.calls.count()).toBe(3);
         done();
-      });
+      }, 20);
     });
 
   it('calls the custom setup method when available', function(done) {
@@ -146,7 +146,7 @@ describe('set variables', function() {
     setTimeout(function() {
       expect(tracker.a).toBe('custom');
       done();
-    });
+    }, 20);
   });
 
   it('logs an error when getTracker throws an error', function(done) {
@@ -165,6 +165,6 @@ describe('set variables', function() {
     setTimeout(function() {
       expect(loggerSpy.error).toHaveBeenCalled();
       done();
-    });
+    }, 20);
   });
 });

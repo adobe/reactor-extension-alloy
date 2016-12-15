@@ -41,7 +41,7 @@ describe('send beacon', function() {
     setTimeout(function() {
       expect(tracker.t).toHaveBeenCalledTimes(1);
       done();
-    });
+    }, 20);
   });
 
   it('sends the beacon for multiple configurations', function(done) {
@@ -72,7 +72,7 @@ describe('send beacon', function() {
     setTimeout(function() {
       expect(tracker.t).toHaveBeenCalledTimes(2);
       done();
-    });
+    }, 20);
   });
 
   it('sends the beacon for all the configurations when extensionConfigurationIds is missing',
@@ -106,7 +106,7 @@ describe('send beacon', function() {
       setTimeout(function() {
         expect(tracker.t).toHaveBeenCalledTimes(3);
         done();
-      });
+      }, 20);
     });
 
   it('logs an error when getTracker throws an error', function(done) {
@@ -125,7 +125,7 @@ describe('send beacon', function() {
     setTimeout(function() {
       expect(loggerSpy.error).toHaveBeenCalled();
       done();
-    });
+    }, 20);
   });
 
   it('sends the custom link beacon for a configuration', function(done) {
@@ -147,7 +147,7 @@ describe('send beacon', function() {
       expect(tracker.tl.calls.count()).toBe(1);
       expect(tracker.tl).toHaveBeenCalledWith('true', 'o', 'link clicked');
       done();
-    });
+    }, 20);
   });
 
   it('sends the custom link beacon using the link name and link type provided', function(done) {
@@ -171,7 +171,7 @@ describe('send beacon', function() {
       expect(tracker.tl.calls.count()).toBe(1);
       expect(tracker.tl).toHaveBeenCalledWith('true', 'c', 'some name');
       done();
-    });
+    }, 20);
   });
 
   it('sends the custom link beacon using the target element when possible', function(done) {
@@ -196,6 +196,6 @@ describe('send beacon', function() {
       expect(tracker.tl.calls.count()).toBe(1);
       expect(tracker.tl).toHaveBeenCalledWith(targetElement, 'o', 'link');
       done();
-    });
+    }, 20);
   });
 });

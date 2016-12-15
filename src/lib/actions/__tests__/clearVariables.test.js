@@ -36,7 +36,7 @@ describe('clear variables', function() {
     setTimeout(function() {
       expect(tracker.clearVars).toHaveBeenCalledTimes(1);
       done();
-    });
+    }, 20);
   });
 
   it('sends the beacon for multiple configurations', function(done) {
@@ -66,7 +66,7 @@ describe('clear variables', function() {
     setTimeout(function() {
       expect(tracker.clearVars).toHaveBeenCalledTimes(2);
       done();
-    });
+    }, 20);
   });
 
   it('sends the beacon for all the configurations when extensionConfigurationIds is missing',
@@ -98,6 +98,6 @@ describe('clear variables', function() {
       setTimeout(function() {
         expect(tracker.clearVars).toHaveBeenCalledTimes(3);
         done();
-      });
+      }, 20);
     });
 });
