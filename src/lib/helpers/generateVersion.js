@@ -8,7 +8,7 @@
 var THIRD_OF_DAY = 8; //hours
 
 var getDayField = function(date) {
-  return date.getDate().toString(36);
+  return date.getUTCDate().toString(36);
 };
 
 var getLastChar = function(str) {
