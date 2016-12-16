@@ -1,8 +1,6 @@
 import React from 'react';
 import ConfigurationSelector, { formConfig as configurationSelectorFormConfig } from '../components/configurationSelector';
 
-import './clearVariables.styl';
-
 export default () => (
   <div>
     <ConfigurationSelector
