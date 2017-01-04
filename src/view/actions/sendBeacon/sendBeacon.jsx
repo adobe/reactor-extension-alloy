@@ -7,9 +7,6 @@ import { connect } from 'react-redux';
 import { Field, formValueSelector } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 
-import ConfigurationSelector, { formConfig as configurationSelectorFormConfig } from '../components/configurationSelector';
-import { mergeConfigs } from '../../utils/formConfigUtils';
-
 import './sendBeacon.styl';
 
 const TYPES = {
@@ -50,10 +47,6 @@ const SendBeacon = ({ type, linkType }) => {
 
   return (
     <div>
-      <ConfigurationSelector
-        className="u-gapBottom"
-        heading="Send a beacon for each of the following extension configurations:"
-      />
       <Heading size="4">Tracking</Heading>
       <div>
         <Field
@@ -115,43 +108,41 @@ export default connect(
   state => formValueSelector('default')(state, 'type', 'linkType')
 )(SendBeacon);
 
-export const formConfig = mergeConfigs(
-  configurationSelectorFormConfig,
-  {
-    settingsToFormValues(values, settings) {
-      const {
-        type,
-        linkType,
-        linkName
-      } = settings;
+export const formConfig = {
+  settingsToFormValues(values, settings) {
+    const {
+      type,
+      linkType,
+      linkName
+    } = settings;
 
-      return {
-        ...values,
-        type: type || TYPES.PAGE,
-        linkType: linkType || LINK_TYPES.CUSTOM,
-        linkName
-      };
-    },
-    formValuesToSettings(settings, values) {
-      const {
-        type,
-        linkType,
-        linkName
-      } = values;
+    return {
+      ...values,
+      type: type || TYPES.PAGE,
+      linkType: linkType || LINK_TYPES.CUSTOM,
+      linkName
+    };
+  },
+  formValuesToSettings(settings, values) {
+    const {
+      type,
+      linkType,
+      linkName
+    } = values;
 
-      settings = {
-        ...settings,
-        type
-      };
+    settings = {
+      ...settings,
+      type
+    };
 
-      if (type === TYPES.LINK) {
-        settings.linkType = linkType;
-        if (linkName) {
-          settings.linkName = linkName;
-        }
+    if (type === TYPES.LINK) {
+      settings.linkType = linkType;
+      if (linkName) {
+        settings.linkName = linkName;
       }
-
-      return settings;
     }
-  });
+
+    return settings;
+  }
+};
 

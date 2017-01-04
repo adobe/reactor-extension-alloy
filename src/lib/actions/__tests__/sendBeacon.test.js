@@ -7,36 +7,21 @@ var getLoggerMockObject = function() {
   return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
 };
 
-var getSendBeacon = function(mocks) {
-  mocks = mocks || {};
-
-  mocks['@turbine/get-extension-configurations'] = mocks['@turbine/get-extension-configurations'] ||
-    function() {
-      return [{
-        id: 'EX1',
-        name: 'EX1'
-      }];
-    };
-
-  return sendBeaconInjector(mocks);
-};
-
 describe('send beacon', function() {
-  it('sends the beacon for a configuration', function(done) {
+  it('fires a page view pixel', function(done) {
     var tracker = {
       t: jasmine.createSpy('t')
     };
 
     var promise = Promise.resolve(tracker);
 
-    var sendBeacon = getSendBeacon({
+    var sendBeacon = sendBeaconInjector({
       '../helpers/getTracker': function() {
         return promise;
       }
     });
 
     sendBeacon({
-      extensionConfigurationIds: ['EX1'],
       type: 'page'
     });
 
@@ -46,88 +31,17 @@ describe('send beacon', function() {
     });
   });
 
-  it('sends the beacon for multiple configurations', function(done) {
-    var tracker = {
-      t: jasmine.createSpy('t')
-    };
-
-    var promise = Promise.resolve(tracker);
-
-    var sendBeacon = getSendBeacon({
-      '../helpers/getTracker': function() {
-        return promise;
-      },
-      '@turbine/get-extension-configurations': function() {
-        return [{
-          id: 'EX1',
-          name: 'EX1'
-        },{
-          id: 'EX2',
-          name: 'EX2'
-        }];
-      }
-    });
-
-    sendBeacon({
-      extensionConfigurationIds: ['EX1', 'EX2'],
-      type: 'page'
-    });
-
-    promise.then(function() {
-      expect(tracker.t).toHaveBeenCalledTimes(2);
-      done();
-    });
-  });
-
-  it('sends the beacon for all the configurations when extensionConfigurationIds is missing',
-    function(done) {
-      var tracker = {
-        t: jasmine.createSpy('t')
-      };
-
-      var promise = Promise.resolve(tracker);
-
-      var sendBeacon = getSendBeacon({
-        '@turbine/get-extension-configurations': function() {
-          return [{
-            id: 'EX1',
-            name: 'EX1'
-          },{
-            id: 'EX2',
-            name: 'EX2'
-          },{
-            id: 'EX3',
-            name: 'EX3'
-          }];
-        },
-        '../helpers/getTracker': function() {
-          return promise;
-        }
-      });
-
-      sendBeacon({
-        type: 'page'
-      });
-
-      promise.then(function() {
-        expect(tracker.t).toHaveBeenCalledTimes(3);
-        done();
-      });
-    });
-
   it('logs an error when getTracker throws an error', function(done) {
     var loggerSpy = getLoggerMockObject();
     var promise = Promise.reject('some error');
-    var sendBeacon = getSendBeacon({
+    var sendBeacon = sendBeaconInjector({
       '../helpers/getTracker': function() {
         return promise;
       },
       '@turbine/logger': loggerSpy
     });
 
-    sendBeacon({
-      extensionConfigurationIds: ['EX1']
-    });
+    sendBeacon({});
 
     promise.then(null, function() {
       expect(loggerSpy.error).toHaveBeenCalled();
@@ -135,21 +49,21 @@ describe('send beacon', function() {
     });
   });
 
-  it('sends the custom link beacon for a configuration', function(done) {
+  it('fires a custom link pixel', function(done) {
     var tracker = {
       tl: jasmine.createSpy('tl')
     };
 
     var promise = Promise.resolve(tracker);
 
-    var sendBeacon = getSendBeacon({
+    var sendBeacon = sendBeaconInjector({
       '../helpers/getTracker': function() {
         return promise;
       }
     });
 
     sendBeacon({
-      extensionConfigurationIds: ['EX1']
+      type: 'link'
     });
 
     promise.then(function() {
@@ -166,14 +80,14 @@ describe('send beacon', function() {
 
     var promise = Promise.resolve(tracker);
 
-    var sendBeacon = getSendBeacon({
+    var sendBeacon = sendBeaconInjector({
       '../helpers/getTracker': function() {
         return promise;
       }
     });
 
     sendBeacon({
-      extensionConfigurationIds: ['EX1'],
+      type: 'link',
       linkName: 'some name',
       linkType: 'c'
     });
@@ -195,14 +109,14 @@ describe('send beacon', function() {
 
     var promise = Promise.resolve(tracker);
 
-    var sendBeacon = getSendBeacon({
+    var sendBeacon = sendBeaconInjector({
       '../helpers/getTracker': function() {
         return promise;
       }
     });
 
     sendBeacon({
-      extensionConfigurationIds: ['EX1']
+      type: 'link',
     }, targetElement);
 
     promise.then(function() {

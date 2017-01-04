@@ -7,7 +7,7 @@ var logger = require('@turbine/logger');
 var Promise = require('@turbine/promise');
 var propertySettings =  require('@turbine/property-settings');
 var window = require('@turbine/window');
-var getExtensionConfigurations = require('@turbine/get-extension-configurations');
+var getExtensionConfiguration = require('@turbine/get-extension-configuration');
 var getSharedModule = require('@turbine/get-shared-module');
 
 var applyTrackerVariables = require('./applyTrackerVariables');
@@ -68,42 +68,21 @@ var updateTrackerVariables = function(trackerProperties, customSetup, tracker) {
 };
 
 var initialize = function(configuration) {
-  var configurationSettings = configuration.settings || {};
-
-  if (checkEuCompliance(configurationSettings.euComplianceEnabled || false)) {
-    return loadLibrary(configurationSettings)
+  if (checkEuCompliance(configuration.euComplianceEnabled || false)) {
+    return loadLibrary(configuration)
       .then(linkVisitorId)
       .then(updateTrackerVersion)
       .then(updateTrackerVariables.bind(
         null,
-        configurationSettings.trackerProperties,
-        configurationSettings.customSetup || {}
+        configuration.trackerProperties,
+        configuration.customSetup || {}
       ));
   } else {
     return Promise.reject('EU compliance was not acknowledged by the user.');
   }
 };
 
-var createPromiseStore = function(configurations) {
-  var store = {};
-
-  configurations.forEach(function(configuration) {
-    store[configuration.id] =  new Promise(function(resolve, reject) {
-      logger.info(
-        'Initializing Adobe Analytics extension for configuration "' +
-        configuration.name +
-        '".'
-      );
-
-      initialize(configuration)
-        .then(resolve, reject);
-    });
-  });
-
-  return store;
-};
-var store = createPromiseStore(getExtensionConfigurations());
-
-module.exports = function(extensionConfigurationId) {
-  return store[extensionConfigurationId];
+var promise = initialize(getExtensionConfiguration());
+module.exports = function() {
+  return promise;
 };

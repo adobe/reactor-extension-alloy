@@ -865,7 +865,6 @@
       "name": "clear-variables",
       "displayName": "Clear Variables",
       "libPath": "src/lib/actions/clearVariables.js",
-      "viewPath": "clearVariables.html",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",

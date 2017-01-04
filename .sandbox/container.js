@@ -25,64 +25,37 @@ module.exports = {
   extensions: {
     "adobe-mcid": {
       displayName: 'Adobe MCID',
-      configurations: [
-        {
-          id: 'ECx',
-          name: 'ECx',
-          settings: {
-            "orgId": "93B41AC151F037F00A490D4D@AdobeOrg"
-          }
-        }
-      ]
+      configuration: {
+        "orgId": "93B41AC151F037F00A490D4D@AdobeOrg"
+      }
     },
     "adobe-analytics": {
       displayName: 'Adobe Analytics',
-      configurations: [
-        {
-          id: 'EXa',
-          name: 'EXa',
-          settings: {
-            "libraryCode": {
-              "type": "managed",
-              "accounts": {
-                "production": [
-                  "Reports"
-                ]
-              },
-              "loadPhase": "pageBottom"
-            },
-            "trackerProperties": {
-              "trackInlineStats": true,
-              "trackDownloadLinks": true,
-              "trackExternalLinks": true,
-              "linkDownloadFileTypes": [
-                "doc",
-                "docx"
-              ],
-              "linkInternalFilters": [
-                "javascript:",
-                "tel:",
-                "mailto:"
-              ]
-            }
-          }
+      configuration: {
+        "libraryCode": {
+          "type": "managed",
+          "accounts": {
+            "production": [
+              "Reports"
+            ]
+          },
+          "loadPhase": "pageBottom"
         },
-        {
-          id: 'EXb',
-          name: 'EXb',
-          settings: {
-            "libraryCode": {
-              "type": "managed",
-              "accounts": {
-                "production": [
-                  "Reports2"
-                ]
-              },
-              "loadPhase": "pageBottom"
-            }
-          }
+        "trackerProperties": {
+          "trackInlineStats": true,
+          "trackDownloadLinks": true,
+          "trackExternalLinks": true,
+          "linkDownloadFileTypes": [
+            "doc",
+            "docx"
+          ],
+          "linkInternalFilters": [
+            "javascript:",
+            "tel:",
+            "mailto:"
+          ]
         }
-      ],
+      },
       // This will be populated automatically based on features found in extension.json.
       modules: {}
     }

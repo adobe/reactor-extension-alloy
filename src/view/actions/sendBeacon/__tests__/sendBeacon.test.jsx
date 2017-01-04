@@ -45,7 +45,6 @@ describe('send beacon', () => {
     expect(pageViewTypeRadio.props.checked).toBe(true);
   });
 
-
   it('sets link form values from settings', () => {
     extensionBridge.init({
       settings: {
