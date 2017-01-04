@@ -1,20 +1,20 @@
 'use strict';
 
-var Promise = require('@reactor/turbine/lib/require')('promise');
+var Promise = require('@reactor/turbine/lib/require')('@turbine/promise');
 var loadLibraryInjector = require('inject!../loadLibrary');
 
 var getLoadLibrary = function(mocks) {
   mocks = mocks || {};
 
-  mocks['window'] = mocks['window'] ||
+  mocks['@turbine/window'] = mocks['@turbine/window'] ||
     {
       'AppMeasurement':  function() {}
     };
 
-  mocks['on-page-bottom'] = mocks['on-page-bottom'] ||
+  mocks['@turbine/on-page-bottom'] = mocks['@turbine/on-page-bottom'] ||
     function(callback) { callback(); };
 
-  mocks['load-script'] = mocks['load-script'] ||
+  mocks['@turbine/load-script'] = mocks['@turbine/load-script'] ||
     function() {};
 
   return loadLibraryInjector(mocks);
@@ -39,7 +39,7 @@ describe('load library', function() {
     it('loads script from url', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        'load-script': loadScriptSpy
+        '@turbine/load-script': loadScriptSpy
       });
 
       loadLibrary({
@@ -58,7 +58,7 @@ describe('load library', function() {
     it('loads library at page top', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        'load-script': loadScriptSpy
+        '@turbine/load-script': loadScriptSpy
       });
 
       loadLibrary({
@@ -81,7 +81,7 @@ describe('load library', function() {
       });
 
       var loadLibrary = getLoadLibrary({
-        'on-page-bottom': onPageBottomSpy
+        '@turbine/on-page-bottom': onPageBottomSpy
       });
 
       loadLibrary({
@@ -107,7 +107,7 @@ describe('load library', function() {
       };
 
       var loadLibrary = getLoadLibrary({
-        'window': windowSpy
+        '@turbine/window': windowSpy
       });
 
       loadLibrary({
@@ -125,7 +125,7 @@ describe('load library', function() {
 
     it('throws an error if window.AppMeasurement is not defined', function(done) {
       var loadLibrary = getLoadLibrary({
-        'window': {}
+        '@turbine/window': {}
       });
 
       loadLibrary({
@@ -151,8 +151,8 @@ describe('load library', function() {
       };
 
       var loadLibrary = getLoadLibrary({
-        'window': windowSpy,
-        'build-info': {
+        '@turbine/window': windowSpy,
+        '@turbine/build-info': {
           environment: 'development'
         }
       });
@@ -175,7 +175,7 @@ describe('load library', function() {
       var loadScriptSpy = jasmine.createSpy('load-script')
         .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
-        'load-script': loadScriptSpy
+        '@turbine/load-script': loadScriptSpy
       });
 
       loadLibrary({
@@ -213,7 +213,7 @@ describe('load library', function() {
     it('does a polling for detecting the app measurement', function(done) {
       var windowSpy = {};
       var loadLibrary = getLoadLibrary({
-        'window': windowSpy
+        '@turbine/window': windowSpy
       });
 
       loadLibrary({
@@ -236,7 +236,7 @@ describe('load library', function() {
     it('throws an error if tracker is not found in a 10s interval', function(done) {
       var windowSpy = {};
       var loadLibrary = getLoadLibrary({
-        'window': windowSpy
+        '@turbine/window': windowSpy
       });
 
       loadLibrary({
@@ -258,7 +258,7 @@ describe('load library', function() {
     it('calls set account method from tracker', function(done) {
       var windowSpy = {};
       var loadLibrary = getLoadLibrary({
-        'window': windowSpy
+        '@turbine/window': windowSpy
       });
 
       loadLibrary({
@@ -283,8 +283,8 @@ describe('load library', function() {
     it('loads script from url', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        'load-script': loadScriptSpy,
-        'window': {
+        '@turbine/load-script': loadScriptSpy,
+        '@turbine/window': {
           's': function() {}
         }
       });
@@ -306,8 +306,8 @@ describe('load library', function() {
     it('loads library at page top', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        'load-script': loadScriptSpy,
-        'window': {
+        '@turbine/load-script': loadScriptSpy,
+        '@turbine/window': {
           's': function() {}
         }
       });
@@ -333,8 +333,8 @@ describe('load library', function() {
       });
 
       var loadLibrary = getLoadLibrary({
-        'on-page-bottom': onPageBottomSpy,
-        'window': {
+        '@turbine/on-page-bottom': onPageBottomSpy,
+        '@turbine/window': {
           's': function() {}
         }
       });
@@ -376,7 +376,7 @@ describe('load library', function() {
         b: jasmine.createSpyObj('b', ['sa'])
       };
       var loadLibrary = getLoadLibrary({
-        'window': windowSpy
+        '@turbine/window': windowSpy
       });
 
       loadLibrary({
@@ -398,8 +398,8 @@ describe('load library', function() {
     it('loads script from url', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        'load-script': loadScriptSpy,
-        'window': {
+        '@turbine/load-script': loadScriptSpy,
+        '@turbine/window': {
           location: {
             protocol: 'http:'
           },
@@ -424,8 +424,8 @@ describe('load library', function() {
     it('loads htpps script from url', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        'load-script': loadScriptSpy,
-        'window': {
+        '@turbine/load-script': loadScriptSpy,
+        '@turbine/window': {
           location: {
             protocol: 'https:'
           },
@@ -451,8 +451,8 @@ describe('load library', function() {
     it('loads library at page top', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        'load-script': loadScriptSpy,
-        'window': {
+        '@turbine/load-script': loadScriptSpy,
+        '@turbine/window': {
           location: {
             protocol: 'http:'
           },
@@ -481,8 +481,8 @@ describe('load library', function() {
       });
 
       var loadLibrary = getLoadLibrary({
-        'on-page-bottom': onPageBottomSpy,
-        'window': {
+        '@turbine/on-page-bottom': onPageBottomSpy,
+        '@turbine/window': {
           location: {
             protocol: 'http:'
           },
@@ -507,7 +507,7 @@ describe('load library', function() {
 
     it('throws an error if tracker is not found at the specified varible', function(done) {
       var loadLibrary = getLoadLibrary({
-        'window': {
+        '@turbine/window': {
           location: {
             protocol: 'http:'
           }
@@ -536,7 +536,7 @@ describe('load library', function() {
         }
       };
       var loadLibrary = getLoadLibrary({
-        'window': windowSpy
+        '@turbine/window': windowSpy
       });
 
       loadLibrary({

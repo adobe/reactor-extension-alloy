@@ -1,14 +1,14 @@
 'use strict';
 
-var buildInfo = require('build-info');
-var cookie = require('cookie');
-var document = require('document');
-var logger = require('logger');
-var Promise = require('promise');
-var propertySettings =  require('property-settings');
-var window = require('window');
-var getExtensionConfigurations = require('get-extension-configurations');
-var getSharedModule = require('get-shared-module');
+var buildInfo = require('@turbine/build-info');
+var cookie = require('@turbine/cookie');
+var document = require('@turbine/document');
+var logger = require('@turbine/logger');
+var Promise = require('@turbine/promise');
+var propertySettings =  require('@turbine/property-settings');
+var window = require('@turbine/window');
+var getExtensionConfigurations = require('@turbine/get-extension-configurations');
+var getSharedModule = require('@turbine/get-shared-module');
 
 var applyTrackerVariables = require('./applyTrackerVariables');
 var loadLibrary = require('./loadLibrary');

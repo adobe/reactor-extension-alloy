@@ -1,12 +1,12 @@
 'use strict';
 
-var buildInfo = require('build-info');
-var loadScript = require('load-script');
-var logger = require('logger');
-var onPageBottom = require('on-page-bottom');
-var window = require('window');
-var Promise = require('promise');
-var getHostedLibFileUrl = require('get-hosted-lib-file-url');
+var buildInfo = require('@turbine/build-info');
+var loadScript = require('@turbine/load-script');
+var logger = require('@turbine/logger');
+var onPageBottom = require('@turbine/on-page-bottom');
+var window = require('@turbine/window');
+var Promise = require('@turbine/promise');
+var getHostedLibFileUrl = require('@turbine/get-hosted-lib-file-url');
 
 var LIB_TYPES = {
   MANAGED: 'managed',

@@ -1,7 +1,7 @@
 'use strict';
 
 var sendBeaconInjector = require('inject!../sendBeacon');
-var Promise = require('@reactor/turbine/lib/require')('promise');
+var Promise = require('@reactor/turbine/lib/require')('@turbine/promise');
 
 var getLoggerMockObject = function() {
   return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
@@ -10,7 +10,7 @@ var getLoggerMockObject = function() {
 var getSendBeacon = function(mocks) {
   mocks = mocks || {};
 
-  mocks['get-extension-configurations'] = mocks['get-extension-configurations'] ||
+  mocks['@turbine/get-extension-configurations'] = mocks['@turbine/get-extension-configurations'] ||
     function() {
       return [{
         id: 'EX1',
@@ -57,7 +57,7 @@ describe('send beacon', function() {
       '../helpers/getTracker': function() {
         return promise;
       },
-      'get-extension-configurations': function() {
+      '@turbine/get-extension-configurations': function() {
         return [{
           id: 'EX1',
           name: 'EX1'
@@ -88,7 +88,7 @@ describe('send beacon', function() {
       var promise = Promise.resolve(tracker);
 
       var sendBeacon = getSendBeacon({
-        'get-extension-configurations': function() {
+        '@turbine/get-extension-configurations': function() {
           return [{
             id: 'EX1',
             name: 'EX1'
@@ -122,7 +122,7 @@ describe('send beacon', function() {
       '../helpers/getTracker': function() {
         return promise;
       },
-      logger: loggerSpy
+      '@turbine/logger': loggerSpy
     });
 
     sendBeacon({

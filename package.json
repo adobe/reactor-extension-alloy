@@ -33,7 +33,7 @@
     "@reactor/extension-mcid": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/extension-mcid.git",
     "@reactor/extension-support-packager": "^2.3.3",
     "@reactor/extension-support-sandbox": "^7.8.5",
-    "@reactor/extension-support-testrunner": "^8.2.0",
+    "@reactor/extension-support-testrunner": "^9.0.0",
     "@reactor/turbine": "^16.1.2",
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.7",

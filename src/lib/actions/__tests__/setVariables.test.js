@@ -1,7 +1,7 @@
 'use strict';
 
 var setVariablesInjector = require('inject!../setVariables');
-var Promise = require('@reactor/turbine/lib/require')('promise');
+var Promise = require('@reactor/turbine/lib/require')('@turbine/promise');
 
 var getLoggerMockObject = function() {
   return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
@@ -10,7 +10,7 @@ var getLoggerMockObject = function() {
 var getSetVariables = function(mocks) {
   mocks = mocks || {};
 
-  mocks['get-extension-configurations'] = mocks['get-extension-configurations'] ||
+  mocks['@turbine/get-extension-configurations'] = mocks['@turbine/get-extension-configurations'] ||
     function() {
       return [{
         id: 'EX1',
@@ -60,7 +60,7 @@ describe('set variables', function() {
       '../helpers/getTracker': function() {
         return promise;
       },
-      'get-extension-configurations': function() {
+      '@turbine/get-extension-configurations': function() {
         return [{
           id: 'EX1',
           name: 'EX1'
@@ -92,7 +92,7 @@ describe('set variables', function() {
       var promise = Promise.resolve(tracker);
 
       var setVariables = getSetVariables({
-        'get-extension-configurations': function() {
+        '@turbine/get-extension-configurations': function() {
           return [{
             id: 'EX1',
             name: 'EX1'
@@ -164,7 +164,7 @@ describe('set variables', function() {
       '../helpers/getTracker': function() {
         return promise;
       },
-      logger: loggerSpy
+      '@turbine/logger': loggerSpy
     });
 
     setVariables({

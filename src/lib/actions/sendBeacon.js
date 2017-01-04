@@ -1,7 +1,7 @@
 'use strict';
 
-var logger = require('logger');
-var getExtensionConfigurations = require('get-extension-configurations');
+var logger = require('@turbine/logger');
+var getExtensionConfigurations = require('@turbine/get-extension-configurations');
 var getTracker = require('../helpers/getTracker');
 
 var isLink = function(element) {

@@ -1,12 +1,12 @@
 'use strict';
 
 var clearVariablesInjector = require('inject!../clearVariables');
-var Promise = require('@reactor/turbine/lib/require')('promise');
+var Promise = require('@reactor/turbine/lib/require')('@turbine/promise');
 
 var getClearVariables = function(mocks) {
   mocks = mocks || {};
 
-  mocks['get-extension-configurations'] = mocks['get-extension-configurations'] ||
+  mocks['@turbine/get-extension-configurations'] = mocks['@turbine/get-extension-configurations'] ||
     function() {
       return [{
         id: 'EX1',
@@ -52,7 +52,7 @@ describe('clear variables', function() {
       '../helpers/getTracker': function() {
         return promise;
       },
-      'get-extension-configurations': function() {
+      '@turbine/get-extension-configurations': function() {
         return [{
           id: 'EX1',
           name: 'EX1'
@@ -81,7 +81,7 @@ describe('clear variables', function() {
       var promise = Promise.resolve(tracker);
 
       var clearVariables = getClearVariables({
-        'get-extension-configurations': function() {
+        '@turbine/get-extension-configurations': function() {
           return [{
             id: 'EX1',
             name: 'EX1'

@@ -1,8 +1,8 @@
 'use strict';
 
-var getQueryParam = require('get-query-param');
-var logger = require('logger');
-var window = require('window');
+var getQueryParam = require('@turbine/get-query-param');
+var logger = require('@turbine/logger');
+var window = require('@turbine/window');
 
 var eVarRegExp = /eVar([0-9]+)/;
 var propRegExp = /prop([0-9]+)/;

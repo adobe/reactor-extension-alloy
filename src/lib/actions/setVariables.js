@@ -1,10 +1,10 @@
 'use strict';
 
-var logger = require('logger');
+var logger = require('@turbine/logger');
 
 var getTracker = require('../helpers/getTracker');
 var applyTrackerVariables = require('../helpers/applyTrackerVariables');
-var getExtensionConfigurations = require('get-extension-configurations');
+var getExtensionConfigurations = require('@turbine/get-extension-configurations');
 
 module.exports = function(settings, targetElement, event) {
   var extensionConfigurations = getExtensionConfigurations();

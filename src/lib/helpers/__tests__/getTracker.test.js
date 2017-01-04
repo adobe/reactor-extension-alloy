@@ -1,6 +1,6 @@
 'use strict';
 
-var Promise = require('@reactor/turbine/lib/require')('promise');
+var Promise = require('@reactor/turbine/lib/require')('@turbine/promise');
 var getTrackerInjector = require('inject!../getTracker');
 
 var getTrackerModule = function(mocks) {
@@ -13,7 +13,7 @@ describe('get tracker', function() {
       .and.returnValue(Promise.resolve('loaded'));
 
     var getTracker = getTrackerModule({
-      'get-extension-configurations': function() {
+      '@turbine/get-extension-configurations': function() {
         return [{
           id: 'EC1'
         }];
@@ -31,7 +31,7 @@ describe('get tracker', function() {
       .and.returnValue(Promise.resolve('loaded'));
 
     var getTracker = getTrackerModule({
-      'get-extension-configurations': function() {
+      '@turbine/get-extension-configurations': function() {
         return [{
           id: 'EC1',
           settings: {
@@ -53,7 +53,7 @@ describe('get tracker', function() {
   describe('when EU compliance is required', function() {
     it('does not load a library if EU compliance is not acknowledged', function(done) {
       var getTracker = getTrackerModule({
-        'get-extension-configurations': function() {
+        '@turbine/get-extension-configurations': function() {
           return [{
             id: 'EC1',
             settings: {
@@ -78,7 +78,7 @@ describe('get tracker', function() {
       });
 
       var getTracker = getTrackerModule({
-        'get-extension-configurations': function() {
+        '@turbine/get-extension-configurations': function() {
           return [{
             id: 'EC1',
             settings: {
@@ -86,10 +86,10 @@ describe('get tracker', function() {
             }
           }];
         },
-        'property-settings': {
+        '@turbine/property-settings': {
           'euCookieName': 'sat_track'
         },
-        'cookie': cookieSpy,
+        '@turbine/cookie': cookieSpy,
         './loadLibrary': loadLibrarySpy
       });
 
@@ -109,12 +109,12 @@ describe('get tracker', function() {
       }));
 
     var getTracker = getTrackerModule({
-      'get-extension-configurations': function() {
+      '@turbine/get-extension-configurations': function() {
         return [{
           id: 'EC1'
         }];
       },
-      'get-shared-module': function() {
+      '@turbine/get-shared-module': function() {
         return mcidInstance;
       },
       './loadLibrary': loadLibrarySpy
@@ -134,7 +134,7 @@ describe('get tracker', function() {
         }));
 
       var getTracker = getTrackerModule({
-        'get-extension-configurations': function() {
+        '@turbine/get-extension-configurations': function() {
           return [{
             id: 'EC1'
           }];
@@ -158,7 +158,7 @@ describe('get tracker', function() {
         }));
 
       var getTracker = getTrackerModule({
-        'get-extension-configurations': function() {
+        '@turbine/get-extension-configurations': function() {
           return [{
             id: 'EC1'
           }];
@@ -182,7 +182,7 @@ describe('get tracker', function() {
       }));
 
     var getTracker = getTrackerModule({
-      'get-extension-configurations': function() {
+      '@turbine/get-extension-configurations': function() {
         return [{
           id: 'EC1',
           settings: {
@@ -207,7 +207,7 @@ describe('get tracker', function() {
       }));
 
     var getTracker = getTrackerModule({
-      'get-extension-configurations': function() {
+      '@turbine/get-extension-configurations': function() {
         return [{
           id: 'EC1',
           settings: {
@@ -239,7 +239,7 @@ describe('get tracker', function() {
       }));
 
     var getTracker = getTrackerModule({
-      'get-extension-configurations': function() {
+      '@turbine/get-extension-configurations': function() {
         return [{
           id: 'EC1',
           settings: {

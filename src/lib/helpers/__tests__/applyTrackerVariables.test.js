@@ -163,7 +163,7 @@ describe('apply tracker variables', function() {
 
   it('sets campaigns from query param on the tracker', function() {
     applyTrackerVariables = getApplyTrackerVariables({
-      'get-query-param': jasmine.createSpy('get-query-param').and.returnValue('somevalue')
+      '@turbine/get-query-param': jasmine.createSpy('get-query-param').and.returnValue('somevalue')
     });
 
     applyTrackerVariables(tracker, {
