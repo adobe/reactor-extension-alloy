@@ -7,7 +7,7 @@ var logger = require('@turbine/logger');
 var Promise = require('@turbine/promise');
 var propertySettings =  require('@turbine/property-settings');
 var window = require('@turbine/window');
-var getExtensionConfiguration = require('@turbine/get-extension-configuration');
+var getExtensionSettings = require('@turbine/get-extension-settings');
 var getSharedModule = require('@turbine/get-shared-module');
 
 var applyTrackerVariables = require('./applyTrackerVariables');
@@ -67,22 +67,22 @@ var updateTrackerVariables = function(trackerProperties, customSetup, tracker) {
   return tracker;
 };
 
-var initialize = function(configuration) {
-  if (checkEuCompliance(configuration.euComplianceEnabled || false)) {
-    return loadLibrary(configuration)
+var initialize = function(settings) {
+  if (checkEuCompliance(settings.euComplianceEnabled || false)) {
+    return loadLibrary(settings)
       .then(linkVisitorId)
       .then(updateTrackerVersion)
       .then(updateTrackerVariables.bind(
         null,
-        configuration.trackerProperties,
-        configuration.customSetup || {}
+        settings.trackerProperties,
+        settings.customSetup || {}
       ));
   } else {
     return Promise.reject('EU compliance was not acknowledged by the user.');
   }
 };
 
-var promise = initialize(getExtensionConfiguration());
+var promise = initialize(getExtensionSettings());
 module.exports = function() {
   return promise;
 };
