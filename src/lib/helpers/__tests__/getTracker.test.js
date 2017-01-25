@@ -13,10 +13,8 @@ describe('get tracker', function() {
       .and.returnValue(Promise.resolve('loaded'));
 
     var getTracker = getTrackerModule({
-      '@turbine/get-extension-configurations': function() {
-        return [{
-          id: 'EC1'
-        }];
+      '@turbine/get-extension-settings': function() {
+        return {};
       },
       './loadLibrary': loadLibrarySpy
     });
@@ -26,18 +24,15 @@ describe('get tracker', function() {
     expect(getTrackerPromise.catch).toEqual(jasmine.any(Function));
   });
 
-  it('loads the library for a configuration', function(done) {
+  it('loads the library with the provided settings', function(done) {
     var loadLibrarySpy = jasmine.createSpy('load-library')
       .and.returnValue(Promise.resolve('loaded'));
 
     var getTracker = getTrackerModule({
-      '@turbine/get-extension-configurations': function() {
-        return [{
-          id: 'EC1',
-          settings: {
-            prop: 1
-          }
-        }];
+      '@turbine/get-extension-settings': function() {
+        return {
+          prop: 1
+        };
       },
       './loadLibrary': loadLibrarySpy
     });
@@ -53,13 +48,10 @@ describe('get tracker', function() {
   describe('when EU compliance is required', function() {
     it('does not load a library if EU compliance is not acknowledged', function(done) {
       var getTracker = getTrackerModule({
-        '@turbine/get-extension-configurations': function() {
-          return [{
-            id: 'EC1',
-            settings: {
-              euComplianceEnabled: true
-            }
-          }];
+        '@turbine/get-extension-settings': function() {
+          return {
+            euComplianceEnabled: true
+          };
         }
       });
 
@@ -78,13 +70,10 @@ describe('get tracker', function() {
       });
 
       var getTracker = getTrackerModule({
-        '@turbine/get-extension-configurations': function() {
-          return [{
-            id: 'EC1',
-            settings: {
-              euComplianceEnabled: true
-            }
-          }];
+        '@turbine/get-extension-settings': function() {
+          return {
+            euComplianceEnabled: true
+          };
         },
         '@turbine/property-settings': {
           'euCookieName': 'sat_track'
@@ -109,10 +98,8 @@ describe('get tracker', function() {
       }));
 
     var getTracker = getTrackerModule({
-      '@turbine/get-extension-configurations': function() {
-        return [{
-          id: 'EC1'
-        }];
+      '@turbine/get-extension-settings': function() {
+        return {};
       },
       '@turbine/get-shared-module': function() {
         return mcidInstance;
@@ -134,10 +121,8 @@ describe('get tracker', function() {
         }));
 
       var getTracker = getTrackerModule({
-        '@turbine/get-extension-configurations': function() {
-          return [{
-            id: 'EC1'
-          }];
+        '@turbine/get-extension-settings': function() {
+          return {};
         },
         './generateVersion': function() {
           return 'DEBA';
@@ -158,10 +143,8 @@ describe('get tracker', function() {
         }));
 
       var getTracker = getTrackerModule({
-        '@turbine/get-extension-configurations': function() {
-          return [{
-            id: 'EC1'
-          }];
+        '@turbine/get-extension-settings': function() {
+          return {};
         },
         './generateVersion': function() {
           return 'DEBA';
@@ -182,15 +165,12 @@ describe('get tracker', function() {
       }));
 
     var getTracker = getTrackerModule({
-      '@turbine/get-extension-configurations': function() {
-        return [{
-          id: 'EC1',
-          settings: {
-            trackerProperties: {
-              prop1: 'a'
-            }
+      '@turbine/get-extension-settings': function() {
+        return {
+          trackerProperties: {
+            prop1: 'a'
           }
-        }];
+        };
       },
       './loadLibrary': loadLibrarySpy
     });
@@ -207,21 +187,18 @@ describe('get tracker', function() {
       }));
 
     var getTracker = getTrackerModule({
-      '@turbine/get-extension-configurations': function() {
-        return [{
-          id: 'EC1',
-          settings: {
-            trackerProperties: {
-              prop1: 'a'
-            },
-            customSetup: {
-              loadPhase: 'beforeSettings',
-              source: function(tracker) {
-                tracker.prop1 = 'b';
-              }
+      '@turbine/get-extension-settings': function() {
+        return {
+          trackerProperties: {
+            prop1: 'a'
+          },
+          customSetup: {
+            loadPhase: 'beforeSettings',
+            source: function(tracker) {
+              tracker.prop1 = 'b';
             }
           }
-        }];
+        };
       },
       './loadLibrary': loadLibrarySpy
     });
@@ -239,20 +216,17 @@ describe('get tracker', function() {
       }));
 
     var getTracker = getTrackerModule({
-      '@turbine/get-extension-configurations': function() {
-        return [{
-          id: 'EC1',
-          settings: {
-            trackerProperties: {
-              prop1: 'a'
-            },
-            customSetup: {
-              source: function(tracker) {
-                tracker.prop1 = 'b';
-              }
+      '@turbine/get-extension-settings': function() {
+        return {
+          trackerProperties: {
+            prop1: 'a'
+          },
+          customSetup: {
+            source: function(tracker) {
+              tracker.prop1 = 'b';
             }
           }
-        }];
+        };
       },
       './loadLibrary': loadLibrarySpy
     });

@@ -1,7 +1,6 @@
 'use strict';
 
 var logger = require('@turbine/logger');
-var getExtensionConfigurations = require('@turbine/get-extension-configurations');
 var getTracker = require('../helpers/getTracker');
 
 var isLink = function(element) {
@@ -18,6 +17,7 @@ var getLinkName = function(element) {
 
 var sendBeacon = function(tracker, settings, targetElement) {
   if (settings.type === 'page') {
+    logger.info('Firing page view beacon.');
     tracker.t();
   } else {
     var linkSettings = {
@@ -26,9 +26,8 @@ var sendBeacon = function(tracker, settings, targetElement) {
     };
 
     logger.info(
-      'Firing link track beacon for configuration "' +
-      ' using the values: ' +
-      JSON.stringify(linkSettings)
+      'Firing link track beacon using the values: ' +
+      JSON.stringify(linkSettings) + '.'
     );
 
     tracker.tl(
@@ -40,24 +39,12 @@ var sendBeacon = function(tracker, settings, targetElement) {
 };
 
 module.exports = function(settings, targetElement) {
-  var extensionConfigurations = getExtensionConfigurations();
-  if (settings.extensionConfigurationIds) {
-    extensionConfigurations = extensionConfigurations.filter(function(extensionsConfiguration) {
-      return settings.extensionConfigurationIds.indexOf(extensionsConfiguration.id) !== -1;
-    });
-  }
-
-  extensionConfigurations.forEach(function(configuration) {
-    getTracker(configuration.id).then(function(tracker) {
-      logger.info('Firing page view beacon for configuration "' + configuration.name + '".');
-      sendBeacon(tracker, settings, targetElement);
-    }, function(errorMessage) {
-      logger.error(
-        'Cannot send beacon for configuration "' +
-        configuration.name +
-        '": ' +
-        errorMessage
-      );
-    });
+  getTracker().then(function(tracker) {
+    sendBeacon(tracker, settings, targetElement);
+  }, function(errorMessage) {
+    logger.error(
+      'Cannot send beacon: ' +
+      errorMessage
+    );
   });
 };

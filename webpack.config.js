@@ -11,8 +11,7 @@ const pkg = require('./package.json');
 const entries = {
   extensionConfiguration: './src/view/extensionConfiguration/index.js',
   sendBeacon: './src/view/actions/sendBeacon/index.js',
-  setVariables: './src/view/actions/setVariables/index.js',
-  clearVariables: './src/view/actions/clearVariables/index.js'
+  setVariables: './src/view/actions/setVariables/index.js'
 };
 
 const plugins = Object.keys(entries).map(chunkName => (

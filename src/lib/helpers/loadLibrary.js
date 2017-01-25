@@ -65,19 +65,19 @@ var createTracker = function() {
   return new window.AppMeasurement();
 };
 
-var loadManagedLibrary = function(configurationSettings) {
-  return waitForPageLoadingPhase(configurationSettings.libraryCode.loadPhase || 'pageBottom')
+var loadManagedLibrary = function(settings) {
+  return waitForPageLoadingPhase(settings.libraryCode.loadPhase || 'pageBottom')
     .then(loadManagedAppMeasurementScript.bind(null, getHostedLibFileUrl('AppMeasurement.js')))
     .then(createTracker)
-    .then(setReportSuitesOnTracker.bind(null, configurationSettings));
+    .then(setReportSuitesOnTracker.bind(null, settings));
 };
 
-var setReportSuitesOnTracker = function(configurationSettings, tracker) {
-  if (configurationSettings.libraryCode.accounts) {
+var setReportSuitesOnTracker = function(settings, tracker) {
+  if (settings.libraryCode.accounts) {
     if (!tracker.sa) {
       logger.warn('Cannot set report suites on tracker. `sa` method not available.');
     } else {
-      var reportSuites = getReportSuites(configurationSettings.libraryCode.accounts);
+      var reportSuites = getReportSuites(settings.libraryCode.accounts);
       logger.info('Setting the following report suites on the tracker: "' + reportSuites + '"');
       tracker.sa(reportSuites);
     }
@@ -109,9 +109,9 @@ var poll = function(trackerVariableName) {
   });
 };
 
-var detectPreinstalledLibrary = function(configurationSettings) {
-  return poll(configurationSettings.libraryCode.trackerVariableName)
-    .then(setReportSuitesOnTracker.bind(null, configurationSettings));
+var detectPreinstalledLibrary = function(settings) {
+  return poll(settings.libraryCode.trackerVariableName)
+    .then(setReportSuitesOnTracker.bind(null, settings));
 };
 
 var getTrackerFromVariable = function(trackerVariableName) {
@@ -123,39 +123,39 @@ var getTrackerFromVariable = function(trackerVariableName) {
   }
 };
 
-var loadRemoteLibrary = function(url, configurationSettings) {
-  var loadPhase = configurationSettings.libraryCode.loadPhase || 'pageBottom';
+var loadRemoteLibrary = function(url, settings) {
+  var loadPhase = settings.libraryCode.loadPhase || 'pageBottom';
 
   return waitForPageLoadingPhase(loadPhase)
     .then(loadAppMeasurementScript.bind(null, url))
-    .then(getTrackerFromVariable.bind(null, configurationSettings.libraryCode.trackerVariableName))
-    .then(setReportSuitesOnTracker.bind(null, configurationSettings));
+    .then(getTrackerFromVariable.bind(null, settings.libraryCode.trackerVariableName))
+    .then(setReportSuitesOnTracker.bind(null, settings));
 };
 
-module.exports = function(configurationSettings) {
+module.exports = function(settings) {
   var url;
   var libraryPromise;
 
-  switch (configurationSettings.libraryCode.type) {
+  switch (settings.libraryCode.type) {
     case LIB_TYPES.MANAGED:
-      libraryPromise = loadManagedLibrary(configurationSettings);
+      libraryPromise = loadManagedLibrary(settings);
       break;
 
     case LIB_TYPES.PREINSTALLED:
-      libraryPromise = detectPreinstalledLibrary(configurationSettings);
+      libraryPromise = detectPreinstalledLibrary(settings);
       break;
 
     case LIB_TYPES.CUSTOM:
-      url = configurationSettings.libraryCode.source;
+      url = settings.libraryCode.source;
 
-      libraryPromise = loadRemoteLibrary(url, configurationSettings);
+      libraryPromise = loadRemoteLibrary(url, settings);
       break;
 
     case LIB_TYPES.REMOTE:
       url = window.location.protocol === 'https:' ?
-        configurationSettings.libraryCode.httpsUrl : configurationSettings.libraryCode.httpUrl;
+        settings.libraryCode.httpsUrl : settings.libraryCode.httpUrl;
 
-      libraryPromise = loadRemoteLibrary(url, configurationSettings);
+      libraryPromise = loadRemoteLibrary(url, settings);
       break;
 
     default:

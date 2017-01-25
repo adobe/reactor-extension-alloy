@@ -7,22 +7,8 @@ var getLoggerMockObject = function() {
   return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
 };
 
-var getSetVariables = function(mocks) {
-  mocks = mocks || {};
-
-  mocks['@turbine/get-extension-configurations'] = mocks['@turbine/get-extension-configurations'] ||
-    function() {
-      return [{
-        id: 'EX1',
-        name: 'EX1'
-      }];
-    };
-
-  return setVariablesInjector(mocks);
-};
-
 describe('set variables', function() {
-  it('applies the variables for a configuration', function(done) {
+  it('applies the provided variables', function(done) {
     var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables');
     var tracker = {};
     var trackerProperties = {
@@ -31,7 +17,7 @@ describe('set variables', function() {
 
     var promise = Promise.resolve(tracker);
 
-    var setVariables = getSetVariables({
+    var setVariables = setVariablesInjector({
       '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
       '../helpers/getTracker': function() {
         return promise;
@@ -39,7 +25,6 @@ describe('set variables', function() {
     });
 
     setVariables({
-      extensionConfigurationIds: ['EX1'],
       trackerProperties: trackerProperties
     });
 
@@ -48,79 +33,6 @@ describe('set variables', function() {
       done();
     });
   });
-
-  it('applies the variables for multiple configurations', function(done) {
-    var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables');
-    var tracker = {};
-
-    var promise = Promise.resolve(tracker);
-
-    var setVariables = getSetVariables({
-      '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
-      '../helpers/getTracker': function() {
-        return promise;
-      },
-      '@turbine/get-extension-configurations': function() {
-        return [{
-          id: 'EX1',
-          name: 'EX1'
-        },{
-          id: 'EX2',
-          name: 'EX2'
-        }];
-      }
-    });
-
-    setVariables({
-      extensionConfigurationIds: ['EX1', 'EX2'],
-      trackerProperties: {
-        a: 'b'
-      }
-    });
-
-    promise.then(function() {
-      expect(applyTrackerVariablesSpy.calls.count()).toBe(2);
-      done();
-    });
-  });
-
-  it('applies the variables for all the configurations when extensionConfigurationIds is missing',
-    function(done) {
-      var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables');
-      var tracker = {};
-
-      var promise = Promise.resolve(tracker);
-
-      var setVariables = getSetVariables({
-        '@turbine/get-extension-configurations': function() {
-          return [{
-            id: 'EX1',
-            name: 'EX1'
-          },{
-            id: 'EX2',
-            name: 'EX2'
-          },{
-            id: 'EX3',
-            name: 'EX3'
-          }];
-        },
-        '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
-        '../helpers/getTracker': function() {
-          return promise;
-        }
-      });
-
-      setVariables({
-        trackerProperties: {
-          a: 'b'
-        }
-      });
-
-      promise.then(function() {
-        expect(applyTrackerVariablesSpy.calls.count()).toBe(3);
-        done();
-      });
-    });
 
   it('calls the custom setup method when available', function(done) {
     var applyTrackerVariablesSpy =
@@ -132,7 +44,7 @@ describe('set variables', function() {
 
     var promise = Promise.resolve(tracker);
 
-    var setVariables = getSetVariables({
+    var setVariables = setVariablesInjector({
       '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
       '../helpers/getTracker': function() {
         return promise;
@@ -140,7 +52,6 @@ describe('set variables', function() {
     });
 
     setVariables({
-      extensionConfigurationIds: ['EX1'],
       trackerProperties: {
         a: 'b'
       },
@@ -160,16 +71,14 @@ describe('set variables', function() {
   it('logs an error when getTracker throws an error', function(done) {
     var loggerSpy = getLoggerMockObject();
     var promise = Promise.reject('some error');
-    var setVariables = getSetVariables({
+    var setVariables = setVariablesInjector({
       '../helpers/getTracker': function() {
         return promise;
       },
       '@turbine/logger': loggerSpy
     });
 
-    setVariables({
-      extensionConfigurationIds: ['EX1']
-    });
+    setVariables({});
 
     promise.then(null, function() {
       expect(loggerSpy.error).toHaveBeenCalled();

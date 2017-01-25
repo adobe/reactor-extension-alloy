@@ -2,38 +2,25 @@
 
 var clearVariablesInjector = require('inject!../clearVariables');
 var Promise = require('@reactor/turbine/lib/require')('@turbine/promise');
-
-var getClearVariables = function(mocks) {
-  mocks = mocks || {};
-
-  mocks['@turbine/get-extension-configurations'] = mocks['@turbine/get-extension-configurations'] ||
-    function() {
-      return [{
-        id: 'EX1',
-        name: 'EX1'
-      }];
-    };
-
-  return clearVariablesInjector(mocks);
+var getLoggerMockObject = function() {
+  return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
 };
 
 describe('clear variables', function() {
-  it('sends the beacon for a configuration', function(done) {
+  it('removes the variables from the tracker', function(done) {
     var tracker = {
       clearVars: jasmine.createSpy('clearVars')
     };
 
     var promise = Promise.resolve(tracker);
 
-    var clearVariables = getClearVariables({
+    var clearVariables = clearVariablesInjector({
       '../helpers/getTracker': function() {
         return promise;
       }
     });
 
-    clearVariables({
-      extensionConfigurationIds: ['EX1']
-    });
+    clearVariables();
 
     promise.then(function() {
       expect(tracker.clearVars).toHaveBeenCalledTimes(1);
@@ -41,68 +28,21 @@ describe('clear variables', function() {
     });
   });
 
-  it('sends the beacon for multiple configurations', function(done) {
-    var tracker = {
-      clearVars: jasmine.createSpy('clearVars')
-    };
-
-    var promise = Promise.resolve(tracker);
-
-    var clearVariables = getClearVariables({
+  it('logs an error when getTracker throws an error', function(done) {
+    var loggerSpy = getLoggerMockObject();
+    var promise = Promise.reject('some error');
+    var clearVariables = clearVariablesInjector({
       '../helpers/getTracker': function() {
         return promise;
       },
-      '@turbine/get-extension-configurations': function() {
-        return [{
-          id: 'EX1',
-          name: 'EX1'
-        },{
-          id: 'EX2',
-          name: 'EX2'
-        }];
-      }
+      '@turbine/logger': loggerSpy
     });
 
-    clearVariables({
-      extensionConfigurationIds: ['EX1', 'EX2']
-    });
+    clearVariables();
 
-    promise.then(function() {
-      expect(tracker.clearVars).toHaveBeenCalledTimes(2);
+    promise.then(null, function() {
+      expect(loggerSpy.error).toHaveBeenCalled();
       done();
     });
   });
-
-  it('sends the beacon for all the configurations when extensionConfigurationIds is missing',
-    function(done) {
-      var tracker = {
-        clearVars: jasmine.createSpy('clearVars')
-      };
-      var promise = Promise.resolve(tracker);
-
-      var clearVariables = getClearVariables({
-        '@turbine/get-extension-configurations': function() {
-          return [{
-            id: 'EX1',
-            name: 'EX1'
-          },{
-            id: 'EX2',
-            name: 'EX2'
-          },{
-            id: 'EX3',
-            name: 'EX3'
-          }];
-        },
-        '../helpers/getTracker': function() {
-          return promise;
-        }
-      });
-
-      clearVariables({});
-
-      promise.then(function() {
-        expect(tracker.clearVars).toHaveBeenCalledTimes(3);
-        done();
-      });
-    });
 });
