@@ -6,7 +6,7 @@ module.exports = {
       name: 'Page beacon',
       events: [
         {
-          modulePath: 'dtm/src/lib/events/pageBottom.js',
+          modulePath: 'sandbox/pageTop.js',
           settings: {}
         }
       ],
@@ -25,13 +25,13 @@ module.exports = {
   extensions: {
     "adobe-mcid": {
       displayName: 'Adobe MCID',
-      configuration: {
+      settings: {
         "orgId": "93B41AC151F037F00A490D4D@AdobeOrg"
       }
     },
     "adobe-analytics": {
       displayName: 'Adobe Analytics',
-      configuration: {
+      settings: {
         "libraryCode": {
           "type": "managed",
           "accounts": {
