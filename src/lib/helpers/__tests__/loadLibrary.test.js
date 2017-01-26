@@ -1,6 +1,6 @@
 'use strict';
 
-var Promise = require('@reactor/turbine/lib/require')('@turbine/promise');
+var Promise = require('@adobe/composer-turbine/lib/require')('@turbine/promise');
 var loadLibraryInjector = require('inject!../loadLibrary');
 
 var getLoadLibrary = function(mocks) {
