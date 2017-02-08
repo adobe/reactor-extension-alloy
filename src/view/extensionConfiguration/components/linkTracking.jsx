@@ -73,13 +73,13 @@ const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
             name="trackerProperties.linkExternalFilters"
             component={ TagListEditor }
             title="Track"
-            tooltip="Links defined here will not be treated as exit links."
+            tooltip="Links containing the following filters will be treated as exit links."
           />
           <Field
             name="trackerProperties.linkInternalFilters"
             component={ TagListEditor }
             title="Never Track"
-            tooltip="Links containing the following filters will be treated as exit links."
+            tooltip="Links defined here will not be treated as exit links."
           />
         </div> : null
       }
