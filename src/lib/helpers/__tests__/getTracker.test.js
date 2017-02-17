@@ -18,7 +18,7 @@
 
 'use strict';
 
-var Promise = require('@adobe/composer-turbine/lib/require')('@turbine/promise');
+var Promise = require('@adobe/reactor-turbine/lib/require')('@turbine/promise');
 var getTrackerInjector = require('inject!../getTracker');
 
 var getTrackerModule = function(mocks) {

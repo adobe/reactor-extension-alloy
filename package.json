@@ -1,7 +1,7 @@
 {
   "name": "@reactor/extension-adobeanalytics",
   "version": "0.0.1",
-  "description": "Adobe Analytics extension for Composer.",
+  "description": "Adobe Analytics extension.",
   "author": {
     "name": "DTM",
     "email": "DTM-Engineering@adobe.com"
@@ -24,14 +24,14 @@
     "test": "reactor-testrunner",
     "lint": "reactor-testrunner lint",
     "sandbox": "webpack --watch --run-sandbox",
-    "package": "npm run build && composer-packager",
-    "bootstrap": "composer-sandbox init",
+    "package": "npm run build && reactor-packager",
+    "bootstrap": "reactor-sandbox init",
     "ci-job": "xvfb-run npm test -- --ci --browser firefox chrome ie9sg ie10sg ie11sg edgesg && npm run lint && npm run package"
   },
   "devDependencies": {
-    "@adobe/composer-packager": "^2.3.3",
-    "@adobe/composer-sandbox": "^7.8.5",
-    "@adobe/composer-turbine": "^17.0.0",
+    "@adobe/reactor-packager": "^2.3.3",
+    "@adobe/reactor-sandbox": "^7.8.5",
+    "@adobe/reactor-turbine": "^18.0.0",
     "@reactor/extension-mcid": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/extension-mcid.git",
     "@reactor/extension-support-testrunner": "^9.0.0",
     "babel-core": "^6.18.2",

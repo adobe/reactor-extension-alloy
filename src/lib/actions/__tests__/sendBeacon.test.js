@@ -19,7 +19,7 @@
 'use strict';
 
 var sendBeaconInjector = require('inject!../sendBeacon');
-var Promise = require('@adobe/composer-turbine/lib/require')('@turbine/promise');
+var Promise = require('@adobe/reactor-turbine/lib/require')('@turbine/promise');
 
 var getLoggerMockObject = function() {
   return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);

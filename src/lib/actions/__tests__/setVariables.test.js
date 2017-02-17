@@ -19,7 +19,7 @@
 'use strict';
 
 var setVariablesInjector = require('inject!../setVariables');
-var Promise = require('@adobe/composer-turbine/lib/require')('@turbine/promise');
+var Promise = require('@adobe/reactor-turbine/lib/require')('@turbine/promise');
 
 var getLoggerMockObject = function() {
   return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
