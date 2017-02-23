@@ -58,6 +58,20 @@ module.exports = {
       },
       // This will be populated automatically based on features found in extension.json.
       modules: {}
+    },
+    "other-extension": {
+      displayName: "Some other extension",
+      "modules": {
+        "other-extension/src/a.js": {
+          "script": function(module, exports, require) {
+            var getSharedModule = require('@turbine/get-shared-module');
+            var getTracker = getSharedModule('adobe-analytics', 'get-tracker');
+            getTracker().then(function(tracker) {
+              console.log('Tracker from shared module:', tracker);
+            });
+          }
+        }
+      }
     }
   },
   propertySettings: {},

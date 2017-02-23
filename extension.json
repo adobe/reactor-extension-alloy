@@ -880,5 +880,11 @@
         }
       }
     }
+  ],
+  "sharedModules": [
+    {
+      "name": "get-tracker",
+      "libPath": "src/lib/helpers/getTracker.js"
+    }
   ]
 }
