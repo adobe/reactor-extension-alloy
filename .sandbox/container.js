@@ -65,9 +65,13 @@ module.exports = {
         "other-extension/src/a.js": {
           "script": function(module, exports, require) {
             var getSharedModule = require('@turbine/get-shared-module');
-            var getTracker = getSharedModule('adobe-analytics', 'get-tracker');
-            getTracker().then(function(tracker) {
-              console.log('Tracker from shared module:', tracker);
+            var augmentTracker = getSharedModule('adobe-analytics', 'augment-tracker');
+            augmentTracker(function(tracker) {
+              return new Promise(function(resolve) {
+                tracker.augmented = true;
+                console.log('Augmented');
+                setTimeout(resolve, 1000);
+              });
             });
           }
         }
