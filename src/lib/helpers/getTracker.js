@@ -27,6 +27,7 @@ var propertySettings =  require('@turbine/property-settings');
 var window = require('@turbine/window');
 var getExtensionSettings = require('@turbine/get-extension-settings');
 var getSharedModule = require('@turbine/get-shared-module');
+var augmenters = require('../helpers/augmenters');
 
 var applyTrackerVariables = require('./applyTrackerVariables');
 var loadLibrary = require('./loadLibrary');
@@ -45,6 +46,14 @@ var checkEuCompliance = function(euComplianceRequired) {
   var cookieName = propertySettings.euCookieName;
   var euCookieValue = cookie.parse(document.cookie)[cookieName];
   return euCookieValue === 'true';
+};
+
+var augmentTracker = function(tracker) {
+  return Promise.all(augmenters.map(function(augmenterFn) {
+    return augmenterFn(tracker);
+  })).then(function() {
+    return tracker;
+  });
 };
 
 var linkVisitorId = function(tracker) {
@@ -88,6 +97,7 @@ var updateTrackerVariables = function(trackerProperties, customSetup, tracker) {
 var initialize = function(settings) {
   if (checkEuCompliance(settings.euComplianceEnabled || false)) {
     return loadLibrary(settings)
+      .then(augmentTracker)
       .then(linkVisitorId)
       .then(updateTrackerVersion)
       .then(updateTrackerVariables.bind(

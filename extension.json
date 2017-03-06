@@ -880,5 +880,11 @@
         }
       }
     }
+  ],
+  "sharedModules": [
+    {
+      "name": "augment-tracker",
+      "libPath": "src/lib/sharedModules/augmentTracker.js"
+    }
   ]
 }
