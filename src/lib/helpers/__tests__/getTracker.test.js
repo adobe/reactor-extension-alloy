@@ -37,7 +37,7 @@ describe('get tracker', function() {
       './loadLibrary': loadLibrarySpy
     });
 
-    var getTrackerPromise = getTracker('EC1');
+    var getTrackerPromise = getTracker();
     expect(getTrackerPromise.then).toEqual(jasmine.any(Function));
     expect(getTrackerPromise.catch).toEqual(jasmine.any(Function));
   });
@@ -55,7 +55,7 @@ describe('get tracker', function() {
       './loadLibrary': loadLibrarySpy
     });
 
-    getTracker('EC1').then(function() {
+    getTracker().then(function() {
       expect(loadLibrarySpy).toHaveBeenCalledWith({
         prop: 1
       });
@@ -73,7 +73,7 @@ describe('get tracker', function() {
         }
       });
 
-      getTracker('EC1').catch(function(error) {
+      getTracker().catch(function(error) {
         expect(error).toBe('EU compliance was not acknowledged by the user.');
         done();
       });
@@ -100,7 +100,7 @@ describe('get tracker', function() {
         './loadLibrary': loadLibrarySpy
       });
 
-      getTracker('EC1').then(function() {
+      getTracker().then(function() {
         expect(loadLibrarySpy).toHaveBeenCalledWith({
           euComplianceEnabled: true
         });
@@ -125,7 +125,7 @@ describe('get tracker', function() {
       './loadLibrary': loadLibrarySpy
     });
 
-    getTracker('EC1').then(function(tracker) {
+    getTracker().then(function(tracker) {
       expect(tracker.visitor).toBe(mcidInstance);
       done();
     });
@@ -148,7 +148,7 @@ describe('get tracker', function() {
         './loadLibrary': loadLibrarySpy
       });
 
-      getTracker('EC1').then(function(tracker) {
+      getTracker().then(function(tracker) {
         expect(tracker.version).toBe('1.5.2-DEBA');
         done();
       });
@@ -170,7 +170,7 @@ describe('get tracker', function() {
         './loadLibrary': loadLibrarySpy
       });
 
-      getTracker('EC1').then(function(tracker) {
+      getTracker().then(function(tracker) {
         expect(tracker.tagContainerMarker).toBe('DEBA');
         done();
       });
@@ -193,7 +193,7 @@ describe('get tracker', function() {
       './loadLibrary': loadLibrarySpy
     });
 
-    getTracker('EC1').then(function(tracker) {
+    getTracker().then(function(tracker) {
       expect(tracker.prop1).toBe('a');
       done();
     });
@@ -221,14 +221,14 @@ describe('get tracker', function() {
       './loadLibrary': loadLibrarySpy
     });
 
-    getTracker('EC1').then(function(tracker) {
+    getTracker().then(function(tracker) {
       expect(tracker.prop1).toBe('a');
       done();
     });
   });
 
 
-  it('calls custom setup after appying settings', function(done) {
+  it('calls custom setup after applying settings', function(done) {
     var loadLibrarySpy = jasmine.createSpy('load-library')
       .and.returnValue(Promise.resolve({
       }));
@@ -249,7 +249,7 @@ describe('get tracker', function() {
       './loadLibrary': loadLibrarySpy
     });
 
-    getTracker('EC1').then(function(tracker) {
+    getTracker().then(function(tracker) {
       expect(tracker.prop1).toBe('b');
       done();
     });
