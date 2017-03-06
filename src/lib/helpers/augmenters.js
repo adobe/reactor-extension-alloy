@@ -18,10 +18,4 @@
 
 'use strict';
 
-var Promise = require('@turbine/promise');
-
-var augmenters = [function() {
-  return Promise.resolve();
-}];
-
-module.exports = augmenters;
+module.exports = [];
