@@ -50,7 +50,7 @@ var checkEuCompliance = function(euComplianceRequired) {
 
 var augmentTracker = function(tracker) {
   return Promise.all(augmenters.map(function(augmenterFn) {
-    return augmenterFn(tracker);
+    return Promise.resolve(augmenterFn(tracker));
   })).then(function() {
     return tracker;
   });

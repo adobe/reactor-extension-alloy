@@ -255,7 +255,7 @@ describe('get tracker', function() {
     });
   });
 
-  it('extends the tracker when augmenters are available', function(done) {
+  it('extends the tracker when augmenters that return promises are available', function(done) {
     var loadLibrarySpy = jasmine.createSpy('load-library')
       .and.returnValue(Promise.resolve({}));
 
@@ -280,4 +280,27 @@ describe('get tracker', function() {
     });
   });
 
+  it('extends the tracker when augmenters that do not return promises are available',
+    function(done) {
+      var loadLibrarySpy = jasmine.createSpy('load-library')
+        .and.returnValue(Promise.resolve({}));
+
+      var getTracker = getTrackerModule({
+        '@turbine/get-extension-settings': function() {
+          return {};
+        },
+        './loadLibrary': loadLibrarySpy,
+        '../helpers/augmenters': [function(tracker) {
+          tracker.augmentedOnce = true;
+        }, function(tracker) {
+          tracker.augmentedTwice = true;
+        }]
+      });
+
+      getTracker().then(function(tracker) {
+        expect(tracker.augmentedOnce).toBe(true);
+        expect(tracker.augmentedTwice).toBe(true);
+        done();
+      });
+    });
 });
