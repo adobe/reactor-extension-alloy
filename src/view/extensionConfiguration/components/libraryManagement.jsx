@@ -23,10 +23,10 @@ import Radio from '@coralui/redux-form-react-coral/lib/Radio';
 import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
 import Heading from '@coralui/react-coral/lib/Heading';
 import { connect } from 'react-redux';
-import { formValueSelector, Field } from 'redux-form';
+import { formValueSelector, Field, FieldArray } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 import EditorButton from '@reactor/react-components/lib/reduxForm/editorButton';
-import TagListEditor from './tagListEditor';
+import ReportSuiteEditor from './reportSuitesEditor';
 import ENVIRONMENTS from '../../enums/environments';
 import COMPONENT_NAMES from '../../enums/componentNames';
 
@@ -52,29 +52,33 @@ const ReportSuites = () => (
     </Heading>
 
     <section className="ReportSuites-fieldsContainer">
-      <Field
-        name="libraryCode.accounts.development"
-        component={ TagListEditor }
-        className="ReportSuites-editor"
-        inputClassName="Field--normal"
-        title="Development Report Suite(s)"
-      />
-
-      <Field
-        name="libraryCode.accounts.staging"
-        component={ TagListEditor }
-        className="ReportSuites-editor"
-        inputClassName="Field--normal"
-        title="Staging Report Suite(s)"
-      />
-
-      <Field
-        name="libraryCode.accounts.production"
-        component={ TagListEditor }
-        className="ReportSuites-editor"
-        inputClassName="Field--normal"
-        title="Production Report Suite(s)"
-      />
+      <div className="ReportSuites-environment">
+        <label className="Label">Development Report Suites</label>
+        <div>
+          <FieldArray
+            name="libraryCode.accounts.development"
+            component={ ReportSuiteEditor }
+          />
+        </div>
+      </div>
+      <div className="ReportSuites-environment">
+        <label className="Label">Staging Report Suites</label>
+        <div>
+          <FieldArray
+            name="libraryCode.accounts.staging"
+            component={ ReportSuiteEditor }
+          />
+        </div>
+      </div>
+      <div className="ReportSuites-environment">
+        <label className="Label">Production Report Suites</label>
+        <div>
+          <FieldArray
+            name="libraryCode.accounts.production"
+            component={ ReportSuiteEditor }
+          />
+        </div>
+      </div>
     </section>
   </section>
 );
@@ -261,17 +265,23 @@ const forceProtocolPrefix = (str, prefix) =>
 
 export const formConfig = {
   settingsToFormValues(values, settings) {
+    const libraryCode = settings.libraryCode || {};
+
     const {
-      accounts,
       type,
       trackerVariableName,
       loadPhase,
       httpUrl,
       httpsUrl,
       source
-    } = settings.libraryCode || {};
+    } = libraryCode;
 
-    const showReportSuites = Boolean(type !== LIB_TYPES.MANAGED && accounts);
+    const showReportSuites = Boolean(type !== LIB_TYPES.MANAGED && libraryCode.accounts);
+
+    const accounts = libraryCode.accounts || {};
+    accounts.production = accounts.production || [''];
+    accounts.staging = accounts.staging || [''];
+    accounts.development = accounts.development || [''];
 
     return {
       ...values,
@@ -302,14 +312,15 @@ export const formConfig = {
       type
     };
 
-    const exportReportSuites =
-      (type !== LIB_TYPES.MANAGED && showReportSuites) || type === LIB_TYPES.MANAGED;
+    const exportReportSuites = showReportSuites || type === LIB_TYPES.MANAGED;
     if (exportReportSuites && values.libraryCode.accounts) {
       const accounts = {};
 
       ENVIRONMENTS.forEach((environment) => {
-        const accountsForEnvironment = values.libraryCode.accounts[environment];
-        if (accountsForEnvironment && accountsForEnvironment.length > 0) {
+        const accountsForEnvironment = values.libraryCode.accounts[environment]
+          .filter(account => account);
+
+        if (accountsForEnvironment.length > 0) {
           accounts[environment] = accountsForEnvironment;
         }
       });
@@ -359,10 +370,11 @@ export const formConfig = {
 
     const reportSuitesAreRequired =
       (type !== LIB_TYPES.MANAGED && showReportSuites) || type === LIB_TYPES.MANAGED;
-    const productionAccountsAreMissing = !accounts.production || accounts.production.length === 0;
+    const productionAccountsAreMissing = !accounts.production ||
+      accounts.production.filter(account => account).length === 0;
     if (reportSuitesAreRequired && productionAccountsAreMissing) {
       libraryCodeErrors.accounts = {
-        production: 'Please specify a production report suite'
+        production: ['Please specify a production report suite']
       };
     }
 
