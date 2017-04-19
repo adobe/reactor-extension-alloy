@@ -23,7 +23,10 @@
     "import/no-named-as-default": 0,
     "jsx-a11y/label-has-for": 0,
     "no-plusplus": 0,
-    "spaced-comment": 0 // To support our copyright banner.
+    "spaced-comment": 0, // To support our copyright banner.
+    "prefer-const": ["error", {
+      "destructuring": "all"
+    }]
   },
   "env": {
     "es6": true,

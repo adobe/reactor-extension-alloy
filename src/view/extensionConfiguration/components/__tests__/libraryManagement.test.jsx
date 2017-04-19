@@ -461,7 +461,7 @@ describe('libary management', () => {
     });
 
     window.extensionBridge = {
-      openCodeEditor: jasmine.createSpy().and.callFake((source, callback) => {
+      openCodeEditor: jasmine.createSpy().and.callFake((callback) => {
         callback('bar');
       })
     };
@@ -470,7 +470,7 @@ describe('libary management', () => {
     openEditorButton.props.onClick();
 
     expect(window.extensionBridge.openCodeEditor)
-      .toHaveBeenCalledWith('foo', jasmine.any(Function));
+      .toHaveBeenCalledWith(jasmine.any(Function), { code: 'foo' });
     expect(extensionBridge.validate()).toBe(true);
 
     const settings = extensionBridge.getSettings();
