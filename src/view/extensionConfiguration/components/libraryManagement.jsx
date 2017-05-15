@@ -204,7 +204,7 @@ const LibraryManagement = ({ type }) => (
                   component={ DecoratedInput }
                   inputComponent={ Textfield }
                   inputClassName="Field--long"
-                  placeholder="http://"
+                  supportDataElement
                 />
               </div>
             </label>
@@ -216,7 +216,7 @@ const LibraryManagement = ({ type }) => (
                   component={ DecoratedInput }
                   inputComponent={ Textfield }
                   inputClassName="Field--long"
-                  placeholder="https://"
+                  supportDataElement
                 />
               </div>
             </label>
@@ -259,9 +259,6 @@ export default connect(
     type: formValueSelector('default')(state, 'libraryCode.type')
   })
 )(LibraryManagement);
-
-const forceProtocolPrefix = (str, prefix) =>
-  (!str || str.indexOf(prefix) === 0 ? str : prefix + str);
 
 export const formConfig = {
   settingsToFormValues(values, settings) {
@@ -339,8 +336,8 @@ export const formConfig = {
     }
 
     if (type === LIB_TYPES.REMOTE) {
-      libraryCodeSettings.httpUrl = forceProtocolPrefix(httpUrl || '', 'http://');
-      libraryCodeSettings.httpsUrl = forceProtocolPrefix(httpsUrl || '', 'https://');
+      libraryCodeSettings.httpUrl = httpUrl;
+      libraryCodeSettings.httpsUrl = httpsUrl;
     }
 
     if (type === LIB_TYPES.CUSTOM) {

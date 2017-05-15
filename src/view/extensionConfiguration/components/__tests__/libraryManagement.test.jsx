@@ -479,38 +479,6 @@ describe('libary management', () => {
     delete window.extensionBridge;
   });
 
-  it('sets the http:// prefix if the http url  does not contain it', () => {
-    extensionBridge.init();
-
-    const { typeRemoteRadio } = getReactComponents(instance);
-    typeRemoteRadio.props.onChange('remote');
-
-    const { httpUrlTextfield } = getReactComponents(instance);
-    httpUrlTextfield.props.onChange('someurl.com');
-
-    const {
-      httpUrl
-    } = extensionBridge.getSettings().libraryCode;
-
-    expect(httpUrl).toBe('http://someurl.com');
-  });
-
-  it('sets the https:// prefix if the https url  does not contain it', () => {
-    extensionBridge.init();
-
-    const { typeRemoteRadio } = getReactComponents(instance);
-    typeRemoteRadio.props.onChange('remote');
-
-    const { httpsUrlTextfield } = getReactComponents(instance);
-    httpsUrlTextfield.props.onChange('someurl.com');
-
-    const {
-      httpsUrl
-    } = extensionBridge.getSettings().libraryCode;
-
-    expect(httpsUrl).toBe('https://someurl.com');
-  });
-
   it('sets error if the http url is not provided', () => {
     extensionBridge.init();
 
