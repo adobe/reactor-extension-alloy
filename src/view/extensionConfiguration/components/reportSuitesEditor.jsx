@@ -67,7 +67,7 @@ export default class ReportSuitesEditor extends React.Component {
       <div className={ className }>
         {rows}
         <Button onClick={ this.onAddReportSuite } >
-          Add
+          Add Report Suite
         </Button>
       </div>
     );

@@ -27,7 +27,7 @@ import TagListEditor from '../tagListEditor';
 const getReactComponents = (wrapper) => {
   const valueTextfield = wrapper.find(Textfield).node;
   const valueButton = wrapper.find(DataElementSelectorButton).node;
-  const addButton = wrapper.find(Button).filterWhere(n => n.prop('children') === 'Add').node;
+  const addButton = wrapper.find(Button).filterWhere(n => n.prop('children') === 'Save').node;
   const dataElementSelectorButton = wrapper.find(Button).node;
 
   return {

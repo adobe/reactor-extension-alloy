@@ -46,7 +46,7 @@ const getReportSuiteElements = (wrapper, fieldNameSuffix) => {
     });
 
   const addButton = reportSuitesEditor.find(Button)
-    .filterWhere(n => n.prop('children') === 'Add').node;
+    .filterWhere(n => n.prop('children') === 'Add Report Suite').node;
 
   return {
     rows,

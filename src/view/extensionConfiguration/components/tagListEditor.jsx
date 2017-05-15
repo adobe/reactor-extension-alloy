@@ -121,7 +121,7 @@ export default class TagListEditor extends React.Component {
             value={ this.state.newValue }
           />
           <DataElementSelectorButton onClick={ this.openSelector } />
-          <Button onClick={ this.add }>Add</Button>
+          <Button onClick={ this.add }>Save</Button>
           { touched && error ? <ErrorTip>{ error }</ErrorTip> : null }
         </div>
         <div className="u-gapTop TagListEditor-tagContainer">
