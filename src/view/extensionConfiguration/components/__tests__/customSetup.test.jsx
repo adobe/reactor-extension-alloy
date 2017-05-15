@@ -21,8 +21,8 @@ import Button from '@coralui/react-coral/lib/Button';
 import Radio from '@coralui/react-coral/lib/Radio';
 
 import CustomSetup, { formConfig } from '../customSetup';
-import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
-import bootstrap from '../../bootstrap';
+import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
+import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const openEditorButton = wrapper.find(Button).node;

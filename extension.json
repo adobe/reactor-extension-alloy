@@ -789,6 +789,7 @@
           "type": "function",
           "propertyPath": "customSetup.source",
           "parameters": [
+            "event",
             "s"
           ]
         }

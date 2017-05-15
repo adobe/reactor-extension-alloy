@@ -25,7 +25,7 @@ import General, { formConfig as generalFormConfig } from './components/general';
 import Variables, { formConfig as variablesFormConfig } from '../components/variables';
 import LinkTracking, { formConfig as linkTrackingFormConfig } from './components/linkTracking';
 import Cookies, { formConfig as cookiesFormConfig } from './components/cookies';
-import CustomSetup, { formConfig as customSetupFormConfig } from '../components/customSetup';
+import CustomSetup, { formConfig as customSetupFormConfig } from './components/customSetup';
 import eventBus from '../utils/eventBus';
 import COMPONENT_NAMES from '../enums/componentNames';
 
@@ -106,7 +106,7 @@ export default class ExtensionConfiguration extends React.Component {
           <AccordionItem header="Cookies">
             <Cookies />
           </AccordionItem>
-          <AccordionItem header="Customize Page Code">
+          <AccordionItem header="Configure Tracker Using Custom Code">
             <CustomSetup />
           </AccordionItem>
         </Accordion>

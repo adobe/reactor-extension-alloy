@@ -29,11 +29,11 @@ const LOAD_PHASES = {
 
 const LOAD_PHASE_DEFAULT = LOAD_PHASES.AFTER_SETTINGS;
 
-const CustomSetup = ({ showLoadPhase = true, source }) => (
+const CustomSetup = ({ source }) => (
   <div>
     <p>
-      Use the editor below to customize the page code. The following variables are available for
-      use within your custom code:
+      Use the editor below to provide code to further configure the tracker. The following
+      variables are available for use within your custom code:
     </p>
 
     <ul>
@@ -45,7 +45,7 @@ const CustomSetup = ({ showLoadPhase = true, source }) => (
       component={ EditorButton }
     />
 
-    { showLoadPhase && source ?
+    { source ?
       <div>
         <fieldset>
           <legend><span className="Label u-gapTop">Execute custom code</span></legend>
