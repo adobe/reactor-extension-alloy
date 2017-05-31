@@ -44,6 +44,8 @@ describe('set variables', function() {
 
     setVariables({
       trackerProperties: trackerProperties
+    }, {
+      element: {}
     });
 
     promise.then(function() {
@@ -78,6 +80,8 @@ describe('set variables', function() {
           tracker.a = 'custom';
         }
       }
+    }, {
+      element: {}
     });
 
     promise.then(function() {
@@ -96,7 +100,7 @@ describe('set variables', function() {
       '@turbine/logger': loggerSpy
     });
 
-    setVariables({});
+    setVariables({}, {});
 
     promise.then(null, function() {
       expect(loggerSpy.error).toHaveBeenCalled();

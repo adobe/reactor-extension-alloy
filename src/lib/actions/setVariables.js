@@ -23,12 +23,12 @@ var logger = require('@turbine/logger');
 var getTracker = require('../helpers/getTracker');
 var applyTrackerVariables = require('../helpers/applyTrackerVariables');
 
-module.exports = function(settings, targetElement, event) {
+module.exports = function(settings, event) {
   getTracker().then(function(tracker) {
     logger.info('Set variables on the tracker.');
     applyTrackerVariables(tracker, settings.trackerProperties);
     if (settings.customSetup && settings.customSetup.source) {
-      settings.customSetup.source.call(targetElement, event, tracker);
+      settings.customSetup.source.call(event.element, event, tracker);
     }
   }, function(errorMessage) {
     logger.error(

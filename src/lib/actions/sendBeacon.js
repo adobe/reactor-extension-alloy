@@ -56,9 +56,9 @@ var sendBeacon = function(tracker, settings, targetElement) {
   }
 };
 
-module.exports = function(settings, targetElement) {
+module.exports = function(settings, event) {
   getTracker().then(function(tracker) {
-    sendBeacon(tracker, settings, targetElement);
+    sendBeacon(tracker, settings, event.element);
   }, function(errorMessage) {
     logger.error(
       'Cannot send beacon: ' +

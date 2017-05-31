@@ -41,6 +41,8 @@ describe('send beacon', function() {
 
     sendBeacon({
       type: 'page'
+    }, {
+      element: {}
     });
 
     promise.then(function() {
@@ -82,6 +84,8 @@ describe('send beacon', function() {
 
     sendBeacon({
       type: 'link'
+    }, {
+      element: {}
     });
 
     promise.then(function() {
@@ -108,6 +112,8 @@ describe('send beacon', function() {
       type: 'link',
       linkName: 'some name',
       linkType: 'c'
+    }, {
+      element: {}
     });
 
     promise.then(function() {
@@ -118,8 +124,8 @@ describe('send beacon', function() {
   });
 
   it('sends the custom link beacon using the target element when possible', function(done) {
-    var targetElement = document.createElement('a');
-    targetElement.innerHTML = 'link';
+    var ruleElement = document.createElement('a');
+    ruleElement.innerHTML = 'link';
 
     var tracker = {
       tl: jasmine.createSpy('tl')
@@ -135,11 +141,13 @@ describe('send beacon', function() {
 
     sendBeacon({
       type: 'link',
-    }, targetElement);
+    }, {
+      element: ruleElement
+    });
 
     promise.then(function() {
       expect(tracker.tl.calls.count()).toBe(1);
-      expect(tracker.tl).toHaveBeenCalledWith(targetElement, 'o', 'link');
+      expect(tracker.tl).toHaveBeenCalledWith(ruleElement, 'o', 'link');
       done();
     });
   });
