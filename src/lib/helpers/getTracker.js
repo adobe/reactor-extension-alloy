@@ -43,7 +43,7 @@ var checkEuCompliance = function(euComplianceRequired) {
     return true;
   }
 
-  var cookieName = propertySettings.euCookieName;
+  var cookieName = propertySettings.trackingCookieName;
   var euCookieValue = cookie.parse(document.cookie)[cookieName];
   return euCookieValue === 'true';
 };

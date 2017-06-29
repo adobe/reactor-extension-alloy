@@ -94,7 +94,7 @@ describe('get tracker', function() {
           };
         },
         '@turbine/property-settings': {
-          'euCookieName': 'sat_track'
+          'trackingCookieName': 'sat_track'
         },
         '@turbine/cookie': cookieSpy,
         './loadLibrary': loadLibrarySpy
