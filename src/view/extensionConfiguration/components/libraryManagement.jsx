@@ -17,7 +17,7 @@
 **************************************************************************/
 
 import React from 'react';
-import { InfoTip } from '@reactor/react-components';
+import InfoTip from '@reactor/react-components/lib/infoTip';
 import Checkbox from '@coralui/redux-form-react-coral/lib/Checkbox';
 import Radio from '@coralui/redux-form-react-coral/lib/Radio';
 import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
@@ -48,12 +48,20 @@ const ReportSuites = () => (
   <section>
     <Heading size="4">
       Report Suites
-      <InfoTip>Some tooltip</InfoTip>
+      <InfoTip>
+        Specify one or more report suites to which your data should be sent.
+      </InfoTip>
     </Heading>
 
     <section className="ReportSuites-fieldsContainer">
       <div className="ReportSuites-environment">
-        <label className="Label">Development Report Suites</label>
+        <label className="Label">
+          Development Report Suites
+          <InfoTip>
+            The report suite to which data should be sent when code is deployed on a
+            development environment.
+          </InfoTip>
+        </label>
         <div>
           <FieldArray
             name="libraryCode.accounts.development"
@@ -62,7 +70,13 @@ const ReportSuites = () => (
         </div>
       </div>
       <div className="ReportSuites-environment">
-        <label className="Label">Staging Report Suites</label>
+        <label className="Label">
+          Staging Report Suites
+          <InfoTip>
+            The report suite to which data should be sent when code is deployed on a
+            staging environment.
+          </InfoTip>
+        </label>
         <div>
           <FieldArray
             name="libraryCode.accounts.staging"
@@ -71,7 +85,13 @@ const ReportSuites = () => (
         </div>
       </div>
       <div className="ReportSuites-environment">
-        <label className="Label">Production Report Suites</label>
+        <label className="Label">
+          Production Report Suites
+          <InfoTip>
+            The report suite to which data should be sent when code is deployed on a
+            production environment.
+          </InfoTip>
+        </label>
         <div>
           <FieldArray
             name="libraryCode.accounts.production"
@@ -173,6 +193,11 @@ const LibraryManagement = ({ type }) => (
       >
         Use the library already installed on the page
       </Field>
+      <InfoTip className="u-fieldLineHeight u-noPadding">
+        Prevents this extension from installing Adobe Analytics page code and assumes
+        the code is already present on your site. Be sure to properly set your tracker
+        variable name when checking this box.
+      </InfoTip>
     </div>
     {
       type === LIB_TYPES.PREINSTALLED ?

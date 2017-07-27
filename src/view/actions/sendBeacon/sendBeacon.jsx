@@ -73,7 +73,8 @@ const SendBeacon = ({ type, linkType }) => {
           type="radio"
           value={ TYPES.PAGE }
         >
-          Increment a pageview<span className="SendBeacon-trackerApi"> - s.t()</span>
+          <span className="u-bold">s.t(): </span>
+          Send data to Adobe Analytics and treat it as a page view
         </Field>
       </div>
       <div>
@@ -83,7 +84,10 @@ const SendBeacon = ({ type, linkType }) => {
           type="radio"
           value={ TYPES.LINK }
         >
-          Do not increment a pageview<span className="SendBeacon-trackerApi"> - s.tl()</span>
+          <span className="u-bold">s.tl(): </span>
+          Send data to Adobe Analytics and
+          <span className="u-italic"> do not </span>
+          treat it as a page view
         </Field>
         {
           type === TYPES.LINK ?
