@@ -82,10 +82,8 @@ describe('get tracker', function() {
     it('does load a library if EU compliance is acknowledged by the user', function(done) {
       var loadLibrarySpy = jasmine.createSpy('load-library')
         .and.returnValue(Promise.resolve('loaded'));
-      var cookieSpy = jasmine.createSpyObj('cookie', ['parse']);
-      cookieSpy.parse.and.returnValue({
-        'sat_track': 'true'
-      });
+      var cookieSpy = jasmine.createSpyObj('cookie', ['get']);
+      cookieSpy.get.and.returnValue('true');
 
       var getTracker = getTrackerModule({
         '@turbine/get-extension-settings': function() {

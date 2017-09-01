@@ -20,7 +20,6 @@
 
 var buildInfo = require('@turbine/build-info');
 var cookie = require('@turbine/cookie');
-var document = require('@turbine/document');
 var logger = require('@turbine/logger');
 var Promise = require('@turbine/promise');
 var propertySettings =  require('@turbine/property-settings');
@@ -44,7 +43,7 @@ var checkEuCompliance = function(euComplianceRequired) {
   }
 
   var cookieName = propertySettings.trackingCookieName;
-  var euCookieValue = cookie.parse(document.cookie)[cookieName];
+  var euCookieValue = cookie.get(cookieName);
   return euCookieValue === 'true';
 };
 
