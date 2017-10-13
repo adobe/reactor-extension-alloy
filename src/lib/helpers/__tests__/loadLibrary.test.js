@@ -18,27 +18,44 @@
 
 'use strict';
 
-var Promise = require('@adobe/reactor-turbine/lib/require')('@turbine/promise');
+var Promise = require('@adobe/reactor-promise');
 var loadLibraryInjector = require('inject!../loadLibrary');
 
 var getLoadLibrary = function(mocks) {
   mocks = mocks || {};
 
-  mocks['@turbine/window'] = mocks['@turbine/window'] ||
+  mocks['@adobe/reactor-window'] = mocks['@adobe/reactor-window'] ||
     {
       'AppMeasurement':  function() {}
     };
 
-  mocks['@turbine/on-page-bottom'] = mocks['@turbine/on-page-bottom'] ||
-    function(callback) { callback(); };
-
-  mocks['@turbine/load-script'] = mocks['@turbine/load-script'] ||
+  mocks['@adobe/reactor-load-script'] = mocks['@adobe/reactor-load-script'] ||
     function() {};
 
   return loadLibraryInjector(mocks);
 };
 
+var mockTurbine;
+
 describe('load library', function() {
+  beforeAll(function() {
+    mockTurbine = {
+      logger: jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']),
+      onPageBottom: jasmine.createSpy('on-page-bottom').and.callFake(function(callback) {
+        callback();
+      }),
+      getHostedLibFileUrl: function(file) { return '//example.com/' + file; },
+      buildInfo: {
+        environment: 'development'
+      }
+    };
+    mockTurbineVariable(mockTurbine);
+  });
+
+  afterAll(function() {
+    resetTurbineVariable();
+  });
+
   it('throws an error for unknown type', function() {
     var loadLibrary = getLoadLibrary();
 
@@ -57,7 +74,7 @@ describe('load library', function() {
     it('loads script from url', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        '@turbine/load-script': loadScriptSpy
+        '@adobe/reactor-load-script': loadScriptSpy
       });
 
       loadLibrary({
@@ -76,7 +93,7 @@ describe('load library', function() {
     it('loads library at page top', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        '@turbine/load-script': loadScriptSpy
+        '@adobe/reactor-load-script': loadScriptSpy
       });
 
       loadLibrary({
@@ -94,13 +111,7 @@ describe('load library', function() {
     });
 
     it('loads library at page bottom', function(done) {
-      var onPageBottomSpy = jasmine.createSpy('on-page-bottom').and.callFake(function(callback) {
-        callback();
-      });
-
-      var loadLibrary = getLoadLibrary({
-        '@turbine/on-page-bottom': onPageBottomSpy
-      });
+      var loadLibrary = getLoadLibrary({});
 
       loadLibrary({
         libraryCode: {
@@ -111,7 +122,7 @@ describe('load library', function() {
           }
         }
       }).then(function() {
-        expect(onPageBottomSpy).toHaveBeenCalled();
+        expect(mockTurbine.onPageBottom).toHaveBeenCalled();
         done();
       });
     });
@@ -125,7 +136,7 @@ describe('load library', function() {
       };
 
       var loadLibrary = getLoadLibrary({
-        '@turbine/window': windowSpy
+        '@adobe/reactor-window': windowSpy
       });
 
       loadLibrary({
@@ -143,7 +154,7 @@ describe('load library', function() {
 
     it('throws an error if window.AppMeasurement is not defined', function(done) {
       var loadLibrary = getLoadLibrary({
-        '@turbine/window': {}
+        '@adobe/reactor-window': {}
       });
 
       loadLibrary({
@@ -169,10 +180,7 @@ describe('load library', function() {
       };
 
       var loadLibrary = getLoadLibrary({
-        '@turbine/window': windowSpy,
-        '@turbine/build-info': {
-          environment: 'development'
-        }
+        '@adobe/reactor-window': windowSpy
       });
 
       loadLibrary({
@@ -193,7 +201,7 @@ describe('load library', function() {
       var loadScriptSpy = jasmine.createSpy('load-script')
         .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
-        '@turbine/load-script': loadScriptSpy
+        '@adobe/reactor-load-script': loadScriptSpy
       });
 
       loadLibrary({
@@ -231,7 +239,7 @@ describe('load library', function() {
     it('does a polling for detecting the app measurement', function(done) {
       var windowSpy = {};
       var loadLibrary = getLoadLibrary({
-        '@turbine/window': windowSpy
+        '@adobe/reactor-window': windowSpy
       });
 
       loadLibrary({
@@ -254,7 +262,7 @@ describe('load library', function() {
     it('throws an error if tracker is not found in a 10s interval', function(done) {
       var windowSpy = {};
       var loadLibrary = getLoadLibrary({
-        '@turbine/window': windowSpy
+        '@adobe/reactor-window': windowSpy
       });
 
       loadLibrary({
@@ -276,7 +284,7 @@ describe('load library', function() {
     it('calls set account method from tracker', function(done) {
       var windowSpy = {};
       var loadLibrary = getLoadLibrary({
-        '@turbine/window': windowSpy
+        '@adobe/reactor-window': windowSpy
       });
 
       loadLibrary({
@@ -301,8 +309,8 @@ describe('load library', function() {
     it('loads script from url', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        '@turbine/load-script': loadScriptSpy,
-        '@turbine/window': {
+        '@adobe/reactor-load-script': loadScriptSpy,
+        '@adobe/reactor-window': {
           's': function() {}
         }
       });
@@ -324,8 +332,8 @@ describe('load library', function() {
     it('loads library at page top', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        '@turbine/load-script': loadScriptSpy,
-        '@turbine/window': {
+        '@adobe/reactor-load-script': loadScriptSpy,
+        '@adobe/reactor-window': {
           's': function() {}
         }
       });
@@ -346,13 +354,8 @@ describe('load library', function() {
     });
 
     it('loads library at page bottom', function(done) {
-      var onPageBottomSpy = jasmine.createSpy('on-page-bottom').and.callFake(function(callback) {
-        callback();
-      });
-
       var loadLibrary = getLoadLibrary({
-        '@turbine/on-page-bottom': onPageBottomSpy,
-        '@turbine/window': {
+        '@adobe/reactor-window': {
           's': function() {}
         }
       });
@@ -367,7 +370,7 @@ describe('load library', function() {
           }
         }
       }).then(function() {
-        expect(onPageBottomSpy).toHaveBeenCalled();
+        expect(mockTurbine.onPageBottom).toHaveBeenCalled();
         done();
       });
     });
@@ -394,7 +397,7 @@ describe('load library', function() {
         b: jasmine.createSpyObj('b', ['sa'])
       };
       var loadLibrary = getLoadLibrary({
-        '@turbine/window': windowSpy
+        '@adobe/reactor-window': windowSpy
       });
 
       loadLibrary({
@@ -416,8 +419,8 @@ describe('load library', function() {
     it('loads script from url', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        '@turbine/load-script': loadScriptSpy,
-        '@turbine/window': {
+        '@adobe/reactor-load-script': loadScriptSpy,
+        '@adobe/reactor-window': {
           location: {
             protocol: 'http:'
           },
@@ -442,8 +445,8 @@ describe('load library', function() {
     it('loads htpps script from url', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        '@turbine/load-script': loadScriptSpy,
-        '@turbine/window': {
+        '@adobe/reactor-load-script': loadScriptSpy,
+        '@adobe/reactor-window': {
           location: {
             protocol: 'https:'
           },
@@ -469,8 +472,8 @@ describe('load library', function() {
     it('loads library at page top', function(done) {
       var loadScriptSpy = jasmine.createSpy('load-script');
       var loadLibrary = getLoadLibrary({
-        '@turbine/load-script': loadScriptSpy,
-        '@turbine/window': {
+        '@adobe/reactor-load-script': loadScriptSpy,
+        '@adobe/reactor-window': {
           location: {
             protocol: 'http:'
           },
@@ -494,13 +497,8 @@ describe('load library', function() {
     });
 
     it('loads library at page bottom', function(done) {
-      var onPageBottomSpy = jasmine.createSpy('on-page-bottom').and.callFake(function(callback) {
-        callback();
-      });
-
       var loadLibrary = getLoadLibrary({
-        '@turbine/on-page-bottom': onPageBottomSpy,
-        '@turbine/window': {
+        '@adobe/reactor-window': {
           location: {
             protocol: 'http:'
           },
@@ -518,14 +516,14 @@ describe('load library', function() {
           }
         }
       }).then(function() {
-        expect(onPageBottomSpy).toHaveBeenCalled();
+        expect(mockTurbine.onPageBottom).toHaveBeenCalled();
         done();
       });
     });
 
     it('throws an error if tracker is not found at the specified varible', function(done) {
       var loadLibrary = getLoadLibrary({
-        '@turbine/window': {
+        '@adobe/reactor-window': {
           location: {
             protocol: 'http:'
           }
@@ -554,7 +552,7 @@ describe('load library', function() {
         }
       };
       var loadLibrary = getLoadLibrary({
-        '@turbine/window': windowSpy
+        '@adobe/reactor-window': windowSpy
       });
 
       loadLibrary({

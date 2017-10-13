@@ -19,13 +19,22 @@
 'use strict';
 
 var setVariablesInjector = require('inject!../setVariables');
-var Promise = require('@adobe/reactor-turbine/lib/require')('@turbine/promise');
-
-var getLoggerMockObject = function() {
-  return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
-};
+var Promise = require('@adobe/reactor-promise');
 
 describe('set variables', function() {
+  var mockTurbine;
+
+  beforeAll(function() {
+    mockTurbine = {
+      logger: jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log'])
+    };
+    mockTurbineVariable(mockTurbine);
+  });
+
+  afterAll(function() {
+    resetTurbineVariable();
+  });
+
   it('applies the provided variables', function(done) {
     var applyTrackerVariablesSpy = jasmine.createSpy('../helpers/applyTrackerVariables');
     var tracker = {};
@@ -91,19 +100,17 @@ describe('set variables', function() {
   });
 
   it('logs an error when getTracker throws an error', function(done) {
-    var loggerSpy = getLoggerMockObject();
     var promise = Promise.reject('some error');
     var setVariables = setVariablesInjector({
       '../helpers/getTracker': function() {
         return promise;
-      },
-      '@turbine/logger': loggerSpy
+      }
     });
 
     setVariables({}, {});
 
     promise.then(null, function() {
-      expect(loggerSpy.error).toHaveBeenCalled();
+      expect(mockTurbine.logger.error).toHaveBeenCalled();
       done();
     });
   });

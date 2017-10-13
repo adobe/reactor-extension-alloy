@@ -19,12 +19,22 @@
 'use strict';
 
 var clearVariablesInjector = require('inject!../clearVariables');
-var Promise = require('@adobe/reactor-turbine/lib/require')('@turbine/promise');
-var getLoggerMockObject = function() {
-  return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
-};
+var Promise = require('@adobe/reactor-promise');
 
 describe('clear variables', function() {
+  var mockTurbine;
+
+  beforeAll(function() {
+    mockTurbine = {
+      logger: jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log'])
+    };
+    mockTurbineVariable(mockTurbine);
+  });
+
+  afterAll(function() {
+    resetTurbineVariable();
+  });
+
   it('removes the variables from the tracker', function(done) {
     var tracker = {
       clearVars: jasmine.createSpy('clearVars')
@@ -47,19 +57,17 @@ describe('clear variables', function() {
   });
 
   it('logs an error when getTracker throws an error', function(done) {
-    var loggerSpy = getLoggerMockObject();
     var promise = Promise.reject('some error');
     var clearVariables = clearVariablesInjector({
       '../helpers/getTracker': function() {
         return promise;
-      },
-      '@turbine/logger': loggerSpy
+      }
     });
 
     clearVariables();
 
     promise.then(null, function() {
-      expect(loggerSpy.error).toHaveBeenCalled();
+      expect(mockTurbine.logger.error).toHaveBeenCalled();
       done();
     });
   });

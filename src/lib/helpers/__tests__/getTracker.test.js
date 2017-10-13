@@ -18,22 +18,46 @@
 
 'use strict';
 
-var Promise = require('@adobe/reactor-turbine/lib/require')('@turbine/promise');
+var Promise = require('@adobe/reactor-promise');
 var getTrackerInjector = require('inject!../getTracker');
 
 var getTrackerModule = function(mocks) {
   return getTrackerInjector(mocks || {});
 };
 
+var mockTurbine;
+
 describe('get tracker', function() {
+
+  beforeEach(function() {
+    mockTurbine = {
+      buildInfo: {
+        turbineBuildDate: '2016-07-01T18:10:34Z'
+      },
+      propertySettings: {
+        trackingCookieName: 'sat_track'
+      },
+      getSharedModule: function() {
+        return {};
+      },
+      getExtensionSettings: function() {
+        return {};
+      },
+      logger: jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log'])
+    };
+
+    mockTurbineVariable(mockTurbine);
+  });
+
+  afterEach(function() {
+    resetTurbineVariable();
+  });
+
   it('returns a promise', function() {
     var loadLibrarySpy = jasmine.createSpy('load-library')
       .and.returnValue(Promise.resolve('loaded'));
 
     var getTracker = getTrackerModule({
-      '@turbine/get-extension-settings': function() {
-        return {};
-      },
       './loadLibrary': loadLibrarySpy
     });
 
@@ -46,12 +70,13 @@ describe('get tracker', function() {
     var loadLibrarySpy = jasmine.createSpy('load-library')
       .and.returnValue(Promise.resolve('loaded'));
 
+    mockTurbine.getExtensionSettings = function() {
+      return {
+        prop: 1
+      };
+    };
+
     var getTracker = getTrackerModule({
-      '@turbine/get-extension-settings': function() {
-        return {
-          prop: 1
-        };
-      },
       './loadLibrary': loadLibrarySpy
     });
 
@@ -65,13 +90,14 @@ describe('get tracker', function() {
 
   describe('when EU compliance is required', function() {
     it('does not load a library if EU compliance is not acknowledged', function(done) {
-      var getTracker = getTrackerModule({
-        '@turbine/get-extension-settings': function() {
-          return {
-            euComplianceEnabled: true
-          };
-        }
-      });
+
+      mockTurbine.getExtensionSettings = function() {
+        return {
+          euComplianceEnabled: true
+        };
+      };
+
+      var getTracker = getTrackerModule();
 
       getTracker().catch(function(error) {
         expect(error).toBe('EU compliance was not acknowledged by the user.');
@@ -85,16 +111,18 @@ describe('get tracker', function() {
       var cookieSpy = jasmine.createSpyObj('cookie', ['get']);
       cookieSpy.get.and.returnValue('true');
 
+      mockTurbine.getExtensionSettings = function() {
+        return {
+          euComplianceEnabled: true
+        };
+      };
+
+      mockTurbine.propertySettings = {
+        trackingCookieName: 'sat_track'
+      };
+
       var getTracker = getTrackerModule({
-        '@turbine/get-extension-settings': function() {
-          return {
-            euComplianceEnabled: true
-          };
-        },
-        '@turbine/property-settings': {
-          'trackingCookieName': 'sat_track'
-        },
-        '@turbine/cookie': cookieSpy,
+        '@adobe/reactor-cookie': cookieSpy,
         './loadLibrary': loadLibrarySpy
       });
 
@@ -113,13 +141,11 @@ describe('get tracker', function() {
       .and.returnValue(Promise.resolve({
       }));
 
+    mockTurbine.getSharedModule = function() {
+      return mcidInstance;
+    };
+
     var getTracker = getTrackerModule({
-      '@turbine/get-extension-settings': function() {
-        return {};
-      },
-      '@turbine/get-shared-module': function() {
-        return mcidInstance;
-      },
       './loadLibrary': loadLibrarySpy
     });
 
@@ -137,9 +163,6 @@ describe('get tracker', function() {
         }));
 
       var getTracker = getTrackerModule({
-        '@turbine/get-extension-settings': function() {
-          return {};
-        },
         './generateVersion': function() {
           return 'DEBA';
         },
@@ -159,9 +182,6 @@ describe('get tracker', function() {
         }));
 
       var getTracker = getTrackerModule({
-        '@turbine/get-extension-settings': function() {
-          return {};
-        },
         './generateVersion': function() {
           return 'DEBA';
         },
@@ -180,14 +200,15 @@ describe('get tracker', function() {
       .and.returnValue(Promise.resolve({
       }));
 
+    mockTurbine.getExtensionSettings = function() {
+      return {
+        trackerProperties: {
+          prop1: 'a'
+        }
+      };
+    };
+
     var getTracker = getTrackerModule({
-      '@turbine/get-extension-settings': function() {
-        return {
-          trackerProperties: {
-            prop1: 'a'
-          }
-        };
-      },
       './loadLibrary': loadLibrarySpy
     });
 
@@ -202,20 +223,21 @@ describe('get tracker', function() {
       .and.returnValue(Promise.resolve({
       }));
 
-    var getTracker = getTrackerModule({
-      '@turbine/get-extension-settings': function() {
-        return {
-          trackerProperties: {
-            prop1: 'a'
-          },
-          customSetup: {
-            loadPhase: 'beforeSettings',
-            source: function(tracker) {
-              tracker.prop1 = 'b';
-            }
+    mockTurbine.getExtensionSettings = function() {
+      return {
+        trackerProperties: {
+          prop1: 'a'
+        },
+        customSetup: {
+          loadPhase: 'beforeSettings',
+          source: function(tracker) {
+            tracker.prop1 = 'b';
           }
-        };
-      },
+        }
+      };
+    };
+
+    var getTracker = getTrackerModule({
       './loadLibrary': loadLibrarySpy
     });
 
@@ -231,19 +253,20 @@ describe('get tracker', function() {
       .and.returnValue(Promise.resolve({
       }));
 
-    var getTracker = getTrackerModule({
-      '@turbine/get-extension-settings': function() {
-        return {
-          trackerProperties: {
-            prop1: 'a'
-          },
-          customSetup: {
-            source: function(tracker) {
-              tracker.prop1 = 'b';
-            }
+    mockTurbine.getExtensionSettings = function() {
+      return {
+        trackerProperties: {
+          prop1: 'a'
+        },
+        customSetup: {
+          source: function(tracker) {
+            tracker.prop1 = 'b';
           }
-        };
-      },
+        }
+      };
+    };
+
+    var getTracker = getTrackerModule({
       './loadLibrary': loadLibrarySpy
     });
 
@@ -258,9 +281,6 @@ describe('get tracker', function() {
       .and.returnValue(Promise.resolve({}));
 
     var getTracker = getTrackerModule({
-      '@turbine/get-extension-settings': function() {
-        return {};
-      },
       './loadLibrary': loadLibrarySpy,
       '../helpers/augmenters': [function(tracker) {
         tracker.augmentedOnce = true;
@@ -284,9 +304,6 @@ describe('get tracker', function() {
         .and.returnValue(Promise.resolve({}));
 
       var getTracker = getTrackerModule({
-        '@turbine/get-extension-settings': function() {
-          return {};
-        },
         './loadLibrary': loadLibrarySpy,
         '../helpers/augmenters': [function(tracker) {
           tracker.augmentedOnce = true;

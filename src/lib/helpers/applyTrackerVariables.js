@@ -18,9 +18,8 @@
 
 'use strict';
 
-var getQueryParam = require('@turbine/get-query-param');
-var logger = require('@turbine/logger');
-var window = require('@turbine/window');
+var queryString = require('@adobe/reactor-query-string');
+var window = require('@adobe/reactor-window');
 
 var eVarRegExp = /eVar([0-9]+)/;
 var propRegExp = /prop([0-9]+)/;
@@ -102,7 +101,8 @@ var transformers = {
   eVars: variablesTransform,
   campaign: function(store, keyName, trackerProperties) {
     if (trackerProperties[keyName].type === 'queryParam') {
-      store[keyName] = getQueryParam(trackerProperties[keyName].value);
+      var queryParams = queryString.parse(window.location.search);
+      store[keyName] = queryParams[trackerProperties[keyName].value];
     } else {
       store[keyName] = trackerProperties[keyName].value;
     }
@@ -146,7 +146,7 @@ module.exports = function(tracker, trackerProperties) {
     newProperties.linkTrackEvents = linkTrackEvents;
   }
 
-  logger.info(
+  turbine.logger.info(
     'Applying the following properties on tracker: "' +
     JSON.stringify(newProperties) +
     '".'

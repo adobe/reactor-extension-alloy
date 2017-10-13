@@ -63,9 +63,8 @@ module.exports = {
       displayName: "Some other extension",
       "modules": {
         "other-extension/src/a.js": {
-          "script": function(module, exports, require) {
-            var getSharedModule = require('@turbine/get-shared-module');
-            var augmentTracker = getSharedModule('adobe-analytics', 'augment-tracker');
+          "script": function() {
+            var augmentTracker = turbine.getSharedModule('adobe-analytics', 'augment-tracker');
             augmentTracker(function(tracker) {
               return new Promise(function(resolve) {
                 tracker.augmented = true;
@@ -78,7 +77,18 @@ module.exports = {
       }
     }
   },
-  propertySettings: {},
+  property: {
+    name: 'Sandbox property',
+    settings: {
+      domains: [
+        'adobe.com',
+        'example.com'
+      ],
+      linkDelay: 100,
+      euCookieName: 'sat_track',
+      undefinedVarsReturnEmpty: false
+    }
+  },
   buildInfo: {
     turbineVersion: '14.0.0',
     turbineBuildDate: '2016-07-01T18:18:34Z',

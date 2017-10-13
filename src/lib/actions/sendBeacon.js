@@ -18,7 +18,6 @@
 
 'use strict';
 
-var logger = require('@turbine/logger');
 var getTracker = require('../helpers/getTracker');
 
 var isLink = function(element) {
@@ -35,7 +34,7 @@ var getLinkName = function(element) {
 
 var sendBeacon = function(tracker, settings, targetElement) {
   if (settings.type === 'page') {
-    logger.info('Firing page view beacon.');
+    turbine.logger.info('Firing page view beacon.');
     tracker.t();
   } else {
     var linkSettings = {
@@ -43,7 +42,7 @@ var sendBeacon = function(tracker, settings, targetElement) {
       linkName: settings.linkName || getLinkName(targetElement)
     };
 
-    logger.info(
+    turbine.logger.info(
       'Firing link track beacon using the values: ' +
       JSON.stringify(linkSettings) + '.'
     );
@@ -60,7 +59,7 @@ module.exports = function(settings, event) {
   getTracker().then(function(tracker) {
     sendBeacon(tracker, settings, event.element);
   }, function(errorMessage) {
-    logger.error(
+    turbine.logger.error(
       'Cannot send beacon: ' +
       errorMessage
     );

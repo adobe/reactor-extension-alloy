@@ -18,13 +18,9 @@
 
 'use strict';
 
-var buildInfo = require('@turbine/build-info');
-var loadScript = require('@turbine/load-script');
-var logger = require('@turbine/logger');
-var onPageBottom = require('@turbine/on-page-bottom');
-var window = require('@turbine/window');
-var Promise = require('@turbine/promise');
-var getHostedLibFileUrl = require('@turbine/get-hosted-lib-file-url');
+var loadScript = require('@adobe/reactor-load-script');
+var window = require('@adobe/reactor-window');
+var Promise = require('@adobe/reactor-promise');
 
 var LIB_TYPES = {
   MANAGED: 'managed',
@@ -34,14 +30,14 @@ var LIB_TYPES = {
 };
 
 var loadAppMeasurementScript = function(url) {
-  logger.info('Loading AppMeasurement script from: ' + url + '.');
+  turbine.logger.info('Loading AppMeasurement script from: ' + url + '.');
   return loadScript(url);
 };
 
 var appMeasurementLoadPromise = null;
 var loadManagedAppMeasurementScript = function(url) {
   if (appMeasurementLoadPromise) {
-    logger.info('AppMeasurement script is already loading in the page.');
+    turbine.logger.info('AppMeasurement script is already loading in the page.');
     return appMeasurementLoadPromise;
   }
 
@@ -52,21 +48,21 @@ var loadManagedAppMeasurementScript = function(url) {
 var waitForPageLoadingPhase = function(loadPhase) {
   if (loadPhase === 'pageBottom') {
     return new Promise(function(resolve) {
-      onPageBottom(function() {
-        logger.info('Loading AppMeasurement script at the bottom of the page.');
+      turbine.onPageBottom(function() {
+        turbine.logger.info('Loading AppMeasurement script at the bottom of the page.');
         resolve();
       });
     });
   } else {
-    logger.info('Loading AppMeasurement script at the top of the page.');
+    turbine.logger.info('Loading AppMeasurement script at the top of the page.');
     return Promise.resolve('pageTop');
   }
 };
 
 var getReportSuites = function(reportSuitesData) {
   var reportSuiteValues = reportSuitesData.production;
-  if (reportSuitesData[buildInfo.environment]) {
-    reportSuiteValues = reportSuitesData[buildInfo.environment];
+  if (reportSuitesData[turbine.buildInfo.environment]) {
+    reportSuiteValues = reportSuitesData[turbine.buildInfo.environment];
   }
 
   return reportSuiteValues.join(',');
@@ -79,13 +75,14 @@ var createTracker = function() {
     );
   }
 
-  logger.info('Creating AppMeasurement tracker.');
+  turbine.logger.info('Creating AppMeasurement tracker.');
   return new window.AppMeasurement();
 };
 
 var loadManagedLibrary = function(settings) {
   return waitForPageLoadingPhase(settings.libraryCode.loadPhase || 'pageBottom')
-    .then(loadManagedAppMeasurementScript.bind(null, getHostedLibFileUrl('AppMeasurement.js')))
+    .then(loadManagedAppMeasurementScript.bind(null,
+      turbine.getHostedLibFileUrl('AppMeasurement.js')))
     .then(createTracker)
     .then(setReportSuitesOnTracker.bind(null, settings));
 };
@@ -93,10 +90,11 @@ var loadManagedLibrary = function(settings) {
 var setReportSuitesOnTracker = function(settings, tracker) {
   if (settings.libraryCode.accounts) {
     if (!tracker.sa) {
-      logger.warn('Cannot set report suites on tracker. `sa` method not available.');
+      turbine.logger.warn('Cannot set report suites on tracker. `sa` method not available.');
     } else {
       var reportSuites = getReportSuites(settings.libraryCode.accounts);
-      logger.info('Setting the following report suites on the tracker: "' + reportSuites + '"');
+      turbine.logger.info('Setting the following report suites on the tracker: "' +
+        reportSuites + '"');
       tracker.sa(reportSuites);
     }
   }
@@ -105,12 +103,13 @@ var setReportSuitesOnTracker = function(settings, tracker) {
 };
 
 var poll = function(trackerVariableName) {
-  logger.info('Waiting for the tracker to become accessible at: "' + trackerVariableName + '".');
+  turbine.logger.info('Waiting for the tracker to become accessible at: "' +
+    trackerVariableName + '".');
   return new Promise(function(resolve, reject) {
     var i = 1;
     var intervalId = setInterval(function() {
       if (window[trackerVariableName]) {
-        logger.info('Found tracker located at: "' + trackerVariableName + '".');
+        turbine.logger.info('Found tracker located at: "' + trackerVariableName + '".');
         resolve(window[trackerVariableName]);
         clearInterval(intervalId);
       }
@@ -134,7 +133,7 @@ var detectPreinstalledLibrary = function(settings) {
 
 var getTrackerFromVariable = function(trackerVariableName) {
   if (window[trackerVariableName]) {
-    logger.info('Found tracker located at: "' + trackerVariableName + '".');
+    turbine.logger.info('Found tracker located at: "' + trackerVariableName + '".');
     return window[trackerVariableName];
   } else {
     throw new Error('Cannot find the global variable name: "' + trackerVariableName + '".');

@@ -28,6 +28,16 @@ describe('apply tracker variables', function() {
   var applyTrackerVariables;
   var tracker;
 
+  beforeAll(function() {
+    mockTurbineVariable({
+      logger: jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log'])
+    });
+  });
+
+  afterAll(function() {
+    resetTurbineVariable();
+  });
+
   beforeEach(function() {
     applyTrackerVariables = getApplyTrackerVariables();
     tracker = {};
@@ -181,7 +191,11 @@ describe('apply tracker variables', function() {
 
   it('sets campaigns from query param on the tracker', function() {
     applyTrackerVariables = getApplyTrackerVariables({
-      '@turbine/get-query-param': jasmine.createSpy('get-query-param').and.returnValue('somevalue')
+      '@adobe/reactor-window': {
+        location: {
+          search: '?someparam=somevalue'
+        }
+      }
     });
 
     applyTrackerVariables(tracker, {

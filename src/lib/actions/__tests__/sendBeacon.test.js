@@ -19,13 +19,22 @@
 'use strict';
 
 var sendBeaconInjector = require('inject!../sendBeacon');
-var Promise = require('@adobe/reactor-turbine/lib/require')('@turbine/promise');
-
-var getLoggerMockObject = function() {
-  return jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log']);
-};
+var Promise = require('@adobe/reactor-promise');
 
 describe('send beacon', function() {
+  var mockTurbine;
+
+  beforeAll(function() {
+    mockTurbine = {
+      logger: jasmine.createSpyObj('logger', ['info', 'error', 'warn', 'log'])
+    };
+    mockTurbineVariable(mockTurbine);
+  });
+
+  afterAll(function() {
+    resetTurbineVariable();
+  });
+
   it('fires a page view pixel', function(done) {
     var tracker = {
       t: jasmine.createSpy('t')
@@ -52,19 +61,17 @@ describe('send beacon', function() {
   });
 
   it('logs an error when getTracker throws an error', function(done) {
-    var loggerSpy = getLoggerMockObject();
     var promise = Promise.reject('some error');
     var sendBeacon = sendBeaconInjector({
       '../helpers/getTracker': function() {
         return promise;
-      },
-      '@turbine/logger': loggerSpy
+      }
     });
 
     sendBeacon({});
 
     promise.then(null, function() {
-      expect(loggerSpy.error).toHaveBeenCalled();
+      expect(mockTurbine.logger.error).toHaveBeenCalled();
       done();
     });
   });
