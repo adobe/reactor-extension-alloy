@@ -79,9 +79,9 @@ export default class TagListEditor extends React.Component {
     }
   };
 
-  openSelectorCallback = (dataElementName) => {
+  openSelectorCallback = (dataElementToken) => {
     this.setState({
-      newValue: addDataElementToken(this.state.newValue, dataElementName)
+      newValue: addDataElementToken(this.state.newValue, dataElementToken)
     });
     this.add();
   };

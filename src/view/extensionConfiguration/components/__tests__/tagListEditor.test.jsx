@@ -73,7 +73,7 @@ describe('tag list editor', () => {
 
     window.extensionBridge.openDataElementSelector = jasmine.createSpy('openDataElementSelector')
       .and.callFake((callback) => {
-        callback('foo');
+        callback('%foo%');
       });
 
     valueButton.props.onClick();
@@ -86,7 +86,7 @@ describe('tag list editor', () => {
 
     window.extensionBridge.openDataElementSelector = jasmine.createSpy('openDataElementSelector')
       .and.callFake((callback) => {
-        callback('foo');
+        callback('%foo%');
       });
 
     dataElementSelectorButton.props.onClick();

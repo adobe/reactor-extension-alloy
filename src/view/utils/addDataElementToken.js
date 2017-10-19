@@ -16,4 +16,4 @@
 * from Adobe Systems Incorporated.
 **************************************************************************/
 
-module.exports = (value, dataElementName) => `${value || ''}%${dataElementName}%`;
+module.exports = (value, dataElementToken) => `${value || ''}${dataElementToken}`;
