@@ -22,7 +22,6 @@ import Tag from '@coralui/react-coral/lib/Tag';
 import TagList from '@coralui/react-coral/lib/TagList';
 import { DataElementSelectorButton, ErrorTip, InfoTip } from '@reactor/react-components';
 import React from 'react';
-import addDataElementToken from '../../utils/addDataElementToken';
 
 import './tagListEditor.styl';
 
@@ -79,9 +78,9 @@ export default class TagListEditor extends React.Component {
     }
   };
 
-  openSelectorCallback = (dataElementName) => {
+  openSelectorCallback = (dataElementToken) => {
     this.setState({
-      newValue: addDataElementToken(this.state.newValue, dataElementName)
+      newValue: `${this.state.newValue || ''}${dataElementToken}`
     });
     this.add();
   };
