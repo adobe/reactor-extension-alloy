@@ -63,7 +63,7 @@ module.exports = {
       displayName: "Some other extension",
       "modules": {
         "other-extension/src/a.js": {
-          "script": function() {
+          "script": function(module, exports, require, turbine) {
             var augmentTracker = turbine.getSharedModule('adobe-analytics', 'augment-tracker');
             augmentTracker(function(tracker) {
               return new Promise(function(resolve) {
