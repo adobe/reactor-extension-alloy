@@ -64,6 +64,7 @@ module.exports = {
       "modules": {
         "other-extension/src/a.js": {
           "script": function(module, exports, require, turbine) {
+            var Promise = require('@adobe/reactor-promise');
             var augmentTracker = turbine.getSharedModule('adobe-analytics', 'augment-tracker');
             augmentTracker(function(tracker) {
               return new Promise(function(resolve) {
