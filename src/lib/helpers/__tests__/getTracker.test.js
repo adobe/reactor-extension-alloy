@@ -53,7 +53,7 @@ describe('get tracker', function() {
     resetTurbineVariable();
   });
 
-  it('returns a promise', function() {
+  it('returns a promise', function(done) {
     var loadLibrarySpy = jasmine.createSpy('load-library')
       .and.returnValue(Promise.resolve('loaded'));
 
@@ -64,6 +64,13 @@ describe('get tracker', function() {
     var getTrackerPromise = getTracker();
     expect(getTrackerPromise.then).toEqual(jasmine.any(Function));
     expect(getTrackerPromise.catch).toEqual(jasmine.any(Function));
+
+    // We need to wait until the promise is resolved to end the test, otherwise stuff that
+    // asynchronously happens within getTracker will attempt to access our mock turbine object
+    // which would have since been made unavailable.
+    getTrackerPromise.then(function() {
+      done();
+    });
   });
 
   it('loads the library with the provided settings', function(done) {
@@ -316,6 +323,45 @@ describe('get tracker', function() {
         expect(tracker.augmentedOnce).toBe(true);
         expect(tracker.augmentedTwice).toBe(true);
         done();
+      });
+    });
+
+  it('still resolves with a tracker when augmenters throw errors',
+    function(done) {
+      var loadLibrarySpy = jasmine.createSpy('load-library')
+        .and.returnValue(Promise.resolve({}));
+
+      var getTracker = getTrackerModule({
+        './loadLibrary': loadLibrarySpy,
+        '../helpers/augmenters': [function() {
+          throw new Error('error thrown from augmenter');
+        }, function(tracker) {
+          tracker.augmentedTwice = true;
+        }]
+      });
+
+      // The error from the augmenter is re-thrown asynchronously so we have to catch it at window.
+      var errorFromAugmenter;
+      window.onerror = function(err) {
+        errorFromAugmenter = err;
+        return true;
+      };
+
+      var trackerPromise = getTracker();
+      trackerPromise.then(function(tracker) {
+        expect(tracker.augmentedOnce).toBe(undefined);
+        expect(tracker.augmentedTwice).toBe(true);
+
+        // The error from the augmenter is re-thrown asynchronously.
+        // I struggle to get this test to always pass in IE9 without a timeout of 10 or greater.
+        // The jasmine mock clock failed me as well. If this give us problems, we may need
+        // to give more attention to it later.
+        setTimeout(function() {
+          expect(errorFromAugmenter).toBeDefined();
+          expect(errorFromAugmenter).toContain('error thrown from augmenter');
+          window.onerror = null;
+          done();
+        }, 10);
       });
     });
 });

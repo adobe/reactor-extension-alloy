@@ -44,7 +44,19 @@ var checkEuCompliance = function(euComplianceRequired) {
 
 var augmentTracker = function(tracker) {
   return Promise.all(augmenters.map(function(augmenterFn) {
-    return Promise.resolve(augmenterFn(tracker));
+    var result;
+
+    // If a tracker augmenter fails, we don't want to fail too. We'll re-throw the error in a
+    // timeout so it still hits the console but doesn't reject our promise.
+    try {
+      result = augmenterFn(tracker);
+    } catch (e) {
+      setTimeout(function() {
+        throw e;
+      });
+    }
+
+    return Promise.resolve(result);
   })).then(function() {
     return tracker;
   });
