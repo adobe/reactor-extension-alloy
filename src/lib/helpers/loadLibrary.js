@@ -68,23 +68,23 @@ var getReportSuites = function(reportSuitesData) {
   return reportSuiteValues.join(',');
 };
 
-var createTracker = function() {
-  if (!window.AppMeasurement) {
+var createTracker = function(reportSuites) {
+  if (!window.s_gi) {
     throw new Error(
-      'Cannot create tracker. `AppMeasurement` method not found.'
+      'Unable to create AppMeasurement tracker, `s_gi` function not found.' + window.AppMeasurement
     );
   }
-
-  turbine.logger.info('Creating AppMeasurement tracker.');
-  return new window.AppMeasurement();
+  turbine.logger.info('Creating AppMeasurement tracker with these report suites: "' +
+    reportSuites + '"');
+  return window.s_gi(reportSuites);
 };
 
 var loadManagedLibrary = function(settings) {
+  var reportSuites = getReportSuites(settings.libraryCode.accounts);
   return waitForPageLoadingPhase(settings.libraryCode.loadPhase || 'pageBottom')
     .then(loadManagedAppMeasurementScript.bind(null,
       turbine.getHostedLibFileUrl('AppMeasurement.js')))
-    .then(createTracker)
-    .then(setReportSuitesOnTracker.bind(null, settings));
+    .then(createTracker.bind(null, reportSuites));
 };
 
 var setReportSuitesOnTracker = function(settings, tracker) {

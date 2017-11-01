@@ -26,7 +26,8 @@ var getLoadLibrary = function(mocks) {
 
   mocks['@adobe/reactor-window'] = mocks['@adobe/reactor-window'] ||
     {
-      'AppMeasurement':  function() {}
+      'AppMeasurement':  function() {},
+      's_gi': function() {}
     };
 
   mocks['@adobe/reactor-load-script'] = mocks['@adobe/reactor-load-script'] ||
@@ -127,14 +128,8 @@ describe('load library', function() {
       });
     });
 
-    it('calls window.AppMeasurement to initialize the library', function(done) {
-      var AppMeasuremenTrackerSpy = jasmine.createSpyObj('AppMeasurement', ['sa']);
-      var windowSpy = {
-        AppMeasurement: function() {
-          return AppMeasuremenTrackerSpy;
-        }
-      };
-
+    it('calls window.s_gi to initialize the library', function(done) {
+      var windowSpy = jasmine.createSpyObj('window', ['s_gi']);
       var loadLibrary = getLoadLibrary({
         '@adobe/reactor-window': windowSpy
       });
@@ -147,12 +142,12 @@ describe('load library', function() {
           }
         }
       }).then(function() {
-        expect(AppMeasuremenTrackerSpy.sa).toHaveBeenCalledWith('aa');
+        expect(windowSpy.s_gi).toHaveBeenCalledWith('aa');
         done();
       });
     });
 
-    it('throws an error if window.AppMeasurement is not defined', function(done) {
+    it('throws an error if window.s_gi is not defined', function(done) {
       var loadLibrary = getLoadLibrary({
         '@adobe/reactor-window': {}
       });
@@ -165,20 +160,15 @@ describe('load library', function() {
           }
         }
       }).catch(function(e) {
-        expect(e).toEqual(jasmine.stringMatching('`AppMeasurement` method not found.'));
+        expect(e).toEqual(jasmine.stringMatching('Unable to create AppMeasurement tracker, ' +
+          '`s_gi` function not found.'));
         done();
       });
     });
 
     it('calls window.AppMeasurement with specified build info environment report suites to ' +
       'initialize the library', function(done) {
-      var AppMeasuremenTrackerSpy = jasmine.createSpyObj('AppMeasurement', ['sa']);
-      var windowSpy = {
-        AppMeasurement: function() {
-          return AppMeasuremenTrackerSpy;
-        }
-      };
-
+      var windowSpy = jasmine.createSpyObj('window', ['s_gi']);
       var loadLibrary = getLoadLibrary({
         '@adobe/reactor-window': windowSpy
       });
@@ -192,7 +182,7 @@ describe('load library', function() {
           }
         }
       }).then(function() {
-        expect(AppMeasuremenTrackerSpy.sa).toHaveBeenCalledWith('bb');
+        expect(windowSpy.s_gi).toHaveBeenCalledWith('bb');
         done();
       });
     });
