@@ -73,7 +73,8 @@ describe('load library', function() {
 
   describe('for managed type', function() {
     it('loads script from url', function(done) {
-      var loadScriptSpy = jasmine.createSpy('load-script');
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
         '@adobe/reactor-load-script': loadScriptSpy
       });
@@ -91,8 +92,9 @@ describe('load library', function() {
       });
     });
 
-    it('loads library at page top', function(done) {
-      var loadScriptSpy = jasmine.createSpy('load-script');
+    it('loads library as soon as possible', function(done) {
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
         '@adobe/reactor-load-script': loadScriptSpy
       });
@@ -100,38 +102,23 @@ describe('load library', function() {
       loadLibrary({
         libraryCode: {
           type: 'managed',
-          loadPhase: 'pageTop',
           accounts: {
             production: ['aa']
           }
         }
       }).then(function() {
         expect(loadScriptSpy).toHaveBeenCalled();
-        done();
-      });
-    });
-
-    it('loads library at page bottom', function(done) {
-      var loadLibrary = getLoadLibrary({});
-
-      loadLibrary({
-        libraryCode: {
-          type: 'managed',
-          loadPhase: 'pageBottom',
-          accounts: {
-            production: ['aa']
-          }
-        }
-      }).then(function() {
-        expect(mockTurbine.onPageBottom).toHaveBeenCalled();
         done();
       });
     });
 
     it('calls window.s_gi to initialize the library', function(done) {
       var windowSpy = jasmine.createSpyObj('window', ['s_gi']);
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
-        '@adobe/reactor-window': windowSpy
+        '@adobe/reactor-window': windowSpy,
+        '@adobe/reactor-load-script': loadScriptSpy
       });
 
       loadLibrary({
@@ -148,8 +135,11 @@ describe('load library', function() {
     });
 
     it('throws an error if window.s_gi is not defined', function(done) {
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
-        '@adobe/reactor-window': {}
+        '@adobe/reactor-window': {},
+        '@adobe/reactor-load-script': loadScriptSpy
       });
 
       loadLibrary({
@@ -169,8 +159,11 @@ describe('load library', function() {
     it('calls window.AppMeasurement with specified build info environment report suites to ' +
       'initialize the library', function(done) {
       var windowSpy = jasmine.createSpyObj('window', ['s_gi']);
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
-        '@adobe/reactor-window': windowSpy
+        '@adobe/reactor-window': windowSpy,
+        '@adobe/reactor-load-script': loadScriptSpy
       });
 
       loadLibrary({
@@ -184,35 +177,6 @@ describe('load library', function() {
       }).then(function() {
         expect(windowSpy.s_gi).toHaveBeenCalledWith('bb');
         done();
-      });
-    });
-
-    it('loads managed script only once', function(done) {
-      var loadScriptSpy = jasmine.createSpy('load-script')
-        .and.returnValue(Promise.resolve('loaded'));
-      var loadLibrary = getLoadLibrary({
-        '@adobe/reactor-load-script': loadScriptSpy
-      });
-
-      loadLibrary({
-        libraryCode: {
-          type: 'managed',
-          accounts: {
-            production: ['aa']
-          }
-        }
-      }).then(function() {
-        loadLibrary({
-          libraryCode: {
-            type: 'managed',
-            accounts: {
-              production: ['aa']
-            }
-          }
-        }).then(function() {
-          expect(loadScriptSpy.calls.count()).toEqual(1);
-          done();
-        });
       });
     });
   });
@@ -297,7 +261,8 @@ describe('load library', function() {
 
   describe('for custom type', function() {
     it('loads script from url', function(done) {
-      var loadScriptSpy = jasmine.createSpy('load-script');
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
         '@adobe/reactor-load-script': loadScriptSpy,
         '@adobe/reactor-window': {
@@ -319,8 +284,9 @@ describe('load library', function() {
       });
     });
 
-    it('loads library at page top', function(done) {
-      var loadScriptSpy = jasmine.createSpy('load-script');
+    it('loads library as soon as possible', function(done) {
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
         '@adobe/reactor-load-script': loadScriptSpy,
         '@adobe/reactor-window': {
@@ -331,7 +297,6 @@ describe('load library', function() {
       loadLibrary({
         libraryCode: {
           type: 'custom',
-          loadPhase: 'pageTop',
           trackerVariableName: 's',
           accounts: {
             production: ['aa']
@@ -339,34 +304,16 @@ describe('load library', function() {
         }
       }).then(function() {
         expect(loadScriptSpy).toHaveBeenCalled();
-        done();
-      });
-    });
-
-    it('loads library at page bottom', function(done) {
-      var loadLibrary = getLoadLibrary({
-        '@adobe/reactor-window': {
-          's': function() {}
-        }
-      });
-
-      loadLibrary({
-        libraryCode: {
-          type: 'custom',
-          loadPhase: 'pageBottom',
-          trackerVariableName: 's',
-          accounts: {
-            production: ['aa']
-          }
-        }
-      }).then(function() {
-        expect(mockTurbine.onPageBottom).toHaveBeenCalled();
         done();
       });
     });
 
     it('throws an error if tracker is not found at the specified varible', function(done) {
-      var loadLibrary = getLoadLibrary();
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
+      var loadLibrary = getLoadLibrary({
+        '@adobe/reactor-load-script': loadScriptSpy
+      });
 
       loadLibrary({
         libraryCode: {
@@ -386,8 +333,11 @@ describe('load library', function() {
       var windowSpy = {
         b: jasmine.createSpyObj('b', ['sa'])
       };
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
-        '@adobe/reactor-window': windowSpy
+        '@adobe/reactor-window': windowSpy,
+        '@adobe/reactor-load-script': loadScriptSpy
       });
 
       loadLibrary({
@@ -407,7 +357,8 @@ describe('load library', function() {
 
   describe('for remote type', function() {
     it('loads script from url', function(done) {
-      var loadScriptSpy = jasmine.createSpy('load-script');
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
         '@adobe/reactor-load-script': loadScriptSpy,
         '@adobe/reactor-window': {
@@ -433,7 +384,8 @@ describe('load library', function() {
     });
 
     it('loads htpps script from url', function(done) {
-      var loadScriptSpy = jasmine.createSpy('load-script');
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
         '@adobe/reactor-load-script': loadScriptSpy,
         '@adobe/reactor-window': {
@@ -459,8 +411,9 @@ describe('load library', function() {
       });
     });
 
-    it('loads library at page top', function(done) {
-      var loadScriptSpy = jasmine.createSpy('load-script');
+    it('loads library as soon as possible', function(done) {
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
         '@adobe/reactor-load-script': loadScriptSpy,
         '@adobe/reactor-window': {
@@ -474,7 +427,6 @@ describe('load library', function() {
       loadLibrary({
         libraryCode: {
           type: 'remote',
-          loadPhase: 'pageTop',
           trackerVariableName: 's',
           accounts: {
             production: ['aa']
@@ -486,33 +438,11 @@ describe('load library', function() {
       });
     });
 
-    it('loads library at page bottom', function(done) {
-      var loadLibrary = getLoadLibrary({
-        '@adobe/reactor-window': {
-          location: {
-            protocol: 'http:'
-          },
-          s: function() {}
-        }
-      });
-
-      loadLibrary({
-        libraryCode: {
-          type: 'remote',
-          loadPhase: 'pageBottom',
-          trackerVariableName: 's',
-          accounts: {
-            production: ['aa']
-          }
-        }
-      }).then(function() {
-        expect(mockTurbine.onPageBottom).toHaveBeenCalled();
-        done();
-      });
-    });
-
     it('throws an error if tracker is not found at the specified varible', function(done) {
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var loadLibrary = getLoadLibrary({
+        '@adobe/reactor-load-script': loadScriptSpy,
         '@adobe/reactor-window': {
           location: {
             protocol: 'http:'
@@ -535,6 +465,8 @@ describe('load library', function() {
     });
 
     it('calls set account method from tracker', function(done) {
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
       var windowSpy = {
         b: jasmine.createSpyObj('b', ['sa']),
         location: {
@@ -542,6 +474,7 @@ describe('load library', function() {
         }
       };
       var loadLibrary = getLoadLibrary({
+        '@adobe/reactor-load-script': loadScriptSpy,
         '@adobe/reactor-window': windowSpy
       });
 

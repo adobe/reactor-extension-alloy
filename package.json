@@ -1,6 +1,6 @@
 {
   "name": "@reactor/extension-adobeanalytics",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Adobe Analytics extension.",
   "author": {
     "name": "Adobe Systems",

@@ -1,6 +1,6 @@
 {
   "name": "adobe-analytics",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "displayName": "Adobe Analytics",
   "description": "Adobe Analytics is an industry-leading solution that empowers you to understand your customers as people and steer your business with customer intelligence. This extension deploys with AppMeasurement version 2.3.0.",
   "iconPath": "resources/icons/mc_analytics.svg",
@@ -33,9 +33,6 @@
                     "managed"
                   ]
                 },
-                "loadPhase": {
-                  "$ref": "#/definitions/loadPhase"
-                },
                 "accounts": {
                   "$ref": "#/definitions/accounts"
                 }
@@ -43,7 +40,6 @@
               "additionalProperties": false,
               "required": [
                 "type",
-                "loadPhase",
                 "accounts"
               ]
             },
@@ -87,9 +83,6 @@
                 "accounts": {
                   "$ref": "#/definitions/accounts"
                 },
-                "loadPhase": {
-                  "$ref": "#/definitions/loadPhase"
-                },
                 "trackerVariableName": {
                   "$ref": "#/definitions/trackerVariableName"
                 }
@@ -99,7 +92,6 @@
                 "type",
                 "httpUrl",
                 "httpsUrl",
-                "loadPhase",
                 "trackerVariableName"
               ]
             },
@@ -118,9 +110,6 @@
                 "accounts": {
                   "$ref": "#/definitions/accounts"
                 },
-                "loadPhase": {
-                  "$ref": "#/definitions/loadPhase"
-                },
                 "trackerVariableName": {
                   "$ref": "#/definitions/trackerVariableName"
                 }
@@ -129,7 +118,6 @@
               "required": [
                 "type",
                 "source",
-                "loadPhase",
                 "trackerVariableName"
               ]
             }
@@ -445,13 +433,6 @@
         "libraryCode"
       ],
       "definitions": {
-        "loadPhase": {
-          "type": "string",
-          "enum": [
-            "pageTop",
-            "pageBottom"
-          ]
-        },
         "trackerVariableName": {
           "type": "string",
           "minLength": 1

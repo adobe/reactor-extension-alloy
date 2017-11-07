@@ -34,31 +34,6 @@ var loadAppMeasurementScript = function(url) {
   return loadScript(url);
 };
 
-var appMeasurementLoadPromise = null;
-var loadManagedAppMeasurementScript = function(url) {
-  if (appMeasurementLoadPromise) {
-    turbine.logger.info('AppMeasurement script is already loading in the page.');
-    return appMeasurementLoadPromise;
-  }
-
-  appMeasurementLoadPromise = loadAppMeasurementScript(url);
-  return appMeasurementLoadPromise;
-};
-
-var waitForPageLoadingPhase = function(loadPhase) {
-  if (loadPhase === 'pageBottom') {
-    return new Promise(function(resolve) {
-      turbine.onPageBottom(function() {
-        turbine.logger.info('Loading AppMeasurement script at the bottom of the page.');
-        resolve();
-      });
-    });
-  } else {
-    turbine.logger.info('Loading AppMeasurement script at the top of the page.');
-    return Promise.resolve('pageTop');
-  }
-};
-
 var getReportSuites = function(reportSuitesData) {
   var reportSuiteValues = reportSuitesData.production;
   if (reportSuitesData[turbine.buildInfo.environment]) {
@@ -81,9 +56,7 @@ var createTracker = function(reportSuites) {
 
 var loadManagedLibrary = function(settings) {
   var reportSuites = getReportSuites(settings.libraryCode.accounts);
-  return waitForPageLoadingPhase(settings.libraryCode.loadPhase || 'pageBottom')
-    .then(loadManagedAppMeasurementScript.bind(null,
-      turbine.getHostedLibFileUrl('AppMeasurement.js')))
+  return loadAppMeasurementScript(turbine.getHostedLibFileUrl('AppMeasurement.js'))
     .then(createTracker.bind(null, reportSuites));
 };
 
@@ -141,10 +114,7 @@ var getTrackerFromVariable = function(trackerVariableName) {
 };
 
 var loadRemoteLibrary = function(url, settings) {
-  var loadPhase = settings.libraryCode.loadPhase || 'pageBottom';
-
-  return waitForPageLoadingPhase(loadPhase)
-    .then(loadAppMeasurementScript.bind(null, url))
+  return loadAppMeasurementScript(url)
     .then(getTrackerFromVariable.bind(null, settings.libraryCode.trackerVariableName))
     .then(setReportSuitesOnTracker.bind(null, settings));
 };

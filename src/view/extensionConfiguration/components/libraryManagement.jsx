@@ -39,11 +39,6 @@ const LIB_TYPES = {
   CUSTOM: 'custom'
 };
 
-const LOAD_PHASES = {
-  PAGE_TOP: 'pageTop',
-  PAGE_BOTTOM: 'pageBottom'
-};
-
 const ReportSuites = () => (
   <section>
     <Heading size="4">
@@ -103,33 +98,6 @@ const ReportSuites = () => (
   </section>
 );
 
-const LoadPhase = ({ className }) => (
-  <div className={ className }>
-    <fieldset>
-      <legend><span className="Label">Load library at:</span></legend>
-      <div>
-        <Field
-          name="libraryCode.loadPhase"
-          component={ Radio }
-          type="radio"
-          value={ LOAD_PHASES.PAGE_TOP }
-        >
-          Page Top
-        </Field>
-
-        <Field
-          name="libraryCode.loadPhase"
-          component={ Radio }
-          type="radio"
-          value={ LOAD_PHASES.PAGE_BOTTOM }
-        >
-          Page Bottom
-        </Field>
-      </div>
-    </fieldset>
-  </div>
-);
-
 const TrackerVariableName = ({ className }) => (
   <div className={ className }>
     <label>
@@ -180,7 +148,6 @@ const LibraryManagement = ({ type }) => (
       type === LIB_TYPES.MANAGED ?
         <div className="FieldSubset">
           <ReportSuites />
-          <LoadPhase />
         </div> : null
     }
 
@@ -248,7 +215,6 @@ const LibraryManagement = ({ type }) => (
           </div>
           <OverwriteReportSuites className="u-block u-gapBottom" />
           <TrackerVariableName className="u-block u-gapBottom" />
-          <LoadPhase />
         </div> : null
     }
 
@@ -273,7 +239,6 @@ const LibraryManagement = ({ type }) => (
           </div>
           <OverwriteReportSuites className="u-block u-gapBottom" />
           <TrackerVariableName className="u-block u-gapBottom" />
-          <LoadPhase />
         </div> : null
     }
   </div>
@@ -292,7 +257,6 @@ export const formConfig = {
     const {
       type,
       trackerVariableName,
-      loadPhase,
       httpUrl,
       httpsUrl,
       source
@@ -310,7 +274,6 @@ export const formConfig = {
       libraryCode: {
         type: type || LIB_TYPES.MANAGED,
         trackerVariableName: trackerVariableName || 's',
-        loadPhase: loadPhase || LOAD_PHASES.PAGE_BOTTOM,
         accounts,
         showReportSuites,
         httpUrl,
@@ -323,7 +286,6 @@ export const formConfig = {
     const {
       type,
       trackerVariableName,
-      loadPhase,
       httpUrl,
       httpsUrl,
       source,
@@ -350,10 +312,6 @@ export const formConfig = {
       if (Object.keys(accounts).length) {
         libraryCodeSettings.accounts = accounts;
       }
-    }
-
-    if (type !== LIB_TYPES.PREINSTALLED) {
-      libraryCodeSettings.loadPhase = loadPhase;
     }
 
     if (type !== LIB_TYPES.MANAGED) {

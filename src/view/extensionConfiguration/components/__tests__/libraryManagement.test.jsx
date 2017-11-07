@@ -59,8 +59,6 @@ const getReactComponents = (wrapper) => {
   const stagingReportSuites = getReportSuiteElements(wrapper, '.staging');
   const developmentReportSuites = getReportSuiteElements(wrapper, '.development');
 
-  const pageBottomLoadPhaseRadio =
-    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'pageBottom').node;
   const typePreinstalledRadio =
     wrapper.find(Radio).filterWhere(n => n.prop('value') === 'preinstalled').node;
   const typeRemoteRadio =
@@ -93,7 +91,6 @@ const getReactComponents = (wrapper) => {
     productionReportSuites,
     stagingReportSuites,
     developmentReportSuites,
-    pageBottomLoadPhaseRadio,
     trackerVariableNameTextfield,
     httpUrlTextfield,
     httpUrlErrorTip,
@@ -171,8 +168,7 @@ describe('libary management', () => {
               'eee',
               'fff'
             ]
-          },
-          loadPhase: 'pageBottom'
+          }
         }
       }
     });
@@ -180,15 +176,13 @@ describe('libary management', () => {
     const {
       productionReportSuites,
       stagingReportSuites,
-      developmentReportSuites,
-      pageBottomLoadPhaseRadio
+      developmentReportSuites
     } = getReactComponents(instance);
 
 
     expect(getReportSuiteTextfieldValues(productionReportSuites)).toEqual(['aaa', 'bbb']);
     expect(getReportSuiteTextfieldValues(stagingReportSuites)).toEqual(['ccc', 'ddd']);
     expect(getReportSuiteTextfieldValues(developmentReportSuites)).toEqual(['eee', 'fff']);
-    expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
   });
 
   it('sets form values from already installed type settings', () => {
@@ -250,7 +244,6 @@ describe('libary management', () => {
             ]
           },
           trackerVariableName: 'd',
-          loadPhase: 'pageBottom',
           httpUrl: 'http://someurl.com',
           httpsUrl: 'http://somehttpsurl.com'
         }
@@ -263,7 +256,6 @@ describe('libary management', () => {
       developmentReportSuites,
       showReportSuitesCheckbox,
       trackerVariableNameTextfield,
-      pageBottomLoadPhaseRadio,
       httpUrlTextfield,
       httpsUrlTextfield
     } = getReactComponents(instance);
@@ -273,7 +265,6 @@ describe('libary management', () => {
     expect(getReportSuiteTextfieldValues(developmentReportSuites)).toEqual(['eee', 'fff']);
 
     expect(showReportSuitesCheckbox.props.value).toBe(true);
-    expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
 
     expect(trackerVariableNameTextfield.props.value).toBe('d');
     expect(httpUrlTextfield.props.value).toBe('http://someurl.com');
@@ -299,8 +290,7 @@ describe('libary management', () => {
               'fff'
             ]
           },
-          trackerVariableName: 'd',
-          loadPhase: 'pageBottom'
+          trackerVariableName: 'd'
         }
       }
     });
@@ -309,7 +299,6 @@ describe('libary management', () => {
       productionReportSuites,
       stagingReportSuites,
       developmentReportSuites,
-      pageBottomLoadPhaseRadio,
       showReportSuitesCheckbox,
       trackerVariableNameTextfield
     } = getReactComponents(instance);
@@ -319,7 +308,6 @@ describe('libary management', () => {
     expect(getReportSuiteTextfieldValues(developmentReportSuites)).toEqual(['eee', 'fff']);
 
     expect(showReportSuitesCheckbox.props.value).toBe(true);
-    expect(pageBottomLoadPhaseRadio.props.checked).toBe(true);
 
     expect(trackerVariableNameTextfield.props.value).toBe('d');
   });
@@ -329,22 +317,17 @@ describe('libary management', () => {
 
     populateReportSuiteFields(instance);
 
-    const { pageBottomLoadPhaseRadio } = getReactComponents(instance);
-    pageBottomLoadPhaseRadio.props.onChange('pageBottom');
-
     const {
       accounts: {
         production,
         staging,
         development
-      },
-      loadPhase
+      }
     } = extensionBridge.getSettings().libraryCode;
 
     expect(production).toEqual(['aa', 'bb']);
     expect(staging).toEqual(['cc', 'dd']);
     expect(development).toEqual(['ee', 'ff']);
-    expect(loadPhase).toBe('pageBottom');
   });
 
   it('sets settings from already installed form values', () => {
@@ -384,14 +367,12 @@ describe('libary management', () => {
       showReportSuitesCheckbox,
       trackerVariableNameTextfield,
       httpUrlTextfield,
-      httpsUrlTextfield,
-      pageBottomLoadPhaseRadio
+      httpsUrlTextfield
     } = getReactComponents(instance);
     showReportSuitesCheckbox.props.onChange(true);
     trackerVariableNameTextfield.props.onChange('d');
     httpUrlTextfield.props.onChange('http://someurl.com');
     httpsUrlTextfield.props.onChange('https://someurl.com');
-    pageBottomLoadPhaseRadio.props.onChange('pageBottom');
 
     populateReportSuiteFields(instance);
 
@@ -403,8 +384,7 @@ describe('libary management', () => {
       },
       trackerVariableName,
       httpUrl,
-      httpsUrl,
-      loadPhase
+      httpsUrl
     } = extensionBridge.getSettings().libraryCode;
 
     expect(production).toEqual(['aa', 'bb']);
@@ -413,7 +393,6 @@ describe('libary management', () => {
     expect(trackerVariableName).toBe('d');
     expect(httpUrl).toBe('http://someurl.com');
     expect(httpsUrl).toBe('https://someurl.com');
-    expect(loadPhase).toBe('pageBottom');
   });
 
   it('sets settings from custom form values', () => {
@@ -424,12 +403,10 @@ describe('libary management', () => {
 
     const {
       showReportSuitesCheckbox,
-      trackerVariableNameTextfield,
-      pageBottomLoadPhaseRadio
+      trackerVariableNameTextfield
     } = getReactComponents(instance);
     showReportSuitesCheckbox.props.onChange(true);
     trackerVariableNameTextfield.props.onChange('d');
-    pageBottomLoadPhaseRadio.props.onChange('pageBottom');
 
     populateReportSuiteFields(instance);
 
@@ -439,15 +416,13 @@ describe('libary management', () => {
         staging,
         development
       },
-      trackerVariableName,
-      loadPhase
+      trackerVariableName
     } = extensionBridge.getSettings().libraryCode;
 
     expect(production).toEqual(['aa', 'bb']);
     expect(staging).toEqual(['cc', 'dd']);
     expect(development).toEqual(['ee', 'ff']);
     expect(trackerVariableName).toBe('d');
-    expect(loadPhase).toBe('pageBottom');
   });
 
   it('opens code editor with source value when button is clicked and stores result', () => {
