@@ -16,7 +16,7 @@
 * from Adobe Systems Incorporated.
 **************************************************************************/
 
-// The DTM mod-stats code version is a 4 characters string.  The first character will always be D
+// The Launch DTM mod-stats code version is a 4 characters string.  The first character will always be L
 // followed by year, month, and day codes.
 // For example: JS-1.4.3-D53O = JS 1.4.3 code, DTM 2015 March 24th release (revision 1)
 // More info: https://wiki.corp.adobe.com/pages/viewpage.action?spaceKey=tagmanager&title=DTM+Analytics+Code+Versions
@@ -59,5 +59,5 @@ module.exports = function(dateString) {
     throw new Error('Invalid date provided');
   }
 
-  return ('D' + getYearField(date) + getMonthField(date) + getDayField(date)).toUpperCase();
+  return ('L' + getYearField(date) + getMonthField(date) + getDayField(date)).toUpperCase();
 };
