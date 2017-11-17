@@ -16,11 +16,14 @@ const entries = {
 
 const plugins = Object.keys(entries).map(chunkName => (
   new HtmlWebpackPlugin({
-    chunks: [chunkName],
+    chunks: ['common', chunkName],
     filename: chunkName + '.html',
     template: 'src/view/template.html'
   })
 ));
+
+// Split out common code from each view into a common file for caching gains.
+plugins.push(new webpack.optimize.CommonsChunkPlugin('common', 'common.js'));
 
 const reactVersion = pkg.dependencies['react'];
 const reactDOMVersion = pkg.dependencies['react-dom'];

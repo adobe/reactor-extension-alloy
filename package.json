@@ -32,7 +32,7 @@
   "devDependencies": {
     "@adobe/reactor-packager": "^2.3.3",
     "@adobe/reactor-sandbox": "^8.1.0",
-    "@adobe/reactor-turbine": "^22.1.1",
+    "@adobe/reactor-turbine": "^23.1.0",
     "@reactor/extension-mcid": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/extension-mcid.git",
     "@reactor/extension-support-testrunner": "^9.1.1",
     "babel-core": "^6.18.2",
