@@ -18,7 +18,7 @@
 
 'use strict';
 
-var getTracker = require('../helpers/getTracker');
+var getTracker = require('../sharedModules/getTracker');
 
 module.exports = function() {
   getTracker().then(function(tracker) {

@@ -43,7 +43,7 @@ describe('clear variables', function() {
     var promise = Promise.resolve(tracker);
 
     var clearVariables = clearVariablesInjector({
-      '../helpers/getTracker': function() {
+      '../sharedModules/getTracker': function() {
         return promise;
       }
     });
@@ -59,7 +59,7 @@ describe('clear variables', function() {
   it('logs an error when getTracker throws an error', function(done) {
     var promise = Promise.reject('some error');
     var clearVariables = clearVariablesInjector({
-      '../helpers/getTracker': function() {
+      '../sharedModules/getTracker': function() {
         return promise;
       }
     });

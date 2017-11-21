@@ -831,6 +831,10 @@
     {
       "name": "augment-tracker",
       "libPath": "src/lib/sharedModules/augmentTracker.js"
+    },
+    {
+      "name": "get-tracker",
+      "libPath": "src/lib/sharedModules/getTracker.js"
     }
   ]
 }

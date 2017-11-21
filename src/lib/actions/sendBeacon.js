@@ -18,7 +18,7 @@
 
 'use strict';
 
-var getTracker = require('../helpers/getTracker');
+var getTracker = require('../sharedModules/getTracker');
 
 var isLink = function(element) {
   return element && element.nodeName && element.nodeName.toLowerCase() === 'a';

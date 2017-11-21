@@ -58,7 +58,7 @@ describe('get tracker', function() {
       .and.returnValue(Promise.resolve('loaded'));
 
     var getTracker = getTrackerModule({
-      './loadLibrary': loadLibrarySpy
+      '../helpers/loadLibrary': loadLibrarySpy
     });
 
     var getTrackerPromise = getTracker();
@@ -84,7 +84,7 @@ describe('get tracker', function() {
     };
 
     var getTracker = getTrackerModule({
-      './loadLibrary': loadLibrarySpy
+      '../helpers/loadLibrary': loadLibrarySpy
     });
 
     getTracker().then(function() {
@@ -130,7 +130,7 @@ describe('get tracker', function() {
 
       var getTracker = getTrackerModule({
         '@adobe/reactor-cookie': cookieSpy,
-        './loadLibrary': loadLibrarySpy
+        '../helpers/loadLibrary': loadLibrarySpy
       });
 
       getTracker().then(function() {
@@ -153,7 +153,7 @@ describe('get tracker', function() {
     };
 
     var getTracker = getTrackerModule({
-      './loadLibrary': loadLibrarySpy
+      '../helpers/loadLibrary': loadLibrarySpy
     });
 
     getTracker().then(function(tracker) {
@@ -170,10 +170,10 @@ describe('get tracker', function() {
         }));
 
       var getTracker = getTrackerModule({
-        './generateVersion': function() {
+        '../helpers/generateVersion': function() {
           return 'DEBA';
         },
-        './loadLibrary': loadLibrarySpy
+        '../helpers/loadLibrary': loadLibrarySpy
       });
 
       getTracker().then(function(tracker) {
@@ -189,10 +189,10 @@ describe('get tracker', function() {
         }));
 
       var getTracker = getTrackerModule({
-        './generateVersion': function() {
+        '../helpers/generateVersion': function() {
           return 'DEBA';
         },
-        './loadLibrary': loadLibrarySpy
+        '../helpers/loadLibrary': loadLibrarySpy
       });
 
       getTracker().then(function(tracker) {
@@ -216,7 +216,7 @@ describe('get tracker', function() {
     };
 
     var getTracker = getTrackerModule({
-      './loadLibrary': loadLibrarySpy
+      '../helpers/loadLibrary': loadLibrarySpy
     });
 
     getTracker().then(function(tracker) {
@@ -245,7 +245,7 @@ describe('get tracker', function() {
     };
 
     var getTracker = getTrackerModule({
-      './loadLibrary': loadLibrarySpy
+      '../helpers/loadLibrary': loadLibrarySpy
     });
 
     getTracker().then(function(tracker) {
@@ -274,7 +274,7 @@ describe('get tracker', function() {
     };
 
     var getTracker = getTrackerModule({
-      './loadLibrary': loadLibrarySpy
+      '../helpers/loadLibrary': loadLibrarySpy
     });
 
     getTracker().then(function(tracker) {
@@ -288,7 +288,7 @@ describe('get tracker', function() {
       .and.returnValue(Promise.resolve({}));
 
     var getTracker = getTrackerModule({
-      './loadLibrary': loadLibrarySpy,
+      '../helpers/loadLibrary': loadLibrarySpy,
       '../helpers/augmenters': [function(tracker) {
         tracker.augmentedOnce = true;
         return Promise.resolve('now');
@@ -311,7 +311,7 @@ describe('get tracker', function() {
         .and.returnValue(Promise.resolve({}));
 
       var getTracker = getTrackerModule({
-        './loadLibrary': loadLibrarySpy,
+        '../helpers/loadLibrary': loadLibrarySpy,
         '../helpers/augmenters': [function(tracker) {
           tracker.augmentedOnce = true;
         }, function(tracker) {
@@ -332,7 +332,7 @@ describe('get tracker', function() {
         .and.returnValue(Promise.resolve({}));
 
       var getTracker = getTrackerModule({
-        './loadLibrary': loadLibrarySpy,
+        '../helpers/loadLibrary': loadLibrarySpy,
         '../helpers/augmenters': [function() {
           throw new Error('error thrown from augmenter');
         }, function(tracker) {

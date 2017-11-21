@@ -43,7 +43,7 @@ describe('send beacon', function() {
     var promise = Promise.resolve(tracker);
 
     var sendBeacon = sendBeaconInjector({
-      '../helpers/getTracker': function() {
+      '../sharedModules/getTracker': function() {
         return promise;
       }
     });
@@ -63,7 +63,7 @@ describe('send beacon', function() {
   it('logs an error when getTracker throws an error', function(done) {
     var promise = Promise.reject('some error');
     var sendBeacon = sendBeaconInjector({
-      '../helpers/getTracker': function() {
+      '../sharedModules/getTracker': function() {
         return promise;
       }
     });
@@ -84,7 +84,7 @@ describe('send beacon', function() {
     var promise = Promise.resolve(tracker);
 
     var sendBeacon = sendBeaconInjector({
-      '../helpers/getTracker': function() {
+      '../sharedModules/getTracker': function() {
         return promise;
       }
     });
@@ -110,7 +110,7 @@ describe('send beacon', function() {
     var promise = Promise.resolve(tracker);
 
     var sendBeacon = sendBeaconInjector({
-      '../helpers/getTracker': function() {
+      '../sharedModules/getTracker': function() {
         return promise;
       }
     });
@@ -141,7 +141,7 @@ describe('send beacon', function() {
     var promise = Promise.resolve(tracker);
 
     var sendBeacon = sendBeaconInjector({
-      '../helpers/getTracker': function() {
+      '../sharedModules/getTracker': function() {
         return promise;
       }
     });

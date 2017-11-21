@@ -18,7 +18,7 @@
 
 'use strict';
 
-var getTracker = require('../helpers/getTracker');
+var getTracker = require('../sharedModules/getTracker');
 var applyTrackerVariables = require('../helpers/applyTrackerVariables');
 
 module.exports = function(settings, event) {

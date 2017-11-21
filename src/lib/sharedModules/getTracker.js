@@ -23,9 +23,9 @@ var Promise = require('@adobe/reactor-promise');
 var window = require('@adobe/reactor-window');
 var augmenters = require('../helpers/augmenters');
 
-var applyTrackerVariables = require('./applyTrackerVariables');
-var loadLibrary = require('./loadLibrary');
-var generateVersion = require('./generateVersion');
+var applyTrackerVariables = require('../helpers/applyTrackerVariables');
+var loadLibrary = require('../helpers/loadLibrary');
+var generateVersion = require('../helpers/generateVersion');
 
 var version = generateVersion(turbine.buildInfo.turbineBuildDate);
 var BEFORE_SETTINGS_LOAD_PHASE = 'beforeSettings';

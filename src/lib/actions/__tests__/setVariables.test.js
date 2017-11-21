@@ -46,7 +46,7 @@ describe('set variables', function() {
 
     var setVariables = setVariablesInjector({
       '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
-      '../helpers/getTracker': function() {
+      '../sharedModules/getTracker': function() {
         return promise;
       }
     });
@@ -75,7 +75,7 @@ describe('set variables', function() {
 
     var setVariables = setVariablesInjector({
       '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
-      '../helpers/getTracker': function() {
+      '../sharedModules/getTracker': function() {
         return promise;
       }
     });
@@ -102,7 +102,7 @@ describe('set variables', function() {
   it('logs an error when getTracker throws an error', function(done) {
     var promise = Promise.reject('some error');
     var setVariables = setVariablesInjector({
-      '../helpers/getTracker': function() {
+      '../sharedModules/getTracker': function() {
         return promise;
       }
     });
