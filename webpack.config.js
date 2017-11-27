@@ -2,11 +2,10 @@
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const HTMLWebpackExternalsPlugin = require('html-webpack-externals-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 const argv = require('yargs').argv;
 const webpack = require('webpack');
-const pkg = require('./package.json');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const entries = {
   extensionConfiguration: './src/view/extensionConfiguration/index.js',
@@ -23,27 +22,11 @@ const plugins = Object.keys(entries).map(chunkName => (
 ));
 
 // Split out common code from each view into a common file for caching gains.
-plugins.push(new webpack.optimize.CommonsChunkPlugin('common', 'common.js'));
-
-const reactVersion = pkg.dependencies['react'];
-const reactDOMVersion = pkg.dependencies['react-dom'];
-
-plugins.push(
-  new HTMLWebpackExternalsPlugin([
-    {
-      name: 'react',
-      var: 'React',
-      url: `//unpkg.com/react@${reactVersion}/dist/react${argv.production ? '.min' : ''}.js`
-    },
-    // If we load react from a CDN, we have to do the same for react-dom without janky business. :(
-    // https://github.com/webpack/webpack/issues/1275#issuecomment-176255624
-    {
-      name: 'react-dom',
-      var: 'ReactDOM',
-      url: `//unpkg.com/react-dom@${reactDOMVersion}/dist/react-dom${argv.production ? '.min' : ''}.js`
-    }
-  ])
-);
+// Split out common code from each view into a common file for caching gains.
+plugins.push(new webpack.optimize.CommonsChunkPlugin({
+  name: 'common',
+  filename: 'common.js'
+}));
 
 if (argv.production) {
   plugins.push(
@@ -69,6 +52,10 @@ if (argv.runSandbox) {
   plugins.push(new WebpackShellPlugin({
     onBuildEnd: ['./node_modules/.bin/reactor-sandbox']
   }));
+}
+
+if (argv.analyze) {
+  plugins.push(new BundleAnalyzerPlugin());
 }
 
 module.exports = {
