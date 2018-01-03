@@ -24,7 +24,7 @@
     "build": "webpack --production",
     "build:analyze": "webpack --production --analyze",
     "test": "reactor-testrunner",
-    "test:watch": "reactor-testrunner -- --no-single-run --no-coverage",
+    "test:watch": "reactor-testrunner --no-single-run --no-coverage",
     "lint": "reactor-testrunner lint",
     "sandbox": "webpack --watch --run-sandbox",
     "package": "npm run build && reactor-packager",
