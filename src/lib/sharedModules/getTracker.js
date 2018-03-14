@@ -22,6 +22,7 @@ var cookie = require('@adobe/reactor-cookie');
 var Promise = require('@adobe/reactor-promise');
 var window = require('@adobe/reactor-window');
 var augmenters = require('../helpers/augmenters');
+var loadScript = require('@adobe/reactor-load-script');
 
 var applyTrackerVariables = require('../helpers/applyTrackerVariables');
 var loadLibrary = require('../helpers/loadLibrary');
@@ -100,6 +101,25 @@ var updateTrackerVariables = function(trackerProperties, customSetup, tracker) {
   return tracker;
 };
 
+var loadTrackerModules = function(moduleProperties, tracker) {
+  if (moduleProperties &&
+      moduleProperties.audienceManager &&
+      moduleProperties.audienceManager.config) {
+    var libFileName = 'AppMeasurement_Module_AudienceManagement.js';
+    var libFileUrl = turbine.getHostedLibFileUrl(libFileName);
+    return loadScript(libFileUrl)
+    .then( function() {
+      tracker.loadModule('AudienceManagement');
+      //turbine.logger.info('Initializing AudienceManagement module:');
+      //turbine.logger.info(JSON.stringify(moduleProperties.audienceManager.config, null, 3));
+      tracker.AudienceManagement.setup(moduleProperties.audienceManager.config);
+      return tracker;
+    });
+  } else {
+    return tracker;
+  }
+};
+
 var initialize = function(settings) {
   if (checkEuCompliance(settings.euComplianceEnabled || false)) {
     return loadLibrary(settings)
@@ -110,7 +130,8 @@ var initialize = function(settings) {
         null,
         settings.trackerProperties,
         settings.customSetup || {}
-      ));
+      ))
+      .then(loadTrackerModules.bind(null, settings.moduleProperties));
   } else {
     return Promise.reject('EU compliance was not acknowledged by the user.');
   }

@@ -22,7 +22,21 @@ var Promise = require('@adobe/reactor-promise');
 var getTrackerInjector = require('inject!../getTracker');
 
 var getTrackerModule = function(mocks) {
-  return getTrackerInjector(mocks || {});
+  mocks = mocks || {};
+  mocks['@adobe/reactor-load-script'] = mocks['@adobe/reactor-load-script'] ||
+    function(url) { 
+      return Promise.resolve();
+    };
+  return getTrackerInjector(mocks);
+};
+
+var getMockTrackerObj = function() {
+  return {
+    loadModule: function(moduleName) {},
+    AudienceManagement: {
+      setup: function() {}
+    }
+  };
 };
 
 var mockTurbine;
@@ -33,6 +47,9 @@ describe('get tracker', function() {
     mockTurbine = {
       buildInfo: {
         turbineBuildDate: '2016-07-01T18:10:34Z'
+      },
+      getHostedLibFileUrl: function(file) {
+        return '//example.com/' + file;
       },
       propertySettings: {
         trackingCookieName: 'sat_track'
@@ -55,11 +72,13 @@ describe('get tracker', function() {
 
   it('returns a promise', function(done) {
     var loadLibrarySpy = jasmine.createSpy('load-library')
-      .and.returnValue(Promise.resolve('loaded'));
+      .and.returnValue(Promise.resolve(getMockTrackerObj()));
 
     var getTracker = getTrackerModule({
       '../helpers/loadLibrary': loadLibrarySpy
     });
+    
+    console.log('[returns a promise] Calling getTracker');
 
     var getTrackerPromise = getTracker();
     expect(getTrackerPromise.then).toEqual(jasmine.any(Function));
@@ -75,7 +94,7 @@ describe('get tracker', function() {
 
   it('loads the library with the provided settings', function(done) {
     var loadLibrarySpy = jasmine.createSpy('load-library')
-      .and.returnValue(Promise.resolve('loaded'));
+      .and.returnValue(Promise.resolve(getMockTrackerObj()));
 
     mockTurbine.getExtensionSettings = function() {
       return {
@@ -114,7 +133,7 @@ describe('get tracker', function() {
 
     it('does load a library if EU compliance is acknowledged by the user', function(done) {
       var loadLibrarySpy = jasmine.createSpy('load-library')
-        .and.returnValue(Promise.resolve('loaded'));
+        .and.returnValue(Promise.resolve(getMockTrackerObj()));
       var cookieSpy = jasmine.createSpyObj('cookie', ['get']);
       cookieSpy.get.and.returnValue('true');
 
@@ -145,8 +164,7 @@ describe('get tracker', function() {
   it('adds VisitorID instance to the tracker when needed', function(done) {
     var mcidInstance = {};
     var loadLibrarySpy = jasmine.createSpy('load-library')
-      .and.returnValue(Promise.resolve({
-      }));
+      .and.returnValue(Promise.resolve(getMockTrackerObj()));
 
     mockTurbine.getSharedModule = function() {
       return mcidInstance;
@@ -164,10 +182,10 @@ describe('get tracker', function() {
 
   describe('updates the version of the tracker', function() {
     it('when tracker property is found', function(done) {
+      var mockTracker = getMockTrackerObj();
+      mockTracker.version = '1.5.2';
       var loadLibrarySpy = jasmine.createSpy('load-library')
-        .and.returnValue(Promise.resolve({
-          version: '1.5.2'
-        }));
+        .and.returnValue(Promise.resolve(mockTracker));
 
       var getTracker = getTrackerModule({
         '../helpers/generateVersion': function() {
@@ -183,10 +201,10 @@ describe('get tracker', function() {
     });
 
     it('when tagContainerMarker property is found', function(done) {
+      var mockTracker = getMockTrackerObj();
+      mockTracker.tagContainerMarker = 'marker';
       var loadLibrarySpy = jasmine.createSpy('load-library')
-        .and.returnValue(Promise.resolve({
-          tagContainerMarker: 'marker'
-        }));
+        .and.returnValue(Promise.resolve(mockTracker));
 
       var getTracker = getTrackerModule({
         '../helpers/generateVersion': function() {
@@ -204,8 +222,7 @@ describe('get tracker', function() {
 
   it('applies the properties on the tracker', function(done) {
     var loadLibrarySpy = jasmine.createSpy('load-library')
-      .and.returnValue(Promise.resolve({
-      }));
+      .and.returnValue(Promise.resolve(getMockTrackerObj()));
 
     mockTurbine.getExtensionSettings = function() {
       return {
@@ -227,8 +244,7 @@ describe('get tracker', function() {
 
   it('calls custom setup before appying settings', function(done) {
     var loadLibrarySpy = jasmine.createSpy('load-library')
-      .and.returnValue(Promise.resolve({
-      }));
+      .and.returnValue(Promise.resolve(getMockTrackerObj()));
 
     mockTurbine.getExtensionSettings = function() {
       return {
@@ -257,8 +273,7 @@ describe('get tracker', function() {
 
   it('calls custom setup after applying settings', function(done) {
     var loadLibrarySpy = jasmine.createSpy('load-library')
-      .and.returnValue(Promise.resolve({
-      }));
+      .and.returnValue(Promise.resolve(getMockTrackerObj()));
 
     mockTurbine.getExtensionSettings = function() {
       return {
@@ -285,7 +300,7 @@ describe('get tracker', function() {
 
   it('extends the tracker when augmenters that return promises are available', function(done) {
     var loadLibrarySpy = jasmine.createSpy('load-library')
-      .and.returnValue(Promise.resolve({}));
+      .and.returnValue(Promise.resolve(getMockTrackerObj()));
 
     var getTracker = getTrackerModule({
       '../helpers/loadLibrary': loadLibrarySpy,
@@ -308,7 +323,7 @@ describe('get tracker', function() {
   it('extends the tracker when augmenters that do not return promises are available',
     function(done) {
       var loadLibrarySpy = jasmine.createSpy('load-library')
-        .and.returnValue(Promise.resolve({}));
+        .and.returnValue(Promise.resolve(getMockTrackerObj()));
 
       var getTracker = getTrackerModule({
         '../helpers/loadLibrary': loadLibrarySpy,
@@ -329,7 +344,7 @@ describe('get tracker', function() {
   it('still resolves with a tracker when augmenters throw errors',
     function(done) {
       var loadLibrarySpy = jasmine.createSpy('load-library')
-        .and.returnValue(Promise.resolve({}));
+        .and.returnValue(Promise.resolve(getMockTrackerObj()));
 
       var getTracker = getTrackerModule({
         '../helpers/loadLibrary': loadLibrarySpy,

@@ -26,6 +26,7 @@ import Variables, { formConfig as variablesFormConfig } from '../components/vari
 import LinkTracking, { formConfig as linkTrackingFormConfig } from './components/linkTracking';
 import Cookies, { formConfig as cookiesFormConfig } from './components/cookies';
 import CustomSetup, { formConfig as customSetupFormConfig } from './components/customSetup';
+import AudienceManager, { formConfig as audienceManagerFormConfig } from './components/audienceManager';
 import eventBus from '../utils/eventBus';
 import COMPONENT_NAMES from '../enums/componentNames';
 
@@ -33,7 +34,8 @@ const accordionIndexes = {
   [COMPONENT_NAMES.LIBRARY_MANAGEMENT]: 0,
   [COMPONENT_NAMES.GENERAL]: 1,
   [COMPONENT_NAMES.VARIABLES]: 2,
-  [COMPONENT_NAMES.COOKIES]: 4
+  [COMPONENT_NAMES.COOKIES]: 4,
+  [COMPONENT_NAMES.AUDIENCE_MANAGER]: 5
 };
 
 const onlyUnique = (value, index, self) => self.indexOf(value) === index;
@@ -109,6 +111,9 @@ export default class ExtensionConfiguration extends React.Component {
           <AccordionItem header="Configure Tracker Using Custom Code">
             <CustomSetup />
           </AccordionItem>
+          <AccordionItem header="Adobe Audience Manager">
+            <AudienceManager />
+          </AccordionItem>
         </Accordion>
       </div>
     );
@@ -121,6 +126,7 @@ export const formConfig = mergeConfigs(
   variablesFormConfig,
   linkTrackingFormConfig,
   cookiesFormConfig,
-  customSetupFormConfig
+  customSetupFormConfig,
+  audienceManagerFormConfig
 );
 

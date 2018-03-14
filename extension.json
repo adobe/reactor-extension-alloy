@@ -1,6 +1,6 @@
 {
   "name": "adobe-analytics",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "displayName": "Adobe Analytics",
   "description": "Adobe Analytics is an industry-leading solution that empowers you to understand your customers as people and steer your business with customer intelligence. This extension deploys with AppMeasurement version 2.6.0.",
   "iconPath": "resources/icons/mc_analytics.svg",
@@ -10,7 +10,8 @@
     "email": "reactor@adobe.com"
   },
   "hostedLibFiles": [
-    "hosted/AppMeasurement.js"
+    "hosted/AppMeasurement.js",
+    "hosted/AppMeasurement_Module_AudienceManagement.js"
   ],
   "viewBasePath": "dist/",
   "configuration": {
@@ -406,6 +407,57 @@
             }
           },
           "additionalProperties": false
+        },
+        "moduleProperties": {
+          "type": "object",
+          "properties": {
+            "audienceManager": {
+              "type": "object",
+              "properties": {
+                "config": {
+                  "type": "object",
+                  "properties": {
+                    "partner": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "containerNSID": {
+                      "type": "number"
+                    },
+                    "disableDestinationPublishingIframe": {
+                      "type": "boolean"
+                    },
+                    "isCoopSafe": {
+                      "type": "boolean"
+                    },
+                    "uuidCookie": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "days": {
+                          "type": "number"
+                        },
+                        "domain": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "path": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "secure": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
         "customSetup": {
           "type": "object",

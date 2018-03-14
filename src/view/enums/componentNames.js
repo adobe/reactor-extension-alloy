@@ -22,7 +22,8 @@ const COMPONENT_NAMES = {
   VARIABLES: 'variables',
   COOKIES: 'cookies',
   GENERAL: 'general',
-  LIBRARY_MANAGEMENT: 'libraryManagement'
+  LIBRARY_MANAGEMENT: 'libraryManagement',
+  AUDIENCE_MANAGER: 'audienceManager'
 };
 
 export default COMPONENT_NAMES;

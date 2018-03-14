@@ -54,6 +54,22 @@ module.exports = {
             "tel:",
             "mailto:"
           ]
+        },
+        "moduleProperties": {
+          "audienceManager": {
+            "config": {
+              "partner": "testdomain",
+              "containerNSID": 0,
+              "disableDestinationPublishingIframe": false,
+              "isCoopSafe": false,
+              "uuidCookie": {
+                "name": "aam_uuid",
+                "days": "100",
+                "path": "/",
+                "secure": false
+              }
+            }
+          }
         }
       },
       // This will be populated automatically based on features found in extension.json.
