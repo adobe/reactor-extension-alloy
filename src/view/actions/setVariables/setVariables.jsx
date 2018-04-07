@@ -27,7 +27,7 @@ export default () => (
   <div>
     <Heading size="4">Variables</Heading>
     <Alert>
-      Please note, this action will <span className="u-italic">not</span> send an
+      Please note, this action will <span className="u-italic">not</span> send a
       beacon; it only sets the variables. In order to send the data to Adobe Analytics, you need
       to add the &quot;send beacon&quot; action from the Adobe Analytics extension to a rule.
     </Alert>
