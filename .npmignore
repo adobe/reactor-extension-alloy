@@ -1,3 +1,8 @@
-.idea
 __tests__
-
+coverage
+test_results
+testrunner
+webpack.config
+sonar-project
+src/view
+\.*
