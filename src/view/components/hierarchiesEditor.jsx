@@ -127,7 +127,7 @@ const renderHierarchies = ({ fields }) => {
   return (
     <div>
       { rows }
-      <Button onClick={ () => fields.push(createEmptyRow()) }>Add hierarchy</Button>
+      <Button onClick={ () => fields.push(createEmptyRow()) }>Add Another</Button>
     </div>
   );
 };

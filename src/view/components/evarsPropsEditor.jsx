@@ -149,7 +149,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
       <Button
         onClick={ () => fields.push(createEmptyRow()) }
       >
-        Add { varType }
+        Add Another
       </Button>
     </section>
   );
