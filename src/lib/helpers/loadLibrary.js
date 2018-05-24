@@ -43,7 +43,7 @@ var getReportSuites = function(reportSuitesData) {
   return reportSuiteValues.join(',');
 };
 
-var createTracker = function(reportSuites) {
+var createTracker = function(settings, reportSuites) {
   if (!window.s_gi) {
     throw new Error(
       'Unable to create AppMeasurement tracker, `s_gi` function not found.' + window.AppMeasurement
@@ -51,13 +51,18 @@ var createTracker = function(reportSuites) {
   }
   turbine.logger.info('Creating AppMeasurement tracker with these report suites: "' +
     reportSuites + '"');
-  return window.s_gi(reportSuites);
+  var tracker = window.s_gi(reportSuites);
+  if (settings.libraryCode.scopeTrackerGlobally) {
+    turbine.logger.info('Setting the tracker as window.s');
+    window.s = tracker;
+  }
+  return tracker;
 };
 
 var loadManagedLibrary = function(settings) {
   var reportSuites = getReportSuites(settings.libraryCode.accounts);
   return loadAppMeasurementScript(turbine.getHostedLibFileUrl('AppMeasurement.js'))
-    .then(createTracker.bind(null, reportSuites));
+    .then(createTracker.bind(null, settings, reportSuites));
 };
 
 var setReportSuitesOnTracker = function(settings, tracker) {

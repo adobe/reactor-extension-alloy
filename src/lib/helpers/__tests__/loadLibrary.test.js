@@ -156,6 +156,31 @@ describe('load library', function() {
       });
     });
 
+    it('makes tracker globally accessible if configured to do so', function(done) {
+      var windowSpy = {
+        'AppMeasurement':  function() {},
+        's_gi': function() { return 'abc'; }
+      };
+      var loadScriptSpy = jasmine.createSpy('load-script')
+        .and.returnValue(Promise.resolve('loaded'));
+      var loadLibrary = getLoadLibrary({
+        '@adobe/reactor-window': windowSpy,
+        '@adobe/reactor-load-script': loadScriptSpy
+      });
+      loadLibrary({
+        libraryCode: {
+          type: 'managed',
+          accounts: {
+            production: ['aa']
+          },
+          scopeTrackerGlobally: true
+        }
+      }).then(function() {
+        expect(windowSpy.s).toEqual('abc');
+        done();
+      });
+    });
+
     it('calls window.AppMeasurement with specified build info environment report suites to ' +
       'initialize the library', function(done) {
       var windowSpy = jasmine.createSpyObj('window', ['s_gi']);

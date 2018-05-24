@@ -148,6 +148,15 @@ const LibraryManagement = ({ type }) => (
       type === LIB_TYPES.MANAGED ?
         <div className="FieldSubset">
           <ReportSuites />
+          <Field
+            name="libraryCode.scopeTrackerGlobally"
+            component={ Checkbox }
+          >
+            Make tracker globally accessible
+          </Field>
+          <InfoTip className="u-fieldLineHeight u-noPadding">
+              If enabled the tracker will be scoped globally under <strong>window.s</strong>.
+          </InfoTip>
         </div> : null
     }
 
@@ -259,7 +268,8 @@ export const formConfig = {
       trackerVariableName,
       httpUrl,
       httpsUrl,
-      source
+      source,
+      scopeTrackerGlobally
     } = libraryCode;
 
     const showReportSuites = Boolean(type !== LIB_TYPES.MANAGED && libraryCode.accounts);
@@ -278,7 +288,8 @@ export const formConfig = {
         showReportSuites,
         httpUrl,
         httpsUrl,
-        source
+        source,
+        scopeTrackerGlobally
       }
     };
   },
@@ -289,7 +300,8 @@ export const formConfig = {
       httpUrl,
       httpsUrl,
       source,
-      showReportSuites
+      showReportSuites,
+      scopeTrackerGlobally
     } = values.libraryCode || {};
 
     const libraryCodeSettings = {
@@ -312,6 +324,8 @@ export const formConfig = {
       if (Object.keys(accounts).length) {
         libraryCodeSettings.accounts = accounts;
       }
+
+      libraryCodeSettings.scopeTrackerGlobally = scopeTrackerGlobally;
     }
 
     if (type !== LIB_TYPES.MANAGED) {

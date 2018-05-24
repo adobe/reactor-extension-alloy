@@ -36,6 +36,9 @@
                 },
                 "accounts": {
                   "$ref": "#/definitions/accounts"
+                },
+                "scopeTrackerGlobally": {
+                  "type": "boolean"
                 }
               },
               "additionalProperties": false,
