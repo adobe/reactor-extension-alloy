@@ -22,7 +22,7 @@ var getTracker = require('../sharedModules/getTracker');
 var applyTrackerVariables = require('../helpers/applyTrackerVariables');
 
 module.exports = function(settings, event) {
-  getTracker().then(function(tracker) {
+  return getTracker().then(function(tracker) {
     turbine.logger.info('Set variables on the tracker.');
     applyTrackerVariables(tracker, settings.trackerProperties);
     if (settings.customSetup && settings.customSetup.source) {

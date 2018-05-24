@@ -56,7 +56,7 @@ var sendBeacon = function(tracker, settings, targetElement) {
 };
 
 module.exports = function(settings, event) {
-  getTracker().then(function(tracker) {
+  return getTracker().then(function(tracker) {
     sendBeacon(tracker, settings, event.element);
   }, function(errorMessage) {
     turbine.logger.error(

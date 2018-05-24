@@ -42,12 +42,10 @@ describe('set variables', function() {
       a: 'b'
     };
 
-    var promise = Promise.resolve(tracker);
-
     var setVariables = setVariablesInjector({
       '../helpers/applyTrackerVariables': applyTrackerVariablesSpy,
       '../sharedModules/getTracker': function() {
-        return promise;
+        return Promise.resolve(tracker);
       }
     });
 
@@ -55,9 +53,7 @@ describe('set variables', function() {
       trackerProperties: trackerProperties
     }, {
       element: {}
-    });
-
-    promise.then(function() {
+    }).then(function() {
       expect(applyTrackerVariablesSpy).toHaveBeenCalledWith(tracker, trackerProperties);
       done();
     });
@@ -91,25 +87,20 @@ describe('set variables', function() {
       }
     }, {
       element: {}
-    });
-
-    promise.then(function() {
+    }).then(function() {
       expect(tracker.a).toBe('custom');
       done();
     });
   });
 
   it('logs an error when getTracker throws an error', function(done) {
-    var promise = Promise.reject('some error');
     var setVariables = setVariablesInjector({
       '../sharedModules/getTracker': function() {
-        return promise;
+        return Promise.reject('some error');
       }
     });
 
-    setVariables({}, {});
-
-    promise.then(null, function() {
+    setVariables({}, {}).then(function() {
       expect(mockTurbine.logger.error).toHaveBeenCalled();
       done();
     });

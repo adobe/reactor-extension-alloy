@@ -21,7 +21,7 @@
 var getTracker = require('../sharedModules/getTracker');
 
 module.exports = function() {
-  getTracker().then(function(tracker) {
+  return getTracker().then(function(tracker) {
     if (tracker.clearVars) {
       turbine.logger.info('Clear variables.');
       tracker.clearVars();

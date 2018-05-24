@@ -40,11 +40,9 @@ describe('send beacon', function() {
       t: jasmine.createSpy('t')
     };
 
-    var promise = Promise.resolve(tracker);
-
     var sendBeacon = sendBeaconInjector({
       '../sharedModules/getTracker': function() {
-        return promise;
+        return Promise.resolve(tracker);
       }
     });
 
@@ -52,25 +50,20 @@ describe('send beacon', function() {
       type: 'page'
     }, {
       element: {}
-    });
-
-    promise.then(function() {
+    }).then(function() {
       expect(tracker.t).toHaveBeenCalledTimes(1);
       done();
     });
   });
 
   it('logs an error when getTracker throws an error', function(done) {
-    var promise = Promise.reject('some error');
     var sendBeacon = sendBeaconInjector({
       '../sharedModules/getTracker': function() {
-        return promise;
+        return Promise.reject('some error');
       }
     });
 
-    sendBeacon({});
-
-    promise.then(null, function() {
+    sendBeacon({}).then(function() {
       expect(mockTurbine.logger.error).toHaveBeenCalled();
       done();
     });
@@ -81,11 +74,9 @@ describe('send beacon', function() {
       tl: jasmine.createSpy('tl')
     };
 
-    var promise = Promise.resolve(tracker);
-
     var sendBeacon = sendBeaconInjector({
       '../sharedModules/getTracker': function() {
-        return promise;
+        return Promise.resolve(tracker);
       }
     });
 
@@ -93,9 +84,7 @@ describe('send beacon', function() {
       type: 'link'
     }, {
       element: {}
-    });
-
-    promise.then(function() {
+    }).then(function() {
       expect(tracker.tl.calls.count()).toBe(1);
       expect(tracker.tl).toHaveBeenCalledWith('true', 'o', 'link clicked');
       done();
@@ -107,11 +96,9 @@ describe('send beacon', function() {
       tl: jasmine.createSpy('tl')
     };
 
-    var promise = Promise.resolve(tracker);
-
     var sendBeacon = sendBeaconInjector({
       '../sharedModules/getTracker': function() {
-        return promise;
+        return Promise.resolve(tracker);
       }
     });
 
@@ -121,9 +108,7 @@ describe('send beacon', function() {
       linkType: 'c'
     }, {
       element: {}
-    });
-
-    promise.then(function() {
+    }).then(function() {
       expect(tracker.tl.calls.count()).toBe(1);
       expect(tracker.tl).toHaveBeenCalledWith('true', 'c', 'some name');
       done();
@@ -138,11 +123,9 @@ describe('send beacon', function() {
       tl: jasmine.createSpy('tl')
     };
 
-    var promise = Promise.resolve(tracker);
-
     var sendBeacon = sendBeaconInjector({
       '../sharedModules/getTracker': function() {
-        return promise;
+        return Promise.resolve(tracker);
       }
     });
 
@@ -150,9 +133,7 @@ describe('send beacon', function() {
       type: 'link',
     }, {
       element: ruleElement
-    });
-
-    promise.then(function() {
+    }).then(function() {
       expect(tracker.tl.calls.count()).toBe(1);
       expect(tracker.tl).toHaveBeenCalledWith(ruleElement, 'o', 'link');
       done();

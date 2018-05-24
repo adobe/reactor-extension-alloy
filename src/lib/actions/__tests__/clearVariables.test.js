@@ -40,33 +40,26 @@ describe('clear variables', function() {
       clearVars: jasmine.createSpy('clearVars')
     };
 
-    var promise = Promise.resolve(tracker);
-
     var clearVariables = clearVariablesInjector({
       '../sharedModules/getTracker': function() {
-        return promise;
+        return Promise.resolve(tracker);
       }
     });
 
-    clearVariables();
-
-    promise.then(function() {
+    clearVariables().then(function() {
       expect(tracker.clearVars).toHaveBeenCalledTimes(1);
       done();
     });
   });
 
   it('logs an error when getTracker throws an error', function(done) {
-    var promise = Promise.reject('some error');
     var clearVariables = clearVariablesInjector({
       '../sharedModules/getTracker': function() {
-        return promise;
+        return Promise.reject('some error');
       }
     });
 
-    clearVariables();
-
-    promise.then(null, function() {
+    clearVariables().then(function() {
       expect(mockTurbine.logger.error).toHaveBeenCalled();
       done();
     });
