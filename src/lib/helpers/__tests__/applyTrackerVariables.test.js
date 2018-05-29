@@ -174,7 +174,27 @@ describe('apply tracker variables', function() {
       ]
     });
 
-    expect(tracker.events).toBe('prodView,scOpen:some');
+    expect(tracker.events).toBe('prodView,scOpen=some');
+  });
+
+  it('sets multiple events on the tracker', function() {
+    applyTrackerVariables(tracker, {
+      events: [
+        {
+          name: 'event123'
+        }
+      ]
+    });
+    applyTrackerVariables(tracker, {
+      events: [
+        {
+          name: 'event345',
+          value: '1.5'
+        }
+      ]
+    });
+
+    expect(tracker.events).toBe('event123,event345=1.5');
   });
 
   it('sets campaigns on the tracker', function() {

@@ -110,12 +110,11 @@ var transformers = {
   events: function(store, keyName, trackerProperties) {
     var events = trackerProperties[keyName].map(function(data) {
       if (data.value) {
-        return [data.name, data.value].join(':');
+        return [data.name, data.value].join('=');
       } else {
         return data.name;
       }
     });
-
     store[keyName] = events.join(',');
   }
 };
@@ -133,6 +132,13 @@ module.exports = function(tracker, trackerProperties) {
       newProperties[propertyName] = value;
     }
   });
+
+  // New events are added to existing tracker events
+  if (newProperties.events) {
+    if (tracker.events && tracker.events.length > 0) {
+      newProperties.events = tracker.events + ',' + newProperties.events;
+    }
+  }
 
   var hasEvents =
     trackerProperties && trackerProperties.events && trackerProperties.events.length > 0;
