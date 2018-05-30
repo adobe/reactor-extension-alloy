@@ -1,8 +1,8 @@
 {
   "name": "adobe-analytics",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "displayName": "Adobe Analytics",
-  "description": "Adobe Analytics is an industry-leading solution that empowers you to understand your customers as people and steer your business with customer intelligence. This extension deploys with AppMeasurement version 2.8.0.",
+  "description": "Adobe Analytics is an industry-leading solution that empowers you to understand your customers as people and steer your business with customer intelligence. This extension deploys with AppMeasurement version 2.9.0.",
   "iconPath": "resources/icons/mc_analytics.svg",
   "author": {
     "name": "Adobe Systems",
