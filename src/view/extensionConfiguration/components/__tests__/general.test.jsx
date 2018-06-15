@@ -17,8 +17,10 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
+import { Field } from 'redux-form';
 import Checkbox from '@coralui/react-coral/lib/Checkbox';
 import Textfield from '@coralui/react-coral/lib/Textfield';
+import ErrorTip from '@reactor/react-components/lib/errorTip';
 
 import General, { formConfig } from '../general';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
@@ -35,10 +37,20 @@ const getReactComponents = (wrapper) => {
       n => n.prop('name') === 'trackerProperties.trackingServerSecure'
     ).node;
 
+
+  const trackingCookieNameField =
+    wrapper.find(Field).filterWhere(
+      n => n.prop('name') === 'trackingCookieName'
+    );
+  const trackingCookieNameTextfield = trackingCookieNameField.find(Textfield).node;
+  const trackingCookieNameErrorTip = trackingCookieNameField.find(ErrorTip).node;
+
   return {
     euComplianceEnabledCheckbox,
     trackingServerTextfield,
-    trackingServerSecureTextfield
+    trackingServerSecureTextfield,
+    trackingCookieNameTextfield,
+    trackingCookieNameErrorTip
   };
 };
 
@@ -54,7 +66,7 @@ describe('general', () => {
   it('sets form values from settings', () => {
     extensionBridge.init({
       settings: {
-        euComplianceEnabled: true,
+        trackingCookieName: 'somecookie',
         trackerProperties: {
           trackingServer: 'someserver',
           trackingServerSecure: 'somesecureserver'
@@ -63,12 +75,12 @@ describe('general', () => {
     });
 
     const {
-      euComplianceEnabledCheckbox,
+      trackingCookieNameTextfield,
       trackingServerTextfield,
       trackingServerSecureTextfield
     } = getReactComponents(instance);
 
-    expect(euComplianceEnabledCheckbox.props.value).toBe(true);
+    expect(trackingCookieNameTextfield.props.value).toBe('somecookie');
     expect(trackingServerTextfield.props.value).toBe('someserver');
     expect(trackingServerSecureTextfield.props.value).toBe('somesecureserver');
   });
@@ -83,10 +95,15 @@ describe('general', () => {
     } = getReactComponents(instance);
 
     euComplianceEnabledCheckbox.props.onChange(true);
+    const {
+      trackingCookieNameTextfield
+    } = getReactComponents(instance);
+
+    trackingCookieNameTextfield.props.onChange('somecookie');
     trackingServerTextfield.props.onChange('someserver');
     trackingServerSecureTextfield.props.onChange('somesecureserver');
 
-    const { euComplianceEnabled } = extensionBridge.getSettings();
+    const { trackingCookieName } = extensionBridge.getSettings();
     const {
       trackerProperties: {
         trackingServer,
@@ -94,8 +111,34 @@ describe('general', () => {
       }
     } = extensionBridge.getSettings();
 
-    expect(euComplianceEnabled).toBe(true);
+    expect(trackingCookieName).toBe('somecookie');
     expect(trackingServer).toBe('someserver');
     expect(trackingServerSecure).toBe('somesecureserver');
+  });
+
+  it('sets the default value of tracking cookie name to sat_track', () => {
+    extensionBridge.init();
+
+    const { euComplianceEnabledCheckbox } = getReactComponents(instance);
+    euComplianceEnabledCheckbox.props.onChange(true);
+
+    const { trackingCookieNameTextfield } = getReactComponents(instance);
+    expect(trackingCookieNameTextfield.props.value).toBe('sat_track');
+  });
+
+  it('sets error if the tracking cookie name url is not provided', () => {
+    extensionBridge.init();
+
+    const { euComplianceEnabledCheckbox } = getReactComponents(instance);
+    euComplianceEnabledCheckbox.props.onChange(true);
+
+    const { trackingCookieNameTextfield } = getReactComponents(instance);
+    trackingCookieNameTextfield.props.onChange('');
+
+    expect(extensionBridge.validate()).toBe(false);
+
+    const { trackingCookieNameErrorTip } = getReactComponents(instance);
+
+    expect(trackingCookieNameErrorTip).toBeDefined();
   });
 });

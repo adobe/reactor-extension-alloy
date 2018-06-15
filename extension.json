@@ -20,8 +20,9 @@
       "$schema": "http://json-schema.org/draft-04/schema#",
       "type": "object",
       "properties": {
-        "euComplianceEnabled": {
-          "type": "boolean"
+        "trackingCookieName": {
+          "type": "string",
+          "minLength": 1
         },
         "libraryCode": {
           "type": "object",

@@ -24,7 +24,7 @@ var getTrackerInjector = require('inject!../getTracker');
 var getTrackerModule = function(mocks) {
   mocks = mocks || {};
   mocks['@adobe/reactor-load-script'] = mocks['@adobe/reactor-load-script'] ||
-    function(url) { 
+    function(url) {
       return Promise.resolve();
     };
   return getTrackerInjector(mocks);
@@ -77,7 +77,7 @@ describe('get tracker', function() {
     var getTracker = getTrackerModule({
       '../helpers/loadLibrary': loadLibrarySpy
     });
-    
+
     console.log('[returns a promise] Calling getTracker');
 
     var getTrackerPromise = getTracker();
@@ -119,7 +119,7 @@ describe('get tracker', function() {
 
       mockTurbine.getExtensionSettings = function() {
         return {
-          euComplianceEnabled: true
+          trackingCookieName: 'x'
         };
       };
 
@@ -139,12 +139,8 @@ describe('get tracker', function() {
 
       mockTurbine.getExtensionSettings = function() {
         return {
-          euComplianceEnabled: true
+          trackingCookieName: 'x'
         };
-      };
-
-      mockTurbine.propertySettings = {
-        trackingCookieName: 'sat_track'
       };
 
       var getTracker = getTrackerModule({
@@ -154,7 +150,7 @@ describe('get tracker', function() {
 
       getTracker().then(function() {
         expect(loadLibrarySpy).toHaveBeenCalledWith({
-          euComplianceEnabled: true
+          trackingCookieName: 'x'
         });
         done();
       });
