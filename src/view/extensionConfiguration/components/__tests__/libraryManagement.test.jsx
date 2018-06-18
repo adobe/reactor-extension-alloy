@@ -436,16 +436,19 @@ describe('libary management', () => {
     });
 
     window.extensionBridge = {
-      openCodeEditor: jasmine.createSpy().and.callFake((callback) => {
-        callback('bar');
+      openCodeEditor: jasmine.createSpy().and.callFake(() => {
+        return {
+          then(resolve) {
+            resolve('bar');
+          }
+        };
       })
     };
 
     const { openEditorButton } = getReactComponents(instance);
     openEditorButton.props.onClick();
 
-    expect(window.extensionBridge.openCodeEditor)
-      .toHaveBeenCalledWith(jasmine.any(Function), { code: 'foo' });
+    expect(window.extensionBridge.openCodeEditor).toHaveBeenCalledWith({ code: 'foo' });
     expect(extensionBridge.validate()).toBe(true);
 
     const settings = extensionBridge.getSettings();

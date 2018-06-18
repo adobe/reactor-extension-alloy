@@ -32,9 +32,9 @@
     "ci-job": "npm test -- --ci && npm run lint && npm run package"
   },
   "devDependencies": {
-    "@adobe/reactor-packager": "^2.3.3",
-    "@adobe/reactor-sandbox": "^8.1.0",
-    "@adobe/reactor-turbine": "^23.1.0",
+    "@adobe/reactor-packager": "^2.6.2",
+    "@adobe/reactor-sandbox": "^8.4.0",
+    "@adobe/reactor-turbine": "^25.1.0",
     "@reactor/extension-mcid": "git+https://fcf1e02afcceac6505ac6b6a43c26061c0b9bcaa:x-oauth-basic@git.corp.adobe.com/reactor/extension-mcid.git",
     "@reactor/extension-support-testrunner": "^11.0.0",
     "babel-core": "^6.18.2",
@@ -52,7 +52,7 @@
   "dependencies": {
     "@coralui/react-coral": "<1.0.0",
     "@coralui/redux-form-react-coral": "<1.0.0",
-    "@reactor/react-components": "^3.1.1",
+    "@reactor/react-components": "^3.5.1",
     "css-loader": "^0.25.0",
     "deep-extend": "^0.4.1",
     "deep-get-set": "^1.0.0",

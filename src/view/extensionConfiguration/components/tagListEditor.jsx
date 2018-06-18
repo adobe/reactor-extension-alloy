@@ -86,7 +86,7 @@ export default class TagListEditor extends React.Component {
   };
 
   openSelector = () => {
-    window.extensionBridge.openDataElementSelector(this.openSelectorCallback);
+    window.extensionBridge.openDataElementSelector().then(this.openSelectorCallback);
   };
 
   valueAlreadyExists = (values, newValue) => values.some(value => value === newValue);
