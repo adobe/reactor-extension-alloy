@@ -40,13 +40,12 @@ const General = props => (
 
     {props.euComplianceEnabled ? (
       <div className="ColumnGrid">
-        <label className="ColumnGrid-cell u-gapLeft2x">
+        <label className="ColumnGrid-cell FieldSubset">
           <span className="Label">Tracking Cookie Name</span>
           <Field
             name="trackingCookieName"
             component={ DecoratedInput }
             inputComponent={ Textfield }
-            inputClassName="u-gapBottom2x"
             className="u-block"
             supportDataElement
           />
