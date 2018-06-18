@@ -105,7 +105,7 @@ const renderEvents = ({ fields }) => {
   return (
     <section>
       { rows }
-      <Button onClick={ () => fields.push(createEmptyRow()) }>Add event</Button>
+      <Button onClick={ () => fields.push(createEmptyRow()) }>Add Another</Button>
     </section>
   );
 };
