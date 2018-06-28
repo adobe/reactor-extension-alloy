@@ -1,42 +1,58 @@
 /*************************************************************************
-* ADOBE CONFIDENTIAL
-* ___________________
-*
-*  Copyright 2016 Adobe Systems Incorporated
-*  All Rights Reserved.
-*
-* NOTICE:  All information contained herein is, and remains
-* the property of Adobe Systems Incorporated and its suppliers,
-* if any.  The intellectual and technical concepts contained
-* herein are proprietary to Adobe Systems Incorporated and its
-* suppliers and are protected by all applicable intellectual property
-* laws, including trade secret and copyright laws.
-* Dissemination of this information or reproduction of this material
-* is strictly forbidden unless prior written permission is obtained
-* from Adobe Systems Incorporated.
-**************************************************************************/
+ * ADOBE CONFIDENTIAL
+ * ___________________
+ *
+ *  Copyright 2016 Adobe Systems Incorporated
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Adobe Systems Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Adobe Systems Incorporated and its
+ * suppliers and are protected by all applicable intellectual property
+ * laws, including trade secret and copyright laws.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Adobe Systems Incorporated.
+ **************************************************************************/
 
 import React from 'react';
+import { connect } from 'react-redux';
 import Checkbox from '@coralui/redux-form-react-coral/lib/Checkbox';
 import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
 import Heading from '@coralui/react-coral/lib/Heading';
-import { Field } from 'redux-form';
+import { Field, formValueSelector } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
 
 import { mergeConfigs } from '../../utils/formConfigUtils';
 import CharSet, { formConfig as charSetFormConfig } from './charSet';
-import CurrencyCode, { formConfig as currencyCodeFormConfig } from './currencyCode';
+import CurrencyCode, {
+  formConfig as currencyCodeFormConfig
+} from './currencyCode';
 import ENVIRONMENTS from '../../enums/environments';
 import COMPONENT_NAMES from '../../enums/componentNames';
 
-export default () => (
+const General = props => (
   <div>
-    <Field
-      name="euComplianceEnabled"
-      component={ Checkbox }
-    >
+    <Field name="euComplianceEnabled" component={ Checkbox }>
       Enable EU compliance for Adobe Analytics
     </Field>
+
+    {props.euComplianceEnabled ? (
+      <div className="ColumnGrid">
+        <label className="ColumnGrid-cell FieldSubset">
+          <span className="Label">Tracking Cookie Name</span>
+          <Field
+            name="trackingCookieName"
+            component={ DecoratedInput }
+            inputComponent={ Textfield }
+            className="u-block"
+            supportDataElement
+          />
+        </label>
+      </div>
+    ) : null}
+
     <div className="ColumnGrid">
       <div className="ColumnGrid-cell">
         <Heading size="4">Character Set</Heading>
@@ -74,22 +90,33 @@ export default () => (
   </div>
 );
 
+export default connect(state => ({
+  euComplianceEnabled: formValueSelector('default')(
+    state,
+    'euComplianceEnabled'
+  )
+}))(General);
+
 export const formConfig = mergeConfigs(
   charSetFormConfig,
   currencyCodeFormConfig,
   {
     settingsToFormValues(values, settings) {
-      const {
-        euComplianceEnabled
-      } = settings;
+      let { trackingCookieName } = settings;
 
-      const {
-        trackingServer,
-        trackingServerSecure
-      } = settings.trackerProperties || {};
+      const { trackingServer, trackingServerSecure } =
+        settings.trackerProperties || {};
+
+      let euComplianceEnabled = false;
+      if (trackingCookieName) {
+        euComplianceEnabled = true;
+      } else {
+        trackingCookieName = 'sat_track';
+      }
 
       return {
         ...values,
+        trackingCookieName,
         euComplianceEnabled,
         trackerProperties: {
           ...values.trackerProperties,
@@ -101,10 +128,8 @@ export const formConfig = mergeConfigs(
     formValuesToSettings(settings, values) {
       const {
         euComplianceEnabled,
-        trackerProperties: {
-          trackingServer,
-          trackingServerSecure
-        }
+        trackingCookieName,
+        trackerProperties: { trackingServer, trackingServerSecure }
       } = values;
 
       const trackerProperties = {
@@ -119,11 +144,17 @@ export const formConfig = mergeConfigs(
         trackerProperties.trackingServerSecure = trackingServerSecure;
       }
 
-      return {
+      const newSettings = {
         ...settings,
-        euComplianceEnabled,
+        trackingCookieName,
         trackerProperties
       };
+
+      if (!euComplianceEnabled) {
+        delete newSettings.trackingCookieName;
+      }
+
+      return newSettings;
     },
     validate(errors, values = { libraryCode: {} }) {
       const trackerPropertiesErrors = {
@@ -132,8 +163,9 @@ export const formConfig = mergeConfigs(
 
       let trackingServersRequired = false;
 
-      const componentsWithErrors = errors.componentsWithErrors ?
-        errors.componentsWithErrors.slice() : [];
+      const componentsWithErrors = errors.componentsWithErrors
+        ? errors.componentsWithErrors.slice()
+        : [];
 
       if (values.libraryCode && values.libraryCode.accounts) {
         const accounts = values.libraryCode.accounts;
@@ -150,12 +182,19 @@ export const formConfig = mergeConfigs(
         } = values.trackerProperties;
 
         if (!trackingServer) {
-          trackerPropertiesErrors.trackingServer = 'Please provide a tracking server';
+          trackerPropertiesErrors.trackingServer =
+            'Please provide a tracking server';
         }
 
         if (!trackingServerSecure) {
-          trackerPropertiesErrors.trackingServerSecure = 'Please provide an SSL tracking server';
+          trackerPropertiesErrors.trackingServerSecure =
+            'Please provide an SSL tracking server';
         }
+      }
+
+      let trackingCookieNameError;
+      if (values.euComplianceEnabled && !values.trackingCookieName) {
+        trackingCookieNameError = 'Please provide a tracking cookie name';
       }
 
       if (Object.keys(trackerPropertiesErrors).length) {
@@ -165,7 +204,9 @@ export const formConfig = mergeConfigs(
       return {
         ...errors,
         componentsWithErrors,
+        trackingCookieName: trackingCookieNameError,
         trackerProperties: trackerPropertiesErrors
       };
     }
-  });
+  }
+);

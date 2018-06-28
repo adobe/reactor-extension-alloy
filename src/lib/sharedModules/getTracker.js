@@ -33,13 +33,12 @@ var BEFORE_SETTINGS_LOAD_PHASE = 'beforeSettings';
 
 var mcidInstance = turbine.getSharedModule('adobe-mcid', 'mcid-instance');
 
-var checkEuCompliance = function(euComplianceRequired) {
-  if (!euComplianceRequired) {
+var checkEuCompliance = function(trackingCoookieName) {
+  if (!trackingCoookieName) {
     return true;
   }
 
-  var cookieName = turbine.propertySettings.trackingCookieName;
-  var euCookieValue = cookie.get(cookieName);
+  var euCookieValue = cookie.get(trackingCoookieName);
   return euCookieValue === 'true';
 };
 
@@ -121,7 +120,7 @@ var loadTrackerModules = function(moduleProperties, tracker) {
 };
 
 var initialize = function(settings) {
-  if (checkEuCompliance(settings.euComplianceEnabled || false)) {
+  if (checkEuCompliance(settings.trackingCookieName)) {
     return loadLibrary(settings)
       .then(augmentTracker)
       .then(linkVisitorId)
