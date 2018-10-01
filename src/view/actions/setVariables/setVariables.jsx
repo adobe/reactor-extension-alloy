@@ -17,8 +17,8 @@
 **************************************************************************/
 
 import React from 'react';
-import Heading from '@coralui/react-coral/lib/Heading';
-import Alert from '@coralui/react-coral/lib/Alert';
+import Heading from '@react/react-spectrum/Heading';
+import Alert from '@react/react-spectrum/Alert';
 import { mergeConfigs } from '../../utils/formConfigUtils';
 import Variables, { formConfig as variablesFormConfig } from '../../components/variables';
 import CustomSetup, { formConfig as customSetupConfig } from './components/customSetup';

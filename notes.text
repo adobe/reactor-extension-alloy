@@ -1,0 +1,21 @@
+Launch Questions/Notes
+
+Adobe analytics extension for Turbine (Launch rule engine which processes rules on client websites and delegates logic to extensions.)
+    -underlying rules engine
+
+basically just a big rules engine
+
+set of actions based on rules:
+    -set props
+    -reset props
+    -fire tracker
+
+config: everything you can set in AppMeasurement
+report suite that is set for staging, once deployed the launch library is loaded
+get tracker calls and load from library - results from json
+
+sandbox: has rules defined
+extension.json
+package.json
+
+Look at list of future enhancements

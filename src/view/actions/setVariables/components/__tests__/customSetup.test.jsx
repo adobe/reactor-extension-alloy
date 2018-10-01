@@ -17,7 +17,7 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Button from '@coralui/react-coral/lib/Button';
+import Button from '@react/react-spectrum/Button';
 
 import CustomSetup, { formConfig } from '../customSetup';
 import createExtensionBridge from '../../../../__tests__/helpers/createExtensionBridge';

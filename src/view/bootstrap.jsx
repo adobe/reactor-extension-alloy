@@ -15,7 +15,7 @@
 * is strictly forbidden unless prior written permission is obtained
 * from Adobe Systems Incorporated.
 **************************************************************************/
-
+import '@babel/polyfill';
 import React from 'react';
 import { Provider, connect } from 'react-redux';
 import { createStore, compose } from 'redux';

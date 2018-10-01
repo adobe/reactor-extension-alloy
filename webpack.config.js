@@ -58,6 +58,15 @@ if (argv.analyze) {
   plugins.push(new BundleAnalyzerPlugin());
 }
 
+plugins.push(new webpack.DefinePlugin({
+  'process.env.SCALE_MEDIUM': 'true',
+  'process.env.SCALE_LARGE': 'false',
+  'process.env.THEME_LIGHT': 'false',
+  'process.env.THEME_LIGHTEST': 'true',
+  'process.env.THEME_DARK': 'false',
+  'process.env.THEME_DARKEST': 'false'
+}));
+
 module.exports = {
   entry: entries,
   plugins: plugins,
@@ -80,6 +89,14 @@ module.exports = {
         test: /\.styl/,
         include: /src\/view/,
         loader: 'style-loader!css-loader!stylus-loader'
+      },
+      {
+        test: /\.css/,
+        loaders: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.json$/,
+        loader: 'json-loader'
       }
     ]
   },

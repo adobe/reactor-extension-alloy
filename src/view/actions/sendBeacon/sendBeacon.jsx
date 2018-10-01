@@ -17,14 +17,13 @@
 **************************************************************************/
 
 import React from 'react';
-import Radio from '@coralui/redux-form-react-coral/lib/Radio';
-import Select from '@coralui/redux-form-react-coral/lib/Select';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import Heading from '@coralui/react-coral/lib/Heading';
+import Radio from '@react/react-spectrum/Radio';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
+import Heading from '@react/react-spectrum/Heading';
 import { connect } from 'react-redux';
 import { Field, formValueSelector } from 'redux-form';
 import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
-
 import './sendBeacon.styl';
 
 const TYPES = {

@@ -18,9 +18,9 @@
 
 import { mount } from 'enzyme';
 import { DataElementSelectorButton } from '@reactor/react-components';
-import Radio from '@coralui/react-coral/lib/Radio';
-import Select from '@coralui/react-coral/lib/Select';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Radio from '@react/react-spectrum/Radio';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
 
 import SendBeacon, { formConfig } from '../sendBeacon';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
