@@ -121,6 +121,7 @@ var transformers = {
 
 module.exports = function(tracker, trackerProperties) {
   var newProperties = {};
+  trackerProperties = trackerProperties || {};
 
   Object.keys(trackerProperties).forEach(function(propertyName) {
     var transform = transformers[propertyName];

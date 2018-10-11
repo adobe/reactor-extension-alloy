@@ -43,6 +43,13 @@ describe('apply tracker variables', function() {
     tracker = {};
   });
 
+  it('works if no tracker variables are sent to it', function() {
+    applyTrackerVariables(tracker, null);
+
+    expect(tracker).toBeDefined();
+  });
+
+
   it('sets link download file types on the tracker', function() {
     applyTrackerVariables(tracker, {
       linkDownloadFileTypes: ['avi', 'exe']
