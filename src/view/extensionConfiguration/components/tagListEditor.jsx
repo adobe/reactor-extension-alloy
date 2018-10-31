@@ -33,6 +33,8 @@ export default class TagListEditor extends React.Component {
     };
   }
 
+  /* eslint-disable no-undef */
+
   onRemove = (removedValue) => {
     const {
       input: {
@@ -90,6 +92,8 @@ export default class TagListEditor extends React.Component {
   };
 
   valueAlreadyExists = (values, newValue) => values.some(value => value === newValue);
+
+  /* eslint-enable no-undef */
 
   render() {
     const {

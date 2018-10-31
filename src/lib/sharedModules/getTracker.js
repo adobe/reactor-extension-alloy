@@ -100,16 +100,21 @@ var updateTrackerVariables = function(trackerProperties, customSetup, tracker) {
   return tracker;
 };
 
-var loadTrackerModules = function(moduleProperties, tracker) {
+var loadTrackerModules = function(properties, tracker) {
+  var moduleProperties = properties.moduleProperties;
   if (moduleProperties &&
       moduleProperties.audienceManager &&
       moduleProperties.audienceManager.config) {
+    var visitorServiceConfig = {
+      namespace: properties.orgId
+    };
+    moduleProperties.audienceManager.config.visitorService = visitorServiceConfig;
     var libFileName = 'AppMeasurement_Module_AudienceManagement.js';
     var libFileUrl = turbine.getHostedLibFileUrl(libFileName);
     return loadScript(libFileUrl)
     .then( function() {
       tracker.loadModule('AudienceManagement');
-      //turbine.logger.info('Initializing AudienceManagement module:');
+      turbine.logger.info('Initializing AudienceManagement module');
       //turbine.logger.info(JSON.stringify(moduleProperties.audienceManager.config, null, 3));
       tracker.AudienceManagement.setup(moduleProperties.audienceManager.config);
       return tracker;
@@ -130,7 +135,7 @@ var initialize = function(settings) {
         settings.trackerProperties,
         settings.customSetup || {}
       ))
-      .then(loadTrackerModules.bind(null, settings.moduleProperties));
+      .then(loadTrackerModules.bind(null, settings));
   } else {
     return Promise.reject('EU compliance was not acknowledged by the user.');
   }

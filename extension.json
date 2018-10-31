@@ -1,10 +1,10 @@
 {
   "name": "adobe-analytics",
-  "version": "1.4.1",
-  "displayName": "Adobe Analytics",
-  "description": "Adobe Analytics is an industry-leading solution that empowers you to understand your customers as people and steer your business with customer intelligence. This extension deploys with AppMeasurement version 2.9.0.",
-  "iconPath": "resources/icons/mc_analytics.svg",
   "platform": "web",
+  "version": "1.5.0",
+  "displayName": "Adobe Analytics",
+  "description": "Adobe Analytics is an industry-leading solution that empowers you to understand your customers as people and steer your business with customer intelligence. This extension deploys with AppMeasurement version 2.10.0.",
+  "iconPath": "resources/icons/mc_analytics.svg",
   "author": {
     "name": "Adobe Systems",
     "url": "http://adobe.com",
@@ -21,6 +21,10 @@
       "$schema": "http://json-schema.org/draft-04/schema#",
       "type": "object",
       "properties": {
+        "orgId": {
+          "type": "string",
+          "minLength": 1
+        },
         "trackingCookieName": {
           "type": "string",
           "minLength": 1
@@ -426,6 +430,14 @@
                       "type": "string",
                       "minLength": 1
                     },
+                    "visitorService": {
+                      "type": "object",
+                      "properties": {
+                        "namespace": {
+                          "type": "string"
+                        }
+                      }
+                    },
                     "containerNSID": {
                       "type": "number"
                     },
@@ -775,6 +787,10 @@
                       "minLength": 1
                     },
                     "value": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "id": {
                       "type": "string",
                       "minLength": 1
                     }

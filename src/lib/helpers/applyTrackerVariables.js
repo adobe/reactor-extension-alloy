@@ -109,11 +109,14 @@ var transformers = {
   },
   events: function(store, keyName, trackerProperties) {
     var events = trackerProperties[keyName].map(function(data) {
+      var entry = data.name;
       if (data.value) {
-        return [data.name, data.value].join('=');
-      } else {
-        return data.name;
+        entry = [entry, data.value].join('=');
       }
+      if (data.id) {
+        entry = [entry, data.id].join(':');
+      }
+      return entry;
     });
     store[keyName] = events.join(',');
   }

@@ -177,11 +177,20 @@ describe('apply tracker variables', function() {
         {
           name: 'scOpen',
           value: 'some'
+        },
+        {
+          name: 'event123',
+          value: 'some',
+          id: 'ABC'
+        },
+        {
+          name: 'event321',
+          id: 'CBA'
         }
       ]
     });
 
-    expect(tracker.events).toBe('prodView,scOpen=some');
+    expect(tracker.events).toBe('prodView,scOpen=some,event123=some:ABC,event321:CBA');
   });
 
   it('sets multiple events on the tracker', function() {
@@ -196,12 +205,13 @@ describe('apply tracker variables', function() {
       events: [
         {
           name: 'event345',
-          value: '1.5'
+          value: '1.5',
+          id: 'ABC'
         }
       ]
     });
 
-    expect(tracker.events).toBe('event123,event345=1.5');
+    expect(tracker.events).toBe('event123,event345=1.5:ABC');
   });
 
   it('sets campaigns on the tracker', function() {

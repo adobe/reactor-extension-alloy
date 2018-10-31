@@ -65,6 +65,9 @@ describe('general', () => {
 
   it('sets form values from settings', () => {
     extensionBridge.init({
+      company: {
+        orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+      },
       settings: {
         trackingCookieName: 'somecookie',
         trackerProperties: {
@@ -86,7 +89,11 @@ describe('general', () => {
   });
 
   it('sets settings from form values', () => {
-    extensionBridge.init();
+    extensionBridge.init({
+      company: {
+        orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+      }
+    });
 
     const {
       euComplianceEnabledCheckbox,
@@ -117,7 +124,11 @@ describe('general', () => {
   });
 
   it('sets the default value of tracking cookie name to sat_track', () => {
-    extensionBridge.init();
+    extensionBridge.init({
+      company: {
+        orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+      }
+    });
 
     const { euComplianceEnabledCheckbox } = getReactComponents(instance);
     euComplianceEnabledCheckbox.props.onChange(true);
@@ -127,7 +138,11 @@ describe('general', () => {
   });
 
   it('sets error if the tracking cookie name url is not provided', () => {
-    extensionBridge.init();
+    extensionBridge.init({
+      company: {
+        orgId: 'ABCDEFGHIJKLMNOPQRSTUVWX@AdobeOrg'
+      }
+    });
 
     const { euComplianceEnabledCheckbox } = getReactComponents(instance);
     euComplianceEnabledCheckbox.props.onChange(true);

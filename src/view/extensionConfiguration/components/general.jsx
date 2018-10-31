@@ -101,7 +101,7 @@ export const formConfig = mergeConfigs(
   charSetFormConfig,
   currencyCodeFormConfig,
   {
-    settingsToFormValues(values, settings) {
+    settingsToFormValues(values, settings, meta) {
       let { trackingCookieName } = settings;
 
       const { trackingServer, trackingServerSecure } =
@@ -122,14 +122,16 @@ export const formConfig = mergeConfigs(
           ...values.trackerProperties,
           trackingServer,
           trackingServerSecure
-        }
+        },
+        orgId: meta.company.orgId
       };
     },
     formValuesToSettings(settings, values) {
       const {
         euComplianceEnabled,
         trackingCookieName,
-        trackerProperties: { trackingServer, trackingServerSecure }
+        trackerProperties: { trackingServer, trackingServerSecure },
+        orgId
       } = values;
 
       const trackerProperties = {
@@ -147,7 +149,8 @@ export const formConfig = mergeConfigs(
       const newSettings = {
         ...settings,
         trackingCookieName,
-        trackerProperties
+        trackerProperties,
+        orgId
       };
 
       if (!euComplianceEnabled) {

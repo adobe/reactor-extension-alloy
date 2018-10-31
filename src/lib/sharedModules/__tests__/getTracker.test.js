@@ -78,8 +78,6 @@ describe('get tracker', function() {
       '../helpers/loadLibrary': loadLibrarySpy
     });
 
-    console.log('[returns a promise] Calling getTracker');
-
     var getTrackerPromise = getTracker();
     expect(getTrackerPromise.then).toEqual(jasmine.any(Function));
     expect(getTrackerPromise.catch).toEqual(jasmine.any(Function));
