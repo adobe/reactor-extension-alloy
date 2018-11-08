@@ -2,25 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6113ea61-9241-4e9d-b065-f33c82b6ebaa" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.sandbox/container.js" beforeDir="false" afterPath="$PROJECT_DIR$/.sandbox/container.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/extension.json" beforeDir="false" afterPath="$PROJECT_DIR$/extension.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hosted/AppMeasurement.js" beforeDir="false" afterPath="$PROJECT_DIR$/hosted/AppMeasurement.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hosted/AppMeasurement_Module_AudienceManagement.js" beforeDir="false" afterPath="$PROJECT_DIR$/hosted/AppMeasurement_Module_AudienceManagement.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/helpers/__tests__/applyTrackerVariables.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/helpers/__tests__/applyTrackerVariables.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/helpers/applyTrackerVariables.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/helpers/applyTrackerVariables.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/sharedModules/__tests__/getTracker.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/sharedModules/__tests__/getTracker.test.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/sharedModules/getTracker.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/sharedModules/getTracker.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/components/__tests__/eventsEditor.test.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/components/__tests__/eventsEditor.test.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/components/eventsEditor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/components/eventsEditor.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/components/variables.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/components/variables.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/currencyCode.test.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/currencyCode.test.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/general.test.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/general.test.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/currencyCode.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/currencyCode.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/general.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/general.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/reportSuitesEditor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/reportSuitesEditor.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/tagListEditor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/tagListEditor.jsx" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -50,7 +32,7 @@
           <entry key="gitignore" value="1" />
           <entry key="html" value="9" />
           <entry key="js" value="42" />
-          <entry key="json" value="13" />
+          <entry key="json" value="14" />
           <entry key="jsx" value="150" />
           <entry key="npmrc" value="1" />
           <entry key="styl" value="11" />
@@ -60,7 +42,7 @@
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="HTML" value="9" />
-          <entry key="JSON" value="14" />
+          <entry key="JSON" value="15" />
           <entry key="JSX Harmony" value="150" />
           <entry key="JavaScript" value="42" />
           <entry key="PLAIN_TEXT" value="2" />
@@ -76,7 +58,7 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="HTML" value="37" />
-          <entry key="JSON" value="54" />
+          <entry key="JSON" value="56" />
           <entry key="JSX Harmony" value="3729" />
           <entry key="JavaScript" value="38" />
           <entry key="Stylus" value="4" />
@@ -87,7 +69,7 @@
         <counts>
           <entry key="html" value="37" />
           <entry key="js" value="38" />
-          <entry key="json" value="54" />
+          <entry key="json" value="56" />
           <entry key="jsx" value="3729" />
           <entry key="styl" value="4" />
         </counts>
@@ -136,21 +118,9 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/customSetup.jsx">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="287">
-              <caret line="25" column="21" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
-              <folding>
-                <element signature="e#809#835#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/tagListEditor.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="70">
+            <state relative-caret-position="103">
               <caret line="109" column="6" selection-start-line="109" selection-start-column="6" selection-end-line="109" selection-end-column="6" />
               <folding>
                 <element signature="e#809#859#0" expanded="true" />
@@ -167,6 +137,15 @@
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/package.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="732">
+              <caret line="35" selection-start-line="35" selection-end-line="35" />
             </state>
           </provider>
         </entry>
@@ -244,8 +223,8 @@
       <find>TagList</find>
       <find>errortip</find>
       <find>editorButton</find>
-      <find>editorb</find>
       <find>meta:</find>
+      <find>editorb</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/src</dir>
@@ -259,7 +238,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/src/view/actions/setVariables/setVariables.jsx" />
         <option value="$PROJECT_DIR$/src/view/global.styl" />
         <option value="$PROJECT_DIR$/extension.json" />
@@ -299,6 +277,7 @@
         <option value="$PROJECT_DIR$/src/view/extensionConfiguration/components/customSetup.jsx" />
         <option value="$PROJECT_DIR$/src/view/extensionConfiguration/components/errorTip.jsx" />
         <option value="$PROJECT_DIR$/src/view/extensionConfiguration/components/tagListEditor.jsx" />
+        <option value="$PROJECT_DIR$/package.json" />
       </list>
     </option>
   </component>
@@ -318,9 +297,7 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
-    <option name="x" value="1680" />
-    <option name="y" value="-56" />
+  <component name="ProjectFrameBounds" fullScreen="true">
     <option name="width" value="1680" />
     <option name="height" value="1050" />
   </component>
@@ -402,6 +379,7 @@
     <property name="node.js.selected.package.eslint" value="$PROJECT_DIR$/node_modules/eslint" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="MTConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -430,12 +408,12 @@
       <workItem from="1540844623962" duration="14811000" />
       <workItem from="1541099738913" duration="1593000" />
       <workItem from="1541103389347" duration="16581000" />
-      <workItem from="1541611825701" duration="7714000" />
+      <workItem from="1541611825701" duration="7958000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="72545000" />
+    <option name="totallyTimeSpent" value="72789000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -448,7 +426,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1680" y="-56" width="1680" height="1050" extended-state="6" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Favorites" order="0" sideWeight="0.50103736" side_tool="true" weight="0.24954791" />
@@ -788,13 +766,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1587">
-          <caret line="69" column="18" selection-start-line="69" selection-start-column="5" selection-end-line="69" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/linkTracking.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1035">
@@ -964,11 +935,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/tagListEditor.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="70">
+        <state relative-caret-position="103">
           <caret line="109" column="6" selection-start-line="109" selection-start-column="6" selection-end-line="109" selection-end-column="6" />
           <folding>
             <element signature="e#809#859#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="732">
+          <caret line="35" selection-start-line="35" selection-end-line="35" />
         </state>
       </provider>
     </entry>
