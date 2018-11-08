@@ -21,7 +21,7 @@ import Heading from '@react/react-spectrum/Heading';
 import Alert from '@react/react-spectrum/Alert';
 import { mergeConfigs } from '../../utils/formConfigUtils';
 import Variables, { formConfig as variablesFormConfig } from '../../components/variables';
-import CustomSetup, { formConfig as customSetupConfig } from './components/customSetup';
+import CustomSetup, { formConfig as customSetupConfig } from '../../extensionConfiguration/components/customSetup';
 
 export default () => (
   <div>

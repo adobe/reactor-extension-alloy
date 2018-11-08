@@ -21,7 +21,7 @@ import Radio from '@react/react-spectrum/Radio';
 import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import WrappedField from './wrappedField';
-import EditorButton from '../components/editorButton';
+import EditorButton from './editorButton';
 
 const LOAD_PHASES = {
   BEFORE_SETTINGS: 'beforeSettings',
