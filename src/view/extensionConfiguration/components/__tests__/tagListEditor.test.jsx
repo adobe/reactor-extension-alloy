@@ -18,8 +18,8 @@
 
 import { mount } from 'enzyme';
 import React from 'react';
-import Button from '@coralui/react-coral/lib/Button';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Button from '@react/react-spectrum/Button';
+import Textfield from '@react/react-spectrum/Textfield';
 import { DataElementSelectorButton } from '@reactor/react-components';
 
 import TagListEditor from '../tagListEditor';

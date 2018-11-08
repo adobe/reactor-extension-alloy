@@ -16,11 +16,12 @@
 * from Adobe Systems Incorporated.
 **************************************************************************/
 
-import Button from '@coralui/react-coral/lib/Button';
-import Textfield from '@coralui/react-coral/lib/Textfield';
-import Tag from '@coralui/react-coral/lib/Tag';
-import TagList from '@coralui/react-coral/lib/TagList';
-import { DataElementSelectorButton, ErrorTip, InfoTip } from '@reactor/react-components';
+import Button from '@react/react-spectrum/Button';
+import Textfield from '@react/react-spectrum/Textfield';
+import { Tag, TagList } from '@react/react-spectrum/TagList';
+import InfoTip from './infoTip';
+import ErrorTip from './errorTip';
+import WrappedField from './wrappedField';
 import React from 'react';
 
 import './tagListEditor.styl';
@@ -95,11 +96,10 @@ export default class TagListEditor extends React.Component {
     const {
       title,
       tooltip,
-      input: {
-        value
-      },
+      value,
       inputClassName,
       className,
+      //figure out what meta is, where it's coming from and if it's needed
       meta: {
         touched,
         error
@@ -119,8 +119,10 @@ export default class TagListEditor extends React.Component {
             onKeyPress={ this.handleKeyPress }
             value={ this.state.newValue }
           />
-          <DataElementSelectorButton onClick={ this.openSelector } />
+          {/*create a dataelementselectorbutton*/}
+          {/*<DataElementSelectorButton onClick={ this.openSelector } />*/}
           <Button onClick={ this.add }>Save</Button>
+          {/*create an error tip*/}
           { touched && error ? <ErrorTip>{ error }</ErrorTip> : null }
         </div>
         <div className="u-gapTop TagListEditor-tagContainer">

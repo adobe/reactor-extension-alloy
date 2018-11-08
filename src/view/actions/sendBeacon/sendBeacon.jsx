@@ -22,8 +22,8 @@ import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
 import Heading from '@react/react-spectrum/Heading';
 import { connect } from 'react-redux';
-import { Field, formValueSelector } from 'redux-form';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import { formValueSelector } from 'redux-form';
+import WrappedField from '../../extensionConfiguration/components/wrappedField';
 import './sendBeacon.styl';
 
 const TYPES = {
@@ -66,7 +66,7 @@ const SendBeacon = ({ type, linkType }) => {
     <div>
       <Heading size="4">Tracking</Heading>
       <div>
-        <Field
+        <WrappedField
           name="type"
           component={ Radio }
           type="radio"
@@ -74,10 +74,10 @@ const SendBeacon = ({ type, linkType }) => {
         >
           <span className="u-bold">s.t(): </span>
           Send data to Adobe Analytics and treat it as a page view
-        </Field>
+        </WrappedField>
       </div>
       <div>
-        <Field
+        <WrappedField
           name="type"
           component={ Radio }
           type="radio"
@@ -87,7 +87,7 @@ const SendBeacon = ({ type, linkType }) => {
           Send data to Adobe Analytics and
           <span className="u-italic"> do not </span>
           treat it as a page view
-        </Field>
+        </WrappedField>
         {
           type === TYPES.LINK ?
             <div className="FieldSubset SendBeacon-linkDetails">
@@ -95,7 +95,7 @@ const SendBeacon = ({ type, linkType }) => {
                 <label>
                   <span className="Label">Link Type</span>
                   <div>
-                    <Field
+                    <WrappedField
                       name="linkType"
                       component={ Select }
                       className="Field--short"
@@ -108,10 +108,9 @@ const SendBeacon = ({ type, linkType }) => {
                 <label>
                   <span className="Label">{ linkNameLabel }</span>
                   <div>
-                    <Field
+                    <WrappedField
                       name="linkName"
-                      component={ DecoratedInput }
-                      inputComponent={ Textfield }
+                      component={ Textfield }
                       inputClassName="Field--long"
                       supportDataElement
                     />

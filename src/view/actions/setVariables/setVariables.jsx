@@ -26,7 +26,7 @@ import CustomSetup, { formConfig as customSetupConfig } from './components/custo
 export default () => (
   <div>
     <Heading size="4">Variables</Heading>
-    <Alert>
+    <Alert variant="info">
       Please note, this action will <span className="u-italic">not</span> send a
       beacon; it only sets the variables. In order to send the data to Adobe Analytics, you need
       to add the &quot;send beacon&quot; action from the Adobe Analytics extension to a rule.

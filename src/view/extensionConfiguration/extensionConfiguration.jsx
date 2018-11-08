@@ -17,8 +17,7 @@
 **************************************************************************/
 
 import React from 'react';
-import Accordion from '@coralui/react-coral/lib/Accordion';
-import AccordionItem from '@coralui/react-coral/lib/AccordionItem';
+import { Accordion, AccordionItem } from '@react/react-spectrum/Accordion';
 import { mergeConfigs } from '../utils/formConfigUtils';
 import LibraryManagement, { formConfig as libraryManagementFormConfig } from './components/libraryManagement';
 import General, { formConfig as generalFormConfig } from './components/general';

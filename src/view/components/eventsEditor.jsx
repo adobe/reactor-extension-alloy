@@ -17,11 +17,11 @@
 **************************************************************************/
 
 import React from 'react';
-import Button from '@coralui/react-coral/lib/Button';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
-import { Field, FieldArray } from 'redux-form';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import Button from '@react/react-spectrum/Button';
+import Textfield from '@react/react-spectrum/Textfield';
+import Autocomplete from '@react/react-spectrum/Autocomplete';
+import { FieldArray } from 'redux-form';
+import WrappedField from '../extensionConfiguration/components/wrappedField';
 import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from '../enums/accessLevelLimits';
 
 const CONTEXT_EVENTS = [
@@ -73,11 +73,10 @@ const renderEvents = ({ fields }) => {
       key={ index }
       className="u-gapBottom2x"
     >
-      <Field
+      <WrappedField
         name={ `${field}.name` }
         className="u-gapRight2x"
-        component={ DecoratedInput }
-        inputComponent={ Autocomplete }
+        component={ Autocomplete }
         placeholder="Select event"
         options={ nameOptions }
       />
@@ -86,14 +85,13 @@ const renderEvents = ({ fields }) => {
 
       <Field
         name={ `${field}.value` }
-        component={ DecoratedInput }
-        inputComponent={ Textfield }
+        component={ Textfield }
         inputClassName="Field--short"
         supportDataElement
       />
 
       <Button
-        variant="minimal"
+        variant="secondary"
         icon="close"
         iconSize="XS"
         square

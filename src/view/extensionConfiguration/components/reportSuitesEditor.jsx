@@ -17,25 +17,24 @@
  **************************************************************************/
 
 import React from 'react';
-import { Field } from 'redux-form';
-import Button from '@coralui/react-coral/lib/Button';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import Button from '@react/react-spectrum/Button';
+import Close from '@react/react-spectrum/Icon/Close';
+import Textfield from '@react/react-spectrum/Textfield';
+import WrappedField from './wrappedField';
 
 const ReportSuiteEditor = ({ fieldName, showRemoveButton, onRemove }) => (
   <div data-row className="u-gapBottom">
-    <Field
+    <WrappedField
       name={ fieldName }
-      component={ DecoratedInput }
-      inputComponent={ Textfield }
+      component={ Textfield }
       supportDataElement
     />
     {
       showRemoveButton ?
         <Button
-          variant="minimal"
+          variant="secondary"
           square
-          icon="close"
+          icon={ <Close /> }
           iconSize="XS"
           onClick={ onRemove }
         /> : null

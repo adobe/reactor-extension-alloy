@@ -18,8 +18,8 @@
 
 import { mount } from 'enzyme';
 import { Field } from 'redux-form';
-import Checkbox from '@coralui/react-coral/lib/Checkbox';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Checkbox from '@react/react-spectrum/Checkbox';
+import Textfield from '@react/react-spectrum/Textfield';
 import ErrorTip from '@reactor/react-components/lib/errorTip';
 
 import General, { formConfig } from '../general';

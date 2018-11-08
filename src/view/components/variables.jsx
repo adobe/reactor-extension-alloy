@@ -17,10 +17,9 @@
 **************************************************************************/
 
 import React from 'react';
-import Select from '@coralui/redux-form-react-coral/lib/Select';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import { Field } from 'redux-form';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
+import WrappedField from '../extensionConfiguration/components/wrappedField';
 import { mergeConfigs } from '../utils/formConfigUtils';
 import EvarsPropsEditor, { getFormConfig as getEvarsPropsEditorFormConfig } from './evarsPropsEditor';
 import EventsEditor, { formConfig as eventsFormConfig } from './eventsEditor';
@@ -62,10 +61,9 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Page Name</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.pageName"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             inputClassName="Field--long"
             supportDataElement
           />
@@ -75,10 +73,9 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Page URL</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.pageURL"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             inputClassName="Field--long"
             supportDataElement
           />
@@ -88,10 +85,9 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Server</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.server"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             inputClassName="Field--long"
             supportDataElement
           />
@@ -101,10 +97,9 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Channel</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.channel"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             inputClassName="Field--long"
             supportDataElement
           />
@@ -114,10 +109,9 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Referrer</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.referrer"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             inputClassName="Field--long"
             supportDataElement
           />
@@ -127,18 +121,17 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell" htmlFor="campaignValue">
         <span className="Label u-gapTop">Campaign</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.campaign.type"
             className="Variables-campaignType"
             component={ Select }
             options={ campaignTypeOptions }
           />
 
-          <Field
+          <WrappedField
             name="trackerProperties.campaign.value"
             className="u-gapLeft"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             inputClassName="Variables-campaignValue"
             supportDataElement
           />
@@ -148,10 +141,9 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">State</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.state"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             inputClassName="Field--long"
             supportDataElement
           />
@@ -161,10 +153,9 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Zip</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.zip"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             inputClassName="Field--long"
             supportDataElement
           />
@@ -174,10 +165,9 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Transaction ID</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.transactionID"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             inputClassName="Field--long"
             supportDataElement
           />
@@ -189,10 +179,9 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <label className="ColumnGrid-cell">
             <span className="Label u-gapTop">Dynamic Variable Prefix</span>
             <div>
-              <Field
+              <WrappedField
                 name="trackerProperties.dynamicVariablePrefix"
-                component={ DecoratedInput }
-                inputComponent={ Textfield }
+                component={ Textfield }
                 inputClassName="Field--long"
                 supportDataElement
               />

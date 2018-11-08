@@ -17,8 +17,8 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Button from '@coralui/react-coral/lib/Button';
-import Radio from '@coralui/react-coral/lib/Radio';
+import Button from '@react/react-spectrum/Button';
+import Radio from '@react/react-spectrum/Radio';
 
 import CustomSetup, { formConfig } from '../customSetup';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';

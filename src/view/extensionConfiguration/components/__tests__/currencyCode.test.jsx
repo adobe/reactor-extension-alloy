@@ -17,9 +17,9 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
-import Radio from '@coralui/react-coral/lib/Radio';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Autocomplete from '@react/react-spectrum/Autocomplete';
+import Radio from '@react/react-spectrum/Radio';
+import Textfield from '@react/react-spectrum/Textfield';
 
 import CurrencyCode, { formConfig } from '../currencyCode';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';

@@ -17,7 +17,7 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Checkbox from '@coralui/react-coral/lib/Checkbox';
+import Checkbox from '@react/react-spectrum/Checkbox';
 
 import LinkTracking, { formConfig } from '../linkTracking';
 import TagListEditor from '../tagListEditor';

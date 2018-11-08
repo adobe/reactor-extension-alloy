@@ -17,12 +17,12 @@
 **************************************************************************/
 
 import React from 'react';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import InfoTip from '@reactor/react-components/lib/infoTip';
-import Checkbox from '@coralui/redux-form-react-coral/lib/Checkbox';
+import Textfield from '@react/react-spectrum/Textfield';
+import Checkbox from '@react/react-spectrum/Checkbox';
 import { connect } from 'react-redux';
-import { Field, formValueSelector } from 'redux-form';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import { formValueSelector } from 'redux-form';
+import WrappedField from './wrappedField';
+import InfoTip from './infoTip';
 import COMPONENT_NAMES from '../../enums/componentNames';
 
 const nameSpace = 'moduleProperties.audienceManager';
@@ -32,12 +32,12 @@ const AudienceManager = ({
   useAdvancedAudienceManagerSettings = false }) =>
     <div>
       <section className="LinkTracking-section u-gapTop">
-        <Field
+        <WrappedField
           name={ `${nameSpace}.useAudienceManagerIntegration` }
           component={ Checkbox }
         >
           Automatically share Analytics Data with Audience Manager
-        </Field>
+        </WrappedField>
         <InfoTip className="u-fieldLineHeight u-noPadding">
           Adds an Audience Management Module to Adobe Analytics that will share Analytics
           data with Audience Manager. This can be used instead of having the separate
@@ -54,22 +54,21 @@ const AudienceManager = ({
                 Customer Care if you do not know your Partner Name.
               </InfoTip>
               <div>
-                <Field
+                <WrappedField
                   name={ `${nameSpace}.config.partner` }
-                  component={ DecoratedInput }
-                  inputComponent={ Textfield }
+                  component={ Textfield }
                   inputClassName="Field--long"
                   supportDataElement
                 />
               </div>
             </label>
             <div>
-              <Field
+              <WrappedField
                 name={ `${nameSpace}.useAdvancedAudienceManagerSettings` }
                 component={ Checkbox }
               >
                 Show advanced settings
-              </Field>
+              </WrappedField>
             </div>
             { useAdvancedAudienceManagerSettings ?
               <div>
@@ -84,35 +83,34 @@ const AudienceManager = ({
                       is 0 by default and you do not need to set this property.
                     </InfoTip>
                     <div>
-                      <Field
+                      <WrappedField
                         name={ `${nameSpace}.config.containerNSID` }
                         type={ 'number' }
-                        component={ DecoratedInput }
-                        inputComponent={ Textfield }
+                        component={ Textfield }
                         inputClassName="Field--long"
                       />
                     </div>
                   </label>
                 </div>
                 <div>
-                  <Field
+                  <WrappedField
                     name={ `${nameSpace}.config.disableDestinationPublishingIframe` }
                     component={ Checkbox }
                   >
                     Do not attach the destination publishing IFRAME to the DOM or fire destinations
-                  </Field>
+                  </WrappedField>
                   <InfoTip className="u-fieldLineHeight u-noPadding">
                     If true, will not attach the destination publishing IFRAME
                     to the DOM or fire destinations. Default is false.
                   </InfoTip>
                 </div>
                 <div>
-                  <Field
+                  <WrappedField
                     name={ `${nameSpace}.config.isCoopSafe` }
                     component={ Checkbox }
                   >
                     Data is safe for Adobe Experience Cloud Device Co-op
-                  </Field>
+                  </WrappedField>
                   <InfoTip className="u-fieldLineHeight u-noPadding">
                     An optional, Boolean configuration that determines if DIL sends (or does not send) data to the Adobe Experience Cloud Device Co-op. <a target="_blank" rel="noopener noreferrer" href="https://marketing.adobe.com/resources/help/en_US/aam/dil-coopsafe.html">More details</a>. Default is false.
                   </InfoTip>
@@ -131,10 +129,9 @@ const AudienceManager = ({
                         The cookie name. Default is aam_uuid.
                       </InfoTip>
                       <div>
-                        <Field
+                        <WrappedField
                           name={ `${nameSpace}.config.uuidCookie.name` }
-                          component={ DecoratedInput }
-                          inputComponent={ Textfield }
+                          component={ Textfield }
                           inputClassName="Field--short"
                         />
                       </div>
@@ -142,14 +139,14 @@ const AudienceManager = ({
                     <div className="FieldSubset">
                       <span className="Label">Days</span>
                       <InfoTip className="u-fieldLineHeight">
+
                         Cookie lifetime (100 days is default).
                       </InfoTip>
                       <div>
-                        <Field
+                        <WrappedField
                           name={ `${nameSpace}.config.uuidCookie.days` }
                           type={ 'number' }
-                          component={ DecoratedInput }
-                          inputComponent={ Textfield }
+                          component={ Textfield }
                           inputClassName="Field--short"
                         />
                       </div>
@@ -161,10 +158,9 @@ const AudienceManager = ({
                         (document.domain is default).
                       </InfoTip>
                       <div>
-                        <Field
+                        <WrappedField
                           name={ `${nameSpace}.config.uuidCookie.domain` }
-                          component={ DecoratedInput }
-                          inputComponent={ Textfield }
+                          component={ Textfield }
                           inputClassName="Field--short"
                         />
                       </div>
@@ -175,21 +171,20 @@ const AudienceManager = ({
                         Cookie path, e.g., &#39;/test&#39; (/ is default).
                       </InfoTip>
                       <div>
-                        <Field
+                        <WrappedField
                           name={ `${nameSpace}.config.uuidCookie.path` }
-                          component={ DecoratedInput }
-                          inputComponent={ Textfield }
+                          component={ Textfield }
                           inputClassName="Field--short"
                         />
                       </div>
                     </div>
                     <div className="FieldSubset">
-                      <Field
+                      <WrappedField
                         name={ `${nameSpace}.config.uuidCookie.secure` }
                         component={ Checkbox }
                       >
                         Secure
-                      </Field>
+                      </WrappedField>
                       <InfoTip className="u-fieldLineHeight">
                         Sets a flag to send data over an HTTPS connection only.
                       </InfoTip>

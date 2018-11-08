@@ -18,11 +18,11 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import Checkbox from '@coralui/redux-form-react-coral/lib/Checkbox';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import Heading from '@coralui/react-coral/lib/Heading';
-import { Field, formValueSelector } from 'redux-form';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import Checkbox from '@react/react-spectrum/Checkbox';
+import Textfield from '@react/react-spectrum/Textfield';
+import Heading from '@react/react-spectrum/Heading';
+import { formValueSelector } from 'redux-form';
+import WrappedField from './wrappedField';
 
 import { mergeConfigs } from '../../utils/formConfigUtils';
 import CharSet, { formConfig as charSetFormConfig } from './charSet';
@@ -34,18 +34,17 @@ import COMPONENT_NAMES from '../../enums/componentNames';
 
 const General = props => (
   <div>
-    <Field name="euComplianceEnabled" component={ Checkbox }>
+    <WrappedField name="euComplianceEnabled" component={ Checkbox }>
       Enable EU compliance for Adobe Analytics
-    </Field>
+    </WrappedField>
 
     {props.euComplianceEnabled ? (
       <div className="ColumnGrid">
         <label className="ColumnGrid-cell FieldSubset">
           <span className="Label">Tracking Cookie Name</span>
-          <Field
+          <WrappedField
             name="trackingCookieName"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             className="u-block"
             supportDataElement
           />
@@ -65,10 +64,9 @@ const General = props => (
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Tracking Server</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.trackingServer"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             inputClassName="Field--long"
             supportDataElement
           />
@@ -77,10 +75,9 @@ const General = props => (
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">SSL Tracking Server</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.trackingServerSecure"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
+            component={ Textfield }
             inputClassName="Field--long"
             supportDataElement
           />

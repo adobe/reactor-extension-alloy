@@ -17,10 +17,10 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Checkbox from '@coralui/react-coral/lib/Checkbox';
-import Radio from '@coralui/react-coral/lib/Radio';
-import Button from '@coralui/react-coral/lib/Button';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Checkbox from '@react/react-spectrum/Checkbox';
+import Radio from '@react/react-spectrum/Radio';
+import Button from '@react/react-spectrum/Button';
+import Textfield from '@react/react-spectrum/Textfield';
 import ErrorTip from '@reactor/react-components/lib/errorTip';
 import { FieldArray, Field } from 'redux-form';
 

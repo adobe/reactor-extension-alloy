@@ -17,12 +17,11 @@
 **************************************************************************/
 
 import React from 'react';
-import Button from '@coralui/react-coral/lib/Button';
-import Select from '@coralui/redux-form-react-coral/lib/Select';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import { Field, FieldArray } from 'redux-form';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
-
+import Button from '@react/react-spectrum/Button';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
+import { FieldArray } from 'redux-form';
+import WrappedField from '../extensionConfiguration/components/wrappedField';
 import './hierarchiesEditor.styl';
 
 const MAX_HIERARCHY_SECTIONS = 4;
@@ -70,10 +69,9 @@ const renderHierarchySections = ({ fields }) => {
           /> : null
       }
 
-      <Field
+      <WrappedField
         name={ `${field}` }
-        component={ DecoratedInput }
-        inputComponent={ Textfield }
+        component={ Textfield }
         supportDataElement
       />
     </div>
@@ -89,22 +87,20 @@ const renderHierarchySections = ({ fields }) => {
 const renderHierarchies = ({ fields }) => {
   const rows = fields.map((field, index) => (
     <div data-row key={ index } className="HierarchiesEditor-hierarchy">
-      <Field
+      <WrappedField
         name={ `${field}.name` }
         className="u-gapRight2x"
-        component={ DecoratedInput }
-        inputComponent={ Select }
+        component={ Select }
         inputClassName="Field--short"
         options={ hierarchiesOptions }
       />
 
       <label>
         <span className="Label u-gapRight">Delimiter</span>
-        <Field
+        <WrappedField
           name={ `${field}.delimiter` }
           className="u-gapRight"
-          component={ DecoratedInput }
-          inputComponent={ Textfield }
+          component={ Textfield }
           inputClassName="Field--short"
         />
       </label>

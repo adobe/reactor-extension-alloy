@@ -17,10 +17,11 @@
 **************************************************************************/
 
 import React from 'react';
-import Radio from '@coralui/redux-form-react-coral/lib/Radio';
-import { Field, formValueSelector } from 'redux-form';
+import Radio from '@react/react-spectrum/Radio';
+import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
-import EditorButton from '@reactor/react-components/lib/reduxForm/editorButton';
+import WrappedField from './wrappedField';
+import EditorButton from '../components/editorButton';
 
 const LOAD_PHASES = {
   BEFORE_SETTINGS: 'beforeSettings',
@@ -40,8 +41,8 @@ const CustomSetup = ({ source }) => (
       <li><i>s</i> - The tracker object.</li>
     </ul>
 
-    <Field
-      name="customSetup.source"
+    <WrappedField
+      name="source"
       component={ EditorButton }
     />
 
@@ -50,23 +51,23 @@ const CustomSetup = ({ source }) => (
         <fieldset>
           <legend><span className="Label u-gapTop">Execute custom code</span></legend>
           <div>
-            <Field
+            <WrappedField
               name="customSetup.loadPhase"
               component={ Radio }
               type="radio"
               value={ LOAD_PHASES.BEFORE_SETTINGS }
             >
               Before other settings are applied
-            </Field>
+            </WrappedField>
 
-            <Field
+            <WrappedField
               name="customSetup.loadPhase"
               component={ Radio }
               type="radio"
               value={ LOAD_PHASES.AFTER_SETTINGS }
             >
               After other settings are applied
-            </Field>
+            </WrappedField>
           </div>
         </fieldset>
       </div> : null

@@ -17,8 +17,8 @@
 **************************************************************************/
 
 import React from 'react';
-import { Field } from 'redux-form';
-import EditorButton from '@reactor/react-components/lib/reduxForm/editorButton';
+import WrappedField from '../../../extensionConfiguration/components/wrappedField';
+import EditorButton from '../../../components/editorButton';
 
 export default () => (
   <div>
@@ -32,7 +32,7 @@ export default () => (
       <li><i>event</i> - The underlying event object that caused this rule to fire.</li>
     </ul>
 
-    <Field
+    <WrappedField
       name="customSetup.source"
       component={ EditorButton }
     />

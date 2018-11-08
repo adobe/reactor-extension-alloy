@@ -17,13 +17,12 @@
 **************************************************************************/
 
 import React from 'react';
-import Radio from '@coralui/redux-form-react-coral/lib/Radio';
-import Select from '@coralui/redux-form-react-coral/lib/Select';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import { Field, change, formValueSelector } from 'redux-form';
+import Radio from '@react/react-spectrum/Radio';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
+import { change, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
-
+import WrappedField from './wrappedField';
 import CHAR_SET_PRESETS from '../../enums/charSets';
 
 const CHAR_SET_INPUT_METHOD = {
@@ -41,7 +40,7 @@ const presetOptions = CHAR_SET_PRESETS.map(preset => ({
 const CharSet = ({ dispatch, charSetInputMethod }) => (
   <div>
     <div>
-      <Field
+      <WrappedField
         name="trackerProperties.charSetInputMethod"
         component={ Radio }
         type="radio"
@@ -51,12 +50,12 @@ const CharSet = ({ dispatch, charSetInputMethod }) => (
         }
       >
         Preset
-      </Field>
+      </WrappedField>
 
       {
         charSetInputMethod === CHAR_SET_INPUT_METHOD.PRESET ?
           <div className="FieldSubset">
-            <Field
+            <WrappedField
               name="trackerProperties.charSet"
               component={ Select }
               options={ presetOptions }
@@ -65,7 +64,7 @@ const CharSet = ({ dispatch, charSetInputMethod }) => (
       }
     </div>
     <div>
-      <Field
+      <WrappedField
         name="trackerProperties.charSetInputMethod"
         component={ Radio }
         type="radio"
@@ -75,15 +74,14 @@ const CharSet = ({ dispatch, charSetInputMethod }) => (
         }
       >
         Custom
-      </Field>
+      </WrappedField>
 
       {
         charSetInputMethod === CHAR_SET_INPUT_METHOD.CUSTOM ?
           <div className="FieldSubset">
-            <Field
+            <WrappedField
               name="trackerProperties.charSet"
-              component={ DecoratedInput }
-              inputComponent={ Textfield }
+              component={ Textfield }
               supportDataElement
             />
           </div> : null
