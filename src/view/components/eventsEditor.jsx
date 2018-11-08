@@ -81,12 +81,20 @@ const renderEvents = ({ fields }) => {
         options={ nameOptions }
       />
 
-      <span className="Label u-gapRight">Serialize from value (optional)</span>
+      <Field
+        name={ `${field}.id` }
+        component={ DecoratedInput }
+        inputComponent={ Textfield }
+        inputClassName="Field--short"
+        placeholder="Event ID (optional)"
+        supportDataElement
+      />
 
       <Field
         name={ `${field}.value` }
         component={ Textfield }
         inputClassName="Field--short"
+        placeholder="Event Value (optional)"
         supportDataElement
       />
 
@@ -154,6 +162,9 @@ export const formConfig = {
         if (event.value) {
           trimmedEvent.value = event.value;
         }
+        if (event.id) {
+          trimmedEvent.id = event.id;
+        }
 
         return trimmedEvent;
       });
@@ -186,6 +197,8 @@ export const formConfig = {
           eventErrors.name = 'This event is already configured';
         }
       } else if (event.value) {
+        eventErrors.name = 'Please provide a name';
+      } else if (event.id) {
         eventErrors.name = 'Please provide a name';
       }
 

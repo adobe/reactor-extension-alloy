@@ -95,15 +95,4 @@ describe('currency code', () => {
     const { currencyCode } = extensionBridge.getSettings().trackerProperties;
     expect(currencyCode).toBe('some custom');
   });
-
-  it('doesn\'t set the trackerSettings property when default value is selected', () => {
-    extensionBridge.init();
-
-    const { presetAutocomplete } = getReactComponents(instance);
-
-    presetAutocomplete.props.onChange({ value: 'USD' });
-
-    const { currencyCode } = extensionBridge.getSettings().trackerProperties;
-    expect(currencyCode).toBeUndefined();
-  });
 });

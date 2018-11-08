@@ -130,8 +130,7 @@ export const formConfig = {
       ...settings.trackerProperties
     };
 
-    // Not setting currencyCode on trackerProperties implies USD.
-    if (currencyCode && currencyCode !== CURRENCY_CODE_DEFAULT) {
+    if (currencyCode) {
       trackerProperties.currencyCode = currencyCode;
     }
 

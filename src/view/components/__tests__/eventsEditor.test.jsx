@@ -30,10 +30,13 @@ import bootstrap from '../../bootstrap';
 const getReactComponents = (wrapper) => {
   const rows = wrapper.find('[data-row]').map((row) => {
     const nameField = row.find(Field).filterWhere(n => n.prop('name').indexOf('.name') !== -1);
+    const valField = row.find(Textfield).filterWhere(n => n.prop('name').indexOf('.value') !== -1);
+    const idField = row.find(Textfield).filterWhere(n => n.prop('name').indexOf('.id') !== -1);
     return {
       nameAutocomplete: nameField.find(Autocomplete).node,
       nameErrorTip: nameField.find(ErrorTip).node,
-      valueTextfield: row.find(Textfield).node,
+      valueTextfield: valField.node,
+      idTextfield: idField.node,
       removeButton: row.find(Button).last().node
     };
   });
@@ -62,7 +65,8 @@ describe('events editor', () => {
           events: [
             {
               name: 'prodView',
-              value: 'a'
+              value: 'a',
+              id: 'b'
             }
           ]
         }
@@ -73,6 +77,7 @@ describe('events editor', () => {
 
     expect(rows[0].nameAutocomplete.props.value).toBe('prodView');
     expect(rows[0].valueTextfield.props.value).toBe('a');
+    expect(rows[0].idTextfield.props.value).toBe('b');
   });
 
   it('sets settings from form values', () => {
@@ -82,10 +87,12 @@ describe('events editor', () => {
 
     rows[0].nameAutocomplete.props.onChange({ value: 'event1' });
     rows[0].valueTextfield.props.onChange('b');
+    rows[0].idTextfield.props.onChange('c');
 
     const { events } = extensionBridge.getSettings().trackerProperties;
     expect(events[0].name).toBe('event1');
     expect(events[0].value).toBe('b');
+    expect(events[0].id).toBe('c');
   });
 
   it('adds a new row when the add button is clicked', () => {

@@ -17,9 +17,17 @@
 **************************************************************************/
 
 import React from 'react';
+<<<<<<< HEAD
 import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
 import WrappedField from '../extensionConfiguration/components/wrappedField';
+=======
+import Select from '@coralui/redux-form-react-coral/lib/Select';
+import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
+//import InfoTip from '@reactor/react-components/lib/infoTip';
+import { Field } from 'redux-form';
+import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+>>>>>>> upstream/master
 import { mergeConfigs } from '../utils/formConfigUtils';
 import EvarsPropsEditor, { getFormConfig as getEvarsPropsEditorFormConfig } from './evarsPropsEditor';
 import EventsEditor, { formConfig as eventsFormConfig } from './eventsEditor';
@@ -50,6 +58,19 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       showEvents ?
         <div>
           <span className="Label u-gapTop">Events</span>
+          {/* This InfoTip is commented out until the problem with the dropdown being layered
+              on top of the tip box is fixed
+          <InfoTip className="u-fieldLineHeight">
+            Events are milestones within a site. By default events are configured as
+            <a href="https://marketing.adobe.com/resources/help/en_US/sc/implement/events.html" target="_blank">
+            counter events.</a><br />
+            Unless specified otherwise a counter event is assigned the value of one. A counter
+            event can be assigned a value other than one by specifying it in the value field.<br />
+            You can specify a unique event ID to
+            <a href="https://marketing.adobe.com/resources/help/en_US/sc/implement/event_serialization_impl.html" target="_blank">
+            prevent duplicate events</a> (e.g. during a page reload) from being recorded more than
+            once.
+          </InfoTip>*/}
           <EventsEditor />
         </div> : null
     }

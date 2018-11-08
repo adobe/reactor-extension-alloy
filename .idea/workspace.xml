@@ -2,52 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6113ea61-9241-4e9d-b065-f33c82b6ebaa" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/extension-adobeanalytics.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/dataElementSelectorButton.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/editorButton.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/errorTip.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/infoTip.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/infoTip.styl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/validationWrapper.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/validationWrapper.styl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/wrappedField.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.sandbox/container.js" beforeDir="false" afterPath="$PROJECT_DIR$/.sandbox/container.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/extension.json" beforeDir="false" afterPath="$PROJECT_DIR$/extension.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hosted/AppMeasurement.js" beforeDir="false" afterPath="$PROJECT_DIR$/hosted/AppMeasurement.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hosted/AppMeasurement_Module_AudienceManagement.js" beforeDir="false" afterPath="$PROJECT_DIR$/hosted/AppMeasurement_Module_AudienceManagement.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/actions/sendBeacon/sendBeacon.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/actions/sendBeacon/sendBeacon.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/actions/setVariables/components/customSetup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/actions/setVariables/components/customSetup.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/actions/setVariables/setVariables.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/actions/setVariables/setVariables.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/components/evarsPropsEditor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/components/evarsPropsEditor.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/helpers/__tests__/applyTrackerVariables.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/helpers/__tests__/applyTrackerVariables.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/helpers/applyTrackerVariables.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/helpers/applyTrackerVariables.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/sharedModules/__tests__/getTracker.test.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/sharedModules/__tests__/getTracker.test.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/sharedModules/getTracker.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/sharedModules/getTracker.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/view/components/__tests__/eventsEditor.test.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/components/__tests__/eventsEditor.test.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/components/eventsEditor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/components/eventsEditor.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/components/hierarchiesEditor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/components/hierarchiesEditor.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/components/variables.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/components/variables.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/charSet.test.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/charSet.test.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/currencyCode.test.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/currencyCode.test.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/customSetup.test.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/customSetup.test.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/general.test.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/general.test.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/libraryManagement.test.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/libraryManagement.test.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/linkTracking.test.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/linkTracking.test.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/tagListEditor.test.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/__tests__/tagListEditor.test.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/audienceManager.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/audienceManager.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/charSet.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/charSet.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/cookies.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/cookies.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/currencyCode.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/currencyCode.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/customSetup.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/customSetup.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/general.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/general.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/libraryManagement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/libraryManagement.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/linkTracking.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/linkTracking.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/reportSuitesEditor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/reportSuitesEditor.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/components/tagListEditor.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/components/tagListEditor.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/extensionConfiguration/extensionConfiguration.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/extensionConfiguration/extensionConfiguration.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/global.styl" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/global.styl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/view/renderView.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/view/renderView.jsx" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -142,7 +115,7 @@
         <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/editorButton.jsx">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="416">
-              <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="29" selection-end-column="12" />
+              <caret line="28" selection-start-line="28" selection-end-line="29" selection-end-column="12" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -166,7 +139,7 @@
         <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/customSetup.jsx">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="287">
-              <caret line="25" column="21" lean-forward="true" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
+              <caret line="25" column="21" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
               <folding>
                 <element signature="e#809#835#0" expanded="true" />
               </folding>
@@ -177,8 +150,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/tagListEditor.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="283">
-              <caret line="105" column="6" lean-forward="true" selection-start-line="105" selection-start-column="6" selection-end-line="105" selection-end-column="6" />
+            <state relative-caret-position="70">
+              <caret line="109" column="6" selection-start-line="109" selection-start-column="6" selection-end-line="109" selection-end-column="6" />
               <folding>
                 <element signature="e#809#859#0" expanded="true" />
               </folding>
@@ -201,8 +174,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/view/components/variables.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2649">
-              <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+            <state relative-caret-position="-2465">
+              <caret line="35" selection-start-line="35" selection-end-line="35" />
+              <folding>
+                <element signature="e#809#835#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -211,7 +187,7 @@
         <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/wrappedField.jsx">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="144">
-              <caret line="13" column="14" lean-forward="true" selection-start-line="13" selection-start-column="14" selection-end-line="13" selection-end-column="14" />
+              <caret line="13" column="14" selection-start-line="13" selection-start-column="14" selection-end-line="13" selection-end-column="14" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -223,7 +199,7 @@
         <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/extensionConfiguration.jsx">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="905">
-              <caret line="101" column="34" lean-forward="true" selection-start-line="101" selection-start-column="34" selection-end-line="101" selection-end-column="34" />
+              <caret line="101" column="34" selection-start-line="101" selection-start-column="34" selection-end-line="101" selection-end-column="34" />
               <folding>
                 <element signature="e#809#835#0" expanded="true" />
               </folding>
@@ -454,12 +430,12 @@
       <workItem from="1540844623962" duration="14811000" />
       <workItem from="1541099738913" duration="1593000" />
       <workItem from="1541103389347" duration="16581000" />
-      <workItem from="1541611825701" duration="7484000" />
+      <workItem from="1541611825701" duration="7714000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="72315000" />
+    <option name="totallyTimeSpent" value="72545000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -603,7 +579,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/view/components/variables.jsx</url>
-          <line>20</line>
+          <line>21</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="11" />
         </line-breakpoint>
@@ -896,7 +872,7 @@
     <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/customSetup.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="287">
-          <caret line="25" column="21" lean-forward="true" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
+          <caret line="25" column="21" selection-start-line="25" selection-start-column="21" selection-end-line="25" selection-end-column="21" />
           <folding>
             <element signature="e#809#835#0" expanded="true" />
           </folding>
@@ -919,7 +895,7 @@
     <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/wrappedField.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
-          <caret line="13" column="14" lean-forward="true" selection-start-line="13" selection-start-column="14" selection-end-line="13" selection-end-column="14" />
+          <caret line="13" column="14" selection-start-line="13" selection-start-column="14" selection-end-line="13" selection-end-column="14" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
@@ -929,7 +905,7 @@
     <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/extensionConfiguration.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="905">
-          <caret line="101" column="34" lean-forward="true" selection-start-line="101" selection-start-column="34" selection-end-line="101" selection-end-column="34" />
+          <caret line="101" column="34" selection-start-line="101" selection-start-column="34" selection-end-line="101" selection-end-column="34" />
           <folding>
             <element signature="e#809#835#0" expanded="true" />
           </folding>
@@ -938,8 +914,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/view/components/variables.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2649">
-          <caret line="27" lean-forward="true" selection-start-line="27" selection-end-line="27" />
+        <state relative-caret-position="-2465">
+          <caret line="35" selection-start-line="35" selection-end-line="35" />
+          <folding>
+            <element signature="e#809#835#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -966,7 +945,7 @@
     <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/editorButton.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="416">
-          <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="29" selection-end-column="12" />
+          <caret line="28" selection-start-line="28" selection-end-line="29" selection-end-column="12" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
@@ -985,8 +964,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/view/extensionConfiguration/components/tagListEditor.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="283">
-          <caret line="105" column="6" lean-forward="true" selection-start-line="105" selection-start-column="6" selection-end-line="105" selection-end-column="6" />
+        <state relative-caret-position="70">
+          <caret line="109" column="6" selection-start-line="109" selection-start-column="6" selection-end-line="109" selection-end-column="6" />
           <folding>
             <element signature="e#809#859#0" expanded="true" />
           </folding>

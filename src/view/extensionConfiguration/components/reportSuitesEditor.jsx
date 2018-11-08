@@ -43,9 +43,11 @@ const ReportSuiteEditor = ({ fieldName, showRemoveButton, onRemove }) => (
 );
 
 export default class ReportSuitesEditor extends React.Component {
+  /* eslint-disable no-undef */
   onAddReportSuite = () => {
     this.props.fields.push('');
   };
+  /* eslint-enable no-undef */
 
   render() {
     const {

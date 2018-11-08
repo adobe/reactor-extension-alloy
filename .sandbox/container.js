@@ -26,12 +26,13 @@ module.exports = {
     "adobe-mcid": {
       displayName: 'Adobe MCID',
       settings: {
-        "orgId": "93B41AC151F037F00A490D4D@AdobeOrg"
+        "orgId": "0BDA4E8A51E84B460A490D4C@AdobeOrg"
       }
     },
     "adobe-analytics": {
       displayName: 'Adobe Analytics',
       settings: {
+        "orgId": "0BDA4E8A51E84B460A490D4C@AdobeOrg",
         "libraryCode": {
           "type": "managed",
           "accounts": {
