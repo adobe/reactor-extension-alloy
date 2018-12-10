@@ -20,7 +20,6 @@ import React from 'react';
 import Button from '@react/react-spectrum/Button';
 import Textfield from '@react/react-spectrum/Textfield';
 import ComboBox from '@react/react-spectrum/ComboBox';
-import Autocomplete from '@react/react-spectrum/Autocomplete';
 import Close from '@react/react-spectrum/Icon/Close';
 import { FieldArray, formValueSelector, change } from 'redux-form';
 import { connect } from 'react-redux';
@@ -128,12 +127,12 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
           // set all the same props for all types. It will throw a warning though, sadly. :(
           name={ `${field}.value` }
           component={ ComboBox }
-          inputClassName="Field--short"
+          inputClassName="leField--short"
           { ...valueFieldProps }
         />
 
         <Button
-          variant="secondary"
+          variant="tool"
           square
           icon={ <Close size="XS" /> }
           onClick={ fields.remove.bind(this, index) }

@@ -19,7 +19,6 @@
 import React from 'react';
 import Checkbox from '@react/react-spectrum/Checkbox';
 import Heading from '@react/react-spectrum/Heading';
-//import Textfield from '@react/react-spectrum/Textfield';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import Combobox from 'react-widgets/lib/Combobox';

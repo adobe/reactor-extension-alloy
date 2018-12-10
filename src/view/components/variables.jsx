@@ -144,7 +144,7 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <WrappedField
             name="trackerProperties.campaign.value"
             // className="u-gapLeft"
-            component={ Textfield }
+            component={ ComboBox }
             inputClassName="Variables-campaignValue"
             supportDataElement
           />

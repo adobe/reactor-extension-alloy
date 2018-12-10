@@ -185,14 +185,14 @@ const LibraryManagement = ({ type }) => (
               If enabled the tracker will be scoped globally under <strong>window.s</strong>.
             </InfoTip>
           </div> : null
-      },
+      }
       {
         type === LIB_TYPES.PREINSTALLED ?
           <div className="FieldSubset">
             <OverwriteReportSuites className="u-gapBottom" />
             <TrackerVariableName />
           </div> : null
-      },
+      }
       {
         type === LIB_TYPES.REMOTE ?
           <div className="FieldSubset">
@@ -223,7 +223,7 @@ const LibraryManagement = ({ type }) => (
             <OverwriteReportSuites className="u-block u-gapBottom" />
             <TrackerVariableName className="u-block u-gapBottom" />
           </div> : null
-      },
+      }
       {
         type === LIB_TYPES.CUSTOM ?
           <div className="FieldSubset">
