@@ -4,7 +4,7 @@ import IconData from '@react/react-spectrum/Icon/Data';
 
 export default function DataElementSelectorButton(props) {
   return (<Button
-    variant="secondary"
+    variant="tool"
     icon={ <IconData /> }
     iconSize="small"
     className={ props.className }
