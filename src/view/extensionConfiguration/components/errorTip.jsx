@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
-import Icon from '@coralui/react-coral/lib/Icon';
-import Tooltip from '@coralui/react-coral/lib/Tooltip';
+import Icon from '@react/react-spectrum/Icon';
+import Tooltip from '@react/react-spectrum/Tooltip';
 
 export default class ErrorTip extends React.Component {
   constructor() {

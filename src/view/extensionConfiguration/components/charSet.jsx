@@ -18,7 +18,7 @@
 
 import React from 'react';
 import Radio from '@react/react-spectrum/Radio';
-import Select from '@react/react-spectrum/Select';
+import ComboBox from '@react/react-spectrum/ComboBox';
 import Textfield from '@react/react-spectrum/Textfield';
 import { change, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
@@ -57,24 +57,24 @@ const CharSet = ({ dispatch, charSetInputMethod }) => (
           <div className="FieldSubset">
             <WrappedField
               name="trackerProperties.charSet"
-              component={ Select }
+              component={ ComboBox }
               options={ presetOptions }
             />
           </div> : null
       }
     </div>
     <div>
-      <WrappedField
-        name="trackerProperties.charSetInputMethod"
-        component={ Radio }
-        type="radio"
-        value={ CHAR_SET_INPUT_METHOD.CUSTOM }
-        onChange={
-          () => dispatch(change('default', 'trackerProperties.charSet', ''))
-        }
-      >
-        Custom
-      </WrappedField>
+      {/*<WrappedField*/}
+        {/*name="trackerProperties.charSetInputMethod"*/}
+        {/*component={ Radio }*/}
+        {/*type="radio"*/}
+        {/*value={ CHAR_SET_INPUT_METHOD.CUSTOM }*/}
+        {/*onChange={*/}
+          {/*() => dispatch(change('default', 'trackerProperties.charSet', ''))*/}
+        {/*}*/}
+      {/*>*/}
+        {/*Custom*/}
+      {/*</WrappedField>*/}
 
       {
         charSetInputMethod === CHAR_SET_INPUT_METHOD.CUSTOM ?

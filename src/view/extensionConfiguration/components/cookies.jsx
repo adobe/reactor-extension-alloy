@@ -17,7 +17,7 @@
 **************************************************************************/
 
 import React from 'react';
-import Select from '@react/react-spectrum/Select';
+import ComboBox from '@react/react-spectrum/ComboBox';
 import Textfield from '@react/react-spectrum/Textfield';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
@@ -101,7 +101,7 @@ const Cookies = ({ cookieLifetime }) => (
         <WrappedField
           id="cookieLifetimeField"
           name="trackerProperties.cookieLifetime"
-          component={ Select }
+          component={ ComboBox }
           inputClassName="Cookies-cookieLifetime"
           className="u-gapRight"
           options={ cookieLifetimeOptions }
@@ -111,7 +111,7 @@ const Cookies = ({ cookieLifetime }) => (
           cookieLifetime === COOKIE_LIFETIME_PERIODS.SECONDS ?
             <WrappedField
               name="trackerProperties.cookieLifetimeSeconds"
-              component={ Select }
+              component={ ComboBox }
               inputClassName="Cookies-cookieLifetimeSeconds"
               supportDataElement
             /> : null

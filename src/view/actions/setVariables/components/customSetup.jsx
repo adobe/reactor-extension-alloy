@@ -18,7 +18,7 @@
 
 import React from 'react';
 import WrappedField from '../../../extensionConfiguration/components/wrappedField';
-import EditorButton from '../../../components/editorButton';
+import EditorButton from '../../../extensionConfiguration/components/editorButton';
 
 export default () => (
   <div>

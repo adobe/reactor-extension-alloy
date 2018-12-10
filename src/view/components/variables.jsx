@@ -17,10 +17,9 @@
 **************************************************************************/
 
 import React from 'react';
-import Select from '@react/react-spectrum/Select';
+import ComboBox from '@react/react-spectrum/ComboBox';
 import Textfield from '@react/react-spectrum/Textfield';
 import WrappedField from '../extensionConfiguration/components/wrappedField';
-//import InfoTip from '@reactor/react-components/lib/infoTip';
 import { mergeConfigs } from '../utils/formConfigUtils';
 import EvarsPropsEditor, { getFormConfig as getEvarsPropsEditorFormConfig } from './evarsPropsEditor';
 import EventsEditor, { formConfig as eventsFormConfig } from './eventsEditor';
@@ -138,13 +137,13 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <WrappedField
             name="trackerProperties.campaign.type"
             className="Variables-campaignType"
-            component={ Select }
+            component={ ComboBox }
             options={ campaignTypeOptions }
           />
 
           <WrappedField
             name="trackerProperties.campaign.value"
-            className="u-gapLeft"
+            // className="u-gapLeft"
             component={ Textfield }
             inputClassName="Variables-campaignValue"
             supportDataElement

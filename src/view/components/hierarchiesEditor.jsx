@@ -18,7 +18,8 @@
 
 import React from 'react';
 import Button from '@react/react-spectrum/Button';
-import Select from '@react/react-spectrum/Select';
+import ComboBox from '@react/react-spectrum/ComboBox';
+import Close from '@react/react-spectrum/Icon/Close';
 import Textfield from '@react/react-spectrum/Textfield';
 import { FieldArray } from 'redux-form';
 import WrappedField from '../extensionConfiguration/components/wrappedField';
@@ -90,7 +91,7 @@ const renderHierarchies = ({ fields }) => {
       <WrappedField
         name={ `${field}.name` }
         className="u-gapRight2x"
-        component={ Select }
+        component={ ComboBox }
         inputClassName="Field--short"
         options={ hierarchiesOptions }
       />
@@ -106,10 +107,9 @@ const renderHierarchies = ({ fields }) => {
       </label>
 
       <Button
-        variant="minimal"
-        icon="close"
+        variant="secondary"
+        icon={ <Close size="XS" /> }
         square
-        iconSize="XS"
         onClick={ fields.remove.bind(this, index) }
       />
 

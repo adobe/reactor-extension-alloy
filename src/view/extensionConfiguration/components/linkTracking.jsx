@@ -19,11 +19,13 @@
 import React from 'react';
 import Checkbox from '@react/react-spectrum/Checkbox';
 import Heading from '@react/react-spectrum/Heading';
-import Textfield from '@react/react-spectrum/Textfield';
+//import Textfield from '@react/react-spectrum/Textfield';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
+import Combobox from 'react-widgets/lib/Combobox';
 import WrappedField from './wrappedField';
 import TagListEditor from './tagListEditor';
+import InfoTip from './infoTip';
 
 import './linkTracking.styl';
 
@@ -57,8 +59,11 @@ const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
             tooltip="If your site contains links to files with any of these extensions, the URLs of
               these links will appear in the File Downloads report."
           >
+            <InfoTip>If your site contains links to files with any of these extensions, the URLs of
+              these links will appear in the File Downloads report.</InfoTip>
+            <Combobox placeholder="Hello..." />
           </WrappedField>
-          <Textfield placeholder="Autocomplete..." />
+
         </div> : null
       }
     </section>

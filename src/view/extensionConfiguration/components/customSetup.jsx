@@ -18,6 +18,7 @@
 
 import React from 'react';
 import Radio from '@react/react-spectrum/Radio';
+import RadioGroup from '@react/react-spectrum/RadioGroup';
 import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
 import WrappedField from './wrappedField';

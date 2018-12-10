@@ -17,9 +17,9 @@
 **************************************************************************/
 
 import React from 'react';
-import InfoTip from '@reactor/react-components/lib/infoTip';
 import Checkbox from '@react/react-spectrum/Checkbox';
 import Radio from '@react/react-spectrum/Radio';
+import RadioGroup from '@react/react-spectrum/RadioGroup';
 import Textfield from '@react/react-spectrum/Textfield';
 import Heading from '@react/react-spectrum/Heading';
 import { connect } from 'react-redux';
@@ -27,6 +27,7 @@ import { formValueSelector, FieldArray } from 'redux-form';
 import EditorButton from './editorButton';
 import WrappedField from './wrappedField';
 import ReportSuiteEditor from './reportSuitesEditor';
+import InfoTip from './infoTip';
 import ENVIRONMENTS from '../../enums/environments';
 import COMPONENT_NAMES from '../../enums/componentNames';
 
@@ -121,7 +122,7 @@ let OverwriteReportSuites = ({ className, showReportSuites }) => (
     </WrappedField>
 
     {
-      showReportSuites ? <ReportSuites /> : null
+      showReportSuites && <ReportSuites />
     }
   </div>
 );
@@ -135,118 +136,107 @@ OverwriteReportSuites = connect(
 const LibraryManagement = ({ type }) => (
   <div>
     <WrappedField
+      vertical
       name="libraryCode.type"
-      component={ Radio }
-      type="radio"
-      value={ LIB_TYPES.MANAGED }
+      component={ RadioGroup }
     >
-      Manage the library for me
-    </WrappedField>
-
-    {
-      type === LIB_TYPES.MANAGED ?
-        <div className="FieldSubset">
-          <ReportSuites />
-          <WrappedField
-            name="libraryCode.scopeTrackerGlobally"
-            component={ Checkbox }
-          >
-            Make tracker globally accessible
-          </WrappedField>
-          <InfoTip className="u-fieldLineHeight u-noPadding">
-              If enabled the tracker will be scoped globally under <strong>window.s</strong>.
-          </InfoTip>
-        </div> : null
-    }
-
-    <div>
-      <WrappedField
+      <Radio
         name="libraryCode.type"
-        component={ Radio }
+        type="radio"
+        value={ LIB_TYPES.MANAGED }
+      >
+        Manage the library for me
+      </Radio>
+
+      <Radio
+        name="libraryCode.type"
         type="radio"
         value={ LIB_TYPES.PREINSTALLED }
       >
         Use the library already installed on the page
-      </WrappedField>
-      <InfoTip className="u-fieldLineHeight u-noPadding">
-        Prevents this extension from installing Adobe Analytics page code and assumes
-        the code is already present on your site. Be sure to properly set your tracker
-        variable name when checking this box.
-      </InfoTip>
-    </div>
-    {
-      type === LIB_TYPES.PREINSTALLED ?
-        <div className="FieldSubset">
-          <OverwriteReportSuites className="u-gapBottom" />
-          <TrackerVariableName />
-        </div> : null
-    }
-
-    <div>
-      <WrappedField
+      </Radio>
+      <Radio
         name="libraryCode.type"
-        component={ Radio }
         type="radio"
         value={ LIB_TYPES.REMOTE }
       >
         Load the library from a custom URL
-      </WrappedField>
-    </div>
-    {
-      type === LIB_TYPES.REMOTE ?
-        <div className="FieldSubset">
-          <div className="u-gapBottom">
-            <label>
-              <span className="Label">HTTP URL:</span>
-              <div>
-                <WrappedField
-                  name="libraryCode.httpUrl"
-                  component={ Textfield }
-                  inputClassName="Field--long"
-                  supportDataElement
-                />
-              </div>
-            </label>
-            <label>
-              <span className="Label u-gapTop">HTTPS URL:</span>
-              <div>
-                <WrappedField
-                  name="libraryCode.httpsUrl"
-                  component={ Textfield }
-                  inputClassName="Field--long"
-                  supportDataElement
-                />
-              </div>
-            </label>
-          </div>
-          <OverwriteReportSuites className="u-block u-gapBottom" />
-          <TrackerVariableName className="u-block u-gapBottom" />
-        </div> : null
-    }
-
-    <div>
-      <WrappedField
+      </Radio>
+      <Radio
         name="libraryCode.type"
         component={ Radio }
         type="radio"
         value={ LIB_TYPES.CUSTOM }
       >
         Let me provide custom library code
-      </WrappedField>
-    </div>
-    {
-      type === LIB_TYPES.CUSTOM ?
-        <div className="FieldSubset">
-          <div className="u-gapBottom">
+      </Radio>
+    </WrappedField>
+      {
+        type === LIB_TYPES.MANAGED ?
+          <div className="FieldSubset">
+            <ReportSuites />
             <WrappedField
-              name="libraryCode.source"
-              component={ EditorButton }
-            />
-          </div>
-          <OverwriteReportSuites className="u-block u-gapBottom" />
-          <TrackerVariableName className="u-block u-gapBottom" />
-        </div> : null
-    }
+              name="libraryCode.scopeTrackerGlobally"
+              component={ Checkbox }
+            >
+              Make tracker globally accessible
+            </WrappedField>
+            <InfoTip className="u-fieldLineHeight u-noPadding">
+              If enabled the tracker will be scoped globally under <strong>window.s</strong>.
+            </InfoTip>
+          </div> : null
+      },
+      {
+        type === LIB_TYPES.PREINSTALLED ?
+          <div className="FieldSubset">
+            <OverwriteReportSuites className="u-gapBottom" />
+            <TrackerVariableName />
+          </div> : null
+      },
+      {
+        type === LIB_TYPES.REMOTE ?
+          <div className="FieldSubset">
+            <div className="u-gapBottom">
+              <label>
+                <span className="Label">HTTP URL:</span>
+                <div>
+                  <WrappedField
+                    name="libraryCode.httpUrl"
+                    component={ Textfield }
+                    inputClassName="Field--long"
+                    supportDataElement
+                  />
+                </div>
+              </label>
+              <label>
+                <span className="Label u-gapTop">HTTPS URL:</span>
+                <div>
+                  <WrappedField
+                    name="libraryCode.httpsUrl"
+                    component={ Textfield }
+                    inputClassName="Field--long"
+                    supportDataElement
+                  />
+                </div>
+              </label>
+            </div>
+            <OverwriteReportSuites className="u-block u-gapBottom" />
+            <TrackerVariableName className="u-block u-gapBottom" />
+          </div> : null
+      },
+      {
+        type === LIB_TYPES.CUSTOM ?
+          <div className="FieldSubset">
+            <div className="u-gapBottom">
+              <WrappedField
+                name="libraryCode.source"
+                component={ EditorButton }
+              />
+            </div>
+            <OverwriteReportSuites className="u-block u-gapBottom" />
+            <TrackerVariableName className="u-block u-gapBottom" />
+          </div> : null
+      }
   </div>
 );
 

@@ -19,7 +19,7 @@
 import React from 'react';
 import Button from '@react/react-spectrum/Button';
 import Textfield from '@react/react-spectrum/Textfield';
-import Select from '@react/react-spectrum/Select';
+import ComboBox from '@react/react-spectrum/ComboBox';
 import Autocomplete from '@react/react-spectrum/Autocomplete';
 import Close from '@react/react-spectrum/Icon/Close';
 import { FieldArray, formValueSelector, change } from 'redux-form';
@@ -95,7 +95,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
       };
     } else {
       valueFieldProps = {
-        inputComponent: Autocomplete,
+        inputComponent: ComboBox,
         placeholder: 'Select variable',
         options: valueOptions
       };
@@ -110,7 +110,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
         <WrappedField
           name={ `${field}.name` }
           className="u-gapRight2x"
-          component={ Autocomplete }
+          component={ ComboBox }
           placeholder={ `Select ${varType}` }
           options={ nameOptions }
         />
@@ -118,7 +118,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
         <WrappedField
           name={ `${field}.type` }
           className="u-gapRight2x Field--short"
-          component={ Select }
+          component={ ComboBox }
           options={ typeOptions }
           onChange={ () => dispatch(change('default', `${field}.value`, '')) }
         />
@@ -127,7 +127,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
           // Because of https://github.com/erikras/redux-form/issues/1785 we have to
           // set all the same props for all types. It will throw a warning though, sadly. :(
           name={ `${field}.value` }
-          component={ Autocomplete }
+          component={ ComboBox }
           inputClassName="Field--short"
           { ...valueFieldProps }
         />
@@ -135,8 +135,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
         <Button
           variant="secondary"
           square
-          icon={ <Close /> }
-          iconSize="XS"
+          icon={ <Close size="XS" /> }
           onClick={ fields.remove.bind(this, index) }
         />
       </div>

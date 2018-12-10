@@ -18,7 +18,8 @@
 
 import React from 'react';
 import Radio from '@react/react-spectrum/Radio';
-import Select from '@react/react-spectrum/Select';
+import RadioGroup from '@react/react-spectrum/RadioGroup';
+import ComboBox from '@react/react-spectrum/ComboBox';
 import Textfield from '@react/react-spectrum/Textfield';
 import Heading from '@react/react-spectrum/Heading';
 import { connect } from 'react-redux';
@@ -68,56 +69,58 @@ const SendBeacon = ({ type, linkType }) => {
       <div>
         <WrappedField
           name="type"
-          component={ Radio }
-          type="radio"
-          value={ TYPES.PAGE }
+          component={ RadioGroup }
+          vertical
         >
-          <span className="u-bold">s.t(): </span>
-          Send data to Adobe Analytics and treat it as a page view
+          <Radio
+            value={ TYPES.PAGE }
+            label={
+              <span>
+                <strong>s.t(): </strong>
+                Send data to Adobe Analytics and treat it as a page view
+              </span>
+            }
+          />
+          <Radio
+            value={ TYPES.LINK }
+            label={
+              <span>
+                <strong>s.tl(): </strong>
+                Send data to Adobe Analytics and do not treat it as a page view
+              </span>
+            }
+          />
         </WrappedField>
-      </div>
-      <div>
-        <WrappedField
-          name="type"
-          component={ Radio }
-          type="radio"
-          value={ TYPES.LINK }
-        >
-          <span className="u-bold">s.tl(): </span>
-          Send data to Adobe Analytics and
-          <span className="u-italic"> do not </span>
-          treat it as a page view
-        </WrappedField>
-        {
-          type === TYPES.LINK ?
-            <div className="FieldSubset SendBeacon-linkDetails">
-              <div className="SendBeacon-linkType u-gapRight">
-                <label>
-                  <span className="Label">Link Type</span>
-                  <div>
-                    <WrappedField
-                      name="linkType"
-                      component={ Select }
-                      className="Field--short"
-                      options={ linkTypeOptions }
-                    />
-                  </div>
-                </label>
-              </div>
-              <div className="SendBeacon-linkName">
-                <label>
-                  <span className="Label">{ linkNameLabel }</span>
-                  <div>
-                    <WrappedField
-                      name="linkName"
-                      component={ Textfield }
-                      inputClassName="Field--long"
-                      supportDataElement
-                    />
-                  </div>
-                </label>
-              </div>
-            </div> : null
+          {
+            type === TYPES.LINK ?
+              <div className="FieldSubset SendBeacon-linkDetails">
+                <div className="SendBeacon-linkType u-gapRight">
+                  <label>
+                    <span className="Label">Link Type</span>
+                    <div>
+                      <WrappedField
+                        name="linkType"
+                        component={ ComboBox }
+                        className="Field--short"
+                        options={ linkTypeOptions }
+                      />
+                    </div>
+                  </label>
+                </div>
+                <div className="SendBeacon-linkName">
+                  <label>
+                    <span className="Label">{ linkNameLabel }</span>
+                    <div>
+                      <WrappedField
+                        name="linkName"
+                        component={ Textfield }
+                        inputClassName="Field--long"
+                        supportDataElement
+                      />
+                    </div>
+                  </label>
+                </div>
+              </div> : null
           }
       </div>
     </div>

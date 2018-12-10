@@ -16,13 +16,13 @@
 * from Adobe Systems Incorporated.
 **************************************************************************/
 
+import React from 'react';
 import Button from '@react/react-spectrum/Button';
 import Textfield from '@react/react-spectrum/Textfield';
 import { Tag, TagList } from '@react/react-spectrum/TagList';
 import InfoTip from './infoTip';
 import ErrorTip from './errorTip';
-import WrappedField from './wrappedField';
-import React from 'react';
+import DataElementSelectorButton from './dataElementSelectorButton';
 
 import './tagListEditor.styl';
 
@@ -38,10 +38,8 @@ export default class TagListEditor extends React.Component {
 
   onRemove = (removedValue) => {
     const {
-      input: {
-        value,
-        onChange
-      }
+      value,
+      onChange
     } = this.props;
 
     onChange(value.filter(val => val !== removedValue));
@@ -56,10 +54,8 @@ export default class TagListEditor extends React.Component {
 
   add = () => {
     const {
-      input: {
-        value,
-        onChange
-      }
+      value,
+      onChange
     } = this.props;
 
     if (this.state.newValue) {
@@ -103,7 +99,6 @@ export default class TagListEditor extends React.Component {
       value,
       inputClassName,
       className,
-      //figure out what meta is, where it's coming from and if it's needed
       meta: {
         touched,
         error
@@ -123,10 +118,8 @@ export default class TagListEditor extends React.Component {
             onKeyPress={ this.handleKeyPress }
             value={ this.state.newValue }
           />
-          {/*create a dataelementselectorbutton*/}
-          {/*<DataElementSelectorButton onClick={ this.openSelector } />*/}
+          <DataElementSelectorButton onClick={ this.openSelector } />
           <Button onClick={ this.add }>Save</Button>
-          {/*create an error tip*/}
           { touched && error ? <ErrorTip>{ error }</ErrorTip> : null }
         </div>
         <div className="u-gapTop TagListEditor-tagContainer">

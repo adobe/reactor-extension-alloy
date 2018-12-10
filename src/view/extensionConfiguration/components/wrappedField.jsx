@@ -23,6 +23,7 @@ class DecoratedInput extends React.Component {
     window.extensionBridge.openDataElementSelector({
       tokenize
     }).then(dataElement => {
+      console.log(this.props);
       onChange(tokenize ? addDataElementToken(value, dataElement) : dataElement);
     });
   };
@@ -48,6 +49,7 @@ class DecoratedInput extends React.Component {
 
     // This code that only sets className if it's truthy is just to get around
     // https://jira.corp.adobe.com/browse/RSP-269
+    // https://jira.corp.adobe.com/browse/RSP-269
     // Once that's fixed, we should be able to always set the className prop.
     const validationWrapperProps = {
       error: meta.touched && meta.error,
@@ -63,6 +65,7 @@ class DecoratedInput extends React.Component {
         <FieldComponent
           { ...input }
           { ...rest }
+          meta={ meta }
           className={ componentClassName }
           invalid={ Boolean(meta.touched && meta.invalid) }
         >

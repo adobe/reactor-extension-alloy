@@ -18,6 +18,7 @@
 
 import React from 'react';
 import Radio from '@react/react-spectrum/Radio';
+import RadioGroup from '@react/react-spectrum/RadioGroup';
 import Textfield from '@react/react-spectrum/Textfield';
 import Autocomplete from '@react/react-spectrum/Autocomplete';
 import { connect } from 'react-redux';
@@ -42,14 +43,23 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
     <div>
       <WrappedField
         name="trackerProperties.currencyCodeInputMethod"
-        component={ Radio }
-        type="radio"
-        value={ CURRENCY_CODE_INPUT_METHODS.PRESET }
-        onChange={
-          () => dispatch(change('default', 'trackerProperties.currencyCode', CURRENCY_CODE_DEFAULT))
-        }
+        component={ RadioGroup }
+        vertical
       >
-        Preset
+        <Radio
+          value={ CURRENCY_CODE_INPUT_METHODS.PRESET }
+          label="Preset"
+          onChange={
+            () => dispatch(change('default', 'trackerProperties.currencyCode', CURRENCY_CODE_DEFAULT))
+          }
+        />
+        <Radio
+          value={ CURRENCY_CODE_INPUT_METHODS.CUSTOM }
+          label="Custom"
+          onChange={
+            () => dispatch(change('default', 'trackerProperties.currencyCode', ''))
+          }
+        />
       </WrappedField>
 
       {
@@ -67,18 +77,6 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
       }
     </div>
     <div>
-      <WrappedField
-        name="trackerProperties.currencyCodeInputMethod"
-        component={ Radio }
-        type="radio"
-        value={ CURRENCY_CODE_INPUT_METHODS.CUSTOM }
-        onChange={
-          () => dispatch(change('default', 'trackerProperties.currencyCode', ''))
-        }
-      >
-        Custom
-      </WrappedField>
-
       {
         currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
           <div className="FieldSubset">

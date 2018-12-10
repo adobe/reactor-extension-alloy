@@ -19,7 +19,8 @@
 import React from 'react';
 import Button from '@react/react-spectrum/Button';
 import Textfield from '@react/react-spectrum/Textfield';
-import Autocomplete from '@react/react-spectrum/Autocomplete';
+import Close from '@react/react-spectrum/Icon/Close';
+import ComboBox from '@react/react-spectrum/ComboBox';
 import { FieldArray } from 'redux-form';
 import WrappedField from '../extensionConfiguration/components/wrappedField';
 import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from '../enums/accessLevelLimits';
@@ -76,21 +77,20 @@ const renderEvents = ({ fields }) => {
       <WrappedField
         name={ `${field}.name` }
         className="u-gapRight2x"
-        component={ Autocomplete }
+        component={ ComboBox }
         placeholder="Select event"
         options={ nameOptions }
       />
 
-      <Field
+      <WrappedField
         name={ `${field}.id` }
-        component={ DecoratedInput }
-        inputComponent={ Textfield }
+        component={ Textfield }
         inputClassName="Field--short"
         placeholder="Event ID (optional)"
         supportDataElement
       />
 
-      <Field
+      <WrappedField
         name={ `${field}.value` }
         component={ Textfield }
         inputClassName="Field--short"
@@ -100,8 +100,7 @@ const renderEvents = ({ fields }) => {
 
       <Button
         variant="secondary"
-        icon="close"
-        iconSize="XS"
+        icon={ <Close size="XS" /> }
         square
         onClick={ fields.remove.bind(this, index) }
       />
