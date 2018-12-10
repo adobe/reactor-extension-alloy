@@ -127,7 +127,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
           // set all the same props for all types. It will throw a warning though, sadly. :(
           name={ `${field}.value` }
           component={ ComboBox }
-          inputClassName="leField--short"
+          inputClassName="Field--short"
           { ...valueFieldProps }
         />
 
