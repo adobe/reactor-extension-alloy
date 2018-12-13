@@ -54,20 +54,16 @@ const CustomSetup = ({ source }) => (
           <div>
             <WrappedField
               name="customSetup.loadPhase"
-              component={ Radio }
-              type="radio"
-              value={ LOAD_PHASES.BEFORE_SETTINGS }
+              component={ RadioGroup }
             >
-              Before other settings are applied
-            </WrappedField>
-
-            <WrappedField
-              name="customSetup.loadPhase"
-              component={ Radio }
-              type="radio"
-              value={ LOAD_PHASES.AFTER_SETTINGS }
-            >
-              After other settings are applied
+              <Radio
+                value={ LOAD_PHASES.BEFORE_SETTINGS }
+                label="Before other settings are applied"
+              />
+              <Radio
+                value={ LOAD_PHASES.AFTER_SETTINGS }
+                label="After other setting are applied"
+              />
             </WrappedField>
           </div>
         </fieldset>
