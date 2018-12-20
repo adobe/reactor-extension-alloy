@@ -24,7 +24,7 @@ import createExtensionBridge from '../../../../__tests__/helpers/createExtension
 import bootstrap from '../../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const openEditorButton = wrapper.find(Button).node;
+  const openEditorButton = wrapper.find(Button);
 
   return {
     openEditorButton
@@ -64,7 +64,7 @@ describe('customSetup', () => {
       openEditorButton
     } = getReactComponents(instance);
 
-    openEditorButton.props.onClick();
+    openEditorButton.props().onClick();
 
     expect(extensionBridge.getSettings()).toEqual({
       customSetup: {
