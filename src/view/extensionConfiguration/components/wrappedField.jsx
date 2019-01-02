@@ -5,6 +5,7 @@ import RadioGroup from '@react/react-spectrum/RadioGroup';
 import Checkbox from '@react/react-spectrum/Checkbox';
 import Data from '@react/react-spectrum/Icon/Data';
 import ValidationWrapper from './validationWrapper';
+import DataElementSelectorButton from './dataElementSelectorButton';
 
 const addDataElementToken = (value, dataElementToken) => `${value || ''}${dataElementToken}`;
 
@@ -73,11 +74,8 @@ class DecoratedInput extends React.Component {
         </FieldComponent>
         {
           supportDataElement || supportDataElementName ?
-            <Button
-              variant="action"
-              quiet
-              icon={ <Data /> }
-              onClick={ this.openDataElementSelector(supportDataElement) }
+            <DataElementSelectorButton 
+              onClick={ this.openDataElementSelector(supportDataElement)}
             /> : null
         }
       </ValidationWrapper>
