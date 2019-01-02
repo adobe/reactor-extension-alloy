@@ -6,7 +6,6 @@ export default function DataElementSelectorButton(props) {
   return (<Button
     variant="tool"
     icon={ <IconData /> }
-    iconSize="small"
     className={ props.className }
     onClick={ props.onClick }
   />);
