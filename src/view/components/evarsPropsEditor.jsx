@@ -18,6 +18,7 @@
 
 import React from 'react';
 import Button from '@react/react-spectrum/Button';
+import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
 import ComboBox from '@react/react-spectrum/ComboBox';
 import Close from '@react/react-spectrum/Icon/Close';
@@ -89,12 +90,12 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
 
     if (type === TYPES.VALUE) {
       valueFieldProps = {
-        inputComponent: Textfield,
+        component: Textfield,
         supportDataElement: true
       };
     } else {
       valueFieldProps = {
-        inputComponent: ComboBox,
+        component: ComboBox,
         placeholder: 'Select variable',
         options: valueOptions
       };
@@ -117,16 +118,15 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
         <WrappedField
           name={ `${field}.type` }
           className="u-gapRight2x Field--short"
-          component={ ComboBox }
+          onBlur={ e => e.preventDefault() }
+          component={ Select }
           options={ typeOptions }
-          onChange={ () => dispatch(change('default', `${field}.value`, '')) }
         />
 
         <WrappedField
           // Because of https://github.com/erikras/redux-form/issues/1785 we have to
           // set all the same props for all types. It will throw a warning though, sadly. :(
           name={ `${field}.value` }
-          component={ ComboBox }
           inputClassName="Field--short"
           { ...valueFieldProps }
         />
