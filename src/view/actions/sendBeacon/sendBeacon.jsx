@@ -19,7 +19,7 @@
 import React from 'react';
 import Radio from '@react/react-spectrum/Radio';
 import RadioGroup from '@react/react-spectrum/RadioGroup';
-import ComboBox from '@react/react-spectrum/ComboBox';
+import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
 import Heading from '@react/react-spectrum/Heading';
 import { connect } from 'react-redux';
@@ -100,8 +100,9 @@ const SendBeacon = ({ type, linkType }) => {
                     <div>
                       <WrappedField
                         name="linkType"
-                        component={ ComboBox }
-                        className="Field--short"
+                        onBlur={ e => e.preventDefault() } // I don't know why, but onBlur empties the value
+                        component={ Select }
+                        componentClassName="Field--short"
                         options={ linkTypeOptions }
                       />
                     </div>
@@ -114,7 +115,7 @@ const SendBeacon = ({ type, linkType }) => {
                       <WrappedField
                         name="linkName"
                         component={ Textfield }
-                        inputClassName="Field--long"
+                        componentClassName="Field--long"
                         supportDataElement
                       />
                     </div>
