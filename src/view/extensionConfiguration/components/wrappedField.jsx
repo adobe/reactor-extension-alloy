@@ -66,7 +66,7 @@ class DecoratedInput extends React.Component {
           { ...rest }
           meta={ meta }
           className={ componentClassName }
-          invalid={ Boolean(meta.touched && meta.invalid) }
+          validationState={ meta.touched && meta.invalid ? 'invalid' : null }
         >
           {children}
         </FieldComponent>

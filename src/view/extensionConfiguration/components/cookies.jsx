@@ -17,7 +17,7 @@
 **************************************************************************/
 
 import React from 'react';
-import ComboBox from '@react/react-spectrum/ComboBox';
+import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
@@ -56,7 +56,7 @@ const Cookies = ({ cookieLifetime }) => (
           <WrappedField
             name="trackerProperties.visitorID"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -67,7 +67,7 @@ const Cookies = ({ cookieLifetime }) => (
           <WrappedField
             name="trackerProperties.visitorNamespace"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -78,7 +78,7 @@ const Cookies = ({ cookieLifetime }) => (
           <WrappedField
             name="trackerProperties.cookieDomainPeriods"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -89,7 +89,7 @@ const Cookies = ({ cookieLifetime }) => (
           <WrappedField
             name="trackerProperties.fpCookieDomainPeriods"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -101,9 +101,10 @@ const Cookies = ({ cookieLifetime }) => (
         <WrappedField
           id="cookieLifetimeField"
           name="trackerProperties.cookieLifetime"
-          component={ ComboBox }
-          inputClassName="Cookies-cookieLifetime"
+          component={ Select }
+          componentClassName="Cookies-cookieLifetime"
           className="u-gapRight"
+          onBlur={ e => e.preventDefault() }
           options={ cookieLifetimeOptions }
         />
 
@@ -111,8 +112,8 @@ const Cookies = ({ cookieLifetime }) => (
           cookieLifetime === COOKIE_LIFETIME_PERIODS.SECONDS ?
             <WrappedField
               name="trackerProperties.cookieLifetimeSeconds"
-              component={ ComboBox }
-              inputClassName="Cookies-cookieLifetimeSeconds"
+              component={ Textfield }
+              componentClassName="Cookies-cookieLifetimeSeconds"
               supportDataElement
             /> : null
         }
