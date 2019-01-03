@@ -26,11 +26,11 @@ import createExtensionBridge from '../../../__tests__/helpers/createExtensionBri
 import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const presetSelect = wrapper.find(Select).node;
+  const presetSelect = wrapper.find(Select);
   const customTextfield =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('charSet') !== -1).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('charSet') !== -1);
   const customInputMethodRadio =
-    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom').node;
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom');
 
   return {
     presetSelect,
@@ -58,7 +58,7 @@ describe('char set', () => {
     });
 
     const { presetSelect } = getReactComponents(instance);
-    expect(presetSelect.props.value).toBe('UTF-8');
+    expect(presetSelect.props().value).toBe('UTF-8');
   });
 
   it('sets custom form values from settings', () => {
@@ -71,7 +71,7 @@ describe('char set', () => {
     });
 
     const { customTextfield } = getReactComponents(instance);
-    expect(customTextfield.props.value).toBe('another non preset value');
+    expect(customTextfield.props().value).toBe('another non preset value');
   });
 
   it('sets settings from preset form values', () => {
@@ -79,7 +79,7 @@ describe('char set', () => {
 
     const { presetSelect } = getReactComponents(instance);
 
-    presetSelect.props.onChange({ value: 'UTF-8' });
+    presetSelect.props().onChange('UTF-8');
 
     const { charSet } = extensionBridge.getSettings().trackerProperties;
     expect(charSet).toBe('UTF-8');
@@ -89,10 +89,10 @@ describe('char set', () => {
     extensionBridge.init();
 
     const { customInputMethodRadio } = getReactComponents(instance);
-    customInputMethodRadio.props.onChange('custom');
+    customInputMethodRadio.props().onChange(true, { stopPropagation: () => undefined });
 
     const { customTextfield } = getReactComponents(instance);
-    customTextfield.props.onChange('some custom');
+    customTextfield.props().onChange('some custom');
 
     const { charSet } = extensionBridge.getSettings().trackerProperties;
     expect(charSet).toBe('some custom');
@@ -103,7 +103,7 @@ describe('char set', () => {
 
     const { presetSelect } = getReactComponents(instance);
 
-    presetSelect.props.onChange({ value: 'ASCII' });
+    presetSelect.props().onChange('ASCII');
 
     const { charSet } = extensionBridge.getSettings().trackerProperties;
     expect(charSet).toBeUndefined();

@@ -17,7 +17,7 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Autocomplete from '@react/react-spectrum/Autocomplete';
+import Select from '@react/react-spectrum/Select';
 import Radio from '@react/react-spectrum/Radio';
 import Textfield from '@react/react-spectrum/Textfield';
 
@@ -26,10 +26,10 @@ import createExtensionBridge from '../../../__tests__/helpers/createExtensionBri
 import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const presetAutocomplete = wrapper.find(Autocomplete).node;
-  const customTextfield = wrapper.find(Textfield).node;
+  const presetAutocomplete = wrapper.find(Select);
+  const customTextfield = wrapper.find(Textfield);
   const customInputMethodRadio =
-    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom').node;
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom');
 
   return {
     presetAutocomplete,
@@ -57,7 +57,7 @@ describe('currency code', () => {
     });
 
     const { presetAutocomplete } = getReactComponents(instance);
-    expect(presetAutocomplete.props.value).toBe('EUR');
+    expect(presetAutocomplete.props().value).toBe('EUR');
   });
 
   it('sets custom form values from settings', () => {
@@ -70,14 +70,14 @@ describe('currency code', () => {
     });
 
     const { customTextfield } = getReactComponents(instance);
-    expect(customTextfield.props.value).toBe('another non preset value');
+    expect(customTextfield.props().value).toBe('another non preset value');
   });
 
   it('sets settings from preset form values', () => {
     extensionBridge.init();
 
     const { presetAutocomplete } = getReactComponents(instance);
-    presetAutocomplete.props.onChange({ value: 'EUR' });
+    presetAutocomplete.props().onChange('EUR');
 
     const { currencyCode } = extensionBridge.getSettings().trackerProperties;
     expect(currencyCode).toBe('EUR');
@@ -87,10 +87,10 @@ describe('currency code', () => {
     extensionBridge.init();
 
     const { customInputMethodRadio } = getReactComponents(instance);
-    customInputMethodRadio.props.onChange('custom');
+    customInputMethodRadio.props().onChange(true, { stopPropagation: () => undefined });
 
     const { customTextfield } = getReactComponents(instance);
-    customTextfield.props.onChange('some custom');
+    customTextfield.props().onChange('some custom');
 
     const { currencyCode } = extensionBridge.getSettings().trackerProperties;
     expect(currencyCode).toBe('some custom');
