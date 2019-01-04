@@ -20,7 +20,6 @@ import { mount } from 'enzyme';
 import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
 import { Field } from 'redux-form';
-import ErrorTip from '@reactor/react-components/lib/errorTip';
 
 import Cookies, { formConfig } from '../cookies';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
@@ -39,7 +38,6 @@ const getReactComponents = (wrapper) => {
     .filterWhere(n => n.prop('name').indexOf('fpCookieDomainPeriods') !== -1);
   const cookieLifetimeSelect = wrapper.find(Select);
   const cookieLifetimeSecondsTextfield = cookieLifetimeSecondsField.find(Textfield);
-  const cookieLifetimeSecondsErrorTip = cookieLifetimeSecondsField.find(ErrorTip);
 
   return {
     visitorIDTextfield,
@@ -47,8 +45,7 @@ const getReactComponents = (wrapper) => {
     cookieDomainPeriodsTextfield,
     fpcookieDomainPeriodsTextfield,
     cookieLifetimeSelect,
-    cookieLifetimeSecondsTextfield,
-    cookieLifetimeSecondsErrorTip
+    cookieLifetimeSecondsTextfield
   };
 };
 
@@ -198,12 +195,7 @@ describe('cookies', () => {
     cookieLifetimeSecondsTextfield.props().onChange('  ');
 
     expect(extensionBridge.validate()).toBe(false);
-
-    const {
-      cookieLifetimeSecondsErrorTip
-    } = getReactComponents(instance);
-
-    expect(cookieLifetimeSecondsErrorTip).toBeDefined();
+    expect(cookieLifetimeSecondsTextfield.props().validationState).toBe("invalid");
   });
 
   it('does not set settings for fields that are not completed', () => {
@@ -223,24 +215,4 @@ describe('cookies', () => {
     expect(cookieLifetime).toBeUndefined();
   });
 
-  it('shows an error when cookieLifetime seconds value is not provided', () => {
-    extensionBridge.init();
-
-    const { cookieLifetimeSelect } = getReactComponents(instance);
-    cookieLifetimeSelect.props().onChange('SECONDS');
-
-    const {
-      cookieLifetimeSecondsTextfield
-    } = getReactComponents(instance);
-
-    cookieLifetimeSecondsTextfield.props().onChange('  ');
-
-    extensionBridge.validate();
-
-    const {
-      cookieLifetimeSecondsErrorTip
-    } = getReactComponents(instance);
-
-    expect(cookieLifetimeSecondsErrorTip).toBeDefined();
-  });
 });
