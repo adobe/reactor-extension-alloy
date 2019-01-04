@@ -26,19 +26,17 @@ import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const enableTrackInlineStatsCheckbox =
-    wrapper.find(Checkbox).filterWhere(n => n.prop('name').indexOf('trackInlineStats') !== -1).node;
+    wrapper.find(Checkbox).filterWhere(n => n.prop('name').indexOf('trackInlineStats') !== -1);
   const trackDownloadLinksCheckbox = wrapper.find(Checkbox)
-    .filterWhere(n => n.prop('name').indexOf('trackDownloadLinks') !== -1).node;
+    .filterWhere(n => n.prop('name').indexOf('trackDownloadLinks') !== -1);
   const trackOutboundLinksCheckbox = wrapper.find(Checkbox)
-    .filterWhere(n => n.prop('name').indexOf('trackExternalLinks') !== -1).node;
+    .filterWhere(n => n.prop('name').indexOf('trackExternalLinks') !== -1);
   const keepUrlParametersCheckbox = wrapper.find(Checkbox)
-    .filterWhere(n => n.prop('name').indexOf('linkLeaveQueryString') !== -1).node;
+    .filterWhere(n => n.prop('name').indexOf('linkLeaveQueryString') !== -1);
 
-  const [
-    linkDownloadFileTypesTagListEditor,
-    linkExternalFiltersTagListEditor,
-    linkInternalFiltersTagListEditor
-  ] = wrapper.find(TagListEditor).nodes;
+  const linkDownloadFileTypesTagListEditor = wrapper.find(TagListEditor).at(0);
+  const linkExternalFiltersTagListEditor = wrapper.find(TagListEditor).at(1);
+  const linkInternalFiltersTagListEditor = wrapper.find(TagListEditor).at(2);
 
   return {
     enableTrackInlineStatsCheckbox,
@@ -85,14 +83,14 @@ describe('link tracking', () => {
       keepUrlParametersCheckbox
     } = getReactComponents(instance);
 
-    expect(enableTrackInlineStatsCheckbox.props.value).toBe(false);
-    expect(trackDownloadLinksCheckbox.props.value).toBe(true);
-    expect(trackOutboundLinksCheckbox.props.value).toBe(true);
-    expect(linkDownloadFileTypesTagListEditor.props.input.value).toEqual(['avi', 'exe']);
-    expect(linkInternalFiltersTagListEditor.props.input.value).toEqual(['tel:', 'mailto:']);
-    expect(linkExternalFiltersTagListEditor.props.input.value)
+    expect(enableTrackInlineStatsCheckbox.props().value).toBe(false);
+    expect(trackDownloadLinksCheckbox.props().value).toBe(true);
+    expect(trackOutboundLinksCheckbox.props().value).toBe(true);
+    expect(linkDownloadFileTypesTagListEditor.props().value).toEqual(['avi', 'exe']);
+    expect(linkInternalFiltersTagListEditor.props().value).toEqual(['tel:', 'mailto:']);
+    expect(linkExternalFiltersTagListEditor.props().value)
       .toEqual(['http://someurl.com', 'http://someurl2.com']);
-    expect(keepUrlParametersCheckbox.props.value).toBe(true);
+    expect(keepUrlParametersCheckbox.props().value).toBe(true);
   });
 
   it('sets settings from form values', () => {
@@ -105,10 +103,10 @@ describe('link tracking', () => {
       keepUrlParametersCheckbox
     } = getReactComponents(instance);
 
-    enableTrackInlineStatsCheckbox.props.onChange(false);
-    trackDownloadLinksCheckbox.props.onChange(true);
-    trackOutboundLinksCheckbox.props.onChange(true);
-    keepUrlParametersCheckbox.props.onChange(true);
+    enableTrackInlineStatsCheckbox.props().onChange(false);
+    trackDownloadLinksCheckbox.props().onChange(true);
+    trackOutboundLinksCheckbox.props().onChange(true);
+    keepUrlParametersCheckbox.props().onChange(true);
 
     const {
       linkDownloadFileTypesTagListEditor,
@@ -116,9 +114,9 @@ describe('link tracking', () => {
       linkInternalFiltersTagListEditor
     } = getReactComponents(instance);
 
-    linkDownloadFileTypesTagListEditor.props.input.onChange(['avi', 'exe']);
-    linkInternalFiltersTagListEditor.props.input.onChange(['tel:', 'mailto:']);
-    linkExternalFiltersTagListEditor.props.input.onChange(['http://someurl.com', 'http://someurl2.com']);
+    linkDownloadFileTypesTagListEditor.props().onChange(['avi', 'exe']);
+    linkInternalFiltersTagListEditor.props().onChange(['tel:', 'mailto:']);
+    linkExternalFiltersTagListEditor.props().onChange(['http://someurl.com', 'http://someurl2.com']);
 
     const {
       trackerProperties: {
