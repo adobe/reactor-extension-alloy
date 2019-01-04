@@ -24,7 +24,7 @@ class EditorButton extends React.Component {
   render() {
     const {
       className,
-      invalid
+      validationState
     } = this.props;
 
     return (
@@ -32,7 +32,8 @@ class EditorButton extends React.Component {
         icon={ <Code /> }
         className={ className }
         onClick={ this.onClick }
-        variant={ invalid ? 'warning' : 'primary' }
+        variant="action"
+        invalid={ validationState === "invalid" }
       >
         Open Editor
       </Button>

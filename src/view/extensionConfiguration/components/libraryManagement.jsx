@@ -102,11 +102,11 @@ const ReportSuites = () => (
 const TrackerVariableName = ({ className }) => (
   <div className={ className }>
     <label>
-      <span className="Label">Tracker is accessible on the global variable named:</span>
+      <span className="Label">Tracker is accessible on the global variable named: </span>
       <WrappedField
         name="libraryCode.trackerVariableName"
         component={ Textfield }
-        inputClassName="u-gapLeft"
+        componentClassName="u-gapLeft"
       />
     </label>
   </div>
@@ -135,42 +135,17 @@ OverwriteReportSuites = connect(
 
 const LibraryManagement = ({ type }) => (
   <div>
-    <WrappedField
-      vertical
-      name="libraryCode.type"
-      component={ RadioGroup }
-    >
-      <Radio
+    <div>
+      <WrappedField
+        vertical
         name="libraryCode.type"
-        type="radio"
-        value={ LIB_TYPES.MANAGED }
+        component={ RadioGroup }
       >
-        Manage the library for me
-      </Radio>
-
-      <Radio
-        name="libraryCode.type"
-        type="radio"
-        value={ LIB_TYPES.PREINSTALLED }
-      >
-        Use the library already installed on the page
-      </Radio>
-      <Radio
-        name="libraryCode.type"
-        type="radio"
-        value={ LIB_TYPES.REMOTE }
-      >
-        Load the library from a custom URL
-      </Radio>
-      <Radio
-        name="libraryCode.type"
-        component={ Radio }
-        type="radio"
-        value={ LIB_TYPES.CUSTOM }
-      >
-        Let me provide custom library code
-      </Radio>
-    </WrappedField>
+        <Radio
+          value={ LIB_TYPES.MANAGED }
+          label="Manage the library for me"
+        />
+      </WrappedField>
       {
         type === LIB_TYPES.MANAGED ?
           <div className="FieldSubset">
@@ -186,6 +161,18 @@ const LibraryManagement = ({ type }) => (
             </InfoTip>
           </div> : null
       }
+    </div>
+    <div>
+      <WrappedField
+        vertical
+        name="libraryCode.type"
+        component={ RadioGroup }
+      >
+        <Radio
+          value={ LIB_TYPES.PREINSTALLED }
+          label="Use the library already installed on the page"
+        />
+      </WrappedField>
       {
         type === LIB_TYPES.PREINSTALLED ?
           <div className="FieldSubset">
@@ -193,6 +180,18 @@ const LibraryManagement = ({ type }) => (
             <TrackerVariableName />
           </div> : null
       }
+    </div>
+    <div>
+      <WrappedField
+        vertical
+        name="libraryCode.type"
+        component={ RadioGroup }
+      >
+        <Radio
+          value={ LIB_TYPES.REMOTE }
+          label="Load the library from a custom URL"
+        />
+      </WrappedField>
       {
         type === LIB_TYPES.REMOTE ?
           <div className="FieldSubset">
@@ -224,6 +223,20 @@ const LibraryManagement = ({ type }) => (
             <TrackerVariableName className="u-block u-gapBottom" />
           </div> : null
       }
+    </div>
+    <div>
+      <WrappedField
+        vertical
+        name="libraryCode.type"
+        component={ RadioGroup }
+      >
+        <Radio
+          component={ Radio }
+          value={ LIB_TYPES.CUSTOM }
+        >
+          Let me provide custom library code
+        </Radio>
+      </WrappedField>
       {
         type === LIB_TYPES.CUSTOM ?
           <div className="FieldSubset">
@@ -237,6 +250,7 @@ const LibraryManagement = ({ type }) => (
             <TrackerVariableName className="u-block u-gapBottom" />
           </div> : null
       }
+    </div>
   </div>
 );
 
