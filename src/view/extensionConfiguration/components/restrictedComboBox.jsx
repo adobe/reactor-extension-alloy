@@ -48,16 +48,18 @@ class RestrictedComboBox extends Component {
     });
   }
   onTextfieldBlur() {
-    const { onChange } = this.props;
+    const { onChange, onBlur } = this.props;
     const { inputValue } = this.state;
     const filteredOptions = this.getFilteredOptions(inputValue);
     if (filteredOptions.length) {
       onChange(filteredOptions[0].value);
+      onBlur(); // This makes redux set meta.touched
     } else {
       this.setState({
         inputValue: ''
       });
       onChange();
+      onBlur(); // This makes redux set meta.touched
       // Workaround for https://jira.corp.adobe.com/browse/RSP-307
       // Because we just changed inputValue, which will then
       // set the value prop of Autocomplete, the Autocomplete will try
@@ -78,7 +80,7 @@ class RestrictedComboBox extends Component {
     return Promise.resolve(this.getFilteredOptions(inputValue));
   }
   render() {
-    const { disabled, required, invalid, quiet, autoFocus } = this.props;
+    const { disabled, required, invalid, validationState, quiet, autoFocus } = this.props;
     const { inputValue, isOpen } = this.state;
     return (
       <Autocomplete
@@ -110,7 +112,7 @@ class RestrictedComboBox extends Component {
           onBlur={ this.onTextfieldBlur.bind(this) }
           disabled={ disabled }
           required={ required }
-          invalid={ invalid }
+          validationState={ validationState }
           autocompleteInput
           quiet={ quiet }
           autoFocus={ autoFocus }

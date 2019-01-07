@@ -20,21 +20,19 @@ import { mount } from 'enzyme';
 import React from 'react';
 import Button from '@react/react-spectrum/Button';
 import Textfield from '@react/react-spectrum/Textfield';
-import { DataElementSelectorButton } from '@reactor/react-components';
+import { DataElementSelectorButton } from '../dataElementSelectorButton';
 
 import TagListEditor from '../tagListEditor';
 
 const getReactComponents = (wrapper) => {
-  const valueTextfield = wrapper.find(Textfield).node;
-  const valueButton = wrapper.find(DataElementSelectorButton).node;
-  const addButton = wrapper.find(Button).filterWhere(n => n.prop('children') === 'Save').node;
-  const dataElementSelectorButton = wrapper.find(Button).node;
+  const valueTextfield = wrapper.find(Textfield);
+  const valueButton = wrapper.find(Button).at(0);
+  const addButton = wrapper.find(Button).at(1);
 
   return {
     valueTextfield,
     valueButton,
-    addButton,
-    dataElementSelectorButton
+    addButton
   };
 };
 
@@ -46,10 +44,8 @@ describe('tag list editor', () => {
     onChangeSpy = jasmine.createSpy('onChange');
 
     const props = {
-      input: {
-        value: [],
-        onChange: onChangeSpy
-      },
+      value: [],
+      onChange: onChangeSpy,
       meta: {
         touched: false,
         error: null
@@ -80,13 +76,13 @@ describe('tag list editor', () => {
         };
       });
 
-    valueButton.props.onClick();
+    valueButton.props().onClick();
 
     expect(window.extensionBridge.openDataElementSelector).toHaveBeenCalled();
   });
 
   it('adds a new tag after selecting a data element from the modal', () => {
-    const { dataElementSelectorButton } = getReactComponents(instance);
+    const { valueButton } = getReactComponents(instance);
 
     window.extensionBridge.openDataElementSelector = jasmine.createSpy('openDataElementSelector')
       .and.callFake(() => {
@@ -97,7 +93,7 @@ describe('tag list editor', () => {
         };
       });
 
-    dataElementSelectorButton.props.onClick();
+    valueButton.props().onClick();
 
     expect(onChangeSpy).toHaveBeenCalledWith(['%foo%']);
   });
@@ -108,8 +104,8 @@ describe('tag list editor', () => {
       valueTextfield
     } = getReactComponents(instance);
 
-    valueTextfield.props.onChange('somevalue');
-    addButton.props.onClick();
+    valueTextfield.props().onChange('somevalue');
+    addButton.props().onClick();
 
     expect(onChangeSpy).toHaveBeenCalledWith(['somevalue']);
   });
@@ -120,13 +116,13 @@ describe('tag list editor', () => {
       valueTextfield
     } = getReactComponents(instance);
 
-    valueTextfield.props.onChange({
+    valueTextfield.props().onChange({
       target: {
         value: 'somevalue'
       }
     });
 
-    valueTextfield.props.onKeyPress({ key: 'Enter', keyCode: 13, which: 13 });
+    valueTextfield.props().onKeyPress({ key: 'Enter', keyCode: 13, which: 13 });
     expect(onChangeSpy).toHaveBeenCalledWith(['somevalue']);
   });
 });
