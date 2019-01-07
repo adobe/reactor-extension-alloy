@@ -1,9 +1,7 @@
 import React from 'react';
 import { Field } from 'redux-form';
-import Button from '@react/react-spectrum/Button';
 import RadioGroup from '@react/react-spectrum/RadioGroup';
 import Checkbox from '@react/react-spectrum/Checkbox';
-import Data from '@react/react-spectrum/Icon/Data';
 import ValidationWrapper from './validationWrapper';
 import DataElementSelectorButton from './dataElementSelectorButton';
 
@@ -74,7 +72,7 @@ class DecoratedInput extends React.Component {
         </FieldComponent>
         {
           supportDataElement || supportDataElementName ?
-            <DataElementSelectorButton 
+            <DataElementSelectorButton
               onClick={ this.openDataElementSelector(supportDataElement)}
             /> : null
         }

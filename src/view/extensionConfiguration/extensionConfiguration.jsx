@@ -87,7 +87,6 @@ export default class ExtensionConfiguration extends React.Component {
       <div>
         <Accordion
           multiselectable
-          variant="quiet"
           selectedIndex={ selectedIndexes }
           className="Accordion--first"
           onChange={ this.onAccordionChange.bind(this) }
