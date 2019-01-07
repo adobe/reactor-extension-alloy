@@ -80,8 +80,7 @@ class RestrictedComboBox extends Component {
     return Promise.resolve(this.getFilteredOptions(inputValue));
   }
   render() {
-    const { disabled, required, invalid, validationState, quiet, autoFocus, 
-      meta: { touched } } = this.props;
+    const { disabled, required, invalid, validationState, quiet, autoFocus } = this.props;
     const { inputValue, isOpen } = this.state;
     return (
       <Autocomplete
