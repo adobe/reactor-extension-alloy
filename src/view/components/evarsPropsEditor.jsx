@@ -20,13 +20,14 @@ import React from 'react';
 import Button from '@react/react-spectrum/Button';
 import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
-import ComboBox from '@react/react-spectrum/ComboBox';
 import Close from '@react/react-spectrum/Icon/Close';
-import { FieldArray, formValueSelector, change } from 'redux-form';
+import { FieldArray, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
+import RestrictedComboBox from '../extensionConfiguration/components/restrictedComboBox';
 import WrappedField from '../extensionConfiguration/components/wrappedField';
 import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from '../enums/accessLevelLimits';
 import COMPONENT_NAMES from '../enums/componentNames';
+//import wrappedComboBox from '../extensionConfiguration/components/wrappedComboBox';
 
 const TYPES = {
   VALUE: 'value',
@@ -95,7 +96,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
       };
     } else {
       valueFieldProps = {
-        component: ComboBox,
+        component: RestrictedComboBox,
         placeholder: 'Select variable',
         options: valueOptions
       };
@@ -110,7 +111,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
         <WrappedField
           name={ `${field}.name` }
           className="u-gapRight2x"
-          component={ ComboBox }
+          component={ RestrictedComboBox }
           placeholder={ `Select ${varType}` }
           options={ nameOptions }
         />
