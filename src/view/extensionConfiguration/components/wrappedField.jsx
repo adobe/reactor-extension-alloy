@@ -2,6 +2,7 @@ import React from 'react';
 import { Field } from 'redux-form';
 import RadioGroup from '@react/react-spectrum/RadioGroup';
 import Checkbox from '@react/react-spectrum/Checkbox';
+import Textfield from '@react/react-spectrum/Textfield';
 import ValidationWrapper from './validationWrapper';
 import DataElementSelectorButton from './dataElementSelectorButton';
 
@@ -46,6 +47,16 @@ class DecoratedInput extends React.Component {
       input.selectedValue = input.value;
     }
 
+    const validation = {};
+    if (meta.touched && meta.invalid) {
+      validation.validationState = 'invalid';
+      if (FieldComponent !== Textfield) {
+        validation.validationState = 'invalid';
+        validation.invalid = true;
+      }
+    }
+    
+
     // This code that only sets className if it's truthy is just to get around
     // https://jira.corp.adobe.com/browse/RSP-269
     // https://jira.corp.adobe.com/browse/RSP-269
@@ -66,7 +77,7 @@ class DecoratedInput extends React.Component {
           { ...rest }
           meta={ meta }
           className={ componentClassName }
-          validationState={ meta.touched && meta.invalid ? 'invalid' : null }
+          { ...validation }
         >
           {children}
         </FieldComponent>
