@@ -17,9 +17,9 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Button from '@coralui/react-coral/lib/Button';
-import Select from '@coralui/react-coral/lib/Select';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Button from '@react/react-spectrum/Button';
+import RestrictedComboBox from '../../extensionConfiguration/components/restrictedComboBox';
+import Textfield from '@react/react-spectrum/Textfield';
 
 import HierarchiesEditor, { formConfig } from '../hierarchiesEditor';
 import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
@@ -27,15 +27,15 @@ import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const rows = wrapper.find('[data-row]').map(row => ({
-    nameTextfield: row.find(Select).node,
+    nameTextfield: row.find(RestrictedComboBox),
     sectionTextfields: row.find(Textfield)
-      .filterWhere(n => n.prop('name').indexOf('sections') !== -1).nodes,
+      .filterWhere(n => n.prop('name') && n.prop('name').indexOf('sections') !== -1),
     delimiterTextfields: row.find(Textfield)
-      .filterWhere(n => n.prop('name').indexOf('delimiter') !== -1).node,
-    removeButton: row.find(Button).node
+      .filterWhere(n => n.prop('name') && n.prop('name').indexOf('delimiter') !== -1),
+    removeButton: row.find(Button).at(1)
   }));
 
-  const addButton = wrapper.find(Button).last().node;
+  const addButton = wrapper.find(Button).last();
 
   return {
     rows,
@@ -74,12 +74,12 @@ describe('hierarchies editor', () => {
 
     const { rows } = getReactComponents(instance);
 
-    expect(rows[0].nameTextfield.props.value).toBe('hier2');
-    expect(rows[0].delimiterTextfields.props.value).toBe(':');
-    expect(rows[0].sectionTextfields[0].props.value).toBe('a');
-    expect(rows[0].sectionTextfields[1].props.value).toBe('b');
-    expect(rows[0].sectionTextfields[2].props.value).toBe('c');
-    expect(rows[0].sectionTextfields[3].props.value).toBe('d');
+    expect(rows[0].nameTextfield.props().value).toBe('hier2');
+    expect(rows[0].delimiterTextfields.props().value).toBe(':');
+    expect(rows[0].sectionTextfields.at(0).props().value).toBe('a');
+    expect(rows[0].sectionTextfields.at(1).props().value).toBe('b');
+    expect(rows[0].sectionTextfields.at(2).props().value).toBe('c');
+    expect(rows[0].sectionTextfields.at(3).props().value).toBe('d');
   });
 
   it('sets settings from form values', () => {
@@ -87,12 +87,12 @@ describe('hierarchies editor', () => {
 
     const { rows } = getReactComponents(instance);
 
-    rows[0].nameTextfield.props.onChange({ value: 'hier3' });
-    rows[0].delimiterTextfields.props.onChange('-');
-    rows[0].sectionTextfields[0].props.onChange('a');
-    rows[0].sectionTextfields[1].props.onChange('b');
-    rows[0].sectionTextfields[2].props.onChange('c');
-    rows[0].sectionTextfields[3].props.onChange('d');
+    rows[0].nameTextfield.props().onChange('hier3');
+    rows[0].delimiterTextfields.props().onChange('-');
+    rows[0].sectionTextfields.at(0).props().onChange('a');
+    rows[0].sectionTextfields.at(1).props().onChange('b');
+    rows[0].sectionTextfields.at(2).props().onChange('c');
+    rows[0].sectionTextfields.at(3).props().onChange('d');
 
     const {
       trackerProperties
@@ -109,7 +109,7 @@ describe('hierarchies editor', () => {
     extensionBridge.init();
 
     const { addButton } = getReactComponents(instance);
-    addButton.props.onClick();
+    addButton.props().onClick();
 
     const { rows } = getReactComponents(instance);
 
@@ -148,17 +148,16 @@ describe('hierarchies editor', () => {
 
     let { rows } = getReactComponents(instance);
 
-    //
     expect(rows.length).toBe(3);
-    expect(rows[0].sectionTextfields[0].props.value).toBe('a');
-    expect(rows[1].sectionTextfields[0].props.value).toBe('aa');
+    expect(rows[0].sectionTextfields.at(0).props().value).toBe('a');
+    expect(rows[1].sectionTextfields.at(0).props().value).toBe('aa');
 
-    rows[0].removeButton.props.onClick();
+    rows[0].removeButton.props().onClick();
 
     ({ rows } = getReactComponents(instance));
 
     expect(rows.length).toBe(2);
-    expect(rows[0].sectionTextfields[0].props.value).toBe('aa');
+    expect(rows[0].sectionTextfields.at(0).props().value).toBe('aa');
   });
 
   describe('validate', () => {
@@ -212,7 +211,7 @@ describe('hierarchies editor', () => {
       });
 
       const { rows } = getReactComponents(instance);
-      rows[0].delimiterTextfields.props.onChange('');
+      rows[0].delimiterTextfields.props().onChange('');
 
       expect(extensionBridge.validate()).toBe(false);
     });
