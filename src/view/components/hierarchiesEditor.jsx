@@ -107,8 +107,10 @@ const renderHierarchies = ({ fields }) => {
       </label>
 
       <Button
-        variant="tool"
-        icon={ <Close size="XS" /> }
+        variant="action"
+        quiet
+        icon={ <Close /> }
+        size="XS"
         square
         onClick={ fields.remove.bind(this, index) }
       />
