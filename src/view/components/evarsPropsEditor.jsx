@@ -27,7 +27,6 @@ import RestrictedComboBox from '../extensionConfiguration/components/restrictedC
 import WrappedField from '../extensionConfiguration/components/wrappedField';
 import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from '../enums/accessLevelLimits';
 import COMPONENT_NAMES from '../enums/componentNames';
-//import wrappedComboBox from '../extensionConfiguration/components/wrappedComboBox';
 
 const TYPES = {
   VALUE: 'value',
