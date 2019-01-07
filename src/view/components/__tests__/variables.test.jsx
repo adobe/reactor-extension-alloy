@@ -17,36 +17,40 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Select from '@coralui/react-coral/lib/Select';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
 
 import Variables, { formConfig } from '../variables';
 import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
 import bootstrap from '../../bootstrap';
 
+
 const getReactComponents = (wrapper) => {
-  const dynamicVariablePrefixTextField = wrapper.find(Textfield)
-      .filterWhere(n => n.prop('name').indexOf('dynamicVariablePrefix') !== -1).node;
+  const nameContains = (name) => {
+    return n => n.prop('name') && n.prop('name').indexOf(name) !== -1;
+  }
+  const dynamicVariablePrefixTextField = 
+    wrapper.find(Textfield).filterWhere(nameContains('dynamicVariablePrefix'));
   const pageNameTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('pageName') !== -1).node;
+    wrapper.find(Textfield).filterWhere(nameContains('pageName'));
   const pageURLTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('pageURL') !== -1).node;
+    wrapper.find(Textfield).filterWhere(nameContains('pageURL'));
   const serverTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('server') !== -1).node;
+    wrapper.find(Textfield).filterWhere(nameContains('server'));
   const channelTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('channel') !== -1).node;
+    wrapper.find(Textfield).filterWhere(nameContains('channel'));
   const referrerTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('referrer') !== -1).node;
+    wrapper.find(Textfield).filterWhere(nameContains('referrer'));
   const campaignSelect =
-    wrapper.find(Select).filterWhere(n => n.prop('name').indexOf('campaign.type') !== -1).node;
+    wrapper.find(Select).filterWhere(nameContains('campaign.type'));
   const campaignTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('campaign.value') !== -1).node;
+    wrapper.find(Textfield).filterWhere(nameContains('campaign.value'));
   const transactionIDTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('transactionID') !== -1).node;
+    wrapper.find(Textfield).filterWhere(nameContains('transactionID'));
   const stateTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('state') !== -1).node;
+    wrapper.find(Textfield).filterWhere(nameContains('state'));
   const zipTextField =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('zip') !== -1).node;
+    wrapper.find(Textfield).filterWhere(nameContains('zip'));
 
   return {
     dynamicVariablePrefixTextField,
@@ -107,17 +111,17 @@ describe('variables', () => {
       zipTextField
     } = getReactComponents(instance);
 
-    expect(dynamicVariablePrefixTextField.props.value).toBe('D=dynamicVariable_value');
-    expect(pageNameTextField.props.value).toBe('pageName_value');
-    expect(pageURLTextField.props.value).toBe('pageURL_value');
-    expect(serverTextField.props.value).toBe('server_value');
-    expect(channelTextField.props.value).toBe('channel_value');
-    expect(referrerTextField.props.value).toBe('referrer_value');
-    expect(campaignSelect.props.value).toBe('value');
-    expect(campaignTextField.props.value).toBe('campaign_value');
-    expect(transactionIDTextField.props.value).toBe('transactionID_value');
-    expect(stateTextField.props.value).toBe('state_value');
-    expect(zipTextField.props.value).toBe('zip_value');
+    expect(dynamicVariablePrefixTextField.props().value).toBe('D=dynamicVariable_value');
+    expect(pageNameTextField.props().value).toBe('pageName_value');
+    expect(pageURLTextField.props().value).toBe('pageURL_value');
+    expect(serverTextField.props().value).toBe('server_value');
+    expect(channelTextField.props().value).toBe('channel_value');
+    expect(referrerTextField.props().value).toBe('referrer_value');
+    expect(campaignSelect.props().value).toBe('value');
+    expect(campaignTextField.props().value).toBe('campaign_value');
+    expect(transactionIDTextField.props().value).toBe('transactionID_value');
+    expect(stateTextField.props().value).toBe('state_value');
+    expect(zipTextField.props().value).toBe('zip_value');
   });
 
   it('sets settings from form values', () => {
@@ -137,17 +141,17 @@ describe('variables', () => {
       zipTextField
     } = getReactComponents(instance);
 
-    dynamicVariablePrefixTextField.props.onChange('D=dynamicVariable_value');
-    pageNameTextField.props.onChange('pageName_value');
-    pageURLTextField.props.onChange('pageURL_value');
-    serverTextField.props.onChange('server_value');
-    channelTextField.props.onChange('channel_value');
-    referrerTextField.props.onChange('referrer_value');
-    campaignSelect.props.onChange('value');
-    campaignTextField.props.onChange('campaign_value');
-    transactionIDTextField.props.onChange('transactionID_value');
-    stateTextField.props.onChange('state_value');
-    zipTextField.props.onChange('zip_value');
+    dynamicVariablePrefixTextField.props().onChange('D=dynamicVariable_value');
+    pageNameTextField.props().onChange('pageName_value');
+    pageURLTextField.props().onChange('pageURL_value');
+    serverTextField.props().onChange('server_value');
+    channelTextField.props().onChange('channel_value');
+    referrerTextField.props().onChange('referrer_value');
+    campaignSelect.props().onChange('value');
+    campaignTextField.props().onChange('campaign_value');
+    transactionIDTextField.props().onChange('transactionID_value');
+    stateTextField.props().onChange('state_value');
+    zipTextField.props().onChange('zip_value');
 
     const {
       trackerProperties
