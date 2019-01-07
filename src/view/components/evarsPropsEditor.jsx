@@ -132,9 +132,10 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
         />
 
         <Button
-          variant="tool"
-          square
-          icon={ <Close size="XS" /> }
+          variant="action"
+          quiet
+          icon={ <Close /> }
+          size="XS"
           onClick={ fields.remove.bind(this, index) }
         />
       </div>
@@ -145,6 +146,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
     <section>
       { rows }
       <Button
+        variant="action"
         onClick={ () => fields.push(createEmptyRow()) }
       >
         Add Another

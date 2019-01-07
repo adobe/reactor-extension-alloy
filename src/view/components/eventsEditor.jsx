@@ -20,9 +20,9 @@ import React from 'react';
 import Button from '@react/react-spectrum/Button';
 import Textfield from '@react/react-spectrum/Textfield';
 import Close from '@react/react-spectrum/Icon/Close';
-import ComboBox from '@react/react-spectrum/ComboBox';
 import { FieldArray } from 'redux-form';
 import WrappedField from '../extensionConfiguration/components/wrappedField';
+import RestrictedComboBox from '../extensionConfiguration/components/restrictedComboBox';
 import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from '../enums/accessLevelLimits';
 
 const CONTEXT_EVENTS = [
@@ -77,7 +77,7 @@ const renderEvents = ({ fields }) => {
       <WrappedField
         name={ `${field}.name` }
         className="u-gapRight2x"
-        component={ ComboBox }
+        component={ RestrictedComboBox }
         placeholder="Select event"
         options={ nameOptions }
       />
@@ -99,9 +99,10 @@ const renderEvents = ({ fields }) => {
       />
 
       <Button
-        variant="tool"
-        icon={ <Close size="XS" /> }
-        square
+        variant="action"
+        quiet
+        icon={ <Close /> }
+        size="XS"
         onClick={ fields.remove.bind(this, index) }
       />
     </div>
@@ -110,7 +111,7 @@ const renderEvents = ({ fields }) => {
   return (
     <section>
       { rows }
-      <Button onClick={ () => fields.push(createEmptyRow()) }>Add Another</Button>
+      <Button variant="action" onClick={ () => fields.push(createEmptyRow()) }>Add Another</Button>
     </section>
   );
 };
