@@ -18,7 +18,8 @@
 
 import React from 'react';
 import Radio from '@react/react-spectrum/Radio';
-import ComboBox from '@react/react-spectrum/ComboBox';
+import RadioGroup from '@react/react-spectrum/RadioGroup';
+import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
 import { change, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
@@ -42,40 +43,43 @@ const CharSet = ({ dispatch, charSetInputMethod }) => (
     <div>
       <WrappedField
         name="trackerProperties.charSetInputMethod"
-        component={ Radio }
-        type="radio"
-        value={ CHAR_SET_INPUT_METHOD.PRESET }
-        onChange={
-          () => dispatch(change('default', 'trackerProperties.charSet', CHAR_SET_DEFAULT))
-        }
+        component={ RadioGroup }
+        vertical
       >
-        Preset
+        <Radio
+          value={ CHAR_SET_INPUT_METHOD.PRESET }
+          label="Preset"
+          onChange={
+            () => dispatch(change('default', 'trackerProperties.charSet', CHAR_SET_DEFAULT))
+          }
+        />
       </WrappedField>
-
       {
         charSetInputMethod === CHAR_SET_INPUT_METHOD.PRESET ?
           <div className="FieldSubset">
             <WrappedField
               name="trackerProperties.charSet"
-              component={ ComboBox }
+              component={ Select }
+              onBlur={ e => e.preventDefault() }
               options={ presetOptions }
             />
           </div> : null
       }
     </div>
     <div>
-      {/*<WrappedField*/}
-        {/*name="trackerProperties.charSetInputMethod"*/}
-        {/*component={ Radio }*/}
-        {/*type="radio"*/}
-        {/*value={ CHAR_SET_INPUT_METHOD.CUSTOM }*/}
-        {/*onChange={*/}
-          {/*() => dispatch(change('default', 'trackerProperties.charSet', ''))*/}
-        {/*}*/}
-      {/*>*/}
-        {/*Custom*/}
-      {/*</WrappedField>*/}
-
+      <WrappedField
+        name="trackerProperties.charSetInputMethod"
+        component={ RadioGroup }
+        vertical
+      >
+        <Radio
+          value={ CHAR_SET_INPUT_METHOD.CUSTOM }
+          label="Custom"
+          onChange={
+            () => dispatch(change('default', 'trackerProperties.charSet', ''))
+          }
+        />
+      </WrappedField>
       {
         charSetInputMethod === CHAR_SET_INPUT_METHOD.CUSTOM ?
           <div className="FieldSubset">

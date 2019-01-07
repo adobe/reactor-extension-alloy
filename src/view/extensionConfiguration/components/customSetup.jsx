@@ -43,10 +43,9 @@ const CustomSetup = ({ source }) => (
     </ul>
 
     <WrappedField
-      name="source"
+      name="customSetup.source"
       component={ EditorButton }
     />
-
     { source ?
       <div>
         <fieldset>

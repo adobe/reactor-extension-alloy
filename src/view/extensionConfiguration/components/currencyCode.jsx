@@ -20,7 +20,7 @@ import React from 'react';
 import Radio from '@react/react-spectrum/Radio';
 import RadioGroup from '@react/react-spectrum/RadioGroup';
 import Textfield from '@react/react-spectrum/Textfield';
-import Autocomplete from '@react/react-spectrum/Autocomplete';
+import Select from '@react/react-spectrum/Select';
 import { connect } from 'react-redux';
 import { change, formValueSelector } from 'redux-form';
 import WrappedField from './wrappedField';
@@ -53,6 +53,26 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
             () => dispatch(change('default', 'trackerProperties.currencyCode', CURRENCY_CODE_DEFAULT))
           }
         />
+      </WrappedField>
+      {
+        currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.PRESET ?
+          <div className="FieldSubset">
+            <WrappedField
+              name="trackerProperties.currencyCode"
+              component={ Select }
+              componentClassName="Field--long"
+              onBlur={ e => e.preventDefault() }
+              options={ presetOptions }
+            />
+          </div> : null
+      }
+    </div>
+    <div>
+      <WrappedField
+        name="trackerProperties.currencyCodeInputMethod"
+        component={ RadioGroup }
+        vertical
+      >
         <Radio
           value={ CURRENCY_CODE_INPUT_METHODS.CUSTOM }
           label="Custom"
@@ -61,22 +81,6 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
           }
         />
       </WrappedField>
-
-      {
-        currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.PRESET ?
-          <div className="FieldSubset">
-            <WrappedField
-              name="trackerProperties.currencyCode"
-              component={ Autocomplete }
-              inputClassName="Field--long"
-              options={ presetOptions }
-            >
-              <Textfield placeholder="Autocomplete..." />
-            </WrappedField>
-          </div> : null
-      }
-    </div>
-    <div>
       {
         currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
           <div className="FieldSubset">

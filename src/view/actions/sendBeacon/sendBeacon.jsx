@@ -91,38 +91,39 @@ const SendBeacon = ({ type, linkType }) => {
             }
           />
         </WrappedField>
-          {
-            type === TYPES.LINK ?
-              <div className="FieldSubset SendBeacon-linkDetails">
-                <div className="SendBeacon-linkType u-gapRight">
-                  <label>
-                    <span className="Label">Link Type</span>
-                    <div>
-                      <WrappedField
-                        name="linkType"
-                        onBlur={ e => e.preventDefault() } // I don't know why, but onBlur empties the value
-                        component={ Select }
-                        componentClassName="Field--short"
-                        options={ linkTypeOptions }
-                      />
-                    </div>
-                  </label>
-                </div>
-                <div className="SendBeacon-linkName">
-                  <label>
-                    <span className="Label">{ linkNameLabel }</span>
-                    <div>
-                      <WrappedField
-                        name="linkName"
-                        component={ Textfield }
-                        componentClassName="Field--long"
-                        supportDataElement
-                      />
-                    </div>
-                  </label>
-                </div>
-              </div> : null
-          }
+        {
+          type === TYPES.LINK ?
+            <div className="FieldSubset SendBeacon-linkDetails">
+              <div className="SendBeacon-linkType u-gapRight">
+                <label>
+                  <span className="Label">Link Type</span>
+                  <div>
+                    <WrappedField
+                      name="linkType"
+                      // I don't know why, but onBlur empties the value
+                      onBlur={ e => e.preventDefault() }
+                      component={ Select }
+                      componentClassName="Field--short"
+                      options={ linkTypeOptions }
+                    />
+                  </div>
+                </label>
+              </div>
+              <div className="SendBeacon-linkName">
+                <label>
+                  <span className="Label">{ linkNameLabel }</span>
+                  <div>
+                    <WrappedField
+                      name="linkName"
+                      component={ Textfield }
+                      componentClassName="Field--long"
+                      supportDataElement
+                    />
+                  </div>
+                </label>
+              </div>
+            </div> : null
+        }
       </div>
     </div>
   );

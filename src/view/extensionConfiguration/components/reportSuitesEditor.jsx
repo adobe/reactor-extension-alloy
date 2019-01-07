@@ -32,8 +32,8 @@ const ReportSuiteEditor = ({ fieldName, showRemoveButton, onRemove }) => (
     {
       showRemoveButton ?
         <Button
-          variant="secondary"
-          square
+          variant="action"
+          quiet
           icon={ <Close /> }
           iconSize="XS"
           onClick={ onRemove }
@@ -67,7 +67,7 @@ export default class ReportSuitesEditor extends React.Component {
     return (
       <div className={ className }>
         {rows}
-        <Button onClick={ this.onAddReportSuite } >
+        <Button variant="action" onClick={ this.onAddReportSuite } >
           Add Another
         </Button>
       </div>

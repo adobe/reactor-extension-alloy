@@ -17,10 +17,9 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Select from '@coralui/react-coral/lib/Select';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
 import { Field } from 'redux-form';
-import ErrorTip from '@reactor/react-components/lib/errorTip';
 
 import Cookies, { formConfig } from '../cookies';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
@@ -30,17 +29,15 @@ const getReactComponents = (wrapper) => {
   const cookieLifetimeSecondsField = wrapper.find(Field)
     .filterWhere(n => n.prop('name').indexOf('cookieLifetimeSeconds') !== -1);
   const visitorIDTextfield =
-    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('visitorID') !== -1).node;
+    wrapper.find(Textfield).filterWhere(n => n.prop('name').indexOf('visitorID') !== -1);
   const visitorNamespaceTextfield = wrapper.find(Textfield)
-    .filterWhere(n => n.prop('name').indexOf('visitorNamespace') !== -1).node;
+    .filterWhere(n => n.prop('name').indexOf('visitorNamespace') !== -1);
   const cookieDomainPeriodsTextfield = wrapper.find(Textfield)
-    .filterWhere(n => n.prop('name').indexOf('cookieDomainPeriods') !== -1).node;
+    .filterWhere(n => n.prop('name').indexOf('cookieDomainPeriods') !== -1);
   const fpcookieDomainPeriodsTextfield = wrapper.find(Textfield)
-    .filterWhere(n => n.prop('name').indexOf('fpCookieDomainPeriods') !== -1).node;
-  const cookieLifetimeSelect =
-    wrapper.find(Select).node;
-  const cookieLifetimeSecondsTextfield = cookieLifetimeSecondsField.find(Textfield).node;
-  const cookieLifetimeSecondsErrorTip = cookieLifetimeSecondsField.find(ErrorTip).node;
+    .filterWhere(n => n.prop('name').indexOf('fpCookieDomainPeriods') !== -1);
+  const cookieLifetimeSelect = wrapper.find(Select);
+  const cookieLifetimeSecondsTextfield = cookieLifetimeSecondsField.find(Textfield);
 
   return {
     visitorIDTextfield,
@@ -48,8 +45,7 @@ const getReactComponents = (wrapper) => {
     cookieDomainPeriodsTextfield,
     fpcookieDomainPeriodsTextfield,
     cookieLifetimeSelect,
-    cookieLifetimeSecondsTextfield,
-    cookieLifetimeSecondsErrorTip
+    cookieLifetimeSecondsTextfield
   };
 };
 
@@ -83,13 +79,12 @@ describe('cookies', () => {
       cookieLifetimeSelect,
       cookieLifetimeSecondsTextfield
     } = getReactComponents(instance);
-
-    expect(visitorIDTextfield.props.value).toBe('visitor id');
-    expect(visitorNamespaceTextfield.props.value).toBe('visitor namespace');
-    expect(cookieDomainPeriodsTextfield.props.value).toBe('cookie domain periods');
-    expect(fpcookieDomainPeriodsTextfield.props.value).toBe('fp cookie domain periods');
-    expect(cookieLifetimeSelect.props.value).toBe('SECONDS');
-    expect(cookieLifetimeSecondsTextfield.props.value).toBe('10');
+    expect(visitorIDTextfield.props().value).toBe('visitor id');
+    expect(visitorNamespaceTextfield.props().value).toBe('visitor namespace');
+    expect(cookieDomainPeriodsTextfield.props().value).toBe('cookie domain periods');
+    expect(fpcookieDomainPeriodsTextfield.props().value).toBe('fp cookie domain periods');
+    expect(cookieLifetimeSelect.props().value).toBe('SECONDS');
+    expect(cookieLifetimeSecondsTextfield.props().value).toBe('10');
   });
 
   it('sets SESSION cookie lifetime form values from settings', () => {
@@ -105,7 +100,7 @@ describe('cookies', () => {
       cookieLifetimeSelect
     } = getReactComponents(instance);
 
-    expect(cookieLifetimeSelect.props.value).toBe('SESSION');
+    expect(cookieLifetimeSelect.props().value).toBe('SESSION');
   });
 
   it('sets NONE cookie lifetime form values from settings', () => {
@@ -121,7 +116,7 @@ describe('cookies', () => {
       cookieLifetimeSelect
     } = getReactComponents(instance);
 
-    expect(cookieLifetimeSelect.props.value).toBe('NONE');
+    expect(cookieLifetimeSelect.props().value).toBe('NONE');
   });
 
   it('sets settings from form values', () => {
@@ -135,14 +130,14 @@ describe('cookies', () => {
       cookieLifetimeSelect
     } = getReactComponents(instance);
 
-    visitorIDTextfield.props.onChange('visitor id');
-    visitorNamespaceTextfield.props.onChange('visitor namespace');
-    cookieDomainPeriodsTextfield.props.onChange('cookie domain periods');
-    fpcookieDomainPeriodsTextfield.props.onChange('fp cookie domain periods');
-    cookieLifetimeSelect.props.onChange({ value: 'SECONDS' });
+    visitorIDTextfield.props().onChange('visitor id');
+    visitorNamespaceTextfield.props().onChange('visitor namespace');
+    cookieDomainPeriodsTextfield.props().onChange('cookie domain periods');
+    fpcookieDomainPeriodsTextfield.props().onChange('fp cookie domain periods');
+    cookieLifetimeSelect.props().onChange('SECONDS');
 
     const { cookieLifetimeSecondsTextfield } = getReactComponents(instance);
-    cookieLifetimeSecondsTextfield.props.onChange('11');
+    cookieLifetimeSecondsTextfield.props().onChange('11');
 
     const {
       visitorID,
@@ -164,7 +159,7 @@ describe('cookies', () => {
 
     const { cookieLifetimeSelect } = getReactComponents(instance);
 
-    cookieLifetimeSelect.props.onChange({ value: 'SESSION' });
+    cookieLifetimeSelect.props().onChange('SESSION');
 
     const {
       cookieLifetime
@@ -178,7 +173,7 @@ describe('cookies', () => {
 
     const { cookieLifetimeSelect } = getReactComponents(instance);
 
-    cookieLifetimeSelect.props.onChange({ value: 'NONE' });
+    cookieLifetimeSelect.props().onChange('NONE');
 
     const {
       cookieLifetime
@@ -191,21 +186,16 @@ describe('cookies', () => {
     extensionBridge.init();
 
     const { cookieLifetimeSelect } = getReactComponents(instance);
-    cookieLifetimeSelect.props.onChange({ value: 'SECONDS' });
+    cookieLifetimeSelect.props().onChange('SECONDS');
 
     const {
       cookieLifetimeSecondsTextfield
     } = getReactComponents(instance);
 
-    cookieLifetimeSecondsTextfield.props.onChange('  ');
+    cookieLifetimeSecondsTextfield.props().onChange('  ');
 
     expect(extensionBridge.validate()).toBe(false);
-
-    const {
-      cookieLifetimeSecondsErrorTip
-    } = getReactComponents(instance);
-
-    expect(cookieLifetimeSecondsErrorTip).toBeDefined();
+    expect(cookieLifetimeSecondsTextfield.props().validationState).toBe("invalid");
   });
 
   it('does not set settings for fields that are not completed', () => {
@@ -225,24 +215,4 @@ describe('cookies', () => {
     expect(cookieLifetime).toBeUndefined();
   });
 
-  it('shows an error when cookieLifetime seconds value is not provided', () => {
-    extensionBridge.init();
-
-    const { cookieLifetimeSelect } = getReactComponents(instance);
-    cookieLifetimeSelect.props.onChange({ value: 'SECONDS' });
-
-    const {
-      cookieLifetimeSecondsTextfield
-    } = getReactComponents(instance);
-
-    cookieLifetimeSecondsTextfield.props.onChange('  ');
-
-    extensionBridge.validate();
-
-    const {
-      cookieLifetimeSecondsErrorTip
-    } = getReactComponents(instance);
-
-    expect(cookieLifetimeSecondsErrorTip).toBeDefined();
-  });
 });
