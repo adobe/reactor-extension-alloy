@@ -80,7 +80,7 @@ class RestrictedComboBox extends Component {
     return Promise.resolve(this.getFilteredOptions(inputValue));
   }
   render() {
-    const { disabled, required, invalid, validationState, quiet, autoFocus } = this.props;
+    const { disabled, required, invalid, validationState, quiet, autoFocus, placeholder } = this.props;
     const { inputValue, isOpen } = this.state;
     return (
       <Autocomplete
@@ -108,7 +108,7 @@ class RestrictedComboBox extends Component {
             this.textfield = textfield;
           } }
           className="spectrum-InputGroup-field"
-          placeholder="Autocomplete..."
+          placeholder={ placeholder }
           onBlur={ this.onTextfieldBlur.bind(this) }
           disabled={ disabled }
           required={ required }
