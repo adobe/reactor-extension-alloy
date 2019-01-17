@@ -19,6 +19,7 @@
 import React from 'react';
 import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
+import InfoTip from '../extensionConfiguration/components/infoTip';
 import WrappedField from '../extensionConfiguration/components/wrappedField';
 import { mergeConfigs } from '../utils/formConfigUtils';
 import EvarsPropsEditor, { getFormConfig as getEvarsPropsEditorFormConfig } from './evarsPropsEditor';
@@ -50,19 +51,17 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       showEvents ?
         <div>
           <span className="Label u-gapTop">Events</span>
-          {/* This InfoTip is commented out until the problem with the dropdown being layered
-              on top of the tip box is fixed
           <InfoTip className="u-fieldLineHeight">
-            Events are milestones within a site. By default events are configured as
+            Events are milestones within a site. By default events are configured as <br />
             <a href="https://marketing.adobe.com/resources/help/en_US/sc/implement/events.html" target="_blank">
-            counter events.</a><br />
+              counter events.</a><br />
             Unless specified otherwise a counter event is assigned the value of one. A counter
             event can be assigned a value other than one by specifying it in the value field.<br />
-            You can specify a unique event ID to
+            You can specify a unique event ID to <br />
             <a href="https://marketing.adobe.com/resources/help/en_US/sc/implement/event_serialization_impl.html" target="_blank">
             prevent duplicate events</a> (e.g. during a page reload) from being recorded more than
             once.
-          </InfoTip>*/}
+          </InfoTip>
           <EventsEditor />
         </div> : null
     }
