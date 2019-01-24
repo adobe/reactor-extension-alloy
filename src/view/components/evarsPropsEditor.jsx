@@ -127,7 +127,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
           // Because of https://github.com/erikras/redux-form/issues/1785 we have to
           // set all the same props for all types. It will throw a warning though, sadly. :(
           name={ `${field}.value` }
-          inputClassName="Field--short"
+          componentClassName="Field--short"
           { ...valueFieldProps }
         />
 

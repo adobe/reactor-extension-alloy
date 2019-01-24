@@ -76,7 +76,7 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <WrappedField
             name="trackerProperties.pageName"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -88,7 +88,7 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <WrappedField
             name="trackerProperties.pageURL"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -100,7 +100,7 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <WrappedField
             name="trackerProperties.server"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -112,7 +112,7 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <WrappedField
             name="trackerProperties.channel"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -124,7 +124,7 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <WrappedField
             name="trackerProperties.referrer"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -157,7 +157,7 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <WrappedField
             name="trackerProperties.state"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -169,7 +169,7 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <WrappedField
             name="trackerProperties.zip"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -181,7 +181,7 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <WrappedField
             name="trackerProperties.transactionID"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -195,7 +195,7 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
               <WrappedField
                 name="trackerProperties.dynamicVariablePrefix"
                 component={ Textfield }
-                inputClassName="Field--long"
+                componentClassName="Field--long"
                 supportDataElement
               />
             </div>

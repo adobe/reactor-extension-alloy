@@ -202,7 +202,7 @@ const LibraryManagement = ({ type }) => (
                   <WrappedField
                     name="libraryCode.httpUrl"
                     component={ Textfield }
-                    inputClassName="Field--long"
+                    componentClassName="Field--long"
                     supportDataElement
                   />
                 </div>
@@ -213,7 +213,7 @@ const LibraryManagement = ({ type }) => (
                   <WrappedField
                     name="libraryCode.httpsUrl"
                     component={ Textfield }
-                    inputClassName="Field--long"
+                    componentClassName="Field--long"
                     supportDataElement
                   />
                 </div>

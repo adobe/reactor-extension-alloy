@@ -57,7 +57,7 @@ const AudienceManager = ({
                 <WrappedField
                   name={ `${nameSpace}.config.partner` }
                   component={ Textfield }
-                  inputClassName="Field--long"
+                  componentClassName="Field--long"
                   supportDataElement
                 />
               </div>
