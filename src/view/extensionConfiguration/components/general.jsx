@@ -67,7 +67,7 @@ const General = props => (
           <WrappedField
             name="trackerProperties.trackingServer"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -78,7 +78,7 @@ const General = props => (
           <WrappedField
             name="trackerProperties.trackingServerSecure"
             component={ Textfield }
-            inputClassName="Field--long"
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>

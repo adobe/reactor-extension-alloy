@@ -60,7 +60,6 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
             <WrappedField
               name="trackerProperties.currencyCode"
               component={ Select }
-              componentClassName="Field--long"
               onBlur={ e => e.preventDefault() }
               options={ presetOptions }
             />
