@@ -19,10 +19,10 @@
 import React from 'react';
 import Button from '@react/react-spectrum/Button';
 import Close from '@react/react-spectrum/Icon/Close';
+import Select from '@react/react-spectrum/Select'
 import Textfield from '@react/react-spectrum/Textfield';
 import { FieldArray } from 'redux-form';
 import WrappedField from '../extensionConfiguration/components/wrappedField';
-import RestrictedComboBox from '../extensionConfiguration/components/restrictedComboBox';
 import './hierarchiesEditor.styl';
 
 const MAX_HIERARCHY_SECTIONS = 4;
@@ -91,9 +91,10 @@ const renderHierarchies = ({ fields }) => {
       <WrappedField
         name={ `${field}.name` }
         className="u-gapRight2x"
-        component={ RestrictedComboBox }
-        inputClassName="Field--short"
+        component={ Select }
+        componentClassName="Field--short"
         options={ hierarchiesOptions }
+        onBlur={ e => e.preventDefault() }
       />
 
       <label>
@@ -102,7 +103,7 @@ const renderHierarchies = ({ fields }) => {
           name={ `${field}.delimiter` }
           className="u-gapRight"
           component={ Textfield }
-          inputClassName="Field--short"
+          componentClassName="Field--short"
         />
       </label>
 
