@@ -103,7 +103,7 @@ const renderHierarchies = ({ fields }) => {
           name={ `${field}.delimiter` }
           className="u-gapRight"
           component={ Textfield }
-          componentClassName="Field--short"
+          componentClassName="Field--shorter"
         />
       </label>
 
