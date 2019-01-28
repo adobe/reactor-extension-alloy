@@ -87,7 +87,7 @@ const AudienceManager = ({
                         name={ `${nameSpace}.config.containerNSID` }
                         type={ 'number' }
                         component={ Textfield }
-                        inputClassName="Field--long"
+                        componentClassName="Field--long"
                       />
                     </div>
                   </label>
@@ -132,7 +132,7 @@ const AudienceManager = ({
                         <WrappedField
                           name={ `${nameSpace}.config.uuidCookie.name` }
                           component={ Textfield }
-                          inputClassName="Field--short"
+                          componentClassName="Field--shorter"
                         />
                       </div>
                     </div>
@@ -147,7 +147,7 @@ const AudienceManager = ({
                           name={ `${nameSpace}.config.uuidCookie.days` }
                           type={ 'number' }
                           component={ Textfield }
-                          inputClassName="Field--short"
+                          componentClassName="Field--shorter"
                         />
                       </div>
                     </div>
@@ -161,7 +161,7 @@ const AudienceManager = ({
                         <WrappedField
                           name={ `${nameSpace}.config.uuidCookie.domain` }
                           component={ Textfield }
-                          inputClassName="Field--short"
+                          componentClassName="Field--shorter"
                         />
                       </div>
                     </div>
@@ -174,7 +174,7 @@ const AudienceManager = ({
                         <WrappedField
                           name={ `${nameSpace}.config.uuidCookie.path` }
                           component={ Textfield }
-                          inputClassName="Field--short"
+                          componentClassName="Field--shorter"
                         />
                       </div>
                     </div>
