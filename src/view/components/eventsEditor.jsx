@@ -85,7 +85,7 @@ const renderEvents = ({ fields }) => {
       <WrappedField
         name={ `${field}.id` }
         component={ Textfield }
-        inputClassName="Field--short"
+        componentClassName="Field--shorter"
         placeholder="Event ID (optional)"
         supportDataElement
       />
@@ -93,7 +93,7 @@ const renderEvents = ({ fields }) => {
       <WrappedField
         name={ `${field}.value` }
         component={ Textfield }
-        inputClassName="Field--short"
+        componentClassName="Field--shorter"
         placeholder="Event Value (optional)"
         supportDataElement
       />
