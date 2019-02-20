@@ -20,9 +20,9 @@ import React from 'react';
 import Radio from '@react/react-spectrum/Radio';
 import RadioGroup from '@react/react-spectrum/RadioGroup';
 import Textfield from '@react/react-spectrum/Textfield';
-import Select from '@react/react-spectrum/Select';
 import { connect } from 'react-redux';
 import { change, formValueSelector } from 'redux-form';
+import RestrictedComboBox from './restrictedComboBox';
 import WrappedField from './wrappedField';
 import CURRENCY_CODE_PRESETS from '../../enums/currencyCodes';
 
@@ -31,7 +31,7 @@ const CURRENCY_CODE_INPUT_METHODS = {
   CUSTOM: 'custom'
 };
 
-const CURRENCY_CODE_DEFAULT = 'USD';
+const CURRENCY_CODE_DEFAULT = 'USD - United States Dollar';
 
 const presetOptions = CURRENCY_CODE_PRESETS.map(preset => ({
   label: `${preset.value} - ${preset.label}`,
@@ -50,7 +50,9 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
           value={ CURRENCY_CODE_INPUT_METHODS.PRESET }
           label="Preset"
           onChange={
-            () => dispatch(change('default', 'trackerProperties.currencyCode', CURRENCY_CODE_DEFAULT))
+            () => {
+              dispatch(change('default', 'trackerProperties.currencyCode', CURRENCY_CODE_DEFAULT))
+            }
           }
         />
       </WrappedField>
@@ -59,9 +61,9 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
           <div className="FieldSubset">
             <WrappedField
               name="trackerProperties.currencyCode"
-              component={ Select }
-              onBlur={ e => e.preventDefault() }
+              component={ RestrictedComboBox }
               options={ presetOptions }
+              defaultValue={ CURRENCY_CODE_DEFAULT }
             />
           </div> : null
       }

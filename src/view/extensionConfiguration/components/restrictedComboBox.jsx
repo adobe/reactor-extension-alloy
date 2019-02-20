@@ -4,6 +4,7 @@ import Textfield from '@react/react-spectrum/Textfield';
 import Button from '@react/react-spectrum/Button';
 import ChevronDownMedium from '@react/react-spectrum/Icon/core/ChevronDownMedium';
 import classNames from 'classnames';
+import '@react/react-spectrum/ComboBox';
 
 let id = 0;
 class RestrictedComboBox extends Component {
