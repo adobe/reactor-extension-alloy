@@ -16,12 +16,13 @@
 * from Adobe Systems Incorporated.
 **************************************************************************/
 
-import React from 'react';
+import React, { Component } from 'react';
 import Checkbox from '@react/react-spectrum/Checkbox';
 import Radio from '@react/react-spectrum/Radio';
 import RadioGroup from '@react/react-spectrum/RadioGroup';
 import Textfield from '@react/react-spectrum/Textfield';
 import Heading from '@react/react-spectrum/Heading';
+import Select from '@react/react-spectrum/Select';
 import { connect } from 'react-redux';
 import { formValueSelector, FieldArray } from 'redux-form';
 import EditorButton from './editorButton';
@@ -30,6 +31,7 @@ import ReportSuiteEditor from './reportSuitesEditor';
 import InfoTip from './infoTip';
 import ENVIRONMENTS from '../../enums/environments';
 import COMPONENT_NAMES from '../../enums/componentNames';
+import AnalyticsApi from '../../utils/analyticsApi';
 
 import './libraryManagement.styl';
 
@@ -40,8 +42,25 @@ const LIB_TYPES = {
   CUSTOM: 'custom'
 };
 
-const ReportSuites = () => (
+  const ReportSuites = ({ companies, getCompletions }) => (
+
   <section>
+      <div>
+        <label className="Label">
+          Company
+          <InfoTip>
+            The company chosen here is only used to pre-populate the list of available report suites on this page.
+          </InfoTip>
+        </label>
+        <div>
+          <WrappedField
+            name="libraryCode.company"
+            component={ Select }
+            onBlur={ e => e.preventDefault() }
+            options={ companies }
+          />
+        </div>
+      </div>
     <Heading size="4">
       Report Suites
       <InfoTip>
@@ -50,6 +69,7 @@ const ReportSuites = () => (
     </Heading>
 
     <section className="ReportSuites-fieldsContainer">
+
       <div className="ReportSuites-environment">
         <label className="Label">
           Development Report Suites
@@ -62,6 +82,7 @@ const ReportSuites = () => (
           <FieldArray
             name="libraryCode.accounts.development"
             component={ ReportSuiteEditor }
+            props={ {getCompletions: getCompletions} }
           />
         </div>
       </div>
@@ -77,6 +98,7 @@ const ReportSuites = () => (
           <FieldArray
             name="libraryCode.accounts.staging"
             component={ ReportSuiteEditor }
+            props={ {getCompletions: getCompletions} }
           />
         </div>
       </div>
@@ -92,6 +114,7 @@ const ReportSuites = () => (
           <FieldArray
             name="libraryCode.accounts.production"
             component={ ReportSuiteEditor }
+            props={ {getCompletions: getCompletions} }
           />
         </div>
       </div>
@@ -112,7 +135,7 @@ const TrackerVariableName = ({ className }) => (
   </div>
 );
 
-let OverwriteReportSuites = ({ className, showReportSuites }) => (
+let OverwriteReportSuites = ({ className, showReportSuites, getCompletions }) => (
   <div className={ className }>
     <WrappedField
       name="libraryCode.showReportSuites"
@@ -122,18 +145,34 @@ let OverwriteReportSuites = ({ className, showReportSuites }) => (
     </WrappedField>
 
     {
-      showReportSuites && <ReportSuites />
+      showReportSuites && <ReportSuites getCompletions={ getCompletions } />
     }
   </div>
 );
 
 OverwriteReportSuites = connect(
   state => ({
-    showReportSuites: formValueSelector('default')(state, 'libraryCode.showReportSuites')
+    showReportSuites: formValueSelector('default')(state, 'libraryCode.showReportSuites'),
+    company: formValueSelector('default')(state, 'libraryCode.company')
   })
 )(OverwriteReportSuites);
 
-const LibraryManagement = ({ type }) => (
+class LibraryManagement extends Component {
+  constructor(props) {
+    super(props);
+    const { meta: { tokens: { imsAccess: token }}} = props.meta;
+
+    // warm the cache
+    // developmentApi.rsidCompletion("");
+    console.log("Meta!", props.meta);
+    this.api = AnalyticsApi(token);
+  }
+
+  render() {
+    const { type, meta: { company: { orgId: imsOrgId }} } = this.props;
+    const getCompletions = (search) => mockApi.rsidCompletion(search);
+
+    return (
   <div>
     <div>
       <WrappedField
@@ -149,7 +188,7 @@ const LibraryManagement = ({ type }) => (
       {
         type === LIB_TYPES.MANAGED ?
           <div className="FieldSubset">
-            <ReportSuites />
+            <ReportSuites getCompletions={ getCompletions }/>
             <WrappedField
               name="libraryCode.scopeTrackerGlobally"
               component={ Checkbox }
@@ -176,7 +215,7 @@ const LibraryManagement = ({ type }) => (
       {
         type === LIB_TYPES.PREINSTALLED ?
           <div className="FieldSubset">
-            <OverwriteReportSuites className="u-gapBottom" />
+            <OverwriteReportSuites className="u-gapBottom" getCompletions={ getCompletions }/>
             <TrackerVariableName />
           </div> : null
       }
@@ -253,10 +292,13 @@ const LibraryManagement = ({ type }) => (
     </div>
   </div>
 );
+  }
+}
 
 export default connect(
   state => ({
-    type: formValueSelector('default')(state, 'libraryCode.type')
+    type: formValueSelector('default')(state, 'libraryCode.type'),
+    meta: state.meta
   })
 )(LibraryManagement);
 
