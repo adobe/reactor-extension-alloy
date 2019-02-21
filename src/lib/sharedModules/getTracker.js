@@ -104,9 +104,12 @@ var loadTrackerModules = function(properties, tracker) {
   var moduleProperties = properties.moduleProperties;
   if (moduleProperties &&
       moduleProperties.audienceManager &&
-      moduleProperties.audienceManager.config) {
+      moduleProperties.audienceManager.config &&
+      window._satellite &&
+      window._satellite.company &&
+      window._satellite.company.orgId) {
     var visitorServiceConfig = {
-      namespace: properties.orgId
+      namespace: window._satellite.company.orgId
     };
     moduleProperties.audienceManager.config.visitorService = visitorServiceConfig;
     var libFileName = 'AppMeasurement_Module_AudienceManagement.js';

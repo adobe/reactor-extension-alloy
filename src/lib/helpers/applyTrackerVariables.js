@@ -41,8 +41,8 @@ var buildLinkTrackVars = function(tracker, newTrackerProperties, addEvents) {
   // Merge with the values already set on tracker.
   linkTrackVarsValues = linkTrackVarsValues.concat((tracker.linkTrackVars || '').split(','));
 
-  return linkTrackVarsValues.filter(function(value, index, self) {
-    return value !== 'None' && value && onlyUnique(value, index, self);
+  return linkTrackVarsValues.filter(function(value, index) {
+    return value !== 'None' && value && onlyUnique(value, index, linkTrackVarsValues);
   }).join(',');
 };
 
@@ -54,8 +54,8 @@ var buildLinkTrackEvents = function(tracker, eventsData) {
   // Merge with the values already set on tracker.
   linkTrackEventsValues = linkTrackEventsValues.concat((tracker.linkTrackEvents || '').split(','));
 
-  return linkTrackEventsValues.filter(function(value, index, self) {
-    return value !== 'None'  && onlyUnique(value, index, self);
+  return linkTrackEventsValues.filter(function(value, index) {
+    return value !== 'None'  && onlyUnique(value, index, linkTrackEventsValues);
   }).join(',');
 };
 

@@ -1,6 +1,6 @@
 {
   "name": "@reactor/extension-adobeanalytics",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Adobe Analytics extension.",
   "author": {
     "name": "Adobe Systems",
@@ -35,6 +35,7 @@
     "@adobe/reactor-packager": "^3.0.2",
     "@adobe/reactor-sandbox": "^10.1.1",
     "@adobe/reactor-turbine": "^25.1.3",
+
     "@reactor/extension-mcid": "git+ssh://git@git.corp.adobe.com:reactor/extension-mcid.git",
     "@reactor/extension-support-testrunner": "^11.1.0",
     "babel-core": "^6.26.3",
