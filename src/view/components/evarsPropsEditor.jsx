@@ -75,7 +75,7 @@ const valueOptions = createOptions('eVar').concat(createOptions('prop'));
 
 const nameOptionsCache = {};
 
-let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, dispatch }) => {
+let renderVariables = ({ fields, varType, varTypePlural, trackerProperties }) => {
   if (!nameOptionsCache[varType]) {
     nameOptionsCache[varType] = createOptions(varType);
   }
