@@ -24,15 +24,23 @@ import WrappedField from './wrappedField';
 import Textfield from '@react/react-spectrum/Textfield';
 import RestrictedComboBox from './restrictedComboBox';
 
-const ReportSuiteEditor = ({ fieldName, showRemoveButton, onRemove, getCompletions }) => (
+const ReportSuiteEditor = ({ fieldName, showRemoveButton, onRemove, getRsidCompletions }) => (
   <div data-row className="u-gapBottom">
-    <WrappedField
-      name={ fieldName }
-      component={ RestrictedComboBox }
-      getCompletions={ getCompletions }
-      supportDataElement
-      allowCreate
-    />
+    { getRsidCompletions ? (
+      <WrappedField
+        name={ fieldName }
+        component={ RestrictedComboBox }
+        getCompletions={ getRsidCompletions }
+        supportDataElement
+        allowCreate
+      />
+    ) : (
+      <WrappedField
+        name={ fieldName }
+        component={ Textfield }
+        supportDataElement
+        />
+    )}
     {
       showRemoveButton ?
         <Button
@@ -57,7 +65,7 @@ export default class ReportSuitesEditor extends React.Component {
     const {
       className,
       fields,
-      getCompletions
+      getRsidCompletions
     } = this.props;
 
     const rows = fields.map((fieldName, index) => (
@@ -66,7 +74,7 @@ export default class ReportSuitesEditor extends React.Component {
         fieldName={ fieldName }
         onRemove={ () => fields.remove(index) }
         showRemoveButton={ fields.length > 1 }
-        getCompletions={ getCompletions }
+        getRsidCompletions={ getRsidCompletions }
       />
     ));
 

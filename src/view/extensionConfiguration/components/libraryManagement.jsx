@@ -24,14 +24,14 @@ import Textfield from '@react/react-spectrum/Textfield';
 import Heading from '@react/react-spectrum/Heading';
 import Select from '@react/react-spectrum/Select';
 import { connect } from 'react-redux';
-import { formValueSelector, FieldArray } from 'redux-form';
+import { formValueSelector, FieldArray, change } from 'redux-form';
 import EditorButton from './editorButton';
 import WrappedField from './wrappedField';
 import ReportSuiteEditor from './reportSuitesEditor';
 import InfoTip from './infoTip';
 import ENVIRONMENTS from '../../enums/environments';
 import COMPONENT_NAMES from '../../enums/componentNames';
-import AnalyticsApi from '../../utils/analyticsApi';
+import analyticsApi from '../../utils/analyticsApi';
 
 import './libraryManagement.styl';
 
@@ -42,25 +42,10 @@ const LIB_TYPES = {
   CUSTOM: 'custom'
 };
 
-  const ReportSuites = ({ companies, getCompletions }) => (
+  const ReportSuites = ({ companies, getRsidCompletions }) => (
 
   <section>
-      <div>
-        <label className="Label">
-          Company
-          <InfoTip>
-            The company chosen here is only used to pre-populate the list of available report suites on this page.
-          </InfoTip>
-        </label>
-        <div>
-          <WrappedField
-            name="libraryCode.company"
-            component={ Select }
-            onBlur={ e => e.preventDefault() }
-            options={ companies }
-          />
-        </div>
-      </div>
+
     <Heading size="4">
       Report Suites
       <InfoTip>
@@ -69,7 +54,24 @@ const LIB_TYPES = {
     </Heading>
 
     <section className="ReportSuites-fieldsContainer">
-
+      { companies && (
+        <div>
+          <label className="Label">
+            Company
+            <InfoTip>
+              The company chosen here is only used to pre-populate the list of available report suites on this page.
+            </InfoTip>
+          </label>
+          <div>
+            <WrappedField
+              name="libraryCode.company"
+              component={ Select }
+              onBlur={ e => e.preventDefault() }
+              options={ companies }
+            />
+          </div>
+        </div>
+      )}
       <div className="ReportSuites-environment">
         <label className="Label">
           Development Report Suites
@@ -82,7 +84,7 @@ const LIB_TYPES = {
           <FieldArray
             name="libraryCode.accounts.development"
             component={ ReportSuiteEditor }
-            props={ {getCompletions: getCompletions} }
+            props={ {getRsidCompletions: getRsidCompletions} }
           />
         </div>
       </div>
@@ -98,7 +100,7 @@ const LIB_TYPES = {
           <FieldArray
             name="libraryCode.accounts.staging"
             component={ ReportSuiteEditor }
-            props={ {getCompletions: getCompletions} }
+            props={ {getRsidCompletions: getRsidCompletions} }
           />
         </div>
       </div>
@@ -114,7 +116,7 @@ const LIB_TYPES = {
           <FieldArray
             name="libraryCode.accounts.production"
             component={ ReportSuiteEditor }
-            props={ {getCompletions: getCompletions} }
+            props={ {getRsidCompletions: getRsidCompletions, companies: companies} }
           />
         </div>
       </div>
@@ -135,7 +137,7 @@ const TrackerVariableName = ({ className }) => (
   </div>
 );
 
-let OverwriteReportSuites = ({ className, showReportSuites, getCompletions }) => (
+let OverwriteReportSuites = ({ className, showReportSuites, getRsidCompletions, companies }) => (
   <div className={ className }>
     <WrappedField
       name="libraryCode.showReportSuites"
@@ -145,7 +147,7 @@ let OverwriteReportSuites = ({ className, showReportSuites, getCompletions }) =>
     </WrappedField>
 
     {
-      showReportSuites && <ReportSuites getCompletions={ getCompletions } />
+      showReportSuites && <ReportSuites getRsidCompletions={ getRsidCompletions } companies={ companies } />
     }
   </div>
 );
@@ -160,18 +162,39 @@ OverwriteReportSuites = connect(
 class LibraryManagement extends Component {
   constructor(props) {
     super(props);
-    const { meta: { tokens: { imsAccess: token }}} = props.meta;
+    this.api = null; 
+    this.state = { companies: null };
+  }
 
-    // warm the cache
-    // developmentApi.rsidCompletion("");
-    console.log("Meta!", props.meta);
-    this.api = AnalyticsApi(token);
+  componentDidMount() {
+    const that = this;
+    const { company, dispatch, meta: { tokens: { imsAccess: token }, company: { orgId: imsOrgId }}} = this.props;
+
+    this.api = analyticsApi(token);
+    this.api.companies(imsOrgId).then(companies => {
+      if (companies.length === 1) {
+        dispatch(change('default', 'libraryCode.company', companies[0].value));
+        that.setState({companies: null });
+      } else if (companies.length === 0) {
+        dispatch(change('default', 'libraryCode.company', null));
+        that.setState({companies: null });
+      } else {
+        if (!company) {
+          dispatch(change('default', 'libraryCode.company', companies[0].value));
+        }
+        that.setState({companies: companies});
+      }
+    });
   }
 
   render() {
-    const { type, meta: { company: { orgId: imsOrgId }} } = this.props;
-    const getCompletions = (search) => mockApi.rsidCompletion(search);
-
+    const { type, company } = this.props;
+    const { companies } = this.state;
+    let getRsidCompletions = null;
+    if (this.api && company) { 
+        getRsidCompletions = this.api.rsidCompletionFunction(company);
+        getRsidCompletions(""); // warm the rsid completion cache before it is sent
+    }
     return (
   <div>
     <div>
@@ -188,7 +211,7 @@ class LibraryManagement extends Component {
       {
         type === LIB_TYPES.MANAGED ?
           <div className="FieldSubset">
-            <ReportSuites getCompletions={ getCompletions }/>
+            <ReportSuites getRsidCompletions={ getRsidCompletions } companies={ companies }/>
             <WrappedField
               name="libraryCode.scopeTrackerGlobally"
               component={ Checkbox }
@@ -215,7 +238,11 @@ class LibraryManagement extends Component {
       {
         type === LIB_TYPES.PREINSTALLED ?
           <div className="FieldSubset">
-            <OverwriteReportSuites className="u-gapBottom" getCompletions={ getCompletions }/>
+            <OverwriteReportSuites 
+              className="u-gapBottom"
+              getRsidCompletions={ getRsidCompletions }
+              companies={ companies }
+            />
             <TrackerVariableName />
           </div> : null
       }
@@ -258,7 +285,11 @@ class LibraryManagement extends Component {
                 </div>
               </label>
             </div>
-            <OverwriteReportSuites className="u-block u-gapBottom" />
+            <OverwriteReportSuites 
+              className="u-block u-gapBottom" 
+              getRsidCompletions={ getRsidCompletions }
+              companies={ companies }
+              />
             <TrackerVariableName className="u-block u-gapBottom" />
           </div> : null
       }
@@ -285,7 +316,11 @@ class LibraryManagement extends Component {
                 component={ EditorButton }
               />
             </div>
-            <OverwriteReportSuites className="u-block u-gapBottom" />
+            <OverwriteReportSuites 
+              className="u-block u-gapBottom"
+              getRsidCompletions={ getRsidCompletions }
+              companies={ companies }
+            />
             <TrackerVariableName className="u-block u-gapBottom" />
           </div> : null
       }
@@ -298,6 +333,7 @@ class LibraryManagement extends Component {
 export default connect(
   state => ({
     type: formValueSelector('default')(state, 'libraryCode.type'),
+    company: formValueSelector('default')(state, 'libraryCode.company'),
     meta: state.meta
   })
 )(LibraryManagement);
@@ -308,6 +344,7 @@ export const formConfig = {
 
     const {
       type,
+      company,
       trackerVariableName,
       httpUrl,
       httpsUrl,
@@ -326,6 +363,7 @@ export const formConfig = {
       ...values,
       libraryCode: {
         type: type || LIB_TYPES.MANAGED,
+        company: company,
         trackerVariableName: trackerVariableName || 's',
         accounts,
         showReportSuites,
@@ -339,6 +377,7 @@ export const formConfig = {
   formValuesToSettings(settings, values) {
     const {
       type,
+      company,
       trackerVariableName,
       httpUrl,
       httpsUrl,
@@ -348,7 +387,8 @@ export const formConfig = {
     } = values.libraryCode || {};
 
     const libraryCodeSettings = {
-      type
+      type,
+      company
     };
 
     const exportReportSuites = showReportSuites || type === LIB_TYPES.MANAGED;

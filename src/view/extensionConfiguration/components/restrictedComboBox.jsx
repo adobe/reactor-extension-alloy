@@ -23,7 +23,7 @@ class RestrictedComboBox extends Component {
     super(props);
     id += 1;
     this.state = {
-      inputValue: props.defaultValue || ''
+      inputValue: props.value || props.defaultValue || ''
     };
     this.comboBoxId = `restricted-combo-box-${id}`;
   }
