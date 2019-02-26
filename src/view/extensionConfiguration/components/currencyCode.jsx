@@ -20,9 +20,10 @@ import React from 'react';
 import Radio from '@react/react-spectrum/Radio';
 import RadioGroup from '@react/react-spectrum/RadioGroup';
 import Textfield from '@react/react-spectrum/Textfield';
+import ComboBox from '@react/react-spectrum/ComboBox';
 import { connect } from 'react-redux';
 import { change, formValueSelector } from 'redux-form';
-import RestrictedComboBox from './restrictedComboBox';
+//import RestrictedComboBox from './restrictedComboBox';
 import WrappedField from './wrappedField';
 import CURRENCY_CODE_PRESETS from '../../enums/currencyCodes';
 
@@ -61,9 +62,11 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
           <div className="FieldSubset">
             <WrappedField
               name="trackerProperties.currencyCode"
-              component={ RestrictedComboBox }
+              component={ ComboBox }
               options={ presetOptions }
-              defaultValue={ CURRENCY_CODE_DEFAULT }
+              placeholder={ CURRENCY_CODE_DEFAULT }
+              value={ 'USD - United States Dollar' }
+              //selectedOption={ 'USD - United States Dollar' }
             />
           </div> : null
       }
