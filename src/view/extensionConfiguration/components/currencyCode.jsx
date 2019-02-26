@@ -23,7 +23,6 @@ import Textfield from '@react/react-spectrum/Textfield';
 import ComboBox from '@react/react-spectrum/ComboBox';
 import { connect } from 'react-redux';
 import { change, formValueSelector } from 'redux-form';
-//import RestrictedComboBox from './restrictedComboBox';
 import WrappedField from './wrappedField';
 import CURRENCY_CODE_PRESETS from '../../enums/currencyCodes';
 
