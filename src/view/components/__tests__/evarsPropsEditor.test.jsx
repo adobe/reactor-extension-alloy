@@ -17,12 +17,11 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Autocomplete from '@coralui/react-coral/lib/Autocomplete';
-import Button from '@coralui/react-coral/lib/Button';
-import Select from '@coralui/react-coral/lib/Select';
-import Textfield from '@coralui/react-coral/lib/Textfield';
+import RestrictedComboBox from '../../extensionConfiguration/components/restrictedComboBox';
+import Button from '@react/react-spectrum/Button';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
 import { Field } from 'redux-form';
-import ErrorTip from '@reactor/react-components/lib/errorTip';
 
 import EvarsPropsEditor, { getFormConfig } from '../evarsPropsEditor';
 import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
@@ -33,16 +32,15 @@ const getReactComponents = (wrapper) => {
     const nameField = row.find(Field).filterWhere(n => n.prop('name').indexOf('.name') !== -1);
     const valueField = row.find(Field).filterWhere(n => n.prop('name').indexOf('.value') !== -1);
     return {
-      nameAutocomplete: nameField.find(Autocomplete).node,
-      nameErrorTip: nameField.find(ErrorTip).node,
-      typeSelect: row.find(Select).node,
-      valueTextfield: valueField.find(Textfield).node || valueField.find(Autocomplete).node,
-      valueErrorTip: valueField.find(ErrorTip).node,
-      removeButton: row.find(Button).filterWhere(n => n.prop('icon') === 'close').node
+      nameRestrictedComboBox: nameField.find(RestrictedComboBox),
+      typeSelect: row.find(Select),
+      valueTextfield: valueField.find(Textfield),
+      valueRestrictedComboBox: valueField.find(RestrictedComboBox),
+      removeButton: row.find(Button).last()
     };
   });
 
-  const addRowButton = wrapper.find(Button).last().node;
+  const addRowButton = wrapper.find(Button).last();
 
   return {
     rows,
@@ -75,7 +73,7 @@ describe('evars props editor', () => {
             {
               name: 'eVar2',
               type: 'alias',
-              value: 'eVar1'
+              value: 'eVar3'
             }
           ]
         }
@@ -83,14 +81,14 @@ describe('evars props editor', () => {
     });
 
     const { rows } = getReactComponents(instance);
+    debugger;
+    expect(rows[0].nameRestrictedComboBox.props().value).toBe('eVar1');
+    expect(rows[0].typeSelect.props().value).toBe('value');
+    expect(rows[0].valueTextfield.props().value).toBe('eVar1Value');
 
-    expect(rows[0].nameAutocomplete.props.value).toBe('eVar1');
-    expect(rows[0].typeSelect.props.value).toBe('value');
-    expect(rows[0].valueTextfield.props.value).toBe('eVar1Value');
-
-    expect(rows[1].nameAutocomplete.props.value).toBe('eVar2');
-    expect(rows[1].typeSelect.props.value).toBe('alias');
-    expect(rows[1].valueTextfield.props.value).toBe('eVar1');
+    expect(rows[1].nameRestrictedComboBox.props().value).toBe('eVar2');
+    expect(rows[1].typeSelect.props().value).toBe('alias');
+    expect(rows[1].valueRestrictedComboBox.props().value).toBe('eVar3');
   });
 
   it('sets settings from form values for value type', () => {
@@ -98,9 +96,9 @@ describe('evars props editor', () => {
 
     const { rows } = getReactComponents(instance);
 
-    rows[0].nameAutocomplete.props.onChange({ value: 'eVar1' });
-    rows[0].typeSelect.props.onChange({ value: 'value' });
-    rows[0].valueTextfield.props.onChange('some value');
+    rows[0].nameRestrictedComboBox.props().onChange('eVar1');
+    rows[0].typeSelect.props().onChange('value');
+    rows[0].valueTextfield.props().onChange('some value');
 
     const { eVars } = extensionBridge.getSettings().trackerProperties;
     expect(eVars[0].name).toBe('eVar1');
@@ -114,12 +112,12 @@ describe('evars props editor', () => {
 
     let { rows } = getReactComponents(instance);
 
-    rows[0].typeSelect.props.onChange({ value: 'alias' });
+    rows[0].typeSelect.props().onChange('alias');
 
     ({ rows } = getReactComponents(instance));
 
-    rows[0].nameAutocomplete.props.onChange({ value: 'eVar2' });
-    rows[0].valueTextfield.props.onChange({ value: 'eVar1' });
+    rows[0].nameRestrictedComboBox.props().onChange('eVar2');
+    rows[0].valueRestrictedComboBox.props().onChange('eVar1');
 
     const { eVars } = extensionBridge.getSettings().trackerProperties;
     expect(eVars[0].name).toBe('eVar2');
@@ -134,7 +132,7 @@ describe('evars props editor', () => {
 
     expect(components.rows.length).toBe(1);
 
-    components.addRowButton.props.onClick();
+    components.addRowButton.props().onClick();
 
     components = getReactComponents(instance);
 
@@ -160,13 +158,13 @@ describe('evars props editor', () => {
 
     expect(rows.length).toBe(2);
 
-    rows[1].removeButton.props.onClick();
+    rows[1].removeButton.props().onClick();
 
     ({ rows } = getReactComponents(instance));
 
     expect(rows.length).toBe(1);
 
-    expect(rows[0].nameAutocomplete.props.value).toContain('eVar1');
+    expect(rows[0].nameRestrictedComboBox.props().value).toContain('eVar1');
   });
 
   it('shows an error when two evars having the same name are added', () => {
@@ -193,7 +191,7 @@ describe('evars props editor', () => {
 
     const { rows } = getReactComponents(instance);
 
-    expect(rows[1].nameErrorTip).toBeDefined();
+    expect(rows[1].nameRestrictedComboBox.props().invalid).toBeTrue();
   });
 
   it('shows an error when an event doesn\'t have a name', () => {
@@ -214,7 +212,7 @@ describe('evars props editor', () => {
     expect(extensionBridge.validate()).toBe(false);
 
     const { rows } = getReactComponents(instance);
-    expect(rows[0].nameErrorTip).toBeDefined();
+    expect(rows[0].nameRestrictedComboBox.props().invalid).toBeTrue();
   });
 
   it('shows an error when an event doesn\'t have a value', () => {
@@ -235,6 +233,6 @@ describe('evars props editor', () => {
     expect(extensionBridge.validate()).toBe(false);
 
     const { rows } = getReactComponents(instance);
-    expect(rows[0].valueErrorTip).toBeDefined();
+    expect(rows[0].valueTextfield.props().validationState).toBe('invalid');
   });
 });

@@ -18,39 +18,36 @@
 
 import { mount } from 'enzyme';
 import { Field } from 'redux-form';
-import Checkbox from '@coralui/react-coral/lib/Checkbox';
-import Textfield from '@coralui/react-coral/lib/Textfield';
-import ErrorTip from '@reactor/react-components/lib/errorTip';
+import Checkbox from '@react/react-spectrum/Checkbox';
+import Textfield from '@react/react-spectrum/Textfield';
 
 import General, { formConfig } from '../general';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
 import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const euComplianceEnabledCheckbox = wrapper.find(Checkbox).node;
+  const euComplianceEnabledCheckbox = wrapper.find(Checkbox);
   const trackingServerTextfield =
     wrapper.find(Textfield).filterWhere(
       n => n.prop('name') === 'trackerProperties.trackingServer'
-    ).node;
+    );
   const trackingServerSecureTextfield =
     wrapper.find(Textfield).filterWhere(
       n => n.prop('name') === 'trackerProperties.trackingServerSecure'
-    ).node;
+    );
 
 
   const trackingCookieNameField =
     wrapper.find(Field).filterWhere(
       n => n.prop('name') === 'trackingCookieName'
     );
-  const trackingCookieNameTextfield = trackingCookieNameField.find(Textfield).node;
-  const trackingCookieNameErrorTip = trackingCookieNameField.find(ErrorTip).node;
-
+  const trackingCookieNameTextfield = trackingCookieNameField.find(Textfield);
+  
   return {
     euComplianceEnabledCheckbox,
     trackingServerTextfield,
     trackingServerSecureTextfield,
     trackingCookieNameTextfield,
-    trackingCookieNameErrorTip
   };
 };
 
@@ -83,9 +80,9 @@ describe('general', () => {
       trackingServerSecureTextfield
     } = getReactComponents(instance);
 
-    expect(trackingCookieNameTextfield.props.value).toBe('somecookie');
-    expect(trackingServerTextfield.props.value).toBe('someserver');
-    expect(trackingServerSecureTextfield.props.value).toBe('somesecureserver');
+    expect(trackingCookieNameTextfield.props().value).toBe('somecookie');
+    expect(trackingServerTextfield.props().value).toBe('someserver');
+    expect(trackingServerSecureTextfield.props().value).toBe('somesecureserver');
   });
 
   it('sets settings from form values', () => {
@@ -101,14 +98,14 @@ describe('general', () => {
       trackingServerSecureTextfield
     } = getReactComponents(instance);
 
-    euComplianceEnabledCheckbox.props.onChange(true);
+    euComplianceEnabledCheckbox.props().onChange(true);
     const {
       trackingCookieNameTextfield
     } = getReactComponents(instance);
 
-    trackingCookieNameTextfield.props.onChange('somecookie');
-    trackingServerTextfield.props.onChange('someserver');
-    trackingServerSecureTextfield.props.onChange('somesecureserver');
+    trackingCookieNameTextfield.props().onChange('somecookie');
+    trackingServerTextfield.props().onChange('someserver');
+    trackingServerSecureTextfield.props().onChange('somesecureserver');
 
     const { trackingCookieName } = extensionBridge.getSettings();
     const {
@@ -131,10 +128,10 @@ describe('general', () => {
     });
 
     const { euComplianceEnabledCheckbox } = getReactComponents(instance);
-    euComplianceEnabledCheckbox.props.onChange(true);
+    euComplianceEnabledCheckbox.props().onChange(true);
 
     const { trackingCookieNameTextfield } = getReactComponents(instance);
-    expect(trackingCookieNameTextfield.props.value).toBe('sat_track');
+    expect(trackingCookieNameTextfield.props().value).toBe('sat_track');
   });
 
   it('sets error if the tracking cookie name url is not provided', () => {
@@ -145,15 +142,12 @@ describe('general', () => {
     });
 
     const { euComplianceEnabledCheckbox } = getReactComponents(instance);
-    euComplianceEnabledCheckbox.props.onChange(true);
+    euComplianceEnabledCheckbox.props().onChange(true);
 
     const { trackingCookieNameTextfield } = getReactComponents(instance);
-    trackingCookieNameTextfield.props.onChange('');
+    trackingCookieNameTextfield.props().onChange('');
 
     expect(extensionBridge.validate()).toBe(false);
-
-    const { trackingCookieNameErrorTip } = getReactComponents(instance);
-
-    expect(trackingCookieNameErrorTip).toBeDefined();
+    expect(trackingCookieNameTextfield.props().validationState).toBe("invalid");
   });
 });

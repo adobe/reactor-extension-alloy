@@ -17,12 +17,12 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Checkbox from '@coralui/react-coral/lib/Checkbox';
-import Radio from '@coralui/react-coral/lib/Radio';
-import Button from '@coralui/react-coral/lib/Button';
-import Textfield from '@coralui/react-coral/lib/Textfield';
-import ErrorTip from '@reactor/react-components/lib/errorTip';
+import Checkbox from '@react/react-spectrum/Checkbox';
+import Radio from '@react/react-spectrum/Radio';
+import Button from '@react/react-spectrum/Button';
+import Textfield from '@react/react-spectrum/Textfield';
 import { FieldArray, Field } from 'redux-form';
+import Close from '@react/react-spectrum/Icon/Close';
 
 import ReportSuitesEditor from '../reportSuitesEditor';
 import LibraryManagement, { formConfig } from '../libraryManagement';
@@ -36,9 +36,8 @@ const getReportSuiteElements = (wrapper, fieldNameSuffix) => {
   const rows = reportSuitesEditor
     .find('[data-row]')
     .map((row) => {
-      const valueTextfield = row.find(Textfield).node;
-      const removeButton = row.find(Button).filterWhere(n => n.prop('icon') === 'close').node;
-
+      const valueTextfield = row.find(Textfield);
+      const removeButton = row.find(Button).last();
       return {
         valueTextfield,
         removeButton
@@ -46,7 +45,7 @@ const getReportSuiteElements = (wrapper, fieldNameSuffix) => {
     });
 
   const addButton = reportSuitesEditor.find(Button)
-    .filterWhere(n => n.prop('children') === 'Add Another').node;
+    .filterWhere(n => n.prop('children') === 'Add Another');
 
   return {
     rows,
@@ -60,32 +59,29 @@ const getReactComponents = (wrapper) => {
   const developmentReportSuites = getReportSuiteElements(wrapper, '.development');
 
   const typePreinstalledRadio =
-    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'preinstalled').node;
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'preinstalled');
   const typeRemoteRadio =
-    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'remote').node;
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'remote');
   const typeCustomRadio =
-    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom').node;
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom');
 
   const trackerVariableNameTextfield = wrapper.find(Field)
-    .filterWhere(n => n.prop('name').indexOf('trackerVariableName') !== -1).find(Textfield).node;
+    .filterWhere(n => n.prop('name').indexOf('trackerVariableName') !== -1).find(Textfield);
 
   const httpUrlField = wrapper.find(Field)
     .filterWhere(n => n.prop('name').indexOf('httpUrl') !== -1);
-  const httpUrlTextfield = httpUrlField.find(Textfield).node;
-  const httpUrlErrorTip = httpUrlField.find(ErrorTip).node;
+  const httpUrlTextfield = httpUrlField.find(Textfield);
 
   const httpsUrlField = wrapper.find(Field)
     .filterWhere(n => n.prop('name').indexOf('httpsUrl') !== -1);
-  const httpsUrlTextfield = httpsUrlField.find(Textfield).node;
-  const httpsUrlErrorTip = httpsUrlField.find(ErrorTip).node;
+  const httpsUrlTextfield = httpsUrlField.find(Textfield);
 
   const showReportSuitesCheckbox =
-    wrapper.find(Checkbox).filterWhere(n => n.prop('name').indexOf('showReportSuites') !== -1).node;
+    wrapper.find(Checkbox).filterWhere(n => n.prop('name').indexOf('showReportSuites') !== -1);
 
 
   const sourceField = wrapper.find(Field).filterWhere(n => n.prop('name') === 'libraryCode.source');
-  const openEditorButton = sourceField.find(Button).node;
-  const sourceErrorTip = wrapper.find(ErrorTip).node;
+  const openEditorButton = sourceField.find(Button);
 
   return {
     productionReportSuites,
@@ -93,15 +89,12 @@ const getReactComponents = (wrapper) => {
     developmentReportSuites,
     trackerVariableNameTextfield,
     httpUrlTextfield,
-    httpUrlErrorTip,
     httpsUrlTextfield,
-    httpsUrlErrorTip,
     showReportSuitesCheckbox,
     typePreinstalledRadio,
     typeRemoteRadio,
     typeCustomRadio,
-    openEditorButton,
-    sourceErrorTip
+    openEditorButton
   };
 };
 
@@ -112,10 +105,10 @@ const populateReportSuiteFields = (instance) => {
     developmentReportSuites
   } = getReactComponents(instance);
 
-  productionReportSuites.addButton.props.onClick();
-  stagingReportSuites.addButton.props.onClick();
-  developmentReportSuites.addButton.props.onClick();
-  developmentReportSuites.addButton.props.onClick();
+  productionReportSuites.addButton.props().onClick();
+  stagingReportSuites.addButton.props().onClick();
+  developmentReportSuites.addButton.props().onClick();
+  developmentReportSuites.addButton.props().onClick();
 
   ({
     productionReportSuites,
@@ -123,22 +116,22 @@ const populateReportSuiteFields = (instance) => {
     developmentReportSuites
   } = getReactComponents(instance));
 
-  productionReportSuites.rows[0].valueTextfield.props.onChange('aa');
-  productionReportSuites.rows[1].valueTextfield.props.onChange('bb');
+  productionReportSuites.rows[0].valueTextfield.props().onChange('aa');
+  productionReportSuites.rows[1].valueTextfield.props().onChange('bb');
 
-  stagingReportSuites.rows[0].valueTextfield.props.onChange('cc');
-  stagingReportSuites.rows[1].valueTextfield.props.onChange('dd');
+  stagingReportSuites.rows[0].valueTextfield.props().onChange('cc');
+  stagingReportSuites.rows[1].valueTextfield.props().onChange('dd');
 
-  developmentReportSuites.rows[0].valueTextfield.props.onChange('ee');
-  developmentReportSuites.rows[1].valueTextfield.props.onChange('ff');
-  developmentReportSuites.rows[2].valueTextfield.props.onChange('gg');
+  developmentReportSuites.rows[0].valueTextfield.props().onChange('ee');
+  developmentReportSuites.rows[1].valueTextfield.props().onChange('ff');
+  developmentReportSuites.rows[2].valueTextfield.props().onChange('gg');
 
   // Test that removing a row functions properly.
-  developmentReportSuites.rows[2].removeButton.props.onClick();
+  developmentReportSuites.rows[2].removeButton.props().onClick();
 };
 
 const getReportSuiteTextfieldValues = reportSuitesEditor => (
-  reportSuitesEditor.rows.map(row => row.valueTextfield.props.value)
+  reportSuitesEditor.rows.map(row => row.valueTextfield.props().value)
 );
 
 describe('libary management', () => {
@@ -220,8 +213,8 @@ describe('libary management', () => {
     expect(getReportSuiteTextfieldValues(productionReportSuites)).toEqual(['aaa', 'bbb']);
     expect(getReportSuiteTextfieldValues(stagingReportSuites)).toEqual(['ccc', 'ddd']);
     expect(getReportSuiteTextfieldValues(developmentReportSuites)).toEqual(['eee', 'fff']);
-    expect(trackerVariableNameTextfield.props.value).toBe('d');
-    expect(showReportSuitesCheckbox.props.value).toBe(true);
+    expect(trackerVariableNameTextfield.props().value).toBe('d');
+    expect(showReportSuitesCheckbox.props().value).toBe(true);
   });
 
   it('sets form values from remote type settings', () => {
@@ -264,11 +257,11 @@ describe('libary management', () => {
     expect(getReportSuiteTextfieldValues(stagingReportSuites)).toEqual(['ccc', 'ddd']);
     expect(getReportSuiteTextfieldValues(developmentReportSuites)).toEqual(['eee', 'fff']);
 
-    expect(showReportSuitesCheckbox.props.value).toBe(true);
+    expect(showReportSuitesCheckbox.props().value).toBe(true);
 
-    expect(trackerVariableNameTextfield.props.value).toBe('d');
-    expect(httpUrlTextfield.props.value).toBe('http://someurl.com');
-    expect(httpsUrlTextfield.props.value).toBe('http://somehttpsurl.com');
+    expect(trackerVariableNameTextfield.props().value).toBe('d');
+    expect(httpUrlTextfield.props().value).toBe('http://someurl.com');
+    expect(httpsUrlTextfield.props().value).toBe('http://somehttpsurl.com');
   });
 
   it('sets form values from custom type settings', () => {
@@ -307,9 +300,9 @@ describe('libary management', () => {
     expect(getReportSuiteTextfieldValues(stagingReportSuites)).toEqual(['ccc', 'ddd']);
     expect(getReportSuiteTextfieldValues(developmentReportSuites)).toEqual(['eee', 'fff']);
 
-    expect(showReportSuitesCheckbox.props.value).toBe(true);
+    expect(showReportSuitesCheckbox.props().value).toBe(true);
 
-    expect(trackerVariableNameTextfield.props.value).toBe('d');
+    expect(trackerVariableNameTextfield.props().value).toBe('d');
   });
 
   it('sets settings from managed form values', () => {
@@ -334,11 +327,11 @@ describe('libary management', () => {
     extensionBridge.init();
 
     const { typePreinstalledRadio } = getReactComponents(instance);
-    typePreinstalledRadio.props.onChange('preinstalled');
+    typePreinstalledRadio.props().onChange(true, { stopPropagation: () => undefined });
 
     const { showReportSuitesCheckbox, trackerVariableNameTextfield } = getReactComponents(instance);
-    showReportSuitesCheckbox.props.onChange(true);
-    trackerVariableNameTextfield.props.onChange('d');
+    showReportSuitesCheckbox.props().onChange(true);
+    trackerVariableNameTextfield.props().onChange('d');
 
     populateReportSuiteFields(instance);
 
@@ -361,7 +354,7 @@ describe('libary management', () => {
     extensionBridge.init();
 
     const { typeRemoteRadio } = getReactComponents(instance);
-    typeRemoteRadio.props.onChange('remote');
+    typeRemoteRadio.props().onChange(true, { stopPropagation: () => undefined });
 
     const {
       showReportSuitesCheckbox,
@@ -369,10 +362,10 @@ describe('libary management', () => {
       httpUrlTextfield,
       httpsUrlTextfield
     } = getReactComponents(instance);
-    showReportSuitesCheckbox.props.onChange(true);
-    trackerVariableNameTextfield.props.onChange('d');
-    httpUrlTextfield.props.onChange('http://someurl.com');
-    httpsUrlTextfield.props.onChange('https://someurl.com');
+    showReportSuitesCheckbox.props().onChange(true);
+    trackerVariableNameTextfield.props().onChange('d');
+    httpUrlTextfield.props().onChange('http://someurl.com');
+    httpsUrlTextfield.props().onChange('https://someurl.com');
 
     populateReportSuiteFields(instance);
 
@@ -399,14 +392,14 @@ describe('libary management', () => {
     extensionBridge.init();
 
     const { typeCustomRadio } = getReactComponents(instance);
-    typeCustomRadio.props.onChange('custom');
+    typeCustomRadio.props().onChange(true, { stopPropagation: () => undefined });
 
     const {
       showReportSuitesCheckbox,
       trackerVariableNameTextfield
     } = getReactComponents(instance);
-    showReportSuitesCheckbox.props.onChange(true);
-    trackerVariableNameTextfield.props.onChange('d');
+    showReportSuitesCheckbox.props().onChange(true);
+    trackerVariableNameTextfield.props().onChange('d');
 
     populateReportSuiteFields(instance);
 
@@ -446,7 +439,7 @@ describe('libary management', () => {
     };
 
     const { openEditorButton } = getReactComponents(instance);
-    openEditorButton.props.onClick();
+    openEditorButton.props().onClick();
 
     expect(window.extensionBridge.openCodeEditor).toHaveBeenCalledWith({ code: 'foo' });
     expect(extensionBridge.validate()).toBe(true);
@@ -461,37 +454,35 @@ describe('libary management', () => {
     extensionBridge.init();
 
     const { typeRemoteRadio } = getReactComponents(instance);
-    typeRemoteRadio.props.onChange('remote');
+    typeRemoteRadio.props().onChange(true, { stopPropagation: () => undefined });
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { httpUrlErrorTip } = getReactComponents(instance);
-
-    expect(httpUrlErrorTip).toBeDefined();
+    const { httpUrlTextfield } = getReactComponents(instance);
+    expect(httpUrlTextfield.props().validationState).toBe("invalid");
   });
 
   it('sets error if the https url is not provided', () => {
     extensionBridge.init();
 
     const { typeRemoteRadio } = getReactComponents(instance);
-    typeRemoteRadio.props.onChange('remote');
+    typeRemoteRadio.props().onChange(true, { stopPropagation: () => undefined });
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { httpsUrlErrorTip } = getReactComponents(instance);
-
-    expect(httpsUrlErrorTip).toBeDefined();
+    const { httpsUrlTextfield } = getReactComponents(instance);
+    expect(httpsUrlTextfield.props().validationState).toBe("invalid");
   });
 
   it('sets error if source is empty', () => {
     extensionBridge.init();
 
     const { typeCustomRadio } = getReactComponents(instance);
-    typeCustomRadio.props.onChange('custom');
+    typeCustomRadio.props().onChange(true, { stopPropagation: () => undefined });
 
     expect(extensionBridge.validate()).toBe(false);
 
-    const { sourceErrorTip } = getReactComponents(instance);
-    expect(sourceErrorTip).toBeDefined();
+    const { openEditorButton } = getReactComponents(instance);
+    expect(openEditorButton.props().invalid).toBeTrue();
   });
 });

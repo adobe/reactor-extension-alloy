@@ -17,13 +17,13 @@
 **************************************************************************/
 
 import React from 'react';
-import Radio from '@coralui/redux-form-react-coral/lib/Radio';
-import Select from '@coralui/redux-form-react-coral/lib/Select';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import { Field, change, formValueSelector } from 'redux-form';
+import Radio from '@react/react-spectrum/Radio';
+import RadioGroup from '@react/react-spectrum/RadioGroup';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
+import { change, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
-
+import WrappedField from './wrappedField';
 import CHAR_SET_PRESETS from '../../enums/charSets';
 
 const CHAR_SET_INPUT_METHOD = {
@@ -41,49 +41,51 @@ const presetOptions = CHAR_SET_PRESETS.map(preset => ({
 const CharSet = ({ dispatch, charSetInputMethod }) => (
   <div>
     <div>
-      <Field
+      <WrappedField
         name="trackerProperties.charSetInputMethod"
-        component={ Radio }
-        type="radio"
-        value={ CHAR_SET_INPUT_METHOD.PRESET }
-        onChange={
-          () => dispatch(change('default', 'trackerProperties.charSet', CHAR_SET_DEFAULT))
-        }
+        component={ RadioGroup }
+        vertical
       >
-        Preset
-      </Field>
-
+        <Radio
+          value={ CHAR_SET_INPUT_METHOD.PRESET }
+          label="Preset"
+          onChange={
+            () => dispatch(change('default', 'trackerProperties.charSet', CHAR_SET_DEFAULT))
+          }
+        />
+      </WrappedField>
       {
         charSetInputMethod === CHAR_SET_INPUT_METHOD.PRESET ?
           <div className="FieldSubset">
-            <Field
+            <WrappedField
               name="trackerProperties.charSet"
               component={ Select }
+              onBlur={ e => e.preventDefault() }
               options={ presetOptions }
             />
           </div> : null
       }
     </div>
     <div>
-      <Field
+      <WrappedField
         name="trackerProperties.charSetInputMethod"
-        component={ Radio }
-        type="radio"
-        value={ CHAR_SET_INPUT_METHOD.CUSTOM }
-        onChange={
-          () => dispatch(change('default', 'trackerProperties.charSet', ''))
-        }
+        component={ RadioGroup }
+        vertical
       >
-        Custom
-      </Field>
-
+        <Radio
+          value={ CHAR_SET_INPUT_METHOD.CUSTOM }
+          label="Custom"
+          onChange={
+            () => dispatch(change('default', 'trackerProperties.charSet', ''))
+          }
+        />
+      </WrappedField>
       {
         charSetInputMethod === CHAR_SET_INPUT_METHOD.CUSTOM ?
           <div className="FieldSubset">
-            <Field
+            <WrappedField
               name="trackerProperties.charSet"
-              component={ DecoratedInput }
-              inputComponent={ Textfield }
+              component={ Textfield }
               supportDataElement
             />
           </div> : null

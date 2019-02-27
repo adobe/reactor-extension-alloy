@@ -17,13 +17,14 @@
 **************************************************************************/
 
 import React from 'react';
-import Button from '@coralui/react-coral/lib/Button';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import Select from '@coralui/redux-form-react-coral/lib/Select';
-import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
-import { Field, FieldArray, formValueSelector, change } from 'redux-form';
+import Button from '@react/react-spectrum/Button';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
+import Close from '@react/react-spectrum/Icon/Close';
+import { FieldArray, formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import RestrictedComboBox from '../extensionConfiguration/components/restrictedComboBox';
+import WrappedField from '../extensionConfiguration/components/wrappedField';
 import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from '../enums/accessLevelLimits';
 import COMPONENT_NAMES from '../enums/componentNames';
 
@@ -74,7 +75,7 @@ const valueOptions = createOptions('eVar').concat(createOptions('prop'));
 
 const nameOptionsCache = {};
 
-let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, dispatch }) => {
+let renderVariables = ({ fields, varType, varTypePlural, trackerProperties }) => {
   if (!nameOptionsCache[varType]) {
     nameOptionsCache[varType] = createOptions(varType);
   }
@@ -89,12 +90,12 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
 
     if (type === TYPES.VALUE) {
       valueFieldProps = {
-        inputComponent: Textfield,
+        component: Textfield,
         supportDataElement: true
       };
     } else {
       valueFieldProps = {
-        inputComponent: Autocomplete,
+        component: RestrictedComboBox,
         placeholder: 'Select variable',
         options: valueOptions
       };
@@ -106,37 +107,35 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
         key={ index }
         className="u-gapBottom2x"
       >
-        <Field
+        <WrappedField
           name={ `${field}.name` }
           className="u-gapRight2x"
-          component={ DecoratedInput }
-          inputComponent={ Autocomplete }
+          component={ RestrictedComboBox }
           placeholder={ `Select ${varType}` }
           options={ nameOptions }
         />
 
-        <Field
+        <WrappedField
           name={ `${field}.type` }
           className="u-gapRight2x Field--short"
+          onBlur={ e => e.preventDefault() }
           component={ Select }
           options={ typeOptions }
-          onChange={ () => dispatch(change('default', `${field}.value`, '')) }
         />
 
-        <Field
+        <WrappedField
           // Because of https://github.com/erikras/redux-form/issues/1785 we have to
           // set all the same props for all types. It will throw a warning though, sadly. :(
           name={ `${field}.value` }
-          component={ DecoratedInput }
-          inputClassName="Field--short"
+          componentClassName="Field--shorter"
           { ...valueFieldProps }
         />
 
         <Button
-          variant="minimal"
-          square
-          icon="close"
-          iconSize="XS"
+          variant="action"
+          quiet
+          icon={ <Close /> }
+          size="XS"
           onClick={ fields.remove.bind(this, index) }
         />
       </div>
@@ -147,6 +146,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties, disp
     <section>
       { rows }
       <Button
+        variant="action"
         onClick={ () => fields.push(createEmptyRow()) }
       >
         Add Another

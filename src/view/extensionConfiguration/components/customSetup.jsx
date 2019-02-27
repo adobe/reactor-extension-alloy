@@ -17,10 +17,12 @@
 **************************************************************************/
 
 import React from 'react';
-import Radio from '@coralui/redux-form-react-coral/lib/Radio';
-import { Field, formValueSelector } from 'redux-form';
+import Radio from '@react/react-spectrum/Radio';
+import RadioGroup from '@react/react-spectrum/RadioGroup';
+import { formValueSelector } from 'redux-form';
 import { connect } from 'react-redux';
-import EditorButton from '@reactor/react-components/lib/reduxForm/editorButton';
+import WrappedField from './wrappedField';
+import EditorButton from './editorButton';
 
 const LOAD_PHASES = {
   BEFORE_SETTINGS: 'beforeSettings',
@@ -40,33 +42,28 @@ const CustomSetup = ({ source }) => (
       <li><i>s</i> - The tracker object.</li>
     </ul>
 
-    <Field
+    <WrappedField
       name="customSetup.source"
       component={ EditorButton }
     />
-
     { source ?
       <div>
         <fieldset>
           <legend><span className="Label u-gapTop">Execute custom code</span></legend>
           <div>
-            <Field
+            <WrappedField
               name="customSetup.loadPhase"
-              component={ Radio }
-              type="radio"
-              value={ LOAD_PHASES.BEFORE_SETTINGS }
+              component={ RadioGroup }
             >
-              Before other settings are applied
-            </Field>
-
-            <Field
-              name="customSetup.loadPhase"
-              component={ Radio }
-              type="radio"
-              value={ LOAD_PHASES.AFTER_SETTINGS }
-            >
-              After other settings are applied
-            </Field>
+              <Radio
+                value={ LOAD_PHASES.BEFORE_SETTINGS }
+                label="Before other settings are applied"
+              />
+              <Radio
+                value={ LOAD_PHASES.AFTER_SETTINGS }
+                label="After other setting are applied"
+              />
+            </WrappedField>
           </div>
         </fieldset>
       </div> : null

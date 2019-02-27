@@ -17,13 +17,13 @@
 **************************************************************************/
 
 import React from 'react';
-import Radio from '@coralui/redux-form-react-coral/lib/Radio';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import Radio from '@react/react-spectrum/Radio';
+import RadioGroup from '@react/react-spectrum/RadioGroup';
+import Textfield from '@react/react-spectrum/Textfield';
+import ComboBox from '@react/react-spectrum/ComboBox';
 import { connect } from 'react-redux';
-import { Field, change, formValueSelector } from 'redux-form';
-
+import { change, formValueSelector } from 'redux-form';
+import WrappedField from './wrappedField';
 import CURRENCY_CODE_PRESETS from '../../enums/currencyCodes';
 
 const CURRENCY_CODE_INPUT_METHODS = {
@@ -31,7 +31,7 @@ const CURRENCY_CODE_INPUT_METHODS = {
   CUSTOM: 'custom'
 };
 
-const CURRENCY_CODE_DEFAULT = 'USD';
+const CURRENCY_CODE_DEFAULT = 'USD - United States Dollar';
 
 const presetOptions = CURRENCY_CODE_PRESETS.map(preset => ({
   label: `${preset.value} - ${preset.label}`,
@@ -41,50 +41,55 @@ const presetOptions = CURRENCY_CODE_PRESETS.map(preset => ({
 const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
   <div>
     <div>
-      <Field
+      <WrappedField
         name="trackerProperties.currencyCodeInputMethod"
-        component={ Radio }
-        type="radio"
-        value={ CURRENCY_CODE_INPUT_METHODS.PRESET }
-        onChange={
-          () => dispatch(change('default', 'trackerProperties.currencyCode', CURRENCY_CODE_DEFAULT))
-        }
+        component={ RadioGroup }
+        vertical
       >
-        Preset
-      </Field>
-
+        <Radio
+          value={ CURRENCY_CODE_INPUT_METHODS.PRESET }
+          label="Preset"
+          onChange={
+            () => {
+              dispatch(change('default', 'trackerProperties.currencyCode', CURRENCY_CODE_DEFAULT))
+            }
+          }
+        />
+      </WrappedField>
       {
         currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.PRESET ?
           <div className="FieldSubset">
-            <Field
+            <WrappedField
               name="trackerProperties.currencyCode"
-              component={ Autocomplete }
-              inputClassName="Field--long"
+              component={ ComboBox }
               options={ presetOptions }
+              placeholder={ CURRENCY_CODE_DEFAULT }
+              value={ 'USD - United States Dollar' }
+              //selectedOption={ 'USD - United States Dollar' }
             />
           </div> : null
       }
     </div>
     <div>
-      <Field
+      <WrappedField
         name="trackerProperties.currencyCodeInputMethod"
-        component={ Radio }
-        type="radio"
-        value={ CURRENCY_CODE_INPUT_METHODS.CUSTOM }
-        onChange={
-          () => dispatch(change('default', 'trackerProperties.currencyCode', ''))
-        }
+        component={ RadioGroup }
+        vertical
       >
-        Custom
-      </Field>
-
+        <Radio
+          value={ CURRENCY_CODE_INPUT_METHODS.CUSTOM }
+          label="Custom"
+          onChange={
+            () => dispatch(change('default', 'trackerProperties.currencyCode', ''))
+          }
+        />
+      </WrappedField>
       {
         currencyCodeInputMethod === CURRENCY_CODE_INPUT_METHODS.CUSTOM ?
           <div className="FieldSubset">
-            <Field
+            <WrappedField
               name="trackerProperties.currencyCode"
-              component={ DecoratedInput }
-              inputComponent={ Textfield }
+              component={ Textfield }
               supportDataElement
             />
           </div> : null

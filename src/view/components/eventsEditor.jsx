@@ -17,11 +17,12 @@
 **************************************************************************/
 
 import React from 'react';
-import Button from '@coralui/react-coral/lib/Button';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import Autocomplete from '@coralui/redux-form-react-coral/lib/Autocomplete';
-import { Field, FieldArray } from 'redux-form';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import Button from '@react/react-spectrum/Button';
+import Textfield from '@react/react-spectrum/Textfield';
+import Close from '@react/react-spectrum/Icon/Close';
+import { FieldArray } from 'redux-form';
+import WrappedField from '../extensionConfiguration/components/wrappedField';
+import RestrictedComboBox from '../extensionConfiguration/components/restrictedComboBox';
 import LIMITS, { LIMITS_LEVELS_LABELS, maxLevel } from '../enums/accessLevelLimits';
 
 const CONTEXT_EVENTS = [
@@ -73,38 +74,35 @@ const renderEvents = ({ fields }) => {
       key={ index }
       className="u-gapBottom2x"
     >
-      <Field
+      <WrappedField
         name={ `${field}.name` }
         className="u-gapRight2x"
-        component={ DecoratedInput }
-        inputComponent={ Autocomplete }
+        component={ RestrictedComboBox }
         placeholder="Select event"
         options={ nameOptions }
       />
 
-      <Field
+      <WrappedField
         name={ `${field}.id` }
-        component={ DecoratedInput }
-        inputComponent={ Textfield }
-        inputClassName="Field--short"
+        component={ Textfield }
+        componentClassName="Field--shorter"
         placeholder="Event ID (optional)"
         supportDataElement
       />
 
-      <Field
+      <WrappedField
         name={ `${field}.value` }
-        component={ DecoratedInput }
-        inputComponent={ Textfield }
-        inputClassName="Field--short"
+        component={ Textfield }
+        componentClassName="Field--shorter"
         placeholder="Event Value (optional)"
         supportDataElement
       />
 
       <Button
-        variant="minimal"
-        icon="close"
-        iconSize="XS"
-        square
+        variant="action"
+        quiet
+        icon={ <Close /> }
+        size="XS"
         onClick={ fields.remove.bind(this, index) }
       />
     </div>
@@ -113,7 +111,7 @@ const renderEvents = ({ fields }) => {
   return (
     <section>
       { rows }
-      <Button onClick={ () => fields.push(createEmptyRow()) }>Add Another</Button>
+      <Button variant="action" onClick={ () => fields.push(createEmptyRow()) }>Add Another</Button>
     </section>
   );
 };

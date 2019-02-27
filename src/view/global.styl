@@ -4,6 +4,12 @@ $gap = 8*$px;
 
 // Attempts to follow SUIT conventions https://suitcss.github.io/
 
+
+.react-spectrum-provider {
+  padding: 12px;
+}
+
+
 body {
   padding: 12*$px;
 }
@@ -25,11 +31,15 @@ fieldset {
 
 .Field {}
 
-.Field--short {
+.Field--short, .spectrum-Dropdown.Field--short {
   width: 150*$px;
 }
 
-.Field--long {
+.Field--shorter {
+  max-width: 150*$px;
+}
+
+.Field--long, .spectrum-Dropdown.Field--long, .spectrum-Textfield.Field--long {
   width: 320*$px;
 }
 

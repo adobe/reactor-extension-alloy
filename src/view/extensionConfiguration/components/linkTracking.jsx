@@ -17,12 +17,13 @@
 **************************************************************************/
 
 import React from 'react';
-import Checkbox from '@coralui/redux-form-react-coral/lib/Checkbox';
-import Heading from '@coralui/react-coral/lib/Heading';
+import Checkbox from '@react/react-spectrum/Checkbox';
+import Heading from '@react/react-spectrum/Heading';
 import { connect } from 'react-redux';
-import { formValueSelector, Field } from 'redux-form';
-
+import { formValueSelector } from 'redux-form';
+import WrappedField from './wrappedField';
 import TagListEditor from './tagListEditor';
+import InfoTip from './infoTip';
 
 import './linkTracking.styl';
 
@@ -32,50 +33,54 @@ const DEFAULT_DOWNLOAD_LINKS = ['doc', 'docx', 'eps', 'jpg', 'png', 'svg', 'xls'
 
 const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
   <div>
-    <Field
+    <WrappedField
       name="trackerProperties.trackInlineStats"
       component={ Checkbox }
     >
       Enable ClickMap
-    </Field>
+    </WrappedField>
 
     <section className="LinkTracking-section">
       <Heading size="4">Downloads</Heading>
-      <Field
+      <WrappedField
         name="trackerProperties.trackDownloadLinks"
         component={ Checkbox }
       >
         Track download links
-      </Field>
+      </WrappedField>
       { trackDownloadLinks ?
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.linkDownloadFileTypes"
             component={ TagListEditor }
             title="Download Extensions"
             tooltip="If your site contains links to files with any of these extensions, the URLs of
               these links will appear in the File Downloads report."
-          />
+          >
+            <InfoTip>If your site contains links to files with any of these extensions, the URLs of
+              these links will appear in the File Downloads report.</InfoTip>
+          </WrappedField>
+
         </div> : null
       }
     </section>
     <section className="LinkTracking-section u-gapTop">
       <Heading size="4">Outbound Links</Heading>
-      <Field
+      <WrappedField
         name="trackerProperties.trackExternalLinks"
         component={ Checkbox }
       >
         Track outbound links
-      </Field>
+      </WrappedField>
       { trackExternalLinks ?
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.linkExternalFilters"
             component={ TagListEditor }
             title="Track"
             tooltip="Links containing the following filters will be treated as exit links."
           />
-          <Field
+          <WrappedField
             name="trackerProperties.linkInternalFilters"
             component={ TagListEditor }
             title="Never Track"
@@ -84,12 +89,12 @@ const LinkTracking = ({ trackDownloadLinks, trackExternalLinks }) => (
         </div> : null
       }
     </section>
-    <Field
+    <WrappedField
       name="trackerProperties.linkLeaveQueryString"
       component={ Checkbox }
     >
       Keep URL Parameters
-    </Field>
+    </WrappedField>
   </div>
 );
 

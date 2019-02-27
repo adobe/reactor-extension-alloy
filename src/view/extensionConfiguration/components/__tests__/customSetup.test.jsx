@@ -17,19 +17,19 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Button from '@coralui/react-coral/lib/Button';
-import Radio from '@coralui/react-coral/lib/Radio';
+import Button from '@react/react-spectrum/Button';
+import Radio from '@react/react-spectrum/Radio';
 
 import CustomSetup, { formConfig } from '../customSetup';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
 import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const openEditorButton = wrapper.find(Button).node;
+  const openEditorButton = wrapper.find(Button);
   const loadPhaseBeforeRadio =
-    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'beforeSettings').node;
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'beforeSettings');
   const loadPhaseAfterRadio =
-    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'afterSettings').node;
+    wrapper.find(Radio).filterWhere(n => n.prop('value') === 'afterSettings');
 
   return {
     openEditorButton,
@@ -62,8 +62,8 @@ describe('customSetup', () => {
     extensionBridge.init();
 
     const { loadPhaseBeforeRadio, loadPhaseAfterRadio } = getReactComponents(instance);
-    expect(loadPhaseBeforeRadio).toBeUndefined();
-    expect(loadPhaseAfterRadio).toBeUndefined();
+    expect(loadPhaseBeforeRadio.exists()).toBeFalse();
+    expect(loadPhaseAfterRadio.exists()).toBeFalse();
   });
 
   it('radio buttons are visible after code editor has been used', () => {
@@ -76,8 +76,8 @@ describe('customSetup', () => {
     });
 
     const { loadPhaseBeforeRadio, loadPhaseAfterRadio } = getReactComponents(instance);
-    expect(loadPhaseBeforeRadio).toBeDefined();
-    expect(loadPhaseAfterRadio).toBeDefined();
+    expect(loadPhaseBeforeRadio.exists()).toBeTrue();
+    expect(loadPhaseAfterRadio.exists()).toBeTrue();
   });
 
   it('sets form values from settings', () => {
@@ -91,7 +91,7 @@ describe('customSetup', () => {
     });
 
     const { loadPhaseBeforeRadio } = getReactComponents(instance);
-    expect(loadPhaseBeforeRadio.props.value).toBe('beforeSettings');
+    expect(loadPhaseBeforeRadio.props().value).toBe('beforeSettings');
   });
 
   it('sets settings from form values', () => {
@@ -105,7 +105,7 @@ describe('customSetup', () => {
 
     const { loadPhaseBeforeRadio } = getReactComponents(instance);
 
-    loadPhaseBeforeRadio.props.onChange('beforeSettings');
+    loadPhaseBeforeRadio.props().onChange(true, { stopPropagation: () => undefined });
 
     const { customSetup } = extensionBridge.getSettings();
     expect(customSetup.loadPhase).toBe('beforeSettings');
@@ -124,7 +124,7 @@ describe('customSetup', () => {
       openEditorButton
     } = getReactComponents(instance);
 
-    openEditorButton.props.onClick();
+    openEditorButton.props().onClick();
 
     expect(extensionBridge.getSettings()).toEqual({
       customSetup: {

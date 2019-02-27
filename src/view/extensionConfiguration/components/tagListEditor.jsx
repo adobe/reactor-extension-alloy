@@ -16,12 +16,13 @@
 * from Adobe Systems Incorporated.
 **************************************************************************/
 
-import Button from '@coralui/react-coral/lib/Button';
-import Textfield from '@coralui/react-coral/lib/Textfield';
-import Tag from '@coralui/react-coral/lib/Tag';
-import TagList from '@coralui/react-coral/lib/TagList';
-import { DataElementSelectorButton, ErrorTip, InfoTip } from '@reactor/react-components';
 import React from 'react';
+import Button from '@react/react-spectrum/Button';
+import Textfield from '@react/react-spectrum/Textfield';
+import { Tag, TagList } from '@react/react-spectrum/TagList';
+import InfoTip from './infoTip';
+import ErrorTip from './errorTip';
+import DataElementSelectorButton from './dataElementSelectorButton';
 
 import './tagListEditor.styl';
 
@@ -37,10 +38,8 @@ export default class TagListEditor extends React.Component {
 
   onRemove = (removedValue) => {
     const {
-      input: {
-        value,
-        onChange
-      }
+      value,
+      onChange
     } = this.props;
 
     onChange(value.filter(val => val !== removedValue));
@@ -55,10 +54,8 @@ export default class TagListEditor extends React.Component {
 
   add = () => {
     const {
-      input: {
-        value,
-        onChange
-      }
+      value,
+      onChange
     } = this.props;
 
     if (this.state.newValue) {
@@ -99,9 +96,7 @@ export default class TagListEditor extends React.Component {
     const {
       title,
       tooltip,
-      input: {
-        value
-      },
+      value,
       inputClassName,
       className,
       meta: {
@@ -124,7 +119,7 @@ export default class TagListEditor extends React.Component {
             value={ this.state.newValue }
           />
           <DataElementSelectorButton onClick={ this.openSelector } />
-          <Button onClick={ this.add }>Save</Button>
+          <Button variant="action" onClick={ this.add }>Add</Button>
           { touched && error ? <ErrorTip>{ error }</ErrorTip> : null }
         </div>
         <div className="u-gapTop TagListEditor-tagContainer">

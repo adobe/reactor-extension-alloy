@@ -17,14 +17,14 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import Button from '@coralui/react-coral/lib/Button';
+import Button from '@react/react-spectrum/Button';
 
 import CustomSetup, { formConfig } from '../customSetup';
 import createExtensionBridge from '../../../../__tests__/helpers/createExtensionBridge';
 import bootstrap from '../../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const openEditorButton = wrapper.find(Button).node;
+  const openEditorButton = wrapper.find(Button);
 
   return {
     openEditorButton
@@ -64,7 +64,7 @@ describe('customSetup', () => {
       openEditorButton
     } = getReactComponents(instance);
 
-    openEditorButton.props.onClick();
+    openEditorButton.props().onClick();
 
     expect(extensionBridge.getSettings()).toEqual({
       customSetup: {

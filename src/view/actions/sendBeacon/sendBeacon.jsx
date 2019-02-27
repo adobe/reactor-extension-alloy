@@ -17,14 +17,14 @@
 **************************************************************************/
 
 import React from 'react';
-import Radio from '@coralui/redux-form-react-coral/lib/Radio';
-import Select from '@coralui/redux-form-react-coral/lib/Select';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-import Heading from '@coralui/react-coral/lib/Heading';
+import Radio from '@react/react-spectrum/Radio';
+import RadioGroup from '@react/react-spectrum/RadioGroup';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
+import Heading from '@react/react-spectrum/Heading';
 import { connect } from 'react-redux';
-import { Field, formValueSelector } from 'redux-form';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
-
+import { formValueSelector } from 'redux-form';
+import WrappedField from '../../extensionConfiguration/components/wrappedField';
 import './sendBeacon.styl';
 
 const TYPES = {
@@ -67,28 +67,30 @@ const SendBeacon = ({ type, linkType }) => {
     <div>
       <Heading size="4">Tracking</Heading>
       <div>
-        <Field
+        <WrappedField
           name="type"
-          component={ Radio }
-          type="radio"
-          value={ TYPES.PAGE }
+          component={ RadioGroup }
+          vertical
         >
-          <span className="u-bold">s.t(): </span>
-          Send data to Adobe Analytics and treat it as a page view
-        </Field>
-      </div>
-      <div>
-        <Field
-          name="type"
-          component={ Radio }
-          type="radio"
-          value={ TYPES.LINK }
-        >
-          <span className="u-bold">s.tl(): </span>
-          Send data to Adobe Analytics and
-          <span className="u-italic"> do not </span>
-          treat it as a page view
-        </Field>
+          <Radio
+            value={ TYPES.PAGE }
+            label={
+              <span>
+                <strong>s.t(): </strong>
+                Send data to Adobe Analytics and treat it as a page view
+              </span>
+            }
+          />
+          <Radio
+            value={ TYPES.LINK }
+            label={
+              <span>
+                <strong>s.tl(): </strong>
+                Send data to Adobe Analytics and do not treat it as a page view
+              </span>
+            }
+          />
+        </WrappedField>
         {
           type === TYPES.LINK ?
             <div className="FieldSubset SendBeacon-linkDetails">
@@ -96,10 +98,12 @@ const SendBeacon = ({ type, linkType }) => {
                 <label>
                   <span className="Label">Link Type</span>
                   <div>
-                    <Field
+                    <WrappedField
                       name="linkType"
+                      // I don't know why, but onBlur empties the value
+                      onBlur={ e => e.preventDefault() }
                       component={ Select }
-                      className="Field--short"
+                      componentClassName="Field--short"
                       options={ linkTypeOptions }
                     />
                   </div>
@@ -109,18 +113,17 @@ const SendBeacon = ({ type, linkType }) => {
                 <label>
                   <span className="Label">{ linkNameLabel }</span>
                   <div>
-                    <Field
+                    <WrappedField
                       name="linkName"
-                      component={ DecoratedInput }
-                      inputComponent={ Textfield }
-                      inputClassName="Field--long"
+                      component={ Textfield }
+                      componentClassName="Field--long"
                       supportDataElement
                     />
                   </div>
                 </label>
               </div>
             </div> : null
-          }
+        }
       </div>
     </div>
   );

@@ -17,11 +17,11 @@
 **************************************************************************/
 
 import React from 'react';
-import Select from '@coralui/redux-form-react-coral/lib/Select';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
 import { connect } from 'react-redux';
-import { Field, formValueSelector } from 'redux-form';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import { formValueSelector } from 'redux-form';
+import WrappedField from './wrappedField';
 import COMPONENT_NAMES from '../../enums/componentNames';
 
 import './cookies.styl';
@@ -53,11 +53,10 @@ const Cookies = ({ cookieLifetime }) => (
       <label className="ColumnGrid-cell">
         <span className="Label">Visitor ID</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.visitorID"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -65,11 +64,10 @@ const Cookies = ({ cookieLifetime }) => (
       <label className="ColumnGrid-cell">
         <span className="Label">Visitor Namespace</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.visitorNamespace"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -77,11 +75,10 @@ const Cookies = ({ cookieLifetime }) => (
       <label className="ColumnGrid-cell">
         <span className="Label">Domain Periods</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.cookieDomainPeriods"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -89,11 +86,10 @@ const Cookies = ({ cookieLifetime }) => (
       <label className="ColumnGrid-cell">
         <span className="Label">First-party Domain Periods</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.fpCookieDomainPeriods"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -102,22 +98,22 @@ const Cookies = ({ cookieLifetime }) => (
     <div>
       <label className="Label" htmlFor="cookieLifetimeField">Cookie Lifetime</label>
       <div>
-        <Field
+        <WrappedField
           id="cookieLifetimeField"
           name="trackerProperties.cookieLifetime"
           component={ Select }
-          inputClassName="Cookies-cookieLifetime"
+          componentClassName="Cookies-cookieLifetime"
           className="u-gapRight"
+          onBlur={ e => e.preventDefault() }
           options={ cookieLifetimeOptions }
         />
 
         {
           cookieLifetime === COOKIE_LIFETIME_PERIODS.SECONDS ?
-            <Field
+            <WrappedField
               name="trackerProperties.cookieLifetimeSeconds"
-              component={ DecoratedInput }
-              inputComponent={ Textfield }
-              inputClassName="Cookies-cookieLifetimeSeconds"
+              component={ Textfield }
+              componentClassName="Cookies-cookieLifetimeSeconds"
               supportDataElement
             /> : null
         }

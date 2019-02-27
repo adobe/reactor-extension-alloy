@@ -17,11 +17,10 @@
 **************************************************************************/
 
 import React from 'react';
-import Select from '@coralui/redux-form-react-coral/lib/Select';
-import Textfield from '@coralui/redux-form-react-coral/lib/Textfield';
-//import InfoTip from '@reactor/react-components/lib/infoTip';
-import { Field } from 'redux-form';
-import DecoratedInput from '@reactor/react-components/lib/reduxForm/decoratedInput';
+import Select from '@react/react-spectrum/Select';
+import Textfield from '@react/react-spectrum/Textfield';
+import InfoTip from '../extensionConfiguration/components/infoTip';
+import WrappedField from '../extensionConfiguration/components/wrappedField';
 import { mergeConfigs } from '../utils/formConfigUtils';
 import EvarsPropsEditor, { getFormConfig as getEvarsPropsEditorFormConfig } from './evarsPropsEditor';
 import EventsEditor, { formConfig as eventsFormConfig } from './eventsEditor';
@@ -52,19 +51,17 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       showEvents ?
         <div>
           <span className="Label u-gapTop">Events</span>
-          {/* This InfoTip is commented out until the problem with the dropdown being layered
-              on top of the tip box is fixed
           <InfoTip className="u-fieldLineHeight">
-            Events are milestones within a site. By default events are configured as
+            Events are milestones within a site. By default events are configured as <br />
             <a href="https://marketing.adobe.com/resources/help/en_US/sc/implement/events.html" target="_blank">
-            counter events.</a><br />
+              counter events.</a><br />
             Unless specified otherwise a counter event is assigned the value of one. A counter
             event can be assigned a value other than one by specifying it in the value field.<br />
-            You can specify a unique event ID to
+            You can specify a unique event ID to <br />
             <a href="https://marketing.adobe.com/resources/help/en_US/sc/implement/event_serialization_impl.html" target="_blank">
             prevent duplicate events</a> (e.g. during a page reload) from being recorded more than
             once.
-          </InfoTip>*/}
+          </InfoTip>
           <EventsEditor />
         </div> : null
     }
@@ -76,11 +73,10 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Page Name</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.pageName"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -89,11 +85,10 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Page URL</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.pageURL"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -102,11 +97,10 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Server</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.server"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -115,11 +109,10 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Channel</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.channel"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -128,11 +121,10 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Referrer</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.referrer"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -141,19 +133,19 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell" htmlFor="campaignValue">
         <span className="Label u-gapTop">Campaign</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.campaign.type"
-            className="Variables-campaignType"
+            componentClassName="Variables-campaignType"
             component={ Select }
             options={ campaignTypeOptions }
+            onBlur={ e => e.preventDefault() }
           />
 
-          <Field
+          <WrappedField
             name="trackerProperties.campaign.value"
-            className="u-gapLeft"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
             inputClassName="Variables-campaignValue"
+            component={ Textfield }
+            componentClassName="Variables-campaignValue u-gapLeft"
             supportDataElement
           />
         </div>
@@ -162,11 +154,10 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">State</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.state"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -175,11 +166,10 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Zip</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.zip"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -188,11 +178,10 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
       <label className="ColumnGrid-cell">
         <span className="Label u-gapTop">Transaction ID</span>
         <div>
-          <Field
+          <WrappedField
             name="trackerProperties.transactionID"
-            component={ DecoratedInput }
-            inputComponent={ Textfield }
-            inputClassName="Field--long"
+            component={ Textfield }
+            componentClassName="Field--long"
             supportDataElement
           />
         </div>
@@ -203,11 +192,10 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <label className="ColumnGrid-cell">
             <span className="Label u-gapTop">Dynamic Variable Prefix</span>
             <div>
-              <Field
+              <WrappedField
                 name="trackerProperties.dynamicVariablePrefix"
-                component={ DecoratedInput }
-                inputComponent={ Textfield }
-                inputClassName="Field--long"
+                component={ Textfield }
+                componentClassName="Field--long"
                 supportDataElement
               />
             </div>
