@@ -5,7 +5,8 @@ import Button from '@react/react-spectrum/Button';
 import ChevronDownMedium from '@react/react-spectrum/Icon/core/ChevronDownMedium';
 import classNames from 'classnames';
 
-import './restrictedComboBox.styl';
+// imports the styles to combine the down button with the textbox
+import InputGroup from '@react/react-spectrum/InputGroup';
 
 let id = 0;
 const getLabel = o => (typeof o === 'string' ? o : o.label);
