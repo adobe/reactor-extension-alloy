@@ -23,7 +23,6 @@ class DecoratedInput extends React.Component {
     window.extensionBridge.openDataElementSelector({
       tokenize
     }).then(dataElement => {
-      console.log(this.props);
       onChange(tokenize ? addDataElementToken(value, dataElement) : dataElement);
     });
   };
