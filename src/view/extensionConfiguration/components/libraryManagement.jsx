@@ -150,6 +150,7 @@ let OverwriteReportSuites = ({ className, showReportSuites, getRsidCompletions, 
       showReportSuites && <ReportSuites getRsidCompletions={ getRsidCompletions } companies={ companies } />
     }
   </div>
+
 );
 
 OverwriteReportSuites = connect(
@@ -168,23 +169,27 @@ class LibraryManagement extends Component {
 
   componentDidMount() {
     const that = this;
-    const { company, dispatch, meta: { tokens: { imsAccess: token }, company: { orgId: imsOrgId }}} = this.props;
+    try {
+      const { company, dispatch, meta: { tokens: { imsAccess: token }, company: { orgId: imsOrgId }}} = this.props;
 
-    this.api = analyticsApi(token);
-    this.api.companies(imsOrgId).then(companies => {
-      if (companies.length === 1) {
-        dispatch(change('default', 'libraryCode.company', companies[0].value));
-        that.setState({companies: null });
-      } else if (companies.length === 0) {
-        dispatch(change('default', 'libraryCode.company', null));
-        that.setState({companies: null });
-      } else {
-        if (!company) {
+      this.api = analyticsApi(token);
+      this.api.companies(imsOrgId).then(companies => {
+        if (companies.length === 1) {
           dispatch(change('default', 'libraryCode.company', companies[0].value));
+          that.setState({companies: null });
+        } else if (companies.length === 0) {
+          dispatch(change('default', 'libraryCode.company', null));
+          that.setState({companies: null });
+        } else {
+          if (!company) {
+            dispatch(change('default', 'libraryCode.company', companies[0].value));
+          }
+          that.setState({companies: companies});
         }
-        that.setState({companies: companies});
-      }
-    });
+      });
+    } catch (e) {
+      // could not get the companies
+    }
   }
 
   render() {

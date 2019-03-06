@@ -1,4 +1,5 @@
-/*************************************************************************
+/**********************************************************
+ * ***************
 * ADOBE CONFIDENTIAL
 * ___________________
 *
@@ -81,7 +82,6 @@ describe('evars props editor', () => {
     });
 
     const { rows } = getReactComponents(instance);
-    debugger;
     expect(rows[0].nameRestrictedComboBox.props().value).toBe('eVar1');
     expect(rows[0].typeSelect.props().value).toBe('value');
     expect(rows[0].valueTextfield.props().value).toBe('eVar1Value');

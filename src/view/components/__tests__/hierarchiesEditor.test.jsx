@@ -18,7 +18,7 @@
 
 import { mount } from 'enzyme';
 import Button from '@react/react-spectrum/Button';
-import RestrictedComboBox from '../../extensionConfiguration/components/restrictedComboBox';
+import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
 
 import HierarchiesEditor, { formConfig } from '../hierarchiesEditor';
@@ -27,7 +27,7 @@ import bootstrap from '../../bootstrap';
 
 const getReactComponents = (wrapper) => {
   const rows = wrapper.find('[data-row]').map(row => ({
-    nameTextfield: row.find(RestrictedComboBox),
+    nameTextfield: row.find(Select),
     sectionTextfields: row.find(Textfield)
       .filterWhere(n => n.prop('name') && n.prop('name').indexOf('sections') !== -1),
     delimiterTextfields: row.find(Textfield)
