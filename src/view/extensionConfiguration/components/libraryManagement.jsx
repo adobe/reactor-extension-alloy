@@ -392,9 +392,12 @@ export const formConfig = {
     } = values.libraryCode || {};
 
     const libraryCodeSettings = {
-      type,
-      company
+      type
     };
+    
+    if (company) {
+      libraryCodeSettings.company = company;
+    }
 
     const exportReportSuites = showReportSuites || type === LIB_TYPES.MANAGED;
     if (exportReportSuites && values.libraryCode.accounts) {
@@ -412,11 +415,10 @@ export const formConfig = {
       if (Object.keys(accounts).length) {
         libraryCodeSettings.accounts = accounts;
       }
-
-      libraryCodeSettings.scopeTrackerGlobally = scopeTrackerGlobally;
     }
-
-    if (type !== LIB_TYPES.MANAGED) {
+    if (type === LIB_TYPES.MANAGED) {
+      libraryCodeSettings.scopeTrackerGlobally = (scopeTrackerGlobally === true);
+    } else {
       libraryCodeSettings.trackerVariableName = trackerVariableName;
     }
 
