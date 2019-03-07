@@ -412,11 +412,10 @@ export const formConfig = {
       if (Object.keys(accounts).length) {
         libraryCodeSettings.accounts = accounts;
       }
-
-      libraryCodeSettings.scopeTrackerGlobally = scopeTrackerGlobally;
     }
-
-    if (type !== LIB_TYPES.MANAGED) {
+    if (type === LIB_TYPES.MANAGED) {
+      libraryCodeSettings.scopeTrackerGlobally = (scopeTrackerGlobally === true);
+    } else {
       libraryCodeSettings.trackerVariableName = trackerVariableName;
     }
 
