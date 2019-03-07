@@ -45,6 +45,9 @@
                 },
                 "scopeTrackerGlobally": {
                   "type": "boolean"
+                },
+                "company": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false,
@@ -66,6 +69,9 @@
                 },
                 "accounts": {
                   "$ref": "#/definitions/accounts"
+                },
+                "company": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false,
@@ -95,6 +101,9 @@
                 },
                 "trackerVariableName": {
                   "$ref": "#/definitions/trackerVariableName"
+                },
+                "company": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false,
@@ -122,6 +131,9 @@
                 },
                 "trackerVariableName": {
                   "$ref": "#/definitions/trackerVariableName"
+                },
+                "company": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false,
