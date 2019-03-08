@@ -72,7 +72,9 @@ class RestrictedComboBox extends Component {
     const { onChange, onBlur, allowCreate } = this.props;
     const { inputValue } = this.state;
 
-    if (!allowCreate) {
+    if (allowCreate) {
+      onChange(inputValue);
+    } else {
       const filteredOptions = this.getFilteredOptions(inputValue);
 
       resolvePromise(filteredOptions, filteredOptions => {
