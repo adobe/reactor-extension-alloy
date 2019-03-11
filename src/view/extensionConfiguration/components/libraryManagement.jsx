@@ -54,10 +54,9 @@ const ReportSuites = ({ companies, getRsidCompletions }) => (
         Specify one or more report suites to which your data should be sent.
       </InfoTip>
     </Heading>
-
-    <section className="ReportSuites-fieldsContainer">
+    <section>
       { companies && (
-        <div>
+        <div className="ReportSuites-environment">
           <label className="Label">
             Company
             <InfoTip>
@@ -75,6 +74,9 @@ const ReportSuites = ({ companies, getRsidCompletions }) => (
           </div>
         </div>
       )}
+    </section>
+    <section className="ReportSuites-fieldsContainer">
+
       <div className="ReportSuites-environment">
         <label className="Label">
           Development Report Suites
