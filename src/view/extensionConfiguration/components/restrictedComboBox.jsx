@@ -67,32 +67,7 @@ class RestrictedComboBox extends Component {
       this.autocomplete.hideMenu();
     });
   }
-  async resolveInputValue() {
-    const { onChange, allowCreate } = this.props;
-    const { inputValue } = this.state;
 
-    const filteredOptions = await this.getFilteredOptions(inputValue);
-    const exactMatch = filteredOptions.find(o => getValue(o) === inputValue);
-
-    if (exactMatch) {
-      this.setState({
-        inputLabel: getLabel(exactMatch)
-      });
-      onChange(inputValue);
-    } else if (allowCreate) {
-      onChange(inputValue);
-    } else if (filteredOptions.length) {
-      this.setState({
-        inputValue: getValue(filteredOptions[0]),
-        inputLabel: getLabel(filteredOptions[0])
-      });
-      onChange(getValue(filteredOptions[0]));
-    } else {
-      this.setState({ inputValue: '', inputLabel: '' });
-      onChange();
-    }
-
-  }
   async onTextfieldBlur() {
     const { onBlur } = this.props;
     await this.resolveInputValue();
@@ -118,6 +93,31 @@ class RestrictedComboBox extends Component {
   getCompletions() {
     const { inputValue } = this.state;
     return Promise.resolve(this.getFilteredOptions(inputValue));
+  }
+  async resolveInputValue() {
+    const { onChange, allowCreate } = this.props;
+    const { inputValue } = this.state;
+
+    const filteredOptions = await this.getFilteredOptions(inputValue);
+    const exactMatch = filteredOptions.find(o => getValue(o) === inputValue);
+
+    if (exactMatch) {
+      this.setState({
+        inputLabel: getLabel(exactMatch)
+      });
+      onChange(inputValue);
+    } else if (allowCreate) {
+      onChange(inputValue);
+    } else if (filteredOptions.length) {
+      this.setState({
+        inputValue: getValue(filteredOptions[0]),
+        inputLabel: getLabel(filteredOptions[0])
+      });
+      onChange(getValue(filteredOptions[0]));
+    } else {
+      this.setState({ inputValue: '', inputLabel: '' });
+      onChange();
+    }
   }
   render() {
     const {
