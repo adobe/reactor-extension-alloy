@@ -1,5 +1,6 @@
 /**********************************************************
- * ***************
+*
+* ***************
 * ADOBE CONFIDENTIAL
 * ___________________
 *
@@ -18,12 +19,12 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import RestrictedComboBox from '../../extensionConfiguration/components/restrictedComboBox';
 import Button from '@react/react-spectrum/Button';
 import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
 import { Field } from 'redux-form';
 
+import RestrictedComboBox from '../../extensionConfiguration/components/restrictedComboBox';
 import EvarsPropsEditor, { getFormConfig } from '../evarsPropsEditor';
 import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
 import bootstrap from '../../bootstrap';

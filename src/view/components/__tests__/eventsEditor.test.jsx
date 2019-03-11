@@ -19,8 +19,8 @@
 import { mount } from 'enzyme';
 import Button from '@react/react-spectrum/Button';
 import Textfield from '@react/react-spectrum/Textfield';
-import RestrictedComboBox from '../../extensionConfiguration/components/restrictedComboBox';
 
+import RestrictedComboBox from '../../extensionConfiguration/components/restrictedComboBox';
 import EventsEditor, { formConfig } from '../eventsEditor';
 import createExtensionBridge from '../../__tests__/helpers/createExtensionBridge';
 import bootstrap from '../../bootstrap';
@@ -28,8 +28,12 @@ import bootstrap from '../../bootstrap';
 const getReactComponents = (wrapper) => {
   const rows = wrapper.find('[data-row]').map((row) => {
     const nameField = row.find(RestrictedComboBox);
-    const valField = row.find(Textfield).filterWhere(n => n.prop('name') && n.prop('name').indexOf('.value') !== -1);
-    const idField = row.find(Textfield).filterWhere(n => n.prop('name') && n.prop('name').indexOf('.id') !== -1);
+    const valField = row.find(Textfield).filterWhere(n =>
+      n.prop('name') && n.prop('name').indexOf('.value') !== -1
+    );
+    const idField = row.find(Textfield).filterWhere(n =>
+      n.prop('name') && n.prop('name').indexOf('.id') !== -1
+    );
     return {
       nameAutocomplete: nameField,
       valueTextfield: valField,

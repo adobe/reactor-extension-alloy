@@ -20,9 +20,10 @@ import React from 'react';
 import Radio from '@react/react-spectrum/Radio';
 import RadioGroup from '@react/react-spectrum/RadioGroup';
 import Textfield from '@react/react-spectrum/Textfield';
-import RestrictedComboBox from './restrictedComboBox';
 import { connect } from 'react-redux';
 import { change, formValueSelector } from 'redux-form';
+
+import RestrictedComboBox from './restrictedComboBox';
 import WrappedField from './wrappedField';
 import CURRENCY_CODE_PRESETS from '../../enums/currencyCodes';
 
@@ -51,7 +52,7 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
           label="Preset"
           onChange={
             () => {
-              dispatch(change('default', 'trackerProperties.currencyCode', CURRENCY_CODE_DEFAULT))
+              dispatch(change('default', 'trackerProperties.currencyCode', CURRENCY_CODE_DEFAULT));
             }
           }
         />

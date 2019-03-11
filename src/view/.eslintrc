@@ -26,7 +26,8 @@
     "spaced-comment": 0, // To support our copyright banner.
     "prefer-const": ["error", {
       "destructuring": "all"
-    }]
+    }],
+    "quote-props": ["error", "consistent"]
   },
   "env": {
     "es6": true,

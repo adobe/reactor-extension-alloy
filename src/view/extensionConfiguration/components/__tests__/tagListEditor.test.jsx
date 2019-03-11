@@ -20,7 +20,6 @@ import { mount } from 'enzyme';
 import React from 'react';
 import Button from '@react/react-spectrum/Button';
 import Textfield from '@react/react-spectrum/Textfield';
-import { DataElementSelectorButton } from '../dataElementSelectorButton';
 
 import TagListEditor from '../tagListEditor';
 

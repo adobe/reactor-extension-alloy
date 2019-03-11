@@ -4,7 +4,7 @@ import OverlayTrigger from '@react/react-spectrum/OverlayTrigger';
 import Tooltip from '@react/react-spectrum/Tooltip';
 import './validationWrapper.styl';
 
-export default (props) => (
+export default props => (
   <OverlayTrigger
     placement={ props.placement || 'right' }
     variant="error"

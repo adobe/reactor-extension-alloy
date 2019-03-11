@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import '@react/react-spectrum/ComboBox';
 
 // imports the styles to combine the down button with the textbox
-import InputGroup from '@react/react-spectrum/InputGroup';
+import InputGroup from '@react/react-spectrum/InputGroup'; // eslint-disable-line no-unused-vars
 
 let id = 0;
 const getLabel = o => (typeof o === 'string' ? o : o.label);
@@ -18,7 +18,7 @@ const resolvePromise = (value, then) => {
   } else {
     then(value);
   }
-}
+};
 
 class RestrictedComboBox extends Component {
   constructor(props) {
@@ -37,8 +37,8 @@ class RestrictedComboBox extends Component {
       this.autocomplete.hideMenu();
     } else {
       const { onChange } = this.props;
-      this.setState({inputValue: "", inputLabel: ""});
-      onChange("");
+      this.setState({ inputValue: '', inputLabel: '' });
+      onChange('');
       this.textfield.focus();
       setTimeout(() => this.autocomplete.showMenu());
     }
@@ -78,9 +78,9 @@ class RestrictedComboBox extends Component {
       onChange(inputValue);
       onBlur();
     } else {
-      const filteredOptions = this.getFilteredOptions(inputValue);
+      const filteredOptionsPromise = this.getFilteredOptions(inputValue);
 
-      resolvePromise(filteredOptions, filteredOptions => {
+      resolvePromise(filteredOptionsPromise, (filteredOptions) => {
         if (filteredOptions.length) {
           this.setState({
             inputValue: getValue(filteredOptions[0]),
@@ -88,7 +88,7 @@ class RestrictedComboBox extends Component {
           });
           onChange(getValue(filteredOptions[0]));
         } else {
-          this.setState({inputValue: '', inputLabel: ''});
+          this.setState({ inputValue: '', inputLabel: '' });
           onChange();
         }
         onBlur(); // This makes redux set meta.touched
@@ -104,29 +104,27 @@ class RestrictedComboBox extends Component {
   }
   getLabelFromValue(value) {
     const { options } = this.props;
-    const matchingOption = options.find( o => getValue(o) === value );
+    const matchingOption = options.find(o => getValue(o) === value);
     if (matchingOption) {
       return getLabel(matchingOption);
-    } else {
-      return value;
     }
+    return value;
   }
   getFilteredOptions(value) {
     const { options, getCompletions } = this.props;
     if (getCompletions) {
       return getCompletions(value);
-    } else {
-      return options.filter(
-        option => getLabel(option).toLowerCase().indexOf(value.toLowerCase()) !== -1
-      );
     }
+    return options.filter(
+      option => getLabel(option).toLowerCase().indexOf(value.toLowerCase()) !== -1
+    );
   }
   getCompletions() {
     const { inputValue } = this.state;
     return Promise.resolve(this.getFilteredOptions(inputValue));
   }
   render() {
-    const { 
+    const {
       disabled,
       required,
       invalid,

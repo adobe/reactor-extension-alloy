@@ -42,12 +42,12 @@ const getReactComponents = (wrapper) => {
       n => n.prop('name') === 'trackingCookieName'
     );
   const trackingCookieNameTextfield = trackingCookieNameField.find(Textfield);
-  
+
   return {
     euComplianceEnabledCheckbox,
     trackingServerTextfield,
     trackingServerSecureTextfield,
-    trackingCookieNameTextfield,
+    trackingCookieNameTextfield
   };
 };
 
@@ -148,6 +148,6 @@ describe('general', () => {
     trackingCookieNameTextfield.props().onChange('');
 
     expect(extensionBridge.validate()).toBe(false);
-    expect(trackingCookieNameTextfield.props().validationState).toBe("invalid");
+    expect(trackingCookieNameTextfield.props().validationState).toBe('invalid');
   });
 });

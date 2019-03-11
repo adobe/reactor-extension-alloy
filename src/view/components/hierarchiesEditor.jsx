@@ -19,7 +19,7 @@
 import React from 'react';
 import Button from '@react/react-spectrum/Button';
 import Close from '@react/react-spectrum/Icon/Close';
-import Select from '@react/react-spectrum/Select'
+import Select from '@react/react-spectrum/Select';
 import Textfield from '@react/react-spectrum/Textfield';
 import { FieldArray } from 'redux-form';
 import WrappedField from '../extensionConfiguration/components/wrappedField';

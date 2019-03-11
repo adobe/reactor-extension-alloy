@@ -3,7 +3,7 @@ import Button from '@react/react-spectrum/Button';
 import Code from '@react/react-spectrum/Icon/Code';
 
 class EditorButton extends React.Component {
-  onClick = () => {
+  onClick() {
     const {
       onChange,
       value,
@@ -19,7 +19,7 @@ class EditorButton extends React.Component {
     }
 
     window.extensionBridge.openCodeEditor(options).then(onChange);
-  };
+  }
 
   render() {
     const {
@@ -33,7 +33,7 @@ class EditorButton extends React.Component {
         className={ className }
         onClick={ this.onClick }
         variant="action"
-        invalid={ validationState === "invalid" }
+        invalid={ validationState === 'invalid' }
       >
         Open Editor
       </Button>

@@ -28,8 +28,8 @@ import bootstrap from '../../bootstrap';
 const getReactComponents = (wrapper) => {
   const nameContains = (name) => {
     return n => n.prop('name') && n.prop('name').indexOf(name) !== -1;
-  }
-  const dynamicVariablePrefixTextField = 
+  };
+  const dynamicVariablePrefixTextField =
     wrapper.find(Textfield).filterWhere(nameContains('dynamicVariablePrefix'));
   const pageNameTextField =
     wrapper.find(Textfield).filterWhere(nameContains('pageName'));
