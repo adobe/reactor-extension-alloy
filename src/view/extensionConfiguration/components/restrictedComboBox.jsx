@@ -24,9 +24,9 @@ class RestrictedComboBox extends Component {
   constructor(props) {
     super(props);
     id += 1;
-    this.state = {
-      inputValue: props.value || props.defaultValue || ''
-    };
+    const inputValue = props.value || props.defaultValue || '';
+    const inputLabel = this.getLabelFromValue(inputValue);
+    this.state = { inputValue, inputLabel };
     this.comboBoxId = `restricted-combo-box-${id}`;
   }
   componentWillUnmount() {
@@ -37,7 +37,7 @@ class RestrictedComboBox extends Component {
       this.autocomplete.hideMenu();
     } else {
       const { onChange } = this.props;
-      this.setState({inputValue: ""});
+      this.setState({inputValue: "", inputLabel: ""});
       onChange("");
       this.textfield.focus();
       setTimeout(() => this.autocomplete.showMenu());
@@ -51,13 +51,15 @@ class RestrictedComboBox extends Component {
   }
   onChange(value) {
     this.setState({
-      inputValue: value
+      inputValue: value,
+      inputLabel: this.getLabelFromValue(value)
     });
   }
   onSelect(option) {
     const { onChange } = this.props;
     this.setState({
-      inputValue: getLabel(option)
+      inputValue: getValue(option),
+      inputLabel: getLabel(option)
     });
     onChange(getValue(option));
     // Workaround for https://jira.corp.adobe.com/browse/RSP-307
@@ -74,26 +76,39 @@ class RestrictedComboBox extends Component {
 
     if (allowCreate) {
       onChange(inputValue);
+      onBlur();
     } else {
       const filteredOptions = this.getFilteredOptions(inputValue);
 
       resolvePromise(filteredOptions, filteredOptions => {
         if (filteredOptions.length) {
-          onChange(getValue(filteredOptions[0]));
-          onBlur(); // This makes redux set meta.touched
-        } else {
-          this.setState({inputValue: ''});
-          onChange();
-          onBlur(); // This makes redux set meta.touched
-          // Workaround for https://jira.corp.adobe.com/browse/RSP-307
-          // Because we just changed inputValue, which will then
-          // set the value prop of Autocomplete, the Autocomplete will try
-          // to show the menu again. :/
-          this.hideMenuTimeout = setTimeout(() => {
-            this.autocomplete.hideMenu();
+          this.setState({
+            inputValue: getValue(filteredOptions[0]),
+            inputLabel: getLabel(filteredOptions[0])
           });
+          onChange(getValue(filteredOptions[0]));
+        } else {
+          this.setState({inputValue: '', inputLabel: ''});
+          onChange();
         }
+        onBlur(); // This makes redux set meta.touched
+        // Workaround for https://jira.corp.adobe.com/browse/RSP-307
+        // Because we just changed inputValue, which will then
+        // set the value prop of Autocomplete, the Autocomplete will try
+        // to show the menu again. :/
+        this.hideMenuTimeout = setTimeout(() => {
+          this.autocomplete.hideMenu();
+        });
       });
+    }
+  }
+  getLabelFromValue(value) {
+    const { options } = this.props;
+    const matchingOption = options.find( o => getValue(o) === value );
+    if (matchingOption) {
+      return getLabel(matchingOption);
+    } else {
+      return value;
     }
   }
   getFilteredOptions(value) {
@@ -121,7 +136,7 @@ class RestrictedComboBox extends Component {
       placeholder,
       allowCreate
     } = this.props;
-    const { inputValue, isOpen } = this.state;
+    const { inputLabel, isOpen } = this.state;
     return (
       <Autocomplete
         ref={ (autocomplete) => {
@@ -138,7 +153,7 @@ class RestrictedComboBox extends Component {
         getCompletions={ this.getCompletions.bind(this) }
         onChange={ this.onChange.bind(this) }
         onSelect={ this.onSelect.bind(this) }
-        value={ inputValue }
+        value={ inputLabel }
         onMenuShow={ this.onMenuShow.bind(this) }
         onMenuHide={ this.onMenuHide.bind(this) }
         allowCreate={ allowCreate }
