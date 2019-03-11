@@ -25,6 +25,8 @@ import Heading from '@react/react-spectrum/Heading';
 import Select from '@react/react-spectrum/Select';
 import { connect } from 'react-redux';
 import { formValueSelector, FieldArray, change } from 'redux-form';
+import memoize from 'memoize-one';
+
 import EditorButton from './editorButton';
 import WrappedField from './wrappedField';
 import ReportSuiteEditor from './reportSuitesEditor';
@@ -170,6 +172,11 @@ class LibraryManagement extends Component {
     super(props);
     this.api = null;
     this.state = { companies: null };
+    this.getRsidCompletionFunction = memoize((company) => {
+      const getRsidCompletions = this.api.rsidCompletionFunction(company);
+      getRsidCompletions('');
+      return getRsidCompletions;
+    });
   }
 
   componentDidMount() {
@@ -213,8 +220,7 @@ class LibraryManagement extends Component {
     const { companies } = this.state;
     let getRsidCompletions = null;
     if (this.api && company) {
-      getRsidCompletions = this.api.rsidCompletionFunction(company);
-      getRsidCompletions(''); // warm the rsid completion cache before it is sent
+      getRsidCompletions = this.getRsidCompletionFunction(company);
     }
     return (
       <div>
