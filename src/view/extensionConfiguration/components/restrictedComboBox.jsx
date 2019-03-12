@@ -98,6 +98,11 @@ class RestrictedComboBox extends Component {
     const { onChange, allowCreate } = this.props;
     const { inputValue } = this.state;
 
+    if (inputValue === '') {
+      onChange(inputValue);
+      return;
+    }
+
     const filteredOptions = await this.getFilteredOptions(inputValue);
     const exactMatch = filteredOptions.find(o => getValue(o) === inputValue);
 
