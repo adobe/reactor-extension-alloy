@@ -18,7 +18,7 @@ class RestrictedComboBox extends Component {
     super(props);
     id += 1;
     const inputValue = props.value || props.defaultValue || '';
-    const inputLabel = '';
+    const inputLabel = inputValue;
     this.state = { inputValue, inputLabel };
     this.comboBoxId = `restricted-combo-box-${id}`;
   }
@@ -99,6 +99,9 @@ class RestrictedComboBox extends Component {
     const { inputValue } = this.state;
 
     if (inputValue === '') {
+      this.setState({
+        inputLabel: inputValue
+      });
       onChange(inputValue);
       return;
     }
@@ -112,6 +115,9 @@ class RestrictedComboBox extends Component {
       });
       onChange(inputValue);
     } else if (allowCreate) {
+      this.setState({
+        inputLabel: inputValue
+      });
       onChange(inputValue);
     } else if (filteredOptions.length) {
       this.setState({

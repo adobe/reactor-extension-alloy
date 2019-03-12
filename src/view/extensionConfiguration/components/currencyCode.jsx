@@ -64,6 +64,7 @@ const CurrencyCode = ({ dispatch, currencyCodeInputMethod }) => (
               name="trackerProperties.currencyCode"
               component={ RestrictedComboBox }
               options={ presetOptions }
+              placeholder="Select currency code"
             />
           </div> : null
       }
