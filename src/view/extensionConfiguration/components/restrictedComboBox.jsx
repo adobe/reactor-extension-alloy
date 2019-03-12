@@ -99,6 +99,9 @@ class RestrictedComboBox extends Component {
     const { inputValue } = this.state;
 
     if (inputValue === '') {
+      this.setState({
+        inputLabel: inputValue
+      });
       onChange(inputValue);
       return;
     }

@@ -1,4 +1,3 @@
-
 /*************************************************************************
 * ADOBE CONFIDENTIAL
 * ___________________
@@ -18,16 +17,16 @@
 **************************************************************************/
 
 import { mount } from 'enzyme';
-import ComboBox from '@react/react-spectrum/ComboBox';
 import Radio from '@react/react-spectrum/Radio';
 import Textfield from '@react/react-spectrum/Textfield';
 
+import RestrictedComboBox from '../restrictedComboBox';
 import CurrencyCode, { formConfig } from '../currencyCode';
 import createExtensionBridge from '../../../__tests__/helpers/createExtensionBridge';
 import bootstrap from '../../../bootstrap';
 
 const getReactComponents = (wrapper) => {
-  const presetAutocomplete = wrapper.find(ComboBox);
+  const presetAutocomplete = wrapper.find(RestrictedComboBox);
   const customTextfield = wrapper.find(Textfield);
   const customInputMethodRadio =
     wrapper.find(Radio).filterWhere(n => n.prop('value') === 'custom');
