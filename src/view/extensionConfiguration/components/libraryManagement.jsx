@@ -25,6 +25,8 @@ import Heading from '@react/react-spectrum/Heading';
 import Select from '@react/react-spectrum/Select';
 import { connect } from 'react-redux';
 import { formValueSelector, FieldArray, change } from 'redux-form';
+import memoize from 'memoize-one';
+
 import EditorButton from './editorButton';
 import WrappedField from './wrappedField';
 import ReportSuiteEditor from './reportSuitesEditor';
@@ -42,7 +44,7 @@ const LIB_TYPES = {
   CUSTOM: 'custom'
 };
 
-  const ReportSuites = ({ companies, getRsidCompletions }) => (
+const ReportSuites = ({ companies, getRsidCompletions }) => (
 
   <section>
 
@@ -52,14 +54,14 @@ const LIB_TYPES = {
         Specify one or more report suites to which your data should be sent.
       </InfoTip>
     </Heading>
-
-    <section className="ReportSuites-fieldsContainer">
+    <section>
       { companies && (
-        <div>
+        <div className="ReportSuites-environment">
           <label className="Label">
             Company
             <InfoTip>
-              The company chosen here is only used to pre-populate the list of available report suites on this page.
+              The company chosen here is only used to pre-populate the list of available report
+              suites on this page.
             </InfoTip>
           </label>
           <div>
@@ -72,6 +74,9 @@ const LIB_TYPES = {
           </div>
         </div>
       )}
+    </section>
+    <section className="ReportSuites-fieldsContainer">
+
       <div className="ReportSuites-environment">
         <label className="Label">
           Development Report Suites
@@ -84,7 +89,7 @@ const LIB_TYPES = {
           <FieldArray
             name="libraryCode.accounts.development"
             component={ ReportSuiteEditor }
-            props={ {getRsidCompletions: getRsidCompletions} }
+            props={ { getRsidCompletions } }
           />
         </div>
       </div>
@@ -100,7 +105,7 @@ const LIB_TYPES = {
           <FieldArray
             name="libraryCode.accounts.staging"
             component={ ReportSuiteEditor }
-            props={ {getRsidCompletions: getRsidCompletions} }
+            props={ { getRsidCompletions } }
           />
         </div>
       </div>
@@ -116,7 +121,7 @@ const LIB_TYPES = {
           <FieldArray
             name="libraryCode.accounts.production"
             component={ ReportSuiteEditor }
-            props={ {getRsidCompletions: getRsidCompletions, companies: companies} }
+            props={ { getRsidCompletions, companies } }
           />
         </div>
       </div>
@@ -147,7 +152,11 @@ let OverwriteReportSuites = ({ className, showReportSuites, getRsidCompletions, 
     </WrappedField>
 
     {
-      showReportSuites && <ReportSuites getRsidCompletions={ getRsidCompletions } companies={ companies } />
+      showReportSuites &&
+      <ReportSuites
+        getRsidCompletions={ getRsidCompletions }
+        companies={ companies }
+      />
     }
   </div>
 
@@ -163,28 +172,44 @@ OverwriteReportSuites = connect(
 class LibraryManagement extends Component {
   constructor(props) {
     super(props);
-    this.api = null; 
+    this.api = null;
     this.state = { companies: null };
+    this.getRsidCompletionFunction = memoize((company) => {
+      const getRsidCompletions = this.api.rsidCompletionFunction(company);
+      getRsidCompletions('');
+      return getRsidCompletions;
+    });
   }
 
   componentDidMount() {
     const that = this;
     try {
-      const { company, dispatch, meta: { tokens: { imsAccess: token }, company: { orgId: imsOrgId }}} = this.props;
+      const {
+        company,
+        dispatch,
+        meta: {
+          tokens: {
+            imsAccess: token
+          },
+          company: {
+            orgId: imsOrgId
+          }
+        }
+      } = this.props;
 
       this.api = analyticsApi(token);
-      this.api.companies(imsOrgId).then(companies => {
+      this.api.companies(imsOrgId).then((companies) => {
         if (companies.length === 1) {
           dispatch(change('default', 'libraryCode.company', companies[0].value));
-          that.setState({companies: null });
+          that.setState({ companies: null });
         } else if (companies.length === 0) {
           dispatch(change('default', 'libraryCode.company', null));
-          that.setState({companies: null });
+          that.setState({ companies: null });
         } else {
           if (!company) {
             dispatch(change('default', 'libraryCode.company', companies[0].value));
           }
-          that.setState({companies: companies});
+          that.setState({ companies });
         }
       });
     } catch (e) {
@@ -196,142 +221,141 @@ class LibraryManagement extends Component {
     const { type, company } = this.props;
     const { companies } = this.state;
     let getRsidCompletions = null;
-    if (this.api && company) { 
-        getRsidCompletions = this.api.rsidCompletionFunction(company);
-        getRsidCompletions(""); // warm the rsid completion cache before it is sent
+    if (this.api && company) {
+      getRsidCompletions = this.getRsidCompletionFunction(company);
     }
     return (
-  <div>
-    <div>
-      <WrappedField
-        vertical
-        name="libraryCode.type"
-        component={ RadioGroup }
-      >
-        <Radio
-          value={ LIB_TYPES.MANAGED }
-          label="Manage the library for me"
-        />
-      </WrappedField>
-      {
-        type === LIB_TYPES.MANAGED ?
-          <div className="FieldSubset">
-            <ReportSuites getRsidCompletions={ getRsidCompletions } companies={ companies }/>
-            <WrappedField
-              name="libraryCode.scopeTrackerGlobally"
-              component={ Checkbox }
+      <div>
+        <div>
+          <WrappedField
+            vertical
+            name="libraryCode.type"
+            component={ RadioGroup }
+          >
+            <Radio
+              value={ LIB_TYPES.MANAGED }
+              label="Manage the library for me"
+            />
+          </WrappedField>
+          {
+            type === LIB_TYPES.MANAGED ?
+              <div className="FieldSubset">
+                <ReportSuites getRsidCompletions={ getRsidCompletions } companies={ companies } />
+                <WrappedField
+                  name="libraryCode.scopeTrackerGlobally"
+                  component={ Checkbox }
+                >
+                  Make tracker globally accessible
+                </WrappedField>
+                <InfoTip className="u-fieldLineHeight u-noPadding">
+                  If enabled the tracker will be scoped globally under <strong>window.s</strong>.
+                </InfoTip>
+              </div> : null
+          }
+        </div>
+        <div>
+          <WrappedField
+            vertical
+            name="libraryCode.type"
+            component={ RadioGroup }
+          >
+            <Radio
+              value={ LIB_TYPES.PREINSTALLED }
+              label="Use the library already installed on the page"
+            />
+          </WrappedField>
+          {
+            type === LIB_TYPES.PREINSTALLED ?
+              <div className="FieldSubset">
+                <OverwriteReportSuites
+                  className="u-gapBottom"
+                  getRsidCompletions={ getRsidCompletions }
+                  companies={ companies }
+                />
+                <TrackerVariableName />
+              </div> : null
+          }
+        </div>
+        <div>
+          <WrappedField
+            vertical
+            name="libraryCode.type"
+            component={ RadioGroup }
+          >
+            <Radio
+              value={ LIB_TYPES.REMOTE }
+              label="Load the library from a custom URL"
+            />
+          </WrappedField>
+          {
+            type === LIB_TYPES.REMOTE ?
+              <div className="FieldSubset">
+                <div className="u-gapBottom">
+                  <label>
+                    <span className="Label">HTTP URL:</span>
+                    <div>
+                      <WrappedField
+                        name="libraryCode.httpUrl"
+                        component={ Textfield }
+                        componentClassName="Field--long"
+                        supportDataElement
+                      />
+                    </div>
+                  </label>
+                  <label>
+                    <span className="Label u-gapTop">HTTPS URL:</span>
+                    <div>
+                      <WrappedField
+                        name="libraryCode.httpsUrl"
+                        component={ Textfield }
+                        componentClassName="Field--long"
+                        supportDataElement
+                      />
+                    </div>
+                  </label>
+                </div>
+                <OverwriteReportSuites
+                  className="u-block u-gapBottom"
+                  getRsidCompletions={ getRsidCompletions }
+                  companies={ companies }
+                />
+                <TrackerVariableName className="u-block u-gapBottom" />
+              </div> : null
+          }
+        </div>
+        <div>
+          <WrappedField
+            vertical
+            name="libraryCode.type"
+            component={ RadioGroup }
+          >
+            <Radio
+              component={ Radio }
+              value={ LIB_TYPES.CUSTOM }
             >
-              Make tracker globally accessible
-            </WrappedField>
-            <InfoTip className="u-fieldLineHeight u-noPadding">
-              If enabled the tracker will be scoped globally under <strong>window.s</strong>.
-            </InfoTip>
-          </div> : null
-      }
-    </div>
-    <div>
-      <WrappedField
-        vertical
-        name="libraryCode.type"
-        component={ RadioGroup }
-      >
-        <Radio
-          value={ LIB_TYPES.PREINSTALLED }
-          label="Use the library already installed on the page"
-        />
-      </WrappedField>
-      {
-        type === LIB_TYPES.PREINSTALLED ?
-          <div className="FieldSubset">
-            <OverwriteReportSuites 
-              className="u-gapBottom"
-              getRsidCompletions={ getRsidCompletions }
-              companies={ companies }
-            />
-            <TrackerVariableName />
-          </div> : null
-      }
-    </div>
-    <div>
-      <WrappedField
-        vertical
-        name="libraryCode.type"
-        component={ RadioGroup }
-      >
-        <Radio
-          value={ LIB_TYPES.REMOTE }
-          label="Load the library from a custom URL"
-        />
-      </WrappedField>
-      {
-        type === LIB_TYPES.REMOTE ?
-          <div className="FieldSubset">
-            <div className="u-gapBottom">
-              <label>
-                <span className="Label">HTTP URL:</span>
-                <div>
+              Let me provide custom library code
+            </Radio>
+          </WrappedField>
+          {
+            type === LIB_TYPES.CUSTOM ?
+              <div className="FieldSubset">
+                <div className="u-gapBottom">
                   <WrappedField
-                    name="libraryCode.httpUrl"
-                    component={ Textfield }
-                    componentClassName="Field--long"
-                    supportDataElement
+                    name="libraryCode.source"
+                    component={ EditorButton }
                   />
                 </div>
-              </label>
-              <label>
-                <span className="Label u-gapTop">HTTPS URL:</span>
-                <div>
-                  <WrappedField
-                    name="libraryCode.httpsUrl"
-                    component={ Textfield }
-                    componentClassName="Field--long"
-                    supportDataElement
-                  />
-                </div>
-              </label>
-            </div>
-            <OverwriteReportSuites 
-              className="u-block u-gapBottom" 
-              getRsidCompletions={ getRsidCompletions }
-              companies={ companies }
-              />
-            <TrackerVariableName className="u-block u-gapBottom" />
-          </div> : null
-      }
-    </div>
-    <div>
-      <WrappedField
-        vertical
-        name="libraryCode.type"
-        component={ RadioGroup }
-      >
-        <Radio
-          component={ Radio }
-          value={ LIB_TYPES.CUSTOM }
-        >
-          Let me provide custom library code
-        </Radio>
-      </WrappedField>
-      {
-        type === LIB_TYPES.CUSTOM ?
-          <div className="FieldSubset">
-            <div className="u-gapBottom">
-              <WrappedField
-                name="libraryCode.source"
-                component={ EditorButton }
-              />
-            </div>
-            <OverwriteReportSuites 
-              className="u-block u-gapBottom"
-              getRsidCompletions={ getRsidCompletions }
-              companies={ companies }
-            />
-            <TrackerVariableName className="u-block u-gapBottom" />
-          </div> : null
-      }
-    </div>
-  </div>
-);
+                <OverwriteReportSuites
+                  className="u-block u-gapBottom"
+                  getRsidCompletions={ getRsidCompletions }
+                  companies={ companies }
+                />
+                <TrackerVariableName className="u-block u-gapBottom" />
+              </div> : null
+          }
+        </div>
+      </div>
+    );
   }
 }
 
@@ -368,7 +392,7 @@ export const formConfig = {
       ...values,
       libraryCode: {
         type: type || LIB_TYPES.MANAGED,
-        company: company,
+        company,
         trackerVariableName: trackerVariableName || 's',
         accounts,
         showReportSuites,
@@ -394,7 +418,7 @@ export const formConfig = {
     const libraryCodeSettings = {
       type
     };
-    
+
     if (company) {
       libraryCodeSettings.company = company;
     }

@@ -195,7 +195,7 @@ describe('cookies', () => {
     cookieLifetimeSecondsTextfield.props().onChange('  ');
 
     expect(extensionBridge.validate()).toBe(false);
-    expect(cookieLifetimeSecondsTextfield.props().validationState).toBe("invalid");
+    expect(cookieLifetimeSecondsTextfield.props().validationState).toBe('invalid');
   });
 
   it('does not set settings for fields that are not completed', () => {
@@ -214,5 +214,4 @@ describe('cookies', () => {
     expect(fpCookieDomainPeriods).toBeUndefined();
     expect(cookieLifetime).toBeUndefined();
   });
-
 });

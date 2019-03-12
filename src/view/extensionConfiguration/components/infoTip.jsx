@@ -7,11 +7,11 @@ import OverlayTrigger from '@react/react-spectrum/OverlayTrigger';
 
 import './infoTip.styl';
 
-export default props => {
+export default (props) => {
   return (
     <div className={ classNames(props.className, 'InfoTip') }>
       <OverlayTrigger placement={ props.placement || 'right' } trigger="hover">
-        <Button variant="tool" quiet icon={ <Info size="XS"/>} aria-label="info" />
+        <Button variant="tool" quiet icon={ <Info size="XS" /> } aria-label="info" />
         <Tooltip>
           { props.children }
         </Tooltip>

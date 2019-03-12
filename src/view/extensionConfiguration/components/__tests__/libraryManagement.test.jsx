@@ -22,7 +22,6 @@ import Radio from '@react/react-spectrum/Radio';
 import Button from '@react/react-spectrum/Button';
 import Textfield from '@react/react-spectrum/Textfield';
 import { FieldArray, Field } from 'redux-form';
-import Close from '@react/react-spectrum/Icon/Close';
 
 import ReportSuitesEditor from '../reportSuitesEditor';
 import LibraryManagement, { formConfig } from '../libraryManagement';
@@ -459,7 +458,7 @@ describe('libary management', () => {
     expect(extensionBridge.validate()).toBe(false);
 
     const { httpUrlTextfield } = getReactComponents(instance);
-    expect(httpUrlTextfield.props().validationState).toBe("invalid");
+    expect(httpUrlTextfield.props().validationState).toBe('invalid');
   });
 
   it('sets error if the https url is not provided', () => {
@@ -471,7 +470,7 @@ describe('libary management', () => {
     expect(extensionBridge.validate()).toBe(false);
 
     const { httpsUrlTextfield } = getReactComponents(instance);
-    expect(httpsUrlTextfield.props().validationState).toBe("invalid");
+    expect(httpsUrlTextfield.props().validationState).toBe('invalid');
   });
 
   it('sets error if source is empty', () => {

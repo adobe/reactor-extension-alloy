@@ -19,9 +19,9 @@
 import React from 'react';
 import Button from '@react/react-spectrum/Button';
 import Close from '@react/react-spectrum/Icon/Close';
-import Autocomplete from '@react/react-spectrum/Autocomplete';
-import WrappedField from './wrappedField';
 import Textfield from '@react/react-spectrum/Textfield';
+
+import WrappedField from './wrappedField';
 import RestrictedComboBox from './restrictedComboBox';
 
 const ReportSuiteEditor = ({ fieldName, showRemoveButton, onRemove, getRsidCompletions }) => (
@@ -39,7 +39,7 @@ const ReportSuiteEditor = ({ fieldName, showRemoveButton, onRemove, getRsidCompl
         name={ fieldName }
         component={ Textfield }
         supportDataElement
-        />
+      />
     )}
     {
       showRemoveButton ?

@@ -7,27 +7,26 @@ import classNames from 'classnames';
 import '@react/react-spectrum/ComboBox';
 
 // imports the styles to combine the down button with the textbox
-import InputGroup from '@react/react-spectrum/InputGroup';
+import InputGroup from '@react/react-spectrum/InputGroup'; // eslint-disable-line no-unused-vars
 
 let id = 0;
 const getLabel = o => (typeof o === 'string' ? o : o.label);
 const getValue = o => (typeof o === 'string' ? o : o.value);
-const resolvePromise = (value, then) => {
-  if (value && typeof value.then === 'function') {
-    value.then(then);
-  } else {
-    then(value);
-  }
-}
 
 class RestrictedComboBox extends Component {
   constructor(props) {
     super(props);
     id += 1;
-    this.state = {
-      inputValue: props.value || props.defaultValue || ''
-    };
+    const inputValue = props.value || props.defaultValue || '';
+    const inputLabel = '';
+    this.state = { inputValue, inputLabel };
     this.comboBoxId = `restricted-combo-box-${id}`;
+  }
+  componentDidMount() {
+    const { inputValue } = this.state;
+    if (inputValue !== '') {
+      this.resolveInputValue();
+    }
   }
   componentWillUnmount() {
     clearTimeout(this.hideMenuTimeout);
@@ -36,9 +35,7 @@ class RestrictedComboBox extends Component {
     if (this.autocomplete.state.showDropdown) {
       this.autocomplete.hideMenu();
     } else {
-      const { onChange } = this.props;
-      this.setState({inputValue: ""});
-      onChange("");
+      this.setState({ inputValue: '', inputLabel: '' });
       this.textfield.focus();
       setTimeout(() => this.autocomplete.showMenu());
     }
@@ -51,13 +48,15 @@ class RestrictedComboBox extends Component {
   }
   onChange(value) {
     this.setState({
-      inputValue: value
+      inputValue: value,
+      inputLabel: value
     });
   }
   onSelect(option) {
     const { onChange } = this.props;
     this.setState({
-      inputValue: getLabel(option)
+      inputValue: getValue(option),
+      inputLabel: getLabel(option)
     });
     onChange(getValue(option));
     // Workaround for https://jira.corp.adobe.com/browse/RSP-307
@@ -68,50 +67,65 @@ class RestrictedComboBox extends Component {
       this.autocomplete.hideMenu();
     });
   }
-  onTextfieldBlur() {
-    const { onChange, onBlur, allowCreate } = this.props;
-    const { inputValue } = this.state;
 
-    if (allowCreate) {
-      onChange(inputValue);
-    } else {
-      const filteredOptions = this.getFilteredOptions(inputValue);
+  async onTextfieldBlur() {
+    const { onBlur } = this.props;
+    await this.resolveInputValue();
 
-      resolvePromise(filteredOptions, filteredOptions => {
-        if (filteredOptions.length) {
-          onChange(getValue(filteredOptions[0]));
-          onBlur(); // This makes redux set meta.touched
-        } else {
-          this.setState({inputValue: ''});
-          onChange();
-          onBlur(); // This makes redux set meta.touched
-          // Workaround for https://jira.corp.adobe.com/browse/RSP-307
-          // Because we just changed inputValue, which will then
-          // set the value prop of Autocomplete, the Autocomplete will try
-          // to show the menu again. :/
-          this.hideMenuTimeout = setTimeout(() => {
-            this.autocomplete.hideMenu();
-          });
-        }
-      });
-    }
+    onBlur(); // This makes redux set meta.touched
+    // Workaround for https://jira.corp.adobe.com/browse/RSP-307
+    // Because we just changed inputValue, which will then
+    // set the value prop of Autocomplete, the Autocomplete will try
+    // to show the menu again. :/
+    this.hideMenuTimeout = setTimeout(() => {
+      this.autocomplete.hideMenu();
+    });
   }
-  getFilteredOptions(value) {
+  async getFilteredOptions(value) {
     const { options, getCompletions } = this.props;
     if (getCompletions) {
       return getCompletions(value);
-    } else {
-      return options.filter(
-        option => getLabel(option).toLowerCase().indexOf(value.toLowerCase()) !== -1
-      );
     }
+    return options.filter(
+      option => getLabel(option).toLowerCase().indexOf(value.toLowerCase()) !== -1
+    );
   }
   getCompletions() {
     const { inputValue } = this.state;
     return Promise.resolve(this.getFilteredOptions(inputValue));
   }
+  async resolveInputValue() {
+    const { onChange, allowCreate } = this.props;
+    const { inputValue } = this.state;
+
+    if (inputValue === '') {
+      onChange(inputValue);
+      return;
+    }
+
+    const filteredOptions = await this.getFilteredOptions(inputValue);
+    const exactMatch = filteredOptions.find(o => getValue(o) === inputValue);
+
+    if (exactMatch) {
+      this.setState({
+        inputLabel: getLabel(exactMatch)
+      });
+      onChange(inputValue);
+    } else if (allowCreate) {
+      onChange(inputValue);
+    } else if (filteredOptions.length) {
+      this.setState({
+        inputValue: getValue(filteredOptions[0]),
+        inputLabel: getLabel(filteredOptions[0])
+      });
+      onChange(getValue(filteredOptions[0]));
+    } else {
+      this.setState({ inputValue: '', inputLabel: '' });
+      onChange();
+    }
+  }
   render() {
-    const { 
+    const {
       disabled,
       required,
       invalid,
@@ -121,7 +135,7 @@ class RestrictedComboBox extends Component {
       placeholder,
       allowCreate
     } = this.props;
-    const { inputValue, isOpen } = this.state;
+    const { inputLabel, isOpen } = this.state;
     return (
       <Autocomplete
         ref={ (autocomplete) => {
@@ -138,7 +152,7 @@ class RestrictedComboBox extends Component {
         getCompletions={ this.getCompletions.bind(this) }
         onChange={ this.onChange.bind(this) }
         onSelect={ this.onSelect.bind(this) }
-        value={ inputValue }
+        value={ inputLabel }
         onMenuShow={ this.onMenuShow.bind(this) }
         onMenuHide={ this.onMenuHide.bind(this) }
         allowCreate={ allowCreate }

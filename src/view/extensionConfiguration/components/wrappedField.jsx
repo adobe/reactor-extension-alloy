@@ -9,23 +9,25 @@ import DataElementSelectorButton from './dataElementSelectorButton';
 const addDataElementToken = (value, dataElementToken) => `${value || ''}${dataElementToken}`;
 
 class DecoratedInput extends React.Component {
-  openDataElementSelector = (tokenize = false) => () => {
-    const {
-      input: {
-        onChange,
-        value
-      }
-    } = this.props;
+  openDataElementSelector(tokenize = false) {
+    return () => {
+      const {
+        input: {
+          onChange,
+          value
+        }
+      } = this.props;
 
-    // Whenever we're dealing with a data element token, we add it to whatever the existing value
-    // is. If we're not dealing with a token, we replace the value entirely. This is just due
-    // to how we want the UX to flow.
-    window.extensionBridge.openDataElementSelector({
-      tokenize
-    }).then(dataElement => {
-      onChange(tokenize ? addDataElementToken(value, dataElement) : dataElement);
-    });
-  };
+      // Whenever we're dealing with a data element token, we add it to whatever the existing value
+      // is. If we're not dealing with a token, we replace the value entirely. This is just due
+      // to how we want the UX to flow.
+      window.extensionBridge.openDataElementSelector({
+        tokenize
+      }).then((dataElement) => {
+        onChange(tokenize ? addDataElementToken(value, dataElement) : dataElement);
+      });
+    };
+  }
 
   render() {
     const {
@@ -54,7 +56,6 @@ class DecoratedInput extends React.Component {
         validation.invalid = true;
       }
     }
-    
 
     // This code that only sets className if it's truthy is just to get around
     // https://jira.corp.adobe.com/browse/RSP-269
@@ -83,7 +84,7 @@ class DecoratedInput extends React.Component {
         {
           supportDataElement || supportDataElementName ?
             <DataElementSelectorButton
-              onClick={ this.openDataElementSelector(supportDataElement)}
+              onClick={ this.openDataElementSelector(supportDataElement) }
             /> : null
         }
       </ValidationWrapper>

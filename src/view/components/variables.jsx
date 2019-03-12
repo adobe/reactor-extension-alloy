@@ -53,12 +53,12 @@ export default ({ showDynamicVariablePrefix = true, showEvents = true }) =>
           <span className="Label u-gapTop">Events</span>
           <InfoTip className="u-fieldLineHeight">
             Events are milestones within a site. By default events are configured as <br />
-            <a href="https://marketing.adobe.com/resources/help/en_US/sc/implement/events.html" target="_blank">
+            <a href="https://marketing.adobe.com/resources/help/en_US/sc/implement/events.html" target="_blank" rel="noopener noreferrer">
               counter events.</a><br />
             Unless specified otherwise a counter event is assigned the value of one. A counter
             event can be assigned a value other than one by specifying it in the value field.<br />
             You can specify a unique event ID to <br />
-            <a href="https://marketing.adobe.com/resources/help/en_US/sc/implement/event_serialization_impl.html" target="_blank">
+            <a href="https://marketing.adobe.com/resources/help/en_US/sc/implement/event_serialization_impl.html" target="_blank" rel="noopener noreferrer">
             prevent duplicate events</a> (e.g. during a page reload) from being recorded more than
             once.
           </InfoTip>

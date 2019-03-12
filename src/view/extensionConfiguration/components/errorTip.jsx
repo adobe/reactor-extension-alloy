@@ -11,17 +11,17 @@ export default class ErrorTip extends React.Component {
     };
   }
 
-  onMouseEnter = () => {
+  onMouseEnter() {
     this.setState({
       mouseOverIcon: true
     });
-  };
+  }
 
-  onMouseLeave = () => {
+  onMouseLeave() {
     this.setState({
       mouseOverIcon: false
     });
-  };
+  }
 
   render() {
     return (
