@@ -95,10 +95,10 @@ class RestrictedComboBox extends Component {
     return Promise.resolve(this.getFilteredOptions(inputValue));
   }
   async resolveInputValue() {
-    const { onChange, allowCreate } = this.props;
+    const { onChange, allowCreate, allowEmpty } = this.props;
     const { inputValue } = this.state;
 
-    if (inputValue === '') {
+    if (inputValue === '' && allowEmpty) {
       this.setState({
         inputLabel: inputValue
       });
