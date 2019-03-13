@@ -80,6 +80,7 @@ const renderEvents = ({ fields }) => {
         component={ RestrictedComboBox }
         placeholder="Select event"
         options={ nameOptions }
+        allowEmpty
       />
 
       <WrappedField

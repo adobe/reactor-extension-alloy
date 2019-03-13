@@ -97,7 +97,8 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties }) =>
       valueFieldProps = {
         component: RestrictedComboBox,
         placeholder: 'Select variable',
-        options: valueOptions
+        options: valueOptions,
+        allowEmpty: true
       };
     }
 
@@ -113,6 +114,7 @@ let renderVariables = ({ fields, varType, varTypePlural, trackerProperties }) =>
           component={ RestrictedComboBox }
           placeholder={ `Select ${varType}` }
           options={ nameOptions }
+          allowEmpty
         />
 
         <WrappedField

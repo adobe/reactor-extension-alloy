@@ -33,6 +33,7 @@ const ReportSuiteEditor = ({ fieldName, showRemoveButton, onRemove, getRsidCompl
         getCompletions={ getRsidCompletions }
         supportDataElement
         allowCreate
+        allowEmpty
         placeholder="Select or type report suite"
       />
     ) : (
