@@ -177,18 +177,12 @@ export const formConfig = mergeConfigs(
 
       if (trackingServersRequired) {
         const {
-          trackingServer,
-          trackingServerSecure
+          trackingServer
         } = values.trackerProperties;
 
         if (!trackingServer) {
           trackerPropertiesErrors.trackingServer =
             'Please provide a tracking server';
-        }
-
-        if (!trackingServerSecure) {
-          trackerPropertiesErrors.trackingServerSecure =
-            'Please provide an SSL tracking server';
         }
       }
 
