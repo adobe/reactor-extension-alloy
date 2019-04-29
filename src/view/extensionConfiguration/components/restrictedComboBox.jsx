@@ -30,8 +30,7 @@ class RestrictedComboBox extends Component {
   }
   componentWillReceiveProps(props) {
     if ((props.value !== this.state.inputLabel) || (props.value !== this.state.inputValue)) {
-      this.setState({ inputLabel: props.value });
-      this.setState({ inputValue: props.value });
+      this.setState({ inputLabel: props.value, inputValue: props.value });
     }
   }
   componentWillUnmount() {
