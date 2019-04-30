@@ -28,6 +28,11 @@ class RestrictedComboBox extends Component {
       this.resolveInputValue();
     }
   }
+  componentWillReceiveProps(props) {
+    if ((props.value !== this.state.inputLabel) || (props.value !== this.state.inputValue)) {
+      this.setState({ inputLabel: props.value, inputValue: props.value });
+    }
+  }
   componentWillUnmount() {
     clearTimeout(this.hideMenuTimeout);
   }
