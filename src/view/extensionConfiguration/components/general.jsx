@@ -171,7 +171,7 @@ export const formConfig = mergeConfigs(
         const accounts = values.libraryCode.accounts;
         trackingServersRequired = ENVIRONMENTS.some((environment) => {
           const accountsForEnvironment = accounts[environment];
-          return accountsForEnvironment && accountsForEnvironment.length > 1;
+          return accountsForEnvironment;
         });
       }
 
