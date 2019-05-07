@@ -1,0 +1,25 @@
+{
+  "displayName": "Adobe Experience Platform Web SDK",
+  "name": "adobe-alloy",
+  "platform": "web",
+  "version": "0.0.1",
+  "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
+  "author": {
+    "name": "Adobe"
+  },
+  "viewBasePath": "dist/",
+  "actions": [
+    {
+      "displayName": "Send Event",
+      "name": "send-event",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {}
+      },
+      "libPath": "src/lib/actions/sendEvent.js",
+      "viewPath": "sendEvent.html"
+    }
+  ],
+  "main": "src/lib/getInstance.js"
+}
