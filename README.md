@@ -4,7 +4,7 @@
 
 ## Contributing
 
-Contributions are welcomed! Read the [Contributing Guide](CONTRIBUTING.md) for more information about how our community works.
+Contributions are welcomed! Read the [Contributing Guide](./.github/CONTRIBUTING.md) for more information about how our community works.
 
 To get started on development:
 
