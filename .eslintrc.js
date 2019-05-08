@@ -7,7 +7,7 @@ module.exports = {
   },
   plugins: ["prettier", "testcafe"],
   rules: {
-    "no-param-reassign": "off",
+    "no-param-reassign": ["error", { props: false }],
     "prettier/prettier": "error",
     "react/require-default-props": "off",
     // Turning this off allows us to import devDependencies in our build tools.
@@ -15,5 +15,5 @@ module.exports = {
     // want to disallow importing extraneous dependencies.
     "import/no-extraneous-dependencies": "off"
   },
-  "parser": "babel-eslint"
+  parser: "babel-eslint"
 };

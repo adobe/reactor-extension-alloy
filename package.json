@@ -5,13 +5,26 @@
   "author": "Adobe",
   "license": "Apache-2.0",
   "scripts": {
+    "prepush-msg": "echo 'Running pre-push scripts...' && exit 0",
+    "precommit-msg": "echo 'Running pre-commit scripts...' && exit 0",
     "build:dev": "parcel src/view/actions/sendEvent.html --public-url ./",
     "build:prod": "parcel build src/view/actions/sendEvent.html --public-url ./",
     "package": "npm run build:prod && npx @adobe/reactor-packager",
     "sandbox": "npx @adobe/reactor-sandbox",
     "dev": "npm-run-all --parallel build:dev sandbox",
-    "lint": "eslint \"src/**/*.jsx\""
+    "lint": "eslint \"src/**/*.{js,jsx}\"",
+    "format": "prettier --write \"*.{js,jsx}\" \"{src,test}/**/*.{js,jsx}\"",
+    "test": "echo 'Tests not yet implemented.'"
   },
+  "pre-commit": [
+    "precommit-msg",
+    "format",
+    "lint"
+  ],
+  "pre-push": [
+    "prepush-msg",
+    "test"
+  ],
   "dependencies": {
     "@react/react-spectrum": "^2.20.0",
     "classnames": "^2.2.6",
