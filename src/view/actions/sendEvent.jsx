@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { object, number } from "yup";
+import { object, string } from "yup";
 import Textfield from "@react/react-spectrum/Textfield";
 import renderView from "../renderView";
 import WrappedField from "../components/wrappedField";
@@ -28,9 +28,7 @@ const getSettings = values => {
 };
 
 const validationSchema = object().shape({
-  dataIngestionName: number()
-    .label("Data Ingestion Name")
-    .min(5)
+  dataIngestionName: string()
 });
 
 const SendEvent = () => {
@@ -39,8 +37,8 @@ const SendEvent = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={formikProps => {
-        console.log(formikProps);
+      render={({ formikProps, settings }) => {
+        console.log(formikProps, settings);
         return (
           <WrappedField
             id="dataIngestionName"

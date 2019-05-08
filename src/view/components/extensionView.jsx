@@ -24,9 +24,10 @@ const ExtensionView = ({
   validationSchema,
   render
 }) => {
-  const [{ initialized, initialValues }, setState] = useState({
+  const [{ initialized, initialValues, settings }, setState] = useState({
     initialized: false,
-    initialValues: {}
+    initialValues: {},
+    settings: {}
   });
 
   useEffect(() => {
@@ -34,7 +35,8 @@ const ExtensionView = ({
       init: options => {
         setState({
           initialized: true,
-          initialValues: getInitialValues(options.settings)
+          initialValues: getInitialValues(options.settings),
+          settings: options.settings
         });
       },
       getSettings: () => {
@@ -56,7 +58,7 @@ const ExtensionView = ({
         validationSchema={validationSchema}
         render={_formikProps => {
           formikProps = _formikProps;
-          return render(formikProps);
+          return render({ formikProps, settings });
         }}
       />
     </ErrorBoundary>

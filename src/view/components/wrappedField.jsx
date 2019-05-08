@@ -43,6 +43,8 @@ const getNestedValue = (obj, path) => {
 const addDataElementToken = (value, dataElementToken) =>
   `${value || ""}${dataElementToken}`;
 
+const noop = () => {};
+
 export class DecoratedInput extends React.Component {
   openDataElementSelector = (tokenize = false) => () => {
     const {
@@ -75,8 +77,8 @@ export class DecoratedInput extends React.Component {
       supportDataElement,
       supportDataElementName,
       errorTooltipPlacement,
-      onChange: onChangeDefinedOnProps,
-      onBlur: onBlurDefinedOnProps,
+      onChange: onChangeDefinedOnProps = noop,
+      onBlur: onBlurDefinedOnProps = noop,
       ...rest
     } = this.props;
 
@@ -84,9 +86,7 @@ export class DecoratedInput extends React.Component {
 
     input.onBlur = e => {
       onBlur(e);
-      if (onBlurDefinedOnProps) {
-        onBlurDefinedOnProps(e);
-      }
+      onBlurDefinedOnProps(e);
     };
 
     if (FieldComponent === Radio || FieldComponent === Checkbox) {
@@ -95,10 +95,7 @@ export class DecoratedInput extends React.Component {
 
     input.onChange = value => {
       setFieldValue(input.name, value);
-
-      if (onChangeDefinedOnProps) {
-        onChangeDefinedOnProps(value);
-      }
+      onChangeDefinedOnProps(value);
     };
 
     const fieldComponentsProps = {
