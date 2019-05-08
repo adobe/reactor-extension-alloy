@@ -1,6 +1,6 @@
 # Alloy Extension for Adobe Experience Platform Launch
 
-[Alloy](git@github.com:adobe/alloy.git) is the web SDK for the Adobe Experience Platform. This repository is for the [Adobe Experience Platform Launch](https://www.adobe.com/experience-platform/launch.html) extension that makes it easier for Launch users to implement Alloy on their websites. This repository is currently under active development and is not yet intended for general consumption.
+[Alloy](https://github.com/adobe/alloy) is the web SDK for the Adobe Experience Platform. This repository is for the [Adobe Experience Platform Launch](https://www.adobe.com/experience-platform/launch.html) extension that makes it easier for Launch users to implement Alloy on their websites. This repository is currently under active development and is not yet intended for general consumption.
 
 ## Contributing
 
