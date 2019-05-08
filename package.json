@@ -12,9 +12,12 @@
     "package": "npm run build:prod && npx @adobe/reactor-packager",
     "sandbox": "npx @adobe/reactor-sandbox",
     "dev": "npm-run-all --parallel build:dev sandbox",
-    "lint": "eslint \"src/**/*.{js,jsx}\"",
+    "lint": "eslint \"*.js\" \"src/**/*.{js,jsx}\" \"test/**/*.{js,jsx}\"",
     "format": "prettier --write \"*.{js,jsx}\" \"{src,test}/**/*.{js,jsx}\"",
-    "test": "echo 'Tests not yet implemented.'"
+    "test": "karma start --single-run",
+    "test:coverage": "karma start --single-run --reporters spec,coverage",
+    "test:watch": "karma start",
+    "test:watch:chrome": "karma start --browsers Chrome"
   },
   "pre-commit": [
     "precommit-msg",
@@ -52,9 +55,25 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.13.0",
     "eslint-plugin-testcafe": "^0.2.1",
+    "jasmine-core": "^3.4.0",
+    "karma": "^4.1.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.2",
+    "karma-jasmine": "^2.0.1",
+    "karma-jasmine-html-reporter": "^1.4.2",
+    "karma-jasmine-matchers": "^4.0.1",
+    "karma-rollup-preprocessor": "^7.0.0",
+    "karma-spec-reporter": "0.0.32",
+    "minimist": "^1.2.0",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.3",
     "prettier": "^1.17.0",
+    "puppeteer": "^1.15.0",
+    "rollup": "^1.11.3",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-istanbul": "^2.0.1",
+    "rollup-plugin-node-resolve": "^4.2.3",
     "stylus": "^0.54.5"
   }
 }

@@ -18,10 +18,9 @@ Several npm scripts have been provided for assisting in development. Each script
 * `dev` Spins up a sandbox where you can manually test the extension. More details about the sandbox can be found [here](https://www.npmjs.com/package/@adobe/reactor-sandbox). 
 * `test` Runs unit tests against source files. Tests can be found in the `test` directory.
 * `test:watch` Same as `test`, but will re-run the tests as you change source files or test files.
+* `test:watch:chrome` Same as `test:watch`, but will run the tests inside of Chrome (non-headless) for easier debugging.
 * `lint` Analyzes code for potential errors.
 * `format` Formats code to match agreed-upon style guidelines.
-
-For functional testing, please see the [functional testing documentation](test/docs/functional.md).
 
 When you attempt to commit code changes, several of the above tasks will be run automatically to help ensure that your changes pass tests and are consistent with agreed-upon standards.
 
