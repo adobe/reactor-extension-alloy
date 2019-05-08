@@ -1,34 +1,36 @@
-/***************************************************************************************
- * (c) 2019 Adobe. All rights reserved.
- * This file is licensed to you under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License. You may obtain a copy
- * of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software distributed under
- * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
- * OF ANY KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- ****************************************************************************************/
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
 
-import React from 'react';
-import { Field } from 'formik';
-import Button from '@react/react-spectrum/Button';
-import Textfield from '@react/react-spectrum/Textfield';
-import Checkbox from '@react/react-spectrum/Checkbox';
-import Radio from '@react/react-spectrum/Radio';
-import Data from '@react/react-spectrum/Icon/Data';
-import ValidationWrapper from './validationWrapper';
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+import React from "react";
+import { Field } from "formik";
+import PropTypes from "prop-types";
+import Button from "@react/react-spectrum/Button";
+import Textfield from "@react/react-spectrum/Textfield";
+import Checkbox from "@react/react-spectrum/Checkbox";
+import Radio from "@react/react-spectrum/Radio";
+import Data from "@react/react-spectrum/Icon/Data";
+import ValidationWrapper from "./validationWrapper";
 
 const getNestedValue = (obj, path) => {
   if (obj[path]) {
     return obj[path];
   }
 
-  const parts = path.split('.');
+  const parts = path.split(".");
 
   for (let i = 0; i < parts.length; i += 1) {
     const part = parts[i];
     if (obj[part]) {
+      // eslint-disable-next-line no-param-reassign
       obj = obj[part];
     } else {
       return obj[part];
@@ -39,7 +41,7 @@ const getNestedValue = (obj, path) => {
 };
 
 const addDataElementToken = (value, dataElementToken) =>
-  `${value || ''}${dataElementToken}`;
+  `${value || ""}${dataElementToken}`;
 
 export class DecoratedInput extends React.Component {
   openDataElementSelector = (tokenize = false) => () => {
@@ -109,7 +111,7 @@ export class DecoratedInput extends React.Component {
 
     if (errorToShow) {
       if (FieldComponent === Textfield) {
-        fieldComponentsProps.validationState = 'invalid';
+        fieldComponentsProps.validationState = "invalid";
       } else {
         fieldComponentsProps.invalid = true;
       }
@@ -134,7 +136,23 @@ export class DecoratedInput extends React.Component {
   }
 }
 
-export default ({ component: Component, ...rest }) => {
+DecoratedInput.propTypes = {
+  fieldComponent: PropTypes.elementType.isRequired,
+  className: PropTypes.string,
+  componentClassName: PropTypes.string,
+  // eslint-disable-next-line react/forbid-prop-types
+  field: PropTypes.object.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
+  form: PropTypes.object.isRequired,
+  children: PropTypes.node,
+  supportDataElement: PropTypes.bool,
+  supportDataElementName: PropTypes.bool,
+  errorTooltipPlacement: PropTypes.oneOf(["top", "right", "bottom", "left"]),
+  onChange: PropTypes.func,
+  onBlur: PropTypes.func
+};
+
+const WrappedField = ({ component: Component, ...rest }) => {
   const fieldProps = {
     component: DecoratedInput,
     fieldComponent: Component,
@@ -143,3 +161,9 @@ export default ({ component: Component, ...rest }) => {
 
   return <Field {...fieldProps} />;
 };
+
+WrappedField.propTypes = {
+  component: PropTypes.elementType.isRequired
+};
+
+export default WrappedField;

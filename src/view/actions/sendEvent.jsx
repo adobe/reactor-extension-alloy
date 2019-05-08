@@ -11,10 +11,10 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
+import { object, number } from "yup";
+import Textfield from "@react/react-spectrum/Textfield";
 import renderView from "../renderView";
 import WrappedField from "../components/wrappedField";
-import Textfield from "@react/react-spectrum/Textfield";
-import { object, string, number } from "yup";
 import ExtensionView from "../components/extensionView";
 
 const getInitialValues = () => {
@@ -40,6 +40,7 @@ const SendEvent = () => {
       getSettings={getSettings}
       validationSchema={validationSchema}
       render={formikProps => {
+        console.log(formikProps);
         return (
           <WrappedField
             id="dataIngestionName"
@@ -51,7 +52,7 @@ const SendEvent = () => {
         );
       }}
     />
-  )
+  );
 };
 
 renderView(SendEvent);
