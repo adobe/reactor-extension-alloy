@@ -52,6 +52,7 @@ const ExtensionView = ({
   return initialized ? (
     <ErrorBoundary>
       <Formik
+        enableReinitialize
         onSubmit={() => {}}
         initialValues={initialValues}
         validate={validate}
