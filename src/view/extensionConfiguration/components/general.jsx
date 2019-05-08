@@ -17,16 +17,18 @@
  **************************************************************************/
 
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import Checkbox from '@react/react-spectrum/Checkbox';
 import Textfield from '@react/react-spectrum/Textfield';
 import Heading from '@react/react-spectrum/Heading';
-import {formValueSelector} from 'redux-form';
+import { formValueSelector } from 'redux-form';
 import WrappedField from './wrappedField';
 
-import {mergeConfigs} from '../../utils/formConfigUtils';
-import CharSet, {formConfig as charSetFormConfig} from './charSet';
-import CurrencyCode, {formConfig as currencyCodeFormConfig} from './currencyCode';
+import { mergeConfigs } from '../../utils/formConfigUtils';
+import CharSet, { formConfig as charSetFormConfig } from './charSet';
+import CurrencyCode, {
+  formConfig as currencyCodeFormConfig
+} from './currencyCode';
 import ENVIRONMENTS from '../../enums/environments';
 import COMPONENT_NAMES from '../../enums/componentNames';
 
