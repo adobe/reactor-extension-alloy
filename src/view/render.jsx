@@ -12,10 +12,9 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import ReactDOM from "react-dom";
-import PropTypes from "prop-types";
 import Provider from "@react/react-spectrum/Provider";
 
-const RenderView = View => {
+export default View => {
   ReactDOM.render(
     <Provider theme="lightest">
       <View />
@@ -23,9 +22,3 @@ const RenderView = View => {
     document.getElementById("root")
   );
 };
-
-RenderView.propTyes = {
-  View: PropTypes.elementType.isRequired
-};
-
-export default RenderView;

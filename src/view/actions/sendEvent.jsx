@@ -13,14 +13,12 @@ governing permissions and limitations under the License.
 import React from "react";
 import { object, string } from "yup";
 import Textfield from "@react/react-spectrum/Textfield";
-import renderView from "../renderView";
+import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
 
-const getInitialValues = () => {
-  return {
-    dataIngestionName: ""
-  };
+const getInitialValues = settings => {
+  return settings;
 };
 
 const getSettings = values => {
@@ -53,4 +51,4 @@ const SendEvent = () => {
   );
 };
 
-renderView(SendEvent);
+render(SendEvent);

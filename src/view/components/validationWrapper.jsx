@@ -39,7 +39,7 @@ const ValidationWrapper = ({
 
 ValidationWrapper.propTypes = {
   placement: PropTypes.oneOf(["top", "right", "bottom", "left"]),
-  error: PropTypes.string.isRequired,
+  error: PropTypes.string,
   className: PropTypes.string,
   children: PropTypes.node.isRequired
 };
