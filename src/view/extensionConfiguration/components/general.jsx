@@ -171,24 +171,22 @@ export const formConfig = mergeConfigs(
         const accounts = values.libraryCode.accounts;
         trackingServersRequired = ENVIRONMENTS.some((environment) => {
           const accountsForEnvironment = accounts[environment];
-          return accountsForEnvironment && accountsForEnvironment.length > 1;
+          const multipleReportSuitesByComma = accountsForEnvironment.some((reportSuite) => {
+            return reportSuite.includes(',');
+          });
+          const multipleReportSuites = accountsForEnvironment.length > 1;
+          return multipleReportSuitesByComma || multipleReportSuites;
         });
       }
 
       if (trackingServersRequired) {
         const {
-          trackingServer,
-          trackingServerSecure
+          trackingServer
         } = values.trackerProperties;
 
         if (!trackingServer) {
           trackerPropertiesErrors.trackingServer =
             'Please provide a tracking server';
-        }
-
-        if (!trackingServerSecure) {
-          trackerPropertiesErrors.trackingServerSecure =
-            'Please provide an SSL tracking server';
         }
       }
 
