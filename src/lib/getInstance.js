@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const runAlloy = require("./runAlloy");
+var runAlloy = require("./runAlloy");
 
 !function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||
   []).push(o),n[o]=function(){var u=arguments;return new Promise(
