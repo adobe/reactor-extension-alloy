@@ -7,7 +7,7 @@
   "author": {
     "name": "Adobe"
   },
-  "viewBasePath": "dist/",
+  "viewBasePath": "dist/view/",
   "actions": [
     {
       "displayName": "Send Event",
@@ -17,9 +17,9 @@
         "type": "object",
         "properties": {}
       },
-      "libPath": "src/lib/actions/sendEvent.js",
+      "libPath": "dist/lib/actions/sendEvent.js",
       "viewPath": "sendEvent.html"
     }
   ],
-  "main": "src/lib/getInstance.js"
+  "main": "dist/lib/getInstance.js"
 }

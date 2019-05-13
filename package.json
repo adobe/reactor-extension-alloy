@@ -7,8 +7,13 @@
   "scripts": {
     "prepush-msg": "echo 'Running pre-push scripts...' && exit 0",
     "precommit-msg": "echo 'Running pre-commit scripts...' && exit 0",
-    "build:dev": "parcel src/view/actions/sendEvent.html --public-url ./",
-    "build:prod": "parcel build src/view/actions/sendEvent.html --public-url ./",
+    "clean": "rm -rf dist",
+    "build:dev:lib": "babel src/lib --out-dir dist/lib --watch",
+    "build:dev:view": "THEME_LIGHTEST=true parcel src/view/**/*.html --public-url . -d dist/view",
+    "build:dev": "npm-run-all clean --parallel build:dev:lib build:dev:view",
+    "build:prod:lib": "babel src/lib --out-dir dist/lib",
+    "build:prod:view": "THEME_LIGHTEST=true parcel build src/view/**/*.html --public-url . -d dist/view --experimental-scope-hoisting",
+    "build:prod": "npm-run-all clean --parallel build:prod:lib build:prod:view",
     "package": "npm run build:prod && npx @adobe/reactor-packager",
     "sandbox": "npx @adobe/reactor-sandbox",
     "dev": "npm-run-all --parallel build:dev sandbox",
@@ -37,15 +42,11 @@
     "react-dom": "^16.8.6",
     "yup": "^0.27.0"
   },
-  "browserslist": [
-    "last 2 Chrome versions",
-    "last 2 Firefox versions",
-    "last 2 Safari versions",
-    "last 2 Edge versions"
-  ],
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.4",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.0",
