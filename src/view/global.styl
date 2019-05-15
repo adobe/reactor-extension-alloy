@@ -10,25 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createSendEvent from "../../../../src/lib/actions/createSendEvent";
+@import "./utils";
 
-describe("Send Event", () => {
-  it("executes event command", () => {
-    const instance = jasmine.createSpy();
-    const getInstance = jasmine.createSpy().and.returnValue(instance);
-    const action = createSendEvent(getInstance);
-    expect(getInstance).toHaveBeenCalledWith("alloy");
+// This is padding that goes around all the content. We put the padding on the Provider container
+// instead of the body because of https://jira.corp.adobe.com/browse/RSP-276
+.react-spectrum-provider {
+  padding: 12px;
+}
 
-    action({
-      data: {
-        foo: "bar"
-      }
-    });
-
-    expect(instance).toHaveBeenCalledWith("event", {
-      data: {
-        foo: "bar"
-      }
-    });
-  });
-});
+.Label {
+  display: inline-block;
+  line-height: 2.25rem!important;
+}

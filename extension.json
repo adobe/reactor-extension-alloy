@@ -15,7 +15,12 @@
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
-        "properties": {}
+        "properties": {
+          "data": {
+            "type": "string",
+            "pattern": "^%([^%]+)%$"
+          }
+        }
       },
       "libPath": "dist/lib/actions/sendEvent.js",
       "viewPath": "sendEvent.html"

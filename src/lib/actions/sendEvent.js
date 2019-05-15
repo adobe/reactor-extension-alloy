@@ -10,14 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-var getInstance = require("../getInstance.js");
+import createSendEvent from "./createSendEvent";
+import getInstance from "../getInstance";
 
-module.exports = function() {
-  var instance = getInstance("alloy");
-  instance("event", {
-    data: {
-      products: ["shirt", "shoes"],
-      total: [19.99]
-    }
-  });
-};
+module.exports = createSendEvent(getInstance);
