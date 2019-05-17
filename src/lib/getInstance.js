@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import runAlloy from "./runAlloy";
+const runAlloy = require("./runAlloy");
 
 !function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||
   []).push(o),n[o]=function(){var u=arguments;return new Promise(
@@ -31,4 +31,4 @@ alloy("configure", {
   debug: true
 });
 
-export default name => window[name];
+module.exports = name => window[name];

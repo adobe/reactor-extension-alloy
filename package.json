@@ -7,22 +7,21 @@
   "scripts": {
     "prepush-msg": "echo 'Running pre-push scripts...' && exit 0",
     "precommit-msg": "echo 'Running pre-commit scripts...' && exit 0",
-    "clean": "rm -rf dist",
-    "build:dev:lib": "babel src/lib --out-dir dist/lib --watch",
-    "build:dev:view": "THEME_LIGHTEST=true parcel src/view/**/*.html --public-url . -d dist/view",
-    "build:dev": "npm-run-all clean --parallel build:dev:lib build:dev:view",
-    "build:prod:lib": "babel src/lib --out-dir dist/lib",
-    "build:prod:view": "THEME_LIGHTEST=true parcel build src/view/**/*.html --public-url . -d dist/view --experimental-scope-hoisting",
-    "build:prod": "npm-run-all clean --parallel build:prod:lib build:prod:view",
+    "sandbox": "reactor-sandbox",
+    "build": "./scripts/build.js",
+    "build:prod": "NODE_ENV=production npm run build",
     "package": "npm run build:prod && npx @adobe/reactor-packager",
-    "sandbox": "npx @adobe/reactor-sandbox",
-    "dev": "npm-run-all --parallel build:dev sandbox",
+    "dev": "./scripts/dev.js",
     "lint": "eslint \"*.js\" \"src/**/*.{js,jsx}\" \"test/**/*.{js,jsx}\"",
     "format": "prettier --write \"*.{js,jsx}\" \"{src,test}/**/*.{js,jsx}\"",
-    "test": "karma start --single-run",
-    "test:coverage": "karma start --single-run --reporters spec,coverage",
-    "test:watch": "karma start",
-    "test:watch:chrome": "karma start --browsers Chrome"
+    "unit:coverage": "karma start --single-run --reporters spec,coverage",
+    "unit:watch": "karma start",
+    "unit:watch:chrome": "karma start --browsers Chrome",
+    "unit": "karma start --single-run",
+    "functional:watch": "./scripts/functional.js --watch",
+    "functional:watch:debug": "echo \"open chrome://inspect in Chrome and click 'inspect'\" && node --inspect-brk ./scripts/functional.js --watch",
+    "functional": "./scripts/functional.js",
+    "test": "npm-run-all --parallel unit functional"
   },
   "pre-commit": [
     "precommit-msg",
@@ -43,6 +42,7 @@
     "yup": "^0.27.0"
   },
   "devDependencies": {
+    "@adobe/reactor-sandbox": "^10.4.3",
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.4",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
@@ -57,6 +57,7 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.13.0",
     "eslint-plugin-testcafe": "^0.2.1",
+    "glob": "^7.1.4",
     "jasmine-core": "^3.4.0",
     "karma": "^4.1.0",
     "karma-chrome-launcher": "^2.2.0",
@@ -71,11 +72,13 @@
     "parcel-bundler": "^1.12.3",
     "prettier": "^1.17.0",
     "puppeteer": "^1.15.0",
+    "rimraf": "^2.6.3",
     "rollup": "^1.11.3",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.3.4",
     "rollup-plugin-istanbul": "^2.0.1",
     "rollup-plugin-node-resolve": "^4.2.3",
-    "stylus": "^0.54.5"
+    "stylus": "^0.54.5",
+    "testcafe": "^1.1.4"
   }
 }

@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
 Copyright 2019 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -10,10 +12,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = getInstance => {
-  const instance = getInstance("alloy");
+const build = require("./helpers/build");
+const sandbox = require("@adobe/reactor-sandbox");
 
-  return settings => {
-    instance("event", settings);
-  };
-};
+(async () => {
+  await build({ watch: true });
+  await sandbox.run();
+})();
