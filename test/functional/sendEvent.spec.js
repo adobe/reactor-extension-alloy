@@ -11,81 +11,52 @@ governing permissions and limitations under the License.
 */
 
 import { Selector } from "testcafe";
+import createExtensionViewController from "./helpers/createExtensionViewController";
 
-const iframe = Selector("#extensionViewPane iframe");
+const extensionViewController = createExtensionViewController("sendEvent.html");
+const iframe = Selector("#extensionViewIframe");
 const dataTextfield = Selector("[name=data]");
 
-const init = async (t, settings) => {
-  await t.switchToMainWindow();
-  return t.eval(
-    () => {
-      return window.extensionBridgePromise.then(extensionView => {
-        return extensionView.init({
-          settings
-        });
-      });
-    },
-    {
-      dependencies: {
-        settings
-      }
-    }
-  );
-};
-
-const getSettings = async t => {
-  await t.switchToMainWindow();
-  return t.eval(() => {
-    return window.extensionBridgePromise.then(extensionView => {
-      return extensionView.getSettings();
-    });
-  });
-};
-
-const validate = async t => {
-  await t.switchToMainWindow();
-  return t.eval(() => {
-    return window.extensionBridgePromise.then(extensionView => {
-      return extensionView.validate();
-    });
-  });
-};
-
-fixture("Extension view sandbox").page(
+// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
+// https://github.com/DevExpress/testcafe/issues/1770
+fixture("Extension view sandbox").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
 test("initializes form fields", async t => {
-  await init(t, {
+  await extensionViewController.init(t, {
     data: "%myDataLayer%"
   });
   await t.switchToIframe(iframe);
   await t.expect(dataTextfield.value).eql("%myDataLayer%");
 });
 
-// Start the sandbox react server first
 test("returns valid settings", async t => {
+  await extensionViewController.init(t);
   await t.switchToIframe(iframe).typeText(dataTextfield, "%myDataLayer%");
-  const settings = await getSettings(t);
+  const settings = await extensionViewController.getSettings(t);
   await t.expect(settings).eql({
     data: "%myDataLayer%"
   });
 });
 
 test("returns valid for valid input", async t => {
+  await extensionViewController.init(t);
   await t.switchToIframe(iframe).typeText(dataTextfield, "%myDataLayer%");
-  const valid = await validate(t);
+  const valid = await extensionViewController.validate(t);
   await t.expect(valid).ok();
 });
 
 test("returns invalid for data value that is not a data element", async t => {
+  await extensionViewController.init(t);
   await t.switchToIframe(iframe).typeText(dataTextfield, "myDataLayer");
-  const valid = await validate(t);
+  const valid = await extensionViewController.validate(t);
   await t.expect(valid).notOk();
 });
 
 test("returns invalid for data value that is more than one data element", async t => {
+  await extensionViewController.init(t);
   await t.switchToIframe(iframe).typeText(dataTextfield, "%a%%b%");
-  const valid = await validate(t);
+  const valid = await extensionViewController.validate(t);
   await t.expect(valid).notOk();
 });

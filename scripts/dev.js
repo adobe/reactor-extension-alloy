@@ -12,8 +12,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const build = require("./helpers/build");
 const sandbox = require("@adobe/reactor-sandbox");
+const build = require("./helpers/build");
 
 (async () => {
   await build({ watch: true });

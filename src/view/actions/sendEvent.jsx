@@ -20,7 +20,9 @@ import "./sendEvent.styl";
 import InfoTip from "../components/infoTip";
 
 const getInitialValues = settings => {
-  return settings;
+  return {
+    data: settings ? settings.data : ""
+  };
 };
 
 const getSettings = values => {
