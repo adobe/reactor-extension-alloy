@@ -15,6 +15,7 @@ import createExtensionViewController from "./helpers/createExtensionViewControll
 
 const extensionViewController = createExtensionViewController("sendEvent.html");
 const iframe = Selector("#extensionViewIframe");
+const typeTextfield = Selector("[name=type]");
 const dataTextfield = Selector("[name=data]");
 
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
@@ -23,15 +24,33 @@ fixture("Extension view sandbox").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
-test("initializes form fields", async t => {
+test("initializes form fields with full settings", async t => {
+  await extensionViewController.init(t, {
+    type: "thingHappened",
+    data: "%myDataLayer%"
+  });
+  await t.switchToIframe(iframe);
+  await t.expect(typeTextfield.value).eql("thingHappened");
+  await t.expect(dataTextfield.value).eql("%myDataLayer%");
+});
+
+test("initializes form fields with minimal settings", async t => {
   await extensionViewController.init(t, {
     data: "%myDataLayer%"
   });
   await t.switchToIframe(iframe);
+  await t.expect(typeTextfield.value).eql("");
   await t.expect(dataTextfield.value).eql("%myDataLayer%");
 });
 
-test("returns valid settings", async t => {
+test("initializes form fields with no settings", async t => {
+  await extensionViewController.init(t);
+  await t.switchToIframe(iframe);
+  await t.expect(typeTextfield.value).eql("");
+  await t.expect(dataTextfield.value).eql("");
+});
+
+test("returns minimal valid settings", async t => {
   await extensionViewController.init(t);
   await t.switchToIframe(iframe).typeText(dataTextfield, "%myDataLayer%");
   const settings = await extensionViewController.getSettings(t);
@@ -40,9 +59,32 @@ test("returns valid settings", async t => {
   });
 });
 
-test("returns valid for valid input", async t => {
+test("returns full valid settings", async t => {
+  await extensionViewController.init(t);
+  await t
+    .switchToIframe(iframe)
+    .typeText(typeTextfield, "thingHappened")
+    .typeText(dataTextfield, "%myDataLayer%");
+  const settings = await extensionViewController.getSettings(t);
+  await t.expect(settings).eql({
+    type: "thingHappened",
+    data: "%myDataLayer%"
+  });
+});
+
+test("returns valid for minimal valid input", async t => {
   await extensionViewController.init(t);
   await t.switchToIframe(iframe).typeText(dataTextfield, "%myDataLayer%");
+  const valid = await extensionViewController.validate(t);
+  await t.expect(valid).ok();
+});
+
+test("returns valid for full valid input", async t => {
+  await extensionViewController.init(t);
+  await t
+    .switchToIframe(iframe)
+    .typeText(typeTextfield, "thingHappened")
+    .typeText(dataTextfield, "%myDataLayer%");
   const valid = await extensionViewController.validate(t);
   await t.expect(valid).ok();
 });

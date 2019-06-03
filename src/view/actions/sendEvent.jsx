@@ -20,13 +20,29 @@ import "./sendEvent.styl";
 import InfoTip from "../components/infoTip";
 
 const getInitialValues = settings => {
+  // settings is null if the user is creating a new rule component
+  if (!settings) {
+    settings = {};
+  }
+
+  const { data = "", type = "" } = settings;
+
   return {
-    data: settings ? settings.data : ""
+    data,
+    type
   };
 };
 
 const getSettings = values => {
-  return values;
+  const settings = {
+    data: values.data
+  };
+
+  if (values.type) {
+    settings.type = values.type;
+  }
+
+  return settings;
 };
 
 const validationSchema = object().shape({
@@ -41,24 +57,41 @@ const SendEvent = () => {
       validationSchema={validationSchema}
       render={() => {
         return (
-          <label>
-            <span className="Label">
-              Data
-              <InfoTip>
-                Please specify a data element that will return a JavaScript
-                object. This object will be sent to the Adobe Experience
-                Platform.
-              </InfoTip>
-            </span>
+          <div>
             <div>
-              <WrappedField
-                name="data"
-                component={Textfield}
-                componentClassName="u-longTextfield"
-                supportDataElement
-              />
+              <label>
+                <span className="Label">Type</span>
+                <div>
+                  <WrappedField
+                    name="type"
+                    component={Textfield}
+                    componentClassName="u-longTextfield"
+                    supportDataElement
+                  />
+                </div>
+              </label>
             </div>
-          </label>
+            <div className="u-gapTop">
+              <label>
+                <span className="Label">
+                  Data
+                  <InfoTip>
+                    Please specify a data element that will return a JavaScript
+                    object. This object will be sent to the Adobe Experience
+                    Platform.
+                  </InfoTip>
+                </span>
+                <div>
+                  <WrappedField
+                    name="data"
+                    component={Textfield}
+                    componentClassName="u-longTextfield"
+                    supportDataElement
+                  />
+                </div>
+              </label>
+            </div>
+          </div>
         );
       }}
     />

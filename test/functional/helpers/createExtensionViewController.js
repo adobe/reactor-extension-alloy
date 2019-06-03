@@ -11,8 +11,11 @@ governing permissions and limitations under the License.
 */
 
 module.exports = viewPath => {
+  // window.loadExtensionView is provided by the extension sandbox tool.
+  // More details about the tool and this method can be found here:
+  // https://www.npmjs.com/package/@adobe/reactor-sandbox
   return {
-    init: async (t, settings) => {
+    init: async (t, settings = null) => {
       await t.switchToMainWindow();
       return t.eval(
         () => {

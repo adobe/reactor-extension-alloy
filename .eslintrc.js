@@ -7,7 +7,7 @@ module.exports = {
   },
   plugins: ["prettier", "testcafe"],
   rules: {
-    "no-param-reassign": ["error", { props: false }],
+    "no-param-reassign": "off",
     "prettier/prettier": "error",
     "react/require-default-props": "off",
     "jsx-a11y/label-has-associated-control": [

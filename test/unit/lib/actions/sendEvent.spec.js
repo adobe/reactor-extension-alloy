@@ -20,12 +20,14 @@ describe("Send Event", () => {
     expect(getInstance).toHaveBeenCalledWith("alloy");
 
     action({
+      type: "thingHappened",
       data: {
         foo: "bar"
       }
     });
 
     expect(instance).toHaveBeenCalledWith("event", {
+      type: "thingHappened",
       data: {
         foo: "bar"
       }
