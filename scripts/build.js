@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
 Copyright 2019 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -10,25 +12,4 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createSendEvent from "../../../../src/lib/actions/createSendEvent";
-
-describe("Send Event", () => {
-  it("executes event command", () => {
-    const instance = jasmine.createSpy();
-    const getInstance = jasmine.createSpy().and.returnValue(instance);
-    const action = createSendEvent(getInstance);
-    expect(getInstance).toHaveBeenCalledWith("alloy");
-
-    action({
-      data: {
-        foo: "bar"
-      }
-    });
-
-    expect(instance).toHaveBeenCalledWith("event", {
-      data: {
-        foo: "bar"
-      }
-    });
-  });
-});
+require("./helpers/build.js")();

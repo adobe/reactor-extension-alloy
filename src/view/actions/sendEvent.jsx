@@ -16,9 +16,13 @@ import Textfield from "@react/react-spectrum/Textfield";
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
+import "./sendEvent.styl";
+import InfoTip from "../components/infoTip";
 
 const getInitialValues = settings => {
-  return settings;
+  return {
+    data: settings ? settings.data : ""
+  };
 };
 
 const getSettings = values => {
@@ -26,7 +30,7 @@ const getSettings = values => {
 };
 
 const validationSchema = object().shape({
-  dataIngestionName: string()
+  data: string().matches(/^%([^%]+)%$/, "Please specify a data element")
 });
 
 const SendEvent = () => {
@@ -35,16 +39,26 @@ const SendEvent = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={({ formikProps, settings }) => {
-        console.log(formikProps, settings);
+      render={() => {
         return (
-          <WrappedField
-            id="dataIngestionName"
-            name="dataIngestionName"
-            component={Textfield}
-            componentClassName="u-longTextfield"
-            supportDataElement
-          />
+          <label>
+            <span className="Label">
+              Data
+              <InfoTip>
+                Please specify a data element that will return a JavaScript
+                object. This object will be sent to the Adobe Experience
+                Platform.
+              </InfoTip>
+            </span>
+            <div>
+              <WrappedField
+                name="data"
+                component={Textfield}
+                componentClassName="u-longTextfield"
+                supportDataElement
+              />
+            </div>
+          </label>
         );
       }}
     />

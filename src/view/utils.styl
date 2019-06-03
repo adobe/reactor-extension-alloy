@@ -10,25 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createSendEvent from "../../../../src/lib/actions/createSendEvent";
+$gap = 8px;
 
-describe("Send Event", () => {
-  it("executes event command", () => {
-    const instance = jasmine.createSpy();
-    const getInstance = jasmine.createSpy().and.returnValue(instance);
-    const action = createSendEvent(getInstance);
-    expect(getInstance).toHaveBeenCalledWith("alloy");
-
-    action({
-      data: {
-        foo: "bar"
-      }
-    });
-
-    expect(instance).toHaveBeenCalledWith("event", {
-      data: {
-        foo: "bar"
-      }
-    });
-  });
-});
+.u-gapLeft {
+  margin-left: $gap !important;
+}
