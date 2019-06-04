@@ -10,9 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import { object, string } from "yup";
 import Textfield from "@react/react-spectrum/Textfield";
+import ComboBox from "@react/react-spectrum/ComboBox";
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
@@ -45,8 +47,11 @@ const getSettings = values => {
   return settings;
 };
 
+const invalidDataMessage = "Please specify a data element";
 const validationSchema = object().shape({
-  data: string().matches(/^%([^%]+)%$/, "Please specify a data element")
+  data: string()
+    .required(invalidDataMessage)
+    .matches(/^%([^%]+)%$/, invalidDataMessage)
 });
 
 const SendEvent = () => {
@@ -64,9 +69,9 @@ const SendEvent = () => {
                 <div>
                   <WrappedField
                     name="type"
-                    component={Textfield}
-                    componentClassName="u-longTextfield"
+                    component={ComboBox}
                     supportDataElement
+                    options={["viewStart"]}
                   />
                 </div>
               </label>
@@ -85,7 +90,6 @@ const SendEvent = () => {
                   <WrappedField
                     name="data"
                     component={Textfield}
-                    componentClassName="u-longTextfield"
                     supportDataElement
                   />
                 </div>

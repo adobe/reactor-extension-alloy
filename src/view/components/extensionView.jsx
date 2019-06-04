@@ -43,8 +43,14 @@ const ExtensionView = ({
         return getSettings(formikProps.values);
       },
       validate: () => {
-        const { submitForm, errors } = formikProps;
-        return submitForm().then(() => Object.keys(errors).length === 0);
+        // The docs say that the promise submitForm returns
+        // will be rejected if there are errors, but that is not the case.
+        // Therefore, after the promise is resolved, we pull formikProps.errors
+        // (which were set during submitForm()) to see if the form is valid.
+        // https://github.com/jaredpalmer/formik/issues/1580
+        return formikProps.submitForm().then(() => {
+          return Object.keys(formikProps.errors).length === 0;
+        });
       }
     });
   }, []);
