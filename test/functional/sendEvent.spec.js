@@ -89,6 +89,12 @@ test("returns valid for full valid input", async t => {
   await t.expect(valid).ok();
 });
 
+test("returns invalid for empty data value", async t => {
+  await extensionViewController.init(t);
+  const valid = await extensionViewController.validate(t);
+  await t.expect(valid).notOk();
+});
+
 test("returns invalid for data value that is not a data element", async t => {
   await extensionViewController.init(t);
   await t.switchToIframe(iframe).typeText(dataTextfield, "myDataLayer");
