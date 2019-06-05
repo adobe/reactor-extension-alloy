@@ -15,6 +15,7 @@ To get started on development:
 Several npm scripts have been provided for assisting in development. Each script can be run by navigating to the cloned repository directory in a terminal and executing `npm run scriptname` where `scriptname` is the name of the script you would like to run. The most useful scripts are as follows:
 
 * `package` Builds and packages the extension to a zip file ready to be uploaded to Launch.  
+* `upload` Same as `package` but also uploads the extension package to Launch.  
 * `dev` Spins up a sandbox where you can manually test the extension. More details about the sandbox can be found [here](https://www.npmjs.com/package/@adobe/reactor-sandbox). 
 * `lint` Analyzes code for potential errors.
 * `format` Formats code to match agreed-upon style guidelines.
