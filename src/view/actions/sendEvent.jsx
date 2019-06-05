@@ -10,9 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import { object, string } from "yup";
 import Textfield from "@react/react-spectrum/Textfield";
+import ComboBox from "@react/react-spectrum/ComboBox";
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
@@ -20,17 +22,36 @@ import "./sendEvent.styl";
 import InfoTip from "../components/infoTip";
 
 const getInitialValues = settings => {
+  // settings is null if the user is creating a new rule component
+  if (!settings) {
+    settings = {};
+  }
+
+  const { data = "", type = "" } = settings;
+
   return {
-    data: settings ? settings.data : ""
+    data,
+    type
   };
 };
 
 const getSettings = values => {
-  return values;
+  const settings = {
+    data: values.data
+  };
+
+  if (values.type) {
+    settings.type = values.type;
+  }
+
+  return settings;
 };
 
+const invalidDataMessage = "Please specify a data element";
 const validationSchema = object().shape({
-  data: string().matches(/^%([^%]+)%$/, "Please specify a data element")
+  data: string()
+    .required(invalidDataMessage)
+    .matches(/^%([^%]+)%$/, invalidDataMessage)
 });
 
 const SendEvent = () => {
@@ -41,24 +62,40 @@ const SendEvent = () => {
       validationSchema={validationSchema}
       render={() => {
         return (
-          <label>
-            <span className="Label">
-              Data
-              <InfoTip>
-                Please specify a data element that will return a JavaScript
-                object. This object will be sent to the Adobe Experience
-                Platform.
-              </InfoTip>
-            </span>
+          <div>
             <div>
-              <WrappedField
-                name="data"
-                component={Textfield}
-                componentClassName="u-longTextfield"
-                supportDataElement
-              />
+              <label>
+                <span className="Label">Type</span>
+                <div>
+                  <WrappedField
+                    name="type"
+                    component={ComboBox}
+                    supportDataElement
+                    options={["viewStart"]}
+                  />
+                </div>
+              </label>
             </div>
-          </label>
+            <div className="u-gapTop">
+              <label>
+                <span className="Label">
+                  Data
+                  <InfoTip>
+                    Please specify a data element that will return a JavaScript
+                    object. This object will be sent to the Adobe Experience
+                    Platform.
+                  </InfoTip>
+                </span>
+                <div>
+                  <WrappedField
+                    name="data"
+                    component={Textfield}
+                    supportDataElement
+                  />
+                </div>
+              </label>
+            </div>
+          </div>
         );
       }}
     />
