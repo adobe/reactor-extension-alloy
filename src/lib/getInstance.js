@@ -20,15 +20,7 @@ const runAlloy = require("./runAlloy");
 runAlloy();
 
 alloy("configure", {
-  orgID: 23784612874,
-  propertyID: 9999999,
-  dataSet: "dataset1",
-  shouldStoreCollectedData: 1,
-  device: "Chrome-Mac",
-  // collectionUrl: "https://edgegateway.azurewebsites.net",
-  collectionUrl: "http://ex-edge.stable-stage.aam-npe.adobeinternal.net/v1",
-  destinationsEnabled: true,
-  debug: true
+  propertyID: 9999999
 });
 
 module.exports = name => window[name];
