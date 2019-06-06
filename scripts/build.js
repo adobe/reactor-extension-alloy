@@ -12,4 +12,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-require("./helpers/build.js")();
+const build = require("./helpers/build.js");
+
+build()
+  .then(() => {
+    process.exit(0);
+  })
+  .catch(() => {
+    process.exit(1);
+  });
