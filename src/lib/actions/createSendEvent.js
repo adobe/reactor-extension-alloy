@@ -10,10 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = getInstance => {
-  const instance = getInstance("alloy");
+module.exports = instanceManager => settings => {
+  const { propertyID, ...otherSettings } = settings;
+  const instance = instanceManager.getInstance(propertyID);
 
-  return settings => {
-    instance("event", settings);
-  };
+  if (instance) {
+    instance("event", otherSettings);
+  } else {
+    turbine.logger.error(
+      `Failed to send event for property ID "${propertyID}". No matching account was configured with this ID.`
+    );
+  }
 };

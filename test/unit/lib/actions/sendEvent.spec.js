@@ -11,26 +11,64 @@ governing permissions and limitations under the License.
 */
 
 import createSendEvent from "../../../../src/lib/actions/createSendEvent";
+import turbineVariable from "../../helpers/turbineVariable";
 
 describe("Send Event", () => {
+  let mockLogger;
+
+  beforeEach(() => {
+    mockLogger = {
+      error: jasmine.createSpy()
+    };
+    turbineVariable.mock({
+      logger: mockLogger
+    });
+  });
+
+  afterEach(() => {
+    turbineVariable.reset();
+  });
+
   it("executes event command", () => {
     const instance = jasmine.createSpy();
-    const getInstance = jasmine.createSpy().and.returnValue(instance);
-    const action = createSendEvent(getInstance);
-    expect(getInstance).toHaveBeenCalledWith("alloy");
+    const instanceManager = {
+      getInstance: jasmine.createSpy().and.returnValue(instance)
+    };
+    const action = createSendEvent(instanceManager);
 
     action({
+      propertyID: "PR123",
       type: "thingHappened",
       data: {
         foo: "bar"
       }
     });
 
+    expect(instanceManager.getInstance).toHaveBeenCalledWith("PR123");
     expect(instance).toHaveBeenCalledWith("event", {
       type: "thingHappened",
       data: {
         foo: "bar"
       }
     });
+  });
+
+  it("logs an error when no matching instance found", () => {
+    const instanceManager = {
+      getInstance: () => {}
+    };
+    const action = createSendEvent(instanceManager);
+
+    action({
+      propertyID: "PR123",
+      type: "thingHappened",
+      data: {
+        foo: "bar"
+      }
+    });
+
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      'Failed to send event for property ID "PR123". No matching account was configured with this ID.'
+    );
   });
 });

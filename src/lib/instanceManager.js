@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createSendEvent = require("./createSendEvent");
-const instanceManager = require("../instanceManager");
+const runAlloy = require("./runAlloy");
+const createInstanceManager = require("./createInstanceManager");
 
-module.exports = createSendEvent(instanceManager);
+module.exports = createInstanceManager(window, runAlloy);

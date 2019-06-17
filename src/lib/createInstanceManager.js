@@ -10,31 +10,34 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const runAlloy = require("./runAlloy");
-
-const { accounts } = turbine.getExtensionSettings();
-const instanceNames = accounts.map(account => account.instanceName);
-
-!function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||
-  []).push(o),n[o]=function(){var u=arguments;return new Promise(
-  function(i,l){n[o].q.push([i,l,u])})},n[o].q=[])})}
-(window,instanceNames);
-
-runAlloy();
-
-accounts.forEach(({ instanceName, propertyID }) => {
-  window[instanceName]("configure", {
-    propertyID
-  });
-});
-
-const getInstanceNameByPropertyID = propertyID => {
+const getInstanceNameByPropertyID = (accounts, propertyID) => {
+  let matchingInstanceName;
   for (let i = 0; i < accounts.length; i += 1) {
     const account = accounts[i];
     if (account.propertyID === propertyID) {
-      return account;
+      matchingInstanceName = account.instanceName;
+      break;
     }
   }
+  return matchingInstanceName;
 };
 
-module.exports = propertyID => window[getInstanceNameByPropertyID(propertyID)];
+module.exports = (window, runAlloy) => {
+  const { accounts } = turbine.getExtensionSettings();
+  const instanceNames = accounts.map(account => account.instanceName);
+
+  runAlloy(instanceNames);
+
+  accounts.forEach(({ instanceName, propertyID }) => {
+    window[instanceName]("configure", {
+      propertyID
+    });
+  });
+
+  return {
+    getInstance(propertyID) {
+      const instanceName = getInstanceNameByPropertyID(accounts, propertyID);
+      return instanceName ? window[instanceName] : undefined;
+    }
+  };
+};

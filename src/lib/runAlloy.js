@@ -10,8 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = () => {
+module.exports = (instanceNames) => {
+	/////////////////////////////
+	// BASE CODE
+	/////////////////////////////
+	!function(n,o){o.forEach(function(o){n[o]||((n.__alloyNS=n.__alloyNS||
+		[]).push(o),n[o]=function(){var u=arguments;return new Promise(
+		function(i,l){n[o].q.push([i,l,u])})},n[o].q=[])})}
+	(window,instanceNames);
 
+	/////////////////////////////
+	// LIBRARY CODE
+	/////////////////////////////
 	(function (factory) {
 		typeof define === 'function' && define.amd ? define(factory) :
 			factory();
@@ -127,6 +137,27 @@ module.exports = () => {
     OF ANY KIND, either express or implied. See the License for the specific language
     governing permissions and limitations under the License.
     */
+
+		/*
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+    */
+
+		/**
+		 * Clones a value by serializing then deserializing the value.
+		 * @param {*} value
+		 * @returns {any}
+		 */
+		var clone = (function (value) {
+			return JSON.parse(JSON.stringify(value));
+		});
 
 		function createCommonjsModule(fn, module) {
 			return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -442,8 +473,24 @@ module.exports = () => {
 			return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
 		}
 
+		function _toConsumableArray(arr) {
+			return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+		}
+
+		function _arrayWithoutHoles(arr) {
+			if (Array.isArray(arr)) {
+				for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+				return arr2;
+			}
+		}
+
 		function _arrayWithHoles(arr) {
 			if (Array.isArray(arr)) return arr;
+		}
+
+		function _iterableToArray(iter) {
+			if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
 		}
 
 		function _iterableToArrayLimit(arr, i) {
@@ -470,6 +517,10 @@ module.exports = () => {
 			}
 
 			return _arr;
+		}
+
+		function _nonIterableSpread() {
+			throw new TypeError("Invalid attempt to spread non-iterable instance");
 		}
 
 		function _nonIterableRest() {
@@ -564,7 +615,7 @@ module.exports = () => {
 		var MAX_POLLING_TIMEOUT = 5000;
 
 		var createError = function createError(selector) {
-			return new Error("Could not find: ".concat(selector));
+			return new Error("Could not find: " + selector);
 		};
 
 		var createPromise = function createPromise(executor) {
@@ -824,13 +875,13 @@ module.exports = () => {
 					src: dest.url
 				});
 				return imagePromise.then(function () {
-					logger.log("Destination succeeded: ".concat(dest.url));
+					logger.log("Destination succeeded:", dest.url);
 					return {
 						succeeded: true,
 						dest: dest
 					};
 				}).catch(function () {
-					logger.log("Destination failed: ".concat(dest.url));
+					logger.log("Destination failed:", dest.url);
 					return {
 						succeeded: false,
 						dest: dest
@@ -956,7 +1007,7 @@ module.exports = () => {
     OF ANY KIND, either express or implied. See the License for the specific language
     governing permissions and limitations under the License.
     */
-		var cookieName = "".concat(namespace, "getTld");
+		var cookieName = namespace + "getTld";
 		var topLevelCookieDomain = "";
 		/**
 		 * Retrieves the top-most domain that is able to accept cookies. This will
@@ -1072,6 +1123,155 @@ module.exports = () => {
     governing permissions and limitations under the License.
     */
 
+		// Copyright Joyent, Inc. and other Node contributors.
+		// obj.hasOwnProperty(prop) will break.
+		// See: https://github.com/joyent/node/issues/1707
+
+		function hasOwnProperty$1(obj, prop) {
+			return Object.prototype.hasOwnProperty.call(obj, prop);
+		}
+
+		var decode = function (qs, sep, eq, options) {
+			sep = sep || '&';
+			eq = eq || '=';
+			var obj = {};
+
+			if (typeof qs !== 'string' || qs.length === 0) {
+				return obj;
+			}
+
+			var regexp = /\+/g;
+			qs = qs.split(sep);
+			var maxKeys = 1000;
+
+			if (options && typeof options.maxKeys === 'number') {
+				maxKeys = options.maxKeys;
+			}
+
+			var len = qs.length; // maxKeys <= 0 means that we should not limit keys count
+
+			if (maxKeys > 0 && len > maxKeys) {
+				len = maxKeys;
+			}
+
+			for (var i = 0; i < len; ++i) {
+				var x = qs[i].replace(regexp, '%20'),
+					idx = x.indexOf(eq),
+					kstr,
+					vstr,
+					k,
+					v;
+
+				if (idx >= 0) {
+					kstr = x.substr(0, idx);
+					vstr = x.substr(idx + 1);
+				} else {
+					kstr = x;
+					vstr = '';
+				}
+
+				k = decodeURIComponent(kstr);
+				v = decodeURIComponent(vstr);
+
+				if (!hasOwnProperty$1(obj, k)) {
+					obj[k] = v;
+				} else if (Array.isArray(obj[k])) {
+					obj[k].push(v);
+				} else {
+					obj[k] = [obj[k], v];
+				}
+			}
+
+			return obj;
+		};
+
+		// Copyright Joyent, Inc. and other Node contributors.
+
+		var stringifyPrimitive = function (v) {
+			switch (typeof v) {
+				case 'string':
+					return v;
+
+				case 'boolean':
+					return v ? 'true' : 'false';
+
+				case 'number':
+					return isFinite(v) ? v : '';
+
+				default:
+					return '';
+			}
+		};
+
+		var encode = function (obj, sep, eq, name) {
+			sep = sep || '&';
+			eq = eq || '=';
+
+			if (obj === null) {
+				obj = undefined;
+			}
+
+			if (typeof obj === 'object') {
+				return Object.keys(obj).map(function (k) {
+					var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
+
+					if (Array.isArray(obj[k])) {
+						return obj[k].map(function (v) {
+							return ks + encodeURIComponent(stringifyPrimitive(v));
+						}).join(sep);
+					} else {
+						return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
+					}
+				}).join(sep);
+			}
+
+			if (!name) return '';
+			return encodeURIComponent(stringifyPrimitive(name)) + eq + encodeURIComponent(stringifyPrimitive(obj));
+		};
+
+		var querystring = createCommonjsModule(function (module, exports) {
+
+			exports.decode = exports.parse = decode;
+			exports.encode = exports.stringify = encode;
+		});
+		var querystring_1 = querystring.decode;
+		var querystring_2 = querystring.parse;
+		var querystring_3 = querystring.encode;
+		var querystring_4 = querystring.stringify;
+
+		// This allows us to more easily make changes to the underlying implementation later without
+		// having to worry about breaking extensions. If extensions demand additional functionality, we
+		// can make adjustments as needed.
+
+
+		var reactorQueryString = {
+			parse: function (string) {
+				//
+				if (typeof string === 'string') {
+					// Remove leading ?, #, & for some leniency so you can pass in location.search or
+					// location.hash directly.
+					string = string.trim().replace(/^[?#&]/, '');
+				}
+
+				return querystring.parse(string);
+			},
+			stringify: function (object) {
+				return querystring.stringify(object);
+			}
+		};
+
+		/*
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+    */
+
 		/*
     Copyright 2019 Adobe. All rights reserved.
     This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -1157,7 +1357,7 @@ module.exports = () => {
 
 		var stackError = (function (message, error) {
 			var stackedError = toError(error);
-			stackedError.message = "".concat(message, "\nCaused by: ").concat(stackedError.message);
+			stackedError.message = message + "\nCaused by: " + stackedError.message;
 			return stackedError;
 		});
 
@@ -1202,7 +1402,6 @@ module.exports = () => {
 						context[storageType].setItem(namespace$$1 + name, value);
 						return true;
 					} catch (e) {
-						console.log(e);
 						return false;
 					}
 				}
@@ -1217,6 +1416,10 @@ module.exports = () => {
 					persistent: getStorageByType(context, "localStorage", finalNamespace)
 				};
 			};
+		});
+
+		var stringToBoolean = (function (str) {
+			return isString(str) && (str.toLowerCase() === "true" || str === "1");
 		});
 
 		/*
@@ -1326,7 +1529,7 @@ module.exports = () => {
 					}, []);
 
 					if (errors.length) {
-						throw new Error("Resolve these configuration problems:\n\t - ".concat(errors.join("\n\t - "), "\nFor configuration documentation see: ").concat(CONFIG_DOC_URI));
+						throw new Error("Resolve these configuration problems:\n\t - " + errors.join("\n\t - ") + "\nFor configuration documentation see: " + CONFIG_DOC_URI);
 					}
 				},
 				toJSON: function toJSON() {
@@ -1364,7 +1567,7 @@ module.exports = () => {
 			var err = "";
 
 			if (currentValue == null) {
-				err = "".concat(key, " is a required configuration parameter");
+				err = key + " is a required configuration parameter";
 			}
 
 			return err;
@@ -1386,7 +1589,7 @@ module.exports = () => {
 			var err = "";
 
 			if (!validUrl) {
-				err = "Invalid domain for ".concat(key, ": ").concat(currentValue, "\"");
+				err = "Invalid domain for " + key + ": " + currentValue + "\"";
 			}
 
 			return err;
@@ -1432,50 +1635,86 @@ module.exports = () => {
     OF ANY KIND, either express or implied. See the License for the specific language
     governing permissions and limitations under the License.
     */
-		var createInstance = (function (namespace, initializeComponents, debugController) {
-			var componentRegistry;
+		var logQueryParam = "alloy_log";
 
-			var debugCommand = function debugCommand(_ref) {
+		/*
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+    */
+		var createInstance = (function (namespace, initializeComponents, logController, logger, window) {
+			var componentRegistry;
+			var configurationFailed = false;
+
+			var logCommand = function logCommand(_ref) {
 				var enabled = _ref.enabled;
 				// eslint-disable-next-line no-param-reassign
-				debugController.debugEnabled = enabled;
+				logController.logEnabled = enabled;
 			};
 
 			var configureCommand = function configureCommand(options) {
-				if (options.debug !== undefined) {
-					debugCommand({
-						enabled: options.debug
+				if (options.log !== undefined) {
+					logCommand({
+						enabled: options.log
+					});
+				}
+
+				var parsedQueryString = reactorQueryString.parse(window.location.search);
+
+				if (parsedQueryString[logQueryParam] !== undefined) {
+					logCommand({
+						enabled: stringToBoolean(parsedQueryString[logQueryParam])
 					});
 				}
 
 				var config = createConfig(options);
 				config.addValidators(configValidators);
-				componentRegistry = initializeComponents(config);
+
+				try {
+					componentRegistry = initializeComponents(config);
+				} catch (e) {
+					configurationFailed = true;
+					throw e;
+				}
 			};
 
 			var executeCommand = function executeCommand(commandName, options) {
 				var command;
 
-				if (commandName === "configure") {
+				if (configurationFailed) {
+					// We've decided if configuration fails we'll return
+					// never-resolved promises for all subsequent commands rather than
+					// throwing an error for each of them.
+					command = function command() {
+						return new Promise(function () {});
+					};
+				} else if (commandName === "configure") {
 					if (componentRegistry) {
 						throw new Error("The library has already been configured and may only be configured once.");
 					}
 
 					command = configureCommand;
-				} else if (commandName === "debug") {
-					command = debugCommand;
+				} else if (commandName === "log") {
+					command = logCommand;
 				} else {
 					if (!componentRegistry) {
-						throw new Error("The library must be configured first. Please do so by calling ".concat(namespace, "(\"configure\", {...})."));
+						throw new Error("The library must be configured first. Please do so by calling " + namespace + "(\"configure\", {...}).");
 					}
 
 					command = componentRegistry.getCommand(commandName);
 
 					if (!isFunction(command)) {
-						throw new Error("The ".concat(commandName, " command does not exist."));
+						throw new Error("The " + commandName + " command does not exist.");
 					}
 				}
 
+				logger.log("Executing \"" + commandName + "\" command.", "Options:", options);
 				return command(options);
 			};
 
@@ -1498,7 +1737,7 @@ module.exports = () => {
 				}).then(resolve).catch(function (error) {
 					var err = toError(error); // eslint-disable-next-line no-param-reassign
 
-					err.message = "[".concat(namespace, "] ").concat(err.message);
+					err.message = "[" + namespace + "] " + err.message;
 					reject(err);
 				});
 			};
@@ -1636,12 +1875,12 @@ module.exports = () => {
 				var conflictingCommandNames = intersection(Object.keys(commandsByName), Object.keys(componentCommandsByName));
 
 				if (conflictingCommandNames.length) {
-					throw new Error("[ComponentRegistry] Could not register ".concat(namespace, " ") + "because it has existing command(s): ".concat(conflictingCommandNames.join(",")));
+					throw new Error("[ComponentRegistry] Could not register " + namespace + " " + ("because it has existing command(s): " + conflictingCommandNames.join(",")));
 				}
 
 				Object.keys(componentCommandsByName).forEach(function (commandName) {
 					var command = componentCommandsByName[commandName];
-					commandsByName[commandName] = wrapForErrorHandling(command, "[".concat(namespace, "] An error occurred while executing the ").concat(commandName, " command."));
+					commandsByName[commandName] = wrapForErrorHandling(command, "[" + namespace + "] An error occurred while executing the " + commandName + " command.");
 				});
 			};
 
@@ -1649,7 +1888,7 @@ module.exports = () => {
 				var componentLifecycleCallbacksByName = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 				Object.keys(componentLifecycleCallbacksByName).forEach(function (hookName) {
 					lifecycleCallbacksByName[hookName] = lifecycleCallbacksByName[hookName] || [];
-					lifecycleCallbacksByName[hookName].push(wrapForErrorHandling(componentLifecycleCallbacksByName[hookName], "[".concat(namespace, "] An error occurred while executing the ").concat(hookName, " lifecycle hook.")));
+					lifecycleCallbacksByName[hookName].push(wrapForErrorHandling(componentLifecycleCallbacksByName[hookName], "[" + namespace + "] An error occurred while executing the " + hookName + " lifecycle hook."));
 				});
 			};
 
@@ -1732,30 +1971,31 @@ module.exports = () => {
 		 * }
 		 *
 		 * @returns {Object<Response>} A Response object containing:
-		 *  - All the properties of the raw response, frozen
 		 *  - `getPayloadByType`: returns a fragment of the response by type
 		 *      - @param {String} type: A string with the current format: <namespace:action>
 		 *          example: "identity:persist"
 		 */
 
 		var createResponse = (function () {
-			var respDto = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+			var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
 				requestId: "",
 				handle: []
 			};
-			var response = reactorObjectAssign(Object.create(null), respDto); // TODO: Should we freeze the response to prevent change by Components?
+			// TODO: Should we freeze the response to prevent change by Components?
 			// Object.freeze(response.handle.map(h => Object.freeze(h)));
+			return {
+				getPayloadByType: function getPayloadByType(type) {
+					var fragment = find(content.handle, function (handleContent) {
+						return handleContent.type === type;
+					});
+					return fragment ? fragment.payload : null;
+				},
+				toJSON: function toJSON() {
+					return content;
+				} // TODO: Maybe consider the following API as well?
+				// - getPayloadsByAction
 
-			response.getPayloadByType = function (type) {
-				var fragment = find(respDto.handle, function (content) {
-					return content.type === type;
-				});
-				return fragment ? fragment.payload : null;
-			}; // TODO: Maybe consider the following API as well?
-			// - getPayloadsByAction
-
-
-			return response;
+			};
 		});
 
 		/*
@@ -1770,13 +2010,19 @@ module.exports = () => {
     governing permissions and limitations under the License.
     */
 		var createNetwork = (function (config, logger, lifecycle, networkStrategy) {
-			var handleResponse = function handleResponse(body) {
-				return new Promise(function (resolve) {
-					return resolve(createResponse(JSON.parse(body)));
-				}).then(function (response) {
-					return lifecycle.onResponse(response);
-				}).catch(function (e) {
-					return logger.warn(e);
+			var handleResponse = function handleResponse(responseBody) {
+				var parsedBody;
+
+				try {
+					parsedBody = JSON.parse(responseBody);
+				} catch (e) {
+					throw new Error("Error parsing server response.\n" + e + "\nResponse body: " + responseBody);
+				}
+
+				logger.log("Received network response:", parsedBody);
+				var response = createResponse(parsedBody);
+				return lifecycle.onResponse(response).then(function () {
+					return response;
 				});
 			};
 
@@ -1785,48 +2031,56 @@ module.exports = () => {
 			return {
 				/**
 				 * The object returned from network.newRequest
+				 *
 				 * @typedef {Object} Request
-				 * @property {function} send - call this function when you are ready to send the payload
-				 * @property {Object} payload - payload object that will be sent
-				 * @property {Promise} responsePromise - promise that will yield the raw response body
-				 * @property {boolean} isBeacon - whether or not this request is a beacon request
+				 * @property {Function} send Call this function when you are ready to send
+				 * the payload. Returns a promise yielding the raw response body.
+				 * @property {Object} payload Payload object that will be sent.
 				 */
 
 				/**
-				 * Create a new request.  Once "send" on the returned object is called, the lifecycle
-				 *  method "onBeforeSend" will be triggered with { payload, responsePromise, isBeacon } as
-				 *  the parameter.  When the response is returned it will call the lifecycle method "onResponse"
-				 *  with the returned response object.
-				 * @param {boolean} isBeacon - true to send a beacon (defaults to false).  If you send
-				 *   a beacon, no data will be returned.
+				 * Create a new request.  Once "send" on the returned object is called, the
+				 * lifecycle method "onBeforeSend" will be triggered with
+				 * { payload, responsePromise, isBeacon } as the parameter.  When the
+				 * response is returned it will call the lifecycle method "onResponse"
+				 * with the returned response object.
 				 *
+				 * @param {boolean} [expectsResponse=true] The endpoint and request mechanism
+				 * will be determined by whether a response is expected.
 				 * @returns {Request}
 				 */
 				newRequest: function newRequest() {
-					var isBeacon = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+					var expectsResponse = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 					var payload = createPayload();
-					var action = isBeacon ? "collect" : "interact";
-					var url = "https://".concat(edgeDomain, "/").concat(action, "?propertyID=").concat(propertyID);
-					var deferred = defer();
-					var responsePromise = deferred.promise.then(function () {
-						return lifecycle.onBeforeSend({
-							payload: payload,
-							responsePromise: responsePromise,
-							isBeacon: isBeacon
-						});
-					}).then(function () {
-						return networkStrategy(url, JSON.stringify(payload), isBeacon);
-					});
 
-					if (!isBeacon) {
-						responsePromise.then(handleResponse);
-					}
+					var send = function send() {
+						var responsePromise = Promise.resolve().then(function () {
+							return lifecycle.onBeforeSend({
+								payload: payload,
+								responsePromise: responsePromise,
+								isBeacon: !expectsResponse
+							});
+						}).then(function () {
+							var action = expectsResponse ? "interact" : "collect";
+							var url = "https://" + edgeDomain + "/" + action + "?propertyID=" + propertyID;
+							var responseHandlingMessage = expectsResponse ? "" : " (response will be ignored)";
+							logger.log("Sending network request" + responseHandlingMessage + ":", payload.toJSON());
+							return networkStrategy(url, JSON.stringify(payload), expectsResponse);
+						}).then(function (responseBody) {
+							var handleResponsePromise;
+
+							if (expectsResponse) {
+								handleResponsePromise = handleResponse(responseBody);
+							}
+
+							return handleResponsePromise;
+						});
+						return responsePromise;
+					};
 
 					return {
 						payload: payload,
-						responsePromise: responsePromise,
-						send: deferred.resolve,
-						isBeacon: isBeacon
+						send: send
 					};
 				}
 			};
@@ -1855,7 +2109,7 @@ module.exports = () => {
 							} else if (request.status >= 200 && request.status < 300) {
 								resolve(request.responseText);
 							} else {
-								reject(new Error("Invalid response code ".concat(request.status, ". Response was ").concat(request.responseText, ".")));
+								reject(new Error("Invalid response code " + request.status + ". Response was " + request.responseText + "."));
 							}
 						}
 					};
@@ -1905,7 +2159,7 @@ module.exports = () => {
 						return response.text();
 					}
 
-					throw new Error("Bad response code: ".concat(response.status));
+					throw new Error("Bad response code: " + response.status);
 				});
 			};
 		});
@@ -1952,12 +2206,9 @@ module.exports = () => {
 		var createNetworkStrategy = (function (window) {
 			var fetch = isFunction(window.fetch) ? fetchFactory(window.fetch) : xhrRequestFactory(window.XMLHttpRequest);
 			var sendBeacon = window.navigator && isFunction(window.navigator.sendBeacon) ? sendBeaconFactory(window.navigator) : fetch;
-			return function (url, body, isBeacon) {
-				if (isBeacon) {
-					return sendBeacon(url, body);
-				}
-
-				return fetch(url, body);
+			return function (url, body, expectsResponse) {
+				var method = expectsResponse ? fetch : sendBeacon;
+				return method(url, body);
 			};
 		});
 
@@ -2005,19 +2256,18 @@ module.exports = () => {
 
 					try {
 						component = createComponent({
-							logger: logger.spawn("[".concat(namespace, "]")),
+							logger: logger.spawn("[" + namespace + "]"),
 							cookie: cookie(namespace, propertyID, cookieDomain),
 							config: config,
 							storage: storage
 						});
 					} catch (error) {
-						throw stackError("[".concat(namespace, "] An error occurred during component creation."), error);
+						throw stackError("[" + namespace + "] An error occurred during component creation.", error);
 					}
 
 					componentRegistry.register(namespace, component);
-				}); // Output the finalized configuration
-
-				logger.info("Runtime configuration:\n", JSON.stringify(config, null, 2));
+				});
+				logger.log("Computed configuration:", config.toJSON());
 				var lifecycle = createLifecycle(componentRegistry);
 				var network = createNetwork$1(config, logger, lifecycle);
 				lifecycle.onComponentsRegistered({
@@ -2040,10 +2290,9 @@ module.exports = () => {
     OF ANY KIND, either express or implied. See the License for the specific language
     governing permissions and limitations under the License.
     */
-		// TO-DOCUMENT: How to enable debugging and logging.
-		var createLogger = function createLogger(window, debugController, prefix) {
+		var createLogger = function createLogger(window, logController, prefix) {
 			var process = function process(level) {
-				if (debugController.debugEnabled) {
+				if (logController.logEnabled) {
 					var _window$console;
 
 					for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -2086,7 +2335,7 @@ module.exports = () => {
 				 * @param {String} additionalPrefix
 				 */
 				spawn: function spawn(additionalPrefix) {
-					return createLogger(window, debugController, "".concat(prefix, " ").concat(additionalPrefix));
+					return createLogger(window, logController, prefix + " " + additionalPrefix);
 				}
 			};
 		};
@@ -2103,7 +2352,7 @@ module.exports = () => {
     governing permissions and limitations under the License.
     */
 		var cookieDetails = {
-			ALLOY_COOKIE_NAME: "TEMP_ALLOY_COOKIE",
+			ALLOY_COOKIE_NAME: "adobe_alloy",
 			// TODO: Rename this cookie
 			ALLOY_COOKIE_TTL: 180
 		};
@@ -2115,9 +2364,10 @@ module.exports = () => {
 			try {
 				return JSON.parse(object);
 			} catch (error) {
-				throw new Error("Invalid cookie format in ".concat(cookieName, " cookie"));
+				throw new Error("Invalid cookie format in " + cookieName + " cookie");
 			}
-		};
+		}; // TODO: Support passing a configurable expiry in the config when creating this cookie.
+
 
 		var createCookie = function createCookie(prefix, id) {
 			var cookieDomain = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
@@ -2127,7 +2377,7 @@ module.exports = () => {
 				 * @param {...*} arg String key stored in alloy cookie under a component prefix.
 				 */
 				get: function get(name) {
-					var cookieName = "".concat(ALLOY_COOKIE_NAME, "_").concat(id);
+					var cookieName = ALLOY_COOKIE_NAME + "_" + id;
 					var currentCookie = reactorCookie.get(cookieName);
 					var currentCookieParsed = currentCookie && safeJSONParse(currentCookie, cookieName);
 					return currentCookieParsed && currentCookieParsed[prefix] && currentCookieParsed[prefix][name];
@@ -2138,7 +2388,7 @@ module.exports = () => {
 				 * @param {...*} arg Strings with key and value to be stored in alloy cookie.
 				 */
 				set: function set(key, value) {
-					var cookieName = "".concat(ALLOY_COOKIE_NAME, "_").concat(id);
+					var cookieName = ALLOY_COOKIE_NAME + "_" + id;
 					var currentCookie = reactorCookie.get(cookieName) ? safeJSONParse(reactorCookie.get(cookieName)) : {};
 
 					var updatedCookie = _objectSpread({}, currentCookie, _defineProperty({}, prefix, _objectSpread({}, currentCookie[prefix], _defineProperty({}, key, value))));
@@ -2154,7 +2404,7 @@ module.exports = () => {
 				 * @param {...*} arg String key stored in alloy cookie under a component prefix.
 				 */
 				remove: function remove(key) {
-					var cookieName = "".concat(ALLOY_COOKIE_NAME, "_").concat(id);
+					var cookieName = ALLOY_COOKIE_NAME + "_" + id;
 					var currentCookie = reactorCookie.get(cookieName);
 					var currentCookieParsed = currentCookie && safeJSONParse(currentCookie);
 
@@ -2180,22 +2430,22 @@ module.exports = () => {
     OF ANY KIND, either express or implied. See the License for the specific language
     governing permissions and limitations under the License.
     */
-		var createDebugController = (function (instanceNamespace, getNamespacedStorage) {
-			// Segregate whether debugging is enabled by the SDK instance name.
-			// This way consumers can debug one instance at a time.
+		var createLogController = (function (instanceNamespace, getNamespacedStorage) {
+			// Segregate whether logging is enabled by the SDK instance name.
+			// This way consumers can log one instance at a time.
 			// TODO: Figure out how this plays out with segregating Web Storage
 			// in the rest of the SDK. Is it segregated by Org ID or Property ID
 			// in the rest of the SDK?
-			var storage = getNamespacedStorage("instance.".concat(instanceNamespace, "."));
-			var debugEnabled = storage.persistent.getItem("debug") === "true";
+			var storage = getNamespacedStorage("instance." + instanceNamespace + ".");
+			var logEnabled = storage.persistent.getItem("log") === "true";
 			return {
-				get debugEnabled() {
-					return debugEnabled;
+				get logEnabled() {
+					return logEnabled;
 				},
 
-				set debugEnabled(value) {
-					storage.persistent.setItem("debug", value);
-					debugEnabled = value;
+				set logEnabled(value) {
+					storage.persistent.setItem("log", value);
+					logEnabled = value;
 				}
 
 			};
@@ -2222,11 +2472,15 @@ module.exports = () => {
 					content.timestamp = timestamp;
 				},
 				mergeData: createMerger(content, "data"),
+				mergeMeta: createMerger(content, "meta"),
 				mergeQuery: createMerger(content, "query"),
 				mergeWeb: createMerger(content, "web"),
 				mergeDevice: createMerger(content, "device"),
 				mergeEnvironment: createMerger(content, "environment"),
 				mergePlaceContext: createMerger(content, "placeContext"),
+				expectsResponse: function expectsResponse() {
+					return Boolean(content.query);
+				},
 				toJSON: function toJSON() {
 					return content;
 				}
@@ -2250,33 +2504,34 @@ module.exports = () => {
 			var lifecycle;
 			var network;
 
-			var makeServerCall = function makeServerCall(events, beacon) {
-				var _network$newRequest = network.newRequest(beacon),
+			var makeServerCall = function makeServerCall(event) {
+				var expectsResponse = event.expectsResponse();
+
+				var _network$newRequest = network.newRequest(expectsResponse),
 					payload = _network$newRequest.payload,
 					send = _network$newRequest.send;
 
-				events.forEach(function (event) {
-					return payload.addEvent(event);
+				payload.addEvent(event);
+				return send().then(function (response) {
+					var data = {
+						requestBody: clone(payload)
+					};
+
+					if (response) {
+						data.responseBody = clone(response);
+					}
+
+					return data;
 				});
-				send();
 			};
 
 			var createEventHandler = function createEventHandler(options) {
-				var beacon = options.beacon;
 				var event = createEvent();
-				var isViewStart = options.type === VIEW_START_EVENT; // Attempt to use Beacon transport.
-				// If the `beacon` config is set, we use it ONLY if not `viewStart`
-				// because `viewStart` events are expected to return a response.
-				// TODO Validate `beacon`.
-				// TODO Might have to move somewhere closer to Network Manager.
-				// TODO Consider adding `beacon` as a config instead of
-				// passing it on each command. This way `Alloy` will always
-				// use beacon when possible.
-
-				var shouldUseBeacon = isViewStart || !beacon ? false : beacon;
+				var isViewStart = options.type === VIEW_START_EVENT;
 				event.mergeData(options.data);
-				lifecycle.onBeforeEvent(event, isViewStart).then(function () {
-					makeServerCall([event], shouldUseBeacon);
+				event.mergeMeta(options.meta);
+				return lifecycle.onBeforeEvent(event, isViewStart).then(function () {
+					return makeServerCall(event);
 				});
 			};
 
@@ -2298,7 +2553,7 @@ module.exports = () => {
 		var millisecondsPerHour = 60 * 60 * 1000; // TODO: use alloy cookie once https://github.com/adobe/alloy/pull/26 is merged
 
 		var getControlObject = function getControlObject() {
-			var val = reactorCookie.get("".concat(namespace, "idSyncControl")) || "";
+			var val = reactorCookie.get(namespace + "idSyncControl") || "";
 			var arr = val ? val.split("_") : [];
 			return arr.reduce(function (obj, pair) {
 				var o = obj;
@@ -2316,9 +2571,9 @@ module.exports = () => {
 		var setControlObject = function setControlObject(obj) {
 			var arr = [];
 			Object.keys(obj).forEach(function (id) {
-				return arr.push("".concat(id, "-").concat(obj[id]));
+				return arr.push(id + "-" + obj[id]);
 			});
-			reactorCookie.set("".concat(namespace, "idSyncControl"), arr.join("_"), {
+			reactorCookie.set(namespace + "idSyncControl", arr.join("_"), {
 				expires: 6 * 30 // 6 months
 
 			});
@@ -2384,16 +2639,17 @@ module.exports = () => {
 			payload.addIdentity(ECID_NAMESPACE, {
 				id: ecid
 			});
-		}; // TODO: Namespace the cookie to be specific to the org.
-
-
-		var getEcid = function getEcid() {
-			return reactorCookie.get("ecid");
 		};
 
 		var createIdentity = function createIdentity(_ref) {
 			var config = _ref.config,
-				logger = _ref.logger;
+				logger = _ref.logger,
+				cookie = _ref.cookie;
+
+			var getEcid = function getEcid() {
+				return cookie.get(ECID_NAMESPACE);
+			};
+
 			var ecid = getEcid();
 			var deferredForEcid;
 
@@ -2444,35 +2700,14 @@ module.exports = () => {
 
 				if (ecidPayload) {
 					ecid = ecidPayload.id;
-					reactorCookie.set("ecid", ecid, {
-						expires: 7
-					});
+					cookie.set(ECID_NAMESPACE, ecid);
 
 					if (deferredForEcid) {
 						deferredForEcid.resolve();
 					}
 				}
 
-				var idSyncs = response.getPayloadByType("identity:exchange") || []; // const idSyncs = [
-				//   {
-				//     type: "url",
-				//     id: 411,
-				//     spec: {
-				//       url:
-				//         "//idsync.rlcdn.com/365868.gif?partner_uid=79653899615727305204290942296930013268",
-				//       hideReferrer: 0
-				//     }
-				//   },
-				//   {
-				//     type: "url",
-				//     id: 2097629,
-				//     spec: {
-				//       url: "//dp2.33across.com/ps/?pid=897&random=1872864154",
-				//       hideReferrer: 1
-				//     }
-				//   }
-				// ];
-
+				var idSyncs = response.getPayloadByType("identity:exchange") || [];
 				processIdSyncs({
 					destinations: idSyncs,
 					config: config,
@@ -2605,153 +2840,304 @@ module.exports = () => {
     OF ANY KIND, either express or implied. See the License for the specific language
     governing permissions and limitations under the License.
     */
-		// TODO: Can/Should we use the value exported from src/constants/namespace.js
-		// for our key prefix?
-		var KEY_PREFIX = "___alloy";
-		var KEY_DETECT_PREFIX = "".concat(KEY_PREFIX, "-detect");
-
-		var hash = function hash(string) {
-			var result = 0;
-			var length = string.length;
-
-			for (var i = 0; i < length; i += 1) {
-				/* eslint-disable */
-				result = (result << 5) - result + string.charCodeAt(i) & 0xffffffff;
-				/* eslint-enable */
-			}
-
-			return result;
-		};
-
-		var buildKey = function buildKey(prefix, selector) {
-			return "".concat(prefix, "-").concat(hash(selector));
-		};
-
-		var createStyleTag = function createStyleTag(className, content) {
-			var style = document.createElement("style");
-			style.className = className;
-			style.innerHTML = content;
-			return style;
-		};
-
-		var appendTo = function appendTo(parent, element) {
-			parent.appendChild(element);
-		};
-
-		var removeFrom = function removeFrom(parent, element) {
-			parent.removeChild(element);
-		};
-
-		var setupElementDetection = function setupElementDetection(key, selector, callback) {
-			var content = "\n    @keyframes ".concat(key, " {\n      from { opacity: 0.99; }\n      to { opacity: 1; }\n    }\n\n    ").concat(selector, " {\n      animation-duration: 0.001s;\n      animation-name: ").concat(key, ";\n    }\n    ");
-			document.addEventListener("animationstart", callback, false);
-			appendTo(document.head, createStyleTag(key, content));
-		};
-
-		var hideElement = function hideElement(selector) {
-			var key = buildKey(KEY_PREFIX, selector);
-			var content = "".concat(selector, " { visibility: hidden }");
-			appendTo(document.head, createStyleTag(key, content));
-		};
-
-		var showElement = function showElement(selector) {
-			var key = buildKey(KEY_PREFIX, selector);
-			var elements = document.querySelectorAll(".".concat(key)); // elements is a nodeList, and in IE nodeList does not support forEach
-
-			for (var i = 0; i < elements.length; i += 1) {
-				removeFrom(document.head, elements[i]);
-			}
-		};
-
-		var render = function render(cache, event, logger) {
-			var animationName = event.animationName;
-
-			if (animationName.indexOf(KEY_DETECT_PREFIX) === -1) {
+		var STYLE_TAG = "style";
+		var CACHE = {};
+		var hideElements = function hideElements(prehidingSelector) {
+			// if we have different events with the same
+			// prehiding selector we don't want to recreate
+			// the style tag
+			if (CACHE[prehidingSelector]) {
 				return;
 			}
 
-			var option = cache[animationName];
+			var node = createNode(STYLE_TAG);
+			node.innerText = prehidingSelector + " { visibility: hidden }";
+			appendNode(document.head, node);
+			CACHE[prehidingSelector] = node;
+		};
+		var showElements = function showElements(prehidingSelector) {
+			var node = CACHE[prehidingSelector];
 
-			if (!option) {
-				logger.log("Element with key:", animationName, "not in cache");
-				return;
-			}
-
-			var type = option.type,
-				selector = option.selector,
-				content = option.content;
-
-			switch (type) {
-				case "setHtml":
-					/* eslint-disable */
-					event.target.innerHTML = content;
-					/* eslint-enable */
-
-					showElement(selector);
-					break;
-
-				default:
-					logger.log(type, "rendering is not supported");
-					break;
+			if (node) {
+				removeNode(node);
 			}
 		};
+
+		/*
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+    */
+		var createSetHtml = (function (collect) {
+			return function (settings, event) {
+				var element = event.element,
+					prehidingSelector = event.prehidingSelector;
+				var content = settings.content,
+					meta = settings.meta; // this is a very naive approach, we will expand later
+
+				element.innerHTML = content; // after rendering we should show remove the flicker control styles
+
+				showElements(prehidingSelector); // make sure we send back the metadata after successful rendering
+
+				collect({
+					meta: {
+						personalization: meta
+					}
+				});
+			};
+		});
+
+		/*
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+    */
+		var elementExists = (function (settings, trigger) {
+			var selector = settings.selector,
+				prehidingSelector = settings.prehidingSelector;
+			hideElements(prehidingSelector);
+			awaitSelector(selector).then(function (nodes) {
+				nodes.forEach(function (element) {
+					trigger({
+						element: element,
+						prehidingSelector: prehidingSelector
+					});
+				});
+			}).catch(function () {
+				// in case of awaiting timing out we
+				// need to remove the style tag
+				// hence showing the nodes
+				showElements(prehidingSelector);
+			});
+		});
+
+		/*
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+    */
+		var initRuleComponentModules = (function (collect) {
+			var setHtml = createSetHtml(collect);
+			return {
+				setHtml: setHtml,
+				elementExists: elementExists
+			};
+		});
+
+		/*
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+    */
+		var buildRuleExecutionOrder = function buildRuleExecutionOrder(rules) {
+			var ruleEventPairs = [];
+			rules.forEach(function (rule) {
+				if (!rule.events) {
+					return;
+				}
+
+				rule.events.forEach(function (event) {
+					ruleEventPairs.push({
+						rule: rule,
+						event: event
+					});
+				});
+			});
+			return ruleEventPairs;
+		};
+
+		var isConditionMet = function isConditionMet(condition, result) {
+			return result && !condition.negate || !result && condition.negate;
+		};
+
+		var executeRules = (function (rules, ruleComponentModules, logger) {
+			var eventModulesInitialized = false;
+			var triggerCallQueue = [];
+
+			var executeModule = function executeModule(moduleType, args) {
+				var ruleComponentModule = ruleComponentModules[moduleType];
+
+				if (!ruleComponentModule) {
+					throw new Error("Rule component module \"" + moduleType + "\" not found");
+				}
+
+				return ruleComponentModule.apply(void 0, _toConsumableArray(args));
+			};
+
+			var getErrorMessage = function getErrorMessage(ruleComponent, rule, errorMessage, errorStack) {
+				return "Failed to execute " + ruleComponent.moduleType + " for " + rule.name + " rule. " + errorMessage + " " + (errorStack ? "\n " + errorStack : "");
+			};
+
+			var logActionError = function logActionError(action, rule, e) {
+				logger.error(getErrorMessage(action, rule, e.message, e.stack));
+			};
+
+			var logConditionError = function logConditionError(condition, rule, e) {
+				logger.error(getErrorMessage(condition, rule, e.message, e.stack));
+			};
+
+			var logConditionNotMet = function logConditionNotMet(condition, rule) {
+				logger.log("Condition " + condition.moduleType + " for rule " + rule.name + " not met.");
+			};
+
+			var logRuleCompleted = function logRuleCompleted(rule) {
+				logger.log("Rule " + rule.name + " fired.");
+			};
+
+			var runActions = function runActions(rule, syntheticEvent) {
+				if (!rule.actions) {
+					return;
+				}
+
+				var action;
+
+				for (var i = 0; i < rule.actions.length; i += 1) {
+					action = rule.actions[i];
+
+					try {
+						executeModule(action.moduleType, [action.settings, syntheticEvent]);
+					} catch (e) {
+						logActionError(action, rule, e);
+						return;
+					}
+				}
+
+				logRuleCompleted(rule);
+			};
+
+			var checkConditions = function checkConditions(rule, syntheticEvent) {
+				if (!rule.conditions) {
+					return;
+				}
+
+				var condition;
+
+				for (var i = 0; i < rule.conditions.length; i += 1) {
+					condition = rule.conditions[i];
+
+					try {
+						var result = executeModule(condition.moduleType, [condition.settings, syntheticEvent]);
+
+						if (!isConditionMet(condition, result)) {
+							logConditionNotMet(condition, rule);
+							return;
+						}
+					} catch (e) {
+						logConditionError(condition, rule, e);
+						return;
+					}
+				}
+
+				runActions(rule, syntheticEvent);
+			};
+
+			var initEventModule = function initEventModule(ruleEventPair) {
+				var rule = ruleEventPair.rule,
+					event = ruleEventPair.event;
+
+				try {
+					var trigger = function trigger(syntheticEvent) {
+						if (!eventModulesInitialized) {
+							triggerCallQueue.push(trigger.bind(null, syntheticEvent));
+							return;
+						}
+
+						checkConditions(rule, syntheticEvent);
+					};
+
+					executeModule(event.moduleType, [event.settings, trigger]);
+				} catch (e) {
+					logger.error(getErrorMessage(event, rule, e.message, e.stack));
+				}
+			};
+
+			buildRuleExecutionOrder(rules).forEach(initEventModule);
+			eventModulesInitialized = true;
+			triggerCallQueue.forEach(function (triggerCall) {
+				return triggerCall();
+			});
+			triggerCallQueue = null;
+		});
+
+		/*
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+    */
+
+		/*
+    Copyright 2019 Adobe. All rights reserved.
+    This file is licensed to you under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License. You may obtain a copy
+    of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+    OF ANY KIND, either express or implied. See the License for the specific language
+    governing permissions and limitations under the License.
+    */
+		var PAGE_HANDLE = "personalization:page";
 
 		var createPersonalization = function createPersonalization(_ref) {
 			var logger = _ref.logger;
-			var storage = {};
-			var componentRegistry;
-
-			var collect = function collect(offerInfo) {
-				componentRegistry.getCommand("event")(offerInfo);
-			};
-
+			var ruleComponentModules;
 			return {
 				lifecycle: {
 					onComponentsRegistered: function onComponentsRegistered(tools) {
-						componentRegistry = tools.componentRegistry;
+						var componentRegistry = tools.componentRegistry;
+						ruleComponentModules = initRuleComponentModules(componentRegistry.getCommand("event"));
 					},
 					onBeforeEvent: function onBeforeEvent(event, isViewStart) {
-						if (isViewStart) {
-							event.mergeQuery({
-								personalization: {
-									prefetch: {
-										views: true
-									},
-									execute: {
-										pageLoad: true
-									}
-								}
-							});
+						if (!isViewStart) {
+							return;
 						}
-					},
-					onBeforeSend: function onBeforeSend(_ref2) {
-						var payload = _ref2.payload;
-						payload.mergeMeta({
+
+						event.mergeQuery({
 							personalization: {
-								client: "demo12",
-								sessionID: "12344566"
+								page: true,
+								views: true
 							}
 						});
 					},
 					onResponse: function onResponse(response) {
-						// eslint-disable-next-line no-unreachable
-						var personalization = response.getPayloadByType("personalization:run") || []; // Caution!!! Here comes Target black magic
+						var fragments = response.getPayloadByType(PAGE_HANDLE) || [];
+						fragments.forEach(function (fragment) {
+							var _fragment$rules = fragment.rules,
+								rules = _fragment$rules === void 0 ? [] : _fragment$rules;
 
-						personalization.forEach(function (option) {
-							var selector = option.selector,
-								eventToken = option.eventToken;
-							var key = buildKey(KEY_DETECT_PREFIX, selector);
-							storage[key] = option;
-							hideElement(selector);
-							setupElementDetection(key, selector, function (event) {
-								render(storage, event, logger);
-								collect({
-									beacon: true,
-									data: {
-										offerInfo: eventToken
-									}
-								});
-							});
+							if (isNonEmptyArray(rules)) {
+								executeRules(rules, ruleComponentModules, logger);
+							}
 						});
 					}
 				}
@@ -2962,7 +3348,7 @@ module.exports = () => {
 
 						configuredContexts = configuredContextNames.filter(function (configuredContextName) {
 							if (!availableContexts[configuredContextName]) {
-								logger.warn("Configured context ".concat(configuredContextName, " is not available."));
+								logger.warn("Configured context " + configuredContextName + " is not available.");
 								return false;
 							}
 
@@ -3064,10 +3450,10 @@ module.exports = () => {
 
 		if (namespaces) {
 			namespaces.forEach(function (namespace) {
-				var debugController = createDebugController(namespace, storage);
-				var logger = createLogger(window, debugController, "[".concat(namespace, "]"));
+				var logController = createLogController(namespace, storage);
+				var logger = createLogger(window, logController, "[" + namespace + "]");
 				var initializeComponents = initializeComponentsFactory(componentCreators, logger, storage, createCookie);
-				var instance = createInstance(namespace, initializeComponents, debugController);
+				var instance = createInstance(namespace, initializeComponents, logController, logger, window);
 				var queue = window[namespace].q;
 				queue.push = instance;
 				queue.forEach(instance);
@@ -3075,5 +3461,6 @@ module.exports = () => {
 		}
 
 	}));
+
 
 };

@@ -31,7 +31,7 @@ module.exports = (options = {}) => {
   const { watch } = options;
   const parcelPromise = new Promise(resolve => {
     const bundler = new Bundler(viewEntries, {
-      publicUrl: ".",
+      publicUrl: "../",
       outDir: viewOutDir,
       watch
     });
