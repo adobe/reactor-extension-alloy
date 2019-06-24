@@ -119,6 +119,7 @@ const Configuration = () => {
                         label="Add Account"
                         onClick={() => {
                           arrayHelpers.push(createEmptyAccount());
+                          setSelectedAccordionIndex(values.accounts.length);
                         }}
                       />
                     </div>
