@@ -61,7 +61,6 @@ module.exports = {
             "config": {
               "partner": "testdomain",
               "containerNSID": 0,
-              "disableDestinationPublishingIframe": false,
               "isCoopSafe": false,
               "uuidCookie": {
                 "name": "aam_uuid",

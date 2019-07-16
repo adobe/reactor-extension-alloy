@@ -94,18 +94,6 @@ const AudienceManager = ({
                 </div>
                 <div>
                   <WrappedField
-                    name={ `${nameSpace}.config.disableDestinationPublishingIframe` }
-                    component={ Checkbox }
-                  >
-                    Do not attach the destination publishing IFRAME to the DOM or fire destinations
-                  </WrappedField>
-                  <InfoTip className="u-fieldLineHeight u-noPadding">
-                    If true, will not attach the destination publishing IFRAME
-                    to the DOM or fire destinations. Default is false.
-                  </InfoTip>
-                </div>
-                <div>
-                  <WrappedField
                     name={ `${nameSpace}.config.isCoopSafe` }
                     component={ Checkbox }
                   >
@@ -223,7 +211,6 @@ export const formConfig = {
     const {
       partner,
       containerNSID,
-      disableDestinationPublishingIframe,
       isCoopSafe,
       uuidCookie
     } = config || {};
@@ -248,8 +235,6 @@ export const formConfig = {
       if (config && Object.keys(config).length > 1) {
         formAudienceManager.useAdvancedAudienceManagerSettings = true;
         formAudienceManager.config.containerNSID = containerNSID;
-        formAudienceManager.config.disableDestinationPublishingIframe =
-          disableDestinationPublishingIframe;
         formAudienceManager.config.isCoopSafe = isCoopSafe;
         if (moduleProperties.audienceManager.config.uuidCookie) {
           formAudienceManager.config.uuidCookie.name = name;
@@ -282,10 +267,6 @@ export const formConfig = {
     } else {
       aamValues.config.containerNSID = Number(aamValues.config.containerNSID);
     }
-    if (!aamValues.config.disableDestinationPublishingIframe) {
-      // Default is false, so we can delete this
-      delete aamValues.config.disableDestinationPublishingIframe;
-    }
     if (!aamValues.config.isCoopSafe) {
       // Default is false, so we can delete this
       delete aamValues.config.isCoopSafe;
@@ -316,8 +297,6 @@ export const formConfig = {
         config: {
           partner: aamValues.config.partner,
           containerNSID: aamValues.config.containerNSID,
-          disableDestinationPublishingIframe:
-            aamValues.config.disableDestinationPublishingIframe,
           isCoopSafe: aamValues.config.isCoopSafe
         }
       }
