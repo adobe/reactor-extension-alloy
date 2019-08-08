@@ -24,19 +24,19 @@ const ExtensionView = ({
   validationSchema,
   render
 }) => {
-  const [{ initialized, initialValues, settings }, setState] = useState({
+  const [{ initialized, initialValues, initInfo }, setState] = useState({
     initialized: false,
     initialValues: {},
-    settings: {}
+    initInfo: {}
   });
 
   useEffect(() => {
     window.extensionBridge.register({
-      init: options => {
+      init: _initInfo => {
         setState({
           initialized: true,
-          initialValues: getInitialValues(options.settings),
-          settings: options.settings
+          initialValues: getInitialValues(_initInfo.settings),
+          initInfo: _initInfo
         });
       },
       getSettings: () => {
@@ -49,6 +49,7 @@ const ExtensionView = ({
         // (which were set during submitForm()) to see if the form is valid.
         // https://github.com/jaredpalmer/formik/issues/1580
         return formikProps.submitForm().then(() => {
+          formikProps.setSubmitting(false);
           return Object.keys(formikProps.errors).length === 0;
         });
       }
@@ -65,7 +66,7 @@ const ExtensionView = ({
         validationSchema={validationSchema}
         render={_formikProps => {
           formikProps = _formikProps;
-          return render({ formikProps, settings });
+          return render({ formikProps, initInfo });
         }}
       />
     </ErrorBoundary>

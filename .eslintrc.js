@@ -10,6 +10,7 @@ module.exports = {
     "no-param-reassign": "off",
     "prettier/prettier": "error",
     "react/require-default-props": "off",
+    "react/no-array-index-key": "off",
     "jsx-a11y/label-has-associated-control": [
       2,
       {

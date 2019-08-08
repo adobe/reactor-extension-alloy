@@ -10,45 +10,61 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const getSettings = async t => {
+  await t.switchToMainWindow();
+  return t.eval(() => {
+    return window.loadExtensionViewPromise.then(extensionView => {
+      return extensionView.getSettings();
+    });
+  });
+};
+
+const validate = async t => {
+  await t.switchToMainWindow();
+  return t.eval(() => {
+    return window.loadExtensionViewPromise.then(extensionView => {
+      return extensionView.validate();
+    });
+  });
+};
+
 module.exports = viewPath => {
   // window.loadExtensionView is provided by the extension sandbox tool.
   // More details about the tool and this method can be found here:
   // https://www.npmjs.com/package/@adobe/reactor-sandbox
   return {
-    init: async (t, settings = null) => {
+    async init(t, initInfo = {}) {
       await t.switchToMainWindow();
       return t.eval(
         () => {
           window.loadExtensionViewPromise = window.loadExtensionView({
             viewPath,
-            initInfo: {
-              settings
-            }
+            initInfo
           });
         },
         {
           dependencies: {
             viewPath,
-            settings
+            initInfo
           }
         }
       );
     },
-    getSettings: async t => {
-      await t.switchToMainWindow();
-      return t.eval(() => {
-        return window.loadExtensionViewPromise.then(extensionView => {
-          return extensionView.getSettings();
-        });
-      });
+    async expectIsValid(t) {
+      const valid = await validate(t);
+      await t
+        .expect(valid)
+        .ok("Expected settings to be valid when they were not valid");
     },
-    validate: async t => {
-      await t.switchToMainWindow();
-      return t.eval(() => {
-        return window.loadExtensionViewPromise.then(extensionView => {
-          return extensionView.validate();
-        });
-      });
+    async expectIsNotValid(t) {
+      const valid = await validate(t);
+      await t
+        .expect(valid)
+        .notOk("Expected settings to not be valid when they were valid");
+    },
+    async expectSettings(t, expectedSettings) {
+      const actualSettings = await getSettings(t);
+      await t.expect(actualSettings).eql(expectedSettings);
     }
   };
 };

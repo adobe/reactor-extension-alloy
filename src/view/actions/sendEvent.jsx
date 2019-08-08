@@ -15,11 +15,13 @@ import React from "react";
 import { object, string } from "yup";
 import Textfield from "@react/react-spectrum/Textfield";
 import ComboBox from "@react/react-spectrum/ComboBox";
+import Select from "@react/react-spectrum/Select";
+import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
-import "./sendEvent.styl";
 import InfoTip from "../components/infoTip";
+import "./sendEvent.styl";
 
 const getInitialValues = settings => {
   // settings is null if the user is creating a new rule component
@@ -27,16 +29,18 @@ const getInitialValues = settings => {
     settings = {};
   }
 
-  const { data = "", type = "" } = settings;
+  const { propertyID = "", data = "", type = "" } = settings;
 
   return {
-    data,
-    type
+    propertyID,
+    type,
+    data
   };
 };
 
 const getSettings = values => {
   const settings = {
+    propertyID: values.propertyID,
     data: values.data
   };
 
@@ -49,6 +53,7 @@ const getSettings = values => {
 
 const invalidDataMessage = "Please specify a data element";
 const validationSchema = object().shape({
+  propertyID: string().required("Please specify an account"),
   data: string()
     .required(invalidDataMessage)
     .matches(/^%([^%]+)%$/, invalidDataMessage)
@@ -60,40 +65,82 @@ const SendEvent = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={() => {
+      render={({ initInfo }) => {
+        const accountOptions = initInfo.extensionSettings.accounts.map(
+          account => ({
+            value: account.propertyID,
+            label: account.propertyID
+          })
+        );
+
+        if (initInfo.settings) {
+          const previouslySavedPropertyID = initInfo.settings.propertyID;
+          if (
+            !accountOptions.some(
+              accountOption =>
+                accountOption.value === initInfo.settings.propertyID
+            )
+          ) {
+            accountOptions.unshift({
+              value: previouslySavedPropertyID,
+              label: `${previouslySavedPropertyID} (Deleted)`,
+              disabled: true
+            });
+          }
+        }
+
         return (
           <div>
             <div>
-              <label>
-                <span className="Label">Type</span>
-                <div>
-                  <WrappedField
-                    name="type"
-                    component={ComboBox}
-                    supportDataElement
-                    options={["viewStart"]}
-                  />
-                </div>
+              <label
+                htmlFor="propertyIDField"
+                className="spectrum-Form-itemLabel"
+              >
+                Account
               </label>
+              <div>
+                <WrappedField
+                  id="propertyIDField"
+                  name="propertyID"
+                  component={Select}
+                  componentClassName="u-fieldLong"
+                  options={accountOptions}
+                />
+              </div>
             </div>
             <div className="u-gapTop">
-              <label>
-                <span className="Label">
-                  Data
-                  <InfoTip>
-                    Please specify a data element that will return a JavaScript
-                    object. This object will be sent to the Adobe Experience
-                    Platform.
-                  </InfoTip>
-                </span>
-                <div>
-                  <WrappedField
-                    name="data"
-                    component={Textfield}
-                    supportDataElement
-                  />
-                </div>
+              <label htmlFor="typeField" className="spectrum-Form-itemLabel">
+                Type
               </label>
+              <div>
+                <WrappedField
+                  id="typeField"
+                  name="type"
+                  component={ComboBox}
+                  componentClassName="u-fieldLong"
+                  supportDataElement
+                  options={["viewStart"]}
+                />
+              </div>
+            </div>
+            <div className="u-gapTop">
+              <label htmlFor="dataField" className="spectrum-Form-itemLabel">
+                Data
+                <InfoTip>
+                  Please specify a data element that will return a JavaScript
+                  object. This object will be sent to the Adobe Experience
+                  Platform.
+                </InfoTip>
+              </label>
+              <div>
+                <WrappedField
+                  id="dataField"
+                  name="data"
+                  component={Textfield}
+                  componentClassName="u-fieldLong"
+                  supportDataElement
+                />
+              </div>
             </div>
           </div>
         );

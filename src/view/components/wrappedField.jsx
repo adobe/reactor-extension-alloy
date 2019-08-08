@@ -72,7 +72,7 @@ export class DecoratedInput extends React.Component {
       className,
       componentClassName,
       field: input,
-      form: { errors, setFieldValue },
+      form: { touched, errors, setFieldValue },
       children,
       supportDataElement,
       supportDataElementName,
@@ -104,13 +104,19 @@ export class DecoratedInput extends React.Component {
       className: componentClassName
     };
 
-    const errorToShow = getNestedValue(errors, input.name);
+    let errorToShow;
 
-    if (errorToShow) {
-      if (FieldComponent === Textfield) {
-        fieldComponentsProps.validationState = "invalid";
-      } else {
-        fieldComponentsProps.invalid = true;
+    const isTouched = getNestedValue(touched, input.name);
+
+    if (isTouched) {
+      errorToShow = getNestedValue(errors, input.name);
+
+      if (errorToShow) {
+        if (FieldComponent === Textfield) {
+          fieldComponentsProps.validationState = "invalid";
+        } else {
+          fieldComponentsProps.invalid = true;
+        }
       }
     }
 
