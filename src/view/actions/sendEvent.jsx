@@ -14,7 +14,7 @@ import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import { object, string } from "yup";
 import Textfield from "@react/react-spectrum/Textfield";
-import ComboBox from "@react/react-spectrum/ComboBox";
+import Checkbox from "@react/react-spectrum/Checkbox";
 import Select from "@react/react-spectrum/Select";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
@@ -29,23 +29,24 @@ const getInitialValues = settings => {
     settings = {};
   }
 
-  const { propertyID = "", data = "", type = "" } = settings;
+  const { propertyId = "", viewStart = false, data = "" } = settings;
 
   return {
-    propertyID,
-    type,
+    propertyId,
+    viewStart,
     data
   };
 };
 
 const getSettings = values => {
   const settings = {
-    propertyID: values.propertyID,
+    propertyId: values.propertyId,
     data: values.data
   };
 
-  if (values.type) {
-    settings.type = values.type;
+  // Only add viewStart if the value is different than the default (false).
+  if (values.viewStart) {
+    settings.viewStart = true;
   }
 
   return settings;
@@ -53,7 +54,7 @@ const getSettings = values => {
 
 const invalidDataMessage = "Please specify a data element";
 const validationSchema = object().shape({
-  propertyID: string().required("Please specify an account"),
+  propertyId: string().required("Please specify an account"),
   data: string()
     .required(invalidDataMessage)
     .matches(/^%([^%]+)%$/, invalidDataMessage)
@@ -68,22 +69,22 @@ const SendEvent = () => {
       render={({ initInfo }) => {
         const accountOptions = initInfo.extensionSettings.accounts.map(
           account => ({
-            value: account.propertyID,
-            label: account.propertyID
+            value: account.propertyId,
+            label: account.propertyId
           })
         );
 
         if (initInfo.settings) {
-          const previouslySavedPropertyID = initInfo.settings.propertyID;
+          const previouslySavedPropertyId = initInfo.settings.propertyId;
           if (
             !accountOptions.some(
               accountOption =>
-                accountOption.value === initInfo.settings.propertyID
+                accountOption.value === initInfo.settings.propertyId
             )
           ) {
             accountOptions.unshift({
-              value: previouslySavedPropertyID,
-              label: `${previouslySavedPropertyID} (Deleted)`,
+              value: previouslySavedPropertyId,
+              label: `${previouslySavedPropertyId} (Deleted)`,
               disabled: true
             });
           }
@@ -93,15 +94,15 @@ const SendEvent = () => {
           <div>
             <div>
               <label
-                htmlFor="propertyIDField"
+                htmlFor="propertyIdField"
                 className="spectrum-Form-itemLabel"
               >
                 Account
               </label>
               <div>
                 <WrappedField
-                  id="propertyIDField"
-                  name="propertyID"
+                  id="propertyIdField"
+                  name="propertyId"
                   component={Select}
                   componentClassName="u-fieldLong"
                   options={accountOptions}
@@ -109,19 +110,11 @@ const SendEvent = () => {
               </div>
             </div>
             <div className="u-gapTop">
-              <label htmlFor="typeField" className="spectrum-Form-itemLabel">
-                Type
-              </label>
-              <div>
-                <WrappedField
-                  id="typeField"
-                  name="type"
-                  component={ComboBox}
-                  componentClassName="u-fieldLong"
-                  supportDataElement
-                  options={["viewStart"]}
-                />
-              </div>
+              <WrappedField
+                name="viewStart"
+                component={Checkbox}
+                label="Occurs at the start of a view"
+              />
             </div>
             <div className="u-gapTop">
               <label htmlFor="dataField" className="spectrum-Form-itemLabel">

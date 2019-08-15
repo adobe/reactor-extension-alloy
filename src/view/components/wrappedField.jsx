@@ -17,6 +17,7 @@ import Button from "@react/react-spectrum/Button";
 import Textfield from "@react/react-spectrum/Textfield";
 import Checkbox from "@react/react-spectrum/Checkbox";
 import Radio from "@react/react-spectrum/Radio";
+import RadioGroup from "@react/react-spectrum/RadioGroup";
 import Data from "@react/react-spectrum/Icon/Data";
 import ValidationWrapper from "./validationWrapper";
 
@@ -97,6 +98,11 @@ export class DecoratedInput extends React.Component {
       setFieldValue(input.name, value);
       onChangeDefinedOnProps(value);
     };
+
+    // Unlike other components, RadioGroup's "value" prop is named "selectedValue". :/
+    if (FieldComponent === RadioGroup) {
+      input.selectedValue = input.value;
+    }
 
     const fieldComponentsProps = {
       ...input,

@@ -48,9 +48,25 @@ const createExpectValue = selector => async (t, value) => {
   await t.expect(selector.getAttribute("value")).eql(value);
 };
 
+const createClick = selector => async t => {
+  await switchToIframe(t);
+  await t.click(selector);
+};
+
+const createExpectChecked = selector => async t => {
+  await switchToIframe(t);
+  await t.expect(selector.checked).ok();
+};
+
+const createExpectUnchecked = selector => async t => {
+  await switchToIframe(t);
+  await t.expect(selector.checked).notOk();
+};
+
 module.exports = {
   select(selector) {
     return {
+      selector,
       expectError: createExpectError(selector),
       expectValue: createExpectValue(selector),
       async selectOption(t, label) {
@@ -62,11 +78,66 @@ module.exports = {
   },
   textfield(selector) {
     return {
+      selector,
       expectError: createExpectError(selector),
       expectValue: createExpectValue(selector),
       async typeText(t, text) {
         await switchToIframe(t);
         await t.typeText(selector, text);
+      }
+    };
+  },
+  checkbox(selector) {
+    return {
+      selector,
+      expectChecked: createExpectChecked(selector),
+      expectUnchecked: createExpectUnchecked(selector),
+      click: createClick(selector)
+    };
+  },
+  radio(selector) {
+    return {
+      selector,
+      expectChecked: createExpectChecked(selector),
+      expectUnchecked: createExpectUnchecked(selector),
+      click: createClick(selector)
+    };
+  },
+  accordion(selector) {
+    return {
+      selector,
+      async clickHeader(t, label) {
+        await switchToIframe(t);
+        await t.click(
+          selector.find(".spectrum-Accordion-itemHeader").withText(label)
+        );
+      }
+    };
+  },
+  button(selector) {
+    return {
+      selector,
+      click: createClick(selector)
+    };
+  },
+  dialog(selector) {
+    return {
+      selector,
+      async expectTitle(t, title) {
+        await switchToIframe(t);
+        await selector.find(".spectrum-Dialog-header").withText(title);
+      },
+      async clickConfirm(t) {
+        await switchToIframe(t);
+        await t.click(
+          selector.find(".spectrum-Dialog-footer .spectrum-Button--cta")
+        );
+      },
+      async clickCancel(t) {
+        await switchToIframe(t);
+        await t.click(
+          selector.find(".spectrum-Dialog-footer .spectrum-Button--secondary")
+        );
       }
     };
   }

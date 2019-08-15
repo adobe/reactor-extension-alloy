@@ -20,7 +20,7 @@
           "items": {
             "type": "object",
             "properties": {
-              "propertyID": {
+              "propertyId": {
                 "type": "string",
                 "minLength": 1
               },
@@ -31,10 +31,29 @@
               "edgeDomain": {
                 "type": "string",
                 "minLength": 1
+              },
+              "errorsEnabled": {
+                "type": "boolean"
+              },
+              "optInEnabled": {
+                "type": "boolean"
+              },
+              "idSyncsEnabled": {
+                "type": "boolean"
+              },
+              "destinationsEnabled": {
+                "type": "boolean"
+              },
+              "context": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": ["web", "device", "environment", "placeContext"]
+                }
               }
             },
             "required": [
-              "propertyID",
+              "propertyId",
               "instanceName"
             ],
             "additionalProperties": false
@@ -55,21 +74,21 @@
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
         "properties": {
-          "propertyID": {
-            "type": "string",
-            "minLength": 1
-          },
-          "type": {
+          "propertyId": {
             "type": "string",
             "minLength": 1
           },
           "data": {
             "type": "string",
             "pattern": "^%([^%]+)%$"
+          },
+          "viewStart": {
+            "type": "boolean",
+            "minLength": 1
           }
         },
         "required": [
-          "propertyID",
+          "propertyId",
           "data"
         ],
         "additionalProperties": false
