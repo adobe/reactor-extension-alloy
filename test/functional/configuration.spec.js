@@ -224,8 +224,10 @@ test("returns full valid settings", async t => {
 
 test("shows errors for empty required values", async t => {
   await extensionViewController.init(t, {});
+  await accounts[0].instanceNameField.clear(t);
   await extensionViewController.expectIsNotValid(t);
   await accounts[0].propertyIdField.expectError(t);
+  await accounts[0].instanceNameField.expectError(t);
 });
 
 test("shows errors for duplicate property IDs", async t => {

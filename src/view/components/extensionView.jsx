@@ -17,6 +17,8 @@ import ErrorBoundary from "./errorBoundary";
 
 let formikProps;
 
+// This component sets up Formik and wires it up to Launch's extension bridge.
+// It should be used for each view inside an extension.
 const ExtensionView = ({
   getInitialValues,
   getSettings,

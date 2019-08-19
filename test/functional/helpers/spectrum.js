@@ -63,6 +63,18 @@ const createExpectUnchecked = selector => async t => {
   await t.expect(selector.checked).notOk();
 };
 
+// This provides an abstraction layer on top of react-spectrum
+// in order to keep react-spectrum specifics outside of tests.
+// This abstraction is more valuable for some components (Select, Accordion)
+// than for others (Button), but should probably be used for all
+// components for consistency. This also takes care of ensuring that
+// TestCafe is looking within the iframe in our test environment when
+// dealing with components, so that we don't have t.switchToIframe()
+// statements littered through our test code. Feel free to add
+// additional components and methods. We always include the original
+// selector on the returned object, so if we need to do something
+// a bit more custom inside the test, the test can use the selector
+// and TestCafe APIs directly.
 module.exports = {
   select(selector) {
     return {
@@ -84,6 +96,10 @@ module.exports = {
       async typeText(t, text) {
         await switchToIframe(t);
         await t.typeText(selector, text);
+      },
+      async clear(t) {
+        await switchToIframe(t);
+        await t.selectText(selector).pressKey("delete");
       }
     };
   },

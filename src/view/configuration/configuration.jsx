@@ -150,7 +150,7 @@ const validationSchema = object()
       this.createError.bind(this),
       settings.accounts,
       "propertyId",
-      "Please provide property ID unique from those used for other accounts."
+      "Please provide a property ID unique from those used for other accounts."
     );
   })
   // TestCafe doesn't allow this to be an arrow function because of
@@ -209,7 +209,7 @@ const Configuration = () => {
                       {values.accounts.map((account, index) => (
                         <AccordionItem
                           key={index}
-                          header={account.propertyId || "untitled"}
+                          header={account.propertyId || "untitled account"}
                         >
                           <div>
                             <label

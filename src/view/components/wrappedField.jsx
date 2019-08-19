@@ -41,30 +41,21 @@ const getNestedValue = (obj, path) => {
   return obj;
 };
 
-const addDataElementToken = (value, dataElementToken) =>
-  `${value || ""}${dataElementToken}`;
-
 const noop = () => {};
 
 export class DecoratedInput extends React.Component {
-  openDataElementSelector = (tokenize = false) => () => {
+  openDataElementSelector = () => {
     const {
-      field: { onChange, value, name }
+      field: { onChange, value = "", name }
     } = this.props;
 
     // Whenever we're dealing with a data element token, we add it to whatever the existing value
     // is. If we're not dealing with a token, we replace the value entirely. This is just due
     // to how we want the UX to flow.
-    window.extensionBridge
-      .openDataElementSelector({
-        tokenize
-      })
-      .then(dataElement => {
-        const newValue = tokenize
-          ? addDataElementToken(value, dataElement)
-          : dataElement;
-        onChange(newValue, { target: { value: newValue, name } });
-      });
+    window.extensionBridge.openDataElementSelector().then(dataElement => {
+      const newValue = `${value}${dataElement}`;
+      onChange(newValue, { target: { value: newValue, name } });
+    });
   };
 
   render() {
@@ -76,7 +67,6 @@ export class DecoratedInput extends React.Component {
       form: { touched, errors, setFieldValue },
       children,
       supportDataElement,
-      supportDataElementName,
       errorTooltipPlacement,
       onChange: onChangeDefinedOnProps = noop,
       onBlur: onBlurDefinedOnProps = noop,
@@ -90,14 +80,14 @@ export class DecoratedInput extends React.Component {
       onBlurDefinedOnProps(e);
     };
 
-    if (FieldComponent === Radio || FieldComponent === Checkbox) {
-      input.checked = Boolean(input.value);
-    }
-
     input.onChange = value => {
       setFieldValue(input.name, value);
       onChangeDefinedOnProps(value);
     };
+
+    if (FieldComponent === Radio || FieldComponent === Checkbox) {
+      input.checked = Boolean(input.value);
+    }
 
     // Unlike other components, RadioGroup's "value" prop is named "selectedValue". :/
     if (FieldComponent === RadioGroup) {
@@ -133,11 +123,11 @@ export class DecoratedInput extends React.Component {
         placement={errorTooltipPlacement}
       >
         <FieldComponent {...fieldComponentsProps}>{children}</FieldComponent>
-        {supportDataElement || supportDataElementName ? (
+        {supportDataElement ? (
           <Button
             variant="tool"
             icon={<Data />}
-            onClick={this.openDataElementSelector(supportDataElement)}
+            onClick={this.openDataElementSelector}
           />
         ) : null}
       </ValidationWrapper>
@@ -155,12 +145,24 @@ DecoratedInput.propTypes = {
   form: PropTypes.object.isRequired,
   children: PropTypes.node,
   supportDataElement: PropTypes.bool,
-  supportDataElementName: PropTypes.bool,
   errorTooltipPlacement: PropTypes.oneOf(["top", "right", "bottom", "left"]),
   onChange: PropTypes.func,
   onBlur: PropTypes.func
 };
 
+// Formik works well with native DOM elements, but we have some things
+// that are unique:
+// (1) We use react-spectrum, whose components have their own APIs.
+// We need to connect those APIs to Formik APIs, such that when Formik
+// states change, the components reflect those changes, and vice versa.
+// (2) We use react-spectrum validation components, which include a red
+// validation border and a tooltip that shows up on hover.
+// (3) We often support data elements, which involved a button next
+// to the textfield that, which clicked, pops up the data element
+// selector (provided by Launch), then appends the selected data element
+// to the textfield value.
+// This class abstracts these details away so we can use simple APIs
+// when building our forms.
 const WrappedField = ({ component: Component, ...rest }) => {
   const fieldProps = {
     component: DecoratedInput,
