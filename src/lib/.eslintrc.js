@@ -4,6 +4,6 @@ module.exports = {
     "func-names": "off"
   },
   globals: {
-    "turbine": "readonly"
+    turbine: "readonly"
   }
 };
