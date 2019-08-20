@@ -15,22 +15,40 @@ import React, { useState } from "react";
 import { object, array, string } from "yup";
 import { FieldArray } from "formik";
 import Textfield from "@react/react-spectrum/Textfield";
+import RadioGroup from "@react/react-spectrum/RadioGroup";
+import Radio from "@react/react-spectrum/Radio";
+import Checkbox from "@react/react-spectrum/Checkbox";
 import Button from "@react/react-spectrum/Button";
 import ModalTrigger from "@react/react-spectrum/ModalTrigger";
 import Dialog from "@react/react-spectrum/Dialog";
 import Delete from "@react/react-spectrum/Icon/Delete";
 import { Accordion, AccordionItem } from "@react/react-spectrum/Accordion";
+import CheckboxList from "../components/checkboxList";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
 import "./configuration.styl";
 
-const createEmptyAccount = () => ({
-  propertyID: "",
+const contextGranularity = {
+  ALL: "all",
+  SPECIFIC: "specific"
+};
+const contextOptions = ["web", "device", "environment", "placeContext"];
+
+const accountDefaults = {
+  propertyId: "",
   instanceName: "alloy",
-  edgeDomain: ""
-});
+  edgeDomain: "",
+  errorsEnabled: true,
+  optInEnabled: false,
+  idSyncsEnabled: true,
+  destinationsEnabled: true,
+  contextGranularity: contextGranularity.ALL,
+  context: contextOptions
+};
+
+const createDefaultAccount = () => JSON.parse(JSON.stringify(accountDefaults));
 
 const getInitialValues = settings => {
   // settings is null if the user is creating a new rule component
@@ -38,8 +56,29 @@ const getInitialValues = settings => {
     settings = {};
   }
 
+  let { accounts } = settings;
+
+  if (accounts) {
+    accounts.forEach(account => {
+      if (account.context) {
+        account.contextGranularity = contextGranularity.SPECIFIC;
+      }
+
+      // Copy default values to the account if the properties
+      // aren't already defined on the account. This is primarily
+      // because Formik requires all fields to have initial values.
+      Object.keys(accountDefaults).forEach(key => {
+        if (account[key] === undefined) {
+          account[key] = accountDefaults[key];
+        }
+      });
+    });
+  } else {
+    accounts = [createDefaultAccount()];
+  }
+
   return {
-    accounts: settings.accounts || [createEmptyAccount()]
+    accounts
   };
 };
 
@@ -47,7 +86,7 @@ const getSettings = values => {
   return {
     accounts: values.accounts.map(account => {
       const trimmedAccount = {
-        propertyID: account.propertyID,
+        propertyId: account.propertyId,
         instanceName: account.instanceName
       };
 
@@ -55,34 +94,73 @@ const getSettings = values => {
         trimmedAccount.edgeDomain = account.edgeDomain;
       }
 
+      if (account.errorsEnabled !== accountDefaults.errorsEnabled) {
+        trimmedAccount.errorsEnabled = account.errorsEnabled;
+      }
+
+      if (account.optInEnabled !== accountDefaults.optInEnabled) {
+        trimmedAccount.optInEnabled = account.optInEnabled;
+      }
+
+      if (account.idSyncsEnabled !== accountDefaults.idSyncsEnabled) {
+        trimmedAccount.idSyncsEnabled = account.idSyncsEnabled;
+      }
+
+      if (account.destinationsEnabled !== accountDefaults.destinationsEnabled) {
+        trimmedAccount.destinationsEnabled = account.destinationsEnabled;
+      }
+
+      if (account.contextGranularity === contextGranularity.SPECIFIC) {
+        trimmedAccount.context = account.context;
+      }
+
       return trimmedAccount;
     })
   };
+};
+
+const validateDuplicateValue = (createError, accounts, key, message) => {
+  const values = accounts.map(account => account[key]);
+  const duplicateIndex = values.findIndex(
+    (value, index) => values.indexOf(value) < index
+  );
+
+  return (
+    duplicateIndex === -1 ||
+    createError({
+      path: `accounts[${duplicateIndex}].${key}`,
+      message
+    })
+  );
 };
 
 const validationSchema = object()
   .shape({
     accounts: array().of(
       object().shape({
-        propertyID: string().required("Please specify a property ID."),
-        instanceName: string().required("Please specify an instance name."),
-        edgeDomain: string()
+        propertyId: string().required("Please specify a property ID."),
+        instanceName: string().required("Please specify an instance name.")
       })
     )
   })
-  .test("instanceName", function(value) {
-    const instanceNames = value.accounts.map(account => account.instanceName);
-    const duplicateIndex = instanceNames.findIndex(
-      (instanceName, index) => instanceNames.indexOf(instanceName) < index
+  // TestCafe doesn't allow this to be an arrow function because of
+  // how it scopes "this".
+  .test("propertyId", function(settings) {
+    return validateDuplicateValue(
+      this.createError.bind(this),
+      settings.accounts,
+      "propertyId",
+      "Please provide a property ID unique from those used for other accounts."
     );
-
-    return (
-      duplicateIndex === -1 ||
-      this.createError({
-        path: `accounts[${duplicateIndex}].instanceName`,
-        message:
-          "Please provide an instance name unique from those used for other accounts."
-      })
+  })
+  // TestCafe doesn't allow this to be an arrow function because of
+  // how it scopes "this".
+  .test("instanceName", function(settings) {
+    return validateDuplicateValue(
+      this.createError.bind(this),
+      settings.accounts,
+      "instanceName",
+      "Please provide an instance name unique from those used for other accounts."
     );
   });
 
@@ -118,7 +196,7 @@ const Configuration = () => {
                       <Button
                         label="Add Account"
                         onClick={() => {
-                          arrayHelpers.push(createEmptyAccount());
+                          arrayHelpers.push(createDefaultAccount());
                           setSelectedAccordionIndex(values.accounts.length);
                         }}
                       />
@@ -131,19 +209,19 @@ const Configuration = () => {
                       {values.accounts.map((account, index) => (
                         <AccordionItem
                           key={index}
-                          header={account.propertyID || "untitled"}
+                          header={account.propertyId || "untitled account"}
                         >
                           <div>
                             <label
-                              htmlFor="propertyIDField"
+                              htmlFor="propertyIdField"
                               className="spectrum-Form-itemLabel"
                             >
                               Property ID
                             </label>
                             <div>
                               <WrappedField
-                                id="propertyIDField"
-                                name={`accounts.${index}.propertyID`}
+                                id="propertyIdField"
+                                name={`accounts.${index}.propertyId`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
                               />
@@ -183,10 +261,81 @@ const Configuration = () => {
                               />
                             </div>
                           </div>
+                          <div className="u-gapTop">
+                            <WrappedField
+                              name={`accounts.${index}.errorsEnabled`}
+                              component={Checkbox}
+                              label="Enable errors"
+                            />
+                          </div>
+
+                          <h3>Privacy</h3>
+
+                          <div className="u-gapTop">
+                            <WrappedField
+                              name={`accounts.${index}.optInEnabled`}
+                              component={Checkbox}
+                              label="Enable Opt-In"
+                            />
+                          </div>
+
+                          <h3>Identity</h3>
+
+                          <div className="u-gapTop">
+                            <WrappedField
+                              name={`accounts.${index}.idSyncsEnabled`}
+                              component={Checkbox}
+                              label="Enable ID Synchronization"
+                            />
+                          </div>
+                          <div className="u-gapTop">
+                            <WrappedField
+                              name={`accounts.${index}.destinationsEnabled`}
+                              component={Checkbox}
+                              label="Enable Destinations"
+                            />
+                          </div>
+
+                          <h3>Context</h3>
+
+                          <div className="u-gapTop">
+                            <label
+                              htmlFor="contextGranularity"
+                              className="spectrum-Form-itemLabel"
+                            >
+                              When sending event data, automatically include:
+                            </label>
+                            <WrappedField
+                              name={`accounts.${index}.contextGranularity`}
+                              component={RadioGroup}
+                              componentClassName="u-flexColumn"
+                            >
+                              <Radio
+                                value={contextGranularity.ALL}
+                                label="all context information"
+                              />
+                              <Radio
+                                value={contextGranularity.SPECIFIC}
+                                label="specific context information"
+                              />
+                            </WrappedField>
+                          </div>
+                          {values.accounts[index].contextGranularity ===
+                          contextGranularity.SPECIFIC ? (
+                            <div className="FieldSubset u-gapTop">
+                              <WrappedField
+                                name={`accounts.${index}.context`}
+                                component={CheckboxList}
+                                options={contextOptions}
+                              />
+                            </div>
+                          ) : null}
+
                           {values.accounts.length > 1 ? (
                             <div className="u-gapTop2x">
                               <ModalTrigger>
                                 <Button
+                                  data-test-id={`accounts.${index}.delete`}
                                   label="Delete Account"
                                   icon={<Delete />}
                                   variant="action"

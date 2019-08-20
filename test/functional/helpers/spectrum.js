@@ -48,9 +48,37 @@ const createExpectValue = selector => async (t, value) => {
   await t.expect(selector.getAttribute("value")).eql(value);
 };
 
+const createClick = selector => async t => {
+  await switchToIframe(t);
+  await t.click(selector);
+};
+
+const createExpectChecked = selector => async t => {
+  await switchToIframe(t);
+  await t.expect(selector.checked).ok();
+};
+
+const createExpectUnchecked = selector => async t => {
+  await switchToIframe(t);
+  await t.expect(selector.checked).notOk();
+};
+
+// This provides an abstraction layer on top of react-spectrum
+// in order to keep react-spectrum specifics outside of tests.
+// This abstraction is more valuable for some components (Select, Accordion)
+// than for others (Button), but should probably be used for all
+// components for consistency. This also takes care of ensuring that
+// TestCafe is looking within the iframe in our test environment when
+// dealing with components, so that we don't have t.switchToIframe()
+// statements littered through our test code. Feel free to add
+// additional components and methods. We always include the original
+// selector on the returned object, so if we need to do something
+// a bit more custom inside the test, the test can use the selector
+// and TestCafe APIs directly.
 module.exports = {
   select(selector) {
     return {
+      selector,
       expectError: createExpectError(selector),
       expectValue: createExpectValue(selector),
       async selectOption(t, label) {
@@ -62,11 +90,70 @@ module.exports = {
   },
   textfield(selector) {
     return {
+      selector,
       expectError: createExpectError(selector),
       expectValue: createExpectValue(selector),
       async typeText(t, text) {
         await switchToIframe(t);
         await t.typeText(selector, text);
+      },
+      async clear(t) {
+        await switchToIframe(t);
+        await t.selectText(selector).pressKey("delete");
+      }
+    };
+  },
+  checkbox(selector) {
+    return {
+      selector,
+      expectChecked: createExpectChecked(selector),
+      expectUnchecked: createExpectUnchecked(selector),
+      click: createClick(selector)
+    };
+  },
+  radio(selector) {
+    return {
+      selector,
+      expectChecked: createExpectChecked(selector),
+      expectUnchecked: createExpectUnchecked(selector),
+      click: createClick(selector)
+    };
+  },
+  accordion(selector) {
+    return {
+      selector,
+      async clickHeader(t, label) {
+        await switchToIframe(t);
+        await t.click(
+          selector.find(".spectrum-Accordion-itemHeader").withText(label)
+        );
+      }
+    };
+  },
+  button(selector) {
+    return {
+      selector,
+      click: createClick(selector)
+    };
+  },
+  dialog(selector) {
+    return {
+      selector,
+      async expectTitle(t, title) {
+        await switchToIframe(t);
+        await selector.find(".spectrum-Dialog-header").withText(title);
+      },
+      async clickConfirm(t) {
+        await switchToIframe(t);
+        await t.click(
+          selector.find(".spectrum-Dialog-footer .spectrum-Button--cta")
+        );
+      },
+      async clickCancel(t) {
+        await switchToIframe(t);
+        await t.click(
+          selector.find(".spectrum-Dialog-footer .spectrum-Button--secondary")
+        );
       }
     };
   }

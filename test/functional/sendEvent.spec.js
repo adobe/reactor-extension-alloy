@@ -17,14 +17,14 @@ import spectrum from "./helpers/spectrum";
 const extensionViewController = createExtensionViewController(
   "actions/sendEvent.html"
 );
-const propertyIDField = spectrum.select(Selector("[name=propertyID]"));
-const typeField = spectrum.textfield(Selector("[name=type]"));
+const propertyIdField = spectrum.select(Selector("[name=propertyId]"));
 const dataField = spectrum.textfield(Selector("[name=data]"));
+const viewStartField = spectrum.checkbox(Selector("[name=viewStart]"));
 
 const mockExtensionSettings = {
   accounts: [
     {
-      propertyID: "PR123",
+      propertyId: "PR123",
       instanceName: "alloy1"
     }
   ]
@@ -32,7 +32,7 @@ const mockExtensionSettings = {
 
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
-fixture("Extension view sandbox").disablePageReloads.page(
+fixture("Send Event View").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
@@ -40,13 +40,13 @@ test("initializes form fields with full settings", async t => {
   await extensionViewController.init(t, {
     extensionSettings: mockExtensionSettings,
     settings: {
-      propertyID: "PR123",
-      type: "thingHappened",
+      propertyId: "PR123",
+      viewStart: true,
       data: "%myDataLayer%"
     }
   });
-  await propertyIDField.expectValue(t, "PR123");
-  await typeField.expectValue(t, "thingHappened");
+  await propertyIdField.expectValue(t, "PR123");
+  await viewStartField.expectChecked(t);
   await dataField.expectValue(t, "%myDataLayer%");
 });
 
@@ -54,12 +54,12 @@ test("initializes form fields with minimal settings", async t => {
   await extensionViewController.init(t, {
     extensionSettings: mockExtensionSettings,
     settings: {
-      propertyID: "PR123",
+      propertyId: "PR123",
       data: "%myDataLayer%"
     }
   });
-  await propertyIDField.expectValue(t, "PR123");
-  await typeField.expectValue(t, "");
+  await propertyIdField.expectValue(t, "PR123");
+  await viewStartField.expectUnchecked(t);
   await dataField.expectValue(t, "%myDataLayer%");
 });
 
@@ -67,8 +67,8 @@ test("initializes form fields with no settings", async t => {
   await extensionViewController.init(t, {
     extensionSettings: mockExtensionSettings
   });
-  await propertyIDField.expectValue(t, "");
-  await typeField.expectValue(t, "");
+  await propertyIdField.expectValue(t, "");
+  await viewStartField.expectUnchecked(t);
   await dataField.expectValue(t, "");
 });
 
@@ -77,10 +77,11 @@ test("returns minimal valid settings", async t => {
     extensionSettings: mockExtensionSettings
   });
 
-  await propertyIDField.selectOption(t, "PR123");
+  await propertyIdField.selectOption(t, "PR123");
   await dataField.typeText(t, "%myDataLayer%");
+  await extensionViewController.expectIsValid(t);
   await extensionViewController.expectSettings(t, {
-    propertyID: "PR123",
+    propertyId: "PR123",
     data: "%myDataLayer%"
   });
 });
@@ -89,33 +90,15 @@ test("returns full valid settings", async t => {
   await extensionViewController.init(t, {
     extensionSettings: mockExtensionSettings
   });
-  await propertyIDField.selectOption(t, "PR123");
-  await typeField.typeText(t, "thingHappened");
+  await propertyIdField.selectOption(t, "PR123");
+  await viewStartField.click(t);
   await dataField.typeText(t, "%myDataLayer%");
+  await extensionViewController.expectIsValid(t);
   await extensionViewController.expectSettings(t, {
-    propertyID: "PR123",
-    type: "thingHappened",
+    propertyId: "PR123",
+    viewStart: true,
     data: "%myDataLayer%"
   });
-});
-
-test("returns valid for minimal valid input", async t => {
-  await extensionViewController.init(t, {
-    extensionSettings: mockExtensionSettings
-  });
-  await propertyIDField.selectOption(t, "PR123");
-  await dataField.typeText(t, "%myDataLayer%");
-  await extensionViewController.expectIsValid(t);
-});
-
-test("returns valid for full valid input", async t => {
-  await extensionViewController.init(t, {
-    extensionSettings: mockExtensionSettings
-  });
-  await propertyIDField.selectOption(t, "PR123");
-  await typeField.typeText(t, "thingHappened");
-  await dataField.typeText(t, "%myDataLayer%");
-  await extensionViewController.expectIsValid(t);
 });
 
 test("shows errors for empty required values", async t => {
@@ -123,7 +106,7 @@ test("shows errors for empty required values", async t => {
     extensionSettings: mockExtensionSettings
   });
   await extensionViewController.expectIsNotValid(t);
-  await propertyIDField.expectError(t);
+  await propertyIdField.expectError(t);
   await dataField.expectError(t);
 });
 
@@ -131,7 +114,7 @@ test("shows error for data value that is not a data element", async t => {
   await extensionViewController.init(t, {
     extensionSettings: mockExtensionSettings,
     settings: {
-      propertyID: "PR123"
+      propertyId: "PR123"
     }
   });
   await dataField.typeText(t, "myDataLayer");
@@ -143,7 +126,7 @@ test("shows error for data value that is more than one data element", async t =>
   await extensionViewController.init(t, {
     extensionSettings: mockExtensionSettings,
     settings: {
-      propertyID: "PR123"
+      propertyId: "PR123"
     }
   });
   await dataField.typeText(t, "%a%%b%");

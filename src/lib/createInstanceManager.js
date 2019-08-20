@@ -10,11 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const getInstanceNameByPropertyID = (accounts, propertyID) => {
+const getInstanceNameByPropertyId = (accounts, propertyId) => {
   let matchingInstanceName;
   for (let i = 0; i < accounts.length; i += 1) {
     const account = accounts[i];
-    if (account.propertyID === propertyID) {
+    if (account.propertyId === propertyId) {
       matchingInstanceName = account.instanceName;
       break;
     }
@@ -28,15 +28,13 @@ module.exports = (window, runAlloy) => {
 
   runAlloy(instanceNames);
 
-  accounts.forEach(({ instanceName, propertyID }) => {
-    window[instanceName]("configure", {
-      propertyID
-    });
+  accounts.forEach(({ instanceName, ...options }) => {
+    window[instanceName]("configure", options);
   });
 
   return {
-    getInstance(propertyID) {
-      const instanceName = getInstanceNameByPropertyID(accounts, propertyID);
+    getInstance(propertyId) {
+      const instanceName = getInstanceNameByPropertyId(accounts, propertyId);
       return instanceName ? window[instanceName] : undefined;
     }
   };

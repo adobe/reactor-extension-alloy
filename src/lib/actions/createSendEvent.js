@@ -11,14 +11,14 @@ governing permissions and limitations under the License.
 */
 
 module.exports = instanceManager => settings => {
-  const { propertyID, ...otherSettings } = settings;
-  const instance = instanceManager.getInstance(propertyID);
+  const { propertyId, ...otherSettings } = settings;
+  const instance = instanceManager.getInstance(propertyId);
 
   if (instance) {
     instance("event", otherSettings);
   } else {
     turbine.logger.error(
-      `Failed to send event for property ID "${propertyID}". No matching account was configured with this ID.`
+      `Failed to send event for property ID "${propertyId}". No matching account was configured with this ID.`
     );
   }
 };

@@ -37,8 +37,8 @@ describe("Send Event", () => {
     const action = createSendEvent(instanceManager);
 
     action({
-      propertyID: "PR123",
-      type: "thingHappened",
+      propertyId: "PR123",
+      viewStart: true,
       data: {
         foo: "bar"
       }
@@ -46,7 +46,7 @@ describe("Send Event", () => {
 
     expect(instanceManager.getInstance).toHaveBeenCalledWith("PR123");
     expect(instance).toHaveBeenCalledWith("event", {
-      type: "thingHappened",
+      viewStart: true,
       data: {
         foo: "bar"
       }
@@ -60,8 +60,8 @@ describe("Send Event", () => {
     const action = createSendEvent(instanceManager);
 
     action({
-      propertyID: "PR123",
-      type: "thingHappened",
+      propertyId: "PR123",
+      viewStart: true,
       data: {
         foo: "bar"
       }

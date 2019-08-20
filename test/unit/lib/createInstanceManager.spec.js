@@ -24,11 +24,11 @@ describe("Instance Manager", () => {
         return {
           accounts: [
             {
-              propertyID: "PR123",
+              propertyId: "PR123",
               instanceName: "alloy1"
             },
             {
-              propertyID: "PR456",
+              propertyId: "PR456",
               instanceName: "alloy2"
             }
           ]
@@ -59,10 +59,10 @@ describe("Instance Manager", () => {
 
   it("configures an SDK instance for each account", () => {
     expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
-      propertyID: "PR123"
+      propertyId: "PR123"
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
-      propertyID: "PR456"
+      propertyId: "PR456"
     });
   });
 
