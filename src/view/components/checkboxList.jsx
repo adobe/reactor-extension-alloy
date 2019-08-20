@@ -21,11 +21,7 @@ class CheckboxList extends React.Component {
   onChange = (isChecked, event) => {
     const checkboxValue = event.nativeEvent.target.value;
     const { onChange } = this.props;
-    let { value } = this.props;
-
-    if (!value) {
-      value = [];
-    }
+    let { value = [] } = this.props;
 
     value = value.slice();
 
