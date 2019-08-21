@@ -22,10 +22,10 @@ const dataField = spectrum.textfield(Selector("[name=data]"));
 const viewStartField = spectrum.checkbox(Selector("[name=viewStart]"));
 
 const mockExtensionSettings = {
-  accounts: [
+  instances: [
     {
       propertyId: "PR123",
-      instanceName: "alloy1"
+      name: "alloy1"
     }
   ]
 };

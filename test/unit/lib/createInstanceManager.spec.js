@@ -22,23 +22,23 @@ describe("Instance Manager", () => {
     turbineVariable.mock({
       getExtensionSettings() {
         return {
-          accounts: [
+          instances: [
             {
-              propertyId: "PR123",
-              instanceName: "alloy1"
+              name: "alloy1",
+              propertyId: "PR123"
             },
             {
-              propertyId: "PR456",
-              instanceName: "alloy2"
+              name: "alloy2",
+              propertyId: "PR456"
             }
           ]
         };
       }
     });
     mockWindow = {};
-    runAlloy = jasmine.createSpy().and.callFake(instanceNames => {
-      instanceNames.forEach(instanceName => {
-        mockWindow[instanceName] = jasmine.createSpy();
+    runAlloy = jasmine.createSpy().and.callFake(names => {
+      names.forEach(name => {
+        mockWindow[name] = jasmine.createSpy();
       });
     });
     instanceManager = createInstanceManager(mockWindow, runAlloy);
@@ -52,12 +52,12 @@ describe("Instance Manager", () => {
     expect(runAlloy).toHaveBeenCalledWith(["alloy1", "alloy2"]);
   });
 
-  it("creates an SDK instance for each account", () => {
+  it("creates an SDK instance for each instance", () => {
     expect(mockWindow.alloy1).toEqual(jasmine.any(Function));
     expect(mockWindow.alloy2).toEqual(jasmine.any(Function));
   });
 
-  it("configures an SDK instance for each account", () => {
+  it("configures an SDK instance for each instance", () => {
     expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
       propertyId: "PR123"
     });

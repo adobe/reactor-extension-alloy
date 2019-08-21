@@ -18,7 +18,7 @@ module.exports = instanceManager => settings => {
     instance("event", otherSettings);
   } else {
     turbine.logger.error(
-      `Failed to send event for property ID "${propertyId}". No matching account was configured with this ID.`
+      `Failed to send event for property ID "${propertyId}". No matching instance was configured with this ID.`
     );
   }
 };

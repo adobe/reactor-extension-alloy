@@ -10,32 +10,32 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const getInstanceNameByPropertyId = (accounts, propertyId) => {
-  let matchingInstanceName;
-  for (let i = 0; i < accounts.length; i += 1) {
-    const account = accounts[i];
-    if (account.propertyId === propertyId) {
-      matchingInstanceName = account.instanceName;
+const getNameByPropertyId = (instances, propertyId) => {
+  let matchingName;
+  for (let i = 0; i < instances.length; i += 1) {
+    const instance = instances[i];
+    if (instance.propertyId === propertyId) {
+      matchingName = instance.name;
       break;
     }
   }
-  return matchingInstanceName;
+  return matchingName;
 };
 
 module.exports = (window, runAlloy) => {
-  const { accounts } = turbine.getExtensionSettings();
-  const instanceNames = accounts.map(account => account.instanceName);
+  const { instances } = turbine.getExtensionSettings();
+  const names = instances.map(instance => instance.name);
 
-  runAlloy(instanceNames);
+  runAlloy(names);
 
-  accounts.forEach(({ instanceName, ...options }) => {
-    window[instanceName]("configure", options);
+  instances.forEach(({ name, ...options }) => {
+    window[name]("configure", options);
   });
 
   return {
     getInstance(propertyId) {
-      const instanceName = getInstanceNameByPropertyId(accounts, propertyId);
-      return instanceName ? window[instanceName] : undefined;
+      const name = getNameByPropertyId(instances, propertyId);
+      return name ? window[name] : undefined;
     }
   };
 };
