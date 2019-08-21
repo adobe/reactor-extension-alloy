@@ -18,43 +18,41 @@ const extensionViewController = createExtensionViewController(
   "configuration/configuration.html"
 );
 
-const addAccountButton = spectrum.button(
-  Selector(".spectrum-Button").withText("Add Account")
+const addInstanceButton = spectrum.button(
+  Selector(".spectrum-Button").withText("Add Instance")
 );
 const accordion = spectrum.accordion(Selector(".spectrum-Accordion"));
 const resourceUsageDialog = spectrum.dialog(Selector(".spectrum-Dialog"));
 
-const accounts = [];
+const instances = [];
 
 for (let i = 0; i < 2; i += 1) {
-  accounts.push({
+  instances.push({
+    nameField: spectrum.textfield(Selector(`[name='instances.${i}.name']`)),
     propertyIdField: spectrum.textfield(
-      Selector(`[name='accounts.${i}.propertyId']`)
-    ),
-    instanceNameField: spectrum.textfield(
-      Selector(`[name='accounts.${i}.instanceName']`)
+      Selector(`[name='instances.${i}.propertyId']`)
     ),
     edgeDomainField: spectrum.textfield(
-      Selector(`[name='accounts.${i}.edgeDomain']`)
+      Selector(`[name='instances.${i}.edgeDomain']`)
     ),
     errorsEnabledField: spectrum.checkbox(
-      Selector(`[name='accounts.${i}.errorsEnabled']`)
+      Selector(`[name='instances.${i}.errorsEnabled']`)
     ),
     optInEnabledField: spectrum.checkbox(
-      Selector(`[name='accounts.${i}.optInEnabled']`)
+      Selector(`[name='instances.${i}.optInEnabled']`)
     ),
     idSyncsEnabledField: spectrum.checkbox(
-      Selector(`[name='accounts.${i}.idSyncsEnabled']`)
+      Selector(`[name='instances.${i}.idSyncsEnabled']`)
     ),
     destinationsEnabledField: spectrum.checkbox(
-      Selector(`[name='accounts.${i}.destinationsEnabled']`)
+      Selector(`[name='instances.${i}.destinationsEnabled']`)
     ),
     contextGranularity: {
       allField: spectrum.radio(
-        Selector(`[name='accounts.${i}.contextGranularity'][value=all]`)
+        Selector(`[name='instances.${i}.contextGranularity'][value=all]`)
       ),
       specificField: spectrum.radio(
-        Selector(`[name='accounts.${i}.contextGranularity'][value=specific]`)
+        Selector(`[name='instances.${i}.contextGranularity'][value=specific]`)
       )
     },
     specificContext: {
@@ -64,7 +62,7 @@ for (let i = 0; i < 2; i += 1) {
       placeContextField: spectrum.checkbox(Selector("[value=placeContext]"))
     },
     deleteButton: spectrum.button(
-      Selector(`[data-test-id='accounts.${i}.delete`)
+      Selector(`[data-test-id='instances.${i}.delete`)
     )
   });
 }
@@ -78,10 +76,10 @@ fixture("Extension Configuration View").disablePageReloads.page(
 test("initializes form fields with full settings", async t => {
   await extensionViewController.init(t, {
     settings: {
-      accounts: [
+      instances: [
         {
+          name: "alloy1",
           propertyId: "PR123",
-          instanceName: "alloy1",
           edgeDomain: "testedge.com",
           errorsEnabled: false,
           optInEnabled: true,
@@ -90,8 +88,8 @@ test("initializes form fields with full settings", async t => {
           context: ["device", "placeContext"]
         },
         {
+          name: "alloy2",
           propertyId: "PR456",
-          instanceName: "alloy2",
           edgeDomain: "testedge2.com",
           optInEnabled: false,
           idSyncsEnabled: false,
@@ -101,80 +99,80 @@ test("initializes form fields with full settings", async t => {
     }
   });
 
-  await accounts[0].propertyIdField.expectValue(t, "PR123");
-  await accounts[0].instanceNameField.expectValue(t, "alloy1");
-  await accounts[0].edgeDomainField.expectValue(t, "testedge.com");
-  await accounts[0].errorsEnabledField.expectUnchecked(t);
-  await accounts[0].optInEnabledField.expectChecked(t);
-  await accounts[0].idSyncsEnabledField.expectUnchecked(t);
-  await accounts[0].destinationsEnabledField.expectUnchecked(t);
-  await accounts[0].contextGranularity.specificField.expectChecked(t);
-  await accounts[0].specificContext.webField.expectUnchecked(t);
-  await accounts[0].specificContext.deviceField.expectChecked(t);
-  await accounts[0].specificContext.environmentField.expectUnchecked(t);
-  await accounts[0].specificContext.placeContextField.expectChecked(t);
+  await instances[0].nameField.expectValue(t, "alloy1");
+  await instances[0].propertyIdField.expectValue(t, "PR123");
+  await instances[0].edgeDomainField.expectValue(t, "testedge.com");
+  await instances[0].errorsEnabledField.expectUnchecked(t);
+  await instances[0].optInEnabledField.expectChecked(t);
+  await instances[0].idSyncsEnabledField.expectUnchecked(t);
+  await instances[0].destinationsEnabledField.expectUnchecked(t);
+  await instances[0].contextGranularity.specificField.expectChecked(t);
+  await instances[0].specificContext.webField.expectUnchecked(t);
+  await instances[0].specificContext.deviceField.expectChecked(t);
+  await instances[0].specificContext.environmentField.expectUnchecked(t);
+  await instances[0].specificContext.placeContextField.expectChecked(t);
 
   await accordion.clickHeader(t, "PR456");
 
-  await accounts[1].propertyIdField.expectValue(t, "PR456");
-  await accounts[1].instanceNameField.expectValue(t, "alloy2");
-  await accounts[1].edgeDomainField.expectValue(t, "testedge2.com");
-  await accounts[1].errorsEnabledField.expectChecked(t);
-  await accounts[1].optInEnabledField.expectUnchecked(t);
-  await accounts[1].idSyncsEnabledField.expectUnchecked(t);
-  await accounts[1].destinationsEnabledField.expectChecked(t);
-  await accounts[1].contextGranularity.specificField.expectChecked(t);
-  await accounts[1].specificContext.webField.expectUnchecked(t);
-  await accounts[1].specificContext.deviceField.expectUnchecked(t);
-  await accounts[1].specificContext.environmentField.expectUnchecked(t);
-  await accounts[1].specificContext.placeContextField.expectUnchecked(t);
+  await instances[1].nameField.expectValue(t, "alloy2");
+  await instances[1].propertyIdField.expectValue(t, "PR456");
+  await instances[1].edgeDomainField.expectValue(t, "testedge2.com");
+  await instances[1].errorsEnabledField.expectChecked(t);
+  await instances[1].optInEnabledField.expectUnchecked(t);
+  await instances[1].idSyncsEnabledField.expectUnchecked(t);
+  await instances[1].destinationsEnabledField.expectChecked(t);
+  await instances[1].contextGranularity.specificField.expectChecked(t);
+  await instances[1].specificContext.webField.expectUnchecked(t);
+  await instances[1].specificContext.deviceField.expectUnchecked(t);
+  await instances[1].specificContext.environmentField.expectUnchecked(t);
+  await instances[1].specificContext.placeContextField.expectUnchecked(t);
 });
 
 test("initializes form fields with minimal settings", async t => {
   await extensionViewController.init(t, {
     settings: {
-      accounts: [
+      instances: [
         {
-          propertyId: "PR123",
-          instanceName: "alloy1"
+          name: "alloy1",
+          propertyId: "PR123"
         }
       ]
     }
   });
 
-  await accounts[0].propertyIdField.expectValue(t, "PR123");
-  await accounts[0].instanceNameField.expectValue(t, "alloy1");
-  await accounts[0].edgeDomainField.expectValue(t, "");
-  await accounts[0].errorsEnabledField.expectChecked(t);
-  await accounts[0].optInEnabledField.expectUnchecked(t);
-  await accounts[0].idSyncsEnabledField.expectChecked(t);
-  await accounts[0].destinationsEnabledField.expectChecked(t);
-  await accounts[0].contextGranularity.allField.expectChecked(t);
+  await instances[0].nameField.expectValue(t, "alloy1");
+  await instances[0].propertyIdField.expectValue(t, "PR123");
+  await instances[0].edgeDomainField.expectValue(t, "");
+  await instances[0].errorsEnabledField.expectChecked(t);
+  await instances[0].optInEnabledField.expectUnchecked(t);
+  await instances[0].idSyncsEnabledField.expectChecked(t);
+  await instances[0].destinationsEnabledField.expectChecked(t);
+  await instances[0].contextGranularity.allField.expectChecked(t);
 });
 
 test("initializes form fields with no settings", async t => {
   await extensionViewController.init(t, {});
 
-  await accounts[0].propertyIdField.expectValue(t, "");
-  await accounts[0].instanceNameField.expectValue(t, "alloy");
-  await accounts[0].edgeDomainField.expectValue(t, "");
-  await accounts[0].errorsEnabledField.expectChecked(t);
-  await accounts[0].optInEnabledField.expectUnchecked(t);
-  await accounts[0].idSyncsEnabledField.expectChecked(t);
-  await accounts[0].destinationsEnabledField.expectChecked(t);
-  await accounts[0].contextGranularity.allField.expectChecked(t);
+  await instances[0].nameField.expectValue(t, "alloy");
+  await instances[0].propertyIdField.expectValue(t, "");
+  await instances[0].edgeDomainField.expectValue(t, "");
+  await instances[0].errorsEnabledField.expectChecked(t);
+  await instances[0].optInEnabledField.expectUnchecked(t);
+  await instances[0].idSyncsEnabledField.expectChecked(t);
+  await instances[0].destinationsEnabledField.expectChecked(t);
+  await instances[0].contextGranularity.allField.expectChecked(t);
 });
 
 test("returns minimal valid settings", async t => {
   await extensionViewController.init(t, {});
 
-  await accounts[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].propertyIdField.typeText(t, "PR123");
   await extensionViewController.expectIsValid(t);
   await extensionViewController.expectSettings(t, {
-    accounts: [
+    instances: [
       {
         propertyId: "PR123",
-        instanceName: "alloy"
+        name: "alloy"
       }
     ]
   });
@@ -183,28 +181,28 @@ test("returns minimal valid settings", async t => {
 test("returns full valid settings", async t => {
   await extensionViewController.init(t, {});
 
-  await accounts[0].propertyIdField.typeText(t, "PR123");
-  await accounts[0].instanceNameField.typeText(t, "1");
-  await accounts[0].edgeDomainField.typeText(t, "testedge.com");
-  await accounts[0].errorsEnabledField.click(t);
-  await accounts[0].optInEnabledField.click(t);
-  await accounts[0].idSyncsEnabledField.click(t);
-  await accounts[0].destinationsEnabledField.click(t);
+  await instances[0].nameField.typeText(t, "1");
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].edgeDomainField.typeText(t, "testedge.com");
+  await instances[0].errorsEnabledField.click(t);
+  await instances[0].optInEnabledField.click(t);
+  await instances[0].idSyncsEnabledField.click(t);
+  await instances[0].destinationsEnabledField.click(t);
 
-  await addAccountButton.click(t);
+  await addInstanceButton.click(t);
 
-  await accounts[1].propertyIdField.typeText(t, "PR456");
-  await accounts[1].instanceNameField.typeText(t, "2");
-  await accounts[1].edgeDomainField.typeText(t, "testedge2.com");
-  await accounts[1].optInEnabledField.click(t);
-  await accounts[1].contextGranularity.specificField.click(t);
+  await instances[1].nameField.typeText(t, "2");
+  await instances[1].propertyIdField.typeText(t, "PR456");
+  await instances[1].edgeDomainField.typeText(t, "testedge2.com");
+  await instances[1].optInEnabledField.click(t);
+  await instances[1].contextGranularity.specificField.click(t);
 
   await extensionViewController.expectIsValid(t);
   await extensionViewController.expectSettings(t, {
-    accounts: [
+    instances: [
       {
+        name: "alloy1",
         propertyId: "PR123",
-        instanceName: "alloy1",
         edgeDomain: "testedge.com",
         errorsEnabled: false,
         optInEnabled: true,
@@ -212,8 +210,8 @@ test("returns full valid settings", async t => {
         destinationsEnabled: false
       },
       {
+        name: "alloy2",
         propertyId: "PR456",
-        instanceName: "alloy2",
         edgeDomain: "testedge2.com",
         optInEnabled: true,
         context: ["web", "device", "environment", "placeContext"]
@@ -224,52 +222,52 @@ test("returns full valid settings", async t => {
 
 test("shows errors for empty required values", async t => {
   await extensionViewController.init(t, {});
-  await accounts[0].instanceNameField.clear(t);
+  await instances[0].nameField.clear(t);
   await extensionViewController.expectIsNotValid(t);
-  await accounts[0].propertyIdField.expectError(t);
-  await accounts[0].instanceNameField.expectError(t);
+  await instances[0].nameField.expectError(t);
+  await instances[0].propertyIdField.expectError(t);
 });
 
 test("shows errors for duplicate property IDs", async t => {
   await extensionViewController.init(t, {});
-  await accounts[0].propertyIdField.typeText(t, "PR123");
-  await addAccountButton.click(t);
-  await accounts[1].propertyIdField.typeText(t, "PR123");
-  // We'll expand the first account before we validate to test that
-  // validation expands the invalid account (in this case, the second one)
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await addInstanceButton.click(t);
+  await instances[1].propertyIdField.typeText(t, "PR123");
+  // We'll expand the first instance before we validate to test that
+  // validation expands the invalid instance (in this case, the second one)
   await accordion.clickHeader(t, "PR123");
   await extensionViewController.expectIsNotValid(t);
-  await accounts[1].propertyIdField.expectError(t);
+  await instances[1].propertyIdField.expectError(t);
 });
 
-test("shows errors for duplicate instance names", async t => {
+test("shows errors for duplicate names", async t => {
   await extensionViewController.init(t, {});
-  await accounts[0].propertyIdField.typeText(t, "PR123");
-  await addAccountButton.click(t);
-  await accounts[1].propertyIdField.typeText(t, "PR456");
-  // We'll expand the first account before we validate to test that
-  // validation expands the invalid account (in this case, the second one)
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await addInstanceButton.click(t);
+  await instances[1].propertyIdField.typeText(t, "PR456");
+  // We'll expand the first instance before we validate to test that
+  // validation expands the invalid instance (in this case, the second one)
   await accordion.clickHeader(t, "PR123");
   await extensionViewController.expectIsNotValid(t);
-  await accounts[1].instanceNameField.expectError(t);
+  await instances[1].nameField.expectError(t);
 });
 
-test("deletes an account", async t => {
+test("deletes an instance", async t => {
   await extensionViewController.init(t, {});
-  await accounts[0].propertyIdField.typeText(t, "PR123");
-  await t.expect(accounts[0].deleteButton.exists).notOk();
-  await addAccountButton.click(t);
-  await t.expect(accounts[1].deleteButton.selector.exists).ok();
-  await accounts[1].propertyIdField.typeText(t, "PR456");
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await t.expect(instances[0].deleteButton.exists).notOk();
+  await addInstanceButton.click(t);
+  await t.expect(instances[1].deleteButton.selector.exists).ok();
+  await instances[1].propertyIdField.typeText(t, "PR456");
   await accordion.clickHeader(t, "PR123");
-  await accounts[0].deleteButton.click(t);
+  await instances[0].deleteButton.click(t);
   // Ensure that clicking cancel doesn't delete anything.
   await resourceUsageDialog.clickCancel(t);
   await t.expect(resourceUsageDialog.selector.exists).notOk();
-  await accounts[0].propertyIdField.expectValue(t, "PR123");
+  await instances[0].propertyIdField.expectValue(t, "PR123");
   // Alright, delete for real.
-  await accounts[0].deleteButton.click(t);
+  await instances[0].deleteButton.click(t);
   await resourceUsageDialog.expectTitle(t, "Resource Usage");
   await resourceUsageDialog.clickConfirm(t);
-  await accounts[0].propertyIdField.expectValue(t, "PR456");
+  await instances[0].propertyIdField.expectValue(t, "PR456");
 });

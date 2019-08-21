@@ -36,9 +36,9 @@ const contextGranularity = {
 };
 const contextOptions = ["web", "device", "environment", "placeContext"];
 
-const accountDefaults = {
+const instanceDefaults = {
+  name: "alloy",
   propertyId: "",
-  instanceName: "alloy",
   edgeDomain: "",
   errorsEnabled: true,
   optInEnabled: false,
@@ -48,7 +48,8 @@ const accountDefaults = {
   context: contextOptions
 };
 
-const createDefaultAccount = () => JSON.parse(JSON.stringify(accountDefaults));
+const createDefaultInstance = () =>
+  JSON.parse(JSON.stringify(instanceDefaults));
 
 const getInitialValues = settings => {
   // settings is null if the user is creating a new rule component
@@ -56,71 +57,73 @@ const getInitialValues = settings => {
     settings = {};
   }
 
-  let { accounts } = settings;
+  let { instances } = settings;
 
-  if (accounts) {
-    accounts.forEach(account => {
-      if (account.context) {
-        account.contextGranularity = contextGranularity.SPECIFIC;
+  if (instances) {
+    instances.forEach(instance => {
+      if (instance.context) {
+        instance.contextGranularity = contextGranularity.SPECIFIC;
       }
 
-      // Copy default values to the account if the properties
-      // aren't already defined on the account. This is primarily
+      // Copy default values to the instance if the properties
+      // aren't already defined on the instance. This is primarily
       // because Formik requires all fields to have initial values.
-      Object.keys(accountDefaults).forEach(key => {
-        if (account[key] === undefined) {
-          account[key] = accountDefaults[key];
+      Object.keys(instanceDefaults).forEach(key => {
+        if (instance[key] === undefined) {
+          instance[key] = instanceDefaults[key];
         }
       });
     });
   } else {
-    accounts = [createDefaultAccount()];
+    instances = [createDefaultInstance()];
   }
 
   return {
-    accounts
+    instances
   };
 };
 
 const getSettings = values => {
   return {
-    accounts: values.accounts.map(account => {
-      const trimmedAccount = {
-        propertyId: account.propertyId,
-        instanceName: account.instanceName
+    instances: values.instances.map(instance => {
+      const trimmedInstance = {
+        name: instance.name,
+        propertyId: instance.propertyId
       };
 
-      if (account.edgeDomain) {
-        trimmedAccount.edgeDomain = account.edgeDomain;
+      if (instance.edgeDomain) {
+        trimmedInstance.edgeDomain = instance.edgeDomain;
       }
 
-      if (account.errorsEnabled !== accountDefaults.errorsEnabled) {
-        trimmedAccount.errorsEnabled = account.errorsEnabled;
+      if (instance.errorsEnabled !== instanceDefaults.errorsEnabled) {
+        trimmedInstance.errorsEnabled = instance.errorsEnabled;
       }
 
-      if (account.optInEnabled !== accountDefaults.optInEnabled) {
-        trimmedAccount.optInEnabled = account.optInEnabled;
+      if (instance.optInEnabled !== instanceDefaults.optInEnabled) {
+        trimmedInstance.optInEnabled = instance.optInEnabled;
       }
 
-      if (account.idSyncsEnabled !== accountDefaults.idSyncsEnabled) {
-        trimmedAccount.idSyncsEnabled = account.idSyncsEnabled;
+      if (instance.idSyncsEnabled !== instanceDefaults.idSyncsEnabled) {
+        trimmedInstance.idSyncsEnabled = instance.idSyncsEnabled;
       }
 
-      if (account.destinationsEnabled !== accountDefaults.destinationsEnabled) {
-        trimmedAccount.destinationsEnabled = account.destinationsEnabled;
+      if (
+        instance.destinationsEnabled !== instanceDefaults.destinationsEnabled
+      ) {
+        trimmedInstance.destinationsEnabled = instance.destinationsEnabled;
       }
 
-      if (account.contextGranularity === contextGranularity.SPECIFIC) {
-        trimmedAccount.context = account.context;
+      if (instance.contextGranularity === contextGranularity.SPECIFIC) {
+        trimmedInstance.context = instance.context;
       }
 
-      return trimmedAccount;
+      return trimmedInstance;
     })
   };
 };
 
-const validateDuplicateValue = (createError, accounts, key, message) => {
-  const values = accounts.map(account => account[key]);
+const validateDuplicateValue = (createError, instances, key, message) => {
+  const values = instances.map(instance => instance[key]);
   const duplicateIndex = values.findIndex(
     (value, index) => values.indexOf(value) < index
   );
@@ -128,7 +131,7 @@ const validateDuplicateValue = (createError, accounts, key, message) => {
   return (
     duplicateIndex === -1 ||
     createError({
-      path: `accounts[${duplicateIndex}].${key}`,
+      path: `instances[${duplicateIndex}].${key}`,
       message
     })
   );
@@ -136,31 +139,33 @@ const validateDuplicateValue = (createError, accounts, key, message) => {
 
 const validationSchema = object()
   .shape({
-    accounts: array().of(
+    instances: array().of(
       object().shape({
-        propertyId: string().required("Please specify a property ID."),
-        instanceName: string().required("Please specify an instance name.")
+        name: string().required("Please specify a name."),
+        propertyId: string().required("Please specify a property ID.")
       })
     )
   })
   // TestCafe doesn't allow this to be an arrow function because of
   // how it scopes "this".
-  .test("propertyId", function(settings) {
+  // eslint-disable-next-line func-names
+  .test("name", function(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
-      settings.accounts,
-      "propertyId",
-      "Please provide a property ID unique from those used for other accounts."
+      settings.instances,
+      "name",
+      "Please provide a name unique from those used for other instances."
     );
   })
   // TestCafe doesn't allow this to be an arrow function because of
   // how it scopes "this".
-  .test("instanceName", function(settings) {
+  // eslint-disable-next-line func-names
+  .test("propertyId", function(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
-      settings.accounts,
-      "instanceName",
-      "Please provide an instance name unique from those used for other accounts."
+      settings.instances,
+      "propertyId",
+      "Please provide a property ID unique from those used for other instances."
     );
   });
 
@@ -178,26 +183,26 @@ const Configuration = () => {
         // If the user just tried to save the configuration and there's
         // a validation error, make sure the first accordion item containing
         // an error is shown.
-        if (isSubmitting && !isValidating && errors && errors.accounts) {
-          const accountIndexContainingErrors = errors.accounts.findIndex(
-            account => account
+        if (isSubmitting && !isValidating && errors && errors.instances) {
+          const instanceIndexContainingErrors = errors.instances.findIndex(
+            instance => instance
           );
-          setSelectedAccordionIndex(accountIndexContainingErrors);
+          setSelectedAccordionIndex(instanceIndexContainingErrors);
         }
 
         return (
           <div>
             <FieldArray
-              name="accounts"
+              name="instances"
               render={arrayHelpers => {
                 return (
                   <div>
                     <div className="u-alignRight">
                       <Button
-                        label="Add Account"
+                        label="Add Instance"
                         onClick={() => {
-                          arrayHelpers.push(createDefaultAccount());
-                          setSelectedAccordionIndex(values.accounts.length);
+                          arrayHelpers.push(createDefaultInstance());
+                          setSelectedAccordionIndex(values.instances.length);
                         }}
                       />
                     </div>
@@ -206,12 +211,30 @@ const Configuration = () => {
                       className="u-gapTop2x"
                       onChange={setSelectedAccordionIndex}
                     >
-                      {values.accounts.map((account, index) => (
+                      {values.instances.map((instance, index) => (
                         <AccordionItem
                           key={index}
-                          header={account.propertyId || "untitled account"}
+                          header={instance.propertyId || "untitled instance"}
                         >
                           <div>
+                            <label
+                              htmlFor="nameField"
+                              className="spectrum-Form-itemLabel"
+                            >
+                              Name (will also be used to create a global method
+                              on window)
+                            </label>
+                            <div>
+                              <WrappedField
+                                id="nameField"
+                                name={`instances.${index}.name`}
+                                component={Textfield}
+                                componentClassName="u-fieldLong"
+                                supportDataElement
+                              />
+                            </div>
+                          </div>
+                          <div className="u-gapTop">
                             <label
                               htmlFor="propertyIdField"
                               className="spectrum-Form-itemLabel"
@@ -221,26 +244,9 @@ const Configuration = () => {
                             <div>
                               <WrappedField
                                 id="propertyIdField"
-                                name={`accounts.${index}.propertyId`}
+                                name={`instances.${index}.propertyId`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
-                              />
-                            </div>
-                          </div>
-                          <div className="u-gapTop">
-                            <label
-                              htmlFor="instanceNameField"
-                              className="spectrum-Form-itemLabel"
-                            >
-                              Instance Name
-                            </label>
-                            <div>
-                              <WrappedField
-                                id="instanceNameField"
-                                name={`accounts.${index}.instanceName`}
-                                component={Textfield}
-                                componentClassName="u-fieldLong"
-                                supportDataElement
                               />
                             </div>
                           </div>
@@ -254,7 +260,7 @@ const Configuration = () => {
                             <div>
                               <WrappedField
                                 id="edgeDomainField"
-                                name={`accounts.${index}.edgeDomain`}
+                                name={`instances.${index}.edgeDomain`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
                                 supportDataElement
@@ -263,7 +269,7 @@ const Configuration = () => {
                           </div>
                           <div className="u-gapTop">
                             <WrappedField
-                              name={`accounts.${index}.errorsEnabled`}
+                              name={`instances.${index}.errorsEnabled`}
                               component={Checkbox}
                               label="Enable errors"
                             />
@@ -273,7 +279,7 @@ const Configuration = () => {
 
                           <div className="u-gapTop">
                             <WrappedField
-                              name={`accounts.${index}.optInEnabled`}
+                              name={`instances.${index}.optInEnabled`}
                               component={Checkbox}
                               label="Enable Opt-In"
                             />
@@ -283,14 +289,14 @@ const Configuration = () => {
 
                           <div className="u-gapTop">
                             <WrappedField
-                              name={`accounts.${index}.idSyncsEnabled`}
+                              name={`instances.${index}.idSyncsEnabled`}
                               component={Checkbox}
                               label="Enable ID Synchronization"
                             />
                           </div>
                           <div className="u-gapTop">
                             <WrappedField
-                              name={`accounts.${index}.destinationsEnabled`}
+                              name={`instances.${index}.destinationsEnabled`}
                               component={Checkbox}
                               label="Enable Destinations"
                             />
@@ -306,7 +312,7 @@ const Configuration = () => {
                               When sending event data, automatically include:
                             </label>
                             <WrappedField
-                              name={`accounts.${index}.contextGranularity`}
+                              name={`instances.${index}.contextGranularity`}
                               component={RadioGroup}
                               componentClassName="u-flexColumn"
                             >
@@ -320,23 +326,23 @@ const Configuration = () => {
                               />
                             </WrappedField>
                           </div>
-                          {values.accounts[index].contextGranularity ===
+                          {values.instances[index].contextGranularity ===
                           contextGranularity.SPECIFIC ? (
                             <div className="FieldSubset u-gapTop">
                               <WrappedField
-                                name={`accounts.${index}.context`}
+                                name={`instances.${index}.context`}
                                 component={CheckboxList}
                                 options={contextOptions}
                               />
                             </div>
                           ) : null}
 
-                          {values.accounts.length > 1 ? (
+                          {values.instances.length > 1 ? (
                             <div className="u-gapTop2x">
                               <ModalTrigger>
                                 <Button
-                                  data-test-id={`accounts.${index}.delete`}
-                                  label="Delete Account"
+                                  data-test-id={`instances.${index}.delete`}
+                                  label="Delete Instance"
                                   icon={<Delete />}
                                   variant="action"
                                 />
@@ -350,7 +356,7 @@ const Configuration = () => {
                                   cancelLabel="Cancel"
                                 >
                                   Any rule components or data elements using
-                                  this account will no longer function as
+                                  this instance will no longer function as
                                   expected when running on your website. We
                                   recommend removing these resources before
                                   publishing your next library. Would you like

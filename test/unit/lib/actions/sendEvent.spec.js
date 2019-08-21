@@ -68,7 +68,7 @@ describe("Send Event", () => {
     });
 
     expect(mockLogger.error).toHaveBeenCalledWith(
-      'Failed to send event for property ID "PR123". No matching account was configured with this ID.'
+      'Failed to send event for property ID "PR123". No matching instance was configured with this ID.'
     );
   });
 });

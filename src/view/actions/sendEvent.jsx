@@ -54,7 +54,7 @@ const getSettings = values => {
 
 const invalidDataMessage = "Please specify a data element";
 const validationSchema = object().shape({
-  propertyId: string().required("Please specify an account"),
+  propertyId: string().required("Please specify an instance"),
   data: string()
     .required(invalidDataMessage)
     .matches(/^%([^%]+)%$/, invalidDataMessage)
@@ -67,22 +67,22 @@ const SendEvent = () => {
       getSettings={getSettings}
       validationSchema={validationSchema}
       render={({ initInfo }) => {
-        const accountOptions = initInfo.extensionSettings.accounts.map(
-          account => ({
-            value: account.propertyId,
-            label: account.propertyId
+        const instanceOptions = initInfo.extensionSettings.instances.map(
+          instance => ({
+            value: instance.propertyId,
+            label: instance.propertyId
           })
         );
 
         if (initInfo.settings) {
           const previouslySavedPropertyId = initInfo.settings.propertyId;
           if (
-            !accountOptions.some(
-              accountOption =>
-                accountOption.value === initInfo.settings.propertyId
+            !instanceOptions.some(
+              instanceOption =>
+                instanceOption.value === initInfo.settings.propertyId
             )
           ) {
-            accountOptions.unshift({
+            instanceOptions.unshift({
               value: previouslySavedPropertyId,
               label: `${previouslySavedPropertyId} (Deleted)`,
               disabled: true
@@ -97,7 +97,7 @@ const SendEvent = () => {
                 htmlFor="propertyIdField"
                 className="spectrum-Form-itemLabel"
               >
-                Account
+                Instance
               </label>
               <div>
                 <WrappedField
@@ -105,7 +105,7 @@ const SendEvent = () => {
                   name="propertyId"
                   component={Select}
                   componentClassName="u-fieldLong"
-                  options={accountOptions}
+                  options={instanceOptions}
                 />
               </div>
             </div>
