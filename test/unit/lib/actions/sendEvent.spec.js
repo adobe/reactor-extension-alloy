@@ -37,14 +37,14 @@ describe("Send Event", () => {
     const action = createSendEvent(instanceManager);
 
     action({
-      propertyId: "PR123",
+      instanceName: "myinstance",
       viewStart: true,
       data: {
         foo: "bar"
       }
     });
 
-    expect(instanceManager.getInstance).toHaveBeenCalledWith("PR123");
+    expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
     expect(instance).toHaveBeenCalledWith("event", {
       viewStart: true,
       data: {
@@ -60,7 +60,7 @@ describe("Send Event", () => {
     const action = createSendEvent(instanceManager);
 
     action({
-      propertyId: "PR123",
+      instanceName: "myinstance",
       viewStart: true,
       data: {
         foo: "bar"
@@ -68,7 +68,7 @@ describe("Send Event", () => {
     });
 
     expect(mockLogger.error).toHaveBeenCalledWith(
-      'Failed to send event for property ID "PR123". No matching instance was configured with this ID.'
+      'Failed to send event for instance "myinstance". No matching instance was configured with this name.'
     );
   });
 });

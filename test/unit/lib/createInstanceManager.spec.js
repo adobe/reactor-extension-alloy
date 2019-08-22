@@ -41,7 +41,11 @@ describe("Instance Manager", () => {
         mockWindow[name] = jasmine.createSpy();
       });
     });
-    instanceManager = createInstanceManager(mockWindow, runAlloy);
+    instanceManager = createInstanceManager(
+      mockWindow,
+      runAlloy,
+      "ABC@AdobeOrg"
+    );
   });
 
   afterEach(() => {
@@ -59,14 +63,16 @@ describe("Instance Manager", () => {
 
   it("configures an SDK instance for each instance", () => {
     expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
-      propertyId: "PR123"
+      propertyId: "PR123",
+      imsOrgId: "ABC@AdobeOrg"
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
-      propertyId: "PR456"
+      propertyId: "PR456",
+      imsOrgId: "ABC@AdobeOrg"
     });
   });
 
-  it("returns instance by property ID", () => {
-    expect(instanceManager.getInstance("PR456")).toBe(mockWindow.alloy2);
+  it("returns instance by name", () => {
+    expect(instanceManager.getInstance("alloy2")).toBe(mockWindow.alloy2);
   });
 });

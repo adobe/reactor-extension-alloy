@@ -10,31 +10,21 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const getNameByPropertyId = (instances, propertyId) => {
-  let matchingName;
-  for (let i = 0; i < instances.length; i += 1) {
-    const instance = instances[i];
-    if (instance.propertyId === propertyId) {
-      matchingName = instance.name;
-      break;
-    }
-  }
-  return matchingName;
-};
-
-module.exports = (window, runAlloy) => {
+module.exports = (window, runAlloy, imsOrgId) => {
   const { instances } = turbine.getExtensionSettings();
   const names = instances.map(instance => instance.name);
 
   runAlloy(names);
 
   instances.forEach(({ name, ...options }) => {
-    window[name]("configure", options);
+    window[name]("configure", {
+      ...options,
+      imsOrgId
+    });
   });
 
   return {
-    getInstance(propertyId) {
-      const name = getNameByPropertyId(instances, propertyId);
+    getInstance(name) {
       return name ? window[name] : undefined;
     }
   };

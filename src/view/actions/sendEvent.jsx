@@ -29,10 +29,10 @@ const getInitialValues = settings => {
     settings = {};
   }
 
-  const { propertyId = "", viewStart = false, data = "" } = settings;
+  const { instanceName = "", viewStart = false, data = "" } = settings;
 
   return {
-    propertyId,
+    instanceName,
     viewStart,
     data
   };
@@ -40,7 +40,7 @@ const getInitialValues = settings => {
 
 const getSettings = values => {
   const settings = {
-    propertyId: values.propertyId,
+    instanceName: values.instanceName,
     data: values.data
   };
 
@@ -54,7 +54,7 @@ const getSettings = values => {
 
 const invalidDataMessage = "Please specify a data element";
 const validationSchema = object().shape({
-  propertyId: string().required("Please specify an instance"),
+  instanceName: string().required("Please specify an instance"),
   data: string()
     .required(invalidDataMessage)
     .matches(/^%([^%]+)%$/, invalidDataMessage)
@@ -69,22 +69,22 @@ const SendEvent = () => {
       render={({ initInfo }) => {
         const instanceOptions = initInfo.extensionSettings.instances.map(
           instance => ({
-            value: instance.propertyId,
-            label: instance.propertyId
+            value: instance.name,
+            label: instance.name
           })
         );
 
         if (initInfo.settings) {
-          const previouslySavedPropertyId = initInfo.settings.propertyId;
+          const previouslySavedInstanceName = initInfo.settings.instanceName;
           if (
             !instanceOptions.some(
               instanceOption =>
-                instanceOption.value === initInfo.settings.propertyId
+                instanceOption.value === initInfo.settings.instanceName
             )
           ) {
             instanceOptions.unshift({
-              value: previouslySavedPropertyId,
-              label: `${previouslySavedPropertyId} (Deleted)`,
+              value: previouslySavedInstanceName,
+              label: `${previouslySavedInstanceName} (Deleted)`,
               disabled: true
             });
           }
@@ -94,15 +94,15 @@ const SendEvent = () => {
           <div>
             <div>
               <label
-                htmlFor="propertyIdField"
+                htmlFor="instanceNameField"
                 className="spectrum-Form-itemLabel"
               >
                 Instance
               </label>
               <div>
                 <WrappedField
-                  id="propertyIdField"
-                  name="propertyId"
+                  id="instanceNameField"
+                  name="instanceName"
                   component={Select}
                   componentClassName="u-fieldLong"
                   options={instanceOptions}
