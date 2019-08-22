@@ -41,6 +41,10 @@
               "idSyncsEnabled": {
                 "type": "boolean"
               },
+              "idSyncContainerId": {
+                "type": "number",
+                "minimum": 0
+              },
               "destinationsEnabled": {
                 "type": "boolean"
               },
