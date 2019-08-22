@@ -47,6 +47,11 @@ for (let i = 0; i < 2; i += 1) {
     destinationsEnabledField: spectrum.checkbox(
       Selector(`[name='instances.${i}.destinationsEnabled']`)
     ),
+    // Due to limitations of the sandbox where tests are run,
+    // testing prehding style viewing/editing is limited.
+    prehidingStyleField: spectrum.button(
+      Selector(`button`).withText("Open Editor")
+    ),
     contextGranularity: {
       allField: spectrum.radio(
         Selector(`[name='instances.${i}.contextGranularity'][value=all]`)
@@ -85,6 +90,7 @@ test("initializes form fields with full settings", async t => {
           optInEnabled: true,
           idSyncsEnabled: false,
           destinationsEnabled: false,
+          prehidingStyle: "#container { display: none }",
           context: ["device", "placeContext"]
         },
         {
@@ -179,7 +185,15 @@ test("returns minimal valid settings", async t => {
 });
 
 test("returns full valid settings", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(
+    t,
+    {},
+    {
+      openCodeEditor() {
+        return Promise.resolve("#container { display: none }");
+      }
+    }
+  );
 
   await instances[0].nameField.typeText(t, "1");
   await instances[0].propertyIdField.typeText(t, "PR123");
@@ -188,6 +202,7 @@ test("returns full valid settings", async t => {
   await instances[0].optInEnabledField.click(t);
   await instances[0].idSyncsEnabledField.click(t);
   await instances[0].destinationsEnabledField.click(t);
+  await instances[0].prehidingStyleField.click(t);
 
   await addInstanceButton.click(t);
 
@@ -207,7 +222,8 @@ test("returns full valid settings", async t => {
         errorsEnabled: false,
         optInEnabled: true,
         idSyncsEnabled: false,
-        destinationsEnabled: false
+        destinationsEnabled: false,
+        prehidingStyle: "#container { display: none }"
       },
       {
         name: "alloy2",
