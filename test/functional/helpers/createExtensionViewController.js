@@ -33,19 +33,25 @@ module.exports = viewPath => {
   // More details about the tool and this method can be found here:
   // https://www.npmjs.com/package/@adobe/reactor-sandbox
   return {
-    async init(t, initInfo = {}) {
+    async init(t, initInfo = {}, sharedViewMethods = {}) {
       await t.switchToMainWindow();
       return t.eval(
         () => {
           window.loadExtensionViewPromise = window.loadExtensionView({
             viewPath,
-            initInfo
+            initInfo,
+            // Can't use spread operator or Object.assign due to
+            // what appears to be weirdness between babel and t.eval()
+            openCodeEditor: sharedViewMethods.openCodeEditor,
+            openRegexTester: sharedViewMethods.openRegexTester,
+            openDataElementSelector: sharedViewMethods.openDataElementSelector
           });
         },
         {
           dependencies: {
             viewPath,
-            initInfo
+            initInfo,
+            sharedViewMethods
           }
         }
       );
@@ -64,7 +70,15 @@ module.exports = viewPath => {
     },
     async expectSettings(t, expectedSettings) {
       const actualSettings = await getSettings(t);
-      await t.expect(actualSettings).eql(expectedSettings);
+
+      await t
+        .expect(actualSettings)
+        .eql(
+          expectedSettings,
+          `Expected settings: ${JSON.stringify(
+            expectedSettings
+          )} Actual settings: ${JSON.stringify(actualSettings)}`
+        );
     }
   };
 };

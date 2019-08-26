@@ -28,6 +28,8 @@ import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
+import EditorButton from "../components/editorButton";
+import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
 import "./configuration.styl";
 
 const contextGranularity = {
@@ -44,6 +46,7 @@ const instanceDefaults = {
   optInEnabled: false,
   idSyncsEnabled: true,
   destinationsEnabled: true,
+  prehidingStyle: "",
   contextGranularity: contextGranularity.ALL,
   context: contextOptions
 };
@@ -91,27 +94,14 @@ const getSettings = values => {
         propertyId: instance.propertyId
       };
 
-      if (instance.edgeDomain) {
-        trimmedInstance.edgeDomain = instance.edgeDomain;
-      }
-
-      if (instance.errorsEnabled !== instanceDefaults.errorsEnabled) {
-        trimmedInstance.errorsEnabled = instance.errorsEnabled;
-      }
-
-      if (instance.optInEnabled !== instanceDefaults.optInEnabled) {
-        trimmedInstance.optInEnabled = instance.optInEnabled;
-      }
-
-      if (instance.idSyncsEnabled !== instanceDefaults.idSyncsEnabled) {
-        trimmedInstance.idSyncsEnabled = instance.idSyncsEnabled;
-      }
-
-      if (
-        instance.destinationsEnabled !== instanceDefaults.destinationsEnabled
-      ) {
-        trimmedInstance.destinationsEnabled = instance.destinationsEnabled;
-      }
+      copyPropertiesIfNotDefault(trimmedInstance, instance, instanceDefaults, [
+        "edgeDomain",
+        "errorsEnabled",
+        "optInEnabled",
+        "idSyncsEnabled",
+        "destinationsEnabled",
+        "prehidingStyle"
+      ]);
 
       if (instance.contextGranularity === contextGranularity.SPECIFIC) {
         trimmedInstance.context = instance.context;
@@ -300,6 +290,24 @@ const Configuration = () => {
                               component={Checkbox}
                               label="Enable Destinations"
                             />
+                          </div>
+
+                          <h3>Personalization</h3>
+
+                          <div className="u-gapTop">
+                            <label
+                              htmlFor="prehidingStyleField"
+                              className="spectrum-Form-itemLabel"
+                            >
+                              Prehiding Style (optional)
+                            </label>
+                            <div>
+                              <WrappedField
+                                id="prehidingStyleField"
+                                name={`instances.${index}.prehidingStyle`}
+                                component={EditorButton}
+                              />
+                            </div>
                           </div>
 
                           <h3>Context</h3>
