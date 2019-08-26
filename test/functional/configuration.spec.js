@@ -44,6 +44,9 @@ for (let i = 0; i < 2; i += 1) {
     idSyncsEnabledField: spectrum.checkbox(
       Selector(`[name='instances.${i}.idSyncsEnabled']`)
     ),
+    idSyncContainerIdField: spectrum.textfield(
+      Selector(`[name='instances.${i}.idSyncContainerId']`)
+    ),
     destinationsEnabledField: spectrum.checkbox(
       Selector(`[name='instances.${i}.destinationsEnabled']`)
     ),
@@ -89,6 +92,7 @@ test("initializes form fields with full settings", async t => {
           errorsEnabled: false,
           optInEnabled: true,
           idSyncsEnabled: false,
+          idSyncContainerId: 123,
           destinationsEnabled: false,
           prehidingStyle: "#container { display: none }",
           context: ["device", "placeContext"]
@@ -111,6 +115,7 @@ test("initializes form fields with full settings", async t => {
   await instances[0].errorsEnabledField.expectUnchecked(t);
   await instances[0].optInEnabledField.expectChecked(t);
   await instances[0].idSyncsEnabledField.expectUnchecked(t);
+  await instances[0].idSyncContainerIdField.expectValue(t, "123");
   await instances[0].destinationsEnabledField.expectUnchecked(t);
   await instances[0].contextGranularity.specificField.expectChecked(t);
   await instances[0].specificContext.webField.expectUnchecked(t);
@@ -152,6 +157,7 @@ test("initializes form fields with minimal settings", async t => {
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
   await instances[0].idSyncsEnabledField.expectChecked(t);
+  await instances[0].idSyncContainerIdField.expectValue(t, "");
   await instances[0].destinationsEnabledField.expectChecked(t);
   await instances[0].contextGranularity.allField.expectChecked(t);
 });
@@ -165,6 +171,7 @@ test("initializes form fields with no settings", async t => {
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
   await instances[0].idSyncsEnabledField.expectChecked(t);
+  await instances[0].idSyncContainerIdField.expectValue(t, "");
   await instances[0].destinationsEnabledField.expectChecked(t);
   await instances[0].contextGranularity.allField.expectChecked(t);
 });
@@ -201,6 +208,7 @@ test("returns full valid settings", async t => {
   await instances[0].errorsEnabledField.click(t);
   await instances[0].optInEnabledField.click(t);
   await instances[0].idSyncsEnabledField.click(t);
+  await instances[0].idSyncContainerIdField.typeText(t, "123");
   await instances[0].destinationsEnabledField.click(t);
   await instances[0].prehidingStyleField.click(t);
 
@@ -222,6 +230,7 @@ test("returns full valid settings", async t => {
         errorsEnabled: false,
         optInEnabled: true,
         idSyncsEnabled: false,
+        idSyncContainerId: 123,
         destinationsEnabled: false,
         prehidingStyle: "#container { display: none }"
       },
@@ -266,6 +275,22 @@ test("shows errors for duplicate names", async t => {
   await accordion.clickHeader(t, "PR123");
   await extensionViewController.expectIsNotValid(t);
   await instances[1].nameField.expectError(t);
+});
+
+test("shows error for negative ID sync container ID", async t => {
+  await extensionViewController.init(t, {});
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].idSyncContainerIdField.typeText(t, "-1");
+  await extensionViewController.expectIsNotValid(t);
+  await instances[0].idSyncContainerIdField.expectError(t);
+});
+
+test("shows error for non-integer ID sync container ID", async t => {
+  await extensionViewController.init(t, {});
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].idSyncContainerIdField.typeText(t, "123.123");
+  await extensionViewController.expectIsNotValid(t);
+  await instances[0].idSyncContainerIdField.expectError(t);
 });
 
 test("deletes an instance", async t => {

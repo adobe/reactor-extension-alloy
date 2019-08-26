@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React, { useState } from "react";
-import { object, array, string } from "yup";
+import { object, array, string, number } from "yup";
 import { FieldArray } from "formik";
 import Textfield from "@react/react-spectrum/Textfield";
 import RadioGroup from "@react/react-spectrum/RadioGroup";
@@ -45,6 +45,7 @@ const instanceDefaults = {
   errorsEnabled: true,
   optInEnabled: false,
   idSyncsEnabled: true,
+  idSyncContainerId: "",
   destinationsEnabled: true,
   prehidingStyle: "",
   contextGranularity: contextGranularity.ALL,
@@ -99,9 +100,16 @@ const getSettings = values => {
         "errorsEnabled",
         "optInEnabled",
         "idSyncsEnabled",
+        "idSyncContainerId",
         "destinationsEnabled",
         "prehidingStyle"
       ]);
+
+      if (trimmedInstance.idSyncContainerId !== undefined) {
+        trimmedInstance.idSyncContainerId = Number(
+          trimmedInstance.idSyncContainerId
+        );
+      }
 
       if (instance.contextGranularity === contextGranularity.SPECIFIC) {
         trimmedInstance.context = instance.context;
@@ -127,12 +135,21 @@ const validateDuplicateValue = (createError, instances, key, message) => {
   );
 };
 
+const idSyncContainerIdValidationMessage =
+  "Please specify an non-negative integer for the container ID.";
+
 const validationSchema = object()
   .shape({
     instances: array().of(
       object().shape({
         name: string().required("Please specify a name."),
-        propertyId: string().required("Please specify a property ID.")
+        propertyId: string().required("Please specify a property ID."),
+        idSyncContainerId: number()
+          // convert empty string to a 0 so it doesn't fail subsequent rules
+          .transform(value => value || 0)
+          .typeError(idSyncContainerIdValidationMessage)
+          .integer(idSyncContainerIdValidationMessage)
+          .min(0, idSyncContainerIdValidationMessage)
       })
     )
   })
@@ -284,6 +301,27 @@ const Configuration = () => {
                               label="Enable ID Synchronization"
                             />
                           </div>
+
+                          <div className="u-gapTop">
+                            <label
+                              htmlFor="idSyncContainerIdField"
+                              className="spectrum-Form-itemLabel"
+                            >
+                              ID Synchronization Container ID
+                            </label>
+                            <div>
+                              <WrappedField
+                                id="idSyncContainerIdField"
+                                name={`instances.${index}.idSyncContainerId`}
+                                component={Textfield}
+                                componentClassName="u-fieldLong"
+                                supportDataElement
+                              />
+                            </div>
+                          </div>
+
+                          <h3>Audiences</h3>
+
                           <div className="u-gapTop">
                             <WrappedField
                               name={`instances.${index}.destinationsEnabled`}
