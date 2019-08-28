@@ -221,7 +221,7 @@ const Configuration = () => {
                       {values.instances.map((instance, index) => (
                         <AccordionItem
                           key={index}
-                          header={instance.propertyId || "untitled instance"}
+                          header={instance.name || "unnamed instance"}
                         >
                           <div>
                             <label

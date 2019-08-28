@@ -123,7 +123,7 @@ test("initializes form fields with full settings", async t => {
   await instances[0].specificContext.environmentField.expectUnchecked(t);
   await instances[0].specificContext.placeContextField.expectChecked(t);
 
-  await accordion.clickHeader(t, "PR456");
+  await accordion.clickHeader(t, "ALLOY2");
 
   await instances[1].nameField.expectValue(t, "alloy2");
   await instances[1].propertyIdField.expectValue(t, "PR456");
@@ -257,10 +257,12 @@ test("shows errors for duplicate property IDs", async t => {
   await extensionViewController.init(t, {});
   await instances[0].propertyIdField.typeText(t, "PR123");
   await addInstanceButton.click(t);
+  // Make accordion header label unique
+  await instances[1].nameField.typeText(t, "2");
   await instances[1].propertyIdField.typeText(t, "PR123");
   // We'll expand the first instance before we validate to test that
   // validation expands the invalid instance (in this case, the second one)
-  await accordion.clickHeader(t, "PR123");
+  await accordion.clickHeader(t, "ALLOY");
   await extensionViewController.expectIsNotValid(t);
   await instances[1].propertyIdField.expectError(t);
 });
@@ -272,7 +274,9 @@ test("shows errors for duplicate names", async t => {
   await instances[1].propertyIdField.typeText(t, "PR456");
   // We'll expand the first instance before we validate to test that
   // validation expands the invalid instance (in this case, the second one)
-  await accordion.clickHeader(t, "PR123");
+  // Even though both accordion header labels are "alloy", this
+  // will select the first one.
+  await accordion.clickHeader(t, "ALLOY");
   await extensionViewController.expectIsNotValid(t);
   await instances[1].nameField.expectError(t);
 });
@@ -299,8 +303,10 @@ test("deletes an instance", async t => {
   await t.expect(instances[0].deleteButton.exists).notOk();
   await addInstanceButton.click(t);
   await t.expect(instances[1].deleteButton.selector.exists).ok();
+  // Make accordion header label unique
+  await instances[1].nameField.typeText(t, "2");
   await instances[1].propertyIdField.typeText(t, "PR456");
-  await accordion.clickHeader(t, "PR123");
+  await accordion.clickHeader(t, "ALLOY");
   await instances[0].deleteButton.click(t);
   // Ensure that clicking cancel doesn't delete anything.
   await resourceUsageDialog.clickCancel(t);
