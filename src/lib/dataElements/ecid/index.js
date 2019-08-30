@@ -10,15 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = instanceManager => settings => {
-  const { instanceName, ...otherSettings } = settings;
-  const instance = instanceManager.getInstance(instanceName);
+const createEcid = require("./createEcid");
+const instanceManager = require("../../instanceManager/index");
 
-  if (instance) {
-    instance("event", otherSettings);
-  } else {
-    turbine.logger.error(
-      `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
-    );
-  }
-};
+module.exports = createEcid(instanceManager);

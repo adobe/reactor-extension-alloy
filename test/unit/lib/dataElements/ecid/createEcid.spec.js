@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createSendEvent from "../../../../src/lib/actions/createSendEvent";
-import turbineVariable from "../../helpers/turbineVariable";
+import createSendEvent from "../../../../../src/lib/actions/sendEvent/createSendEvent";
+import turbineVariable from "../../../helpers/turbineVariable";
 
 describe("Send Event", () => {
   let mockLogger;
@@ -32,7 +32,9 @@ describe("Send Event", () => {
   it("executes event command", () => {
     const instance = jasmine.createSpy();
     const instanceManager = {
-      getInstance: jasmine.createSpy().and.returnValue(instance)
+      getAccessor: jasmine.createSpy().and.returnValue({
+        instance
+      })
     };
     const action = createSendEvent(instanceManager);
 
@@ -44,7 +46,7 @@ describe("Send Event", () => {
       }
     });
 
-    expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
+    expect(instanceManager.getAccessor).toHaveBeenCalledWith("myinstance");
     expect(instance).toHaveBeenCalledWith("event", {
       viewStart: true,
       data: {
@@ -55,7 +57,7 @@ describe("Send Event", () => {
 
   it("logs an error when no matching instance found", () => {
     const instanceManager = {
-      getInstance: () => {}
+      getAccessor: () => undefined
     };
     const action = createSendEvent(instanceManager);
 

@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createInstanceManager from "../../../src/lib/createInstanceManager";
-import turbineVariable from "../helpers/turbineVariable";
+import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
+import turbineVariable from "../../helpers/turbineVariable";
 
 describe("Instance Manager", () => {
   let runAlloy;
@@ -38,7 +38,14 @@ describe("Instance Manager", () => {
     mockWindow = {};
     runAlloy = jasmine.createSpy().and.callFake(names => {
       names.forEach(name => {
-        mockWindow[name] = jasmine.createSpy();
+        mockWindow[name] = jasmine
+          .createSpy()
+          .and.callFake((commandName, options) => {
+            if (commandName === "configure") {
+              options.reactorRegisterGetEcid(() => `${name}:ecid`);
+              options.reactorRegisterCreateStitchId(() => `${name}:stitchId`);
+            }
+          });
       });
     });
     instanceManager = createInstanceManager(
@@ -56,23 +63,30 @@ describe("Instance Manager", () => {
     expect(runAlloy).toHaveBeenCalledWith(["alloy1", "alloy2"]);
   });
 
-  it("creates an SDK instance for each instance", () => {
+  it("creates an SDK instance for each configured instance", () => {
     expect(mockWindow.alloy1).toEqual(jasmine.any(Function));
     expect(mockWindow.alloy2).toEqual(jasmine.any(Function));
   });
 
-  it("configures an SDK instance for each instance", () => {
+  it("configures an SDK instance for each configured instance", () => {
     expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
       propertyId: "PR123",
-      imsOrgId: "ABC@AdobeOrg"
+      imsOrgId: "ABC@AdobeOrg",
+      reactorRegisterGetEcid: jasmine.any(Function),
+      reactorRegisterCreateStitchId: jasmine.any(Function)
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
       propertyId: "PR456",
-      imsOrgId: "ABC@AdobeOrg"
+      imsOrgId: "ABC@AdobeOrg",
+      reactorRegisterGetEcid: jasmine.any(Function),
+      reactorRegisterCreateStitchId: jasmine.any(Function)
     });
   });
 
-  it("returns instance by name", () => {
-    expect(instanceManager.getInstance("alloy2")).toBe(mockWindow.alloy2);
+  it("returns accessor by name", () => {
+    const accessor = instanceManager.getAccessor("alloy2");
+    expect(accessor.instance).toBe(mockWindow.alloy2);
+    expect(accessor.getEcid()).toBe("alloy2:ecid");
+    expect(accessor.createStitchId()).toBe("alloy2:stitchId");
   });
 });

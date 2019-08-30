@@ -13,16 +13,13 @@ governing permissions and limitations under the License.
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import { object, string } from "yup";
-import Textfield from "@react/react-spectrum/Textfield";
-import Checkbox from "@react/react-spectrum/Checkbox";
 import Select from "@react/react-spectrum/Select";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
-import InfoTip from "../components/infoTip";
 import getInstanceOptions from "../utils/getInstanceOptions";
-import "./sendEvent.styl";
+import "./ecid.styl";
 
 const getInitialValues = settings => {
   // settings is null if the user is creating a new rule component
@@ -30,38 +27,24 @@ const getInitialValues = settings => {
     settings = {};
   }
 
-  const { instanceName = "", viewStart = false, data = "" } = settings;
+  const { instanceName = "" } = settings;
 
   return {
-    instanceName,
-    viewStart,
-    data
+    instanceName
   };
 };
 
 const getSettings = values => {
-  const settings = {
-    instanceName: values.instanceName,
-    data: values.data
+  return {
+    instanceName: values.instanceName
   };
-
-  // Only add viewStart if the value is different than the default (false).
-  if (values.viewStart) {
-    settings.viewStart = true;
-  }
-
-  return settings;
 };
 
-const invalidDataMessage = "Please specify a data element";
 const validationSchema = object().shape({
-  instanceName: string().required("Please specify an instance"),
-  data: string()
-    .required(invalidDataMessage)
-    .matches(/^%([^%]+)%$/, invalidDataMessage)
+  instanceName: string().required("Please specify an instance")
 });
 
-const SendEvent = () => {
+const Ecid = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -87,32 +70,6 @@ const SendEvent = () => {
                 />
               </div>
             </div>
-            <div className="u-gapTop">
-              <WrappedField
-                name="viewStart"
-                component={Checkbox}
-                label="Occurs at the start of a view"
-              />
-            </div>
-            <div className="u-gapTop">
-              <label htmlFor="dataField" className="spectrum-Form-itemLabel">
-                Data
-                <InfoTip>
-                  Please specify a data element that will return a JavaScript
-                  object. This object will be sent to the Adobe Experience
-                  Platform.
-                </InfoTip>
-              </label>
-              <div>
-                <WrappedField
-                  id="dataField"
-                  name="data"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement
-                />
-              </div>
-            </div>
           </div>
         );
       }}
@@ -120,4 +77,4 @@ const SendEvent = () => {
   );
 };
 
-render(SendEvent);
+render(Ecid);

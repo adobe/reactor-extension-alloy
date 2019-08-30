@@ -81,6 +81,22 @@ module.exports = {
       selector,
       expectError: createExpectError(selector),
       expectValue: createExpectValue(selector),
+      async expectSelectedOptionLabel(t, label) {
+        await switchToIframe(t);
+        await t
+          .expect(selector.find(".spectrum-Dropdown-label").innerText)
+          .eql(label);
+      },
+      async expectOptionLabels(t, labels) {
+        await switchToIframe(t);
+        await t.click(selector.find("button"));
+        const optionLabels = popoverSelector.find(".spectrum-Menu-itemLabel");
+        for (let i = 0; i < labels.length; i += 1) {
+          // eslint-disable-next-line no-await-in-loop
+          await t.expect(optionLabels.nth(i).withText(labels[i]).exists).ok();
+        }
+        await t.expect(optionLabels.count).eql(labels.length);
+      },
       async selectOption(t, label) {
         await switchToIframe(t);
         await t.click(selector.find("button"));
