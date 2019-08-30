@@ -318,3 +318,46 @@ test("deletes an instance", async t => {
   await resourceUsageDialog.clickConfirm(t);
   await instances[0].propertyIdField.expectValue(t, "PR456");
 });
+
+test("opens CSS code editor for editing prehiding style", async t => {
+  // The sandbox we use for testing doesn't have a real code editor
+  // that replicates what the Launch UI uses. As such, testing that
+  // the prehidingStyle editor button opens a code editor configured
+  // for editing CSS is not as trivial as it should be, so we're going
+  // to abuse the openCodeEditor API to just return the options that were
+  // passed in (instead of an actual string of code) and then abuse our
+  // form and settings system to validate that the object is as expected.
+  // Don't try this at home.
+  await extensionViewController.init(
+    t,
+    {
+      settings: {
+        instances: [
+          {
+            name: "alloy",
+            propertyId: "PR123",
+            prehidingStyle: "#container { display: none }"
+          }
+        ]
+      }
+    },
+    {
+      openCodeEditor(options) {
+        return Promise.resolve(options);
+      }
+    }
+  );
+  await instances[0].prehidingStyleField.click(t);
+  await extensionViewController.expectSettings(t, {
+    instances: [
+      {
+        name: "alloy",
+        propertyId: "PR123",
+        prehidingStyle: {
+          code: "#container { display: none }",
+          language: "css"
+        }
+      }
+    ]
+  });
+});
