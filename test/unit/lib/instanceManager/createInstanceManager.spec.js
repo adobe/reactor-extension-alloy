@@ -72,12 +72,14 @@ describe("Instance Manager", () => {
     expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
       propertyId: "PR123",
       imsOrgId: "ABC@AdobeOrg",
+      logEnabled: true,
       reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateStitchId: jasmine.any(Function)
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
       propertyId: "PR456",
       imsOrgId: "ABC@AdobeOrg",
+      logEnabled: true,
       reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateStitchId: jasmine.any(Function)
     });
