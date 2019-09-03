@@ -31,3 +31,7 @@ Several npm scripts have been provided for assisting in development. Each script
 When you attempt to commit code changes, several of the above tasks will be run automatically to help ensure that your changes pass tests and are consistent with agreed-upon standards.
 
 Thank you for your interest in contributing! 
+
+## Uploading
+
+To upload the extension, you will first need to create an integration in [Adobe I/O](https://console.adobe.io). Once an integration has been created, use the [Launch Extension Uploader Tool](https://www.npmjs.com/package/@adobe/reactor-uploader) to upload the extension. For more information, please see the [Submissions documentation](https://developer.adobelaunch.com/extensions/submissions/) provided by Launch.

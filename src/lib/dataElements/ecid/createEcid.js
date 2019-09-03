@@ -10,22 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = (window, runAlloy, imsOrgId) => {
-  const { instances } = turbine.getExtensionSettings();
-  const names = instances.map(instance => instance.name);
+module.exports = instanceManager => settings => {
+  const { instanceName } = settings;
+  const instanceAccessor = instanceManager.getAccessor(instanceName);
+  let ecid;
 
-  runAlloy(names);
+  if (instanceAccessor) {
+    ecid = instanceAccessor.getEcid();
+  } else {
+    turbine.logger.error(
+      `Failed to retrieve ECID for instance "${instanceName}". No matching instance was configured with this name.`
+    );
+  }
 
-  instances.forEach(({ name, ...options }) => {
-    window[name]("configure", {
-      ...options,
-      imsOrgId
-    });
-  });
-
-  return {
-    getInstance(name) {
-      return name ? window[name] : undefined;
-    }
-  };
+  return ecid;
 };
