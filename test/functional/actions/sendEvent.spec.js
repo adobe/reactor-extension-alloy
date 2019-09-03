@@ -11,8 +11,9 @@ governing permissions and limitations under the License.
 */
 
 import { Selector } from "testcafe";
-import createExtensionViewController from "./helpers/createExtensionViewController";
-import spectrum from "./helpers/spectrum";
+import createExtensionViewController from "../helpers/createExtensionViewController";
+import spectrum from "../helpers/spectrum";
+import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
 
 const extensionViewController = createExtensionViewController(
   "actions/sendEvent.html"
@@ -133,3 +134,5 @@ test("shows error for data value that is more than one data element", async t =>
   await extensionViewController.expectIsNotValid(t);
   await dataField.expectError(t);
 });
+
+testInstanceNameOptions(extensionViewController, instanceNameField);

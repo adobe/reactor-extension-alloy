@@ -10,11 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const runAlloy = require("./runAlloy");
-const createInstanceManager = require("./createInstanceManager");
+module.exports = instanceManager => settings => {
+  const { instanceName, ...otherSettings } = settings;
+  const instanceAccessor = instanceManager.getAccessor(instanceName);
 
-module.exports = createInstanceManager(
-  window,
-  runAlloy,
-  _satellite.company.orgId
-);
+  if (instanceAccessor) {
+    instanceAccessor.instance("event", otherSettings);
+  } else {
+    turbine.logger.error(
+      `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
+    );
+  }
+};

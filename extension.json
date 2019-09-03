@@ -101,9 +101,31 @@
         ],
         "additionalProperties": false
       },
-      "libPath": "dist/lib/actions/sendEvent.js",
+      "libPath": "dist/lib/actions/sendEvent/index.js",
       "viewPath": "actions/sendEvent.html"
     }
   ],
-  "main": "dist/lib/instanceManager.js"
+  "dataElements": [
+    {
+      "displayName": "ECID",
+      "name": "ecid",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "instanceName": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "instanceName"
+        ],
+        "additionalProperties": false
+      },
+      "libPath": "dist/lib/dataElements/ecid/index.js",
+      "viewPath": "dataElements/ecid.html"
+    }
+  ],
+  "main": "dist/lib/instanceManager/index.js"
 }
