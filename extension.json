@@ -128,7 +128,7 @@
         "additionalProperties": false
       },
       "libPath": "dist/lib/dataElements/ecid/index.js",
-      "viewPath": "dataElements/ecid.html"
+      "viewPath": "dataElements/minimal.html"
     },
     {
       "displayName": "Event Merge ID",
@@ -148,7 +148,7 @@
         "additionalProperties": false
       },
       "libPath": "dist/lib/dataElements/eventMergeId/index.js",
-      "viewPath": "dataElements/eventMergeId.html"
+      "viewPath": "dataElements/minimal.html"
     }
   ],
   "main": "dist/lib/instanceManager/index.js"

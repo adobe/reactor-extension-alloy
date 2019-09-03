@@ -14,12 +14,12 @@ import createExtensionViewController from "../helpers/createExtensionViewControl
 import testInstanceNameOnlyView from "../helpers/testInstanceNameOnlyView";
 
 const extensionViewController = createExtensionViewController(
-  "dataElements/eventMergeId.html"
+  "dataElements/minimal.html"
 );
 
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
-fixture("Event Merge ID View").disablePageReloads.page(
+fixture("ECID and Event Merge ID View").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 

@@ -15,11 +15,11 @@ import React from "react";
 import { object, string } from "yup";
 import Select from "@react/react-spectrum/Select";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
-import render from "../../render";
-import WrappedField from "../../components/wrappedField";
-import ExtensionView from "../../components/extensionView";
-import getInstanceOptions from "../../utils/getInstanceOptions";
-import "./instanceNameOnly.styl";
+import render from "../render";
+import WrappedField from "../components/wrappedField";
+import ExtensionView from "../components/extensionView";
+import getInstanceOptions from "../utils/getInstanceOptions";
+import "./minimal.styl";
 
 const getInitialValues = settings => {
   // settings is null if the user is creating a new data element
@@ -44,7 +44,7 @@ const validationSchema = object().shape({
   instanceName: string().required("Please specify an instance")
 });
 
-const InstanceNameOnly = () => {
+const Minimal = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -75,4 +75,4 @@ const InstanceNameOnly = () => {
   );
 };
 
-render(InstanceNameOnly);
+render(Minimal);

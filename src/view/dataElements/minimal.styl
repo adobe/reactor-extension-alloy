@@ -10,8 +10,4 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-// We could just make eventMergeId.html point directly to
-// "common/instanceNameOnly", but we have to do this instead
-// because of a bug in Parcel:
-// https://github.com/parcel-bundler/parcel/issues/2340
-import "./common/instanceNameOnly";
+@import "../global";
