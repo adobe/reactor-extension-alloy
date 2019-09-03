@@ -30,12 +30,18 @@ const getInitialValues = settings => {
     settings = {};
   }
 
-  const { instanceName = "", viewStart = false, data = "" } = settings;
+  const {
+    instanceName = "",
+    viewStart = false,
+    data = "",
+    eventMergeId = ""
+  } = settings;
 
   return {
     instanceName,
     viewStart,
-    data
+    data,
+    eventMergeId
   };
 };
 
@@ -48,6 +54,10 @@ const getSettings = values => {
   // Only add viewStart if the value is different than the default (false).
   if (values.viewStart) {
     settings.viewStart = true;
+  }
+
+  if (values.eventMergeId) {
+    settings.eventMergeId = values.eventMergeId;
   }
 
   return settings;
@@ -107,6 +117,23 @@ const SendEvent = () => {
                 <WrappedField
                   id="dataField"
                   name="data"
+                  component={Textfield}
+                  componentClassName="u-fieldLong"
+                  supportDataElement
+                />
+              </div>
+            </div>
+            <div className="u-gapTop">
+              <label
+                htmlFor="eventMergeIdField"
+                className="spectrum-Form-itemLabel"
+              >
+                Event Merge ID (optional)
+              </label>
+              <div>
+                <WrappedField
+                  id="eventMergeIdField"
+                  name="eventMergeId"
                   component={Textfield}
                   componentClassName="u-fieldLong"
                   supportDataElement

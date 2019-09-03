@@ -10,17 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewController from "../helpers/createExtensionViewController";
-import testInstanceNameOnlyView from "../helpers/testInstanceNameOnlyView";
+module.exports = instanceManager => settings => {
+  const { instanceName } = settings;
+  const instanceAccessor = instanceManager.getAccessor(instanceName);
+  let eventMergeId;
 
-const extensionViewController = createExtensionViewController(
-  "dataElements/ecid.html"
-);
+  if (instanceAccessor) {
+    eventMergeId = instanceAccessor.createEventMergeId();
+  } else {
+    turbine.logger.error(
+      `Failed to create event merge ID for instance "${instanceName}". No matching instance was configured with this name.`
+    );
+  }
 
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("ECID View").disablePageReloads.page(
-  "http://localhost:3000/viewSandbox.html"
-);
-
-testInstanceNameOnlyView(extensionViewController);
+  return eventMergeId;
+};

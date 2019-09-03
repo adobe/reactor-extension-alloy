@@ -86,12 +86,16 @@
             "type": "string",
             "minLength": 1
           },
+          "viewStart": {
+            "type": "boolean",
+            "minLength": 1
+          },
           "data": {
             "type": "string",
             "pattern": "^%([^%]+)%$"
           },
-          "viewStart": {
-            "type": "boolean",
+          "eventMergeId": {
+            "type": "string",
             "minLength": 1
           }
         },
@@ -125,6 +129,26 @@
       },
       "libPath": "dist/lib/dataElements/ecid/index.js",
       "viewPath": "dataElements/ecid.html"
+    },
+    {
+      "displayName": "Event Merge ID",
+      "name": "event-merge-id",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "instanceName": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "instanceName"
+        ],
+        "additionalProperties": false
+      },
+      "libPath": "dist/lib/dataElements/eventMergeId/index.js",
+      "viewPath": "dataElements/eventMergeId.html"
     }
   ],
   "main": "dist/lib/instanceManager/index.js"

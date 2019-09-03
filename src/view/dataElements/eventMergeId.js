@@ -10,17 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewController from "../helpers/createExtensionViewController";
-import testInstanceNameOnlyView from "../helpers/testInstanceNameOnlyView";
-
-const extensionViewController = createExtensionViewController(
-  "dataElements/ecid.html"
-);
-
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("ECID View").disablePageReloads.page(
-  "http://localhost:3000/viewSandbox.html"
-);
-
-testInstanceNameOnlyView(extensionViewController);
+// We could just make eventMergeId.html point directly to
+// "common/instanceNameOnly", but we have to do this instead
+// because of a bug in Parcel:
+// https://github.com/parcel-bundler/parcel/issues/2340
+import "./common/instanceNameOnly";
