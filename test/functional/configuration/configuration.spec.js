@@ -196,8 +196,13 @@ test("returns full valid settings", async t => {
     t,
     {},
     {
-      openCodeEditor() {
-        return Promise.resolve("#container { display: none }");
+      openCodeEditor(options) {
+        return Promise.resolve(
+          // We include options.language in the result
+          // just so we can assert that the code editor
+          // was properly configured for editing CSS
+          `#container { display: none } // ${options.language}`
+        );
       }
     }
   );
@@ -232,7 +237,7 @@ test("returns full valid settings", async t => {
         idSyncsEnabled: false,
         idSyncContainerId: 123,
         destinationsEnabled: false,
-        prehidingStyle: "#container { display: none }"
+        prehidingStyle: "#container { display: none } // css"
       },
       {
         name: "alloy2",

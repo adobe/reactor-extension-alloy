@@ -344,6 +344,7 @@ const Configuration = () => {
                                 id="prehidingStyleField"
                                 name={`instances.${index}.prehidingStyle`}
                                 component={EditorButton}
+                                language="css"
                               />
                             </div>
                           </div>
