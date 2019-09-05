@@ -186,6 +186,7 @@ const componentWrappers = {
   }
 };
 
+// This adds certain properties to all component wrappers.
 Object.keys(componentWrappers).forEach(componentName => {
   const componentWrapper = componentWrappers[componentName];
   componentWrappers[componentName] = selector => {
