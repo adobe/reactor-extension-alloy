@@ -14,7 +14,7 @@ import createExtensionViewController from "../helpers/createExtensionViewControl
 import testInstanceNameOnlyView from "../helpers/testInstanceNameOnlyView";
 
 const extensionViewController = createExtensionViewController(
-  "dataElements/minimal.html"
+  "dataElements/instanceNameOnly.html"
 );
 
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.

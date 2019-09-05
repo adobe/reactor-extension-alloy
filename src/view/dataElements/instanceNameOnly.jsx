@@ -19,7 +19,7 @@ import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
-import "./minimal.styl";
+import "./instanceNameOnly.styl";
 
 const getInitialValues = settings => {
   // settings is null if the user is creating a new data element
@@ -44,7 +44,7 @@ const validationSchema = object().shape({
   instanceName: string().required("Please specify an instance")
 });
 
-const Minimal = () => {
+const InstanceNameOnly = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -75,4 +75,4 @@ const Minimal = () => {
   );
 };
 
-render(Minimal);
+render(InstanceNameOnly);
