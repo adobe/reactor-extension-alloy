@@ -107,6 +107,34 @@
       },
       "libPath": "dist/lib/actions/sendEvent/index.js",
       "viewPath": "actions/sendEvent.html"
+    },
+    {
+      "displayName": "Set Opt-In Preferences",
+      "name": "set-opt-in-preferences",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "instanceName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "purposes": {
+            "type": "string",
+            "enum": [
+              "all",
+              "none"
+            ]
+          }
+        },
+        "required": [
+          "instanceName",
+          "purposes"
+        ],
+        "additionalProperties": false
+      },
+      "libPath": "dist/lib/actions/setOptInPreferences/index.js",
+      "viewPath": "actions/setOptInPreferences.html"
     }
   ],
   "dataElements": [

@@ -63,6 +63,16 @@ const createExpectUnchecked = selector => async t => {
   await t.expect(selector.checked).notOk();
 };
 
+const createExpectExists = selector => async t => {
+  await switchToIframe(t);
+  await t.expect(selector.exists).ok();
+};
+
+const createExpectNotExists = selector => async t => {
+  await switchToIframe(t);
+  await t.expect(selector.exists).notOk();
+};
+
 // This provides an abstraction layer on top of react-spectrum
 // in order to keep react-spectrum specifics outside of tests.
 // This abstraction is more valuable for some components (Select, Accordion)
@@ -75,10 +85,9 @@ const createExpectUnchecked = selector => async t => {
 // selector on the returned object, so if we need to do something
 // a bit more custom inside the test, the test can use the selector
 // and TestCafe APIs directly.
-module.exports = {
+const componentWrappers = {
   select(selector) {
     return {
-      selector,
       expectError: createExpectError(selector),
       expectValue: createExpectValue(selector),
       async expectSelectedOptionLabel(t, label) {
@@ -106,7 +115,6 @@ module.exports = {
   },
   textfield(selector) {
     return {
-      selector,
       expectError: createExpectError(selector),
       expectValue: createExpectValue(selector),
       async typeText(t, text) {
@@ -121,7 +129,6 @@ module.exports = {
   },
   checkbox(selector) {
     return {
-      selector,
       expectChecked: createExpectChecked(selector),
       expectUnchecked: createExpectUnchecked(selector),
       click: createClick(selector)
@@ -129,7 +136,6 @@ module.exports = {
   },
   radio(selector) {
     return {
-      selector,
       expectChecked: createExpectChecked(selector),
       expectUnchecked: createExpectUnchecked(selector),
       click: createClick(selector)
@@ -137,7 +143,6 @@ module.exports = {
   },
   accordion(selector) {
     return {
-      selector,
       async clickHeader(t, label) {
         await switchToIframe(t);
         await t.click(
@@ -148,13 +153,11 @@ module.exports = {
   },
   button(selector) {
     return {
-      selector,
       click: createClick(selector)
     };
   },
   dialog(selector) {
     return {
-      selector,
       async expectTitle(t, title) {
         await switchToIframe(t);
         await selector.find(".spectrum-Dialog-header").withText(title);
@@ -172,5 +175,27 @@ module.exports = {
         );
       }
     };
+  },
+  alert(selector) {
+    return {
+      async expectTitle(t, title) {
+        await switchToIframe(t);
+        await selector.find(".spectrum-Alert-header").withText(title);
+      }
+    };
   }
 };
+
+Object.keys(componentWrappers).forEach(componentName => {
+  const componentWrapper = componentWrappers[componentName];
+  componentWrappers[componentName] = selector => {
+    return {
+      ...componentWrapper(selector),
+      selector,
+      expectExists: createExpectExists(selector),
+      expectNotExists: createExpectNotExists(selector)
+    };
+  };
+});
+
+module.exports = componentWrappers;

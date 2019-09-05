@@ -12,7 +12,6 @@ governing permissions and limitations under the License.
 
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
-import { object, string } from "yup";
 import Select from "@react/react-spectrum/Select";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
@@ -21,13 +20,9 @@ import ExtensionView from "../components/extensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import "./instanceNameOnly.styl";
 
-const getInitialValues = settings => {
-  // settings is null if the user is creating a new data element
-  if (!settings) {
-    settings = {};
-  }
-
-  const { instanceName = "" } = settings;
+const getInitialValues = initInfo => {
+  const { instanceName = initInfo.extensionSettings.instances[0].name } =
+    initInfo.settings || {};
 
   return {
     instanceName
@@ -40,16 +35,11 @@ const getSettings = values => {
   };
 };
 
-const validationSchema = object().shape({
-  instanceName: string().required("Please specify an instance")
-});
-
 const InstanceNameOnly = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
-      validationSchema={validationSchema}
       render={({ initInfo }) => {
         return (
           <div>
