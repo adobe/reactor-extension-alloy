@@ -32,7 +32,7 @@ import EditorButton from "../components/editorButton";
 import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
 import "./configuration.styl";
 
-const contextGranularity = {
+const contextGranularityEnum = {
   ALL: "all",
   SPECIFIC: "specific"
 };
@@ -48,25 +48,20 @@ const instanceDefaults = {
   idSyncContainerId: "",
   destinationsEnabled: true,
   prehidingStyle: "",
-  contextGranularity: contextGranularity.ALL,
+  contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions
 };
 
 const createDefaultInstance = () =>
   JSON.parse(JSON.stringify(instanceDefaults));
 
-const getInitialValues = settings => {
-  // settings is null if the user is creating a new rule component
-  if (!settings) {
-    settings = {};
-  }
-
-  let { instances } = settings;
+const getInitialValues = initInfo => {
+  let { instances } = initInfo.settings || {};
 
   if (instances) {
     instances.forEach(instance => {
       if (instance.context) {
-        instance.contextGranularity = contextGranularity.SPECIFIC;
+        instance.contextGranularity = contextGranularityEnum.SPECIFIC;
       }
 
       // Copy default values to the instance if the properties
@@ -111,7 +106,7 @@ const getSettings = values => {
         );
       }
 
-      if (instance.contextGranularity === contextGranularity.SPECIFIC) {
+      if (instance.contextGranularity === contextGranularityEnum.SPECIFIC) {
         trimmedInstance.context = instance.context;
       }
 
@@ -353,28 +348,29 @@ const Configuration = () => {
 
                           <div className="u-gapTop">
                             <label
-                              htmlFor="contextGranularity"
+                              htmlFor="contextGranularityField"
                               className="spectrum-Form-itemLabel"
                             >
                               When sending event data, automatically include:
                             </label>
                             <WrappedField
+                              id="contextGranularityField"
                               name={`instances.${index}.contextGranularity`}
                               component={RadioGroup}
                               componentClassName="u-flexColumn"
                             >
                               <Radio
-                                value={contextGranularity.ALL}
+                                value={contextGranularityEnum.ALL}
                                 label="all context information"
                               />
                               <Radio
-                                value={contextGranularity.SPECIFIC}
+                                value={contextGranularityEnum.SPECIFIC}
                                 label="specific context information"
                               />
                             </WrappedField>
                           </div>
                           {values.instances[index].contextGranularity ===
-                          contextGranularity.SPECIFIC ? (
+                          contextGranularityEnum.SPECIFIC ? (
                             <div className="FieldSubset u-gapTop">
                               <WrappedField
                                 name={`instances.${index}.context`}

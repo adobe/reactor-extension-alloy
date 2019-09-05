@@ -305,9 +305,9 @@ test("shows error for non-integer ID sync container ID", async t => {
 test("deletes an instance", async t => {
   await extensionViewController.init(t, {});
   await instances[0].propertyIdField.typeText(t, "PR123");
-  await t.expect(instances[0].deleteButton.exists).notOk();
+  await instances[0].deleteButton.expectNotExists(t);
   await addInstanceButton.click(t);
-  await t.expect(instances[1].deleteButton.selector.exists).ok();
+  await instances[1].deleteButton.expectExists(t);
   // Make accordion header label unique
   await instances[1].nameField.typeText(t, "2");
   await instances[1].propertyIdField.typeText(t, "PR456");
@@ -315,7 +315,7 @@ test("deletes an instance", async t => {
   await instances[0].deleteButton.click(t);
   // Ensure that clicking cancel doesn't delete anything.
   await resourceUsageDialog.clickCancel(t);
-  await t.expect(resourceUsageDialog.selector.exists).notOk();
+  await resourceUsageDialog.expectNotExists(t);
   await instances[0].propertyIdField.expectValue(t, "PR123");
   // Alright, delete for real.
   await instances[0].deleteButton.click(t);

@@ -37,7 +37,7 @@ const ExtensionView = ({
       init: _initInfo => {
         setState({
           initialized: true,
-          initialValues: getInitialValues(_initInfo.settings),
+          initialValues: getInitialValues(_initInfo),
           initInfo: _initInfo
         });
       },

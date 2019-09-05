@@ -28,6 +28,10 @@ const mockExtensionSettings = {
     {
       name: "alloy1",
       propertyId: "PR123"
+    },
+    {
+      name: "alloy2",
+      propertyId: "PR456"
     }
   ]
 };
@@ -42,13 +46,13 @@ test("initializes form fields with full settings", async t => {
   await extensionViewController.init(t, {
     extensionSettings: mockExtensionSettings,
     settings: {
-      instanceName: "alloy1",
+      instanceName: "alloy2",
       viewStart: true,
       data: "%myDataLayer%",
       eventMergeId: "%myEventMergeId%"
     }
   });
-  await instanceNameField.expectValue(t, "alloy1");
+  await instanceNameField.expectValue(t, "alloy2");
   await viewStartField.expectChecked(t);
   await dataField.expectValue(t, "%myDataLayer%");
   await eventMergeIdField.expectValue(t, "%myEventMergeId%");
@@ -72,7 +76,7 @@ test("initializes form fields with no settings", async t => {
   await extensionViewController.init(t, {
     extensionSettings: mockExtensionSettings
   });
-  await instanceNameField.expectValue(t, "");
+  await instanceNameField.expectValue(t, "alloy1");
   await viewStartField.expectUnchecked(t);
   await dataField.expectValue(t, "");
   await eventMergeIdField.expectValue(t, "");
@@ -83,7 +87,6 @@ test("returns minimal valid settings", async t => {
     extensionSettings: mockExtensionSettings
   });
 
-  await instanceNameField.selectOption(t, "alloy1");
   await dataField.typeText(t, "%myDataLayer%");
   await extensionViewController.expectIsValid(t);
   await extensionViewController.expectSettings(t, {
@@ -96,13 +99,13 @@ test("returns full valid settings", async t => {
   await extensionViewController.init(t, {
     extensionSettings: mockExtensionSettings
   });
-  await instanceNameField.selectOption(t, "alloy1");
+  await instanceNameField.selectOption(t, "alloy2");
   await viewStartField.click(t);
   await dataField.typeText(t, "%myDataLayer%");
   await eventMergeIdField.typeText(t, "%myEventMergeId%");
   await extensionViewController.expectIsValid(t);
   await extensionViewController.expectSettings(t, {
-    instanceName: "alloy1",
+    instanceName: "alloy2",
     viewStart: true,
     data: "%myDataLayer%",
     eventMergeId: "%myEventMergeId%"
@@ -114,16 +117,12 @@ test("shows errors for empty required values", async t => {
     extensionSettings: mockExtensionSettings
   });
   await extensionViewController.expectIsNotValid(t);
-  await instanceNameField.expectError(t);
   await dataField.expectError(t);
 });
 
 test("shows error for data value that is not a data element", async t => {
   await extensionViewController.init(t, {
-    extensionSettings: mockExtensionSettings,
-    settings: {
-      instanceName: "alloy1"
-    }
+    extensionSettings: mockExtensionSettings
   });
   await dataField.typeText(t, "myDataLayer");
   await extensionViewController.expectIsNotValid(t);
@@ -132,10 +131,7 @@ test("shows error for data value that is not a data element", async t => {
 
 test("shows error for data value that is more than one data element", async t => {
   await extensionViewController.init(t, {
-    extensionSettings: mockExtensionSettings,
-    settings: {
-      instanceName: "alloy1"
-    }
+    extensionSettings: mockExtensionSettings
   });
   await dataField.typeText(t, "%a%%b%");
   await extensionViewController.expectIsNotValid(t);

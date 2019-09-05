@@ -24,18 +24,13 @@ import InfoTip from "../components/infoTip";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import "./sendEvent.styl";
 
-const getInitialValues = settings => {
-  // settings is null if the user is creating a new rule component
-  if (!settings) {
-    settings = {};
-  }
-
+const getInitialValues = initInfo => {
   const {
-    instanceName = "",
+    instanceName = initInfo.extensionSettings.instances[0].name,
     viewStart = false,
     data = "",
     eventMergeId = ""
-  } = settings;
+  } = initInfo.settings || {};
 
   return {
     instanceName,
@@ -65,7 +60,6 @@ const getSettings = values => {
 
 const invalidDataMessage = "Please specify a data element";
 const validationSchema = object().shape({
-  instanceName: string().required("Please specify an instance"),
   data: string()
     .required(invalidDataMessage)
     .matches(/^%([^%]+)%$/, invalidDataMessage)
