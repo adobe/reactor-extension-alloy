@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createEcid from "../../../../../src/lib/dataElements/ecid/createEcid";
+import createEventMergeId from "../../../../../src/lib/dataElements/eventMergeId/createEventMergeId";
 import turbineVariable from "../../../helpers/turbineVariable";
 
-describe("ECID", () => {
+describe("Event Merge ID", () => {
   let mockLogger;
 
   beforeEach(() => {
@@ -29,15 +29,15 @@ describe("ECID", () => {
     turbineVariable.reset();
   });
 
-  it("returns ECID", () => {
+  it("returns event merge ID", () => {
     const instanceManager = {
       getAccessor: jasmine.createSpy().and.returnValue({
-        getEcid() {
+        createEventMergeId() {
           return "ABC123";
         }
       })
     };
-    const dataElement = createEcid(instanceManager);
+    const dataElement = createEventMergeId(instanceManager);
 
     const value = dataElement({
       instanceName: "myinstance"
@@ -51,14 +51,14 @@ describe("ECID", () => {
     const instanceManager = {
       getAccessor: () => undefined
     };
-    const dataElement = createEcid(instanceManager);
+    const dataElement = createEventMergeId(instanceManager);
 
     dataElement({
       instanceName: "myinstance"
     });
 
     expect(mockLogger.error).toHaveBeenCalledWith(
-      'Failed to retrieve ECID for instance "myinstance". No matching instance was configured with this name.'
+      'Failed to create event merge ID for instance "myinstance". No matching instance was configured with this name.'
     );
   });
 });

@@ -19,8 +19,9 @@ const extensionViewController = createExtensionViewController(
   "actions/sendEvent.html"
 );
 const instanceNameField = spectrum.select(Selector("[name=instanceName]"));
-const dataField = spectrum.textfield(Selector("[name=data]"));
 const viewStartField = spectrum.checkbox(Selector("[name=viewStart]"));
+const dataField = spectrum.textfield(Selector("[name=data]"));
+const eventMergeIdField = spectrum.textfield(Selector("[name=eventMergeId]"));
 
 const mockExtensionSettings = {
   instances: [
@@ -43,12 +44,14 @@ test("initializes form fields with full settings", async t => {
     settings: {
       instanceName: "alloy1",
       viewStart: true,
-      data: "%myDataLayer%"
+      data: "%myDataLayer%",
+      eventMergeId: "%myEventMergeId%"
     }
   });
   await instanceNameField.expectValue(t, "alloy1");
   await viewStartField.expectChecked(t);
   await dataField.expectValue(t, "%myDataLayer%");
+  await eventMergeIdField.expectValue(t, "%myEventMergeId%");
 });
 
 test("initializes form fields with minimal settings", async t => {
@@ -62,6 +65,7 @@ test("initializes form fields with minimal settings", async t => {
   await instanceNameField.expectValue(t, "alloy1");
   await viewStartField.expectUnchecked(t);
   await dataField.expectValue(t, "%myDataLayer%");
+  await eventMergeIdField.expectValue(t, "");
 });
 
 test("initializes form fields with no settings", async t => {
@@ -71,6 +75,7 @@ test("initializes form fields with no settings", async t => {
   await instanceNameField.expectValue(t, "");
   await viewStartField.expectUnchecked(t);
   await dataField.expectValue(t, "");
+  await eventMergeIdField.expectValue(t, "");
 });
 
 test("returns minimal valid settings", async t => {
@@ -94,11 +99,13 @@ test("returns full valid settings", async t => {
   await instanceNameField.selectOption(t, "alloy1");
   await viewStartField.click(t);
   await dataField.typeText(t, "%myDataLayer%");
+  await eventMergeIdField.typeText(t, "%myEventMergeId%");
   await extensionViewController.expectIsValid(t);
   await extensionViewController.expectSettings(t, {
     instanceName: "alloy1",
     viewStart: true,
-    data: "%myDataLayer%"
+    data: "%myDataLayer%",
+    eventMergeId: "%myEventMergeId%"
   });
 });
 

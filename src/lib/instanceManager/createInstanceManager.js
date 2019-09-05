@@ -35,8 +35,8 @@ module.exports = (window, runAlloy, imsOrgId) => {
       reactorRegisterGetEcid(getEcid) {
         accessor.getEcid = getEcid;
       },
-      reactorRegisterCreateStitchId(createStitchId) {
-        accessor.createStitchId = createStitchId;
+      reactorRegisterCreateEventMergeId(createEventMergeId) {
+        accessor.createEventMergeId = createEventMergeId;
       }
     });
     accessor.instance = window[name];

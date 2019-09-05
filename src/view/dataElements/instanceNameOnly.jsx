@@ -19,10 +19,10 @@ import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
-import "./ecid.styl";
+import "./instanceNameOnly.styl";
 
 const getInitialValues = settings => {
-  // settings is null if the user is creating a new rule component
+  // settings is null if the user is creating a new data element
   if (!settings) {
     settings = {};
   }
@@ -44,7 +44,7 @@ const validationSchema = object().shape({
   instanceName: string().required("Please specify an instance")
 });
 
-const Ecid = () => {
+const InstanceNameOnly = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -53,22 +53,20 @@ const Ecid = () => {
       render={({ initInfo }) => {
         return (
           <div>
+            <label
+              htmlFor="instanceNameField"
+              className="spectrum-Form-itemLabel"
+            >
+              Instance
+            </label>
             <div>
-              <label
-                htmlFor="instanceNameField"
-                className="spectrum-Form-itemLabel"
-              >
-                Instance
-              </label>
-              <div>
-                <WrappedField
-                  id="instanceNameField"
-                  name="instanceName"
-                  component={Select}
-                  componentClassName="u-fieldLong"
-                  options={getInstanceOptions(initInfo)}
-                />
-              </div>
+              <WrappedField
+                id="instanceNameField"
+                name="instanceName"
+                component={Select}
+                componentClassName="u-fieldLong"
+                options={getInstanceOptions(initInfo)}
+              />
             </div>
           </div>
         );
@@ -77,4 +75,4 @@ const Ecid = () => {
   );
 };
 
-render(Ecid);
+render(InstanceNameOnly);

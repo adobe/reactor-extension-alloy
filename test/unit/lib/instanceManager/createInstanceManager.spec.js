@@ -43,7 +43,9 @@ describe("Instance Manager", () => {
           .and.callFake((commandName, options) => {
             if (commandName === "configure") {
               options.reactorRegisterGetEcid(() => `${name}:ecid`);
-              options.reactorRegisterCreateStitchId(() => `${name}:stitchId`);
+              options.reactorRegisterCreateEventMergeId(
+                () => `${name}:eventMergeId`
+              );
             }
           });
       });
@@ -74,14 +76,14 @@ describe("Instance Manager", () => {
       imsOrgId: "ABC@AdobeOrg",
       logEnabled: true,
       reactorRegisterGetEcid: jasmine.any(Function),
-      reactorRegisterCreateStitchId: jasmine.any(Function)
+      reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
       propertyId: "PR456",
       imsOrgId: "ABC@AdobeOrg",
       logEnabled: true,
       reactorRegisterGetEcid: jasmine.any(Function),
-      reactorRegisterCreateStitchId: jasmine.any(Function)
+      reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
   });
 
@@ -89,6 +91,6 @@ describe("Instance Manager", () => {
     const accessor = instanceManager.getAccessor("alloy2");
     expect(accessor.instance).toBe(mockWindow.alloy2);
     expect(accessor.getEcid()).toBe("alloy2:ecid");
-    expect(accessor.createStitchId()).toBe("alloy2:stitchId");
+    expect(accessor.createEventMergeId()).toBe("alloy2:eventMergeId");
   });
 });
