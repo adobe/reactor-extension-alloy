@@ -35,3 +35,7 @@ Thank you for your interest in contributing!
 ## Uploading
 
 To upload the extension, you will first need to create an integration in [Adobe I/O](https://console.adobe.io). Once an integration has been created, use the [Launch Extension Uploader Tool](https://www.npmjs.com/package/@adobe/reactor-uploader) to upload the extension. For more information, please see the [Submissions documentation](https://developer.adobelaunch.com/extensions/submissions/) provided by Launch.
+
+## Requesting Write Access (Adobe Employees)
+
+For Adobe Employees that would like write access to this repository, please follow the instructions found in the [GitHub Adobe Org Management document](https://git.corp.adobe.com/OpenSourceAdvisoryBoard/handbook/blob/master/GitHub-Adobe-Org-Management.md#request-access-to-our-adobe-github-org). When you must indicate a team to which your user should be added, please enter `adobe|UnifiedJS`.
