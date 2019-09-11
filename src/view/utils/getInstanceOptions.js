@@ -21,12 +21,18 @@ governing permissions and limitations under the License.
  * @returns {Array}
  */
 export default initInfo => {
-  const instanceOptions = initInfo.extensionSettings.instances.map(
-    instance => ({
-      value: instance.name,
-      label: instance.name
-    })
-  );
+  // initInfo.extensionSettings.instances will always be defined and
+  // be an array with at least one instance, except when we're testing
+  // using the local sandbox tool where it might be undefined if we
+  // haven't initialized the view with proper data. In that
+  // case, we'll prefer showing an empty list of options instead of
+  // throwing an error.
+  const instances = initInfo.extensionSettings.instances || [];
+
+  const instanceOptions = instances.map(instance => ({
+    value: instance.name,
+    label: instance.name
+  }));
 
   if (initInfo.settings) {
     const previouslySavedInstanceName = initInfo.settings.instanceName;
