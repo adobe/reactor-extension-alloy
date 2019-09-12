@@ -41,7 +41,7 @@ describe("Send Event", () => {
     action({
       instanceName: "myinstance",
       viewStart: true,
-      data: {
+      xdm: {
         foo: "bar"
       }
     });
@@ -49,7 +49,7 @@ describe("Send Event", () => {
     expect(instanceManager.getAccessor).toHaveBeenCalledWith("myinstance");
     expect(instance).toHaveBeenCalledWith("event", {
       viewStart: true,
-      data: {
+      xdm: {
         foo: "bar"
       }
     });
@@ -66,7 +66,7 @@ describe("Send Event", () => {
     action({
       instanceName: "myinstance",
       viewStart: true,
-      data: {
+      xdm: {
         foo: "bar"
       }
     });

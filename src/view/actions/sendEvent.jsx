@@ -28,41 +28,35 @@ const getInitialValues = initInfo => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
     viewStart = false,
-    data = "",
-    eventMergeId = ""
+    xdm = ""
   } = initInfo.settings || {};
 
   return {
     instanceName,
     viewStart,
-    data,
-    eventMergeId
+    xdm
   };
 };
 
 const getSettings = values => {
   const settings = {
-    instanceName: values.instanceName,
-    data: values.data
+    instanceName: values.instanceName
   };
+
+  if (values.xdm) {
+    settings.xdm = values.xdm;
+  }
 
   // Only add viewStart if the value is different than the default (false).
   if (values.viewStart) {
     settings.viewStart = true;
   }
 
-  if (values.eventMergeId) {
-    settings.eventMergeId = values.eventMergeId;
-  }
-
   return settings;
 };
 
-const invalidDataMessage = "Please specify a data element";
 const validationSchema = object().shape({
-  data: string()
-    .required(invalidDataMessage)
-    .matches(/^%([^%]+)%$/, invalidDataMessage)
+  xdm: string().matches(/^%([^%]+)%$/, "Please specify a data element")
 });
 
 const SendEvent = () => {
@@ -99,35 +93,18 @@ const SendEvent = () => {
               />
             </div>
             <div className="u-gapTop">
-              <label htmlFor="dataField" className="spectrum-Form-itemLabel">
-                Data
+              <label htmlFor="xdmField" className="spectrum-Form-itemLabel">
+                XDM Data
                 <InfoTip>
                   Please specify a data element that will return a JavaScript
-                  object. This object will be sent to the Adobe Experience
-                  Platform.
+                  object in XDM format. This object will be sent to the Adobe
+                  Experience Platform.
                 </InfoTip>
               </label>
               <div>
                 <WrappedField
-                  id="dataField"
-                  name="data"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <label
-                htmlFor="eventMergeIdField"
-                className="spectrum-Form-itemLabel"
-              >
-                Event Merge ID (optional)
-              </label>
-              <div>
-                <WrappedField
-                  id="eventMergeIdField"
-                  name="eventMergeId"
+                  id="xdmField"
+                  name="xdm"
                   component={Textfield}
                   componentClassName="u-fieldLong"
                   supportDataElement
