@@ -9,6 +9,10 @@ const mockExtensionSettings = {
     {
       name: "alloy1",
       propertyId: "PR123"
+    },
+    {
+      name: "alloy2",
+      propertyId: "PR456"
     }
   ]
 };
@@ -18,36 +22,28 @@ export default extensionViewController => {
     await extensionViewController.init(t, {
       extensionSettings: mockExtensionSettings,
       settings: {
-        instanceName: "alloy1"
+        instanceName: "alloy2"
       }
     });
-    await instanceNameField.expectValue(t, "alloy1");
+    await instanceNameField.expectValue(t, "alloy2");
   });
 
   test("initializes form fields with no settings", async t => {
     await extensionViewController.init(t, {
       extensionSettings: mockExtensionSettings
     });
-    await instanceNameField.expectValue(t, "");
+    await instanceNameField.expectValue(t, "alloy1");
   });
 
   test("returns full valid settings", async t => {
     await extensionViewController.init(t, {
       extensionSettings: mockExtensionSettings
     });
-    await instanceNameField.selectOption(t, "alloy1");
+    await instanceNameField.selectOption(t, "alloy2");
     await extensionViewController.expectIsValid(t);
     await extensionViewController.expectSettings(t, {
-      instanceName: "alloy1"
+      instanceName: "alloy2"
     });
-  });
-
-  test("shows errors for empty required values", async t => {
-    await extensionViewController.init(t, {
-      extensionSettings: mockExtensionSettings
-    });
-    await extensionViewController.expectIsNotValid(t);
-    await instanceNameField.expectError(t);
   });
 
   testInstanceNameOptions(extensionViewController, instanceNameField);
