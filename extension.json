@@ -90,18 +90,13 @@
             "type": "boolean",
             "minLength": 1
           },
-          "data": {
+          "xdm": {
             "type": "string",
             "pattern": "^%([^%]+)%$"
-          },
-          "eventMergeId": {
-            "type": "string",
-            "minLength": 1
           }
         },
         "required": [
-          "instanceName",
-          "data"
+          "instanceName"
         ],
         "additionalProperties": false
       },
