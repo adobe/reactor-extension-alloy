@@ -1774,8 +1774,10 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-var boolean = (function (key, currentValue) {
-  return currentValue === undefined || isBoolean(currentValue) ? "" : "Value for " + key + " is not a boolean: " + currentValue;
+var createExpected = (function (message) {
+  return function (isValid, key, value) {
+    return isValid ? "" : "'" + key + "': Expected " + message + ", but got '" + value + "'.";
+  };
 });
 
 /*
@@ -1789,16 +1791,74 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-var eitherNilOrNonEmpty = (function (key, currentValue) {
-  if (isNil(currentValue)) {
+var expected = createExpected("true or false");
+var booleanValidator = (function (key, currentValue) {
+  return expected(isBoolean(currentValue), key, currentValue);
+});
+
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+var chain = (function (validator, other) {
+  var additionalMethods = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+  var newValidator = function newValidator() {
+    var error = validator.apply(void 0, arguments);
+    return error || other.apply(void 0, arguments);
+  };
+
+  assign(newValidator, validator, additionalMethods);
+  return newValidator;
+});
+
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+var createMinimumValidator = (function (minimum) {
+  return function (key, currentValue) {
+    var expected = createExpected("a value greater than or equal to " + minimum);
+    return expected(currentValue >= minimum, key, currentValue);
+  };
+});
+
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+var expected$1 = createExpected("a unique value across instances");
+var createUniqueValidator = (function () {
+  var values = [];
+  return function (key, currentValue) {
+    if (values.indexOf(currentValue) >= 0) {
+      return expected$1(false, key, currentValue);
+    }
+
+    values.push(currentValue);
     return "";
-  }
-
-  if (isNonEmptyString(currentValue)) {
-    return "";
-  }
-
-  return "Invalid value for " + key + ": " + currentValue;
+  };
 });
 
 /*
@@ -1812,8 +1872,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-var nonNegativeInteger = (function (key, currentValue) {
-  return currentValue === undefined || isInteger(currentValue) && currentValue >= 0 ? "" : "Value for " + key + " is not a nonnegative integer: " + currentValue;
+var expected$2 = createExpected("a valid domain");
+var domainValidator = (function (key, currentValue) {
+  return expected$2(/^[a-z0-9-.]{1,}$/gi.test(currentValue), key, currentValue);
 });
 
 /*
@@ -1827,11 +1888,59 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-var required = (function (key, currentValue) {
+var expected$3 = createExpected("an integer");
+var integerValidator = (function (key, currentValue) {
+  return expected$3(isInteger(currentValue), key, currentValue);
+});
+
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+var expected$4 = createExpected("a non-empty string");
+var nonEmptyValidator = (function (key, value) {
+  return expected$4(value.length > 0, key, value);
+});
+
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+var expected$5 = createExpected("a number");
+var numberValidator = (function (key, currentValue) {
+  return expected$5(isNumber(currentValue), key, currentValue);
+});
+
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+var requiredValidator = (function (key, currentValue) {
   var err = "";
 
   if (currentValue == null) {
-    err = key + " is a required configuration parameter";
+    err = "'" + key + "' is a required configuration parameter";
   }
 
   return err;
@@ -1848,15 +1957,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-var validDomain = (function (key, currentValue) {
-  var validUrl = /^[a-z0-9-.]{1,}$/gi.test(currentValue);
-  var err = "";
-
-  if (!validUrl) {
-    err = "Invalid domain for " + key + ": " + currentValue;
-  }
-
-  return err;
+var expected$6 = createExpected("a string");
+var stringValidator = (function (key, value) {
+  return expected$6(isString(value), key, value);
 });
 
 /*
@@ -1870,6 +1973,82 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+// If the config is optional and not set, the validation doesn't get called and the
+// default value is used.  Therefore, we can assume that when the validator is called
+// and the value is null, the config is required.
+
+var baseValidator = function baseValidator() {
+  return requiredValidator.apply(void 0, arguments);
+};
+
+var domain = function domain() {
+  return chain(this, domainValidator);
+};
+
+var nonEmpty = function nonEmpty() {
+  return chain(this, nonEmptyValidator);
+};
+
+var unique = function createUnique() {
+  return chain(this, createUniqueValidator());
+};
+
+var minimum = function minimum(minValue) {
+  return chain(this, createMinimumValidator(minValue));
+};
+
+var integer = function integer() {
+  return chain(this, integerValidator);
+}; // exposed validators
+
+
+var boolean = function boolean() {
+  return chain(this, booleanValidator);
+};
+
+var number = function number() {
+  return chain(this, numberValidator, {
+    minimum: minimum,
+    integer: integer,
+    unique: unique
+  });
+};
+
+var string = function string() {
+  return chain(this, stringValidator, {
+    domain: domain,
+    nonEmpty: nonEmpty,
+    unique: unique
+  });
+}; // Use this to change the message that is returned.  This is useful for complex validators
+// where you don't want to just tell the user one thing at a time.  For example:
+// number().integer().minimum(0)("key", "foo") => "'key': Expected a number, but got 'foo'"
+// number().integer().minimum(0).expected("an integer greater than or equal to 0")("key", "foo")
+//  => "'key': Expected an integer greater than or equal to 0"
+
+
+var expected$7 = function expected(message) {
+  var e = createExpected(message);
+  var validator = this;
+
+  var newValidator = function newValidator() {
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    return e.apply(void 0, [!validator.apply(void 0, args)].concat(args));
+  };
+
+  assign(newValidator, validator);
+  return newValidator;
+};
+
+assign(baseValidator, {
+  expected: expected$7
+});
+var boundString = string.bind(baseValidator);
+var boundBoolean = boolean.bind(baseValidator);
+var boundNumber = number.bind(baseValidator);
 
 /*
 Copyright 2019 Adobe. All rights reserved.
@@ -1894,11 +2073,11 @@ var createInstance = (function (namespace, initializeComponents, logController, 
 
   var coreConfigValidators = {
     errorsEnabled: {
-      validate: boolean,
+      validate: boundBoolean(),
       defaultValue: true
     },
     logEnabled: {
-      validate: boolean,
+      validate: boundBoolean(),
       defaultValue: false
     }
   };
@@ -2945,6 +3124,36 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+var createConfigValidators = (function () {
+  return {
+    propertyId: {
+      validate: boundString().unique()
+    },
+    edgeDomain: {
+      defaultValue: "alpha.konductor.adobedc.net",
+      validate: boundString().domain()
+    },
+    imsOrgId: {
+      validate: boundString().unique()
+    },
+    clickCollectionEnabled: {
+      defaultValue: true,
+      validate: boundBoolean()
+    }
+  };
+});
+
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 var urlStartsWithScheme = function urlStartsWithScheme(url) {
   return url && /^[a-z0-9]+:\/\//i.test(url);
 };
@@ -3135,21 +3344,7 @@ var createDataCollector = function createDataCollector(_ref) {
 
 createDataCollector.namespace = "DataCollector";
 createDataCollector.abbreviation = "DC";
-createDataCollector.configValidators = {
-  propertyId: {
-    validate: required
-  },
-  edgeDomain: {
-    validate: validDomain,
-    defaultValue: "alpha.konductor.adobedc.net"
-  },
-  imsOrgId: {
-    validate: required
-  },
-  clickCollectionEnabled: {
-    defaultValue: true
-  }
-};
+createDataCollector.configValidators = createConfigValidators();
 
 var AUTH_STATES = {
   UNKNOWN: 0,
@@ -3287,79 +3482,99 @@ var normalizeCustomerIds = function normalizeCustomerIds(customerIds) {
 };
 
 var CUSTOMER_ID_HASH = COOKIE_NAMES.CUSTOMER_ID_HASH;
-var processCustomerIds = (function (customerIds) {
-  var normalizedCustomerIds = normalizeCustomerIds(customerIds);
-  var checksum = crc32(JSON.stringify(normalizedCustomerIds)).toString(36);
-  return {
-    detectCustomerIdChange: function detectCustomerIdChange(cookieJar) {
-      return checksum !== cookieJar.get(CUSTOMER_ID_HASH);
+var createCustomerIds = (function (cookieJar, lifecycle, network, optIn) {
+  var updateChecksum = function updateChecksum(checksum) {
+    return cookieJar.set(CUSTOMER_ID_HASH, checksum);
+  }; // TODO: FIXME: We shouldn't need an event.
+
+
+  var createPayload = function createPayload(event) {
+    var payload = network.createPayload();
+    payload.addEvent(event);
+    return payload;
+  };
+
+  var hash = function hash(originalIds, normalizedIds) {
+    var idNames = Object.keys(normalizedIds);
+    var idsToHash = idNames.filter(function (idName) {
+      return originalIds[idName].hash;
+    });
+    var idHashPromises = idsToHash.map(function (id) {
+      return convertStringToSha256Buffer(normalizedIds[id].id);
+    });
+    return Promise.all(idHashPromises).then(function (hashedIds) {
+      return hashedIds.reduce(function (finalIds, hashedId, index) {
+        finalIds[idsToHash[index]].id = convertBufferToHex(hashedId);
+        return finalIds;
+      }, normalizedIds);
+    });
+  };
+
+  var makeServerCall = function makeServerCall(payload) {
+    return lifecycle.onBeforeDataCollection({
+      payload: payload
+    }).then(function () {
+      return network.sendRequest(payload, payload.expectsResponse);
+    });
+  };
+
+  var state = {
+    haveChanged: false,
+    ids: {},
+    hasIds: false
+  };
+
+  var setState = function setState(customerIdChanged, normalizedIds) {
+    state.haveChanged = customerIdChanged;
+    state.ids = _objectSpread({}, state.ids, normalizedIds);
+    state.hasIds = !!Object.keys(state.ids).length;
+  };
+
+  var customerIds = {
+    addToPayload: function addToPayload(payload) {
+      var currentState = clone(state);
+
+      if (currentState.hasIds) {
+        Object.keys(currentState.ids).forEach(function (name) {
+          payload.addIdentity(name, currentState.ids[name]);
+        });
+        payload.mergeMeta({
+          identity: {
+            customerIdChanged: currentState.haveChanged
+          }
+        });
+        state.haveChanged = false;
+      }
     },
-    updateChecksum: function updateChecksum(cookieJar) {
-      return cookieJar.set(CUSTOMER_ID_HASH, checksum);
-    },
-    getNormalizedAndHashedIds: function getNormalizedAndHashedIds() {
-      var idNames = Object.keys(normalizedCustomerIds);
-      var idsToHash = idNames.filter(function (idName) {
-        return customerIds[idName].hash;
-      });
-      var idHashPromises = idsToHash.map(function (id) {
-        return convertStringToSha256Buffer(normalizedCustomerIds[id].id);
-      });
-      return Promise.all(idHashPromises).then(function (hashedIds) {
-        return hashedIds.reduce(function (normalizedIds, hashedId, index) {
-          normalizedIds[idsToHash[index]].id = convertBufferToHex(hashedId);
-          return normalizedIds;
-        }, normalizedCustomerIds);
+    sync: function sync(originalIds) {
+      validateCustomerIds(originalIds);
+      var normalizedIds = normalizeCustomerIds(originalIds);
+      var checksum = crc32(JSON.stringify(normalizedIds)).toString(36);
+      var customerIdChanged = checksum !== cookieJar.get(CUSTOMER_ID_HASH);
+      var event = createEvent();
+      var payload = createPayload(event);
+
+      if (customerIdChanged) {
+        updateChecksum(checksum);
+      }
+
+      return hash(originalIds, normalizedIds).then(function (hashedIds) {
+        setState(customerIdChanged, hashedIds);
+        lifecycle.onBeforeEvent({
+          event: event,
+          options: {},
+          isViewStart: false,
+          documentUnloading: false
+        }) // FIXME: We shouldn't need an event.
+        .then(function () {
+          return optIn.whenOptedIn();
+        }).then(function () {
+          return makeServerCall(payload);
+        });
       });
     }
   };
-});
-
-var makeServerCall = function makeServerCall(payload, lifecycle, network) {
-  return lifecycle.onBeforeDataCollection({
-    payload: payload
-  }).then(function () {
-    return network.sendRequest(payload, payload.expectsResponse);
-  });
-};
-
-var _setCustomerIds = (function (ids, cookieJar, lifecycle, network, optIn) {
-  validateCustomerIds(ids);
-  var event = createEvent(); // FIXME: We shouldn't need an event.
-
-  var payload = network.createPayload();
-  payload.addEvent(event); // FIXME: We shouldn't need an event.
-
-  var customerIds = assign({}, ids);
-  var customerIdsProcess = processCustomerIds(customerIds);
-  var customerIdChanged = customerIdsProcess.detectCustomerIdChange(cookieJar);
-  customerIdsProcess.getNormalizedAndHashedIds().then(function (normalizedAndHashedIds) {
-    var idNames = Object.keys(normalizedAndHashedIds);
-    idNames.forEach(function (idName) {
-      payload.addIdentity(idName, normalizedAndHashedIds[idName]);
-    });
-    payload.mergeMeta({
-      identity: {
-        customerIdChanged: customerIdChanged
-      }
-    });
-
-    if (customerIdChanged) {
-      customerIdsProcess.updateChecksum(cookieJar);
-    }
-
-    return lifecycle // FIXME: We shouldn't need an event.
-    .onBeforeEvent({
-      event: event,
-      options: {},
-      isViewStart: false,
-      documentUnloading: false
-    }).then(function () {
-      return optIn.whenOptedIn();
-    }).then(function () {
-      return makeServerCall(payload, lifecycle, network);
-    });
-  });
+  return customerIds;
 });
 
 /*
@@ -3376,7 +3591,6 @@ governing permissions and limitations under the License.
 var EXPERIENCE_CLOUD_ID = COOKIE_NAMES.EXPERIENCE_CLOUD_ID;
 
 var addIdsContext = function addIdsContext(payload, ecid) {
-  // TODO: Add customer ids.
   payload.addIdentity(EXPERIENCE_CLOUD_ID, {
     id: ecid
   });
@@ -3397,6 +3611,7 @@ var createIdentity = function createIdentity(_ref) {
   var deferredForEcid;
   var network;
   var lifecycle;
+  var customerIds;
   var idSyncs = createIdSyncs(config, logger, cookieJar);
   var alreadyQueriedForIdSyncs = false;
   return {
@@ -3405,9 +3620,10 @@ var createIdentity = function createIdentity(_ref) {
         lifecycle = tools.lifecycle;
         network = tools.network;
         optIn = tools.optIn;
-        // This is a way for the ECID data element in the Reactor extension
+        customerIds = createCustomerIds(cookieJar, lifecycle, network, optIn); // This is a way for the ECID data element in the Reactor extension
         // to get the ECID synchronously since data elements are required
         // to be synchronous.
+
         config.reactorRegisterGetEcid(function () {
           return optIn.isOptedIn() ? _getEcid() : undefined;
         });
@@ -3460,6 +3676,7 @@ var createIdentity = function createIdentity(_ref) {
             payload.expectResponse();
           }
 
+          customerIds.addToPayload(payload);
           return promise;
         });
       },
@@ -3485,10 +3702,9 @@ var createIdentity = function createIdentity(_ref) {
       getEcid: function getEcid() {
         return optIn.whenOptedIn().then(_getEcid);
       },
-      // TODO: Discuss renaming of CustomerIds to UserIds
       setCustomerIds: function setCustomerIds(options) {
         return optIn.whenOptedIn().then(function () {
-          return _setCustomerIds(options, cookieJar, lifecycle, network, optIn);
+          return customerIds.sync(options);
         });
       }
     }
@@ -3499,10 +3715,12 @@ createIdentity.namespace = "Identity";
 createIdentity.abbreviation = "ID";
 createIdentity.configValidators = {
   idSyncsEnabled: {
-    defaultValue: true
+    defaultValue: true,
+    validate: boundBoolean()
   },
   idSyncContainerId: {
-    validate: nonNegativeInteger
+    defaultValue: undefined,
+    validate: boundNumber().integer().minimum(0).expected("an integer greater than or equal to 0")
   }
 }; // Not much need to validate since we are our own consumer.
 
@@ -4892,11 +5110,12 @@ createPersonalization.namespace = "Personalization";
 createPersonalization.abbreviation = "PE";
 createPersonalization.configValidators = {
   prehidingStyle: {
-    validate: eitherNilOrNonEmpty
+    defaultValue: undefined,
+    validate: boundString().nonEmpty()
   },
   authoringModeEnabled: {
     defaultValue: false,
-    validate: boolean
+    validate: boundBoolean()
   }
 };
 
@@ -5253,7 +5472,7 @@ createPrivacy.abbreviation = "PR";
 createPrivacy.configValidators = {
   optInEnabled: {
     defaultValue: false,
-    validate: boolean
+    validate: boundBoolean
   }
 };
 
@@ -5308,7 +5527,7 @@ var createLibraryInfo = function createLibraryInfo() {
         return {
           // The value will be swapped with the proper version
           // at build time.
-          version: "0.0.1-alpha.7"
+          version: "0.0.1-alpha.8"
         };
       }
     }
@@ -5355,5 +5574,6 @@ if (namespaces) {
 
   })();
 }
+
 
 };
