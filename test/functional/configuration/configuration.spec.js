@@ -41,8 +41,8 @@ for (let i = 0; i < 2; i += 1) {
     optInEnabledField: spectrum.checkbox(
       Selector(`[name='instances.${i}.optInEnabled']`)
     ),
-    idSyncsEnabledField: spectrum.checkbox(
-      Selector(`[name='instances.${i}.idSyncsEnabled']`)
+    idSyncEnabledField: spectrum.checkbox(
+      Selector(`[name='instances.${i}.idSyncEnabled']`)
     ),
     idSyncContainerIdField: spectrum.textfield(
       Selector(`[name='instances.${i}.idSyncContainerId']`)
@@ -91,7 +91,7 @@ test("initializes form fields with full settings", async t => {
           edgeDomain: "testedge.com",
           errorsEnabled: false,
           optInEnabled: true,
-          idSyncsEnabled: false,
+          idSyncEnabled: false,
           idSyncContainerId: 123,
           destinationsEnabled: false,
           prehidingStyle: "#container { display: none }",
@@ -102,7 +102,7 @@ test("initializes form fields with full settings", async t => {
           propertyId: "PR456",
           edgeDomain: "testedge2.com",
           optInEnabled: false,
-          idSyncsEnabled: false,
+          idSyncEnabled: false,
           context: []
         }
       ]
@@ -114,7 +114,7 @@ test("initializes form fields with full settings", async t => {
   await instances[0].edgeDomainField.expectValue(t, "testedge.com");
   await instances[0].errorsEnabledField.expectUnchecked(t);
   await instances[0].optInEnabledField.expectChecked(t);
-  await instances[0].idSyncsEnabledField.expectUnchecked(t);
+  await instances[0].idSyncEnabledField.expectUnchecked(t);
   await instances[0].idSyncContainerIdField.expectValue(t, "123");
   await instances[0].destinationsEnabledField.expectUnchecked(t);
   await instances[0].contextGranularity.specificField.expectChecked(t);
@@ -130,7 +130,7 @@ test("initializes form fields with full settings", async t => {
   await instances[1].edgeDomainField.expectValue(t, "testedge2.com");
   await instances[1].errorsEnabledField.expectChecked(t);
   await instances[1].optInEnabledField.expectUnchecked(t);
-  await instances[1].idSyncsEnabledField.expectUnchecked(t);
+  await instances[1].idSyncEnabledField.expectUnchecked(t);
   await instances[1].destinationsEnabledField.expectChecked(t);
   await instances[1].contextGranularity.specificField.expectChecked(t);
   await instances[1].specificContext.webField.expectUnchecked(t);
@@ -156,7 +156,7 @@ test("initializes form fields with minimal settings", async t => {
   await instances[0].edgeDomainField.expectValue(t, "");
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
-  await instances[0].idSyncsEnabledField.expectChecked(t);
+  await instances[0].idSyncEnabledField.expectChecked(t);
   await instances[0].idSyncContainerIdField.expectValue(t, "");
   await instances[0].destinationsEnabledField.expectChecked(t);
   await instances[0].contextGranularity.allField.expectChecked(t);
@@ -170,7 +170,7 @@ test("initializes form fields with no settings", async t => {
   await instances[0].edgeDomainField.expectValue(t, "");
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
-  await instances[0].idSyncsEnabledField.expectChecked(t);
+  await instances[0].idSyncEnabledField.expectChecked(t);
   await instances[0].idSyncContainerIdField.expectValue(t, "");
   await instances[0].destinationsEnabledField.expectChecked(t);
   await instances[0].contextGranularity.allField.expectChecked(t);
@@ -212,7 +212,7 @@ test("returns full valid settings", async t => {
   await instances[0].edgeDomainField.typeText(t, "testedge.com");
   await instances[0].errorsEnabledField.click(t);
   await instances[0].optInEnabledField.click(t);
-  await instances[0].idSyncsEnabledField.click(t);
+  await instances[0].idSyncEnabledField.click(t);
   await instances[0].idSyncContainerIdField.typeText(t, "123");
   await instances[0].destinationsEnabledField.click(t);
   await instances[0].prehidingStyleField.click(t);
@@ -234,7 +234,7 @@ test("returns full valid settings", async t => {
         edgeDomain: "testedge.com",
         errorsEnabled: false,
         optInEnabled: true,
-        idSyncsEnabled: false,
+        idSyncEnabled: false,
         idSyncContainerId: 123,
         destinationsEnabled: false,
         prehidingStyle: "#container { display: none } // css"
