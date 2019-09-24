@@ -38,7 +38,7 @@
               "optInEnabled": {
                 "type": "boolean"
               },
-              "idSyncsEnabled": {
+              "idSyncEnabled": {
                 "type": "boolean"
               },
               "idSyncContainerId": {

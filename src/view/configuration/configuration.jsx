@@ -44,7 +44,7 @@ const instanceDefaults = {
   edgeDomain: "",
   errorsEnabled: true,
   optInEnabled: false,
-  idSyncsEnabled: true,
+  idSyncEnabled: true,
   idSyncContainerId: "",
   destinationsEnabled: true,
   prehidingStyle: "",
@@ -94,7 +94,7 @@ const getSettings = values => {
         "edgeDomain",
         "errorsEnabled",
         "optInEnabled",
-        "idSyncsEnabled",
+        "idSyncEnabled",
         "idSyncContainerId",
         "destinationsEnabled",
         "prehidingStyle"
@@ -291,7 +291,7 @@ const Configuration = () => {
 
                           <div className="u-gapTop">
                             <WrappedField
-                              name={`instances.${index}.idSyncsEnabled`}
+                              name={`instances.${index}.idSyncEnabled`}
                               component={Checkbox}
                               label="Enable ID Synchronization"
                             />
