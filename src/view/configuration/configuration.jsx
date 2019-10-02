@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React, { useState } from "react";
-import { object, array, string, number } from "yup";
+import { object, array, string, number, lazy } from "yup";
 import { FieldArray } from "formik";
 import Textfield from "@react/react-spectrum/Textfield";
 import RadioGroup from "@react/react-spectrum/RadioGroup";
@@ -30,6 +30,7 @@ import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
 import EditorButton from "../components/editorButton";
 import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
+import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./configuration.styl";
 
 const contextGranularityEnum = {
@@ -95,15 +96,23 @@ const getSettings = values => {
         "errorsEnabled",
         "optInEnabled",
         "idSyncEnabled",
-        "idSyncContainerId",
         "destinationsEnabled",
         "prehidingStyle"
       ]);
 
-      if (trimmedInstance.idSyncContainerId !== undefined) {
-        trimmedInstance.idSyncContainerId = Number(
-          trimmedInstance.idSyncContainerId
-        );
+      if (
+        instance.idSyncEnabled &&
+        instance.idSyncContainerId !== instanceDefaults.idSyncContainerId
+      ) {
+        trimmedInstance.idSyncContainerId = instance.idSyncContainerId;
+
+        // trimmedInstance.idSyncContainerId is most likely a string at this point. If
+        // the value represents a number, we need to cast to a number.
+        if (number().isValidSync(trimmedInstance.idSyncContainerId)) {
+          trimmedInstance.idSyncContainerId = Number(
+            trimmedInstance.idSyncContainerId
+          );
+        }
       }
 
       if (instance.contextGranularity === contextGranularityEnum.SPECIFIC) {
@@ -131,7 +140,7 @@ const validateDuplicateValue = (createError, instances, key, message) => {
 };
 
 const idSyncContainerIdValidationMessage =
-  "Please specify an non-negative integer for the container ID.";
+  "Please specify a non-negative integer or data element for the container ID.";
 
 const validationSchema = object()
   .shape({
@@ -139,12 +148,33 @@ const validationSchema = object()
       object().shape({
         name: string().required("Please specify a name."),
         propertyId: string().required("Please specify a property ID."),
-        idSyncContainerId: number()
-          // convert empty string to a 0 so it doesn't fail subsequent rules
-          .transform(value => value || 0)
-          .typeError(idSyncContainerIdValidationMessage)
-          .integer(idSyncContainerIdValidationMessage)
-          .min(0, idSyncContainerIdValidationMessage)
+        // A valid idSyncContainerId field value can be an integer
+        // greater than or equal to 0, an empty string, or a string containing
+        // a single data element token. Using `lazy` as we've done
+        // here is the suggested way of handling a value that can be two
+        // different types (number and string):
+        // https://github.com/jquense/yup/issues/321
+        idSyncContainerId: lazy(value => {
+          let validator;
+          if (number().isValidSync(value)) {
+            validator = number().when("idSyncEnabled", {
+              is: true,
+              then: number()
+                .integer(idSyncContainerIdValidationMessage)
+                // convert empty string to a 0 so it doesn't fail subsequent rules
+                .min(0, idSyncContainerIdValidationMessage)
+            });
+          } else {
+            validator = string().when("idSyncEnabled", {
+              is: true,
+              then: string().matches(singleDataElementRegex, {
+                message: idSyncContainerIdValidationMessage,
+                excludeEmptyString: true
+              })
+            });
+          }
+          return validator;
+        })
       })
     )
   })
@@ -297,23 +327,25 @@ const Configuration = () => {
                             />
                           </div>
 
-                          <div className="u-gapTop">
-                            <label
-                              htmlFor="idSyncContainerIdField"
-                              className="spectrum-Form-itemLabel"
-                            >
-                              ID Synchronization Container ID
-                            </label>
-                            <div>
-                              <WrappedField
-                                id="idSyncContainerIdField"
-                                name={`instances.${index}.idSyncContainerId`}
-                                component={Textfield}
-                                componentClassName="u-fieldLong"
-                                supportDataElement
-                              />
+                          {values.instances[index].idSyncEnabled ? (
+                            <div className="FieldSubset u-gapTop">
+                              <label
+                                htmlFor="idSyncContainerIdField"
+                                className="spectrum-Form-itemLabel"
+                              >
+                                ID Synchronization Container ID
+                              </label>
+                              <div>
+                                <WrappedField
+                                  id="idSyncContainerIdField"
+                                  name={`instances.${index}.idSyncContainerId`}
+                                  component={Textfield}
+                                  componentClassName="u-fieldLong"
+                                  supportDataElement
+                                />
+                              </div>
                             </div>
-                          </div>
+                          ) : null}
 
                           <h3>Audiences</h3>
 

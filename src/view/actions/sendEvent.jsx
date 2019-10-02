@@ -22,6 +22,7 @@ import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
 import InfoTip from "../components/infoTip";
 import getInstanceOptions from "../utils/getInstanceOptions";
+import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./sendEvent.styl";
 
 const getInitialValues = initInfo => {
@@ -56,7 +57,7 @@ const getSettings = values => {
 };
 
 const validationSchema = object().shape({
-  xdm: string().matches(/^%([^%]+)%$/, "Please specify a data element")
+  xdm: string().matches(singleDataElementRegex, "Please specify a data element")
 });
 
 const SendEvent = () => {

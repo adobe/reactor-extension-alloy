@@ -42,8 +42,16 @@
                 "type": "boolean"
               },
               "idSyncContainerId": {
-                "type": "number",
-                "minimum": 0
+                "oneOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^%([^%]+)%$"
+                  }
+                ]
               },
               "destinationsEnabled": {
                 "type": "boolean"

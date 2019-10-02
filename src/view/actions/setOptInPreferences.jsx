@@ -23,6 +23,7 @@ import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
+import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./setOptInPreferences.styl";
 
 const purposesEnum = {
@@ -75,7 +76,7 @@ const validationSchema = object().shape({
     is: purposesEnum.DATA_ELEMENT,
     then: string()
       .required(invalidDataMessage)
-      .matches(/^%([^%]+)%$/, invalidDataMessage)
+      .matches(singleDataElementRegex, invalidDataMessage)
   })
 });
 

@@ -91,7 +91,7 @@ test("initializes form fields with full settings", async t => {
           edgeDomain: "testedge.com",
           errorsEnabled: false,
           optInEnabled: true,
-          idSyncEnabled: false,
+          idSyncEnabled: true,
           idSyncContainerId: 123,
           destinationsEnabled: false,
           prehidingStyle: "#container { display: none }",
@@ -114,7 +114,7 @@ test("initializes form fields with full settings", async t => {
   await instances[0].edgeDomainField.expectValue(t, "testedge.com");
   await instances[0].errorsEnabledField.expectUnchecked(t);
   await instances[0].optInEnabledField.expectChecked(t);
-  await instances[0].idSyncEnabledField.expectUnchecked(t);
+  await instances[0].idSyncEnabledField.expectChecked(t);
   await instances[0].idSyncContainerIdField.expectValue(t, "123");
   await instances[0].destinationsEnabledField.expectUnchecked(t);
   await instances[0].contextGranularity.specificField.expectChecked(t);
@@ -131,6 +131,7 @@ test("initializes form fields with full settings", async t => {
   await instances[1].errorsEnabledField.expectChecked(t);
   await instances[1].optInEnabledField.expectUnchecked(t);
   await instances[1].idSyncEnabledField.expectUnchecked(t);
+  await instances[1].idSyncContainerIdField.expectNotExists(t);
   await instances[1].destinationsEnabledField.expectChecked(t);
   await instances[1].contextGranularity.specificField.expectChecked(t);
   await instances[1].specificContext.webField.expectUnchecked(t);
@@ -212,7 +213,6 @@ test("returns full valid settings", async t => {
   await instances[0].edgeDomainField.typeText(t, "testedge.com");
   await instances[0].errorsEnabledField.click(t);
   await instances[0].optInEnabledField.click(t);
-  await instances[0].idSyncEnabledField.click(t);
   await instances[0].idSyncContainerIdField.typeText(t, "123");
   await instances[0].destinationsEnabledField.click(t);
   await instances[0].prehidingStyleField.click(t);
@@ -223,6 +223,7 @@ test("returns full valid settings", async t => {
   await instances[1].propertyIdField.typeText(t, "PR456");
   await instances[1].edgeDomainField.typeText(t, "testedge2.com");
   await instances[1].optInEnabledField.click(t);
+  await instances[1].idSyncEnabledField.click(t);
   await instances[1].contextGranularity.specificField.click(t);
 
   await extensionViewController.expectIsValid(t);
@@ -234,7 +235,6 @@ test("returns full valid settings", async t => {
         edgeDomain: "testedge.com",
         errorsEnabled: false,
         optInEnabled: true,
-        idSyncEnabled: false,
         idSyncContainerId: 123,
         destinationsEnabled: false,
         prehidingStyle: "#container { display: none } // css"
@@ -244,6 +244,7 @@ test("returns full valid settings", async t => {
         propertyId: "PR456",
         edgeDomain: "testedge2.com",
         optInEnabled: true,
+        idSyncEnabled: false,
         context: ["web", "device", "environment", "placeContext"]
       }
     ]
@@ -286,7 +287,7 @@ test("shows errors for duplicate names", async t => {
   await instances[1].nameField.expectError(t);
 });
 
-test("shows error for negative ID sync container ID", async t => {
+test("shows error for non-negative number for ID sync container ID", async t => {
   await extensionViewController.init(t, {});
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "-1");
@@ -294,12 +295,44 @@ test("shows error for negative ID sync container ID", async t => {
   await instances[0].idSyncContainerIdField.expectError(t);
 });
 
-test("shows error for non-integer ID sync container ID", async t => {
+test("shows error for a float number for ID sync container ID", async t => {
   await extensionViewController.init(t, {});
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "123.123");
   await extensionViewController.expectIsNotValid(t);
   await instances[0].idSyncContainerIdField.expectError(t);
+});
+
+test("shows error for an arbitrary string for ID sync container ID", async t => {
+  await extensionViewController.init(t, {});
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].idSyncContainerIdField.typeText(t, "123foo");
+  await extensionViewController.expectIsNotValid(t);
+  await instances[0].idSyncContainerIdField.expectError(t);
+});
+
+test("does not show error for a data element for ID sync container ID", async t => {
+  await extensionViewController.init(t, {});
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].idSyncContainerIdField.typeText(t, "%123foo%");
+  await extensionViewController.expectIsValid(t);
+});
+
+test("ignores ID sync container ID when ID sync is disabled", async t => {
+  await extensionViewController.init(t, {});
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].idSyncContainerIdField.typeText(t, "123foo");
+  await instances[0].idSyncEnabledField.click(t);
+  await extensionViewController.expectIsValid(t);
+  await extensionViewController.expectSettings(t, {
+    instances: [
+      {
+        name: "alloy",
+        propertyId: "PR123",
+        idSyncEnabled: false
+      }
+    ]
+  });
 });
 
 test("deletes an instance", async t => {
