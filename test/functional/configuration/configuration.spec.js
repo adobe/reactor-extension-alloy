@@ -287,7 +287,7 @@ test("shows errors for duplicate names", async t => {
   await instances[1].nameField.expectError(t);
 });
 
-test("shows error for non-negative number for ID sync container ID", async t => {
+test("shows error for ID sync container ID value that is a negative number", async t => {
   await extensionViewController.init(t, {});
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "-1");
@@ -295,7 +295,7 @@ test("shows error for non-negative number for ID sync container ID", async t => 
   await instances[0].idSyncContainerIdField.expectError(t);
 });
 
-test("shows error for a float number for ID sync container ID", async t => {
+test("shows error for ID sync container ID value that is a float number", async t => {
   await extensionViewController.init(t, {});
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "123.123");
@@ -303,7 +303,7 @@ test("shows error for a float number for ID sync container ID", async t => {
   await instances[0].idSyncContainerIdField.expectError(t);
 });
 
-test("shows error for an arbitrary string for ID sync container ID", async t => {
+test("shows error for ID sync container ID value that is an arbitrary string", async t => {
   await extensionViewController.init(t, {});
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "123foo");
@@ -311,14 +311,22 @@ test("shows error for an arbitrary string for ID sync container ID", async t => 
   await instances[0].idSyncContainerIdField.expectError(t);
 });
 
-test("does not show error for a data element for ID sync container ID", async t => {
+test("shows error for ID sync container ID value that is multiple data elements", async t => {
+  await extensionViewController.init(t, {});
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].idSyncContainerIdField.typeText(t, "%foo%%bar%");
+  await extensionViewController.expectIsNotValid(t);
+  await instances[0].idSyncContainerIdField.expectError(t);
+});
+
+test("does not show error for ID sync container ID value that is a single data element", async t => {
   await extensionViewController.init(t, {});
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "%123foo%");
   await extensionViewController.expectIsValid(t);
 });
 
-test("ignores ID sync container ID when ID sync is disabled", async t => {
+test("ignores ID sync container ID value when ID sync is disabled", async t => {
   await extensionViewController.init(t, {});
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "123foo");
