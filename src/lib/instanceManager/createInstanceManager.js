@@ -21,7 +21,7 @@ module.exports = (window, runAlloy, imsOrgId) => {
     const accessor = {};
     window[name]("configure", {
       ...options,
-      imsOrgId,
+      imsOrgId: options.imsOrgId || imsOrgId,
       // The Alloy build we're using for this extension
       // logs using turbine.logger. Therefore, we'll
       // always enable logging in Alloy and let Reactor's

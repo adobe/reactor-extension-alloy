@@ -39,10 +39,11 @@ const contextGranularityEnum = {
 };
 const contextOptions = ["web", "device", "environment", "placeContext"];
 
-const instanceDefaults = {
+const getInstanceDefaults = initInfo => ({
   name: "alloy",
   propertyId: "",
-  edgeDomain: "",
+  imsOrgId: initInfo.company.orgId,
+  edgeDomain: "alpha.konductor.adobedc.net",
   errorsEnabled: true,
   optInEnabled: false,
   idSyncEnabled: true,
@@ -51,12 +52,13 @@ const instanceDefaults = {
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions
-};
+});
 
-const createDefaultInstance = () =>
-  JSON.parse(JSON.stringify(instanceDefaults));
+const createDefaultInstance = initInfo =>
+  JSON.parse(JSON.stringify(getInstanceDefaults(initInfo)));
 
-const getInitialValues = initInfo => {
+const getInitialValues = ({ initInfo }) => {
+  const instanceDefaults = getInstanceDefaults(initInfo);
   let { instances } = initInfo.settings || {};
 
   if (instances) {
@@ -75,7 +77,7 @@ const getInitialValues = initInfo => {
       });
     });
   } else {
-    instances = [createDefaultInstance()];
+    instances = [createDefaultInstance(initInfo)];
   }
 
   return {
@@ -83,15 +85,17 @@ const getInitialValues = initInfo => {
   };
 };
 
-const getSettings = values => {
+const getSettings = ({ values, initInfo }) => {
+  const instanceDefaults = getInstanceDefaults(initInfo);
   return {
     instances: values.instances.map(instance => {
       const trimmedInstance = {
-        name: instance.name,
-        propertyId: instance.propertyId
+        name: instance.name
       };
 
       copyPropertiesIfNotDefault(trimmedInstance, instance, instanceDefaults, [
+        "propertyId",
+        "imsOrgId",
         "edgeDomain",
         "errorsEnabled",
         "optInEnabled",
@@ -148,6 +152,8 @@ const validationSchema = object()
       object().shape({
         name: string().required("Please specify a name."),
         propertyId: string().required("Please specify a property ID."),
+        imsOrgId: string().required("Please specify an IMS organization ID."),
+        edgeDomain: string().required("Please specify an edge domain."),
         // A valid idSyncContainerId field value can be an integer
         // greater than or equal to 0, an empty string, or a string containing
         // a single data element token. Using `lazy` as we've done
@@ -199,6 +205,17 @@ const validationSchema = object()
       "propertyId",
       "Please provide a property ID unique from those used for other instances."
     );
+  })
+  // TestCafe doesn't allow this to be an arrow function because of
+  // how it scopes "this".
+  // eslint-disable-next-line func-names
+  .test("imsOrgId", function(settings) {
+    return validateDuplicateValue(
+      this.createError.bind(this),
+      settings.instances,
+      "imsOrgId",
+      "Please provide an IMS Organization ID unique from those used for other instances."
+    );
   });
 
 const Configuration = () => {
@@ -209,8 +226,14 @@ const Configuration = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={({ formikProps }) => {
-        const { values, errors, isSubmitting, isValidating } = formikProps;
+      render={({ formikProps, initInfo }) => {
+        const {
+          values,
+          errors,
+          isSubmitting,
+          isValidating,
+          setFieldValue
+        } = formikProps;
 
         // If the user just tried to save the configuration and there's
         // a validation error, make sure the first accordion item containing
@@ -233,7 +256,7 @@ const Configuration = () => {
                       <Button
                         label="Add Instance"
                         onClick={() => {
-                          arrayHelpers.push(createDefaultInstance());
+                          arrayHelpers.push(createDefaultInstance(initInfo));
                           setSelectedAccordionIndex(values.instances.length);
                         }}
                       />
@@ -279,6 +302,7 @@ const Configuration = () => {
                                 name={`instances.${index}.propertyId`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
+                                supportDataElement
                               />
                             </div>
                           </div>
@@ -287,7 +311,39 @@ const Configuration = () => {
                               htmlFor="edgeDomainField"
                               className="spectrum-Form-itemLabel"
                             >
-                              Edge Domain (optional)
+                              IMS Organization ID
+                            </label>
+                            <div>
+                              <WrappedField
+                                id="imsOrgIdField"
+                                name={`instances.${index}.imsOrgId`}
+                                component={Textfield}
+                                componentClassName="u-fieldLong"
+                                supportDataElement
+                              />
+                              <Button
+                                id="imsOrgIdRestoreButton"
+                                label="Restore to default"
+                                onClick={() => {
+                                  const instanceDefaults = getInstanceDefaults(
+                                    initInfo
+                                  );
+                                  setFieldValue(
+                                    `instances.${index}.imsOrgId`,
+                                    instanceDefaults.imsOrgId
+                                  );
+                                }}
+                                quiet
+                                variant="quiet"
+                              />
+                            </div>
+                          </div>
+                          <div className="u-gapTop">
+                            <label
+                              htmlFor="edgeDomainField"
+                              className="spectrum-Form-itemLabel"
+                            >
+                              Edge Domain
                             </label>
                             <div>
                               <WrappedField
@@ -296,6 +352,21 @@ const Configuration = () => {
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
                                 supportDataElement
+                              />
+                              <Button
+                                id="edgeDomainRestoreButton"
+                                label="Restore to default"
+                                onClick={() => {
+                                  const instanceDefaults = getInstanceDefaults(
+                                    initInfo
+                                  );
+                                  setFieldValue(
+                                    `instances.${index}.edgeDomain`,
+                                    instanceDefaults.edgeDomain
+                                  );
+                                }}
+                                quiet
+                                variant="quiet"
                               />
                             </div>
                           </div>
@@ -333,7 +404,7 @@ const Configuration = () => {
                                 htmlFor="idSyncContainerIdField"
                                 className="spectrum-Form-itemLabel"
                               >
-                                ID Synchronization Container ID
+                                ID Synchronization Container ID (optional)
                               </label>
                               <div>
                                 <WrappedField
@@ -416,7 +487,7 @@ const Configuration = () => {
                             <div className="u-gapTop2x">
                               <ModalTrigger>
                                 <Button
-                                  data-test-id={`instances.${index}.delete`}
+                                  id="deleteButton"
                                   label="Delete Instance"
                                   icon={<Delete />}
                                   variant="action"

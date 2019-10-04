@@ -28,6 +28,10 @@
                 "type": "string",
                 "minLength": 1
               },
+              "imsOrgId": {
+                "type": "string",
+                "minLength": 1
+              },
               "edgeDomain": {
                 "type": "string",
                 "minLength": 1

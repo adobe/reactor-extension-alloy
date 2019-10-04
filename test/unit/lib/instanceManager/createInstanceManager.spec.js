@@ -29,7 +29,8 @@ describe("Instance Manager", () => {
             },
             {
               name: "alloy2",
-              propertyId: "PR456"
+              propertyId: "PR456",
+              imsOrgId: "DIFFERENTORG@AdobeOrg"
             }
           ]
         };
@@ -80,7 +81,7 @@ describe("Instance Manager", () => {
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
       propertyId: "PR456",
-      imsOrgId: "ABC@AdobeOrg",
+      imsOrgId: "DIFFERENTORG@AdobeOrg",
       logEnabled: true,
       reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateEventMergeId: jasmine.any(Function)

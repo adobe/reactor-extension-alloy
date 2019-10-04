@@ -20,7 +20,7 @@ import ExtensionView from "../components/extensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import "./instanceNameOnly.styl";
 
-const getInitialValues = initInfo => {
+const getInitialValues = ({ initInfo }) => {
   const { instanceName = initInfo.extensionSettings.instances[0].name } =
     initInfo.settings || {};
 
@@ -29,7 +29,7 @@ const getInitialValues = initInfo => {
   };
 };
 
-const getSettings = values => {
+const getSettings = ({ values }) => {
   return {
     instanceName: values.instanceName
   };

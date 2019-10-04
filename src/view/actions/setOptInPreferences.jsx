@@ -32,7 +32,7 @@ const purposesEnum = {
   DATA_ELEMENT: "dataElement"
 };
 
-const getInitialValues = initInfo => {
+const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
     purposes = purposesEnum.ALL
@@ -53,7 +53,7 @@ const getInitialValues = initInfo => {
   return initialValues;
 };
 
-const getSettings = values => {
+const getSettings = ({ values }) => {
   const { instanceName, purposes, purposesDataElement } = values;
 
   return {
