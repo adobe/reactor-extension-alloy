@@ -19,6 +19,7 @@ import RadioGroup from "@react/react-spectrum/RadioGroup";
 import Radio from "@react/react-spectrum/Radio";
 import Checkbox from "@react/react-spectrum/Checkbox";
 import Button from "@react/react-spectrum/Button";
+import Alert from "@react/react-spectrum/Alert";
 import ModalTrigger from "@react/react-spectrum/ModalTrigger";
 import Dialog from "@react/react-spectrum/Dialog";
 import Delete from "@react/react-spectrum/Icon/Delete";
@@ -245,7 +246,8 @@ const Configuration = () => {
           errors,
           isSubmitting,
           isValidating,
-          setFieldValue
+          setFieldValue,
+          initialValues
         } = formikProps;
 
         // If the user just tried to save the configuration and there's
@@ -301,6 +303,24 @@ const Configuration = () => {
                                 supportDataElement
                               />
                             </div>
+                            {// If we're editing an existing configuration and the name changes.
+                            initInfo.settings &&
+                            initialValues.instances[0].name !==
+                              values.instances[0].name ? (
+                              <Alert
+                                id="nameChangeAlert"
+                                className="ConstrainedAlert"
+                                header="Potential Problems Due to Name Change"
+                                variant="warning"
+                              >
+                                Any rule components or data elements using this
+                                instance will no longer function as expected
+                                when running on your website. We recommend
+                                removing or updating those resources before
+                                publishing your next library.
+                              </Alert>
+                            ) : null}
+                            <div />
                           </div>
                           <div className="u-gapTop">
                             <label

@@ -29,7 +29,7 @@ const purposesRadioGroup = {
 const purposesDataElementField = spectrum.textfield(
   Selector("[name=purposesDataElement]")
 );
-const warning = spectrum.alert(Selector(`.spectrum-Alert`));
+const optInDisabledAlert = spectrum.alert(Selector("#optInDisabledAlert"));
 
 const mockExtensionSettings = {
   instances: [
@@ -148,7 +148,7 @@ test("shows warning if opt-in is not enabled", async t => {
     }
   });
 
-  await warning.expectTitle(t, "Opt-In Not Enabled");
+  await optInDisabledAlert.expectExists(t);
 });
 
 test("does not show warning if opt-in is enabled", async t => {
@@ -160,7 +160,7 @@ test("does not show warning if opt-in is enabled", async t => {
     }
   });
 
-  await warning.expectNotExists(t);
+  await optInDisabledAlert.expectNotExists(t);
 });
 
 testInstanceNameOptions(extensionViewController, instanceNameField);
