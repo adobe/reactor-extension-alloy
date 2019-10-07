@@ -150,7 +150,20 @@ const validationSchema = object()
   .shape({
     instances: array().of(
       object().shape({
-        name: string().required("Please specify a name."),
+        name: string()
+          .required("Please specify a name.")
+          // Under strict mode, setting window["123"], where the key is all
+          // digits, throws a "Failed to set an indexed property on 'Window'" error.
+          // This regex ensure there's at least one non-digit.
+          .matches(/\D+/, "Please provide a non-numeric name.")
+          .test({
+            name: "notWindowPropertyName",
+            message:
+              "Please provide a name that does not conflict with a property already found on the window object.",
+            test(value) {
+              return !(value in window);
+            }
+          }),
         propertyId: string().required("Please specify a property ID."),
         imsOrgId: string().required("Please specify an IMS organization ID."),
         edgeDomain: string().required("Please specify an edge domain."),
@@ -187,7 +200,7 @@ const validationSchema = object()
   // TestCafe doesn't allow this to be an arrow function because of
   // how it scopes "this".
   // eslint-disable-next-line func-names
-  .test("name", function(settings) {
+  .test("uniqueName", function(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
       settings.instances,
@@ -198,7 +211,7 @@ const validationSchema = object()
   // TestCafe doesn't allow this to be an arrow function because of
   // how it scopes "this".
   // eslint-disable-next-line func-names
-  .test("propertyId", function(settings) {
+  .test("uniquePropertyId", function(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
       settings.instances,
@@ -209,7 +222,7 @@ const validationSchema = object()
   // TestCafe doesn't allow this to be an arrow function because of
   // how it scopes "this".
   // eslint-disable-next-line func-names
-  .test("imsOrgId", function(settings) {
+  .test("uniqueImsOrgId", function(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
       settings.instances,

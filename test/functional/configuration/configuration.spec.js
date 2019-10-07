@@ -270,7 +270,7 @@ test("returns full valid settings", async t => {
   });
 });
 
-test("shows errors for empty required values", async t => {
+test("shows error for empty required values", async t => {
   await extensionViewController.init(t, defaultInitInfo);
   await instances[0].nameField.clear(t);
   await instances[0].imsOrgIdField.clear(t);
@@ -282,7 +282,7 @@ test("shows errors for empty required values", async t => {
   await instances[0].edgeDomainField.expectError(t);
 });
 
-test("shows errors for duplicate names", async t => {
+test("shows error for duplicate name", async t => {
   await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
   await addInstanceButton.click(t);
@@ -296,7 +296,23 @@ test("shows errors for duplicate names", async t => {
   await instances[1].nameField.expectError(t);
 });
 
-test("shows errors for duplicate property IDs", async t => {
+test("shows error for numeric name", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].nameField.clear(t);
+  await instances[0].nameField.typeText(t, "addEventListener");
+  await extensionViewController.expectIsNotValid(t);
+  await instances[0].nameField.expectError(t);
+});
+
+test("shows error for name that matches key on window", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].nameField.clear(t);
+  await instances[0].nameField.typeText(t, "123");
+  await extensionViewController.expectIsNotValid(t);
+  await instances[0].nameField.expectError(t);
+});
+
+test("shows error for duplicate property ID", async t => {
   await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
   await addInstanceButton.click(t);
@@ -310,7 +326,7 @@ test("shows errors for duplicate property IDs", async t => {
   await instances[1].propertyIdField.expectError(t);
 });
 
-test("shows errors for duplicate IMS org IDs", async t => {
+test("shows error for duplicate IMS org ID", async t => {
   await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
   await addInstanceButton.click(t);
