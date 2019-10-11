@@ -296,7 +296,7 @@ test("shows error for duplicate name", async t => {
   await instances[1].nameField.expectError(t);
 });
 
-test("shows error for numeric name", async t => {
+test("shows error for name that matches key on window", async t => {
   await extensionViewController.init(t, defaultInitInfo);
   await instances[0].nameField.clear(t);
   await instances[0].nameField.typeText(t, "addEventListener");
@@ -304,7 +304,7 @@ test("shows error for numeric name", async t => {
   await instances[0].nameField.expectError(t);
 });
 
-test("shows error for name that matches key on window", async t => {
+test("shows error for numeric name", async t => {
   await extensionViewController.init(t, defaultInitInfo);
   await instances[0].nameField.clear(t);
   await instances[0].nameField.typeText(t, "123");
