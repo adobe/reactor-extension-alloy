@@ -32,8 +32,15 @@ for (let i = 0; i < 2; i += 1) {
     propertyIdField: spectrum.textfield(
       Selector(`[name='instances.${i}.propertyId']`)
     ),
+    imsOrgIdField: spectrum.textfield(
+      Selector(`[name='instances.${i}.imsOrgId']`)
+    ),
+    imsOrgIdRestoreButton: spectrum.button(Selector("#imsOrgIdRestoreButton")),
     edgeDomainField: spectrum.textfield(
       Selector(`[name='instances.${i}.edgeDomain']`)
+    ),
+    edgeDomainRestoreButton: spectrum.button(
+      Selector(`#edgeDomainRestoreButton`)
     ),
     errorsEnabledField: spectrum.checkbox(
       Selector(`[name='instances.${i}.errorsEnabled']`)
@@ -69,9 +76,7 @@ for (let i = 0; i < 2; i += 1) {
       environmentField: spectrum.checkbox(Selector("[value=environment]")),
       placeContextField: spectrum.checkbox(Selector("[value=placeContext]"))
     },
-    deleteButton: spectrum.button(
-      Selector(`[data-test-id='instances.${i}.delete`)
-    )
+    deleteButton: spectrum.button(Selector("#deleteButton"))
   });
 }
 
@@ -81,36 +86,48 @@ fixture("Extension Configuration View").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
+const defaultEdgeDomain = "alpha.konductor.adobedc.net";
+
+const defaultInitInfo = {
+  company: {
+    orgId: "ABC123@AdobeOrg"
+  }
+};
+
 test("initializes form fields with full settings", async t => {
-  await extensionViewController.init(t, {
-    settings: {
-      instances: [
-        {
-          name: "alloy1",
-          propertyId: "PR123",
-          edgeDomain: "testedge.com",
-          errorsEnabled: false,
-          optInEnabled: true,
-          idSyncEnabled: true,
-          idSyncContainerId: 123,
-          destinationsEnabled: false,
-          prehidingStyle: "#container { display: none }",
-          context: ["device", "placeContext"]
-        },
-        {
-          name: "alloy2",
-          propertyId: "PR456",
-          edgeDomain: "testedge2.com",
-          optInEnabled: false,
-          idSyncEnabled: false,
-          context: []
-        }
-      ]
-    }
-  });
+  await extensionViewController.init(
+    t,
+    Object.assign({}, defaultInitInfo, {
+      settings: {
+        instances: [
+          {
+            name: "alloy1",
+            propertyId: "PR123",
+            imsOrgId: "ORG456@OtherCompanyOrg",
+            edgeDomain: "testedge.com",
+            errorsEnabled: false,
+            optInEnabled: true,
+            idSyncEnabled: true,
+            idSyncContainerId: 123,
+            destinationsEnabled: false,
+            prehidingStyle: "#container { display: none }",
+            context: ["device", "placeContext"]
+          },
+          {
+            name: "alloy2",
+            propertyId: "PR456",
+            optInEnabled: false,
+            idSyncEnabled: false,
+            context: []
+          }
+        ]
+      }
+    })
+  );
 
   await instances[0].nameField.expectValue(t, "alloy1");
   await instances[0].propertyIdField.expectValue(t, "PR123");
+  await instances[0].imsOrgIdField.expectValue(t, "ORG456@OtherCompanyOrg");
   await instances[0].edgeDomainField.expectValue(t, "testedge.com");
   await instances[0].errorsEnabledField.expectUnchecked(t);
   await instances[0].optInEnabledField.expectChecked(t);
@@ -127,7 +144,8 @@ test("initializes form fields with full settings", async t => {
 
   await instances[1].nameField.expectValue(t, "alloy2");
   await instances[1].propertyIdField.expectValue(t, "PR456");
-  await instances[1].edgeDomainField.expectValue(t, "testedge2.com");
+  await instances[1].imsOrgIdField.expectValue(t, "ABC123@AdobeOrg");
+  await instances[1].edgeDomainField.expectValue(t, defaultEdgeDomain);
   await instances[1].errorsEnabledField.expectChecked(t);
   await instances[1].optInEnabledField.expectUnchecked(t);
   await instances[1].idSyncEnabledField.expectUnchecked(t);
@@ -141,20 +159,24 @@ test("initializes form fields with full settings", async t => {
 });
 
 test("initializes form fields with minimal settings", async t => {
-  await extensionViewController.init(t, {
-    settings: {
-      instances: [
-        {
-          name: "alloy1",
-          propertyId: "PR123"
-        }
-      ]
-    }
-  });
+  await extensionViewController.init(
+    t,
+    Object.assign({}, defaultInitInfo, {
+      settings: {
+        instances: [
+          {
+            name: "alloy1",
+            propertyId: "PR123"
+          }
+        ]
+      }
+    })
+  );
 
   await instances[0].nameField.expectValue(t, "alloy1");
   await instances[0].propertyIdField.expectValue(t, "PR123");
-  await instances[0].edgeDomainField.expectValue(t, "");
+  await instances[0].imsOrgIdField.expectValue(t, "ABC123@AdobeOrg");
+  await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
   await instances[0].idSyncEnabledField.expectChecked(t);
@@ -164,11 +186,12 @@ test("initializes form fields with minimal settings", async t => {
 });
 
 test("initializes form fields with no settings", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(t, defaultInitInfo);
 
   await instances[0].nameField.expectValue(t, "alloy");
   await instances[0].propertyIdField.expectValue(t, "");
-  await instances[0].edgeDomainField.expectValue(t, "");
+  await instances[0].imsOrgIdField.expectValue(t, "ABC123@AdobeOrg");
+  await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
   await instances[0].idSyncEnabledField.expectChecked(t);
@@ -178,7 +201,7 @@ test("initializes form fields with no settings", async t => {
 });
 
 test("returns minimal valid settings", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(t, defaultInitInfo);
 
   await instances[0].propertyIdField.typeText(t, "PR123");
   await extensionViewController.expectIsValid(t);
@@ -193,24 +216,20 @@ test("returns minimal valid settings", async t => {
 });
 
 test("returns full valid settings", async t => {
-  await extensionViewController.init(
-    t,
-    {},
-    {
-      openCodeEditor(options) {
-        return Promise.resolve(
-          // We include options.language in the result
-          // just so we can assert that the code editor
-          // was properly configured for editing CSS
-          `#container { display: none } // ${options.language}`
-        );
-      }
+  await extensionViewController.init(t, defaultInitInfo, {
+    openCodeEditor(options) {
+      return Promise.resolve(
+        // We include options.language in the result
+        // just so we can assert that the code editor
+        // was properly configured for editing CSS
+        `#container { display: none } // ${options.language}`
+      );
     }
-  );
+  });
 
   await instances[0].nameField.typeText(t, "1");
   await instances[0].propertyIdField.typeText(t, "PR123");
-  await instances[0].edgeDomainField.typeText(t, "testedge.com");
+  await instances[0].edgeDomainField.typeText(t, "2");
   await instances[0].errorsEnabledField.click(t);
   await instances[0].optInEnabledField.click(t);
   await instances[0].idSyncContainerIdField.typeText(t, "123");
@@ -221,7 +240,7 @@ test("returns full valid settings", async t => {
 
   await instances[1].nameField.typeText(t, "2");
   await instances[1].propertyIdField.typeText(t, "PR456");
-  await instances[1].edgeDomainField.typeText(t, "testedge2.com");
+  await instances[1].imsOrgIdField.typeText(t, "2");
   await instances[1].optInEnabledField.click(t);
   await instances[1].idSyncEnabledField.click(t);
   await instances[1].contextGranularity.specificField.click(t);
@@ -232,7 +251,7 @@ test("returns full valid settings", async t => {
       {
         name: "alloy1",
         propertyId: "PR123",
-        edgeDomain: "testedge.com",
+        edgeDomain: `${defaultEdgeDomain}2`,
         errorsEnabled: false,
         optInEnabled: true,
         idSyncContainerId: 123,
@@ -242,7 +261,7 @@ test("returns full valid settings", async t => {
       {
         name: "alloy2",
         propertyId: "PR456",
-        edgeDomain: "testedge2.com",
+        imsOrgId: "ABC123@AdobeOrg2",
         optInEnabled: true,
         idSyncEnabled: false,
         context: ["web", "device", "environment", "placeContext"]
@@ -252,29 +271,19 @@ test("returns full valid settings", async t => {
 });
 
 test("shows errors for empty required values", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(t, defaultInitInfo);
   await instances[0].nameField.clear(t);
+  await instances[0].imsOrgIdField.clear(t);
+  await instances[0].edgeDomainField.clear(t);
   await extensionViewController.expectIsNotValid(t);
   await instances[0].nameField.expectError(t);
   await instances[0].propertyIdField.expectError(t);
-});
-
-test("shows errors for duplicate property IDs", async t => {
-  await extensionViewController.init(t, {});
-  await instances[0].propertyIdField.typeText(t, "PR123");
-  await addInstanceButton.click(t);
-  // Make accordion header label unique
-  await instances[1].nameField.typeText(t, "2");
-  await instances[1].propertyIdField.typeText(t, "PR123");
-  // We'll expand the first instance before we validate to test that
-  // validation expands the invalid instance (in this case, the second one)
-  await accordion.clickHeader(t, "ALLOY");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[1].propertyIdField.expectError(t);
+  await instances[0].imsOrgIdField.expectError(t);
+  await instances[0].edgeDomainField.expectError(t);
 });
 
 test("shows errors for duplicate names", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
   await addInstanceButton.click(t);
   await instances[1].propertyIdField.typeText(t, "PR456");
@@ -287,8 +296,50 @@ test("shows errors for duplicate names", async t => {
   await instances[1].nameField.expectError(t);
 });
 
+test("shows errors for duplicate property IDs", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await addInstanceButton.click(t);
+  await instances[1].propertyIdField.typeText(t, "PR123");
+  // We'll expand the first instance before we validate to test that
+  // validation expands the invalid instance (in this case, the second one)
+  // Even though both accordion header labels are "alloy", this
+  // will select the first one.
+  await accordion.clickHeader(t, "ALLOY");
+  await extensionViewController.expectIsNotValid(t);
+  await instances[1].propertyIdField.expectError(t);
+});
+
+test("shows errors for duplicate IMS org IDs", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].propertyIdField.typeText(t, "PR123");
+  await addInstanceButton.click(t);
+  await instances[1].propertyIdField.typeText(t, "PR456");
+  // We'll expand the first instance before we validate to test that
+  // validation expands the invalid instance (in this case, the second one)
+  // Even though both accordion header labels are "alloy", this
+  // will select the first one.
+  await accordion.clickHeader(t, "ALLOY");
+  await extensionViewController.expectIsNotValid(t);
+  await instances[1].imsOrgIdField.expectError(t);
+});
+
+test("restores default IMS org ID value when restore button is clicked", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].imsOrgIdField.typeText(t, "foo");
+  await instances[0].imsOrgIdRestoreButton.click(t);
+  await instances[0].imsOrgIdField.expectValue(t, "ABC123@AdobeOrg");
+});
+
+test("restores default edge domain value when restore button is clicked", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].edgeDomainField.typeText(t, "foo");
+  await instances[0].edgeDomainRestoreButton.click(t);
+  await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
+});
+
 test("shows error for ID sync container ID value that is a negative number", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "-1");
   await extensionViewController.expectIsNotValid(t);
@@ -296,7 +347,7 @@ test("shows error for ID sync container ID value that is a negative number", asy
 });
 
 test("shows error for ID sync container ID value that is a float number", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "123.123");
   await extensionViewController.expectIsNotValid(t);
@@ -304,7 +355,7 @@ test("shows error for ID sync container ID value that is a float number", async 
 });
 
 test("shows error for ID sync container ID value that is an arbitrary string", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "123foo");
   await extensionViewController.expectIsNotValid(t);
@@ -312,7 +363,7 @@ test("shows error for ID sync container ID value that is an arbitrary string", a
 });
 
 test("shows error for ID sync container ID value that is multiple data elements", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "%foo%%bar%");
   await extensionViewController.expectIsNotValid(t);
@@ -320,14 +371,14 @@ test("shows error for ID sync container ID value that is multiple data elements"
 });
 
 test("does not show error for ID sync container ID value that is a single data element", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "%123foo%");
   await extensionViewController.expectIsValid(t);
 });
 
 test("ignores ID sync container ID value when ID sync is disabled", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "123foo");
   await instances[0].idSyncEnabledField.click(t);
@@ -344,7 +395,7 @@ test("ignores ID sync container ID value when ID sync is disabled", async t => {
 });
 
 test("deletes an instance", async t => {
-  await extensionViewController.init(t, {});
+  await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
   await instances[0].deleteButton.expectNotExists(t);
   await addInstanceButton.click(t);

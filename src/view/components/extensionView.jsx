@@ -26,23 +26,37 @@ const ExtensionView = ({
   validationSchema,
   render
 }) => {
-  const [{ initialized, initialValues, initInfo }, setState] = useState({
+  const [
+    { initialized, initialValues, initInfo },
+    setInitializationValues
+  ] = useState({
     initialized: false,
     initialValues: {},
     initInfo: {}
   });
 
   useEffect(() => {
+    // This effect function only runs once, so while our registered init
+    // function updates the component's state using setInitializationValues,
+    // the getSettings closure wouldn't be able to access the updated component
+    // state value. For this reason, we keep this local effectInitInfo
+    // so that getSettings() can access the initInfo value after it comes
+    // through init().
+    let effectInitInfo;
     window.extensionBridge.register({
       init: _initInfo => {
-        setState({
+        effectInitInfo = _initInfo;
+        setInitializationValues({
           initialized: true,
-          initialValues: getInitialValues(_initInfo),
+          initialValues: getInitialValues({ initInfo: _initInfo }),
           initInfo: _initInfo
         });
       },
       getSettings: () => {
-        return getSettings(formikProps.values);
+        return getSettings({
+          values: formikProps.values,
+          initInfo: effectInitInfo
+        });
       },
       validate: () => {
         // The docs say that the promise submitForm returns

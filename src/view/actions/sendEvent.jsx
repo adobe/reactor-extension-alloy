@@ -25,7 +25,7 @@ import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./sendEvent.styl";
 
-const getInitialValues = initInfo => {
+const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
     viewStart = false,
@@ -39,7 +39,7 @@ const getInitialValues = initInfo => {
   };
 };
 
-const getSettings = values => {
+const getSettings = ({ values }) => {
   const settings = {
     instanceName: values.instanceName
   };
