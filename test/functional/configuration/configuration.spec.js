@@ -29,6 +29,7 @@ const instances = [];
 for (let i = 0; i < 2; i += 1) {
   instances.push({
     nameField: spectrum.textfield(Selector(`[name='instances.${i}.name']`)),
+    nameChangeAlert: spectrum.alert(Selector("#nameChangeAlert")),
     propertyIdField: spectrum.textfield(
       Selector(`[name='instances.${i}.propertyId']`)
     ),
@@ -310,6 +311,30 @@ test("shows error for numeric name", async t => {
   await instances[0].nameField.typeText(t, "123");
   await extensionViewController.expectIsNotValid(t);
   await instances[0].nameField.expectError(t);
+});
+
+test("shows a warning when name is changed on existing configuration", async t => {
+  await extensionViewController.init(
+    t,
+    Object.assign({}, defaultInitInfo, {
+      settings: {
+        instances: [
+          {
+            name: "alloy",
+            propertyId: "PR123"
+          }
+        ]
+      }
+    })
+  );
+  await instances[0].nameField.typeText(t, "123");
+  await instances[0].nameChangeAlert.expectExists(t);
+});
+
+test("does not show a warning when name is changed on new configuration", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].nameField.typeText(t, "123");
+  await instances[0].nameChangeAlert.expectNotExists(t);
 });
 
 test("shows error for duplicate property ID", async t => {

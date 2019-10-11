@@ -91,7 +91,11 @@ const SetOptInPreferences = () => {
           <div>
             {isOptInEnabled(initInfo, formikProps) ? null : (
               <div>
-                <Alert header="Opt-In Not Enabled" variant="warning">
+                <Alert
+                  id="optInDisabledAlert"
+                  header="Opt-In Not Enabled"
+                  variant="warning"
+                >
                   Before Opt-In preferences can be set, Opt-In must be enabled
                   for the instance within the extension configuration.
                 </Alert>
