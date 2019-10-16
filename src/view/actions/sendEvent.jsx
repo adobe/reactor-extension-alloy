@@ -16,14 +16,15 @@ import { object, string } from "yup";
 import Textfield from "@react/react-spectrum/Textfield";
 import Checkbox from "@react/react-spectrum/Checkbox";
 import Select from "@react/react-spectrum/Select";
+import FieldLabel from "@react/react-spectrum/FieldLabel";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
-import InfoTip from "../components/infoTip";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./sendEvent.styl";
+import InfoTipLayout from "../components/infoTipLayout";
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -70,12 +71,7 @@ const SendEvent = () => {
         return (
           <div>
             <div>
-              <label
-                htmlFor="instanceNameField"
-                className="spectrum-Form-itemLabel"
-              >
-                Instance
-              </label>
+              <FieldLabel labelFor="instanceNameField" label="Instance" />
               <div>
                 <WrappedField
                   id="instanceNameField"
@@ -87,21 +83,22 @@ const SendEvent = () => {
               </div>
             </div>
             <div className="u-gapTop">
-              <WrappedField
-                name="viewStart"
-                component={Checkbox}
-                label="Occurs at the start of a view"
-              />
+              <InfoTipLayout tip="Influences whether the SDK should retrieve and render personalization content, among other things.">
+                <WrappedField
+                  name="viewStart"
+                  component={Checkbox}
+                  label="Occurs at the start of a view"
+                />
+              </InfoTipLayout>
             </div>
             <div className="u-gapTop">
-              <label htmlFor="xdmField" className="spectrum-Form-itemLabel">
-                XDM Data
-                <InfoTip>
-                  Please specify a data element that will return a JavaScript
+              <InfoTipLayout
+                tip="Please specify a data element that will return a JavaScript
                   object in XDM format. This object will be sent to the Adobe
-                  Experience Platform.
-                </InfoTip>
-              </label>
+                  Experience Platform."
+              >
+                <FieldLabel labelFor="xdmField" label="XDM Data" />
+              </InfoTipLayout>
               <div>
                 <WrappedField
                   id="xdmField"

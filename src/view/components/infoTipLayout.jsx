@@ -12,28 +12,23 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import classNames from "classnames";
-import InfoIcon from "@react/react-spectrum/Icon/Info";
-import Tooltip from "@react/react-spectrum/Tooltip";
-import OverlayTrigger from "@react/react-spectrum/OverlayTrigger";
-
-import "./infoTip.styl";
 import PropTypes from "prop-types";
+import InfoTip from "./infoTip";
 
-const InfoTip = ({ className, placement, children }) => (
-  <div className={classNames(className, "InfoTip")}>
-    <OverlayTrigger placement={placement || "right"} trigger="hover">
-      <span className="u-flex">
-        <InfoIcon className="InfoTip-icon" size="XS" />
-      </span>
-      <Tooltip className="InfoTip-tooltip">{children}</Tooltip>
-    </OverlayTrigger>
+/**
+ * Strives to provide an InfoTip that's laid out nicely next to provided children.
+ */
+const InfoTipLayout = ({ children, className, tip }) => (
+  <div className={classNames("u-flex", "u-alignItemsCenter", className)}>
+    {children}
+    {tip ? <InfoTip className="u-gapLeft">{tip}</InfoTip> : null}
   </div>
 );
 
-InfoTip.propTypes = {
+InfoTipLayout.propTypes = {
+  children: PropTypes.node.isRequired,
   className: PropTypes.string,
-  placement: PropTypes.oneOf(["top", "right", "bottom", "left"]),
-  children: PropTypes.node.isRequired
+  tip: PropTypes.string
 };
 
-export default InfoTip;
+export default InfoTipLayout;

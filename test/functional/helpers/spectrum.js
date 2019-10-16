@@ -73,6 +73,16 @@ const createExpectNotExists = selector => async t => {
   await t.expect(selector.exists).notOk();
 };
 
+const createExpectEnabled = selector => async t => {
+  await switchToIframe(t);
+  await t.expect(selector.hasAttribute("disabled")).notOk();
+};
+
+const createExpectDisabled = selector => async t => {
+  await switchToIframe(t);
+  await t.expect(selector.hasAttribute("disabled")).ok();
+};
+
 // This provides an abstraction layer on top of react-spectrum
 // in order to keep react-spectrum specifics outside of tests.
 // This abstraction is more valuable for some components (Select, Accordion)
@@ -194,7 +204,9 @@ Object.keys(componentWrappers).forEach(componentName => {
       ...componentWrapper(selector),
       selector,
       expectExists: createExpectExists(selector),
-      expectNotExists: createExpectNotExists(selector)
+      expectNotExists: createExpectNotExists(selector),
+      expectEnabled: createExpectEnabled(selector),
+      expectDisabled: createExpectDisabled(selector)
     };
   };
 });

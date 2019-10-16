@@ -17,6 +17,7 @@ import Select from "@react/react-spectrum/Select";
 import RadioGroup from "@react/react-spectrum/RadioGroup";
 import Radio from "@react/react-spectrum/Radio";
 import Textfield from "@react/react-spectrum/Textfield";
+import FieldLabel from "@react/react-spectrum/FieldLabel";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import { object, string } from "yup";
 import render from "../render";
@@ -25,6 +26,7 @@ import ExtensionView from "../components/extensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./setOptInPreferences.styl";
+import InfoTipLayout from "../components/infoTipLayout";
 
 const purposesEnum = {
   ALL: "all",
@@ -102,12 +104,7 @@ const SetOptInPreferences = () => {
               </div>
             )}
             <div>
-              <label
-                htmlFor="instanceNameField"
-                className="spectrum-Form-itemLabel"
-              >
-                Instance
-              </label>
+              <FieldLabel labelFor="instanceNameField" label="Instance" />
               <div>
                 <WrappedField
                   id="instanceNameField"
@@ -119,12 +116,10 @@ const SetOptInPreferences = () => {
               </div>
             </div>
             <div className="u-gapTop">
-              <label
-                htmlFor="purposesField"
-                className="spectrum-Form-itemLabel"
-              >
-                The user has opted into:
-              </label>
+              <FieldLabel
+                labelFor="purposesField"
+                label="The user has opted into:"
+              />
               <WrappedField
                 id="purposesField"
                 name="purposes"
@@ -141,12 +136,12 @@ const SetOptInPreferences = () => {
             </div>
             {formikProps.values.purposes === purposesEnum.DATA_ELEMENT ? (
               <div className="FieldSubset u-gapTop">
-                <label
-                  htmlFor="purposesDataElementField"
-                  className="spectrum-Form-itemLabel"
-                >
-                  Data Element
-                </label>
+                <InfoTipLayout tip='The data element should return "all" or "none".'>
+                  <FieldLabel
+                    labelFor="purposesDataElementField"
+                    label="Data Element"
+                  />
+                </InfoTipLayout>
                 <div>
                   <WrappedField
                     id="purposesDataElementField"

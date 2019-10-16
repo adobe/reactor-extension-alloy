@@ -126,6 +126,13 @@ test("initializes form fields with full settings", async t => {
     })
   );
 
+  // When initializing with multiple instances, the accordion should
+  // be fully collapsed.
+  await instances[0].nameField.expectNotExists(t);
+  await instances[1].nameField.expectNotExists(t);
+
+  await accordion.clickHeader(t, "ALLOY1");
+
   await instances[0].nameField.expectValue(t, "alloy1");
   await instances[0].propertyIdField.expectValue(t, "PR123");
   await instances[0].imsOrgIdField.expectValue(t, "ORG456@OtherCompanyOrg");
@@ -438,9 +445,9 @@ test("ignores ID sync container ID value when ID sync is disabled", async t => {
 test("deletes an instance", async t => {
   await extensionViewController.init(t, defaultInitInfo);
   await instances[0].propertyIdField.typeText(t, "PR123");
-  await instances[0].deleteButton.expectNotExists(t);
+  await instances[0].deleteButton.expectDisabled(t);
   await addInstanceButton.click(t);
-  await instances[1].deleteButton.expectExists(t);
+  await instances[1].deleteButton.expectEnabled(t);
   // Make accordion header label unique
   await instances[1].nameField.typeText(t, "2");
   await instances[1].propertyIdField.typeText(t, "PR456");
