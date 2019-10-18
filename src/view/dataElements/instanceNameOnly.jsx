@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import Select from "@react/react-spectrum/Select";
+import FieldLabel from "@react/react-spectrum/FieldLabel";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
@@ -43,12 +44,7 @@ const InstanceNameOnly = () => {
       render={({ initInfo }) => {
         return (
           <div>
-            <label
-              htmlFor="instanceNameField"
-              className="spectrum-Form-itemLabel"
-            >
-              Instance
-            </label>
+            <FieldLabel labelFor="propertyIdField" label="Instance" />
             <div>
               <WrappedField
                 id="instanceNameField"

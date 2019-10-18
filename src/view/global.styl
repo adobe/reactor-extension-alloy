@@ -18,6 +18,15 @@ governing permissions and limitations under the License.
   padding: 12px;
 }
 
+// There's extra space to the right of Checkbox and Radio,
+// which is not according to design, which makes it hard
+// to place tooltips correctly.
+// https://github.com/adobe/spectrum-css/issues/124
+.spectrum-Checkbox,
+.spectrum-Radio {
+  margin-right: 0;
+}
+
 .Label {
   display: inline-block;
   line-height: 2.25rem!important;
@@ -29,4 +38,12 @@ governing permissions and limitations under the License.
 
 .ConstrainedAlert {
   width: 600px;
+}
+
+.Note {
+  font-size: 12px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 2.25rem;
+  color: rgb(116, 116, 116);
 }

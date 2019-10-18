@@ -22,6 +22,7 @@ import Button from "@react/react-spectrum/Button";
 import Alert from "@react/react-spectrum/Alert";
 import ModalTrigger from "@react/react-spectrum/ModalTrigger";
 import Dialog from "@react/react-spectrum/Dialog";
+import FieldLabel from "@react/react-spectrum/FieldLabel";
 import Delete from "@react/react-spectrum/Icon/Delete";
 import { Accordion, AccordionItem } from "@react/react-spectrum/Accordion";
 import CheckboxList from "../components/checkboxList";
@@ -30,6 +31,7 @@ import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
 import EditorButton from "../components/editorButton";
+import InfoTipLayout from "../components/infoTipLayout";
 import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./configuration.styl";
@@ -233,7 +235,10 @@ const validationSchema = object()
   });
 
 const Configuration = () => {
-  const [selectedAccordionIndex, setSelectedAccordionIndex] = useState(0);
+  const [selectedAccordionIndex, setSelectedAccordionIndex] = useState();
+  const [isFirstExtensionViewRender, setIsFirstExtensionViewRender] = useState(
+    true
+  );
 
   return (
     <ExtensionView
@@ -250,6 +255,13 @@ const Configuration = () => {
           initialValues
         } = formikProps;
 
+        // Only expand the first accordion item if there's one instance because
+        // users may get disoriented if we automatically expand the first item
+        // when there are multiple instances.
+        if (isFirstExtensionViewRender && values.instances.length === 1) {
+          setSelectedAccordionIndex(0);
+        }
+
         // If the user just tried to save the configuration and there's
         // a validation error, make sure the first accordion item containing
         // an error is shown.
@@ -259,6 +271,8 @@ const Configuration = () => {
           );
           setSelectedAccordionIndex(instanceIndexContainingErrors);
         }
+
+        setIsFirstExtensionViewRender(false);
 
         return (
           <div>
@@ -287,13 +301,9 @@ const Configuration = () => {
                           header={instance.name || "unnamed instance"}
                         >
                           <div>
-                            <label
-                              htmlFor="nameField"
-                              className="spectrum-Form-itemLabel"
-                            >
-                              Name (will also be used to create a global method
-                              on window)
-                            </label>
+                            <InfoTipLayout tip="A global method on the window object will be created with this name.">
+                              <FieldLabel labelFor="nameField" label="Name" />
+                            </InfoTipLayout>
                             <div>
                               <WrappedField
                                 id="nameField"
@@ -323,12 +333,12 @@ const Configuration = () => {
                             <div />
                           </div>
                           <div className="u-gapTop">
-                            <label
-                              htmlFor="propertyIdField"
-                              className="spectrum-Form-itemLabel"
-                            >
-                              Property ID
-                            </label>
+                            <InfoTipLayout tip="Your assigned property ID, which links the SDK to the appropriate accounts and configuration.">
+                              <FieldLabel
+                                labelFor="propertyIdField"
+                                label="Property ID"
+                              />
+                            </InfoTipLayout>
                             <div>
                               <WrappedField
                                 id="propertyIdField"
@@ -340,12 +350,12 @@ const Configuration = () => {
                             </div>
                           </div>
                           <div className="u-gapTop">
-                            <label
-                              htmlFor="edgeDomainField"
-                              className="spectrum-Form-itemLabel"
-                            >
-                              IMS Organization ID
-                            </label>
+                            <InfoTipLayout tip="Your assigned Experience Cloud organization ID.">
+                              <FieldLabel
+                                labelFor="imsOrgIdField"
+                                label="IMS Organization ID"
+                              />
+                            </InfoTipLayout>
                             <div>
                               <WrappedField
                                 id="imsOrgIdField"
@@ -372,12 +382,17 @@ const Configuration = () => {
                             </div>
                           </div>
                           <div className="u-gapTop">
-                            <label
-                              htmlFor="edgeDomainField"
-                              className="spectrum-Form-itemLabel"
+                            <InfoTipLayout
+                              tip="The domain that will be used to interact with
+                              Adobe Services. This should only be changed if you
+                              have a first party domain (CNAME) that proxies
+                              requests to Adobe's edge infrastructure."
                             >
-                              Edge Domain
-                            </label>
+                              <FieldLabel
+                                labelFor="edgeDomainField"
+                                label="Edge Domain"
+                              />
+                            </InfoTipLayout>
                             <div>
                               <WrappedField
                                 id="edgeDomainField"
@@ -404,41 +419,47 @@ const Configuration = () => {
                             </div>
                           </div>
                           <div className="u-gapTop">
-                            <WrappedField
-                              name={`instances.${index}.errorsEnabled`}
-                              component={Checkbox}
-                              label="Enable errors"
-                            />
+                            <InfoTipLayout tip="Allows uncaught errors to be displayed in the console.">
+                              <WrappedField
+                                name={`instances.${index}.errorsEnabled`}
+                                component={Checkbox}
+                                label="Enable errors"
+                              />
+                            </InfoTipLayout>
                           </div>
 
                           <h3>Privacy</h3>
 
                           <div className="u-gapTop">
-                            <WrappedField
-                              name={`instances.${index}.optInEnabled`}
-                              component={Checkbox}
-                              label="Enable Opt-In"
-                            />
+                            <InfoTipLayout tip="Sends requests to third-party URLs to synchronize the Adobe unique user ID with the unique user ID of a third-party data source.">
+                              <WrappedField
+                                name={`instances.${index}.optInEnabled`}
+                                component={Checkbox}
+                                label="Enable Opt-In"
+                              />
+                            </InfoTipLayout>
                           </div>
 
                           <h3>Identity</h3>
 
                           <div className="u-gapTop">
-                            <WrappedField
-                              name={`instances.${index}.idSyncEnabled`}
-                              component={Checkbox}
-                              label="Enable ID Synchronization"
-                            />
+                            <InfoTipLayout tip="Queues privacy-sensitive work until the user opts in.">
+                              <WrappedField
+                                name={`instances.${index}.idSyncEnabled`}
+                                component={Checkbox}
+                                label="Enable ID Synchronization"
+                              />
+                            </InfoTipLayout>
                           </div>
 
                           {values.instances[index].idSyncEnabled ? (
                             <div className="FieldSubset u-gapTop">
-                              <label
-                                htmlFor="idSyncContainerIdField"
-                                className="spectrum-Form-itemLabel"
-                              >
-                                ID Synchronization Container ID (optional)
-                              </label>
+                              <InfoTipLayout tip="The container ID that specifies which ID syncs will be fired. This can be obtained from your Adobe consultant.">
+                                <FieldLabel
+                                  labelFor="idSyncContainerIdField"
+                                  label="ID Synchronization Container ID (optional)"
+                                />
+                              </InfoTipLayout>
                               <div>
                                 <WrappedField
                                   id="idSyncContainerIdField"
@@ -454,22 +475,24 @@ const Configuration = () => {
                           <h3>Audiences</h3>
 
                           <div className="u-gapTop">
-                            <WrappedField
-                              name={`instances.${index}.destinationsEnabled`}
-                              component={Checkbox}
-                              label="Enable Destinations"
-                            />
+                            <InfoTipLayout tip="Sends requests to third-party URLs to set cookies based on segment qualification.">
+                              <WrappedField
+                                name={`instances.${index}.destinationsEnabled`}
+                                component={Checkbox}
+                                label="Enable Destinations"
+                              />
+                            </InfoTipLayout>
                           </div>
 
                           <h3>Personalization</h3>
 
                           <div className="u-gapTop">
-                            <label
-                              htmlFor="prehidingStyleField"
-                              className="spectrum-Form-itemLabel"
-                            >
-                              Prehiding Style (optional)
-                            </label>
+                            <InfoTipLayout tip="A CSS style definition that will hide content areas of your web page while personalized content is loaded from the server.">
+                              <FieldLabel
+                                labelFor="prehidingStyleField"
+                                label="Prehiding Style (optional)"
+                              />
+                            </InfoTipLayout>
                             <div>
                               <WrappedField
                                 id="prehidingStyleField"
@@ -483,12 +506,12 @@ const Configuration = () => {
                           <h3>Context</h3>
 
                           <div className="u-gapTop">
-                            <label
-                              htmlFor="contextGranularityField"
-                              className="spectrum-Form-itemLabel"
-                            >
-                              When sending event data, automatically include:
-                            </label>
+                            <InfoTipLayout tip="Indicates which categories of context information should be automatically collected.">
+                              <FieldLabel
+                                labelFor="contextGranularityField"
+                                label="When sending event data, automatically include:"
+                              />
+                            </InfoTipLayout>
                             <WrappedField
                               id="contextGranularityField"
                               name={`instances.${index}.contextGranularity`}
@@ -516,34 +539,39 @@ const Configuration = () => {
                             </div>
                           ) : null}
 
-                          {values.instances.length > 1 ? (
-                            <div className="u-gapTop2x">
-                              <ModalTrigger>
-                                <Button
-                                  id="deleteButton"
-                                  label="Delete Instance"
-                                  icon={<Delete />}
-                                  variant="action"
-                                />
-                                <Dialog
-                                  onConfirm={() => {
-                                    arrayHelpers.remove(index);
-                                    setSelectedAccordionIndex(0);
-                                  }}
-                                  title="Resource Usage"
-                                  confirmLabel="OK"
-                                  cancelLabel="Cancel"
-                                >
-                                  Any rule components or data elements using
-                                  this instance will no longer function as
-                                  expected when running on your website. We
-                                  recommend removing these resources before
-                                  publishing your next library. Would you like
-                                  to proceed?
-                                </Dialog>
-                              </ModalTrigger>
-                            </div>
-                          ) : null}
+                          <div className="u-gapTop2x">
+                            <ModalTrigger>
+                              <Button
+                                id="deleteButton"
+                                label="Delete Instance"
+                                icon={<Delete />}
+                                variant="action"
+                                disabled={values.instances.length === 1}
+                              />
+                              {values.instances.length === 1 ? (
+                                <span className="Note u-gapLeft">
+                                  You must have at least one instance to use
+                                  this extension.
+                                </span>
+                              ) : null}
+                              <Dialog
+                                onConfirm={() => {
+                                  arrayHelpers.remove(index);
+                                  setSelectedAccordionIndex(0);
+                                }}
+                                title="Resource Usage"
+                                confirmLabel="Delete"
+                                cancelLabel="Cancel"
+                              >
+                                Any rule components or data elements using this
+                                instance will no longer function as expected
+                                when running on your website. We recommend
+                                removing these resources or switching them to
+                                use a different instance before publishing your
+                                next library. Would you like to proceed?
+                              </Dialog>
+                            </ModalTrigger>
+                          </div>
                         </AccordionItem>
                       ))}
                     </Accordion>
