@@ -30,8 +30,8 @@ for (let i = 0; i < 2; i += 1) {
   instances.push({
     nameField: spectrum.textfield(Selector(`[name='instances.${i}.name']`)),
     nameChangeAlert: spectrum.alert(Selector("#nameChangeAlert")),
-    propertyIdField: spectrum.textfield(
-      Selector(`[name='instances.${i}.propertyId']`)
+    configIdField: spectrum.textfield(
+      Selector(`[name='instances.${i}.configId']`)
     ),
     imsOrgIdField: spectrum.textfield(
       Selector(`[name='instances.${i}.imsOrgId']`)
@@ -103,7 +103,7 @@ test("initializes form fields with full settings", async t => {
         instances: [
           {
             name: "alloy1",
-            propertyId: "PR123",
+            configId: "PR123",
             imsOrgId: "ORG456@OtherCompanyOrg",
             edgeDomain: "testedge.com",
             errorsEnabled: false,
@@ -116,7 +116,7 @@ test("initializes form fields with full settings", async t => {
           },
           {
             name: "alloy2",
-            propertyId: "PR456",
+            configId: "PR456",
             optInEnabled: false,
             idSyncEnabled: false,
             context: []
@@ -134,7 +134,7 @@ test("initializes form fields with full settings", async t => {
   await accordion.clickHeader(t, "ALLOY1");
 
   await instances[0].nameField.expectValue(t, "alloy1");
-  await instances[0].propertyIdField.expectValue(t, "PR123");
+  await instances[0].configIdField.expectValue(t, "PR123");
   await instances[0].imsOrgIdField.expectValue(t, "ORG456@OtherCompanyOrg");
   await instances[0].edgeDomainField.expectValue(t, "testedge.com");
   await instances[0].errorsEnabledField.expectUnchecked(t);
@@ -151,7 +151,7 @@ test("initializes form fields with full settings", async t => {
   await accordion.clickHeader(t, "ALLOY2");
 
   await instances[1].nameField.expectValue(t, "alloy2");
-  await instances[1].propertyIdField.expectValue(t, "PR456");
+  await instances[1].configIdField.expectValue(t, "PR456");
   await instances[1].imsOrgIdField.expectValue(t, "ABC123@AdobeOrg");
   await instances[1].edgeDomainField.expectValue(t, defaultEdgeDomain);
   await instances[1].errorsEnabledField.expectChecked(t);
@@ -174,7 +174,7 @@ test("initializes form fields with minimal settings", async t => {
         instances: [
           {
             name: "alloy1",
-            propertyId: "PR123"
+            configId: "PR123"
           }
         ]
       }
@@ -182,7 +182,7 @@ test("initializes form fields with minimal settings", async t => {
   );
 
   await instances[0].nameField.expectValue(t, "alloy1");
-  await instances[0].propertyIdField.expectValue(t, "PR123");
+  await instances[0].configIdField.expectValue(t, "PR123");
   await instances[0].imsOrgIdField.expectValue(t, "ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
   await instances[0].errorsEnabledField.expectChecked(t);
@@ -197,7 +197,7 @@ test("initializes form fields with no settings", async t => {
   await extensionViewController.init(t, defaultInitInfo);
 
   await instances[0].nameField.expectValue(t, "alloy");
-  await instances[0].propertyIdField.expectValue(t, "");
+  await instances[0].configIdField.expectValue(t, "");
   await instances[0].imsOrgIdField.expectValue(t, "ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
   await instances[0].errorsEnabledField.expectChecked(t);
@@ -211,12 +211,12 @@ test("initializes form fields with no settings", async t => {
 test("returns minimal valid settings", async t => {
   await extensionViewController.init(t, defaultInitInfo);
 
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await extensionViewController.expectIsValid(t);
   await extensionViewController.expectSettings(t, {
     instances: [
       {
-        propertyId: "PR123",
+        configId: "PR123",
         name: "alloy"
       }
     ]
@@ -236,7 +236,7 @@ test("returns full valid settings", async t => {
   });
 
   await instances[0].nameField.typeText(t, "1");
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await instances[0].edgeDomainField.typeText(t, "2");
   await instances[0].errorsEnabledField.click(t);
   await instances[0].optInEnabledField.click(t);
@@ -247,7 +247,7 @@ test("returns full valid settings", async t => {
   await addInstanceButton.click(t);
 
   await instances[1].nameField.typeText(t, "2");
-  await instances[1].propertyIdField.typeText(t, "PR456");
+  await instances[1].configIdField.typeText(t, "PR456");
   await instances[1].imsOrgIdField.typeText(t, "2");
   await instances[1].optInEnabledField.click(t);
   await instances[1].idSyncEnabledField.click(t);
@@ -258,7 +258,7 @@ test("returns full valid settings", async t => {
     instances: [
       {
         name: "alloy1",
-        propertyId: "PR123",
+        configId: "PR123",
         edgeDomain: `${defaultEdgeDomain}2`,
         errorsEnabled: false,
         optInEnabled: true,
@@ -268,7 +268,7 @@ test("returns full valid settings", async t => {
       },
       {
         name: "alloy2",
-        propertyId: "PR456",
+        configId: "PR456",
         imsOrgId: "ABC123@AdobeOrg2",
         optInEnabled: true,
         idSyncEnabled: false,
@@ -285,16 +285,16 @@ test("shows error for empty required values", async t => {
   await instances[0].edgeDomainField.clear(t);
   await extensionViewController.expectIsNotValid(t);
   await instances[0].nameField.expectError(t);
-  await instances[0].propertyIdField.expectError(t);
+  await instances[0].configIdField.expectError(t);
   await instances[0].imsOrgIdField.expectError(t);
   await instances[0].edgeDomainField.expectError(t);
 });
 
 test("shows error for duplicate name", async t => {
   await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await addInstanceButton.click(t);
-  await instances[1].propertyIdField.typeText(t, "PR456");
+  await instances[1].configIdField.typeText(t, "PR456");
   // We'll expand the first instance before we validate to test that
   // validation expands the invalid instance (in this case, the second one)
   // Even though both accordion header labels are "alloy", this
@@ -328,7 +328,7 @@ test("shows a warning when name is changed on existing configuration", async t =
         instances: [
           {
             name: "alloy",
-            propertyId: "PR123"
+            configId: "PR123"
           }
         ]
       }
@@ -346,23 +346,23 @@ test("does not show a warning when name is changed on new configuration", async 
 
 test("shows error for duplicate property ID", async t => {
   await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await addInstanceButton.click(t);
-  await instances[1].propertyIdField.typeText(t, "PR123");
+  await instances[1].configIdField.typeText(t, "PR123");
   // We'll expand the first instance before we validate to test that
   // validation expands the invalid instance (in this case, the second one)
   // Even though both accordion header labels are "alloy", this
   // will select the first one.
   await accordion.clickHeader(t, "ALLOY");
   await extensionViewController.expectIsNotValid(t);
-  await instances[1].propertyIdField.expectError(t);
+  await instances[1].configIdField.expectError(t);
 });
 
 test("shows error for duplicate IMS org ID", async t => {
   await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await addInstanceButton.click(t);
-  await instances[1].propertyIdField.typeText(t, "PR456");
+  await instances[1].configIdField.typeText(t, "PR456");
   // We'll expand the first instance before we validate to test that
   // validation expands the invalid instance (in this case, the second one)
   // Even though both accordion header labels are "alloy", this
@@ -388,7 +388,7 @@ test("restores default edge domain value when restore button is clicked", async 
 
 test("shows error for ID sync container ID value that is a negative number", async t => {
   await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "-1");
   await extensionViewController.expectIsNotValid(t);
   await instances[0].idSyncContainerIdField.expectError(t);
@@ -396,7 +396,7 @@ test("shows error for ID sync container ID value that is a negative number", asy
 
 test("shows error for ID sync container ID value that is a float number", async t => {
   await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "123.123");
   await extensionViewController.expectIsNotValid(t);
   await instances[0].idSyncContainerIdField.expectError(t);
@@ -404,7 +404,7 @@ test("shows error for ID sync container ID value that is a float number", async 
 
 test("shows error for ID sync container ID value that is an arbitrary string", async t => {
   await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "123foo");
   await extensionViewController.expectIsNotValid(t);
   await instances[0].idSyncContainerIdField.expectError(t);
@@ -412,7 +412,7 @@ test("shows error for ID sync container ID value that is an arbitrary string", a
 
 test("shows error for ID sync container ID value that is multiple data elements", async t => {
   await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "%foo%%bar%");
   await extensionViewController.expectIsNotValid(t);
   await instances[0].idSyncContainerIdField.expectError(t);
@@ -420,14 +420,14 @@ test("shows error for ID sync container ID value that is multiple data elements"
 
 test("does not show error for ID sync container ID value that is a single data element", async t => {
   await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "%123foo%");
   await extensionViewController.expectIsValid(t);
 });
 
 test("ignores ID sync container ID value when ID sync is disabled", async t => {
   await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await instances[0].idSyncContainerIdField.typeText(t, "123foo");
   await instances[0].idSyncEnabledField.click(t);
   await extensionViewController.expectIsValid(t);
@@ -435,7 +435,7 @@ test("ignores ID sync container ID value when ID sync is disabled", async t => {
     instances: [
       {
         name: "alloy",
-        propertyId: "PR123",
+        configId: "PR123",
         idSyncEnabled: false
       }
     ]
@@ -444,22 +444,22 @@ test("ignores ID sync container ID value when ID sync is disabled", async t => {
 
 test("deletes an instance", async t => {
   await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].propertyIdField.typeText(t, "PR123");
+  await instances[0].configIdField.typeText(t, "PR123");
   await instances[0].deleteButton.expectDisabled(t);
   await addInstanceButton.click(t);
   await instances[1].deleteButton.expectEnabled(t);
   // Make accordion header label unique
   await instances[1].nameField.typeText(t, "2");
-  await instances[1].propertyIdField.typeText(t, "PR456");
+  await instances[1].configIdField.typeText(t, "PR456");
   await accordion.clickHeader(t, "ALLOY");
   await instances[0].deleteButton.click(t);
   // Ensure that clicking cancel doesn't delete anything.
   await resourceUsageDialog.clickCancel(t);
   await resourceUsageDialog.expectNotExists(t);
-  await instances[0].propertyIdField.expectValue(t, "PR123");
+  await instances[0].configIdField.expectValue(t, "PR123");
   // Alright, delete for real.
   await instances[0].deleteButton.click(t);
   await resourceUsageDialog.expectTitle(t, "Resource Usage");
   await resourceUsageDialog.clickConfirm(t);
-  await instances[0].propertyIdField.expectValue(t, "PR456");
+  await instances[0].configIdField.expectValue(t, "PR456");
 });

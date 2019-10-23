@@ -2242,9 +2242,9 @@ governing permissions and limitations under the License.
         return function (config) {
           var componentRegistry = createComponentRegistry();
           var imsOrgId = config.imsOrgId,
-            propertyId = config.propertyId,
+            configId = config.configId,
             cookieDomain = config.cookieDomain;
-          var cookieName = ALLOY_COOKIE_NAME + "_" + propertyId;
+          var cookieName = ALLOY_COOKIE_NAME + "_" + configId;
           var cookieProxy = createCookieProxy(cookieName, ALLOY_COOKIE_TTL_IN_DAYS, cookieDomain || memoizedGetTopLevelDomain(window, cookie)); // TODO: Should this storage be namespaced by property ID or org ID?
 
           var storage = createNamespacedStorage(imsOrgId);
@@ -2758,7 +2758,7 @@ governing permissions and limitations under the License.
         };
 
         var edgeDomain = config.edgeDomain,
-          propertyId = config.propertyId;
+          configId = config.configId;
         return {
           /**
            * Create a new payload.  Once you have added data to the payload, send it with
@@ -2793,7 +2793,7 @@ governing permissions and limitations under the License.
             return Promise.resolve().then(function () {
               var action = reallyExpectsResponse ? "interact" : "collect";
               var baseUrl = "https://" + edgeDomain;
-              var url = baseUrl + "/" + apiVersion + "/" + action + "?propertyId=" + propertyId + "&requestId=" + requestId;
+              var url = baseUrl + "/" + apiVersion + "/" + action + "?configId=" + configId + "&requestId=" + requestId;
               var responseHandlingMessage = reallyExpectsResponse ? "" : " (no response is expected)";
               var stringifiedPayload = JSON.stringify(payload); // We want to log raw payload and event data rather than
               // our fancy wrapper objects. Calling payload.toJSON() is
@@ -3129,7 +3129,7 @@ governing permissions and limitations under the License.
 */
       var createConfigValidators = (function () {
         return {
-          propertyId: {
+          configId: {
             validate: boundString().unique()
           },
           edgeDomain: {

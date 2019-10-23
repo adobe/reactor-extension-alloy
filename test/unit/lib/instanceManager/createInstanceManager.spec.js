@@ -25,11 +25,11 @@ describe("Instance Manager", () => {
           instances: [
             {
               name: "alloy1",
-              propertyId: "PR123"
+              configId: "PR123"
             },
             {
               name: "alloy2",
-              propertyId: "PR456",
+              configId: "PR456",
               imsOrgId: "DIFFERENTORG@AdobeOrg"
             }
           ]
@@ -73,14 +73,14 @@ describe("Instance Manager", () => {
 
   it("configures an SDK instance for each configured instance", () => {
     expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
-      propertyId: "PR123",
+      configId: "PR123",
       imsOrgId: "ABC@AdobeOrg",
       logEnabled: true,
       reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
-      propertyId: "PR456",
+      configId: "PR456",
       imsOrgId: "DIFFERENTORG@AdobeOrg",
       logEnabled: true,
       reactorRegisterGetEcid: jasmine.any(Function),

@@ -44,7 +44,7 @@ const contextOptions = ["web", "device", "environment", "placeContext"];
 
 const getInstanceDefaults = initInfo => ({
   name: "alloy",
-  propertyId: "",
+  configId: "",
   imsOrgId: initInfo.company.orgId,
   edgeDomain: "alpha.konductor.adobedc.net",
   errorsEnabled: true,
@@ -97,7 +97,7 @@ const getSettings = ({ values, initInfo }) => {
       };
 
       copyPropertiesIfNotDefault(trimmedInstance, instance, instanceDefaults, [
-        "propertyId",
+        "configId",
         "imsOrgId",
         "edgeDomain",
         "errorsEnabled",
@@ -167,7 +167,7 @@ const validationSchema = object()
               return !(value in window);
             }
           }),
-        propertyId: string().required("Please specify a property ID."),
+        configId: string().required("Please specify a property ID."),
         imsOrgId: string().required("Please specify an IMS organization ID."),
         edgeDomain: string().required("Please specify an edge domain."),
         // A valid idSyncContainerId field value can be an integer
@@ -214,11 +214,11 @@ const validationSchema = object()
   // TestCafe doesn't allow this to be an arrow function because of
   // how it scopes "this".
   // eslint-disable-next-line func-names
-  .test("uniquePropertyId", function(settings) {
+  .test("uniqueConfigId", function(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
       settings.instances,
-      "propertyId",
+      "configId",
       "Please provide a property ID unique from those used for other instances."
     );
   })
@@ -335,14 +335,14 @@ const Configuration = () => {
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Your assigned property ID, which links the SDK to the appropriate accounts and configuration.">
                               <FieldLabel
-                                labelFor="propertyIdField"
+                                labelFor="configIdField"
                                 label="Property ID"
                               />
                             </InfoTipLayout>
                             <div>
                               <WrappedField
-                                id="propertyIdField"
-                                name={`instances.${index}.propertyId`}
+                                id="configIdField"
+                                name={`instances.${index}.configId`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
                                 supportDataElement

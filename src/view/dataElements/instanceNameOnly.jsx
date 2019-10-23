@@ -44,7 +44,7 @@ const InstanceNameOnly = () => {
       render={({ initInfo }) => {
         return (
           <div>
-            <FieldLabel labelFor="propertyIdField" label="Instance" />
+            <FieldLabel labelFor="configIdField" label="Instance" />
             <div>
               <WrappedField
                 id="instanceNameField"

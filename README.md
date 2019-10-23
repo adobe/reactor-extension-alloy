@@ -43,7 +43,7 @@ For illustration purposes, let's assume we are testing the Send Event action typ
   "instances": [
     {
       "name": "alloy",
-      "propertyId": "PR123",
+      "configId": "PR123",
       "idSyncContainerId": 10
     }
   ]
