@@ -35,11 +35,11 @@ const mockExtensionSettings = {
   instances: [
     {
       name: "alloy1",
-      propertyId: "PR123"
+      configId: "PR123"
     },
     {
       name: "alloy2",
-      propertyId: "PR456",
+      configId: "PR456",
       optInEnabled: true
     }
   ]
