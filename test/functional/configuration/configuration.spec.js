@@ -87,7 +87,7 @@ fixture("Extension Configuration View").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
-const defaultEdgeDomain = "alpha.konductor.adobedc.net";
+const defaultEdgeDomain = "beta.adobedc.net";
 
 const defaultInitInfo = {
   company: {
