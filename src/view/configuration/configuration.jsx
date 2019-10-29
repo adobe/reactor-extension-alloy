@@ -51,7 +51,8 @@ const getInstanceDefaults = initInfo => ({
   optInEnabled: false,
   idSyncEnabled: true,
   idSyncContainerId: "",
-  destinationsEnabled: true,
+  urlActivationEnabled: true,
+  cookieActivationEnabled: true,
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions
@@ -103,7 +104,8 @@ const getSettings = ({ values, initInfo }) => {
         "errorsEnabled",
         "optInEnabled",
         "idSyncEnabled",
-        "destinationsEnabled",
+        "urlActivationEnabled",
+        "cookieActivationEnabled",
         "prehidingStyle"
       ]);
 
@@ -475,11 +477,21 @@ const Configuration = () => {
                           <h3>Audiences</h3>
 
                           <div className="u-gapTop">
-                            <InfoTipLayout tip="Sends requests to third-party URLs to set cookies based on segment qualification.">
+                            <InfoTipLayout tip="Enables URL destinations, which allows the firing of URLs based on segment qualification.">
                               <WrappedField
-                                name={`instances.${index}.destinationsEnabled`}
+                                name={`instances.${index}.urlActivationEnabled`}
                                 component={Checkbox}
-                                label="Enable Destinations"
+                                label="Enable URL Destinations"
+                              />
+                            </InfoTipLayout>
+                          </div>
+
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="Enables cookie destinations, which allows the setting of cookies based on segment qualification.">
+                              <WrappedField
+                                name={`instances.${index}.cookieActivationEnabled`}
+                                component={Checkbox}
+                                label="Enable cookie Destinations"
                               />
                             </InfoTipLayout>
                           </div>
