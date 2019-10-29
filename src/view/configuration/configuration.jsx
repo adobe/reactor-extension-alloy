@@ -167,7 +167,7 @@ const validationSchema = object()
               return !(value in window);
             }
           }),
-        configId: string().required("Please specify a property ID."),
+        configId: string().required("Please specify a config ID."),
         imsOrgId: string().required("Please specify an IMS organization ID."),
         edgeDomain: string().required("Please specify an edge domain."),
         // A valid idSyncContainerId field value can be an integer
@@ -219,7 +219,7 @@ const validationSchema = object()
       this.createError.bind(this),
       settings.instances,
       "configId",
-      "Please provide a property ID unique from those used for other instances."
+      "Please provide a config ID unique from those used for other instances."
     );
   })
   // TestCafe doesn't allow this to be an arrow function because of
@@ -333,10 +333,10 @@ const Configuration = () => {
                             <div />
                           </div>
                           <div className="u-gapTop">
-                            <InfoTipLayout tip="Your assigned property ID, which links the SDK to the appropriate accounts and configuration.">
+                            <InfoTipLayout tip="Your assigned config ID, which links the SDK to the appropriate accounts and configuration.">
                               <FieldLabel
                                 labelFor="configIdField"
-                                label="Property ID"
+                                label="Config ID"
                               />
                             </InfoTipLayout>
                             <div>
@@ -431,7 +431,7 @@ const Configuration = () => {
                           <h3>Privacy</h3>
 
                           <div className="u-gapTop">
-                            <InfoTipLayout tip="Sends requests to third-party URLs to synchronize the Adobe unique user ID with the unique user ID of a third-party data source.">
+                            <InfoTipLayout tip="Queues privacy-sensitive work until the user opts in.">
                               <WrappedField
                                 name={`instances.${index}.optInEnabled`}
                                 component={Checkbox}
@@ -443,7 +443,7 @@ const Configuration = () => {
                           <h3>Identity</h3>
 
                           <div className="u-gapTop">
-                            <InfoTipLayout tip="Queues privacy-sensitive work until the user opts in.">
+                            <InfoTipLayout tip="Sends requests to third-party URLs to synchronize the Adobe unique user ID with the unique user ID of a third-party data source.">
                               <WrappedField
                                 name={`instances.${index}.idSyncEnabled`}
                                 component={Checkbox}
