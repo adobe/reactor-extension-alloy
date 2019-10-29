@@ -150,6 +150,26 @@
       },
       "libPath": "dist/lib/actions/setOptInPreferences/index.js",
       "viewPath": "actions/setOptInPreferences.html"
+    },
+    {
+      "displayName": "Set Customer IDs",
+      "name": "set-customer-ids",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "instanceName": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "instanceName"
+        ],
+        "additionalProperties": false
+      },
+      "libPath": "dist/lib/actions/setCustomerIds/index.js",
+      "viewPath": "actions/setCustomerIds.html"
     }
   ],
   "dataElements": [
