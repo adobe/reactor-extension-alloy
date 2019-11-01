@@ -13,10 +13,13 @@ governing permissions and limitations under the License.
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import { object, string } from "yup";
+import { FieldArray } from "formik";
 import Textfield from "@react/react-spectrum/Textfield";
 import Checkbox from "@react/react-spectrum/Checkbox";
 import Select from "@react/react-spectrum/Select";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
+import Button from "@react/react-spectrum/Button";
+import Well from "@react/react-spectrum/Well";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
@@ -61,6 +64,38 @@ const validationSchema = object().shape({
   xdm: string().matches(singleDataElementRegex, "Please specify a data element")
 });
 
+const values = {
+  instances: [
+    {
+      name: "alloy",
+      configId: "99999999"
+    },
+    {
+      name: "alloy2",
+      configId: "8888888"
+    }
+  ]
+};
+
+/*
+const normalizedObj = {
+  email: {
+    id: "tester",
+    authenticatedState: LOGGED_OUT,
+    primary: true
+  },
+  crm: {
+    id: "1234",
+    authenticatedState: AMBIGUOUS
+  },
+  custom: {
+    id: "abc",
+    primary: false,
+    authenticatedState: AMBIGUOUS
+  }
+};
+*/
+
 const SendEvent = () => {
   return (
     <ExtensionView
@@ -82,32 +117,93 @@ const SendEvent = () => {
                 />
               </div>
             </div>
-            <div className="u-gapTop">
-              <InfoTipLayout tip="Influences whether the SDK should retrieve and render personalization content, among other things.">
-                <WrappedField
-                  name="viewStart"
-                  component={Checkbox}
-                  label="Occurs at the start of a view"
-                />
-              </InfoTipLayout>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="Please specify a data element that will return a JavaScript
-                  object in XDM format. This object will be sent to the Adobe
-                  Experience Platform."
-              >
-                <FieldLabel labelFor="xdmField" label="XDM Data" />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  id="xdmField"
-                  name="xdm"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement
-                />
-              </div>
+            <div>
+              <FieldArray
+                name="instances"
+                render={() => {
+                  return (
+                    <div>
+                      <div className="u-alignRight">
+                        <Button label="Add Item" onClick={() => {}} />
+                      </div>
+                      {values.instances.map((instance, index) => (
+                        <Well key={index}>
+                          <div>
+                            <InfoTipLayout tip="Tip">
+                              <FieldLabel
+                                labelFor="namespaceField"
+                                label="Namespace"
+                              />
+                            </InfoTipLayout>
+                            <div>
+                              <WrappedField
+                                id="namespaceField"
+                                name={`instances.${index}.namespace`}
+                                component={Textfield}
+                                componentClassName="u-fieldLong"
+                                supportDataElement
+                              />
+                            </div>
+                          </div>
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="Tip">
+                              <FieldLabel labelFor="idField" label="ID" />
+                            </InfoTipLayout>
+                            <div>
+                              <WrappedField
+                                id="idField"
+                                name={`instances.${index}.id`}
+                                component={Textfield}
+                                componentClassName="u-fieldLong"
+                                supportDataElement
+                              />
+                            </div>
+                          </div>
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="Tip">
+                              <FieldLabel
+                                labelFor="authenticatedStateField"
+                                label="Authenticated State"
+                              />
+                            </InfoTipLayout>
+                            <div>
+                              <WrappedField
+                                id="authenticatedStateField"
+                                name="authenticatedState"
+                                component={Select}
+                                componentClassName="u-fieldLong"
+                                options={[
+                                  {
+                                    value: "ambiguous",
+                                    label: "AMBIGUOUS"
+                                  },
+                                  {
+                                    value: "authenticated",
+                                    label: "AUTHENTICATED"
+                                  },
+                                  {
+                                    value: "loggedOut",
+                                    label: "LOGGED_OUT"
+                                  }
+                                ]}
+                              />
+                            </div>
+                          </div>
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="Tip">
+                              <WrappedField
+                                name={`instances.${index}.primary`}
+                                component={Checkbox}
+                                label="Primary"
+                              />
+                            </InfoTipLayout>
+                          </div>
+                        </Well>
+                      ))}
+                    </div>
+                  );
+                }}
+              />
             </div>
           </div>
         );
