@@ -25,21 +25,16 @@ import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
-import singleDataElementRegex from "../constants/singleDataElementRegex";
+import authenticatedStateOptions from "../constants/authenticatedStateOptions";
 import "./setCustomerIds.styl";
 import InfoTipLayout from "../components/infoTipLayout";
 
 const getInitialValues = ({ initInfo }) => {
-  const {
-    instanceName = initInfo.extensionSettings.instances[0].name,
-    viewStart = false,
-    xdm = ""
-  } = initInfo.settings || {};
+  const { instanceName = initInfo.extensionSettings.instances[0].name } =
+    initInfo.settings || {};
 
   return {
-    instanceName,
-    viewStart,
-    xdm
+    instanceName
   };
 };
 
@@ -48,20 +43,11 @@ const getSettings = ({ values }) => {
     instanceName: values.instanceName
   };
 
-  if (values.xdm) {
-    settings.xdm = values.xdm;
-  }
-
-  // Only add viewStart if the value is different than the default (false).
-  if (values.viewStart) {
-    settings.viewStart = true;
-  }
-
   return settings;
 };
 
 const validationSchema = object().shape({
-  xdm: string().matches(singleDataElementRegex, "Please specify a data element")
+  xdm: string().matches(/^%[^%]+%$/, "Please specify a data element")
 });
 
 const values = {
@@ -96,7 +82,7 @@ const normalizedObj = {
 };
 */
 
-const SendEvent = () => {
+const setCustomerIds = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -172,20 +158,7 @@ const SendEvent = () => {
                                 name="authenticatedState"
                                 component={Select}
                                 componentClassName="u-fieldLong"
-                                options={[
-                                  {
-                                    value: "ambiguous",
-                                    label: "AMBIGUOUS"
-                                  },
-                                  {
-                                    value: "authenticated",
-                                    label: "AUTHENTICATED"
-                                  },
-                                  {
-                                    value: "loggedOut",
-                                    label: "LOGGED_OUT"
-                                  }
-                                ]}
+                                options={authenticatedStateOptions}
                               />
                             </div>
                           </div>
@@ -212,4 +185,4 @@ const SendEvent = () => {
   );
 };
 
-render(SendEvent);
+render(setCustomerIds);
