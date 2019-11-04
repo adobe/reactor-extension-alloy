@@ -54,11 +54,32 @@ const values = {
   instances: [
     {
       name: "alloy",
-      configId: "99999999"
+      configId: "99999999",
+      customerIds: [
+        {
+          namespace: "email",
+          id: "tester",
+          authenticatedState: "loggedOut",
+          primary: true
+        },
+        {
+          namespace: "crm",
+          id: "1234",
+          authenticatedState: "ambiguous"
+        }
+      ]
     },
     {
       name: "alloy2",
-      configId: "8888888"
+      configId: "8888888",
+      customerIds: [
+        {
+          namespace: "custom",
+          id: "abc",
+          primary: false,
+          authenticatedState: "ambiguous"
+        }
+      ]
     }
   ]
 };
