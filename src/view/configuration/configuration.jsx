@@ -51,8 +51,8 @@ const getInstanceDefaults = initInfo => ({
   optInEnabled: false,
   idSyncEnabled: true,
   idSyncContainerId: "",
-  urlActivationEnabled: true,
-  cookieActivationEnabled: true,
+  urlDestinationsEnabled: true,
+  cookieDestinationsEnabled: true,
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions
@@ -104,8 +104,8 @@ const getSettings = ({ values, initInfo }) => {
         "errorsEnabled",
         "optInEnabled",
         "idSyncEnabled",
-        "urlActivationEnabled",
-        "cookieActivationEnabled",
+        "urlDestinationsEnabled",
+        "cookieDestinationsEnabled",
         "prehidingStyle"
       ]);
 
@@ -479,7 +479,7 @@ const Configuration = () => {
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Enables URL destinations, which allows the firing of URLs based on segment qualification.">
                               <WrappedField
-                                name={`instances.${index}.urlActivationEnabled`}
+                                name={`instances.${index}.urlDestinationsEnabled`}
                                 component={Checkbox}
                                 label="Enable URL Destinations"
                               />
@@ -489,7 +489,7 @@ const Configuration = () => {
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Enables cookie destinations, which allows the setting of cookies based on segment qualification.">
                               <WrappedField
-                                name={`instances.${index}.cookieActivationEnabled`}
+                                name={`instances.${index}.cookieDestinationsEnabled`}
                                 component={Checkbox}
                                 label="Enable cookie Destinations"
                               />
