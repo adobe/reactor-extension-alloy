@@ -27,33 +27,28 @@ import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
-// import getInstanceOptions from "../utils/getInstanceOptions";
 import authenticatedStateOptions from "../constants/authenticatedStateOptions";
 import "./setCustomerIds.styl";
 import InfoTipLayout from "../components/infoTipLayout";
 
 const getInitialValues = ({ initInfo }) => {
-  const { instanceName = initInfo.extensionSettings.instances[0].name } =
-    initInfo.settings || {};
+  const { instances } = initInfo.settings || {};
 
   return {
-    instanceName
+    instances
   };
 };
 
 const getSettings = ({ values }) => {
-  const settings = {
-    instanceName: values.instanceName
-  };
-
-  return settings;
+  return values;
 };
 
 const validationSchema = object().shape({
   xdm: string().matches(/^%[^%]+%$/, "Please specify a data element")
 });
 
-const values = {
+/*
+const values1 = {
   instances: [
     {
       name: "alloy",
@@ -87,7 +82,6 @@ const values = {
   ]
 };
 
-/*
 const normalizedObj = {
   email: {
     id: "tester",
@@ -117,7 +111,9 @@ const setCustomerIds = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={() => {
+      render={({ formikProps }) => {
+        const { values, errors, isSubmitting, isValidating } = formikProps;
+
         // Only expand the first accordion item if there's one instance because
         // users may get disoriented if we automatically expand the first item
         // when there are multiple instances.
@@ -128,133 +124,137 @@ const setCustomerIds = () => {
         // If the user just tried to save the configuration and there's
         // a validation error, make sure the first accordion item containing
         // an error is shown.
-        // if (isSubmitting && !isValidating && errors && errors.instances) {
-        //   const instanceIndexContainingErrors = errors.instances.findIndex(
-        //     instance => instance
-        //   );
-        //   setSelectedAccordionIndex(instanceIndexContainingErrors);
-        // }
+        if (isSubmitting && !isValidating && errors && errors.instances) {
+          const instanceIndexContainingErrors = errors.instances.findIndex(
+            instance => instance
+          );
+          setSelectedAccordionIndex(instanceIndexContainingErrors);
+        }
 
         setIsFirstExtensionViewRender(false);
 
         return (
           <div>
-            <Heading variant="subtitle1">Instances</Heading>
-            <Accordion
-              multiselectable
-              selectedIndex={selectedAccordionIndex}
-              className="u-gapTop2x"
-              onChange={setSelectedAccordionIndex}
-            >
-              {values.instances.map((instance, instanceIndex) => (
-                <AccordionItem
-                  key={instanceIndex}
-                  header={instance.name || "unnamed instance"}
-                >
+            <FieldArray
+              name="instances"
+              render={() => {
+                return (
                   <div>
-                    <div>
-                      <div>
-                        {Array.isArray(instance.customerIds) &&
-                          instance.customerIds.length && (
-                            <Heading variant="subtitle2">Customer IDs</Heading>
-                          )}
-                        <FieldArray
-                          name="customerIds"
-                          render={() => {
-                            return (
+                    <Heading variant="subtitle1">Instances</Heading>
+                    <Accordion
+                      multiselectable
+                      selectedIndex={selectedAccordionIndex}
+                      className="u-gapTop2x"
+                      onChange={setSelectedAccordionIndex}
+                    >
+                      {values.instances.map((instance, instanceIndex) => (
+                        <AccordionItem
+                          key={instanceIndex}
+                          header={instance.name || "unnamed instance"}
+                        >
+                          <div>
+                            <div>
                               <div>
                                 {Array.isArray(instance.customerIds) &&
-                                  instance.customerIds.length &&
-                                  instance.customerIds.map(
-                                    (customerId, index) => (
-                                      <Well key={index}>
-                                        <div>
-                                          <InfoTipLayout tip="Tip">
-                                            <FieldLabel
-                                              labelFor="namespaceField"
-                                              label="Namespace"
-                                            />
-                                          </InfoTipLayout>
-                                          <div>
-                                            <WrappedField
-                                              id="namespaceField"
-                                              name={`values.instances.${instanceIndex}.customerIds.${index}.namespace`}
-                                              component={Textfield}
-                                              componentClassName="u-fieldLong"
-                                              supportDataElement
-                                            />
-                                          </div>
-                                        </div>
-                                        <div className="u-gapTop">
-                                          <InfoTipLayout tip="Tip">
-                                            <FieldLabel
-                                              labelFor="idField"
-                                              label="ID"
-                                            />
-                                          </InfoTipLayout>
-                                          <div>
-                                            <WrappedField
-                                              id="idField"
-                                              name={`values.instances.${instanceIndex}.customerIds.${index}.id`}
-                                              component={Textfield}
-                                              componentClassName="u-fieldLong"
-                                              supportDataElement
-                                            />
-                                          </div>
-                                        </div>
-                                        <div className="u-gapTop">
-                                          <InfoTipLayout tip="Tip">
-                                            <FieldLabel
-                                              labelFor="authenticatedStateField"
-                                              label="Authenticated State"
-                                            />
-                                          </InfoTipLayout>
-                                          <div>
-                                            <WrappedField
-                                              id="authenticatedStateField"
-                                              name="authenticatedState"
-                                              component={Select}
-                                              componentClassName="u-fieldLong"
-                                              options={
-                                                authenticatedStateOptions
-                                              }
-                                            />
-                                          </div>
-                                        </div>
-                                        <div className="u-gapTop">
-                                          <InfoTipLayout tip="Tip">
-                                            <WrappedField
-                                              name={`values.instances.${instanceIndex}.customerIds.${index}.primary`}
-                                              component={Checkbox}
-                                              label="Primary"
-                                            />
-                                          </InfoTipLayout>
-                                        </div>
-                                        <div className="u-gapTop u-alignRight">
-                                          <Button
-                                            icon={<Delete />}
-                                            onClick={() => {}}
-                                          />
-                                        </div>
-                                      </Well>
-                                    )
+                                  instance.customerIds.length && (
+                                    <Heading variant="subtitle2">
+                                      Customer IDs
+                                    </Heading>
                                   )}
-                                <div className="u-gapTop u-alignRight">
-                                  <Button
-                                    label="Add Customer ID"
-                                    onClick={() => {}}
-                                  />
+                                <div>
+                                  {Array.isArray(instance.customerIds) &&
+                                    instance.customerIds.length &&
+                                    instance.customerIds.map(
+                                      (customerId, index) => (
+                                        <Well key={index}>
+                                          <div>
+                                            <InfoTipLayout tip="Tip">
+                                              <FieldLabel
+                                                labelFor="namespaceField"
+                                                label="Namespace"
+                                              />
+                                            </InfoTipLayout>
+                                            <div>
+                                              <WrappedField
+                                                id="namespaceField"
+                                                name={`instances.${instanceIndex}.customerIds.${index}.namespace`}
+                                                component={Textfield}
+                                                componentClassName="u-fieldLong"
+                                                supportDataElement
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className="u-gapTop">
+                                            <InfoTipLayout tip="Tip">
+                                              <FieldLabel
+                                                labelFor="idField"
+                                                label="ID"
+                                              />
+                                            </InfoTipLayout>
+                                            <div>
+                                              <WrappedField
+                                                id="idField"
+                                                name={`instances.${instanceIndex}.customerIds.${index}.id`}
+                                                component={Textfield}
+                                                componentClassName="u-fieldLong"
+                                                supportDataElement
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className="u-gapTop">
+                                            <InfoTipLayout tip="Tip">
+                                              <FieldLabel
+                                                labelFor="authenticatedStateField"
+                                                label="Authenticated State"
+                                              />
+                                            </InfoTipLayout>
+                                            <div>
+                                              <WrappedField
+                                                id="authenticatedStateField"
+                                                name={`instances.${instanceIndex}.customerIds.${index}.authenticatedState`}
+                                                component={Select}
+                                                componentClassName="u-fieldLong"
+                                                options={
+                                                  authenticatedStateOptions
+                                                }
+                                              />
+                                            </div>
+                                          </div>
+                                          <div className="u-gapTop">
+                                            <InfoTipLayout tip="Tip">
+                                              <WrappedField
+                                                name={`instances.${instanceIndex}.customerIds.${index}.primary`}
+                                                component={Checkbox}
+                                                label="Primary"
+                                              />
+                                            </InfoTipLayout>
+                                          </div>
+                                          <div className="u-gapTop u-alignRight">
+                                            <Button
+                                              icon={<Delete />}
+                                              onClick={() => {}}
+                                            />
+                                          </div>
+                                        </Well>
+                                      )
+                                    )}
+                                  <div className="u-gapTop u-alignRight">
+                                    <Button
+                                      label="Add Customer ID"
+                                      onClick={() => {}}
+                                    />
+                                  </div>
                                 </div>
                               </div>
-                            );
-                          }}
-                        />
-                      </div>
-                    </div>
+                            </div>
+                          </div>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
                   </div>
-                </AccordionItem>
-              ))}
-            </Accordion>
+                );
+              }}
+            />
           </div>
         );
       }}
