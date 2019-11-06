@@ -57,7 +57,10 @@
                   }
                 ]
               },
-              "destinationsEnabled": {
+              "urlDestinationsEnabled": {
+                "type": "boolean"
+              },
+              "cookieDestinationsEnabled": {
                 "type": "boolean"
               },
               "prehidingStyle": {
