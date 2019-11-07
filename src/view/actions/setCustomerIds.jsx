@@ -203,6 +203,16 @@ const setCustomerIds = () => {
                                           </div>
                                           <div className="u-gapTop">
                                             <InfoTipLayout tip="Tip">
+                                              <WrappedField
+                                                name={`instances.${instanceIndex}.customerIds.${index}.hash`}
+                                                component={Checkbox}
+                                                label="Convert ID to sha256 hash"
+                                                supportDataElement
+                                              />
+                                            </InfoTipLayout>
+                                          </div>
+                                          <div className="u-gapTop">
+                                            <InfoTipLayout tip="Tip">
                                               <FieldLabel
                                                 labelFor="authenticatedStateField"
                                                 label="Authenticated State"
@@ -217,6 +227,7 @@ const setCustomerIds = () => {
                                                 options={
                                                   authenticatedStateOptions
                                                 }
+                                                supportDataElement
                                               />
                                             </div>
                                           </div>
@@ -226,6 +237,7 @@ const setCustomerIds = () => {
                                                 name={`instances.${instanceIndex}.customerIds.${index}.primary`}
                                                 component={Checkbox}
                                                 label="Primary"
+                                                supportDataElement
                                               />
                                             </InfoTipLayout>
                                           </div>
