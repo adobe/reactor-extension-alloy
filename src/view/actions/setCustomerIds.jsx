@@ -30,6 +30,7 @@ import ExtensionView from "../components/extensionView";
 import authenticatedStateOptions from "../constants/authenticatedStateOptions";
 import "./setCustomerIds.styl";
 import InfoTipLayout from "../components/infoTipLayout";
+import getCustomerIdNamespaceOptions from "../utils/getCustomerIdNamespaceOptions";
 
 const getInitialValues = ({ initInfo }) => {
   const { instances } = initInfo.settings || {};
@@ -45,6 +46,12 @@ const getSettings = ({ values }) => {
 
 const validationSchema = object().shape({
   xdm: string().matches(/^%[^%]+%$/, "Please specify a data element")
+});
+
+let customerIdNamespaceOptions = [];
+
+getCustomerIdNamespaceOptions().then(options => {
+  customerIdNamespaceOptions = options;
 });
 
 /*
@@ -178,8 +185,11 @@ const setCustomerIds = () => {
                                               <WrappedField
                                                 id="namespaceField"
                                                 name={`instances.${instanceIndex}.customerIds.${index}.namespace`}
-                                                component={Textfield}
+                                                component={Select}
                                                 componentClassName="u-fieldLong"
+                                                options={
+                                                  customerIdNamespaceOptions
+                                                }
                                                 supportDataElement
                                               />
                                             </div>
