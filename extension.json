@@ -228,8 +228,7 @@
                 }
               },
               "required": [
-                "name",
-                "customerIds"
+                "name"
               ],
               "additionalProperties": false
             }
