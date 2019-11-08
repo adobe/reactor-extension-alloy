@@ -55,39 +55,38 @@ getCustomerIdNamespaceOptions().then(options => {
 });
 
 /*
-const values1 = {
-  instances: [
-    {
-      name: "alloy",
-      configId: "99999999",
-      customerIds: [
-        {
-          namespace: "email",
-          id: "tester",
-          authenticatedState: "loggedOut",
-          primary: true
-        },
-        {
-          namespace: "crm",
-          id: "1234",
-          authenticatedState: "ambiguous"
-        }
-      ]
-    },
-    {
-      name: "alloy2",
-      configId: "8888888",
-      customerIds: [
-        {
-          namespace: "custom",
-          id: "abc",
-          primary: false,
-          authenticatedState: "ambiguous"
-        }
-      ]
-    }
-  ]
-};
+const values = {
+    "instances": [
+      {
+        "name": "willi",
+        "customerIds": [
+          {
+            "namespace": "Email_LC_SHA256",
+            "id": "tester",
+            "authenticatedState": "loggedOut",
+            "primary": true,
+            "hash": true
+          },
+          {
+            "namespace": "AAID",
+            "id": "1234",
+            "authenticatedState": "ambiguous"
+          }
+        ]
+      },
+      {
+        "name": "willi2",
+        "customerIds": [
+          {
+            "namespace": "CORE",
+            "id": "abc",
+            "primary": false,
+            "authenticatedState": "ambiguous"
+          }
+        ]
+      }
+    ]
+  };
 
 const normalizedObj = {
   email: {
