@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React, { useState } from "react";
-import { object, string } from "yup";
+import { array, object, string } from "yup";
 import { FieldArray } from "formik";
 import Textfield from "@react/react-spectrum/Textfield";
 import Checkbox from "@react/react-spectrum/Checkbox";
@@ -33,7 +33,13 @@ import InfoTipLayout from "../components/infoTipLayout";
 import getCustomerIdNamespaceOptions from "../utils/getCustomerIdNamespaceOptions";
 
 const getInitialValues = ({ initInfo }) => {
-  const { instances } = initInfo.settings || {};
+  const {
+    instances = [
+      {
+        name: initInfo.extensionSettings.instances[0].name
+      }
+    ]
+  } = initInfo.settings || {};
 
   return {
     instances
@@ -45,7 +51,15 @@ const getSettings = ({ values }) => {
 };
 
 const validationSchema = object().shape({
-  xdm: string().matches(/^%[^%]+%$/, "Please specify a data element")
+  instances: array().of(
+    object().shape({
+      customerIds: array().of(
+        object().shape({
+          id: string().required("Please specify an ID.")
+        })
+      )
+    })
+  )
 });
 
 let customerIdNamespaceOptions = [];
@@ -55,7 +69,15 @@ getCustomerIdNamespaceOptions().then(options => {
 });
 
 /*
-const values = {
+const extensionSettings = {
+  "instances": [
+    {
+      "name": "willi"
+    }
+  ]
+};
+
+const settings = {
     "instances": [
       {
         "name": "willi",
