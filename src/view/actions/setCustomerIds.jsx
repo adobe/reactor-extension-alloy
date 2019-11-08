@@ -33,13 +33,8 @@ import InfoTipLayout from "../components/infoTipLayout";
 import getCustomerIdNamespaceOptions from "../utils/getCustomerIdNamespaceOptions";
 
 const getInitialValues = ({ initInfo }) => {
-  const {
-    instances = [
-      {
-        name: initInfo.extensionSettings.instances[0].name
-      }
-    ]
-  } = initInfo.settings || {};
+  const { instances = initInfo.extensionSettings.instances } =
+    initInfo.settings || {};
 
   return {
     instances
@@ -72,7 +67,10 @@ getCustomerIdNamespaceOptions().then(options => {
 const extensionSettings = {
   "instances": [
     {
-      "name": "willi"
+      "name": "willi1"
+    },
+    {
+      "name": "willi2"
     }
   ]
 };
