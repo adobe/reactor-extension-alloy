@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import "regenerator-runtime"; // needed for some of react-spectrum
-import React, { useState } from "react";
+import React from "react";
 import { array, object, string } from "yup";
 import { FieldArray } from "formik";
 import Textfield from "@react/react-spectrum/Textfield";
@@ -20,7 +20,6 @@ import Select from "@react/react-spectrum/Select";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import Button from "@react/react-spectrum/Button";
 import Well from "@react/react-spectrum/Well";
-import { Accordion, AccordionItem } from "@react/react-spectrum/Accordion";
 import Heading from "@react/react-spectrum/Heading";
 import Delete from "@react/react-spectrum/Icon/Delete";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
@@ -33,16 +32,27 @@ import InfoTipLayout from "../components/infoTipLayout";
 import getCustomerIdNamespaceOptions from "../utils/getCustomerIdNamespaceOptions";
 
 const getInitialValues = ({ initInfo }) => {
-  const {
-    instances = initInfo.extensionSettings.instances.map(instance => {
-      return {
-        name: instance.name
-      };
-    })
-  } = initInfo.settings || {};
+  const { instanceName = initInfo.extensionSettings.instances[0].name } =
+    initInfo.settings || {};
 
   return {
-    instances
+    instanceName,
+    customerIds: [
+      {
+        namespace: "Email_LC_SHA256",
+        id: "tester",
+        authenticatedState: "loggedOut",
+        primary: true,
+        hash: true
+      },
+      {
+        namespace: "Email_LC_SHA256",
+        id: "tester",
+        authenticatedState: "loggedOut",
+        primary: true,
+        hash: true
+      }
+    ]
   };
 };
 
@@ -51,13 +61,10 @@ const getSettings = ({ values }) => {
 };
 
 const validationSchema = object().shape({
-  instances: array().of(
+  instanceName: string().required("Please specify an instance name."),
+  customerIds: array().of(
     object().shape({
-      customerIds: array().of(
-        object().shape({
-          id: string().required("Please specify an ID.")
-        })
-      )
+      id: string().required("Please specify an ID.")
     })
   )
 });
@@ -83,37 +90,22 @@ const extensionSettings = {
 };
 
 const settings = {
-    "instances": [
-      {
-        "name": "willi",
-        "customerIds": [
-          {
-            "namespace": "Email_LC_SHA256",
-            "id": "tester",
-            "authenticatedState": "loggedOut",
-            "primary": true,
-            "hash": true
-          },
-          {
-            "namespace": "AAID",
-            "id": "1234",
-            "authenticatedState": "ambiguous"
-          }
-        ]
-      },
-      {
-        "name": "willi2",
-        "customerIds": [
-          {
-            "namespace": "CORE",
-            "id": "abc",
-            "primary": false,
-            "authenticatedState": "ambiguous"
-          }
-        ]
-      }
-    ]
-  };
+  "instanceName": "willi",
+  "customerIds": [
+    {
+      "namespace": "Email_LC_SHA256",
+      "id": "tester",
+      "authenticatedState": "loggedOut",
+      "primary": true,
+      "hash": true
+    },
+    {
+      "namespace": "AAID",
+      "id": "1234",
+      "authenticatedState": "ambiguous"
+    }
+  ]
+};
 
 const normalizedObj = {
   email: {
@@ -134,176 +126,125 @@ const normalizedObj = {
 */
 
 const setCustomerIds = () => {
-  const [selectedAccordionIndex, setSelectedAccordionIndex] = useState();
-  const [isFirstExtensionViewRender, setIsFirstExtensionViewRender] = useState(
-    true
-  );
-
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
       render={({ formikProps }) => {
-        const { values, errors, isSubmitting, isValidating } = formikProps;
-
-        // Only expand the first accordion item if there's one instance because
-        // users may get disoriented if we automatically expand the first item
-        // when there are multiple instances.
-        if (isFirstExtensionViewRender && values.instances.length === 1) {
-          setSelectedAccordionIndex(0);
-        }
-
-        // If the user just tried to save the configuration and there's
-        // a validation error, make sure the first accordion item containing
-        // an error is shown.
-        if (isSubmitting && !isValidating && errors && errors.instances) {
-          const instanceIndexContainingErrors = errors.instances.findIndex(
-            instance => instance
-          );
-          setSelectedAccordionIndex(instanceIndexContainingErrors);
-        }
-
-        setIsFirstExtensionViewRender(false);
-
+        const { values } = formikProps;
         return (
-          <div>
+          <React.Fragment>
+            <InfoTipLayout tip="Tip">
+              <FieldLabel labelFor="instanceName" label="Instance" />
+            </InfoTipLayout>
+            <div>
+              <WrappedField
+                id="instanceName"
+                name="instanceName"
+                component={Textfield}
+                componentClassName="u-fieldLong"
+                supportDataElement
+              />
+            </div>
+            <div className="u-gapTop u-alignRight">
+              <Button label="Add Customer ID" onClick={() => {}} />
+            </div>
             <FieldArray
-              name="instances"
+              name="customerIds"
               render={() => {
                 return (
-                  <div>
-                    <Heading variant="subtitle1">Instances</Heading>
-                    <Accordion
-                      multiselectable
-                      selectedIndex={selectedAccordionIndex}
-                      className="u-gapTop2x"
-                      onChange={setSelectedAccordionIndex}
-                    >
-                      {values.instances.map((instance, instanceIndex) => (
-                        <AccordionItem
-                          key={instanceIndex}
-                          header={instance.name || "unnamed instance"}
-                        >
-                          <div>
+                  <React.Fragment>
+                    {Array.isArray(values.customerIds) &&
+                      values.customerIds.length && (
+                        <Heading variant="subtitle2">Customer IDs</Heading>
+                      )}
+                    <div>
+                      {Array.isArray(values.customerIds) &&
+                        values.customerIds.length &&
+                        values.customerIds.map((customerId, index) => (
+                          <Well key={index}>
                             <div>
+                              <InfoTipLayout tip="Tip">
+                                <FieldLabel
+                                  labelFor="namespaceField"
+                                  label="Namespace"
+                                />
+                              </InfoTipLayout>
                               <div>
-                                {Array.isArray(instance.customerIds) &&
-                                  instance.customerIds.length && (
-                                    <Heading variant="subtitle2">
-                                      Customer IDs
-                                    </Heading>
-                                  )}
-                                <div>
-                                  {Array.isArray(instance.customerIds) &&
-                                    instance.customerIds.length &&
-                                    instance.customerIds.map(
-                                      (customerId, index) => (
-                                        <Well key={index}>
-                                          <div>
-                                            <InfoTipLayout tip="Tip">
-                                              <FieldLabel
-                                                labelFor="namespaceField"
-                                                label="Namespace"
-                                              />
-                                            </InfoTipLayout>
-                                            <div>
-                                              <WrappedField
-                                                id="namespaceField"
-                                                name={`instances.${instanceIndex}.customerIds.${index}.namespace`}
-                                                component={Select}
-                                                componentClassName="u-fieldLong"
-                                                options={
-                                                  customerIdNamespaceOptions
-                                                }
-                                                supportDataElement
-                                              />
-                                            </div>
-                                          </div>
-                                          <div className="u-gapTop">
-                                            <InfoTipLayout tip="Tip">
-                                              <FieldLabel
-                                                labelFor="idField"
-                                                label="ID"
-                                              />
-                                            </InfoTipLayout>
-                                            <div>
-                                              <WrappedField
-                                                id="idField"
-                                                name={`instances.${instanceIndex}.customerIds.${index}.id`}
-                                                component={Textfield}
-                                                componentClassName="u-fieldLong"
-                                                supportDataElement
-                                              />
-                                            </div>
-                                          </div>
-                                          <div className="u-gapTop">
-                                            <InfoTipLayout tip="Tip">
-                                              <WrappedField
-                                                name={`instances.${instanceIndex}.customerIds.${index}.hash`}
-                                                component={Checkbox}
-                                                label="Convert ID to sha256 hash"
-                                                supportDataElement
-                                              />
-                                            </InfoTipLayout>
-                                          </div>
-                                          <div className="u-gapTop">
-                                            <InfoTipLayout tip="Tip">
-                                              <FieldLabel
-                                                labelFor="authenticatedStateField"
-                                                label="Authenticated State"
-                                              />
-                                            </InfoTipLayout>
-                                            <div>
-                                              <WrappedField
-                                                id="authenticatedStateField"
-                                                name={`instances.${instanceIndex}.customerIds.${index}.authenticatedState`}
-                                                component={Select}
-                                                componentClassName="u-fieldLong"
-                                                options={
-                                                  authenticatedStateOptions
-                                                }
-                                                supportDataElement
-                                              />
-                                            </div>
-                                          </div>
-                                          <div className="u-gapTop">
-                                            <InfoTipLayout tip="Tip">
-                                              <WrappedField
-                                                name={`instances.${instanceIndex}.customerIds.${index}.primary`}
-                                                component={Checkbox}
-                                                label="Primary"
-                                                supportDataElement
-                                              />
-                                            </InfoTipLayout>
-                                          </div>
-                                          <div className="u-gapTop u-alignRight">
-                                            <Button
-                                              icon={<Delete />}
-                                              onClick={() => {}}
-                                            />
-                                          </div>
-                                        </Well>
-                                      )
-                                    )}
-                                  <div className="u-gapTop u-alignRight">
-                                    <Button
-                                      label="Add Customer ID"
-                                      onClick={() => {}}
-                                    />
-                                  </div>
-                                </div>
+                                <WrappedField
+                                  id="namespaceField"
+                                  name={`customerIds.${index}.namespace`}
+                                  component={Select}
+                                  componentClassName="u-fieldLong"
+                                  options={customerIdNamespaceOptions}
+                                  supportDataElement
+                                />
                               </div>
                             </div>
-                          </div>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
-                  </div>
+                            <div className="u-gapTop">
+                              <InfoTipLayout tip="Tip">
+                                <FieldLabel labelFor="idField" label="ID" />
+                              </InfoTipLayout>
+                              <div>
+                                <WrappedField
+                                  id="idField"
+                                  name={`customerIds.${index}.id`}
+                                  component={Textfield}
+                                  componentClassName="u-fieldLong"
+                                  supportDataElement
+                                />
+                              </div>
+                            </div>
+                            <div className="u-gapTop">
+                              <InfoTipLayout tip="Tip">
+                                <WrappedField
+                                  name={`customerIds.${index}.hash`}
+                                  component={Checkbox}
+                                  label="Convert ID to sha256 hash"
+                                  supportDataElement
+                                />
+                              </InfoTipLayout>
+                            </div>
+                            <div className="u-gapTop">
+                              <InfoTipLayout tip="Tip">
+                                <FieldLabel
+                                  labelFor="authenticatedStateField"
+                                  label="Authenticated State"
+                                />
+                              </InfoTipLayout>
+                              <div>
+                                <WrappedField
+                                  id="authenticatedStateField"
+                                  name={`customerIds.${index}.authenticatedState`}
+                                  component={Select}
+                                  componentClassName="u-fieldLong"
+                                  options={authenticatedStateOptions}
+                                  supportDataElement
+                                />
+                              </div>
+                            </div>
+                            <div className="u-gapTop">
+                              <InfoTipLayout tip="Tip">
+                                <WrappedField
+                                  name={`customerIds.${index}.primary`}
+                                  component={Checkbox}
+                                  label="Primary"
+                                  supportDataElement
+                                />
+                              </InfoTipLayout>
+                            </div>
+                            <div className="u-gapTop u-alignRight">
+                              <Button icon={<Delete />} onClick={() => {}} />
+                            </div>
+                          </Well>
+                        ))}
+                    </div>
+                  </React.Fragment>
                 );
               }}
             />
-          </div>
+          </React.Fragment>
         );
       }}
     />
