@@ -22,6 +22,8 @@ import Button from "@react/react-spectrum/Button";
 import Well from "@react/react-spectrum/Well";
 import Heading from "@react/react-spectrum/Heading";
 import Delete from "@react/react-spectrum/Icon/Delete";
+import ModalTrigger from "@react/react-spectrum/ModalTrigger";
+import Dialog from "@react/react-spectrum/Dialog";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
@@ -31,6 +33,16 @@ import "./setCustomerIds.styl";
 import InfoTipLayout from "../components/infoTipLayout";
 import getCustomerIdNamespaceOptions from "../utils/getCustomerIdNamespaceOptions";
 
+const createDefaultCustomerId = () => {
+  return {
+    namespace: "",
+    id: "",
+    authenticatedState: "",
+    primary: false,
+    hash: false
+  };
+};
+
 const getInitialValues = ({ initInfo }) => {
   const { instanceName = initInfo.extensionSettings.instances[0].name } =
     initInfo.settings || {};
@@ -38,13 +50,7 @@ const getInitialValues = ({ initInfo }) => {
   return {
     instanceName,
     customerIds: (initInfo.settings && initInfo.settings.customerIds) || [
-      {
-        namespace: "",
-        id: "",
-        authenticatedState: "",
-        primary: false,
-        hash: false
-      }
+      createDefaultCustomerId()
     ]
   };
 };
@@ -59,7 +65,9 @@ const validationSchema = object().shape({
     object().shape({
       namespace: string().required("Please select a namespace."),
       id: string().required("Please specify an ID."),
-      authenticatedState: string().required("Please select an authenticated state.")
+      authenticatedState: string().required(
+        "Please select an authenticated state."
+      )
     })
   )
 });
@@ -137,21 +145,28 @@ const setCustomerIds = () => {
                 supportDataElement
               />
             </div>
-            <div className="u-gapTop u-alignRight">
-              <Button label="Add Customer ID" onClick={() => {}} />
-            </div>
             <FieldArray
               name="customerIds"
-              render={() => {
+              render={arrayHelpers => {
                 return (
                   <React.Fragment>
-                    {Array.isArray(values.customerIds) &&
-                      values.customerIds.length && (
-                        <Heading variant="subtitle2">Customer IDs</Heading>
-                      )}
+                    <div className="u-gapTop u-alignRight">
+                      <Button
+                        label="Add Customer ID"
+                        onClick={() => {
+                          arrayHelpers.push(createDefaultCustomerId());
+                        }}
+                      />
+                    </div>
+                    {((Array.isArray(values.customerIds) &&
+                      values.customerIds.length) ||
+                      null) && (
+                      <Heading variant="subtitle2">Customer IDs</Heading>
+                    )}
                     <div>
-                      {Array.isArray(values.customerIds) &&
-                        values.customerIds.length &&
+                      {((Array.isArray(values.customerIds) &&
+                        values.customerIds.length) ||
+                        null) &&
                         values.customerIds.map((customerId, index) => (
                           <Well key={index}>
                             <div>
@@ -225,7 +240,23 @@ const setCustomerIds = () => {
                               </InfoTipLayout>
                             </div>
                             <div className="u-gapTop u-alignRight">
-                              <Button icon={<Delete />} onClick={() => {}} />
+                              <ModalTrigger>
+                                <Button
+                                  id="deleteButton"
+                                  icon={<Delete />}
+                                  variant="action"
+                                />
+                                <Dialog
+                                  title="Delete Customer ID"
+                                  onConfirm={() => {
+                                    arrayHelpers.remove(index);
+                                  }}
+                                  confirmLabel="Delete"
+                                  cancelLabel="Cancel"
+                                >
+                                  Would you like to proceed?
+                                </Dialog>
+                              </ModalTrigger>
                             </div>
                           </Well>
                         ))}
