@@ -55,7 +55,8 @@ const getInstanceDefaults = initInfo => ({
   cookieDestinationsEnabled: true,
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
-  context: contextOptions
+  context: contextOptions,
+  migrateIds: false
 });
 
 const createDefaultInstance = initInfo =>
@@ -106,7 +107,8 @@ const getSettings = ({ values, initInfo }) => {
         "idSyncEnabled",
         "urlDestinationsEnabled",
         "cookieDestinationsEnabled",
-        "prehidingStyle"
+        "prehidingStyle",
+        "migrateIds"
       ]);
 
       if (
@@ -453,7 +455,7 @@ const Configuration = () => {
                               />
                             </InfoTipLayout>
                           </div>
-
+                          
                           {values.instances[index].idSyncEnabled ? (
                             <div className="FieldSubset u-gapTop">
                               <InfoTipLayout tip="The container ID that specifies which ID syncs will be fired. This can be obtained from your Adobe consultant.">
@@ -473,6 +475,16 @@ const Configuration = () => {
                               </div>
                             </div>
                           ) : null}
+
+                            <div className="u-gapTop">
+                            <InfoTipLayout tip="Copy id from a previous version of experience cloud ID service.">
+                              <WrappedField
+                                name={`instances.${index}.migrateIds`}
+                                component={Checkbox}
+                                label="Migrate Ids from VisitorAPI"
+                              />
+                            </InfoTipLayout>
+                          </div>
 
                           <h3>Audiences</h3>
 

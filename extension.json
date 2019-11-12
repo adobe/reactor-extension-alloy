@@ -57,6 +57,9 @@
                   }
                 ]
               },
+              "migrateIds": {
+                "type": "boolean"
+              },
               "urlDestinationsEnabled": {
                 "type": "boolean"
               },
