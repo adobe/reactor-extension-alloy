@@ -37,20 +37,13 @@ const getInitialValues = ({ initInfo }) => {
 
   return {
     instanceName,
-    customerIds: [
+    customerIds: (initInfo.settings && initInfo.settings.customerIds) || [
       {
-        namespace: "Email_LC_SHA256",
-        id: "tester",
-        authenticatedState: "loggedOut",
-        primary: true,
-        hash: true
-      },
-      {
-        namespace: "Email_LC_SHA256",
-        id: "tester",
-        authenticatedState: "loggedOut",
-        primary: true,
-        hash: true
+        namespace: "",
+        id: "",
+        authenticatedState: "",
+        primary: false,
+        hash: false
       }
     ]
   };
@@ -64,7 +57,9 @@ const validationSchema = object().shape({
   instanceName: string().required("Please specify an instance name."),
   customerIds: array().of(
     object().shape({
-      id: string().required("Please specify an ID.")
+      namespace: string().required("Please select a namespace."),
+      id: string().required("Please specify an ID."),
+      authenticatedState: string().required("Please select an authenticated state.")
     })
   )
 });
@@ -90,19 +85,14 @@ const extensionSettings = {
 };
 
 const settings = {
-  "instanceName": "willi",
+  "instanceName": "willi1",
   "customerIds": [
     {
-      "namespace": "Email_LC_SHA256",
-      "id": "tester",
+      "namespace": "ECID",
+      "id": "wvg",
       "authenticatedState": "loggedOut",
-      "primary": true,
+      "primary": false,
       "hash": true
-    },
-    {
-      "namespace": "AAID",
-      "id": "1234",
-      "authenticatedState": "ambiguous"
     }
   ]
 };
