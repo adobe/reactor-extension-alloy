@@ -455,7 +455,7 @@ const Configuration = () => {
                               />
                             </InfoTipLayout>
                           </div>
-                          
+
                           {values.instances[index].idSyncEnabled ? (
                             <div className="FieldSubset u-gapTop">
                               <InfoTipLayout tip="The container ID that specifies which ID syncs will be fired. This can be obtained from your Adobe consultant.">
@@ -476,12 +476,12 @@ const Configuration = () => {
                             </div>
                           ) : null}
 
-                            <div className="u-gapTop">
-                            <InfoTipLayout tip="Copy id from a previous version of experience cloud ID service.">
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="Copy ID from a previous version of Adobe Experience Cloud Identity Service.">
                               <WrappedField
                                 name={`instances.${index}.migrateIds`}
                                 component={Checkbox}
-                                label="Migrate Ids from VisitorAPI"
+                                label="Migrate IDs from VisitorAPI"
                               />
                             </InfoTipLayout>
                           </div>
