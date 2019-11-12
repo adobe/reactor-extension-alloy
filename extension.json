@@ -158,77 +158,65 @@
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
         "properties": {
-          "instances": {
+          "instanceName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "customerIds": {
             "type": "array",
             "minItems": 1,
             "items": {
               "type": "object",
               "properties": {
-                "name": {
+                "namespace": {
                   "type": "string",
                   "minLength": 1
                 },
-                "customerIds": {
-                  "type": "array",
-                  "minItems": 1,
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "namespace": {
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "id": {
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "authenticatedState": {
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "primary": {
-                        "oneOf": [
-                          {
-                            "type": "boolean",
-                            "minimum": 0
-                          },
-                          {
-                            "type": "string",
-                            "pattern": "^%[^%]+%$"
-                          }
-                        ]
-                      },
-                      "hash": {
-                        "oneOf": [
-                          {
-                            "type": "boolean",
-                            "minimum": 0
-                          },
-                          {
-                            "type": "string",
-                            "pattern": "^%[^%]+%$"
-                          }
-                        ]
-                      }
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "authenticatedState": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "primary": {
+                  "oneOf": [
+                    {
+                      "type": "boolean",
+                      "minimum": 0
                     },
-                    "required": [
-                      "namespace",
-                      "id",
-                      "authenticatedState"
-                    ],
-                    "additionalProperties": false
-                  }
+                    {
+                      "type": "string",
+                      "pattern": "^%[^%]+%$"
+                    }
+                  ]
+                },
+                "hash": {
+                  "oneOf": [
+                    {
+                      "type": "boolean",
+                      "minimum": 0
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^%[^%]+%$"
+                    }
+                  ]
                 }
               },
               "required": [
-                "name"
+                "namespace",
+                "id",
+                "authenticatedState"
               ],
               "additionalProperties": false
             }
           }
         },
         "required": [
-          "instances"
+          "instanceName",
+          "customerIds"
         ],
         "additionalProperties": false
       },
