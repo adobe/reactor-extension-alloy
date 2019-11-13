@@ -11,14 +11,36 @@ governing permissions and limitations under the License.
 */
 
 module.exports = instanceManager => settings => {
-  const { instanceName, ...otherSettings } = settings;
+  const { instanceName, customerIds } = settings;
   const instanceAccessor = instanceManager.getAccessor(instanceName);
 
   if (instanceAccessor) {
-    instanceAccessor.instance("event", otherSettings);
+    if (customerIds.length) {
+      const customerIdsConfig = customerIds.reduce(
+        (config, customerIdObject) => {
+          const { id, authenticatedState, primary, hash } = customerIdObject;
+
+          config[customerIdObject.namespace] = {
+            id,
+            authenticatedState,
+            primary,
+            hash
+          };
+
+          return config;
+        },
+        {}
+      );
+
+      instanceAccessor.instance("setCustomerIds", customerIdsConfig);
+    } else {
+      turbine.logger.warn(
+        `Attempted to set customer IDs for instance "${instanceName}", but there were none to set.`
+      );
+    }
   } else {
     turbine.logger.error(
-      `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
+      `Failed to set customer IDs for instance "${instanceName}". No matching instance was configured with this name.`
     );
   }
 };
