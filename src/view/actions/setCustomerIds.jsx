@@ -28,10 +28,10 @@ import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
+import CustomerIdNamespaceSelect from "../components/customerIdNamespaceSelect";
 import authenticatedStateOptions from "../constants/authenticatedStateOptions";
 import "./setCustomerIds.styl";
 import InfoTipLayout from "../components/infoTipLayout";
-import getCustomerIdNamespaceOptions from "../utils/getCustomerIdNamespaceOptions";
 
 const createDefaultCustomerId = () => {
   return {
@@ -70,12 +70,6 @@ const validationSchema = object().shape({
       )
     })
   )
-});
-
-let customerIdNamespaceOptions = [];
-
-getCustomerIdNamespaceOptions().then(options => {
-  customerIdNamespaceOptions = options;
 });
 
 /*
@@ -177,13 +171,8 @@ const setCustomerIds = () => {
                                 />
                               </InfoTipLayout>
                               <div>
-                                <WrappedField
-                                  id="namespaceField"
+                                <CustomerIdNamespaceSelect
                                   name={`customerIds.${index}.namespace`}
-                                  component={Select}
-                                  componentClassName="u-fieldLong"
-                                  options={customerIdNamespaceOptions}
-                                  supportDataElement
                                 />
                               </div>
                             </div>
