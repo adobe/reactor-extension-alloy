@@ -277,7 +277,7 @@ export default () => {
 
     setTimeout(() => {
       getOptions(namespaceApiResponse);
-    }, 0);
+    }, 300);
   });
 
   return namespaceOptionsPromise;
