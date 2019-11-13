@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = (window, runAlloy, imsOrgId) => {
+module.exports = (window, runAlloy, orgId) => {
   const accessorByInstanceName = {};
   const { instances } = turbine.getExtensionSettings();
   const names = instances.map(instance => instance.name);
@@ -21,7 +21,7 @@ module.exports = (window, runAlloy, imsOrgId) => {
     const accessor = {};
     window[name]("configure", {
       ...options,
-      imsOrgId: options.imsOrgId || imsOrgId,
+      orgId: options.orgId || orgId,
       // The Alloy build we're using for this extension
       // logs using turbine.logger. Therefore, we'll
       // always enable logging in Alloy and let Reactor's

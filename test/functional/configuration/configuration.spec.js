@@ -33,10 +33,8 @@ for (let i = 0; i < 2; i += 1) {
     configIdField: spectrum.textfield(
       Selector(`[name='instances.${i}.configId']`)
     ),
-    imsOrgIdField: spectrum.textfield(
-      Selector(`[name='instances.${i}.imsOrgId']`)
-    ),
-    imsOrgIdRestoreButton: spectrum.button(Selector("#imsOrgIdRestoreButton")),
+    orgIdField: spectrum.textfield(Selector(`[name='instances.${i}.orgId']`)),
+    orgIdRestoreButton: spectrum.button(Selector("#orgIdRestoreButton")),
     edgeDomainField: spectrum.textfield(
       Selector(`[name='instances.${i}.edgeDomain']`)
     ),
@@ -110,7 +108,7 @@ test("initializes form fields with full settings", async t => {
           {
             name: "alloy1",
             configId: "PR123",
-            imsOrgId: "ORG456@OtherCompanyOrg",
+            orgId: "ORG456@OtherCompanyOrg",
             edgeDomain: "testedge.com",
             errorsEnabled: false,
             optInEnabled: true,
@@ -144,7 +142,7 @@ test("initializes form fields with full settings", async t => {
 
   await instances[0].nameField.expectValue(t, "alloy1");
   await instances[0].configIdField.expectValue(t, "PR123");
-  await instances[0].imsOrgIdField.expectValue(t, "ORG456@OtherCompanyOrg");
+  await instances[0].orgIdField.expectValue(t, "ORG456@OtherCompanyOrg");
   await instances[0].edgeDomainField.expectValue(t, "testedge.com");
   await instances[0].errorsEnabledField.expectUnchecked(t);
   await instances[0].optInEnabledField.expectChecked(t);
@@ -163,7 +161,7 @@ test("initializes form fields with full settings", async t => {
 
   await instances[1].nameField.expectValue(t, "alloy2");
   await instances[1].configIdField.expectValue(t, "PR456");
-  await instances[1].imsOrgIdField.expectValue(t, "ABC123@AdobeOrg");
+  await instances[1].orgIdField.expectValue(t, "ABC123@AdobeOrg");
   await instances[1].edgeDomainField.expectValue(t, defaultEdgeDomain);
   await instances[1].errorsEnabledField.expectChecked(t);
   await instances[1].optInEnabledField.expectUnchecked(t);
@@ -196,7 +194,7 @@ test("initializes form fields with minimal settings", async t => {
 
   await instances[0].nameField.expectValue(t, "alloy1");
   await instances[0].configIdField.expectValue(t, "PR123");
-  await instances[0].imsOrgIdField.expectValue(t, "ABC123@AdobeOrg");
+  await instances[0].orgIdField.expectValue(t, "ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
@@ -213,7 +211,7 @@ test("initializes form fields with no settings", async t => {
 
   await instances[0].nameField.expectValue(t, "alloy");
   await instances[0].configIdField.expectValue(t, "");
-  await instances[0].imsOrgIdField.expectValue(t, "ABC123@AdobeOrg");
+  await instances[0].orgIdField.expectValue(t, "ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
@@ -267,7 +265,7 @@ test("returns full valid settings", async t => {
 
   await instances[1].nameField.typeText(t, "2");
   await instances[1].configIdField.typeText(t, "PR456");
-  await instances[1].imsOrgIdField.typeText(t, "2");
+  await instances[1].orgIdField.typeText(t, "2");
   await instances[1].optInEnabledField.click(t);
   // await instances[1].idSyncEnabledField.click(t);
   await instances[1].idMigrationEnabled.click(t);
@@ -291,7 +289,7 @@ test("returns full valid settings", async t => {
       {
         name: "alloy2",
         configId: "PR456",
-        imsOrgId: "ABC123@AdobeOrg2",
+        orgId: "ABC123@AdobeOrg2",
         optInEnabled: true,
         // idSyncEnabled: false,
         idMigrationEnabled: false,
@@ -304,12 +302,12 @@ test("returns full valid settings", async t => {
 test("shows error for empty required values", async t => {
   await extensionViewController.init(t, defaultInitInfo);
   await instances[0].nameField.clear(t);
-  await instances[0].imsOrgIdField.clear(t);
+  await instances[0].orgIdField.clear(t);
   await instances[0].edgeDomainField.clear(t);
   await extensionViewController.expectIsNotValid(t);
   await instances[0].nameField.expectError(t);
   await instances[0].configIdField.expectError(t);
-  await instances[0].imsOrgIdField.expectError(t);
+  await instances[0].orgIdField.expectError(t);
   await instances[0].edgeDomainField.expectError(t);
 });
 
@@ -392,14 +390,14 @@ test("shows error for duplicate IMS org ID", async t => {
   // will select the first one.
   await accordion.clickHeader(t, "ALLOY");
   await extensionViewController.expectIsNotValid(t);
-  await instances[1].imsOrgIdField.expectError(t);
+  await instances[1].orgIdField.expectError(t);
 });
 
 test("restores default IMS org ID value when restore button is clicked", async t => {
   await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].imsOrgIdField.typeText(t, "foo");
-  await instances[0].imsOrgIdRestoreButton.click(t);
-  await instances[0].imsOrgIdField.expectValue(t, "ABC123@AdobeOrg");
+  await instances[0].orgIdField.typeText(t, "foo");
+  await instances[0].orgIdRestoreButton.click(t);
+  await instances[0].orgIdField.expectValue(t, "ABC123@AdobeOrg");
 });
 
 test("restores default edge domain value when restore button is clicked", async t => {

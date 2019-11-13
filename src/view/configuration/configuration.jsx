@@ -45,7 +45,7 @@ const contextOptions = ["web", "device", "environment", "placeContext"];
 const getInstanceDefaults = initInfo => ({
   name: "alloy",
   configId: "",
-  imsOrgId: initInfo.company.orgId,
+  orgId: initInfo.company.orgId,
   edgeDomain: "beta.adobedc.net",
   errorsEnabled: true,
   optInEnabled: false,
@@ -100,7 +100,7 @@ const getSettings = ({ values, initInfo }) => {
 
       copyPropertiesIfNotDefault(trimmedInstance, instance, instanceDefaults, [
         "configId",
-        "imsOrgId",
+        "orgId",
         "edgeDomain",
         "errorsEnabled",
         "optInEnabled",
@@ -172,7 +172,7 @@ const validationSchema = object()
             }
           }),
         configId: string().required("Please specify a config ID."),
-        imsOrgId: string().required("Please specify an IMS organization ID."),
+        orgId: string().required("Please specify an IMS organization ID."),
         edgeDomain: string().required("Please specify an edge domain."),
         // A valid idSyncContainerId field value can be an integer
         // greater than or equal to 0, an empty string, or a string containing
@@ -229,11 +229,11 @@ const validationSchema = object()
   // TestCafe doesn't allow this to be an arrow function because of
   // how it scopes "this".
   // eslint-disable-next-line func-names
-  .test("uniqueImsOrgId", function(settings) {
+  .test("uniqueOrgId", function(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
       settings.instances,
-      "imsOrgId",
+      "orgId",
       "Please provide an IMS Organization ID unique from those used for other instances."
     );
   });
@@ -356,28 +356,28 @@ const Configuration = () => {
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Your assigned Experience Cloud organization ID.">
                               <FieldLabel
-                                labelFor="imsOrgIdField"
+                                labelFor="orgIdField"
                                 label="IMS Organization ID"
                               />
                             </InfoTipLayout>
                             <div>
                               <WrappedField
-                                id="imsOrgIdField"
-                                name={`instances.${index}.imsOrgId`}
+                                id="orgIdField"
+                                name={`instances.${index}.orgId`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
                                 supportDataElement
                               />
                               <Button
-                                id="imsOrgIdRestoreButton"
+                                id="orgIdRestoreButton"
                                 label="Restore to default"
                                 onClick={() => {
                                   const instanceDefaults = getInstanceDefaults(
                                     initInfo
                                   );
                                   setFieldValue(
-                                    `instances.${index}.imsOrgId`,
-                                    instanceDefaults.imsOrgId
+                                    `instances.${index}.orgId`,
+                                    instanceDefaults.orgId
                                   );
                                 }}
                                 quiet
