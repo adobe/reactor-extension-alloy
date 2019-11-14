@@ -16,9 +16,3 @@ export const PLATFORM_PRODUCTION_URL = "https://platform.adobe.com";
 export const PLATFORM_STAGE_URL = "https://platform-stage.adobe.com";
 export const PLATFORM_INTEGRATION_URL = "https://platform-int.adobe.io";
 export const CLIENT_ID = "Activation-DTM";
-
-export const authenticatedStates = {
-  AMBIGUOUS: "ambiguous",
-  AUTHENTICATED: "authenticated",
-  LOGGED_OUT: "loggedOut"
-};
