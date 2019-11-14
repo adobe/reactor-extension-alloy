@@ -55,6 +55,9 @@ for (let i = 0; i < 2; i += 1) {
     idSyncContainerIdField: spectrum.textfield(
       Selector(`[name='instances.${i}.idSyncContainerId']`)
     ),
+    migrateIdsField: spectrum.checkbox(
+      Selector(`[name='instances.${i}.migrateIds']`)
+    ),
     urlDestinationsEnabledField: spectrum.checkbox(
       Selector(`[name='instances.${i}.urlDestinationsEnabled']`)
     ),
@@ -113,6 +116,7 @@ test("initializes form fields with full settings", async t => {
             optInEnabled: true,
             idSyncEnabled: true,
             idSyncContainerId: 123,
+            migrateIds: true,
             urlDestinationsEnabled: true,
             cookieDestinationsEnabled: false,
             prehidingStyle: "#container { display: none }",
@@ -123,6 +127,7 @@ test("initializes form fields with full settings", async t => {
             configId: "PR456",
             optInEnabled: false,
             idSyncEnabled: false,
+            migrateIds: false,
             context: []
           }
         ]
@@ -145,6 +150,7 @@ test("initializes form fields with full settings", async t => {
   await instances[0].optInEnabledField.expectChecked(t);
   await instances[0].idSyncEnabledField.expectChecked(t);
   await instances[0].idSyncContainerIdField.expectValue(t, "123");
+  await instances[0].migrateIdsField.expectChecked(t);
   await instances[0].urlDestinationsEnabledField.expectChecked(t);
   await instances[0].cookieDestinationsEnabledField.expectUnchecked(t);
   await instances[0].contextGranularity.specificField.expectChecked(t);
@@ -163,6 +169,7 @@ test("initializes form fields with full settings", async t => {
   await instances[1].optInEnabledField.expectUnchecked(t);
   await instances[1].idSyncEnabledField.expectUnchecked(t);
   await instances[1].idSyncContainerIdField.expectNotExists(t);
+  await instances[1].migrateIdsField.expectUnchecked(t);
   await instances[1].urlDestinationsEnabledField.expectChecked(t);
   await instances[1].cookieDestinationsEnabledField.expectChecked(t);
   await instances[1].contextGranularity.specificField.expectChecked(t);
@@ -195,6 +202,7 @@ test("initializes form fields with minimal settings", async t => {
   await instances[0].optInEnabledField.expectUnchecked(t);
   await instances[0].idSyncEnabledField.expectChecked(t);
   await instances[0].idSyncContainerIdField.expectValue(t, "");
+  await instances[0].migrateIdsField.expectUnchecked(t);
   await instances[0].urlDestinationsEnabledField.expectChecked(t);
   await instances[0].cookieDestinationsEnabledField.expectChecked(t);
   await instances[0].contextGranularity.allField.expectChecked(t);
@@ -211,6 +219,7 @@ test("initializes form fields with no settings", async t => {
   await instances[0].optInEnabledField.expectUnchecked(t);
   await instances[0].idSyncEnabledField.expectChecked(t);
   await instances[0].idSyncContainerIdField.expectValue(t, "");
+  await instances[0].migrateIdsField.expectUnchecked(t);
   await instances[0].urlDestinationsEnabledField.expectChecked(t);
   await instances[0].cookieDestinationsEnabledField.expectChecked(t);
   await instances[0].contextGranularity.allField.expectChecked(t);
@@ -249,6 +258,7 @@ test("returns full valid settings", async t => {
   await instances[0].errorsEnabledField.click(t);
   await instances[0].optInEnabledField.click(t);
   await instances[0].idSyncContainerIdField.typeText(t, "123");
+  await instances[0].migrateIdsField.click(t);
   await instances[0].urlDestinationsEnabledField.click(t);
   await instances[0].cookieDestinationsEnabledField.click(t);
   await instances[0].prehidingStyleField.click(t);
@@ -260,6 +270,7 @@ test("returns full valid settings", async t => {
   await instances[1].imsOrgIdField.typeText(t, "2");
   await instances[1].optInEnabledField.click(t);
   await instances[1].idSyncEnabledField.click(t);
+  await instances[1].migrateIdsField.click(t);
   await instances[1].contextGranularity.specificField.click(t);
 
   await extensionViewController.expectIsValid(t);
@@ -272,6 +283,7 @@ test("returns full valid settings", async t => {
         errorsEnabled: false,
         optInEnabled: true,
         idSyncContainerId: 123,
+        migrateIds: true,
         urlDestinationsEnabled: false,
         cookieDestinationsEnabled: false,
         prehidingStyle: "#container { display: none } // css"
@@ -282,6 +294,7 @@ test("returns full valid settings", async t => {
         imsOrgId: "ABC123@AdobeOrg2",
         optInEnabled: true,
         idSyncEnabled: false,
+        migrateIds: true,
         context: ["web", "device", "environment", "placeContext"]
       }
     ]
