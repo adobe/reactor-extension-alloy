@@ -31,7 +31,7 @@ import ExtensionView from "../components/extensionView";
 import CustomerIdNamespaceSelect from "../components/customerIdNamespaceSelect";
 import authenticatedStateOptions from "../constants/authenticatedStateOptions";
 import "./setCustomerIds.styl";
-import InfoTipLayout from "../components/infoTipLayout";
+import { updateFetchSettings } from "../utils/fetch";
 
 const createDefaultCustomerId = () => {
   return {
@@ -46,6 +46,11 @@ const createDefaultCustomerId = () => {
 const getInitialValues = ({ initInfo }) => {
   const { instanceName = initInfo.extensionSettings.instances[0].name } =
     initInfo.settings || {};
+
+  updateFetchSettings({
+    imsOrgId: initInfo.company.orgId,
+    token: initInfo.tokens.imsAccess
+  });
 
   return {
     instanceName,
@@ -72,51 +77,6 @@ const validationSchema = object().shape({
   )
 });
 
-/*
-const extensionSettings = {
-  "instances": [
-    {
-      "name": "willi1",
-      "configId": "8888888"
-    },
-    {
-      "name": "willi2",
-      "configId": "9999999"
-    }
-  ]
-};
-
-const settings = {
-  "instanceName": "willi1",
-  "customerIds": [
-    {
-      "namespace": "ECID",
-      "id": "wvg",
-      "authenticatedState": "loggedOut",
-      "primary": false,
-      "hash": true
-    }
-  ]
-};
-
-const normalizedObj = {
-  email: {
-    id: "tester",
-    authenticatedState: LOGGED_OUT,
-    primary: true
-  },
-  crm: {
-    id: "1234",
-    authenticatedState: AMBIGUOUS
-  },
-  custom: {
-    id: "abc",
-    primary: false,
-    authenticatedState: AMBIGUOUS
-  }
-};
-*/
-
 const setCustomerIds = () => {
   return (
     <ExtensionView
@@ -127,9 +87,7 @@ const setCustomerIds = () => {
         const { values } = formikProps;
         return (
           <React.Fragment>
-            <InfoTipLayout tip="Tip">
-              <FieldLabel labelFor="instanceName" label="Instance" />
-            </InfoTipLayout>
+            <FieldLabel labelFor="instanceName" label="Instance" />
             <div>
               <WrappedField
                 id="instanceName"
@@ -164,12 +122,10 @@ const setCustomerIds = () => {
                         values.customerIds.map((customerId, index) => (
                           <Well key={index}>
                             <div>
-                              <InfoTipLayout tip="Tip">
-                                <FieldLabel
-                                  labelFor="namespaceField"
-                                  label="Namespace"
-                                />
-                              </InfoTipLayout>
+                              <FieldLabel
+                                labelFor="namespaceField"
+                                label="Namespace"
+                              />
                               <div>
                                 <CustomerIdNamespaceSelect
                                   name={`customerIds.${index}.namespace`}
@@ -177,9 +133,7 @@ const setCustomerIds = () => {
                               </div>
                             </div>
                             <div className="u-gapTop">
-                              <InfoTipLayout tip="Tip">
-                                <FieldLabel labelFor="idField" label="ID" />
-                              </InfoTipLayout>
+                              <FieldLabel labelFor="idField" label="ID" />
                               <div>
                                 <WrappedField
                                   id="idField"
@@ -191,22 +145,18 @@ const setCustomerIds = () => {
                               </div>
                             </div>
                             <div className="u-gapTop">
-                              <InfoTipLayout tip="Tip">
-                                <WrappedField
-                                  name={`customerIds.${index}.hash`}
-                                  component={Checkbox}
-                                  label="Convert ID to sha256 hash"
-                                  supportDataElement
-                                />
-                              </InfoTipLayout>
+                              <WrappedField
+                                name={`customerIds.${index}.hash`}
+                                component={Checkbox}
+                                label="Convert ID to sha256 hash"
+                                supportDataElement
+                              />
                             </div>
                             <div className="u-gapTop">
-                              <InfoTipLayout tip="Tip">
-                                <FieldLabel
-                                  labelFor="authenticatedStateField"
-                                  label="Authenticated State"
-                                />
-                              </InfoTipLayout>
+                              <FieldLabel
+                                labelFor="authenticatedStateField"
+                                label="Authenticated State"
+                              />
                               <div>
                                 <WrappedField
                                   id="authenticatedStateField"
@@ -219,14 +169,12 @@ const setCustomerIds = () => {
                               </div>
                             </div>
                             <div className="u-gapTop">
-                              <InfoTipLayout tip="Tip">
-                                <WrappedField
-                                  name={`customerIds.${index}.primary`}
-                                  component={Checkbox}
-                                  label="Primary"
-                                  supportDataElement
-                                />
-                              </InfoTipLayout>
+                              <WrappedField
+                                name={`customerIds.${index}.primary`}
+                                component={Checkbox}
+                                label="Primary"
+                                supportDataElement
+                              />
                             </div>
                             <div className="u-gapTop u-alignRight">
                               <ModalTrigger>

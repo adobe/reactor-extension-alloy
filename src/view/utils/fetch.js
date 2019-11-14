@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { CLIENT_ID, API_PRODUCTION_URL, API_STAGE_URL } from "./constants";
+import { CLIENT_ID, API_PRODUCTION_URL, API_STAGE_URL } from "../constants/api";
 import getEnvironment from "./getEnvironment";
 
 let fetchSettings = { imsOrgId: null, token: null };
