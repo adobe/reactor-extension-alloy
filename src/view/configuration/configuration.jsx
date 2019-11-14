@@ -55,7 +55,8 @@ const getInstanceDefaults = initInfo => ({
   cookieDestinationsEnabled: true,
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
-  context: contextOptions
+  context: contextOptions,
+  idMigrationEnabled: true
 });
 
 const createDefaultInstance = initInfo =>
@@ -106,7 +107,8 @@ const getSettings = ({ values, initInfo }) => {
         "idSyncEnabled",
         "urlDestinationsEnabled",
         "cookieDestinationsEnabled",
-        "prehidingStyle"
+        "prehidingStyle",
+        "idMigrationEnabled"
       ]);
 
       if (
@@ -473,6 +475,16 @@ const Configuration = () => {
                               </div>
                             </div>
                           ) : null}
+
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="Enables the AEP Web SDK to preserve the ECID by reading/writing the AMCV cookie. Use this config until users are fully migrated to the Alloy cookie and in situations where you have mixed pages on your website.">
+                              <WrappedField
+                                name={`instances.${index}.idMigrationEnabled`}
+                                component={Checkbox}
+                                label="Migrate ECID from VisitorAPI to Alloy to prevent visitor cliffing"
+                              />
+                            </InfoTipLayout>
+                          </div>
 
                           <h3>Audiences</h3>
 
