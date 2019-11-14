@@ -56,7 +56,7 @@ const getInstanceDefaults = initInfo => ({
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions,
-  migrateIds: false
+  idMigrationEnabled: true
 });
 
 const createDefaultInstance = initInfo =>
@@ -108,7 +108,7 @@ const getSettings = ({ values, initInfo }) => {
         "urlDestinationsEnabled",
         "cookieDestinationsEnabled",
         "prehidingStyle",
-        "migrateIds"
+        "idMigrationEnabled"
       ]);
 
       if (
@@ -477,11 +477,11 @@ const Configuration = () => {
                           ) : null}
 
                           <div className="u-gapTop">
-                            <InfoTipLayout tip="Copy ID from a previous version of Adobe Experience Cloud Identity Service.">
+                            <InfoTipLayout tip="Enables the AEP Web SDK to preserve the ECID by reading/writing the AMCV cookie. Use this config until users are fully migrated to the Alloy cookie and in situations where you have mixed pages on your website.">
                               <WrappedField
-                                name={`instances.${index}.migrateIds`}
+                                name={`instances.${index}.idMigrationEnabled`}
                                 component={Checkbox}
-                                label="Migrate IDs from VisitorAPI"
+                                label="Migrate ECID from VisitorAPI to Alloy to prevent visitor cliffing"
                               />
                             </InfoTipLayout>
                           </div>
