@@ -149,7 +149,6 @@ const setCustomerIds = () => {
                                 name={`customerIds.${index}.hash`}
                                 component={Checkbox}
                                 label="Convert ID to sha256 hash"
-                                supportDataElement
                               />
                             </div>
                             <div className="u-gapTop">
@@ -164,7 +163,6 @@ const setCustomerIds = () => {
                                   component={Select}
                                   componentClassName="u-fieldLong"
                                   options={authenticatedStateOptions}
-                                  supportDataElement
                                 />
                               </div>
                             </div>
@@ -173,7 +171,6 @@ const setCustomerIds = () => {
                                 name={`customerIds.${index}.primary`}
                                 component={Checkbox}
                                 label="Primary"
-                                supportDataElement
                               />
                             </div>
                             <div className="u-gapTop u-alignRight">

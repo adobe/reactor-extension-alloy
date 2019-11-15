@@ -25,7 +25,6 @@ function cinSelect({ name }) {
       component={Select}
       componentClassName="u-fieldLong"
       options={namespaceOptions}
-      supportDataElement
     />
   );
 }

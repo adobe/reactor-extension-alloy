@@ -187,28 +187,10 @@
                   "minLength": 1
                 },
                 "primary": {
-                  "oneOf": [
-                    {
-                      "type": "boolean",
-                      "minimum": 0
-                    },
-                    {
-                      "type": "string",
-                      "pattern": "^%[^%]+%$"
-                    }
-                  ]
+                  "type": "boolean"
                 },
                 "hash": {
-                  "oneOf": [
-                    {
-                      "type": "boolean",
-                      "minimum": 0
-                    },
-                    {
-                      "type": "string",
-                      "pattern": "^%[^%]+%$"
-                    }
-                  ]
+                  "type": "boolean"
                 }
               },
               "required": [
