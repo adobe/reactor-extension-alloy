@@ -10,23 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import loadIdentityNamespaces from "../actions/api/loadIdentityNamespaces";
-
 export default () => {
-  const namespaceOptionsPromise = new Promise(resolve => {
-    const getOptions = response => {
-      const options = response.map(code => ({
-        value: code,
-        label: code
-      }));
-
-      resolve(options);
-    };
-
-    loadIdentityNamespaces().then(response => {
-      getOptions(response);
-    });
-  });
-
-  return namespaceOptionsPromise;
+  return {
+    namespace: "",
+    id: "",
+    authenticatedState: "",
+    primary: false,
+    hash: false
+  };
 };
