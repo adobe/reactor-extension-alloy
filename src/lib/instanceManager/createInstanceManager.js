@@ -23,12 +23,6 @@ module.exports = (window, runAlloy, orgId) => {
       ...options,
       orgId: options.orgId || orgId,
       // The Alloy build we're using for this extension
-      // logs using turbine.logger. Therefore, we'll
-      // always enable logging in Alloy and let Reactor's
-      // debug mode determine whether the Alloy messages
-      // actually make it to the console.
-      logEnabled: true,
-      // The Alloy build we're using for this extension
       // provides a backdoor to perform certain operations
       // synchronously, because Reactor requires that data
       // elements be resolved synchronously for now.
