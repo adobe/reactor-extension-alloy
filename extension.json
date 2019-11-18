@@ -161,26 +161,6 @@
   ],
   "dataElements": [
     {
-      "displayName": "ECID",
-      "name": "ecid",
-      "schema": {
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "type": "object",
-        "properties": {
-          "instanceName": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "required": [
-          "instanceName"
-        ],
-        "additionalProperties": false
-      },
-      "libPath": "dist/lib/dataElements/ecid/index.js",
-      "viewPath": "dataElements/instanceNameOnly.html"
-    },
-    {
       "displayName": "Event Merge ID",
       "name": "event-merge-id",
       "schema": {
