@@ -30,13 +30,17 @@ const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
     viewStart = false,
-    xdm = ""
+    xdm = "",
+    type = "",
+    mergeId = ""
   } = initInfo.settings || {};
 
   return {
     instanceName,
     viewStart,
-    xdm
+    xdm,
+    type,
+    mergeId
   };
 };
 
@@ -47,6 +51,12 @@ const getSettings = ({ values }) => {
 
   if (values.xdm) {
     settings.xdm = values.xdm;
+  }
+  if (values.type) {
+    settings.type = values.type;
+  }
+  if (values.mergeId) {
+    settings.mergeId = values.mergeId;
   }
 
   // Only add viewStart if the value is different than the default (false).
@@ -103,6 +113,40 @@ const SendEvent = () => {
                 <WrappedField
                   id="xdmField"
                   name="xdm"
+                  component={Textfield}
+                  componentClassName="u-fieldLong"
+                  supportDataElement
+                />
+              </div>
+            </div>
+            <div className="u-gapTop">
+              <InfoTipLayout
+                tip="The type of the experience event.  This will be added to the
+                  XDM object as the field `eventType`."
+              >
+                <FieldLabel labelFor="typeField" label="Type (optional)" />
+              </InfoTipLayout>
+              <div>
+                <WrappedField
+                  id="typeField"
+                  name="type"
+                  component={Textfield}
+                  componentClassName="u-fieldLong"
+                  supportDataElement
+                />
+              </div>
+            </div>
+            <div className="u-gapTop">
+              <InfoTipLayout
+                tip="The merge ID of the experience event.  This will be added to
+                  the XDM object as the field `eventMergeId`."
+              >
+                <FieldLabel labelFor="mergeIdField" label="Merge ID (optional)" />
+              </InfoTipLayout>
+              <div>
+                <WrappedField
+                  id="mergeIdField"
+                  name="mergeId"
                   component={Textfield}
                   componentClassName="u-fieldLong"
                   supportDataElement
