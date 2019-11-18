@@ -75,14 +75,12 @@ describe("Instance Manager", () => {
     expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
       configId: "PR123",
       orgId: "ABC@AdobeOrg",
-      logEnabled: true,
       reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
       configId: "PR456",
       orgId: "DIFFERENTORG@AdobeOrg",
-      logEnabled: true,
       reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
