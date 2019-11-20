@@ -21,6 +21,7 @@ import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
+import ControlledCombo from "../components/controlledCombo";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./sendEvent.styl";
@@ -70,6 +71,30 @@ const getSettings = ({ values }) => {
 const validationSchema = object().shape({
   xdm: string().matches(singleDataElementRegex, "Please specify a data element")
 });
+
+const knownEventTypes = [
+  "advertising.completes",
+  "advertising.timePlayed",
+  "advertising.federated",
+  "advertising.clicks",
+  "advertising.conversions",
+  "advertising.firstQuartiles",
+  "advertising.impressions",
+  "advertising.midpoints",
+  "advertising.starts",
+  "advertising.thirdQuartiles",
+  "web.webpagedetails.pageViews",
+  "web.webinteraction.linkClicks",
+  "commerce.checkouts",
+  "commerce.productListAdds",
+  "commerce.productListOpens",
+  "commerce.productListRemovals",
+  "commerce.productListReopens",
+  "commerce.productListViews",
+  "commerce.productViews",
+  "commerce.purchases",
+  "commerce.saveForLaters"
+];
 
 const SendEvent = () => {
   return (
@@ -121,8 +146,8 @@ const SendEvent = () => {
             </div>
             <div className="u-gapTop">
               <InfoTipLayout
-                tip="The type of the experience event.  This will be added to the
-                  XDM object as the field `eventType`."
+                tip="The type of the experience event.  Choose a predefined type or create
+                  your own. This will be added to the XDM object as the field `eventType`."
               >
                 <FieldLabel labelFor="typeField" label="Type (optional)" />
               </InfoTipLayout>
@@ -130,9 +155,11 @@ const SendEvent = () => {
                 <WrappedField
                   id="typeField"
                   name="type"
-                  component={Textfield}
+                  component={ControlledCombo}
                   componentClassName="u-fieldLong"
                   supportDataElement
+                  allowCreate
+                  options={knownEventTypes}
                 />
               </div>
             </div>
