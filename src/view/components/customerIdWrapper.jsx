@@ -16,24 +16,23 @@ import PropTypes from "prop-types";
 import WrappedField from "./wrappedField";
 import authenticatedStateOptions from "../constants/authenticatedStateOptions";
 import "../actions/setCustomerIds.styl";
-import loadIdentityNamespaces from "../actions/api/loadIdentityNamespaces";
 import getDefaultCustomerId from "../utils/getDefaultCustomerId";
 import ErrorMessage from "./errorMessage";
 
 function cidWrapper({ values }) {
-  const [namespaceOptions, setNamespaceOptions] = useState([]);
+  // const [namespaceOptions, setNamespaceOptions] = useState([]);
   const [showStuff, setShowStuff] = useState({});
   let returnValue = null;
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const nOptions = await loadIdentityNamespaces();
+        // const nOptions = await loadIdentityNamespaces();
 
         setShowStuff({
           value: "content"
         });
-        setNamespaceOptions(nOptions);
+        // setNamespaceOptions(nOptions);
       } catch (error) {
         setShowStuff({
           value: "error",
@@ -92,9 +91,10 @@ function cidWrapper({ values }) {
                               <WrappedField
                                 id="namespaceField"
                                 name={`customerIds.${index}.namespace`}
-                                component={Select}
+                                // component={Select}
+                                component={Textfield}
                                 componentClassName="u-fieldLong"
-                                options={namespaceOptions}
+                                // options={namespaceOptions}
                               />
                             </div>
                           </div>
