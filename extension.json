@@ -112,6 +112,12 @@
           "xdm": {
             "type": "string",
             "pattern": "^%[^%]+%$"
+          },
+          "type": {
+            "type": "string"
+          },
+          "mergeId": {
+            "type": "string"
           }
         },
         "required": [
