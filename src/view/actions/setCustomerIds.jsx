@@ -64,11 +64,7 @@ const setCustomerIds = () => {
           token: initInfo.tokens.imsAccess
         });
 
-        return (
-          <React.Fragment>
-            <CustomerIdWrapper values={values}></CustomerIdWrapper>
-          </React.Fragment>
-        );
+        return <CustomerIdWrapper values={values}></CustomerIdWrapper>;
       }}
     />
   );

@@ -15,7 +15,6 @@ import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import PropTypes from "prop-types";
 import WrappedField from "./wrappedField";
 import authenticatedStateOptions from "../constants/authenticatedStateOptions";
-import "../actions/setCustomerIds.styl";
 import getDefaultCustomerId from "../utils/getDefaultCustomerId";
 import ErrorMessage from "./errorMessage";
 
@@ -139,13 +138,21 @@ function cidWrapper({ values }) {
                               label="Primary"
                             />
                           </div>
-                          <div className="u-gapTop u-alignRight">
+                          <div className="u-gapTop">
                             <ModalTrigger>
                               <Button
                                 id="deleteButton"
+                                label="Delete Customer ID"
                                 icon={<Delete />}
                                 variant="action"
+                                disabled={values.customerIds.length === 1}
                               />
+                              {values.customerIds.length === 1 ? (
+                                <span className="Note u-gapLeft">
+                                  You must have at least one customer ID to use
+                                  this action.
+                                </span>
+                              ) : null}
                               <Dialog
                                 title="Delete Customer ID"
                                 onConfirm={() => {

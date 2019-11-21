@@ -11,8 +11,4 @@ governing permissions and limitations under the License.
 */
 
 export const API_PRODUCTION_URL = "https://platform.adobe.io";
-export const API_STAGE_URL = "https://platform-stage.adobe.io";
-export const PLATFORM_PRODUCTION_URL = "https://platform.adobe.com";
-export const PLATFORM_STAGE_URL = "https://platform-stage.adobe.com";
-export const PLATFORM_INTEGRATION_URL = "https://platform-int.adobe.io";
 export const CLIENT_ID = "Activation-DTM";

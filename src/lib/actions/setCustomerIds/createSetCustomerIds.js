@@ -18,14 +18,7 @@ module.exports = instanceManager => settings => {
     if (customerIds.length) {
       const customerIdsConfig = customerIds.reduce(
         (config, customerIdObject) => {
-          const { id, authenticatedState, primary, hash } = customerIdObject;
-
-          config[customerIdObject.namespace] = {
-            id,
-            authenticatedState,
-            primary,
-            hash
-          };
+          config[customerIdObject.namespace] = customerIdObject;
 
           return config;
         },

@@ -54,6 +54,7 @@ describe("Set Customer IDs", () => {
     expect(instanceManager.getAccessor).toHaveBeenCalledWith("instance1");
     expect(instance).toHaveBeenCalledWith("setCustomerIds", {
       ECID: {
+        namespace: "ECID",
         id: "wvg",
         authenticatedState: "loggedOut",
         primary: false,

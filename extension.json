@@ -184,7 +184,7 @@
                 },
                 "authenticatedState": {
                   "type": "string",
-                  "minLength": 1
+                  "enum": ["ambiguous", "authenticated", "loggedOut"]
                 },
                 "primary": {
                   "type": "boolean"

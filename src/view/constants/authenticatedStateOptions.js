@@ -13,14 +13,14 @@ governing permissions and limitations under the License.
 export default [
   {
     value: "ambiguous",
-    label: "ambiguous"
+    label: "Ambiguous"
   },
   {
     value: "authenticated",
-    label: "authenticated"
+    label: "Authenticated"
   },
   {
     value: "loggedOut",
-    label: "loggedOut"
+    label: "Logged Out"
   }
 ];
