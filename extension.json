@@ -171,6 +171,7 @@
           },
           "customerIds": {
             "type": "array",
+            "minItems": 1,
             "items": {
               "type": "object",
               "properties": {
@@ -189,7 +190,7 @@
                 "primary": {
                   "type": "boolean"
                 },
-                "hash": {
+                "hashEnabled": {
                   "type": "boolean"
                 }
               },

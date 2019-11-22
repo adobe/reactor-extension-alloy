@@ -17,8 +17,9 @@ import WrappedField from "./wrappedField";
 import authenticatedStateOptions from "../constants/authenticatedStateOptions";
 import getDefaultCustomerId from "../utils/getDefaultCustomerId";
 import ErrorMessage from "./errorMessage";
+import InfoTipLayout from "./infoTipLayout";
 
-function cidWrapper({ values }) {
+function CIdWrapper({ values }) {
   // const [namespaceOptions, setNamespaceOptions] = useState([]);
   const [showStuff, setShowStuff] = useState({});
   let returnValue = null;
@@ -110,11 +111,13 @@ function cidWrapper({ values }) {
                             </div>
                           </div>
                           <div className="u-gapTop">
-                            <WrappedField
-                              name={`customerIds.${index}.hash`}
-                              component={Checkbox}
-                              label="Convert ID to sha256 hash"
-                            />
+                            <InfoTipLayout tip="Uses the SHA-256 hashing algorithm that allows you to pass in customer IDs or email addresses, and pass out hashed IDs. This is an optional Javascript method for sending hashed identifiers. You can continue to use your own methods of hashing prior to sending customer IDs.">
+                              <WrappedField
+                                name={`customerIds.${index}.hashEnabled`}
+                                component={Checkbox}
+                                label="Convert ID to sha256 hash"
+                              />
+                            </InfoTipLayout>
                           </div>
                           <div className="u-gapTop">
                             <FieldLabel
@@ -132,11 +135,13 @@ function cidWrapper({ values }) {
                             </div>
                           </div>
                           <div className="u-gapTop">
-                            <WrappedField
-                              name={`customerIds.${index}.primary`}
-                              component={Checkbox}
-                              label="Primary"
-                            />
+                            <InfoTipLayout tip="Adobe Experience Platform will use the customer ID as an identifier to help stitch together more information about that individual. If left unchecked, the identifier within this namespace will still be collected but the ECID will be used as the primary identifier for stitching.">
+                              <WrappedField
+                                name={`customerIds.${index}.primary`}
+                                component={Checkbox}
+                                label="Primary"
+                              />
+                            </InfoTipLayout>
                           </div>
                           <div className="u-gapTop">
                             <ModalTrigger>
@@ -185,9 +190,9 @@ function cidWrapper({ values }) {
   return returnValue;
 }
 
-cidWrapper.propTypes = {
+CIdWrapper.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   values: PropTypes.object
 };
 
-export default cidWrapper;
+export default CIdWrapper;

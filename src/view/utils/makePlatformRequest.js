@@ -12,18 +12,18 @@ governing permissions and limitations under the License.
 
 import { CLIENT_ID, API_PRODUCTION_URL } from "../constants/api";
 
-let fetchSettings = { imsOrgId: null, token: null };
+let platformRequestSettings = { imsOrgId: null, token: null };
 
 export default (url, options = {}) =>
   new Promise((resolve, reject) => {
     options = Object.assign({}, { method: "GET", body: "" }, options);
 
-    if (!fetchSettings.imsOrgId || !fetchSettings.token) {
+    if (!platformRequestSettings.imsOrgId || !platformRequestSettings.token) {
       reject(
         new Error(
           JSON.stringify({
             errorMessage:
-              "No settings were found. You need to call `updateFetchSettings` before using `fetch`."
+              "No settings were found. You need to call `updatePlatformRequestSettings` before using `makePlatformRequest`."
           })
         )
       );
@@ -34,8 +34,11 @@ export default (url, options = {}) =>
     xhr.open(options.method, `${API_PRODUCTION_URL}${url}`, true);
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.setRequestHeader("x-api-key", CLIENT_ID);
-    xhr.setRequestHeader("x-gw-ims-org-id", fetchSettings.imsOrgId);
-    xhr.setRequestHeader("Authorization", `Bearer ${fetchSettings.token}`);
+    xhr.setRequestHeader("x-gw-ims-org-id", platformRequestSettings.imsOrgId);
+    xhr.setRequestHeader(
+      "Authorization",
+      `Bearer ${platformRequestSettings.token}`
+    );
 
     if (options.headers) {
       Object.keys(options.headers).forEach(headerName => {
@@ -83,8 +86,8 @@ export default (url, options = {}) =>
     xhr.send(JSON.stringify(options.body));
   });
 
-export const updateFetchSettings = settings => {
-  fetchSettings = settings;
+export const updatePlatformRequestSettings = settings => {
+  platformRequestSettings = settings;
 };
 
-export const getFetchSettings = () => fetchSettings;
+export const getPlatformRequestSettings = () => platformRequestSettings;

@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import fetch from "../../utils/fetch";
+import makePlatformRequest from "../../utils/makePlatformRequest";
 
 export default () =>
-  fetch("/data/core/idnamespace/identities").then(response =>
+  makePlatformRequest("/data/core/idnamespace/identities").then(response =>
     response.map(namespace => ({
       value: namespace.code,
       label: namespace.code

@@ -15,22 +15,13 @@ module.exports = instanceManager => settings => {
   const instanceAccessor = instanceManager.getAccessor(instanceName);
 
   if (instanceAccessor) {
-    if (customerIds.length) {
-      const customerIdsConfig = customerIds.reduce(
-        (config, customerIdObject) => {
-          config[customerIdObject.namespace] = customerIdObject;
+    const customerIdsConfig = customerIds.reduce((config, customerIdObject) => {
+      config[customerIdObject.namespace] = customerIdObject;
 
-          return config;
-        },
-        {}
-      );
+      return config;
+    }, {});
 
-      instanceAccessor.instance("setCustomerIds", customerIdsConfig);
-    } else {
-      turbine.logger.warn(
-        `Attempted to set customer IDs for instance "${instanceName}", but there were none to set.`
-      );
-    }
+    instanceAccessor.instance("setCustomerIds", customerIdsConfig);
   } else {
     turbine.logger.error(
       `Failed to set customer IDs for instance "${instanceName}". No matching instance was configured with this name.`

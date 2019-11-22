@@ -17,7 +17,7 @@ import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import "./setCustomerIds.styl";
-import { updateFetchSettings } from "../utils/fetch";
+import { updatePlatformRequestSettings } from "../utils/makePlatformRequest";
 import CustomerIdWrapper from "../components/customerIdWrapper";
 import getDefaultCustomerId from "../utils/getDefaultCustomerId";
 
@@ -41,7 +41,15 @@ const validationSchema = object().shape({
   instanceName: string().required("Please specify an instance name."),
   customerIds: array().of(
     object().shape({
-      namespace: string().required("Please select a namespace."),
+      namespace: string()
+        .required("Please select a namespace.")
+        .test({
+          name: "notECID",
+          message: "ECID is not allowed",
+          test(value) {
+            return value !== "ECID";
+          }
+        }),
       id: string().required("Please specify an ID."),
       authenticatedState: string().required(
         "Please select an authenticated state."
@@ -50,7 +58,7 @@ const validationSchema = object().shape({
   )
 });
 
-const setCustomerIds = () => {
+const SetCustomerIds = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -59,7 +67,7 @@ const setCustomerIds = () => {
       render={({ formikProps, initInfo }) => {
         const { values } = formikProps;
 
-        updateFetchSettings({
+        updatePlatformRequestSettings({
           imsOrgId: initInfo.company.orgId,
           token: initInfo.tokens.imsAccess
         });
@@ -70,4 +78,4 @@ const setCustomerIds = () => {
   );
 };
 
-render(setCustomerIds);
+render(SetCustomerIds);
