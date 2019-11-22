@@ -118,13 +118,23 @@ const SendEvent = () => {
               </div>
             </div>
             <div className="u-gapTop">
-              <InfoTipLayout tip="Influences whether the SDK should retrieve and render personalization content, among other things.">
-                <WrappedField
-                  name="viewStart"
-                  component={Checkbox}
-                  label="Occurs at the start of a view"
-                />
+              <InfoTipLayout
+                tip="The type of the experience event.  Choose a predefined type or create
+                  your own. This will be added to the XDM object as the field `eventType`."
+              >
+                <FieldLabel labelFor="typeField" label="Type (optional)" />
               </InfoTipLayout>
+              <div>
+                <WrappedField
+                  id="typeField"
+                  name="type"
+                  component={ControlledCombo}
+                  componentClassName="u-fieldLong"
+                  supportDataElement
+                  allowCreate
+                  options={knownEventTypes}
+                />
+              </div>
             </div>
             <div className="u-gapTop">
               <InfoTipLayout
@@ -141,25 +151,6 @@ const SendEvent = () => {
                   component={Textfield}
                   componentClassName="u-fieldLong"
                   supportDataElement
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="The type of the experience event.  Choose a predefined type or create
-                  your own. This will be added to the XDM object as the field `eventType`."
-              >
-                <FieldLabel labelFor="typeField" label="Type (optional)" />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  id="typeField"
-                  name="type"
-                  component={ControlledCombo}
-                  componentClassName="u-fieldLong"
-                  supportDataElement
-                  allowCreate
-                  options={knownEventTypes}
                 />
               </div>
             </div>
@@ -182,6 +173,15 @@ const SendEvent = () => {
                   supportDataElement
                 />
               </div>
+            </div>
+            <div className="u-gapTop">
+              <InfoTipLayout tip="Influences whether the SDK should retrieve and render personalization content, among other things.">
+                <WrappedField
+                  name="viewStart"
+                  component={Checkbox}
+                  label="Occurs at the start of a view"
+                />
+              </InfoTipLayout>
             </div>
           </div>
         );
