@@ -58,6 +58,7 @@ const getInstanceDefaults = initInfo => ({
   context: contextOptions,
   idMigrationEnabled: true,
   clickCollectionEnabled: true,
+  onBeforeEventSend: "",
   downloadLinkQualifier:
     "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$"
 });
@@ -112,6 +113,7 @@ const getSettings = ({ values, initInfo }) => {
         "cookieDestinationsEnabled",
         "prehidingStyle",
         "idMigrationEnabled",
+        "onBeforeEventSend",
         "clickCollectionEnabled"
       ];
 
@@ -167,6 +169,9 @@ const validateDuplicateValue = (createError, instances, key, message) => {
 
 const idSyncContainerIdValidationMessage =
   "Please specify a non-negative integer or data element for the container ID.";
+
+const onBeforeEventSendValidationMessage =
+  "Please specify a data element for the onBeforeEventSend callback.";
 
 const validationSchema = object()
   .shape({
@@ -231,6 +236,10 @@ const validationSchema = object()
                 }
               }
             })
+        }),
+        onBeforeEventSend: string().matches(singleDataElementRegex, {
+          message: onBeforeEventSendValidationMessage,
+          excludeEmptyString: true
         })
       })
     )
@@ -477,7 +486,7 @@ const Configuration = () => {
 
                           <h3>Identity</h3>
                           {/* TODO - Uncomment these when Konductor support is available  */}
-                          {/* <div className="u-gapTop">
+                          <div className="u-gapTop">
                             <InfoTipLayout tip="Sends requests to third-party URLs to synchronize the Adobe unique user ID with the unique user ID of a third-party data source.">
                               <WrappedField
                                 name={`instances.${index}.idSyncEnabled`}
@@ -505,7 +514,7 @@ const Configuration = () => {
                                 />
                               </div>
                             </div>
-                          ) : null} */}
+                          ) : null}
 
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Enables the AEP Web SDK to preserve the ECID by reading/writing the AMCV cookie. Use this config until users are fully migrated to the Alloy cookie and in situations where you have mixed pages on your website.">
@@ -559,7 +568,23 @@ const Configuration = () => {
                           </div> */}
 
                           <h3>Data Collection</h3>
-
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="If you want to add, remove, or modify fields from the event globally, you can configure an onBeforeEventSend callback.  This callback will be called everytime and event is sent.  This callback passes an object with an `xdm` fields.  Modify the xdm object to change the data that is sent in the event.">
+                              <FieldLabel
+                                labelFor="onBeforeEventSendField"
+                                label="Set this to configure a callback that will be called for every event."
+                              />
+                            </InfoTipLayout>
+                            <div>
+                              <WrappedField
+                                id="onBeforeEventSendField"
+                                name={`instances.${index}.onBeforeEventSend`}
+                                component={Textfield}
+                                componentClassName="u-fieldLong"
+                                supportDataElement
+                              />
+                            </div>
+                          </div>
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected.">
                               <WrappedField

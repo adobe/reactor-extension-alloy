@@ -79,6 +79,9 @@ for (let i = 0; i < 2; i += 1) {
     downloadLinkQualifierTestButton: spectrum.button(
       Selector(`#downloadLinkQualifierTestButton`)
     ),
+    onBeforeEventSendField: spectrum.textfield(
+      Selector(`[name='instances.${i}.onBeforeEventSend']`)
+    ),
     contextGranularity: {
       allField: spectrum.radio(
         Selector(`[name='instances.${i}.contextGranularity'][value=all]`)
@@ -230,6 +233,7 @@ test("initializes form fields with minimal settings", async t => {
     defaultDownloadLinkQualifier
   );
   await instances[0].contextGranularity.allField.expectChecked(t);
+  await instances[0].onBeforeEventSendField.expectValue(t, "");
 });
 
 test("initializes form fields with no settings", async t => {
@@ -252,6 +256,7 @@ test("initializes form fields with no settings", async t => {
     defaultDownloadLinkQualifier
   );
   await instances[0].contextGranularity.allField.expectChecked(t);
+  await instances[0].onBeforeEventSendField.expectValue(t, "");
 });
 
 test("returns minimal valid settings", async t => {
@@ -291,7 +296,7 @@ test("returns full valid settings", async t => {
   // await instances[0].urlDestinationsEnabledField.click(t);
   // await instances[0].cookieDestinationsEnabledField.click(t);
   // await instances[0].prehidingStyleField.click(t);
-
+  await instances[0].onBeforeEventSendField.typeText(t, "%foo%");
   await addInstanceButton.click(t);
 
   await instances[1].nameField.typeText(t, "2");
@@ -314,10 +319,11 @@ test("returns full valid settings", async t => {
         errorsEnabled: false,
         optInEnabled: true,
         // idSyncContainerId: 123,
-        idMigrationEnabled: false
+        idMigrationEnabled: false,
         // urlDestinationsEnabled: false,
         // cookieDestinationsEnabled: false,
-        // prehidingStyle: "#container { display: none } // css"
+        // prehidingStyle: "#container { display: none } // css",
+        onBeforeEventSend: "%foo%"
       },
       {
         name: "alloy2",
@@ -521,6 +527,29 @@ test("sets download link qualifier when test button is clicked", async t => {
 //     ]
 //   });
 // });
+
+test("shows error for onBeforeEventSend value that is an arbitrary string", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].configIdField.typeText(t, "PR123");
+  await instances[0].onBeforeEventSendField.typeText(t, "123foo");
+  await extensionViewController.expectIsNotValid(t);
+  await instances[0].onBeforeEventSendField.expectError(t);
+});
+
+test("shows error for onBeforeEventSend value that is multiple data elements", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].configIdField.typeText(t, "PR123");
+  await instances[0].onBeforeEventSendField.typeText(t, "%foo%%bar%");
+  await extensionViewController.expectIsNotValid(t);
+  await instances[0].onBeforeEventSendField.expectError(t);
+});
+
+test("does not show error for onBeforeEventSend value that is a single data element", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].configIdField.typeText(t, "PR123");
+  await instances[0].onBeforeEventSendField.typeText(t, "%123foo%");
+  await extensionViewController.expectIsValid(t);
+});
 
 test("deletes an instance", async t => {
   await extensionViewController.init(t, defaultInitInfo);
