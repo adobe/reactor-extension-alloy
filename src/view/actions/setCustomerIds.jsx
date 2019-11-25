@@ -37,26 +37,72 @@ const getSettings = ({ values }) => {
   return values;
 };
 
-const validationSchema = object().shape({
-  instanceName: string().required("Please specify an instance name."),
-  customerIds: array().of(
-    object().shape({
-      namespace: string()
-        .required("Please select a namespace.")
-        .test({
-          name: "notECID",
-          message: "ECID is not allowed",
-          test(value) {
-            return value !== "ECID";
-          }
-        }),
-      id: string().required("Please specify an ID."),
-      authenticatedState: string().required(
-        "Please select an authenticated state."
-      )
+const validateDuplicateValue = (
+  createError,
+  customerIds,
+  key,
+  message,
+  validateBooleanTrue
+) => {
+  const values = customerIds.map(customerId => customerId[key]);
+  const duplicateIndex = values.findIndex(
+    (value, index) =>
+      values.indexOf(value) < index && (!validateBooleanTrue || value === true)
+  );
+
+  return (
+    duplicateIndex === -1 ||
+    createError({
+      path: `customerIds[${duplicateIndex}].${key}`,
+      message
     })
-  )
-});
+  );
+};
+
+const validationSchema = object()
+  .shape({
+    instanceName: string().required("Please specify an instance name."),
+    customerIds: array().of(
+      object().shape({
+        namespace: string()
+          .required("Please select a namespace.")
+          .test({
+            name: "notECID",
+            message: "ECID is not allowed",
+            test(value) {
+              return value !== "ECID";
+            }
+          }),
+        id: string().required("Please specify an ID."),
+        authenticatedState: string().required(
+          "Please select an authenticated state."
+        )
+      })
+    )
+  })
+  // TestCafe doesn't allow this to be an arrow function because of
+  // how it scopes "this".
+  // eslint-disable-next-line func-names
+  .test("uniqueNamespace", function(settings) {
+    return validateDuplicateValue(
+      this.createError.bind(this),
+      settings.customerIds,
+      "namespace",
+      "Please provide a unique namespace."
+    );
+  })
+  // TestCafe doesn't allow this to be an arrow function because of
+  // how it scopes "this".
+  // eslint-disable-next-line func-names
+  .test("uniquePrimary", function(settings) {
+    return validateDuplicateValue(
+      this.createError.bind(this),
+      settings.customerIds,
+      "primary",
+      "Only one namespace can be primary.",
+      true
+    );
+  });
 
 const SetCustomerIds = () => {
   return (

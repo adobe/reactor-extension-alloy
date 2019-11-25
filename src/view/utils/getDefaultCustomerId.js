@@ -16,6 +16,6 @@ export default () => {
     id: "",
     authenticatedState: "",
     primary: false,
-    hash: false
+    hashEnabled: false
   };
 };
