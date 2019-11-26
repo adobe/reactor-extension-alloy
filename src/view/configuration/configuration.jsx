@@ -486,7 +486,7 @@ const Configuration = () => {
 
                           <h3>Identity</h3>
                           {/* TODO - Uncomment these when Konductor support is available  */}
-                          <div className="u-gapTop">
+                          {/* <div className="u-gapTop">
                             <InfoTipLayout tip="Sends requests to third-party URLs to synchronize the Adobe unique user ID with the unique user ID of a third-party data source.">
                               <WrappedField
                                 name={`instances.${index}.idSyncEnabled`}
@@ -514,7 +514,7 @@ const Configuration = () => {
                                 />
                               </div>
                             </div>
-                          ) : null}
+                          ) : null} */}
 
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Enables the AEP Web SDK to preserve the ECID by reading/writing the AMCV cookie. Use this config until users are fully migrated to the Alloy cookie and in situations where you have mixed pages on your website.">
@@ -569,10 +569,10 @@ const Configuration = () => {
 
                           <h3>Data Collection</h3>
                           <div className="u-gapTop">
-                            <InfoTipLayout tip="If you want to add, remove, or modify fields from the event globally, you can configure an onBeforeEventSend callback.  This callback will be called everytime and event is sent.  This callback passes an object with an `xdm` fields.  Modify the xdm object to change the data that is sent in the event.">
+                            <InfoTipLayout tip="If you want to add, remove, or modify fields from the event globally, you can configure an `onBeforeEventSend` callback. This callback will be called everytime an event is sent. This callback passes an object with a `xdm` fields. Modify the `xdm` object to change the data that is sent in the event.">
                               <FieldLabel
                                 labelFor="onBeforeEventSendField"
-                                label="Set this to configure a callback that will be called for every event."
+                                label="Callback function for modifying data before each event is sent to the server"
                               />
                             </InfoTipLayout>
                             <div>
