@@ -146,7 +146,7 @@ function CIdWrapper({ values }) {
                           <div className="u-gapTop">
                             <ModalTrigger>
                               <Button
-                                id="deleteButton"
+                                id={`deleteButton${index}`}
                                 label="Delete Customer ID"
                                 icon={<Delete />}
                                 variant="action"

@@ -17,7 +17,6 @@ import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import "./setCustomerIds.styl";
-import { updatePlatformRequestSettings } from "../utils/makePlatformRequest";
 import CustomerIdWrapper from "../components/customerIdWrapper";
 import getDefaultCustomerId from "../utils/getDefaultCustomerId";
 
@@ -110,13 +109,13 @@ const SetCustomerIds = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={({ formikProps, initInfo }) => {
+      render={({ formikProps }) => {
         const { values } = formikProps;
 
-        updatePlatformRequestSettings({
-          imsOrgId: initInfo.company.orgId,
-          token: initInfo.tokens.imsAccess
-        });
+        // updatePlatformRequestSettings({
+        //   imsOrgId: initInfo.company.orgId,
+        //   token: initInfo.tokens.imsAccess
+        // });
 
         return <CustomerIdWrapper values={values}></CustomerIdWrapper>;
       }}
