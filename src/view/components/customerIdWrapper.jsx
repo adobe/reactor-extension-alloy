@@ -161,6 +161,7 @@ function CIdWrapper({ values }) {
                               ) : null}
                               <Dialog
                                 title="Delete Customer ID"
+                                id={`deleteCustomerId${index}`}
                                 onConfirm={() => {
                                   arrayHelpers.remove(index);
                                 }}
