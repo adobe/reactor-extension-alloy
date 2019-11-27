@@ -32,7 +32,7 @@ const mockExtensionSettings = {
 };
 
 const instanceNameField = spectrum.select(Selector("[name=instanceName]"));
-
+const addCustomerIdButton = spectrum.button(Selector("#addCustomerId"));
 const customerIds = [];
 
 for (let i = 0; i < 2; i += 1) {
@@ -60,7 +60,61 @@ fixture("Set Customer IDs View").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
-test("initializes form fields with full settings", async t => {
+test("initializes form fields with full valid settings", async t => {
+  await extensionViewController.init(t, {
+    extensionSettings: mockExtensionSettings,
+    settings: {
+      instanceName: "alloy99",
+      customerIds: [
+        {
+          namespace: "CORE",
+          id: "wvg",
+          authenticatedState: "loggedOut",
+          primary: false,
+          hashEnabled: true
+        },
+        {
+          namespace: "AAID",
+          id: "zyx",
+          authenticatedState: "authenticated",
+          primary: true,
+          hashEnabled: false
+        }
+      ]
+    }
+  });
+
+  await instanceNameField.expectValue(t, "alloy99");
+  await customerIds[0].namespaceField.expectValue(t, "CORE");
+  await customerIds[0].idField.expectValue(t, "wvg");
+  await customerIds[0].hashEnabledField.expectChecked(t);
+  await customerIds[0].authenticatedStateField.expectValue(t, "loggedOut");
+  await customerIds[0].primaryField.expectUnchecked(t);
+  await customerIds[0].deleteButton.expectEnabled(t);
+  await customerIds[1].namespaceField.expectValue(t, "AAID");
+  await customerIds[1].idField.expectValue(t, "zyx");
+  await customerIds[1].hashEnabledField.expectUnchecked(t);
+  await customerIds[1].authenticatedStateField.expectValue(t, "authenticated");
+  await customerIds[1].primaryField.expectChecked(t);
+  await customerIds[1].deleteButton.expectEnabled(t);
+  await extensionViewController.expectIsValid(t);
+});
+
+test("initializes form fields with no settings", async t => {
+  await extensionViewController.init(t, {
+    extensionSettings: mockExtensionSettings
+  });
+
+  await instanceNameField.expectValue(t, "alloy1");
+  await customerIds[0].namespaceField.expectValue(t, "");
+  await customerIds[0].idField.expectValue(t, "");
+  await customerIds[0].hashEnabledField.expectUnchecked(t);
+  await customerIds[0].authenticatedStateField.expectValue(t, "");
+  await customerIds[0].primaryField.expectUnchecked(t);
+  await customerIds[0].deleteButton.expectDisabled(t);
+});
+
+test("shows error for namespace value that is a duplicate", async t => {
   await extensionViewController.init(t, {
     extensionSettings: mockExtensionSettings,
     settings: {
@@ -76,75 +130,32 @@ test("initializes form fields with full settings", async t => {
       ]
     }
   });
-  await instanceNameField.expectValue(t, "alloy99");
-  await customerIds[0].namespaceField.expectValue(t, "CORE");
-  await customerIds[0].idField.expectValue(t, "wvg");
-  await customerIds[0].hashEnabledField.expectChecked(t);
-  await customerIds[0].authenticatedStateField.expectValue(t, "loggedOut");
-  await customerIds[0].primaryField.expectUnchecked(t);
+
+  await addCustomerIdButton.click(t);
+  await customerIds[1].namespaceField.typeText(t, "CORE");
+  await customerIds[1].idField.typeText(t, "zyx");
+  await customerIds[1].namespaceField.expectError(t);
 });
 
-// test("initializes form fields with minimal settings", async t => {
-//   await extensionViewController.init(t, {
-//     extensionSettings: mockExtensionSettings,
-//     settings: {
-//       instanceName: "alloy1"
-//     }
-//   });
-//   await instanceNameField.expectValue(t, "alloy1");
-//   await viewStartField.expectUnchecked(t);
-//   await xdmField.expectValue(t, "");
-// });
-//
-// test("initializes form fields with no settings", async t => {
-//   await extensionViewController.init(t, {
-//     extensionSettings: mockExtensionSettings
-//   });
-//   await instanceNameField.expectValue(t, "alloy1");
-//   await viewStartField.expectUnchecked(t);
-//   await xdmField.expectValue(t, "");
-// });
-//
-// test("returns minimal valid settings", async t => {
-//   await extensionViewController.init(t, {
-//     extensionSettings: mockExtensionSettings
-//   });
-//
-//   await extensionViewController.expectIsValid(t);
-//   await extensionViewController.expectSettings(t, {
-//     instanceName: "alloy1"
-//   });
-// });
-//
-// test("returns full valid settings", async t => {
-//   await extensionViewController.init(t, {
-//     extensionSettings: mockExtensionSettings
-//   });
-//   await instanceNameField.selectOption(t, "alloy2");
-//   await viewStartField.click(t);
-//   await xdmField.typeText(t, "%myDataLayer%");
-//   await extensionViewController.expectIsValid(t);
-//   await extensionViewController.expectSettings(t, {
-//     instanceName: "alloy2",
-//     viewStart: true,
-//     xdm: "%myDataLayer%"
-//   });
-// });
-//
-// test("shows error for xdm value that is not a data element", async t => {
-//   await extensionViewController.init(t, {
-//     extensionSettings: mockExtensionSettings
-//   });
-//   await xdmField.typeText(t, "myDataLayer");
-//   await extensionViewController.expectIsNotValid(t);
-//   await xdmField.expectError(t);
-// });
-//
-// test("shows error for xdm value that is more than one data element", async t => {
-//   await extensionViewController.init(t, {
-//     extensionSettings: mockExtensionSettings
-//   });
-//   await xdmField.typeText(t, "%a%%b%");
-//   await extensionViewController.expectIsNotValid(t);
-//   await xdmField.expectError(t);
-// });
+test("shows error for primary value of true that is a duplicate", async t => {
+  await extensionViewController.init(t, {
+    extensionSettings: mockExtensionSettings,
+    settings: {
+      instanceName: "alloy99",
+      customerIds: [
+        {
+          namespace: "CORE",
+          id: "wvg",
+          authenticatedState: "loggedOut",
+          primary: true,
+          hashEnabled: true
+        }
+      ]
+    }
+  });
+
+  await addCustomerIdButton.click(t);
+  await customerIds[1].primaryField.click(t);
+  await customerIds[1].idField.typeText(t, "zyx");
+  await customerIds[1].primaryField.expectError(t);
+});

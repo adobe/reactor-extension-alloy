@@ -65,6 +65,7 @@ function CIdWrapper({ values }) {
                 <React.Fragment>
                   <div className="u-gapTop u-alignRight">
                     <Button
+                      id="addCustomerId"
                       label="Add Customer ID"
                       onClick={() => {
                         arrayHelpers.push(getDefaultCustomerId());
