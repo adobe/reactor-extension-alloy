@@ -141,7 +141,10 @@ const SendEvent = () => {
                 tip="The merge ID of the experience event.  This will be added to
                   the XDM object as the field `eventMergeId`."
               >
-                <FieldLabel labelFor="mergeIdField" label="Merge ID (optional)" />
+                <FieldLabel
+                  labelFor="mergeIdField"
+                  label="Merge ID (optional)"
+                />
               </InfoTipLayout>
               <div>
                 <WrappedField

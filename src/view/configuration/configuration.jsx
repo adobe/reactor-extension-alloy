@@ -58,7 +58,8 @@ const getInstanceDefaults = initInfo => ({
   context: contextOptions,
   idMigrationEnabled: true,
   clickCollectionEnabled: true,
-  downloadLinkQualifier: "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$"
+  downloadLinkQualifier:
+    "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$"
 });
 
 const createDefaultInstance = initInfo =>
@@ -205,11 +206,9 @@ const validationSchema = object()
           }
           return validator;
         }),
-        downloadLinkQualifier: string()
-        .test({
+        downloadLinkQualifier: string().test({
           name: "invalidDownloadLinkQualifier",
-          message:
-            "Please provide a valid regular expression.",
+          message: "Please provide a valid regular expression.",
           test(value) {
             try {
               return new RegExp(value) !== null;
@@ -218,7 +217,7 @@ const validationSchema = object()
             }
           }
         })
-    })
+      })
     )
   })
   // TestCafe doesn't allow this to be an arrow function because of
