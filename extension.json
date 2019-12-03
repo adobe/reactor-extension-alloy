@@ -71,6 +71,12 @@
                 "type": "string",
                 "minLength": 1
               },
+              "clickCollectionEnabled": {
+                "type": "boolean"
+              },
+              "downloadLinkQualifier": {
+                "type": "string"
+              },
               "context": {
                 "type": "array",
                 "items": {

@@ -56,7 +56,9 @@ const getInstanceDefaults = initInfo => ({
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions,
-  idMigrationEnabled: true
+  idMigrationEnabled: true,
+  clickCollectionEnabled: true,
+  downloadLinkQualifier: "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$"
 });
 
 const createDefaultInstance = initInfo =>
@@ -108,7 +110,9 @@ const getSettings = ({ values, initInfo }) => {
         "urlDestinationsEnabled",
         "cookieDestinationsEnabled",
         "prehidingStyle",
-        "idMigrationEnabled"
+        "idMigrationEnabled",
+        "clickCollectionEnabled",
+        "downloadLinkQualifier"
       ]);
 
       if (
@@ -200,8 +204,21 @@ const validationSchema = object()
             });
           }
           return validator;
+        }),
+        downloadLinkQualifier: string()
+        .test({
+          name: "invalidDownloadLinkQualifier",
+          message:
+            "Please provide a valid regular expression.",
+          test(value) {
+            try {
+              return new RegExp(value) !== null;
+            } catch (e) {
+              return false;
+            }
+          }
         })
-      })
+    })
     )
   })
   // TestCafe doesn't allow this to be an arrow function because of
@@ -527,8 +544,50 @@ const Configuration = () => {
                             </div>
                           </div> */}
 
-                          <h3>Context</h3>
+                          <h3>Data Collection</h3>
 
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected or not.">
+                              <WrappedField
+                                name={`instances.${index}.clickCollectionEnabled`}
+                                component={Checkbox}
+                                label="Enable click data collection"
+                              />
+                            </InfoTipLayout>
+                          </div>
+                          {values.instances[index].clickCollectionEnabled ? (
+                            <div>
+                              <InfoTipLayout tip="Regular expression that qualifies a link URL as a download link.">
+                                <FieldLabel
+                                  labelFor="downloadLinkQualifier"
+                                  label="Download Link Qualifier"
+                                />
+                              </InfoTipLayout>
+                              <div>
+                                <WrappedField
+                                  id="downloadLinkQualifierField"
+                                  name={`instances.${index}.downloadLinkQualifier`}
+                                  component={Textfield}
+                                  componentClassName="u-fieldLong"
+                                />
+                                <Button
+                                  id="downloadLinkQualifierRestoreButton"
+                                  label="Restore to default"
+                                  onClick={() => {
+                                    const instanceDefaults = getInstanceDefaults(
+                                      initInfo
+                                    );
+                                    setFieldValue(
+                                      `instances.${index}.downloadLinkQualifier`,
+                                      instanceDefaults.downloadLinkQualifier
+                                    );
+                                  }}
+                                  quiet
+                                  variant="quiet"
+                                />
+                              </div>
+                            </div>
+                          ) : null}
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Indicates which categories of context information should be automatically collected.">
                               <FieldLabel
@@ -562,7 +621,6 @@ const Configuration = () => {
                               />
                             </div>
                           ) : null}
-
                           <div className="u-gapTop2x">
                             <ModalTrigger>
                               <Button

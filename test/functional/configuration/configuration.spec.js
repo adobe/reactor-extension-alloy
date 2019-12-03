@@ -67,6 +67,15 @@ for (let i = 0; i < 2; i += 1) {
     prehidingStyleField: spectrum.button(
       Selector(`button`).withText("Open Editor")
     ),
+    clickCollectionEnabledField: spectrum.checkbox(
+      Selector(`[name='instances.${i}.clickCollectionEnabled']`)
+    ),
+    downloadLinkQualifierField: spectrum.textfield(
+      Selector(`[name='instances.${i}.downloadLinkQualifier']`)
+    ),
+    downloadLinkQualifierRestoreButton: spectrum.button(
+      Selector(`#downloadLinkQualifierRestoreButton`)
+    ),
     contextGranularity: {
       allField: spectrum.radio(
         Selector(`[name='instances.${i}.contextGranularity'][value=all]`)
@@ -92,6 +101,7 @@ fixture("Extension Configuration View").disablePageReloads.page(
 );
 
 const defaultEdgeDomain = "beta.adobedc.net";
+const defaultDownloadLinkQualifier = "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
 
 const defaultInitInfo = {
   company: {
@@ -118,7 +128,8 @@ test("initializes form fields with full settings", async t => {
             urlDestinationsEnabled: true,
             cookieDestinationsEnabled: false,
             prehidingStyle: "#container { display: none }",
-            context: ["device", "placeContext"]
+            context: ["device", "placeContext"],
+            clickCollectionEnabled: false
           },
           {
             name: "alloy2",
@@ -151,6 +162,7 @@ test("initializes form fields with full settings", async t => {
   await instances[0].idMigrationEnabled.expectChecked(t);
   // await instances[0].urlDestinationsEnabledField.expectChecked(t);
   // await instances[0].cookieDestinationsEnabledField.expectUnchecked(t);
+  await instances[0].clickCollectionEnabledField.expectUnchecked(t);
   await instances[0].contextGranularity.specificField.expectChecked(t);
   await instances[0].specificContext.webField.expectUnchecked(t);
   await instances[0].specificContext.deviceField.expectChecked(t);
@@ -170,6 +182,8 @@ test("initializes form fields with full settings", async t => {
   await instances[1].idMigrationEnabled.expectUnchecked(t);
   // await instances[1].urlDestinationsEnabledField.expectChecked(t);
   // await instances[1].cookieDestinationsEnabledField.expectChecked(t);
+  await instances[1].clickCollectionEnabledField.expectChecked(t);
+  await instances[1].downloadLinkQualifierField.expectValue(t, defaultDownloadLinkQualifier);
   await instances[1].contextGranularity.specificField.expectChecked(t);
   await instances[1].specificContext.webField.expectUnchecked(t);
   await instances[1].specificContext.deviceField.expectUnchecked(t);
@@ -203,6 +217,8 @@ test("initializes form fields with minimal settings", async t => {
   await instances[0].idMigrationEnabled.expectChecked(t);
   // await instances[0].urlDestinationsEnabledField.expectChecked(t);
   // await instances[0].cookieDestinationsEnabledField.expectChecked(t);
+  await instances[0].clickCollectionEnabledField.expectChecked(t);
+  await instances[0].downloadLinkQualifierField.expectValue(t, defaultDownloadLinkQualifier);
   await instances[0].contextGranularity.allField.expectChecked(t);
 });
 
@@ -220,6 +236,8 @@ test("initializes form fields with no settings", async t => {
   await instances[0].idMigrationEnabled.expectChecked(t);
   // await instances[0].urlDestinationsEnabledField.expectChecked(t);
   // await instances[0].cookieDestinationsEnabledField.expectChecked(t);
+  await instances[0].clickCollectionEnabledField.expectChecked(t);
+  await instances[0].downloadLinkQualifierField.expectValue(t, defaultDownloadLinkQualifier);
   await instances[0].contextGranularity.allField.expectChecked(t);
 });
 
@@ -406,6 +424,14 @@ test("restores default edge domain value when restore button is clicked", async 
   await instances[0].edgeDomainRestoreButton.click(t);
   await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
 });
+
+test("restores default download link qualifier when restore button is clicked", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].downloadLinkQualifierField.typeText(t, "\.");
+  await instances[0].downloadLinkQualifierRestoreButton.click(t);
+  await instances[0].downloadLinkQualifierField.expectValue(t, defaultDownloadLinkQualifier);
+});
+
 
 // test("shows error for ID sync container ID value that is a negative number", async t => {
 //   await extensionViewController.init(t, defaultInitInfo);
