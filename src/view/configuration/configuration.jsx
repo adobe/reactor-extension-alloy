@@ -569,7 +569,7 @@ const Configuration = () => {
 
                           <h3>Data Collection</h3>
                           <div className="u-gapTop">
-                            <InfoTipLayout tip="If you want to add, remove, or modify fields from the event globally, you can configure an `onBeforeEventSend` callback. This callback will be called everytime an event is sent. This callback passes an object with a `xdm` fields. Modify the `xdm` object to change the data that is sent in the event.">
+                            <InfoTipLayout tip="If you want to add, remove, or modify fields from the event globally, you can configure an `onBeforeEventSend` callback. This callback will be called everytime an event is sent. This callback passes an object with a `xdm` field. Modify the `xdm` object to change the data that is sent in the event.">
                               <FieldLabel
                                 labelFor="onBeforeEventSendField"
                                 label="Callback function for modifying data before each event is sent to the server"
