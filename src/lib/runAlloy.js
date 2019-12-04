@@ -3134,7 +3134,7 @@ governing permissions and limitations under the License.
             event.mergeXdm({
               eventType: "web.webinteraction.linkClicks",
               web: {
-                webinteraction: {
+                webInteraction: {
                   name: linkName,
                   type: linkType,
                   URL: linkUrl,
@@ -5315,7 +5315,7 @@ governing permissions and limitations under the License.
 
 // The value will be swapped with the proper version at build time
 // see rollupPluginReplaceVersion.js
-      var libraryVersion = "0.0.7";
+      var libraryVersion = "0.0.8";
 
       /*
 Copyright 2019 Adobe. All rights reserved.
