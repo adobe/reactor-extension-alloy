@@ -109,7 +109,7 @@ const SetCustomerIds = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={({ formikProps }) => {
+      render={({ formikProps, initInfo }) => {
         const { values } = formikProps;
 
         // updatePlatformRequestSettings({
@@ -117,7 +117,12 @@ const SetCustomerIds = () => {
         //   token: initInfo.tokens.imsAccess
         // });
 
-        return <CustomerIdWrapper values={values}></CustomerIdWrapper>;
+        return (
+          <CustomerIdWrapper
+            values={values}
+            initInfo={initInfo}
+          ></CustomerIdWrapper>
+        );
       }}
     />
   );

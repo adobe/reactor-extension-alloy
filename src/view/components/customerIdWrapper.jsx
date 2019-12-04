@@ -18,8 +18,9 @@ import authenticatedStateOptions from "../constants/authenticatedStateOptions";
 import getDefaultCustomerId from "../utils/getDefaultCustomerId";
 import ErrorMessage from "./errorMessage";
 import InfoTipLayout from "./infoTipLayout";
+import getInstanceOptions from "../utils/getInstanceOptions";
 
-function CIdWrapper({ values }) {
+function CustomerIdWrapper({ values, initInfo }) {
   // const [namespaceOptions, setNamespaceOptions] = useState([]);
   const [showStuff, setShowStuff] = useState({});
   let returnValue = null;
@@ -53,9 +54,9 @@ function CIdWrapper({ values }) {
             <WrappedField
               id="instanceName"
               name="instanceName"
-              component={Textfield}
+              component={Select}
               componentClassName="u-fieldLong"
-              supportDataElement
+              options={getInstanceOptions(initInfo)}
             />
           </div>
           <FieldArray
@@ -192,9 +193,11 @@ function CIdWrapper({ values }) {
   return returnValue;
 }
 
-CIdWrapper.propTypes = {
+CustomerIdWrapper.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
-  values: PropTypes.object
+  values: PropTypes.object,
+  // eslint-disable-next-line react/forbid-prop-types
+  initInfo: PropTypes.object
 };
 
-export default CIdWrapper;
+export default CustomerIdWrapper;
