@@ -9,8 +9,6 @@ import Button from "@react/react-spectrum/Button";
 import Well from "@react/react-spectrum/Well";
 import Heading from "@react/react-spectrum/Heading";
 import Delete from "@react/react-spectrum/Icon/Delete";
-import ModalTrigger from "@react/react-spectrum/ModalTrigger";
-import Dialog from "@react/react-spectrum/Dialog";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import PropTypes from "prop-types";
 import WrappedField from "./wrappedField";
@@ -135,32 +133,21 @@ function CustomerIdWrapper({ values, initInfo }) {
                         </InfoTipLayout>
                       </div>
                       <div className="u-gapTop">
-                        <ModalTrigger>
-                          <Button
-                            id={`deleteButton${index}`}
-                            label="Delete Customer ID"
-                            icon={<Delete />}
-                            variant="action"
-                            disabled={values.customerIds.length === 1}
-                          />
-                          {values.customerIds.length === 1 ? (
-                            <span className="Note u-gapLeft">
-                              You must have at least one customer ID to use this
-                              action.
-                            </span>
-                          ) : null}
-                          <Dialog
-                            title="Delete Customer ID"
-                            id={`deleteCustomerId${index}`}
-                            onConfirm={() => {
-                              arrayHelpers.remove(index);
-                            }}
-                            confirmLabel="Delete"
-                            cancelLabel="Cancel"
-                          >
-                            Would you like to proceed?
-                          </Dialog>
-                        </ModalTrigger>
+                        <Button
+                          id={`deleteButton${index}`}
+                          label="Delete Customer ID"
+                          icon={<Delete />}
+                          disabled={values.customerIds.length === 1}
+                          onClick={() => {
+                            arrayHelpers.remove(index);
+                          }}
+                        />
+                        {values.customerIds.length === 1 ? (
+                          <span className="Note u-gapLeft">
+                            You must have at least one customer ID to use this
+                            action.
+                          </span>
+                        ) : null}
                       </div>
                     </Well>
                   ))}

@@ -212,8 +212,6 @@ test("deletes customer id", async t => {
   });
 
   await customerIds[0].deleteButton.click(t);
-  await customerIds[0].deleteDialog.expectTitle(t, "Delete Customer ID");
-  await customerIds[0].deleteDialog.clickConfirm(t);
   await extensionViewController.expectIsValid(t);
   await extensionViewController.expectSettings(t, {
     instanceName: "alloy99",
