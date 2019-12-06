@@ -100,7 +100,7 @@ function CustomerIdWrapper({ values, initInfo }) {
                         </div>
                       </div>
                       <div className="u-gapTop">
-                        <InfoTipLayout tip="Uses the SHA-256 hashing algorithm that allows you to pass in customer IDs or email addresses, and pass out hashed IDs. This is an optional Javascript method for sending hashed identifiers. You can continue to use your own methods of hashing prior to sending customer IDs.">
+                        <InfoTipLayout tip="Uses the SHA-256 hashing algorithm that allows you to pass in customer IDs or email addresses, and pass out hashed IDs. This is an optional Javascript method for sending hashed identifiers. You can continue to use your own methods of hashing prior to sending customer IDs. Note: if this is set to true for a customer ID and the page is HTTP, the customer ID will be removed from the call because hashing cannot be completed in this case.">
                           <WrappedField
                             name={`customerIds.${index}.hashEnabled`}
                             component={Checkbox}
