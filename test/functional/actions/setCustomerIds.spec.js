@@ -164,26 +164,12 @@ test("shows error for primary value of true that is a duplicate", async t => {
 test("shows error for blank required fields", async t => {
   await extensionViewController.init(t, {
     extensionSettings: mockExtensionSettings,
-    settings: {
-      instanceName: "alloy99",
-      customerIds: [
-        {
-          namespace: "CORE",
-          id: "wvg",
-          authenticatedState: "",
-          primary: true,
-          hashEnabled: true
-        }
-      ]
-    }
+    settings: null
   });
 
-  await customerIds[0].namespaceField.clear(t);
-  await customerIds[0].idField.clear(t);
-  await customerIds[0].namespaceField.expectError(t);
-  await customerIds[0].primaryField.click(t);
-  await customerIds[0].idField.expectError(t);
   await extensionViewController.expectIsNotValid(t);
+  await customerIds[0].namespaceField.expectError(t);
+  await customerIds[0].idField.expectError(t);
   await customerIds[0].authenticatedStateField.expectError(t);
 });
 
