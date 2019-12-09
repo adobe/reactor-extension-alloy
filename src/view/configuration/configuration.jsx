@@ -46,7 +46,7 @@ const getInstanceDefaults = initInfo => ({
   name: "alloy",
   configId: "",
   orgId: initInfo.company.orgId,
-  edgeDomain: "beta.adobedc.net",
+  edgeDomain: "edge.adobedc.net",
   errorsEnabled: true,
   optInEnabled: false,
   idSyncEnabled: true,

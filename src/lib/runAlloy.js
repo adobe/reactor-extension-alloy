@@ -2063,7 +2063,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var EDGE_DOMAIN = "beta.adobedc.net";
+      var EDGE_DOMAIN = "edge.adobedc.net";
       var ID_THIRD_PARTY_DOMAIN = "adobedc.demdex.net";
 
       /*
@@ -5315,7 +5315,7 @@ governing permissions and limitations under the License.
 
 // The value will be swapped with the proper version at build time
 // see rollupPluginReplaceVersion.js
-      var libraryVersion = "0.0.8";
+      var libraryVersion = "0.0.9";
 
       /*
 Copyright 2019 Adobe. All rights reserved.
