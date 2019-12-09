@@ -29,7 +29,7 @@ module.exports = instanceNames => {
 })(window, instanceNames);
 
 /////////////////////////////////
-// LIBRARY CODE: Version 0.0.7
+// LIBRARY CODE
 /////////////////////////////////
   /**
    * Copyright 2019 Adobe. All rights reserved.
