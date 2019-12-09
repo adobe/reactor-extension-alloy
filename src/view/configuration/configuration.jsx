@@ -101,7 +101,7 @@ const getSettings = ({ values, initInfo }) => {
         name: instance.name
       };
 
-      copyPropertiesIfNotDefault(trimmedInstance, instance, instanceDefaults, [
+      const copyPropertyKeys = [
         "configId",
         "orgId",
         "edgeDomain",
@@ -112,9 +112,19 @@ const getSettings = ({ values, initInfo }) => {
         "cookieDestinationsEnabled",
         "prehidingStyle",
         "idMigrationEnabled",
-        "clickCollectionEnabled",
-        "downloadLinkQualifier"
-      ]);
+        "clickCollectionEnabled"
+      ];
+
+      if (instance.clickCollectionEnabled) {
+        copyPropertyKeys.push("downloadLinkQualifier");
+      }
+
+      copyPropertiesIfNotDefault(
+        trimmedInstance,
+        instance,
+        instanceDefaults,
+        copyPropertyKeys
+      );
 
       if (
         instance.idSyncEnabled &&
@@ -206,16 +216,21 @@ const validationSchema = object()
           }
           return validator;
         }),
-        downloadLinkQualifier: string().test({
-          name: "invalidDownloadLinkQualifier",
-          message: "Please provide a valid regular expression.",
-          test(value) {
-            try {
-              return new RegExp(value) !== null;
-            } catch (e) {
-              return false;
-            }
-          }
+        downloadLinkQualifier: string().when("clickCollectionEnabled", {
+          is: true,
+          then: string()
+            .min(1)
+            .test({
+              name: "invalidDownloadLinkQualifier",
+              message: "Please provide a valid regular expression.",
+              test(value) {
+                try {
+                  return new RegExp(value) !== null;
+                } catch (e) {
+                  return false;
+                }
+              }
+            })
         })
       })
     )
@@ -546,7 +561,7 @@ const Configuration = () => {
                           <h3>Data Collection</h3>
 
                           <div className="u-gapTop">
-                            <InfoTipLayout tip="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected or not.">
+                            <InfoTipLayout tip="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected.">
                               <WrappedField
                                 name={`instances.${index}.clickCollectionEnabled`}
                                 component={Checkbox}
@@ -555,7 +570,7 @@ const Configuration = () => {
                             </InfoTipLayout>
                           </div>
                           {values.instances[index].clickCollectionEnabled ? (
-                            <div>
+                            <div className="FieldSubset u-gapTop">
                               <InfoTipLayout tip="Regular expression that qualifies a link URL as a download link.">
                                 <FieldLabel
                                   labelFor="downloadLinkQualifier"

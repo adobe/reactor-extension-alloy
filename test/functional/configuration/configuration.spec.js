@@ -297,6 +297,8 @@ test("returns full valid settings", async t => {
   await instances[1].optInEnabledField.click(t);
   // await instances[1].idSyncEnabledField.click(t);
   await instances[1].idMigrationEnabled.click(t);
+  await instances[1].downloadLinkQualifierField.clear(t);
+  await instances[1].downloadLinkQualifierField.typeText(t, "[]");
   await instances[1].contextGranularity.specificField.click(t);
 
   await extensionViewController.expectIsValid(t);
@@ -321,7 +323,8 @@ test("returns full valid settings", async t => {
         optInEnabled: true,
         // idSyncEnabled: false,
         idMigrationEnabled: false,
-        context: ["web", "device", "environment", "placeContext"]
+        context: ["web", "device", "environment", "placeContext"],
+        downloadLinkQualifier: "[]"
       }
     ]
   });
@@ -419,6 +422,14 @@ test("shows error for duplicate IMS org ID", async t => {
   await accordion.clickHeader(t, "ALLOY");
   await extensionViewController.expectIsNotValid(t);
   await instances[1].orgIdField.expectError(t);
+});
+
+test("shows error for invalid download link qualifier", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].downloadLinkQualifierField.clear(t);
+  await instances[0].downloadLinkQualifierField.typeText(t, "[");
+  await extensionViewController.expectIsNotValid(t);
+  await instances[0].downloadLinkQualifierField.expectError(t);
 });
 
 test("restores default IMS org ID value when restore button is clicked", async t => {
