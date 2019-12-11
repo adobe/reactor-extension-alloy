@@ -586,7 +586,7 @@ const Configuration = () => {
                                 />
                                 <Button
                                   id="downloadLinkQualifierTestButton"
-                                  className="RightButton"
+                                  className="u-gapLeft"
                                   label="Test"
                                   onClick={() => {
                                     const currentPattern =
