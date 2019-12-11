@@ -28,9 +28,9 @@ module.exports = instanceNames => {
   });
 })(window, instanceNames);
 
-/////////////////////////////
+/////////////////////////////////
 // LIBRARY CODE
-/////////////////////////////
+/////////////////////////////////
   /**
    * Copyright 2019 Adobe. All rights reserved.
    * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -534,44 +534,6 @@ governing permissions and limitations under the License.
           deferred.reject = reject;
         });
         return deferred;
-      });
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
-
-      /**
-       * Executes a function that returns promise. If the promise is rejected, the
-       * function will executed again. This will process continue until a promise
-       * returned from the function successfully resolves or the maximum number
-       * of retries has been reached.
-       * @param {Function} fn A function which returns a promise.
-       * @param {number} [maxRetries=3] The max number of retries.
-       */
-      var executeWithRetry = (function (fn) {
-        var maxRetries = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 3;
-        var retryCount = 0;
-
-        var execute = function execute() {
-          return fn().catch(function (e) {
-            if (retryCount < maxRetries) {
-              retryCount += 1;
-              return execute();
-            }
-
-            throw e;
-          });
-        };
-
-        return execute();
       });
 
       /*
@@ -1748,8 +1710,9 @@ governing permissions and limitations under the License.
         var loggerPrefix = "[" + instanceNamespace + "]";
         var parsedQueryString = queryString.parse(locationSearch);
         var storage = createNamespacedStorage("instance." + instanceNamespace + ".");
-        var debugEnabled = storage.session.getItem("debug") === "true";
-        var debugEnabledWritableFromConfig = true;
+        var debugSessionValue = storage.session.getItem("debug");
+        var debugEnabled = debugSessionValue === "true";
+        var debugEnabledWritableFromConfig = debugSessionValue === null;
 
         var getDebugEnabled = function getDebugEnabled() {
           return debugEnabled;
@@ -1796,7 +1759,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 // TO-DOCUMENT: Lifecycle hooks and their params.
-      var hookNames = ["onComponentsRegistered", "onBeforeEvent", "onResponse", "onResponseError", "onBeforeDataCollection", "onClick"];
+      var hookNames = ["onComponentsRegistered", "onBeforeEvent", "onResponse", "onRequestFailure", "onBeforeDataCollection", "onClick"];
 
       var createHook = function createHook(componentRegistry, hookName) {
         return function () {
@@ -1978,46 +1941,113 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
       /**
-       * Represents a gateway response with the addition to helper methods.
-       *
-       * @param {Object} respDto The raw JSON response from the edge gateway
-       *  - Current schema:
-       * {
-       *      requestId: {String},
-       *      handle: [
-       *          { type, payload }
-       *      ]
-       * }
-       *
-       * @returns {Object<Response>} A Response object containing:
-       *  - `getPayloadsByType`: returns matching fragments of the response by type
-       *      - @param {String} type: A string with the current format: <namespace:action>
-       *          example: "identity:persist"
+       * Creates a representation of a gateway response with the addition of
+       * helper methods.
+       * @returns Response
        */
 
       var createResponse = (function () {
-        var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-          requestId: "",
-          handle: []
-        };
-        // TODO: Should we freeze the response to prevent change by Components?
-        // Object.freeze(response.handle.map(h => Object.freeze(h)));
+        var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var _content$handle = content.handle,
+          handle = _content$handle === void 0 ? [] : _content$handle,
+          _content$errors = content.errors,
+          errors = _content$errors === void 0 ? [] : _content$errors,
+          _content$warnings = content.warnings,
+          warnings = _content$warnings === void 0 ? [] : _content$warnings;
+        /**
+         * Response object.
+         * @typedef {Object} Response
+         */
+
         return {
+          /**
+           * Returns matching fragments of the response by type.
+           * @param {String} type A string with the current format: <namespace:action>
+           *
+           * @example
+           * getPayloadsByType("identity:persist")
+           */
           getPayloadsByType: function getPayloadsByType(type) {
-            var _content$handle = content.handle,
-              handle = _content$handle === void 0 ? [] : _content$handle;
             return flatMap(handle.filter(function (fragment) {
               return fragment.type === type;
             }), function (fragment) {
               return fragment.payload;
             });
           },
+
+          /**
+           * Returns all errors.
+           */
+          getErrors: function getErrors() {
+            return errors;
+          },
+
+          /**
+           * Returns all warnings.
+           */
+          getWarnings: function getWarnings() {
+            return warnings;
+          },
           toJSON: function toJSON() {
             return content;
-          } // TODO: Maybe consider the following API as well?
-          // - getPayloadsByAction
-
+          }
         };
+      });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+      /**
+       * Request was successful.
+       */
+      var SUCCESS = "success";
+      /**
+       * Request failed and should not be retried.
+       */
+
+      var FATAL_ERROR = "fatalError";
+      /**
+       * Request failed and can be retried.
+       */
+
+      var RETRYABLE_ERROR = "retryableError";
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+      var STATUS_OK = 200;
+      var STATUS_NO_CONTENT = 204;
+      var STATUS_TOO_MANY_REQUESTS = 429;
+      var getResponseStatusType = (function (statusCode) {
+        // Although other 200 status codes are in the "successful" 2xx range,
+        // they're unexpected and we might not have code in place to successfully
+        // handle them (e.g., what do we do with a 205 Reset Content?)
+        if (statusCode === STATUS_OK || statusCode === STATUS_NO_CONTENT) {
+          return SUCCESS;
+        }
+
+        if (statusCode === STATUS_TOO_MANY_REQUESTS || statusCode >= 500 && statusCode < 600) {
+          return RETRYABLE_ERROR;
+        }
+
+        return FATAL_ERROR;
       });
 
       var apiVersion = "v1";
@@ -2033,7 +2063,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var EDGE_DOMAIN = "beta.adobedc.net";
+      var EDGE_DOMAIN = "edge.adobedc.net";
       var ID_THIRD_PARTY_DOMAIN = "adobedc.demdex.net";
 
       /*
@@ -2057,13 +2087,24 @@ governing permissions and limitations under the License.
           var parsedBody;
 
           try {
+            // One of the cases where the response body is not JSON is when
+            // JAG throws an error. In this case, the response will be plain text
+            // explaining what went wrong.
             parsedBody = JSON.parse(responseBody);
           } catch (e) {
-            throw new Error("Error parsing server response.\n" + e + "\nResponse body: " + responseBody);
+            throw new Error("Unexpected server response.\n" + e + "\nResponse body: " + responseBody);
           }
 
           logger.log("Request " + requestId + ": Received response.", parsedBody);
-          var response = createResponse(parsedBody);
+          var response = createResponse(parsedBody); // TODO Document that onResponse will be called when Konductor
+          // sends a well-formed response even if that response contains
+          // error objects. This is because even when there are error objects
+          // there can be "handle" payloads to act upon. Also document
+          // that onRequestFailure will be called when the network request
+          // itself failed (e.g., no internet connection), when JAG throws an
+          // error (the request never made it to Konductor), or when
+          // Konductor returns a malformed response.
+
           return lifecycle.onResponse({
             response: response,
             requestId: requestId
@@ -2130,9 +2171,24 @@ governing permissions and limitations under the License.
                 logger.log("Request " + requestId + ": Sending request" + responseHandlingMessage + ".", JSON.parse(stringifiedPayload));
               }
 
-              return executeWithRetry(function () {
-                return networkStrategy(url, stringifiedPayload, documentUnloading);
-              }, 3);
+              var executeRequest = function executeRequest() {
+                var retriesAttempted = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+                return networkStrategy(url, stringifiedPayload, documentUnloading).then(function (result) {
+                  var statusType = getResponseStatusType(result.status);
+
+                  if (statusType === SUCCESS) {
+                    return result.body;
+                  }
+
+                  if (statusType === RETRYABLE_ERROR && retriesAttempted < 3) {
+                    return executeRequest(retriesAttempted + 1);
+                  }
+
+                  throw new Error("Unexpected response status code " + result.status + ". Response was: " + result.body);
+                });
+              };
+
+              return executeRequest();
             }).catch(function (error) {
               throw stackError("Network request failed.", error);
             }).then(function (responseBody) {
@@ -2144,12 +2200,12 @@ governing permissions and limitations under the License.
 
               return handleResponsePromise;
             }).catch(function (error) {
-              // The network error that just occurred is more important than
-              // any error that may occur in lifecycle.onResponseError(). For
-              // that reason, we make sure the network error is the one that
-              // bubbles up. We also wait until lifecycle.onResponseError is
+              // The error that we caught is more important than
+              // any error that may have occurred in lifecycle.onResponseError().
+              // For that reason, we make sure the caught error is the one that
+              // bubbles up. We also wait until lifecycle.onRequestFailure is
               // complete before returning, so that any error that may occur
-              // in lifecycle.onResponseError is properly suppressed if the
+              // in lifecycle.onRequestFailure is properly suppressed if the
               // user has errorsEnabled: false in the configuration.
               // We could use finally() here, but just to be safe, we don't,
               // because finally() is only recently supported natively and may
@@ -2158,8 +2214,7 @@ governing permissions and limitations under the License.
                 throw error;
               };
 
-              return lifecycle.onResponseError({
-                error: error,
+              return lifecycle.onRequestFailure({
                 requestId: requestId
               }).then(throwError, throwError);
             });
@@ -2407,7 +2462,7 @@ governing permissions and limitations under the License.
               throw new Error("The library must be configured first. Please do so by executing the configure command.");
             }
 
-            if (commandName === "log") {
+            if (commandName === "debug") {
               execute = function execute() {
                 return debugCommand(options);
               };
@@ -3075,14 +3130,11 @@ governing permissions and limitations under the License.
           }
 
           if (isValidLink) {
-            if (linkType === "exit") {
-              event.documentUnloading();
-            }
-
+            event.documentUnloading();
             event.mergeXdm({
               eventType: "web.webinteraction.linkClicks",
               web: {
-                webinteraction: {
+                webInteraction: {
                   name: linkName,
                   type: linkType,
                   URL: linkUrl,
@@ -3329,7 +3381,7 @@ governing permissions and limitations under the License.
         var hash = function hash(originalIds, normalizedIds) {
           var idNames = Object.keys(normalizedIds);
           var idsToHash = idNames.filter(function (idName) {
-            return originalIds[idName].hash;
+            return originalIds[idName].hashEnabled;
           });
           var idHashPromises = idsToHash.map(function (id) {
             return convertStringToSha256Buffer(normalizedIds[id].id);
@@ -3392,20 +3444,24 @@ governing permissions and limitations under the License.
       });
 
       var createMigration = (function (orgId, idMigrationEnabled) {
+        var amcvCookieName = "AMCV_" + orgId;
         return {
-          getEcidFromAmcvCookie: function getEcidFromAmcvCookie(identityCookieJar) {
+          getEcidFromLegacyCookie: function getEcidFromLegacyCookie(identityCookieJar) {
             var ecid = null;
+            var legacyItpCookieName = "s_ecid";
 
             if (idMigrationEnabled) {
-              var amcvCookieValue = cookie.get("AMCV_" + orgId);
+              var legacyEcidCookieValue = cookie.get(legacyItpCookieName) || cookie.get(amcvCookieName);
 
-              if (amcvCookieValue) {
+              if (legacyEcidCookieValue) {
                 var reg = /(^|\|)MCMID\|(\d+)($|\|)/;
-                var matches = amcvCookieValue.match(reg); // Destructuring arrays breaks in IE
-                // eslint-disable-next-line prefer-destructuring
+                var matches = legacyEcidCookieValue.match(reg);
 
-                ecid = matches[2];
-                identityCookieJar.set(EXPERIENCE_CLOUD_ID, ecid);
+                if (matches) {
+                  // Destructuring arrays breaks in IE
+                  ecid = matches[2];
+                  identityCookieJar.set(EXPERIENCE_CLOUD_ID, ecid);
+                }
               }
             }
 
@@ -3413,10 +3469,10 @@ governing permissions and limitations under the License.
           },
           createAmcvCookie: function createAmcvCookie(ecid) {
             if (idMigrationEnabled) {
-              var amcvCookieValue = cookie.get("AMCV_" + orgId);
+              var amcvCookieValue = cookie.get(amcvCookieName);
 
               if (!amcvCookieValue) {
-                cookie.set("AMCV_" + orgId, "MCMID|" + ecid);
+                cookie.set(amcvCookieName, "MCMID|" + ecid);
               }
             }
           }
@@ -3498,7 +3554,7 @@ governing permissions and limitations under the License.
         var migration = createMigration(orgId, idMigrationEnabled); // TODO: Fetch from server if ECID is not available.
 
         var _getEcid = function getEcid() {
-          var ecid = cookieJar.get(EXPERIENCE_CLOUD_ID) || migration.getEcidFromAmcvCookie(cookieJar);
+          var ecid = cookieJar.get(EXPERIENCE_CLOUD_ID) || migration.getEcidFromLegacyCookie(cookieJar);
           return ecid;
         }; // This is a way for the ECID data element in the Reactor extension
         // to get the ECID synchronously since data elements are required
@@ -5010,7 +5066,7 @@ governing permissions and limitations under the License.
               executeFragments(fragments, ruleComponentModules, logger);
               showContainers();
             },
-            onResponseError: function onResponseError() {
+            onRequestFailure: function onRequestFailure() {
               showContainers();
             },
             onClick: function onClick(_ref4) {
@@ -5259,7 +5315,7 @@ governing permissions and limitations under the License.
 
 // The value will be swapped with the proper version at build time
 // see rollupPluginReplaceVersion.js
-      var libraryVersion = "0.0.1-alpha.8";
+      var libraryVersion = "0.0.9";
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -5747,12 +5803,13 @@ governing permissions and limitations under the License.
 
             request.onreadystatechange = function () {
               if (request.readyState === 4) {
-                if (request.status === 204) {
-                  resolve();
-                } else if (request.status >= 200 && request.status < 300) {
-                  resolve(request.responseText);
+                if (request.status === 0) {
+                  reject(new Error("Request aborted."));
                 } else {
-                  reject(new Error("Invalid response code " + request.status + ". Response was \"" + request.responseText + "\"."));
+                  resolve({
+                    status: request.status,
+                    body: request.responseText
+                  });
                 }
               }
             };
@@ -5793,15 +5850,12 @@ governing permissions and limitations under the License.
             referrer: "client",
             body: body
           }).then(function (response) {
-            if (response.ok) {
-              if (response.status === 204) {
-                return undefined;
-              }
-
-              return response.text();
-            }
-
-            throw new Error("Bad response code: " + response.status);
+            return response.text().then(function (responseBody) {
+              return {
+                status: response.status,
+                body: responseBody
+              };
+            });
           });
         };
       });
@@ -5826,9 +5880,15 @@ governing permissions and limitations under the License.
           if (!navigator.sendBeacon(url, blob)) {
             logger.log("The `beacon` call has failed; falling back to `fetch`");
             return fetch(url, body);
-          }
+          } // Using sendBeacon, we technically don't get a response back from
+          // the server, but we'll resolve the promise with an object to maintain
+          // consistency with other network strategies.
 
-          return Promise.resolve();
+
+          return Promise.resolve({
+            status: 204,
+            body: ""
+          });
         };
       });
 
@@ -6011,15 +6071,27 @@ governing permissions and limitations under the License.
                 useIdThirdPartyDomain: payload.shouldUseIdThirdPartyDomain
               });
             }).then(function (response) {
-              var returnData = {
-                requestBody: clone(payload)
-              };
-
-              if (response) {
-                returnData.responseBody = clone(response);
+              if (!response) {
+                return;
               }
 
-              return returnData;
+              var warnings = response.getWarnings();
+              var errors = response.getErrors();
+              warnings.forEach(function (warning) {
+                logger.warn("Warning received from server: [Code " + warning.code + "] " + warning.message);
+              });
+
+              if (errors.length) {
+                var errorMessage = errors.reduce(function (memo, error) {
+                  return memo + "\n\u2022 [Code " + error.code + "] " + error.message;
+                }, "The server responded with the following errors:");
+                throw new Error(errorMessage);
+              } // We don't want to expose the response to the customer, so
+              // we'll stop its propagation at this point. Later, we may wish
+              // to allow the response to propagate out of the event manager
+              // but not let it propagate beyond the components using the event
+              // manager.
+
             });
           }
         };
@@ -6174,5 +6246,10 @@ governing permissions and limitations under the License.
 
     })();
   }
+
+
+/////////////////////////////////
+// End Library Code
+/////////////////////////////////
 
 };

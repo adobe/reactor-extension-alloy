@@ -103,7 +103,7 @@ fixture("Extension Configuration View").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
-const defaultEdgeDomain = "beta.adobedc.net";
+const defaultEdgeDomain = "edge.adobedc.net";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
 
