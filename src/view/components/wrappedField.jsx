@@ -44,7 +44,7 @@ const getNestedValue = (obj, path) => {
 const noop = () => {};
 
 export class DecoratedInput extends React.Component {
-  openDataElementSelector = () => {
+  openDataElementSelector = replace => {
     const {
       field: { onChange, value = "", name }
     } = this.props;
@@ -53,7 +53,7 @@ export class DecoratedInput extends React.Component {
     // is. If we're not dealing with a token, we replace the value entirely. This is just due
     // to how we want the UX to flow.
     window.extensionBridge.openDataElementSelector().then(dataElement => {
-      const newValue = `${value}${dataElement}`;
+      const newValue = replace ? dataElement : `${value}${dataElement}`;
       onChange(newValue, { target: { value: newValue, name } });
     });
   };
@@ -127,7 +127,9 @@ export class DecoratedInput extends React.Component {
           <Button
             variant="tool"
             icon={<Data />}
-            onClick={this.openDataElementSelector}
+            onClick={() =>
+              this.openDataElementSelector(supportDataElement.replace)
+            }
           />
         ) : null}
       </ValidationWrapper>
@@ -144,7 +146,7 @@ DecoratedInput.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   form: PropTypes.object.isRequired,
   children: PropTypes.node,
-  supportDataElement: PropTypes.bool,
+  supportDataElement: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
   errorTooltipPlacement: PropTypes.oneOf(["top", "right", "bottom", "left"]),
   onChange: PropTypes.func,
   onBlur: PropTypes.func

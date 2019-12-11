@@ -581,7 +581,7 @@ const Configuration = () => {
                                 name={`instances.${index}.onBeforeEventSend`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
-                                supportDataElement
+                                supportDataElement={{ replace: true }}
                               />
                             </div>
                           </div>
