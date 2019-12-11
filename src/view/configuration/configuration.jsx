@@ -585,6 +585,23 @@ const Configuration = () => {
                                   componentClassName="u-fieldLong"
                                 />
                                 <Button
+                                  id="downloadLinkQualifierTestButton"
+                                  className="RightButton"
+                                  label="Test"
+                                  onClick={() => {
+                                    const currentPattern = values.instances[index].downloadLinkQualifier;
+                                    window.extensionBridge.openRegexTester({pattern: currentPattern}).then(function(newPattern) {
+                                      values.instances[index].downloadLinkQualifier = newPattern;
+                                      setFieldValue(
+                                        `instances.${index}.downloadLinkQualifier`,
+                                        newPattern
+                                      );
+                                    });
+                                  }}
+                                  quiet
+                                  variant="quiet"
+                                />
+                                <Button
                                   id="downloadLinkQualifierRestoreButton"
                                   label="Restore to default"
                                   onClick={() => {

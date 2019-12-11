@@ -76,6 +76,9 @@ for (let i = 0; i < 2; i += 1) {
     downloadLinkQualifierRestoreButton: spectrum.button(
       Selector(`#downloadLinkQualifierRestoreButton`)
     ),
+    downloadLinkQualifierTestButton: spectrum.button(
+      Selector(`#downloadLinkQualifierTestButton`)
+    ),
     contextGranularity: {
       allField: spectrum.radio(
         Selector(`[name='instances.${i}.contextGranularity'][value=all]`)
@@ -455,6 +458,17 @@ test("restores default download link qualifier when restore button is clicked", 
     defaultDownloadLinkQualifier
   );
 });
+
+test("sets download link qualifier when test button is clicked", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].downloadLinkQualifierTestButton.click(t);
+  // openRegexTester returns Edited Regex ### in the sandbox environment
+  await instances[0].downloadLinkQualifierField.expectMatch(
+    t,
+    /^Edited Regex/
+  );
+});
+
 
 // test("shows error for ID sync container ID value that is a negative number", async t => {
 //   await extensionViewController.init(t, defaultInitInfo);
