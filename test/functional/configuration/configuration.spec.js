@@ -463,12 +463,8 @@ test("sets download link qualifier when test button is clicked", async t => {
   await extensionViewController.init(t, defaultInitInfo);
   await instances[0].downloadLinkQualifierTestButton.click(t);
   // openRegexTester returns Edited Regex ### in the sandbox environment
-  await instances[0].downloadLinkQualifierField.expectMatch(
-    t,
-    /^Edited Regex/
-  );
+  await instances[0].downloadLinkQualifierField.expectMatch(t, /^Edited Regex/);
 });
-
 
 // test("shows error for ID sync container ID value that is a negative number", async t => {
 //   await extensionViewController.init(t, defaultInitInfo);
