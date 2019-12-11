@@ -56,7 +56,10 @@ const getInstanceDefaults = initInfo => ({
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions,
-  idMigrationEnabled: true
+  idMigrationEnabled: true,
+  clickCollectionEnabled: true,
+  downloadLinkQualifier:
+    "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$"
 });
 
 const createDefaultInstance = initInfo =>
@@ -98,7 +101,7 @@ const getSettings = ({ values, initInfo }) => {
         name: instance.name
       };
 
-      copyPropertiesIfNotDefault(trimmedInstance, instance, instanceDefaults, [
+      const copyPropertyKeys = [
         "configId",
         "orgId",
         "edgeDomain",
@@ -108,8 +111,20 @@ const getSettings = ({ values, initInfo }) => {
         "urlDestinationsEnabled",
         "cookieDestinationsEnabled",
         "prehidingStyle",
-        "idMigrationEnabled"
-      ]);
+        "idMigrationEnabled",
+        "clickCollectionEnabled"
+      ];
+
+      if (instance.clickCollectionEnabled) {
+        copyPropertyKeys.push("downloadLinkQualifier");
+      }
+
+      copyPropertiesIfNotDefault(
+        trimmedInstance,
+        instance,
+        instanceDefaults,
+        copyPropertyKeys
+      );
 
       if (
         instance.idSyncEnabled &&
@@ -200,6 +215,22 @@ const validationSchema = object()
             });
           }
           return validator;
+        }),
+        downloadLinkQualifier: string().when("clickCollectionEnabled", {
+          is: true,
+          then: string()
+            .min(1)
+            .test({
+              name: "invalidDownloadLinkQualifier",
+              message: "Please provide a valid regular expression.",
+              test(value) {
+                try {
+                  return new RegExp(value) !== null;
+                } catch (e) {
+                  return false;
+                }
+              }
+            })
         })
       })
     )
@@ -527,8 +558,75 @@ const Configuration = () => {
                             </div>
                           </div> */}
 
-                          <h3>Context</h3>
+                          <h3>Data Collection</h3>
 
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected.">
+                              <WrappedField
+                                name={`instances.${index}.clickCollectionEnabled`}
+                                component={Checkbox}
+                                label="Enable click data collection"
+                              />
+                            </InfoTipLayout>
+                          </div>
+                          {values.instances[index].clickCollectionEnabled ? (
+                            <div className="FieldSubset u-gapTop">
+                              <InfoTipLayout tip="Regular expression that qualifies a link URL as a download link.">
+                                <FieldLabel
+                                  labelFor="downloadLinkQualifier"
+                                  label="Download Link Qualifier"
+                                />
+                              </InfoTipLayout>
+                              <div>
+                                <WrappedField
+                                  id="downloadLinkQualifierField"
+                                  name={`instances.${index}.downloadLinkQualifier`}
+                                  component={Textfield}
+                                  componentClassName="u-fieldLong"
+                                />
+                                <Button
+                                  id="downloadLinkQualifierTestButton"
+                                  className="u-gapLeft"
+                                  label="Test"
+                                  onClick={() => {
+                                    const currentPattern =
+                                      values.instances[index]
+                                        .downloadLinkQualifier;
+                                    window.extensionBridge
+                                      .openRegexTester({
+                                        pattern: currentPattern
+                                      })
+                                      .then(newPattern => {
+                                        values.instances[
+                                          index
+                                        ].downloadLinkQualifier = newPattern;
+                                        setFieldValue(
+                                          `instances.${index}.downloadLinkQualifier`,
+                                          newPattern
+                                        );
+                                      });
+                                  }}
+                                  quiet
+                                  variant="quiet"
+                                />
+                                <Button
+                                  id="downloadLinkQualifierRestoreButton"
+                                  label="Restore to default"
+                                  onClick={() => {
+                                    const instanceDefaults = getInstanceDefaults(
+                                      initInfo
+                                    );
+                                    setFieldValue(
+                                      `instances.${index}.downloadLinkQualifier`,
+                                      instanceDefaults.downloadLinkQualifier
+                                    );
+                                  }}
+                                  quiet
+                                  variant="quiet"
+                                />
+                              </div>
+                            </div>
+                          ) : null}
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Indicates which categories of context information should be automatically collected.">
                               <FieldLabel
@@ -562,7 +660,6 @@ const Configuration = () => {
                               />
                             </div>
                           ) : null}
-
                           <div className="u-gapTop2x">
                             <ModalTrigger>
                               <Button

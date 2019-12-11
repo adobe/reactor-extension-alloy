@@ -48,6 +48,15 @@ const createExpectValue = selector => async (t, value) => {
   await t.expect(selector.getAttribute("value")).eql(value);
 };
 
+const createExpectMatch = selector => async (t, value) => {
+  await switchToIframe(t);
+  // We need to use the value attribute instead of property
+  // because some react-spectrum components, like Select,
+  // don't set the value property on the primary DOM element
+  // but instead use an attribute.
+  await t.expect(selector.getAttribute("value")).match(value);
+};
+
 const createClick = selector => async t => {
   await switchToIframe(t);
   await t.click(selector);
@@ -127,6 +136,7 @@ const componentWrappers = {
     return {
       expectError: createExpectError(selector),
       expectValue: createExpectValue(selector),
+      expectMatch: createExpectMatch(selector),
       async typeText(t, text) {
         await switchToIframe(t);
         await t.typeText(selector, text);
