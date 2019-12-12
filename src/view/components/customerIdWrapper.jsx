@@ -18,24 +18,6 @@ import InfoTipLayout from "./infoTipLayout";
 import getInstanceOptions from "../utils/getInstanceOptions";
 
 function CustomerIdWrapper({ values, initInfo }) {
-  // TODO: implement in the future
-  /*
-  const [namespaceOptions, setNamespaceOptions] = useState([]);
-  const [error, setError] = useState();
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const nOptions = await loadIdentityNamespaces();
-
-        setNamespaceOptions(nOptions);
-      } catch (error) {}
-    }
-
-    fetchData();
-  }, []);
-*/
-
   return (
     <React.Fragment>
       <FieldLabel labelFor="instanceName" label="Instance" />

@@ -112,11 +112,6 @@ const SetCustomerIds = () => {
       render={({ formikProps, initInfo }) => {
         const { values } = formikProps;
 
-        // updatePlatformRequestSettings({
-        //   imsOrgId: initInfo.company.orgId,
-        //   token: initInfo.tokens.imsAccess
-        // });
-
         return (
           <CustomerIdWrapper
             values={values}
