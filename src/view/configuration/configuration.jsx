@@ -171,7 +171,7 @@ const idSyncContainerIdValidationMessage =
   "Please specify a non-negative integer or data element for the container ID.";
 
 const onBeforeEventSendValidationMessage =
-  "Please specify a data element for the onBeforeEventSend callback.";
+  "Please specify a data element.";
 
 const validationSchema = object()
   .shape({
@@ -354,7 +354,7 @@ const Configuration = () => {
                                 name={`instances.${index}.name`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
-                                supportDataElement
+                                supportDataElement="replace"
                               />
                             </div>
                             {// If we're editing an existing configuration and the name changes.
@@ -389,7 +389,7 @@ const Configuration = () => {
                                 name={`instances.${index}.configId`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
-                                supportDataElement
+                                supportDataElement="replace"
                               />
                             </div>
                           </div>
@@ -406,7 +406,7 @@ const Configuration = () => {
                                 name={`instances.${index}.orgId`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
-                                supportDataElement
+                                supportDataElement="replace"
                               />
                               <Button
                                 id="orgIdRestoreButton"
@@ -443,7 +443,7 @@ const Configuration = () => {
                                 name={`instances.${index}.edgeDomain`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
-                                supportDataElement
+                                supportDataElement="replace"
                               />
                               <Button
                                 id="edgeDomainRestoreButton"
@@ -510,7 +510,7 @@ const Configuration = () => {
                                   name={`instances.${index}.idSyncContainerId`}
                                   component={Textfield}
                                   componentClassName="u-fieldLong"
-                                  supportDataElement
+                                  supportDataElement="replace"
                                 />
                               </div>
                             </div>
@@ -581,7 +581,7 @@ const Configuration = () => {
                                 name={`instances.${index}.onBeforeEventSend`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
-                                supportDataElement={{ replace: true }}
+                                supportDataElement="replace"
                               />
                             </div>
                           </div>

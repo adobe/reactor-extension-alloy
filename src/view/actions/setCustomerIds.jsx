@@ -112,12 +112,7 @@ const SetCustomerIds = () => {
       render={({ formikProps, initInfo }) => {
         const { values } = formikProps;
 
-        return (
-          <CustomerIdWrapper
-            values={values}
-            initInfo={initInfo}
-          ></CustomerIdWrapper>
-        );
+        return <CustomerIdWrapper values={values} initInfo={initInfo} />;
       }}
     />
   );
