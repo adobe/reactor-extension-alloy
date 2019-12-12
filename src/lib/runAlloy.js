@@ -254,35 +254,20 @@ governing permissions and limitations under the License.
         return obj;
       }
 
-      function ownKeys(object, enumerableOnly) {
-        var keys = Object.keys(object);
-
-        if (Object.getOwnPropertySymbols) {
-          var symbols = Object.getOwnPropertySymbols(object);
-          if (enumerableOnly) symbols = symbols.filter(function (sym) {
-            return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-          });
-          keys.push.apply(keys, symbols);
-        }
-
-        return keys;
-      }
-
-      function _objectSpread2(target) {
+      function _objectSpread(target) {
         for (var i = 1; i < arguments.length; i++) {
           var source = arguments[i] != null ? arguments[i] : {};
+          var ownKeys = Object.keys(source);
 
-          if (i % 2) {
-            ownKeys(source, true).forEach(function (key) {
-              _defineProperty(target, key, source[key]);
-            });
-          } else if (Object.getOwnPropertyDescriptors) {
-            Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-          } else {
-            ownKeys(source).forEach(function (key) {
-              Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-            });
+          if (typeof Object.getOwnPropertySymbols === 'function') {
+            ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
+              return Object.getOwnPropertyDescriptor(source, sym).enumerable;
+            }));
           }
+
+          ownKeys.forEach(function (key) {
+            _defineProperty(target, key, source[key]);
+          });
         }
 
         return target;
@@ -349,10 +334,6 @@ governing permissions and limitations under the License.
       }
 
       function _iterableToArrayLimit(arr, i) {
-        if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-          return;
-        }
-
         var _arr = [];
         var _n = true;
         var _d = false;
@@ -882,6 +863,18 @@ governing permissions and limitations under the License.
 
         return null;
       });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 
       var fireOnPage = fireImage;
       var IFRAME_ATTRS = {
@@ -1588,6 +1581,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
       var safeJSONParse = function safeJSONParse(object, cookieName) {
         try {
           return JSON.parse(object);
@@ -1655,7 +1660,7 @@ governing permissions and limitations under the License.
           set: function set(key, value) {
             var currentCookie = cookieProxy.get() || {};
 
-            var updatedCookie = _objectSpread2({}, currentCookie, _defineProperty({}, componentNamespace, _objectSpread2({}, currentCookie[componentNamespace], _defineProperty({}, key, value))));
+            var updatedCookie = _objectSpread({}, currentCookie, _defineProperty({}, componentNamespace, _objectSpread({}, currentCookie[componentNamespace], _defineProperty({}, key, value))));
 
             cookieProxy.set(updatedCookie);
           },
@@ -1668,7 +1673,7 @@ governing permissions and limitations under the License.
             var currentCookie = cookieProxy.get();
 
             if (currentCookie && currentCookie[componentNamespace]) {
-              var updatedCookie = _objectSpread2({}, currentCookie, _defineProperty({}, componentNamespace, _objectSpread2({}, currentCookie[componentNamespace])));
+              var updatedCookie = _objectSpread({}, currentCookie, _defineProperty({}, componentNamespace, _objectSpread({}, currentCookie[componentNamespace])));
 
               delete updatedCookie[componentNamespace][key];
               cookieProxy.set(updatedCookie);
@@ -3309,7 +3314,6 @@ governing permissions and limitations under the License.
       var LOGGED_OUT = "loggedOut";
 
       var AUTH_STATES = /*#__PURE__*/Object.freeze({
-        __proto__: null,
         AMBIGUOUS: AMBIGUOUS,
         AUTHENTICATED: AUTHENTICATED,
         LOGGED_OUT: LOGGED_OUT
@@ -3402,7 +3406,7 @@ governing permissions and limitations under the License.
 
         var setState = function setState(customerIdChanged, normalizedIds) {
           state.haveChanged = customerIdChanged;
-          state.ids = _objectSpread2({}, state.ids, {}, normalizedIds);
+          state.ids = _objectSpread({}, state.ids, normalizedIds);
           state.hasIds = !!Object.keys(state.ids).length;
         };
 
@@ -4296,6 +4300,18 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
       var PREHIDING_ID = "alloy-prehiding";
       var HIDING_STYLE_DEFINITION = "{ visibility: hidden }"; // Using global is OK since we have a single DOM
 // so storing nodes even for multiple Alloy instances is fine
@@ -4806,7 +4822,7 @@ governing permissions and limitations under the License.
           replaceHtml: createAction(collect, replaceHtml),
           prependHtml: createAction(collect, prependHtml),
           appendHtml: createAction(collect, appendHtml),
-          click: function click(settings) {
+          click: function click$$1(settings) {
             return _click(settings, store);
           }
         };
@@ -4921,6 +4937,18 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
       var matchesSelectorWithEq = (function (selector, element) {
         if (isNotEqSelector(selector)) {
           return matchesSelector(selector, element);
@@ -4989,7 +5017,7 @@ governing permissions and limitations under the License.
 
       var mergeMeta = function mergeMeta(event, meta) {
         event.mergeMeta({
-          personalization: _objectSpread2({}, meta)
+          personalization: _objectSpread({}, meta)
         });
       };
 
@@ -6247,9 +6275,8 @@ governing permissions and limitations under the License.
     })();
   }
 
-
-/////////////////////////////////
-// End Library Code
-/////////////////////////////////
+/////////////////////////////
+// END OF LIBRARY CODE
+/////////////////////////////
 
 };
