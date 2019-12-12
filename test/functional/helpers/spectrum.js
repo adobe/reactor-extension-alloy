@@ -16,6 +16,7 @@ const iframe = Selector("#extensionViewIframe");
 const popoverSelector = Selector(".spectrum-Popover");
 const menuItemLabelCssSelector = ".spectrum-Menu-itemLabel";
 const isInvalidClassName = "is-invalid";
+const invalidAttribute = "aria-invalid";
 
 const switchToIframe = async t => {
   // We need to make sure we're inside the iframe.
@@ -37,6 +38,11 @@ const createExpectError = selector => async t => {
   await t
     .expect(selector.hasClass(isInvalidClassName))
     .ok("Expected field to have error when it did not");
+};
+
+const createExpectErrorByAttribute = selector => async t => {
+  await switchToIframe(t);
+  await t.expect(selector.getAttribute(invalidAttribute)).eql("true");
 };
 
 const createExpectValue = selector => async (t, value) => {
@@ -149,6 +155,7 @@ const componentWrappers = {
   },
   checkbox(selector) {
     return {
+      expectError: createExpectErrorByAttribute(selector),
       expectChecked: createExpectChecked(selector),
       expectUnchecked: createExpectUnchecked(selector),
       click: createClick(selector)

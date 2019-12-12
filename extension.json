@@ -170,6 +170,60 @@
       },
       "libPath": "dist/lib/actions/setOptInPreferences/index.js",
       "viewPath": "actions/setOptInPreferences.html"
+    },
+    {
+      "displayName": "Set Customer IDs",
+      "name": "set-customer-ids",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "instanceName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "customerIds": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "namespace": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "authenticatedState": {
+                  "type": "string",
+                  "enum": ["ambiguous", "authenticated", "loggedOut"]
+                },
+                "primary": {
+                  "type": "boolean"
+                },
+                "hashEnabled": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "namespace",
+                "id",
+                "authenticatedState"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "instanceName",
+          "customerIds"
+        ],
+        "additionalProperties": false
+      },
+      "libPath": "dist/lib/actions/setCustomerIds/index.js",
+      "viewPath": "actions/setCustomerIds.html"
     }
   ],
   "dataElements": [
