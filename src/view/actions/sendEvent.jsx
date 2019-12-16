@@ -130,7 +130,7 @@ const SendEvent = () => {
                   name="type"
                   component={ComboBox}
                   componentClassName="u-fieldLong"
-                  supportDataElement
+                  supportDataElement="replace"
                   allowCreate
                   options={knownEventTypes}
                 />
@@ -150,7 +150,7 @@ const SendEvent = () => {
                   name="xdm"
                   component={Textfield}
                   componentClassName="u-fieldLong"
-                  supportDataElement
+                  supportDataElement="replace"
                 />
               </div>
             </div>
@@ -170,7 +170,7 @@ const SendEvent = () => {
                   name="mergeId"
                   component={Textfield}
                   componentClassName="u-fieldLong"
-                  supportDataElement
+                  supportDataElement="replace"
                 />
               </div>
             </div>

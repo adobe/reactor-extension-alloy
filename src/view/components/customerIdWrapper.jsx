@@ -77,7 +77,7 @@ function CustomerIdWrapper({ values, initInfo }) {
                             name={`customerIds.${index}.id`}
                             component={Textfield}
                             componentClassName="u-fieldLong"
-                            supportDataElement
+                            supportDataElement="replace"
                           />
                         </div>
                       </div>
