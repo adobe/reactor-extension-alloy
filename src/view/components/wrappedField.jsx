@@ -46,14 +46,18 @@ const noop = () => {};
 export class DecoratedInput extends React.Component {
   openDataElementSelector = () => {
     const {
-      field: { onChange, value = "", name }
+      field: { onChange, value = "", name },
+      supportDataElement
     } = this.props;
 
     // Whenever we're dealing with a data element token, we add it to whatever the existing value
     // is. If we're not dealing with a token, we replace the value entirely. This is just due
     // to how we want the UX to flow.
     window.extensionBridge.openDataElementSelector().then(dataElement => {
-      const newValue = `${value}${dataElement}`;
+      const newValue =
+        supportDataElement === "replace"
+          ? dataElement
+          : `${value}${dataElement}`;
       onChange(newValue, { target: { value: newValue, name } });
     });
   };
@@ -144,7 +148,7 @@ DecoratedInput.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   form: PropTypes.object.isRequired,
   children: PropTypes.node,
-  supportDataElement: PropTypes.bool,
+  supportDataElement: PropTypes.string,
   errorTooltipPlacement: PropTypes.oneOf(["top", "right", "bottom", "left"]),
   onChange: PropTypes.func,
   onBlur: PropTypes.func

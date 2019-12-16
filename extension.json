@@ -84,6 +84,10 @@
                   "type": "string",
                   "enum": ["web", "device", "environment", "placeContext"]
                 }
+              },
+              "onBeforeEventSend": {
+                "type": "string",
+                "pattern": "^%[^%]+%$"                  
               }
             },
             "required": [

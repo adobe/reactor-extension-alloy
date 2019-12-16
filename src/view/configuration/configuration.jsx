@@ -58,6 +58,7 @@ const getInstanceDefaults = initInfo => ({
   context: contextOptions,
   idMigrationEnabled: true,
   clickCollectionEnabled: true,
+  onBeforeEventSend: "",
   downloadLinkQualifier:
     "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$"
 });
@@ -112,6 +113,7 @@ const getSettings = ({ values, initInfo }) => {
         "cookieDestinationsEnabled",
         "prehidingStyle",
         "idMigrationEnabled",
+        "onBeforeEventSend",
         "clickCollectionEnabled"
       ];
 
@@ -167,6 +169,9 @@ const validateDuplicateValue = (createError, instances, key, message) => {
 
 const idSyncContainerIdValidationMessage =
   "Please specify a non-negative integer or data element for the container ID.";
+
+const onBeforeEventSendValidationMessage =
+  "Please specify a data element.";
 
 const validationSchema = object()
   .shape({
@@ -231,6 +236,10 @@ const validationSchema = object()
                 }
               }
             })
+        }),
+        onBeforeEventSend: string().matches(singleDataElementRegex, {
+          message: onBeforeEventSendValidationMessage,
+          excludeEmptyString: true
         })
       })
     )
@@ -345,7 +354,7 @@ const Configuration = () => {
                                 name={`instances.${index}.name`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
-                                supportDataElement
+                                supportDataElement="replace"
                               />
                             </div>
                             {// If we're editing an existing configuration and the name changes.
@@ -380,7 +389,7 @@ const Configuration = () => {
                                 name={`instances.${index}.configId`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
-                                supportDataElement
+                                supportDataElement="replace"
                               />
                             </div>
                           </div>
@@ -397,7 +406,7 @@ const Configuration = () => {
                                 name={`instances.${index}.orgId`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
-                                supportDataElement
+                                supportDataElement="replace"
                               />
                               <Button
                                 id="orgIdRestoreButton"
@@ -434,7 +443,7 @@ const Configuration = () => {
                                 name={`instances.${index}.edgeDomain`}
                                 component={Textfield}
                                 componentClassName="u-fieldLong"
-                                supportDataElement
+                                supportDataElement="replace"
                               />
                               <Button
                                 id="edgeDomainRestoreButton"
@@ -501,7 +510,7 @@ const Configuration = () => {
                                   name={`instances.${index}.idSyncContainerId`}
                                   component={Textfield}
                                   componentClassName="u-fieldLong"
-                                  supportDataElement
+                                  supportDataElement="replace"
                                 />
                               </div>
                             </div>
@@ -559,7 +568,23 @@ const Configuration = () => {
                           </div> */}
 
                           <h3>Data Collection</h3>
-
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="If you want to add, remove, or modify fields from the event globally, you can configure an `onBeforeEventSend` callback. This callback will be called everytime an event is sent. This callback passes an object with a `xdm` field. Modify the `xdm` object to change the data that is sent in the event.">
+                              <FieldLabel
+                                labelFor="onBeforeEventSendField"
+                                label="Callback function for modifying data before each event is sent to the server"
+                              />
+                            </InfoTipLayout>
+                            <div>
+                              <WrappedField
+                                id="onBeforeEventSendField"
+                                name={`instances.${index}.onBeforeEventSend`}
+                                component={Textfield}
+                                componentClassName="u-fieldLong"
+                                supportDataElement="replace"
+                              />
+                            </div>
+                          </div>
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected.">
                               <WrappedField
