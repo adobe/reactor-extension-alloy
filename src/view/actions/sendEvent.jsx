@@ -15,6 +15,7 @@ import React from "react";
 import { object, string } from "yup";
 import Textfield from "@react/react-spectrum/Textfield";
 import Checkbox from "@react/react-spectrum/Checkbox";
+import ComboBox from "@react/react-spectrum/ComboBox";
 import Select from "@react/react-spectrum/Select";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
@@ -71,6 +72,30 @@ const validationSchema = object().shape({
   xdm: string().matches(singleDataElementRegex, "Please specify a data element")
 });
 
+const knownEventTypes = [
+  "advertising.completes",
+  "advertising.timePlayed",
+  "advertising.federated",
+  "advertising.clicks",
+  "advertising.conversions",
+  "advertising.firstQuartiles",
+  "advertising.impressions",
+  "advertising.midpoints",
+  "advertising.starts",
+  "advertising.thirdQuartiles",
+  "web.webpagedetails.pageViews",
+  "web.webinteraction.linkClicks",
+  "commerce.checkouts",
+  "commerce.productListAdds",
+  "commerce.productListOpens",
+  "commerce.productListRemovals",
+  "commerce.productListReopens",
+  "commerce.productListViews",
+  "commerce.productViews",
+  "commerce.purchases",
+  "commerce.saveForLaters"
+];
+
 const SendEvent = () => {
   return (
     <ExtensionView
@@ -93,13 +118,23 @@ const SendEvent = () => {
               </div>
             </div>
             <div className="u-gapTop">
-              <InfoTipLayout tip="Influences whether the SDK should retrieve and render personalization content, among other things.">
-                <WrappedField
-                  name="viewStart"
-                  component={Checkbox}
-                  label="Occurs at the start of a view"
-                />
+              <InfoTipLayout
+                tip="The type of the experience event. Choose a predefined type or create
+                  your own. This will be added to the XDM object as the field `eventType`."
+              >
+                <FieldLabel labelFor="typeField" label="Type (optional)" />
               </InfoTipLayout>
+              <div>
+                <WrappedField
+                  id="typeField"
+                  name="type"
+                  component={ComboBox}
+                  componentClassName="u-fieldLong"
+                  supportDataElement
+                  allowCreate
+                  options={knownEventTypes}
+                />
+              </div>
             </div>
             <div className="u-gapTop">
               <InfoTipLayout
@@ -121,24 +156,7 @@ const SendEvent = () => {
             </div>
             <div className="u-gapTop">
               <InfoTipLayout
-                tip="The type of the experience event.  This will be added to the
-                  XDM object as the field `eventType`."
-              >
-                <FieldLabel labelFor="typeField" label="Type (optional)" />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  id="typeField"
-                  name="type"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="The merge ID of the experience event.  This will be added to
+                tip="The merge ID of the experience event. This will be added to
                   the XDM object as the field `eventMergeId`."
               >
                 <FieldLabel
@@ -155,6 +173,15 @@ const SendEvent = () => {
                   supportDataElement
                 />
               </div>
+            </div>
+            <div className="u-gapTop">
+              <InfoTipLayout tip="Influences whether the SDK should retrieve and render personalization content, among other things.">
+                <WrappedField
+                  name="viewStart"
+                  component={Checkbox}
+                  label="Occurs at the start of a view"
+                />
+              </InfoTipLayout>
             </div>
           </div>
         );
