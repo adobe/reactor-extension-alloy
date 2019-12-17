@@ -41,6 +41,12 @@ for (let i = 0; i < 2; i += 1) {
     edgeDomainRestoreButton: spectrum.button(
       Selector(`#edgeDomainRestoreButton`)
     ),
+    edgeBasePathField: spectrum.textfield(
+      Selector(`[name='instances.${i}.edgeBasePath']`)
+    ),
+    edgeBasePathRestoreButton: spectrum.button(
+      Selector(`#edgeBasePathRestoreButton`)
+    ),
     errorsEnabledField: spectrum.checkbox(
       Selector(`[name='instances.${i}.errorsEnabled']`)
     ),
@@ -107,6 +113,7 @@ fixture("Extension Configuration View").disablePageReloads.page(
 );
 
 const defaultEdgeDomain = "edge.adobedc.net";
+const defaultEdgeBasePath = "ee";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
 
@@ -127,6 +134,7 @@ test("initializes form fields with full settings", async t => {
             configId: "PR123",
             orgId: "ORG456@OtherCompanyOrg",
             edgeDomain: "testedge.com",
+            edgeBasePath: "ee-beta",
             errorsEnabled: false,
             optInEnabled: true,
             idSyncEnabled: true,
@@ -162,6 +170,7 @@ test("initializes form fields with full settings", async t => {
   await instances[0].configIdField.expectValue(t, "PR123");
   await instances[0].orgIdField.expectValue(t, "ORG456@OtherCompanyOrg");
   await instances[0].edgeDomainField.expectValue(t, "testedge.com");
+  await instances[0].edgeBasePathField.expectValue(t, "ee-beta");
   await instances[0].errorsEnabledField.expectUnchecked(t);
   await instances[0].optInEnabledField.expectChecked(t);
   // await instances[0].idSyncEnabledField.expectChecked(t);
@@ -182,6 +191,7 @@ test("initializes form fields with full settings", async t => {
   await instances[1].configIdField.expectValue(t, "PR456");
   await instances[1].orgIdField.expectValue(t, "ABC123@AdobeOrg");
   await instances[1].edgeDomainField.expectValue(t, defaultEdgeDomain);
+  await instances[1].edgeBasePathField.expectValue(t, defaultEdgeBasePath);
   await instances[1].errorsEnabledField.expectChecked(t);
   await instances[1].optInEnabledField.expectUnchecked(t);
   // await instances[1].idSyncEnabledField.expectUnchecked(t);
@@ -220,6 +230,7 @@ test("initializes form fields with minimal settings", async t => {
   await instances[0].configIdField.expectValue(t, "PR123");
   await instances[0].orgIdField.expectValue(t, "ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
+  await instances[0].edgeBasePathField.expectValue(t, defaultEdgeBasePath);
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
   // await instances[0].idSyncEnabledField.expectChecked(t);
@@ -243,6 +254,7 @@ test("initializes form fields with no settings", async t => {
   await instances[0].configIdField.expectValue(t, "");
   await instances[0].orgIdField.expectValue(t, "ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
+  await instances[0].edgeBasePathField.expectValue(t, defaultEdgeBasePath);
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
   // await instances[0].idSyncEnabledField.expectChecked(t);
@@ -289,6 +301,7 @@ test("returns full valid settings", async t => {
   await instances[0].nameField.typeText(t, "1");
   await instances[0].configIdField.typeText(t, "PR123");
   await instances[0].edgeDomainField.typeText(t, "2");
+  await instances[0].edgeBasePathField.typeText(t, "-alpha");
   await instances[0].errorsEnabledField.click(t);
   await instances[0].optInEnabledField.click(t);
   // await instances[0].idSyncContainerIdField.typeText(t, "123");
@@ -316,6 +329,7 @@ test("returns full valid settings", async t => {
         name: "alloy1",
         configId: "PR123",
         edgeDomain: `${defaultEdgeDomain}2`,
+        edgeBasePath: `${defaultEdgeBasePath}-alpha`,
         errorsEnabled: false,
         optInEnabled: true,
         // idSyncContainerId: 123,
@@ -344,11 +358,13 @@ test("shows error for empty required values", async t => {
   await instances[0].nameField.clear(t);
   await instances[0].orgIdField.clear(t);
   await instances[0].edgeDomainField.clear(t);
+  await instances[0].edgeBasePathField.clear(t);
   await extensionViewController.expectIsNotValid(t);
   await instances[0].nameField.expectError(t);
   await instances[0].configIdField.expectError(t);
   await instances[0].orgIdField.expectError(t);
   await instances[0].edgeDomainField.expectError(t);
+  await instances[0].edgeBasePathField.expectError(t);
 });
 
 test("shows error for duplicate name", async t => {
@@ -453,6 +469,13 @@ test("restores default edge domain value when restore button is clicked", async 
   await instances[0].edgeDomainField.typeText(t, "foo");
   await instances[0].edgeDomainRestoreButton.click(t);
   await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
+});
+
+test("restores default edge base path value when restore button is clicked", async t => {
+  await extensionViewController.init(t, defaultInitInfo);
+  await instances[0].edgeBasePathField.typeText(t, "foo");
+  await instances[0].edgeBasePathRestoreButton.click(t);
+  await instances[0].edgeBasePathField.expectValue(t, defaultEdgeBasePath);
 });
 
 test("restores default download link qualifier when restore button is clicked", async t => {
