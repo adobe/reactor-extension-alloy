@@ -15,13 +15,13 @@ import React from "react";
 import { object, string } from "yup";
 import Textfield from "@react/react-spectrum/Textfield";
 import Checkbox from "@react/react-spectrum/Checkbox";
+import ComboBox from "@react/react-spectrum/ComboBox";
 import Select from "@react/react-spectrum/Select";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
-import ControlledCombo from "../components/controlledCombo";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./sendEvent.styl";
@@ -119,7 +119,7 @@ const SendEvent = () => {
             </div>
             <div className="u-gapTop">
               <InfoTipLayout
-                tip="The type of the experience event.  Choose a predefined type or create
+                tip="The type of the experience event. Choose a predefined type or create
                   your own. This will be added to the XDM object as the field `eventType`."
               >
                 <FieldLabel labelFor="typeField" label="Type (optional)" />
@@ -128,7 +128,7 @@ const SendEvent = () => {
                 <WrappedField
                   id="typeField"
                   name="type"
-                  component={ControlledCombo}
+                  component={ComboBox}
                   componentClassName="u-fieldLong"
                   supportDataElement
                   allowCreate
@@ -156,7 +156,7 @@ const SendEvent = () => {
             </div>
             <div className="u-gapTop">
               <InfoTipLayout
-                tip="The merge ID of the experience event.  This will be added to
+                tip="The merge ID of the experience event. This will be added to
                   the XDM object as the field `eventMergeId`."
               >
                 <FieldLabel
