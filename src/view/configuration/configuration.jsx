@@ -47,6 +47,7 @@ const getInstanceDefaults = initInfo => ({
   configId: "",
   orgId: initInfo.company.orgId,
   edgeDomain: "edge.adobedc.net",
+  edgeBasePath: "ee",
   errorsEnabled: true,
   optInEnabled: false,
   idSyncEnabled: true,
@@ -106,6 +107,7 @@ const getSettings = ({ values, initInfo }) => {
         "configId",
         "orgId",
         "edgeDomain",
+        "edgeBasePath",
         "errorsEnabled",
         "optInEnabled",
         "idSyncEnabled",
@@ -170,8 +172,7 @@ const validateDuplicateValue = (createError, instances, key, message) => {
 const idSyncContainerIdValidationMessage =
   "Please specify a non-negative integer or data element for the container ID.";
 
-const onBeforeEventSendValidationMessage =
-  "Please specify a data element.";
+const onBeforeEventSendValidationMessage = "Please specify a data element.";
 
 const validationSchema = object()
   .shape({
@@ -194,6 +195,7 @@ const validationSchema = object()
         configId: string().required("Please specify a config ID."),
         orgId: string().required("Please specify an IMS organization ID."),
         edgeDomain: string().required("Please specify an edge domain."),
+        edgeBasePath: string().required("Please specify an edge base path."),
         // A valid idSyncContainerId field value can be an integer
         // greater than or equal to 0, an empty string, or a string containing
         // a single data element token. Using `lazy` as we've done
@@ -428,9 +430,9 @@ const Configuration = () => {
                           <div className="u-gapTop">
                             <InfoTipLayout
                               tip="The domain that will be used to interact with
-                              Adobe Services. This should only be changed if you
-                              have a first party domain (CNAME) that proxies
-                              requests to Adobe's edge infrastructure."
+                              Adobe Services. Update this setting if you have
+                              mapped one of your first party domains (using
+                              CNAME) to an Adobe provisioned domain."
                             >
                               <FieldLabel
                                 labelFor="edgeDomainField"
@@ -685,6 +687,47 @@ const Configuration = () => {
                               />
                             </div>
                           ) : null}
+
+                          <h3>Advanced Settings</h3>
+
+                          <div className="u-gapTop">
+                            <InfoTipLayout
+                              tip="Specifies the base path of the endpoint used
+                              to interact with Adobe Services. This setting
+                              should only be changed if you are not intending
+                              to use the default production environment."
+                            >
+                              <FieldLabel
+                                labelFor="edgeBasePathField"
+                                label="Edge Base Path"
+                              />
+                            </InfoTipLayout>
+                            <div>
+                              <WrappedField
+                                id="edgeBasePathField"
+                                name={`instances.${index}.edgeBasePath`}
+                                component={Textfield}
+                                componentClassName="u-fieldLong"
+                                supportDataElement="replace"
+                              />
+                              <Button
+                                id="edgeBasePathRestoreButton"
+                                label="Restore to default"
+                                onClick={() => {
+                                  const instanceDefaults = getInstanceDefaults(
+                                    initInfo
+                                  );
+                                  setFieldValue(
+                                    `instances.${index}.edgeBasePath`,
+                                    instanceDefaults.edgeBasePath
+                                  );
+                                }}
+                                quiet
+                                variant="quiet"
+                              />
+                            </div>
+                          </div>
+
                           <div className="u-gapTop2x">
                             <ModalTrigger>
                               <Button

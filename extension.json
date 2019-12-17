@@ -37,6 +37,10 @@
                 "type": "string",
                 "minLength": 1
               },
+              "edgeBasePath": {
+                "type": "string",
+                "minLength": 1
+              },
               "errorsEnabled": {
                 "type": "boolean"
               },
