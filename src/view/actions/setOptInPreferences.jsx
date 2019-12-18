@@ -148,7 +148,7 @@ const SetOptInPreferences = () => {
                     name="purposesDataElement"
                     component={Textfield}
                     componentClassName="u-fieldLong"
-                    supportDataElement
+                    supportDataElement="replace"
                   />
                 </div>
               </div>
