@@ -93,6 +93,66 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+      var CHROME = "Chrome";
+      var EDGE = "Edge";
+      var EDGE_CHROMIUM = "EdgeChromium";
+      var FIREFOX = "Firefox";
+      var IE = "IE";
+      var SAFARI = "Safari";
+      var UNKNOWN = "Unknown";
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+      /**
+       * Determines whether an array includes a certain value.
+       * @param {Array} arr Array to search.
+       * @param {*} item The item for which to search.
+       * @returns {boolean}
+       */
+      var includes = (function (arr, item) {
+        return arr.indexOf(item) !== -1;
+      });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+// we don't know. We also assume "unknown" browsers support third-party cookies,
+// though we don't really know that either. We're making best guesses.
+
+      var browsersSupportingThirdPartyCookie = [CHROME, EDGE, EDGE_CHROMIUM, IE, UNKNOWN];
+      var areThirdPartyCookiesSupportedByDefault = (function (browser) {
+        return includes(browsersSupportingThirdPartyCookie, browser);
+      });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -155,6 +215,11 @@ governing permissions and limitations under the License.
       var convertStringToSha256Buffer = (function (message) {
         var data = encodeText(message);
         var crypto = window.msCrypto || window.crypto;
+
+        if (!crypto.subtle) {
+          return false;
+        }
+
         var result = crypto.subtle.digest("SHA-256", data);
 
         if (result.then) {
@@ -254,20 +319,35 @@ governing permissions and limitations under the License.
         return obj;
       }
 
-      function _objectSpread(target) {
+      function ownKeys(object, enumerableOnly) {
+        var keys = Object.keys(object);
+
+        if (Object.getOwnPropertySymbols) {
+          var symbols = Object.getOwnPropertySymbols(object);
+          if (enumerableOnly) symbols = symbols.filter(function (sym) {
+            return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+          });
+          keys.push.apply(keys, symbols);
+        }
+
+        return keys;
+      }
+
+      function _objectSpread2(target) {
         for (var i = 1; i < arguments.length; i++) {
           var source = arguments[i] != null ? arguments[i] : {};
-          var ownKeys = Object.keys(source);
 
-          if (typeof Object.getOwnPropertySymbols === 'function') {
-            ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) {
-              return Object.getOwnPropertyDescriptor(source, sym).enumerable;
-            }));
+          if (i % 2) {
+            ownKeys(source, true).forEach(function (key) {
+              _defineProperty(target, key, source[key]);
+            });
+          } else if (Object.getOwnPropertyDescriptors) {
+            Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+          } else {
+            ownKeys(source).forEach(function (key) {
+              Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+            });
           }
-
-          ownKeys.forEach(function (key) {
-            _defineProperty(target, key, source[key]);
-          });
         }
 
         return target;
@@ -334,6 +414,10 @@ governing permissions and limitations under the License.
       }
 
       function _iterableToArrayLimit(arr, i) {
+        if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+          return;
+        }
+
         var _arr = [];
         var _n = true;
         var _d = false;
@@ -440,57 +524,22 @@ governing permissions and limitations under the License.
       /**
        * Creates a function that, when passed an object of updates, will merge
        * the updates onto the current value of a payload property.
-       * @param content
-       * @param key
+       * @param {Object} content The base object to modify
+       * @param {String } key The property to merge updates into. This
+       * can be a dot-notation property path.
        * @returns {Function}
        */
 
       var createMerger = (function (content, key) {
         return function (updates) {
-          // eslint-disable-next-line no-param-reassign
-          content[key] = content[key] || {};
-          deepAssign(content[key], updates);
+          var propertyPath = key.split(".");
+          var hostObjectForUpdates = propertyPath.reduce(function (obj, propertyName) {
+            obj[propertyName] = obj[propertyName] || {};
+            return obj[propertyName];
+          }, content);
+          deepAssign(hostObjectForUpdates, updates);
         };
       });
-
-      /* eslint-disable */
-
-      /*
-crc32 · JavaScript Function to Calculate CRC32 of a String
-Description
-  Below is a JavaScript function to calculate CRC32 of a string.
-  The string can be either ASCII or Unicode.
-  Unicode strings will be encoded in UTF-8.
-  The polynomial used in calculation is 0xedb88320.
-  This polynomial is used in Ethernet, Gzip, PNG, SATA and many other technologies.
-*/
-      var crc32 = function () {
-        var table = [];
-
-        for (var i = 0; i < 256; i++) {
-          var c = i;
-
-          for (var j = 0; j < 8; j++) {
-            c = c & 1 ? 0xedb88320 ^ c >>> 1 : c >>> 1;
-          }
-
-          table.push(c);
-        }
-
-        return function (str, crc) {
-          str = unescape(encodeURIComponent(str));
-          if (!crc) crc = 0;
-          crc = crc ^ -1;
-
-          for (var _i = 0; _i < str.length; _i++) {
-            var y = (crc ^ str.charCodeAt(_i)) & 0xff;
-            crc = crc >>> 8 ^ table[y];
-          }
-
-          crc = crc ^ -1;
-          return crc >>> 0;
-        };
-      }();
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -515,6 +564,59 @@ governing permissions and limitations under the License.
           deferred.reject = reject;
         });
         return deferred;
+      });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+      /**
+       * Whether a string ends with the characters of a specified string
+       * @param {String} str The string to search within.
+       * @param {String} suffix The string to search for.
+       * @returns {boolean}
+       */
+      var endsWith = (function (str, suffix) {
+        return str.substr(-suffix.length) === suffix;
+      });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+      /**
+       * Returns the first item in the array that satisfies the provided testing function.
+       * @param {Array} arr The array to search.
+       * @param {Function} predicate Function that will be called for each item. Arguments
+       * will be the item, the item index, then the array itself.
+       * @returns {*}
+       */
+      var find = (function (arr, predicate) {
+        for (var i = 0; i < arr.length; i += 1) {
+          var item = arr[i];
+
+          if (predicate(item, i, arr)) {
+            return item;
+          }
+        }
+
+        return undefined;
       });
 
       /*
@@ -864,6 +966,48 @@ governing permissions and limitations under the License.
         return null;
       });
 
+      var fireOnPage = fireImage;
+      var IFRAME_ATTRS = {
+        name: "Adobe Alloy",
+        style: "display: none; width: 0; height: 0;"
+      };
+      var fireReferrerHideableImage = (function (request) {
+        var createIframe = function createIframe() {
+          return awaitSelector(BODY).then(function (_ref) {
+            var _ref2 = _slicedToArray(_ref, 1),
+              body = _ref2[0];
+
+            var iframe = createNode(IFRAME, IFRAME_ATTRS);
+            return appendNode(body, iframe);
+          });
+        };
+
+        var fireInIframe = function fireInIframe(_ref3) {
+          var src = _ref3.src;
+          return createIframe().then(function (iframe) {
+            var currentDocument = iframe.contentWindow.document;
+            return fireImage({
+              src: src,
+              currentDocument: currentDocument
+            }).then(function () {
+              removeNode(iframe);
+            });
+          });
+        };
+
+        var hideReferrer = request.hideReferrer,
+          url = request.url;
+        return hideReferrer ? fireInIframe({
+          src: url
+        }) : fireOnPage({
+          src: url
+        });
+      });
+
+      var flatMap = (function (array, mapFunction) {
+        return Array.prototype.concat.apply([], array.map(mapFunction));
+      });
+
       /*
 Copyright 2019 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -875,90 +1019,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
-      var fireOnPage = fireImage;
-      var IFRAME_ATTRS = {
-        name: "Adobe Destinationing iFrame",
-        class: "adobe-iframe",
-        style: "display: none; width: 0; height: 0;"
-      };
-
-      var createFilterResultBySucceeded = function createFilterResultBySucceeded(succeeded) {
-        return function (result) {
-          return result.succeeded === succeeded;
-        };
-      };
-
-      var mapResultToDest = function mapResultToDest(result) {
-        return result.dest;
-      };
-
-      var fireDestinations = (function (_ref) {
-        var logger = _ref.logger,
-          destinations = _ref.destinations;
-        var iframePromise;
-
-        var createIframe = function createIframe() {
-          if (!iframePromise) {
-            iframePromise = awaitSelector(BODY).then(function (_ref2) {
-              var _ref3 = _slicedToArray(_ref2, 1),
-                body = _ref3[0];
-
-              var iframe = createNode(IFRAME, IFRAME_ATTRS);
-              return appendNode(body, iframe);
-            });
-          }
-
-          return iframePromise;
-        };
-
-        var fireInIframe = function fireInIframe(_ref4) {
-          var src = _ref4.src;
-          return createIframe().then(function (iframe) {
-            var currentDocument = iframe.contentWindow.document;
-            return fireImage({
-              src: src,
-              currentDocument: currentDocument
-            });
-          });
-        };
-
-        return Promise.all(destinations.map(function (dest) {
-          var imagePromise = dest.hideReferrer ? fireInIframe({
-            src: dest.url
-          }) : fireOnPage({
-            src: dest.url
-          });
-          return imagePromise.then(function () {
-            logger.log("Destination succeeded:", dest.url);
-            return {
-              succeeded: true,
-              dest: dest
-            };
-          }).catch(function () {
-            logger.log("Destination failed:", dest.url);
-            return {
-              succeeded: false,
-              dest: dest
-            };
-          });
-        })).then(function (results) {
-          if (iframePromise) {
-            iframePromise.then(function (iframe) {
-              return removeNode(iframe);
-            });
-          }
-
-          return {
-            succeeded: results.filter(createFilterResultBySucceeded(true)).map(mapResultToDest),
-            failed: results.filter(createFilterResultBySucceeded(false)).map(mapResultToDest)
-          };
-        });
-      });
-
-      var flatMap = (function (array, mapFunction) {
-        return Array.prototype.concat.apply([], array.map(mapFunction));
-      });
+      var baseNamespace = "com.adobe.alloy.";
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -993,30 +1054,17 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var baseNamespace = "com.adobe.alloy.";
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
       var cookieName = baseNamespace + "getTld";
       /**
-       * Retrieves the top-most domain that is able to accept cookies. This will
-       * be the top-most domain that is not a "public suffix" as outlined
-       * in https://publicsuffix.org/
+       * Of the current web page's hostname, this is the top-most domain that is
+       * not a "public suffix" as outlined in https://publicsuffix.org/. In other
+       * words, this is top-most domain that is able to accept cookies.
        * @param {Object} window
        * @param {Object} cookieJar
        * @returns {string}
        */
 
-      var getTopLevelCookieDomain = (function (window, cookieJar) {
+      var getApexDomain = (function (window, cookieJar) {
         var topLevelCookieDomain = ""; // If hostParts.length === 1, we may be on localhost.
 
         var hostParts = window.location.hostname.toLowerCase().split(".");
@@ -1047,15 +1095,42 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+      var IDENTITY_COOKIE_KEY = "identity"; // Remember to also incorporate the org ID wherever cookies are read or written.
 
-      /**
-       * Determines whether an array includes a certain value.
-       * @param {Array} arr Array to search.
-       * @param {*} item The item for which to search.
-       * @returns {boolean}
-       */
-      var includes = (function (arr, item) {
-        return arr.indexOf(item) !== -1;
+      var COOKIE_NAME_PREFIX = "kndctr"; // TODO: Currently the opt-in cookie is not managed by Konductor and therefore
+// does not use the same cookie prefix. This will change once Konductor
+// starts managing it.
+
+      var OPT_IN_COOKIE_NAME = "adobe_alloy_optIn";
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+      var sanitizeOrgIdForCookieName = (function (orgId) {
+        return orgId.replace("@", "_");
+      });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+      var getNamespacedCookieName = (function (orgId, key) {
+        return COOKIE_NAME_PREFIX + "_" + sanitizeOrgIdForCookieName(orgId) + "_" + key;
       });
 
       /*
@@ -1166,6 +1241,29 @@ governing permissions and limitations under the License.
       var isInteger = (function (value) {
         var parsed = parseInt(value, 10);
         return isNumber(parsed) && value === parsed;
+      });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+      /**
+       * Determines whether a cookie name is namespaced according to the contract
+       * defined by the server.
+       * @param {String} orgId The org ID configured for the Alloy instance.
+       * @param {String} name The cookie name.
+       * @returns {boolean}
+       */
+
+      var isNamespacedCookieName = (function (orgId, name) {
+        return name.indexOf(COOKIE_NAME_PREFIX + "_" + sanitizeOrgIdForCookieName(orgId) + "_") === 0;
       });
 
       /*
@@ -1580,119 +1678,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
-
-      var safeJSONParse = function safeJSONParse(object, cookieName) {
-        try {
-          return JSON.parse(object);
-        } catch (error) {
-          throw new Error("Invalid cookie format in " + cookieName + " cookie");
-        }
-      };
-      /**
-       * The purpose of this proxy is to cache the cookie so we don't have to
-       * read and deserialize it every time a piece of it is accessed. It assumes
-       * nothing outside of Alloy will be modifying the cookie.
-       */
-
-
-      var createCookieProxy = (function (name, expires, domain) {
-        var deserializedCookie;
-        var cookieHasBeenRead = false;
-        return {
-          get: function get() {
-            // We don't read the cookie right when the cookie proxy is created
-            // because we don't know if the user has opted in. If the user
-            // hasn't opted in, we're legally obligated to not read the cookie.
-            // If a component tries to read something off the cookie though,
-            // we assume that the component has received word that the user
-            // has opted-in. The responsibility is on the component.
-            if (cookieHasBeenRead) {
-              return deserializedCookie;
-            }
-
-            var serializedCookie = cookie.get(name);
-            deserializedCookie = serializedCookie && safeJSONParse(serializedCookie, name);
-            cookieHasBeenRead = true;
-            return deserializedCookie;
-          },
-          set: function set(updatedCookie) {
-            deserializedCookie = updatedCookie;
-            cookie.set(name, updatedCookie, {
-              expires: expires,
-              domain: domain
-            });
-          }
-        };
-      });
-
-      var createComponentNamespacedCookieJar = (function (cookieProxy, componentNamespace) {
-        if (!isNonEmptyString(componentNamespace)) {
-          throw Error("No cookie namespace.  Please define 'abbreviation' on the component.");
-        }
-
-        return {
-          /**
-           * Returns a value from the Alloy cookie for a given key.
-           * @param {string} key
-           */
-          get: function get(key) {
-            var currentCookie = cookieProxy.get();
-            return currentCookie && currentCookie[componentNamespace] && currentCookie[componentNamespace][key];
-          },
-
-          /**
-           * Sets a value in the Alloy cookie for a given key.
-           * @param {string} key
-           * @param {string} value
-           */
-          set: function set(key, value) {
-            var currentCookie = cookieProxy.get() || {};
-
-            var updatedCookie = _objectSpread({}, currentCookie, _defineProperty({}, componentNamespace, _objectSpread({}, currentCookie[componentNamespace], _defineProperty({}, key, value))));
-
-            cookieProxy.set(updatedCookie);
-          },
-
-          /**
-           * Removes a value from the Alloy cookie for a given key.
-           * @param {string} key
-           */
-          remove: function remove(key) {
-            var currentCookie = cookieProxy.get();
-
-            if (currentCookie && currentCookie[componentNamespace]) {
-              var updatedCookie = _objectSpread({}, currentCookie, _defineProperty({}, componentNamespace, _objectSpread({}, currentCookie[componentNamespace])));
-
-              delete updatedCookie[componentNamespace][key];
-              cookieProxy.set(updatedCookie);
-            }
-          }
-        };
-      });
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
       var debugQueryParam = "alloy_debug";
 
       /*
@@ -1911,7 +1896,8 @@ governing permissions and limitations under the License.
             expectsResponse = expectsResponse || event.expectsResponse;
             content.events.push(event.toJSON());
           },
-          mergeMeta: createMerger(content, "meta"),
+          mergeConfigOverrides: createMerger(content, "meta.configOverrides"),
+          mergeState: createMerger(content, "meta.state"),
           useIdThirdPartyDomain: function useIdThirdPartyDomain() {
             shouldUseIdThirdPartyDomain = true;
           },
@@ -1928,71 +1914,6 @@ governing permissions and limitations under the License.
             return expectsResponse;
           },
 
-          toJSON: function toJSON() {
-            return content;
-          }
-        };
-      });
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
-      /**
-       * Creates a representation of a gateway response with the addition of
-       * helper methods.
-       * @returns Response
-       */
-
-      var createResponse = (function () {
-        var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-        var _content$handle = content.handle,
-          handle = _content$handle === void 0 ? [] : _content$handle,
-          _content$errors = content.errors,
-          errors = _content$errors === void 0 ? [] : _content$errors,
-          _content$warnings = content.warnings,
-          warnings = _content$warnings === void 0 ? [] : _content$warnings;
-        /**
-         * Response object.
-         * @typedef {Object} Response
-         */
-
-        return {
-          /**
-           * Returns matching fragments of the response by type.
-           * @param {String} type A string with the current format: <namespace:action>
-           *
-           * @example
-           * getPayloadsByType("identity:persist")
-           */
-          getPayloadsByType: function getPayloadsByType(type) {
-            return flatMap(handle.filter(function (fragment) {
-              return fragment.type === type;
-            }), function (fragment) {
-              return fragment.payload;
-            });
-          },
-
-          /**
-           * Returns all errors.
-           */
-          getErrors: function getErrors() {
-            return errors;
-          },
-
-          /**
-           * Returns all warnings.
-           */
-          getWarnings: function getWarnings() {
-            return warnings;
-          },
           toJSON: function toJSON() {
             return content;
           }
@@ -2068,24 +1989,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var EDGE_DOMAIN = "edge.adobedc.net";
-      var ID_THIRD_PARTY_DOMAIN = "adobedc.demdex.net";
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
       var createNetwork = (function (_ref) {
         var config = _ref.config,
           logger = _ref.logger,
-          lifecycle = _ref.lifecycle,
           networkStrategy = _ref.networkStrategy;
 
         var handleResponse = function handleResponse(requestId, responseBody) {
@@ -2101,25 +2007,10 @@ governing permissions and limitations under the License.
           }
 
           logger.log("Request " + requestId + ": Received response.", parsedBody);
-          var response = createResponse(parsedBody); // TODO Document that onResponse will be called when Konductor
-          // sends a well-formed response even if that response contains
-          // error objects. This is because even when there are error objects
-          // there can be "handle" payloads to act upon. Also document
-          // that onRequestFailure will be called when the network request
-          // itself failed (e.g., no internet connection), when JAG throws an
-          // error (the request never made it to Konductor), or when
-          // Konductor returns a malformed response.
-
-          return lifecycle.onResponse({
-            response: response,
-            requestId: requestId
-          }).then(function () {
-            return response;
-          });
+          return parsedBody;
         };
 
-        var edgeDomain = config.edgeDomain,
-          edgeBasePath = config.edgeBasePath,
+        var edgeBasePath = config.edgeBasePath,
           configId = config.configId;
         return {
           /**
@@ -2134,6 +2025,8 @@ governing permissions and limitations under the License.
            * with the returned response object.
            *
            * @param {Object} payload This will be JSON stringified and sent as the post body.
+           * @param {String} endpointDomain The domain of the endpoint to which the
+           * request should be sent.
            * @param {Object} [options]
            * @param {boolean} [options.expectsResponse=true] The endpoint and request mechanism
            * will be determined by whether a response is expected.
@@ -2143,14 +2036,12 @@ governing permissions and limitations under the License.
            * completely processed.  If expectsResponse==false, the promise will be resolved
            * with undefined.
            */
-          sendRequest: function sendRequest(payload) {
-            var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+          sendRequest: function sendRequest(payload, endpointDomain) {
+            var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
             var _options$expectsRespo = options.expectsResponse,
               expectsResponse = _options$expectsRespo === void 0 ? true : _options$expectsRespo,
               _options$documentUnlo = options.documentUnloading,
-              documentUnloading = _options$documentUnlo === void 0 ? false : _options$documentUnlo,
-              _options$useIdThirdPa = options.useIdThirdPartyDomain,
-              useIdThirdPartyDomain = _options$useIdThirdPa === void 0 ? false : _options$useIdThirdPa;
+              documentUnloading = _options$documentUnlo === void 0 ? false : _options$documentUnlo;
             var requestId = v4_1();
 
             if (documentUnloading) {
@@ -2160,8 +2051,7 @@ governing permissions and limitations under the License.
             var reallyExpectsResponse = documentUnloading ? false : expectsResponse;
             return Promise.resolve().then(function () {
               var action = reallyExpectsResponse ? "interact" : "collect";
-              var domain = useIdThirdPartyDomain ? ID_THIRD_PARTY_DOMAIN : edgeDomain;
-              var baseUrl = "https://" + domain;
+              var baseUrl = "https://" + endpointDomain;
               var url = baseUrl + "/" + edgeBasePath + "/" + apiVersion + "/" + action + "?configId=" + configId + "&requestId=" + requestId;
               var responseHandlingMessage = reallyExpectsResponse ? "" : " (no response is expected)";
               var stringifiedPayload = JSON.stringify(payload); // We want to log raw payload and event data rather than
@@ -2204,24 +2094,6 @@ governing permissions and limitations under the License.
               }
 
               return handleResponsePromise;
-            }).catch(function (error) {
-              // The error that we caught is more important than
-              // any error that may have occurred in lifecycle.onResponseError().
-              // For that reason, we make sure the caught error is the one that
-              // bubbles up. We also wait until lifecycle.onRequestFailure is
-              // complete before returning, so that any error that may occur
-              // in lifecycle.onRequestFailure is properly suppressed if the
-              // user has errorsEnabled: false in the configuration.
-              // We could use finally() here, but just to be safe, we don't,
-              // because finally() is only recently supported natively and may
-              // not exist in customer-provided promise polyfills.
-              var throwError = function throwError() {
-                throw error;
-              };
-
-              return lifecycle.onRequestFailure({
-                requestId: requestId
-              }).then(throwError, throwError);
             });
           }
         };
@@ -2238,26 +2110,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var cookieDetails = {
-        ALLOY_COOKIE_NAME: "adobe_alloy",
-        // TODO: Rename this cookie
-        ALLOY_OPT_IN_COOKIE_NAME: "adobe_alloy_optIn",
-        ALLOY_COOKIE_TTL_IN_DAYS: 180
-      };
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
-
-      var ALLOY_OPT_IN_COOKIE_NAME = cookieDetails.ALLOY_OPT_IN_COOKIE_NAME; // The user has opted into all purposes.
 
       var ALL = "all"; // The user has opted into no purposes.
 
@@ -2271,7 +2123,7 @@ governing permissions and limitations under the License.
           createOrgNamespacedCookieName = _ref.createOrgNamespacedCookieName;
         var deferredsAwaitingResolution = [];
         var purposes = ALL;
-        var cookieName = createOrgNamespacedCookieName(ALLOY_OPT_IN_COOKIE_NAME, config.orgId);
+        var cookieName = createOrgNamespacedCookieName(OPT_IN_COOKIE_NAME, config.orgId);
 
         if (config.optInEnabled) {
           purposes = cookieJar.get(cookieName) || PENDING;
@@ -2394,6 +2246,19 @@ governing permissions and limitations under the License.
             lastChanceCallback = value;
           },
 
+          validate: function validate() {
+            var warnings = [];
+
+            if (event.isEmpty()) {
+              warnings.push("No event xdm or event data specified.");
+            }
+
+            if (content.xdm && !content.xdm.eventType || userXdm && !userXdm.eventType) {
+              warnings.push("No type or xdm.eventType specified.");
+            }
+
+            return warnings;
+          },
           toJSON: function toJSON() {
             if (userXdm) {
               event.mergeXdm(userXdm);
@@ -2430,6 +2295,71 @@ governing permissions and limitations under the License.
           }
         };
         return event;
+      });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+      /**
+       * Creates a representation of a gateway response with the addition of
+       * helper methods.
+       * @returns Response
+       */
+
+      var createResponse = (function () {
+        var content = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var _content$handle = content.handle,
+          handle = _content$handle === void 0 ? [] : _content$handle,
+          _content$errors = content.errors,
+          errors = _content$errors === void 0 ? [] : _content$errors,
+          _content$warnings = content.warnings,
+          warnings = _content$warnings === void 0 ? [] : _content$warnings;
+        /**
+         * Response object.
+         * @typedef {Object} Response
+         */
+
+        return {
+          /**
+           * Returns matching fragments of the response by type.
+           * @param {String} type A string with the current format: <namespace:action>
+           *
+           * @example
+           * getPayloadsByType("identity:persist")
+           */
+          getPayloadsByType: function getPayloadsByType(type) {
+            return flatMap(handle.filter(function (fragment) {
+              return fragment.type === type;
+            }), function (fragment) {
+              return fragment.payload;
+            });
+          },
+
+          /**
+           * Returns all errors.
+           */
+          getErrors: function getErrors() {
+            return errors;
+          },
+
+          /**
+           * Returns all warnings.
+           */
+          getWarnings: function getWarnings() {
+            return warnings;
+          },
+          toJSON: function toJSON() {
+            return content;
+          }
+        };
       });
 
       /*
@@ -2523,8 +2453,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+      var CONFIG_DOC_URI = "https://adobe.ly/2r0uUjh";
+
       var createDataCollector = function createDataCollector(_ref) {
-        var eventManager = _ref.eventManager;
+        var eventManager = _ref.eventManager,
+          logger = _ref.logger;
         return {
           commands: {
             event: function event(options) {
@@ -2560,6 +2493,12 @@ governing permissions and limitations under the License.
 
               event.userXdm = xdm;
               event.userData = data;
+              var warnings = event.validate();
+
+              if (warnings.length) {
+                logger.warn("Invalid event command options:\n\t - " + warnings.join("\n\t - ") + "\nFor documentation covering the event command see: " + CONFIG_DOC_URI);
+              }
+
               return eventManager.sendEvent(event, {
                 isViewStart: viewStart
               });
@@ -2569,7 +2508,6 @@ governing permissions and limitations under the License.
       };
 
       createDataCollector.namespace = "DataCollector";
-      createDataCollector.abbreviation = "DC";
       createDataCollector.configValidators = {};
 
       /*
@@ -3185,7 +3123,6 @@ governing permissions and limitations under the License.
       };
 
       createActivityCollector.namespace = "ActivityCollector";
-      createActivityCollector.abbreviation = "AC";
       createActivityCollector.configValidators = createConfigValidators();
 
       /*
@@ -3199,102 +3136,27 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var CUSTOMER_ID_HASH = "CIDH";
-      var EXPERIENCE_CLOUD_ID = "ECID";
-      var ID_SYNC_TIMESTAMP = "idSyncTimestamp";
-      var ID_SYNC_CONTROL = "idSyncControl";
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
-      var DEFAULT_ID_SYNC_TTL_MINUTES = 10080; // 7 days
-
-      var getControlObject = function getControlObject(cookieJar) {
-        var val = cookieJar.get(ID_SYNC_CONTROL) || "";
-        var arr = val ? val.split("_") : [];
-        return arr.reduce(function (controlObject, idTimestampPair) {
-          var _idTimestampPair$spli = idTimestampPair.split("-"),
-            _idTimestampPair$spli2 = _slicedToArray(_idTimestampPair$spli, 2),
-            id = _idTimestampPair$spli2[0],
-            timestamp = _idTimestampPair$spli2[1];
-
-          controlObject[id] = parseInt(timestamp, 36);
-          return controlObject;
-        }, {});
+      var createResultLogMessage = function createResultLogMessage(idSync, success) {
+        return "ID sync " + (success ? "succeeded" : "failed") + ": " + idSync.spec.url;
       };
 
-      var setControlObject = function setControlObject(controlObject, cookieJar) {
-        var arr = Object.keys(controlObject).map(function (id) {
-          return id + "-" + controlObject[id].toString(36);
-        });
-        cookieJar.set(ID_SYNC_CONTROL, arr.join("_"));
-      };
-
-      var createProcessor = function createProcessor(config, logger, cookieJar) {
-        return function (destinations) {
-          if (!config.idSyncEnabled) {
-            return Promise.reject(new Error("ID synchronization not enabled"));
-          }
-
-          var controlObject = getControlObject(cookieJar);
-          var now = convertTimes(MILLISECOND, HOUR, new Date().getTime()); // hours
-
-          Object.keys(controlObject).forEach(function (key) {
-            if (controlObject[key] < now) {
-              delete controlObject[key];
-            }
+      var processIdSyncsFactory = (function (_ref) {
+        var fireReferrerHideableImage = _ref.fireReferrerHideableImage,
+          logger = _ref.logger;
+        return function (idSyncs) {
+          var urlIdSyncs = idSyncs.filter(function (idSync) {
+            return idSync.type === "url";
           });
-          var idSyncs = destinations.filter(function (dest) {
-            return dest.type === "url" && controlObject[dest.id] === undefined;
-          }).map(function (dest) {
-            return assign({
-              id: dest.id
-            }, dest.spec);
-          });
-          return fireDestinations({
-            logger: logger,
-            destinations: idSyncs
-          }).then(function (result) {
-            var nowInHours = Math.round(convertTimes(MILLISECOND, HOUR, new Date().getTime()));
-            result.succeeded.forEach(function (idSync) {
-              var ttlInHours = Math.round(convertTimes(MINUTE, HOUR, idSync.ttlMinutes || DEFAULT_ID_SYNC_TTL_MINUTES));
-              controlObject[idSync.id] = nowInHours + ttlInHours;
+          return Promise.all(urlIdSyncs.map(function (idSync) {
+            return fireReferrerHideableImage(idSync.spec).then(function () {
+              logger.log(createResultLogMessage(idSync, true));
+            }).catch(function () {
+              // We intentionally do not throw an error if id syncs fail. We
+              // consider it a non-critical failure and therefore do not want it to
+              // reject the promise handed back to the customer.
+              logger.error(createResultLogMessage(idSync, false));
             });
-            setControlObject(controlObject, cookieJar);
-            cookieJar.set(ID_SYNC_TIMESTAMP, (Math.round(convertTimes(MILLISECOND, HOUR, new Date().getTime())) + convertTimes(DAY, HOUR, 7)).toString(36));
-
-            if (result.failed.length) {
-              var failedIds = result.failed.map(function (idSync) {
-                return idSync.id;
-              });
-              throw new Error("The following ID sync IDs failed: " + failedIds.join(", ") + ".");
-            }
-
-            return result;
-          });
-        };
-      };
-
-      var createExpiryChecker = function createExpiryChecker(cookieJar) {
-        return function () {
-          var nowInHours = Math.round(convertTimes(MILLISECOND, HOUR, new Date().getTime()));
-          var timestamp = parseInt(cookieJar.get(ID_SYNC_TIMESTAMP) || 0, 36);
-          return nowInHours > timestamp;
-        };
-      };
-
-      var createIdSyncs = (function (config, logger, cookieJar) {
-        return {
-          process: createProcessor(config, logger, cookieJar),
-          hasExpired: createExpiryChecker(cookieJar)
+          }));
         };
       });
 
@@ -3314,6 +3176,7 @@ governing permissions and limitations under the License.
       var LOGGED_OUT = "loggedOut";
 
       var AUTH_STATES = /*#__PURE__*/Object.freeze({
+        __proto__: null,
         AMBIGUOUS: AMBIGUOUS,
         AUTHENTICATED: AUTHENTICATED,
         LOGGED_OUT: LOGGED_OUT
@@ -3377,67 +3240,57 @@ governing permissions and limitations under the License.
         }, {});
       };
 
-      var createCustomerIds = (function (cookieJar, eventManager) {
-        var updateChecksum = function updateChecksum(checksum) {
-          return cookieJar.set(CUSTOMER_ID_HASH, checksum);
-        };
-
-        var hash = function hash(originalIds, normalizedIds) {
+      var createCustomerIds = (function (eventManager) {
+        var hash = function hash(originalIds, normalizedIds, logger) {
           var idNames = Object.keys(normalizedIds);
           var idsToHash = idNames.filter(function (idName) {
             return originalIds[idName].hashEnabled;
           });
           var idHashPromises = idsToHash.map(function (id) {
-            return convertStringToSha256Buffer(normalizedIds[id].id);
+            return convertStringToSha256Buffer(normalizedIds[id].id.trim().toLowerCase());
           });
           return Promise.all(idHashPromises).then(function (hashedIds) {
             return hashedIds.reduce(function (finalIds, hashedId, index) {
-              finalIds[idsToHash[index]].id = convertBufferToHex(hashedId);
+              if (!hashedId) {
+                delete finalIds[idsToHash[index]];
+                logger.warn("Unable to hash identity " + idsToHash[index] + " due to lack of browser support.");
+              } else {
+                finalIds[idsToHash[index]].id = convertBufferToHex(hashedId);
+              }
+
               return finalIds;
             }, normalizedIds);
           });
         };
 
         var state = {
-          haveChanged: false,
           ids: {},
           hasIds: false
         };
 
-        var setState = function setState(customerIdChanged, normalizedIds) {
-          state.haveChanged = customerIdChanged;
-          state.ids = _objectSpread({}, state.ids, normalizedIds);
+        var setState = function setState(normalizedIds) {
+          state.ids = _objectSpread2({}, state.ids, {}, normalizedIds);
           state.hasIds = !!Object.keys(state.ids).length;
         };
 
         var customerIds = {
           addToPayload: function addToPayload(payload) {
-            var currentState = clone(state);
-
-            if (currentState.hasIds) {
-              Object.keys(currentState.ids).forEach(function (name) {
-                payload.addIdentity(name, currentState.ids[name]);
+            if (state.hasIds) {
+              var ids = clone(state.ids);
+              Object.keys(ids).forEach(function (name) {
+                payload.addIdentity(name, ids[name]);
               });
-              payload.mergeMeta({
-                identity: {
-                  customerIdChanged: currentState.haveChanged
-                }
-              });
-              state.haveChanged = false;
             }
           },
-          sync: function sync(originalIds) {
+          sync: function sync(originalIds, logger) {
             validateCustomerIds(originalIds);
             var normalizedIds = normalizeCustomerIds(originalIds);
-            var checksum = crc32(JSON.stringify(normalizedIds)).toString(36);
-            var customerIdChanged = checksum !== cookieJar.get(CUSTOMER_ID_HASH);
+            return hash(originalIds, normalizedIds, logger).then(function (hashedIds) {
+              if (isEmptyObject(hashedIds)) {
+                return false;
+              }
 
-            if (customerIdChanged) {
-              updateChecksum(checksum);
-            }
-
-            return hash(originalIds, normalizedIds).then(function (hashedIds) {
-              setState(customerIdChanged, hashedIds); // FIXME: Konductor shouldn't require an event.
+              setState(hashedIds); // FIXME: Konductor shouldn't require an event.
 
               var event = eventManager.createEvent();
               return eventManager.sendEvent(event);
@@ -3445,80 +3298,6 @@ governing permissions and limitations under the License.
           }
         };
         return customerIds;
-      });
-
-      var createMigration = (function (orgId, idMigrationEnabled) {
-        var amcvCookieName = "AMCV_" + orgId;
-        return {
-          getEcidFromLegacyCookie: function getEcidFromLegacyCookie(identityCookieJar) {
-            var ecid = null;
-            var legacyItpCookieName = "s_ecid";
-
-            if (idMigrationEnabled) {
-              var legacyEcidCookieValue = cookie.get(legacyItpCookieName) || cookie.get(amcvCookieName);
-
-              if (legacyEcidCookieValue) {
-                var reg = /(^|\|)MCMID\|(\d+)($|\|)/;
-                var matches = legacyEcidCookieValue.match(reg);
-
-                if (matches) {
-                  // Destructuring arrays breaks in IE
-                  ecid = matches[2];
-                  identityCookieJar.set(EXPERIENCE_CLOUD_ID, ecid);
-                }
-              }
-            }
-
-            return ecid;
-          },
-          createAmcvCookie: function createAmcvCookie(ecid) {
-            if (idMigrationEnabled) {
-              var amcvCookieValue = cookie.get(amcvCookieName);
-
-              if (!amcvCookieValue) {
-                cookie.set(amcvCookieName, "MCMID|" + ecid);
-              }
-            }
-          }
-        };
-      });
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
-      var CHROME = "Chrome";
-      var EDGE = "Edge";
-      var EDGE_CHROMIUM = "EdgeChromium";
-      var FIREFOX = "Firefox";
-      var IE = "IE";
-      var SAFARI = "Safari";
-      var UNKNOWN = "Unknown";
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
-// we don't know. We also assume "unknown" browsers support third-party cookies,
-// though we don't really know that either. We're making best guesses.
-
-      var browsersSupportingThirdPartyCookie = [CHROME, EDGE, EDGE_CHROMIUM, IE, UNKNOWN];
-      var areThirdPartyCookiesSupported = (function (browser) {
-        return includes(browsersSupportingThirdPartyCookie, browser);
       });
 
       var matchUserAgent = function matchUserAgent(regexs) {
@@ -3544,59 +3323,112 @@ governing permissions and limitations under the License.
         return matchUserAgent((_matchUserAgent = {}, _defineProperty(_matchUserAgent, EDGE, /Edge\/([0-9\._]+)/), _defineProperty(_matchUserAgent, EDGE_CHROMIUM, /Edg\/([0-9\.]+)/), _defineProperty(_matchUserAgent, CHROME, /(?!Chrom.*OPR)Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/), _defineProperty(_matchUserAgent, FIREFOX, /Firefox\/([0-9\.]+)(?:\s|$)/), _defineProperty(_matchUserAgent, IE, /Trident\/7\.0.*rv\:([0-9\.]+).*\).*Gecko$/), _defineProperty(_matchUserAgent, SAFARI, /Version\/([0-9\._]+).*Safari/), _matchUserAgent))(window.navigator.userAgent);
       });
 
-      var addIdsContext = function addIdsContext(payload, ecid) {
-        payload.addIdentity(EXPERIENCE_CLOUD_ID, {
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+// Maybe default the domain in the cookieJar to apex while allowing overrides.
+
+      var apexDomain = getApexDomain(window, cookie);
+      var createMigration = (function (orgId) {
+        var amcvCookieName = "AMCV_" + orgId;
+        return {
+          getEcidFromLegacyCookies: function getEcidFromLegacyCookies() {
+            var ecid = null;
+            var secidCookieName = "s_ecid";
+            var legacyEcidCookieValue = cookie.get(secidCookieName) || cookie.get(amcvCookieName);
+
+            if (legacyEcidCookieValue) {
+              var reg = /(^|\|)MCMID\|(\d+)($|\|)/;
+              var matches = legacyEcidCookieValue.match(reg);
+
+              if (matches) {
+                // Destructuring arrays breaks in IE
+                ecid = matches[2];
+              }
+            }
+
+            return ecid;
+          },
+          createLegacyCookie: function createLegacyCookie(ecid) {
+            var amcvCookieValue = cookie.get(amcvCookieName);
+
+            if (!amcvCookieValue) {
+              cookie.set(amcvCookieName, "MCMID|" + ecid, {
+                domain: apexDomain,
+                // Without `expires` this will be a session cookie.
+                expires: 390 // days, or 13 months.
+
+              });
+            }
+          }
+        };
+      });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+      var ecidNamespace = "ECID";
+
+      var addEcidToPayload = function addEcidToPayload(payload, ecid) {
+        payload.addIdentity(ecidNamespace, {
           id: ecid
         });
       };
 
-      var createComponent = (function (idSyncs, config, logger, cookieJar, optIn, eventManager) {
-        var deferredForEcid;
-        var alreadyQueriedForIdSyncs = false;
+      var createComponent = (function (processIdSyncs, config, logger, optIn, eventManager) {
         var idMigrationEnabled = config.idMigrationEnabled,
           orgId = config.orgId;
-        var migration = createMigration(orgId, idMigrationEnabled); // TODO: Fetch from server if ECID is not available.
+        var identityCookieName = getNamespacedCookieName(orgId, IDENTITY_COOKIE_KEY);
+        var deferredForEcid;
+        var migration = createMigration(orgId);
 
-        var _getEcid = function getEcid() {
-          var ecid = cookieJar.get(EXPERIENCE_CLOUD_ID) || migration.getEcidFromLegacyCookie(cookieJar);
-          return ecid;
-        }; // This is a way for the ECID data element in the Reactor extension
-        // to get the ECID synchronously since data elements are required
-        // to be synchronous.
+        var hasIdentityCookie = function hasIdentityCookie() {
+          return Boolean(cookie.get(identityCookieName));
+        };
 
-
-        config.reactorRegisterGetEcid(function () {
-          return optIn.isOptedIn() ? _getEcid() : undefined;
-        });
-        var customerIds = createCustomerIds(cookieJar, eventManager);
+        var customerIds = createCustomerIds(eventManager);
         return {
           lifecycle: {
             // Waiting for opt-in because we'll be reading the ECID from a cookie
             onBeforeEvent: function onBeforeEvent(_ref) {
-              var event = _ref.event;
+              var event = _ref.event,
+                payload = _ref.payload;
               return optIn.whenOptedIn().then(function () {
-                var identityQuery = {
-                  identity: {}
-                };
-                var sendIdentityQuery = false;
-
-                if (!alreadyQueriedForIdSyncs && config.idSyncEnabled && idSyncs.hasExpired()) {
-                  alreadyQueriedForIdSyncs = true;
-                  identityQuery.identity.exchange = true;
-                  sendIdentityQuery = true;
-
-                  if (config.idSyncContainerId !== undefined) {
-                    identityQuery.identity.containerId = config.idSyncContainerId;
+                event.mergeQuery({
+                  identity: {
+                    fetch: [ecidNamespace]
                   }
+                });
+                var configOverrides = {};
+
+                if (config.idSyncEnabled !== undefined) {
+                  configOverrides.idSyncEnabled = config.idSyncEnabled;
                 }
 
-                if (!config.thirdPartyCookiesEnabled) {
-                  identityQuery.identity.thirdPartyCookiesEnabled = false;
-                  sendIdentityQuery = true;
+                if (config.idSyncContainerId !== undefined) {
+                  configOverrides.idSyncContainerId = config.idSyncContainerId;
                 }
 
-                if (sendIdentityQuery) {
-                  event.mergeQuery(identityQuery);
+                if (Object.keys(configOverrides).length) {
+                  payload.mergeConfigOverrides({
+                    identity: configOverrides
+                  });
                 }
               });
             },
@@ -3605,30 +3437,43 @@ governing permissions and limitations under the License.
             onBeforeDataCollection: function onBeforeDataCollection(_ref2) {
               var payload = _ref2.payload;
               return optIn.whenOptedIn().then(function () {
-                var ecid = _getEcid();
-
                 var promise;
 
-                if (ecid) {
-                  addIdsContext(payload, ecid);
-                } else if (deferredForEcid) {
-                  // We don't have an ECID, but the first request has gone out to
-                  // fetch it. We must wait for the response to come back with the
-                  // ECID before we can apply it to this payload.
-                  logger.log("Delaying request while retrieving ECID from server.");
-                  promise = deferredForEcid.promise.then(function () {
-                    logger.log("Resuming previously delayed request.");
-                    addIdsContext(payload, _getEcid());
-                  });
-                } else {
-                  // We don't have an ECID and no request has gone out to fetch it.
-                  // We won't apply the ECID to this request, but we'll set up a
-                  // promise so that future requests can know when the ECID has returned.
-                  deferredForEcid = defer();
-                  payload.expectResponse();
+                if (!hasIdentityCookie()) {
+                  var ecidToMigrate = idMigrationEnabled && migration.getEcidFromLegacyCookies();
 
-                  if (config.thirdPartyCookiesEnabled && areThirdPartyCookiesSupported(getBrowser(window))) {
-                    payload.useIdThirdPartyDomain();
+                  if (ecidToMigrate) {
+                    // We don't have an identity cookie, but we do have an ECID
+                    // from a legacy cookie that we can explicitly provide
+                    // to the server, which is sufficient until the identity cookie
+                    // gets set.
+                    addEcidToPayload(payload, ecidToMigrate);
+                  } else if (deferredForEcid) {
+                    // We don't have an identity cookie, but the first request has
+                    // been sent to get it. We must wait for the response to the first
+                    // request to come back and a cookie set before we can let this
+                    // request go out.
+                    logger.log("Delaying request while retrieving ECID from server.");
+                    promise = deferredForEcid.promise.then(function () {
+                      logger.log("Resuming previously delayed request.");
+                    });
+                  } else {
+                    // We don't have an identity cookie and no request has gone out
+                    // to get it. We'll let this request go out to fetch the cookie,
+                    // but we'll set up a promise so that future requests can
+                    // know when the cookie has been set. We don't let additional
+                    // requests to go out in the meantime because a new ECID would
+                    // be minted for each request (each request would be seen as a
+                    // new visitor).
+                    deferredForEcid = defer();
+                    payload.expectResponse(); // If third-party cookies are enabled by the customer and
+                    // supported by the browser, we will send the request to a
+                    // a third-party domain that allows for more accurate
+                    // identification of the user through use of a third-party cookie.
+
+                    if (config.thirdPartyCookiesEnabled && areThirdPartyCookiesSupportedByDefault(getBrowser(window))) {
+                      payload.useIdThirdPartyDomain();
+                    }
                   }
                 }
 
@@ -3636,33 +3481,37 @@ governing permissions and limitations under the License.
                 return promise;
               });
             },
-            // Waiting for opt-in because we'll be writing the ECID to a cookie
+            // Waiting for opt-in because we'll be reading the ECID from a cookie
             onResponse: function onResponse(_ref3) {
               var response = _ref3.response;
               return optIn.whenOptedIn().then(function () {
-                var ecidPayloads = response.getPayloadsByType("identity:persist");
+                if (idMigrationEnabled) {
+                  var identityResultPayloads = response.getPayloadsByType("identity:result");
+                  var ecidPayload = find(identityResultPayloads, function (payload) {
+                    return payload.namespace && payload.namespace.code === ecidNamespace;
+                  });
 
-                if (ecidPayloads.length > 0) {
-                  var ecid = ecidPayloads[0].id;
-                  cookieJar.set(EXPERIENCE_CLOUD_ID, ecid);
-                  migration.createAmcvCookie(ecid);
-
-                  if (deferredForEcid) {
-                    deferredForEcid.resolve();
+                  if (ecidPayload) {
+                    migration.createLegacyCookie(ecidPayload.id);
                   }
+                } // If we were queuing requests until we received the identity cookie,
+                // and now we have the identity cookie, we can let the queued
+                // requests go out. Technically, we should always have an identity
+                // cookie at this point, but we check just to be sure.
+
+
+                if (deferredForEcid && hasIdentityCookie()) {
+                  deferredForEcid.resolve();
                 }
 
-                idSyncs.process(response.getPayloadsByType("identity:exchange"));
+                return processIdSyncs(response.getPayloadsByType("identity:exchange"), logger);
               });
             }
           },
           commands: {
-            getEcid: function getEcid() {
-              return optIn.whenOptedIn().then(_getEcid);
-            },
             setCustomerIds: function setCustomerIds(options) {
               return optIn.whenOptedIn().then(function () {
-                return customerIds.sync(options);
+                return customerIds.sync(options, logger);
               });
             }
           }
@@ -3684,30 +3533,26 @@ governing permissions and limitations under the License.
       var createIdentity = function createIdentity(_ref) {
         var config = _ref.config,
           logger = _ref.logger,
-          cookieJar = _ref.cookieJar,
           optIn = _ref.optIn,
           eventManager = _ref.eventManager;
-        // We avoid reading the ECID from the cookie right away, because we
-        // need to wait for the user to opt in first.
-        var idSyncs = createIdSyncs(config, logger, cookieJar);
-        return createComponent(idSyncs, config, logger, cookieJar, optIn, eventManager);
+        var processIdSyncs = processIdSyncsFactory({
+          fireReferrerHideableImage: fireReferrerHideableImage,
+          logger: logger
+        });
+        return createComponent(processIdSyncs, config, logger, optIn, eventManager);
       };
 
       createIdentity.namespace = "Identity";
-      createIdentity.abbreviation = "ID";
       createIdentity.configValidators = {
         idSyncEnabled: {
-          defaultValue: true,
+          defaultValue: undefined,
           validate: boundBoolean()
         },
         idSyncContainerId: {
+          defaultValue: undefined,
           validate: boundNumber().integer().minimum(0).expected("an integer greater than or equal to 0")
         },
         thirdPartyCookiesEnabled: {
-          defaultValue: true,
-          validate: boundBoolean()
-        },
-        idMigrationEnabled: {
           defaultValue: true,
           validate: boundBoolean()
         }
@@ -3729,44 +3574,51 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-      var processUrls = function processUrls(destinations, logger) {
+      var createResultLogMessage$1 = function createResultLogMessage(urlDestination, success) {
+        return "URL destination " + (success ? "succeeded" : "failed") + ": " + urlDestination.spec.url;
+      };
+
+      var processUrls = function processUrls(fireReferrerHideableImage, logger, destinations) {
         var urlDestinations = destinations.filter(function (dest) {
           return dest.type === "url";
-        }).map(function (dest) {
-          return assign({
-            id: dest.id
-          }, dest.spec);
         });
-
-        if (urlDestinations.length) {
-          fireDestinations({
-            logger: logger,
-            destinations: urlDestinations
+        return Promise.all(urlDestinations.map(function (urlDestination) {
+          return fireReferrerHideableImage(urlDestination.spec).then(function () {
+            logger.log(createResultLogMessage$1(urlDestination, true));
+          }).catch(function () {
+            // We intentionally do not throw an error if destinations fail. We
+            // consider it a non-critical failure and therefore do not want it to
+            // reject the promise handed back to the customer.
+            logger.error(createResultLogMessage$1(urlDestination, false));
           });
-        }
+        }));
       };
 
       var processCookies = function processCookies(destinations) {
         var cookieDestinations = destinations.filter(function (dest) {
           return dest.type === "cookie";
-        }).map(function (dest) {
-          return dest.spec;
-        }); // TODO: Konductor might have to set those if CNAME provided?
-
+        });
         cookieDestinations.forEach(function (dest) {
-          cookie.set(dest.name, dest.value || "", {
-            domain: dest.domain || "",
-            expires: dest.ttlDays ? dest.ttlDays : 10 // days
+          var _dest$spec = dest.spec,
+            name = _dest$spec.name,
+            value = _dest$spec.value,
+            domain = _dest$spec.domain,
+            ttlDays = _dest$spec.ttlDays;
+          cookie.set(name, value || "", {
+            domain: domain || "",
+            expires: ttlDays || 10 // days
 
           });
         });
       };
 
-      var processDestinations = (function (_ref) {
-        var destinations = _ref.destinations,
+      var processDestinationsFactory = (function (_ref) {
+        var fireReferrerHideableImage = _ref.fireReferrerHideableImage,
           logger = _ref.logger;
-        processUrls(destinations, logger);
-        processCookies(destinations);
+        return function (destinations) {
+          processCookies(destinations);
+          return processUrls(fireReferrerHideableImage, logger, destinations);
+        };
       });
 
       /*
@@ -3781,32 +3633,49 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+      var getConfigOverrides = function getConfigOverrides(config) {
+        var configOverrides = {};
+
+        if (config.urlDestinationsEnabled !== undefined) {
+          configOverrides.urlDestinationsEnabled = config.urlDestinationsEnabled;
+        }
+
+        if (config.cookieDestinationsEnabled !== undefined) {
+          configOverrides.storedDestinationsEnabled = config.cookieDestinationsEnabled;
+        }
+
+        return Object.keys(configOverrides).length ? configOverrides : undefined;
+      };
+
       var createAudiences = function createAudiences(_ref) {
         var config = _ref.config,
           logger = _ref.logger;
+        var processDestinations = processDestinationsFactory({
+          fireReferrerHideableImage: fireReferrerHideableImage,
+          logger: logger
+        });
         return {
           lifecycle: {
             onBeforeEvent: function onBeforeEvent(_ref2) {
               var event = _ref2.event,
-                isViewStart = _ref2.isViewStart;
+                isViewStart = _ref2.isViewStart,
+                payload = _ref2.payload;
 
               if (isViewStart) {
-                event.mergeQuery({
-                  activation: {
-                    urlsEnabled: config.urlDestinationsEnabled,
-                    cookiesEnabled: config.cookieDestinationsEnabled
-                  }
-                });
-                event.expectResponse();
+                var configOverrides = getConfigOverrides(config);
+
+                if (configOverrides) {
+                  event.expectResponse();
+                  payload.mergeConfigOverrides({
+                    activation: configOverrides
+                  });
+                }
               }
             },
             onResponse: function onResponse(_ref3) {
               var response = _ref3.response;
               var destinations = response.getPayloadsByType("activation:push");
-              processDestinations({
-                destinations: destinations,
-                logger: logger
-              });
+              return processDestinations(destinations);
             }
           },
           commands: {}
@@ -3814,14 +3683,13 @@ governing permissions and limitations under the License.
       };
 
       createAudiences.namespace = "Audiences";
-      createAudiences.abbreviation = "AU";
       createAudiences.configValidators = {
         cookieDestinationsEnabled: {
-          defaultValue: true,
+          defaultValue: undefined,
           validate: boundBoolean()
         },
         urlDestinationsEnabled: {
-          defaultValue: true,
+          defaultValue: undefined,
           validate: boundBoolean()
         }
       };
@@ -4288,18 +4156,6 @@ governing permissions and limitations under the License.
       var getFirstChild = (function (element) {
         return element.firstElementChild;
       });
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -4822,7 +4678,7 @@ governing permissions and limitations under the License.
           replaceHtml: createAction(collect, replaceHtml),
           prependHtml: createAction(collect, prependHtml),
           appendHtml: createAction(collect, appendHtml),
-          click: function click$$1(settings) {
+          click: function click(settings) {
             return _click(settings, store);
           }
         };
@@ -4868,15 +4724,21 @@ governing permissions and limitations under the License.
         };
 
         var getErrorMessage = function getErrorMessage(ruleComponent, rule, errorMessage, errorStack) {
-          return "Failed to execute " + ruleComponent.moduleType + " for " + rule.name + " rule. " + errorMessage + " " + (errorStack ? "\n " + errorStack : "");
+          var ruleRespresentation = JSON.stringify(rule);
+          return "Failed to execute " + ruleComponent.moduleType + " for " + ruleRespresentation + " rule.\n    " + errorMessage + " " + (errorStack ? "\n " + errorStack : "");
         };
 
         var logActionError = function logActionError(action, rule, e) {
-          logger.error(getErrorMessage(action, rule, e.message, e.stack));
+          if (logger.enabled) {
+            logger.error(getErrorMessage(action, rule, e.message, e.stack));
+          }
         };
 
         var logRuleCompleted = function logRuleCompleted(rule) {
-          logger.log("Rule " + rule.name + " fired.");
+          if (logger.enabled) {
+            var ruleRespresentation = JSON.stringify(rule);
+            logger.log("Rule " + ruleRespresentation + " fired.");
+          }
         };
 
         var runActions = function runActions(rule, syntheticEvent) {
@@ -4925,18 +4787,6 @@ governing permissions and limitations under the License.
         });
         triggerCallQueue = null;
       });
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -5017,7 +4867,7 @@ governing permissions and limitations under the License.
 
       var mergeMeta = function mergeMeta(event, meta) {
         event.mergeMeta({
-          personalization: _objectSpread({}, meta)
+          personalization: _objectSpread2({}, meta)
         });
       };
 
@@ -5054,29 +4904,31 @@ governing permissions and limitations under the License.
         };
 
         var ruleComponentModules = initRuleComponentModules(collect, store);
+
+        var disablePersonalization = function disablePersonalization(payload) {
+          payload.mergeConfigOverrides({
+            personalization: {
+              enabled: false
+            }
+          });
+        };
+
         return {
           lifecycle: {
             onBeforeEvent: function onBeforeEvent(_ref2) {
               var event = _ref2.event,
-                isViewStart = _ref2.isViewStart;
+                isViewStart = _ref2.isViewStart,
+                payload = _ref2.payload;
 
               if (authoringModeEnabled) {
                 logger.warn("Rendering is disabled, authoring mode.");
-                event.mergeQuery({
-                  personalization: {
-                    enabled: false
-                  }
-                });
+                disablePersonalization(payload);
                 return;
               }
 
               if (!isViewStart) {
                 // If NOT isViewStart disable personalization
-                event.mergeQuery({
-                  personalization: {
-                    enabled: false
-                  }
-                });
+                disablePersonalization(payload);
               } else {
                 event.expectResponse(); // For viewStart we try to hide the personalization containers
 
@@ -5112,7 +4964,6 @@ governing permissions and limitations under the License.
       };
 
       createPersonalization.namespace = "Personalization";
-      createPersonalization.abbreviation = "PE";
       createPersonalization.configValidators = {
         prehidingStyle: {
           validate: boundString().nonEmpty()
@@ -5130,16 +4981,14 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var webFactory = (function (window, topFrameSetProvider) {
-        var topFrameSet;
+      var webFactory = (function (window) {
         return function (xdm) {
-          topFrameSet = topFrameSet || topFrameSetProvider();
           var web = {
             webPageDetails: {
               URL: window.location.href || window.location
             },
             webReferrer: {
-              URL: topFrameSet.document.referrer
+              URL: window.top.document.referrer
             }
           };
           deepAssign(xdm, {
@@ -5276,39 +5125,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var topFrameSetFactory = (function (window) {
-        return function () {
-          var topFrameSet = window;
-          var _topFrameSet = topFrameSet,
-            location = _topFrameSet.location;
-
-          try {
-            var _topFrameSet2 = topFrameSet,
-              parent = _topFrameSet2.parent;
-
-            while (parent && parent.location && location && String(parent.location) !== String(location) && topFrameSet.location && String(parent.location) !== String(topFrameSet.location) && parent.location.host === location.host) {
-              topFrameSet = parent;
-              var _topFrameSet3 = topFrameSet;
-              parent = _topFrameSet3.parent;
-            }
-          } catch (e) {// default to whatever topFrameSet is set
-          }
-
-          return topFrameSet;
-        };
-      });
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
       var timestampFactory = (function (dateProvider) {
         return function (xdm) {
           var timestamp = dateProvider().toISOString();
@@ -5343,7 +5159,7 @@ governing permissions and limitations under the License.
 
 // The value will be swapped with the proper version at build time
 // see rollupPluginReplaceVersion.js
-      var libraryVersion = "0.0.9";
+      var libraryVersion = "0.0.10";
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -5392,8 +5208,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var topFrameSetProvider = topFrameSetFactory(window);
-      var web = webFactory(window, topFrameSetProvider);
+      var web = webFactory(window);
       var device = deviceFactory(window);
       var environment = environmentFactory(window);
       var placeContext = placeContextFactory(function () {
@@ -5418,7 +5233,6 @@ governing permissions and limitations under the License.
       };
 
       createContext.namespace = "Context";
-      createContext.abbreviation = "CO";
       createContext.configValidators = {
         context: {
           defaultValue: Object.keys(optionalContexts),
@@ -5472,7 +5286,6 @@ governing permissions and limitations under the License.
       };
 
       createPrivacy.namespace = "Privacy";
-      createPrivacy.abbreviation = "PR";
       createPrivacy.configValidators = {
         optInEnabled: {
           defaultValue: false,
@@ -5506,7 +5319,6 @@ governing permissions and limitations under the License.
       };
 
       createEventMerge.namespace = "EventMerge";
-      createEventMerge.abbreviation = "EM";
       createEventMerge.configValidators = {}; // Not much need to validate since we are our own consumer.
 
       createEventMerge.configValidators.reactorRegisterCreateEventMergeId = {
@@ -5538,7 +5350,6 @@ governing permissions and limitations under the License.
       };
 
       createLibraryInfo.namespace = "LibraryInfo";
-      createLibraryInfo.abbreviation = "LI";
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -5612,10 +5423,9 @@ governing permissions and limitations under the License.
           componentRegistry = _ref.componentRegistry,
           getImmediatelyAvailableTools = _ref.getImmediatelyAvailableTools;
         componentCreators.forEach(function (createComponent) {
-          var namespace = createComponent.namespace,
-            abbreviation = createComponent.abbreviation; // TO-DOCUMENT: Helpers that we inject into factories.
+          var namespace = createComponent.namespace; // TO-DOCUMENT: Helpers that we inject into factories.
 
-          var tools = getImmediatelyAvailableTools(abbreviation);
+          var tools = getImmediatelyAvailableTools(namespace);
           var component;
 
           try {
@@ -5660,7 +5470,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var CONFIG_DOC_URI = "https://launch.gitbook.io/adobe-experience-platform-web-sdk/fundamentals/configuring-the-sdk";
+      var CONFIG_DOC_URI$1 = "https://adobe.ly/2M4ErNE";
 
       var createConfigValidator = function createConfigValidator(config) {
         var validators = Object.create(null);
@@ -5693,12 +5503,26 @@ governing permissions and limitations under the License.
             }, []);
 
             if (errors.length) {
-              throw new Error("Resolve these configuration problems:\n\t - " + errors.join("\n\t - ") + "\nFor configuration documentation see: " + CONFIG_DOC_URI);
+              throw new Error("Resolve these configuration problems:\n\t - " + errors.join("\n\t - ") + "\nFor configuration documentation see: " + CONFIG_DOC_URI$1);
             }
           }
         };
         return validator;
       };
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+      var EDGE_DOMAIN = "edge.adobedc.net";
+      var ID_THIRD_PARTY_DOMAIN = "adobedc.demdex.net";
 
       var EDGE_BASE_PATH = "ee";
 
@@ -5794,36 +5618,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var ALLOY_COOKIE_NAME = cookieDetails.ALLOY_COOKIE_NAME,
-        ALLOY_COOKIE_TTL_IN_DAYS = cookieDetails.ALLOY_COOKIE_TTL_IN_DAYS;
-      /**
-       * Tool-specific dependencies => componentCreator => result
-       */
-
-      var cookieJarToolFactory = (function (_ref) {
-        var config = _ref.config,
-          createCookieProxy = _ref.createCookieProxy,
-          createComponentNamespacedCookieJar = _ref.createComponentNamespacedCookieJar,
-          getTopLevelDomain = _ref.getTopLevelDomain,
-          createOrgNamespacedCookieName = _ref.createOrgNamespacedCookieName;
-        var cookieName = createOrgNamespacedCookieName(ALLOY_COOKIE_NAME, config.orgId);
-        var cookieProxy = createCookieProxy(cookieName, ALLOY_COOKIE_TTL_IN_DAYS, config.cookieDomain || getTopLevelDomain());
-        return function (componentAbbreviation) {
-          return createComponentNamespacedCookieJar(cookieProxy, componentAbbreviation);
-        };
-      });
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
       var xhrRequestFactory = (function (XMLHttpRequest) {
         return function (url, body) {
           return new Promise(function (resolve, reject) {
@@ -5872,6 +5666,8 @@ governing permissions and limitations under the License.
           return fetch(url, {
             method: "POST",
             cache: "no-cache",
+            credentials: "include",
+            // To set the cookie header in the request.
             headers: {
               "Content-Type": "text/plain; charset=UTF-8"
             },
@@ -6008,12 +5804,15 @@ governing permissions and limitations under the License.
 */
       var createEventManager = (function (_ref) {
         var createEvent = _ref.createEvent,
+          createResponse = _ref.createResponse,
           optIn = _ref.optIn,
           lifecycle = _ref.lifecycle,
+          cookieTransfer = _ref.cookieTransfer,
           network = _ref.network,
           config = _ref.config,
           logger = _ref.logger;
-        var orgId = config.orgId,
+        var edgeDomain = config.edgeDomain,
+          orgId = config.orgId,
           onBeforeEventSend = config.onBeforeEventSend,
           debugEnabled = config.debugEnabled,
           datasetId = config.datasetId,
@@ -6029,33 +5828,31 @@ governing permissions and limitations under the License.
         };
 
         var addMetaTo = function addMetaTo(payload) {
-          var meta = {
-            gateway: {
-              orgId: orgId
-            }
+          var configOverrides = {
+            orgId: orgId
           };
-          var collect = Object.create(null);
-          assignIf(collect, {
+          var dataCollection = Object.create(null);
+          assignIf(dataCollection, {
             synchronousValidation: true
           }, function () {
             return debugEnabled;
           });
-          assignIf(collect, {
+          assignIf(dataCollection, {
             datasetId: config.datasetId
           }, function () {
             return datasetId;
           });
-          assignIf(collect, {
+          assignIf(dataCollection, {
             schemaId: config.schemaId
           }, function () {
             return schemaId;
           });
 
-          if (!isEmptyObject(collect)) {
-            meta.collect = collect;
+          if (!isEmptyObject(dataCollection)) {
+            configOverrides.dataCollection = dataCollection;
           }
 
-          payload.mergeMeta(meta);
+          payload.mergeConfigOverrides(configOverrides);
         };
 
         return {
@@ -6082,7 +5879,8 @@ governing permissions and limitations under the License.
             addMetaTo(payload);
             return lifecycle.onBeforeEvent({
               event: event,
-              isViewStart: isViewStart
+              isViewStart: isViewStart,
+              payload: payload
             }).then(function () {
               // it's important to add the event here because the payload object will call toJSON
               // which applies the userData, userXdm, and lastChanceCallback
@@ -6093,10 +5891,43 @@ governing permissions and limitations under the License.
                 payload: payload
               });
             }).then(function () {
-              return network.sendRequest(payload, {
+              var endpointDomain = payload.shouldUseIdThirdPartyDomain ? ID_THIRD_PARTY_DOMAIN : edgeDomain;
+              cookieTransfer.cookiesToPayload(payload, endpointDomain);
+              return network.sendRequest(payload, endpointDomain, {
                 expectsResponse: payload.expectsResponse,
-                documentUnloading: event.isDocumentUnloading,
-                useIdThirdPartyDomain: payload.shouldUseIdThirdPartyDomain
+                documentUnloading: event.isDocumentUnloading
+              });
+            }).catch(function (error) {
+              // The error that we caught is more important than
+              // any error that may have occurred in lifecycle.onResponseError().
+              // For that reason, we make sure the caught error is the one that
+              // bubbles up. We also wait until lifecycle.onRequestFailure is
+              // complete before returning, so that any error that may occur
+              // in lifecycle.onRequestFailure is properly suppressed if the
+              // user has errorsEnabled: false in the configuration.
+              // We could use finally() here, but just to be safe, we don't,
+              // because finally() is only recently supported natively and may
+              // not exist in customer-provided promise polyfills.
+              var throwError = function throwError() {
+                throw error;
+              };
+
+              return lifecycle.onRequestFailure().then(throwError, throwError);
+            }).then(function (parsedBody) {
+              var response = createResponse(parsedBody);
+              cookieTransfer.responseToCookies(response); // TODO Document that onResponse will be called when Konductor
+              // sends a well-formed response even if that response contains
+              // error objects. This is because even when there are error objects
+              // there can be "handle" payloads to act upon. Also document
+              // that onRequestFailure will be called when the network request
+              // itself failed (e.g., no internet connection), when JAG throws an
+              // error (the request never made it to Konductor), or when
+              // Konductor returns a malformed response.
+
+              return lifecycle.onResponse({
+                response: response
+              }).then(function () {
+                return response;
               });
             }).then(function (response) {
               if (!response) {
@@ -6136,6 +5967,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+// TODO: Remove this once the opt-in cookie is managed by the server.
 // Due to security software flagging the `@` sign in the ORG ID
 // as a security vulnerability, we are replacing it with an `_`.
       var createOrgNamespacedCookieName = (function (cookieNamePrefix, orgId) {
@@ -6153,16 +5985,89 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+      var STATE_STORE_HANDLE_TYPE = "state:store";
+      var createCookieTransfer = (function (_ref) {
+        var cookieJar = _ref.cookieJar,
+          orgId = _ref.orgId,
+          apexDomain = _ref.apexDomain;
+        return {
+          /**
+           * When sending to a third-party endpoint, the endpoint won't be able to
+           * access first-party cookies, therefore we transfer cookies into
+           * the request body so they can be read by the server.
+           */
+          cookiesToPayload: function cookiesToPayload(payload, endpointDomain) {
+            var isEndpointFirstParty = endsWith(endpointDomain, apexDomain);
+            var state = {
+              domain: apexDomain
+            }; // If the endpoint is first-party, there's no need to transfer cookies
+            // to the payload since they'll be automatically passed through cookie
+            // headers.
+
+            if (!isEndpointFirstParty) {
+              var cookies = cookieJar.get();
+              var entries = Object.keys(cookies).filter(function (name) {
+                // We have a contract with the server that we will pass
+                // all cookies whose names are namespaced according to the
+                // logic in isNamespacedCookieName as well as any legacy
+                // cookie names (so that the server can handle migrating
+                // identities on websites previously using Visitor.js)
+                return isNamespacedCookieName(orgId, name);
+              }).map(function (qualifyingCookieName) {
+                return {
+                  key: qualifyingCookieName,
+                  value: cookies[qualifyingCookieName]
+                };
+              });
+
+              if (entries.length) {
+                state.entries = entries;
+              }
+            }
+
+            payload.mergeState(state);
+          },
+
+          /**
+           * When receiving from a third-party endpoint, the endpoint won't be able to
+           * write first-party cookies, therefore we write first-party cookies
+           * as directed in the response body.
+           */
+          responseToCookies: function responseToCookies(response) {
+            response.getPayloadsByType(STATE_STORE_HANDLE_TYPE).forEach(function (stateItem) {
+              var options = {
+                domain: apexDomain
+              };
+
+              if (stateItem.maxAge !== undefined) {
+                // cookieJar expects "expires" in days
+                options.expires = convertTimes(SECOND, DAY, stateItem.maxAge);
+              }
+
+              cookieJar.set(stateItem.key, stateItem.value, options);
+            });
+          }
+        };
+      });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 
       var instanceNamespaces = window.__alloyNS;
       var createNamespacedStorage = storageFactory(window);
-      var memoizedGetTopLevelDomain = memoize(getTopLevelCookieDomain);
-      var console; // When running within the Reactor extension, we want logging to be
-// toggled when Reactor logging is toggled. The easiest way to do
-// this is to pipe our log messages through the Reactor logger.
-
-      console = turbine.logger;
+      var _window = window,
+        console = _window.console;
       var coreConfigValidators = createCoreConfigs();
+      var apexDomain$1 = getApexDomain(window, cookie);
 
       if (instanceNamespaces) {
         instanceNamespaces.forEach(function (instanceNamespace) {
@@ -6178,11 +6083,6 @@ governing permissions and limitations under the License.
           var componentRegistry = createComponentRegistry();
           var lifecycle = createLifecycle(componentRegistry);
           var networkStrategy = createNetworkStrategy(window, logger);
-
-          var getTopLevelDomain = function getTopLevelDomain() {
-            return memoizedGetTopLevelDomain(window, cookie);
-          };
-
           var errorsEnabled = true;
 
           var getErrorsEnabled = function getErrorsEnabled() {
@@ -6216,39 +6116,36 @@ governing permissions and limitations under the License.
               cookieJar: cookie,
               createOrgNamespacedCookieName: createOrgNamespacedCookieName
             });
+            var cookieTransfer = createCookieTransfer({
+              cookieJar: cookie,
+              orgId: config.orgId,
+              apexDomain: apexDomain$1
+            });
             var network = createNetwork({
               config: config,
               logger: logger,
-              lifecycle: lifecycle,
               networkStrategy: networkStrategy
             });
             var eventManager = createEventManager({
               createEvent: createEvent,
+              createResponse: createResponse,
               optIn: optIn,
               lifecycle: lifecycle,
+              cookieTransfer: cookieTransfer,
               network: network,
               config: config,
               logger: logger
-            });
-            var createCookieJarTool = cookieJarToolFactory({
-              config: config,
-              createCookieProxy: createCookieProxy,
-              createComponentNamespacedCookieJar: createComponentNamespacedCookieJar,
-              getTopLevelDomain: getTopLevelDomain,
-              createOrgNamespacedCookieName: createOrgNamespacedCookieName
             });
             return initializeComponents({
               componentCreators: componentCreators,
               lifecycle: lifecycle,
               componentRegistry: componentRegistry,
-              getImmediatelyAvailableTools: function getImmediatelyAvailableTools(componentAbbreviation) {
+              getImmediatelyAvailableTools: function getImmediatelyAvailableTools(componentNamespace) {
                 return {
                   config: config,
                   optIn: optIn,
-                  network: network,
                   eventManager: eventManager,
-                  cookieJar: createCookieJarTool(componentAbbreviation),
-                  logger: logController.createComponentLogger(componentAbbreviation)
+                  logger: logController.createComponentLogger(componentNamespace)
                 };
               }
             });
@@ -6274,6 +6171,8 @@ governing permissions and limitations under the License.
 
     })();
   }
+
+
 
 /////////////////////////////
 // END OF LIBRARY CODE
