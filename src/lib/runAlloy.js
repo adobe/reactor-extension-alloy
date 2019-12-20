@@ -2942,18 +2942,16 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var createConfigValidators = (function () {
-        return {
-          clickCollectionEnabled: {
-            defaultValue: true,
-            validate: boundBoolean()
-          },
-          downloadLinkQualifier: {
-            defaultValue: "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$",
-            validate: boundString().regexp()
-          }
-        };
-      });
+      var configValidators = {
+        clickCollectionEnabled: {
+          defaultValue: true,
+          validate: boundBoolean()
+        },
+        downloadLinkQualifier: {
+          defaultValue: "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$",
+          validate: boundString().regexp()
+        }
+      };
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -3123,7 +3121,7 @@ governing permissions and limitations under the License.
       };
 
       createActivityCollector.namespace = "ActivityCollector";
-      createActivityCollector.configValidators = createConfigValidators();
+      createActivityCollector.configValidators = configValidators;
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -3159,6 +3157,40 @@ governing permissions and limitations under the License.
           }));
         };
       });
+
+      /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+      var configValidators$1 = {
+        idSyncEnabled: {
+          defaultValue: undefined,
+          validate: boundBoolean()
+        },
+        idSyncContainerId: {
+          defaultValue: undefined,
+          validate: boundNumber().integer().minimum(0).expected("an integer greater than or equal to 0")
+        },
+        thirdPartyCookiesEnabled: {
+          defaultValue: true,
+          validate: boundBoolean()
+        },
+        idMigrationEnabled: {
+          defaultValue: true,
+          validate: boundBoolean()
+        }
+      }; // Not much need to validate since we are our own consumer.
+
+      configValidators$1.reactorRegisterGetEcid = {
+        defaultValue: function defaultValue() {}
+      };
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -3543,24 +3575,7 @@ governing permissions and limitations under the License.
       };
 
       createIdentity.namespace = "Identity";
-      createIdentity.configValidators = {
-        idSyncEnabled: {
-          defaultValue: undefined,
-          validate: boundBoolean()
-        },
-        idSyncContainerId: {
-          defaultValue: undefined,
-          validate: boundNumber().integer().minimum(0).expected("an integer greater than or equal to 0")
-        },
-        thirdPartyCookiesEnabled: {
-          defaultValue: true,
-          validate: boundBoolean()
-        }
-      }; // Not much need to validate since we are our own consumer.
-
-      createIdentity.configValidators.reactorRegisterGetEcid = {
-        defaultValue: function defaultValue() {}
-      };
+      createIdentity.configValidators = configValidators$1;
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -5159,7 +5174,7 @@ governing permissions and limitations under the License.
 
 // The value will be swapped with the proper version at build time
 // see rollupPluginReplaceVersion.js
-      var libraryVersion = "0.0.10";
+      var libraryVersion = "0.0.11";
 
       /*
 Copyright 2019 Adobe. All rights reserved.
