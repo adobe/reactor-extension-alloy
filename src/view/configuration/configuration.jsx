@@ -30,7 +30,7 @@ import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
-// import EditorButton from "../components/editorButton";
+import EditorButton from "../components/editorButton";
 import InfoTipLayout from "../components/infoTipLayout";
 import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
@@ -487,8 +487,7 @@ const Configuration = () => {
                           </div>
 
                           <h3>Identity</h3>
-                          {/* TODO - Uncomment these when Konductor support is available  */}
-                          {/* <div className="u-gapTop">
+                          <div className="u-gapTop">
                             <InfoTipLayout tip="Sends requests to third-party URLs to synchronize the Adobe unique user ID with the unique user ID of a third-party data source.">
                               <WrappedField
                                 name={`instances.${index}.idSyncEnabled`}
@@ -516,7 +515,7 @@ const Configuration = () => {
                                 />
                               </div>
                             </div>
-                          ) : null} */}
+                          ) : null}
 
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Enables the AEP Web SDK to preserve the ECID by reading/writing the AMCV cookie. Use this config until users are fully migrated to the Alloy cookie and in situations where you have mixed pages on your website.">
@@ -527,8 +526,8 @@ const Configuration = () => {
                               />
                             </InfoTipLayout>
                           </div>
-                          {/* TODO - Uncomment these when Konductor support is available  */}
-                          {/* <h3>Audiences</h3>
+
+                          <h3>Audiences</h3>
 
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Enables URL destinations, which allows the firing of URLs based on segment qualification.">
@@ -567,7 +566,7 @@ const Configuration = () => {
                                 language="css"
                               />
                             </div>
-                          </div> */}
+                          </div>
 
                           <h3>Data Collection</h3>
                           <div className="u-gapTop">
