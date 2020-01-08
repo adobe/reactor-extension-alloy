@@ -5168,7 +5168,7 @@ var createPersonalization = function createPersonalization(_ref) {
           // If NOT isViewStart disable personalization
           disablePersonalization(payload);
         } else {
-          event.getExpectResponse(); // For viewStart we try to hide the personalization containers
+          event.expectResponse(); // For viewStart we try to hide the personalization containers
 
           hideContainers(prehidingStyle);
         }
@@ -6527,6 +6527,7 @@ if (instanceNamespaces) {
 
   })();
 }
+
 
 
 
