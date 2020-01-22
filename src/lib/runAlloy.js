@@ -5168,7 +5168,7 @@ var createPersonalization = function createPersonalization(_ref) {
           // If NOT isViewStart disable personalization
           disablePersonalization(payload);
         } else {
-          event.getExpectResponse(); // For viewStart we try to hide the personalization containers
+          event.expectResponse(); // For viewStart we try to hide the personalization containers
 
           hideContainers(prehidingStyle);
         }
@@ -5395,7 +5395,7 @@ var implementationDetailsFactory = (function (version) {
 
 // The value will be swapped with the proper version at build time
 // see rollupPluginReplaceVersion.js
-var libraryVersion = "0.0.12";
+var libraryVersion = "0.0.13";
 
 /*
 Copyright 2019 Adobe. All rights reserved.
@@ -6527,6 +6527,7 @@ if (instanceNamespaces) {
 
   })();
 }
+
 
 
 
