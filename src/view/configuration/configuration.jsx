@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React, { useState } from "react";
-import { object, array, string, number, lazy } from "yup";
+import { object, array, string } from "yup";
 import { FieldArray } from "formik";
 import Textfield from "@react/react-spectrum/Textfield";
 import RadioGroup from "@react/react-spectrum/RadioGroup";
@@ -110,9 +110,6 @@ const getSettings = ({ values, initInfo }) => {
         "edgeBasePath",
         "errorsEnabled",
         "optInEnabled",
-        "idSyncEnabled",
-        "urlDestinationsEnabled",
-        "cookieDestinationsEnabled",
         "prehidingStyle",
         "idMigrationEnabled",
         "onBeforeEventSend",
@@ -129,21 +126,6 @@ const getSettings = ({ values, initInfo }) => {
         instanceDefaults,
         copyPropertyKeys
       );
-
-      if (
-        instance.idSyncEnabled &&
-        instance.idSyncContainerId !== instanceDefaults.idSyncContainerId
-      ) {
-        trimmedInstance.idSyncContainerId = instance.idSyncContainerId;
-
-        // trimmedInstance.idSyncContainerId is most likely a string at this point. If
-        // the value represents a number, we need to cast to a number.
-        if (number().isValidSync(trimmedInstance.idSyncContainerId)) {
-          trimmedInstance.idSyncContainerId = Number(
-            trimmedInstance.idSyncContainerId
-          );
-        }
-      }
 
       if (instance.contextGranularity === contextGranularityEnum.SPECIFIC) {
         trimmedInstance.context = instance.context;
@@ -169,9 +151,6 @@ const validateDuplicateValue = (createError, instances, key, message) => {
   );
 };
 
-const idSyncContainerIdValidationMessage =
-  "Please specify a non-negative integer or data element for the container ID.";
-
 const onBeforeEventSendValidationMessage = "Please specify a data element.";
 
 const validationSchema = object()
@@ -196,33 +175,6 @@ const validationSchema = object()
         orgId: string().required("Please specify an IMS organization ID."),
         edgeDomain: string().required("Please specify an edge domain."),
         edgeBasePath: string().required("Please specify an edge base path."),
-        // A valid idSyncContainerId field value can be an integer
-        // greater than or equal to 0, an empty string, or a string containing
-        // a single data element token. Using `lazy` as we've done
-        // here is the suggested way of handling a value that can be two
-        // different types (number and string):
-        // https://github.com/jquense/yup/issues/321
-        idSyncContainerId: lazy(value => {
-          let validator;
-          if (number().isValidSync(value)) {
-            validator = number().when("idSyncEnabled", {
-              is: true,
-              then: number()
-                .integer(idSyncContainerIdValidationMessage)
-                // convert empty string to a 0 so it doesn't fail subsequent rules
-                .min(0, idSyncContainerIdValidationMessage)
-            });
-          } else {
-            validator = string().when("idSyncEnabled", {
-              is: true,
-              then: string().matches(singleDataElementRegex, {
-                message: idSyncContainerIdValidationMessage,
-                excludeEmptyString: true
-              })
-            });
-          }
-          return validator;
-        }),
         downloadLinkQualifier: string().when("clickCollectionEnabled", {
           is: true,
           then: string()
@@ -487,35 +439,6 @@ const Configuration = () => {
                           </div>
 
                           <h3>Identity</h3>
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="Sends requests to third-party URLs to synchronize the Adobe unique user ID with the unique user ID of a third-party data source.">
-                              <WrappedField
-                                name={`instances.${index}.idSyncEnabled`}
-                                component={Checkbox}
-                                label="Enable ID Synchronization"
-                              />
-                            </InfoTipLayout>
-                          </div>
-
-                          {values.instances[index].idSyncEnabled ? (
-                            <div className="FieldSubset u-gapTop">
-                              <InfoTipLayout tip="The container ID that specifies which ID syncs will be fired. This can be obtained from your Adobe consultant.">
-                                <FieldLabel
-                                  labelFor="idSyncContainerIdField"
-                                  label="ID Synchronization Container ID (optional)"
-                                />
-                              </InfoTipLayout>
-                              <div>
-                                <WrappedField
-                                  id="idSyncContainerIdField"
-                                  name={`instances.${index}.idSyncContainerId`}
-                                  component={Textfield}
-                                  componentClassName="u-fieldLong"
-                                  supportDataElement="replace"
-                                />
-                              </div>
-                            </div>
-                          ) : null}
 
                           <div className="u-gapTop">
                             <InfoTipLayout tip="Enables the AEP Web SDK to preserve the ECID by reading/writing the AMCV cookie. Use this config until users are fully migrated to the Alloy cookie and in situations where you have mixed pages on your website.">
@@ -523,28 +446,6 @@ const Configuration = () => {
                                 name={`instances.${index}.idMigrationEnabled`}
                                 component={Checkbox}
                                 label="Migrate ECID from VisitorAPI to Alloy to prevent visitor cliffing"
-                              />
-                            </InfoTipLayout>
-                          </div>
-
-                          <h3>Audiences</h3>
-
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="Enables URL destinations, which allows the firing of URLs based on segment qualification.">
-                              <WrappedField
-                                name={`instances.${index}.urlDestinationsEnabled`}
-                                component={Checkbox}
-                                label="Enable URL Destinations"
-                              />
-                            </InfoTipLayout>
-                          </div>
-
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="Enables cookie destinations, which allows the setting of cookies based on segment qualification.">
-                              <WrappedField
-                                name={`instances.${index}.cookieDestinationsEnabled`}
-                                component={Checkbox}
-                                label="Enable cookie Destinations"
                               />
                             </InfoTipLayout>
                           </div>

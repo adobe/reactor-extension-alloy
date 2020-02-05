@@ -47,28 +47,7 @@
               "optInEnabled": {
                 "type": "boolean"
               },
-              "idSyncEnabled": {
-                "type": "boolean"
-              },
-              "idSyncContainerId": {
-                "oneOf": [
-                  {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  {
-                    "type": "string",
-                    "pattern": "^%[^%]+%$"
-                  }
-                ]
-              },
               "idMigrationEnabled": {
-                "type": "boolean"
-              },
-              "urlDestinationsEnabled": {
-                "type": "boolean"
-              },
-              "cookieDestinationsEnabled": {
                 "type": "boolean"
               },
               "prehidingStyle": {
@@ -98,7 +77,7 @@
               "configId",
               "name"
             ],
-            "additionalProperties": false
+            "additionalProperties": true
           }
         }
       },
