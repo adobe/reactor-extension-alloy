@@ -53,20 +53,8 @@ for (let i = 0; i < 2; i += 1) {
     optInEnabledField: spectrum.checkbox(
       Selector(`[name='instances.${i}.optInEnabled']`)
     ),
-    idSyncEnabledField: spectrum.checkbox(
-      Selector(`[name='instances.${i}.idSyncEnabled']`)
-    ),
-    idSyncContainerIdField: spectrum.textfield(
-      Selector(`[name='instances.${i}.idSyncContainerId']`)
-    ),
     idMigrationEnabled: spectrum.checkbox(
       Selector(`[name='instances.${i}.idMigrationEnabled']`)
-    ),
-    urlDestinationsEnabledField: spectrum.checkbox(
-      Selector(`[name='instances.${i}.urlDestinationsEnabled']`)
-    ),
-    cookieDestinationsEnabledField: spectrum.checkbox(
-      Selector(`[name='instances.${i}.cookieDestinationsEnabled']`)
     ),
     // Due to limitations of the sandbox where tests are run,
     // testing prehding style viewing/editing is limited.
@@ -137,11 +125,7 @@ test("initializes form fields with full settings", async t => {
             edgeBasePath: "ee-beta",
             errorsEnabled: false,
             optInEnabled: true,
-            idSyncEnabled: true,
-            idSyncContainerId: 123,
             idMigrationEnabled: true,
-            urlDestinationsEnabled: true,
-            cookieDestinationsEnabled: false,
             prehidingStyle: "#container { display: none }",
             context: ["device", "placeContext"],
             clickCollectionEnabled: false
@@ -150,7 +134,6 @@ test("initializes form fields with full settings", async t => {
             name: "alloy2",
             configId: "PR456",
             optInEnabled: false,
-            idSyncEnabled: false,
             idMigrationEnabled: false,
             context: []
           }
@@ -173,11 +156,7 @@ test("initializes form fields with full settings", async t => {
   await instances[0].edgeBasePathField.expectValue(t, "ee-beta");
   await instances[0].errorsEnabledField.expectUnchecked(t);
   await instances[0].optInEnabledField.expectChecked(t);
-  await instances[0].idSyncEnabledField.expectChecked(t);
-  await instances[0].idSyncContainerIdField.expectValue(t, "123");
   await instances[0].idMigrationEnabled.expectChecked(t);
-  await instances[0].urlDestinationsEnabledField.expectChecked(t);
-  await instances[0].cookieDestinationsEnabledField.expectUnchecked(t);
   await instances[0].clickCollectionEnabledField.expectUnchecked(t);
   await instances[0].contextGranularity.specificField.expectChecked(t);
   await instances[0].specificContext.webField.expectUnchecked(t);
@@ -194,11 +173,7 @@ test("initializes form fields with full settings", async t => {
   await instances[1].edgeBasePathField.expectValue(t, defaultEdgeBasePath);
   await instances[1].errorsEnabledField.expectChecked(t);
   await instances[1].optInEnabledField.expectUnchecked(t);
-  await instances[1].idSyncEnabledField.expectUnchecked(t);
-  await instances[1].idSyncContainerIdField.expectNotExists(t);
   await instances[1].idMigrationEnabled.expectUnchecked(t);
-  await instances[1].urlDestinationsEnabledField.expectChecked(t);
-  await instances[1].cookieDestinationsEnabledField.expectChecked(t);
   await instances[1].clickCollectionEnabledField.expectChecked(t);
   await instances[1].downloadLinkQualifierField.expectValue(
     t,
@@ -233,11 +208,7 @@ test("initializes form fields with minimal settings", async t => {
   await instances[0].edgeBasePathField.expectValue(t, defaultEdgeBasePath);
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
-  await instances[0].idSyncEnabledField.expectChecked(t);
-  await instances[0].idSyncContainerIdField.expectValue(t, "");
   await instances[0].idMigrationEnabled.expectChecked(t);
-  await instances[0].urlDestinationsEnabledField.expectChecked(t);
-  await instances[0].cookieDestinationsEnabledField.expectChecked(t);
   await instances[0].clickCollectionEnabledField.expectChecked(t);
   await instances[0].downloadLinkQualifierField.expectValue(
     t,
@@ -257,11 +228,7 @@ test("initializes form fields with no settings", async t => {
   await instances[0].edgeBasePathField.expectValue(t, defaultEdgeBasePath);
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
-  await instances[0].idSyncEnabledField.expectChecked(t);
-  await instances[0].idSyncContainerIdField.expectValue(t, "");
   await instances[0].idMigrationEnabled.expectChecked(t);
-  await instances[0].urlDestinationsEnabledField.expectChecked(t);
-  await instances[0].cookieDestinationsEnabledField.expectChecked(t);
   await instances[0].clickCollectionEnabledField.expectChecked(t);
   await instances[0].downloadLinkQualifierField.expectValue(
     t,
@@ -304,10 +271,7 @@ test("returns full valid settings", async t => {
   await instances[0].edgeBasePathField.typeText(t, "-alpha");
   await instances[0].errorsEnabledField.click(t);
   await instances[0].optInEnabledField.click(t);
-  await instances[0].idSyncContainerIdField.typeText(t, "123");
   await instances[0].idMigrationEnabled.click(t);
-  await instances[0].urlDestinationsEnabledField.click(t);
-  await instances[0].cookieDestinationsEnabledField.click(t);
   await instances[0].prehidingStyleField.click(t);
   await instances[0].onBeforeEventSendField.typeText(t, "%foo%");
   await addInstanceButton.click(t);
@@ -316,7 +280,6 @@ test("returns full valid settings", async t => {
   await instances[1].configIdField.typeText(t, "PR456");
   await instances[1].orgIdField.typeText(t, "2");
   await instances[1].optInEnabledField.click(t);
-  await instances[1].idSyncEnabledField.click(t);
   await instances[1].idMigrationEnabled.click(t);
   await instances[1].downloadLinkQualifierField.clear(t);
   await instances[1].downloadLinkQualifierField.typeText(t, "[]");
@@ -332,10 +295,7 @@ test("returns full valid settings", async t => {
         edgeBasePath: `${defaultEdgeBasePath}-alpha`,
         errorsEnabled: false,
         optInEnabled: true,
-        idSyncContainerId: 123,
         idMigrationEnabled: false,
-        urlDestinationsEnabled: false,
-        cookieDestinationsEnabled: false,
         prehidingStyle: "#container { display: none } // css",
         onBeforeEventSend: "%foo%"
       },
@@ -344,7 +304,6 @@ test("returns full valid settings", async t => {
         configId: "PR456",
         orgId: "ABC123@AdobeOrg2",
         optInEnabled: true,
-        idSyncEnabled: false,
         idMigrationEnabled: false,
         context: ["web", "device", "environment", "placeContext"],
         downloadLinkQualifier: "[]"
@@ -493,62 +452,6 @@ test("sets download link qualifier when test button is clicked", async t => {
   await instances[0].downloadLinkQualifierTestButton.click(t);
   // openRegexTester returns Edited Regex ### in the sandbox environment
   await instances[0].downloadLinkQualifierField.expectMatch(t, /^Edited Regex/);
-});
-
-test("shows error for ID sync container ID value that is a negative number", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await instances[0].idSyncContainerIdField.typeText(t, "-1");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[0].idSyncContainerIdField.expectError(t);
-});
-
-test("shows error for ID sync container ID value that is a float number", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await instances[0].idSyncContainerIdField.typeText(t, "123.123");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[0].idSyncContainerIdField.expectError(t);
-});
-
-test("shows error for ID sync container ID value that is an arbitrary string", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await instances[0].idSyncContainerIdField.typeText(t, "123foo");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[0].idSyncContainerIdField.expectError(t);
-});
-
-test("shows error for ID sync container ID value that is multiple data elements", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await instances[0].idSyncContainerIdField.typeText(t, "%foo%%bar%");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[0].idSyncContainerIdField.expectError(t);
-});
-
-test("does not show error for ID sync container ID value that is a single data element", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await instances[0].idSyncContainerIdField.typeText(t, "%123foo%");
-  await extensionViewController.expectIsValid(t);
-});
-
-test("ignores ID sync container ID value when ID sync is disabled", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await instances[0].idSyncContainerIdField.typeText(t, "123foo");
-  await instances[0].idSyncEnabledField.click(t);
-  await extensionViewController.expectIsValid(t);
-  await extensionViewController.expectSettings(t, {
-    instances: [
-      {
-        name: "alloy",
-        configId: "PR123",
-        idSyncEnabled: false
-      }
-    ]
-  });
 });
 
 test("shows error for onBeforeEventSend value that is an arbitrary string", async t => {
