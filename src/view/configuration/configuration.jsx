@@ -453,7 +453,7 @@ const Configuration = () => {
                               <WrappedField
                                 name={`instances.${index}.thirdPartyCookiesEnabled`}
                                 component={Checkbox}
-                                label="Use third party cookies"
+                                label="Use third-party cookies"
                               />
                             </InfoTipLayout>
                           </div>
