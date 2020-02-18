@@ -50,6 +50,9 @@
               "idMigrationEnabled": {
                 "type": "boolean"
               },
+              "thirdPartyCookiesEnabled": {
+                "type": "boolean"
+              },
               "prehidingStyle": {
                 "type": "string",
                 "minLength": 1

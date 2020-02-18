@@ -56,6 +56,9 @@ for (let i = 0; i < 2; i += 1) {
     idMigrationEnabled: spectrum.checkbox(
       Selector(`[name='instances.${i}.idMigrationEnabled']`)
     ),
+    thirdPartyCookiesEnabled: spectrum.checkbox(
+      Selector(`[name='instances.${i}.thirdPartyCookiesEnabled']`)
+    ),
     // Due to limitations of the sandbox where tests are run,
     // testing prehding style viewing/editing is limited.
     prehidingStyleField: spectrum.button(
@@ -126,6 +129,7 @@ test("initializes form fields with full settings", async t => {
             errorsEnabled: false,
             optInEnabled: true,
             idMigrationEnabled: true,
+            thirdPartyCookiesEnabled: true,
             prehidingStyle: "#container { display: none }",
             context: ["device", "placeContext"],
             clickCollectionEnabled: false
@@ -135,6 +139,7 @@ test("initializes form fields with full settings", async t => {
             configId: "PR456",
             optInEnabled: false,
             idMigrationEnabled: false,
+            thirdPartyCookiesEnabled: false,
             context: []
           }
         ]
@@ -157,6 +162,7 @@ test("initializes form fields with full settings", async t => {
   await instances[0].errorsEnabledField.expectUnchecked(t);
   await instances[0].optInEnabledField.expectChecked(t);
   await instances[0].idMigrationEnabled.expectChecked(t);
+  await instances[0].thirdPartyCookiesEnabled.expectChecked(t);
   await instances[0].clickCollectionEnabledField.expectUnchecked(t);
   await instances[0].contextGranularity.specificField.expectChecked(t);
   await instances[0].specificContext.webField.expectUnchecked(t);
@@ -174,6 +180,7 @@ test("initializes form fields with full settings", async t => {
   await instances[1].errorsEnabledField.expectChecked(t);
   await instances[1].optInEnabledField.expectUnchecked(t);
   await instances[1].idMigrationEnabled.expectUnchecked(t);
+  await instances[1].thirdPartyCookiesEnabled.expectUnchecked(t);
   await instances[1].clickCollectionEnabledField.expectChecked(t);
   await instances[1].downloadLinkQualifierField.expectValue(
     t,
@@ -209,6 +216,7 @@ test("initializes form fields with minimal settings", async t => {
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
   await instances[0].idMigrationEnabled.expectChecked(t);
+  await instances[0].thirdPartyCookiesEnabled.expectChecked(t);
   await instances[0].clickCollectionEnabledField.expectChecked(t);
   await instances[0].downloadLinkQualifierField.expectValue(
     t,
@@ -229,6 +237,7 @@ test("initializes form fields with no settings", async t => {
   await instances[0].errorsEnabledField.expectChecked(t);
   await instances[0].optInEnabledField.expectUnchecked(t);
   await instances[0].idMigrationEnabled.expectChecked(t);
+  await instances[0].thirdPartyCookiesEnabled.expectChecked(t);
   await instances[0].clickCollectionEnabledField.expectChecked(t);
   await instances[0].downloadLinkQualifierField.expectValue(
     t,
@@ -272,6 +281,7 @@ test("returns full valid settings", async t => {
   await instances[0].errorsEnabledField.click(t);
   await instances[0].optInEnabledField.click(t);
   await instances[0].idMigrationEnabled.click(t);
+  await instances[0].thirdPartyCookiesEnabled.click(t);
   await instances[0].prehidingStyleField.click(t);
   await instances[0].onBeforeEventSendField.typeText(t, "%foo%");
   await addInstanceButton.click(t);
@@ -281,6 +291,7 @@ test("returns full valid settings", async t => {
   await instances[1].orgIdField.typeText(t, "2");
   await instances[1].optInEnabledField.click(t);
   await instances[1].idMigrationEnabled.click(t);
+  await instances[1].thirdPartyCookiesEnabled.click(t);
   await instances[1].downloadLinkQualifierField.clear(t);
   await instances[1].downloadLinkQualifierField.typeText(t, "[]");
   await instances[1].contextGranularity.specificField.click(t);
@@ -296,6 +307,7 @@ test("returns full valid settings", async t => {
         errorsEnabled: false,
         optInEnabled: true,
         idMigrationEnabled: false,
+        thirdPartyCookiesEnabled: false,
         prehidingStyle: "#container { display: none } // css",
         onBeforeEventSend: "%foo%"
       },
@@ -305,6 +317,7 @@ test("returns full valid settings", async t => {
         orgId: "ABC123@AdobeOrg2",
         optInEnabled: true,
         idMigrationEnabled: false,
+        thirdPartyCookiesEnabled: false,
         context: ["web", "device", "environment", "placeContext"],
         downloadLinkQualifier: "[]"
       }

@@ -50,14 +50,11 @@ const getInstanceDefaults = initInfo => ({
   edgeBasePath: "ee",
   errorsEnabled: true,
   optInEnabled: false,
-  idSyncEnabled: true,
-  idSyncContainerId: "",
-  urlDestinationsEnabled: true,
-  cookieDestinationsEnabled: true,
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions,
   idMigrationEnabled: true,
+  thirdPartyCookiesEnabled: true,
   clickCollectionEnabled: true,
   onBeforeEventSend: "",
   downloadLinkQualifier:
@@ -112,6 +109,7 @@ const getSettings = ({ values, initInfo }) => {
         "optInEnabled",
         "prehidingStyle",
         "idMigrationEnabled",
+        "thirdPartyCookiesEnabled",
         "onBeforeEventSend",
         "clickCollectionEnabled"
       ];
@@ -446,6 +444,16 @@ const Configuration = () => {
                                 name={`instances.${index}.idMigrationEnabled`}
                                 component={Checkbox}
                                 label="Migrate ECID from VisitorAPI to Alloy to prevent visitor cliffing"
+                              />
+                            </InfoTipLayout>
+                          </div>
+
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="Enables the setting of Adobe third-party cookies. The SDK has the ability to persist the visitor ID in a third-party context to enable the same visitor ID to be used across site. This is useful if you have multiple sites or you want to share data with partners; however, sometimes this is not desired for privacy reasons.">
+                              <WrappedField
+                                name={`instances.${index}.thirdPartyCookiesEnabled`}
+                                component={Checkbox}
+                                label="Use third-party cookies"
                               />
                             </InfoTipLayout>
                           </div>
