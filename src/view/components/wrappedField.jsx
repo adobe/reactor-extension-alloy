@@ -143,9 +143,7 @@ DecoratedInput.propTypes = {
   fieldComponent: PropTypes.elementType.isRequired,
   className: PropTypes.string,
   componentClassName: PropTypes.string,
-  // eslint-disable-next-line react/forbid-prop-types
   field: PropTypes.object.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
   form: PropTypes.object.isRequired,
   children: PropTypes.node,
   supportDataElement: PropTypes.string,

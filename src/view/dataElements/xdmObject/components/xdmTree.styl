@@ -1,0 +1,15 @@
+.XdmTree {
+  &.ant-tree,
+  &.ant-tree li .ant-tree-node-content-wrapper {
+    font-size: inherit;
+    color: inherit;
+  }
+
+  &.ant-tree li .ant-tree-node-content-wrapper {
+    &:hover,
+    &.ant-tree-node-selected {
+      // Selection color from react-spectrum
+      background-color: rgba(44,44,44,0.04);
+    }
+  }
+}

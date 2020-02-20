@@ -33,7 +33,9 @@ module.exports = (options = {}) => {
     const bundler = new Bundler(viewEntries, {
       publicUrl: "../",
       outDir: viewOutDir,
-      watch
+      watch,
+      // HMR seems to be broken: https://github.com/parcel-bundler/parcel/issues/2894
+      hmr: false
     });
 
     bundler.on("bundled", () => {

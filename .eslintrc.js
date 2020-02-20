@@ -16,6 +16,7 @@ module.exports = {
     "prettier/prettier": "error",
     "react/require-default-props": "off",
     "react/no-array-index-key": "off",
+    "react/forbid-prop-types": "off",
     "jsx-a11y/label-has-associated-control": [
       2,
       {
