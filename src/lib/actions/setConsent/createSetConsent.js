@@ -11,14 +11,14 @@ governing permissions and limitations under the License.
 */
 
 module.exports = instanceManager => settings => {
-  const { instanceName, ...otherSettings } = settings;
+  const { instanceName, consent } = settings;
   const instanceAccessor = instanceManager.getAccessor(instanceName);
 
   if (instanceAccessor) {
-    instanceAccessor.instance("optIn", otherSettings);
+    instanceAccessor.instance("setConsent", consent);
   } else {
     turbine.logger.error(
-      `Failed to set opt-in preferences for instance "${instanceName}". No matching instance was configured with this name.`
+      `Failed to set consent for instance "${instanceName}". No matching instance was configured with this name.`
     );
   }
 };

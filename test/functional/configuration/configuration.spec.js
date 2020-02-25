@@ -50,9 +50,16 @@ for (let i = 0; i < 2; i += 1) {
     errorsEnabledField: spectrum.checkbox(
       Selector(`[name='instances.${i}.errorsEnabled']`)
     ),
-    optInEnabledField: spectrum.checkbox(
-      Selector(`[name='instances.${i}.optInEnabled']`)
-    ),
+    defaultConsent: {
+      inField: spectrum.radio(
+        Selector(`[name='instances.${i}.defaultConsent.general'][value=in]`)
+      ),
+      pendingField: spectrum.radio(
+        Selector(
+          `[name='instances.${i}.defaultConsent.general'][value=pending]`
+        )
+      )
+    },
     idMigrationEnabled: spectrum.checkbox(
       Selector(`[name='instances.${i}.idMigrationEnabled']`)
     ),
@@ -126,7 +133,7 @@ test("initializes form fields with full settings", async () => {
             edgeDomain: "testedge.com",
             edgeBasePath: "ee-beta",
             errorsEnabled: false,
-            optInEnabled: true,
+            defaultConsent: { general: "pending" },
             idMigrationEnabled: true,
             thirdPartyCookiesEnabled: true,
             prehidingStyle: "#container { display: none }",
@@ -136,7 +143,7 @@ test("initializes form fields with full settings", async () => {
           {
             name: "alloy2",
             configId: "PR456",
-            optInEnabled: false,
+            defaultConsent: { general: "in" },
             idMigrationEnabled: false,
             thirdPartyCookiesEnabled: false,
             context: []
@@ -159,7 +166,8 @@ test("initializes form fields with full settings", async () => {
   await instances[0].edgeDomainField.expectValue("testedge.com");
   await instances[0].edgeBasePathField.expectValue("ee-beta");
   await instances[0].errorsEnabledField.expectUnchecked();
-  await instances[0].optInEnabledField.expectChecked();
+  await instances[0].defaultConsent.inField.expectUnchecked();
+  await instances[0].defaultConsent.pendingField.expectChecked();
   await instances[0].idMigrationEnabled.expectChecked();
   await instances[0].thirdPartyCookiesEnabled.expectChecked();
   await instances[0].clickCollectionEnabledField.expectUnchecked();
@@ -177,7 +185,8 @@ test("initializes form fields with full settings", async () => {
   await instances[1].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[1].edgeBasePathField.expectValue(defaultEdgeBasePath);
   await instances[1].errorsEnabledField.expectChecked();
-  await instances[1].optInEnabledField.expectUnchecked();
+  await instances[1].defaultConsent.inField.expectChecked();
+  await instances[1].defaultConsent.pendingField.expectUnchecked();
   await instances[1].idMigrationEnabled.expectUnchecked();
   await instances[1].thirdPartyCookiesEnabled.expectUnchecked();
   await instances[1].clickCollectionEnabledField.expectChecked();
@@ -211,6 +220,8 @@ test("initializes form fields with minimal settings", async () => {
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
   await instances[0].errorsEnabledField.expectChecked();
+  await instances[0].defaultConsent.inField.expectChecked();
+  await instances[0].defaultConsent.pendingField.expectUnchecked();
   await instances[0].optInEnabledField.expectUnchecked();
   await instances[0].idMigrationEnabled.expectChecked();
   await instances[0].thirdPartyCookiesEnabled.expectChecked();
@@ -231,7 +242,8 @@ test("initializes form fields with no settings", async () => {
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
   await instances[0].errorsEnabledField.expectChecked();
-  await instances[0].optInEnabledField.expectUnchecked();
+  await instances[0].defaultConsent.inField.expectChecked();
+  await instances[0].defaultConsent.pendingField.expectUnchecked();
   await instances[0].idMigrationEnabled.expectChecked();
   await instances[0].thirdPartyCookiesEnabled.expectChecked();
   await instances[0].clickCollectionEnabledField.expectChecked();
@@ -274,7 +286,7 @@ test("returns full valid settings", async () => {
   await instances[0].edgeDomainField.typeText("2");
   await instances[0].edgeBasePathField.typeText("-alpha");
   await instances[0].errorsEnabledField.click();
-  await instances[0].optInEnabledField.click();
+  await instances[0].defaultConsent.pendingField.click(t);
   await instances[0].idMigrationEnabled.click();
   await instances[0].thirdPartyCookiesEnabled.click();
   await instances[0].prehidingStyleField.click();
@@ -284,7 +296,7 @@ test("returns full valid settings", async () => {
   await instances[1].nameField.typeText("2");
   await instances[1].configIdField.typeText("PR456");
   await instances[1].orgIdField.typeText("2");
-  await instances[1].optInEnabledField.click();
+  await instances[1].defaultConsent.pendingField.click(t);
   await instances[1].idMigrationEnabled.click();
   await instances[1].thirdPartyCookiesEnabled.click();
   await instances[1].downloadLinkQualifierField.clear();
@@ -300,7 +312,7 @@ test("returns full valid settings", async () => {
         edgeDomain: `${defaultEdgeDomain}2`,
         edgeBasePath: `${defaultEdgeBasePath}-alpha`,
         errorsEnabled: false,
-        optInEnabled: true,
+        defaultConsent: { general: "pending" },
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
         prehidingStyle: "#container { display: none } // css",
@@ -310,7 +322,7 @@ test("returns full valid settings", async () => {
         name: "alloy2",
         configId: "PR456",
         orgId: "ABC123@AdobeOrg2",
-        optInEnabled: true,
+        defaultConsent: { general: "pending" },
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
         context: ["web", "device", "environment", "placeContext"],
