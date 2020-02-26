@@ -433,7 +433,7 @@ const Configuration = () => {
                           <h3>Privacy</h3>
 
                           <div className="u-gapTop">
-                            <InfoTipLayout tip="The consent level when there is no consent cookie.">
+                            <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent preferences.">
                               <FieldLabel
                                 labelFor="generalDefaultConsent"
                                 label="Default Consent Level"

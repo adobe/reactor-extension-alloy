@@ -48,7 +48,7 @@ const purposesEnum = {
  *   consent: "%dataElement123%"
  * }
  *
- * The formic object looks like this:
+ * The formik object looks like this:
  * {
  *   instanceName,
  *   option, // "in", "out", or "dataElement"
@@ -56,7 +56,7 @@ const purposesEnum = {
  * }
  *
  * When we get to more granular purposes, we can augment the settings object to include
- * additional purposes. We will need to re-vamp the UI and the formic object when that happens.
+ * additional purposes. We will need to re-vamp the UI and the formik object when that happens.
  */
 const getInitialValues = ({ initInfo }) => {
   const {
