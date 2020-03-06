@@ -43,8 +43,8 @@ fixture("Send Event View").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
-test("initializes form fields with full settings", async t => {
-  await extensionViewController.init(t, {
+test("initializes form fields with full settings", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
@@ -54,60 +54,60 @@ test("initializes form fields with full settings", async t => {
       mergeId: "%myMergeId%"
     }
   });
-  await instanceNameField.expectValue(t, "alloy2");
-  await viewStartField.expectChecked(t);
-  await xdmField.expectValue(t, "%myDataLayer%");
-  await typeField.expectValue(t, "myType1");
-  await mergeIdField.expectValue(t, "%myMergeId%");
+  await instanceNameField.expectValue("alloy2");
+  await viewStartField.expectChecked();
+  await xdmField.expectValue("%myDataLayer%");
+  await typeField.expectValue("myType1");
+  await mergeIdField.expectValue("%myMergeId%");
 });
 
-test("initializes form fields with minimal settings", async t => {
-  await extensionViewController.init(t, {
+test("initializes form fields with minimal settings", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy1"
     }
   });
-  await instanceNameField.expectValue(t, "alloy1");
-  await viewStartField.expectUnchecked(t);
-  await xdmField.expectValue(t, "");
-  await typeField.expectValue(t, "");
-  await mergeIdField.expectValue(t, "");
+  await instanceNameField.expectValue("alloy1");
+  await viewStartField.expectUnchecked();
+  await xdmField.expectValue("");
+  await typeField.expectValue("");
+  await mergeIdField.expectValue("");
 });
 
-test("initializes form fields with no settings", async t => {
-  await extensionViewController.init(t, {
+test("initializes form fields with no settings", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await instanceNameField.expectValue(t, "alloy1");
-  await viewStartField.expectUnchecked(t);
-  await xdmField.expectValue(t, "");
-  await typeField.expectValue(t, "");
-  await mergeIdField.expectValue(t, "");
+  await instanceNameField.expectValue("alloy1");
+  await viewStartField.expectUnchecked();
+  await xdmField.expectValue("");
+  await typeField.expectValue("");
+  await mergeIdField.expectValue("");
 });
 
-test("returns minimal valid settings", async t => {
-  await extensionViewController.init(t, {
+test("returns minimal valid settings", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
 
-  await extensionViewController.expectIsValid(t);
-  await extensionViewController.expectSettings(t, {
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
     instanceName: "alloy1"
   });
 });
 
-test("returns full valid settings", async t => {
-  await extensionViewController.init(t, {
+test("returns full valid settings", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await instanceNameField.selectOption(t, "alloy2");
-  await viewStartField.click(t);
-  await xdmField.typeText(t, "%myDataLayer%");
-  await typeField.typeText(t, "mytype1");
-  await mergeIdField.typeText(t, "%myMergeId%");
-  await extensionViewController.expectIsValid(t);
-  await extensionViewController.expectSettings(t, {
+  await instanceNameField.selectOption("alloy2");
+  await viewStartField.click();
+  await xdmField.typeText("%myDataLayer%");
+  await typeField.typeText("mytype1");
+  await mergeIdField.typeText("%myMergeId%");
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
     instanceName: "alloy2",
     viewStart: true,
     xdm: "%myDataLayer%",
@@ -116,22 +116,22 @@ test("returns full valid settings", async t => {
   });
 });
 
-test("shows error for xdm value that is not a data element", async t => {
-  await extensionViewController.init(t, {
+test("shows error for xdm value that is not a data element", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await xdmField.typeText(t, "myDataLayer");
-  await extensionViewController.expectIsNotValid(t);
-  await xdmField.expectError(t);
+  await xdmField.typeText("myDataLayer");
+  await extensionViewController.expectIsNotValid();
+  await xdmField.expectError();
 });
 
-test("shows error for xdm value that is more than one data element", async t => {
-  await extensionViewController.init(t, {
+test("shows error for xdm value that is more than one data element", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await xdmField.typeText(t, "%a%%b%");
-  await extensionViewController.expectIsNotValid(t);
-  await xdmField.expectError(t);
+  await xdmField.typeText("%a%%b%");
+  await extensionViewController.expectIsNotValid();
+  await xdmField.expectError();
 });
 
 testInstanceNameOptions(extensionViewController, instanceNameField);

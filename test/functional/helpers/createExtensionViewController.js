@@ -10,7 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const getSettings = async t => {
+import { t } from "testcafe";
+
+const getSettings = async () => {
   await t.switchToMainWindow();
   return t.eval(() => {
     return window.loadExtensionViewPromise.then(extensionView => {
@@ -19,7 +21,7 @@ const getSettings = async t => {
   });
 };
 
-const validate = async t => {
+const validate = async () => {
   await t.switchToMainWindow();
   return t.eval(() => {
     return window.loadExtensionViewPromise.then(extensionView => {
@@ -33,7 +35,7 @@ module.exports = viewPath => {
   // More details about the tool and this method can be found here:
   // https://www.npmjs.com/package/@adobe/reactor-sandbox
   return {
-    async init(t, initInfo = {}, sharedViewMethods = {}) {
+    async init(initInfo = {}, sharedViewMethods = {}) {
       await t.switchToMainWindow();
       return t.eval(
         () => {
@@ -56,20 +58,20 @@ module.exports = viewPath => {
         }
       );
     },
-    async expectIsValid(t) {
-      const valid = await validate(t);
+    async expectIsValid() {
+      const valid = await validate();
       await t
         .expect(valid)
         .ok("Expected settings to be valid when they were not valid");
     },
-    async expectIsNotValid(t) {
-      const valid = await validate(t);
+    async expectIsNotValid() {
+      const valid = await validate();
       await t
         .expect(valid)
         .notOk("Expected settings to not be valid when they were valid");
     },
-    async expectSettings(t, expectedSettings) {
-      const actualSettings = await getSettings(t);
+    async expectSettings(expectedSettings) {
+      const actualSettings = await getSettings();
 
       await t
         .expect(actualSettings)

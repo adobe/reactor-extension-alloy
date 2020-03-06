@@ -51,96 +51,96 @@ fixture("Set Opt-In Preferences View").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
-test("initializes form fields with settings containing static purposes", async t => {
-  await extensionViewController.init(t, {
+test("initializes form fields with settings containing static purposes", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
       purposes: "none"
     }
   });
-  await instanceNameField.expectValue(t, "alloy2");
-  await purposesRadioGroup.allField.expectUnchecked(t);
-  await purposesRadioGroup.noneField.expectChecked(t);
-  await purposesRadioGroup.dataElementField.expectUnchecked(t);
+  await instanceNameField.expectValue("alloy2");
+  await purposesRadioGroup.allField.expectUnchecked();
+  await purposesRadioGroup.noneField.expectChecked();
+  await purposesRadioGroup.dataElementField.expectUnchecked();
 });
 
-test("initializes form fields with settings containing data element for purposes", async t => {
-  await extensionViewController.init(t, {
+test("initializes form fields with settings containing data element for purposes", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
       purposes: "%foo%"
     }
   });
-  await instanceNameField.expectValue(t, "alloy2");
-  await purposesRadioGroup.allField.expectUnchecked(t);
-  await purposesRadioGroup.noneField.expectUnchecked(t);
-  await purposesRadioGroup.dataElementField.expectChecked(t);
-  await purposesDataElementField.expectValue(t, "%foo%");
+  await instanceNameField.expectValue("alloy2");
+  await purposesRadioGroup.allField.expectUnchecked();
+  await purposesRadioGroup.noneField.expectUnchecked();
+  await purposesRadioGroup.dataElementField.expectChecked();
+  await purposesDataElementField.expectValue("%foo%");
 });
 
-test("initializes form fields with no settings", async t => {
-  await extensionViewController.init(t, {
+test("initializes form fields with no settings", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await instanceNameField.expectValue(t, "alloy1");
-  await purposesRadioGroup.allField.expectChecked(t);
-  await purposesRadioGroup.noneField.expectUnchecked(t);
-  await purposesRadioGroup.dataElementField.expectUnchecked(t);
+  await instanceNameField.expectValue("alloy1");
+  await purposesRadioGroup.allField.expectChecked();
+  await purposesRadioGroup.noneField.expectUnchecked();
+  await purposesRadioGroup.dataElementField.expectUnchecked();
 });
 
-test("returns valid settings containing static purposes", async t => {
-  await extensionViewController.init(t, {
+test("returns valid settings containing static purposes", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
 
-  await instanceNameField.selectOption(t, "alloy2");
-  await purposesRadioGroup.noneField.click(t);
-  await extensionViewController.expectIsValid(t);
-  await extensionViewController.expectSettings(t, {
+  await instanceNameField.selectOption("alloy2");
+  await purposesRadioGroup.noneField.click();
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
     instanceName: "alloy2",
     purposes: "none"
   });
 });
 
-test("returns valid settings containing data element for purposes", async t => {
-  await extensionViewController.init(t, {
+test("returns valid settings containing data element for purposes", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
 
-  await instanceNameField.selectOption(t, "alloy2");
-  await purposesRadioGroup.dataElementField.click(t);
-  await purposesDataElementField.typeText(t, "%foo%");
-  await extensionViewController.expectIsValid(t);
-  await extensionViewController.expectSettings(t, {
+  await instanceNameField.selectOption("alloy2");
+  await purposesRadioGroup.dataElementField.click();
+  await purposesDataElementField.typeText("%foo%");
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
     instanceName: "alloy2",
     purposes: "%foo%"
   });
 });
 
-test("shows error for purposes data element value that is not a data element", async t => {
-  await extensionViewController.init(t, {
+test("shows error for purposes data element value that is not a data element", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await purposesRadioGroup.dataElementField.click(t);
-  await purposesDataElementField.typeText(t, "foo");
-  await extensionViewController.expectIsNotValid(t);
-  await purposesDataElementField.expectError(t);
+  await purposesRadioGroup.dataElementField.click();
+  await purposesDataElementField.typeText("foo");
+  await extensionViewController.expectIsNotValid();
+  await purposesDataElementField.expectError();
 });
 
-test("shows error for purposes data element value that is more than one data element", async t => {
-  await extensionViewController.init(t, {
+test("shows error for purposes data element value that is more than one data element", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await purposesRadioGroup.dataElementField.click(t);
-  await purposesDataElementField.typeText(t, "%foo%%bar%");
-  await extensionViewController.expectIsNotValid(t);
-  await purposesDataElementField.expectError(t);
+  await purposesRadioGroup.dataElementField.click();
+  await purposesDataElementField.typeText("%foo%%bar%");
+  await extensionViewController.expectIsNotValid();
+  await purposesDataElementField.expectError();
 });
 
-test("shows warning if opt-in is not enabled", async t => {
-  await extensionViewController.init(t, {
+test("shows warning if opt-in is not enabled", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy1",
@@ -148,11 +148,11 @@ test("shows warning if opt-in is not enabled", async t => {
     }
   });
 
-  await optInDisabledAlert.expectExists(t);
+  await optInDisabledAlert.expectExists();
 });
 
-test("does not show warning if opt-in is enabled", async t => {
-  await extensionViewController.init(t, {
+test("does not show warning if opt-in is enabled", async () => {
+  await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
@@ -160,7 +160,7 @@ test("does not show warning if opt-in is enabled", async t => {
     }
   });
 
-  await optInDisabledAlert.expectNotExists(t);
+  await optInDisabledAlert.expectNotExists();
 });
 
 testInstanceNameOptions(extensionViewController, instanceNameField);

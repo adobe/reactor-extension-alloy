@@ -11,8 +11,8 @@ governing permissions and limitations under the License.
 */
 
 export default (extensionViewController, instanceNameField) => {
-  test("shows instance options including option for instance that no longer exists", async t => {
-    await extensionViewController.init(t, {
+  test("shows instance options including option for instance that no longer exists", async () => {
+    await extensionViewController.init({
       extensionSettings: {
         instances: [
           {
@@ -29,11 +29,8 @@ export default (extensionViewController, instanceNameField) => {
         instanceName: "alloydeleted"
       }
     });
-    await instanceNameField.expectSelectedOptionLabel(
-      t,
-      "alloydeleted (Deleted)"
-    );
-    await instanceNameField.expectOptionLabels(t, [
+    await instanceNameField.expectSelectedOptionLabel("alloydeleted (Deleted)");
+    await instanceNameField.expectOptionLabels([
       "alloydeleted (Deleted)",
       "alloy1",
       "alloy2"
