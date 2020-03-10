@@ -18,30 +18,30 @@ const mockExtensionSettings = {
 };
 
 export default extensionViewController => {
-  test("initializes form fields with full settings", async t => {
-    await extensionViewController.init(t, {
+  test("initializes form fields with full settings", async () => {
+    await extensionViewController.init({
       extensionSettings: mockExtensionSettings,
       settings: {
         instanceName: "alloy2"
       }
     });
-    await instanceNameField.expectValue(t, "alloy2");
+    await instanceNameField.expectValue("alloy2");
   });
 
-  test("initializes form fields with no settings", async t => {
-    await extensionViewController.init(t, {
+  test("initializes form fields with no settings", async () => {
+    await extensionViewController.init({
       extensionSettings: mockExtensionSettings
     });
-    await instanceNameField.expectValue(t, "alloy1");
+    await instanceNameField.expectValue("alloy1");
   });
 
-  test("returns full valid settings", async t => {
-    await extensionViewController.init(t, {
+  test("returns full valid settings", async () => {
+    await extensionViewController.init({
       extensionSettings: mockExtensionSettings
     });
-    await instanceNameField.selectOption(t, "alloy2");
-    await extensionViewController.expectIsValid(t);
-    await extensionViewController.expectSettings(t, {
+    await instanceNameField.selectOption("alloy2");
+    await extensionViewController.expectIsValid();
+    await extensionViewController.expectSettings({
       instanceName: "alloy2"
     });
   });

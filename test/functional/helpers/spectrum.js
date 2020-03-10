@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Selector } from "testcafe";
+import { Selector, t } from "testcafe";
 
 const iframe = Selector("#extensionViewIframe");
 const popoverSelector = Selector(".spectrum-Popover");
@@ -18,7 +18,7 @@ const menuItemLabelCssSelector = ".spectrum-Menu-itemLabel";
 const isInvalidClassName = "is-invalid";
 const invalidAttribute = "aria-invalid";
 
-const switchToIframe = async t => {
+const switchToIframe = async () => {
   // We need to make sure we're inside the iframe.
   // However, if we were to call t.switchToIframe when
   // we're already in the iframe, testcafe will think we're
@@ -29,24 +29,24 @@ const switchToIframe = async t => {
   await t.switchToIframe(iframe);
 };
 
-const selectMenuItem = async (t, container, label) => {
+const selectMenuItem = async (container, label) => {
   await t.click(container.find(menuItemLabelCssSelector).withText(label));
 };
 
-const createExpectError = selector => async t => {
-  await switchToIframe(t);
+const createExpectError = selector => async () => {
+  await switchToIframe();
   await t
     .expect(selector.hasClass(isInvalidClassName))
     .ok("Expected field to have error when it did not");
 };
 
-const createExpectErrorByAttribute = selector => async t => {
-  await switchToIframe(t);
+const createExpectErrorByAttribute = selector => async () => {
+  await switchToIframe();
   await t.expect(selector.getAttribute(invalidAttribute)).eql("true");
 };
 
-const createExpectValue = selector => async (t, value) => {
-  await switchToIframe(t);
+const createExpectValue = selector => async value => {
+  await switchToIframe();
   // We need to use the value attribute instead of property
   // because some react-spectrum components, like Select,
   // don't set the value property on the primary DOM element
@@ -54,8 +54,8 @@ const createExpectValue = selector => async (t, value) => {
   await t.expect(selector.getAttribute("value")).eql(value);
 };
 
-const createExpectMatch = selector => async (t, value) => {
-  await switchToIframe(t);
+const createExpectMatch = selector => async value => {
+  await switchToIframe();
   // We need to use the value attribute instead of property
   // because some react-spectrum components, like Select,
   // don't set the value property on the primary DOM element
@@ -63,38 +63,38 @@ const createExpectMatch = selector => async (t, value) => {
   await t.expect(selector.getAttribute("value")).match(value);
 };
 
-const createClick = selector => async t => {
-  await switchToIframe(t);
+const createClick = selector => async () => {
+  await switchToIframe();
   await t.click(selector);
 };
 
-const createExpectChecked = selector => async t => {
-  await switchToIframe(t);
+const createExpectChecked = selector => async () => {
+  await switchToIframe();
   await t.expect(selector.checked).ok();
 };
 
-const createExpectUnchecked = selector => async t => {
-  await switchToIframe(t);
+const createExpectUnchecked = selector => async () => {
+  await switchToIframe();
   await t.expect(selector.checked).notOk();
 };
 
-const createExpectExists = selector => async t => {
-  await switchToIframe(t);
+const createExpectExists = selector => async () => {
+  await switchToIframe();
   await t.expect(selector.exists).ok();
 };
 
-const createExpectNotExists = selector => async t => {
-  await switchToIframe(t);
+const createExpectNotExists = selector => async () => {
+  await switchToIframe();
   await t.expect(selector.exists).notOk();
 };
 
-const createExpectEnabled = selector => async t => {
-  await switchToIframe(t);
+const createExpectEnabled = selector => async () => {
+  await switchToIframe();
   await t.expect(selector.hasAttribute("disabled")).notOk();
 };
 
-const createExpectDisabled = selector => async t => {
-  await switchToIframe(t);
+const createExpectDisabled = selector => async () => {
+  await switchToIframe();
   await t.expect(selector.hasAttribute("disabled")).ok();
 };
 
@@ -115,14 +115,14 @@ const componentWrappers = {
     return {
       expectError: createExpectError(selector),
       expectValue: createExpectValue(selector),
-      async expectSelectedOptionLabel(t, label) {
-        await switchToIframe(t);
+      async expectSelectedOptionLabel(label) {
+        await switchToIframe();
         await t
           .expect(selector.find(".spectrum-Dropdown-label").innerText)
           .eql(label);
       },
-      async expectOptionLabels(t, labels) {
-        await switchToIframe(t);
+      async expectOptionLabels(labels) {
+        await switchToIframe();
         await t.click(selector.find("button"));
         const optionLabels = popoverSelector.find(".spectrum-Menu-itemLabel");
         for (let i = 0; i < labels.length; i += 1) {
@@ -131,10 +131,10 @@ const componentWrappers = {
         }
         await t.expect(optionLabels.count).eql(labels.length);
       },
-      async selectOption(t, label) {
-        await switchToIframe(t);
+      async selectOption(label) {
+        await switchToIframe();
         await t.click(selector.find("button"));
-        await selectMenuItem(t, popoverSelector, label);
+        await selectMenuItem(popoverSelector, label);
       }
     };
   },
@@ -143,12 +143,12 @@ const componentWrappers = {
       expectError: createExpectError(selector),
       expectValue: createExpectValue(selector),
       expectMatch: createExpectMatch(selector),
-      async typeText(t, text) {
-        await switchToIframe(t);
+      async typeText(text) {
+        await switchToIframe();
         await t.typeText(selector, text);
       },
-      async clear(t) {
-        await switchToIframe(t);
+      async clear() {
+        await switchToIframe();
         await t.selectText(selector).pressKey("delete");
       }
     };
@@ -170,8 +170,8 @@ const componentWrappers = {
   },
   accordion(selector) {
     return {
-      async clickHeader(t, label) {
-        await switchToIframe(t);
+      async clickHeader(label) {
+        await switchToIframe();
         await t.click(
           selector.find(".spectrum-Accordion-itemHeader").withText(label)
         );
@@ -185,18 +185,18 @@ const componentWrappers = {
   },
   dialog(selector) {
     return {
-      async expectTitle(t, title) {
-        await switchToIframe(t);
+      async expectTitle(title) {
+        await switchToIframe();
         await selector.find(".spectrum-Dialog-header").withText(title);
       },
-      async clickConfirm(t) {
-        await switchToIframe(t);
+      async clickConfirm() {
+        await switchToIframe();
         await t.click(
           selector.find(".spectrum-Dialog-footer .spectrum-Button--cta")
         );
       },
-      async clickCancel(t) {
-        await switchToIframe(t);
+      async clickCancel() {
+        await switchToIframe();
         await t.click(
           selector.find(".spectrum-Dialog-footer .spectrum-Button--secondary")
         );
@@ -205,8 +205,8 @@ const componentWrappers = {
   },
   alert(selector) {
     return {
-      async expectTitle(t, title) {
-        await switchToIframe(t);
+      async expectTitle(title) {
+        await switchToIframe();
         await selector.find(".spectrum-Alert-header").withText(title);
       }
     };

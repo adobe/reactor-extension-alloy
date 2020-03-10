@@ -114,9 +114,8 @@ const defaultInitInfo = {
   }
 };
 
-test("initializes form fields with full settings", async t => {
+test("initializes form fields with full settings", async () => {
   await extensionViewController.init(
-    t,
     Object.assign({}, defaultInitInfo, {
       settings: {
         instances: [
@@ -149,53 +148,51 @@ test("initializes form fields with full settings", async t => {
 
   // When initializing with multiple instances, the accordion should
   // be fully collapsed.
-  await instances[0].nameField.expectNotExists(t);
-  await instances[1].nameField.expectNotExists(t);
+  await instances[0].nameField.expectNotExists();
+  await instances[1].nameField.expectNotExists();
 
-  await accordion.clickHeader(t, "ALLOY1");
+  await accordion.clickHeader("ALLOY1");
 
-  await instances[0].nameField.expectValue(t, "alloy1");
-  await instances[0].configIdField.expectValue(t, "PR123");
-  await instances[0].orgIdField.expectValue(t, "ORG456@OtherCompanyOrg");
-  await instances[0].edgeDomainField.expectValue(t, "testedge.com");
-  await instances[0].edgeBasePathField.expectValue(t, "ee-beta");
-  await instances[0].errorsEnabledField.expectUnchecked(t);
-  await instances[0].optInEnabledField.expectChecked(t);
-  await instances[0].idMigrationEnabled.expectChecked(t);
-  await instances[0].thirdPartyCookiesEnabled.expectChecked(t);
-  await instances[0].clickCollectionEnabledField.expectUnchecked(t);
-  await instances[0].contextGranularity.specificField.expectChecked(t);
-  await instances[0].specificContext.webField.expectUnchecked(t);
-  await instances[0].specificContext.deviceField.expectChecked(t);
-  await instances[0].specificContext.environmentField.expectUnchecked(t);
-  await instances[0].specificContext.placeContextField.expectChecked(t);
+  await instances[0].nameField.expectValue("alloy1");
+  await instances[0].configIdField.expectValue("PR123");
+  await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
+  await instances[0].edgeDomainField.expectValue("testedge.com");
+  await instances[0].edgeBasePathField.expectValue("ee-beta");
+  await instances[0].errorsEnabledField.expectUnchecked();
+  await instances[0].optInEnabledField.expectChecked();
+  await instances[0].idMigrationEnabled.expectChecked();
+  await instances[0].thirdPartyCookiesEnabled.expectChecked();
+  await instances[0].clickCollectionEnabledField.expectUnchecked();
+  await instances[0].contextGranularity.specificField.expectChecked();
+  await instances[0].specificContext.webField.expectUnchecked();
+  await instances[0].specificContext.deviceField.expectChecked();
+  await instances[0].specificContext.environmentField.expectUnchecked();
+  await instances[0].specificContext.placeContextField.expectChecked();
 
-  await accordion.clickHeader(t, "ALLOY2");
+  await accordion.clickHeader("ALLOY2");
 
-  await instances[1].nameField.expectValue(t, "alloy2");
-  await instances[1].configIdField.expectValue(t, "PR456");
-  await instances[1].orgIdField.expectValue(t, "ABC123@AdobeOrg");
-  await instances[1].edgeDomainField.expectValue(t, defaultEdgeDomain);
-  await instances[1].edgeBasePathField.expectValue(t, defaultEdgeBasePath);
-  await instances[1].errorsEnabledField.expectChecked(t);
-  await instances[1].optInEnabledField.expectUnchecked(t);
-  await instances[1].idMigrationEnabled.expectUnchecked(t);
-  await instances[1].thirdPartyCookiesEnabled.expectUnchecked(t);
-  await instances[1].clickCollectionEnabledField.expectChecked(t);
+  await instances[1].nameField.expectValue("alloy2");
+  await instances[1].configIdField.expectValue("PR456");
+  await instances[1].orgIdField.expectValue("ABC123@AdobeOrg");
+  await instances[1].edgeDomainField.expectValue(defaultEdgeDomain);
+  await instances[1].edgeBasePathField.expectValue(defaultEdgeBasePath);
+  await instances[1].errorsEnabledField.expectChecked();
+  await instances[1].optInEnabledField.expectUnchecked();
+  await instances[1].idMigrationEnabled.expectUnchecked();
+  await instances[1].thirdPartyCookiesEnabled.expectUnchecked();
+  await instances[1].clickCollectionEnabledField.expectChecked();
   await instances[1].downloadLinkQualifierField.expectValue(
-    t,
     defaultDownloadLinkQualifier
   );
-  await instances[1].contextGranularity.specificField.expectChecked(t);
-  await instances[1].specificContext.webField.expectUnchecked(t);
-  await instances[1].specificContext.deviceField.expectUnchecked(t);
-  await instances[1].specificContext.environmentField.expectUnchecked(t);
-  await instances[1].specificContext.placeContextField.expectUnchecked(t);
+  await instances[1].contextGranularity.specificField.expectChecked();
+  await instances[1].specificContext.webField.expectUnchecked();
+  await instances[1].specificContext.deviceField.expectUnchecked();
+  await instances[1].specificContext.environmentField.expectUnchecked();
+  await instances[1].specificContext.placeContextField.expectUnchecked();
 });
 
-test("initializes form fields with minimal settings", async t => {
+test("initializes form fields with minimal settings", async () => {
   await extensionViewController.init(
-    t,
     Object.assign({}, defaultInitInfo, {
       settings: {
         instances: [
@@ -208,51 +205,49 @@ test("initializes form fields with minimal settings", async t => {
     })
   );
 
-  await instances[0].nameField.expectValue(t, "alloy1");
-  await instances[0].configIdField.expectValue(t, "PR123");
-  await instances[0].orgIdField.expectValue(t, "ABC123@AdobeOrg");
-  await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
-  await instances[0].edgeBasePathField.expectValue(t, defaultEdgeBasePath);
-  await instances[0].errorsEnabledField.expectChecked(t);
-  await instances[0].optInEnabledField.expectUnchecked(t);
-  await instances[0].idMigrationEnabled.expectChecked(t);
-  await instances[0].thirdPartyCookiesEnabled.expectChecked(t);
-  await instances[0].clickCollectionEnabledField.expectChecked(t);
+  await instances[0].nameField.expectValue("alloy1");
+  await instances[0].configIdField.expectValue("PR123");
+  await instances[0].orgIdField.expectValue("ABC123@AdobeOrg");
+  await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
+  await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
+  await instances[0].errorsEnabledField.expectChecked();
+  await instances[0].optInEnabledField.expectUnchecked();
+  await instances[0].idMigrationEnabled.expectChecked();
+  await instances[0].thirdPartyCookiesEnabled.expectChecked();
+  await instances[0].clickCollectionEnabledField.expectChecked();
   await instances[0].downloadLinkQualifierField.expectValue(
-    t,
     defaultDownloadLinkQualifier
   );
-  await instances[0].contextGranularity.allField.expectChecked(t);
-  await instances[0].onBeforeEventSendField.expectValue(t, "");
+  await instances[0].contextGranularity.allField.expectChecked();
+  await instances[0].onBeforeEventSendField.expectValue("");
 });
 
-test("initializes form fields with no settings", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
+test("initializes form fields with no settings", async () => {
+  await extensionViewController.init(defaultInitInfo);
 
-  await instances[0].nameField.expectValue(t, "alloy");
-  await instances[0].configIdField.expectValue(t, "");
-  await instances[0].orgIdField.expectValue(t, "ABC123@AdobeOrg");
-  await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
-  await instances[0].edgeBasePathField.expectValue(t, defaultEdgeBasePath);
-  await instances[0].errorsEnabledField.expectChecked(t);
-  await instances[0].optInEnabledField.expectUnchecked(t);
-  await instances[0].idMigrationEnabled.expectChecked(t);
-  await instances[0].thirdPartyCookiesEnabled.expectChecked(t);
-  await instances[0].clickCollectionEnabledField.expectChecked(t);
+  await instances[0].nameField.expectValue("alloy");
+  await instances[0].configIdField.expectValue("");
+  await instances[0].orgIdField.expectValue("ABC123@AdobeOrg");
+  await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
+  await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
+  await instances[0].errorsEnabledField.expectChecked();
+  await instances[0].optInEnabledField.expectUnchecked();
+  await instances[0].idMigrationEnabled.expectChecked();
+  await instances[0].thirdPartyCookiesEnabled.expectChecked();
+  await instances[0].clickCollectionEnabledField.expectChecked();
   await instances[0].downloadLinkQualifierField.expectValue(
-    t,
     defaultDownloadLinkQualifier
   );
-  await instances[0].contextGranularity.allField.expectChecked(t);
-  await instances[0].onBeforeEventSendField.expectValue(t, "");
+  await instances[0].contextGranularity.allField.expectChecked();
+  await instances[0].onBeforeEventSendField.expectValue("");
 });
 
-test("returns minimal valid settings", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
+test("returns minimal valid settings", async () => {
+  await extensionViewController.init(defaultInitInfo);
 
-  await instances[0].configIdField.typeText(t, "PR123");
-  await extensionViewController.expectIsValid(t);
-  await extensionViewController.expectSettings(t, {
+  await instances[0].configIdField.typeText("PR123");
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
     instances: [
       {
         configId: "PR123",
@@ -262,8 +257,8 @@ test("returns minimal valid settings", async t => {
   });
 });
 
-test("returns full valid settings", async t => {
-  await extensionViewController.init(t, defaultInitInfo, {
+test("returns full valid settings", async () => {
+  await extensionViewController.init(defaultInitInfo, {
     openCodeEditor(options) {
       return Promise.resolve(
         // We include options.language in the result
@@ -274,30 +269,30 @@ test("returns full valid settings", async t => {
     }
   });
 
-  await instances[0].nameField.typeText(t, "1");
-  await instances[0].configIdField.typeText(t, "PR123");
-  await instances[0].edgeDomainField.typeText(t, "2");
-  await instances[0].edgeBasePathField.typeText(t, "-alpha");
-  await instances[0].errorsEnabledField.click(t);
-  await instances[0].optInEnabledField.click(t);
-  await instances[0].idMigrationEnabled.click(t);
-  await instances[0].thirdPartyCookiesEnabled.click(t);
-  await instances[0].prehidingStyleField.click(t);
-  await instances[0].onBeforeEventSendField.typeText(t, "%foo%");
-  await addInstanceButton.click(t);
+  await instances[0].nameField.typeText("1");
+  await instances[0].configIdField.typeText("PR123");
+  await instances[0].edgeDomainField.typeText("2");
+  await instances[0].edgeBasePathField.typeText("-alpha");
+  await instances[0].errorsEnabledField.click();
+  await instances[0].optInEnabledField.click();
+  await instances[0].idMigrationEnabled.click();
+  await instances[0].thirdPartyCookiesEnabled.click();
+  await instances[0].prehidingStyleField.click();
+  await instances[0].onBeforeEventSendField.typeText("%foo%");
+  await addInstanceButton.click();
 
-  await instances[1].nameField.typeText(t, "2");
-  await instances[1].configIdField.typeText(t, "PR456");
-  await instances[1].orgIdField.typeText(t, "2");
-  await instances[1].optInEnabledField.click(t);
-  await instances[1].idMigrationEnabled.click(t);
-  await instances[1].thirdPartyCookiesEnabled.click(t);
-  await instances[1].downloadLinkQualifierField.clear(t);
-  await instances[1].downloadLinkQualifierField.typeText(t, "[]");
-  await instances[1].contextGranularity.specificField.click(t);
+  await instances[1].nameField.typeText("2");
+  await instances[1].configIdField.typeText("PR456");
+  await instances[1].orgIdField.typeText("2");
+  await instances[1].optInEnabledField.click();
+  await instances[1].idMigrationEnabled.click();
+  await instances[1].thirdPartyCookiesEnabled.click();
+  await instances[1].downloadLinkQualifierField.clear();
+  await instances[1].downloadLinkQualifierField.typeText("[]");
+  await instances[1].contextGranularity.specificField.click();
 
-  await extensionViewController.expectIsValid(t);
-  await extensionViewController.expectSettings(t, {
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
     instances: [
       {
         name: "alloy1",
@@ -325,53 +320,52 @@ test("returns full valid settings", async t => {
   });
 });
 
-test("shows error for empty required values", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].nameField.clear(t);
-  await instances[0].orgIdField.clear(t);
-  await instances[0].edgeDomainField.clear(t);
-  await instances[0].edgeBasePathField.clear(t);
-  await extensionViewController.expectIsNotValid(t);
-  await instances[0].nameField.expectError(t);
-  await instances[0].configIdField.expectError(t);
-  await instances[0].orgIdField.expectError(t);
-  await instances[0].edgeDomainField.expectError(t);
-  await instances[0].edgeBasePathField.expectError(t);
+test("shows error for empty required values", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].nameField.clear();
+  await instances[0].orgIdField.clear();
+  await instances[0].edgeDomainField.clear();
+  await instances[0].edgeBasePathField.clear();
+  await extensionViewController.expectIsNotValid();
+  await instances[0].nameField.expectError();
+  await instances[0].configIdField.expectError();
+  await instances[0].orgIdField.expectError();
+  await instances[0].edgeDomainField.expectError();
+  await instances[0].edgeBasePathField.expectError();
 });
 
-test("shows error for duplicate name", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await addInstanceButton.click(t);
-  await instances[1].configIdField.typeText(t, "PR456");
+test("shows error for duplicate name", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].configIdField.typeText("PR123");
+  await addInstanceButton.click();
+  await instances[1].configIdField.typeText("PR456");
   // We'll expand the first instance before we validate to test that
   // validation expands the invalid instance (in this case, the second one)
   // Even though both accordion header labels are "alloy", this
   // will select the first one.
-  await accordion.clickHeader(t, "ALLOY");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[1].nameField.expectError(t);
+  await accordion.clickHeader("ALLOY");
+  await extensionViewController.expectIsNotValid();
+  await instances[1].nameField.expectError();
 });
 
-test("shows error for name that matches key on window", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].nameField.clear(t);
-  await instances[0].nameField.typeText(t, "addEventListener");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[0].nameField.expectError(t);
+test("shows error for name that matches key on window", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].nameField.clear();
+  await instances[0].nameField.typeText("addEventListener");
+  await extensionViewController.expectIsNotValid();
+  await instances[0].nameField.expectError();
 });
 
-test("shows error for numeric name", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].nameField.clear(t);
-  await instances[0].nameField.typeText(t, "123");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[0].nameField.expectError(t);
+test("shows error for numeric name", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].nameField.clear();
+  await instances[0].nameField.typeText("123");
+  await extensionViewController.expectIsNotValid();
+  await instances[0].nameField.expectError();
 });
 
-test("shows a warning when name is changed on existing configuration", async t => {
+test("shows a warning when name is changed on existing configuration", async () => {
   await extensionViewController.init(
-    t,
     Object.assign({}, defaultInitInfo, {
       settings: {
         instances: [
@@ -383,131 +377,130 @@ test("shows a warning when name is changed on existing configuration", async t =
       }
     })
   );
-  await instances[0].nameField.typeText(t, "123");
-  await instances[0].nameChangeAlert.expectExists(t);
+  await instances[0].nameField.typeText("123");
+  await instances[0].nameChangeAlert.expectExists();
 });
 
-test("does not show a warning when name is changed on new configuration", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].nameField.typeText(t, "123");
-  await instances[0].nameChangeAlert.expectNotExists(t);
+test("does not show a warning when name is changed on new configuration", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].nameField.typeText("123");
+  await instances[0].nameChangeAlert.expectNotExists();
 });
 
-test("shows error for duplicate property ID", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await addInstanceButton.click(t);
-  await instances[1].configIdField.typeText(t, "PR123");
+test("shows error for duplicate property ID", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].configIdField.typeText("PR123");
+  await addInstanceButton.click();
+  await instances[1].configIdField.typeText("PR123");
   // We'll expand the first instance before we validate to test that
   // validation expands the invalid instance (in this case, the second one)
   // Even though both accordion header labels are "alloy", this
   // will select the first one.
-  await accordion.clickHeader(t, "ALLOY");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[1].configIdField.expectError(t);
+  await accordion.clickHeader("ALLOY");
+  await extensionViewController.expectIsNotValid();
+  await instances[1].configIdField.expectError();
 });
 
-test("shows error for duplicate IMS org ID", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await addInstanceButton.click(t);
-  await instances[1].configIdField.typeText(t, "PR456");
+test("shows error for duplicate IMS org ID", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].configIdField.typeText("PR123");
+  await addInstanceButton.click();
+  await instances[1].configIdField.typeText("PR456");
   // We'll expand the first instance before we validate to test that
   // validation expands the invalid instance (in this case, the second one)
   // Even though both accordion header labels are "alloy", this
   // will select the first one.
-  await accordion.clickHeader(t, "ALLOY");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[1].orgIdField.expectError(t);
+  await accordion.clickHeader("ALLOY");
+  await extensionViewController.expectIsNotValid();
+  await instances[1].orgIdField.expectError();
 });
 
-test("shows error for invalid download link qualifier", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].downloadLinkQualifierField.clear(t);
-  await instances[0].downloadLinkQualifierField.typeText(t, "[");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[0].downloadLinkQualifierField.expectError(t);
+test("shows error for invalid download link qualifier", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].downloadLinkQualifierField.clear();
+  await instances[0].downloadLinkQualifierField.typeText("[");
+  await extensionViewController.expectIsNotValid();
+  await instances[0].downloadLinkQualifierField.expectError();
 });
 
-test("restores default IMS org ID value when restore button is clicked", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].orgIdField.typeText(t, "foo");
-  await instances[0].orgIdRestoreButton.click(t);
-  await instances[0].orgIdField.expectValue(t, "ABC123@AdobeOrg");
+test("restores default IMS org ID value when restore button is clicked", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].orgIdField.typeText("foo");
+  await instances[0].orgIdRestoreButton.click();
+  await instances[0].orgIdField.expectValue("ABC123@AdobeOrg");
 });
 
-test("restores default edge domain value when restore button is clicked", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].edgeDomainField.typeText(t, "foo");
-  await instances[0].edgeDomainRestoreButton.click(t);
-  await instances[0].edgeDomainField.expectValue(t, defaultEdgeDomain);
+test("restores default edge domain value when restore button is clicked", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].edgeDomainField.typeText("foo");
+  await instances[0].edgeDomainRestoreButton.click();
+  await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
 });
 
-test("restores default edge base path value when restore button is clicked", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].edgeBasePathField.typeText(t, "foo");
-  await instances[0].edgeBasePathRestoreButton.click(t);
-  await instances[0].edgeBasePathField.expectValue(t, defaultEdgeBasePath);
+test("restores default edge base path value when restore button is clicked", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].edgeBasePathField.typeText("foo");
+  await instances[0].edgeBasePathRestoreButton.click();
+  await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
 });
 
-test("restores default download link qualifier when restore button is clicked", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].downloadLinkQualifierField.typeText(t, ".");
-  await instances[0].downloadLinkQualifierRestoreButton.click(t);
+test("restores default download link qualifier when restore button is clicked", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].downloadLinkQualifierField.typeText(".");
+  await instances[0].downloadLinkQualifierRestoreButton.click();
   await instances[0].downloadLinkQualifierField.expectValue(
-    t,
     defaultDownloadLinkQualifier
   );
 });
 
-test("sets download link qualifier when test button is clicked", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].downloadLinkQualifierTestButton.click(t);
+test("sets download link qualifier when test button is clicked", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].downloadLinkQualifierTestButton.click();
   // openRegexTester returns Edited Regex ### in the sandbox environment
-  await instances[0].downloadLinkQualifierField.expectMatch(t, /^Edited Regex/);
+  await instances[0].downloadLinkQualifierField.expectMatch(/^Edited Regex/);
 });
 
-test("shows error for onBeforeEventSend value that is an arbitrary string", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await instances[0].onBeforeEventSendField.typeText(t, "123foo");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[0].onBeforeEventSendField.expectError(t);
+test("shows error for onBeforeEventSend value that is an arbitrary string", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].configIdField.typeText("PR123");
+  await instances[0].onBeforeEventSendField.typeText("123foo");
+  await extensionViewController.expectIsNotValid();
+  await instances[0].onBeforeEventSendField.expectError();
 });
 
-test("shows error for onBeforeEventSend value that is multiple data elements", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await instances[0].onBeforeEventSendField.typeText(t, "%foo%%bar%");
-  await extensionViewController.expectIsNotValid(t);
-  await instances[0].onBeforeEventSendField.expectError(t);
+test("shows error for onBeforeEventSend value that is multiple data elements", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].configIdField.typeText("PR123");
+  await instances[0].onBeforeEventSendField.typeText("%foo%%bar%");
+  await extensionViewController.expectIsNotValid();
+  await instances[0].onBeforeEventSendField.expectError();
 });
 
-test("does not show error for onBeforeEventSend value that is a single data element", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await instances[0].onBeforeEventSendField.typeText(t, "%123foo%");
-  await extensionViewController.expectIsValid(t);
+test("does not show error for onBeforeEventSend value that is a single data element", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].configIdField.typeText("PR123");
+  await instances[0].onBeforeEventSendField.typeText("%123foo%");
+  await extensionViewController.expectIsValid();
 });
 
-test("deletes an instance", async t => {
-  await extensionViewController.init(t, defaultInitInfo);
-  await instances[0].configIdField.typeText(t, "PR123");
-  await instances[0].deleteButton.expectDisabled(t);
-  await addInstanceButton.click(t);
-  await instances[1].deleteButton.expectEnabled(t);
+test("deletes an instance", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].configIdField.typeText("PR123");
+  await instances[0].deleteButton.expectDisabled();
+  await addInstanceButton.click();
+  await instances[1].deleteButton.expectEnabled();
   // Make accordion header label unique
-  await instances[1].nameField.typeText(t, "2");
-  await instances[1].configIdField.typeText(t, "PR456");
-  await accordion.clickHeader(t, "ALLOY");
-  await instances[0].deleteButton.click(t);
+  await instances[1].nameField.typeText("2");
+  await instances[1].configIdField.typeText("PR456");
+  await accordion.clickHeader("ALLOY");
+  await instances[0].deleteButton.click();
   // Ensure that clicking cancel doesn't delete anything.
-  await resourceUsageDialog.clickCancel(t);
-  await resourceUsageDialog.expectNotExists(t);
-  await instances[0].configIdField.expectValue(t, "PR123");
+  await resourceUsageDialog.clickCancel();
+  await resourceUsageDialog.expectNotExists();
+  await instances[0].configIdField.expectValue("PR123");
   // Alright, delete for real.
-  await instances[0].deleteButton.click(t);
-  await resourceUsageDialog.expectTitle(t, "Resource Usage");
-  await resourceUsageDialog.clickConfirm(t);
-  await instances[0].configIdField.expectValue(t, "PR456");
+  await instances[0].deleteButton.click();
+  await resourceUsageDialog.expectTitle("Resource Usage");
+  await resourceUsageDialog.clickConfirm();
+  await instances[0].configIdField.expectValue("PR456");
 });
