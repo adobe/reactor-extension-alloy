@@ -92,6 +92,12 @@ const XdmObject = ({ initInfo, formikProps, schema }) => {
   );
 };
 
+XdmObject.propTypes = {
+  initInfo: PropTypes.object.isRequired,
+  formikProps: PropTypes.object.isRequired,
+  schema: PropTypes.object
+};
+
 const XdmExtensionView = () => {
   const [schema, setSchema] = useState();
 
@@ -130,12 +136,6 @@ const XdmExtensionView = () => {
       render={props => <XdmObject {...props} schema={schema} />}
     />
   );
-};
-
-XdmObject.propTypes = {
-  initInfo: PropTypes.object.isRequired,
-  formikProps: PropTypes.object.isRequired,
-  schema: PropTypes.object
 };
 
 render(XdmExtensionView);

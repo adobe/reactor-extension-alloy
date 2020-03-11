@@ -12,9 +12,15 @@ governing permissions and limitations under the License.
 
 import { useEffect, useRef } from "react";
 
-// A react hook which the callback after a user attempts to
-// submit a formik form (rather than just changes a field value)
-// and validation completes.
+/**
+ * A react hook which the callback after a user attempts to
+ * submit a formik form (rather than just changes a field value)
+ * and validation completes.
+ *
+ * @param {Function} callback A function to call whenever the user
+ * attempts to submit a formik form and validation completes.
+ * @param {Object} formikProps Formik props, provided by Formik.
+ */
 export default ({ callback, formikProps }) => {
   const { isValidating, submitCount } = formikProps;
   const previousProcessedSubmitCountRef = useRef(0);

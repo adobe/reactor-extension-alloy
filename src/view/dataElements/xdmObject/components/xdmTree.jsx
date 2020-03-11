@@ -18,7 +18,7 @@ import "./xdmTree.styl";
 import generateTreeStructure from "../helpers/generateTreeStructure";
 import getNodeIdsToExpandForValidation from "../helpers/getNodeIdsToExpandForValidation";
 import XdmTreeNode from "./xdmTreeNode";
-import useNewlyValidatedFormSubmission from "../helpers/useNewlyValidatedFormSubmission";
+import useNewlyValidatedFormSubmission from "../../../utils/useNewlyValidatedFormSubmission";
 
 const { TreeNode } = Tree;
 
