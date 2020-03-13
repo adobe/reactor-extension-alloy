@@ -222,7 +222,6 @@ test("initializes form fields with minimal settings", async () => {
   await instances[0].errorsEnabledField.expectChecked();
   await instances[0].defaultConsent.inField.expectChecked();
   await instances[0].defaultConsent.pendingField.expectUnchecked();
-  await instances[0].optInEnabledField.expectUnchecked();
   await instances[0].idMigrationEnabled.expectChecked();
   await instances[0].thirdPartyCookiesEnabled.expectChecked();
   await instances[0].clickCollectionEnabledField.expectChecked();
@@ -286,7 +285,7 @@ test("returns full valid settings", async () => {
   await instances[0].edgeDomainField.typeText("2");
   await instances[0].edgeBasePathField.typeText("-alpha");
   await instances[0].errorsEnabledField.click();
-  await instances[0].defaultConsent.pendingField.click(t);
+  await instances[0].defaultConsent.pendingField.click();
   await instances[0].idMigrationEnabled.click();
   await instances[0].thirdPartyCookiesEnabled.click();
   await instances[0].prehidingStyleField.click();
@@ -296,7 +295,7 @@ test("returns full valid settings", async () => {
   await instances[1].nameField.typeText("2");
   await instances[1].configIdField.typeText("PR456");
   await instances[1].orgIdField.typeText("2");
-  await instances[1].defaultConsent.pendingField.click(t);
+  await instances[1].defaultConsent.pendingField.click();
   await instances[1].idMigrationEnabled.click();
   await instances[1].thirdPartyCookiesEnabled.click();
   await instances[1].downloadLinkQualifierField.clear();
