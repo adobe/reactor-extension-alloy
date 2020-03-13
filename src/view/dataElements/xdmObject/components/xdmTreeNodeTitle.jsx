@@ -11,20 +11,17 @@ governing permissions and limitations under the License.
 */
 import React from "react";
 import PropTypes from "prop-types";
-import Checkmark from "@react/react-spectrum/Icon/Checkmark";
 import classNames from "classnames";
 import IconTip, {
   ICON_SIZE_S,
   VARIANT_ERROR
 } from "../../../components/iconTip";
+import PopulationAmountIndicator from "./populationAmountIndicator";
 import "./xdmTreeNodeTitle.styl";
+import { EMPTY, PARTIAL } from "../constants/populationAmount";
 
 const XdmTreeNodeTitle = props => {
   const { displayName, type, isPopulated, error } = props;
-
-  const populatedIcon = isPopulated ? (
-    <Checkmark size="XS" className="u-gapRight" />
-  ) : null;
 
   return (
     <div
@@ -47,7 +44,10 @@ const XdmTreeNodeTitle = props => {
           {error}
         </IconTip>
       )}
-      {populatedIcon}
+      <PopulationAmountIndicator
+        className="u-gapRight"
+        populationAmount={EMPTY}
+      />
       <span data-test-id="xdmTreeNodeTitleDisplayName">{displayName}</span>
       <span className="XdmTreeNodeTitle-type u-gapLeft u-gapRight">{type}</span>
     </div>
