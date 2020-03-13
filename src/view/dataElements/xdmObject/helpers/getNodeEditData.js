@@ -12,10 +12,10 @@ governing permissions and limitations under the License.
 
 import { OBJECT, ARRAY } from "../constants/schemaType";
 
-const addToBreadcrumb = (breadcrumb, title, nodeId) => {
-  if (title) {
+const addToBreadcrumb = (breadcrumb, displayName, nodeId) => {
+  if (displayName) {
     breadcrumb.unshift({
-      label: title,
+      label: displayName,
       nodeId
     });
   }
@@ -36,19 +36,23 @@ const addToBreadcrumb = (breadcrumb, title, nodeId) => {
  * @param {FormStateNode} candidateFormStateNode A form state node that is a
  * candidate for the node we're trying to find by ID.
  * @param {string} candidateFieldName The Formik field name for the candidate.
- * @param {string} candidateTitle The title for the candidate node.
+ * @param {string} candidateDisplayName The display name for the candidate node.
  * @param {string} nodeIdToFind The ID of the node that we're trying to find.
  * @returns {NodeEditData}
  */
 const getNodeEditData = ({
   candidateFormStateNode,
   candidateFieldName,
-  candidateTitle,
+  candidateDisplayName,
   nodeIdToFind
 }) => {
   if (candidateFormStateNode.id === nodeIdToFind) {
     const breadcrumb = [];
-    addToBreadcrumb(breadcrumb, candidateTitle, candidateFormStateNode.id);
+    addToBreadcrumb(
+      breadcrumb,
+      candidateDisplayName,
+      candidateFormStateNode.id
+    );
     return {
       formStateNode: candidateFormStateNode,
       fieldName: candidateFieldName,
@@ -71,13 +75,14 @@ const getNodeEditData = ({
         candidateFieldName: candidateFieldName
           ? `${candidateFieldName}.properties.${propertyName}`
           : `properties.${propertyName}`,
-        candidateTitle: propertySchema.candidateTitle || propertyName
+        candidateDisplayName:
+          propertySchema.candidateDisplayName || propertyName
       });
 
       if (foundNodeHierarchyAndFieldName) {
         addToBreadcrumb(
           foundNodeHierarchyAndFieldName.breadcrumb,
-          candidateTitle,
+          candidateDisplayName,
           candidateFormStateNode.id
         );
         return foundNodeHierarchyAndFieldName;
@@ -95,13 +100,13 @@ const getNodeEditData = ({
         candidateFieldName: candidateFieldName
           ? `${candidateFieldName}.items.${i}`
           : `items.${i}`,
-        candidateTitle: `Item ${i + 1}`
+        candidateDisplayName: `Item ${i + 1}`
       });
 
       if (foundNodeHierarchyAndFieldName) {
         addToBreadcrumb(
           foundNodeHierarchyAndFieldName.breadcrumb,
-          candidateTitle,
+          candidateDisplayName,
           candidateFormStateNode.id
         );
         return foundNodeHierarchyAndFieldName;
