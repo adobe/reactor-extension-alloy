@@ -143,9 +143,7 @@ function CustomerIdWrapper({ values, initInfo }) {
 }
 
 CustomerIdWrapper.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   values: PropTypes.object,
-  // eslint-disable-next-line react/forbid-prop-types
   initInfo: PropTypes.object
 };
 

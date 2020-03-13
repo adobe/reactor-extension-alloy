@@ -11,23 +11,12 @@ governing permissions and limitations under the License.
 */
 
 import { Selector, t } from "testcafe";
+import switchToIframe from "./switchToIframe";
 
-const iframe = Selector("#extensionViewIframe");
 const popoverSelector = Selector(".spectrum-Popover");
 const menuItemLabelCssSelector = ".spectrum-Menu-itemLabel";
 const isInvalidClassName = "is-invalid";
 const invalidAttribute = "aria-invalid";
-
-const switchToIframe = async () => {
-  // We need to make sure we're inside the iframe.
-  // However, if we were to call t.switchToIframe when
-  // we're already in the iframe, testcafe will think we're
-  // trying to go into a nested iframe. To prevent that,
-  // we always go up to the main window, then down into
-  // the iframe.
-  await t.switchToMainWindow();
-  await t.switchToIframe(iframe);
-};
 
 const selectMenuItem = async (container, label) => {
   await t.click(container.find(menuItemLabelCssSelector).withText(label));

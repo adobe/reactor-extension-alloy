@@ -15,10 +15,12 @@ governing permissions and limitations under the License.
 const path = require("path");
 const sandbox = require("@adobe/reactor-sandbox");
 const argv = require("minimist")(process.argv.slice(2));
+const chalk = require("chalk");
 
 const { watch } = argv;
 const createTestCafe = require("testcafe");
 const build = require("./helpers/build");
+const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
 
 const testsDir = path.join(__dirname, "../test/functional");
 
@@ -32,6 +34,27 @@ const testsDir = path.join(__dirname, "../test/functional");
     : testcafe.createRunner();
   const failedCount = await runner
     .src(testsDir)
+    .filter((testName, fixtureName, fixturePath, testMeta, fixtureMeta) => {
+      const requiresAdobeIOIntegration =
+        fixtureMeta.requiresAdobeIOIntegration ||
+        testMeta.requiresAdobeIOIntegration;
+
+      if (requiresAdobeIOIntegration && !adobeIOClientCredentials) {
+        // Using console.log instead of console.warn here because console.warn is an alias for console.error, which
+        // means it outputs to stderr and this isn't technically an error.
+        const fullTestName = `${fixtureName} ${testName}`;
+        console.log(
+          chalk.yellowBright(
+            `The test named ${chalk.bold(
+              fullTestName
+            )} will be skipped. It requires an Adobe I/O integration and no environment variables containing Adobe I/O integration details were found.`
+          )
+        );
+        return false;
+      }
+
+      return true;
+    })
     .browsers("chrome")
     .run();
   testcafe.close();

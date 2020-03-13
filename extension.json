@@ -76,17 +76,12 @@
                 "pattern": "^%[^%]+%$"
               }
             },
-            "required": [
-              "configId",
-              "name"
-            ],
+            "required": ["configId", "name"],
             "additionalProperties": true
           }
         }
       },
-      "required": [
-        "instances"
-      ],
+      "required": ["instances"],
       "additionalProperties": false
     }
   },
@@ -117,9 +112,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "instanceName"
-        ],
+        "required": ["instanceName"],
         "additionalProperties": false
       },
       "libPath": "dist/lib/actions/sendEvent/index.js",
@@ -140,10 +133,7 @@
             "anyOf": [
               {
                 "type": "string",
-                "enum": [
-                  "all",
-                  "none"
-                ]
+                "enum": ["all", "none"]
               },
               {
                 "type": "string",
@@ -152,10 +142,7 @@
             ]
           }
         },
-        "required": [
-          "instanceName",
-          "purposes"
-        ],
+        "required": ["instanceName", "purposes"],
         "additionalProperties": false
       },
       "libPath": "dist/lib/actions/setOptInPreferences/index.js",
@@ -197,19 +184,12 @@
                   "type": "boolean"
                 }
               },
-              "required": [
-                "namespace",
-                "id",
-                "authenticatedState"
-              ],
+              "required": ["namespace", "id", "authenticatedState"],
               "additionalProperties": false
             }
           }
         },
-        "required": [
-          "instanceName",
-          "customerIds"
-        ],
+        "required": ["instanceName", "customerIds"],
         "additionalProperties": false
       },
       "libPath": "dist/lib/actions/setCustomerIds/index.js",
@@ -229,13 +209,49 @@
             "minLength": 1
           }
         },
-        "required": [
-          "instanceName"
-        ],
+        "required": ["instanceName"],
         "additionalProperties": false
       },
       "libPath": "dist/lib/dataElements/eventMergeId/index.js",
       "viewPath": "dataElements/instanceNameOnly.html"
+    },
+    {
+      "displayName": "XDM Object",
+      "name": "xdm-object",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": ["id", "version"],
+            "additionalProperties": false
+          },
+          "data": {
+            "type": "object"
+          }
+        },
+        "required": ["schema", "data"],
+        "additionalProperties": false
+      },
+      "transforms": [
+        {
+          "type": "remove",
+          "propertyPath": "schema"
+        }
+      ],
+      "libPath": "dist/lib/dataElements/xdmObject/index.js",
+      "viewPath": "dataElements/xdmObject.html"
     }
   ],
   "main": "dist/lib/instanceManager/index.js"

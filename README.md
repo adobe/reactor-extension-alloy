@@ -32,27 +32,9 @@ When you attempt to commit code changes, several of the above tasks will be run 
 
 Thank you for your interest in contributing!
 
-## Manually Testing Views Using the Local Sandbox
+## Testing
 
-When running `npm run dev`, a local sandbox will be provided where you can manually test extension views in isolation. For this extension, all views (except the extension configuration view) provide a dropdown where the user can select which configured SDK instance should be used for that particular action, data element, etc. This dropdown is populated with SDK instance names that were previously configured by the user in the extension configuration view, which is a required step when the user installs the extension on a Launch property. In other words, these views are dependent upon settings coming from the extension configuration view in order to function properly.
-
-For illustration purposes, let's assume we are testing the Send Event action type. In the sandbox, we first need to select the "Extension Configuration" view. In that view, configure whatever instances you would like to test with. When you're done, click the Get Settings tab on the right side of the sandbox, then click the Get Settings button. You should be provided with a block of JSON that looks something like this:
-
-```json
-{
-  "instances": [
-    {
-      "name": "alloy",
-      "configId": "PR123",
-      "idSyncContainerId": 10
-    }
-  ]
-}
-```
-
-Copy this JSON. Now, switch to "Send Event" action view. You'll likely won't see any instances to choose from in the instances dropdown. That's expected, because it doesn't have extension settings (the settings that contain the configured instances) to work with yet since the view is being tested in isolation. It does not reflect how the extension will really behave inside Launch, however, because inside Launch, extension settings will always be provided to the view.
-
-Within the Init tab on the right side of the page, find the `extensionSettings` node inside the JSON. Paste your copied JSON for the value of `extensionSettings`. Click "Init". You should now see instances to choose from in the instances dropdown. 
+Please see [Test Instructions](test/docs/README.md) for more details about running tests.
 
 ## Publishing a New Extension Version
 

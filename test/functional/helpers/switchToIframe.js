@@ -1,5 +1,5 @@
 /*
-Copyright 2019 Adobe. All rights reserved.
+Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,20 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
-import PropTypes from "prop-types";
-import Alert from "@react/react-spectrum/Alert";
+import { Selector, t } from "testcafe";
 
-const ErrorMessage = ({ children }) => (
-  <div className="u-flex u-fullHeight u-alignItemsCenter u-justifyContentCenter">
-    <Alert header="Error" variant="error">
-      {children}
-    </Alert>
-  </div>
-);
+const iframe = Selector("#extensionViewIframe");
 
-ErrorMessage.propTypes = {
-  children: PropTypes.node.isRequired
+export default async () => {
+  // We need to make sure we're inside the iframe.
+  // However, if we were to call t.switchToIframe when
+  // we're already in the iframe, testcafe will think we're
+  // trying to go into a nested iframe. To prevent that,
+  // we always go up to the main window, then down into
+  // the iframe.
+  await t.switchToMainWindow();
+  await t.switchToIframe(iframe);
 };
-
-export default ErrorMessage;

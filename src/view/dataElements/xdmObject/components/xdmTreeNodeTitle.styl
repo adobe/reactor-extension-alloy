@@ -1,0 +1,21 @@
+.XdmTreeNodeTitle {
+  &.is-invalid {
+    color: #ec5b62;
+
+    .XdmTreeNodeTitle-type {
+      &:before {
+        border-left-color: #ec5b62;
+      }
+      color: inherit;
+    }
+  }
+}
+
+.XdmTreeNodeTitle-type {
+  &:before {
+    content: " ";
+    border-left: 1px solid #cacaca;
+    padding-left: 8px;
+  }
+  color: #707070;
+}

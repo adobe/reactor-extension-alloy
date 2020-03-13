@@ -11,7 +11,10 @@ governing permissions and limitations under the License.
 */
 
 // These are utility classes. The !important keyword is very intentional.
-// Related reading: https://css-tricks.com/when-using-important-is-the-right-choice/
+// Related reading:
+// https://tailwindcss.com/docs/utility-first/
+// https://css-tricks.com/when-using-important-is-the-right-choice/
+
 
 $gap = 8px;
 
@@ -23,8 +26,24 @@ $gap = 8px;
   margin-top: $gap*2 !important;
 }
 
+.u-gapBottom {
+  margin-bottom: $gap !important;
+}
+
 .u-gapLeft {
   margin-left: $gap !important;
+}
+
+.u-gapLeftNegative {
+  margin-left: $gap*-1 !important;
+}
+
+.u-gapRight {
+  margin-right: $gap !important;
+}
+
+.u-gapLeft2x {
+  margin-left: $gap*2 !important;
 }
 
 .u-alignRight {
@@ -47,6 +66,26 @@ $gap = 8px;
   display: flex !important;
 }
 
+.u-flexShrink0 {
+  flex-shrink: 0;
+}
+
 .u-alignItemsCenter {
   align-items: center !important;
+}
+
+.u-justifyContentCenter {
+  justify-content: center;
+}
+
+.u-fullHeight {
+  height: 100%;
+}
+
+.u-overflowXAuto {
+  overflow-x: auto;
+}
+
+.u-overflowYAuto {
+  overflow-y: auto;
 }
