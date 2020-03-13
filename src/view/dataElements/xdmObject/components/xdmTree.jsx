@@ -17,19 +17,27 @@ import "antd/es/tree/style/css";
 import "./xdmTree.styl";
 import generateTreeStructure from "../helpers/generateTreeStructure";
 import getNodeIdsToExpandForValidation from "../helpers/getNodeIdsToExpandForValidation";
-import XdmTreeNode from "./xdmTreeNode";
+import XdmTreeNodeTitle from "./xdmTreeNodeTitle";
 import useNewlyValidatedFormSubmission from "../helpers/useNewlyValidatedFormSubmission";
 
 const { TreeNode } = Tree;
 
 const renderTreeNodes = (nodes = []) => {
   return nodes.map(node => {
-    const { id, disabled, children, title, type, isPopulated, error } = node;
+    const {
+      id,
+      disabled,
+      children,
+      displayName,
+      type,
+      isPopulated,
+      error
+    } = node;
     return (
       <TreeNode
         title={
-          <XdmTreeNode
-            title={title}
+          <XdmTreeNodeTitle
+            displayName={displayName}
             type={type}
             isPopulated={isPopulated}
             error={error}

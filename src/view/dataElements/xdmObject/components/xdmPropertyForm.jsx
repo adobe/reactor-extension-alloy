@@ -33,7 +33,6 @@ const XdmPropertyForm = props => {
           name={`${fieldName}.wholeValue`}
           component={Textfield}
           componentClassName="u-fieldLong"
-          supportDataElement="replace"
         />
       </div>
     </div>

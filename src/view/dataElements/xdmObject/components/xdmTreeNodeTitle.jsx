@@ -17,10 +17,10 @@ import IconTip, {
   ICON_SIZE_S,
   VARIANT_ERROR
 } from "../../../components/iconTip";
-import "./xdmTreeNode.styl";
+import "./xdmTreeNodeTitle.styl";
 
-const XdmTreeNode = props => {
-  const { title, type, isPopulated, error } = props;
+const XdmTreeNodeTitle = props => {
+  const { displayName, type, isPopulated, error } = props;
 
   const populatedIcon = isPopulated ? (
     <Checkmark size="XS" className="u-gapRight" />
@@ -28,10 +28,15 @@ const XdmTreeNode = props => {
 
   return (
     <div
-      data-test-id="xdmTreeNode"
-      className={classNames("XdmTreeNode", "u-flex", "u-alignItemsCenter", {
-        "is-invalid": error
-      })}
+      data-test-id="xdmTreeNodeTitle"
+      className={classNames(
+        "XdmTreeNodeTitle",
+        "u-flex",
+        "u-alignItemsCenter",
+        {
+          "is-invalid": error
+        }
+      )}
     >
       {error && (
         <IconTip
@@ -43,17 +48,17 @@ const XdmTreeNode = props => {
         </IconTip>
       )}
       {populatedIcon}
-      <span data-test-id="xdmTreeNodeTitle">{title}</span>
-      <span className="XdmTreeNode-type u-gapLeft u-gapRight">{type}</span>
+      <span data-test-id="xdmTreeNodeTitleDisplayName">{displayName}</span>
+      <span className="XdmTreeNodeTitle-type u-gapLeft u-gapRight">{type}</span>
     </div>
   );
 };
 
-XdmTreeNode.propTypes = {
-  title: PropTypes.string.isRequired,
+XdmTreeNodeTitle.propTypes = {
+  displayName: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   isPopulated: PropTypes.bool.isRequired,
   error: PropTypes.string
 };
 
-export default XdmTreeNode;
+export default XdmTreeNodeTitle;

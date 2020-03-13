@@ -22,9 +22,9 @@ const xdmTree = createDataTestIdSelector("xdmTree");
 const getNode = async title => {
   await switchToIframe();
   return xdmTree
-    .find(createDataTestIdSelectorString("xdmTreeNodeTitle"))
+    .find(createDataTestIdSelectorString("xdmTreeNodeTitleDisplayName"))
     .withText(title)
-    .parent(createDataTestIdSelectorString("xdmTreeNode"))
+    .parent(createDataTestIdSelectorString("xdmTreeNodeTitle"))
     .nth(0);
 };
 

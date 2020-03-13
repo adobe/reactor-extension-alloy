@@ -17,7 +17,7 @@ import { ARRAY, OBJECT } from "../constants/schemaType";
  * The model representing a node on the XDM tree.
  * @typedef {Object} TreeNode
  * @property {string} id A unique identifier for the node.
- * @property {string} title A user-friendly title for the node.
+ * @property {string} displayName A user-friendly display for the node.
  * @property {string} type The JSON type that the node's value must be
  * @property {boolean} disabled Whether the user should be disallowed
  * from providing a value for the node.
@@ -32,7 +32,7 @@ import { ARRAY, OBJECT } from "../constants/schemaType";
  * Generates an object representing a node on the XDM tree. The node
  * may contain child nodes.
  * @param {FormStateNode} formStateNode A node from the form state.
- * @param {string} [title] A user-friendly title for the node.
+ * @param {string} [displayName] A user-friendly display name for the node.
  * @param {boolean} [isAncestorUsingWholePopulationStrategy=false] Whether any ancestor
  * node is using the WHOLE population strategy. If this is true, this node will
  * be disabled.
@@ -53,7 +53,7 @@ import { ARRAY, OBJECT } from "../constants/schemaType";
  */
 const getTreeNode = ({
   formStateNode,
-  title,
+  displayName,
   isAncestorUsingWholePopulationStrategy = false,
   notifyParentOfDataPopulation = () => {},
   notifyParentOfTouched = () => {},
@@ -73,7 +73,7 @@ const getTreeNode = ({
 
   const node = {
     id,
-    title,
+    displayName,
     type: schema.type,
     disabled: isAlwaysDisabled || isAncestorUsingWholePopulationStrategy,
     isPopulated: false
@@ -120,7 +120,7 @@ const getTreeNode = ({
         const propertyFormStateNode = properties[propertyName];
         const childNode = getTreeNode({
           formStateNode: propertyFormStateNode,
-          title: propertyName,
+          displayName: propertyName,
           isAncestorUsingWholePopulationStrategy:
             isAncestorUsingWholePopulationStrategy ||
             isUsingWholePopulationStrategy,
@@ -144,7 +144,7 @@ const getTreeNode = ({
     node.children = items.map((itemFormStateNode, index) => {
       const childNode = getTreeNode({
         formStateNode: itemFormStateNode,
-        title: `Item ${index + 1}`,
+        displayName: `Item ${index + 1}`,
         isAncestorUsingWholePopulationStrategy:
           isAncestorUsingWholePopulationStrategy ||
           isUsingWholePopulationStrategy,
