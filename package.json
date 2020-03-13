@@ -41,6 +41,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "regenerator-runtime": "^0.13.2",
+    "uniq": "^1.0.1",
     "yup": "^0.27.0"
   },
   "devDependencies": {

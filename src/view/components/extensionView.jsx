@@ -110,6 +110,11 @@ const ExtensionView = ({
   bridgeState.setInitialValues = setInitialValues;
   bridgeState.setInitializationError = setInitializationError;
 
+  // TODO Pass this through render function.
+  const resetForm = () => {
+    // getInitialValues();
+  };
+
   useEffect(registerWithExtensionBridge, []);
 
   if (initializationError) {

@@ -9,6 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import uniq from "uniq";
 
 const EDGE_CONFIG_HOST = "https://edge.adobe.io";
 const PLATFORM_HOST = "https://platform.adobe.io";
@@ -16,12 +17,17 @@ const PLATFORM_HOST = "https://platform.adobe.io";
 const schemaVersionRegexForContentType = /version=(\d+)/;
 
 const getVersionFromSchemaRefContentType = contentType => {
-  // contentType example: application/vnd.adobe.xed-full+json;version=1
-  // The value that comes before "version" is not guaranteed, which is
-  // why we can't use contentType directly for fetching a schema, but
-  // instead must parse out the version.
+  // Example: application/vnd.adobe.xed-full+json;version=1
+  // The value that comes before "version" is not guaranteed.
   const match = contentType.match(schemaVersionRegexForContentType);
   return match[1];
+};
+
+const compareSchemaRefs = (schemaRef1, schemaRef2) => {
+  return schemaRef1.id === schemaRef2.id &&
+    schemaRef1.version === schemaRef2.version
+    ? 0
+    : -1;
 };
 
 const getBaseRequestHeaders = ({ orgId, imsAccess }) => {
@@ -67,17 +73,6 @@ const fetchDatasetIdFromEdgeConfig = ({ baseRequestHeaders, configId }) => {
     });
 };
 
-const fetchSchemaRefFromDataSet = ({ baseRequestHeaders, datasetId }) => {
-  return fetch(
-    `${PLATFORM_HOST}/data/foundation/catalog/dataSets/${datasetId}`,
-    {
-      headers: baseRequestHeaders
-    }
-  )
-    .then(response => response.json())
-    .then(responseBody => responseBody[datasetId].schemaRef);
-};
-
 const fetchSchema = ({ baseRequestHeaders, schemaRef }) => {
   const schemaMajorVersion = getVersionFromSchemaRefContentType(
     schemaRef.contentType
@@ -89,6 +84,7 @@ const fetchSchema = ({ baseRequestHeaders, schemaRef }) => {
     {
       headers: {
         ...baseRequestHeaders,
+        // The first part of this ensures all json-schema refs are resolved within the schema we retrieve.
         Accept: `application/vnd.adobe.xed-full+json;version=${schemaMajorVersion}`
       }
     }
@@ -97,25 +93,101 @@ const fetchSchema = ({ baseRequestHeaders, schemaRef }) => {
     .then(responseBody => responseBody);
 };
 
-/**
- * Retrieves the schema configured for the dataset that is configured
- * for an edge configuration.
- * @param {string} configId Edge configuration ID
- * @param {string} orgId Experience Cloud organization ID
- * @param {string} imsAccess IMS auth token
- * @returns {Promise} Promise to be resolved with the schema.
- */
-export default ({ configId, orgId, imsAccess }) => {
-  const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
-  return fetchDatasetIdFromEdgeConfig({ baseRequestHeaders, configId })
-    .then(datasetId => {
-      return datasetId
-        ? fetchSchemaRefFromDataSet({ baseRequestHeaders, datasetId })
-        : undefined;
+const fetchSchemas = ({ baseRequestHeaders, schemaRefs }) => {
+  const uniqueSchemaRefs = uniq(schemaRefs, compareSchemaRefs);
+  const fetchSchemasPromises = uniqueSchemaRefs.map(schemaRef => {
+    return fetchSchema({ baseRequestHeaders, schemaRef });
+  });
+
+  return Promise.all(fetchSchemasPromises).then(schemas => {
+    return uniqueSchemaRefs.reduce((schemaBySchemaRefMap, schemaRef, index) => {
+      schemaBySchemaRefMap.set(schemaRef, schemas[index]);
+      return schemaBySchemaRefMap;
+    }, new Map());
+  });
+};
+
+const fetchSchemaRefsFromDatasets = ({ baseRequestHeaders, datasetIds }) => {
+  const uniqueDatasetIds = uniq(datasetIds);
+  const commaDelimitedDatasetIds = uniqueDatasetIds.join(",");
+  return fetch(
+    `${PLATFORM_HOST}/data/foundation/catalog/dataSets/${commaDelimitedDatasetIds}?properties=schemaRef`,
+    {
+      headers: baseRequestHeaders
+    }
+  )
+    .then(response => {
+      if (!response.ok) {
+        // TODO
+      }
+      return response.json();
     })
-    .then(schemaRef => {
-      return schemaRef
-        ? fetchSchema({ baseRequestHeaders, schemaRef })
-        : undefined;
+    .then(responseBody => {
+      return uniqueDatasetIds.reduce((schemaRefByDatasetId, datasetId) => {
+        if (responseBody[datasetId]) {
+          schemaRefByDatasetId[datasetId] = responseBody[datasetId].schemaRef;
+        }
+        return schemaRefByDatasetId;
+      }, {});
+    });
+};
+
+const fetchDatasetIdsFromEdgeConfigs = ({ baseRequestHeaders, configIds }) => {
+  const uniqueConfigIds = uniq(configIds);
+  const fetchDatasetIdsPromises = uniqueConfigIds.map(configId => {
+    return fetchDatasetIdFromEdgeConfig({ baseRequestHeaders, configId });
+  });
+  // TODO What if we don't get a dataaset ID back for an edge config (which can happen!)
+  return Promise.all(fetchDatasetIdsPromises).then(datasetIds => {
+    return uniqueConfigIds.reduce(
+      (datasetIdByEdgeConfigId, configId, index) => {
+        datasetIdByEdgeConfigId[configId] = datasetIds[index];
+        return datasetIdByEdgeConfigId;
+      },
+      {}
+    );
+  });
+};
+
+export default ({ extensionSettings, orgId, imsAccess }) => {
+  const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
+
+  const instancesInfo = extensionSettings.instances.map(instance => {
+    return {
+      name: instance.name,
+      configId: instance.configId
+    };
+  });
+
+  const configIds = extensionSettings.instances.map(
+    instance => instance.configId
+  );
+
+  return fetchDatasetIdsFromEdgeConfigs({ baseRequestHeaders, configIds })
+    .then(datasetIdByEdgeConfigId => {
+      instancesInfo.forEach(instanceInfo => {
+        instanceInfo.datasetId = datasetIdByEdgeConfigId[instanceInfo.configId];
+      });
+
+      const datasetIds = Object.values(datasetIdByEdgeConfigId);
+      return fetchSchemaRefsFromDatasets({
+        baseRequestHeaders,
+        instancesInfo,
+        datasetIds
+      });
+    })
+    .then(schemaRefByDataSet => {
+      instancesInfo.forEach(instanceInfo => {
+        instanceInfo.schemaRef = schemaRefByDataSet[instanceInfo.datasetId];
+      });
+      // TODO: Pass schema refs instead of instancesInfo
+      return fetchSchemas({ baseRequestHeaders, instancesInfo });
+    })
+    .then(schemasBySchemaRefMap => {
+      instancesInfo.forEach(instanceInfo => {
+        instanceInfo.schema = schemasBySchemaRefMap.get(instanceInfo.schemaRef);
+      });
+
+      return instancesInfo;
     });
 };

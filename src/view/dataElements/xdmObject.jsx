@@ -30,7 +30,7 @@ const getInitialValues = ({ settings, schema }) => {
   return getInitialFormState({ schema, value });
 };
 
-const XdmObject = ({ initInfo, formikProps, schema }) => {
+const XdmObject = ({ initInfo, formikProps, schema, resetForm }) => {
   const { values: formState } = formikProps;
   const [selectedNodeId, setSelectedNodeId] = useState();
 
@@ -47,6 +47,9 @@ const XdmObject = ({ initInfo, formikProps, schema }) => {
 
   return (
     <div className="u-flex u-fullHeight">
+      {
+        // Select Here? On change, call resetForm()
+      }
       <div className="XdmObject-treeContainer u-flexShrink0 u-fullHeight u-overflowXAuto u-overflowYAuto">
         <XdmTree
           formikProps={formikProps}
@@ -84,10 +87,14 @@ XdmObject.propTypes = {
 
 const XdmExtensionView = () => {
   const [schema, setSchema] = useState();
+  const [instancesInfo, setInstancesInfo] = useState();
 
   return (
     <ExtensionView
       getInitialValues={({ initInfo }) => {
+        // TODO: If we've already loaded the schemas, then don't load the
+        // schemas again. Just call getInitialValues with the newly
+        // selected schema and return the result.
         return fetchSchema({
           configId: initInfo.extensionSettings.instances[0].configId,
           orgId: initInfo.company.orgId,
