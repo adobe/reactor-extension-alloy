@@ -10,31 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { PARTS, WHOLE } from "../constants/populationStrategy";
+import { WHOLE } from "../constants/populationStrategy";
 import { ARRAY, OBJECT } from "../constants/schemaType";
-import { EMPTY, FULL, PARTIAL } from "../constants/populationAmount";
-
-const calculatePopulationAmountWhenAncestorUsingWholePopulationStrategy = doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue => {
-  return doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue
-    ? FULL
-    : EMPTY;
-};
-
-const calculatePopulationAmountForWholePopulationStrategy = wholeValue => {
-  return wholeValue ? FULL : EMPTY;
-};
-
-const calculatePopulationAmountForPartsPopulationStrategy = fullPopulationTally => {
-  if (fullPopulationTally.numPopulatedLeafs === fullPopulationTally.numLeafs) {
-    return FULL;
-  }
-
-  if (fullPopulationTally.numPopulatedLeafs === 0) {
-    return EMPTY;
-  }
-
-  return PARTIAL;
-};
 
 /**
  * The model representing a node on the XDM tree.
@@ -78,7 +55,6 @@ const getTreeNode = ({
   formStateNode,
   displayName,
   isAncestorUsingWholePopulationStrategy = false,
-  doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue = false,
   notifyParentOfDataPopulation = () => {},
   notifyParentOfTouched = () => {},
   errors,
@@ -104,20 +80,26 @@ const getTreeNode = ({
   };
 
   const isUsingWholePopulationStrategy = populationStrategy === WHOLE;
-  const isHighestNodeUsingWholePopulationStrategy =
-    !isAncestorUsingWholePopulationStrategy && isUsingWholePopulationStrategy;
 
   let isTouchedAtCurrentOrDescendantNode = false;
 
+  const isLeafNode = schema.type !== OBJECT && schema.type !== ARRAY;
   const fullPopulationTally = {
-    numLeafs: 0,
-    numPopulatedLeafs: 0
+    numLeafs: isLeafNode ? 1 : 0,
+    numPopulatedLeafs: isLeafNode ? 1 : 0
   };
-
   const confirmChildNodePopulation = populationTally => {
     fullPopulationTally.numLeafs += populationTally.numLeafs;
-    fullPopulationTally.numPopulatedLeafs += populationTally.numPopulatedLeafs;
+    // Allie understands! Please comment.
+    fullPopulationTally.numPopulatedLeafs += isUsingWholePopulationStrategy
+      ? populationTally.numLeafs
+      : populationTally.numPopulatedLeafs;
   };
+
+  if (isAutoPopulated) {
+    // Make sure it's recorded as 100% populated.
+    // confirmChildNodePopulation();
+  }
 
   const confirmTouchedAtCurrentOrDescendantNode = () => {
     if (!isTouchedAtCurrentOrDescendantNode) {
@@ -130,16 +112,13 @@ const getTreeNode = ({
     confirmTouchedAtCurrentOrDescendantNode();
   }
 
-  const commonChildInfo = {
-    isAncestorUsingWholePopulationStrategy:
-      isAncestorUsingWholePopulationStrategy || isUsingWholePopulationStrategy,
-    doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue:
-      (isAncestorUsingWholePopulationStrategy &&
-        doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue) ||
-      (isHighestNodeUsingWholePopulationStrategy && wholeValue),
-    notifyParentOfDataPopulation: confirmChildNodePopulation,
-    notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode
-  };
+  if (
+    !isAncestorUsingWholePopulationStrategy &&
+    isUsingWholePopulationStrategy &&
+    wholeValue
+  ) {
+    confirmChildNodePopulation();
+  }
 
   if (schema.type === OBJECT && properties) {
     const propertyNames = Object.keys(properties);
@@ -149,7 +128,11 @@ const getTreeNode = ({
         const childNode = getTreeNode({
           formStateNode: propertyFormStateNode,
           displayName: propertyName,
-          ...commonChildInfo,
+          isAncestorUsingWholePopulationStrategy:
+            isAncestorUsingWholePopulationStrategy ||
+            isUsingWholePopulationStrategy,
+          notifyParentOfDataPopulation: confirmChildNodePopulation,
+          notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
           errors:
             errors && errors.properties
               ? errors.properties[propertyName]
@@ -169,7 +152,11 @@ const getTreeNode = ({
       const childNode = getTreeNode({
         formStateNode: itemFormStateNode,
         displayName: `Item ${index + 1}`,
-        ...commonChildInfo,
+        isAncestorUsingWholePopulationStrategy:
+          isAncestorUsingWholePopulationStrategy ||
+          isUsingWholePopulationStrategy,
+        notifyParentOfDataPopulation: confirmChildNodePopulation,
+        notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
         errors: errors && errors.items ? errors.items[index] : undefined,
         touched: touched && touched.items ? touched.items[index] : undefined
       });
@@ -177,40 +164,9 @@ const getTreeNode = ({
     });
   }
 
-  // If the current node doesn't have children, then the current node itself
-  // IS the leaf node that should be tallied.
-  // TODO Can we get rid of this? Maybe just tell the parent our population
-  // amount after we've calculated it below.
-  if (node.children) {
-    if (populationStrategy === WHOLE) {
-      if (wholeValue) {
-        fullPopulationTally.numPopulatedLeafs = fullPopulationTally.numLeafs;
-      } else {
-        fullPopulationTally.numPopulatedLeafs = 0;
-      }
-    }
-  } else {
-    fullPopulationTally.numLeafs = 1;
-    fullPopulationTally.numPopulatedLeafs = wholeValue ? 1 : 0;
-  }
-
   notifyParentOfDataPopulation(fullPopulationTally);
-
-  if (isAutoPopulated) {
-    node.populationAmount = FULL;
-  } else if (isAncestorUsingWholePopulationStrategy) {
-    node.populationAmount = calculatePopulationAmountWhenAncestorUsingWholePopulationStrategy(
-      doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue
-    );
-  } else if (populationStrategy === PARTS) {
-    node.populationAmount = calculatePopulationAmountForPartsPopulationStrategy(
-      fullPopulationTally
-    );
-  } else {
-    node.populationAmount = calculatePopulationAmountForWholePopulationStrategy(
-      wholeValue
-    );
-  }
+  node.populationPercentage =
+    fullPopulationTally.numPopulatedLeafs / fullPopulationTally.numLeafs;
 
   if (isTouchedAtCurrentOrDescendantNode) {
     node.error =

@@ -18,21 +18,10 @@ import IconTip, {
 } from "../../../components/iconTip";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import "./xdmTreeNodeTitle.styl";
-import { EMPTY, FULL, PARTIAL } from "../constants/populationAmount";
+import { EMPTY, PARTIAL } from "../constants/populationAmount";
 
-/**
- * The display for a specific node within the XDM tree.
- * @param {Object} props
- * @param {string} props.displayName The node's user-friendly name.
- * @param {string} props.type The node type (object, array, string, etc.)
- * @param {boolean} props.isPopulated Whether the node has been directly
- * populated (if using the WHOLE population method) or at least one of its
- * descendants has been populated (if using the PARTS population method).
- * @param {string} [error] The validation error message pertaining to
- * this node, if any.
- */
 const XdmTreeNodeTitle = props => {
-  const { displayName, type, populationAmount, error } = props;
+  const { displayName, type, isPopulated, error } = props;
 
   return (
     <div
@@ -57,7 +46,7 @@ const XdmTreeNodeTitle = props => {
       )}
       <PopulationAmountIndicator
         className="u-gapRight"
-        populationAmount={populationAmount}
+        populationAmount={EMPTY}
       />
       <span data-test-id="xdmTreeNodeTitleDisplayName">{displayName}</span>
       <span className="XdmTreeNodeTitle-type u-gapLeft u-gapRight">{type}</span>
@@ -68,7 +57,7 @@ const XdmTreeNodeTitle = props => {
 XdmTreeNodeTitle.propTypes = {
   displayName: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY]),
+  isPopulated: PropTypes.bool.isRequired,
   error: PropTypes.string
 };
 
