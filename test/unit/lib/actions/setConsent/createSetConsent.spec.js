@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createSetOptInPreferences from "../../../../../src/lib/actions/setOptInPreferences/createSetOptInPreferences";
+import createSetConsent from "../../../../../src/lib/actions/setConsent/createSetConsent";
 import turbineVariable from "../../../helpers/turbineVariable";
 
-describe("Set Opt-In Preferences", () => {
+describe("Set Consent", () => {
   let mockLogger;
 
   beforeEach(() => {
@@ -29,24 +29,24 @@ describe("Set Opt-In Preferences", () => {
     turbineVariable.reset();
   });
 
-  ["all", "none"].forEach(purposes => {
-    it(`executes optIn command with "${purposes}" purposes`, () => {
+  ["in", "out"].forEach(generalConsent => {
+    it(`executes setConsent command with "${generalConsent}" general consent`, () => {
       const instance = jasmine.createSpy();
       const instanceManager = {
         getAccessor: jasmine.createSpy().and.returnValue({
           instance
         })
       };
-      const action = createSetOptInPreferences(instanceManager);
+      const action = createSetConsent(instanceManager);
 
       action({
         instanceName: "myinstance",
-        purposes
+        consent: { general: generalConsent }
       });
 
       expect(instanceManager.getAccessor).toHaveBeenCalledWith("myinstance");
-      expect(instance).toHaveBeenCalledWith("optIn", {
-        purposes
+      expect(instance).toHaveBeenCalledWith("setConsent", {
+        general: generalConsent
       });
     });
   });
@@ -57,7 +57,7 @@ describe("Set Opt-In Preferences", () => {
         return undefined;
       }
     };
-    const action = createSetOptInPreferences(instanceManager);
+    const action = createSetConsent(instanceManager);
 
     action({
       instanceName: "myinstance",
@@ -65,7 +65,7 @@ describe("Set Opt-In Preferences", () => {
     });
 
     expect(mockLogger.error).toHaveBeenCalledWith(
-      'Failed to send event for instance "myinstance". No matching instance was configured with this name.'
+      'Failed to set consent for instance "myinstance". No matching instance was configured with this name.'
     );
   });
 });
