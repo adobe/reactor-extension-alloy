@@ -83,15 +83,22 @@ const getTreeNode = ({
 
   let isTouchedAtCurrentOrDescendantNode = false;
 
-  const confirmDataPopulatedAtCurrentOrDescendantNode = () => {
-    if (!node.isPopulated) {
-      notifyParentOfDataPopulation();
-      node.isPopulated = true;
-    }
+  const isLeafNode = schema.type !== OBJECT && schema.type !== ARRAY;
+  const fullPopulationTally = {
+    numLeafs: isLeafNode ? 1 : 0,
+    numPopulatedLeafs: isLeafNode ? 1 : 0
+  };
+  const confirmChildNodePopulation = populationTally => {
+    fullPopulationTally.numLeafs += populationTally.numLeafs;
+    // Allie understands! Please comment.
+    fullPopulationTally.numPopulatedLeafs += isUsingWholePopulationStrategy
+      ? populationTally.numLeafs
+      : populationTally.numPopulatedLeafs;
   };
 
   if (isAutoPopulated) {
-    confirmDataPopulatedAtCurrentOrDescendantNode();
+    // Make sure it's recorded as 100% populated.
+    // confirmChildNodePopulation();
   }
 
   const confirmTouchedAtCurrentOrDescendantNode = () => {
@@ -110,7 +117,7 @@ const getTreeNode = ({
     isUsingWholePopulationStrategy &&
     wholeValue
   ) {
-    confirmDataPopulatedAtCurrentOrDescendantNode();
+    confirmChildNodePopulation();
   }
 
   if (schema.type === OBJECT && properties) {
@@ -124,7 +131,7 @@ const getTreeNode = ({
           isAncestorUsingWholePopulationStrategy:
             isAncestorUsingWholePopulationStrategy ||
             isUsingWholePopulationStrategy,
-          notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode,
+          notifyParentOfDataPopulation: confirmChildNodePopulation,
           notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
           errors:
             errors && errors.properties
@@ -148,7 +155,7 @@ const getTreeNode = ({
         isAncestorUsingWholePopulationStrategy:
           isAncestorUsingWholePopulationStrategy ||
           isUsingWholePopulationStrategy,
-        notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode,
+        notifyParentOfDataPopulation: confirmChildNodePopulation,
         notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
         errors: errors && errors.items ? errors.items[index] : undefined,
         touched: touched && touched.items ? touched.items[index] : undefined
@@ -156,6 +163,10 @@ const getTreeNode = ({
       return childNode;
     });
   }
+
+  notifyParentOfDataPopulation(fullPopulationTally);
+  node.populationPercentage =
+    fullPopulationTally.numPopulatedLeafs / fullPopulationTally.numLeafs;
 
   if (isTouchedAtCurrentOrDescendantNode) {
     node.error =

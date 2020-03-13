@@ -1,0 +1,29 @@
+size = 15px;
+stroke-width = 9;
+
+.PopulationAmountIndicator {
+  width: size;
+  height: size;
+}
+
+.PopulationAmountIndicator-baseRing {
+  stroke: #d2d3d4;
+  stroke-width: stroke-width;
+}
+
+.PopulationAmountIndicator-emphasisRing {
+  stroke: #1473e6;
+  stroke-width: stroke-width;
+
+  &.is-full {
+    stroke-dasharray: 100 0;
+  }
+
+  &.is-partial {
+    stroke-dasharray: 50 50;
+  }
+
+  &.is-empty {
+    stroke-dasharray: 0 100;
+  }
+}
