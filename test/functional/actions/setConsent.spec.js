@@ -16,20 +16,17 @@ import spectrum from "../helpers/spectrum";
 import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
 
 const extensionViewController = createExtensionViewController(
-  "actions/setOptInPreferences.html"
+  "actions/setConsent.html"
 );
 const instanceNameField = spectrum.select(Selector("[name=instanceName]"));
-const purposesRadioGroup = {
-  allField: spectrum.radio(Selector(`[name='purposes'][value=all]`)),
-  noneField: spectrum.radio(Selector(`[name='purposes'][value=none]`)),
+const radioGroup = {
+  inField: spectrum.radio(Selector(`[name='option'][value=in]`)),
+  outField: spectrum.radio(Selector(`[name='option'][value=out]`)),
   dataElementField: spectrum.radio(
-    Selector(`[name='purposes'][value=dataElement]`)
+    Selector(`[name='option'][value=dataElement]`)
   )
 };
-const purposesDataElementField = spectrum.textfield(
-  Selector("[name=purposesDataElement]")
-);
-const optInDisabledAlert = spectrum.alert(Selector("#optInDisabledAlert"));
+const dataElementField = spectrum.textfield(Selector("[name=dataElement]"));
 
 const mockExtensionSettings = {
   instances: [
@@ -39,15 +36,14 @@ const mockExtensionSettings = {
     },
     {
       name: "alloy2",
-      configId: "PR456",
-      optInEnabled: true
+      configId: "PR456"
     }
   ]
 };
 
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
-fixture("Set Opt-In Preferences View").disablePageReloads.page(
+fixture("Set Consent View").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
@@ -56,13 +52,13 @@ test("initializes form fields with settings containing static purposes", async (
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
-      purposes: "none"
+      consent: { general: "out" }
     }
   });
   await instanceNameField.expectValue("alloy2");
-  await purposesRadioGroup.allField.expectUnchecked();
-  await purposesRadioGroup.noneField.expectChecked();
-  await purposesRadioGroup.dataElementField.expectUnchecked();
+  await radioGroup.inField.expectUnchecked();
+  await radioGroup.outField.expectChecked();
+  await radioGroup.dataElementField.expectUnchecked();
 });
 
 test("initializes form fields with settings containing data element for purposes", async () => {
@@ -70,14 +66,14 @@ test("initializes form fields with settings containing data element for purposes
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
-      purposes: "%foo%"
+      consent: "%foo%"
     }
   });
   await instanceNameField.expectValue("alloy2");
-  await purposesRadioGroup.allField.expectUnchecked();
-  await purposesRadioGroup.noneField.expectUnchecked();
-  await purposesRadioGroup.dataElementField.expectChecked();
-  await purposesDataElementField.expectValue("%foo%");
+  await radioGroup.inField.expectUnchecked();
+  await radioGroup.outField.expectUnchecked();
+  await radioGroup.dataElementField.expectChecked();
+  await dataElementField.expectValue("%foo%");
 });
 
 test("initializes form fields with no settings", async () => {
@@ -85,9 +81,9 @@ test("initializes form fields with no settings", async () => {
     extensionSettings: mockExtensionSettings
   });
   await instanceNameField.expectValue("alloy1");
-  await purposesRadioGroup.allField.expectChecked();
-  await purposesRadioGroup.noneField.expectUnchecked();
-  await purposesRadioGroup.dataElementField.expectUnchecked();
+  await radioGroup.inField.expectChecked();
+  await radioGroup.outField.expectUnchecked();
+  await radioGroup.dataElementField.expectUnchecked();
 });
 
 test("returns valid settings containing static purposes", async () => {
@@ -96,11 +92,11 @@ test("returns valid settings containing static purposes", async () => {
   });
 
   await instanceNameField.selectOption("alloy2");
-  await purposesRadioGroup.noneField.click();
+  await radioGroup.outField.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy2",
-    purposes: "none"
+    consent: { general: "out" }
   });
 });
 
@@ -110,12 +106,12 @@ test("returns valid settings containing data element for purposes", async () => 
   });
 
   await instanceNameField.selectOption("alloy2");
-  await purposesRadioGroup.dataElementField.click();
-  await purposesDataElementField.typeText("%foo%");
+  await radioGroup.dataElementField.click();
+  await dataElementField.typeText("%foo%");
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy2",
-    purposes: "%foo%"
+    consent: "%foo%"
   });
 });
 
@@ -123,44 +119,20 @@ test("shows error for purposes data element value that is not a data element", a
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await purposesRadioGroup.dataElementField.click();
-  await purposesDataElementField.typeText("foo");
+  await radioGroup.dataElementField.click();
+  await dataElementField.typeText("foo");
   await extensionViewController.expectIsNotValid();
-  await purposesDataElementField.expectError();
+  await dataElementField.expectError();
 });
 
 test("shows error for purposes data element value that is more than one data element", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await purposesRadioGroup.dataElementField.click();
-  await purposesDataElementField.typeText("%foo%%bar%");
+  await radioGroup.dataElementField.click();
+  await dataElementField.typeText("%foo%%bar%");
   await extensionViewController.expectIsNotValid();
-  await purposesDataElementField.expectError();
-});
-
-test("shows warning if opt-in is not enabled", async () => {
-  await extensionViewController.init({
-    extensionSettings: mockExtensionSettings,
-    settings: {
-      instanceName: "alloy1",
-      purposes: "all"
-    }
-  });
-
-  await optInDisabledAlert.expectExists();
-});
-
-test("does not show warning if opt-in is enabled", async () => {
-  await extensionViewController.init({
-    extensionSettings: mockExtensionSettings,
-    settings: {
-      instanceName: "alloy2",
-      purposes: "all"
-    }
-  });
-
-  await optInDisabledAlert.expectNotExists();
+  await dataElementField.expectError();
 });
 
 testInstanceNameOptions(extensionViewController, instanceNameField);

@@ -35,12 +35,16 @@ import EditorButton from "../components/editorButton";
 import InfoTipLayout from "../components/infoTipLayout";
 import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
-import "./configuration.styl";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
+import "./configuration.styl";
 
 const contextGranularityEnum = {
   ALL: "all",
   SPECIFIC: "specific"
+};
+const consentLevels = {
+  IN: "in",
+  PENDING: "pending"
 };
 const contextOptions = ["web", "device", "environment", "placeContext"];
 
@@ -51,7 +55,7 @@ const getInstanceDefaults = initInfo => ({
   edgeDomain: "edge.adobedc.net",
   edgeBasePath: "ee",
   errorsEnabled: true,
-  optInEnabled: false,
+  defaultConsent: { general: consentLevels.IN },
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions,
@@ -108,7 +112,6 @@ const getSettings = ({ values, initInfo }) => {
         "edgeDomain",
         "edgeBasePath",
         "errorsEnabled",
-        "optInEnabled",
         "prehidingStyle",
         "idMigrationEnabled",
         "thirdPartyCookiesEnabled",
@@ -129,6 +132,9 @@ const getSettings = ({ values, initInfo }) => {
 
       if (instance.contextGranularity === contextGranularityEnum.SPECIFIC) {
         trimmedInstance.context = instance.context;
+      }
+      if (instance.defaultConsent.general === consentLevels.PENDING) {
+        trimmedInstance.defaultConsent = { general: consentLevels.PENDING };
       }
 
       return trimmedInstance;
@@ -373,9 +379,9 @@ const Configuration = ({ formikProps, initInfo }) => {
                     <div className="u-gapTop">
                       <InfoTipLayout
                         tip="The domain that will be used to interact with
-                              Adobe Services. Update this setting if you have
-                              mapped one of your first party domains (using
-                              CNAME) to an Adobe provisioned domain."
+                        Adobe Services. Update this setting if you have
+                        mapped one of your first party domains (using
+                        CNAME) to an Adobe provisioned domain."
                       >
                         <FieldLabel
                           labelFor="edgeDomainField"
@@ -419,13 +425,27 @@ const Configuration = ({ formikProps, initInfo }) => {
                     <h3>Privacy</h3>
 
                     <div className="u-gapTop">
-                      <InfoTipLayout tip="Queues privacy-sensitive work until the user opts in.">
-                        <WrappedField
-                          name={`instances.${index}.optInEnabled`}
-                          component={Checkbox}
-                          label="Enable Opt-In"
+                      <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent preferences.">
+                        <FieldLabel
+                          labelFor="generalDefaultConsent"
+                          label="Default Consent Level"
                         />
                       </InfoTipLayout>
+                      <WrappedField
+                        id="generalDefaultConsent"
+                        name={`instances.${index}.defaultConsent.general`}
+                        component={RadioGroup}
+                        componentClassName="u-flexColumn"
+                      >
+                        <Radio
+                          value={consentLevels.IN}
+                          label="In - Do not wait for explicit consent."
+                        />
+                        <Radio
+                          value={consentLevels.PENDING}
+                          label="Pending - Queue privacy-sensitive work until the user gives consent."
+                        />
+                      </WrappedField>
                     </div>
 
                     <h3>Identity</h3>
@@ -590,9 +610,9 @@ const Configuration = ({ formikProps, initInfo }) => {
                     <div className="u-gapTop">
                       <InfoTipLayout
                         tip="Specifies the base path of the endpoint used
-                              to interact with Adobe Services. This setting
-                              should only be changed if you are not intending
-                              to use the default production environment."
+                        to interact with Adobe Services. This setting
+                        should only be changed if you are not intending
+                        to use the default production environment."
                       >
                         <FieldLabel
                           labelFor="edgeBasePathField"
@@ -683,5 +703,4 @@ const ConfigurationExtensionView = () => {
     />
   );
 };
-
 render(ConfigurationExtensionView);

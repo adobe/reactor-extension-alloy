@@ -119,8 +119,8 @@
       "viewPath": "actions/sendEvent.html"
     },
     {
-      "displayName": "Set Opt-In Preferences",
-      "name": "set-opt-in-preferences",
+      "displayName": "Set Consent",
+      "name": "set-consent",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
@@ -129,11 +129,20 @@
             "type": "string",
             "minLength": 1
           },
-          "purposes": {
+          "consent": {
             "anyOf": [
               {
-                "type": "string",
-                "enum": ["all", "none"]
+                "type": "object",
+                "properties": {
+                  "general": {
+                    "type": "string",
+                    "enum": [
+                      "in",
+                      "out"
+                    ]
+                  }
+                },
+                "additionalProperties": false
               },
               {
                 "type": "string",
@@ -142,11 +151,14 @@
             ]
           }
         },
-        "required": ["instanceName", "purposes"],
+        "required": [
+          "instanceName",
+          "consent"
+        ],
         "additionalProperties": false
       },
-      "libPath": "dist/lib/actions/setOptInPreferences/index.js",
-      "viewPath": "actions/setOptInPreferences.html"
+      "libPath": "dist/lib/actions/setConsent/index.js",
+      "viewPath": "actions/setConsent.html"
     },
     {
       "displayName": "Set Customer IDs",
