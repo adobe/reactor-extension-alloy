@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { object, array, string } from "yup";
 import { FieldArray } from "formik";
 import Textfield from "@react/react-spectrum/Textfield";
@@ -34,6 +35,7 @@ import EditorButton from "../components/editorButton";
 import InfoTipLayout from "../components/infoTipLayout";
 import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
+import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
 import "./configuration.styl";
 
 const contextGranularityEnum = {
@@ -236,471 +238,469 @@ const validationSchema = object()
     );
   });
 
-const Configuration = () => {
-  const [selectedAccordionIndex, setSelectedAccordionIndex] = useState();
-  const [isFirstExtensionViewRender, setIsFirstExtensionViewRender] = useState(
-    true
+const Configuration = ({ formikProps, initInfo }) => {
+  const {
+    values,
+    errors,
+    isSubmitting,
+    isValidating,
+    setFieldValue,
+    initialValues
+  } = formikProps;
+
+  // On the initial render, only expand the first accordion item
+  // if there's one instance, because users may get disoriented if we
+  // automatically expand the first item when there are multiple instances.
+  const [selectedAccordionIndex, setSelectedAccordionIndex] = useState(
+    values.instances.length === 1 ? 0 : undefined
   );
 
+  useNewlyValidatedFormSubmission({
+    callback: () => {
+      // If the user just tried to save the configuration and there's
+      // a validation error, make sure the first accordion item containing
+      // an error is shown.
+      if (isSubmitting && !isValidating && errors && errors.instances) {
+        const instanceIndexContainingErrors = errors.instances.findIndex(
+          instance => instance
+        );
+        setSelectedAccordionIndex(instanceIndexContainingErrors);
+      }
+    },
+    formikProps
+  });
+
+  return (
+    <div>
+      <FieldArray
+        name="instances"
+        render={arrayHelpers => {
+          return (
+            <div>
+              <div className="u-alignRight">
+                <Button
+                  label="Add Instance"
+                  onClick={() => {
+                    arrayHelpers.push(createDefaultInstance(initInfo));
+                    setSelectedAccordionIndex(values.instances.length);
+                  }}
+                />
+              </div>
+              <Accordion
+                selectedIndex={selectedAccordionIndex}
+                className="u-gapTop2x"
+                onChange={setSelectedAccordionIndex}
+              >
+                {values.instances.map((instance, index) => (
+                  <AccordionItem
+                    key={index}
+                    header={instance.name || "unnamed instance"}
+                  >
+                    <div>
+                      <InfoTipLayout tip="A global method on the window object will be created with this name.">
+                        <FieldLabel labelFor="nameField" label="Name" />
+                      </InfoTipLayout>
+                      <div>
+                        <WrappedField
+                          id="nameField"
+                          name={`instances.${index}.name`}
+                          component={Textfield}
+                          componentClassName="u-fieldLong"
+                          supportDataElement="replace"
+                        />
+                      </div>
+                      {// If we're editing an existing configuration and the name changes.
+                      initInfo.settings &&
+                      initialValues.instances[0].name !==
+                        values.instances[0].name ? (
+                        <Alert
+                          id="nameChangeAlert"
+                          className="ConstrainedAlert"
+                          header="Potential Problems Due to Name Change"
+                          variant="warning"
+                        >
+                          Any rule components or data elements using this
+                          instance will no longer function as expected when
+                          running on your website. We recommend removing or
+                          updating those resources before publishing your next
+                          library.
+                        </Alert>
+                      ) : null}
+                      <div />
+                    </div>
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="Your assigned config ID, which links the SDK to the appropriate accounts and configuration.">
+                        <FieldLabel
+                          labelFor="configIdField"
+                          label="Config ID"
+                        />
+                      </InfoTipLayout>
+                      <div>
+                        <WrappedField
+                          id="configIdField"
+                          name={`instances.${index}.configId`}
+                          component={Textfield}
+                          componentClassName="u-fieldLong"
+                          supportDataElement="replace"
+                        />
+                      </div>
+                    </div>
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="Your assigned Experience Cloud organization ID.">
+                        <FieldLabel
+                          labelFor="orgIdField"
+                          label="IMS Organization ID"
+                        />
+                      </InfoTipLayout>
+                      <div>
+                        <WrappedField
+                          id="orgIdField"
+                          name={`instances.${index}.orgId`}
+                          component={Textfield}
+                          componentClassName="u-fieldLong"
+                          supportDataElement="replace"
+                        />
+                        <Button
+                          id="orgIdRestoreButton"
+                          label="Restore to default"
+                          onClick={() => {
+                            const instanceDefaults = getInstanceDefaults(
+                              initInfo
+                            );
+                            setFieldValue(
+                              `instances.${index}.orgId`,
+                              instanceDefaults.orgId
+                            );
+                          }}
+                          quiet
+                        />
+                      </div>
+                    </div>
+                    <div className="u-gapTop">
+                      <InfoTipLayout
+                        tip="The domain that will be used to interact with
+                        Adobe Services. Update this setting if you have
+                        mapped one of your first party domains (using
+                        CNAME) to an Adobe provisioned domain."
+                      >
+                        <FieldLabel
+                          labelFor="edgeDomainField"
+                          label="Edge Domain"
+                        />
+                      </InfoTipLayout>
+                      <div>
+                        <WrappedField
+                          id="edgeDomainField"
+                          name={`instances.${index}.edgeDomain`}
+                          component={Textfield}
+                          componentClassName="u-fieldLong"
+                          supportDataElement="replace"
+                        />
+                        <Button
+                          id="edgeDomainRestoreButton"
+                          label="Restore to default"
+                          onClick={() => {
+                            const instanceDefaults = getInstanceDefaults(
+                              initInfo
+                            );
+                            setFieldValue(
+                              `instances.${index}.edgeDomain`,
+                              instanceDefaults.edgeDomain
+                            );
+                          }}
+                          quiet
+                        />
+                      </div>
+                    </div>
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="Allows uncaught errors to be displayed in the console.">
+                        <WrappedField
+                          name={`instances.${index}.errorsEnabled`}
+                          component={Checkbox}
+                          label="Enable errors"
+                        />
+                      </InfoTipLayout>
+                    </div>
+
+                    <h3>Privacy</h3>
+
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent preferences.">
+                        <FieldLabel
+                          labelFor="generalDefaultConsent"
+                          label="Default Consent Level"
+                        />
+                      </InfoTipLayout>
+                      <WrappedField
+                        id="generalDefaultConsent"
+                        name={`instances.${index}.defaultConsent.general`}
+                        component={RadioGroup}
+                        componentClassName="u-flexColumn"
+                      >
+                        <Radio
+                          value={consentLevels.IN}
+                          label="In - Do not wait for explicit consent."
+                        />
+                        <Radio
+                          value={consentLevels.PENDING}
+                          label="Pending - Queue privacy-sensitive work until the user gives consent."
+                        />
+                      </WrappedField>
+                    </div>
+
+                    <h3>Identity</h3>
+
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="Enables the AEP Web SDK to preserve the ECID by reading/writing the AMCV cookie. Use this config until users are fully migrated to the Alloy cookie and in situations where you have mixed pages on your website.">
+                        <WrappedField
+                          name={`instances.${index}.idMigrationEnabled`}
+                          component={Checkbox}
+                          label="Migrate ECID from VisitorAPI to Alloy to prevent visitor cliffing"
+                        />
+                      </InfoTipLayout>
+                    </div>
+
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="Enables the setting of Adobe third-party cookies. The SDK has the ability to persist the visitor ID in a third-party context to enable the same visitor ID to be used across site. This is useful if you have multiple sites or you want to share data with partners; however, sometimes this is not desired for privacy reasons.">
+                        <WrappedField
+                          name={`instances.${index}.thirdPartyCookiesEnabled`}
+                          component={Checkbox}
+                          label="Use third-party cookies"
+                        />
+                      </InfoTipLayout>
+                    </div>
+
+                    <h3>Personalization</h3>
+
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="A CSS style definition that will hide content areas of your web page while personalized content is loaded from the server.">
+                        <FieldLabel
+                          labelFor="prehidingStyleField"
+                          label="Prehiding Style (optional)"
+                        />
+                      </InfoTipLayout>
+                      <div>
+                        <WrappedField
+                          id="prehidingStyleField"
+                          name={`instances.${index}.prehidingStyle`}
+                          component={EditorButton}
+                          language="css"
+                        />
+                      </div>
+                    </div>
+
+                    <h3>Data Collection</h3>
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="If you want to add, remove, or modify fields from the event globally, you can configure an `onBeforeEventSend` callback. This callback will be called everytime an event is sent. This callback passes an object with a `xdm` field. Modify the `xdm` object to change the data that is sent in the event.">
+                        <FieldLabel
+                          labelFor="onBeforeEventSendField"
+                          label="Callback function for modifying data before each event is sent to the server"
+                        />
+                      </InfoTipLayout>
+                      <div>
+                        <WrappedField
+                          id="onBeforeEventSendField"
+                          name={`instances.${index}.onBeforeEventSend`}
+                          component={Textfield}
+                          componentClassName="u-fieldLong"
+                          supportDataElement="replace"
+                        />
+                      </div>
+                    </div>
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected.">
+                        <WrappedField
+                          name={`instances.${index}.clickCollectionEnabled`}
+                          component={Checkbox}
+                          label="Enable click data collection"
+                        />
+                      </InfoTipLayout>
+                    </div>
+                    {values.instances[index].clickCollectionEnabled ? (
+                      <div className="FieldSubset u-gapTop">
+                        <InfoTipLayout tip="Regular expression that qualifies a link URL as a download link.">
+                          <FieldLabel
+                            labelFor="downloadLinkQualifier"
+                            label="Download Link Qualifier"
+                          />
+                        </InfoTipLayout>
+                        <div>
+                          <WrappedField
+                            id="downloadLinkQualifierField"
+                            name={`instances.${index}.downloadLinkQualifier`}
+                            component={Textfield}
+                            componentClassName="u-fieldLong"
+                          />
+                          <Button
+                            id="downloadLinkQualifierTestButton"
+                            className="u-gapLeft"
+                            label="Test"
+                            onClick={() => {
+                              const currentPattern =
+                                values.instances[index].downloadLinkQualifier;
+                              window.extensionBridge
+                                .openRegexTester({
+                                  pattern: currentPattern
+                                })
+                                .then(newPattern => {
+                                  values.instances[
+                                    index
+                                  ].downloadLinkQualifier = newPattern;
+                                  setFieldValue(
+                                    `instances.${index}.downloadLinkQualifier`,
+                                    newPattern
+                                  );
+                                });
+                            }}
+                            quiet
+                          />
+                          <Button
+                            id="downloadLinkQualifierRestoreButton"
+                            label="Restore to default"
+                            onClick={() => {
+                              const instanceDefaults = getInstanceDefaults(
+                                initInfo
+                              );
+                              setFieldValue(
+                                `instances.${index}.downloadLinkQualifier`,
+                                instanceDefaults.downloadLinkQualifier
+                              );
+                            }}
+                            quiet
+                          />
+                        </div>
+                      </div>
+                    ) : null}
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="Indicates which categories of context information should be automatically collected.">
+                        <FieldLabel
+                          labelFor="contextGranularityField"
+                          label="When sending event data, automatically include:"
+                        />
+                      </InfoTipLayout>
+                      <WrappedField
+                        id="contextGranularityField"
+                        name={`instances.${index}.contextGranularity`}
+                        component={RadioGroup}
+                        componentClassName="u-flexColumn"
+                      >
+                        <Radio
+                          value={contextGranularityEnum.ALL}
+                          label="all context information"
+                        />
+                        <Radio
+                          value={contextGranularityEnum.SPECIFIC}
+                          label="specific context information"
+                        />
+                      </WrappedField>
+                    </div>
+                    {values.instances[index].contextGranularity ===
+                    contextGranularityEnum.SPECIFIC ? (
+                      <div className="FieldSubset u-gapTop">
+                        <WrappedField
+                          name={`instances.${index}.context`}
+                          component={CheckboxList}
+                          options={contextOptions}
+                        />
+                      </div>
+                    ) : null}
+
+                    <h3>Advanced Settings</h3>
+
+                    <div className="u-gapTop">
+                      <InfoTipLayout
+                        tip="Specifies the base path of the endpoint used
+                        to interact with Adobe Services. This setting
+                        should only be changed if you are not intending
+                        to use the default production environment."
+                      >
+                        <FieldLabel
+                          labelFor="edgeBasePathField"
+                          label="Edge Base Path"
+                        />
+                      </InfoTipLayout>
+                      <div>
+                        <WrappedField
+                          id="edgeBasePathField"
+                          name={`instances.${index}.edgeBasePath`}
+                          component={Textfield}
+                          componentClassName="u-fieldLong"
+                          supportDataElement="replace"
+                        />
+                        <Button
+                          id="edgeBasePathRestoreButton"
+                          label="Restore to default"
+                          onClick={() => {
+                            const instanceDefaults = getInstanceDefaults(
+                              initInfo
+                            );
+                            setFieldValue(
+                              `instances.${index}.edgeBasePath`,
+                              instanceDefaults.edgeBasePath
+                            );
+                          }}
+                          quiet
+                        />
+                      </div>
+                    </div>
+
+                    <div className="u-gapTop2x">
+                      <ModalTrigger>
+                        <Button
+                          id="deleteButton"
+                          label="Delete Instance"
+                          icon={<Delete />}
+                          variant="action"
+                          disabled={values.instances.length === 1}
+                        />
+                        {values.instances.length === 1 ? (
+                          <span className="Note u-gapLeft">
+                            You must have at least one instance to use this
+                            extension.
+                          </span>
+                        ) : null}
+                        <Dialog
+                          onConfirm={() => {
+                            arrayHelpers.remove(index);
+                            setSelectedAccordionIndex(0);
+                          }}
+                          title="Resource Usage"
+                          confirmLabel="Delete"
+                          cancelLabel="Cancel"
+                        >
+                          Any rule components or data elements using this
+                          instance will no longer function as expected when
+                          running on your website. We recommend removing these
+                          resources or switching them to use a different
+                          instance before publishing your next library. Would
+                          you like to proceed?
+                        </Dialog>
+                      </ModalTrigger>
+                    </div>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+          );
+        }}
+      />
+    </div>
+  );
+};
+
+Configuration.propTypes = {
+  initInfo: PropTypes.object.isRequired,
+  formikProps: PropTypes.object.isRequired
+};
+
+const ConfigurationExtensionView = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={({ formikProps, initInfo }) => {
-        const {
-          values,
-          errors,
-          isSubmitting,
-          isValidating,
-          setFieldValue,
-          initialValues
-        } = formikProps;
-
-        // Only expand the first accordion item if there's one instance because
-        // users may get disoriented if we automatically expand the first item
-        // when there are multiple instances.
-        if (isFirstExtensionViewRender && values.instances.length === 1) {
-          setSelectedAccordionIndex(0);
-        }
-
-        // If the user just tried to save the configuration and there's
-        // a validation error, make sure the first accordion item containing
-        // an error is shown.
-        if (isSubmitting && !isValidating && errors && errors.instances) {
-          const instanceIndexContainingErrors = errors.instances.findIndex(
-            instance => instance
-          );
-          setSelectedAccordionIndex(instanceIndexContainingErrors);
-        }
-
-        setIsFirstExtensionViewRender(false);
-
-        return (
-          <div>
-            <FieldArray
-              name="instances"
-              render={arrayHelpers => {
-                return (
-                  <div>
-                    <div className="u-alignRight">
-                      <Button
-                        label="Add Instance"
-                        onClick={() => {
-                          arrayHelpers.push(createDefaultInstance(initInfo));
-                          setSelectedAccordionIndex(values.instances.length);
-                        }}
-                      />
-                    </div>
-                    <Accordion
-                      selectedIndex={selectedAccordionIndex}
-                      className="u-gapTop2x"
-                      onChange={setSelectedAccordionIndex}
-                    >
-                      {values.instances.map((instance, index) => (
-                        <AccordionItem
-                          key={index}
-                          header={instance.name || "unnamed instance"}
-                        >
-                          <div>
-                            <InfoTipLayout tip="A global method on the window object will be created with this name.">
-                              <FieldLabel labelFor="nameField" label="Name" />
-                            </InfoTipLayout>
-                            <div>
-                              <WrappedField
-                                id="nameField"
-                                name={`instances.${index}.name`}
-                                component={Textfield}
-                                componentClassName="u-fieldLong"
-                                supportDataElement="replace"
-                              />
-                            </div>
-                            {// If we're editing an existing configuration and the name changes.
-                            initInfo.settings &&
-                            initialValues.instances[0].name !==
-                              values.instances[0].name ? (
-                              <Alert
-                                id="nameChangeAlert"
-                                className="ConstrainedAlert"
-                                header="Potential Problems Due to Name Change"
-                                variant="warning"
-                              >
-                                Any rule components or data elements using this
-                                instance will no longer function as expected
-                                when running on your website. We recommend
-                                removing or updating those resources before
-                                publishing your next library.
-                              </Alert>
-                            ) : null}
-                            <div />
-                          </div>
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="Your assigned config ID, which links the SDK to the appropriate accounts and configuration.">
-                              <FieldLabel
-                                labelFor="configIdField"
-                                label="Config ID"
-                              />
-                            </InfoTipLayout>
-                            <div>
-                              <WrappedField
-                                id="configIdField"
-                                name={`instances.${index}.configId`}
-                                component={Textfield}
-                                componentClassName="u-fieldLong"
-                                supportDataElement="replace"
-                              />
-                            </div>
-                          </div>
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="Your assigned Experience Cloud organization ID.">
-                              <FieldLabel
-                                labelFor="orgIdField"
-                                label="IMS Organization ID"
-                              />
-                            </InfoTipLayout>
-                            <div>
-                              <WrappedField
-                                id="orgIdField"
-                                name={`instances.${index}.orgId`}
-                                component={Textfield}
-                                componentClassName="u-fieldLong"
-                                supportDataElement="replace"
-                              />
-                              <Button
-                                id="orgIdRestoreButton"
-                                label="Restore to default"
-                                onClick={() => {
-                                  const instanceDefaults = getInstanceDefaults(
-                                    initInfo
-                                  );
-                                  setFieldValue(
-                                    `instances.${index}.orgId`,
-                                    instanceDefaults.orgId
-                                  );
-                                }}
-                                quiet
-                                variant="quiet"
-                              />
-                            </div>
-                          </div>
-                          <div className="u-gapTop">
-                            <InfoTipLayout
-                              tip="The domain that will be used to interact with
-                              Adobe Services. Update this setting if you have
-                              mapped one of your first party domains (using
-                              CNAME) to an Adobe provisioned domain."
-                            >
-                              <FieldLabel
-                                labelFor="edgeDomainField"
-                                label="Edge Domain"
-                              />
-                            </InfoTipLayout>
-                            <div>
-                              <WrappedField
-                                id="edgeDomainField"
-                                name={`instances.${index}.edgeDomain`}
-                                component={Textfield}
-                                componentClassName="u-fieldLong"
-                                supportDataElement="replace"
-                              />
-                              <Button
-                                id="edgeDomainRestoreButton"
-                                label="Restore to default"
-                                onClick={() => {
-                                  const instanceDefaults = getInstanceDefaults(
-                                    initInfo
-                                  );
-                                  setFieldValue(
-                                    `instances.${index}.edgeDomain`,
-                                    instanceDefaults.edgeDomain
-                                  );
-                                }}
-                                quiet
-                                variant="quiet"
-                              />
-                            </div>
-                          </div>
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="Allows uncaught errors to be displayed in the console.">
-                              <WrappedField
-                                name={`instances.${index}.errorsEnabled`}
-                                component={Checkbox}
-                                label="Enable errors"
-                              />
-                            </InfoTipLayout>
-                          </div>
-
-                          <h3>Privacy</h3>
-
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent preferences.">
-                              <FieldLabel
-                                labelFor="generalDefaultConsent"
-                                label="Default Consent Level"
-                              />
-                            </InfoTipLayout>
-                            <WrappedField
-                              id="generalDefaultConsent"
-                              name={`instances.${index}.defaultConsent.general`}
-                              component={RadioGroup}
-                              componentClassName="u-flexColumn"
-                            >
-                              <Radio
-                                value={consentLevels.IN}
-                                label="In - Do not wait for explicit consent."
-                              />
-                              <Radio
-                                value={consentLevels.PENDING}
-                                label="Pending - Queue privacy-sensitive work until the user gives consent."
-                              />
-                            </WrappedField>
-                          </div>
-
-                          <h3>Identity</h3>
-
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="Enables the AEP Web SDK to preserve the ECID by reading/writing the AMCV cookie. Use this config until users are fully migrated to the Alloy cookie and in situations where you have mixed pages on your website.">
-                              <WrappedField
-                                name={`instances.${index}.idMigrationEnabled`}
-                                component={Checkbox}
-                                label="Migrate ECID from VisitorAPI to Alloy to prevent visitor cliffing"
-                              />
-                            </InfoTipLayout>
-                          </div>
-
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="Enables the setting of Adobe third-party cookies. The SDK has the ability to persist the visitor ID in a third-party context to enable the same visitor ID to be used across site. This is useful if you have multiple sites or you want to share data with partners; however, sometimes this is not desired for privacy reasons.">
-                              <WrappedField
-                                name={`instances.${index}.thirdPartyCookiesEnabled`}
-                                component={Checkbox}
-                                label="Use third-party cookies"
-                              />
-                            </InfoTipLayout>
-                          </div>
-
-                          <h3>Personalization</h3>
-
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="A CSS style definition that will hide content areas of your web page while personalized content is loaded from the server.">
-                              <FieldLabel
-                                labelFor="prehidingStyleField"
-                                label="Prehiding Style (optional)"
-                              />
-                            </InfoTipLayout>
-                            <div>
-                              <WrappedField
-                                id="prehidingStyleField"
-                                name={`instances.${index}.prehidingStyle`}
-                                component={EditorButton}
-                                language="css"
-                              />
-                            </div>
-                          </div>
-
-                          <h3>Data Collection</h3>
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="If you want to add, remove, or modify fields from the event globally, you can configure an `onBeforeEventSend` callback. This callback will be called everytime an event is sent. This callback passes an object with a `xdm` field. Modify the `xdm` object to change the data that is sent in the event.">
-                              <FieldLabel
-                                labelFor="onBeforeEventSendField"
-                                label="Callback function for modifying data before each event is sent to the server"
-                              />
-                            </InfoTipLayout>
-                            <div>
-                              <WrappedField
-                                id="onBeforeEventSendField"
-                                name={`instances.${index}.onBeforeEventSend`}
-                                component={Textfield}
-                                componentClassName="u-fieldLong"
-                                supportDataElement="replace"
-                              />
-                            </div>
-                          </div>
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected.">
-                              <WrappedField
-                                name={`instances.${index}.clickCollectionEnabled`}
-                                component={Checkbox}
-                                label="Enable click data collection"
-                              />
-                            </InfoTipLayout>
-                          </div>
-                          {values.instances[index].clickCollectionEnabled ? (
-                            <div className="FieldSubset u-gapTop">
-                              <InfoTipLayout tip="Regular expression that qualifies a link URL as a download link.">
-                                <FieldLabel
-                                  labelFor="downloadLinkQualifier"
-                                  label="Download Link Qualifier"
-                                />
-                              </InfoTipLayout>
-                              <div>
-                                <WrappedField
-                                  id="downloadLinkQualifierField"
-                                  name={`instances.${index}.downloadLinkQualifier`}
-                                  component={Textfield}
-                                  componentClassName="u-fieldLong"
-                                />
-                                <Button
-                                  id="downloadLinkQualifierTestButton"
-                                  className="u-gapLeft"
-                                  label="Test"
-                                  onClick={() => {
-                                    const currentPattern =
-                                      values.instances[index]
-                                        .downloadLinkQualifier;
-                                    window.extensionBridge
-                                      .openRegexTester({
-                                        pattern: currentPattern
-                                      })
-                                      .then(newPattern => {
-                                        values.instances[
-                                          index
-                                        ].downloadLinkQualifier = newPattern;
-                                        setFieldValue(
-                                          `instances.${index}.downloadLinkQualifier`,
-                                          newPattern
-                                        );
-                                      });
-                                  }}
-                                  quiet
-                                  variant="quiet"
-                                />
-                                <Button
-                                  id="downloadLinkQualifierRestoreButton"
-                                  label="Restore to default"
-                                  onClick={() => {
-                                    const instanceDefaults = getInstanceDefaults(
-                                      initInfo
-                                    );
-                                    setFieldValue(
-                                      `instances.${index}.downloadLinkQualifier`,
-                                      instanceDefaults.downloadLinkQualifier
-                                    );
-                                  }}
-                                  quiet
-                                  variant="quiet"
-                                />
-                              </div>
-                            </div>
-                          ) : null}
-                          <div className="u-gapTop">
-                            <InfoTipLayout tip="Indicates which categories of context information should be automatically collected.">
-                              <FieldLabel
-                                labelFor="contextGranularityField"
-                                label="When sending event data, automatically include:"
-                              />
-                            </InfoTipLayout>
-                            <WrappedField
-                              id="contextGranularityField"
-                              name={`instances.${index}.contextGranularity`}
-                              component={RadioGroup}
-                              componentClassName="u-flexColumn"
-                            >
-                              <Radio
-                                value={contextGranularityEnum.ALL}
-                                label="all context information"
-                              />
-                              <Radio
-                                value={contextGranularityEnum.SPECIFIC}
-                                label="specific context information"
-                              />
-                            </WrappedField>
-                          </div>
-                          {values.instances[index].contextGranularity ===
-                          contextGranularityEnum.SPECIFIC ? (
-                            <div className="FieldSubset u-gapTop">
-                              <WrappedField
-                                name={`instances.${index}.context`}
-                                component={CheckboxList}
-                                options={contextOptions}
-                              />
-                            </div>
-                          ) : null}
-
-                          <h3>Advanced Settings</h3>
-
-                          <div className="u-gapTop">
-                            <InfoTipLayout
-                              tip="Specifies the base path of the endpoint used
-                              to interact with Adobe Services. This setting
-                              should only be changed if you are not intending
-                              to use the default production environment."
-                            >
-                              <FieldLabel
-                                labelFor="edgeBasePathField"
-                                label="Edge Base Path"
-                              />
-                            </InfoTipLayout>
-                            <div>
-                              <WrappedField
-                                id="edgeBasePathField"
-                                name={`instances.${index}.edgeBasePath`}
-                                component={Textfield}
-                                componentClassName="u-fieldLong"
-                                supportDataElement="replace"
-                              />
-                              <Button
-                                id="edgeBasePathRestoreButton"
-                                label="Restore to default"
-                                onClick={() => {
-                                  const instanceDefaults = getInstanceDefaults(
-                                    initInfo
-                                  );
-                                  setFieldValue(
-                                    `instances.${index}.edgeBasePath`,
-                                    instanceDefaults.edgeBasePath
-                                  );
-                                }}
-                                quiet
-                                variant="quiet"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="u-gapTop2x">
-                            <ModalTrigger>
-                              <Button
-                                id="deleteButton"
-                                label="Delete Instance"
-                                icon={<Delete />}
-                                variant="action"
-                                disabled={values.instances.length === 1}
-                              />
-                              {values.instances.length === 1 ? (
-                                <span className="Note u-gapLeft">
-                                  You must have at least one instance to use
-                                  this extension.
-                                </span>
-                              ) : null}
-                              <Dialog
-                                onConfirm={() => {
-                                  arrayHelpers.remove(index);
-                                  setSelectedAccordionIndex(0);
-                                }}
-                                title="Resource Usage"
-                                confirmLabel="Delete"
-                                cancelLabel="Cancel"
-                              >
-                                Any rule components or data elements using this
-                                instance will no longer function as expected
-                                when running on your website. We recommend
-                                removing these resources or switching them to
-                                use a different instance before publishing your
-                                next library. Would you like to proceed?
-                              </Dialog>
-                            </ModalTrigger>
-                          </div>
-                        </AccordionItem>
-                      ))}
-                    </Accordion>
-                  </div>
-                );
-              }}
-            />
-          </div>
-        );
-      }}
+      render={props => <Configuration {...props} />}
     />
   );
 };
-
-render(Configuration);
+render(ConfigurationExtensionView);
