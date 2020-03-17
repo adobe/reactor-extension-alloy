@@ -27,12 +27,10 @@ import getNodeEditData from "../helpers/getNodeEditData";
 const NodeEdit = props => {
   const { formState, onNodeSelect, selectedNodeId } = props;
 
-  const { formStateNode, fieldName, breadcrumb } = selectedNodeId
-    ? getNodeEditData({
-        formState,
-        nodeId: selectedNodeId
-      })
-    : {};
+  const { formStateNode, fieldName, breadcrumb } = getNodeEditData({
+    formState,
+    nodeId: selectedNodeId
+  });
 
   let TypeSpecificNodeEdit;
 
