@@ -19,6 +19,17 @@ import IconTip, {
 } from "../../../components/iconTip";
 import "./xdmTreeNodeTitle.styl";
 
+/**
+ * The display for a specific node within the XDM tree.
+ * @param {Object} props
+ * @param {string} props.displayName The node's user-friendly name.
+ * @param {string} props.type The node type (object, array, string, etc.)
+ * @param {boolean} props.isPopulated Whether the node has been directly
+ * populated (if using the WHOLE population method) or at least one of its
+ * descendants has been populated (if using the PARTS population method).
+ * @param {string} [error] The validation error message pertaining to
+ * this node, if any.
+ */
 const XdmTreeNodeTitle = props => {
   const { displayName, type, isPopulated, error } = props;
 
