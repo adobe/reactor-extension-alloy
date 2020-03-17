@@ -37,7 +37,7 @@ export default {
     const node = await getNode(title);
     await t.click(
       node
-        .parent("li")
+        .parent(".ant-tree-treenode")
         .nth(0)
         .find(".ant-tree-switcher")
     );

@@ -35,7 +35,8 @@ module.exports = (options = {}) => {
       outDir: viewOutDir,
       watch,
       // HMR seems to be broken: https://github.com/parcel-bundler/parcel/issues/2894
-      hmr: false
+      hmr: false,
+      sourceMaps: false
     });
 
     bundler.on("bundled", () => {
