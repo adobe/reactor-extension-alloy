@@ -146,7 +146,7 @@ DecoratedInput.propTypes = {
   field: PropTypes.object.isRequired,
   form: PropTypes.object.isRequired,
   children: PropTypes.node,
-  supportDataElement: PropTypes.string,
+  supportDataElement: PropTypes.oneOf(["replace", "append"]),
   errorTooltipPlacement: PropTypes.oneOf(["top", "right", "bottom", "left"]),
   onChange: PropTypes.func,
   onBlur: PropTypes.func
