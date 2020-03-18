@@ -15,7 +15,7 @@ import PropTypes from "prop-types";
 import Breadcrumbs from "@react/react-spectrum/Breadcrumbs";
 import ArrayEdit from "./arrayEdit";
 import ObjectEdit from "./objectEdit";
-import ObjectPropertyEdit from "./objectPropertyEdit";
+import NonObjectOrArrayEdit from "./nonObjectOrArrayEdit";
 import { ARRAY, OBJECT } from "../constants/schemaType";
 import { formStateNodePropTypes } from "../helpers/getInitialFormState";
 import getNodeEditData from "../helpers/getNodeEditData";
@@ -39,7 +39,7 @@ const NodeEdit = props => {
   } else if (formStateNode.schema.type === OBJECT) {
     TypeSpecificNodeEdit = ObjectEdit;
   } else {
-    TypeSpecificNodeEdit = ObjectPropertyEdit;
+    TypeSpecificNodeEdit = NonObjectOrArrayEdit;
   }
 
   return (

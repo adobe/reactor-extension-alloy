@@ -19,9 +19,9 @@ import AutoPopulationAlert from "./autoPopulationAlert";
 import { formStateNodePropTypes } from "../helpers/getInitialFormState";
 
 /**
- * The form for editing a field that is an object property.
+ * The form for editing a field that is neither an object nor an array.
  */
-const ObjectPropertyEdit = props => {
+const NonObjectOrArrayEdit = props => {
   const { formStateNode, fieldName } = props;
 
   return (
@@ -43,9 +43,9 @@ const ObjectPropertyEdit = props => {
   );
 };
 
-ObjectPropertyEdit.propTypes = {
+NonObjectOrArrayEdit.propTypes = {
   formStateNode: formStateNodePropTypes.isRequired,
   fieldName: PropTypes.string.isRequired
 };
 
-export default ObjectPropertyEdit;
+export default NonObjectOrArrayEdit;
