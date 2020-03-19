@@ -12,7 +12,6 @@ governing permissions and limitations under the License.
 
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum";
-import { createTestIdSelector } from "../helpers/dataTestIdSelectors";
 
 const extensionViewController = createExtensionViewController(
   "actions/setCustomerIds.html"
@@ -31,28 +30,18 @@ const mockExtensionSettings = {
   ]
 };
 
-const instanceNameField = spectrum.select(
-  createTestIdSelector("instanceNameField")
-);
-const addCustomerIdButton = spectrum.button(
-  createTestIdSelector("addCustomerIdButton")
-);
+const instanceNameField = spectrum.select("instanceNameField");
+const addCustomerIdButton = spectrum.button("addCustomerIdButton");
 const customerIds = [];
 
 for (let i = 0; i < 2; i += 1) {
   customerIds.push({
-    namespaceField: spectrum.textfield(
-      createTestIdSelector(`namespace${i}Field`)
-    ),
-    idField: spectrum.textfield(createTestIdSelector(`id${i}Field`)),
-    hashEnabledField: spectrum.checkbox(
-      createTestIdSelector(`hashEnabled${i}Field`)
-    ),
-    authenticatedStateField: spectrum.select(
-      createTestIdSelector(`authenticatedState${i}Field`)
-    ),
-    primaryField: spectrum.checkbox(createTestIdSelector(`primary${i}Field`)),
-    deleteButton: spectrum.button(createTestIdSelector(`delete${i}Button`))
+    namespaceField: spectrum.textfield(`namespace${i}Field`),
+    idField: spectrum.textfield(`id${i}Field`),
+    hashEnabledField: spectrum.checkbox(`hashEnabled${i}Field`),
+    authenticatedStateField: spectrum.select(`authenticatedState${i}Field`),
+    primaryField: spectrum.checkbox(`primary${i}Field`),
+    deleteButton: spectrum.button(`delete${i}Button`)
   });
 }
 

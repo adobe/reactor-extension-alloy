@@ -13,24 +13,17 @@ governing permissions and limitations under the License.
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum";
 import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
-import { createTestIdSelector } from "../helpers/dataTestIdSelectors";
 
 const extensionViewController = createExtensionViewController(
   "actions/setConsent.html"
 );
-const instanceNameField = spectrum.select(
-  createTestIdSelector("instanceNameField")
-);
+const instanceNameField = spectrum.select("instanceNameField");
 const radioGroup = {
-  inField: spectrum.radio(createTestIdSelector("inOptionField")),
-  outField: spectrum.radio(createTestIdSelector("outOptionField")),
-  dataElementField: spectrum.radio(
-    createTestIdSelector("dataElementOptionField")
-  )
+  inField: spectrum.radio("inOptionField"),
+  outField: spectrum.radio("outOptionField"),
+  dataElementField: spectrum.radio("dataElementOptionField")
 };
-const dataElementField = spectrum.textfield(
-  createTestIdSelector("dataElementField")
-);
+const dataElementField = spectrum.textfield("dataElementField");
 
 const mockExtensionSettings = {
   instances: [

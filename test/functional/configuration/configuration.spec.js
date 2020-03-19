@@ -13,18 +13,13 @@ governing permissions and limitations under the License.
 import { Selector } from "testcafe";
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum";
-import { createTestIdSelector } from "../helpers/dataTestIdSelectors";
 
 const extensionViewController = createExtensionViewController(
   "configuration/configuration.html"
 );
 
-const addInstanceButton = spectrum.button(
-  createTestIdSelector("addInstanceButton")
-);
-const accordion = spectrum.accordion(
-  createTestIdSelector("instancesAccordion")
-);
+const addInstanceButton = spectrum.button("addInstanceButton");
+const accordion = spectrum.accordion("instancesAccordion");
 
 // We can't use data-test-id on Dialog because of a Spectrum bug.
 // https://git.corp.adobe.com/React/react-spectrum-v2/issues/501
@@ -34,81 +29,51 @@ const instances = [];
 
 for (let i = 0; i < 2; i += 1) {
   instances.push({
-    nameField: spectrum.textfield(createTestIdSelector("nameField")),
-    nameChangeAlert: spectrum.alert(createTestIdSelector("nameChangeAlert")),
-    configIdField: spectrum.textfield(createTestIdSelector("configIdField")),
-    orgIdField: spectrum.textfield(createTestIdSelector("orgIdField")),
-    orgIdRestoreButton: spectrum.button(
-      createTestIdSelector("orgIdRestoreButton")
-    ),
-    edgeDomainField: spectrum.textfield(
-      createTestIdSelector("edgeDomainField")
-    ),
-    edgeDomainRestoreButton: spectrum.button(
-      createTestIdSelector("edgeDomainRestoreButton")
-    ),
-    edgeBasePathField: spectrum.textfield(
-      createTestIdSelector("edgeBasePathField")
-    ),
-    edgeBasePathRestoreButton: spectrum.button(
-      createTestIdSelector("edgeBasePathRestoreButton")
-    ),
-    errorsEnabledField: spectrum.checkbox(
-      createTestIdSelector("errorsEnabledField")
-    ),
+    nameField: spectrum.textfield("nameField"),
+    nameChangeAlert: spectrum.alert("nameChangeAlert"),
+    configIdField: spectrum.textfield("configIdField"),
+    orgIdField: spectrum.textfield("orgIdField"),
+    orgIdRestoreButton: spectrum.button("orgIdRestoreButton"),
+    edgeDomainField: spectrum.textfield("edgeDomainField"),
+    edgeDomainRestoreButton: spectrum.button("edgeDomainRestoreButton"),
+    edgeBasePathField: spectrum.textfield("edgeBasePathField"),
+    edgeBasePathRestoreButton: spectrum.button("edgeBasePathRestoreButton"),
+    errorsEnabledField: spectrum.checkbox("errorsEnabledField"),
     defaultConsent: {
-      inField: spectrum.radio(createTestIdSelector("defaultConsentInField")),
-      pendingField: spectrum.radio(
-        createTestIdSelector("defaultConsentOutField")
-      )
+      inField: spectrum.radio("defaultConsentInField"),
+      pendingField: spectrum.radio("defaultConsentOutField")
     },
-    idMigrationEnabled: spectrum.checkbox(
-      createTestIdSelector("idMigrationEnabledField")
-    ),
+    idMigrationEnabled: spectrum.checkbox("idMigrationEnabledField"),
     thirdPartyCookiesEnabled: spectrum.checkbox(
-      createTestIdSelector("thirdPartyCookiesEnabledField")
+      "thirdPartyCookiesEnabledField"
     ),
     // Due to limitations of the sandbox where tests are run,
     // testing prehiding style viewing/editing is limited.
-    prehidingStyleEditorButton: spectrum.button(
-      createTestIdSelector("prehidingStyleEditorButton")
-    ),
+    prehidingStyleEditorButton: spectrum.button("prehidingStyleEditorButton"),
     clickCollectionEnabledField: spectrum.checkbox(
-      createTestIdSelector("clickCollectionEnabledField")
+      "clickCollectionEnabledField"
     ),
     downloadLinkQualifierField: spectrum.textfield(
-      createTestIdSelector("downloadLinkQualifierField")
+      "downloadLinkQualifierField"
     ),
     downloadLinkQualifierRestoreButton: spectrum.button(
-      createTestIdSelector("downloadLinkQualifierRestoreButton")
+      "downloadLinkQualifierRestoreButton"
     ),
     downloadLinkQualifierTestButton: spectrum.button(
-      createTestIdSelector("downloadLinkQualifierTestButton")
+      "downloadLinkQualifierTestButton"
     ),
-    onBeforeEventSendField: spectrum.textfield(
-      createTestIdSelector("onBeforeEventSendField")
-    ),
+    onBeforeEventSendField: spectrum.textfield("onBeforeEventSendField"),
     contextGranularity: {
-      allField: spectrum.radio(
-        createTestIdSelector("contextGranularityAllField")
-      ),
-      specificField: spectrum.radio(
-        createTestIdSelector("contextGranularitySpecificField")
-      )
+      allField: spectrum.radio("contextGranularityAllField"),
+      specificField: spectrum.radio("contextGranularitySpecificField")
     },
     specificContext: {
-      webField: spectrum.checkbox(createTestIdSelector("contextWebField")),
-      deviceField: spectrum.checkbox(
-        createTestIdSelector("contextDeviceField")
-      ),
-      environmentField: spectrum.checkbox(
-        createTestIdSelector("contextEnvironmentField")
-      ),
-      placeContextField: spectrum.checkbox(
-        createTestIdSelector("contextPlaceContextField")
-      )
+      webField: spectrum.checkbox("contextWebField"),
+      deviceField: spectrum.checkbox("contextDeviceField"),
+      environmentField: spectrum.checkbox("contextEnvironmentField"),
+      placeContextField: spectrum.checkbox("contextPlaceContextField")
     },
-    deleteButton: spectrum.button(createTestIdSelector("deleteInstanceButton"))
+    deleteButton: spectrum.button("deleteInstanceButton")
   });
 }
 

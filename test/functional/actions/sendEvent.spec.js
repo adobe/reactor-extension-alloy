@@ -13,20 +13,15 @@ governing permissions and limitations under the License.
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum";
 import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
-import { createTestIdSelector } from "../helpers/dataTestIdSelectors";
 
 const extensionViewController = createExtensionViewController(
   "actions/sendEvent.html"
 );
-const instanceNameField = spectrum.select(
-  createTestIdSelector("instanceNameField")
-);
-const viewStartField = spectrum.checkbox(
-  createTestIdSelector("viewStartField")
-);
-const xdmField = spectrum.textfield(createTestIdSelector("xdmField"));
-const typeField = spectrum.textfield(createTestIdSelector("typeField"));
-const mergeIdField = spectrum.textfield(createTestIdSelector("mergeIdField"));
+const instanceNameField = spectrum.select("instanceNameField");
+const viewStartField = spectrum.checkbox("viewStartField");
+const xdmField = spectrum.textfield("xdmField");
+const typeField = spectrum.textfield("typeField");
+const mergeIdField = spectrum.textfield("mergeIdField");
 
 const mockExtensionSettings = {
   instances: [

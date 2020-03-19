@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import { Selector, t } from "testcafe";
 import switchToIframe from "./switchToIframe";
+import { createTestIdSelector } from "./dataTestIdSelectors";
 
 const popoverSelector = Selector(".spectrum-Popover");
 const menuItemLabelCssSelector = ".spectrum-Menu-itemLabel";
@@ -98,7 +99,8 @@ const createExpectDisabled = selector => async () => {
 // additional components and methods. We always include the original
 // selector on the returned object, so if we need to do something
 // a bit more custom inside the test, the test can use the selector
-// and TestCafe APIs directly.
+// and TestCafe APIs directly. A test ID string or a Selector can
+// be passed into each component wrapper.
 const componentWrappers = {
   select(selector) {
     return {
@@ -202,10 +204,22 @@ const componentWrappers = {
   }
 };
 
+/**
+ * Given a test ID string or a selector, it returns a selector.
+ * @param {string|Selector} testIdOrSelector
+ * @returns {Selector}
+ */
+const selectorize = testIdOrSelector => {
+  return typeof testIdOrSelector === "string"
+    ? createTestIdSelector(testIdOrSelector)
+    : testIdOrSelector;
+};
+
 // This adds certain properties to all component wrappers.
 Object.keys(componentWrappers).forEach(componentName => {
   const componentWrapper = componentWrappers[componentName];
-  componentWrappers[componentName] = selector => {
+  componentWrappers[componentName] = testIdOrSelector => {
+    const selector = selectorize(testIdOrSelector);
     return {
       ...componentWrapper(selector),
       selector,
