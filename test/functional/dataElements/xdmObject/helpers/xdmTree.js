@@ -13,18 +13,18 @@ governing permissions and limitations under the License.
 import { t } from "testcafe";
 import switchToIframe from "../../../helpers/switchToIframe";
 import {
-  createDataTestIdSelector,
-  createDataTestIdSelectorString
+  createTestIdSelector,
+  createTestIdSelectorString
 } from "../../../helpers/dataTestIdSelectors";
 
-const xdmTree = createDataTestIdSelector("xdmTree");
+const xdmTree = createTestIdSelector("xdmTree");
 
 const getNode = async title => {
   await switchToIframe();
   return xdmTree
-    .find(createDataTestIdSelectorString("xdmTreeNodeTitleDisplayName"))
+    .find(createTestIdSelectorString("xdmTreeNodeTitleDisplayName"))
     .withText(title)
-    .parent(createDataTestIdSelectorString("xdmTreeNodeTitle"))
+    .parent(createTestIdSelectorString("xdmTreeNodeTitle"))
     .nth(0);
 };
 

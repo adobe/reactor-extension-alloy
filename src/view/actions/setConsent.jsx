@@ -124,6 +124,7 @@ const SetConsent = () => {
               <FieldLabel labelFor="instanceNameField" label="Instance" />
               <div>
                 <WrappedField
+                  data-test-id="instanceNameField"
                   id="instanceNameField"
                   name="instanceName"
                   component={Select}
@@ -143,9 +144,18 @@ const SetConsent = () => {
                 component={RadioGroup}
                 componentClassName="u-flexColumn"
               >
-                <Radio value={purposesEnum.IN} label="In" />
-                <Radio value={purposesEnum.OUT} label="Out" />
                 <Radio
+                  data-test-id="inOptionField"
+                  value={purposesEnum.IN}
+                  label="In"
+                />
+                <Radio
+                  data-test-id="outOptionField"
+                  value={purposesEnum.OUT}
+                  label="Out"
+                />
+                <Radio
+                  data-test-id="dataElementOptionField"
                   value={purposesEnum.DATA_ELEMENT}
                   label="Consent provided by data element"
                 />
@@ -161,6 +171,7 @@ const SetConsent = () => {
                 </InfoTipLayout>
                 <div>
                   <WrappedField
+                    data-test-id="dataElementField"
                     id="dataElementField"
                     name="dataElement"
                     component={Textfield}

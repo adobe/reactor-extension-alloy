@@ -37,10 +37,11 @@ class EditorButton extends React.Component {
   };
 
   render() {
-    const { className, invalid } = this.props;
+    const { className, invalid, ...otherProps } = this.props;
 
     return (
       <Button
+        {...otherProps}
         icon={<Code />}
         className={className}
         onClick={this.onClick}

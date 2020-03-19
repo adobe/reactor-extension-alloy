@@ -109,6 +109,7 @@ const SendEvent = () => {
               <FieldLabel labelFor="instanceNameField" label="Instance" />
               <div>
                 <WrappedField
+                  data-test-id="instanceNameField"
                   id="instanceNameField"
                   name="instanceName"
                   component={Select}
@@ -126,6 +127,7 @@ const SendEvent = () => {
               </InfoTipLayout>
               <div>
                 <WrappedField
+                  data-test-id="typeField"
                   id="typeField"
                   name="type"
                   component={ComboBox}
@@ -146,6 +148,7 @@ const SendEvent = () => {
               </InfoTipLayout>
               <div>
                 <WrappedField
+                  data-test-id="xdmField"
                   id="xdmField"
                   name="xdm"
                   component={Textfield}
@@ -166,6 +169,7 @@ const SendEvent = () => {
               </InfoTipLayout>
               <div>
                 <WrappedField
+                  data-test-id="mergeIdField"
                   id="mergeIdField"
                   name="mergeId"
                   component={Textfield}
@@ -177,6 +181,7 @@ const SendEvent = () => {
             <div className="u-gapTop">
               <InfoTipLayout tip="Influences whether the SDK should retrieve and render personalization content, among other things.">
                 <WrappedField
+                  data-test-id="viewStartField"
                   name="viewStart"
                   component={Checkbox}
                   label="Occurs at the start of a view"

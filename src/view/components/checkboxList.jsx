@@ -38,20 +38,16 @@ class CheckboxList extends React.Component {
   render() {
     const { options, value, className } = this.props;
     const listItems = options.map(option => {
-      let optionValue;
-      let optionLabel;
-
-      if (typeof option === "string") {
-        optionValue = option;
-        optionLabel = option;
-      } else {
-        optionValue = option.value;
-        optionLabel = option.label;
-      }
+      const {
+        value: optionValue,
+        label: optionLabel,
+        testId: optionTestId
+      } = option;
 
       return (
         <li key={optionValue}>
           <Checkbox
+            data-test-id={optionTestId}
             value={optionValue}
             checked={value && value.includes(optionValue)}
             onChange={this.onChange}

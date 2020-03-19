@@ -13,94 +13,102 @@ governing permissions and limitations under the License.
 import { Selector } from "testcafe";
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum";
+import { createTestIdSelector } from "../helpers/dataTestIdSelectors";
 
 const extensionViewController = createExtensionViewController(
   "configuration/configuration.html"
 );
 
 const addInstanceButton = spectrum.button(
-  Selector(".spectrum-Button").withText("Add Instance")
+  createTestIdSelector("addInstanceButton")
 );
-const accordion = spectrum.accordion(Selector(".spectrum-Accordion"));
-const resourceUsageDialog = spectrum.dialog(Selector(".spectrum-Dialog"));
+const accordion = spectrum.accordion(
+  createTestIdSelector("instancesAccordion")
+);
+
+// We can't use data-test-id on Dialog because of a Spectrum bug.
+// https://git.corp.adobe.com/React/react-spectrum-v2/issues/501
+const resourceUsageDialog = spectrum.dialog(Selector("#resourceUsageDialog"));
 
 const instances = [];
 
 for (let i = 0; i < 2; i += 1) {
   instances.push({
-    nameField: spectrum.textfield(Selector(`[name='instances.${i}.name']`)),
-    nameChangeAlert: spectrum.alert(Selector("#nameChangeAlert")),
-    configIdField: spectrum.textfield(
-      Selector(`[name='instances.${i}.configId']`)
+    nameField: spectrum.textfield(createTestIdSelector("nameField")),
+    nameChangeAlert: spectrum.alert(createTestIdSelector("nameChangeAlert")),
+    configIdField: spectrum.textfield(createTestIdSelector("configIdField")),
+    orgIdField: spectrum.textfield(createTestIdSelector("orgIdField")),
+    orgIdRestoreButton: spectrum.button(
+      createTestIdSelector("orgIdRestoreButton")
     ),
-    orgIdField: spectrum.textfield(Selector(`[name='instances.${i}.orgId']`)),
-    orgIdRestoreButton: spectrum.button(Selector("#orgIdRestoreButton")),
     edgeDomainField: spectrum.textfield(
-      Selector(`[name='instances.${i}.edgeDomain']`)
+      createTestIdSelector("edgeDomainField")
     ),
     edgeDomainRestoreButton: spectrum.button(
-      Selector(`#edgeDomainRestoreButton`)
+      createTestIdSelector("edgeDomainRestoreButton")
     ),
     edgeBasePathField: spectrum.textfield(
-      Selector(`[name='instances.${i}.edgeBasePath']`)
+      createTestIdSelector("edgeBasePathField")
     ),
     edgeBasePathRestoreButton: spectrum.button(
-      Selector(`#edgeBasePathRestoreButton`)
+      createTestIdSelector("edgeBasePathRestoreButton")
     ),
     errorsEnabledField: spectrum.checkbox(
-      Selector(`[name='instances.${i}.errorsEnabled']`)
+      createTestIdSelector("errorsEnabledField")
     ),
     defaultConsent: {
-      inField: spectrum.radio(
-        Selector(`[name='instances.${i}.defaultConsent.general'][value=in]`)
-      ),
+      inField: spectrum.radio(createTestIdSelector("defaultConsentInField")),
       pendingField: spectrum.radio(
-        Selector(
-          `[name='instances.${i}.defaultConsent.general'][value=pending]`
-        )
+        createTestIdSelector("defaultConsentOutField")
       )
     },
     idMigrationEnabled: spectrum.checkbox(
-      Selector(`[name='instances.${i}.idMigrationEnabled']`)
+      createTestIdSelector("idMigrationEnabledField")
     ),
     thirdPartyCookiesEnabled: spectrum.checkbox(
-      Selector(`[name='instances.${i}.thirdPartyCookiesEnabled']`)
+      createTestIdSelector("thirdPartyCookiesEnabledField")
     ),
     // Due to limitations of the sandbox where tests are run,
-    // testing prehding style viewing/editing is limited.
-    prehidingStyleField: spectrum.button(
-      Selector(`button`).withText("Open Editor")
+    // testing prehiding style viewing/editing is limited.
+    prehidingStyleEditorButton: spectrum.button(
+      createTestIdSelector("prehidingStyleEditorButton")
     ),
     clickCollectionEnabledField: spectrum.checkbox(
-      Selector(`[name='instances.${i}.clickCollectionEnabled']`)
+      createTestIdSelector("clickCollectionEnabledField")
     ),
     downloadLinkQualifierField: spectrum.textfield(
-      Selector(`[name='instances.${i}.downloadLinkQualifier']`)
+      createTestIdSelector("downloadLinkQualifierField")
     ),
     downloadLinkQualifierRestoreButton: spectrum.button(
-      Selector(`#downloadLinkQualifierRestoreButton`)
+      createTestIdSelector("downloadLinkQualifierRestoreButton")
     ),
     downloadLinkQualifierTestButton: spectrum.button(
-      Selector(`#downloadLinkQualifierTestButton`)
+      createTestIdSelector("downloadLinkQualifierTestButton")
     ),
     onBeforeEventSendField: spectrum.textfield(
-      Selector(`[name='instances.${i}.onBeforeEventSend']`)
+      createTestIdSelector("onBeforeEventSendField")
     ),
     contextGranularity: {
       allField: spectrum.radio(
-        Selector(`[name='instances.${i}.contextGranularity'][value=all]`)
+        createTestIdSelector("contextGranularityAllField")
       ),
       specificField: spectrum.radio(
-        Selector(`[name='instances.${i}.contextGranularity'][value=specific]`)
+        createTestIdSelector("contextGranularitySpecificField")
       )
     },
     specificContext: {
-      webField: spectrum.checkbox(Selector("[value=web]")),
-      deviceField: spectrum.checkbox(Selector("[value=device]")),
-      environmentField: spectrum.checkbox(Selector("[value=environment]")),
-      placeContextField: spectrum.checkbox(Selector("[value=placeContext]"))
+      webField: spectrum.checkbox(createTestIdSelector("contextWebField")),
+      deviceField: spectrum.checkbox(
+        createTestIdSelector("contextDeviceField")
+      ),
+      environmentField: spectrum.checkbox(
+        createTestIdSelector("contextEnvironmentField")
+      ),
+      placeContextField: spectrum.checkbox(
+        createTestIdSelector("contextPlaceContextField")
+      )
     },
-    deleteButton: spectrum.button(Selector("#deleteButton"))
+    deleteButton: spectrum.button(createTestIdSelector("deleteInstanceButton"))
   });
 }
 
@@ -288,7 +296,7 @@ test("returns full valid settings", async () => {
   await instances[0].defaultConsent.pendingField.click();
   await instances[0].idMigrationEnabled.click();
   await instances[0].thirdPartyCookiesEnabled.click();
-  await instances[0].prehidingStyleField.click();
+  await instances[0].prehidingStyleEditorButton.click();
   await instances[0].onBeforeEventSendField.typeText("%foo%");
   await addInstanceButton.click();
 
@@ -511,7 +519,6 @@ test("deletes an instance", async () => {
   await instances[0].configIdField.expectValue("PR123");
   // Alright, delete for real.
   await instances[0].deleteButton.click();
-  await resourceUsageDialog.expectTitle("Resource Usage");
   await resourceUsageDialog.clickConfirm();
   await instances[0].configIdField.expectValue("PR456");
 });

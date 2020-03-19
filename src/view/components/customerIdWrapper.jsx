@@ -20,10 +20,11 @@ import getInstanceOptions from "../utils/getInstanceOptions";
 function CustomerIdWrapper({ values, initInfo }) {
   return (
     <React.Fragment>
-      <FieldLabel labelFor="instanceName" label="Instance" />
+      <FieldLabel labelFor="instanceNameField" label="Instance" />
       <div>
         <WrappedField
-          id="instanceName"
+          data-test-id="instanceNameField"
+          id="instanceNameField"
           name="instanceName"
           component={Select}
           componentClassName="u-fieldLong"
@@ -37,7 +38,7 @@ function CustomerIdWrapper({ values, initInfo }) {
             <React.Fragment>
               <div className="u-gapTop u-alignRight">
                 <Button
-                  id="addCustomerId"
+                  data-test-id="addCustomerIdButton"
                   label="Add Customer ID"
                   onClick={() => {
                     arrayHelpers.push(getDefaultCustomerId());
@@ -55,12 +56,13 @@ function CustomerIdWrapper({ values, initInfo }) {
                     <Well key={index}>
                       <div>
                         <FieldLabel
-                          labelFor={`namespaceField${index}`}
+                          labelFor={`namespace${index}Field`}
                           label="Namespace"
                         />
                         <div>
                           <WrappedField
-                            id={`namespaceField${index}`}
+                            data-test-id={`namespace${index}Field`}
+                            id={`namespace${index}Field`}
                             name={`customerIds.${index}.namespace`}
                             // component={Select}
                             component={Textfield}
@@ -70,10 +72,11 @@ function CustomerIdWrapper({ values, initInfo }) {
                         </div>
                       </div>
                       <div className="u-gapTop">
-                        <FieldLabel labelFor={`idField${index}`} label="ID" />
+                        <FieldLabel labelFor={`id${index}Field`} label="ID" />
                         <div>
                           <WrappedField
-                            id={`idField${index}`}
+                            data-test-id={`id${index}Field`}
+                            id={`id${index}Field`}
                             name={`customerIds.${index}.id`}
                             component={Textfield}
                             componentClassName="u-fieldLong"
@@ -84,6 +87,7 @@ function CustomerIdWrapper({ values, initInfo }) {
                       <div className="u-gapTop">
                         <InfoTipLayout tip="Uses the SHA-256 hashing algorithm that allows you to pass in customer IDs or email addresses, and pass out hashed IDs. This is an optional Javascript method for sending hashed identifiers. You can continue to use your own methods of hashing prior to sending customer IDs. Note: if this is set to true for a customer ID and the page is HTTP, the customer ID will be removed from the call because hashing cannot be completed in this case.">
                           <WrappedField
+                            data-test-id={`hashEnabled${index}Field`}
                             name={`customerIds.${index}.hashEnabled`}
                             component={Checkbox}
                             label="Convert ID to sha256 hash"
@@ -92,12 +96,13 @@ function CustomerIdWrapper({ values, initInfo }) {
                       </div>
                       <div className="u-gapTop">
                         <FieldLabel
-                          labelFor={`authenticatedStateField${index}`}
+                          labelFor={`authenticatedState${index}Field`}
                           label="Authenticated State"
                         />
                         <div>
                           <WrappedField
-                            id={`authenticatedStateField${index}`}
+                            data-test-id={`authenticatedState${index}Field`}
+                            id={`authenticatedState${index}Field`}
                             name={`customerIds.${index}.authenticatedState`}
                             component={Select}
                             componentClassName="u-fieldLong"
@@ -108,6 +113,7 @@ function CustomerIdWrapper({ values, initInfo }) {
                       <div className="u-gapTop">
                         <InfoTipLayout tip="Adobe Experience Platform will use the customer ID as an identifier to help stitch together more information about that individual. If left unchecked, the identifier within this namespace will still be collected but the ECID will be used as the primary identifier for stitching.">
                           <WrappedField
+                            data-test-id={`primary${index}Field`}
                             name={`customerIds.${index}.primary`}
                             component={Checkbox}
                             label="Primary"
@@ -116,7 +122,7 @@ function CustomerIdWrapper({ values, initInfo }) {
                       </div>
                       <div className="u-gapTop">
                         <Button
-                          id={`deleteButton${index}`}
+                          data-test-id={`delete${index}Button`}
                           label="Delete Customer ID"
                           icon={<Delete />}
                           disabled={values.customerIds.length === 1}

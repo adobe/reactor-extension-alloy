@@ -10,23 +10,27 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Selector } from "testcafe";
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum";
 import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
+import { createTestIdSelector } from "../helpers/dataTestIdSelectors";
 
 const extensionViewController = createExtensionViewController(
   "actions/setConsent.html"
 );
-const instanceNameField = spectrum.select(Selector("[name=instanceName]"));
+const instanceNameField = spectrum.select(
+  createTestIdSelector("instanceNameField")
+);
 const radioGroup = {
-  inField: spectrum.radio(Selector(`[name='option'][value=in]`)),
-  outField: spectrum.radio(Selector(`[name='option'][value=out]`)),
+  inField: spectrum.radio(createTestIdSelector("inOptionField")),
+  outField: spectrum.radio(createTestIdSelector("outOptionField")),
   dataElementField: spectrum.radio(
-    Selector(`[name='option'][value=dataElement]`)
+    createTestIdSelector("dataElementOptionField")
   )
 };
-const dataElementField = spectrum.textfield(Selector("[name=dataElement]"));
+const dataElementField = spectrum.textfield(
+  createTestIdSelector("dataElementField")
+);
 
 const mockExtensionSettings = {
   instances: [

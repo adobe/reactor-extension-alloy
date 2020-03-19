@@ -11,23 +11,23 @@ governing permissions and limitations under the License.
 */
 
 import spectrum from "../../../helpers/spectrum";
-import { createDataTestIdSelector } from "../../../helpers/dataTestIdSelectors";
+import { createTestIdSelector } from "../../../helpers/dataTestIdSelectors";
 
 /**
  * Provides methods for managing an array's items when on the array's edit view.
  */
 export default {
   addItem: async () => {
-    await spectrum.button(createDataTestIdSelector("addItemButton")).click();
+    await spectrum.button(createTestIdSelector("addItemButton")).click();
   },
   removeItem: async index => {
     await spectrum
-      .button(createDataTestIdSelector(`item${index}RemoveButton`))
+      .button(createTestIdSelector(`item${index}RemoveButton`))
       .click();
   },
   clickItem: async index => {
     await spectrum
-      .button(createDataTestIdSelector(`item${index}SelectButton`))
+      .button(createTestIdSelector(`item${index}SelectButton`))
       .click();
   }
 };
