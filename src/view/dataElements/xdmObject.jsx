@@ -96,7 +96,7 @@ const XdmExtensionView = () => {
         // schemas again. Just call getInitialValues with the newly
         // selected schema and return the result.
         return fetchSchema({
-          configId: initInfo.extensionSettings.instances[0].configId,
+          extensionSettings: initInfo.extensionSettings,
           orgId: initInfo.company.orgId,
           imsAccess: initInfo.tokens.imsAccess
         }).then(fetchedSchema => {

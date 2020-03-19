@@ -177,11 +177,12 @@ export default ({ extensionSettings, orgId, imsAccess }) => {
       });
     })
     .then(schemaRefByDataSet => {
+      const schemaRefs = [];
       instancesInfo.forEach(instanceInfo => {
         instanceInfo.schemaRef = schemaRefByDataSet[instanceInfo.datasetId];
+        schemaRefs.push(instanceInfo.schemaRef);
       });
-      // TODO: Pass schema refs instead of instancesInfo
-      return fetchSchemas({ baseRequestHeaders, instancesInfo });
+      return fetchSchemas({ baseRequestHeaders, schemaRefs });
     })
     .then(schemasBySchemaRefMap => {
       instancesInfo.forEach(instanceInfo => {
