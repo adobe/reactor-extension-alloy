@@ -14,6 +14,7 @@ import "regenerator-runtime"; // needed for some of react-spectrum
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Alert from "@react/react-spectrum/Alert";
+import Select from "@react/react-spectrum/Select";
 import NoSelectedNodeView from "./xdmObject/components/noSelectedNodeView";
 import ExtensionView from "../components/extensionView";
 import XdmTree from "./xdmObject/components/xdmTree";
@@ -24,24 +25,23 @@ import validate from "./xdmObject/helpers/validate";
 import render from "../render";
 import fetchInstancesMeta from "./xdmObject/helpers/fetchInstancesMeta";
 import "./xdmObject.styl";
+import getMajorVersionFromSchemaVersion from "./xdmObject/helpers/getMajorVersionFromSchemaVersion";
 
-const getInitialValues = ({ settings, schema }) => {
-  const value = (settings && settings.data) || {};
-  return getInitialFormState({ schema, value });
+const getInitialValues = ({ data = {}, schema }) => {
+  return getInitialFormState({ schema, value: data });
 };
 
 const XdmObject = ({
   initInfo,
   formikProps,
-  schema,
   instancesMeta,
-  selectedInstanceMeta,
-  setSelectedInstanceMeta
+  selectedSchema,
+  setSelectedSchema
 }) => {
   const { values: formState } = formikProps;
   const [selectedNodeId, setSelectedNodeId] = useState();
 
-  if (!schema) {
+  if (!instancesMeta.length) {
     return (
       <div className="u-flex u-fullHeight u-alignItemsCenter u-justifyContentCenter">
         <Alert variant="error" header="No Schema Found">
@@ -52,8 +52,25 @@ const XdmObject = ({
     );
   }
 
+  const schemaOptions = instancesMeta.reduce(
+    (schemaOptionsMemo, instanceMeta) => {
+      const matchingOption = schemaOptionsMemo.find(schemaOption => {
+        return schemaOption.value.id === instanceMeta.schema.id;
+      });
+
+      if (!matchingOption) {
+      }
+    },
+    []
+  );
+
   return (
     <div className="u-flex u-fullHeight">
+      <Select
+        options={schemaOptions}
+        value={selectedSchema}
+        onChange={option => setSelectedSchema(option.value)}
+      />
       {
         // Select Here? On change, call resetForm()
         // Use a react-spectrum Select without Formik
@@ -97,9 +114,8 @@ XdmObject.propTypes = {
 };
 
 const XdmExtensionView = () => {
-  // const [schema, setSchema] = useState();
   const [instancesMeta, setInstancesMeta] = useState();
-  const [selectedInstanceMeta, setSelectedInstanceMeta] = useState();
+  const [selectedSchema, setSelectedSchema] = useState();
 
   return (
     <ExtensionView
@@ -114,13 +130,38 @@ const XdmExtensionView = () => {
         }).then(fetchedInstancesMeta => {
           setInstancesMeta(fetchedInstancesMeta);
 
-          if (!fetchedInstancesMeta) {
+          if (!fetchedInstancesMeta.length) {
             return {};
           }
 
+          const { settings } = initInfo;
+
+          let matchingInstanceMeta;
+
+          if (settings && settings.schema) {
+            const { id, version } = settings.schema;
+            const majorVersion = getMajorVersionFromSchemaVersion(version);
+
+            matchingInstanceMeta = fetchedInstancesMeta.find(instanceMeta => {
+              const instanceSchemaMajorVersion = getMajorVersionFromSchemaVersion(
+                instanceMeta.schema.version
+              );
+              return (
+                id === instanceMeta.schema.id &&
+                majorVersion === instanceSchemaMajorVersion
+              );
+            });
+          }
+
+          if (!matchingInstanceMeta) {
+            [matchingInstanceMeta] = fetchedInstancesMeta;
+          }
+
+          setSelectedSchema(matchingInstanceMeta);
+
           const initialValues = getInitialValues({
-            settings: initInfo.settings,
-            schema: fetchedInstancesMeta
+            data: settings && settings.data,
+            schema: matchingInstanceMeta.schema
           });
 
           return initialValues;
@@ -128,18 +169,17 @@ const XdmExtensionView = () => {
       }}
       getSettings={({ values }) => {
         return {
-          // Use selectedInstanceMetaHere
           schema: {
-            id: schema.$id,
-            version: schema.version
+            id: selectedSchema.$id,
+            version: selectedSchema.version
           },
           data: getValueFromFormState({ formStateNode: values }) || {}
         };
       }}
       validate={validate}
       render={props => {
-        const setSelectedInstanceMetaAndResetForm = () => {
-          // call setSelectedInstanceMeta
+        const onSchemaSelected = schema => {
+          setSelectedSchema(schema);
           // reset form using props.resetForm()
         };
 
@@ -148,8 +188,8 @@ const XdmExtensionView = () => {
             {...props}
             // schema={schema}
             instancesMeta={instancesMeta}
-            selectedInstanceMeta={selectedInstanceMeta}
-            setSelectedInstanceMeta={setSelectedInstanceMetaAndResetForm}
+            selectedSchema={selectedSchema}
+            setSelectedSchema={onSchemaSelected}
           />
         );
       }}

@@ -16,7 +16,7 @@ const PLATFORM_HOST = "https://platform.adobe.io";
 
 const schemaVersionRegexForContentType = /version=(\d+)/;
 
-const getVersionFromSchemaRefContentType = contentType => {
+const getMajorVersionFromSchemaRefContentType = contentType => {
   // Example: application/vnd.adobe.xed-full+json;version=1
   // The value that comes before "version" is not guaranteed.
   const match = contentType.match(schemaVersionRegexForContentType);
@@ -25,7 +25,8 @@ const getVersionFromSchemaRefContentType = contentType => {
 
 const compareSchemaRefs = (schemaRef1, schemaRef2) => {
   return schemaRef1.id === schemaRef2.id &&
-    schemaRef1.version === schemaRef2.version
+    getMajorVersionFromSchemaRefContentType(schemaRef1.contentType) ===
+      getMajorVersionFromSchemaRefContentType(schemaRef2.contentType)
     ? 0
     : -1;
 };
@@ -73,8 +74,8 @@ const fetchDatasetIdFromEdgeConfig = ({ baseRequestHeaders, configId }) => {
     });
 };
 
-const fetchInstancesMeta = ({ baseRequestHeaders, schemaRef }) => {
-  const schemaMajorVersion = getVersionFromSchemaRefContentType(
+const fetchSchema = ({ baseRequestHeaders, schemaRef }) => {
+  const schemaMajorVersion = getMajorVersionFromSchemaRefContentType(
     schemaRef.contentType
   );
   return fetch(
@@ -93,10 +94,10 @@ const fetchInstancesMeta = ({ baseRequestHeaders, schemaRef }) => {
     .then(responseBody => responseBody);
 };
 
-const fetchSchemas = ({ baseRequestHeaders, schemaRefs }) => {
+const fetchSchemasBySchemaRefs = ({ baseRequestHeaders, schemaRefs }) => {
   const uniqueSchemaRefs = uniq(schemaRefs, compareSchemaRefs);
   const fetchSchemasPromises = uniqueSchemaRefs.map(schemaRef => {
-    return fetchInstancesMeta({ baseRequestHeaders, schemaRef });
+    return fetchSchema({ baseRequestHeaders, schemaRef });
   });
 
   return Promise.all(fetchSchemasPromises).then(schemas => {
@@ -182,12 +183,17 @@ export default ({ extensionSettings, orgId, imsAccess }) => {
         instanceInfo.schemaRef = schemaRefByDataSet[instanceInfo.datasetId];
         schemaRefs.push(instanceInfo.schemaRef);
       });
-      return fetchSchemas({ baseRequestHeaders, schemaRefs });
+      return fetchSchemasBySchemaRefs({ baseRequestHeaders, schemaRefs });
     })
     .then(schemasBySchemaRefMap => {
       instancesMeta.forEach(instanceInfo => {
         instanceInfo.schema = schemasBySchemaRefMap.get(instanceInfo.schemaRef);
       });
+
+      // TODO: Produce schemaInstancesMap and return it.
+      // Map(
+      //   schema = instances
+      // )
 
       return instancesMeta;
     });

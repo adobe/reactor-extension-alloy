@@ -110,11 +110,6 @@ const ExtensionView = ({
   bridgeState.setInitialValues = setInitialValues;
   bridgeState.setInitializationError = setInitializationError;
 
-  // TODO Pass this through render function.
-  const resetForm = () => {
-    // getInitialValues();
-  };
-
   useEffect(registerWithExtensionBridge, []);
 
   if (initializationError) {
@@ -138,7 +133,11 @@ const ExtensionView = ({
           validationSchema={validationSchema}
           render={formikProps => {
             bridgeState.formikProps = formikProps;
-            return render({ formikProps, initInfo: bridgeState.initInfo });
+            return render({
+              formikProps,
+              initInfo: bridgeState.initInfo,
+              resetForm: setInitialValues
+            });
           }}
         />
       </ErrorBoundary>
