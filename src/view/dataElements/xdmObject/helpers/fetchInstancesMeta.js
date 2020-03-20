@@ -73,7 +73,7 @@ const fetchDatasetIdFromEdgeConfig = ({ baseRequestHeaders, configId }) => {
     });
 };
 
-const fetchSchema = ({ baseRequestHeaders, schemaRef }) => {
+const fetchInstancesMeta = ({ baseRequestHeaders, schemaRef }) => {
   const schemaMajorVersion = getVersionFromSchemaRefContentType(
     schemaRef.contentType
   );
@@ -96,7 +96,7 @@ const fetchSchema = ({ baseRequestHeaders, schemaRef }) => {
 const fetchSchemas = ({ baseRequestHeaders, schemaRefs }) => {
   const uniqueSchemaRefs = uniq(schemaRefs, compareSchemaRefs);
   const fetchSchemasPromises = uniqueSchemaRefs.map(schemaRef => {
-    return fetchSchema({ baseRequestHeaders, schemaRef });
+    return fetchInstancesMeta({ baseRequestHeaders, schemaRef });
   });
 
   return Promise.all(fetchSchemasPromises).then(schemas => {
@@ -152,7 +152,7 @@ const fetchDatasetIdsFromEdgeConfigs = ({ baseRequestHeaders, configIds }) => {
 export default ({ extensionSettings, orgId, imsAccess }) => {
   const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
 
-  const instancesInfo = extensionSettings.instances.map(instance => {
+  const instancesMeta = extensionSettings.instances.map(instance => {
     return {
       name: instance.name,
       configId: instance.configId
@@ -165,30 +165,30 @@ export default ({ extensionSettings, orgId, imsAccess }) => {
 
   return fetchDatasetIdsFromEdgeConfigs({ baseRequestHeaders, configIds })
     .then(datasetIdByEdgeConfigId => {
-      instancesInfo.forEach(instanceInfo => {
+      instancesMeta.forEach(instanceInfo => {
         instanceInfo.datasetId = datasetIdByEdgeConfigId[instanceInfo.configId];
       });
 
       const datasetIds = Object.values(datasetIdByEdgeConfigId);
       return fetchSchemaRefsFromDatasets({
         baseRequestHeaders,
-        instancesInfo,
+        instancesInfo: instancesMeta,
         datasetIds
       });
     })
     .then(schemaRefByDataSet => {
       const schemaRefs = [];
-      instancesInfo.forEach(instanceInfo => {
+      instancesMeta.forEach(instanceInfo => {
         instanceInfo.schemaRef = schemaRefByDataSet[instanceInfo.datasetId];
         schemaRefs.push(instanceInfo.schemaRef);
       });
       return fetchSchemas({ baseRequestHeaders, schemaRefs });
     })
     .then(schemasBySchemaRefMap => {
-      instancesInfo.forEach(instanceInfo => {
+      instancesMeta.forEach(instanceInfo => {
         instanceInfo.schema = schemasBySchemaRefMap.get(instanceInfo.schemaRef);
       });
 
-      return instancesInfo;
+      return instancesMeta;
     });
 };

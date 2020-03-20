@@ -22,7 +22,7 @@ import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import NodeEdit from "./xdmObject/components/nodeEdit";
 import validate from "./xdmObject/helpers/validate";
 import render from "../render";
-import fetchSchema from "./xdmObject/helpers/fetchSchema";
+import fetchInstancesMeta from "./xdmObject/helpers/fetchInstancesMeta";
 import "./xdmObject.styl";
 
 const getInitialValues = ({ settings, schema }) => {
@@ -30,7 +30,14 @@ const getInitialValues = ({ settings, schema }) => {
   return getInitialFormState({ schema, value });
 };
 
-const XdmObject = ({ initInfo, formikProps, schema, resetForm }) => {
+const XdmObject = ({
+  initInfo,
+  formikProps,
+  schema,
+  instancesMeta,
+  selectedInstanceMeta,
+  setSelectedInstanceMeta
+}) => {
   const { values: formState } = formikProps;
   const [selectedNodeId, setSelectedNodeId] = useState();
 
@@ -49,6 +56,10 @@ const XdmObject = ({ initInfo, formikProps, schema, resetForm }) => {
     <div className="u-flex u-fullHeight">
       {
         // Select Here? On change, call resetForm()
+        // Use a react-spectrum Select without Formik
+        // Use instancesMeta to show all the options.
+        // Let selectedInstanceMeta to determine which option is selected.
+        // Call setSelectedInstanceMeta when a new option is selected.
       }
       <div className="XdmObject-treeContainer u-flexShrink0 u-fullHeight u-overflowXAuto u-overflowYAuto">
         <XdmTree
@@ -86,8 +97,9 @@ XdmObject.propTypes = {
 };
 
 const XdmExtensionView = () => {
-  const [schema, setSchema] = useState();
-  const [instancesInfo, setInstancesInfo] = useState();
+  // const [schema, setSchema] = useState();
+  const [instancesMeta, setInstancesMeta] = useState();
+  const [selectedInstanceMeta, setSelectedInstanceMeta] = useState();
 
   return (
     <ExtensionView
@@ -95,20 +107,20 @@ const XdmExtensionView = () => {
         // TODO: If we've already loaded the schemas, then don't load the
         // schemas again. Just call getInitialValues with the newly
         // selected schema and return the result.
-        return fetchSchema({
+        return fetchInstancesMeta({
           extensionSettings: initInfo.extensionSettings,
           orgId: initInfo.company.orgId,
           imsAccess: initInfo.tokens.imsAccess
-        }).then(fetchedSchema => {
-          setSchema(fetchedSchema);
+        }).then(fetchedInstancesMeta => {
+          setInstancesMeta(fetchedInstancesMeta);
 
-          if (!fetchedSchema) {
+          if (!fetchedInstancesMeta) {
             return {};
           }
 
           const initialValues = getInitialValues({
             settings: initInfo.settings,
-            schema: fetchedSchema
+            schema: fetchedInstancesMeta
           });
 
           return initialValues;
@@ -116,6 +128,7 @@ const XdmExtensionView = () => {
       }}
       getSettings={({ values }) => {
         return {
+          // Use selectedInstanceMetaHere
           schema: {
             id: schema.$id,
             version: schema.version
@@ -124,7 +137,22 @@ const XdmExtensionView = () => {
         };
       }}
       validate={validate}
-      render={props => <XdmObject {...props} schema={schema} />}
+      render={props => {
+        const setSelectedInstanceMetaAndResetForm = () => {
+          // call setSelectedInstanceMeta
+          // reset form using props.resetForm()
+        };
+
+        return (
+          <XdmObject
+            {...props}
+            // schema={schema}
+            instancesMeta={instancesMeta}
+            selectedInstanceMeta={selectedInstanceMeta}
+            setSelectedInstanceMeta={setSelectedInstanceMetaAndResetForm}
+          />
+        );
+      }}
     />
   );
 };
