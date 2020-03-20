@@ -18,7 +18,10 @@ import WrappedField from "../../../components/wrappedField";
 import AutoPopulationAlert from "./autoPopulationAlert";
 import { formStateNodePropTypes } from "../helpers/getInitialFormState";
 
-const XdmPropertyForm = props => {
+/**
+ * The form for editing a field that is neither an object nor an array.
+ */
+const NonObjectOrArrayEdit = props => {
   const { formStateNode, fieldName } = props;
 
   return (
@@ -40,9 +43,9 @@ const XdmPropertyForm = props => {
   );
 };
 
-XdmPropertyForm.propTypes = {
+NonObjectOrArrayEdit.propTypes = {
   formStateNode: formStateNodePropTypes.isRequired,
   fieldName: PropTypes.string.isRequired
 };
 
-export default XdmPropertyForm;
+export default NonObjectOrArrayEdit;

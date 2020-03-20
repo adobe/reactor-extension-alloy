@@ -13,15 +13,13 @@ governing permissions and limitations under the License.
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import Breadcrumbs from "@react/react-spectrum/Breadcrumbs";
 import Alert from "@react/react-spectrum/Alert";
 import NoSelectedNodeView from "./xdmObject/components/noSelectedNodeView";
 import ExtensionView from "../components/extensionView";
 import XdmTree from "./xdmObject/components/xdmTree";
 import getInitialFormState from "./xdmObject/helpers/getInitialFormState";
 import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
-import getNodeEditData from "./xdmObject/helpers/getNodeEditData";
-import XdmForm from "./xdmObject/components/xdmForm";
+import NodeEdit from "./xdmObject/components/nodeEdit";
 import validate from "./xdmObject/helpers/validate";
 import render from "../render";
 import fetchSchema from "./xdmObject/helpers/fetchSchema";
@@ -47,13 +45,6 @@ const XdmObject = ({ initInfo, formikProps, schema }) => {
     );
   }
 
-  const { formStateNode, fieldName, breadcrumb } = selectedNodeId
-    ? getNodeEditData({
-        formState,
-        nodeId: selectedNodeId
-      })
-    : {};
-
   return (
     <div className="u-flex u-fullHeight">
       <div className="XdmObject-treeContainer u-flexShrink0 u-fullHeight u-overflowXAuto u-overflowYAuto">
@@ -64,19 +55,12 @@ const XdmObject = ({ initInfo, formikProps, schema }) => {
         />
       </div>
       <div className="u-gapLeft2x">
-        {breadcrumb && (
-          <Breadcrumbs
-            className="u-gapLeftNegative"
-            items={breadcrumb}
-            onBreadcrumbClick={item => setSelectedNodeId(item.nodeId)}
-          />
-        )}
         <div className="u-gapTop2x">
-          {formStateNode ? (
-            <XdmForm
-              formStateNode={formStateNode}
-              fieldName={fieldName}
-              onSelect={setSelectedNodeId}
+          {selectedNodeId ? (
+            <NodeEdit
+              formState={formState}
+              onNodeSelect={setSelectedNodeId}
+              selectedNodeId={selectedNodeId}
             />
           ) : (
             <NoSelectedNodeView

@@ -21,7 +21,10 @@ import { PARTS, WHOLE } from "../constants/populationStrategy";
 import AutoPopulationAlert from "./autoPopulationAlert";
 import { formStateNodePropTypes } from "../helpers/getInitialFormState";
 
-const XdmObjectForm = props => {
+/**
+ * The form for editing a node that is an object type.
+ */
+const ObjectEdit = props => {
   const { formStateNode, fieldName } = props;
   const {
     isPartsPopulationStrategySupported,
@@ -70,9 +73,9 @@ const XdmObjectForm = props => {
   );
 };
 
-XdmObjectForm.propTypes = {
+ObjectEdit.propTypes = {
   formStateNode: formStateNodePropTypes.isRequired,
   fieldName: PropTypes.string.isRequired
 };
 
-export default XdmObjectForm;
+export default ObjectEdit;

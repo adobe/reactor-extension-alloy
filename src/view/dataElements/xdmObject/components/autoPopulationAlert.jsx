@@ -13,6 +13,10 @@ governing permissions and limitations under the License.
 import React from "react";
 import Alert from "@react/react-spectrum/Alert";
 
+/**
+ * Shown on the edit form for any fields that get populated
+ * automatically by Alloy.
+ */
 const AutoPopulationAlert = () => (
   <Alert header="Auto-populated Field">
     The value for this field will be auto-populated by the Adobe Experience

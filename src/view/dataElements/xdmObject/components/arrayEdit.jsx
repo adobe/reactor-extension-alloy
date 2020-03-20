@@ -27,6 +27,10 @@ import { PARTS, WHOLE } from "../constants/populationStrategy";
 import { ARRAY, OBJECT } from "../constants/schemaType";
 import AutoPopulationAlert from "./autoPopulationAlert";
 
+/**
+ * Displayed when the WHOLE population strategy is selected.
+ * Allows the user to provide a value for the whole array.
+ */
 const WholePopulationStrategyForm = ({ fieldName }) => (
   <React.Fragment>
     <FieldLabel
@@ -48,11 +52,15 @@ WholePopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired
 };
 
+/**
+ * Displayed when the PARTS population strategy is selected.
+ * Allows the user to provide individual items within the array.
+ */
 const PartsPopulationStrategyForm = ({
   fieldName,
   schema,
   items,
-  onSelect
+  onNodeSelect
 }) => (
   <FieldArray
     name={`${fieldName}.items`}
@@ -69,7 +77,7 @@ const PartsPopulationStrategyForm = ({
                   data-test-id={`item${index}SelectButton`}
                   quiet
                   variant="action"
-                  onClick={() => onSelect(itemNode.id)}
+                  onClick={() => onNodeSelect(itemNode.id)}
                 >
                   Item {index + 1}
                 </Button>
@@ -117,11 +125,14 @@ PartsPopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired,
   schema: PropTypes.object.isRequired,
   items: PropTypes.arrayOf(formStateNodePropTypes).isRequired,
-  onSelect: PropTypes.func.isRequired
+  onNodeSelect: PropTypes.func.isRequired
 };
 
-const XdmArrayForm = props => {
-  const { formStateNode, fieldName, onSelect } = props;
+/**
+ * The form for editing a node that is an array type.
+ */
+const ArrayEdit = props => {
+  const { formStateNode, fieldName, onNodeSelect } = props;
   const {
     isPartsPopulationStrategySupported,
     populationStrategy,
@@ -158,7 +169,7 @@ const XdmArrayForm = props => {
             fieldName={fieldName}
             schema={schema}
             items={items}
-            onSelect={onSelect}
+            onNodeSelect={onNodeSelect}
           />
         )}
       </div>
@@ -166,10 +177,10 @@ const XdmArrayForm = props => {
   );
 };
 
-XdmArrayForm.propTypes = {
+ArrayEdit.propTypes = {
   formStateNode: formStateNodePropTypes.isRequired,
   fieldName: PropTypes.string.isRequired,
-  onSelect: PropTypes.func.isRequired
+  onNodeSelect: PropTypes.func.isRequired
 };
 
-export default XdmArrayForm;
+export default ArrayEdit;

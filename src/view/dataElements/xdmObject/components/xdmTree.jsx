@@ -22,6 +22,9 @@ import useNewlyValidatedFormSubmission from "../../../utils/useNewlyValidatedFor
 
 const { TreeNode } = Tree;
 
+/**
+ * Recursively renders tree nodes.
+ */
 const renderTreeNodes = (nodes = []) => {
   return nodes.map(node => {
     const {
@@ -52,8 +55,13 @@ const renderTreeNodes = (nodes = []) => {
   });
 };
 
+/**
+ * Displays the XDM object as a tree.
+ */
 const XdmTree = props => {
   const { formikProps, selectedNodeId, onSelect = () => {} } = props;
+
+  // See getInitialFormState.js for documentation on formState's structure.
   const { values: formState, errors, touched } = formikProps;
   const [expandedNodeIds, setExpandedNodeIds] = useState([]);
   const treeStructure = generateTreeStructure({
@@ -62,9 +70,10 @@ const XdmTree = props => {
     touched
   });
 
-  // Expand invalid items when the user attempts to submit the form, but
-  // not when validation occurs as a result of a user changing the value
-  // of a field (it's jarring).
+  // Expand invalid items when the user attempts to submit the form by hitting
+  // the save button in Launch. We purposefully don't expand invalid items when
+  // validation occurs as a result of a user changing the value of a field because
+  // it's a jarring experience.
   useNewlyValidatedFormSubmission({
     formikProps,
     callback: () => {
