@@ -44,9 +44,10 @@ const InstanceNameOnly = () => {
       render={({ initInfo }) => {
         return (
           <div>
-            <FieldLabel labelFor="configIdField" label="Instance" />
+            <FieldLabel labelFor="instanceNameField" label="Instance" />
             <div>
               <WrappedField
+                data-test-id="instanceNameField"
                 id="instanceNameField"
                 name="instanceName"
                 component={Select}

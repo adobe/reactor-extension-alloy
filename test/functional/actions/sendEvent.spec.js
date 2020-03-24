@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Selector } from "testcafe";
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum";
 import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
@@ -18,11 +17,11 @@ import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
 const extensionViewController = createExtensionViewController(
   "actions/sendEvent.html"
 );
-const instanceNameField = spectrum.select(Selector("[name=instanceName]"));
-const viewStartField = spectrum.checkbox(Selector("[name=viewStart]"));
-const xdmField = spectrum.textfield(Selector("[name=xdm]"));
-const typeField = spectrum.textfield(Selector("[name=type]"));
-const mergeIdField = spectrum.textfield(Selector("[name=mergeId]"));
+const instanceNameField = spectrum.select("instanceNameField");
+const viewStartField = spectrum.checkbox("viewStartField");
+const xdmField = spectrum.textfield("xdmField");
+const typeField = spectrum.textfield("typeField");
+const mergeIdField = spectrum.textfield("mergeIdField");
 
 const mockExtensionSettings = {
   instances: [

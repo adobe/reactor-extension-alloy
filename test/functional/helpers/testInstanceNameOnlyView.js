@@ -1,8 +1,7 @@
-import { Selector } from "testcafe";
 import spectrum from "./spectrum";
 import testInstanceNameOptions from "./testInstanceNameOptions";
 
-const instanceNameField = spectrum.select(Selector("[name=instanceName]"));
+const instanceNameField = spectrum.select("instanceNameField");
 
 const mockExtensionSettings = {
   instances: [

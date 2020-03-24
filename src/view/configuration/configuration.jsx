@@ -46,7 +46,28 @@ const consentLevels = {
   IN: "in",
   PENDING: "pending"
 };
-const contextOptions = ["web", "device", "environment", "placeContext"];
+const contextOptions = [
+  {
+    label: "Web",
+    value: "web",
+    testId: "contextWebField"
+  },
+  {
+    label: "Device",
+    value: "device",
+    testId: "contextDeviceField"
+  },
+  {
+    label: "Environment",
+    value: "environment",
+    testId: "contextEnvironmentField"
+  },
+  {
+    label: "Place Context",
+    value: "placeContext",
+    testId: "contextPlaceContextField"
+  }
+];
 
 const getInstanceDefaults = initInfo => ({
   name: "alloy",
@@ -58,7 +79,7 @@ const getInstanceDefaults = initInfo => ({
   defaultConsent: { general: consentLevels.IN },
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
-  context: contextOptions,
+  context: contextOptions.map(contextOption => contextOption.value),
   idMigrationEnabled: true,
   thirdPartyCookiesEnabled: true,
   clickCollectionEnabled: true,
@@ -279,6 +300,7 @@ const Configuration = ({ formikProps, initInfo }) => {
             <div>
               <div className="u-alignRight">
                 <Button
+                  data-test-id="addInstanceButton"
                   label="Add Instance"
                   onClick={() => {
                     arrayHelpers.push(createDefaultInstance(initInfo));
@@ -287,6 +309,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                 />
               </div>
               <Accordion
+                data-test-id="instancesAccordion"
                 selectedIndex={selectedAccordionIndex}
                 className="u-gapTop2x"
                 onChange={setSelectedAccordionIndex}
@@ -302,6 +325,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                       </InfoTipLayout>
                       <div>
                         <WrappedField
+                          data-test-id="nameField"
                           id="nameField"
                           name={`instances.${index}.name`}
                           component={Textfield}
@@ -314,6 +338,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                       initialValues.instances[0].name !==
                         values.instances[0].name ? (
                         <Alert
+                          data-test-id="nameChangeAlert"
                           id="nameChangeAlert"
                           className="ConstrainedAlert"
                           header="Potential Problems Due to Name Change"
@@ -337,6 +362,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                       </InfoTipLayout>
                       <div>
                         <WrappedField
+                          data-test-id="configIdField"
                           id="configIdField"
                           name={`instances.${index}.configId`}
                           component={Textfield}
@@ -354,6 +380,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                       </InfoTipLayout>
                       <div>
                         <WrappedField
+                          data-test-id="orgIdField"
                           id="orgIdField"
                           name={`instances.${index}.orgId`}
                           component={Textfield}
@@ -361,7 +388,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                           supportDataElement="replace"
                         />
                         <Button
-                          id="orgIdRestoreButton"
+                          data-test-id="orgIdRestoreButton"
                           label="Restore to default"
                           onClick={() => {
                             const instanceDefaults = getInstanceDefaults(
@@ -390,6 +417,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                       </InfoTipLayout>
                       <div>
                         <WrappedField
+                          data-test-id="edgeDomainField"
                           id="edgeDomainField"
                           name={`instances.${index}.edgeDomain`}
                           component={Textfield}
@@ -397,7 +425,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                           supportDataElement="replace"
                         />
                         <Button
-                          id="edgeDomainRestoreButton"
+                          data-test-id="edgeDomainRestoreButton"
                           label="Restore to default"
                           onClick={() => {
                             const instanceDefaults = getInstanceDefaults(
@@ -415,6 +443,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                     <div className="u-gapTop">
                       <InfoTipLayout tip="Allows uncaught errors to be displayed in the console.">
                         <WrappedField
+                          data-test-id="errorsEnabledField"
                           name={`instances.${index}.errorsEnabled`}
                           component={Checkbox}
                           label="Enable errors"
@@ -438,10 +467,12 @@ const Configuration = ({ formikProps, initInfo }) => {
                         componentClassName="u-flexColumn"
                       >
                         <Radio
+                          data-test-id="defaultConsentInField"
                           value={consentLevels.IN}
                           label="In - Do not wait for explicit consent."
                         />
                         <Radio
+                          data-test-id="defaultConsentOutField"
                           value={consentLevels.PENDING}
                           label="Pending - Queue privacy-sensitive work until the user gives consent."
                         />
@@ -453,6 +484,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                     <div className="u-gapTop">
                       <InfoTipLayout tip="Enables the AEP Web SDK to preserve the ECID by reading/writing the AMCV cookie. Use this config until users are fully migrated to the Alloy cookie and in situations where you have mixed pages on your website.">
                         <WrappedField
+                          data-test-id="idMigrationEnabledField"
                           name={`instances.${index}.idMigrationEnabled`}
                           component={Checkbox}
                           label="Migrate ECID from VisitorAPI to Alloy to prevent visitor cliffing"
@@ -463,6 +495,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                     <div className="u-gapTop">
                       <InfoTipLayout tip="Enables the setting of Adobe third-party cookies. The SDK has the ability to persist the visitor ID in a third-party context to enable the same visitor ID to be used across site. This is useful if you have multiple sites or you want to share data with partners; however, sometimes this is not desired for privacy reasons.">
                         <WrappedField
+                          data-test-id="thirdPartyCookiesEnabledField"
                           name={`instances.${index}.thirdPartyCookiesEnabled`}
                           component={Checkbox}
                           label="Use third-party cookies"
@@ -481,6 +514,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                       </InfoTipLayout>
                       <div>
                         <WrappedField
+                          data-test-id="prehidingStyleEditorButton"
                           id="prehidingStyleField"
                           name={`instances.${index}.prehidingStyle`}
                           component={EditorButton}
@@ -499,6 +533,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                       </InfoTipLayout>
                       <div>
                         <WrappedField
+                          data-test-id="onBeforeEventSendField"
                           id="onBeforeEventSendField"
                           name={`instances.${index}.onBeforeEventSend`}
                           component={Textfield}
@@ -510,6 +545,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                     <div className="u-gapTop">
                       <InfoTipLayout tip="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected.">
                         <WrappedField
+                          data-test-id="clickCollectionEnabledField"
                           name={`instances.${index}.clickCollectionEnabled`}
                           component={Checkbox}
                           label="Enable click data collection"
@@ -526,13 +562,14 @@ const Configuration = ({ formikProps, initInfo }) => {
                         </InfoTipLayout>
                         <div>
                           <WrappedField
+                            data-test-id="downloadLinkQualifierField"
                             id="downloadLinkQualifierField"
                             name={`instances.${index}.downloadLinkQualifier`}
                             component={Textfield}
                             componentClassName="u-fieldLong"
                           />
                           <Button
-                            id="downloadLinkQualifierTestButton"
+                            data-test-id="downloadLinkQualifierTestButton"
                             className="u-gapLeft"
                             label="Test"
                             onClick={() => {
@@ -555,7 +592,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                             quiet
                           />
                           <Button
-                            id="downloadLinkQualifierRestoreButton"
+                            data-test-id="downloadLinkQualifierRestoreButton"
                             label="Restore to default"
                             onClick={() => {
                               const instanceDefaults = getInstanceDefaults(
@@ -585,10 +622,12 @@ const Configuration = ({ formikProps, initInfo }) => {
                         componentClassName="u-flexColumn"
                       >
                         <Radio
+                          data-test-id="contextGranularityAllField"
                           value={contextGranularityEnum.ALL}
                           label="all context information"
                         />
                         <Radio
+                          data-test-id="contextGranularitySpecificField"
                           value={contextGranularityEnum.SPECIFIC}
                           label="specific context information"
                         />
@@ -621,6 +660,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                       </InfoTipLayout>
                       <div>
                         <WrappedField
+                          data-test-id="edgeBasePathField"
                           id="edgeBasePathField"
                           name={`instances.${index}.edgeBasePath`}
                           component={Textfield}
@@ -628,7 +668,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                           supportDataElement="replace"
                         />
                         <Button
-                          id="edgeBasePathRestoreButton"
+                          data-test-id="edgeBasePathRestoreButton"
                           label="Restore to default"
                           onClick={() => {
                             const instanceDefaults = getInstanceDefaults(
@@ -647,7 +687,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                     <div className="u-gapTop2x">
                       <ModalTrigger>
                         <Button
-                          id="deleteButton"
+                          data-test-id="deleteInstanceButton"
                           label="Delete Instance"
                           icon={<Delete />}
                           variant="action"
@@ -660,6 +700,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                           </span>
                         ) : null}
                         <Dialog
+                          id="resourceUsageDialog"
                           onConfirm={() => {
                             arrayHelpers.remove(index);
                             setSelectedAccordionIndex(0);

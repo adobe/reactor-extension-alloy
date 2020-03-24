@@ -11,30 +11,21 @@ governing permissions and limitations under the License.
 */
 
 import spectrum from "../../../helpers/spectrum";
-import { createDataTestIdSelector } from "../../../helpers/dataTestIdSelectors";
 
 /**
  * Provides methods for managing form fields when editing a node.
  */
 export default {
   selectPartsPopulationStrategy: async () => {
-    await spectrum
-      .radio(createDataTestIdSelector("partsPopulationStrategyField"))
-      .click();
+    await spectrum.radio("partsPopulationStrategyField").click();
   },
   selectWholePopulationStrategy: async () => {
-    await spectrum
-      .radio(createDataTestIdSelector("wholePopulationStrategyField"))
-      .click();
+    await spectrum.radio("wholePopulationStrategyField").click();
   },
   enterWholeValue: async text => {
-    await spectrum
-      .textfield(createDataTestIdSelector("wholeValueField"))
-      .typeText(text);
+    await spectrum.textfield("wholeValueField").typeText(text);
   },
   expectWholeValue: async text => {
-    await spectrum
-      .textfield(createDataTestIdSelector("wholeValueField"))
-      .expectValue(text);
+    await spectrum.textfield("wholeValueField").expectValue(text);
   }
 };

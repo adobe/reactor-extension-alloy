@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Selector } from "testcafe";
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum";
 
@@ -31,27 +30,18 @@ const mockExtensionSettings = {
   ]
 };
 
-const instanceNameField = spectrum.select(Selector("[name=instanceName]"));
-const addCustomerIdButton = spectrum.button(Selector("#addCustomerId"));
+const instanceNameField = spectrum.select("instanceNameField");
+const addCustomerIdButton = spectrum.button("addCustomerIdButton");
 const customerIds = [];
 
 for (let i = 0; i < 2; i += 1) {
   customerIds.push({
-    namespaceField: spectrum.textfield(
-      Selector(`[name='customerIds.${i}.namespace']`)
-    ),
-    idField: spectrum.textfield(Selector(`[name='customerIds.${i}.id']`)),
-    hashEnabledField: spectrum.checkbox(
-      Selector(`[name='customerIds.${i}.hashEnabled']`)
-    ),
-    authenticatedStateField: spectrum.select(
-      Selector(`[name='customerIds.${i}.authenticatedState']`)
-    ),
-    primaryField: spectrum.checkbox(
-      Selector(`[name='customerIds.${i}.primary']`)
-    ),
-    deleteButton: spectrum.button(Selector(`#deleteButton${i}`)),
-    deleteDialog: spectrum.dialog(Selector(`#deleteCustomerId${i}`))
+    namespaceField: spectrum.textfield(`namespace${i}Field`),
+    idField: spectrum.textfield(`id${i}Field`),
+    hashEnabledField: spectrum.checkbox(`hashEnabled${i}Field`),
+    authenticatedStateField: spectrum.select(`authenticatedState${i}Field`),
+    primaryField: spectrum.checkbox(`primary${i}Field`),
+    deleteButton: spectrum.button(`delete${i}Button`)
   });
 }
 
