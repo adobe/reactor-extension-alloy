@@ -52,3 +52,16 @@ For Adobe employees, please reach out to the `alloy-engineering` Slack channel a
 * `EDGE_E2E_CLIENT_SECRET` - The value of this variable should be the client secret.
 
 Once the environment variables are configured, tests that require authentication should run successfully.
+
+### Selecting DOM Elements
+
+When writing automated tests, it's likely you'll need to select a DOM element so the test can interact with the element. Where possible, add a `data-test-id` attribute to the element, even if the element already has an `id` attribute that may seem adequate. Then, select the element using an attribute CSS selector (see our helpful [data test ID selectors](../functional/helpers/dataTestIdSelectors.js)).
+
+If the DOM element you are attempting to interact with is a [React-Spectrum](https://react-spectrum.corp.adobe.com/) component or part of a React-Spectrum component, you may find our [spectrum helpers](../functional/helpers/spectrum.js) useful. When using the spectrum helpers, you can pass the element's "test ID" (the value of the element's `data-test-id` attribute) directly into the helper and it will automatically select the element using the `data-test-id` attribute.
+
+Values of `data-test-id` attributes should follow these standards:
+
+* Should be camelCased. Example: `resourceUsageDialog`
+* Should end in `Field` if the element in some component intended for user input (textfield, select, radio, checkbox, etc.). Example: `instanceNameField`
+* Should end in `Button` if the element is as button that allows the user to take some action. Example: `addCustomerIdButton`
+* Should integrate the index before the `Field` or `Button` suffix if an element is repeated multiple times. Example: `hashEnabled1Field`, `hashEnabled2Field`, `hashEnabled3Field`
