@@ -23,25 +23,23 @@ import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import NodeEdit from "./xdmObject/components/nodeEdit";
 import validate from "./xdmObject/helpers/validate";
 import render from "../render";
-import fetchInstancesMeta from "./xdmObject/helpers/fetchInstancesMeta";
+import fetchInstancesBySchemaMap from "./xdmObject/helpers/fetchInstancesBySchemaMap";
 import "./xdmObject.styl";
 import getMajorVersionFromSchemaVersion from "./xdmObject/helpers/getMajorVersionFromSchemaVersion";
-
-const getInitialValues = ({ data = {}, schema }) => {
-  return getInitialFormState({ schema, value: data });
-};
+import findKeyInMap from "../utils/findKeyInMap";
+import FieldLabel from "@react/react-spectrum/FieldLabel";
 
 const XdmObject = ({
   initInfo,
   formikProps,
-  instancesMeta,
+  instancesBySchemaMap,
   selectedSchema,
   setSelectedSchema
 }) => {
   const { values: formState } = formikProps;
   const [selectedNodeId, setSelectedNodeId] = useState();
 
-  if (!instancesMeta.length) {
+  if (!instancesBySchemaMap.size) {
     return (
       <div className="u-flex u-fullHeight u-alignItemsCenter u-justifyContentCenter">
         <Alert variant="error" header="No Schema Found">
@@ -52,55 +50,73 @@ const XdmObject = ({
     );
   }
 
-  const schemaOptions = instancesMeta.reduce(
-    (schemaOptionsMemo, instanceMeta) => {
-      const matchingOption = schemaOptionsMemo.find(schemaOption => {
-        return schemaOption.value.id === instanceMeta.schema.id;
-      });
+  // TODO: Use this to only show the version number if there's more than one version
+  // of the same schema.
+  // const numMajorVersionsBySchemaId = {};
 
-      if (!matchingOption) {
-      }
-    },
-    []
-  );
+  // TODO: If there's only one instance, don't show the select.
+
+  const schemaOptions = [];
+  instancesBySchemaMap.forEach((instances, schema) => {
+    const schemaTitle = schema.title;
+    const schemaMajorVersion = getMajorVersionFromSchemaVersion(schema.version);
+    const instanceNamesCommaDelimited = instances
+      .map(instance => instance.name)
+      .join(", ");
+    const label = `${schemaTitle} (v${schemaMajorVersion}) (${instanceNamesCommaDelimited})`;
+
+    const option = {
+      value: schema,
+      label
+    };
+
+    schemaOptions.push(option);
+  });
 
   return (
-    <div className="u-flex u-fullHeight">
-      <Select
-        options={schemaOptions}
-        value={selectedSchema}
-        onChange={option => setSelectedSchema(option.value)}
-      />
-      {
-        // Select Here? On change, call resetForm()
-        // Use a react-spectrum Select without Formik
-        // Use instancesMeta to show all the options.
-        // Let selectedInstanceMeta to determine which option is selected.
-        // Call setSelectedInstanceMeta when a new option is selected.
-      }
-      <div className="XdmObject-treeContainer u-flexShrink0 u-fullHeight u-overflowXAuto u-overflowYAuto">
-        <XdmTree
-          formikProps={formikProps}
-          selectedNodeId={selectedNodeId}
-          onSelect={setSelectedNodeId}
+    <div className="u-flex u-flexColumn u-fullHeight">
+      <FieldLabel
+        className="u-flex"
+        labelFor="schemaField"
+        label="Schema"
+        position="left"
+      >
+        <Select
+          id="schemaField"
+          className="u-widthAuto u-gapBottom"
+          options={schemaOptions}
+          value={selectedSchema}
+          onChange={schema => {
+            setSelectedNodeId(undefined);
+            setSelectedSchema(schema);
+          }}
         />
-      </div>
-      <div className="u-gapLeft2x">
-        <div className="u-gapTop2x">
-          {selectedNodeId ? (
-            <NodeEdit
-              formState={formState}
-              onNodeSelect={setSelectedNodeId}
-              selectedNodeId={selectedNodeId}
-            />
-          ) : (
-            <NoSelectedNodeView
-              schema={schema}
-              previouslySavedSchemaInfo={
-                initInfo.settings && initInfo.settings.schema
-              }
-            />
-          )}
+      </FieldLabel>
+      <div className="u-flex u-minHeight0">
+        <div className="XdmObject-treeContainer u-flexShrink0 u-overflowXAuto u-overflowYAuto">
+          <XdmTree
+            formikProps={formikProps}
+            selectedNodeId={selectedNodeId}
+            onSelect={setSelectedNodeId}
+          />
+        </div>
+        <div className="u-gapLeft2x">
+          <div>
+            {selectedNodeId ? (
+              <NodeEdit
+                formState={formState}
+                onNodeSelect={setSelectedNodeId}
+                selectedNodeId={selectedNodeId}
+              />
+            ) : (
+              <NoSelectedNodeView
+                schema={selectedSchema}
+                previouslySavedSchemaInfo={
+                  initInfo.settings && initInfo.settings.schema
+                }
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -114,7 +130,7 @@ XdmObject.propTypes = {
 };
 
 const XdmExtensionView = () => {
-  const [instancesMeta, setInstancesMeta] = useState();
+  const [instancesBySchemaMap, setInstancesBySchemaMap] = useState();
   const [selectedSchema, setSelectedSchema] = useState();
 
   return (
@@ -123,45 +139,46 @@ const XdmExtensionView = () => {
         // TODO: If we've already loaded the schemas, then don't load the
         // schemas again. Just call getInitialValues with the newly
         // selected schema and return the result.
-        return fetchInstancesMeta({
+        return fetchInstancesBySchemaMap({
           extensionSettings: initInfo.extensionSettings,
           orgId: initInfo.company.orgId,
           imsAccess: initInfo.tokens.imsAccess
-        }).then(fetchedInstancesMeta => {
-          setInstancesMeta(fetchedInstancesMeta);
+        }).then(_instancesBySchemaMap => {
+          setInstancesBySchemaMap(_instancesBySchemaMap);
 
-          if (!fetchedInstancesMeta.length) {
+          if (!_instancesBySchemaMap.size) {
             return {};
           }
 
           const { settings } = initInfo;
 
-          let matchingInstanceMeta;
+          let matchingSchema;
 
+          // TODO: Break out into a different function?
           if (settings && settings.schema) {
             const { id, version } = settings.schema;
             const majorVersion = getMajorVersionFromSchemaVersion(version);
 
-            matchingInstanceMeta = fetchedInstancesMeta.find(instanceMeta => {
+            matchingSchema = findKeyInMap(_instancesBySchemaMap, schema => {
               const instanceSchemaMajorVersion = getMajorVersionFromSchemaVersion(
-                instanceMeta.schema.version
+                schema.version
               );
               return (
-                id === instanceMeta.schema.id &&
-                majorVersion === instanceSchemaMajorVersion
+                id === schema.id && majorVersion === instanceSchemaMajorVersion
               );
             });
           }
 
-          if (!matchingInstanceMeta) {
-            [matchingInstanceMeta] = fetchedInstancesMeta;
+          if (!matchingSchema) {
+            // Use the first schema.
+            matchingSchema = _instancesBySchemaMap.keys().next().value;
           }
 
-          setSelectedSchema(matchingInstanceMeta);
+          setSelectedSchema(matchingSchema);
 
-          const initialValues = getInitialValues({
-            data: settings && settings.data,
-            schema: matchingInstanceMeta.schema
+          const initialValues = getInitialFormState({
+            data: (settings && settings.data) || {},
+            schema: matchingSchema
           });
 
           return initialValues;
@@ -180,14 +197,18 @@ const XdmExtensionView = () => {
       render={props => {
         const onSchemaSelected = schema => {
           setSelectedSchema(schema);
-          // reset form using props.resetForm()
+          const initialValues = getInitialFormState({
+            data: {},
+            schema
+          });
+          props.resetForm(initialValues);
         };
 
         return (
           <XdmObject
             {...props}
             // schema={schema}
-            instancesMeta={instancesMeta}
+            instancesBySchemaMap={instancesBySchemaMap}
             selectedSchema={selectedSchema}
             setSelectedSchema={onSchemaSelected}
           />

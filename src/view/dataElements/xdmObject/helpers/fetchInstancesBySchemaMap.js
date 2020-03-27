@@ -155,7 +155,7 @@ export default ({ extensionSettings, orgId, imsAccess }) => {
 
   const instancesMeta = extensionSettings.instances.map(instance => {
     return {
-      name: instance.name,
+      instance,
       configId: instance.configId
     };
   });
@@ -187,14 +187,25 @@ export default ({ extensionSettings, orgId, imsAccess }) => {
     })
     .then(schemasBySchemaRefMap => {
       instancesMeta.forEach(instanceInfo => {
+        // FIXME: If two instances have different datasets with equivalent schema refs
+        // (same ID and same major version) then schemaBySchemaRefMap will only contain
+        // one of the schema refs as a key, making this lookup break for the second
+        // instance, I think.
         instanceInfo.schema = schemasBySchemaRefMap.get(instanceInfo.schemaRef);
       });
 
-      // TODO: Produce schemaInstancesMap and return it.
-      // Map(
-      //   schema = instances
-      // )
+      const schemaInstancesMap = instancesMeta.reduce((memo, instanceMeta) => {
+        let instancesForSchema = memo.get(instanceMeta.schema);
 
-      return instancesMeta;
+        if (!instancesForSchema) {
+          instancesForSchema = [];
+          memo.set(instanceMeta.schema, instancesForSchema);
+        }
+
+        instancesForSchema.push(instanceMeta.instance);
+        return memo;
+      }, new Map());
+
+      return schemaInstancesMap;
     });
 };
