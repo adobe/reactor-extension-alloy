@@ -12,6 +12,23 @@ governing permissions and limitations under the License.
 
 import { WHOLE } from "../constants/populationStrategy";
 import { ARRAY, OBJECT } from "../constants/schemaType";
+import { EMPTY, FULL, PARTIAL } from "../constants/populationAmount";
+
+const calculatePopulationAmountForWholePopulationStrategy = wholeValue => {
+  return wholeValue ? FULL : EMPTY;
+};
+
+const calculatePopulationAmountForPartsPopulationStrategy = fullPopulationTally => {
+  if (fullPopulationTally.numPopulatedLeafs === fullPopulationTally.numLeafs) {
+    return FULL;
+  }
+
+  if (fullPopulationTally.numPopulatedLeafs === 0) {
+    return EMPTY;
+  }
+
+  return PARTIAL;
+};
 
 /**
  * The model representing a node on the XDM tree.
@@ -83,23 +100,15 @@ const getTreeNode = ({
 
   let isTouchedAtCurrentOrDescendantNode = false;
 
-  const isLeafNode = schema.type !== OBJECT && schema.type !== ARRAY;
   const fullPopulationTally = {
-    numLeafs: isLeafNode ? 1 : 0,
-    numPopulatedLeafs: isLeafNode ? 1 : 0
-  };
-  const confirmChildNodePopulation = populationTally => {
-    fullPopulationTally.numLeafs += populationTally.numLeafs;
-    // Allie understands! Please comment.
-    fullPopulationTally.numPopulatedLeafs += isUsingWholePopulationStrategy
-      ? populationTally.numLeafs
-      : populationTally.numPopulatedLeafs;
+    numLeafs: 0,
+    numPopulatedLeafs: 0
   };
 
-  if (isAutoPopulated) {
-    // Make sure it's recorded as 100% populated.
-    // confirmChildNodePopulation();
-  }
+  const confirmChildNodePopulation = populationTally => {
+    fullPopulationTally.numLeafs += populationTally.numLeafs;
+    fullPopulationTally.numPopulatedLeafs += populationTally.numPopulatedLeafs;
+  };
 
   const confirmTouchedAtCurrentOrDescendantNode = () => {
     if (!isTouchedAtCurrentOrDescendantNode) {
@@ -110,14 +119,6 @@ const getTreeNode = ({
 
   if (touched && touched.wholeValue) {
     confirmTouchedAtCurrentOrDescendantNode();
-  }
-
-  if (
-    !isAncestorUsingWholePopulationStrategy &&
-    isUsingWholePopulationStrategy &&
-    wholeValue
-  ) {
-    confirmChildNodePopulation();
   }
 
   if (schema.type === OBJECT && properties) {
@@ -164,9 +165,28 @@ const getTreeNode = ({
     });
   }
 
+  // If the current node doesn't have children, then the current node itself
+  // IS the leaf node that should be tallied.
+  if (!node.children) {
+    fullPopulationTally.numLeafs = 1;
+    fullPopulationTally.numPopulatedLeafs = wholeValue ? 1 : 0;
+  }
+
   notifyParentOfDataPopulation(fullPopulationTally);
-  node.populationPercentage =
-    fullPopulationTally.numPopulatedLeafs / fullPopulationTally.numLeafs;
+
+  // TODO: Come back to this. Only set population percentage if ancestor is using whole population strategy
+  // AND the ancestor has a value?
+  if (isAutoPopulated || isAncestorUsingWholePopulationStrategy) {
+    node.populationAmount = FULL;
+  } else if (populationStrategy === WHOLE) {
+    node.populationAmount = calculatePopulationAmountForWholePopulationStrategy(
+      wholeValue
+    );
+  } else {
+    node.populationAmount = calculatePopulationAmountForPartsPopulationStrategy(
+      fullPopulationTally
+    );
+  }
 
   if (isTouchedAtCurrentOrDescendantNode) {
     node.error =
