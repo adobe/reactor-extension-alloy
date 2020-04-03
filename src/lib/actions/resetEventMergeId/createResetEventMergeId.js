@@ -10,17 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewController from "../helpers/createExtensionViewController";
-import testInstanceNameOnlyView from "../helpers/testInstanceNameOnlyView";
-
-const extensionViewController = createExtensionViewController(
-  "dataElements/instanceNameOnly.html"
-);
-
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("ECID and Event Merge ID View").disablePageReloads.page(
-  "http://localhost:3000/viewSandbox.html"
-);
-
-testInstanceNameOnlyView(extensionViewController);
+module.exports = eventMergeIdCache => {
+  return settings => {
+    eventMergeIdCache.clearByEventMergeId(settings.eventMergeId);
+  };
+};

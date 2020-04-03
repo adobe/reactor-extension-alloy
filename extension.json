@@ -87,6 +87,24 @@
   },
   "actions": [
     {
+      "displayName": "Reset Event Merge ID",
+      "name": "reset-event-merge-id",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "eventMergeId": {
+            "type": "string",
+            "pattern": "^%[^%]+%$"
+          }
+        },
+        "required": ["eventMergeId"],
+        "additionalProperties": false
+      },
+      "libPath": "dist/lib/actions/resetEventMergeId/index.js",
+      "viewPath": "actions/resetEventMergeId.html"
+    },
+    {
       "displayName": "Send Event",
       "name": "send-event",
       "schema": {
@@ -136,10 +154,7 @@
                 "properties": {
                   "general": {
                     "type": "string",
-                    "enum": [
-                      "in",
-                      "out"
-                    ]
+                    "enum": ["in", "out"]
                   }
                 },
                 "additionalProperties": false
@@ -151,10 +166,7 @@
             ]
           }
         },
-        "required": [
-          "instanceName",
-          "consent"
-        ],
+        "required": ["instanceName", "consent"],
         "additionalProperties": false
       },
       "libPath": "dist/lib/actions/setConsent/index.js",
@@ -219,13 +231,17 @@
           "instanceName": {
             "type": "string",
             "minLength": 1
+          },
+          "cacheId": {
+            "type": "string",
+            "minLength": 1
           }
         },
-        "required": ["instanceName"],
+        "required": ["instanceName", "cacheId"],
         "additionalProperties": false
       },
       "libPath": "dist/lib/dataElements/eventMergeId/index.js",
-      "viewPath": "dataElements/instanceNameOnly.html"
+      "viewPath": "dataElements/eventMergeId.html"
     },
     {
       "displayName": "XDM Object",
