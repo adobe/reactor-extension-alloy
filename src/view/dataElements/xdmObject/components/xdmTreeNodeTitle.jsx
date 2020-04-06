@@ -18,7 +18,7 @@ import IconTip, {
 } from "../../../components/iconTip";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import "./xdmTreeNodeTitle.styl";
-import { EMPTY, PARTIAL } from "../constants/populationAmount";
+import { EMPTY, FULL, PARTIAL } from "../constants/populationAmount";
 
 /**
  * The display for a specific node within the XDM tree.
@@ -32,7 +32,7 @@ import { EMPTY, PARTIAL } from "../constants/populationAmount";
  * this node, if any.
  */
 const XdmTreeNodeTitle = props => {
-  const { displayName, type, isPopulated, error } = props;
+  const { displayName, type, populationAmount, error } = props;
 
   return (
     <div
@@ -57,7 +57,7 @@ const XdmTreeNodeTitle = props => {
       )}
       <PopulationAmountIndicator
         className="u-gapRight"
-        populationAmount={EMPTY}
+        populationAmount={populationAmount}
       />
       <span data-test-id="xdmTreeNodeTitleDisplayName">{displayName}</span>
       <span className="XdmTreeNodeTitle-type u-gapLeft u-gapRight">{type}</span>
@@ -68,7 +68,7 @@ const XdmTreeNodeTitle = props => {
 XdmTreeNodeTitle.propTypes = {
   displayName: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  isPopulated: PropTypes.bool.isRequired,
+  populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY]),
   error: PropTypes.string
 };
 

@@ -33,7 +33,7 @@ const renderTreeNodes = (nodes = []) => {
       children,
       displayName,
       type,
-      isPopulated,
+      populationAmount,
       error
     } = node;
     return (
@@ -42,7 +42,7 @@ const renderTreeNodes = (nodes = []) => {
           <XdmTreeNodeTitle
             displayName={displayName}
             type={type}
-            isPopulated={isPopulated}
+            populationAmount={populationAmount}
             error={error}
           />
         }
