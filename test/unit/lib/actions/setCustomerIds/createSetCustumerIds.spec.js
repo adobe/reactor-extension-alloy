@@ -11,22 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import createSetCustomerIds from "../../../../../src/lib/actions/setCustomerIds/createSetCustomerIds";
-import turbineVariable from "../../../helpers/turbineVariable";
 
 describe("Set Customer IDs", () => {
-  let mockLogger;
+  let turbine;
 
   beforeEach(() => {
-    mockLogger = {
-      error: jasmine.createSpy()
+    turbine = {
+      logger: jasmine.createSpyObj("logger", ["error"])
     };
-    turbineVariable.mock({
-      logger: mockLogger
-    });
-  });
-
-  afterEach(() => {
-    turbineVariable.reset();
   });
 
   it("executes setCustomerIds command", () => {
@@ -36,7 +28,7 @@ describe("Set Customer IDs", () => {
         instance
       })
     };
-    const action = createSetCustomerIds(instanceManager);
+    const action = createSetCustomerIds({ instanceManager, turbine });
 
     action({
       instanceName: "instance1",
@@ -69,7 +61,7 @@ describe("Set Customer IDs", () => {
         return undefined;
       }
     };
-    const action = createSetCustomerIds(instanceManager);
+    const action = createSetCustomerIds({ instanceManager, turbine });
 
     action({
       instanceName: "instance1",
@@ -84,7 +76,7 @@ describe("Set Customer IDs", () => {
       ]
     });
 
-    expect(mockLogger.error).toHaveBeenCalledWith(
+    expect(turbine.logger.error).toHaveBeenCalledWith(
       'Failed to set customer IDs for instance "instance1". No matching instance was configured with this name.'
     );
   });

@@ -11,22 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import createSetConsent from "../../../../../src/lib/actions/setConsent/createSetConsent";
-import turbineVariable from "../../../helpers/turbineVariable";
 
 describe("Set Consent", () => {
-  let mockLogger;
+  let turbine;
 
   beforeEach(() => {
-    mockLogger = {
-      error: jasmine.createSpy()
+    turbine = {
+      logger: jasmine.createSpyObj("logger", ["error"])
     };
-    turbineVariable.mock({
-      logger: mockLogger
-    });
-  });
-
-  afterEach(() => {
-    turbineVariable.reset();
   });
 
   ["in", "out"].forEach(generalConsent => {
@@ -37,7 +29,7 @@ describe("Set Consent", () => {
           instance
         })
       };
-      const action = createSetConsent(instanceManager);
+      const action = createSetConsent({ instanceManager, turbine });
 
       action({
         instanceName: "myinstance",
@@ -57,14 +49,14 @@ describe("Set Consent", () => {
         return undefined;
       }
     };
-    const action = createSetConsent(instanceManager);
+    const action = createSetConsent({ instanceManager, turbine });
 
     action({
       instanceName: "myinstance",
       purposes: "none"
     });
 
-    expect(mockLogger.error).toHaveBeenCalledWith(
+    expect(turbine.logger.error).toHaveBeenCalledWith(
       'Failed to set consent for instance "myinstance". No matching instance was configured with this name.'
     );
   });

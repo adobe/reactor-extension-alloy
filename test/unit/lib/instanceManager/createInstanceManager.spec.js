@@ -11,15 +11,15 @@ governing permissions and limitations under the License.
 */
 
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
-import turbineVariable from "../../helpers/turbineVariable";
 
 describe("Instance Manager", () => {
+  let turbine;
   let runAlloy;
   let instanceManager;
   let mockWindow;
 
   beforeEach(() => {
-    turbineVariable.mock({
+    turbine = {
       getExtensionSettings() {
         return {
           instances: [
@@ -35,7 +35,7 @@ describe("Instance Manager", () => {
           ]
         };
       }
-    });
+    };
     mockWindow = {};
     runAlloy = jasmine.createSpy().and.callFake(names => {
       names.forEach(name => {
@@ -51,15 +51,12 @@ describe("Instance Manager", () => {
           });
       });
     });
-    instanceManager = createInstanceManager(
-      mockWindow,
+    instanceManager = createInstanceManager({
+      turbine,
+      window: mockWindow,
       runAlloy,
-      "ABC@AdobeOrg"
-    );
-  });
-
-  afterEach(() => {
-    turbineVariable.reset();
+      orgId: "ABC@AdobeOrg"
+    });
   });
 
   it("runs alloy", () => {

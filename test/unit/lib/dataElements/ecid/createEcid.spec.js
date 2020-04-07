@@ -11,22 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import createEcid from "../../../../../src/lib/dataElements/ecid/createEcid";
-import turbineVariable from "../../../helpers/turbineVariable";
 
 describe("ECID", () => {
-  let mockLogger;
+  let turbine;
 
   beforeEach(() => {
-    mockLogger = {
-      error: jasmine.createSpy()
+    turbine = {
+      logger: jasmine.createSpyObj("logger", ["error"])
     };
-    turbineVariable.mock({
-      logger: mockLogger
-    });
-  });
-
-  afterEach(() => {
-    turbineVariable.reset();
   });
 
   it("returns ECID", () => {
@@ -37,7 +29,7 @@ describe("ECID", () => {
         }
       })
     };
-    const dataElement = createEcid(instanceManager);
+    const dataElement = createEcid({ instanceManager, turbine });
 
     const value = dataElement({
       instanceName: "myinstance"
@@ -51,13 +43,13 @@ describe("ECID", () => {
     const instanceManager = {
       getAccessor: () => undefined
     };
-    const dataElement = createEcid(instanceManager);
+    const dataElement = createEcid({ instanceManager, turbine });
 
     dataElement({
       instanceName: "myinstance"
     });
 
-    expect(mockLogger.error).toHaveBeenCalledWith(
+    expect(turbine.logger.error).toHaveBeenCalledWith(
       'Failed to retrieve ECID for instance "myinstance". No matching instance was configured with this name.'
     );
   });

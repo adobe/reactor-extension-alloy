@@ -11,22 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import createEventMergeId from "../../../../../src/lib/dataElements/eventMergeId/createEventMergeId";
-import turbineVariable from "../../../helpers/turbineVariable";
 
 describe("Event Merge ID", () => {
-  let mockLogger;
+  let turbine;
 
   beforeEach(() => {
-    mockLogger = {
-      error: jasmine.createSpy()
+    turbine = {
+      logger: jasmine.createSpyObj("logger", ["error"])
     };
-    turbineVariable.mock({
-      logger: mockLogger
-    });
-  });
-
-  afterEach(() => {
-    turbineVariable.reset();
   });
 
   it("returns event merge ID", () => {
@@ -37,7 +29,7 @@ describe("Event Merge ID", () => {
         }
       })
     };
-    const dataElement = createEventMergeId(instanceManager);
+    const dataElement = createEventMergeId({ instanceManager, turbine });
 
     const value = dataElement({
       instanceName: "myinstance"
@@ -51,13 +43,13 @@ describe("Event Merge ID", () => {
     const instanceManager = {
       getAccessor: () => undefined
     };
-    const dataElement = createEventMergeId(instanceManager);
+    const dataElement = createEventMergeId({ instanceManager, turbine });
 
     dataElement({
       instanceName: "myinstance"
     });
 
-    expect(mockLogger.error).toHaveBeenCalledWith(
+    expect(turbine.logger.error).toHaveBeenCalledWith(
       'Failed to create event merge ID for instance "myinstance". No matching instance was configured with this name.'
     );
   });

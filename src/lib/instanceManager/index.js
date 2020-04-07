@@ -13,8 +13,9 @@ governing permissions and limitations under the License.
 const runAlloy = require("../runAlloy");
 const createInstanceManager = require("./createInstanceManager");
 
-module.exports = createInstanceManager(
+module.exports = createInstanceManager({
+  turbine,
   window,
   runAlloy,
-  _satellite.company.orgId
-);
+  orgId: _satellite.company.orgId
+});

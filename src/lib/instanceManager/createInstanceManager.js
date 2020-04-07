@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = (window, runAlloy, orgId) => {
+module.exports = ({ turbine, window, runAlloy, orgId }) => {
   const accessorByInstanceName = {};
   const { instances } = turbine.getExtensionSettings();
   const names = instances.map(instance => instance.name);

@@ -11,22 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import createSendEvent from "../../../../../src/lib/actions/sendEvent/createSendEvent";
-import turbineVariable from "../../../helpers/turbineVariable";
 
 describe("Send Event", () => {
-  let mockLogger;
+  let turbine;
 
   beforeEach(() => {
-    mockLogger = {
-      error: jasmine.createSpy()
+    turbine = {
+      logger: jasmine.createSpyObj("logger", ["error"])
     };
-    turbineVariable.mock({
-      logger: mockLogger
-    });
-  });
-
-  afterEach(() => {
-    turbineVariable.reset();
   });
 
   it("executes event command", () => {
@@ -36,7 +28,7 @@ describe("Send Event", () => {
         instance
       })
     };
-    const action = createSendEvent(instanceManager);
+    const action = createSendEvent({ instanceManager, turbine });
 
     action({
       instanceName: "myinstance",
@@ -61,7 +53,7 @@ describe("Send Event", () => {
         return undefined;
       }
     };
-    const action = createSendEvent(instanceManager);
+    const action = createSendEvent({ instanceManager, turbine });
 
     action({
       instanceName: "myinstance",
@@ -71,7 +63,7 @@ describe("Send Event", () => {
       }
     });
 
-    expect(mockLogger.error).toHaveBeenCalledWith(
+    expect(turbine.logger.error).toHaveBeenCalledWith(
       'Failed to send event for instance "myinstance". No matching instance was configured with this name.'
     );
   });

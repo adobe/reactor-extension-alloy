@@ -13,4 +13,4 @@ governing permissions and limitations under the License.
 const createSetCustomerIds = require("./createSetCustomerIds");
 const instanceManager = require("../../instanceManager/index");
 
-module.exports = createSetCustomerIds(instanceManager);
+module.exports = createSetCustomerIds({ instanceManager, turbine });
