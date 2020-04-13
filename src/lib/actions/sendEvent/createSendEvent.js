@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = instanceManager => settings => {
+module.exports = ({ instanceManager, turbine }) => settings => {
   const { instanceName, ...otherSettings } = settings;
   const instanceAccessor = instanceManager.getAccessor(instanceName);
 
