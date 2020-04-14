@@ -12,6 +12,8 @@ governing permissions and limitations under the License.
 
 module.exports = eventMergeIdCache => {
   return settings => {
+    // A new event merge ID will be automatically created the next
+    // time the data element is accessed.
     eventMergeIdCache.clearByEventMergeId(settings.eventMergeId);
   };
 };
