@@ -13,4 +13,4 @@ governing permissions and limitations under the License.
 const createEcid = require("./createEcid");
 const instanceManager = require("../../instanceManager/index");
 
-module.exports = createEcid(instanceManager);
+module.exports = createEcid({ instanceManager, turbine });

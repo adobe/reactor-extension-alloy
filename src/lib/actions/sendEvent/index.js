@@ -13,4 +13,4 @@ governing permissions and limitations under the License.
 const createSendEvent = require("./createSendEvent");
 const instanceManager = require("../../instanceManager/index");
 
-module.exports = createSendEvent(instanceManager);
+module.exports = createSendEvent({ instanceManager, turbine });

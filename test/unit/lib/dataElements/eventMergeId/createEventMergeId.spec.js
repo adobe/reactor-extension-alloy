@@ -11,22 +11,18 @@ governing permissions and limitations under the License.
 */
 
 import createEventMergeId from "../../../../../src/lib/dataElements/eventMergeId/createEventMergeId";
-import turbineVariable from "../../../helpers/turbineVariable";
 
 describe("Event Merge ID", () => {
-  let mockLogger;
   let eventMergeIdCache;
   let instanceAccessor;
   let instanceManager;
   let dataElement;
+  let turbine;
 
   beforeEach(() => {
-    mockLogger = {
-      error: jasmine.createSpy()
+    turbine = {
+      logger: jasmine.createSpyObj("logger", ["error"])
     };
-    turbineVariable.mock({
-      logger: mockLogger
-    });
     instanceAccessor = jasmine.createSpyObj("instance", ["createEventMergeId"]);
     instanceManager = jasmine.createSpyObj("instanceManager", {
       getAccessor: instanceAccessor
@@ -35,11 +31,11 @@ describe("Event Merge ID", () => {
       "getByCacheId",
       "set"
     ]);
-    dataElement = createEventMergeId(instanceManager, eventMergeIdCache);
-  });
-
-  afterEach(() => {
-    turbineVariable.reset();
+    dataElement = createEventMergeId({
+      instanceManager,
+      eventMergeIdCache,
+      turbine
+    });
   });
 
   it("produces and caches event merge ID based on cache ID", () => {
@@ -92,7 +88,7 @@ describe("Event Merge ID", () => {
       cacheId: "cacheId1"
     });
 
-    expect(mockLogger.error).toHaveBeenCalledWith(
+    expect(turbine.logger.error).toHaveBeenCalledWith(
       'Failed to create event merge ID for instance "myinstance". No matching instance was configured with this name.'
     );
   });
