@@ -9,27 +9,16 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-module.exports = ({
-  instanceManager,
-  eventMergeIdCache,
-  turbine
-}) => settings => {
+module.exports = ({ instanceManager, eventMergeIdCache }) => settings => {
   // Optimally we would use the data element name as the cache ID, but
   // we don't receive the data element name from Turbine, so we have to use
   // a separate cache ID that was generated when the data element was created.
-  const { instanceName, cacheId } = settings;
+  const { cacheId } = settings;
   let eventMergeId = eventMergeIdCache.getByCacheId(cacheId);
 
   if (!eventMergeId) {
-    const instanceAccessor = instanceManager.getAccessor(instanceName);
-    if (instanceAccessor) {
-      eventMergeId = instanceAccessor.createEventMergeId();
-      eventMergeIdCache.set(cacheId, eventMergeId);
-    } else {
-      turbine.logger.error(
-        `Failed to create event merge ID for instance "${instanceName}". No matching instance was configured with this name.`
-      );
-    }
+    eventMergeId = instanceManager.createEventMergeId();
+    eventMergeIdCache.set(cacheId, eventMergeId);
   }
 
   return eventMergeId;

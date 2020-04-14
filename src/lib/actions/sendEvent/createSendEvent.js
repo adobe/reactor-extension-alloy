@@ -12,10 +12,10 @@ governing permissions and limitations under the License.
 
 module.exports = ({ instanceManager, turbine }) => settings => {
   const { instanceName, ...otherSettings } = settings;
-  const instanceAccessor = instanceManager.getAccessor(instanceName);
+  const instance = instanceManager.getInstance(instanceName);
 
-  if (instanceAccessor) {
-    instanceAccessor.instance("event", otherSettings);
+  if (instance) {
+    instance("event", otherSettings);
   } else {
     turbine.logger.error(
       `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`

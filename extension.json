@@ -228,16 +228,12 @@
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
         "properties": {
-          "instanceName": {
-            "type": "string",
-            "minLength": 1
-          },
           "cacheId": {
             "type": "string",
             "minLength": 1
           }
         },
-        "required": ["instanceName", "cacheId"],
+        "required": ["cacheId"],
         "additionalProperties": false
       },
       "libPath": "dist/lib/dataElements/eventMergeId/index.js",

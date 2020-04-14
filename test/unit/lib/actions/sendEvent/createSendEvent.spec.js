@@ -23,11 +23,9 @@ describe("Send Event", () => {
 
   it("executes event command", () => {
     const instance = jasmine.createSpy();
-    const instanceManager = {
-      getAccessor: jasmine.createSpy().and.returnValue({
-        instance
-      })
-    };
+    const instanceManager = jasmine.createSpyObj("instanceManager", {
+      getInstance: instance
+    });
     const action = createSendEvent({ instanceManager, turbine });
 
     action({
@@ -38,7 +36,7 @@ describe("Send Event", () => {
       }
     });
 
-    expect(instanceManager.getAccessor).toHaveBeenCalledWith("myinstance");
+    expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
     expect(instance).toHaveBeenCalledWith("event", {
       viewStart: true,
       xdm: {
@@ -48,11 +46,9 @@ describe("Send Event", () => {
   });
 
   it("logs an error when no matching instance found", () => {
-    const instanceManager = {
-      getAccessor() {
-        return undefined;
-      }
-    };
+    const instanceManager = jasmine.createSpyObj("instanceManager", {
+      getInstance: undefined
+    });
     const action = createSendEvent({ instanceManager, turbine });
 
     action({

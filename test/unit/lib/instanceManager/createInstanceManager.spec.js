@@ -52,9 +52,8 @@ describe("Instance Manager", () => {
           .createSpy()
           .and.callFake((commandName, options) => {
             if (commandName === "configure") {
-              options.reactorRegisterGetEcid(() => `${name}:ecid`);
               options.reactorRegisterCreateEventMergeId(
-                () => `${name}:eventMergeId`
+                () => `randomEventMergeId`
               );
             }
           });
@@ -79,14 +78,12 @@ describe("Instance Manager", () => {
       configId: "PR123",
       debugEnabled: false,
       orgId: "ABC@AdobeOrg",
-      reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
       configId: "PR456",
       debugEnabled: false,
       orgId: "DIFFERENTORG@AdobeOrg",
-      reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
   });
@@ -98,7 +95,6 @@ describe("Instance Manager", () => {
       configId: "PR123",
       debugEnabled: true,
       orgId: "ABC@AdobeOrg",
-      reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
   });
@@ -115,11 +111,15 @@ describe("Instance Manager", () => {
     expect(mockWindow.alloy1).toHaveBeenCalledWith("debug", { enabled: false });
   });
 
-  it("returns accessor by name", () => {
+  it("returns instance by name", () => {
     build();
-    const accessor = instanceManager.getAccessor("alloy2");
-    expect(accessor.instance).toBe(mockWindow.alloy2);
-    expect(accessor.getEcid()).toBe("alloy2:ecid");
-    expect(accessor.createEventMergeId()).toBe("alloy2:eventMergeId");
+    const instance = instanceManager.getInstance("alloy2");
+    expect(instance).toBe(mockWindow.alloy2);
+  });
+
+  it("creates an event merge ID", () => {
+    build();
+    const eventMergeId = instanceManager.createEventMergeId();
+    expect(eventMergeId).toBe("randomEventMergeId");
   });
 });

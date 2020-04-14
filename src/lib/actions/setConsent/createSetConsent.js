@@ -12,10 +12,10 @@ governing permissions and limitations under the License.
 
 module.exports = ({ instanceManager, turbine }) => settings => {
   const { instanceName, consent } = settings;
-  const instanceAccessor = instanceManager.getAccessor(instanceName);
+  const instance = instanceManager.getInstance(instanceName);
 
-  if (instanceAccessor) {
-    instanceAccessor.instance("setConsent", consent);
+  if (instance) {
+    instance("setConsent", consent);
   } else {
     turbine.logger.error(
       `Failed to set consent for instance "${instanceName}". No matching instance was configured with this name.`

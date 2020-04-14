@@ -12,16 +12,16 @@ governing permissions and limitations under the License.
 
 module.exports = ({ instanceManager, turbine }) => settings => {
   const { instanceName, customerIds } = settings;
-  const instanceAccessor = instanceManager.getAccessor(instanceName);
+  const instance = instanceManager.getInstance(instanceName);
 
-  if (instanceAccessor) {
+  if (instance) {
     const customerIdsConfig = customerIds.reduce((config, customerIdObject) => {
       config[customerIdObject.namespace] = customerIdObject;
 
       return config;
     }, {});
 
-    instanceAccessor.instance("setCustomerIds", customerIdsConfig);
+    instance("setCustomerIds", customerIdsConfig);
   } else {
     turbine.logger.error(
       `Failed to set customer IDs for instance "${instanceName}". No matching instance was configured with this name.`

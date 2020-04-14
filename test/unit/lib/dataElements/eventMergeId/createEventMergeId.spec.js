@@ -14,7 +14,6 @@ import createEventMergeId from "../../../../../src/lib/dataElements/eventMergeId
 
 describe("Event Merge ID", () => {
   let eventMergeIdCache;
-  let instanceAccessor;
   let instanceManager;
   let dataElement;
   let turbine;
@@ -23,9 +22,8 @@ describe("Event Merge ID", () => {
     turbine = {
       logger: jasmine.createSpyObj("logger", ["error"])
     };
-    instanceAccessor = jasmine.createSpyObj("instance", ["createEventMergeId"]);
     instanceManager = jasmine.createSpyObj("instanceManager", {
-      getAccessor: instanceAccessor
+      createEventMergeId: "randomEventMergeId"
     });
     eventMergeIdCache = jasmine.createSpyObj("eventMergeIdCache", [
       "getByCacheId",
@@ -39,7 +37,7 @@ describe("Event Merge ID", () => {
   });
 
   it("produces and caches event merge ID based on cache ID", () => {
-    instanceAccessor.createEventMergeId.and.returnValues(
+    instanceManager.createEventMergeId.and.returnValues(
       "eventMergeId1",
       "eventMergeId2"
     );
@@ -79,17 +77,5 @@ describe("Event Merge ID", () => {
     expect(result2).toBe("eventMergeId2");
     expect(result3).toBe("eventMergeId1");
     expect(result4).toBe("eventMergeId2Reset");
-  });
-
-  it("logs an error when no matching instance found", () => {
-    instanceManager.getAccessor.and.returnValue(undefined);
-    dataElement({
-      instanceName: "myinstance",
-      cacheId: "cacheId1"
-    });
-
-    expect(turbine.logger.error).toHaveBeenCalledWith(
-      'Failed to create event merge ID for instance "myinstance". No matching instance was configured with this name.'
-    );
   });
 });
