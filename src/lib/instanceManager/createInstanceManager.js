@@ -12,15 +12,19 @@ governing permissions and limitations under the License.
 
 module.exports = ({ turbine, window, runAlloy, orgId }) => {
   const accessorByInstanceName = {};
-  const { instances } = turbine.getExtensionSettings();
-  const names = instances.map(instance => instance.name);
+  const { instances: instancesSettings } = turbine.getExtensionSettings();
+  const instanceNames = instancesSettings.map(
+    instanceSettings => instanceSettings.name
+  );
 
-  runAlloy(names);
+  runAlloy(instanceNames);
 
-  instances.forEach(({ name, ...options }) => {
+  instancesSettings.forEach(({ name, ...options }) => {
+    const instance = window[name];
     const accessor = {};
-    window[name]("configure", {
+    instance("configure", {
       ...options,
+      debugEnabled: turbine.debugEnabled,
       orgId: options.orgId || orgId,
       // The Alloy build we're using for this extension
       // provides a backdoor to perform certain operations
@@ -33,8 +37,11 @@ module.exports = ({ turbine, window, runAlloy, orgId }) => {
         accessor.createEventMergeId = createEventMergeId;
       }
     });
-    accessor.instance = window[name];
+    accessor.instance = instance;
     accessorByInstanceName[name] = accessor;
+    turbine.onDebugChanged(enabled => {
+      instance("debug", { enabled });
+    });
   });
 
   return {
