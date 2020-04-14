@@ -18,24 +18,33 @@ describe("Instance Manager", () => {
   let instanceManager;
   let mockWindow;
 
+  const build = () => {
+    instanceManager = createInstanceManager({
+      turbine,
+      window: mockWindow,
+      runAlloy,
+      orgId: "ABC@AdobeOrg"
+    });
+  };
+
   beforeEach(() => {
-    turbine = {
-      getExtensionSettings() {
-        return {
-          instances: [
-            {
-              name: "alloy1",
-              configId: "PR123"
-            },
-            {
-              name: "alloy2",
-              configId: "PR456",
-              orgId: "DIFFERENTORG@AdobeOrg"
-            }
-          ]
-        };
-      }
-    };
+    turbine = jasmine.createSpyObj({
+      getExtensionSettings: {
+        instances: [
+          {
+            name: "alloy1",
+            configId: "PR123"
+          },
+          {
+            name: "alloy2",
+            configId: "PR456",
+            orgId: "DIFFERENTORG@AdobeOrg"
+          }
+        ]
+      },
+      onDebugChanged: undefined
+    });
+    turbine.debugEnabled = false;
     mockWindow = {};
     runAlloy = jasmine.createSpy().and.callFake(names => {
       names.forEach(name => {
@@ -51,39 +60,63 @@ describe("Instance Manager", () => {
           });
       });
     });
-    instanceManager = createInstanceManager({
-      turbine,
-      window: mockWindow,
-      runAlloy,
-      orgId: "ABC@AdobeOrg"
-    });
   });
 
   it("runs alloy", () => {
+    build();
     expect(runAlloy).toHaveBeenCalledWith(["alloy1", "alloy2"]);
   });
 
   it("creates an SDK instance for each configured instance", () => {
+    build();
     expect(mockWindow.alloy1).toEqual(jasmine.any(Function));
     expect(mockWindow.alloy2).toEqual(jasmine.any(Function));
   });
 
   it("configures an SDK instance for each configured instance", () => {
+    build();
     expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
       configId: "PR123",
+      debugEnabled: false,
       orgId: "ABC@AdobeOrg",
       reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
       configId: "PR456",
+      debugEnabled: false,
       orgId: "DIFFERENTORG@AdobeOrg",
       reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
   });
 
+  it("configures SDK instance with debugging enabled if Launch debugging is enabled", () => {
+    turbine.debugEnabled = true;
+    build();
+    expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
+      configId: "PR123",
+      debugEnabled: true,
+      orgId: "ABC@AdobeOrg",
+      reactorRegisterGetEcid: jasmine.any(Function),
+      reactorRegisterCreateEventMergeId: jasmine.any(Function)
+    });
+  });
+
+  it("toggles SDK debugging when Launch debugging is toggled", () => {
+    const onDebugChangedCallbacks = [];
+    turbine.onDebugChanged.and.callFake(callback => {
+      onDebugChangedCallbacks.push(callback);
+    });
+    build();
+    onDebugChangedCallbacks.forEach(callback => callback(true));
+    expect(mockWindow.alloy1).toHaveBeenCalledWith("debug", { enabled: true });
+    onDebugChangedCallbacks.forEach(callback => callback(false));
+    expect(mockWindow.alloy1).toHaveBeenCalledWith("debug", { enabled: false });
+  });
+
   it("returns accessor by name", () => {
+    build();
     const accessor = instanceManager.getAccessor("alloy2");
     expect(accessor.instance).toBe(mockWindow.alloy2);
     expect(accessor.getEcid()).toBe("alloy2:ecid");
