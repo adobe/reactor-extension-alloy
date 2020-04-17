@@ -13,44 +13,69 @@ governing permissions and limitations under the License.
 import createEventMergeId from "../../../../../src/lib/dataElements/eventMergeId/createEventMergeId";
 
 describe("Event Merge ID", () => {
+  let eventMergeIdCache;
+  let instanceManager;
+  let dataElement;
   let turbine;
 
   beforeEach(() => {
     turbine = {
       logger: jasmine.createSpyObj("logger", ["error"])
     };
+    instanceManager = jasmine.createSpyObj("instanceManager", {
+      createEventMergeId: "randomEventMergeId"
+    });
+    eventMergeIdCache = jasmine.createSpyObj("eventMergeIdCache", [
+      "getByCacheId",
+      "set"
+    ]);
+    dataElement = createEventMergeId({
+      instanceManager,
+      eventMergeIdCache,
+      turbine
+    });
   });
 
-  it("returns event merge ID", () => {
-    const instanceManager = {
-      getAccessor: jasmine.createSpy().and.returnValue({
-        createEventMergeId() {
-          return "ABC123";
-        }
-      })
-    };
-    const dataElement = createEventMergeId({ instanceManager, turbine });
-
-    const value = dataElement({
-      instanceName: "myinstance"
-    });
-
-    expect(instanceManager.getAccessor).toHaveBeenCalledWith("myinstance");
-    expect(value).toBe("ABC123");
-  });
-
-  it("logs an error when no matching instance found", () => {
-    const instanceManager = {
-      getAccessor: () => undefined
-    };
-    const dataElement = createEventMergeId({ instanceManager, turbine });
-
-    dataElement({
-      instanceName: "myinstance"
-    });
-
-    expect(turbine.logger.error).toHaveBeenCalledWith(
-      'Failed to create event merge ID for instance "myinstance". No matching instance was configured with this name.'
+  it("produces and caches event merge ID based on cache ID", () => {
+    instanceManager.createEventMergeId.and.returnValues(
+      "eventMergeId1",
+      "eventMergeId2"
     );
+    eventMergeIdCache.getByCacheId.and.returnValues(
+      undefined,
+      undefined,
+      "eventMergeId1",
+      // Simulate the event merge ID having being reset through the Reset Event Merge ID action.
+      "eventMergeId2Reset"
+    );
+    const result1 = dataElement({
+      instanceName: "myinstance",
+      cacheId: "cacheId1"
+    });
+    const result2 = dataElement({
+      instanceName: "myinstance",
+      cacheId: "cacheId2"
+    });
+    const result3 = dataElement({
+      instanceName: "myinstance",
+      cacheId: "cacheId1"
+    });
+    const result4 = dataElement({
+      instanceName: "myinstance",
+      cacheId: "cacheId2"
+    });
+    expect(eventMergeIdCache.set).toHaveBeenCalledWith(
+      "cacheId1",
+      "eventMergeId1"
+    );
+    expect(eventMergeIdCache.set).toHaveBeenCalledWith(
+      "cacheId2",
+      "eventMergeId2"
+    );
+    expect(eventMergeIdCache.set).toHaveBeenCalledTimes(2);
+    expect(result1).toBe("eventMergeId1");
+    expect(result2).toBe("eventMergeId2");
+    expect(result3).toBe("eventMergeId1");
+    expect(result4).toBe("eventMergeId2Reset");
   });
 });

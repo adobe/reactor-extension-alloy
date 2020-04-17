@@ -10,26 +10,21 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
+import createResetEventMergeId from "../../../../../src/lib/actions/resetEventMergeId/createResetEventMergeId";
 
-const FillParentAndCenterChildren = ({ children, className }) => {
-  return (
-    <div
-      className={classNames(
-        "u-flex u-fullHeight u-alignItemsCenter u-justifyContentCenter",
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+describe("createResetEventMergeId", () => {
+  let eventMergeIdCache;
+  let resetEventMergeId;
 
-FillParentAndCenterChildren.propTypes = {
-  children: PropTypes.node.isRequired,
-  className: PropTypes.string
-};
+  beforeEach(() => {
+    eventMergeIdCache = jasmine.createSpyObj("eventMergeIdCache", [
+      "clearByEventMergeId"
+    ]);
+    resetEventMergeId = createResetEventMergeId(eventMergeIdCache);
+  });
 
-export default FillParentAndCenterChildren;
+  it("resets event merge ID", () => {
+    resetEventMergeId({ eventMergeId: "foo" });
+    expect(eventMergeIdCache.clearByEventMergeId).toHaveBeenCalledWith("foo");
+  });
+});

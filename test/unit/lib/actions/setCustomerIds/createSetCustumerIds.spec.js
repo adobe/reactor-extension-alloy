@@ -23,11 +23,9 @@ describe("Set Customer IDs", () => {
 
   it("executes setCustomerIds command", () => {
     const instance = jasmine.createSpy();
-    const instanceManager = {
-      getAccessor: jasmine.createSpy().and.returnValue({
-        instance
-      })
-    };
+    const instanceManager = jasmine.createSpyObj("instanceManager", {
+      getInstance: instance
+    });
     const action = createSetCustomerIds({ instanceManager, turbine });
 
     action({
@@ -43,7 +41,7 @@ describe("Set Customer IDs", () => {
       ]
     });
 
-    expect(instanceManager.getAccessor).toHaveBeenCalledWith("instance1");
+    expect(instanceManager.getInstance).toHaveBeenCalledWith("instance1");
     expect(instance).toHaveBeenCalledWith("setCustomerIds", {
       ECID: {
         namespace: "ECID",
@@ -56,11 +54,9 @@ describe("Set Customer IDs", () => {
   });
 
   it("logs an error when no matching instance found", () => {
-    const instanceManager = {
-      getAccessor() {
-        return undefined;
-      }
-    };
+    const instanceManager = jasmine.createSpyObj("instanceManager", {
+      getInstance: undefined
+    });
     const action = createSetCustomerIds({ instanceManager, turbine });
 
     action({

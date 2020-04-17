@@ -10,18 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager, turbine }) => settings => {
-  const { instanceName } = settings;
-  const instanceAccessor = instanceManager.getAccessor(instanceName);
-  let ecid;
+@import "../global";
 
-  if (instanceAccessor) {
-    ecid = instanceAccessor.getEcid();
-  } else {
-    turbine.logger.error(
-      `Failed to retrieve ECID for instance "${instanceName}". No matching instance was configured with this name.`
-    );
-  }
-
-  return ecid;
-};
+.EventMergeId-description {
+  font-size: 18px;
+}

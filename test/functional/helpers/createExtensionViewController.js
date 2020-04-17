@@ -58,6 +58,8 @@ module.exports = viewPath => {
         }
       );
     },
+    getSettings,
+    validate,
     async expectIsValid() {
       const valid = await validate();
       await t
