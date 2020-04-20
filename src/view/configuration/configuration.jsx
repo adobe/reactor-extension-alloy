@@ -34,7 +34,6 @@ import ExtensionView from "../components/extensionView";
 import EditorButton from "../components/editorButton";
 import InfoTipLayout from "../components/infoTipLayout";
 import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
-import singleDataElementRegex from "../constants/singleDataElementRegex";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
 import "./configuration.styl";
 
@@ -178,8 +177,6 @@ const validateDuplicateValue = (createError, instances, key, message) => {
   );
 };
 
-const onBeforeEventSendValidationMessage = "Please specify a data element.";
-
 const validationSchema = object()
   .shape({
     instances: array().of(
@@ -217,10 +214,6 @@ const validationSchema = object()
                 }
               }
             })
-        }),
-        onBeforeEventSend: string().matches(singleDataElementRegex, {
-          message: onBeforeEventSendValidationMessage,
-          excludeEmptyString: true
         })
       })
     )
@@ -519,13 +512,16 @@ const Configuration = ({ formikProps, initInfo }) => {
                           name={`instances.${index}.prehidingStyle`}
                           component={EditorButton}
                           language="css"
+                          placeholder={
+                            "/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/"
+                          }
                         />
                       </div>
                     </div>
 
                     <h3>Data Collection</h3>
                     <div className="u-gapTop">
-                      <InfoTipLayout tip="If you want to add, remove, or modify fields from the event globally, you can configure an `onBeforeEventSend` callback. This callback will be called everytime an event is sent. This callback passes an object with a `xdm` field. Modify the `xdm` object to change the data that is sent in the event.">
+                      <InfoTipLayout tip='A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'>
                         <FieldLabel
                           labelFor="onBeforeEventSendField"
                           label="Callback function for modifying data before each event is sent to the server"
@@ -533,12 +529,14 @@ const Configuration = ({ formikProps, initInfo }) => {
                       </InfoTipLayout>
                       <div>
                         <WrappedField
-                          data-test-id="onBeforeEventSendField"
+                          data-test-id="onBeforeEventSendEditorButton"
                           id="onBeforeEventSendField"
                           name={`instances.${index}.onBeforeEventSend`}
-                          component={Textfield}
-                          componentClassName="u-fieldLong"
-                          supportDataElement="replace"
+                          component={EditorButton}
+                          language="javascript"
+                          placeholder={
+                            '// Modify content.xdm as necessary. For example:\n// content.xdm.product = "shirt";'
+                          }
                         />
                       </div>
                     </div>
@@ -580,9 +578,13 @@ const Configuration = ({ formikProps, initInfo }) => {
                                   pattern: currentPattern
                                 })
                                 .then(newPattern => {
-                                  values.instances[
-                                    index
-                                  ].downloadLinkQualifier = newPattern;
+                                  // A bug exists in the Launch UI where the promise is resolved
+                                  // with undefined if the user hits Cancel. Instead, the promise
+                                  // should have never been resolved or rejected.
+                                  // https://jira.corp.adobe.com/browse/DTM-14454
+                                  if (newPattern === undefined) {
+                                    return;
+                                  }
                                   setFieldValue(
                                     `instances.${index}.downloadLinkQualifier`,
                                     newPattern
