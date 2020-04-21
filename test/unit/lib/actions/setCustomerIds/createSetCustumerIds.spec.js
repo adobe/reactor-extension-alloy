@@ -13,22 +13,16 @@ governing permissions and limitations under the License.
 import createSetCustomerIds from "../../../../../src/lib/actions/setCustomerIds/createSetCustomerIds";
 
 describe("Set Customer IDs", () => {
-  let turbine;
-
-  beforeEach(() => {
-    turbine = {
-      logger: jasmine.createSpyObj("logger", ["error"])
-    };
-  });
-
   it("executes setCustomerIds command", () => {
-    const instance = jasmine.createSpy();
+    const promiseReturnedFromInstance = Promise.resolve();
+    const instance = jasmine
+      .createSpy()
+      .and.returnValue(promiseReturnedFromInstance);
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: instance
     });
-    const action = createSetCustomerIds({ instanceManager, turbine });
-
-    action({
+    const action = createSetCustomerIds({ instanceManager });
+    const promiseReturnedFromAction = action({
       instanceName: "instance1",
       customerIds: [
         {
@@ -41,6 +35,7 @@ describe("Set Customer IDs", () => {
       ]
     });
 
+    expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
     expect(instanceManager.getInstance).toHaveBeenCalledWith("instance1");
     expect(instance).toHaveBeenCalledWith("setCustomerIds", {
       ECID: {
@@ -53,27 +48,29 @@ describe("Set Customer IDs", () => {
     });
   });
 
-  it("logs an error when no matching instance found", () => {
+  it("throws an error when no matching instance found", () => {
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: undefined
     });
-    const action = createSetCustomerIds({ instanceManager, turbine });
+    const action = createSetCustomerIds({ instanceManager });
 
-    action({
-      instanceName: "instance1",
-      customerIds: [
-        {
-          namespace: "ECID",
-          id: "wvg",
-          authenticatedState: "loggedOut",
-          primary: false,
-          hash: true
-        }
-      ]
-    });
-
-    expect(turbine.logger.error).toHaveBeenCalledWith(
-      'Failed to set customer IDs for instance "instance1". No matching instance was configured with this name.'
+    expect(() => {
+      action({
+        instanceName: "instance1",
+        customerIds: [
+          {
+            namespace: "ECID",
+            id: "wvg",
+            authenticatedState: "loggedOut",
+            primary: false,
+            hash: true
+          }
+        ]
+      });
+    }).toThrow(
+      new Error(
+        'Failed to set customer IDs for instance "instance1". No matching instance was configured with this name.'
+      )
     );
   });
 });

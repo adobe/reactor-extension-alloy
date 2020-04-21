@@ -16,12 +16,8 @@ describe("Event Merge ID", () => {
   let eventMergeIdCache;
   let instanceManager;
   let dataElement;
-  let turbine;
 
   beforeEach(() => {
-    turbine = {
-      logger: jasmine.createSpyObj("logger", ["error"])
-    };
     instanceManager = jasmine.createSpyObj("instanceManager", {
       createEventMergeId: "randomEventMergeId"
     });
@@ -31,8 +27,7 @@ describe("Event Merge ID", () => {
     ]);
     dataElement = createEventMergeId({
       instanceManager,
-      eventMergeIdCache,
-      turbine
+      eventMergeIdCache
     });
   });
 
