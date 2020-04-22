@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import { WHOLE } from "../constants/populationStrategy";
 import { ARRAY, OBJECT } from "../constants/schemaType";
+import isWholeValuePopulated from "./isWholeValuePopulated";
 
 /**
  * The model representing a node on the XDM tree.
@@ -108,7 +109,7 @@ const getTreeNode = ({
   if (
     !isAncestorUsingWholePopulationStrategy &&
     isUsingWholePopulationStrategy &&
-    wholeValue
+    isWholeValuePopulated(wholeValue)
   ) {
     confirmDataPopulatedAtCurrentOrDescendantNode();
   }

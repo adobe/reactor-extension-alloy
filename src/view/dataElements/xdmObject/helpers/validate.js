@@ -12,7 +12,16 @@ governing permissions and limitations under the License.
 
 import { WHOLE } from "../constants/populationStrategy";
 import singleDataElementRegex from "../../../constants/singleDataElementRegex";
-import { ARRAY, OBJECT } from "../constants/schemaType";
+import {
+  ARRAY,
+  BOOLEAN,
+  INTEGER,
+  NUMBER,
+  OBJECT
+} from "../constants/schemaType";
+import isWholeValuePopulated from "./isWholeValuePopulated";
+import isNumberLike from "./isNumberLike";
+import isIntegerLike from "./isIntegerLike";
 
 /**
  * Validates the user's XDM input.
@@ -47,15 +56,38 @@ const validate = ({
   };
 
   if (populationStrategy === WHOLE) {
-    if (
-      (schema.type === OBJECT || schema.type === ARRAY) &&
-      wholeValue &&
-      !wholeValue.match(singleDataElementRegex)
-    ) {
-      return { wholeValue: "Value must be a data element." };
-    }
+    if (isWholeValuePopulated(wholeValue)) {
+      if (
+        (schema.type === OBJECT || schema.type === ARRAY) &&
+        !singleDataElementRegex.test(wholeValue)
+      ) {
+        return { wholeValue: "Value must be a data element." };
+      }
 
-    if (wholeValue !== "") {
+      if (
+        schema.type === NUMBER &&
+        !singleDataElementRegex.test(wholeValue) &&
+        !isNumberLike(wholeValue)
+      ) {
+        return { wholeValue: "Value must be a data element or number." };
+      }
+
+      if (
+        schema.type === INTEGER &&
+        !singleDataElementRegex.test(wholeValue) &&
+        !isIntegerLike(wholeValue)
+      ) {
+        return { wholeValue: "Value must be a data element or integer." };
+      }
+
+      if (
+        schema.type === BOOLEAN &&
+        !singleDataElementRegex.test(wholeValue) &&
+        typeof wholeValue !== "boolean"
+      ) {
+        return { wholeValue: "Value must be a data element." };
+      }
+
       confirmDataPopulatedAtCurrentOrDescendantNode();
     }
   } else {

@@ -152,19 +152,18 @@ const getFormStateNode = ({ schema, value, nodePath }) => {
 
   formStateNode.isPartsPopulationStrategySupported = isPartsPopulationStrategySupported;
 
-  // If value is a string, we know that a data element token (e.g., "%foo%") or static
-  // string value (e.g., "foo") has been directly provided and the user is intending to use
+  // If value is a string, boolean, or number, we know that a data element token (e.g., "%foo%")
+  // or static string value (e.g., "foo") has been directly provided and the user is intending to use
   // the WHOLE population strategy. Otherwise, the user is using the PARTS population strategy
   // (if a value exists) or hasn't decided which strategy to use (if no value exists)
   // in which case we'll use the PARTS population strategy if it's supported for the
-  // node. Note that if value is something else like a number or a boolean (anything that's
-  // not a string, object, or array), it would mean the user created the action using the
-  // Launch API. Because we currently have no way of representing numbers or booleans as
-  // values in the UI, we discard the value. Users wanting to use this action's UI and
-  // provide a non-string value like numbers or booleans will need to create data elements
-  // for the values and reference those data elements unless/until we provide enhanced ways
-  // of providing different types of constant values.
-  if (typeof value === "string") {
+  // node.
+  const valueType = typeof value;
+  if (
+    valueType === "string" ||
+    valueType === "boolean" ||
+    valueType === "number"
+  ) {
     formStateNode.populationStrategy = WHOLE;
     formStateNode.wholeValue = value;
   } else {
@@ -189,7 +188,7 @@ const formStateNodeShape = {
   isAutoPopulated: PropTypes.bool.isRequired,
   isAlwaysDisabled: PropTypes.bool.isRequired,
   isPartsPopulationStrategySupported: PropTypes.bool.isRequired,
-  wholeValue: PropTypes.string.isRequired,
+  wholeValue: PropTypes.any.isRequired,
   populationStrategy: PropTypes.oneOf([WHOLE, PARTS]).isRequired
 };
 

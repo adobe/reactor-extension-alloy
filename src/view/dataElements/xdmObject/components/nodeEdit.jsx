@@ -15,10 +15,35 @@ import PropTypes from "prop-types";
 import Breadcrumbs from "@react/react-spectrum/Breadcrumbs";
 import ArrayEdit from "./arrayEdit";
 import ObjectEdit from "./objectEdit";
-import NonObjectOrArrayEdit from "./nonObjectOrArrayEdit";
-import { ARRAY, OBJECT } from "../constants/schemaType";
+import BooleanEdit from "./booleanEdit";
+import NumberOrIntegerEdit from "./numberOrIntegerEdit";
+import StringEdit from "./stringEdit";
+import {
+  ARRAY,
+  OBJECT,
+  BOOLEAN,
+  NUMBER,
+  INTEGER
+} from "../constants/schemaType";
 import { formStateNodePropTypes } from "../helpers/getInitialFormState";
 import getNodeEditData from "../helpers/getNodeEditData";
+import AutoPopulationAlert from "./autoPopulationAlert";
+
+const getComponentForSchemaType = schemaType => {
+  switch (schemaType) {
+    case ARRAY:
+      return ArrayEdit;
+    case OBJECT:
+      return ObjectEdit;
+    case BOOLEAN:
+      return BooleanEdit;
+    case NUMBER:
+    case INTEGER:
+      return NumberOrIntegerEdit;
+    default:
+      return StringEdit;
+  }
+};
 
 /**
  * The form for editing a node in the XDM object. The form fields
@@ -32,15 +57,9 @@ const NodeEdit = props => {
     nodeId: selectedNodeId
   });
 
-  let TypeSpecificNodeEdit;
-
-  if (formStateNode.schema.type === ARRAY) {
-    TypeSpecificNodeEdit = ArrayEdit;
-  } else if (formStateNode.schema.type === OBJECT) {
-    TypeSpecificNodeEdit = ObjectEdit;
-  } else {
-    TypeSpecificNodeEdit = NonObjectOrArrayEdit;
-  }
+  const TypeSpecificNodeEdit = getComponentForSchemaType(
+    formStateNode.schema.type
+  );
 
   return (
     <div>
@@ -49,11 +68,14 @@ const NodeEdit = props => {
         items={breadcrumb}
         onBreadcrumbClick={item => onNodeSelect(item.nodeId)}
       />
-      <TypeSpecificNodeEdit
-        formStateNode={formStateNode}
-        fieldName={fieldName}
-        onNodeSelect={onNodeSelect}
-      />
+      <div>
+        {formStateNode.isAutoPopulated && <AutoPopulationAlert />}
+        <TypeSpecificNodeEdit
+          formStateNode={formStateNode}
+          fieldName={fieldName}
+          onNodeSelect={onNodeSelect}
+        />
+      </div>
     </div>
   );
 };

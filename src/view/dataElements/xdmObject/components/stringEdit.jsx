@@ -15,37 +15,30 @@ import PropTypes from "prop-types";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import Textfield from "@react/react-spectrum/Textfield";
 import WrappedField from "../../../components/wrappedField";
-import AutoPopulationAlert from "./autoPopulationAlert";
-import { formStateNodePropTypes } from "../helpers/getInitialFormState";
 
 /**
- * The form for editing a field that is neither an object nor an array.
+ * The form for editing a string field.
  */
-const NonObjectOrArrayEdit = props => {
-  const { formStateNode, fieldName } = props;
+const StringEdit = props => {
+  const { fieldName } = props;
 
   return (
     <div>
-      {formStateNode.isAutoPopulated && <AutoPopulationAlert />}
-      <div className="u-gapTop">
-        <FieldLabel labelFor="wholeValueField" label="Value" />
-
-        <WrappedField
-          data-test-id="wholeValueField"
-          id="wholeValueField"
-          name={`${fieldName}.wholeValue`}
-          component={Textfield}
-          componentClassName="u-fieldLong"
-          supportDataElement="append"
-        />
-      </div>
+      <FieldLabel labelFor="wholeValueField" label="Value" />
+      <WrappedField
+        data-test-id="wholeValueField"
+        id="wholeValueField"
+        name={`${fieldName}.wholeValue`}
+        component={Textfield}
+        componentClassName="u-fieldLong"
+        supportDataElement="append"
+      />
     </div>
   );
 };
 
-NonObjectOrArrayEdit.propTypes = {
-  formStateNode: formStateNodePropTypes.isRequired,
+StringEdit.propTypes = {
   fieldName: PropTypes.string.isRequired
 };
 
-export default NonObjectOrArrayEdit;
+export default StringEdit;

@@ -25,7 +25,6 @@ import getInitialFormState, {
 } from "../helpers/getInitialFormState";
 import { PARTS, WHOLE } from "../constants/populationStrategy";
 import { ARRAY, OBJECT } from "../constants/schemaType";
-import AutoPopulationAlert from "./autoPopulationAlert";
 
 /**
  * Displayed when the WHOLE population strategy is selected.
@@ -142,11 +141,11 @@ const ArrayEdit = props => {
 
   return (
     <div>
-      {formStateNode.isAutoPopulated && <AutoPopulationAlert />}
       {isPartsPopulationStrategySupported && (
         <WrappedField
           name={`${fieldName}.populationStrategy`}
           component={RadioGroup}
+          className="u-gapBottom"
         >
           <Radio
             data-test-id="partsPopulationStrategyField"
@@ -161,7 +160,7 @@ const ArrayEdit = props => {
           />
         </WrappedField>
       )}
-      <div className="u-gapTop2x">
+      <div>
         {populationStrategy === WHOLE ? (
           <WholePopulationStrategyForm fieldName={fieldName} />
         ) : (

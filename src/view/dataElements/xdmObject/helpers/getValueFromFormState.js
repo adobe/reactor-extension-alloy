@@ -11,7 +11,9 @@ governing permissions and limitations under the License.
 */
 
 import { WHOLE } from "../constants/populationStrategy";
-import { ARRAY, OBJECT } from "../constants/schemaType";
+import { ARRAY, NUMBER, INTEGER, OBJECT } from "../constants/schemaType";
+import isWholeValuePopulated from "./isWholeValuePopulated";
+import singleDataElementRegex from "../../../constants/singleDataElementRegex";
 
 /**
  * Computes and returns the user-provided value from a form state node. If the
@@ -23,38 +25,55 @@ import { ARRAY, OBJECT } from "../constants/schemaType";
  * @returns {*}
  */
 const getValueFromFormState = ({ formStateNode }) => {
-  if (formStateNode.populationStrategy === WHOLE) {
-    return formStateNode.wholeValue ? formStateNode.wholeValue : undefined;
-  }
+  const {
+    populationStrategy,
+    wholeValue,
+    properties,
+    items,
+    schema
+  } = formStateNode;
 
-  if (formStateNode.schema.type === OBJECT) {
-    if (!formStateNode.properties) {
+  if (populationStrategy === WHOLE) {
+    if (!isWholeValuePopulated(wholeValue)) {
       return undefined;
     }
 
-    const value = Object.keys(formStateNode.properties).reduce(
-      (memo, propertyName) => {
-        const propertyFormStateNode = formStateNode.properties[propertyName];
-        const propertyValue = getValueFromFormState({
-          formStateNode: propertyFormStateNode
-        });
-        if (propertyValue !== undefined) {
-          memo[propertyName] = propertyValue;
-        }
-        return memo;
-      },
-      {}
-    );
+    if (schema.type === NUMBER || schema.type === INTEGER) {
+      if (singleDataElementRegex.test(wholeValue)) {
+        return wholeValue;
+      }
+
+      return Number(wholeValue);
+    }
+
+    return wholeValue;
+  }
+
+  if (schema.type === OBJECT) {
+    if (!properties) {
+      return undefined;
+    }
+
+    const value = Object.keys(properties).reduce((memo, propertyName) => {
+      const propertyFormStateNode = properties[propertyName];
+      const propertyValue = getValueFromFormState({
+        formStateNode: propertyFormStateNode
+      });
+      if (propertyValue !== undefined) {
+        memo[propertyName] = propertyValue;
+      }
+      return memo;
+    }, {});
 
     return Object.keys(value).length ? value : undefined;
   }
 
-  if (formStateNode.schema.type === ARRAY) {
-    if (!formStateNode.items) {
+  if (schema.type === ARRAY) {
+    if (!items) {
       return undefined;
     }
 
-    const value = formStateNode.items.reduce((memo, itemFormStateNode) => {
+    const value = items.reduce((memo, itemFormStateNode) => {
       const itemValue = getValueFromFormState({
         formStateNode: itemFormStateNode
       });

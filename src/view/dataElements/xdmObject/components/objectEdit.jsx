@@ -18,7 +18,6 @@ import Textfield from "@react/react-spectrum/Textfield";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import WrappedField from "../../../components/wrappedField";
 import { PARTS, WHOLE } from "../constants/populationStrategy";
-import AutoPopulationAlert from "./autoPopulationAlert";
 import { formStateNodePropTypes } from "../helpers/getInitialFormState";
 
 /**
@@ -33,7 +32,6 @@ const ObjectEdit = props => {
 
   return (
     <div>
-      {formStateNode.isAutoPopulated && <AutoPopulationAlert />}
       {isPartsPopulationStrategySupported && (
         <WrappedField
           name={`${fieldName}.populationStrategy`}
