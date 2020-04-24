@@ -297,7 +297,7 @@ test("returns full valid settings", async () => {
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
         onBeforeEventSend:
-          'language=javascript;code=// Modify content.xdm as necessary. For example:\n// content.xdm.product = "shirt";',
+          'language=javascript;code=// Modify content.xdm as necessary. There is no need to wrap the code in a function\n// or return a value. For example:\n// content.xdm.product = "shirt";',
         context: ["web", "device", "environment", "placeContext"],
         downloadLinkQualifier: "[]"
       }
@@ -492,7 +492,7 @@ test("does not save onBeforeEventSend code if it matches placeholder", async () 
   await extensionViewController.init(defaultInitInfo, {
     openCodeEditor() {
       return Promise.resolve(
-        '// Modify content.xdm as necessary. For example:\n// content.xdm.product = "shirt";'
+        '// Modify content.xdm as necessary. There is no need to wrap the code in a function\n// or return a value. For example:\n// content.xdm.product = "shirt";'
       );
     }
   });
