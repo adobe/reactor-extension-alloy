@@ -101,7 +101,7 @@ test("initializes form fields with full settings", async () => {
         instances: [
           {
             name: "alloy1",
-            configId: "PR123",
+            edgeConfigId: "PR123",
             orgId: "ORG456@OtherCompanyOrg",
             edgeDomain: "testedge.com",
             edgeBasePath: "ee-beta",
@@ -115,7 +115,7 @@ test("initializes form fields with full settings", async () => {
           },
           {
             name: "alloy2",
-            configId: "PR456",
+            edgeConfigId: "PR456",
             defaultConsent: { general: "in" },
             idMigrationEnabled: false,
             thirdPartyCookiesEnabled: false,
@@ -180,7 +180,7 @@ test("initializes form fields with minimal settings", async () => {
         instances: [
           {
             name: "alloy1",
-            configId: "PR123"
+            edgeConfigId: "PR123"
           }
         ]
       }
@@ -234,7 +234,7 @@ test("returns minimal valid settings", async () => {
   await extensionViewController.expectSettings({
     instances: [
       {
-        configId: "PR123",
+        edgeConfigId: "PR123",
         name: "alloy"
       }
     ]
@@ -280,7 +280,7 @@ test("returns full valid settings", async () => {
     instances: [
       {
         name: "alloy1",
-        configId: "PR123",
+        edgeConfigId: "PR123",
         edgeDomain: `${defaultEdgeDomain}2`,
         edgeBasePath: `${defaultEdgeBasePath}-alpha`,
         errorsEnabled: false,
@@ -292,7 +292,7 @@ test("returns full valid settings", async () => {
       },
       {
         name: "alloy2",
-        configId: "PR456",
+        edgeConfigId: "PR456",
         orgId: "ABC123@AdobeOrg2",
         defaultConsent: { general: "pending" },
         idMigrationEnabled: false,
@@ -355,7 +355,7 @@ test("shows a warning when name is changed on existing configuration", async () 
         instances: [
           {
             name: "alloy",
-            configId: "PR123"
+            edgeConfigId: "PR123"
           }
         ]
       }

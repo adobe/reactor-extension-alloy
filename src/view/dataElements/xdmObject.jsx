@@ -89,7 +89,7 @@ const XdmExtensionView = () => {
     <ExtensionView
       getInitialValues={({ initInfo }) => {
         return fetchSchema({
-          configId: initInfo.extensionSettings.instances[0].configId,
+          edgeConfigId: initInfo.extensionSettings.instances[0].edgeConfigId,
           orgId: initInfo.company.orgId,
           imsAccess: initInfo.tokens.imsAccess
         }).then(fetchedSchema => {
