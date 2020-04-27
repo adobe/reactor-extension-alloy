@@ -12,20 +12,14 @@ governing permissions and limitations under the License.
 
 import PropTypes from "prop-types";
 import { WHOLE, PARTS } from "../constants/populationStrategy";
-import { OBJECT, ARRAY } from "../constants/schemaType";
 import autoPopulatedFields from "../constants/autoPopulatedFields";
 import alwaysDisabledFields from "../constants/alwaysDisabledFields";
+import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 let lastGeneratedNodeId = 0;
 const generateNodeId = () => {
   lastGeneratedNodeId += 1;
   return `node-${lastGeneratedNodeId}`;
-};
-
-const getNodePath = (parentNodePath, propertyOrIndexName) => {
-  return parentNodePath
-    ? `${parentNodePath}.${propertyOrIndexName}`
-    : propertyOrIndexName;
 };
 
 /**
@@ -80,9 +74,7 @@ const getNodePath = (parentNodePath, propertyOrIndexName) => {
  * The path for bar would be "foo.bar".
  * @returns FormStateNode
  */
-const getFormStateNode = ({ schema, value, nodePath }) => {
-  const { type } = schema;
-
+const getInitialFormStateNode = ({ schema, value, nodePath }) => {
   const formStateNode = {
     // We generate an ID rather than use something like a schema path
     // or field path because those paths would need to incorporate indexes
@@ -95,91 +87,25 @@ const getFormStateNode = ({ schema, value, nodePath }) => {
     isAlwaysDisabled: alwaysDisabledFields.includes(nodePath)
   };
 
-  let isPartsPopulationStrategySupported = false;
-
-  if (type === OBJECT) {
-    // Note if we aren't provided properties, we don't supported the
-    // PARTS population strategy. The identityMap property on an
-    // ExperienceEvent schema is one example of this.
-    const { properties = {} } = schema;
-    const propertyNames = Object.keys(properties);
-    let propertyFormStateNodes;
-
-    if (propertyNames.length) {
-      isPartsPopulationStrategySupported = true;
-      propertyFormStateNodes = propertyNames.reduce((memo, propertyName) => {
-        const propertySchema = properties[propertyName];
-        let propertyValue;
-
-        if (typeof value === "object") {
-          propertyValue = value[propertyName];
-        }
-
-        const propertyFormStateNode = getFormStateNode({
-          schema: propertySchema,
-          value: propertyValue,
-          nodePath: getNodePath(nodePath, propertyName)
-        });
-        memo[propertyName] = propertyFormStateNode;
-        return memo;
-      }, {});
-    }
-
-    formStateNode.properties = propertyFormStateNodes || {};
-  }
-
-  if (type === ARRAY) {
-    let itemFormStateNodes = [];
-    // Note if we aren't provided a schema for the array items (a case which
-    // may not exist), we don't supported the PARTS population strategy.
-    if (schema.items) {
-      isPartsPopulationStrategySupported = true;
-      if (Array.isArray(value) && value.length) {
-        itemFormStateNodes = value.map((itemValue, index) => {
-          const itemSchema = schema.items;
-          const itemFormStateNode = getFormStateNode({
-            schema: itemSchema,
-            value: itemValue,
-            nodePath: getNodePath(nodePath, index)
-          });
-          return itemFormStateNode;
-        });
-      }
-    }
-
-    formStateNode.items = itemFormStateNodes || [];
-  }
-
-  formStateNode.isPartsPopulationStrategySupported = isPartsPopulationStrategySupported;
-
-  // If value is a string, boolean, or number, we know that a data element token (e.g., "%foo%")
-  // or static string value (e.g., "foo") has been directly provided and the user is intending to use
-  // the WHOLE population strategy. Otherwise, the user is using the PARTS population strategy
-  // (if a value exists) or hasn't decided which strategy to use (if no value exists)
-  // in which case we'll use the PARTS population strategy if it's supported for the
-  // node.
-  const valueType = typeof value;
-  if (
-    valueType === "string" ||
-    valueType === "boolean" ||
-    valueType === "number"
-  ) {
-    formStateNode.populationStrategy = WHOLE;
-    formStateNode.wholeValue = value;
-  } else {
-    formStateNode.populationStrategy = formStateNode.isPartsPopulationStrategySupported
-      ? PARTS
-      : WHOLE;
-    formStateNode.wholeValue = "";
-  }
+  // Type specific helpers should set:
+  //  - isPartsPopulationStrategySupported
+  //  - populationStrategy
+  //  - wholeValue
+  //  - anything else needed for the specific type (e.g., "items" for array or "children" for object)
+  getTypeSpecificHelpers(schema.type).populateInitialFormStateNode({
+    formStateNode,
+    value,
+    nodePath,
+    getInitialFormStateNode
+  });
 
   return formStateNode;
 };
 
-// Avoid exposing all of getFormStateNode's parameters since
+// Avoid exposing all of getInitialFormStateNode's parameters since
 // they're only used internally for recursion.
 export default ({ schema, value }) => {
-  return getFormStateNode({ schema, value });
+  return getInitialFormStateNode({ schema, value });
 };
 
 const formStateNodeShape = {

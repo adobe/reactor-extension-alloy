@@ -11,8 +11,8 @@ governing permissions and limitations under the License.
 */
 
 import { WHOLE } from "../constants/populationStrategy";
-import { ARRAY, OBJECT } from "../constants/schemaType";
 import isWholeValuePopulated from "./isWholeValuePopulated";
+import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 /**
  * The model representing a node on the XDM tree.
@@ -66,13 +66,11 @@ const getTreeNode = ({
     schema,
     populationStrategy,
     wholeValue,
-    properties,
-    items,
     isAlwaysDisabled,
     isAutoPopulated
   } = formStateNode;
 
-  const node = {
+  const treeNode = {
     id,
     displayName,
     type: schema.type,
@@ -85,9 +83,9 @@ const getTreeNode = ({
   let isTouchedAtCurrentOrDescendantNode = false;
 
   const confirmDataPopulatedAtCurrentOrDescendantNode = () => {
-    if (!node.isPopulated) {
+    if (!treeNode.isPopulated) {
       notifyParentOfDataPopulation();
-      node.isPopulated = true;
+      treeNode.isPopulated = true;
     }
   };
 
@@ -114,58 +112,28 @@ const getTreeNode = ({
     confirmDataPopulatedAtCurrentOrDescendantNode();
   }
 
-  if (schema.type === OBJECT && properties) {
-    const propertyNames = Object.keys(properties);
-    if (propertyNames.length) {
-      node.children = propertyNames.sort().map(propertyName => {
-        const propertyFormStateNode = properties[propertyName];
-        const childNode = getTreeNode({
-          formStateNode: propertyFormStateNode,
-          displayName: propertyName,
-          isAncestorUsingWholePopulationStrategy:
-            isAncestorUsingWholePopulationStrategy ||
-            isUsingWholePopulationStrategy,
-          notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode,
-          notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
-          errors:
-            errors && errors.properties
-              ? errors.properties[propertyName]
-              : undefined,
-          touched:
-            touched && touched.properties
-              ? touched.properties[propertyName]
-              : undefined
-        });
-        return childNode;
-      });
-    }
-  }
-
-  if (schema.type === ARRAY && items && items.length) {
-    node.children = items.map((itemFormStateNode, index) => {
-      const childNode = getTreeNode({
-        formStateNode: itemFormStateNode,
-        displayName: `Item ${index + 1}`,
-        isAncestorUsingWholePopulationStrategy:
-          isAncestorUsingWholePopulationStrategy ||
-          isUsingWholePopulationStrategy,
-        notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode,
-        notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
-        errors: errors && errors.items ? errors.items[index] : undefined,
-        touched: touched && touched.items ? touched.items[index] : undefined
-      });
-      return childNode;
-    });
-  }
+  // Type specific helpers should set:
+  //  - children, if the node has children
+  getTypeSpecificHelpers(schema.type).populateTreeNode({
+    treeNode,
+    formStateNode,
+    isAncestorUsingWholePopulationStrategy,
+    isUsingWholePopulationStrategy,
+    confirmDataPopulatedAtCurrentOrDescendantNode,
+    confirmTouchedAtCurrentOrDescendantNode,
+    errors,
+    touched,
+    getTreeNode
+  });
 
   if (isTouchedAtCurrentOrDescendantNode) {
-    node.error =
+    treeNode.error =
       errors && typeof errors.wholeValue === "string"
         ? errors.wholeValue
         : undefined;
   }
 
-  return node;
+  return treeNode;
 };
 
 // Avoid exposing all of getTreeNode's parameters since

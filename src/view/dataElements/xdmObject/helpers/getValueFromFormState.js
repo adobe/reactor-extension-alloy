@@ -10,10 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { WHOLE } from "../constants/populationStrategy";
-import { ARRAY, NUMBER, INTEGER, OBJECT } from "../constants/schemaType";
-import isWholeValuePopulated from "./isWholeValuePopulated";
-import singleDataElementRegex from "../../../constants/singleDataElementRegex";
+import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 /**
  * Computes and returns the user-provided value from a form state node. If the
@@ -25,68 +22,11 @@ import singleDataElementRegex from "../../../constants/singleDataElementRegex";
  * @returns {*}
  */
 const getValueFromFormState = ({ formStateNode }) => {
-  const {
-    populationStrategy,
-    wholeValue,
-    properties,
-    items,
-    schema
-  } = formStateNode;
-
-  if (populationStrategy === WHOLE) {
-    if (!isWholeValuePopulated(wholeValue)) {
-      return undefined;
-    }
-
-    if (schema.type === NUMBER || schema.type === INTEGER) {
-      if (singleDataElementRegex.test(wholeValue)) {
-        return wholeValue;
-      }
-
-      return Number(wholeValue);
-    }
-
-    return wholeValue;
-  }
-
-  if (schema.type === OBJECT) {
-    if (!properties) {
-      return undefined;
-    }
-
-    const value = Object.keys(properties).reduce((memo, propertyName) => {
-      const propertyFormStateNode = properties[propertyName];
-      const propertyValue = getValueFromFormState({
-        formStateNode: propertyFormStateNode
-      });
-      if (propertyValue !== undefined) {
-        memo[propertyName] = propertyValue;
-      }
-      return memo;
-    }, {});
-
-    return Object.keys(value).length ? value : undefined;
-  }
-
-  if (schema.type === ARRAY) {
-    if (!items) {
-      return undefined;
-    }
-
-    const value = items.reduce((memo, itemFormStateNode) => {
-      const itemValue = getValueFromFormState({
-        formStateNode: itemFormStateNode
-      });
-      if (itemValue !== undefined) {
-        memo.push(itemValue);
-      }
-      return memo;
-    }, []);
-
-    return value.length ? value : undefined;
-  }
-
-  return undefined;
+  const { schema } = formStateNode;
+  return getTypeSpecificHelpers(schema.type).getValueFromFormState({
+    formStateNode,
+    getValueFromFormState
+  });
 };
 
 export default getValueFromFormState;

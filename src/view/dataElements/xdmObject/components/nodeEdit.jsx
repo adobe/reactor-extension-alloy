@@ -13,35 +13,37 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import Breadcrumbs from "@react/react-spectrum/Breadcrumbs";
-import ArrayEdit from "./arrayEdit";
-import ObjectEdit from "./objectEdit";
-import BooleanEdit from "./booleanEdit";
-import NumberOrIntegerEdit from "./numberOrIntegerEdit";
-import StringEdit from "./stringEdit";
-import {
-  ARRAY,
-  OBJECT,
-  BOOLEAN,
-  NUMBER,
-  INTEGER
-} from "../constants/schemaType";
 import { formStateNodePropTypes } from "../helpers/getInitialFormState";
 import getNodeEditData from "../helpers/getNodeEditData";
 import AutoPopulationAlert from "./autoPopulationAlert";
+import {
+  ARRAY,
+  BOOLEAN,
+  INTEGER,
+  NUMBER,
+  OBJECT
+} from "../constants/schemaType";
+import arrayEdit from "./arrayEdit";
+import booleanEdit from "./booleanEdit";
+import integerEdit from "./integerEdit";
+import numberEdit from "./numberEdit";
+import objectEdit from "./objectEdit";
+import stringEdit from "./stringEdit";
 
-const getComponentForSchemaType = schemaType => {
+const getViewBySchemaType = schemaType => {
   switch (schemaType) {
     case ARRAY:
-      return ArrayEdit;
-    case OBJECT:
-      return ObjectEdit;
+      return arrayEdit;
     case BOOLEAN:
-      return BooleanEdit;
-    case NUMBER:
+      return booleanEdit;
     case INTEGER:
-      return NumberOrIntegerEdit;
+      return integerEdit;
+    case NUMBER:
+      return numberEdit;
+    case OBJECT:
+      return objectEdit;
     default:
-      return StringEdit;
+      return stringEdit;
   }
 };
 
@@ -57,9 +59,7 @@ const NodeEdit = props => {
     nodeId: selectedNodeId
   });
 
-  const TypeSpecificNodeEdit = getComponentForSchemaType(
-    formStateNode.schema.type
-  );
+  const TypeSpecificNodeEdit = getViewBySchemaType(formStateNode.schema.type);
 
   return (
     <div>
