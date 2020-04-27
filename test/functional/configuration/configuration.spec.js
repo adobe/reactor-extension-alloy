@@ -62,7 +62,9 @@ for (let i = 0; i < 2; i += 1) {
     downloadLinkQualifierTestButton: spectrum.button(
       "downloadLinkQualifierTestButton"
     ),
-    onBeforeEventSendField: spectrum.textfield("onBeforeEventSendField"),
+    onBeforeEventSendEditorButton: spectrum.button(
+      "onBeforeEventSendEditorButton"
+    ),
     contextGranularity: {
       allField: spectrum.radio("contextGranularityAllField"),
       specificField: spectrum.radio("contextGranularitySpecificField")
@@ -101,7 +103,7 @@ test("initializes form fields with full settings", async () => {
         instances: [
           {
             name: "alloy1",
-            configId: "PR123",
+            edgeConfigId: "PR123",
             orgId: "ORG456@OtherCompanyOrg",
             edgeDomain: "testedge.com",
             edgeBasePath: "ee-beta",
@@ -115,7 +117,7 @@ test("initializes form fields with full settings", async () => {
           },
           {
             name: "alloy2",
-            configId: "PR456",
+            edgeConfigId: "PR456",
             defaultConsent: { general: "in" },
             idMigrationEnabled: false,
             thirdPartyCookiesEnabled: false,
@@ -180,7 +182,7 @@ test("initializes form fields with minimal settings", async () => {
         instances: [
           {
             name: "alloy1",
-            configId: "PR123"
+            edgeConfigId: "PR123"
           }
         ]
       }
@@ -202,7 +204,6 @@ test("initializes form fields with minimal settings", async () => {
     defaultDownloadLinkQualifier
   );
   await instances[0].contextGranularity.allField.expectChecked();
-  await instances[0].onBeforeEventSendField.expectValue("");
 });
 
 test("initializes form fields with no settings", async () => {
@@ -223,7 +224,6 @@ test("initializes form fields with no settings", async () => {
     defaultDownloadLinkQualifier
   );
   await instances[0].contextGranularity.allField.expectChecked();
-  await instances[0].onBeforeEventSendField.expectValue("");
 });
 
 test("returns minimal valid settings", async () => {
@@ -234,7 +234,7 @@ test("returns minimal valid settings", async () => {
   await extensionViewController.expectSettings({
     instances: [
       {
-        configId: "PR123",
+        edgeConfigId: "PR123",
         name: "alloy"
       }
     ]
@@ -245,10 +245,9 @@ test("returns full valid settings", async () => {
   await extensionViewController.init(defaultInitInfo, {
     openCodeEditor(options) {
       return Promise.resolve(
-        // We include options.language in the result
-        // just so we can assert that the code editor
-        // was properly configured for editing CSS
-        `#container { display: none } // ${options.language}`
+        // We include options.language and options.code in the result
+        // just so we can assert that the code editor was properly configured
+        `language=${options.language};code=${options.code}`
       );
     }
   });
@@ -262,7 +261,6 @@ test("returns full valid settings", async () => {
   await instances[0].idMigrationEnabled.click();
   await instances[0].thirdPartyCookiesEnabled.click();
   await instances[0].prehidingStyleEditorButton.click();
-  await instances[0].onBeforeEventSendField.typeText("%foo%");
   await addInstanceButton.click();
 
   await instances[1].nameField.typeText("2");
@@ -271,6 +269,7 @@ test("returns full valid settings", async () => {
   await instances[1].defaultConsent.pendingField.click();
   await instances[1].idMigrationEnabled.click();
   await instances[1].thirdPartyCookiesEnabled.click();
+  await instances[1].onBeforeEventSendEditorButton.click();
   await instances[1].downloadLinkQualifierField.clear();
   await instances[1].downloadLinkQualifierField.typeText("[]");
   await instances[1].contextGranularity.specificField.click();
@@ -280,23 +279,25 @@ test("returns full valid settings", async () => {
     instances: [
       {
         name: "alloy1",
-        configId: "PR123",
+        edgeConfigId: "PR123",
         edgeDomain: `${defaultEdgeDomain}2`,
         edgeBasePath: `${defaultEdgeBasePath}-alpha`,
         errorsEnabled: false,
         defaultConsent: { general: "pending" },
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
-        prehidingStyle: "#container { display: none } // css",
-        onBeforeEventSend: "%foo%"
+        prehidingStyle:
+          "language=css;code=/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/"
       },
       {
         name: "alloy2",
-        configId: "PR456",
+        edgeConfigId: "PR456",
         orgId: "ABC123@AdobeOrg2",
         defaultConsent: { general: "pending" },
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
+        onBeforeEventSend:
+          'language=javascript;code=// Modify content.xdm as necessary. There is no need to wrap the code in a function\n// or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";',
         context: ["web", "device", "environment", "placeContext"],
         downloadLinkQualifier: "[]"
       }
@@ -355,7 +356,7 @@ test("shows a warning when name is changed on existing configuration", async () 
         instances: [
           {
             name: "alloy",
-            configId: "PR123"
+            edgeConfigId: "PR123"
           }
         ]
       }
@@ -444,29 +445,6 @@ test("sets download link qualifier when test button is clicked", async () => {
   await instances[0].downloadLinkQualifierField.expectMatch(/^Edited Regex/);
 });
 
-test("shows error for onBeforeEventSend value that is an arbitrary string", async () => {
-  await extensionViewController.init(defaultInitInfo);
-  await instances[0].configIdField.typeText("PR123");
-  await instances[0].onBeforeEventSendField.typeText("123foo");
-  await extensionViewController.expectIsNotValid();
-  await instances[0].onBeforeEventSendField.expectError();
-});
-
-test("shows error for onBeforeEventSend value that is multiple data elements", async () => {
-  await extensionViewController.init(defaultInitInfo);
-  await instances[0].configIdField.typeText("PR123");
-  await instances[0].onBeforeEventSendField.typeText("%foo%%bar%");
-  await extensionViewController.expectIsNotValid();
-  await instances[0].onBeforeEventSendField.expectError();
-});
-
-test("does not show error for onBeforeEventSend value that is a single data element", async () => {
-  await extensionViewController.init(defaultInitInfo);
-  await instances[0].configIdField.typeText("PR123");
-  await instances[0].onBeforeEventSendField.typeText("%123foo%");
-  await extensionViewController.expectIsValid();
-});
-
 test("deletes an instance", async () => {
   await extensionViewController.init(defaultInitInfo);
   await instances[0].configIdField.typeText("PR123");
@@ -486,4 +464,48 @@ test("deletes an instance", async () => {
   await instances[0].deleteButton.click();
   await resourceUsageDialog.clickConfirm();
   await instances[0].configIdField.expectValue("PR456");
+});
+
+test("does not save prehidingStyle code if it matches placeholder", async () => {
+  await extensionViewController.init(defaultInitInfo, {
+    openCodeEditor() {
+      return Promise.resolve(
+        "/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/"
+      );
+    }
+  });
+
+  await instances[0].configIdField.typeText("PR123");
+  await instances[0].prehidingStyleEditorButton.click();
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
+    instances: [
+      {
+        name: "alloy",
+        configId: "PR123"
+      }
+    ]
+  });
+});
+
+test("does not save onBeforeEventSend code if it matches placeholder", async () => {
+  await extensionViewController.init(defaultInitInfo, {
+    openCodeEditor() {
+      return Promise.resolve(
+        '// Modify content.xdm as necessary. There is no need to wrap the code in a function\n// or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";'
+      );
+    }
+  });
+
+  await instances[0].configIdField.typeText("PR123");
+  await instances[0].onBeforeEventSendEditorButton.click();
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
+    instances: [
+      {
+        name: "alloy",
+        configId: "PR123"
+      }
+    ]
+  });
 });

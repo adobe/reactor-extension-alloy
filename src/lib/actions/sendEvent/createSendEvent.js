@@ -20,5 +20,5 @@ module.exports = ({ instanceManager }) => settings => {
     );
   }
 
-  return instance("event", otherSettings);
+  return instance("sendEvent", otherSettings);
 };

@@ -14,7 +14,7 @@ For illustration purposes, let's assume we are testing the Send Event action typ
   "instances": [
     {
       "name": "alloy",
-      "configId": "PR123",
+      "edgeConfigId": "PR123",
       "idSyncContainerId": 10
     }
   ]
