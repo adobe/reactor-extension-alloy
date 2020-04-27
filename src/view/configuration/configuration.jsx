@@ -535,7 +535,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                           component={EditorButton}
                           language="javascript"
                           placeholder={
-                            '// Modify content.xdm as necessary. There is no need to wrap the code in a function\n// or return a value. For example:\n// content.xdm.product = "shirt";'
+                            '// Modify content.xdm as necessary. There is no need to wrap the code in a function\n// or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";'
                           }
                         />
                       </div>
