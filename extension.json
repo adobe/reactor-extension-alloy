@@ -73,7 +73,7 @@
               },
               "onBeforeEventSend": {
                 "type": "string",
-                "pattern": "^%[^%]+%$"
+                "minLength": 1
               }
             },
             "required": ["configId", "name"],
@@ -83,7 +83,14 @@
       },
       "required": ["instances"],
       "additionalProperties": false
-    }
+    },
+    "transforms": [
+      {
+        "type": "function",
+        "propertyPath": "instances[].onBeforeEventSend",
+        "parameters": ["content"]
+      }
+    ]
   },
   "actions": [
     {
