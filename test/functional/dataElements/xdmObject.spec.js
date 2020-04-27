@@ -38,7 +38,7 @@ const initializeExtensionView = async additionalInitInfo => {
     extensionSettings: {
       instances: [
         {
-          configId: "74580452-647b-4797-99af-6d0e042435ec"
+          edgeConfigId: "74580452-647b-4797-99af-6d0e042435ec"
         }
       ]
     },

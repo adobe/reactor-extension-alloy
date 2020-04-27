@@ -37,7 +37,7 @@ describe("Send Event", () => {
     });
 
     expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
-    expect(instance).toHaveBeenCalledWith("event", {
+    expect(instance).toHaveBeenCalledWith("sendEvent", {
       viewStart: true,
       xdm: {
         foo: "bar"

@@ -33,9 +33,9 @@ const getBaseRequestHeaders = ({ orgId, imsAccess }) => {
   };
 };
 
-const fetchDatasetIdFromEdgeConfig = ({ baseRequestHeaders, configId }) => {
+const fetchDatasetIdFromEdgeConfig = ({ baseRequestHeaders, edgeConfigId }) => {
   return fetch(
-    `${EDGE_CONFIG_HOST}/configs/user/edge/${configId}/environments`,
+    `${EDGE_CONFIG_HOST}/configs/user/edge/${edgeConfigId}/environments`,
     {
       headers: baseRequestHeaders
     }
@@ -100,14 +100,14 @@ const fetchSchema = ({ baseRequestHeaders, schemaRef }) => {
 /**
  * Retrieves the schema configured for the dataset that is configured
  * for an edge configuration.
- * @param {string} configId Edge configuration ID
+ * @param {string} edgeConfigId Edge configuration ID
  * @param {string} orgId Experience Cloud organization ID
  * @param {string} imsAccess IMS auth token
  * @returns {Promise} Promise to be resolved with the schema.
  */
-export default ({ configId, orgId, imsAccess }) => {
+export default ({ edgeConfigId, orgId, imsAccess }) => {
   const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
-  return fetchDatasetIdFromEdgeConfig({ baseRequestHeaders, configId })
+  return fetchDatasetIdFromEdgeConfig({ baseRequestHeaders, edgeConfigId })
     .then(datasetId => {
       return datasetId
         ? fetchSchemaRefFromDataSet({ baseRequestHeaders, datasetId })

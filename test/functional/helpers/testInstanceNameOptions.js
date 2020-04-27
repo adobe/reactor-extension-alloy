@@ -17,11 +17,11 @@ export default (extensionViewController, instanceNameField) => {
         instances: [
           {
             name: "alloy1",
-            configId: "PR123"
+            edgeConfigId: "PR123"
           },
           {
             name: "alloy2",
-            configId: "PR456"
+            edgeConfigId: "PR456"
           }
         ]
       },

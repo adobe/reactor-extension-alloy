@@ -71,7 +71,7 @@ const contextOptions = [
 
 const getInstanceDefaults = initInfo => ({
   name: "alloy",
-  configId: "",
+  edgeConfigId: "",
   orgId: initInfo.company.orgId,
   edgeDomain: "edge.adobedc.net",
   edgeBasePath: "ee",
@@ -128,7 +128,7 @@ const getSettings = ({ values, initInfo }) => {
       };
 
       const copyPropertyKeys = [
-        "configId",
+        "edgeConfigId",
         "orgId",
         "edgeDomain",
         "edgeBasePath",
@@ -198,7 +198,7 @@ const validationSchema = object()
               return !(value in window);
             }
           }),
-        configId: string().required("Please specify a config ID."),
+        edgeConfigId: string().required("Please specify an edge config ID."),
         orgId: string().required("Please specify an IMS organization ID."),
         edgeDomain: string().required("Please specify an edge domain."),
         edgeBasePath: string().required("Please specify an edge base path."),
@@ -243,8 +243,8 @@ const validationSchema = object()
     return validateDuplicateValue(
       this.createError.bind(this),
       settings.instances,
-      "configId",
-      "Please provide a config ID unique from those used for other instances."
+      "edgeConfigId",
+      "Please provide an edge config ID unique from those used for other instances."
     );
   })
   // TestCafe doesn't allow this to be an arrow function because of
@@ -354,17 +354,17 @@ const Configuration = ({ formikProps, initInfo }) => {
                       <div />
                     </div>
                     <div className="u-gapTop">
-                      <InfoTipLayout tip="Your assigned config ID, which links the SDK to the appropriate accounts and configuration.">
+                      <InfoTipLayout tip="Your assigned edge config ID, which links the SDK to the appropriate accounts and configuration.">
                         <FieldLabel
                           labelFor="configIdField"
-                          label="Config ID"
+                          label="Edge Config ID"
                         />
                       </InfoTipLayout>
                       <div>
                         <WrappedField
                           data-test-id="configIdField"
                           id="configIdField"
-                          name={`instances.${index}.configId`}
+                          name={`instances.${index}.edgeConfigId`}
                           component={Textfield}
                           componentClassName="u-fieldLong"
                           supportDataElement="replace"

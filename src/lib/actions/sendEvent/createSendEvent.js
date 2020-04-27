@@ -15,7 +15,7 @@ module.exports = ({ instanceManager, turbine }) => settings => {
   const instance = instanceManager.getInstance(instanceName);
 
   if (instance) {
-    instance("event", otherSettings);
+    instance("sendEvent", otherSettings);
   } else {
     turbine.logger.error(
       `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
