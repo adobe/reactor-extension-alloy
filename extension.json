@@ -29,6 +29,18 @@
                 "type": "string",
                 "minLength": 1
               },
+              "stagingEdgeConfigId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "developmentEdgeConfigId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "edgeConfigInputMethod": {
+                "type": "string",
+                "minLength": 1
+              },
               "orgId": {
                 "type": "string",
                 "minLength": 1
@@ -97,6 +109,10 @@
         "type": "function",
         "propertyPath": "instances[].onBeforeEventSend",
         "parameters": ["content"]
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].edgeConfigInputMethod"
       }
     ]
   },
