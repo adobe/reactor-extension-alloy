@@ -106,9 +106,13 @@ describe("Instance Manager", () => {
     });
     build();
     onDebugChangedCallbacks.forEach(callback => callback(true));
-    expect(mockWindow.alloy1).toHaveBeenCalledWith("debug", { enabled: true });
+    expect(mockWindow.alloy1).toHaveBeenCalledWith("setDebug", {
+      enabled: true
+    });
     onDebugChangedCallbacks.forEach(callback => callback(false));
-    expect(mockWindow.alloy1).toHaveBeenCalledWith("debug", { enabled: false });
+    expect(mockWindow.alloy1).toHaveBeenCalledWith("setDebug", {
+      enabled: false
+    });
   });
 
   it("returns instance by name", () => {
