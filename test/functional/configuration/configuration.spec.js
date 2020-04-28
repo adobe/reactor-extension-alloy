@@ -482,7 +482,7 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
     instances: [
       {
         name: "alloy",
-        configId: "PR123"
+        edgeConfigId: "PR123"
       }
     ]
   });
@@ -504,7 +504,7 @@ test("does not save onBeforeEventSend code if it matches placeholder", async () 
     instances: [
       {
         name: "alloy",
-        configId: "PR123"
+        edgeConfigId: "PR123"
       }
     ]
   });
