@@ -49,7 +49,11 @@ test("initializes form fields with settings containing static purposes", async (
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
-      consent: { general: "out" }
+      consent: {
+        purposes: {
+          general: "out"
+        }
+      }
     }
   });
   await instanceNameField.expectValue("alloy2");
@@ -93,7 +97,11 @@ test("returns valid settings containing static purposes", async () => {
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy2",
-    consent: { general: "out" }
+    consent: {
+      purposes: {
+        general: "out"
+      }
+    }
   });
 });
 
@@ -110,6 +118,15 @@ test("returns valid settings containing data element for purposes", async () => 
     instanceName: "alloy2",
     consent: "%foo%"
   });
+});
+
+test("shows error for purposes data element value that is empty", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await radioGroup.dataElementField.click();
+  await extensionViewController.expectIsNotValid();
+  await dataElementField.expectError();
 });
 
 test("shows error for purposes data element value that is not a data element", async () => {

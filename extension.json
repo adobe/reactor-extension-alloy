@@ -159,11 +159,19 @@
               {
                 "type": "object",
                 "properties": {
-                  "general": {
-                    "type": "string",
-                    "enum": ["in", "out"]
+                  "purposes": {
+                    "type": "object",
+                    "properties": {
+                      "general": {
+                        "type": "string",
+                        "enum": ["in", "out"]
+                      }
+                    },
+                    "required": ["general"],
+                    "additionalProperties": false
                   }
                 },
+                "required": ["purposes"],
                 "additionalProperties": false
               },
               {

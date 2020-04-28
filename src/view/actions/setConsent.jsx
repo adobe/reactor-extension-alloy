@@ -38,7 +38,9 @@ const purposesEnum = {
  * {
  *   instanceName, // the name of the instance
  *   consent: {
- *     general // valid values are "in" and "out"
+ *     purposes: {
+ *       general // valid values are "in" and "out"
+ *     }
  *   }
  * }
  * ---OR---
@@ -71,13 +73,10 @@ const getInitialValues = ({ initInfo }) => {
   if (typeof consent === "string") {
     initialValues.option = purposesEnum.DATA_ELEMENT;
     initialValues.dataElement = consent;
-  } else if (
-    consent &&
-    consent.general &&
-    (consent.general === purposesEnum.IN ||
-      consent.general === purposesEnum.OUT)
-  ) {
-    initialValues.option = consent.general;
+  } else if (consent) {
+    // If we get here, we can be sure that consent.purposes.general is defined
+    // because it is enforced by the schema in extension.json.
+    initialValues.option = consent.purposes.general;
     initialValues.dataElement = "";
   } else {
     initialValues.option = purposesEnum.IN;
@@ -95,7 +94,11 @@ const getSettings = ({ values }) => {
   };
 
   if (option === purposesEnum.IN || option === purposesEnum.OUT) {
-    settings.consent = { general: option };
+    settings.consent = {
+      purposes: {
+        general: option
+      }
+    };
   } else {
     settings.consent = dataElement;
   }
@@ -105,9 +108,13 @@ const getSettings = ({ values }) => {
 
 const invalidDataMessage = "Please specify a data element";
 const validationSchema = object().shape({
-  dataElement: string().matches(singleDataElementRegex, {
-    message: invalidDataMessage,
-    excludeEmptyString: true
+  dataElement: string().when("option", {
+    is: purposesEnum.DATA_ELEMENT,
+    then: string()
+      .matches(singleDataElementRegex, {
+        message: invalidDataMessage
+      })
+      .required(invalidDataMessage)
   })
 });
 
