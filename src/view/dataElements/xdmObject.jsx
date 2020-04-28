@@ -15,6 +15,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Alert from "@react/react-spectrum/Alert";
 import Select from "@react/react-spectrum/Select";
+import FieldLabel from "@react/react-spectrum/FieldLabel";
 import NoSelectedNodeView from "./xdmObject/components/noSelectedNodeView";
 import ExtensionView from "../components/extensionView";
 import XdmTree from "./xdmObject/components/xdmTree";
@@ -23,54 +24,36 @@ import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import NodeEdit from "./xdmObject/components/nodeEdit";
 import validate from "./xdmObject/helpers/validate";
 import render from "../render";
-import fetchInstancesBySchemaMap from "./xdmObject/helpers/fetchInstancesBySchemaMap";
+import fetchSchema from "./xdmObject/helpers/fetchSchema";
+import fetchSchemaList from "./xdmObject/helpers/fetchSchemaList";
 import "./xdmObject.styl";
-import getMajorVersionFromSchemaVersion from "./xdmObject/helpers/getMajorVersionFromSchemaVersion";
-import findKeyInMap from "../utils/findKeyInMap";
-import FieldLabel from "@react/react-spectrum/FieldLabel";
 
 const XdmObject = ({
   initInfo,
   formikProps,
-  instancesBySchemaMap,
-  selectedSchema,
-  setSelectedSchema
+  schemasMeta,
+  selectedSchemaMeta,
+  setSelectedSchemaMeta
 }) => {
   const { values: formState } = formikProps;
   const [selectedNodeId, setSelectedNodeId] = useState();
 
-  if (!instancesBySchemaMap.size) {
+  if (!schemasMeta.length) {
     return (
       <div className="u-flex u-fullHeight u-alignItemsCenter u-justifyContentCenter">
         <Alert variant="error" header="No Schema Found">
-          No configured XDM schema was found. Please ensure you have created an
-          edge configuration with a production environment.
+          No XDM schema was found. Please ensure you have created an XDM schema
+          within Adobe Experience Platform.
         </Alert>
       </div>
     );
   }
 
-  // TODO: Use this to only show the version number if there's more than one version
-  // of the same schema.
-  // const numMajorVersionsBySchemaId = {};
-
-  // TODO: If there's only one instance, don't show the select.
-
-  const schemaOptions = [];
-  instancesBySchemaMap.forEach((instances, schema) => {
-    const schemaTitle = schema.title;
-    const schemaMajorVersion = getMajorVersionFromSchemaVersion(schema.version);
-    const instanceNamesCommaDelimited = instances
-      .map(instance => instance.name)
-      .join(", ");
-    const label = `${schemaTitle} (v${schemaMajorVersion}) (${instanceNamesCommaDelimited})`;
-
-    const option = {
-      value: schema,
-      label
+  const schemaOptions = schemasMeta.map(schemaMeta => {
+    return {
+      value: schemaMeta,
+      label: schemaMeta.title
     };
-
-    schemaOptions.push(option);
   });
 
   return (
@@ -85,10 +68,10 @@ const XdmObject = ({
           id="schemaField"
           className="u-widthAuto u-gapBottom"
           options={schemaOptions}
-          value={selectedSchema}
-          onChange={schema => {
+          value={selectedSchemaMeta}
+          onChange={schemaMeta => {
             setSelectedNodeId(undefined);
-            setSelectedSchema(schema);
+            setSelectedSchemaMeta(schemaMeta);
           }}
         />
       </FieldLabel>
@@ -110,7 +93,7 @@ const XdmObject = ({
               />
             ) : (
               <NoSelectedNodeView
-                schema={selectedSchema}
+                schemaMeta={selectedSchemaMeta}
                 previouslySavedSchemaInfo={
                   initInfo.settings && initInfo.settings.schema
                 }
@@ -126,12 +109,14 @@ const XdmObject = ({
 XdmObject.propTypes = {
   initInfo: PropTypes.object.isRequired,
   formikProps: PropTypes.object.isRequired,
-  schema: PropTypes.object
+  schemasMeta: PropTypes.object,
+  selectedSchemaMeta: PropTypes.object,
+  setSelectedSchemaMeta: PropTypes.func
 };
 
 const XdmExtensionView = () => {
-  const [instancesBySchemaMap, setInstancesBySchemaMap] = useState();
-  const [selectedSchema, setSelectedSchema] = useState();
+  const [schemasMeta, setSchemasMeta] = useState();
+  const [selectedSchemaMeta, setSelectedSchemaMeta] = useState();
 
   return (
     <ExtensionView
@@ -139,78 +124,67 @@ const XdmExtensionView = () => {
         // TODO: If we've already loaded the schemas, then don't load the
         // schemas again. Just call getInitialValues with the newly
         // selected schema and return the result.
-        return fetchInstancesBySchemaMap({
-          extensionSettings: initInfo.extensionSettings,
+        return fetchSchemaList({
           orgId: initInfo.company.orgId,
           imsAccess: initInfo.tokens.imsAccess
-        }).then(_instancesBySchemaMap => {
-          setInstancesBySchemaMap(_instancesBySchemaMap);
+        })
+          .then(_schemasMeta => {
+            setSchemasMeta(_schemasMeta);
 
-          if (!_instancesBySchemaMap.size) {
-            return {};
-          }
+            if (!_schemasMeta.length) {
+              return {};
+            }
 
-          const { settings } = initInfo;
+            setSelectedSchemaMeta(_schemasMeta[0]);
 
-          let matchingSchema;
-
-          // TODO: Break out into a different function?
-          if (settings && settings.schema) {
-            const { id, version } = settings.schema;
-            const majorVersion = getMajorVersionFromSchemaVersion(version);
-
-            matchingSchema = findKeyInMap(_instancesBySchemaMap, schema => {
-              const instanceSchemaMajorVersion = getMajorVersionFromSchemaVersion(
-                schema.version
-              );
-              return (
-                id === schema.id && majorVersion === instanceSchemaMajorVersion
-              );
+            return fetchSchema({
+              orgId: initInfo.company.orgId,
+              imsAccess: initInfo.tokens.imsAccess,
+              schemaMeta: _schemasMeta[0]
             });
-          }
+          })
+          .then(schema => {
+            const initialValues = getInitialFormState({
+              data: (initInfo.settings && initInfo.settings.data) || {},
+              schema
+            });
 
-          if (!matchingSchema) {
-            // Use the first schema.
-            matchingSchema = _instancesBySchemaMap.keys().next().value;
-          }
-
-          setSelectedSchema(matchingSchema);
-
-          const initialValues = getInitialFormState({
-            data: (settings && settings.data) || {},
-            schema: matchingSchema
+            return initialValues;
           });
-
-          return initialValues;
-        });
       }}
       getSettings={({ values }) => {
         return {
           schema: {
-            id: selectedSchema.$id,
-            version: selectedSchema.version
+            id: selectedSchemaMeta.$id,
+            version: selectedSchemaMeta.version
           },
           data: getValueFromFormState({ formStateNode: values }) || {}
         };
       }}
       validate={validate}
-      render={props => {
-        const onSchemaSelected = schema => {
-          setSelectedSchema(schema);
-          const initialValues = getInitialFormState({
-            data: {},
-            schema
+      render={options => {
+        const onSchemaMetaSelected = schemaMeta => {
+          setSelectedSchemaMeta(schemaMeta);
+          fetchSchema({
+            orgId: options.initInfo.company.orgId,
+            imsAccess: options.initInfo.tokens.imsAccess,
+            schemaMeta
+          }).then(schema => {
+            const initialValues = getInitialFormState({
+              data: {},
+              schema
+            });
+            options.resetForm(initialValues);
           });
-          props.resetForm(initialValues);
         };
 
         return (
           <XdmObject
-            {...props}
+            {...options}
             // schema={schema}
-            instancesBySchemaMap={instancesBySchemaMap}
-            selectedSchema={selectedSchema}
-            setSelectedSchema={onSchemaSelected}
+            schemasMeta={schemasMeta}
+            selectedSchemaMeta={selectedSchemaMeta}
+            setSelectedSchemaMeta={onSchemaMetaSelected}
           />
         );
       }}

@@ -13,27 +13,22 @@ governing permissions and limitations under the License.
 import getBaseRequestHeaders from "./getBaseRequestHeaders";
 import platform from "./platform";
 
-export default ({ orgId, imsAccess }) => {
+export default ({ orgId, imsAccess, schemaMeta }) => {
   const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
+  const schemaMajorVersion = schemaMeta.version.split(".")[0];
 
-  // TODO: paginate this response using on responseBody._page.count or responseBody._links.next
   return fetch(
-    `${platform.getHost()}/data/foundation/schemaregistry/global/schemas?orderby=title`,
+    `${platform.getHost()}/data/foundation/schemaregistry/tenant/schemas/${encodeURIComponent(
+      schemaMeta.$id
+    )}`,
     {
       headers: {
         ...baseRequestHeaders,
-        // request a summary response with title , $id , meta:altId , and version attributes
-        Accept: "application/vnd.adobe.xed-id+json"
+        // The first part of this ensures all json-schema refs are resolved within the schema we retrieve.
+        Accept: `application/vnd.adobe.xed-full+json;version=${schemaMajorVersion}`
       }
     }
   )
-    .then(response => {
-      if (!response.ok) {
-        // TODO
-      }
-      return response.json();
-    })
-    .then(responseBody => {
-      return responseBody.results;
-    });
+    .then(response => response.json())
+    .then(responseBody => responseBody);
 };

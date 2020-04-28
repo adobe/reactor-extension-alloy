@@ -10,6 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-export default schemaVersion => {
-  return schemaVersion.split(".")[0];
+export default ({ orgId, imsAccess }) => {
+  return {
+    "x-api-key": "Activation-DTM",
+    "x-gw-ims-org-id": orgId,
+    Authorization: `Bearer ${imsAccess}`,
+    "Content-Type": "application/json"
+  };
 };
