@@ -26,22 +26,47 @@ import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./sendEvent.styl";
 import InfoTipLayout from "../components/infoTipLayout";
+import DecisionScopesComponent from "../components/decisionScopesComponent";
+
+const decisionScopeTypeEnum = {
+  CONSTANT: "constant",
+  DATA_ELEMENT: "dataElement"
+};
+
+const filterDecisionScopes = scopes => {
+  return scopes.filter(s => s !== "");
+};
 
 const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
-    viewStart = false,
+    renderDecisions = false,
+    decisionScopes = null,
     xdm = "",
     type = "",
     mergeId = ""
   } = initInfo.settings || {};
+  const initialPersonalizationData = {};
+
+  if (Array.isArray(decisionScopes)) {
+    initialPersonalizationData.option = decisionScopeTypeEnum.CONSTANT;
+    initialPersonalizationData.decisionScopesArray = decisionScopes;
+  } else if (typeof decisionScopes === "string") {
+    initialPersonalizationData.option = decisionScopeTypeEnum.DATA_ELEMENT;
+    initialPersonalizationData.decisionScopesDataElement = decisionScopes;
+  } else {
+    initialPersonalizationData.option = decisionScopeTypeEnum.CONSTANT;
+    initialPersonalizationData.decisionScopesArray = [""];
+    initialPersonalizationData.decisionScopesDataElement = "";
+  }
 
   return {
     instanceName,
-    viewStart,
+    renderDecisions,
     xdm,
     type,
-    mergeId
+    mergeId,
+    ...initialPersonalizationData
   };
 };
 
@@ -60,9 +85,22 @@ const getSettings = ({ values }) => {
     settings.mergeId = values.mergeId;
   }
 
-  // Only add viewStart if the value is different than the default (false).
-  if (values.viewStart) {
-    settings.viewStart = true;
+  // Only add renderDecisions if the value is different than the default (false).
+  if (values.renderDecisions) {
+    settings.renderDecisions = true;
+  }
+  if (
+    values.option === decisionScopeTypeEnum.DATA_ELEMENT &&
+    values.decisionScopesDataElement
+  ) {
+    settings.decisionScopes = values.decisionScopesDataElement;
+  }
+
+  if (
+    values.option === decisionScopeTypeEnum.CONSTANT &&
+    values.decisionScopesArray.length > 0
+  ) {
+    settings.decisionScopes = filterDecisionScopes(values.decisionScopesArray);
   }
 
   return settings;
@@ -102,7 +140,9 @@ const SendEvent = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={({ initInfo }) => {
+      render={({ formikProps, initInfo }) => {
+        const { values } = formikProps;
+
         return (
           <div>
             <div>
@@ -181,13 +221,18 @@ const SendEvent = () => {
             <div className="u-gapTop">
               <InfoTipLayout tip="Influences whether the SDK should retrieve and render personalization content, among other things.">
                 <WrappedField
-                  data-test-id="viewStartField"
-                  name="viewStart"
+                  data-test-id="renderDecisionsField"
+                  name="renderDecisions"
                   component={Checkbox}
-                  label="Occurs at the start of a view"
+                  label="Render visual personalization decisions"
                 />
               </InfoTipLayout>
             </div>
+            <DecisionScopesComponent
+              values={values}
+              formikProps={formikProps}
+              options={decisionScopeTypeEnum}
+            />
           </div>
         );
       }}

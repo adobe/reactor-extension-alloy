@@ -18,7 +18,7 @@ const extensionViewController = createExtensionViewController(
   "actions/sendEvent.html"
 );
 const instanceNameField = spectrum.select("instanceNameField");
-const viewStartField = spectrum.checkbox("viewStartField");
+const renderDecisionsField = spectrum.checkbox("renderDecisionsField");
 const xdmField = spectrum.textfield("xdmField");
 const typeField = spectrum.textfield("typeField");
 const mergeIdField = spectrum.textfield("mergeIdField");
@@ -47,14 +47,14 @@ test("initializes form fields with full settings", async () => {
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
-      viewStart: true,
+      renderDecisions: true,
       xdm: "%myDataLayer%",
       type: "myType1",
       mergeId: "%myMergeId%"
     }
   });
   await instanceNameField.expectValue("alloy2");
-  await viewStartField.expectChecked();
+  await renderDecisionsField.expectChecked();
   await xdmField.expectValue("%myDataLayer%");
   await typeField.expectValue("myType1");
   await mergeIdField.expectValue("%myMergeId%");
@@ -68,7 +68,7 @@ test("initializes form fields with minimal settings", async () => {
     }
   });
   await instanceNameField.expectValue("alloy1");
-  await viewStartField.expectUnchecked();
+  await renderDecisionsField.expectUnchecked();
   await xdmField.expectValue("");
   await typeField.expectValue("");
   await mergeIdField.expectValue("");
@@ -79,7 +79,7 @@ test("initializes form fields with no settings", async () => {
     extensionSettings: mockExtensionSettings
   });
   await instanceNameField.expectValue("alloy1");
-  await viewStartField.expectUnchecked();
+  await renderDecisionsField.expectUnchecked();
   await xdmField.expectValue("");
   await typeField.expectValue("");
   await mergeIdField.expectValue("");
@@ -101,14 +101,14 @@ test("returns full valid settings", async () => {
     extensionSettings: mockExtensionSettings
   });
   await instanceNameField.selectOption("alloy2");
-  await viewStartField.click();
+  await renderDecisionsField.click();
   await xdmField.typeText("%myDataLayer%");
   await typeField.typeText("mytype1");
   await mergeIdField.typeText("%myMergeId%");
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy2",
-    viewStart: true,
+    renderDecisions: true,
     xdm: "%myDataLayer%",
     type: "mytype1",
     mergeId: "%myMergeId%"

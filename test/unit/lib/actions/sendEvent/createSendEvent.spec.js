@@ -24,7 +24,7 @@ describe("Send Event", () => {
     const action = createSendEvent({ instanceManager });
     const promiseReturnedFromAction = action({
       instanceName: "myinstance",
-      viewStart: true,
+      renderDecisions: true,
       xdm: {
         foo: "bar"
       }
@@ -33,7 +33,7 @@ describe("Send Event", () => {
     expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
     expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
     expect(instance).toHaveBeenCalledWith("sendEvent", {
-      viewStart: true,
+      renderDecisions: true,
       xdm: {
         foo: "bar"
       }
@@ -49,7 +49,7 @@ describe("Send Event", () => {
     expect(() => {
       action({
         instanceName: "myinstance",
-        viewStart: true,
+        renderDecisions: true,
         xdm: {
           foo: "bar"
         }
