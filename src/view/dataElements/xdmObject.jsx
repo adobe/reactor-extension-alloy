@@ -66,6 +66,7 @@ const XdmObject = ({
       >
         <Select
           id="schemaField"
+          data-test-id="schemaField"
           className="u-widthAuto u-gapBottom"
           options={schemaOptions}
           value={selectedSchemaMeta}

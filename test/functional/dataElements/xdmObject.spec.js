@@ -15,6 +15,7 @@ import getAdobeIOAccessToken from "../helpers/getAdobeIOAccessToken";
 import xdmTree from "./xdmObject/helpers/xdmTree";
 import arrayItemsEdit from "./xdmObject/helpers/arrayItemsEdit";
 import nodeEdit from "./xdmObject/helpers/nodeEdit";
+import spectrum from "../helpers/spectrum";
 
 const extensionViewController = createExtensionViewController(
   "dataElements/xdmObject.html"
@@ -29,7 +30,15 @@ fixture("XDM Object View")
 const schema = {
   id:
     "https://ns.adobe.com/alloyengineering/schemas/2c70e73b33329135dea3aac47bb52ec2",
-  version: "1.3"
+  version: "1.6"
+};
+
+const schemaTitle = "XDM Object Data Element Tests";
+
+const schemaSelectField = spectrum.select("schemaField");
+
+const selectSchemaFromSchemasMeta = async () => {
+  await schemaSelectField.selectOption(schemaTitle);
 };
 
 const initializeExtensionView = async additionalInitInfo => {
@@ -51,8 +60,9 @@ const initializeExtensionView = async additionalInitInfo => {
   await extensionViewController.init(initInfo);
 };
 
-test("allows user to provide individual object attribute values", async () => {
+test.only("allows user to provide individual object attribute values", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
@@ -70,7 +80,7 @@ test("allows user to provide individual object attribute values", async () => {
   });
 });
 
-test("initializes form fields with individual object attribute values", async () => {
+test.only("initializes form fields with individual object attribute values", async () => {
   await initializeExtensionView({
     settings: {
       schema,
@@ -83,14 +93,16 @@ test("initializes form fields with individual object attribute values", async ()
       }
     }
   });
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
   await nodeEdit.expectWholeValue("Adobe");
 });
 
-test("allows user to provide whole object value", async () => {
+test.only("allows user to provide whole object value", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.click("vendor");
   await nodeEdit.selectWholePopulationStrategy();
@@ -106,7 +118,7 @@ test("allows user to provide whole object value", async () => {
   });
 });
 
-test("initializes form fields with whole object value", async () => {
+test.only("initializes form fields with whole object value", async () => {
   await initializeExtensionView({
     settings: {
       schema,
@@ -117,13 +129,15 @@ test("initializes form fields with whole object value", async () => {
       }
     }
   });
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.click("vendor");
   await nodeEdit.expectWholeValue("%vendor%");
 });
 
-test("allows user to provide individual array items", async () => {
+test.only("allows user to provide individual array items", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
@@ -149,7 +163,7 @@ test("allows user to provide individual array items", async () => {
   });
 });
 
-test("initializes form fields with individual array items", async () => {
+test.only("initializes form fields with individual array items", async () => {
   await initializeExtensionView({
     settings: {
       schema,
@@ -162,6 +176,7 @@ test("initializes form fields with individual array items", async () => {
       }
     }
   });
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.toggleExpansion("industries");
@@ -169,8 +184,9 @@ test("initializes form fields with individual array items", async () => {
   await nodeEdit.expectWholeValue("%industry%");
 });
 
-test("allows user to provide whole array value", async () => {
+test.only("allows user to provide whole array value", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
@@ -190,7 +206,7 @@ test("allows user to provide whole array value", async () => {
   });
 });
 
-test("initializes form fields with whole array value", async () => {
+test.only("initializes form fields with whole array value", async () => {
   await initializeExtensionView({
     settings: {
       schema,
@@ -203,6 +219,7 @@ test("initializes form fields with whole array value", async () => {
       }
     }
   });
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
@@ -211,6 +228,7 @@ test("initializes form fields with whole array value", async () => {
 
 test("allows user to provide value for property with string type", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
