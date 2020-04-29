@@ -13,22 +13,16 @@ governing permissions and limitations under the License.
 import createSendEvent from "../../../../../src/lib/actions/sendEvent/createSendEvent";
 
 describe("Send Event", () => {
-  let turbine;
-
-  beforeEach(() => {
-    turbine = {
-      logger: jasmine.createSpyObj("logger", ["error"])
-    };
-  });
-
   it("executes event command", () => {
-    const instance = jasmine.createSpy();
+    const promiseReturnedFromInstance = Promise.resolve();
+    const instance = jasmine
+      .createSpy()
+      .and.returnValue(promiseReturnedFromInstance);
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: instance
     });
-    const action = createSendEvent({ instanceManager, turbine });
-
-    action({
+    const action = createSendEvent({ instanceManager });
+    const promiseReturnedFromAction = action({
       instanceName: "myinstance",
       viewStart: true,
       xdm: {
@@ -36,6 +30,7 @@ describe("Send Event", () => {
       }
     });
 
+    expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
     expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
     expect(instance).toHaveBeenCalledWith("sendEvent", {
       viewStart: true,
@@ -45,22 +40,24 @@ describe("Send Event", () => {
     });
   });
 
-  it("logs an error when no matching instance found", () => {
+  it("throws an error when no matching instance found", () => {
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: undefined
     });
-    const action = createSendEvent({ instanceManager, turbine });
+    const action = createSendEvent({ instanceManager });
 
-    action({
-      instanceName: "myinstance",
-      viewStart: true,
-      xdm: {
-        foo: "bar"
-      }
-    });
-
-    expect(turbine.logger.error).toHaveBeenCalledWith(
-      'Failed to send event for instance "myinstance". No matching instance was configured with this name.'
+    expect(() => {
+      action({
+        instanceName: "myinstance",
+        viewStart: true,
+        xdm: {
+          foo: "bar"
+        }
+      });
+    }).toThrow(
+      new Error(
+        'Failed to send event for instance "myinstance". No matching instance was configured with this name.'
+      )
     );
   });
 });

@@ -13,27 +13,22 @@ governing permissions and limitations under the License.
 import createSetConsent from "../../../../../src/lib/actions/setConsent/createSetConsent";
 
 describe("Set Consent", () => {
-  let turbine;
-
-  beforeEach(() => {
-    turbine = {
-      logger: jasmine.createSpyObj("logger", ["error"])
-    };
-  });
-
   ["in", "out"].forEach(generalConsent => {
     it(`executes setConsent command with "${generalConsent}" general consent`, () => {
-      const instance = jasmine.createSpy();
+      const promiseReturnedFromInstance = Promise.resolve();
+      const instance = jasmine
+        .createSpy()
+        .and.returnValue(promiseReturnedFromInstance);
       const instanceManager = jasmine.createSpyObj("instanceManager", {
         getInstance: instance
       });
-      const action = createSetConsent({ instanceManager, turbine });
-
-      action({
+      const action = createSetConsent({ instanceManager });
+      const promiseReturnedFromAction = action({
         instanceName: "myinstance",
         consent: { general: generalConsent }
       });
 
+      expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
       expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
       expect(instance).toHaveBeenCalledWith("setConsent", {
         general: generalConsent
@@ -41,19 +36,21 @@ describe("Set Consent", () => {
     });
   });
 
-  it("logs an error when no matching instance found", () => {
+  it("throws an error when no matching instance found", () => {
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: undefined
     });
-    const action = createSetConsent({ instanceManager, turbine });
+    const action = createSetConsent({ instanceManager });
 
-    action({
-      instanceName: "myinstance",
-      purposes: "none"
-    });
-
-    expect(turbine.logger.error).toHaveBeenCalledWith(
-      'Failed to set consent for instance "myinstance". No matching instance was configured with this name.'
+    expect(() => {
+      action({
+        instanceName: "myinstance",
+        purposes: "none"
+      });
+    }).toThrow(
+      new Error(
+        'Failed to set consent for instance "myinstance". No matching instance was configured with this name.'
+      )
     );
   });
 });
