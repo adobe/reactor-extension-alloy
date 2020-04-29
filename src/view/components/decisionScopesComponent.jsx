@@ -17,8 +17,8 @@ function DecisionScopesComponent({ values, formikProps, options }) {
     <div>
       <div className="u-gapTop">
         <InfoTipLayout
-          tip="If you set decision scopes as a Data Element. That Data Element should return an array.
-        Otherwise you could add decision scopes as constants."
+          tip="If you set decision scopes as a Data Element, that Data Element should return an array.
+          Otherwise you could add decision scopes as constants."
         >
           <FieldLabel
             labelFor="decisionScopesType"
@@ -34,7 +34,7 @@ function DecisionScopesComponent({ values, formikProps, options }) {
           <Radio
             data-test-id="constantOptionField"
             value={options.CONSTANT}
-            label="Constant"
+            label="Enter values"
           />
           <Radio
             data-test-id="dataElementOptionField"
