@@ -232,9 +232,9 @@
   "events": [
     {
     "name": "decisions-received",
-    "categoryName": "Decisions Received",
     "displayName": "Decisions Received",
-    "libPath": "dist/lib/events/decisionsReceived/index.js"
+    "libPath": "dist/lib/events/decisionsReceived/index.js",
+    "schema": {}
   }
   ],
   "dataElements": [
