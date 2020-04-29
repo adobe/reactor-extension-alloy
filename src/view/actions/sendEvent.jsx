@@ -28,7 +28,7 @@ import "./sendEvent.styl";
 import InfoTipLayout from "../components/infoTipLayout";
 import DecisionScopesComponent from "../components/decisionScopesComponent";
 
-const decisionScopeTypeEnum = {
+const decisionScopesOptions = {
   CONSTANT: "constant",
   DATA_ELEMENT: "dataElement"
 };
@@ -37,6 +37,47 @@ const filterDecisionScopes = scopes => {
   return scopes.filter(s => s !== "");
 };
 
+const getDecisionScopes = values => {
+  if (
+    values.option === decisionScopesOptions.DATA_ELEMENT &&
+    values.decisionScopesDataElement
+  ) {
+    return values.decisionScopesDataElement;
+  }
+
+  if (
+    values.option === decisionScopesOptions.CONSTANT &&
+    values.decisionScopesArray.length > 0
+  ) {
+    const scopes = filterDecisionScopes(values.decisionScopesArray);
+    if (scopes.length > 0) {
+      return scopes;
+    }
+  }
+  return undefined;
+};
+
+const getInitialDecisionScopesData = decisionScopes => {
+  if (Array.isArray(decisionScopes)) {
+    return {
+      option: decisionScopesOptions.CONSTANT,
+      decisionScopesArray: decisionScopes,
+      decisionScopesDataElement: ""
+    };
+  }
+  if (typeof decisionScopes === "string") {
+    return {
+      option: decisionScopesOptions.DATA_ELEMENT,
+      decisionScopesDataElement: decisionScopes,
+      decisionScopesArray: [""]
+    };
+  }
+  return {
+    option: decisionScopesOptions.DATA_ELEMENT,
+    decisionScopesDataElement: "",
+    decisionScopesArray: [""]
+  };
+};
 const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
@@ -46,19 +87,9 @@ const getInitialValues = ({ initInfo }) => {
     type = "",
     mergeId = ""
   } = initInfo.settings || {};
-  const initialPersonalizationData = {};
-
-  if (Array.isArray(decisionScopes)) {
-    initialPersonalizationData.option = decisionScopeTypeEnum.CONSTANT;
-    initialPersonalizationData.decisionScopesArray = decisionScopes;
-  } else if (typeof decisionScopes === "string") {
-    initialPersonalizationData.option = decisionScopeTypeEnum.DATA_ELEMENT;
-    initialPersonalizationData.decisionScopesDataElement = decisionScopes;
-  } else {
-    initialPersonalizationData.option = decisionScopeTypeEnum.CONSTANT;
-    initialPersonalizationData.decisionScopesArray = [""];
-    initialPersonalizationData.decisionScopesDataElement = "";
-  }
+  const initialPersonalizationData = getInitialDecisionScopesData(
+    decisionScopes
+  );
 
   return {
     instanceName,
@@ -89,18 +120,9 @@ const getSettings = ({ values }) => {
   if (values.renderDecisions) {
     settings.renderDecisions = true;
   }
-  if (
-    values.option === decisionScopeTypeEnum.DATA_ELEMENT &&
-    values.decisionScopesDataElement
-  ) {
-    settings.decisionScopes = values.decisionScopesDataElement;
-  }
-
-  if (
-    values.option === decisionScopeTypeEnum.CONSTANT &&
-    values.decisionScopesArray.length > 0
-  ) {
-    settings.decisionScopes = filterDecisionScopes(values.decisionScopesArray);
+  const scopes = getDecisionScopes(values);
+  if (scopes) {
+    settings.decisionScopes = scopes;
   }
 
   return settings;
@@ -231,7 +253,7 @@ const SendEvent = () => {
             <DecisionScopesComponent
               values={values}
               formikProps={formikProps}
-              options={decisionScopeTypeEnum}
+              options={decisionScopesOptions}
             />
           </div>
         );

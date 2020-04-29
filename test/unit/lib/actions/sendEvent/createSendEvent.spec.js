@@ -14,6 +14,7 @@ import createSendEvent from "../../../../../src/lib/actions/sendEvent/createSend
 
 describe("Send Event", () => {
   it("executes event command", () => {
+    const promise = { then: func => func({ decisions: [] }) };
     const promiseReturnedFromInstance = Promise.resolve();
     const instance = jasmine
       .createSpy()
@@ -21,7 +22,11 @@ describe("Send Event", () => {
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: instance
     });
-    const action = createSendEvent({ instanceManager });
+    const decisionsCallbackStorage = jasmine.createSpyObj(
+      "decisionsCallbackStorage",
+      ["triggerEvent"]
+    );
+    const action = createSendEvent({ instanceManager, decisionsCallbackStorage });
     const promiseReturnedFromAction = action({
       instanceName: "myinstance",
       renderDecisions: true,
@@ -37,6 +42,9 @@ describe("Send Event", () => {
       xdm: {
         foo: "bar"
       }
+    });
+    expect(decisionsCallbackStorage.triggerEvent).toHaveBeenCalledWith({
+      decisions: []
     });
   });
 
