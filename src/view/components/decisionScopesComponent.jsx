@@ -29,17 +29,19 @@ function DecisionScopesComponent({ values, formikProps, options }) {
           id="decisionScopesTypeField"
           name="option"
           component={RadioGroup}
-          componentClassName="u-flexColumn"
+          componentClassName="u-flexRow"
         >
           <Radio
             data-test-id="constantOptionField"
             value={options.CONSTANT}
             label="Enter values"
+            className="u-gapLeft"
           />
           <Radio
             data-test-id="dataElementOptionField"
             value={options.DATA_ELEMENT}
             label="Data Element"
+            className="u-gapLeft"
           />
         </WrappedField>
       </div>
