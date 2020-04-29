@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager }) => settings => {
+module.exports = ({ instanceManager, decisionsCallbackStorage }) => settings => {
   const { instanceName, ...otherSettings } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
@@ -20,5 +20,7 @@ module.exports = ({ instanceManager }) => settings => {
     );
   }
 
-  return instance("sendEvent", otherSettings);
+  return instance("event", otherSettings).then(decisions => {
+    decisionsCallbackStorage.triggerEvent(decisions);
+  });
 };
