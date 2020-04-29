@@ -10,17 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager, turbine }) => settings => {
+module.exports = ({ instanceManager }) => settings => {
   const { instanceName, identities } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
-  if (instance) {
-    instance("syncIdentity", {
-      identities
-    });
-  } else {
-    turbine.logger.error(
+  if (!instance) {
+    throw new Error(
       `Failed to sync identity for instance "${instanceName}". No matching instance was configured with this name.`
     );
   }
+
+  return instance("syncIdentity", {
+    identities
+  });
 };

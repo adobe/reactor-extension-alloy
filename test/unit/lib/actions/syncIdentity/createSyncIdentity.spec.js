@@ -13,22 +13,16 @@ governing permissions and limitations under the License.
 import createSyncIdentity from "../../../../../src/lib/actions/syncIdentity/createSyncIdentity";
 
 describe("Sync Identity", () => {
-  let turbine;
-
-  beforeEach(() => {
-    turbine = {
-      logger: jasmine.createSpyObj("logger", ["error"])
-    };
-  });
-
   it("executes syncIdentity command", () => {
-    const instance = jasmine.createSpy();
+    const promiseReturnedFromInstance = Promise.resolve();
+    const instance = jasmine
+      .createSpy()
+      .and.returnValue(promiseReturnedFromInstance);
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: instance
     });
-    const action = createSyncIdentity({ instanceManager, turbine });
-
-    action({
+    const action = createSyncIdentity({ instanceManager });
+    const promiseReturnedFromAction = action({
       instanceName: "instance1",
       identities: {
         ECID: {
@@ -40,6 +34,7 @@ describe("Sync Identity", () => {
       }
     });
 
+    expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
     expect(instanceManager.getInstance).toHaveBeenCalledWith("instance1");
     expect(instance).toHaveBeenCalledWith("syncIdentity", {
       identities: {
@@ -53,26 +48,28 @@ describe("Sync Identity", () => {
     });
   });
 
-  it("logs an error when no matching instance found", () => {
+  it("throws an error when no matching instance found", () => {
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: undefined
     });
-    const action = createSyncIdentity({ instanceManager, turbine });
+    const action = createSyncIdentity({ instanceManager });
 
-    action({
-      instanceName: "instance1",
-      identities: {
-        ECID: {
-          id: "wvg",
-          authenticatedState: "loggedOut",
-          primary: false,
-          hash: true
+    expect(() => {
+      action({
+        instanceName: "instance1",
+        identities: {
+          ECID: {
+            id: "wvg",
+            authenticatedState: "loggedOut",
+            primary: false,
+            hash: true
+          }
         }
-      }
-    });
-
-    expect(turbine.logger.error).toHaveBeenCalledWith(
-      'Failed to sync identity for instance "instance1". No matching instance was configured with this name.'
+      });
+    }).toThrow(
+      new Error(
+        'Failed to sync identity for instance "instance1". No matching instance was configured with this name.'
+      )
     );
   });
 });
