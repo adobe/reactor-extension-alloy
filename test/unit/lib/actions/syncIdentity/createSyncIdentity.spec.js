@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createSetCustomerIds from "../../../../../src/lib/actions/setCustomerIds/createSetCustomerIds";
+import createSyncIdentity from "../../../../../src/lib/actions/syncIdentity/createSyncIdentity";
 
-describe("Set Customer IDs", () => {
-  it("executes setCustomerIds command", () => {
+describe("Sync Identity", () => {
+  it("executes syncIdentity command", () => {
     const promiseReturnedFromInstance = Promise.resolve();
     const instance = jasmine
       .createSpy()
@@ -21,29 +21,29 @@ describe("Set Customer IDs", () => {
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: instance
     });
-    const action = createSetCustomerIds({ instanceManager });
+    const action = createSyncIdentity({ instanceManager });
     const promiseReturnedFromAction = action({
       instanceName: "instance1",
-      customerIds: [
-        {
-          namespace: "ECID",
+      identities: {
+        ECID: {
           id: "wvg",
           authenticatedState: "loggedOut",
           primary: false,
           hash: true
         }
-      ]
+      }
     });
 
     expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
     expect(instanceManager.getInstance).toHaveBeenCalledWith("instance1");
-    expect(instance).toHaveBeenCalledWith("setCustomerIds", {
-      ECID: {
-        namespace: "ECID",
-        id: "wvg",
-        authenticatedState: "loggedOut",
-        primary: false,
-        hash: true
+    expect(instance).toHaveBeenCalledWith("syncIdentity", {
+      identities: {
+        ECID: {
+          id: "wvg",
+          authenticatedState: "loggedOut",
+          primary: false,
+          hash: true
+        }
       }
     });
   });
@@ -52,24 +52,23 @@ describe("Set Customer IDs", () => {
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: undefined
     });
-    const action = createSetCustomerIds({ instanceManager });
+    const action = createSyncIdentity({ instanceManager });
 
     expect(() => {
       action({
         instanceName: "instance1",
-        customerIds: [
-          {
-            namespace: "ECID",
+        identities: {
+          ECID: {
             id: "wvg",
             authenticatedState: "loggedOut",
             primary: false,
             hash: true
           }
-        ]
+        }
       });
     }).toThrow(
       new Error(
-        'Failed to set customer IDs for instance "instance1". No matching instance was configured with this name.'
+        'Failed to sync identity for instance "instance1". No matching instance was configured with this name.'
       )
     );
   });

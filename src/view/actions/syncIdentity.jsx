@@ -16,34 +16,56 @@ import { array, object, string } from "yup";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import ExtensionView from "../components/extensionView";
-import "./setCustomerIds.styl";
-import CustomerIdWrapper from "../components/customerIdWrapper";
-import getDefaultCustomerId from "../utils/getDefaultCustomerId";
+import IdentityWrapper from "../components/identityWrapper";
+import getDefaultIdentity from "../utils/getDefaultIdentity";
+import "./syncIdentity.styl";
+
+const identitiesMapToArray = identityMap => {
+  return Object.keys(identityMap).map(namespace => {
+    return {
+      namespace,
+      ...identityMap[namespace]
+    };
+  });
+};
+
+const identitiesArrayToMap = identitiesArray => {
+  return identitiesArray.reduce((identityMap, identity) => {
+    const { namespace, ...otherProperties } = identity;
+    identityMap[identity.namespace] = otherProperties;
+    return identityMap;
+  }, {});
+};
 
 const getInitialValues = ({ initInfo }) => {
   const { instanceName = initInfo.extensionSettings.instances[0].name } =
     initInfo.settings || {};
 
+  const identities = initInfo.settings
+    ? identitiesMapToArray(initInfo.settings.identities)
+    : [getDefaultIdentity()];
+
   return {
     instanceName,
-    customerIds: (initInfo.settings && initInfo.settings.customerIds) || [
-      getDefaultCustomerId()
-    ]
+    identities
   };
 };
 
 const getSettings = ({ values }) => {
-  return values;
+  return {
+    instanceName: values.instanceName,
+    identities: identitiesArrayToMap(values.identities)
+  };
 };
 
 const validateDuplicateValue = (
   createError,
-  customerIds,
+  identities,
   key,
   message,
   validateBooleanTrue
 ) => {
-  const values = customerIds.map(customerId => customerId[key]);
+  const values = identities.map(identity => identity[key]);
   const duplicateIndex = values.findIndex(
     (value, index) =>
       values.indexOf(value) < index && (!validateBooleanTrue || value === true)
@@ -52,7 +74,7 @@ const validateDuplicateValue = (
   return (
     duplicateIndex === -1 ||
     createError({
-      path: `customerIds[${duplicateIndex}].${key}`,
+      path: `identities[${duplicateIndex}].${key}`,
       message
     })
   );
@@ -61,7 +83,7 @@ const validateDuplicateValue = (
 const validationSchema = object()
   .shape({
     instanceName: string().required("Please specify an instance name."),
-    customerIds: array().of(
+    identities: array().of(
       object().shape({
         namespace: string()
           .required("Please select a namespace.")
@@ -85,7 +107,7 @@ const validationSchema = object()
   .test("uniqueNamespace", function(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
-      settings.customerIds,
+      settings.identities,
       "namespace",
       "Please provide a unique namespace."
     );
@@ -96,14 +118,14 @@ const validationSchema = object()
   .test("uniquePrimary", function(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
-      settings.customerIds,
+      settings.identities,
       "primary",
       "Only one namespace can be primary.",
       true
     );
   });
 
-const SetCustomerIds = () => {
+const SyncIdentity = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -112,10 +134,10 @@ const SetCustomerIds = () => {
       render={({ formikProps, initInfo }) => {
         const { values } = formikProps;
 
-        return <CustomerIdWrapper values={values} initInfo={initInfo} />;
+        return <IdentityWrapper values={values} initInfo={initInfo} />;
       }}
     />
   );
 };
 
-render(SetCustomerIds);
+render(SyncIdentity);

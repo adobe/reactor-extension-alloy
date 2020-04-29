@@ -10,21 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager }) => settings => {
-  const { instanceName, customerIds } = settings;
-  const instance = instanceManager.getInstance(instanceName);
+const createSyncIdentity = require("./createSyncIdentity");
+const instanceManager = require("../../instanceManager/index");
 
-  if (!instance) {
-    throw new Error(
-      `Failed to set customer IDs for instance "${instanceName}". No matching instance was configured with this name.`
-    );
-  }
-
-  const customerIdsConfig = customerIds.reduce((config, customerIdObject) => {
-    config[customerIdObject.namespace] = customerIdObject;
-
-    return config;
-  }, {});
-
-  return instance("setCustomerIds", customerIdsConfig);
-};
+module.exports = createSyncIdentity({ instanceManager, turbine });
