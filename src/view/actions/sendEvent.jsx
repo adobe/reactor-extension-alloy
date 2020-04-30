@@ -129,7 +129,16 @@ const getSettings = ({ values }) => {
 };
 
 const validationSchema = object().shape({
-  xdm: string().matches(singleDataElementRegex, "Please specify a data element")
+  xdm: string().matches(
+    singleDataElementRegex,
+    "Please specify a data element"
+  ),
+  decisionScopesDataElement: string().when("option", {
+    is: decisionScopesOptions.DATA_ELEMENT,
+    then: string()
+      .min(1)
+      .matches(singleDataElementRegex, "Please specify a data element")
+  })
 });
 
 const knownEventTypes = [
