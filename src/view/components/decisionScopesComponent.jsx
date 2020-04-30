@@ -98,7 +98,7 @@ function DecisionScopesComponent({ values, options }) {
                       />
                     </div>
                   ))}
-                  <div className="u-gapTop u-alignRight">
+                  <div className="u-gapTop">
                     <Button
                       data-test-id="addDecisionScopeButton"
                       label="Add scope"
