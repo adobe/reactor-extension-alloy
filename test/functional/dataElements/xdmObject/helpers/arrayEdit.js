@@ -13,19 +13,28 @@ governing permissions and limitations under the License.
 import spectrum from "../../../helpers/spectrum";
 
 /**
- * Provides methods for managing form fields when editing a node.
+ * Provides methods for managing form fields when editing an array node.
  */
 export default {
+  addItem: async () => {
+    await spectrum.button("addItemButton").click();
+  },
+  removeItem: async index => {
+    await spectrum.button(`item${index}RemoveButton`).click();
+  },
+  clickItem: async index => {
+    await spectrum.button(`item${index}SelectButton`).click();
+  },
   selectPartsPopulationStrategy: async () => {
     await spectrum.radio("partsPopulationStrategyField").click();
   },
   selectWholePopulationStrategy: async () => {
     await spectrum.radio("wholePopulationStrategyField").click();
   },
-  enterWholeValue: async text => {
-    await spectrum.textfield("wholeValueField").typeText(text);
+  enterValue: async text => {
+    await spectrum.textfield("valueField").typeText(text);
   },
-  expectWholeValue: async text => {
-    await spectrum.textfield("wholeValueField").expectValue(text);
+  expectValue: async text => {
+    await spectrum.textfield("valueField").expectValue(text);
   }
 };

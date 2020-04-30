@@ -11,20 +11,20 @@ governing permissions and limitations under the License.
 */
 
 import { WHOLE } from "../../constants/populationStrategy";
-import isWholeValuePopulated from "../isWholeValuePopulated";
+import isFormStateValuePopulated from "../isFormStateValuePopulated";
 
 export default ({ formStateNode, getValueFromFormState }) => {
-  const { populationStrategy, wholeValue, items } = formStateNode;
+  const { populationStrategy, value, items } = formStateNode;
 
   if (populationStrategy === WHOLE) {
-    return isWholeValuePopulated(wholeValue) ? wholeValue : undefined;
+    return isFormStateValuePopulated(value) ? value : undefined;
   }
 
   if (!items) {
     return undefined;
   }
 
-  const value = items.reduce((memo, itemFormStateNode) => {
+  const computedValue = items.reduce((memo, itemFormStateNode) => {
     const itemValue = getValueFromFormState({
       formStateNode: itemFormStateNode
     });
@@ -34,5 +34,5 @@ export default ({ formStateNode, getValueFromFormState }) => {
     return memo;
   }, []);
 
-  return value.length ? value : undefined;
+  return computedValue.length ? computedValue : undefined;
 };

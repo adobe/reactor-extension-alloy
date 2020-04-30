@@ -10,23 +10,22 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import isFormStateValuePopulated from "../isFormStateValuePopulated";
-import singleDataElementRegex from "../../../../constants/singleDataElementRegex";
-import isNumberLike from "../isNumberLike";
+import spectrum from "../../../helpers/spectrum";
 
-export default ({
-  formStateNode,
-  confirmDataPopulatedAtCurrentOrDescendantNode
-}) => {
-  const { value } = formStateNode;
-
-  if (isFormStateValuePopulated(value)) {
-    if (!singleDataElementRegex.test(value) && !isNumberLike(value)) {
-      return { value: "Value must be a data element or number." };
-    }
-
-    confirmDataPopulatedAtCurrentOrDescendantNode();
+/**
+ * Provides methods for managing form fields when editing an object node.
+ */
+export default {
+  selectPartsPopulationStrategy: async () => {
+    await spectrum.radio("partsPopulationStrategyField").click();
+  },
+  selectWholePopulationStrategy: async () => {
+    await spectrum.radio("wholePopulationStrategyField").click();
+  },
+  enterValue: async text => {
+    await spectrum.textfield("valueField").typeText(text);
+  },
+  expectValue: async text => {
+    await spectrum.textfield("valueField").expectValue(text);
   }
-
-  return undefined;
 };

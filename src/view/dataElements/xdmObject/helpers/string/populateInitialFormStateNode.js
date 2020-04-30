@@ -15,5 +15,5 @@ import { WHOLE } from "../../constants/populationStrategy";
 export default ({ formStateNode, value = "" }) => {
   formStateNode.isPartsPopulationStrategySupported = false;
   formStateNode.populationStrategy = WHOLE;
-  formStateNode.wholeValue = value;
+  formStateNode.value = value;
 };

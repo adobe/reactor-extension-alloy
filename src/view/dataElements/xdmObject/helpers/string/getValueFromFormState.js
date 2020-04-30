@@ -10,9 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import isWholeValuePopulated from "../isWholeValuePopulated";
+import isFormStateValuePopulated from "../isFormStateValuePopulated";
 
 export default ({ formStateNode }) => {
-  const { wholeValue } = formStateNode;
-  return isWholeValuePopulated(wholeValue) ? wholeValue : undefined;
+  const { value } = formStateNode;
+  return isFormStateValuePopulated(value) ? value : undefined;
 };

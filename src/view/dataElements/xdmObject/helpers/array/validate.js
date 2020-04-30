@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { WHOLE } from "../../constants/populationStrategy";
-import isWholeValuePopulated from "../isWholeValuePopulated";
+import isFormStateValuePopulated from "../isFormStateValuePopulated";
 import singleDataElementRegex from "../../../../constants/singleDataElementRegex";
 
 export default ({
@@ -19,12 +19,12 @@ export default ({
   confirmDataPopulatedAtCurrentOrDescendantNode,
   validate
 }) => {
-  const { populationStrategy, wholeValue, items } = formStateNode;
+  const { populationStrategy, value, items } = formStateNode;
 
   if (populationStrategy === WHOLE) {
-    if (isWholeValuePopulated(wholeValue)) {
-      if (!singleDataElementRegex.test(wholeValue)) {
-        return { wholeValue: "Value must be a data element." };
+    if (isFormStateValuePopulated(value)) {
+      if (!singleDataElementRegex.test(value)) {
+        return { value: "Value must be a data element." };
       }
       confirmDataPopulatedAtCurrentOrDescendantNode();
     }

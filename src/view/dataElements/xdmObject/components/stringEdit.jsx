@@ -24,11 +24,11 @@ const StringEdit = props => {
 
   return (
     <div>
-      <FieldLabel labelFor="wholeValueField" label="Value" />
+      <FieldLabel labelFor="valueField" label="Value" />
       <WrappedField
-        data-test-id="wholeValueField"
-        id="wholeValueField"
-        name={`${fieldName}.wholeValue`}
+        data-test-id="valueField"
+        id="valueField"
+        name={`${fieldName}.value`}
         component={Textfield}
         componentClassName="u-fieldLong"
         supportDataElement="append"

@@ -10,17 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import isWholeValuePopulated from "../isWholeValuePopulated";
+import isFormStateValuePopulated from "../isFormStateValuePopulated";
 import singleDataElementRegex from "../../../../constants/singleDataElementRegex";
 
 export default ({ formStateNode }) => {
-  const { wholeValue } = formStateNode;
+  const { value } = formStateNode;
 
-  if (!isWholeValuePopulated(wholeValue)) {
+  if (!isFormStateValuePopulated(value)) {
     return undefined;
   }
 
-  return singleDataElementRegex.test(wholeValue)
-    ? wholeValue
-    : Number(wholeValue);
+  return singleDataElementRegex.test(value) ? value : Number(value);
 };

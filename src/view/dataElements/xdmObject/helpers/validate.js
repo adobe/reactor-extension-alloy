@@ -53,7 +53,7 @@ const validate = ({
     !isPopulatedAtCurrentOrDescendantNode
   ) {
     return {
-      wholeValue:
+      value:
         "Items within arrays must not be empty. Please populate or remove the item."
     };
   }
@@ -63,7 +63,7 @@ const validate = ({
     !isAutoPopulated &&
     !isPopulatedAtCurrentOrDescendantNode
   ) {
-    return { wholeValue: "This is a required field and must be populated." };
+    return { value: "This is a required field and must be populated." };
   }
 
   return undefined;

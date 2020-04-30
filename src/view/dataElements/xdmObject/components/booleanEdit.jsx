@@ -20,8 +20,10 @@ import Textfield from "@react/react-spectrum/Textfield";
 import PropTypes from "prop-types";
 import WrappedField from "../../../components/wrappedField";
 
-const CONSTANT = "constant";
-const DATA_ELEMENT = "dataElement";
+const inputMethods = {
+  CONSTANT: "constant",
+  DATA_ELEMENT: "dataElement"
+};
 
 // The Select component requires options whose values are strings.
 const booleanOptions = [
@@ -66,8 +68,8 @@ const convertBooleanOptionValueToActualValue = booleanOptionValue => {
 const BooleanInput = props => {
   const { value, onChange, fieldName } = props;
 
-  // Notice that the input method (constant or data element) is stored as
-  // local state rather than Formik state and the `wholeValue` stored in
+  // Notice that the input method (data element or constant) is stored as
+  // local state rather than Formik state and the `value` stored in
   // Formik state is not partitioned between which input method is being used.
   // This reduces the complexity of the Formik state, but does complicate this
   // component a little more. Without adding more state management in this
@@ -77,7 +79,9 @@ const BooleanInput = props => {
 
   useEffect(() => {
     const defaultInputMethod =
-      typeof value === "boolean" ? CONSTANT : DATA_ELEMENT;
+      typeof value === "boolean"
+        ? inputMethods.CONSTANT
+        : inputMethods.DATA_ELEMENT;
     setInputType(defaultInputMethod);
   }, [fieldName]);
 
@@ -92,14 +96,24 @@ const BooleanInput = props => {
           setInputType(newInputMethod);
         }}
       >
-        <Radio label="Data Element" value={DATA_ELEMENT} />
-        <Radio className="u-gapLeft2x" label="Constant" value={CONSTANT} />
+        <Radio
+          data-test-id="dataElementInputMethodField"
+          label="Provide Data Element"
+          value={inputMethods.DATA_ELEMENT}
+        />
+        <Radio
+          data-test-id="valueInputMethodField"
+          className="u-gapLeft2x"
+          label="Select Value"
+          value={inputMethods.CONSTANT}
+        />
       </RadioGroup>
-      {inputMethod === CONSTANT ? (
+      {inputMethod === inputMethods.CONSTANT ? (
         <div>
-          <FieldLabel labelFor="wholeValueField" label="Value" />
+          <FieldLabel labelFor="constantValueField" label="Value" />
           <Select
-            id="wholeValueField"
+            data-test-id="constantValueField"
+            id="constantValueField"
             value={convertActualValueToBooleanOptionValue(value)}
             options={booleanOptions}
             onChange={newValue => {
@@ -109,10 +123,10 @@ const BooleanInput = props => {
         </div>
       ) : (
         <div>
-          <FieldLabel labelFor="wholeValueField" label="Value" />
+          <FieldLabel labelFor="dataElementValueField" label="Value" />
           <WrappedField
-            data-test-id="wholeValueField"
-            id="wholeValueField"
+            data-test-id="dataElementValueField"
+            id="dataElementValueField"
             name={fieldName}
             component={Textfield}
             componentClassName="u-fieldLong"
@@ -135,17 +149,17 @@ BooleanInput.propTypes = {
  */
 const BooleanEdit = props => {
   const { fieldName } = props;
-  const wholeValueFieldName = `${fieldName}.wholeValue`;
+  const valueFieldName = `${fieldName}.value`;
   return (
     <Field
-      name={wholeValueFieldName}
+      name={valueFieldName}
       render={({ field, form }) => {
         return (
           <BooleanInput
-            fieldName={wholeValueFieldName}
+            fieldName={valueFieldName}
             value={field.value}
             onChange={newValue => {
-              form.setFieldValue(wholeValueFieldName, newValue);
+              form.setFieldValue(valueFieldName, newValue);
             }}
           />
         );

@@ -32,14 +32,11 @@ import { ARRAY, OBJECT } from "../constants/schemaType";
  */
 const WholePopulationStrategyForm = ({ fieldName }) => (
   <React.Fragment>
-    <FieldLabel
-      labelFor="wholeValueField"
-      label="Data element providing array"
-    />
+    <FieldLabel labelFor="valueField" label="Data element providing array" />
     <WrappedField
-      data-test-id="wholeValueField"
-      id="wholeValueField"
-      name={`${fieldName}.wholeValue`}
+      data-test-id="valueField"
+      id="valueField"
+      name={`${fieldName}.value`}
       component={Textfield}
       componentClassName="u-fieldLong"
       supportDataElement="replace"

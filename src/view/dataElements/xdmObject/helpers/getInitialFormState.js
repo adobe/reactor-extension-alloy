@@ -47,10 +47,10 @@ const generateNodeId = () => {
  * provided for the object's properties or the array's items.
  * @property {string} populationStrategy Indicates which population
  * strategy the user is taking to populate the node's value.
- * @property {string} wholeValue The value that a user has provided for
+ * @property {string} value The value that a user has provided for
  * the whole node. This is only pertinent when the population strategy
  * is set to WHOLE. If the the user has set the population strategy to
- * PARTS, it will be ignored. We don't clear out wholeValue when the
+ * PARTS, it will be ignored. We don't clear out value when the
  * user switches populationStrategy to PARTS, because the user might
  * switch back to WHOLE and we'd like to be able to show the value
  * they had previously entered.
@@ -90,7 +90,7 @@ const getInitialFormStateNode = ({ schema, value, nodePath }) => {
   // Type specific helpers should set:
   //  - isPartsPopulationStrategySupported
   //  - populationStrategy
-  //  - wholeValue
+  //  - value
   //  - anything else needed for the specific type (e.g., "items" for array or "children" for object)
   getTypeSpecificHelpers(schema.type).populateInitialFormStateNode({
     formStateNode,
@@ -114,7 +114,7 @@ const formStateNodeShape = {
   isAutoPopulated: PropTypes.bool.isRequired,
   isAlwaysDisabled: PropTypes.bool.isRequired,
   isPartsPopulationStrategySupported: PropTypes.bool.isRequired,
-  wholeValue: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
   populationStrategy: PropTypes.oneOf([WHOLE, PARTS]).isRequired
 };
 

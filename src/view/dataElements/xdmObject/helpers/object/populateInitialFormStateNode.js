@@ -56,11 +56,11 @@ export default ({
   // default to the PARTS population strategy if it's supported for the node.
   if (typeof value === "string") {
     formStateNode.populationStrategy = WHOLE;
-    formStateNode.wholeValue = value;
+    formStateNode.value = value;
   } else {
     formStateNode.populationStrategy = formStateNode.isPartsPopulationStrategySupported
       ? PARTS
       : WHOLE;
-    formStateNode.wholeValue = "";
+    formStateNode.value = "";
   }
 };

@@ -10,21 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import isWholeValuePopulated from "../isWholeValuePopulated";
+import isFormStateValuePopulated from "../isFormStateValuePopulated";
 import singleDataElementRegex from "../../../../constants/singleDataElementRegex";
 
 export default ({
   formStateNode,
   confirmDataPopulatedAtCurrentOrDescendantNode
 }) => {
-  const { wholeValue } = formStateNode;
+  const { value } = formStateNode;
 
-  if (isWholeValuePopulated(wholeValue)) {
-    if (
-      !singleDataElementRegex.test(wholeValue) &&
-      typeof wholeValue !== "boolean"
-    ) {
-      return { wholeValue: "Value must be a data element." };
+  if (isFormStateValuePopulated(value)) {
+    if (!singleDataElementRegex.test(value) && typeof value !== "boolean") {
+      return { value: "Value must be a data element." };
     }
 
     confirmDataPopulatedAtCurrentOrDescendantNode();

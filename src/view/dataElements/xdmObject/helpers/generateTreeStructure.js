@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { WHOLE } from "../constants/populationStrategy";
-import isWholeValuePopulated from "./isWholeValuePopulated";
+import isFormStateValuePopulated from "./isFormStateValuePopulated";
 import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 /**
@@ -65,7 +65,7 @@ const getTreeNode = ({
     id,
     schema,
     populationStrategy,
-    wholeValue,
+    value,
     isAlwaysDisabled,
     isAutoPopulated
   } = formStateNode;
@@ -100,14 +100,14 @@ const getTreeNode = ({
     }
   };
 
-  if (touched && touched.wholeValue) {
+  if (touched && touched.value) {
     confirmTouchedAtCurrentOrDescendantNode();
   }
 
   if (
     !isAncestorUsingWholePopulationStrategy &&
     isUsingWholePopulationStrategy &&
-    isWholeValuePopulated(wholeValue)
+    isFormStateValuePopulated(value)
   ) {
     confirmDataPopulatedAtCurrentOrDescendantNode();
   }
@@ -128,9 +128,7 @@ const getTreeNode = ({
 
   if (isTouchedAtCurrentOrDescendantNode) {
     treeNode.error =
-      errors && typeof errors.wholeValue === "string"
-        ? errors.wholeValue
-        : undefined;
+      errors && typeof errors.value === "string" ? errors.value : undefined;
   }
 
   return treeNode;

@@ -54,13 +54,13 @@ const ObjectEdit = props => {
       {populationStrategy === WHOLE && (
         <div className="u-gapTop">
           <FieldLabel
-            labelFor="wholeValueField"
+            labelFor="valueField"
             label="Data element providing object"
           />
           <WrappedField
-            data-test-id="wholeValueField"
-            id="wholeValueField"
-            name={`${fieldName}.wholeValue`}
+            data-test-id="valueField"
+            id="valueField"
+            name={`${fieldName}.value`}
             component={Textfield}
             componentClassName="u-fieldLong"
             supportDataElement="replace"

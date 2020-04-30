@@ -9,24 +9,16 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import spectrum from "../../../helpers/spectrum";
 
-import isFormStateValuePopulated from "../isFormStateValuePopulated";
-import singleDataElementRegex from "../../../../constants/singleDataElementRegex";
-import isNumberLike from "../isNumberLike";
-
-export default ({
-  formStateNode,
-  confirmDataPopulatedAtCurrentOrDescendantNode
-}) => {
-  const { value } = formStateNode;
-
-  if (isFormStateValuePopulated(value)) {
-    if (!singleDataElementRegex.test(value) && !isNumberLike(value)) {
-      return { value: "Value must be a data element or number." };
-    }
-
-    confirmDataPopulatedAtCurrentOrDescendantNode();
+/**
+ * Provides methods for managing form fields when editing an integer node.
+ */
+export default {
+  enterValue: async text => {
+    await spectrum.textfield("valueField").typeText(text);
+  },
+  expectValue: async text => {
+    await spectrum.textfield("valueField").expectValue(text);
   }
-
-  return undefined;
 };
