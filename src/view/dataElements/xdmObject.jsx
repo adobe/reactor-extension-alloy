@@ -110,7 +110,7 @@ const XdmObject = ({
 XdmObject.propTypes = {
   initInfo: PropTypes.object.isRequired,
   formikProps: PropTypes.object.isRequired,
-  schemasMeta: PropTypes.object,
+  schemasMeta: PropTypes.array,
   selectedSchemaMeta: PropTypes.object,
   setSelectedSchemaMeta: PropTypes.func
 };
@@ -136,12 +136,27 @@ const XdmExtensionView = () => {
               return {};
             }
 
-            setSelectedSchemaMeta(_schemasMeta[0]);
+            // TODO: don't initialize form state if the schema doesn't match
+            let existingSchema;
+            if (initInfo.settings && initInfo.settings.schema) {
+              for (let i = 0; i < _schemasMeta.length; i += 1) {
+                if (_schemasMeta[i].$id === initInfo.settings.schema.id) {
+                  existingSchema = _schemasMeta[i];
+                }
+              }
+            }
+
+            let schemaMeta = _schemasMeta[0];
+            if (existingSchema) {
+              schemaMeta = existingSchema;
+            }
+
+            setSelectedSchemaMeta(schemaMeta);
 
             return fetchSchema({
               orgId: initInfo.company.orgId,
               imsAccess: initInfo.tokens.imsAccess,
-              schemaMeta: _schemasMeta[0]
+              schemaMeta
             });
           })
           .then(schema => {
@@ -182,7 +197,6 @@ const XdmExtensionView = () => {
         return (
           <XdmObject
             {...options}
-            // schema={schema}
             schemasMeta={schemasMeta}
             selectedSchemaMeta={selectedSchemaMeta}
             setSelectedSchemaMeta={onSchemaMetaSelected}
