@@ -18,7 +18,7 @@ export default ({ orgId, imsAccess }) => {
 
   // TODO: paginate this response using on responseBody._page.count or responseBody._links.next
   return fetch(
-    `${platform.getHost()}/data/foundation/schemaregistry/global/schemas?orderby=title`,
+    `${platform.getHost()}/data/foundation/schemaregistry/tenant/schemas?orderby=title`,
     {
       headers: {
         ...baseRequestHeaders,
