@@ -37,7 +37,7 @@ const filterDecisionScopes = scopes => {
   return scopes.filter(s => s !== "");
 };
 
-const getDecisionScopes = values => {
+const getDecisionScopesFromFormState = values => {
   if (
     values.decisionsInputMethod === decisionScopesOptions.DATA_ELEMENT &&
     values.decisionScopesDataElement
@@ -120,7 +120,7 @@ const getSettings = ({ values }) => {
   if (values.renderDecisions) {
     settings.renderDecisions = true;
   }
-  const scopes = getDecisionScopes(values);
+  const scopes = getDecisionScopesFromFormState(values);
   if (scopes) {
     settings.decisionScopes = scopes;
   }
