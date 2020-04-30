@@ -39,14 +39,14 @@ const filterDecisionScopes = scopes => {
 
 const getDecisionScopes = values => {
   if (
-    values.option === decisionScopesOptions.DATA_ELEMENT &&
+    values.decisionsInputMethod === decisionScopesOptions.DATA_ELEMENT &&
     values.decisionScopesDataElement
   ) {
     return values.decisionScopesDataElement;
   }
 
   if (
-    values.option === decisionScopesOptions.CONSTANT &&
+    values.decisionsInputMethod === decisionScopesOptions.CONSTANT &&
     values.decisionScopesArray.length > 0
   ) {
     const scopes = filterDecisionScopes(values.decisionScopesArray);
@@ -60,20 +60,20 @@ const getDecisionScopes = values => {
 const getInitialDecisionScopesData = decisionScopes => {
   if (Array.isArray(decisionScopes)) {
     return {
-      option: decisionScopesOptions.CONSTANT,
+      decisionsInputMethod: decisionScopesOptions.CONSTANT,
       decisionScopesArray: decisionScopes,
       decisionScopesDataElement: ""
     };
   }
   if (typeof decisionScopes === "string") {
     return {
-      option: decisionScopesOptions.DATA_ELEMENT,
+      decisionsInputMethod: decisionScopesOptions.DATA_ELEMENT,
       decisionScopesDataElement: decisionScopes,
       decisionScopesArray: [""]
     };
   }
   return {
-    option: decisionScopesOptions.DATA_ELEMENT,
+    decisionsInputMethod: decisionScopesOptions.CONSTANT,
     decisionScopesDataElement: "",
     decisionScopesArray: [""]
   };
@@ -133,11 +133,12 @@ const validationSchema = object().shape({
     singleDataElementRegex,
     "Please specify a data element"
   ),
-  decisionScopesDataElement: string().when("option", {
+  decisionScopesDataElement: string().when("decisionsInputMethod", {
     is: decisionScopesOptions.DATA_ELEMENT,
-    then: string()
-      .min(1)
-      .matches(singleDataElementRegex, "Please specify a data element")
+    then: string().matches(
+      singleDataElementRegex,
+      "Please specify a data element"
+    )
   })
 });
 
@@ -261,7 +262,6 @@ const SendEvent = () => {
             </div>
             <DecisionScopesComponent
               values={values}
-              formikProps={formikProps}
               options={decisionScopesOptions}
             />
           </div>

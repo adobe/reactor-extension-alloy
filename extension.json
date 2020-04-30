@@ -231,11 +231,11 @@
   ],
   "events": [
     {
-    "name": "decisions-received",
-    "displayName": "Decisions Received",
-    "libPath": "dist/lib/events/decisionsReceived/index.js",
-    "schema": {}
-  }
+      "name": "decisions-received",
+      "displayName": "Decisions Received",
+      "libPath": "dist/lib/events/decisionsReceived/index.js",
+      "schema": {}
+    }
   ],
   "dataElements": [
     {

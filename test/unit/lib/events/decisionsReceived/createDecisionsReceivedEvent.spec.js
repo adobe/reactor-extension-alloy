@@ -14,7 +14,7 @@ import createDecisionsReceivedEvent from "../../../../../src/lib/events/decision
 
 describe("Decisions received event", () => {
   it("should add a trigger in the callbackStorage", () => {
-    const trigger = jasmine.any(Function);
+    const trigger = () => {};
     const decisionsCallbackStorage = jasmine.createSpyObj(
       "decisionsCallbackStorage",
       ["add"]

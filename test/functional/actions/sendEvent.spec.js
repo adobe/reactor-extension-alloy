@@ -22,6 +22,12 @@ const renderDecisionsField = spectrum.checkbox("renderDecisionsField");
 const xdmField = spectrum.textfield("xdmField");
 const typeField = spectrum.textfield("typeField");
 const mergeIdField = spectrum.textfield("mergeIdField");
+const scopeDataElementField = spectrum.textfield("scopeDataElementField");
+const scopeValuesFirstField = spectrum.textfield("scope0Field");
+const radioGroup = {
+  dataElement: spectrum.radio("dataElementOptionField"),
+  values: spectrum.radio("constantOptionField")
+};
 
 const mockExtensionSettings = {
   instances: [
@@ -50,7 +56,8 @@ test("initializes form fields with full settings", async () => {
       renderDecisions: true,
       xdm: "%myDataLayer%",
       type: "myType1",
-      mergeId: "%myMergeId%"
+      mergeId: "%myMergeId%",
+      decisionScopes: "%myDecisionScope%"
     }
   });
   await instanceNameField.expectValue("alloy2");
@@ -58,6 +65,10 @@ test("initializes form fields with full settings", async () => {
   await xdmField.expectValue("%myDataLayer%");
   await typeField.expectValue("myType1");
   await mergeIdField.expectValue("%myMergeId%");
+  await radioGroup.dataElement.expectChecked();
+  await radioGroup.values.expectUnchecked();
+  await scopeDataElementField.expectValue("%myDecisionScope%");
+  await scopeValuesFirstField.expectValue("");
 });
 
 test("initializes form fields with minimal settings", async () => {

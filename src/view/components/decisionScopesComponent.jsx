@@ -1,3 +1,15 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import { FieldArray } from "formik";
@@ -12,13 +24,13 @@ import Radio from "@react/react-spectrum/Radio";
 import InfoTipLayout from "./infoTipLayout";
 import WrappedField from "./wrappedField";
 
-function DecisionScopesComponent({ values, formikProps, options }) {
+function DecisionScopesComponent({ values, options }) {
   return (
     <div>
       <div className="u-gapTop">
         <InfoTipLayout
-          tip="If you set decision scopes as a Data Element, that Data Element should return an array.
-          Otherwise you could add decision scopes as constants."
+          tip="You may provide scopes as a data element or enter each scope individually.
+           If a data element is provided, it must return an array of scopes."
         >
           <FieldLabel
             labelFor="decisionScopesType"
@@ -27,7 +39,7 @@ function DecisionScopesComponent({ values, formikProps, options }) {
         </InfoTipLayout>
         <WrappedField
           id="decisionScopesTypeField"
-          name="option"
+          name="decisionsInputMethod"
           component={RadioGroup}
           componentClassName="u-flexRow"
         >
@@ -45,7 +57,7 @@ function DecisionScopesComponent({ values, formikProps, options }) {
           />
         </WrappedField>
       </div>
-      {formikProps.values.option === options.DATA_ELEMENT ? (
+      {values.decisionsInputMethod === options.DATA_ELEMENT && (
         <div className="FieldSubset u-gapTop">
           <div>
             <WrappedField
@@ -58,41 +70,38 @@ function DecisionScopesComponent({ values, formikProps, options }) {
             />
           </div>
         </div>
-      ) : null}
-      {formikProps.values.option === options.CONSTANT ? (
+      )}
+      {values.decisionsInputMethod === options.CONSTANT && (
         <div className="FieldSubset u-gapTop">
           <FieldArray
             name="decisionScopesArray"
             render={arrayHelpers => {
               return (
                 <div className="u-gapTop">
-                  {((Array.isArray(values.decisionScopesArray) &&
-                    values.decisionScopesArray.length) ||
-                    null) &&
-                    values.decisionScopesArray.map((scope, index) => (
-                      <div className="u-gapTop" key={index}>
-                        <WrappedField
-                          data-test-id={`scope${index}Field`}
-                          id={`scope${index}Field`}
-                          name={`decisionScopesArray.${index}`}
-                          component={Textfield}
-                          componentClassName="u-fieldLong"
-                        />
-                        <Button
-                          data-test-id={`deleteScope${index}Button`}
-                          icon={<Delete />}
-                          disabled={values.decisionScopesArray.length === 1}
-                          size="S"
-                          onClick={() => {
-                            arrayHelpers.remove(index);
-                          }}
-                        />
-                      </div>
-                    ))}
+                  {values.decisionScopesArray.map((scope, index) => (
+                    <div className="u-gapTop" key={index}>
+                      <WrappedField
+                        data-test-id={`scope${index}Field`}
+                        id={`scope${index}Field`}
+                        name={`decisionScopesArray.${index}`}
+                        component={Textfield}
+                        componentClassName="u-fieldLong"
+                      />
+                      <Button
+                        data-test-id={`deleteScope${index}Button`}
+                        icon={<Delete />}
+                        disabled={values.decisionScopesArray.length === 1}
+                        variant="tool"
+                        onClick={() => {
+                          arrayHelpers.remove(index);
+                        }}
+                      />
+                    </div>
+                  ))}
                   <div className="u-gapTop u-alignRight">
                     <Button
                       data-test-id="addDecisionScopeButton"
-                      label="Add decision scope"
+                      label="Add scope"
                       onClick={() => {
                         arrayHelpers.push("");
                       }}
@@ -103,14 +112,13 @@ function DecisionScopesComponent({ values, formikProps, options }) {
             }}
           />
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
 
 DecisionScopesComponent.propTypes = {
   values: PropTypes.object,
-  formikProps: PropTypes.object,
   options: PropTypes.object
 };
 
