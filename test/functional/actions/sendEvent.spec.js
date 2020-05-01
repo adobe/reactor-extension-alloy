@@ -78,24 +78,13 @@ test("initializes form fields with full settings, when decision scopes is data e
   await scopeDataElementField.expectValue("%myDecisionScope%");
 });
 
-test("initializes form fields with full settings, when decision scopes is an array of scopes", async () => {
+test("initializes decision scopes form fields, when decision scopes is an array of scopes", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
-      instanceName: "alloy2",
-      renderDecisions: true,
-      xdm: "%myDataLayer%",
-      type: "myType1",
-      mergeId: "%myMergeId%",
       decisionScopes: ["foo1", "foo2", "foo3"]
     }
   });
-  await instanceNameField.expectValue("alloy2");
-  await renderDecisionsField.expectChecked();
-  await xdmField.expectValue("%myDataLayer%");
-  await typeField.expectValue("myType1");
-  await mergeIdField.expectValue("%myMergeId%");
-  await radioGroup.dataElement.expectUnchecked();
   await radioGroup.values.expectChecked();
   await scopeDataElementField.expectError;
   await scopeArrayValues[0].value.expectValue("foo1");
