@@ -5691,27 +5691,45 @@ var buildActions = function buildActions(decision) {
   });
 };
 
+var processMetas = function processMetas(collect, logger, actionResults) {
+  var results = flatMap(actionResults, identity);
+  var finalMetas = [];
+  var set = new Set();
+  results.forEach(function (item) {
+    if (item.error) {
+      logger.warn(item);
+      return;
+    }
+
+    var meta = item.meta;
+
+    if (set.has(meta.id)) {
+      return;
+    }
+
+    set.add(meta.id);
+    finalMetas.push(meta);
+  });
+
+  if (isNonEmptyArray(finalMetas)) {
+    collect({
+      decisions: finalMetas
+    });
+  }
+};
+
 var createExecuteDecisions = (function (_ref) {
   var modules = _ref.modules,
       logger = _ref.logger,
       executeActions = _ref.executeActions,
       collect = _ref.collect;
   return function (decisions) {
-    var decisionMetasPromise = decisions.map(function (decision) {
+    var actionResultsPromises = decisions.map(function (decision) {
       var actions = buildActions(decision);
       return executeActions(actions, modules, logger);
     });
-    return Promise.all(decisionMetasPromise).then(function (result) {
-      var metas = flatMap(result, identity);
-      return metas.map(function (item) {
-        return item.meta;
-      });
-    }).then(function (decisionMetas) {
-      if (isNonEmptyArray(decisionMetas)) {
-        collect({
-          decisions: decisionMetas
-        });
-      }
+    return Promise.all(actionResultsPromises).then(function (results) {
+      return processMetas(collect, logger, results);
     }).catch(function (error) {
       logger.error(error);
     });
@@ -5859,7 +5877,7 @@ var mergeQuery = function mergeQuery(event, details) {
 };
 var createQueryDetails = function createQueryDetails(decisionScopes) {
   return {
-    accepts: ALL_SCHEMAS,
+    schemas: ALL_SCHEMAS,
     decisionScopes: decisionScopes
   };
 };
@@ -6140,7 +6158,7 @@ var implementationDetailsFactory = (function (version) {
 
 // The value will be swapped with the proper version at build time
 // see rollupPluginReplaceVersion.js
-var libraryVersion = "0.2.0";
+var libraryVersion = "0.2.1";
 
 /*
 Copyright 2019 Adobe. All rights reserved.
@@ -7363,7 +7381,6 @@ if (instanceNamespaces) {
 
   })();
 }
-
 
 /////////////////////////////
 // END OF LIBRARY CODE
