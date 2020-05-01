@@ -10,12 +10,22 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import spectrum from "../../../helpers/spectrum";
+
 /**
- * Types (among others) supported by JSON Schema.
- * @type {string}
+ * Provides methods for managing form fields when editing an object node.
  */
-export const OBJECT = "object";
-export const ARRAY = "array";
-export const BOOLEAN = "boolean";
-export const NUMBER = "number";
-export const INTEGER = "integer";
+export default {
+  selectPartsPopulationStrategy: async () => {
+    await spectrum.radio("partsPopulationStrategyField").click();
+  },
+  selectWholePopulationStrategy: async () => {
+    await spectrum.radio("wholePopulationStrategyField").click();
+  },
+  enterValue: async text => {
+    await spectrum.textfield("valueField").typeText(text);
+  },
+  expectValue: async text => {
+    await spectrum.textfield("valueField").expectValue(text);
+  }
+};

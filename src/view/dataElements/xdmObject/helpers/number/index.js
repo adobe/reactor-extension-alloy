@@ -10,12 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/**
- * Types (among others) supported by JSON Schema.
- * @type {string}
- */
-export const OBJECT = "object";
-export const ARRAY = "array";
-export const BOOLEAN = "boolean";
-export const NUMBER = "number";
-export const INTEGER = "integer";
+import populateInitialFormStateNode from "./populateInitialFormStateNode";
+import getValueFromFormState from "./getValueFromFormState";
+import validate from "./validate";
+import populateTreeNode from "../boolean/populateTreeNode";
+
+export default {
+  populateInitialFormStateNode,
+  getValueFromFormState,
+  validate,
+  populateTreeNode
+};

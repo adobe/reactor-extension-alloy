@@ -18,7 +18,6 @@ import Textfield from "@react/react-spectrum/Textfield";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import WrappedField from "../../../components/wrappedField";
 import { PARTS, WHOLE } from "../constants/populationStrategy";
-import AutoPopulationAlert from "./autoPopulationAlert";
 import { formStateNodePropTypes } from "../helpers/getInitialFormState";
 
 /**
@@ -33,7 +32,6 @@ const ObjectEdit = props => {
 
   return (
     <div>
-      {formStateNode.isAutoPopulated && <AutoPopulationAlert />}
       {isPartsPopulationStrategySupported && (
         <WrappedField
           name={`${fieldName}.populationStrategy`}
@@ -56,13 +54,13 @@ const ObjectEdit = props => {
       {populationStrategy === WHOLE && (
         <div className="u-gapTop">
           <FieldLabel
-            labelFor="wholeValueField"
+            labelFor="valueField"
             label="Data element providing object"
           />
           <WrappedField
-            data-test-id="wholeValueField"
-            id="wholeValueField"
-            name={`${fieldName}.wholeValue`}
+            data-test-id="valueField"
+            id="valueField"
+            name={`${fieldName}.value`}
             component={Textfield}
             componentClassName="u-fieldLong"
             supportDataElement="replace"

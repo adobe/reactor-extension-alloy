@@ -10,12 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/**
- * Types (among others) supported by JSON Schema.
- * @type {string}
- */
-export const OBJECT = "object";
-export const ARRAY = "array";
-export const BOOLEAN = "boolean";
-export const NUMBER = "number";
-export const INTEGER = "integer";
+import { WHOLE } from "../../constants/populationStrategy";
+
+export default ({ formStateNode, value = "" }) => {
+  formStateNode.isPartsPopulationStrategySupported = false;
+  formStateNode.populationStrategy = WHOLE;
+  formStateNode.value = value;
+};

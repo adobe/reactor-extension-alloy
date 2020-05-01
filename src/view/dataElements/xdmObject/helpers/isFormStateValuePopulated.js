@@ -11,11 +11,7 @@ governing permissions and limitations under the License.
 */
 
 /**
- * Types (among others) supported by JSON Schema.
- * @type {string}
+ * Returns whether a node's form state value has been populated. An empty string is the default,
+ * so anything other than that indicates the user has populated the value.
  */
-export const OBJECT = "object";
-export const ARRAY = "array";
-export const BOOLEAN = "boolean";
-export const NUMBER = "number";
-export const INTEGER = "integer";
+export default value => value !== "";

@@ -10,12 +10,23 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/**
- * Types (among others) supported by JSON Schema.
- * @type {string}
- */
-export const OBJECT = "object";
-export const ARRAY = "array";
-export const BOOLEAN = "boolean";
-export const NUMBER = "number";
-export const INTEGER = "integer";
+import isFormStateValuePopulated from "../isFormStateValuePopulated";
+import singleDataElementRegex from "../../../../constants/singleDataElementRegex";
+import isNumberLike from "../isNumberLike";
+
+export default ({
+  formStateNode,
+  confirmDataPopulatedAtCurrentOrDescendantNode
+}) => {
+  const { value } = formStateNode;
+
+  if (isFormStateValuePopulated(value)) {
+    if (!singleDataElementRegex.test(value) && !isNumberLike(value)) {
+      return { value: "Value must be a data element or number." };
+    }
+
+    confirmDataPopulatedAtCurrentOrDescendantNode();
+  }
+
+  return undefined;
+};

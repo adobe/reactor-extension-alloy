@@ -9,23 +9,16 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
 import spectrum from "../../../helpers/spectrum";
 
 /**
- * Provides methods for managing form fields when editing a node.
+ * Provides methods for managing form fields when editing a number node.
  */
 export default {
-  selectPartsPopulationStrategy: async () => {
-    await spectrum.radio("partsPopulationStrategyField").click();
+  enterValue: async text => {
+    await spectrum.textfield("valueField").typeText(text);
   },
-  selectWholePopulationStrategy: async () => {
-    await spectrum.radio("wholePopulationStrategyField").click();
-  },
-  enterWholeValue: async text => {
-    await spectrum.textfield("wholeValueField").typeText(text);
-  },
-  expectWholeValue: async text => {
-    await spectrum.textfield("wholeValueField").expectValue(text);
+  expectValue: async text => {
+    await spectrum.textfield("valueField").expectValue(text);
   }
 };

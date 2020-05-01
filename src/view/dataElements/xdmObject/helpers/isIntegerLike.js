@@ -10,12 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import isNumberLike from "./isNumberLike";
+
 /**
- * Types (among others) supported by JSON Schema.
- * @type {string}
+ * Returns whether the value is an integer or a string that represents an integer.
+ * An empty string returns false.
  */
-export const OBJECT = "object";
-export const ARRAY = "array";
-export const BOOLEAN = "boolean";
-export const NUMBER = "number";
-export const INTEGER = "integer";
+export default value => isNumberLike(value) && Number.isInteger(Number(value));
