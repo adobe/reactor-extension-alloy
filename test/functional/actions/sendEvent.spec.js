@@ -166,15 +166,10 @@ test("returns full valid settings with decision scopes as data element", async (
     decisionScopes: "%myScope%"
   });
 });
-test("returns full valid settings with decision scopes as an array of strings", async () => {
+test("returns decision scopes settings as an array", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await instanceNameField.selectOption("alloy2");
-  await renderDecisionsField.click();
-  await xdmField.typeText("%myDataLayer%");
-  await typeField.typeText("mytype1");
-  await mergeIdField.typeText("%myMergeId%");
   await radioGroup.values.click();
   await scopeArrayValues[0].value.typeText("foo");
   await addDecisionScopeButton.click();
@@ -184,33 +179,20 @@ test("returns full valid settings with decision scopes as an array of strings", 
   await scopeArrayValues[1].deleteButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    instanceName: "alloy2",
-    renderDecisions: true,
-    xdm: "%myDataLayer%",
-    type: "mytype1",
-    mergeId: "%myMergeId%",
+    instanceName: "alloy1",
     decisionScopes: ["foo", "foo2"]
   });
 });
-test("returns valid settings without decision scopes, when it is an array of empty strings", async () => {
+test("does not return decision scopes settings when provided with array of empty strings", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await instanceNameField.selectOption("alloy2");
-  await renderDecisionsField.click();
-  await xdmField.typeText("%myDataLayer%");
-  await typeField.typeText("mytype1");
-  await mergeIdField.typeText("%myMergeId%");
   await radioGroup.values.click();
   await addDecisionScopeButton.click();
   await addDecisionScopeButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    instanceName: "alloy2",
-    renderDecisions: true,
-    xdm: "%myDataLayer%",
-    type: "mytype1",
-    mergeId: "%myMergeId%"
+    instanceName: "alloy1"
   });
 });
 
