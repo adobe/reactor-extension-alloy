@@ -44,8 +44,16 @@
               "errorsEnabled": {
                 "type": "boolean"
               },
-              "optInEnabled": {
-                "type": "boolean"
+              "defaultConsent": {
+                "type": "object",
+                "properties": {
+                  "general": {
+                    "type": "string",
+                    "enum": ["in", "pending"]
+                  }
+                },
+                "additionalProperties": false,
+                "required": ["general"]
               },
               "idMigrationEnabled": {
                 "type": "boolean"
