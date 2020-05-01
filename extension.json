@@ -3,7 +3,7 @@
   "name": "adobe-alloy",
   "iconPath": "resources/images/icon.svg",
   "platform": "web",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
   "author": {
     "name": "Adobe"
@@ -77,7 +77,7 @@
               }
             },
             "required": ["edgeConfigId", "name"],
-            "additionalProperties": true
+            "additionalProperties": false
           }
         }
       },
