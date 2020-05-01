@@ -26,22 +26,78 @@ import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./sendEvent.styl";
 import InfoTipLayout from "../components/infoTipLayout";
+import DecisionScopesComponent from "../components/decisionScopesComponent";
 
+const decisionScopesOptions = {
+  CONSTANT: "constant",
+  DATA_ELEMENT: "dataElement"
+};
+
+const filterDecisionScopes = scopes => {
+  return scopes.filter(s => s !== "");
+};
+
+const getDecisionScopesFromFormState = values => {
+  if (
+    values.decisionsInputMethod === decisionScopesOptions.DATA_ELEMENT &&
+    values.decisionScopesDataElement
+  ) {
+    return values.decisionScopesDataElement;
+  }
+
+  if (
+    values.decisionsInputMethod === decisionScopesOptions.CONSTANT &&
+    values.decisionScopesArray.length > 0
+  ) {
+    const scopes = filterDecisionScopes(values.decisionScopesArray);
+    if (scopes.length > 0) {
+      return scopes;
+    }
+  }
+  return undefined;
+};
+
+const getInitialDecisionScopesData = decisionScopes => {
+  if (Array.isArray(decisionScopes)) {
+    return {
+      decisionsInputMethod: decisionScopesOptions.CONSTANT,
+      decisionScopesArray: decisionScopes,
+      decisionScopesDataElement: ""
+    };
+  }
+  if (typeof decisionScopes === "string") {
+    return {
+      decisionsInputMethod: decisionScopesOptions.DATA_ELEMENT,
+      decisionScopesDataElement: decisionScopes,
+      decisionScopesArray: [""]
+    };
+  }
+  return {
+    decisionsInputMethod: decisionScopesOptions.CONSTANT,
+    decisionScopesDataElement: "",
+    decisionScopesArray: [""]
+  };
+};
 const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
-    viewStart = false,
+    renderDecisions = false,
+    decisionScopes = null,
     xdm = "",
     type = "",
     mergeId = ""
   } = initInfo.settings || {};
+  const initialPersonalizationData = getInitialDecisionScopesData(
+    decisionScopes
+  );
 
   return {
     instanceName,
-    viewStart,
+    renderDecisions,
     xdm,
     type,
-    mergeId
+    mergeId,
+    ...initialPersonalizationData
   };
 };
 
@@ -60,16 +116,30 @@ const getSettings = ({ values }) => {
     settings.mergeId = values.mergeId;
   }
 
-  // Only add viewStart if the value is different than the default (false).
-  if (values.viewStart) {
-    settings.viewStart = true;
+  // Only add renderDecisions if the value is different than the default (false).
+  if (values.renderDecisions) {
+    settings.renderDecisions = true;
+  }
+  const scopes = getDecisionScopesFromFormState(values);
+  if (scopes) {
+    settings.decisionScopes = scopes;
   }
 
   return settings;
 };
 
 const validationSchema = object().shape({
-  xdm: string().matches(singleDataElementRegex, "Please specify a data element")
+  xdm: string().matches(
+    singleDataElementRegex,
+    "Please specify a data element"
+  ),
+  decisionScopesDataElement: string().when("decisionsInputMethod", {
+    is: decisionScopesOptions.DATA_ELEMENT,
+    then: string().matches(
+      singleDataElementRegex,
+      "Please specify a data element"
+    )
+  })
 });
 
 const knownEventTypes = [
@@ -102,7 +172,9 @@ const SendEvent = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={({ initInfo }) => {
+      render={({ formikProps, initInfo }) => {
+        const { values } = formikProps;
+
         return (
           <div>
             <div>
@@ -179,15 +251,19 @@ const SendEvent = () => {
               </div>
             </div>
             <div className="u-gapTop">
-              <InfoTipLayout tip="Influences whether the SDK should retrieve and render personalization content, among other things.">
+              <InfoTipLayout tip="Influences whether the SDK should retrieve and render personalization content.">
                 <WrappedField
-                  data-test-id="viewStartField"
-                  name="viewStart"
+                  data-test-id="renderDecisionsField"
+                  name="renderDecisions"
                   component={Checkbox}
-                  label="Occurs at the start of a view"
+                  label="Render visual personalization decisions"
                 />
               </InfoTipLayout>
             </div>
+            <DecisionScopesComponent
+              values={values}
+              options={decisionScopesOptions}
+            />
           </div>
         );
       }}

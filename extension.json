@@ -122,9 +122,15 @@
             "type": "string",
             "minLength": 1
           },
-          "viewStart": {
+          "renderDecisions": {
             "type": "boolean",
             "minLength": 1
+          },
+          "decisionScopes": {
+            "anyOf": [
+              { "type": "array" },
+              { "type": "string", "pattern": "^%[^%]+%$" }
+            ]
           },
           "xdm": {
             "type": "string",
@@ -221,6 +227,14 @@
       },
       "libPath": "dist/lib/actions/syncIdentity/index.js",
       "viewPath": "actions/syncIdentity.html"
+    }
+  ],
+  "events": [
+    {
+      "name": "decisions-received",
+      "displayName": "Decisions Received",
+      "libPath": "dist/lib/events/decisionsReceived/index.js",
+      "schema": {}
     }
   ],
   "dataElements": [
