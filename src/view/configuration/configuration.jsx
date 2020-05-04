@@ -26,6 +26,7 @@ import Dialog from "@react/react-spectrum/Dialog";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import Delete from "@react/react-spectrum/Icon/Delete";
 import { Accordion, AccordionItem } from "@react/react-spectrum/Accordion";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import CheckboxList from "../components/checkboxList";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
@@ -35,6 +36,7 @@ import EditorButton from "../components/editorButton";
 import InfoTipLayout from "../components/infoTipLayout";
 import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
+import prehidingSnippet from "../utils/prehidingSnippet";
 import "./configuration.styl";
 
 const contextGranularityEnum = {
@@ -518,7 +520,22 @@ const Configuration = ({ formikProps, initInfo }) => {
                         />
                       </div>
                     </div>
-
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="Prehiding snipped should be placed on the page at the very top">
+                        <FieldLabel
+                          labelFor="prehidingStyleField"
+                          label="Default prehiding snippet (optional)"
+                        />
+                      </InfoTipLayout>
+                      <div className="u-gapLeft">
+                        <CopyToClipboard text={prehidingSnippet}>
+                          <Button
+                            data-test-id="copyToClipboardPrehidingStyleBtn"
+                            label="Copy now"
+                          />
+                        </CopyToClipboard>
+                      </div>
+                    </div>
                     <h3>Data Collection</h3>
                     <div className="u-gapTop">
                       <InfoTipLayout tip='A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'>

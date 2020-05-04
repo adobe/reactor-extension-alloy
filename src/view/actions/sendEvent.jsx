@@ -251,7 +251,7 @@ const SendEvent = () => {
               </div>
             </div>
             <div className="u-gapTop">
-              <InfoTipLayout tip="Influences whether the SDK should retrieve and render personalization content.">
+              <InfoTipLayout tip="Influences whether the SDK should automatically render personalization and pre-hide the content to prevent flicker.">
                 <WrappedField
                   data-test-id="renderDecisionsField"
                   name="renderDecisions"
