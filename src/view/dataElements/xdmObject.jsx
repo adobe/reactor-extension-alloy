@@ -26,6 +26,7 @@ import validate from "./xdmObject/helpers/validate";
 import render from "../render";
 import fetchSchema from "./xdmObject/helpers/fetchSchema";
 import fetchSchemaList from "./xdmObject/helpers/fetchSchemaList";
+import findSchemaMetaById from "./xdmObject/helpers/findSchemaMetaById";
 import "./xdmObject.styl";
 
 const XdmObject = ({
@@ -51,7 +52,7 @@ const XdmObject = ({
 
   const schemaOptions = schemasMeta.map(schemaMeta => {
     return {
-      value: schemaMeta,
+      value: schemaMeta.$id,
       label: schemaMeta.title
     };
   });
@@ -69,10 +70,12 @@ const XdmObject = ({
           data-test-id="schemaField"
           className="u-widthAuto u-gapBottom"
           options={schemaOptions}
-          value={selectedSchemaMeta}
-          onChange={schemaMeta => {
+          value={selectedSchemaMeta.$id}
+          onChange={schemaMetaId => {
             setSelectedNodeId(undefined);
-            setSelectedSchemaMeta(schemaMeta);
+            setSelectedSchemaMeta({
+              $id: schemaMetaId
+            });
           }}
         />
       </FieldLabel>
@@ -139,11 +142,10 @@ const XdmExtensionView = () => {
             // TODO: don't initialize form state if the schema doesn't match
             let existingSchema;
             if (initInfo.settings && initInfo.settings.schema) {
-              for (let i = 0; i < _schemasMeta.length; i += 1) {
-                if (_schemasMeta[i].$id === initInfo.settings.schema.id) {
-                  existingSchema = _schemasMeta[i];
-                }
-              }
+              existingSchema = findSchemaMetaById({
+                $id: initInfo.settings.schema.id,
+                schemasMeta: _schemasMeta
+              });
             }
 
             let schemaMeta = _schemasMeta[0];
@@ -179,7 +181,11 @@ const XdmExtensionView = () => {
       }}
       validate={validate}
       render={options => {
-        const onSchemaMetaSelected = schemaMeta => {
+        const onSchemaMetaSelected = _schemaMeta => {
+          const schemaMeta = findSchemaMetaById({
+            $id: _schemaMeta.$id,
+            schemasMeta
+          });
           setSelectedSchemaMeta(schemaMeta);
           fetchSchema({
             orgId: options.initInfo.company.orgId,
