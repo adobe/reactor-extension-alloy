@@ -11,31 +11,40 @@ governing permissions and limitations under the License.
 */
 
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
-import turbineVariable from "../../helpers/turbineVariable";
 
 describe("Instance Manager", () => {
+  let turbine;
   let runAlloy;
   let instanceManager;
   let mockWindow;
 
-  beforeEach(() => {
-    turbineVariable.mock({
-      getExtensionSettings() {
-        return {
-          instances: [
-            {
-              name: "alloy1",
-              configId: "PR123"
-            },
-            {
-              name: "alloy2",
-              configId: "PR456",
-              orgId: "DIFFERENTORG@AdobeOrg"
-            }
-          ]
-        };
-      }
+  const build = () => {
+    instanceManager = createInstanceManager({
+      turbine,
+      window: mockWindow,
+      runAlloy,
+      orgId: "ABC@AdobeOrg"
     });
+  };
+
+  beforeEach(() => {
+    turbine = jasmine.createSpyObj({
+      getExtensionSettings: {
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123"
+          },
+          {
+            name: "alloy2",
+            edgeConfigId: "PR456",
+            orgId: "DIFFERENTORG@AdobeOrg"
+          }
+        ]
+      },
+      onDebugChanged: undefined
+    });
+    turbine.debugEnabled = false;
     mockWindow = {};
     runAlloy = jasmine.createSpy().and.callFake(names => {
       names.forEach(name => {
@@ -43,53 +52,78 @@ describe("Instance Manager", () => {
           .createSpy()
           .and.callFake((commandName, options) => {
             if (commandName === "configure") {
-              options.reactorRegisterGetEcid(() => `${name}:ecid`);
               options.reactorRegisterCreateEventMergeId(
-                () => `${name}:eventMergeId`
+                () => `randomEventMergeId`
               );
             }
           });
       });
     });
-    instanceManager = createInstanceManager(
-      mockWindow,
-      runAlloy,
-      "ABC@AdobeOrg"
-    );
-  });
-
-  afterEach(() => {
-    turbineVariable.reset();
   });
 
   it("runs alloy", () => {
+    build();
     expect(runAlloy).toHaveBeenCalledWith(["alloy1", "alloy2"]);
   });
 
   it("creates an SDK instance for each configured instance", () => {
+    build();
     expect(mockWindow.alloy1).toEqual(jasmine.any(Function));
     expect(mockWindow.alloy2).toEqual(jasmine.any(Function));
   });
 
   it("configures an SDK instance for each configured instance", () => {
+    build();
     expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
-      configId: "PR123",
+      edgeConfigId: "PR123",
+      debugEnabled: false,
       orgId: "ABC@AdobeOrg",
-      reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
-      configId: "PR456",
+      edgeConfigId: "PR456",
+      debugEnabled: false,
       orgId: "DIFFERENTORG@AdobeOrg",
-      reactorRegisterGetEcid: jasmine.any(Function),
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
   });
 
-  it("returns accessor by name", () => {
-    const accessor = instanceManager.getAccessor("alloy2");
-    expect(accessor.instance).toBe(mockWindow.alloy2);
-    expect(accessor.getEcid()).toBe("alloy2:ecid");
-    expect(accessor.createEventMergeId()).toBe("alloy2:eventMergeId");
+  it("configures SDK instance with debugging enabled if Launch debugging is enabled", () => {
+    turbine.debugEnabled = true;
+    build();
+    expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
+      edgeConfigId: "PR123",
+      debugEnabled: true,
+      orgId: "ABC@AdobeOrg",
+      reactorRegisterCreateEventMergeId: jasmine.any(Function)
+    });
+  });
+
+  it("toggles SDK debugging when Launch debugging is toggled", () => {
+    const onDebugChangedCallbacks = [];
+    turbine.onDebugChanged.and.callFake(callback => {
+      onDebugChangedCallbacks.push(callback);
+    });
+    build();
+    onDebugChangedCallbacks.forEach(callback => callback(true));
+    expect(mockWindow.alloy1).toHaveBeenCalledWith("setDebug", {
+      enabled: true
+    });
+    onDebugChangedCallbacks.forEach(callback => callback(false));
+    expect(mockWindow.alloy1).toHaveBeenCalledWith("setDebug", {
+      enabled: false
+    });
+  });
+
+  it("returns instance by name", () => {
+    build();
+    const instance = instanceManager.getInstance("alloy2");
+    expect(instance).toBe(mockWindow.alloy2);
+  });
+
+  it("creates an event merge ID", () => {
+    build();
+    const eventMergeId = instanceManager.createEventMergeId();
+    expect(eventMergeId).toBe("randomEventMergeId");
   });
 });

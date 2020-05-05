@@ -12,20 +12,14 @@ governing permissions and limitations under the License.
 
 import PropTypes from "prop-types";
 import { WHOLE, PARTS } from "../constants/populationStrategy";
-import { OBJECT, ARRAY } from "../constants/schemaType";
 import autoPopulatedFields from "../constants/autoPopulatedFields";
 import alwaysDisabledFields from "../constants/alwaysDisabledFields";
+import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 let lastGeneratedNodeId = 0;
 const generateNodeId = () => {
   lastGeneratedNodeId += 1;
   return `node-${lastGeneratedNodeId}`;
-};
-
-const getNodePath = (parentNodePath, propertyOrIndexName) => {
-  return parentNodePath
-    ? `${parentNodePath}.${propertyOrIndexName}`
-    : propertyOrIndexName;
 };
 
 /**
@@ -53,10 +47,10 @@ const getNodePath = (parentNodePath, propertyOrIndexName) => {
  * provided for the object's properties or the array's items.
  * @property {string} populationStrategy Indicates which population
  * strategy the user is taking to populate the node's value.
- * @property {string} wholeValue The value that a user has provided for
+ * @property {string} value The value that a user has provided for
  * the whole node. This is only pertinent when the population strategy
  * is set to WHOLE. If the the user has set the population strategy to
- * PARTS, it will be ignored. We don't clear out wholeValue when the
+ * PARTS, it will be ignored. We don't clear out value when the
  * user switches populationStrategy to PARTS, because the user might
  * switch back to WHOLE and we'd like to be able to show the value
  * they had previously entered.
@@ -80,9 +74,7 @@ const getNodePath = (parentNodePath, propertyOrIndexName) => {
  * The path for bar would be "foo.bar".
  * @returns FormStateNode
  */
-const getFormStateNode = ({ schema, value, nodePath }) => {
-  const { type } = schema;
-
+const getInitialFormStateNode = ({ schema, value, nodePath }) => {
   const formStateNode = {
     // We generate an ID rather than use something like a schema path
     // or field path because those paths would need to incorporate indexes
@@ -95,92 +87,25 @@ const getFormStateNode = ({ schema, value, nodePath }) => {
     isAlwaysDisabled: alwaysDisabledFields.includes(nodePath)
   };
 
-  let isPartsPopulationStrategySupported = false;
-
-  if (type === OBJECT) {
-    // Note if we aren't provided properties, we don't supported the
-    // PARTS population strategy. The identityMap property on an
-    // ExperienceEvent schema is one example of this.
-    const { properties = {} } = schema;
-    const propertyNames = Object.keys(properties);
-    let propertyFormStateNodes;
-
-    if (propertyNames.length) {
-      isPartsPopulationStrategySupported = true;
-      propertyFormStateNodes = propertyNames.reduce((memo, propertyName) => {
-        const propertySchema = properties[propertyName];
-        let propertyValue;
-
-        if (typeof value === "object") {
-          propertyValue = value[propertyName];
-        }
-
-        const propertyFormStateNode = getFormStateNode({
-          schema: propertySchema,
-          value: propertyValue,
-          nodePath: getNodePath(nodePath, propertyName)
-        });
-        memo[propertyName] = propertyFormStateNode;
-        return memo;
-      }, {});
-    }
-
-    formStateNode.properties = propertyFormStateNodes || {};
-  }
-
-  if (type === ARRAY) {
-    let itemFormStateNodes = [];
-    // Note if we aren't provided a schema for the array items (a case which
-    // may not exist), we don't supported the PARTS population strategy.
-    if (schema.items) {
-      isPartsPopulationStrategySupported = true;
-      if (Array.isArray(value) && value.length) {
-        itemFormStateNodes = value.map((itemValue, index) => {
-          const itemSchema = schema.items;
-          const itemFormStateNode = getFormStateNode({
-            schema: itemSchema,
-            value: itemValue,
-            nodePath: getNodePath(nodePath, index)
-          });
-          return itemFormStateNode;
-        });
-      }
-    }
-
-    formStateNode.items = itemFormStateNodes || [];
-  }
-
-  formStateNode.isPartsPopulationStrategySupported = isPartsPopulationStrategySupported;
-
-  // If value is a string, we know that a data element token (e.g., "%foo%") or static
-  // string value (e.g., "foo") has been directly provided and the user is intending to use
-  // the WHOLE population strategy. Otherwise, the user is using the PARTS population strategy
-  // (if a value exists) or hasn't decided which strategy to use (if no value exists)
-  // in which case we'll use the PARTS population strategy if it's supported for the
-  // node. Note that if value is something else like a number or a boolean (anything that's
-  // not a string, object, or array), it would mean the user created the action using the
-  // Launch API. Because we currently have no way of representing numbers or booleans as
-  // values in the UI, we discard the value. Users wanting to use this action's UI and
-  // provide a non-string value like numbers or booleans will need to create data elements
-  // for the values and reference those data elements unless/until we provide enhanced ways
-  // of providing different types of constant values.
-  if (typeof value === "string") {
-    formStateNode.populationStrategy = WHOLE;
-    formStateNode.wholeValue = value;
-  } else {
-    formStateNode.populationStrategy = formStateNode.isPartsPopulationStrategySupported
-      ? PARTS
-      : WHOLE;
-    formStateNode.wholeValue = "";
-  }
+  // Type specific helpers should set:
+  //  - isPartsPopulationStrategySupported
+  //  - populationStrategy
+  //  - value
+  //  - anything else needed for the specific type (e.g., "items" for array or "children" for object)
+  getTypeSpecificHelpers(schema.type).populateInitialFormStateNode({
+    formStateNode,
+    value,
+    nodePath,
+    getInitialFormStateNode
+  });
 
   return formStateNode;
 };
 
-// Avoid exposing all of getFormStateNode's parameters since
+// Avoid exposing all of getInitialFormStateNode's parameters since
 // they're only used internally for recursion.
 export default ({ schema, value }) => {
-  return getFormStateNode({ schema, value });
+  return getInitialFormStateNode({ schema, value });
 };
 
 const formStateNodeShape = {
@@ -189,7 +114,7 @@ const formStateNodeShape = {
   isAutoPopulated: PropTypes.bool.isRequired,
   isAlwaysDisabled: PropTypes.bool.isRequired,
   isPartsPopulationStrategySupported: PropTypes.bool.isRequired,
-  wholeValue: PropTypes.string.isRequired,
+  value: PropTypes.any.isRequired,
   populationStrategy: PropTypes.oneOf([WHOLE, PARTS]).isRequired
 };
 

@@ -25,7 +25,6 @@ import getInitialFormState, {
 } from "../helpers/getInitialFormState";
 import { PARTS, WHOLE } from "../constants/populationStrategy";
 import { ARRAY, OBJECT } from "../constants/schemaType";
-import AutoPopulationAlert from "./autoPopulationAlert";
 
 /**
  * Displayed when the WHOLE population strategy is selected.
@@ -33,14 +32,11 @@ import AutoPopulationAlert from "./autoPopulationAlert";
  */
 const WholePopulationStrategyForm = ({ fieldName }) => (
   <React.Fragment>
-    <FieldLabel
-      labelFor="wholeValueField"
-      label="Data element providing array"
-    />
+    <FieldLabel labelFor="valueField" label="Data element providing array" />
     <WrappedField
-      data-test-id="wholeValueField"
-      id="wholeValueField"
-      name={`${fieldName}.wholeValue`}
+      data-test-id="valueField"
+      id="valueField"
+      name={`${fieldName}.value`}
       component={Textfield}
       componentClassName="u-fieldLong"
       supportDataElement="replace"
@@ -142,11 +138,11 @@ const ArrayEdit = props => {
 
   return (
     <div>
-      {formStateNode.isAutoPopulated && <AutoPopulationAlert />}
       {isPartsPopulationStrategySupported && (
         <WrappedField
           name={`${fieldName}.populationStrategy`}
           component={RadioGroup}
+          className="u-gapBottom"
         >
           <Radio
             data-test-id="partsPopulationStrategyField"
@@ -161,7 +157,7 @@ const ArrayEdit = props => {
           />
         </WrappedField>
       )}
-      <div className="u-gapTop2x">
+      <div>
         {populationStrategy === WHOLE ? (
           <WholePopulationStrategyForm fieldName={fieldName} />
         ) : (

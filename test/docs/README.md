@@ -14,7 +14,7 @@ For illustration purposes, let's assume we are testing the Send Event action typ
   "instances": [
     {
       "name": "alloy",
-      "configId": "PR123",
+      "edgeConfigId": "PR123",
       "idSyncContainerId": 10
     }
   ]
@@ -63,5 +63,5 @@ Values of `data-test-id` attributes should follow these standards:
 
 * Should be camelCased. Example: `resourceUsageDialog`
 * Should end in `Field` if the element in some component intended for user input (textfield, select, radio, checkbox, etc.). Example: `instanceNameField`
-* Should end in `Button` if the element is as button that allows the user to take some action. Example: `addCustomerIdButton`
+* Should end in `Button` if the element is as button that allows the user to take some action. Example: `addIdentityButton`
 * Should integrate the index before the `Field` or `Button` suffix if an element is repeated multiple times. Example: `hashEnabled1Field`, `hashEnabled2Field`, `hashEnabled3Field`

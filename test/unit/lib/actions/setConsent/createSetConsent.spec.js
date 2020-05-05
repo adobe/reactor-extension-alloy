@@ -11,61 +11,46 @@ governing permissions and limitations under the License.
 */
 
 import createSetConsent from "../../../../../src/lib/actions/setConsent/createSetConsent";
-import turbineVariable from "../../../helpers/turbineVariable";
 
 describe("Set Consent", () => {
-  let mockLogger;
-
-  beforeEach(() => {
-    mockLogger = {
-      error: jasmine.createSpy()
-    };
-    turbineVariable.mock({
-      logger: mockLogger
-    });
-  });
-
-  afterEach(() => {
-    turbineVariable.reset();
-  });
-
   ["in", "out"].forEach(generalConsent => {
     it(`executes setConsent command with "${generalConsent}" general consent`, () => {
-      const instance = jasmine.createSpy();
-      const instanceManager = {
-        getAccessor: jasmine.createSpy().and.returnValue({
-          instance
-        })
-      };
-      const action = createSetConsent(instanceManager);
-
-      action({
+      const promiseReturnedFromInstance = Promise.resolve();
+      const instance = jasmine
+        .createSpy()
+        .and.returnValue(promiseReturnedFromInstance);
+      const instanceManager = jasmine.createSpyObj("instanceManager", {
+        getInstance: instance
+      });
+      const action = createSetConsent({ instanceManager });
+      const promiseReturnedFromAction = action({
         instanceName: "myinstance",
         consent: { general: generalConsent }
       });
 
-      expect(instanceManager.getAccessor).toHaveBeenCalledWith("myinstance");
+      expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
+      expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
       expect(instance).toHaveBeenCalledWith("setConsent", {
         general: generalConsent
       });
     });
   });
 
-  it("logs an error when no matching instance found", () => {
-    const instanceManager = {
-      getAccessor() {
-        return undefined;
-      }
-    };
-    const action = createSetConsent(instanceManager);
-
-    action({
-      instanceName: "myinstance",
-      purposes: "none"
+  it("throws an error when no matching instance found", () => {
+    const instanceManager = jasmine.createSpyObj("instanceManager", {
+      getInstance: undefined
     });
+    const action = createSetConsent({ instanceManager });
 
-    expect(mockLogger.error).toHaveBeenCalledWith(
-      'Failed to set consent for instance "myinstance". No matching instance was configured with this name.'
+    expect(() => {
+      action({
+        instanceName: "myinstance",
+        purposes: "none"
+      });
+    }).toThrow(
+      new Error(
+        'Failed to set consent for instance "myinstance". No matching instance was configured with this name.'
+      )
     );
   });
 });

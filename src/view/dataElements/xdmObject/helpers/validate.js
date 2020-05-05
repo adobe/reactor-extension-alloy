@@ -10,9 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { WHOLE } from "../constants/populationStrategy";
-import singleDataElementRegex from "../../../constants/singleDataElementRegex";
-import { ARRAY, OBJECT } from "../constants/schemaType";
+import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 /**
  * Validates the user's XDM input.
@@ -28,14 +26,7 @@ const validate = ({
   isParentAnArray = false,
   notifyParentOfDataPopulation = () => {}
 }) => {
-  const {
-    schema,
-    populationStrategy,
-    wholeValue,
-    properties,
-    items,
-    isAutoPopulated
-  } = formStateNode;
+  const { schema, isAutoPopulated } = formStateNode;
 
   let isPopulatedAtCurrentOrDescendantNode = false;
 
@@ -46,54 +37,14 @@ const validate = ({
     }
   };
 
-  if (populationStrategy === WHOLE) {
-    if (
-      (schema.type === OBJECT || schema.type === ARRAY) &&
-      wholeValue &&
-      !wholeValue.match(singleDataElementRegex)
-    ) {
-      return { wholeValue: "Value must be a data element." };
-    }
+  const errors = getTypeSpecificHelpers(schema.type).validate({
+    formStateNode,
+    confirmDataPopulatedAtCurrentOrDescendantNode,
+    validate
+  });
 
-    if (wholeValue !== "") {
-      confirmDataPopulatedAtCurrentOrDescendantNode();
-    }
-  } else {
-    if (schema.type === OBJECT && properties) {
-      const propertyNames = Object.keys(properties);
-      const propertyErrors = propertyNames.reduce((memo, propertyName) => {
-        const propertyFormStateNode = properties[propertyName];
-        const error = validate({
-          formStateNode: propertyFormStateNode,
-          isParentAnArray: false,
-          notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode
-        });
-
-        if (error) {
-          memo[propertyName] = error;
-        }
-        return memo;
-      }, {});
-
-      if (Object.keys(propertyErrors).length) {
-        return { properties: propertyErrors };
-      }
-    }
-
-    if (schema.type === ARRAY && items) {
-      const itemErrors = items
-        .map(itemFormStateNode => {
-          return validate({
-            formStateNode: itemFormStateNode,
-            isParentAnArray: true,
-            notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode
-          });
-        })
-        .filter(error => error);
-      if (itemErrors.length) {
-        return { items: itemErrors };
-      }
-    }
+  if (errors) {
+    return errors;
   }
 
   if (
@@ -102,7 +53,7 @@ const validate = ({
     !isPopulatedAtCurrentOrDescendantNode
   ) {
     return {
-      wholeValue:
+      value:
         "Items within arrays must not be empty. Please populate or remove the item."
     };
   }
@@ -112,7 +63,7 @@ const validate = ({
     !isAutoPopulated &&
     !isPopulatedAtCurrentOrDescendantNode
   ) {
-    return { wholeValue: "This is a required field and must be populated." };
+    return { value: "This is a required field and must be populated." };
   }
 
   return undefined;

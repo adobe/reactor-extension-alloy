@@ -10,15 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = instanceManager => settings => {
+module.exports = ({ instanceManager }) => settings => {
   const { instanceName, consent } = settings;
-  const instanceAccessor = instanceManager.getAccessor(instanceName);
+  const instance = instanceManager.getInstance(instanceName);
 
-  if (instanceAccessor) {
-    instanceAccessor.instance("setConsent", consent);
-  } else {
-    turbine.logger.error(
+  if (!instance) {
+    throw new Error(
       `Failed to set consent for instance "${instanceName}". No matching instance was configured with this name.`
     );
   }
+
+  return instance("setConsent", consent);
 };

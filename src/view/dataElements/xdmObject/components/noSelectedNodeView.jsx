@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import Alert from "@react/react-spectrum/Alert";
+import "./noSelectedNodeView.styl";
 
 /**
  * Shown when no node is selected within the XDM tree.
@@ -38,7 +39,7 @@ const NoSelectedNodeView = props => {
           also no longer be included on the XDM object.
         </Alert>
       )}
-      <div className="XdmObject-description">
+      <div className="NoSelectedNodeView-description">
         Build an object that complies with your configured schema by selecting
         attributes on the left and providing their values.
       </div>
