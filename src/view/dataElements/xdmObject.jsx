@@ -163,7 +163,7 @@ const XdmExtensionView = () => {
           })
           .then(schema => {
             const initialValues = getInitialFormState({
-              data: (initInfo.settings && initInfo.settings.data) || {},
+              value: (initInfo.settings && initInfo.settings.data) || {},
               schema
             });
 
@@ -193,7 +193,7 @@ const XdmExtensionView = () => {
             schemaMeta
           }).then(schema => {
             const initialValues = getInitialFormState({
-              data: {},
+              value: {},
               schema
             });
             options.resetForm(initialValues);
