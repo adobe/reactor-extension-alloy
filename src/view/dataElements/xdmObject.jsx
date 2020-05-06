@@ -38,7 +38,7 @@ const XdmObject = ({
   const { values: formState } = formikProps;
   const [selectedNodeId, setSelectedNodeId] = useState();
 
-  if (!schemasMeta || !schemasMeta.length) {
+  if (!schemasMeta.length) {
     return (
       <div className="u-flex u-fullHeight u-alignItemsCenter u-justifyContentCenter">
         <Alert variant="error" header="No Schema Found">
@@ -72,8 +72,9 @@ const XdmObject = ({
           value={selectedSchemaMeta.$id}
           onChange={schemaMetaId => {
             setSelectedNodeId(undefined);
-            setSelectedSchemaMeta(schemasMeta.find(schemaMeta =>
-              schemaMeta.$id === schemaMetaId));
+            setSelectedSchemaMeta(
+              schemasMeta.find(schemaMeta => schemaMeta.$id === schemaMetaId)
+            );
           }}
         />
       </FieldLabel>
@@ -131,7 +132,7 @@ const XdmExtensionView = () => {
           .then(_schemasMeta => {
             setSchemasMeta(_schemasMeta);
 
-            if (!_schemasMeta || !_schemasMeta.length) {
+            if (!_schemasMeta.length) {
               return {};
             }
 
@@ -139,8 +140,9 @@ const XdmExtensionView = () => {
             let schemaMeta = _schemasMeta[0];
 
             if (initInfo.settings && initInfo.settings.schema) {
-              schemaMeta = _schemasMeta.find(schemaMeta =>
-                schemaMeta.$id === initInfo.settings.schema.id);
+              schemaMeta = _schemasMeta.find(
+                _schemaMeta => _schemaMeta.$id === initInfo.settings.schema.id
+              );
             }
 
             setSelectedSchemaMeta(schemaMeta);

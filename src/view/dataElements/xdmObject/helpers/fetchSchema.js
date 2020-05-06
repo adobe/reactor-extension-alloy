@@ -29,6 +29,11 @@ export default ({ orgId, imsAccess, schemaMeta }) => {
       }
     }
   )
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Cannot fetch schema from schema registry');
+      }
+      return response.json();
+    })
     .then(responseBody => responseBody);
 };
