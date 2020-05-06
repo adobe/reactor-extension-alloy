@@ -25,8 +25,7 @@ import NodeEdit from "./xdmObject/components/nodeEdit";
 import validate from "./xdmObject/helpers/validate";
 import render from "../render";
 import fetchSchema from "./xdmObject/helpers/fetchSchema";
-import fetchSchemaList from "./xdmObject/helpers/fetchSchemaList";
-import findSchemaMetaById from "./xdmObject/helpers/findSchemaMetaById";
+import fetchSchemasMeta from "./xdmObject/helpers/fetchSchemasMeta";
 import "./xdmObject.styl";
 
 const XdmObject = ({
@@ -39,7 +38,7 @@ const XdmObject = ({
   const { values: formState } = formikProps;
   const [selectedNodeId, setSelectedNodeId] = useState();
 
-  if (!schemasMeta.length) {
+  if (!schemasMeta || !schemasMeta.length) {
     return (
       <div className="u-flex u-fullHeight u-alignItemsCenter u-justifyContentCenter">
         <Alert variant="error" header="No Schema Found">
@@ -73,9 +72,8 @@ const XdmObject = ({
           value={selectedSchemaMeta.$id}
           onChange={schemaMetaId => {
             setSelectedNodeId(undefined);
-            setSelectedSchemaMeta({
-              $id: schemaMetaId
-            });
+            setSelectedSchemaMeta(schemasMeta.find(schemaMeta =>
+              schemaMeta.$id === schemaMetaId));
           }}
         />
       </FieldLabel>
@@ -122,35 +120,27 @@ const XdmExtensionView = () => {
   const [schemasMeta, setSchemasMeta] = useState();
   const [selectedSchemaMeta, setSelectedSchemaMeta] = useState();
 
+  // TODO: break apart this extension view
   return (
     <ExtensionView
       getInitialValues={({ initInfo }) => {
-        // TODO: If we've already loaded the schemas, then don't load the
-        // schemas again. Just call getInitialValues with the newly
-        // selected schema and return the result.
-        return fetchSchemaList({
+        return fetchSchemasMeta({
           orgId: initInfo.company.orgId,
           imsAccess: initInfo.tokens.imsAccess
         })
           .then(_schemasMeta => {
             setSchemasMeta(_schemasMeta);
 
-            if (!_schemasMeta.length) {
+            if (!_schemasMeta || !_schemasMeta.length) {
               return {};
             }
 
             // TODO: don't initialize form state if the schema doesn't match
-            let existingSchema;
-            if (initInfo.settings && initInfo.settings.schema) {
-              existingSchema = findSchemaMetaById({
-                $id: initInfo.settings.schema.id,
-                schemasMeta: _schemasMeta
-              });
-            }
-
             let schemaMeta = _schemasMeta[0];
-            if (existingSchema) {
-              schemaMeta = existingSchema;
+
+            if (initInfo.settings && initInfo.settings.schema) {
+              schemaMeta = _schemasMeta.find(schemaMeta =>
+                schemaMeta.$id === initInfo.settings.schema.id);
             }
 
             setSelectedSchemaMeta(schemaMeta);
@@ -181,11 +171,9 @@ const XdmExtensionView = () => {
       }}
       validate={validate}
       render={options => {
-        const onSchemaMetaSelected = _schemaMeta => {
-          const schemaMeta = findSchemaMetaById({
-            $id: _schemaMeta.$id,
-            schemasMeta
-          });
+        // TODO: address a suspected race condition where a previous selected item may return before
+        //  a secondary selected item
+        const onSchemaMetaSelected = schemaMeta => {
           setSelectedSchemaMeta(schemaMeta);
           fetchSchema({
             orgId: options.initInfo.company.orgId,
