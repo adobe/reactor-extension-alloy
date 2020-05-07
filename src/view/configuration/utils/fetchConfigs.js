@@ -33,11 +33,10 @@ const fetchConfigsFromEdgeConfig = ({ baseRequestHeaders }) => {
       }
 
       // eslint-disable-next-line no-underscore-dangle
-      return responseBody._embedded.configs
-        .map(config => ({
-          label: config.title,
-          value: config.id
-        }));
+      return responseBody._embedded.configs.map(config => ({
+        label: config.title,
+        value: config.id
+      }));
     });
 };
 
