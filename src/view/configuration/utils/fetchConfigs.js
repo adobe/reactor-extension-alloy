@@ -37,15 +37,7 @@ const fetchConfigsFromEdgeConfig = ({ baseRequestHeaders }) => {
         .map(config => ({
           label: config.title,
           value: config.id
-        }))
-        .concat([
-          { label: "My Testing Config 1 (noprod)", value: "noprod" },
-          { label: "My Testing Config 2 (nostaging)", value: "nostaging" },
-          { label: "My Testing Config 3 (nodev)", value: "nodev" },
-          { label: "My Testing Config 4 (1dev)", value: "1dev" },
-          { label: "My Testing Config 5 (3dev)", value: "3dev" },
-          { label: "My Testing Config 6 (none)", value: "none" }
-        ]);
+        }));
     });
 };
 

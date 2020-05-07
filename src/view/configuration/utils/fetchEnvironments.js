@@ -39,34 +39,6 @@ const fetchConfigEnvironmentsFromEdgeConfig = ({
         staging: [],
         development: []
       };
-      if (["nostaging", "nodev", "1dev", "3dev"].indexOf(edgeConfigId) > -1) {
-        result.production.push({
-          label: "My Production Env",
-          value: `${edgeConfigId}:prod`
-        });
-      }
-      if (["noprod", "nodev", "1dev", "3dev"].indexOf(edgeConfigId) > -1) {
-        result.staging.push({
-          label: "My Staging Env",
-          value: `${edgeConfigId}:stage`
-        });
-      }
-      if (["noprod", "nostaging", "1dev", "3dev"].indexOf(edgeConfigId) > -1) {
-        result.development.push({
-          label: "My Development Env 1",
-          value: `${edgeConfigId}:dev1`
-        });
-      }
-      if (edgeConfigId === "3dev") {
-        result.development.push({
-          label: "My Development Env 2",
-          value: `${edgeConfigId}:dev2`
-        });
-        result.development.push({
-          label: "My Development Env 3",
-          value: `${edgeConfigId}:dev3`
-        });
-      }
 
       // eslint-disable-next-line no-underscore-dangle
       if (!responseBody._embedded || !responseBody._embedded.environments) {
