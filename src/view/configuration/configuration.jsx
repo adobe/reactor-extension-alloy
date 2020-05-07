@@ -36,7 +36,7 @@ import EditorButton from "../components/editorButton";
 import InfoTipLayout from "../components/infoTipLayout";
 import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
-import { PREHIDING_SNIPPET } from "../utils/prehidingSnippet";
+import prehidingSnippet from "./constants/prehidingSnippet";
 import "./configuration.styl";
 
 const contextGranularityEnum = {
@@ -523,15 +523,15 @@ const Configuration = ({ formikProps, initInfo }) => {
                     <div className="u-gapTop">
                       <InfoTipLayout tip="Place the prehiding snippet within the <head> tag of the HTML page.">
                         <FieldLabel
-                          labelFor="copyToClipboardPrehidingStyleBtn"
+                          labelFor="copyToClipboardPrehidingSnippetButton"
                           label="Default prehiding snippet (optional)"
                         />
                       </InfoTipLayout>
                       <div>
-                        <CopyToClipboard text={PREHIDING_SNIPPET}>
+                        <CopyToClipboard text={prehidingSnippet}>
                           <Button
-                            id="copyToClipboardPrehidingStyleBtn"
-                            data-test-id="copyToClipboardPrehidingStyleBtn"
+                            id="copyToClipboardPrehidingSnippetButton"
+                            data-test-id="copyToClipboardPrehidingSnippetButton"
                             label="Copy to Clipboard"
                           />
                         </CopyToClipboard>

@@ -1,4 +1,4 @@
-export const PREHIDING_SNIPPET = `
+export default `
 <script>
   !function(e,a,n,t){var i=e.head;if(i){
   if (a) return;
