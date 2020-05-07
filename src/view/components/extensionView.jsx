@@ -133,7 +133,11 @@ const ExtensionView = ({
           validationSchema={validationSchema}
           render={formikProps => {
             bridgeState.formikProps = formikProps;
-            return render({ formikProps, initInfo: bridgeState.initInfo });
+            return render({
+              formikProps,
+              initInfo: bridgeState.initInfo,
+              resetForm: setInitialValues
+            });
           }}
         />
       </ErrorBoundary>

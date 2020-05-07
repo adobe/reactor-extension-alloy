@@ -27,6 +27,7 @@ import FieldLabel from "@react/react-spectrum/FieldLabel";
 import Delete from "@react/react-spectrum/Icon/Delete";
 import Select from "@react/react-spectrum/Select";
 import { Accordion, AccordionItem } from "@react/react-spectrum/Accordion";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import CheckboxList from "../components/checkboxList";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
@@ -39,6 +40,7 @@ import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
 import fetchConfigs from "./utils/fetchConfigs";
 import fetchEnvironments from "./utils/fetchEnvironments";
+import prehidingSnippet from "./constants/prehidingSnippet";
 import "./configuration.styl";
 import EnvironmentSelector from "../components/environmentSelector";
 
@@ -793,7 +795,23 @@ const Configuration = ({
                         />
                       </div>
                     </div>
-
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="Place the prehiding snippet within the <head> tag of the HTML page.">
+                        <FieldLabel
+                          labelFor="copyToClipboardPrehidingSnippetButton"
+                          label="Default prehiding snippet (optional)"
+                        />
+                      </InfoTipLayout>
+                      <div>
+                        <CopyToClipboard text={prehidingSnippet}>
+                          <Button
+                            id="copyToClipboardPrehidingSnippetButton"
+                            data-test-id="copyToClipboardPrehidingSnippetButton"
+                            label="Copy to Clipboard"
+                          />
+                        </CopyToClipboard>
+                      </div>
+                    </div>
                     <h3>Data Collection</h3>
                     <div className="u-gapTop">
                       <InfoTipLayout tip='A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'>

@@ -19,7 +19,7 @@ import "./noSelectedNodeView.styl";
  * Shown when no node is selected within the XDM tree.
  */
 const NoSelectedNodeView = props => {
-  const { schema, previouslySavedSchemaInfo } = props;
+  const { schemaMeta, previouslySavedSchemaInfo } = props;
 
   // The schema used when the data element was last saved is different
   // from the latest configured schema. Either the customer has since
@@ -27,8 +27,8 @@ const NoSelectedNodeView = props => {
   // or they have made changes to the schema itself.
   const isSchemaMismatched =
     previouslySavedSchemaInfo &&
-    (previouslySavedSchemaInfo.id !== schema.$id ||
-      previouslySavedSchemaInfo.version !== schema.version);
+    (previouslySavedSchemaInfo.id !== schemaMeta.$id ||
+      previouslySavedSchemaInfo.version !== schemaMeta.version);
 
   return (
     <div>
@@ -48,7 +48,7 @@ const NoSelectedNodeView = props => {
 };
 
 NoSelectedNodeView.propTypes = {
-  schema: PropTypes.object.isRequired,
+  schemaMeta: PropTypes.object.isRequired,
   previouslySavedSchemaInfo: PropTypes.shape({
     id: PropTypes.string.isRequired,
     version: PropTypes.string.isRequired

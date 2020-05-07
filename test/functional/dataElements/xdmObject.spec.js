@@ -20,6 +20,7 @@ import integerEdit from "./xdmObject/helpers/integerEdit";
 import numberEdit from "./xdmObject/helpers/numberEdit";
 import objectEdit from "./xdmObject/helpers/objectEdit";
 import stringEdit from "./xdmObject/helpers/stringEdit";
+import spectrum from "../helpers/spectrum";
 
 const extensionViewController = createExtensionViewController(
   "dataElements/xdmObject.html"
@@ -29,6 +30,14 @@ const schema = {
   id:
     "https://ns.adobe.com/alloyengineering/schemas/2c70e73b33329135dea3aac47bb52ec2",
   version: "1.6"
+};
+
+const schemaTitle = "XDM Object Data Element Tests";
+
+const schemaSelectField = spectrum.select("schemaField");
+
+const selectSchemaFromSchemasMeta = async () => {
+  await schemaSelectField.selectOption(schemaTitle);
 };
 
 /**
@@ -80,6 +89,7 @@ fixture("XDM Object View")
 
 test("allows user to provide individual object attribute values", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
@@ -115,6 +125,7 @@ test("initializes form fields with individual object attribute values", async ()
 
 test("allows user to provide whole object value", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.click("vendor");
   await objectEdit.selectWholePopulationStrategy();
@@ -145,6 +156,7 @@ test("initializes form fields with whole object value", async () => {
 
 test("allows user to provide individual array items", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
@@ -189,6 +201,7 @@ test("initializes form fields with individual array items", async () => {
 
 test("allows user to provide whole array value", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
@@ -226,6 +239,7 @@ test("initializes form fields with whole array value", async () => {
 
 test("allows user to provide value for property with string type", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
@@ -262,6 +276,7 @@ test("initializes form fields with string value", async () => {
 
 test("allows user to provide value for property with integer type", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("numEmployees");
@@ -298,6 +313,7 @@ test("initializes form fields with integer value", async () => {
 
 test("allows user to provide value for property with number type", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("revenue");
@@ -334,6 +350,7 @@ test("initializes form fields with number value", async () => {
 
 test("allows user to enter data element value for property with boolean type", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
@@ -370,6 +387,7 @@ test("initializes form fields with boolean data element value", async () => {
 
 test("allows user to select true constant value for property with boolean type", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
@@ -407,6 +425,7 @@ test("initializes form fields with boolean constant value of true", async () => 
 
 test("allows user to select false constant value for property with boolean type", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
@@ -444,6 +463,7 @@ test("initializes form fields with boolean constant value of false", async () =>
 
 test("allows user to select no constant value for property with boolean type", async () => {
   await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
