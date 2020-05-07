@@ -60,7 +60,7 @@ class EditorButton extends React.Component {
         icon={<Code />}
         className={className}
         onClick={this.onClick}
-        variant={invalid ? "warning" : "primary"}
+        variant={invalid ? "warning" : "secondary"}
       >
         Open Editor
       </Button>
