@@ -117,17 +117,21 @@ const getInitialValues = ({ initInfo, setConfigs, setEnvironments }) => {
         instances &&
         instances.length > 0 &&
         instances[0].edgeConfigId &&
-        fetchedConfigs.find(
-          config => config.value === instances[0].edgeConfigId
-        )
+        instances[0].edgeConfigInputMethod === edgeConfigInputMethods.SELECT
       ) {
-        return fetchEnvironments({
-          orgId: initInfo.company.orgId,
-          imsAccess: initInfo.tokens.imsAccess,
-          edgeConfigId: instances[0].edgeConfigId
-        });
+        if (
+          fetchedConfigs.find(
+            config => config.value === instances[0].edgeConfigId
+          )
+        ) {
+          return fetchEnvironments({
+            orgId: initInfo.company.orgId,
+            imsAccess: initInfo.tokens.imsAccess,
+            edgeConfigId: instances[0].edgeConfigId
+          });
+        }
+        instances[0].edgeConfigId = "";
       }
-      instances[0].edgeConfigId = "";
       return Promise.resolve({
         edgeConfigId: "",
         production: [],
@@ -436,7 +440,10 @@ const Configuration = ({
                   data-test-id="addInstanceButton"
                   label="Add Instance"
                   onClick={() => {
-                    arrayHelpers.push(createDefaultInstance(initInfo));
+                    const newInstance = createDefaultInstance(initInfo);
+                    newInstance.edgeConfigInputMethod =
+                      edgeConfigInputMethods.TEXTFIELD;
+                    arrayHelpers.push(newInstance);
                     setSelectedAccordionIndex(values.instances.length);
                   }}
                 />
@@ -576,12 +583,12 @@ const Configuration = ({
                           component={RadioGroup}
                         >
                           <Radio
-                            data-test-id="edgeConfigInputMethodField"
+                            data-test-id="edgeConfigInputMethodSelectRadio"
                             value={edgeConfigInputMethods.SELECT}
                             label="Choose from list"
                           />
                           <Radio
-                            data-test-id="edgeConfigInputMethodField"
+                            data-test-id="edgeConfigInputMethodTextfieldRadio"
                             value={edgeConfigInputMethods.TEXTFIELD}
                             label="Enter values"
                             className="u-gapLeft2x"
@@ -595,13 +602,13 @@ const Configuration = ({
                           <div className="u-gapTop">
                             <InfoTipLayout tip="The edge config name">
                               <FieldLabel
-                                labelFor="configIdField"
+                                labelFor="edgeConfigId"
                                 label="Edge Config"
                               />
                             </InfoTipLayout>
                             <WrappedField
-                              data-test-id="configIdField"
-                              id="configIdField"
+                              data-test-id="edgeConfigIdSelect"
+                              id="edgeConfigId"
                               name={`instances.${index}.edgeConfigId`}
                               component={Select}
                               options={configs}
@@ -668,7 +675,7 @@ const Configuration = ({
                               />
                             </InfoTipLayout>
                             <WrappedField
-                              data-test-id="edgeConfigId"
+                              data-test-id="productionManualEdgeConfigIdField"
                               id="edgeConfigIdField"
                               name={`instances.${index}.edgeConfigId`}
                               component={Textfield}
@@ -684,7 +691,7 @@ const Configuration = ({
                               />
                             </InfoTipLayout>
                             <WrappedField
-                              data-test-id="stagingEdgeConfigId"
+                              data-test-id="stagingManualEdgeConfigIdField"
                               id="stagingEdgeConfigIdField"
                               name={`instances.${index}.stagingEdgeConfigId`}
                               component={Textfield}
@@ -700,7 +707,7 @@ const Configuration = ({
                               />
                             </InfoTipLayout>
                             <WrappedField
-                              data-test-id="developmentEdgeConfigId"
+                              data-test-id="developmentManualEdgeConfigIdField"
                               id="developmentEdgeConfigIdField"
                               name={`instances.${index}.developmentEdgeConfigId`}
                               component={Textfield}

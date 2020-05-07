@@ -31,7 +31,9 @@ const EnvironmentSelector = ({
   id,
   value,
   onChange,
-  onBlur
+  onBlur,
+  "data-test-id": dataTestId,
+  ...rest
 }) => {
   return (
     <div className="EnvironmentSelector">
@@ -44,6 +46,8 @@ const EnvironmentSelector = ({
           variant={alertVariant}
           header={alertHeader}
           className="u-fieldLong"
+          data-test-id={`${dataTestId}Alert`}
+          {...rest}
         >
           {alertText}
         </Alert>
@@ -54,6 +58,8 @@ const EnvironmentSelector = ({
           className="u-fieldLong"
           value={options[0].label}
           disabled
+          data-test-id={`${dataTestId}Field`}
+          {...rest}
         />
       )}
       {options.length > 1 && (
@@ -65,6 +71,8 @@ const EnvironmentSelector = ({
           value={value}
           onChange={onChange}
           onBlur={onBlur}
+          data-test-id={`${dataTestId}Select`}
+          {...rest}
         />
       )}
     </div>
@@ -81,7 +89,8 @@ EnvironmentSelector.propTypes = {
   id: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,
-  onBlur: PropTypes.func
+  onBlur: PropTypes.func,
+  "data-test-id": PropTypes.string
 };
 
 export default EnvironmentSelector;

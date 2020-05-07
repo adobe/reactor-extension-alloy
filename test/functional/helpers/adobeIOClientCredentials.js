@@ -50,7 +50,7 @@ if (clientSecret && privateKeyPath) {
 } else {
   // eslint-disable-next-line no-console
   console.error(
-    chalk.redBright(
+    chalk.yellowBright(
       `One or more environment variables required to obtain an IMS token are not set. Please ensure that ${PRIVATE_KEY_FILE_ENV_VAR_NAME}, and ${CLIENT_SECRET_ENV_VAR_NAME} are set.`
     )
   );

@@ -17,12 +17,12 @@ const sandbox = require("@adobe/reactor-sandbox");
 const argv = require("minimist")(process.argv.slice(2));
 const chalk = require("chalk");
 
-const { watch } = argv;
+const { watch, testName: testNameFilter, src } = argv;
 const createTestCafe = require("testcafe");
 const build = require("./helpers/build");
 const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
 
-const testsDir = path.join(__dirname, "../test/functional");
+const testsDir = src || path.join(__dirname, "../test/functional");
 
 (async () => {
   await build({ watch });
@@ -35,6 +35,9 @@ const testsDir = path.join(__dirname, "../test/functional");
   const failedCount = await runner
     .src(testsDir)
     .filter((testName, fixtureName, fixturePath, testMeta, fixtureMeta) => {
+      if (testNameFilter && testNameFilter !== testName) {
+        return false;
+      }
       const requiresAdobeIOIntegration =
         fixtureMeta.requiresAdobeIOIntegration ||
         testMeta.requiresAdobeIOIntegration;

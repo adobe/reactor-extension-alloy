@@ -27,11 +27,29 @@ const resourceUsageDialog = spectrum.dialog(Selector("#resourceUsageDialog"));
 
 const instances = [];
 
+const environmentFields = env => {
+  return {
+    manualField: spectrum.textfield(`${env}ManualEdgeConfigIdField`),
+    alert: spectrum.alert(`${env}EdgeConfigIdAlert`),
+    field: spectrum.textfield(`${env}EdgeConfigIdField`),
+    select: spectrum.select(`${env}EdgeConfigIdSelect`)
+  };
+};
+
 for (let i = 0; i < 2; i += 1) {
   instances.push({
     nameField: spectrum.textfield("nameField"),
     nameChangeAlert: spectrum.alert("nameChangeAlert"),
-    configIdField: spectrum.textfield("configIdField"),
+    edgeConfigInputMethodSelectRadio: spectrum.radio(
+      "edgeConfigInputMethodSelectRadio"
+    ),
+    edgeConfigInputMethodTextfieldRadio: spectrum.radio(
+      "edgeConfigInputMethodTextfieldRadio"
+    ),
+    edgeConfigIdSelect: spectrum.select("edgeConfigIdSelect"),
+    productionEnvironment: environmentFields("production"),
+    stagingEnvironment: environmentFields("staging"),
+    developmentEnvironment: environmentFields("development"),
     orgIdField: spectrum.textfield("orgIdField"),
     orgIdRestoreButton: spectrum.button("orgIdRestoreButton"),
     edgeDomainField: spectrum.textfield("edgeDomainField"),
@@ -93,6 +111,9 @@ const defaultDownloadLinkQualifier =
 const defaultInitInfo = {
   company: {
     orgId: "ABC123@AdobeOrg"
+  },
+  tokens: {
+    imsAccess: "Badtoken"
   }
 };
 
@@ -103,7 +124,10 @@ test("initializes form fields with full settings", async () => {
         instances: [
           {
             name: "alloy1",
+            edgeConfigInputMethod: "textfield",
             edgeConfigId: "PR123",
+            stagingEdgeConfigId: "PR123:stage",
+            developmentEdgeConfigId: "PR123:dev1",
             orgId: "ORG456@OtherCompanyOrg",
             edgeDomain: "testedge.com",
             edgeBasePath: "ee-beta",
@@ -118,6 +142,8 @@ test("initializes form fields with full settings", async () => {
           {
             name: "alloy2",
             edgeConfigId: "PR456",
+            stagingEdgeConfigId: "PR456:stage",
+            developmentEdgeConfigId: "PR456:dev3",
             defaultConsent: { general: "in" },
             idMigrationEnabled: false,
             thirdPartyCookiesEnabled: false,
@@ -136,7 +162,23 @@ test("initializes form fields with full settings", async () => {
   await accordion.clickHeader("ALLOY1");
 
   await instances[0].nameField.expectValue("alloy1");
-  await instances[0].configIdField.expectValue("PR123");
+  await instances[0].edgeConfigInputMethodTextfieldRadio.expectChecked();
+  await instances[0].edgeConfigInputMethodSelectRadio.expectUnchecked();
+  await instances[0].edgeConfigIdSelect.expectNotExists();
+  await instances[0].productionEnvironment.manualField.expectValue("PR123");
+  await instances[0].productionEnvironment.alert.expectNotExists();
+  await instances[0].productionEnvironment.field.expectNotExists();
+  await instances[0].productionEnvironment.select.expectNotExists();
+  await instances[0].stagingEnvironment.manualField.expectValue("PR123:stage");
+  await instances[0].stagingEnvironment.alert.expectNotExists();
+  await instances[0].stagingEnvironment.field.expectNotExists();
+  await instances[0].stagingEnvironment.select.expectNotExists();
+  await instances[0].developmentEnvironment.manualField.expectValue(
+    "PR123:dev1"
+  );
+  await instances[0].developmentEnvironment.alert.expectNotExists();
+  await instances[0].developmentEnvironment.field.expectNotExists();
+  await instances[0].developmentEnvironment.select.expectNotExists();
   await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
   await instances[0].edgeDomainField.expectValue("testedge.com");
   await instances[0].edgeBasePathField.expectValue("ee-beta");
@@ -155,7 +197,23 @@ test("initializes form fields with full settings", async () => {
   await accordion.clickHeader("ALLOY2");
 
   await instances[1].nameField.expectValue("alloy2");
-  await instances[1].configIdField.expectValue("PR456");
+  await instances[1].edgeConfigInputMethodTextfieldRadio.expectNotExists();
+  await instances[1].edgeConfigInputMethodSelectRadio.expectNotExists();
+  await instances[1].edgeConfigIdSelect.expectNotExists();
+  await instances[1].productionEnvironment.manualField.expectValue("PR456");
+  await instances[1].productionEnvironment.alert.expectNotExists();
+  await instances[1].productionEnvironment.field.expectNotExists();
+  await instances[1].productionEnvironment.select.expectNotExists();
+  await instances[1].stagingEnvironment.manualField.expectValue("PR456:stage");
+  await instances[1].stagingEnvironment.alert.expectNotExists();
+  await instances[1].stagingEnvironment.field.expectNotExists();
+  await instances[1].stagingEnvironment.select.expectNotExists();
+  await instances[1].developmentEnvironment.manualField.expectValue(
+    "PR456:dev3"
+  );
+  await instances[1].developmentEnvironment.alert.expectNotExists();
+  await instances[1].developmentEnvironment.field.expectNotExists();
+  await instances[1].developmentEnvironment.select.expectNotExists();
   await instances[1].orgIdField.expectValue("ABC123@AdobeOrg");
   await instances[1].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[1].edgeBasePathField.expectValue(defaultEdgeBasePath);
@@ -182,7 +240,8 @@ test("initializes form fields with minimal settings", async () => {
         instances: [
           {
             name: "alloy1",
-            edgeConfigId: "PR123"
+            edgeConfigId: "PR123",
+            edgeConfigInputMethod: "textfield"
           }
         ]
       }
@@ -190,7 +249,9 @@ test("initializes form fields with minimal settings", async () => {
   );
 
   await instances[0].nameField.expectValue("alloy1");
-  await instances[0].configIdField.expectValue("PR123");
+  await instances[0].productionEnvironment.manualField.expectValue("PR123");
+  await instances[0].stagingEnvironment.manualField.expectValue("");
+  await instances[0].developmentEnvironment.manualField.expectValue("");
   await instances[0].orgIdField.expectValue("ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
@@ -210,7 +271,21 @@ test("initializes form fields with no settings", async () => {
   await extensionViewController.init(defaultInitInfo);
 
   await instances[0].nameField.expectValue("alloy");
-  await instances[0].configIdField.expectValue("");
+  await instances[0].edgeConfigInputMethodTextfieldRadio.expectUnchecked();
+  await instances[0].edgeConfigInputMethodSelectRadio.expectChecked();
+  await instances[0].edgeConfigIdSelect.expectValue("");
+  await instances[0].productionEnvironment.manualField.expectNotExists();
+  await instances[0].productionEnvironment.alert.expectNotExists();
+  await instances[0].productionEnvironment.field.expectNotExists();
+  await instances[0].productionEnvironment.select.expectNotExists();
+  await instances[0].stagingEnvironment.manualField.expectNotExists();
+  await instances[0].stagingEnvironment.alert.expectNotExists();
+  await instances[0].stagingEnvironment.field.expectNotExists();
+  await instances[0].stagingEnvironment.select.expectNotExists();
+  await instances[0].developmentEnvironment.manualField.expectNotExists();
+  await instances[0].developmentEnvironment.alert.expectNotExists();
+  await instances[0].developmentEnvironment.field.expectNotExists();
+  await instances[0].developmentEnvironment.select.expectNotExists();
   await instances[0].orgIdField.expectValue("ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
@@ -229,12 +304,14 @@ test("initializes form fields with no settings", async () => {
 test("returns minimal valid settings", async () => {
   await extensionViewController.init(defaultInitInfo);
 
-  await instances[0].configIdField.typeText("PR123");
+  await instances[0].edgeConfigInputMethodTextfieldRadio.click();
+  await instances[0].productionEnvironment.manualField.typeText("PR123");
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instances: [
       {
         edgeConfigId: "PR123",
+        edgeConfigInputMethod: "textfield",
         name: "alloy"
       }
     ]
@@ -253,7 +330,10 @@ test("returns full valid settings", async () => {
   });
 
   await instances[0].nameField.typeText("1");
-  await instances[0].configIdField.typeText("PR123");
+  await instances[0].edgeConfigInputMethodTextfieldRadio.click();
+  await instances[0].productionEnvironment.manualField.typeText("PR123");
+  await instances[0].stagingEnvironment.manualField.typeText("PR123:stage");
+  await instances[0].developmentEnvironment.manualField.typeText("PR123:dev1");
   await instances[0].edgeDomainField.typeText("2");
   await instances[0].edgeBasePathField.typeText("-alpha");
   await instances[0].errorsEnabledField.click();
@@ -264,7 +344,9 @@ test("returns full valid settings", async () => {
   await addInstanceButton.click();
 
   await instances[1].nameField.typeText("2");
-  await instances[1].configIdField.typeText("PR456");
+  await instances[1].productionEnvironment.manualField.typeText("PR456");
+  await instances[1].stagingEnvironment.manualField.typeText("PR456:stage");
+  await instances[1].developmentEnvironment.manualField.typeText("PR456:dev1");
   await instances[1].orgIdField.typeText("2");
   await instances[1].defaultConsent.pendingField.click();
   await instances[1].idMigrationEnabled.click();
@@ -279,7 +361,10 @@ test("returns full valid settings", async () => {
     instances: [
       {
         name: "alloy1",
+        edgeConfigInputMethod: "textfield",
         edgeConfigId: "PR123",
+        stagingEdgeConfigId: "PR123:stage",
+        developmentEdgeConfigId: "PR123:dev1",
         edgeDomain: `${defaultEdgeDomain}2`,
         edgeBasePath: `${defaultEdgeBasePath}-alpha`,
         errorsEnabled: false,
@@ -292,6 +377,8 @@ test("returns full valid settings", async () => {
       {
         name: "alloy2",
         edgeConfigId: "PR456",
+        stagingEdgeConfigId: "PR456:stage",
+        developmentEdgeConfigId: "PR456:dev1",
         orgId: "ABC123@AdobeOrg2",
         defaultConsent: { general: "pending" },
         idMigrationEnabled: false,
@@ -313,17 +400,25 @@ test("shows error for empty required values", async () => {
   await instances[0].edgeBasePathField.clear();
   await extensionViewController.expectIsNotValid();
   await instances[0].nameField.expectError();
-  await instances[0].configIdField.expectError();
+  await instances[0].edgeConfigIdSelect.expectError();
   await instances[0].orgIdField.expectError();
   await instances[0].edgeDomainField.expectError();
   await instances[0].edgeBasePathField.expectError();
 });
 
+test("shows error on manual edgeConfigId entry", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].edgeConfigInputMethodTextfieldRadio.click();
+  await extensionViewController.expectIsNotValid();
+  await instances[0].productionEnvironment.manualField.expectError();
+});
+
 test("shows error for duplicate name", async () => {
   await extensionViewController.init(defaultInitInfo);
-  await instances[0].configIdField.typeText("PR123");
+  await instances[0].edgeConfigInputMethodTextfieldRadio.click();
+  await instances[0].productionEnvironment.manualField.typeText("PR123");
   await addInstanceButton.click();
-  await instances[1].configIdField.typeText("PR456");
+  await instances[1].productionEnvironment.manualField.typeText("PR456");
   // We'll expand the first instance before we validate to test that
   // validation expands the invalid instance (in this case, the second one)
   // Even though both accordion header labels are "alloy", this
@@ -374,23 +469,25 @@ test("does not show a warning when name is changed on new configuration", async 
 
 test("shows error for duplicate property ID", async () => {
   await extensionViewController.init(defaultInitInfo);
-  await instances[0].configIdField.typeText("PR123");
+  await instances[0].edgeConfigInputMethodTextfieldRadio.click();
+  await instances[0].productionEnvironment.manualField.typeText("PR123");
   await addInstanceButton.click();
-  await instances[1].configIdField.typeText("PR123");
+  await instances[1].productionEnvironment.manualField.typeText("PR123");
   // We'll expand the first instance before we validate to test that
   // validation expands the invalid instance (in this case, the second one)
   // Even though both accordion header labels are "alloy", this
   // will select the first one.
   await accordion.clickHeader("ALLOY");
   await extensionViewController.expectIsNotValid();
-  await instances[1].configIdField.expectError();
+  await instances[1].productionEnvironment.manualField.expectError();
 });
 
 test("shows error for duplicate IMS org ID", async () => {
   await extensionViewController.init(defaultInitInfo);
-  await instances[0].configIdField.typeText("PR123");
+  await instances[0].edgeConfigInputMethodTextfieldRadio.click();
+  await instances[0].productionEnvironment.manualField.typeText("PR123");
   await addInstanceButton.click();
-  await instances[1].configIdField.typeText("PR456");
+  await instances[1].productionEnvironment.manualField.typeText("PR456");
   // We'll expand the first instance before we validate to test that
   // validation expands the invalid instance (in this case, the second one)
   // Even though both accordion header labels are "alloy", this
@@ -447,23 +544,24 @@ test("sets download link qualifier when test button is clicked", async () => {
 
 test("deletes an instance", async () => {
   await extensionViewController.init(defaultInitInfo);
-  await instances[0].configIdField.typeText("PR123");
+  await instances[0].edgeConfigInputMethodTextfieldRadio.click();
+  await instances[0].productionEnvironment.manualField.typeText("PR123");
   await instances[0].deleteButton.expectDisabled();
   await addInstanceButton.click();
   await instances[1].deleteButton.expectEnabled();
   // Make accordion header label unique
   await instances[1].nameField.typeText("2");
-  await instances[1].configIdField.typeText("PR456");
+  await instances[1].productionEnvironment.manualField.typeText("PR456");
   await accordion.clickHeader("ALLOY");
   await instances[0].deleteButton.click();
   // Ensure that clicking cancel doesn't delete anything.
   await resourceUsageDialog.clickCancel();
   await resourceUsageDialog.expectNotExists();
-  await instances[0].configIdField.expectValue("PR123");
+  await instances[0].productionEnvironment.manualField.expectValue("PR123");
   // Alright, delete for real.
   await instances[0].deleteButton.click();
   await resourceUsageDialog.clickConfirm();
-  await instances[0].configIdField.expectValue("PR456");
+  await instances[0].productionEnvironment.manualField.expectValue("PR456");
 });
 
 test("does not save prehidingStyle code if it matches placeholder", async () => {
@@ -475,14 +573,16 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
     }
   });
 
-  await instances[0].configIdField.typeText("PR123");
+  await instances[0].edgeConfigInputMethodTextfieldRadio.click();
+  await instances[0].productionEnvironment.manualField.typeText("PR123");
   await instances[0].prehidingStyleEditorButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instances: [
       {
         name: "alloy",
-        edgeConfigId: "PR123"
+        edgeConfigId: "PR123",
+        edgeConfigInputMethod: "textfield"
       }
     ]
   });
@@ -497,14 +597,16 @@ test("does not save onBeforeEventSend code if it matches placeholder", async () 
     }
   });
 
-  await instances[0].configIdField.typeText("PR123");
+  await instances[0].edgeConfigInputMethodTextfieldRadio.click();
+  await instances[0].productionEnvironment.manualField.typeText("PR123");
   await instances[0].onBeforeEventSendEditorButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instances: [
       {
         name: "alloy",
-        edgeConfigId: "PR123"
+        edgeConfigId: "PR123",
+        edgeConfigInputMethod: "textfield"
       }
     ]
   });
