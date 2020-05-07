@@ -14,6 +14,8 @@ import "regenerator-runtime"; // needed for some of react-spectrum
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Alert from "@react/react-spectrum/Alert";
+import Select from "@react/react-spectrum/Select";
+import FieldLabel from "@react/react-spectrum/FieldLabel";
 import NoSelectedNodeView from "./xdmObject/components/noSelectedNodeView";
 import ExtensionView from "../components/extensionView";
 import XdmTree from "./xdmObject/components/xdmTree";
@@ -23,53 +25,84 @@ import NodeEdit from "./xdmObject/components/nodeEdit";
 import validate from "./xdmObject/helpers/validate";
 import render from "../render";
 import fetchSchema from "./xdmObject/helpers/fetchSchema";
+import fetchSchemasMeta from "./xdmObject/helpers/fetchSchemasMeta";
 import "./xdmObject.styl";
 
-const getInitialValues = ({ settings, schema }) => {
-  const value = (settings && settings.data) || {};
-  return getInitialFormState({ schema, value });
-};
-
-const XdmObject = ({ initInfo, formikProps, schema }) => {
+const XdmObject = ({
+  initInfo,
+  formikProps,
+  schemasMeta,
+  selectedSchemaMeta,
+  setSelectedSchemaMeta
+}) => {
   const { values: formState } = formikProps;
   const [selectedNodeId, setSelectedNodeId] = useState();
 
-  if (!schema) {
+  if (!schemasMeta.length) {
     return (
       <div className="u-flex u-fullHeight u-alignItemsCenter u-justifyContentCenter">
         <Alert variant="error" header="No Schema Found">
-          No configured XDM schema was found. Please ensure you have created an
-          edge configuration with a production environment.
+          No XDM schema was found. Please ensure you have created an XDM schema
+          within Adobe Experience Platform.
         </Alert>
       </div>
     );
   }
 
+  const schemaOptions = schemasMeta.map(schemaMeta => {
+    return {
+      value: schemaMeta.$id,
+      label: schemaMeta.title
+    };
+  });
+
   return (
-    <div className="u-flex u-fullHeight">
-      <div className="XdmObject-treeContainer u-flexShrink0 u-fullHeight u-overflowXAuto u-overflowYAuto">
-        <XdmTree
-          formikProps={formikProps}
-          selectedNodeId={selectedNodeId}
-          onSelect={setSelectedNodeId}
+    <div className="u-flex u-flexColumn u-fullHeight">
+      <FieldLabel
+        className="u-flex"
+        labelFor="schemaField"
+        label="Schema"
+        position="left"
+      >
+        <Select
+          id="schemaField"
+          data-test-id="schemaField"
+          className="u-widthAuto u-gapBottom"
+          options={schemaOptions}
+          value={selectedSchemaMeta.$id}
+          onChange={schemaMetaId => {
+            setSelectedNodeId(undefined);
+            setSelectedSchemaMeta(
+              schemasMeta.find(schemaMeta => schemaMeta.$id === schemaMetaId)
+            );
+          }}
         />
-      </div>
-      <div className="u-gapLeft2x">
-        <div className="u-gapTop2x">
-          {selectedNodeId ? (
-            <NodeEdit
-              formState={formState}
-              onNodeSelect={setSelectedNodeId}
-              selectedNodeId={selectedNodeId}
-            />
-          ) : (
-            <NoSelectedNodeView
-              schema={schema}
-              previouslySavedSchemaInfo={
-                initInfo.settings && initInfo.settings.schema
-              }
-            />
-          )}
+      </FieldLabel>
+      <div className="u-flex u-minHeight0">
+        <div className="XdmObject-treeContainer u-flexShrink0 u-overflowXAuto u-overflowYAuto">
+          <XdmTree
+            formikProps={formikProps}
+            selectedNodeId={selectedNodeId}
+            onSelect={setSelectedNodeId}
+          />
+        </div>
+        <div className="u-gapLeft2x">
+          <div>
+            {selectedNodeId ? (
+              <NodeEdit
+                formState={formState}
+                onNodeSelect={setSelectedNodeId}
+                selectedNodeId={selectedNodeId}
+              />
+            ) : (
+              <NoSelectedNodeView
+                schemaMeta={selectedSchemaMeta}
+                previouslySavedSchemaInfo={
+                  initInfo.settings && initInfo.settings.schema
+                }
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -79,45 +112,93 @@ const XdmObject = ({ initInfo, formikProps, schema }) => {
 XdmObject.propTypes = {
   initInfo: PropTypes.object.isRequired,
   formikProps: PropTypes.object.isRequired,
-  schema: PropTypes.object
+  schemasMeta: PropTypes.array,
+  selectedSchemaMeta: PropTypes.object,
+  setSelectedSchemaMeta: PropTypes.func
 };
 
 const XdmExtensionView = () => {
-  const [schema, setSchema] = useState();
+  const [schemasMeta, setSchemasMeta] = useState();
+  const [selectedSchemaMeta, setSelectedSchemaMeta] = useState();
 
+  // TODO: break apart this extension view
   return (
     <ExtensionView
       getInitialValues={({ initInfo }) => {
-        return fetchSchema({
-          edgeConfigId: initInfo.extensionSettings.instances[0].edgeConfigId,
+        return fetchSchemasMeta({
           orgId: initInfo.company.orgId,
           imsAccess: initInfo.tokens.imsAccess
-        }).then(fetchedSchema => {
-          setSchema(fetchedSchema);
+        })
+          .then(_schemasMeta => {
+            setSchemasMeta(_schemasMeta);
 
-          if (!fetchedSchema) {
-            return {};
-          }
+            if (!_schemasMeta.length) {
+              return {};
+            }
 
-          const initialValues = getInitialValues({
-            settings: initInfo.settings,
-            schema: fetchedSchema
+            // TODO: don't initialize form state if the schema doesn't match
+            let schemaMeta = _schemasMeta[0];
+
+            if (initInfo.settings && initInfo.settings.schema) {
+              schemaMeta = _schemasMeta.find(
+                _schemaMeta => _schemaMeta.$id === initInfo.settings.schema.id
+              );
+            }
+
+            setSelectedSchemaMeta(schemaMeta);
+
+            return fetchSchema({
+              orgId: initInfo.company.orgId,
+              imsAccess: initInfo.tokens.imsAccess,
+              schemaMeta
+            });
+          })
+          .then(schema => {
+            const initialValues = getInitialFormState({
+              value: (initInfo.settings && initInfo.settings.data) || {},
+              schema
+            });
+
+            return initialValues;
           });
-
-          return initialValues;
-        });
       }}
       getSettings={({ values }) => {
         return {
           schema: {
-            id: schema.$id,
-            version: schema.version
+            id: selectedSchemaMeta.$id,
+            version: selectedSchemaMeta.version
           },
           data: getValueFromFormState({ formStateNode: values }) || {}
         };
       }}
       validate={validate}
-      render={props => <XdmObject {...props} schema={schema} />}
+      render={options => {
+        // TODO: address a suspected race condition where a previous selected item may return before
+        //  a secondary selected item
+        const onSchemaMetaSelected = schemaMeta => {
+          setSelectedSchemaMeta(schemaMeta);
+          fetchSchema({
+            orgId: options.initInfo.company.orgId,
+            imsAccess: options.initInfo.tokens.imsAccess,
+            schemaMeta
+          }).then(schema => {
+            const initialValues = getInitialFormState({
+              value: {},
+              schema
+            });
+            options.resetForm(initialValues);
+          });
+        };
+
+        return (
+          <XdmObject
+            {...options}
+            schemasMeta={schemasMeta}
+            selectedSchemaMeta={selectedSchemaMeta}
+            setSelectedSchemaMeta={onSchemaMetaSelected}
+          />
+        );
+      }}
     />
   );
 };
