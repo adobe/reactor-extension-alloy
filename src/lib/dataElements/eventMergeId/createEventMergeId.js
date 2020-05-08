@@ -17,7 +17,7 @@ module.exports = ({ instanceManager, eventMergeIdCache }) => settings => {
   let eventMergeId = eventMergeIdCache.getByCacheId(cacheId);
 
   if (!eventMergeId) {
-    eventMergeId = instanceManager.createEventMergeId();
+    ({ eventMergeId } = instanceManager.createEventMergeId());
     eventMergeIdCache.set(cacheId, eventMergeId);
   }
 

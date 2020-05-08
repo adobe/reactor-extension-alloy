@@ -13,7 +13,7 @@ import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import PropTypes from "prop-types";
 import WrappedField from "./wrappedField";
 import authenticatedStateOptions from "../constants/authenticatedStateOptions";
-import getDefaultIdentity from "../utils/getDefaultIdentity";
+import getDefaultIdentifier from "../utils/getDefaultIdentifier";
 import InfoTipLayout from "./infoTipLayout";
 import getInstanceOptions from "../utils/getInstanceOptions";
 
@@ -32,22 +32,22 @@ function IdentityWrapper({ values, initInfo }) {
         />
       </div>
       <FieldArray
-        name="identities"
+        name="identifiers"
         render={arrayHelpers => {
           return (
             <React.Fragment>
               <div className="u-gapTop u-alignRight">
                 <Button
-                  data-test-id="addIdentityButton"
-                  label="Add Identity"
+                  data-test-id="addIdentifierButton"
+                  label="Add Identifier"
                   onClick={() => {
-                    arrayHelpers.push(getDefaultIdentity());
+                    arrayHelpers.push(getDefaultIdentifier());
                   }}
                 />
               </div>
-              <Heading variant="subtitle2">Identity</Heading>
+              <Heading variant="subtitle2">Identifier</Heading>
               <div>
-                {values.identities.map((identity, index) => (
+                {values.identifiers.map((identifier, index) => (
                   <Well key={index}>
                     <div>
                       <FieldLabel
@@ -58,7 +58,7 @@ function IdentityWrapper({ values, initInfo }) {
                         <WrappedField
                           data-test-id={`namespace${index}Field`}
                           id={`namespace${index}Field`}
-                          name={`identities.${index}.namespace`}
+                          name={`identifiers.${index}.namespace`}
                           // component={Select}
                           component={Textfield}
                           componentClassName="u-fieldLong"
@@ -72,7 +72,7 @@ function IdentityWrapper({ values, initInfo }) {
                         <WrappedField
                           data-test-id={`id${index}Field`}
                           id={`id${index}Field`}
-                          name={`identities.${index}.id`}
+                          name={`identifiers.${index}.id`}
                           component={Textfield}
                           componentClassName="u-fieldLong"
                           supportDataElement="replace"
@@ -80,10 +80,10 @@ function IdentityWrapper({ values, initInfo }) {
                       </div>
                     </div>
                     <div className="u-gapTop">
-                      <InfoTipLayout tip="Uses the SHA-256 hashing algorithm that allows you to pass in identities or email addresses, and pass out hashed IDs. This is an optional Javascript method for sending hashed identifiers. You can continue to use your own methods of hashing prior to sending identities. Note: if this is set to true for an identity and the page is HTTP, the identity will be removed from the call because hashing cannot be completed in this case.">
+                      <InfoTipLayout tip="Uses the SHA-256 hashing algorithm that allows you to pass in identifiers or email addresses, and pass out hashed IDs. This is an optional Javascript method for sending hashed identifiers. You can continue to use your own methods of hashing prior to sending identifiers. Note: if this is set to true for an identifier and the page is HTTP, the identifier will be removed from the call because hashing cannot be completed in this case.">
                         <WrappedField
                           data-test-id={`hashEnabled${index}Field`}
-                          name={`identities.${index}.hashEnabled`}
+                          name={`identifiers.${index}.hashEnabled`}
                           component={Checkbox}
                           label="Convert ID to sha256 hash"
                         />
@@ -98,7 +98,7 @@ function IdentityWrapper({ values, initInfo }) {
                         <WrappedField
                           data-test-id={`authenticatedState${index}Field`}
                           id={`authenticatedState${index}Field`}
-                          name={`identities.${index}.authenticatedState`}
+                          name={`identifiers.${index}.authenticatedState`}
                           component={Select}
                           componentClassName="u-fieldLong"
                           options={authenticatedStateOptions}
@@ -106,10 +106,10 @@ function IdentityWrapper({ values, initInfo }) {
                       </div>
                     </div>
                     <div className="u-gapTop">
-                      <InfoTipLayout tip="Adobe Experience Platform will use the identity as an identifier to help stitch together more information about that individual. If left unchecked, the identifier within this namespace will still be collected but the ECID will be used as the primary identifier for stitching.">
+                      <InfoTipLayout tip="Adobe Experience Platform will use the identifier to help stitch together more information about that individual. If left unchecked, the identifier within this namespace will still be collected but the ECID will be used as the primary identifier for stitching.">
                         <WrappedField
                           data-test-id={`primary${index}Field`}
-                          name={`identities.${index}.primary`}
+                          name={`identifiers.${index}.primary`}
                           component={Checkbox}
                           label="Primary"
                         />
@@ -118,16 +118,16 @@ function IdentityWrapper({ values, initInfo }) {
                     <div className="u-gapTop">
                       <Button
                         data-test-id={`delete${index}Button`}
-                        label="Delete Identity"
+                        label="Delete Identifier"
                         icon={<Delete />}
-                        disabled={values.identities.length === 1}
+                        disabled={values.identifiers.length === 1}
                         onClick={() => {
                           arrayHelpers.remove(index);
                         }}
                       />
-                      {values.identities.length === 1 ? (
+                      {values.identifiers.length === 1 ? (
                         <span className="Note u-gapLeft">
-                          You must have at least one identity to use this
+                          You must have at least one identifier to use this
                           action.
                         </span>
                       ) : null}
