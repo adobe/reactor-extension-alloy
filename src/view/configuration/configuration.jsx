@@ -575,7 +575,7 @@ const Configuration = ({
                       </InfoTipLayout>
                     </div>
 
-                    <h3>Edge Config IDs</h3>
+                    <h3>Edge Configurations</h3>
 
                     <div className="u-gapTop">
                       {index === 0 && (
@@ -605,7 +605,7 @@ const Configuration = ({
                             <InfoTipLayout tip="The edge config name">
                               <FieldLabel
                                 labelFor="edgeConfigId"
-                                label="Edge Config"
+                                label="Edge Configuration"
                               />
                             </InfoTipLayout>
                             <WrappedField

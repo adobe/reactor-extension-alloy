@@ -29,9 +29,6 @@ const EnvironmentSelector = ({
   alertText,
   options,
   id,
-  value,
-  onChange,
-  onBlur,
   "data-test-id": dataTestId,
   ...rest
 }) => {
@@ -45,9 +42,9 @@ const EnvironmentSelector = ({
           id={`${id}Field`}
           variant={alertVariant}
           header={alertHeader}
+          {...rest}
           className="u-fieldLong"
           data-test-id={`${dataTestId}Alert`}
-          {...rest}
         >
           {alertText}
         </Alert>
@@ -55,24 +52,21 @@ const EnvironmentSelector = ({
       {options.length === 1 && (
         <Textfield
           id={`${id}Field`}
+          {...rest}
           className="u-fieldLong"
           value={options[0].label}
-          disabled
           data-test-id={`${dataTestId}Field`}
-          {...rest}
+          disabled
         />
       )}
       {options.length > 1 && (
         <Select
           id={`${id}Field`}
           options={options}
-          className="u-fieldLong"
-          required
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-          data-test-id={`${dataTestId}Select`}
           {...rest}
+          className="u-fieldLong"
+          data-test-id={`${dataTestId}Select`}
+          required
         />
       )}
     </div>
@@ -87,9 +81,6 @@ EnvironmentSelector.propTypes = {
   alertText: PropTypes.string,
   options: PropTypes.array,
   id: PropTypes.string,
-  value: PropTypes.string,
-  onChange: PropTypes.func,
-  onBlur: PropTypes.func,
   "data-test-id": PropTypes.string
 };
 
