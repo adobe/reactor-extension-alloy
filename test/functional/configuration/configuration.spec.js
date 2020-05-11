@@ -124,7 +124,6 @@ test("initializes form fields with full settings", async () => {
         instances: [
           {
             name: "alloy1",
-            edgeConfigInputMethod: "textfield",
             edgeConfigId: "PR123",
             stagingEdgeConfigId: "PR123:stage",
             developmentEdgeConfigId: "PR123:dev1",
@@ -240,8 +239,7 @@ test("initializes form fields with minimal settings", async () => {
         instances: [
           {
             name: "alloy1",
-            edgeConfigId: "PR123",
-            edgeConfigInputMethod: "textfield"
+            edgeConfigId: "PR123"
           }
         ]
       }
@@ -311,7 +309,6 @@ test("returns minimal valid settings", async () => {
     instances: [
       {
         edgeConfigId: "PR123",
-        edgeConfigInputMethod: "textfield",
         name: "alloy"
       }
     ]
@@ -361,7 +358,6 @@ test("returns full valid settings", async () => {
     instances: [
       {
         name: "alloy1",
-        edgeConfigInputMethod: "textfield",
         edgeConfigId: "PR123",
         stagingEdgeConfigId: "PR123:stage",
         developmentEdgeConfigId: "PR123:dev1",
@@ -581,8 +577,7 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
     instances: [
       {
         name: "alloy",
-        edgeConfigId: "PR123",
-        edgeConfigInputMethod: "textfield"
+        edgeConfigId: "PR123"
       }
     ]
   });
@@ -606,7 +601,6 @@ test("does not save onBeforeEventSend code if it matches placeholder", async () 
       {
         name: "alloy",
         edgeConfigId: "PR123",
-        edgeConfigInputMethod: "textfield"
       }
     ]
   });

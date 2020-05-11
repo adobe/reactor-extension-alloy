@@ -115,12 +115,7 @@ const getInitialValues = ({ initInfo, setConfigs, setEnvironments }) => {
     .then(fetchedConfigs => {
       setConfigs(fetchedConfigs);
 
-      if (
-        instances &&
-        instances.length > 0 &&
-        instances[0].edgeConfigId &&
-        instances[0].edgeConfigInputMethod === edgeConfigInputMethods.SELECT
-      ) {
+      if (instances && instances.length > 0 && instances[0].edgeConfigId) {
         if (
           fetchedConfigs.find(
             config => config.value === instances[0].edgeConfigId
@@ -132,7 +127,8 @@ const getInitialValues = ({ initInfo, setConfigs, setEnvironments }) => {
             edgeConfigId: instances[0].edgeConfigId
           });
         }
-        instances[0].edgeConfigId = "";
+        // We don't know about that edgeConfigId so fallback to the textfield input method
+        instances[0].edgeConfigInputMethod = edgeConfigInputMethods.TEXTFIELD;
       }
       return Promise.resolve({
         edgeConfigId: "",
@@ -149,18 +145,23 @@ const getInitialValues = ({ initInfo, setConfigs, setEnvironments }) => {
           if (instance.context) {
             instance.contextGranularity = contextGranularityEnum.SPECIFIC;
           }
+          // if one environment is empty (and there are some), or not found, use the textfield input method.
           if (
             index === 0 &&
-            instance.edgeConfigInputMethod === edgeConfigInputMethods.SELECT
+            ((!instance.stagingEdgeConfigId &&
+              fetchedEnvironments.staging.length > 0) ||
+              (!instance.developmentEdgeConfigId &&
+                fetchedEnvironments.development.length > 0) ||
+              (instance.stagingEdgeConfigId &&
+                !fetchedEnvironments.staging.find(
+                  env => env.value === instance.stagingEdgeConfigId
+                )) ||
+              (instance.developmentEdgeConfigId &&
+                !fetchedEnvironments.development.find(
+                  env => env.value === instance.developmentEdgeConfigId
+                )))
           ) {
-            if (fetchedEnvironments.staging.length > 0) {
-              instance.stagingEdgeConfigId =
-                fetchedEnvironments.staging[0].value;
-            }
-            if (fetchedEnvironments.development.length === 1) {
-              instance.developmentEdgeConfigId =
-                fetchedEnvironments.development[0].value;
-            }
+            instance.edgeConfigInputMethod = edgeConfigInputMethods.TEXTFIELD;
           }
 
           // Copy default values to the instance if the properties
@@ -185,7 +186,7 @@ const getInitialValues = ({ initInfo, setConfigs, setEnvironments }) => {
 const getSettings = ({ values, initInfo }) => {
   const instanceDefaults = getInstanceDefaults(initInfo);
   return {
-    instances: values.instances.map((instance, index) => {
+    instances: values.instances.map(instance => {
       const trimmedInstance = {
         name: instance.name
       };
@@ -204,10 +205,6 @@ const getSettings = ({ values, initInfo }) => {
         "onBeforeEventSend",
         "clickCollectionEnabled"
       ];
-
-      if (index === 0) {
-        copyPropertyKeys.push("edgeConfigInputMethod");
-      }
 
       if (instance.clickCollectionEnabled) {
         copyPropertyKeys.push("downloadLinkQualifier");
@@ -686,10 +683,10 @@ const Configuration = ({
                             />
                           </div>
                           <div className="u-gapTop">
-                            <InfoTipLayout tip="The stage edge config environment id.">
+                            <InfoTipLayout tip="The staging edge config environment id.">
                               <FieldLabel
                                 labelFor="stagingEdgeConfigIdField"
-                                label="Stage Environment ID"
+                                label="Staging Environment ID"
                               />
                             </InfoTipLayout>
                             <WrappedField

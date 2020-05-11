@@ -37,10 +37,6 @@
                 "type": "string",
                 "minLength": 1
               },
-              "edgeConfigInputMethod": {
-                "type": "string",
-                "minLength": 1
-              },
               "orgId": {
                 "type": "string",
                 "minLength": 1
