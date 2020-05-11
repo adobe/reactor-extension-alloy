@@ -46,6 +46,7 @@ const testsDir = src || path.join(__dirname, "../test/functional");
         // Using console.log instead of console.warn here because console.warn is an alias for console.error, which
         // means it outputs to stderr and this isn't technically an error.
         const fullTestName = `${fixtureName} ${testName}`;
+        // eslint-disable-next-line no-console
         console.log(
           chalk.yellowBright(
             `The test named ${chalk.bold(

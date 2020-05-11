@@ -10,16 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const EDGE_CONFIG_HOST = "https://edge.adobe.io";
-
-const getBaseRequestHeaders = ({ orgId, imsAccess }) => {
-  return {
-    "x-api-key": "Activation-DTM",
-    "x-gw-ims-org-id": orgId,
-    Authorization: `Bearer ${imsAccess}`,
-    "Content-Type": "application/json"
-  };
-};
+import EDGE_CONFIG_HOST from "../../constants/edgeConfigHost";
+import getBaseRequestHeaders from "../../utils/getBaseRequestHeaders";
 
 const fetchConfigsFromEdgeConfig = ({ baseRequestHeaders }) => {
   return fetch(`${EDGE_CONFIG_HOST}/configs/user/edge?size=100`, {

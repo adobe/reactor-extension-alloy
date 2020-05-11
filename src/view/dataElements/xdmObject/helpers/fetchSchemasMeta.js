@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import getBaseRequestHeaders from "./getBaseRequestHeaders";
+import getBaseRequestHeaders from "../../../utils/getBaseRequestHeaders";
 import platform from "./platform";
 
 export default ({ orgId, imsAccess }) => {
@@ -29,7 +29,7 @@ export default ({ orgId, imsAccess }) => {
   )
     .then(response => {
       if (!response.ok) {
-        throw new Error('Cannot fetch schemas from schema registry');
+        throw new Error("Cannot fetch schemas from schema registry");
       }
       return response.json();
     })

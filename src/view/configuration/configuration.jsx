@@ -346,14 +346,14 @@ const Configuration = ({
 
   const firstInstance = values.instances[0];
 
-  const isFirstRef = useRef(true);
+  const isFirstRenderRef = useRef(true);
   useEffect(() => {
-    const isFirst = isFirstRef.current;
-    isFirstRef.current = false;
+    const isFirstRender = isFirstRenderRef.current;
+    isFirstRenderRef.current = false;
     let isLatestRequest = true;
     if (
       firstInstance.edgeConfigInputMethod === edgeConfigInputMethods.SELECT &&
-      !isFirst &&
+      !isFirstRender &&
       firstInstance.edgeConfigId
     ) {
       if (firstInstance.edgeConfigId !== environments.edgeConfigId) {

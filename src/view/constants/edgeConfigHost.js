@@ -10,14 +10,4 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.EnvironmentSelector {
-  .spectrum-Alert {
-    padding: 10px 10px;
-    margin: 0;
-  }
-
-  .spectrum-Alert-icon {
-    top: 10px;
-    right: 10px;
-  }
-}
+export default "https://edge.adobe.io";
