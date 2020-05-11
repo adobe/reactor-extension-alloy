@@ -149,6 +149,9 @@
           },
           "mergeId": {
             "type": "string"
+          },
+          "datasetId": {
+            "type": "string"
           }
         },
         "required": ["instanceName"],

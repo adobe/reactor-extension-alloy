@@ -22,6 +22,7 @@ const renderDecisionsField = spectrum.checkbox("renderDecisionsField");
 const xdmField = spectrum.textfield("xdmField");
 const typeField = spectrum.textfield("typeField");
 const mergeIdField = spectrum.textfield("mergeIdField");
+const datasetIdField = spectrum.textfield("datasetIdField");
 const scopeDataElementField = spectrum.textfield("scopeDataElementField");
 const radioGroup = {
   dataElement: spectrum.radio("dataElementOptionField"),
@@ -65,7 +66,8 @@ test("initializes form fields with full settings, when decision scopes is data e
       xdm: "%myDataLayer%",
       type: "myType1",
       mergeId: "%myMergeId%",
-      decisionScopes: "%myDecisionScope%"
+      decisionScopes: "%myDecisionScope%",
+      datasetId: "%myDatasetId%"
     }
   });
   await instanceNameField.expectValue("alloy2");
@@ -73,6 +75,7 @@ test("initializes form fields with full settings, when decision scopes is data e
   await xdmField.expectValue("%myDataLayer%");
   await typeField.expectValue("myType1");
   await mergeIdField.expectValue("%myMergeId%");
+  await datasetIdField.expectValue("%myDatasetId%");
   await radioGroup.dataElement.expectChecked();
   await radioGroup.values.expectUnchecked();
   await scopeDataElementField.expectValue("%myDecisionScope%");
@@ -104,6 +107,7 @@ test("initializes form fields with minimal settings", async () => {
   await xdmField.expectValue("");
   await typeField.expectValue("");
   await mergeIdField.expectValue("");
+  await datasetIdField.expectValue("");
   await radioGroup.values.expectChecked();
   await radioGroup.dataElement.expectUnchecked();
   await scopeArrayValues[0].value.expectValue("");
@@ -118,6 +122,7 @@ test("initializes form fields with no settings", async () => {
   await xdmField.expectValue("");
   await typeField.expectValue("");
   await mergeIdField.expectValue("");
+  await datasetIdField.expectValue("");
   await radioGroup.values.expectChecked();
   await radioGroup.dataElement.expectUnchecked();
   await scopeArrayValues[0].value.expectValue("");
