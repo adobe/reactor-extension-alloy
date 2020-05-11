@@ -600,7 +600,7 @@ test("does not save onBeforeEventSend code if it matches placeholder", async () 
     instances: [
       {
         name: "alloy",
-        edgeConfigId: "PR123",
+        edgeConfigId: "PR123"
       }
     ]
   });
