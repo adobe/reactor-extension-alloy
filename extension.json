@@ -145,13 +145,16 @@
             "pattern": "^%[^%]+%$"
           },
           "type": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "mergeId": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           },
           "datasetId": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1
           }
         },
         "required": ["instanceName"],

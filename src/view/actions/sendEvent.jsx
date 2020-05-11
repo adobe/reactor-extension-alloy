@@ -257,12 +257,12 @@ const SendEvent = () => {
             </div>
             <div className="u-gapTop">
               <InfoTipLayout
-                tip="A platform experience event data set ID that is different from the 
-                data set used in the Configuration UI."
+                tip="A platform experience event dataset ID that is different from the 
+                dataset provided in the Edge configuration."
               >
                 <FieldLabel
                   labelFor="datasetIdField"
-                  label="Data Set ID (optional)"
+                  label="Dataset ID (optional)"
                 />
               </InfoTipLayout>
               <div>
