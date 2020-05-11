@@ -37,15 +37,19 @@ const purposesEnum = {
  * The settings object for this action has the form of:
  * {
  *   instanceName, // the name of the instance
- *   consent: {
- *     general // valid values are "in" and "out"
- *   }
+ *   preferences: [{
+ *    standard: "Adobe",
+ *    version: "1.0",
+ *    value: {
+ *      general // valid values are "in" and "out"
+ *    }
+ *   }]
  * }
  * ---OR---
  * {
  *   instanceName,
- *   // this should resolve to either { general: "in" } or { general: "out" }
- *   consent: "%dataElement123%"
+ *   // this should resolve to the preferences object above
+ *   preferences: "%dataElement123%"
  * }
  *
  * The formik object looks like this:
@@ -61,23 +65,25 @@ const purposesEnum = {
 const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
-    consent
+    preferences
   } = initInfo.settings || {};
 
   const initialValues = {
     instanceName
   };
 
-  if (typeof consent === "string") {
+  if (typeof preferences === "string") {
     initialValues.option = purposesEnum.DATA_ELEMENT;
-    initialValues.dataElement = consent;
+    initialValues.dataElement = preferences;
   } else if (
-    consent &&
-    consent.general &&
-    (consent.general === purposesEnum.IN ||
-      consent.general === purposesEnum.OUT)
+    preferences &&
+    preferences.length > 0 &&
+    preferences[0].value &&
+    preferences[0].value.general &&
+    (preferences[0].value.general === purposesEnum.IN ||
+      preferences[0].value.general === purposesEnum.OUT)
   ) {
-    initialValues.option = consent.general;
+    initialValues.option = preferences[0].value.general;
     initialValues.dataElement = "";
   } else {
     initialValues.option = purposesEnum.IN;
@@ -95,9 +101,11 @@ const getSettings = ({ values }) => {
   };
 
   if (option === purposesEnum.IN || option === purposesEnum.OUT) {
-    settings.consent = { general: option };
+    settings.preferences = [
+      { standard: "Adobe", version: "1.0", value: { general: option } }
+    ];
   } else {
-    settings.consent = dataElement;
+    settings.preferences = dataElement;
   }
 
   return settings;
@@ -163,7 +171,7 @@ const SetConsent = () => {
             </div>
             {formikProps.values.option === purposesEnum.DATA_ELEMENT ? (
               <div className="FieldSubset u-gapTop">
-                <InfoTipLayout tip='The data element should return { general: "in" } or { general: "out" }.'>
+                <InfoTipLayout tip="The data element should return an array of consent preferences.">
                   <FieldLabel
                     labelFor="dataElementField"
                     label="Data Element"

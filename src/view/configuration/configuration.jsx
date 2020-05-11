@@ -77,7 +77,7 @@ const getInstanceDefaults = initInfo => ({
   edgeDomain: "edge.adobedc.net",
   edgeBasePath: "ee",
   errorsEnabled: true,
-  defaultConsent: { general: consentLevels.IN },
+  defaultConsent: consentLevels.IN,
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions.map(contextOption => contextOption.value),
@@ -138,7 +138,8 @@ const getSettings = ({ values, initInfo }) => {
         "idMigrationEnabled",
         "thirdPartyCookiesEnabled",
         "onBeforeEventSend",
-        "clickCollectionEnabled"
+        "clickCollectionEnabled",
+        "defaultConsent"
       ];
 
       if (instance.clickCollectionEnabled) {
@@ -154,9 +155,6 @@ const getSettings = ({ values, initInfo }) => {
 
       if (instance.contextGranularity === contextGranularityEnum.SPECIFIC) {
         trimmedInstance.context = instance.context;
-      }
-      if (instance.defaultConsent.general === consentLevels.PENDING) {
-        trimmedInstance.defaultConsent = { general: consentLevels.PENDING };
       }
 
       return trimmedInstance;
@@ -457,7 +455,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                       </InfoTipLayout>
                       <WrappedField
                         id="generalDefaultConsent"
-                        name={`instances.${index}.defaultConsent.general`}
+                        name={`instances.${index}.defaultConsent`}
                         component={RadioGroup}
                         componentClassName="u-flexColumn"
                       >

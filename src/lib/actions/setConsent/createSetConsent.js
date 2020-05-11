@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 module.exports = ({ instanceManager }) => settings => {
-  const { instanceName, consent } = settings;
+  const { instanceName, preferences } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -20,5 +20,5 @@ module.exports = ({ instanceManager }) => settings => {
     );
   }
 
-  return instance("setConsent", consent);
+  return instance("setConsent", { preferences });
 };
