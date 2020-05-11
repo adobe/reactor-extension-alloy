@@ -33,7 +33,9 @@ describe("Instance Manager", () => {
         instances: [
           {
             name: "alloy1",
-            edgeConfigId: "PR123"
+            edgeConfigId: "PR123",
+            stagingEdgeConfigId: "PR123:stage",
+            developmentEdgeConfigId: "PR123:dev"
           },
           {
             name: "alloy2",
@@ -42,7 +44,8 @@ describe("Instance Manager", () => {
           }
         ]
       },
-      onDebugChanged: undefined
+      onDebugChanged: undefined,
+      buildInfo: { environment: "production" }
     });
     turbine.debugEnabled = false;
     mockWindow = {};
@@ -125,5 +128,23 @@ describe("Instance Manager", () => {
     build();
     const eventMergeId = instanceManager.createEventMergeId();
     expect(eventMergeId).toBe("randomEventMergeId");
+  });
+
+  it("handles a staging environment", () => {
+    turbine.buildInfo.environment = "staging";
+    build();
+    expect(mockWindow.alloy1.calls.argsFor(0)[1].edgeConfigId).toEqual(
+      "PR123:stage"
+    );
+    expect(mockWindow.alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
+  });
+
+  it("handles a development environment", () => {
+    turbine.buildInfo.environment = "development";
+    build();
+    expect(mockWindow.alloy1.calls.argsFor(0)[1].edgeConfigId).toEqual(
+      "PR123:dev"
+    );
+    expect(mockWindow.alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
   });
 });

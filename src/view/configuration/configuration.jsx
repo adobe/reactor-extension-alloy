@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import "regenerator-runtime"; // needed for some of react-spectrum
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { object, array, string } from "yup";
 import { FieldArray } from "formik";
@@ -25,6 +25,7 @@ import ModalTrigger from "@react/react-spectrum/ModalTrigger";
 import Dialog from "@react/react-spectrum/Dialog";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import Delete from "@react/react-spectrum/Icon/Delete";
+import Select from "@react/react-spectrum/Select";
 import { Accordion, AccordionItem } from "@react/react-spectrum/Accordion";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CheckboxList from "../components/checkboxList";
@@ -34,11 +35,19 @@ import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
 import EditorButton from "../components/editorButton";
 import InfoTipLayout from "../components/infoTipLayout";
+
 import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
+import fetchConfigs from "./utils/fetchConfigs";
+import fetchEnvironments from "./utils/fetchEnvironments";
 import prehidingSnippet from "./constants/prehidingSnippet";
 import "./configuration.styl";
+import EnvironmentSelector from "../components/environmentSelector";
 
+const edgeConfigInputMethods = {
+  SELECT: "select",
+  TEXTFIELD: "textfield"
+};
 const contextGranularityEnum = {
   ALL: "all",
   SPECIFIC: "specific"
@@ -72,7 +81,10 @@ const contextOptions = [
 
 const getInstanceDefaults = initInfo => ({
   name: "alloy",
+  edgeConfigInputMethod: edgeConfigInputMethods.SELECT,
   edgeConfigId: "",
+  stagingEdgeConfigId: "",
+  developmentEdgeConfigId: "",
   orgId: initInfo.company.orgId,
   edgeDomain: "edge.adobedc.net",
   edgeBasePath: "ee",
@@ -92,32 +104,83 @@ const getInstanceDefaults = initInfo => ({
 const createDefaultInstance = initInfo =>
   JSON.parse(JSON.stringify(getInstanceDefaults(initInfo)));
 
-const getInitialValues = ({ initInfo }) => {
+const getInitialValues = ({ initInfo, setConfigs, setEnvironments }) => {
   const instanceDefaults = getInstanceDefaults(initInfo);
   let { instances } = initInfo.settings || {};
 
-  if (instances) {
-    instances.forEach(instance => {
-      if (instance.context) {
-        instance.contextGranularity = contextGranularityEnum.SPECIFIC;
+  return fetchConfigs({
+    orgId: initInfo.company.orgId,
+    imsAccess: initInfo.tokens.imsAccess
+  })
+    .then(fetchedConfigs => {
+      setConfigs(fetchedConfigs);
+
+      if (instances && instances.length > 0 && instances[0].edgeConfigId) {
+        if (
+          fetchedConfigs.find(
+            config => config.value === instances[0].edgeConfigId
+          )
+        ) {
+          return fetchEnvironments({
+            orgId: initInfo.company.orgId,
+            imsAccess: initInfo.tokens.imsAccess,
+            edgeConfigId: instances[0].edgeConfigId
+          });
+        }
+        // We don't know about that edgeConfigId so fallback to the textfield input method
+        instances[0].edgeConfigInputMethod = edgeConfigInputMethods.TEXTFIELD;
+      }
+      return Promise.resolve({
+        edgeConfigId: "",
+        production: [],
+        staging: [],
+        development: []
+      });
+    })
+    .then(fetchedEnvironments => {
+      setEnvironments({ fetching: false, ...fetchedEnvironments });
+
+      if (instances) {
+        instances.forEach((instance, index) => {
+          if (instance.context) {
+            instance.contextGranularity = contextGranularityEnum.SPECIFIC;
+          }
+          // if one environment is empty (and there are some), or not found, use the textfield input method.
+          if (
+            index === 0 &&
+            ((!instance.stagingEdgeConfigId &&
+              fetchedEnvironments.staging.length > 0) ||
+              (!instance.developmentEdgeConfigId &&
+                fetchedEnvironments.development.length > 0) ||
+              (instance.stagingEdgeConfigId &&
+                !fetchedEnvironments.staging.find(
+                  env => env.value === instance.stagingEdgeConfigId
+                )) ||
+              (instance.developmentEdgeConfigId &&
+                !fetchedEnvironments.development.find(
+                  env => env.value === instance.developmentEdgeConfigId
+                )))
+          ) {
+            instance.edgeConfigInputMethod = edgeConfigInputMethods.TEXTFIELD;
+          }
+
+          // Copy default values to the instance if the properties
+          // aren't already defined on the instance. This is primarily
+          // because Formik requires all fields to have initial values.
+          Object.keys(instanceDefaults).forEach(key => {
+            if (instance[key] === undefined) {
+              instance[key] = instanceDefaults[key];
+            }
+          });
+        });
+      } else {
+        instances = [createDefaultInstance(initInfo)];
       }
 
-      // Copy default values to the instance if the properties
-      // aren't already defined on the instance. This is primarily
-      // because Formik requires all fields to have initial values.
-      Object.keys(instanceDefaults).forEach(key => {
-        if (instance[key] === undefined) {
-          instance[key] = instanceDefaults[key];
-        }
-      });
+      return {
+        instances
+      };
     });
-  } else {
-    instances = [createDefaultInstance(initInfo)];
-  }
-
-  return {
-    instances
-  };
 };
 
 const getSettings = ({ values, initInfo }) => {
@@ -130,6 +193,8 @@ const getSettings = ({ values, initInfo }) => {
 
       const copyPropertyKeys = [
         "edgeConfigId",
+        "stagingEdgeConfigId",
+        "developmentEdgeConfigId",
         "orgId",
         "edgeDomain",
         "edgeBasePath",
@@ -254,7 +319,13 @@ const validationSchema = object()
     );
   });
 
-const Configuration = ({ formikProps, initInfo }) => {
+const Configuration = ({
+  formikProps,
+  initInfo,
+  configs,
+  environments,
+  setEnvironments
+}) => {
   const {
     values,
     errors,
@@ -263,13 +334,83 @@ const Configuration = ({ formikProps, initInfo }) => {
     setFieldValue,
     initialValues
   } = formikProps;
-
   // On the initial render, only expand the first accordion item
   // if there's one instance, because users may get disoriented if we
   // automatically expand the first item when there are multiple instances.
   const [selectedAccordionIndex, setSelectedAccordionIndex] = useState(
     values.instances.length === 1 ? 0 : undefined
   );
+
+  const firstInstance = values.instances[0];
+
+  const isFirstRenderRef = useRef(true);
+  useEffect(() => {
+    const isFirstRender = isFirstRenderRef.current;
+    isFirstRenderRef.current = false;
+    let isLatestRequest = true;
+    if (
+      firstInstance.edgeConfigInputMethod === edgeConfigInputMethods.SELECT &&
+      !isFirstRender &&
+      firstInstance.edgeConfigId
+    ) {
+      if (firstInstance.edgeConfigId !== environments.edgeConfigId) {
+        setEnvironments({
+          edgeConfigid: firstInstance.edgeConfigId,
+          fetching: true
+        });
+        setFieldValue("instances.0.stagingEdgeConfigId", "");
+        setFieldValue("instances.0.developmentEdgeConfigId", "");
+
+        fetchEnvironments({
+          orgId: initInfo.company.orgId,
+          imsAccess: initInfo.tokens.imsAccess,
+          edgeConfigId: firstInstance.edgeConfigId
+        }).then(fetchedEnvironments => {
+          if (isLatestRequest) {
+            setEnvironments({ fetching: false, ...fetchedEnvironments });
+            if (fetchedEnvironments.staging.length > 0) {
+              setFieldValue(
+                "instances.0.stagingEdgeConfigId",
+                fetchedEnvironments.staging[0].value
+              );
+            }
+            if (fetchedEnvironments.development.length === 1) {
+              setFieldValue(
+                "instances.0.developmentEdgeConfigId",
+                fetchedEnvironments.development[0].value
+              );
+            }
+          }
+        });
+      } else {
+        // check to see if entered values are valid
+        if (environments.staging.length > 0) {
+          setFieldValue(
+            "instances.0.stagingEdgeConfigId",
+            environments.staging[0].value
+          );
+        } else {
+          setFieldValue("instances.0.stagingEdgeConfigId", "");
+        }
+        if (environments.development.length === 1) {
+          setFieldValue(
+            "instances.0.developmentEdgeConfigId",
+            environments.development[0].value
+          );
+        } else if (
+          environments.development.length === 0 ||
+          !environments.development.find(
+            env => env.value === firstInstance.developmentEdgeConfigId
+          )
+        ) {
+          setFieldValue("instances.0.developmentEdgeConfigId", "");
+        }
+      }
+    }
+    return () => {
+      isLatestRequest = false;
+    };
+  }, [firstInstance.edgeConfigId, firstInstance.edgeConfigInputMethod]);
 
   useNewlyValidatedFormSubmission({
     callback: () => {
@@ -298,7 +439,10 @@ const Configuration = ({ formikProps, initInfo }) => {
                   data-test-id="addInstanceButton"
                   label="Add Instance"
                   onClick={() => {
-                    arrayHelpers.push(createDefaultInstance(initInfo));
+                    const newInstance = createDefaultInstance(initInfo);
+                    newInstance.edgeConfigInputMethod =
+                      edgeConfigInputMethods.TEXTFIELD;
+                    arrayHelpers.push(newInstance);
                     setSelectedAccordionIndex(values.instances.length);
                   }}
                 />
@@ -347,24 +491,6 @@ const Configuration = ({ formikProps, initInfo }) => {
                         </Alert>
                       ) : null}
                       <div />
-                    </div>
-                    <div className="u-gapTop">
-                      <InfoTipLayout tip="Your assigned edge config ID, which links the SDK to the appropriate accounts and configuration.">
-                        <FieldLabel
-                          labelFor="configIdField"
-                          label="Edge Config ID"
-                        />
-                      </InfoTipLayout>
-                      <div>
-                        <WrappedField
-                          data-test-id="configIdField"
-                          id="configIdField"
-                          name={`instances.${index}.edgeConfigId`}
-                          component={Textfield}
-                          componentClassName="u-fieldLong"
-                          supportDataElement="replace"
-                        />
-                      </div>
                     </div>
                     <div className="u-gapTop">
                       <InfoTipLayout tip="Your assigned Experience Cloud organization ID.">
@@ -444,6 +570,152 @@ const Configuration = ({ formikProps, initInfo }) => {
                           label="Enable errors"
                         />
                       </InfoTipLayout>
+                    </div>
+
+                    <h3>Edge Configurations</h3>
+
+                    <div className="u-gapTop">
+                      {index === 0 && (
+                        <WrappedField
+                          name={`instances.${index}.edgeConfigInputMethod`}
+                          id="edgeConfigInputMethodRadioGroup"
+                          component={RadioGroup}
+                        >
+                          <Radio
+                            data-test-id="edgeConfigInputMethodSelectRadio"
+                            value={edgeConfigInputMethods.SELECT}
+                            label="Choose from list"
+                          />
+                          <Radio
+                            data-test-id="edgeConfigInputMethodTextfieldRadio"
+                            value={edgeConfigInputMethods.TEXTFIELD}
+                            label="Enter values"
+                            className="u-gapLeft2x"
+                          />
+                        </WrappedField>
+                      )}
+                      {index === 0 &&
+                      instance.edgeConfigInputMethod ===
+                        edgeConfigInputMethods.SELECT ? (
+                        <div>
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="The edge config name">
+                              <FieldLabel
+                                labelFor="edgeConfigId"
+                                label="Edge Configuration"
+                              />
+                            </InfoTipLayout>
+                            <WrappedField
+                              data-test-id="edgeConfigIdSelect"
+                              id="edgeConfigId"
+                              name={`instances.${index}.edgeConfigId`}
+                              component={Select}
+                              options={configs}
+                              componentClassName="u-fieldLong"
+                            />
+                          </div>
+                          {!environments.fetching && instance.edgeConfigId && (
+                            <div>
+                              <div className="u-gapTop">
+                                <WrappedField
+                                  data-test-id="productionEdgeConfigId"
+                                  id="productionEdgeConfigId"
+                                  name="instances.0.productionEdgeConfigId"
+                                  component={EnvironmentSelector}
+                                  label="Production Environment"
+                                  infoTip="The production edge config environment. This config is used when the launch library is used in development."
+                                  alertVariant="error"
+                                  alertHeader="Error"
+                                  alertText="No Production environment has been configured. You must add a production environment to your Edge Configuration."
+                                  options={environments.production}
+                                  className="u-fieldLong"
+                                />
+                              </div>
+                              <div className="u-gapTop">
+                                <WrappedField
+                                  data-test-id="stagingEdgeConfigId"
+                                  id="stagingEdgeConfigId"
+                                  name="instances.0.stagingEdgeConfigId"
+                                  component={EnvironmentSelector}
+                                  label="Staging Environment"
+                                  infoTip="The staging edge config environment. This config is used when the launch library is used in staging."
+                                  alertVariant="warning"
+                                  alertHeader="Warning"
+                                  alertText="No staging environments have been configured. The production environment will be used for the Launch staging environment."
+                                  options={environments.staging}
+                                  className="u-fieldLong"
+                                />
+                              </div>
+                              <div className="u-gapTop">
+                                <WrappedField
+                                  data-test-id="developmentEdgeConfigId"
+                                  id="developmentEdgeConfigId"
+                                  name="instances.0.developmentEdgeConfigId"
+                                  component={EnvironmentSelector}
+                                  label="Development Environment"
+                                  infoTip="The development edge config environment. This config is used when the launch library is used in development."
+                                  alertVariant="warning"
+                                  alertHeader="Warning"
+                                  alertText="No development environments have been configured. The production environment will be used for the Launch development environment."
+                                  options={environments.development}
+                                  className="u-fieldLong"
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="The production edge config environment id.">
+                              <FieldLabel
+                                labelFor="edgeConfigIdField"
+                                label="Production Environment ID"
+                              />
+                            </InfoTipLayout>
+                            <WrappedField
+                              data-test-id="productionManualEdgeConfigIdField"
+                              id="edgeConfigIdField"
+                              name={`instances.${index}.edgeConfigId`}
+                              component={Textfield}
+                              componentClassName="u-fieldLong"
+                              supportDataElement="replace"
+                            />
+                          </div>
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="The staging edge config environment id.">
+                              <FieldLabel
+                                labelFor="stagingEdgeConfigIdField"
+                                label="Staging Environment ID"
+                              />
+                            </InfoTipLayout>
+                            <WrappedField
+                              data-test-id="stagingManualEdgeConfigIdField"
+                              id="stagingEdgeConfigIdField"
+                              name={`instances.${index}.stagingEdgeConfigId`}
+                              component={Textfield}
+                              componentClassName="u-fieldLong"
+                              supportDataElement="replace"
+                            />
+                          </div>
+                          <div className="u-gapTop">
+                            <InfoTipLayout tip="The development edge config environment id.">
+                              <FieldLabel
+                                labelFor="developmentEdgeConfigIdField"
+                                label="Development Environment ID"
+                              />
+                            </InfoTipLayout>
+                            <WrappedField
+                              data-test-id="developmentManualEdgeConfigIdField"
+                              id="developmentEdgeConfigIdField"
+                              name={`instances.${index}.developmentEdgeConfigId`}
+                              component={Textfield}
+                              componentClassName="u-fieldLong"
+                              supportDataElement="replace"
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <h3>Privacy</h3>
@@ -751,16 +1023,31 @@ const Configuration = ({ formikProps, initInfo }) => {
 
 Configuration.propTypes = {
   initInfo: PropTypes.object.isRequired,
-  formikProps: PropTypes.object.isRequired
+  formikProps: PropTypes.object.isRequired,
+  configs: PropTypes.array.isRequired,
+  environments: PropTypes.object.isRequired,
+  setEnvironments: PropTypes.func.isRequired
 };
 
 const ConfigurationExtensionView = () => {
+  const [configs, setConfigs] = useState();
+  const [environments, setEnvironments] = useState();
+
   return (
     <ExtensionView
-      getInitialValues={getInitialValues}
+      getInitialValues={({ initInfo }) =>
+        getInitialValues({ initInfo, setConfigs, setEnvironments })
+      }
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={props => <Configuration {...props} />}
+      render={props => (
+        <Configuration
+          {...props}
+          configs={configs}
+          environments={environments}
+          setEnvironments={setEnvironments}
+        />
+      )}
     />
   );
 };
