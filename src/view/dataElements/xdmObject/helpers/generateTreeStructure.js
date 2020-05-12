@@ -155,9 +155,9 @@ const getTreeNode = ({
   });
 
   if (
-      !isAncestorUsingWholePopulationStrategy &&
-      isUsingWholePopulationStrategy &&
-      isFormStateValuePopulated(value)
+    !isAncestorUsingWholePopulationStrategy &&
+    isUsingWholePopulationStrategy &&
+    isFormStateValuePopulated(value)
   ) {
     confirmDataPopulatedAtCurrentOrDescendantNode();
   }

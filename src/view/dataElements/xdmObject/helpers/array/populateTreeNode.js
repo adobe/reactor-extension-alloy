@@ -33,11 +33,12 @@ export default ({
         formStateNode: itemFormStateNode,
         displayName: `Item ${index + 1}`,
         isAncestorUsingWholePopulationStrategy:
-            isAncestorUsingWholePopulationStrategy || isUsingWholePopulationStrategy,
+          isAncestorUsingWholePopulationStrategy ||
+          isUsingWholePopulationStrategy,
         doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue:
-            (isAncestorUsingWholePopulationStrategy &&
-                doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue) ||
-            (isHighestNodeUsingWholePopulationStrategy && value),
+          (isAncestorUsingWholePopulationStrategy &&
+            doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue) ||
+          (isHighestNodeUsingWholePopulationStrategy && value),
         notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode,
         notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
         errors: errors && errors.items ? errors.items[index] : undefined,
