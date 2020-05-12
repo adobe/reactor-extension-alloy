@@ -16,3 +16,6 @@ governing permissions and limitations under the License.
  */
 export const OBJECT = "object";
 export const ARRAY = "array";
+export const BOOLEAN = "boolean";
+export const NUMBER = "number";
+export const INTEGER = "integer";

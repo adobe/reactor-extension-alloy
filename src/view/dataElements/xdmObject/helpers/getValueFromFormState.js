@@ -10,8 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { WHOLE } from "../constants/populationStrategy";
-import { ARRAY, OBJECT } from "../constants/schemaType";
+import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 /**
  * Computes and returns the user-provided value from a form state node. If the
@@ -23,51 +22,11 @@ import { ARRAY, OBJECT } from "../constants/schemaType";
  * @returns {*}
  */
 const getValueFromFormState = ({ formStateNode }) => {
-  if (formStateNode.populationStrategy === WHOLE) {
-    return formStateNode.wholeValue ? formStateNode.wholeValue : undefined;
-  }
-
-  if (formStateNode.schema.type === OBJECT) {
-    if (!formStateNode.properties) {
-      return undefined;
-    }
-
-    const value = Object.keys(formStateNode.properties).reduce(
-      (memo, propertyName) => {
-        const propertyFormStateNode = formStateNode.properties[propertyName];
-        const propertyValue = getValueFromFormState({
-          formStateNode: propertyFormStateNode
-        });
-        if (propertyValue !== undefined) {
-          memo[propertyName] = propertyValue;
-        }
-        return memo;
-      },
-      {}
-    );
-
-    return Object.keys(value).length ? value : undefined;
-  }
-
-  if (formStateNode.schema.type === ARRAY) {
-    if (!formStateNode.items) {
-      return undefined;
-    }
-
-    const value = formStateNode.items.reduce((memo, itemFormStateNode) => {
-      const itemValue = getValueFromFormState({
-        formStateNode: itemFormStateNode
-      });
-      if (itemValue !== undefined) {
-        memo.push(itemValue);
-      }
-      return memo;
-    }, []);
-
-    return value.length ? value : undefined;
-  }
-
-  return undefined;
+  const { schema } = formStateNode;
+  return getTypeSpecificHelpers(schema.type).getValueFromFormState({
+    formStateNode,
+    getValueFromFormState
+  });
 };
 
 export default getValueFromFormState;

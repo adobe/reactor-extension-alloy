@@ -10,22 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import spectrum from "../../../helpers/spectrum";
-
-/**
- * Provides methods for managing form fields when editing a node.
- */
-export default {
-  selectPartsPopulationStrategy: async () => {
-    await spectrum.radio("partsPopulationStrategyField").click();
-  },
-  selectWholePopulationStrategy: async () => {
-    await spectrum.radio("wholePopulationStrategyField").click();
-  },
-  enterWholeValue: async text => {
-    await spectrum.textfield("wholeValueField").typeText(text);
-  },
-  expectWholeValue: async text => {
-    await spectrum.textfield("wholeValueField").expectValue(text);
-  }
+module.exports = ({ decisionsCallbackStorage }) => (settings, trigger) => {
+  decisionsCallbackStorage.add(trigger);
 };

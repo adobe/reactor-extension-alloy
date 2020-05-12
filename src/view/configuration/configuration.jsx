@@ -26,6 +26,7 @@ import Dialog from "@react/react-spectrum/Dialog";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import Delete from "@react/react-spectrum/Icon/Delete";
 import { Accordion, AccordionItem } from "@react/react-spectrum/Accordion";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 import CheckboxList from "../components/checkboxList";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
@@ -34,8 +35,8 @@ import ExtensionView from "../components/extensionView";
 import EditorButton from "../components/editorButton";
 import InfoTipLayout from "../components/infoTipLayout";
 import copyPropertiesIfNotDefault from "./utils/copyPropertiesIfNotDefault";
-import singleDataElementRegex from "../constants/singleDataElementRegex";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
+import prehidingSnippet from "./constants/prehidingSnippet";
 import "./configuration.styl";
 
 const contextGranularityEnum = {
@@ -71,7 +72,7 @@ const contextOptions = [
 
 const getInstanceDefaults = initInfo => ({
   name: "alloy",
-  configId: "",
+  edgeConfigId: "",
   orgId: initInfo.company.orgId,
   edgeDomain: "edge.adobedc.net",
   edgeBasePath: "ee",
@@ -128,7 +129,7 @@ const getSettings = ({ values, initInfo }) => {
       };
 
       const copyPropertyKeys = [
-        "configId",
+        "edgeConfigId",
         "orgId",
         "edgeDomain",
         "edgeBasePath",
@@ -178,8 +179,6 @@ const validateDuplicateValue = (createError, instances, key, message) => {
   );
 };
 
-const onBeforeEventSendValidationMessage = "Please specify a data element.";
-
 const validationSchema = object()
   .shape({
     instances: array().of(
@@ -198,7 +197,7 @@ const validationSchema = object()
               return !(value in window);
             }
           }),
-        configId: string().required("Please specify a config ID."),
+        edgeConfigId: string().required("Please specify an edge config ID."),
         orgId: string().required("Please specify an IMS organization ID."),
         edgeDomain: string().required("Please specify an edge domain."),
         edgeBasePath: string().required("Please specify an edge base path."),
@@ -217,10 +216,6 @@ const validationSchema = object()
                 }
               }
             })
-        }),
-        onBeforeEventSend: string().matches(singleDataElementRegex, {
-          message: onBeforeEventSendValidationMessage,
-          excludeEmptyString: true
         })
       })
     )
@@ -243,8 +238,8 @@ const validationSchema = object()
     return validateDuplicateValue(
       this.createError.bind(this),
       settings.instances,
-      "configId",
-      "Please provide a config ID unique from those used for other instances."
+      "edgeConfigId",
+      "Please provide an edge config ID unique from those used for other instances."
     );
   })
   // TestCafe doesn't allow this to be an arrow function because of
@@ -354,17 +349,17 @@ const Configuration = ({ formikProps, initInfo }) => {
                       <div />
                     </div>
                     <div className="u-gapTop">
-                      <InfoTipLayout tip="Your assigned config ID, which links the SDK to the appropriate accounts and configuration.">
+                      <InfoTipLayout tip="Your assigned edge config ID, which links the SDK to the appropriate accounts and configuration.">
                         <FieldLabel
                           labelFor="configIdField"
-                          label="Config ID"
+                          label="Edge Config ID"
                         />
                       </InfoTipLayout>
                       <div>
                         <WrappedField
                           data-test-id="configIdField"
                           id="configIdField"
-                          name={`instances.${index}.configId`}
+                          name={`instances.${index}.edgeConfigId`}
                           component={Textfield}
                           componentClassName="u-fieldLong"
                           supportDataElement="replace"
@@ -519,13 +514,32 @@ const Configuration = ({ formikProps, initInfo }) => {
                           name={`instances.${index}.prehidingStyle`}
                           component={EditorButton}
                           language="css"
+                          placeholder={
+                            "/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/"
+                          }
                         />
                       </div>
                     </div>
-
+                    <div className="u-gapTop">
+                      <InfoTipLayout tip="Place the prehiding snippet within the <head> tag of the HTML page.">
+                        <FieldLabel
+                          labelFor="copyToClipboardPrehidingSnippetButton"
+                          label="Default prehiding snippet (optional)"
+                        />
+                      </InfoTipLayout>
+                      <div>
+                        <CopyToClipboard text={prehidingSnippet}>
+                          <Button
+                            id="copyToClipboardPrehidingSnippetButton"
+                            data-test-id="copyToClipboardPrehidingSnippetButton"
+                            label="Copy to Clipboard"
+                          />
+                        </CopyToClipboard>
+                      </div>
+                    </div>
                     <h3>Data Collection</h3>
                     <div className="u-gapTop">
-                      <InfoTipLayout tip="If you want to add, remove, or modify fields from the event globally, you can configure an `onBeforeEventSend` callback. This callback will be called everytime an event is sent. This callback passes an object with a `xdm` field. Modify the `xdm` object to change the data that is sent in the event.">
+                      <InfoTipLayout tip='A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'>
                         <FieldLabel
                           labelFor="onBeforeEventSendField"
                           label="Callback function for modifying data before each event is sent to the server"
@@ -533,12 +547,14 @@ const Configuration = ({ formikProps, initInfo }) => {
                       </InfoTipLayout>
                       <div>
                         <WrappedField
-                          data-test-id="onBeforeEventSendField"
+                          data-test-id="onBeforeEventSendEditorButton"
                           id="onBeforeEventSendField"
                           name={`instances.${index}.onBeforeEventSend`}
-                          component={Textfield}
-                          componentClassName="u-fieldLong"
-                          supportDataElement="replace"
+                          component={EditorButton}
+                          language="javascript"
+                          placeholder={
+                            '// Modify content.xdm as necessary. There is no need to wrap the code in a function\n// or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";'
+                          }
                         />
                       </div>
                     </div>
@@ -580,9 +596,13 @@ const Configuration = ({ formikProps, initInfo }) => {
                                   pattern: currentPattern
                                 })
                                 .then(newPattern => {
-                                  values.instances[
-                                    index
-                                  ].downloadLinkQualifier = newPattern;
+                                  // A bug exists in the Launch UI where the promise is resolved
+                                  // with undefined if the user hits Cancel. Instead, the promise
+                                  // should have never been resolved or rejected.
+                                  // https://jira.corp.adobe.com/browse/DTM-14454
+                                  if (newPattern === undefined) {
+                                    return;
+                                  }
                                   setFieldValue(
                                     `instances.${index}.downloadLinkQualifier`,
                                     newPattern

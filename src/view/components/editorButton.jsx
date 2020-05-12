@@ -23,17 +23,32 @@ import PropTypes from "prop-types";
  */
 class EditorButton extends React.Component {
   onClick = () => {
-    const { onChange, value, language } = this.props;
+    const { onChange, value, language, placeholder } = this.props;
 
     const options = {
-      code: value
+      code: value || placeholder || ""
     };
 
     if (language) {
       options.language = language;
     }
 
-    window.extensionBridge.openCodeEditor(options).then(onChange);
+    window.extensionBridge.openCodeEditor(options).then(updatedCode => {
+      // A bug exists in the Launch UI where the promise is resolved
+      // with undefined if the user hits Cancel. In this case, the promise
+      // should never be resolved or rejected.
+      // https://jira.corp.adobe.com/browse/DTM-14454
+      if (updatedCode === undefined) {
+        return;
+      }
+
+      // If the user never changed placeholder code, don't save the placeholder code.
+      if (placeholder && updatedCode === placeholder) {
+        updatedCode = "";
+      }
+
+      onChange(updatedCode);
+    });
   };
 
   render() {
@@ -45,7 +60,7 @@ class EditorButton extends React.Component {
         icon={<Code />}
         className={className}
         onClick={this.onClick}
-        variant={invalid ? "warning" : "primary"}
+        variant={invalid ? "warning" : "secondary"}
       >
         Open Editor
       </Button>
@@ -58,7 +73,12 @@ EditorButton.propTypes = {
   value: PropTypes.string.isRequired,
   className: PropTypes.string,
   invalid: PropTypes.bool,
-  language: PropTypes.oneOf(["javascript", "html", "css", "json", "plaintext"])
+  language: PropTypes.oneOf(["javascript", "html", "css", "json", "plaintext"]),
+  /**
+   * Provides initial code to display in the editor if value is empty.
+   * If the user does not modify the placeholder code, an empty value will be saved.
+   */
+  placeholder: PropTypes.string
 };
 
 export default EditorButton;

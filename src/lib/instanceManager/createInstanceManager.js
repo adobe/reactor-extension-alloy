@@ -45,7 +45,7 @@ module.exports = ({ turbine, window, runAlloy, orgId }) => {
       }
     });
     turbine.onDebugChanged(enabled => {
-      instance("debug", { enabled });
+      instance("setDebug", { enabled });
     });
   });
 

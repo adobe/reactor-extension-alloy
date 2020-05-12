@@ -10,15 +10,22 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager, turbine }) => settings => {
+module.exports = ({
+  instanceManager,
+  decisionsCallbackStorage
+}) => settings => {
   const { instanceName, ...otherSettings } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
-  if (instance) {
-    instance("event", otherSettings);
-  } else {
-    turbine.logger.error(
+  if (!instance) {
+    throw new Error(
       `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
     );
   }
+
+  return instance("sendEvent", otherSettings).then(result => {
+    if (result.decisions) {
+      decisionsCallbackStorage.triggerEvent({ decisions: result.decisions });
+    }
+  });
 };

@@ -14,28 +14,28 @@ import createExtensionViewController from "../helpers/createExtensionViewControl
 import spectrum from "../helpers/spectrum";
 
 const extensionViewController = createExtensionViewController(
-  "actions/setCustomerIds.html"
+  "actions/syncIdentity.html"
 );
 
 const mockExtensionSettings = {
   instances: [
     {
       name: "alloy1",
-      configId: "PR123"
+      edgeConfigId: "PR123"
     },
     {
       name: "alloy2",
-      configId: "PR456"
+      edgeConfigId: "PR456"
     }
   ]
 };
 
 const instanceNameField = spectrum.select("instanceNameField");
-const addCustomerIdButton = spectrum.button("addCustomerIdButton");
-const customerIds = [];
+const addIdentityButton = spectrum.button("addIdentityButton");
+const identities = [];
 
 for (let i = 0; i < 2; i += 1) {
-  customerIds.push({
+  identities.push({
     namespaceField: spectrum.textfield(`namespace${i}Field`),
     idField: spectrum.textfield(`id${i}Field`),
     hashEnabledField: spectrum.checkbox(`hashEnabled${i}Field`),
@@ -47,7 +47,7 @@ for (let i = 0; i < 2; i += 1) {
 
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
-fixture("Set Customer IDs View").disablePageReloads.page(
+fixture("Sync Identity View").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
@@ -56,7 +56,7 @@ test("initializes form fields with full valid settings", async () => {
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy99",
-      customerIds: [
+      identities: [
         {
           namespace: "CORE",
           id: "wvg",
@@ -76,18 +76,18 @@ test("initializes form fields with full valid settings", async () => {
   });
 
   await instanceNameField.expectValue("alloy99");
-  await customerIds[0].namespaceField.expectValue("CORE");
-  await customerIds[0].idField.expectValue("wvg");
-  await customerIds[0].hashEnabledField.expectChecked();
-  await customerIds[0].authenticatedStateField.expectValue("loggedOut");
-  await customerIds[0].primaryField.expectUnchecked();
-  await customerIds[0].deleteButton.expectEnabled();
-  await customerIds[1].namespaceField.expectValue("AAID");
-  await customerIds[1].idField.expectValue("zyx");
-  await customerIds[1].hashEnabledField.expectUnchecked();
-  await customerIds[1].authenticatedStateField.expectValue("authenticated");
-  await customerIds[1].primaryField.expectChecked();
-  await customerIds[1].deleteButton.expectEnabled();
+  await identities[0].namespaceField.expectValue("CORE");
+  await identities[0].idField.expectValue("wvg");
+  await identities[0].hashEnabledField.expectChecked();
+  await identities[0].authenticatedStateField.expectValue("loggedOut");
+  await identities[0].primaryField.expectUnchecked();
+  await identities[0].deleteButton.expectEnabled();
+  await identities[1].namespaceField.expectValue("AAID");
+  await identities[1].idField.expectValue("zyx");
+  await identities[1].hashEnabledField.expectUnchecked();
+  await identities[1].authenticatedStateField.expectValue("authenticated");
+  await identities[1].primaryField.expectChecked();
+  await identities[1].deleteButton.expectEnabled();
   await extensionViewController.expectIsValid();
 });
 
@@ -97,12 +97,12 @@ test("initializes form fields with no settings", async () => {
   });
 
   await instanceNameField.expectValue("alloy1");
-  await customerIds[0].namespaceField.expectValue("");
-  await customerIds[0].idField.expectValue("");
-  await customerIds[0].hashEnabledField.expectUnchecked();
-  await customerIds[0].authenticatedStateField.expectValue("");
-  await customerIds[0].primaryField.expectUnchecked();
-  await customerIds[0].deleteButton.expectDisabled();
+  await identities[0].namespaceField.expectValue("");
+  await identities[0].idField.expectValue("");
+  await identities[0].hashEnabledField.expectUnchecked();
+  await identities[0].authenticatedStateField.expectValue("");
+  await identities[0].primaryField.expectUnchecked();
+  await identities[0].deleteButton.expectDisabled();
 });
 
 test("shows error for namespace value that is a duplicate", async () => {
@@ -110,22 +110,21 @@ test("shows error for namespace value that is a duplicate", async () => {
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy99",
-      customerIds: [
-        {
-          namespace: "CORE",
+      identities: {
+        CORE: {
           id: "wvg",
           authenticatedState: "loggedOut",
           primary: false,
           hashEnabled: true
         }
-      ]
+      }
     }
   });
 
-  await addCustomerIdButton.click();
-  await customerIds[1].namespaceField.typeText("CORE");
-  await customerIds[1].idField.typeText("zyx");
-  await customerIds[1].namespaceField.expectError();
+  await addIdentityButton.click();
+  await identities[1].namespaceField.typeText("CORE");
+  await identities[1].idField.typeText("zyx");
+  await identities[1].namespaceField.expectError();
 });
 
 test("shows error for primary value of true that is a duplicate", async () => {
@@ -133,22 +132,21 @@ test("shows error for primary value of true that is a duplicate", async () => {
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy99",
-      customerIds: [
-        {
-          namespace: "CORE",
+      identities: {
+        CORE: {
           id: "wvg",
           authenticatedState: "loggedOut",
           primary: true,
           hashEnabled: true
         }
-      ]
+      }
     }
   });
 
-  await addCustomerIdButton.click();
-  await customerIds[1].primaryField.click();
-  await customerIds[1].idField.typeText("zyx");
-  await customerIds[1].primaryField.expectError();
+  await addIdentityButton.click();
+  await identities[1].primaryField.click();
+  await identities[1].idField.typeText("zyx");
+  await identities[1].primaryField.expectError();
 });
 
 test("shows error for blank required fields", async () => {
@@ -158,47 +156,44 @@ test("shows error for blank required fields", async () => {
   });
 
   await extensionViewController.expectIsNotValid();
-  await customerIds[0].namespaceField.expectError();
-  await customerIds[0].idField.expectError();
-  await customerIds[0].authenticatedStateField.expectError();
+  await identities[0].namespaceField.expectError();
+  await identities[0].idField.expectError();
+  await identities[0].authenticatedStateField.expectError();
 });
 
-test("deletes customer id", async () => {
+test("deletes identity", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy99",
-      customerIds: [
-        {
-          namespace: "CORE",
+      identities: {
+        CORE: {
           id: "wvg",
           authenticatedState: "loggedOut",
           primary: false,
           hashEnabled: true
         },
-        {
-          namespace: "AAID",
+        AAID: {
           id: "zyx",
           authenticatedState: "authenticated",
           primary: true,
           hashEnabled: false
         }
-      ]
+      }
     }
   });
 
-  await customerIds[0].deleteButton.click();
+  await identities[0].deleteButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy99",
-    customerIds: [
-      {
-        namespace: "AAID",
+    identities: {
+      AAID: {
         id: "zyx",
         authenticatedState: "authenticated",
         primary: true,
         hashEnabled: false
       }
-    ]
+    }
   });
 });

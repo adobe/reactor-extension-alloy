@@ -33,11 +33,11 @@ describe("Instance Manager", () => {
         instances: [
           {
             name: "alloy1",
-            configId: "PR123"
+            edgeConfigId: "PR123"
           },
           {
             name: "alloy2",
-            configId: "PR456",
+            edgeConfigId: "PR456",
             orgId: "DIFFERENTORG@AdobeOrg"
           }
         ]
@@ -75,13 +75,13 @@ describe("Instance Manager", () => {
   it("configures an SDK instance for each configured instance", () => {
     build();
     expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
-      configId: "PR123",
+      edgeConfigId: "PR123",
       debugEnabled: false,
       orgId: "ABC@AdobeOrg",
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
-      configId: "PR456",
+      edgeConfigId: "PR456",
       debugEnabled: false,
       orgId: "DIFFERENTORG@AdobeOrg",
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
@@ -92,7 +92,7 @@ describe("Instance Manager", () => {
     turbine.debugEnabled = true;
     build();
     expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
-      configId: "PR123",
+      edgeConfigId: "PR123",
       debugEnabled: true,
       orgId: "ABC@AdobeOrg",
       reactorRegisterCreateEventMergeId: jasmine.any(Function)
@@ -106,9 +106,13 @@ describe("Instance Manager", () => {
     });
     build();
     onDebugChangedCallbacks.forEach(callback => callback(true));
-    expect(mockWindow.alloy1).toHaveBeenCalledWith("debug", { enabled: true });
+    expect(mockWindow.alloy1).toHaveBeenCalledWith("setDebug", {
+      enabled: true
+    });
     onDebugChangedCallbacks.forEach(callback => callback(false));
-    expect(mockWindow.alloy1).toHaveBeenCalledWith("debug", { enabled: false });
+    expect(mockWindow.alloy1).toHaveBeenCalledWith("setDebug", {
+      enabled: false
+    });
   });
 
   it("returns instance by name", () => {

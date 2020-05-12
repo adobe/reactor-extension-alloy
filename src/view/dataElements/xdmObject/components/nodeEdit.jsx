@@ -13,12 +13,39 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import Breadcrumbs from "@react/react-spectrum/Breadcrumbs";
-import ArrayEdit from "./arrayEdit";
-import ObjectEdit from "./objectEdit";
-import NonObjectOrArrayEdit from "./nonObjectOrArrayEdit";
-import { ARRAY, OBJECT } from "../constants/schemaType";
 import { formStateNodePropTypes } from "../helpers/getInitialFormState";
 import getNodeEditData from "../helpers/getNodeEditData";
+import AutoPopulationAlert from "./autoPopulationAlert";
+import {
+  ARRAY,
+  BOOLEAN,
+  INTEGER,
+  NUMBER,
+  OBJECT
+} from "../constants/schemaType";
+import arrayEdit from "./arrayEdit";
+import booleanEdit from "./booleanEdit";
+import integerEdit from "./integerEdit";
+import numberEdit from "./numberEdit";
+import objectEdit from "./objectEdit";
+import stringEdit from "./stringEdit";
+
+const getViewBySchemaType = schemaType => {
+  switch (schemaType) {
+    case ARRAY:
+      return arrayEdit;
+    case BOOLEAN:
+      return booleanEdit;
+    case INTEGER:
+      return integerEdit;
+    case NUMBER:
+      return numberEdit;
+    case OBJECT:
+      return objectEdit;
+    default:
+      return stringEdit;
+  }
+};
 
 /**
  * The form for editing a node in the XDM object. The form fields
@@ -32,15 +59,7 @@ const NodeEdit = props => {
     nodeId: selectedNodeId
   });
 
-  let TypeSpecificNodeEdit;
-
-  if (formStateNode.schema.type === ARRAY) {
-    TypeSpecificNodeEdit = ArrayEdit;
-  } else if (formStateNode.schema.type === OBJECT) {
-    TypeSpecificNodeEdit = ObjectEdit;
-  } else {
-    TypeSpecificNodeEdit = NonObjectOrArrayEdit;
-  }
+  const TypeSpecificNodeEdit = getViewBySchemaType(formStateNode.schema.type);
 
   return (
     <div>
@@ -49,11 +68,14 @@ const NodeEdit = props => {
         items={breadcrumb}
         onBreadcrumbClick={item => onNodeSelect(item.nodeId)}
       />
-      <TypeSpecificNodeEdit
-        formStateNode={formStateNode}
-        fieldName={fieldName}
-        onNodeSelect={onNodeSelect}
-      />
+      <div>
+        {formStateNode.isAutoPopulated && <AutoPopulationAlert />}
+        <TypeSpecificNodeEdit
+          formStateNode={formStateNode}
+          fieldName={fieldName}
+          onNodeSelect={onNodeSelect}
+        />
+      </div>
     </div>
   );
 };

@@ -13,54 +13,95 @@ governing permissions and limitations under the License.
 import createSendEvent from "../../../../../src/lib/actions/sendEvent/createSendEvent";
 
 describe("Send Event", () => {
-  let turbine;
-
-  beforeEach(() => {
-    turbine = {
-      logger: jasmine.createSpyObj("logger", ["error"])
-    };
-  });
-
-  it("executes event command", () => {
-    const instance = jasmine.createSpy();
+  it("executes event command and triggers decisions received event", () => {
+    const decisions = [];
+    const instance = jasmine
+      .createSpy()
+      .and.returnValue(Promise.resolve({ decisions }));
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: instance
     });
-    const action = createSendEvent({ instanceManager, turbine });
-
-    action({
+    const decisionsCallbackStorage = jasmine.createSpyObj(
+      "decisionsCallbackStorage",
+      ["triggerEvent"]
+    );
+    const action = createSendEvent({
+      instanceManager,
+      decisionsCallbackStorage
+    });
+    const promiseReturnedFromAction = action({
       instanceName: "myinstance",
-      viewStart: true,
+      renderDecisions: true,
       xdm: {
         foo: "bar"
       }
     });
 
     expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
-    expect(instance).toHaveBeenCalledWith("event", {
-      viewStart: true,
+    expect(instance).toHaveBeenCalledWith("sendEvent", {
+      renderDecisions: true,
       xdm: {
         foo: "bar"
       }
+    });
+
+    return promiseReturnedFromAction.then(() => {
+      expect(decisionsCallbackStorage.triggerEvent).toHaveBeenCalledWith({
+        decisions
+      });
     });
   });
-
-  it("logs an error when no matching instance found", () => {
+  it("executes event command and doesn't trigger decisions received event when decisions are missing", () => {
+    const instance = jasmine.createSpy().and.returnValue(Promise.resolve({}));
     const instanceManager = jasmine.createSpyObj("instanceManager", {
-      getInstance: undefined
+      getInstance: instance
     });
-    const action = createSendEvent({ instanceManager, turbine });
-
-    action({
+    const decisionsCallbackStorage = jasmine.createSpyObj(
+      "decisionsCallbackStorage",
+      ["triggerEvent"]
+    );
+    const action = createSendEvent({
+      instanceManager,
+      decisionsCallbackStorage
+    });
+    const promiseReturnedFromAction = action({
       instanceName: "myinstance",
-      viewStart: true,
+      renderDecisions: true,
       xdm: {
         foo: "bar"
       }
     });
 
-    expect(turbine.logger.error).toHaveBeenCalledWith(
-      'Failed to send event for instance "myinstance". No matching instance was configured with this name.'
+    expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
+    expect(instance).toHaveBeenCalledWith("sendEvent", {
+      renderDecisions: true,
+      xdm: {
+        foo: "bar"
+      }
+    });
+
+    return promiseReturnedFromAction.then(() => {
+      expect(decisionsCallbackStorage.triggerEvent).not.toHaveBeenCalled();
+    });
+  });
+  it("throws an error when no matching instance found", () => {
+    const instanceManager = jasmine.createSpyObj("instanceManager", [
+      "getInstance"
+    ]);
+    const action = createSendEvent({ instanceManager });
+
+    expect(() => {
+      action({
+        instanceName: "myinstance",
+        renderDecisions: true,
+        xdm: {
+          foo: "bar"
+        }
+      });
+    }).toThrow(
+      new Error(
+        'Failed to send event for instance "myinstance". No matching instance was configured with this name.'
+      )
     );
   });
 });

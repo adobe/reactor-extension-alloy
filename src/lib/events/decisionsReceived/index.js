@@ -10,19 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import spectrum from "../../../helpers/spectrum";
+const decisionsCallbackStorage = require("../../decisionsCallbackStorage");
+const createDecisionsReceivedEvent = require("./createDecisionsReceivedEvent");
 
-/**
- * Provides methods for managing an array's items when on the array's edit view.
- */
-export default {
-  addItem: async () => {
-    await spectrum.button("addItemButton").click();
-  },
-  removeItem: async index => {
-    await spectrum.button(`item${index}RemoveButton`).click();
-  },
-  clickItem: async index => {
-    await spectrum.button(`item${index}SelectButton`).click();
-  }
-};
+module.exports = createDecisionsReceivedEvent({
+  decisionsCallbackStorage
+});

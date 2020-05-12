@@ -13,6 +13,8 @@ governing permissions and limitations under the License.
 import { PARTS, WHOLE } from "../constants/populationStrategy";
 import { ARRAY, OBJECT } from "../constants/schemaType";
 import { EMPTY, FULL, PARTIAL } from "../constants/populationAmount";
+import isFormStateValuePopulated from "./isFormStateValuePopulated";
+import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 const calculatePopulationAmountWhenAncestorUsingWholePopulationStrategy = doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue => {
   return doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue
@@ -88,14 +90,12 @@ const getTreeNode = ({
     id,
     schema,
     populationStrategy,
-    wholeValue,
-    properties,
-    items,
+    value,
     isAlwaysDisabled,
     isAutoPopulated
   } = formStateNode;
 
-  const node = {
+  const treeNode = {
     id,
     displayName,
     type: schema.type,
@@ -114,6 +114,13 @@ const getTreeNode = ({
     numPopulatedLeafs: 0
   };
 
+  const confirmDataPopulatedAtCurrentOrDescendantNode = () => {
+    if (!treeNode.isPopulated) {
+      notifyParentOfDataPopulation();
+      treeNode.isPopulated = true;
+    }
+  };
+
   const confirmChildNodePopulation = populationTally => {
     fullPopulationTally.numLeafs += populationTally.numLeafs;
     fullPopulationTally.numPopulatedLeafs += populationTally.numPopulatedLeafs;
@@ -126,64 +133,42 @@ const getTreeNode = ({
     }
   };
 
-  if (touched && touched.wholeValue) {
+  if (touched && touched.value) {
     confirmTouchedAtCurrentOrDescendantNode();
   }
 
-  const commonChildInfo = {
-    isAncestorUsingWholePopulationStrategy:
-      isAncestorUsingWholePopulationStrategy || isUsingWholePopulationStrategy,
-    doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue:
-      (isAncestorUsingWholePopulationStrategy &&
-        doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue) ||
-      (isHighestNodeUsingWholePopulationStrategy && wholeValue),
-    notifyParentOfDataPopulation: confirmChildNodePopulation,
-    notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode
-  };
+  // Type specific helpers should set:
+  //  - children, if the node has children
+  getTypeSpecificHelpers(schema.type).populateTreeNode({
+    treeNode,
+    formStateNode,
+    isAncestorUsingWholePopulationStrategy,
+    isUsingWholePopulationStrategy,
+    confirmChildNodePopulation,
+    confirmDataPopulatedAtCurrentOrDescendantNode,
+    confirmTouchedAtCurrentOrDescendantNode,
+    isHighestNodeUsingWholePopulationStrategy,
+    value,
+    errors,
+    touched,
+    getTreeNode
+  });
 
-  if (schema.type === OBJECT && properties) {
-    const propertyNames = Object.keys(properties);
-    if (propertyNames.length) {
-      node.children = propertyNames.sort().map(propertyName => {
-        const propertyFormStateNode = properties[propertyName];
-        const childNode = getTreeNode({
-          formStateNode: propertyFormStateNode,
-          displayName: propertyName,
-          ...commonChildInfo,
-          errors:
-            errors && errors.properties
-              ? errors.properties[propertyName]
-              : undefined,
-          touched:
-            touched && touched.properties
-              ? touched.properties[propertyName]
-              : undefined
-        });
-        return childNode;
-      });
-    }
-  }
-
-  if (schema.type === ARRAY && items && items.length) {
-    node.children = items.map((itemFormStateNode, index) => {
-      const childNode = getTreeNode({
-        formStateNode: itemFormStateNode,
-        displayName: `Item ${index + 1}`,
-        ...commonChildInfo,
-        errors: errors && errors.items ? errors.items[index] : undefined,
-        touched: touched && touched.items ? touched.items[index] : undefined
-      });
-      return childNode;
-    });
+  if (
+      !isAncestorUsingWholePopulationStrategy &&
+      isUsingWholePopulationStrategy &&
+      isFormStateValuePopulated(value)
+  ) {
+    confirmDataPopulatedAtCurrentOrDescendantNode();
   }
 
   // If the current node doesn't have children, then the current node itself
   // IS the leaf node that should be tallied.
   // TODO Can we get rid of this? Maybe just tell the parent our population
   // amount after we've calculated it below.
-  if (node.children) {
+  if (treeNode.children) {
     if (populationStrategy === WHOLE) {
-      if (wholeValue) {
+      if (value) {
         fullPopulationTally.numPopulatedLeafs = fullPopulationTally.numLeafs;
       } else {
         fullPopulationTally.numPopulatedLeafs = 0;
@@ -191,35 +176,33 @@ const getTreeNode = ({
     }
   } else {
     fullPopulationTally.numLeafs = 1;
-    fullPopulationTally.numPopulatedLeafs = wholeValue ? 1 : 0;
+    fullPopulationTally.numPopulatedLeafs = value ? 1 : 0;
   }
 
   notifyParentOfDataPopulation(fullPopulationTally);
 
   if (isAutoPopulated) {
-    node.populationAmount = FULL;
+    treeNode.populationAmount = FULL;
   } else if (isAncestorUsingWholePopulationStrategy) {
-    node.populationAmount = calculatePopulationAmountWhenAncestorUsingWholePopulationStrategy(
+    treeNode.populationAmount = calculatePopulationAmountWhenAncestorUsingWholePopulationStrategy(
       doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue
     );
   } else if (populationStrategy === PARTS) {
-    node.populationAmount = calculatePopulationAmountForPartsPopulationStrategy(
+    treeNode.populationAmount = calculatePopulationAmountForPartsPopulationStrategy(
       fullPopulationTally
     );
   } else {
-    node.populationAmount = calculatePopulationAmountForWholePopulationStrategy(
-      wholeValue
+    treeNode.populationAmount = calculatePopulationAmountForWholePopulationStrategy(
+      value
     );
   }
 
   if (isTouchedAtCurrentOrDescendantNode) {
-    node.error =
-      errors && typeof errors.wholeValue === "string"
-        ? errors.wholeValue
-        : undefined;
+    treeNode.error =
+      errors && typeof errors.value === "string" ? errors.value : undefined;
   }
 
-  return node;
+  return treeNode;
 };
 
 // Avoid exposing all of getTreeNode's parameters since
