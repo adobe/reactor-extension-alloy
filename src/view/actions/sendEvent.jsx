@@ -85,8 +85,7 @@ const getInitialValues = ({ initInfo }) => {
     decisionScopes = null,
     xdm = "",
     type = "",
-    mergeId = "",
-    datasetId = ""
+    mergeId = ""
   } = initInfo.settings || {};
   const initialPersonalizationData = getInitialDecisionScopesData(
     decisionScopes
@@ -98,7 +97,6 @@ const getInitialValues = ({ initInfo }) => {
     xdm,
     type,
     mergeId,
-    datasetId,
     ...initialPersonalizationData
   };
 };
@@ -116,9 +114,6 @@ const getSettings = ({ values }) => {
   }
   if (values.mergeId) {
     settings.mergeId = values.mergeId;
-  }
-  if (values.datasetId) {
-    settings.datasetId = values.datasetId;
   }
 
   // Only add renderDecisions if the value is different than the default (false).
@@ -249,27 +244,6 @@ const SendEvent = () => {
                   data-test-id="mergeIdField"
                   id="mergeIdField"
                   name="mergeId"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement="replace"
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="A platform experience event dataset ID that is different from the 
-                dataset provided in the Edge configuration."
-              >
-                <FieldLabel
-                  labelFor="datasetIdField"
-                  label="Dataset ID (optional)"
-                />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  data-test-id="datasetIdField"
-                  id="datasetIdField"
-                  name="datasetId"
                   component={Textfield}
                   componentClassName="u-fieldLong"
                   supportDataElement="replace"
