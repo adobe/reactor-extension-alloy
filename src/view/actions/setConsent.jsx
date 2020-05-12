@@ -75,14 +75,7 @@ const getInitialValues = ({ initInfo }) => {
   if (typeof consent === "string") {
     initialValues.option = purposesEnum.DATA_ELEMENT;
     initialValues.dataElement = consent;
-  } else if (
-    consent &&
-    consent.length > 0 &&
-    consent[0].value &&
-    consent[0].value.general &&
-    (consent[0].value.general === purposesEnum.IN ||
-      consent[0].value.general === purposesEnum.OUT)
-  ) {
+  } else if (consent) {
     initialValues.option = consent[0].value.general;
     initialValues.dataElement = "";
   } else {

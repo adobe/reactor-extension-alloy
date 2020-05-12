@@ -95,9 +95,7 @@ test("returns valid settings containing static purposes", async () => {
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy2",
-    consent: [
-      { standard: "Adobe", version: "1.0", value: { general: "out" } }
-    ]
+    consent: [{ standard: "Adobe", version: "1.0", value: { general: "out" } }]
   });
 });
 

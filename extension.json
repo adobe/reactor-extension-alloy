@@ -199,7 +199,8 @@
                       },
                       "additionalProperties": false
                     }
-                  }
+                  },
+                  "additionalProperties": false
                 }
               },
               {
