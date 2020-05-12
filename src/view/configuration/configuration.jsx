@@ -447,7 +447,7 @@ const Configuration = ({ formikProps, initInfo }) => {
                     <h3>Privacy</h3>
 
                     <div className="u-gapTop">
-                      <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent preferences.">
+                      <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent.">
                         <FieldLabel
                           labelFor="generalDefaultConsent"
                           label="Default Consent Level"

@@ -25,7 +25,7 @@ describe("Set Consent", () => {
       const action = createSetConsent({ instanceManager });
       const promiseReturnedFromAction = action({
         instanceName: "myinstance",
-        preferences: [
+        consent: [
           {
             standard: "Adobe",
             version: "1.0",
@@ -37,7 +37,7 @@ describe("Set Consent", () => {
       expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
       expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
       expect(instance).toHaveBeenCalledWith("setConsent", {
-        preferences: [
+        consent: [
           {
             standard: "Adobe",
             version: "1.0",

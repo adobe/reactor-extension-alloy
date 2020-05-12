@@ -49,7 +49,7 @@ test("initializes form fields with settings containing static purposes", async (
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
-      preferences: [
+      consent: [
         { standard: "Adobe", version: "1.0", value: { general: "out" } }
       ]
     }
@@ -65,7 +65,7 @@ test("initializes form fields with settings containing data element for purposes
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
-      preferences: "%foo%"
+      consent: "%foo%"
     }
   });
   await instanceNameField.expectValue("alloy2");
@@ -95,7 +95,7 @@ test("returns valid settings containing static purposes", async () => {
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy2",
-    preferences: [
+    consent: [
       { standard: "Adobe", version: "1.0", value: { general: "out" } }
     ]
   });
@@ -112,7 +112,7 @@ test("returns valid settings containing data element for purposes", async () => 
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy2",
-    preferences: "%foo%"
+    consent: "%foo%"
   });
 });
 
