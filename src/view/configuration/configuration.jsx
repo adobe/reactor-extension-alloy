@@ -88,7 +88,6 @@ const getInstanceDefaults = initInfo => ({
   orgId: initInfo.company.orgId,
   edgeDomain: "edge.adobedc.net",
   edgeBasePath: "ee",
-  errorsEnabled: true,
   defaultConsent: { general: consentLevels.IN },
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
@@ -198,7 +197,6 @@ const getSettings = ({ values, initInfo }) => {
         "orgId",
         "edgeDomain",
         "edgeBasePath",
-        "errorsEnabled",
         "prehidingStyle",
         "idMigrationEnabled",
         "thirdPartyCookiesEnabled",
@@ -560,16 +558,6 @@ const Configuration = ({
                           quiet
                         />
                       </div>
-                    </div>
-                    <div className="u-gapTop">
-                      <InfoTipLayout tip="Allows uncaught errors to be displayed in the console.">
-                        <WrappedField
-                          data-test-id="errorsEnabledField"
-                          name={`instances.${index}.errorsEnabled`}
-                          component={Checkbox}
-                          label="Enable errors"
-                        />
-                      </InfoTipLayout>
                     </div>
 
                     <h3>Edge Configurations</h3>

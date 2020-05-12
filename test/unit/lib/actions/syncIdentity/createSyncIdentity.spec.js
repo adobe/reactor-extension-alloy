@@ -24,7 +24,7 @@ describe("Sync Identity", () => {
     const action = createSyncIdentity({ instanceManager });
     const promiseReturnedFromAction = action({
       instanceName: "instance1",
-      identities: {
+      identity: {
         ECID: {
           id: "wvg",
           authenticatedState: "loggedOut",
@@ -37,7 +37,7 @@ describe("Sync Identity", () => {
     expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
     expect(instanceManager.getInstance).toHaveBeenCalledWith("instance1");
     expect(instance).toHaveBeenCalledWith("syncIdentity", {
-      identities: {
+      identity: {
         ECID: {
           id: "wvg",
           authenticatedState: "loggedOut",
@@ -57,7 +57,7 @@ describe("Sync Identity", () => {
     expect(() => {
       action({
         instanceName: "instance1",
-        identities: {
+        identity: {
           ECID: {
             id: "wvg",
             authenticatedState: "loggedOut",

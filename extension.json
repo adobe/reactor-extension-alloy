@@ -49,9 +49,6 @@
                 "type": "string",
                 "minLength": 1
               },
-              "errorsEnabled": {
-                "type": "boolean"
-              },
               "defaultConsent": {
                 "type": "object",
                 "properties": {
@@ -218,7 +215,7 @@
             "type": "string",
             "minLength": 1
           },
-          "identities": {
+          "identity": {
             "type": "object",
             "additionalProperties": {
               "type": "object",
@@ -244,7 +241,7 @@
             "minProperties": 1
           }
         },
-        "required": ["instanceName", "identities"],
+        "required": ["instanceName", "identity"],
         "additionalProperties": false
       },
       "libPath": "dist/lib/actions/syncIdentity/index.js",

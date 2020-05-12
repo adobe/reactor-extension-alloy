@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 module.exports = ({ instanceManager }) => settings => {
-  const { instanceName, identities } = settings;
+  const { instanceName, identity } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -21,6 +21,6 @@ module.exports = ({ instanceManager }) => settings => {
   }
 
   return instance("syncIdentity", {
-    identities
+    identity
   });
 };

@@ -19,7 +19,7 @@ describe("Event Merge ID", () => {
 
   beforeEach(() => {
     instanceManager = jasmine.createSpyObj("instanceManager", {
-      createEventMergeId: "randomEventMergeId"
+      createEventMergeId: { eventMergeId: "randomEventMergeId" }
     });
     eventMergeIdCache = jasmine.createSpyObj("eventMergeIdCache", [
       "getByCacheId",
@@ -33,8 +33,8 @@ describe("Event Merge ID", () => {
 
   it("produces and caches event merge ID based on cache ID", () => {
     instanceManager.createEventMergeId.and.returnValues(
-      "eventMergeId1",
-      "eventMergeId2"
+      { eventMergeId: "eventMergeId1" },
+      { eventMergeId: "eventMergeId2" }
     );
     eventMergeIdCache.getByCacheId.and.returnValues(
       undefined,

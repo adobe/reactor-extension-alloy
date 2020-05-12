@@ -56,7 +56,6 @@ for (let i = 0; i < 2; i += 1) {
     edgeDomainRestoreButton: spectrum.button("edgeDomainRestoreButton"),
     edgeBasePathField: spectrum.textfield("edgeBasePathField"),
     edgeBasePathRestoreButton: spectrum.button("edgeBasePathRestoreButton"),
-    errorsEnabledField: spectrum.checkbox("errorsEnabledField"),
     defaultConsent: {
       inField: spectrum.radio("defaultConsentInField"),
       pendingField: spectrum.radio("defaultConsentOutField")
@@ -130,7 +129,6 @@ test("initializes form fields with full settings", async () => {
             orgId: "ORG456@OtherCompanyOrg",
             edgeDomain: "testedge.com",
             edgeBasePath: "ee-beta",
-            errorsEnabled: false,
             defaultConsent: { general: "pending" },
             idMigrationEnabled: true,
             thirdPartyCookiesEnabled: true,
@@ -181,7 +179,6 @@ test("initializes form fields with full settings", async () => {
   await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
   await instances[0].edgeDomainField.expectValue("testedge.com");
   await instances[0].edgeBasePathField.expectValue("ee-beta");
-  await instances[0].errorsEnabledField.expectUnchecked();
   await instances[0].defaultConsent.inField.expectUnchecked();
   await instances[0].defaultConsent.pendingField.expectChecked();
   await instances[0].idMigrationEnabled.expectChecked();
@@ -216,7 +213,6 @@ test("initializes form fields with full settings", async () => {
   await instances[1].orgIdField.expectValue("ABC123@AdobeOrg");
   await instances[1].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[1].edgeBasePathField.expectValue(defaultEdgeBasePath);
-  await instances[1].errorsEnabledField.expectChecked();
   await instances[1].defaultConsent.inField.expectChecked();
   await instances[1].defaultConsent.pendingField.expectUnchecked();
   await instances[1].idMigrationEnabled.expectUnchecked();
@@ -253,7 +249,6 @@ test("initializes form fields with minimal settings", async () => {
   await instances[0].orgIdField.expectValue("ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
-  await instances[0].errorsEnabledField.expectChecked();
   await instances[0].defaultConsent.inField.expectChecked();
   await instances[0].defaultConsent.pendingField.expectUnchecked();
   await instances[0].idMigrationEnabled.expectChecked();
@@ -287,7 +282,6 @@ test("initializes form fields with no settings", async () => {
   await instances[0].orgIdField.expectValue("ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
-  await instances[0].errorsEnabledField.expectChecked();
   await instances[0].defaultConsent.inField.expectChecked();
   await instances[0].defaultConsent.pendingField.expectUnchecked();
   await instances[0].idMigrationEnabled.expectChecked();
@@ -333,7 +327,6 @@ test("returns full valid settings", async () => {
   await instances[0].developmentEnvironment.manualField.typeText("PR123:dev1");
   await instances[0].edgeDomainField.typeText("2");
   await instances[0].edgeBasePathField.typeText("-alpha");
-  await instances[0].errorsEnabledField.click();
   await instances[0].defaultConsent.pendingField.click();
   await instances[0].idMigrationEnabled.click();
   await instances[0].thirdPartyCookiesEnabled.click();
@@ -363,7 +356,6 @@ test("returns full valid settings", async () => {
         developmentEdgeConfigId: "PR123:dev1",
         edgeDomain: `${defaultEdgeDomain}2`,
         edgeBasePath: `${defaultEdgeBasePath}-alpha`,
-        errorsEnabled: false,
         defaultConsent: { general: "pending" },
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
