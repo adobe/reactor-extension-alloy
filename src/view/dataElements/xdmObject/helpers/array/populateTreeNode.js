@@ -10,13 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import isFormStateValuePopulated from "../isFormStateValuePopulated";
+
 export default ({
   treeNode,
   formStateNode,
   isAncestorUsingWholePopulationStrategy,
   isUsingWholePopulationStrategy,
-  confirmDataPopulatedAtCurrentOrDescendantNode,
-  confirmChildNodePopulation,
+  reportPopulationTally,
   isHighestNodeUsingWholePopulationStrategy,
   doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue,
   value,
@@ -26,6 +27,16 @@ export default ({
   getTreeNode
 }) => {
   const { items } = formStateNode;
+
+  const populationTally = {
+    numLeafs: 0,
+    numPopulatedLeafs: 0
+  };
+
+  const confirmPopulationTally = childPopulationTally => {
+    populationTally.numLeafs += childPopulationTally.numLeafs;
+    populationTally.numPopulatedLeafs += childPopulationTally.numPopulatedLeafs;
+  };
 
   if (items && items.length) {
     treeNode.children = items.map((itemFormStateNode, index) => {
@@ -39,7 +50,7 @@ export default ({
           (isAncestorUsingWholePopulationStrategy &&
             doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue) ||
           (isHighestNodeUsingWholePopulationStrategy && value),
-        notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode,
+        reportPopulationTally: confirmPopulationTally,
         notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
         errors: errors && errors.items ? errors.items[index] : undefined,
         touched: touched && touched.items ? touched.items[index] : undefined
@@ -47,4 +58,14 @@ export default ({
       return childNode;
     });
   }
+
+  if (isUsingWholePopulationStrategy) {
+    if (isFormStateValuePopulated(value)) {
+      populationTally.numPopulatedLeafs = populationTally.numLeafs;
+    } else {
+      populationTally.numPopulatedLeafs = 0;
+    }
+  }
+
+  reportPopulationTally(populationTally);
 };
