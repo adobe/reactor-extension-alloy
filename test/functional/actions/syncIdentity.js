@@ -31,11 +31,11 @@ const mockExtensionSettings = {
 };
 
 const instanceNameField = spectrum.select("instanceNameField");
-const addIdentityButton = spectrum.button("addIdentityButton");
-const identities = [];
+const addIdentifierButton = spectrum.button("addIdentifierButton");
+const identifiers = [];
 
 for (let i = 0; i < 2; i += 1) {
-  identities.push({
+  identifiers.push({
     namespaceField: spectrum.textfield(`namespace${i}Field`),
     idField: spectrum.textfield(`id${i}Field`),
     hashEnabledField: spectrum.checkbox(`hashEnabled${i}Field`),
@@ -56,7 +56,7 @@ test("initializes form fields with full valid settings", async () => {
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy99",
-      identities: [
+      identity: [
         {
           namespace: "CORE",
           id: "wvg",
@@ -76,18 +76,18 @@ test("initializes form fields with full valid settings", async () => {
   });
 
   await instanceNameField.expectValue("alloy99");
-  await identities[0].namespaceField.expectValue("CORE");
-  await identities[0].idField.expectValue("wvg");
-  await identities[0].hashEnabledField.expectChecked();
-  await identities[0].authenticatedStateField.expectValue("loggedOut");
-  await identities[0].primaryField.expectUnchecked();
-  await identities[0].deleteButton.expectEnabled();
-  await identities[1].namespaceField.expectValue("AAID");
-  await identities[1].idField.expectValue("zyx");
-  await identities[1].hashEnabledField.expectUnchecked();
-  await identities[1].authenticatedStateField.expectValue("authenticated");
-  await identities[1].primaryField.expectChecked();
-  await identities[1].deleteButton.expectEnabled();
+  await identifiers[0].namespaceField.expectValue("CORE");
+  await identifiers[0].idField.expectValue("wvg");
+  await identifiers[0].hashEnabledField.expectChecked();
+  await identifiers[0].authenticatedStateField.expectValue("loggedOut");
+  await identifiers[0].primaryField.expectUnchecked();
+  await identifiers[0].deleteButton.expectEnabled();
+  await identifiers[1].namespaceField.expectValue("AAID");
+  await identifiers[1].idField.expectValue("zyx");
+  await identifiers[1].hashEnabledField.expectUnchecked();
+  await identifiers[1].authenticatedStateField.expectValue("authenticated");
+  await identifiers[1].primaryField.expectChecked();
+  await identifiers[1].deleteButton.expectEnabled();
   await extensionViewController.expectIsValid();
 });
 
@@ -97,12 +97,12 @@ test("initializes form fields with no settings", async () => {
   });
 
   await instanceNameField.expectValue("alloy1");
-  await identities[0].namespaceField.expectValue("");
-  await identities[0].idField.expectValue("");
-  await identities[0].hashEnabledField.expectUnchecked();
-  await identities[0].authenticatedStateField.expectValue("");
-  await identities[0].primaryField.expectUnchecked();
-  await identities[0].deleteButton.expectDisabled();
+  await identifiers[0].namespaceField.expectValue("");
+  await identifiers[0].idField.expectValue("");
+  await identifiers[0].hashEnabledField.expectUnchecked();
+  await identifiers[0].authenticatedStateField.expectValue("");
+  await identifiers[0].primaryField.expectUnchecked();
+  await identifiers[0].deleteButton.expectDisabled();
 });
 
 test("shows error for namespace value that is a duplicate", async () => {
@@ -110,7 +110,7 @@ test("shows error for namespace value that is a duplicate", async () => {
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy99",
-      identities: {
+      identity: {
         CORE: {
           id: "wvg",
           authenticatedState: "loggedOut",
@@ -121,10 +121,10 @@ test("shows error for namespace value that is a duplicate", async () => {
     }
   });
 
-  await addIdentityButton.click();
-  await identities[1].namespaceField.typeText("CORE");
-  await identities[1].idField.typeText("zyx");
-  await identities[1].namespaceField.expectError();
+  await addIdentifierButton.click();
+  await identifiers[1].namespaceField.typeText("CORE");
+  await identifiers[1].idField.typeText("zyx");
+  await identifiers[1].namespaceField.expectError();
 });
 
 test("shows error for primary value of true that is a duplicate", async () => {
@@ -132,7 +132,7 @@ test("shows error for primary value of true that is a duplicate", async () => {
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy99",
-      identities: {
+      identity: {
         CORE: {
           id: "wvg",
           authenticatedState: "loggedOut",
@@ -143,10 +143,10 @@ test("shows error for primary value of true that is a duplicate", async () => {
     }
   });
 
-  await addIdentityButton.click();
-  await identities[1].primaryField.click();
-  await identities[1].idField.typeText("zyx");
-  await identities[1].primaryField.expectError();
+  await addIdentifierButton.click();
+  await identifiers[1].primaryField.click();
+  await identifiers[1].idField.typeText("zyx");
+  await identifiers[1].primaryField.expectError();
 });
 
 test("shows error for blank required fields", async () => {
@@ -156,17 +156,17 @@ test("shows error for blank required fields", async () => {
   });
 
   await extensionViewController.expectIsNotValid();
-  await identities[0].namespaceField.expectError();
-  await identities[0].idField.expectError();
-  await identities[0].authenticatedStateField.expectError();
+  await identifiers[0].namespaceField.expectError();
+  await identifiers[0].idField.expectError();
+  await identifiers[0].authenticatedStateField.expectError();
 });
 
-test("deletes identity", async () => {
+test("deletes identifier", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy99",
-      identities: {
+      identity: {
         CORE: {
           id: "wvg",
           authenticatedState: "loggedOut",
@@ -183,11 +183,11 @@ test("deletes identity", async () => {
     }
   });
 
-  await identities[0].deleteButton.click();
+  await identifiers[0].deleteButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy99",
-    identities: {
+    identity: {
       AAID: {
         id: "zyx",
         authenticatedState: "authenticated",

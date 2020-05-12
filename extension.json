@@ -29,6 +29,14 @@
                 "type": "string",
                 "minLength": 1
               },
+              "stagingEdgeConfigId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "developmentEdgeConfigId": {
+                "type": "string",
+                "minLength": 1
+              },
               "orgId": {
                 "type": "string",
                 "minLength": 1
@@ -40,9 +48,6 @@
               "edgeBasePath": {
                 "type": "string",
                 "minLength": 1
-              },
-              "errorsEnabled": {
-                "type": "boolean"
               },
               "defaultConsent": {
                 "type": "string",
@@ -90,6 +95,10 @@
         "type": "function",
         "propertyPath": "instances[].onBeforeEventSend",
         "parameters": ["content"]
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].edgeConfigInputMethod"
       }
     ]
   },
@@ -142,10 +151,6 @@
             "minLength": 1
           },
           "mergeId": {
-            "type": "string",
-            "minLength": 1
-          },
-          "datasetId": {
             "type": "string",
             "minLength": 1
           }
@@ -221,7 +226,7 @@
             "type": "string",
             "minLength": 1
           },
-          "identities": {
+          "identity": {
             "type": "object",
             "additionalProperties": {
               "type": "object",
@@ -247,7 +252,7 @@
             "minProperties": 1
           }
         },
-        "required": ["instanceName", "identities"],
+        "required": ["instanceName", "identity"],
         "additionalProperties": false
       },
       "libPath": "dist/lib/actions/syncIdentity/index.js",
