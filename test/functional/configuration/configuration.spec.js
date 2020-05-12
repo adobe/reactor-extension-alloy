@@ -129,7 +129,7 @@ test("initializes form fields with full settings", async () => {
             orgId: "ORG456@OtherCompanyOrg",
             edgeDomain: "testedge.com",
             edgeBasePath: "ee-beta",
-            defaultConsent: { general: "pending" },
+            defaultConsent: "pending",
             idMigrationEnabled: true,
             thirdPartyCookiesEnabled: true,
             prehidingStyle: "#container { display: none }",
@@ -141,7 +141,7 @@ test("initializes form fields with full settings", async () => {
             edgeConfigId: "PR456",
             stagingEdgeConfigId: "PR456:stage",
             developmentEdgeConfigId: "PR456:dev3",
-            defaultConsent: { general: "in" },
+            defaultConsent: "in",
             idMigrationEnabled: false,
             thirdPartyCookiesEnabled: false,
             context: []
@@ -356,7 +356,7 @@ test("returns full valid settings", async () => {
         developmentEdgeConfigId: "PR123:dev1",
         edgeDomain: `${defaultEdgeDomain}2`,
         edgeBasePath: `${defaultEdgeBasePath}-alpha`,
-        defaultConsent: { general: "pending" },
+        defaultConsent: "pending",
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
         prehidingStyle:
@@ -368,7 +368,7 @@ test("returns full valid settings", async () => {
         stagingEdgeConfigId: "PR456:stage",
         developmentEdgeConfigId: "PR456:dev1",
         orgId: "ABC123@AdobeOrg2",
-        defaultConsent: { general: "pending" },
+        defaultConsent: "pending",
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
         onBeforeEventSend:

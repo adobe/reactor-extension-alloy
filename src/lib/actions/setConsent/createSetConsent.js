@@ -20,5 +20,5 @@ module.exports = ({ instanceManager }) => settings => {
     );
   }
 
-  return instance("setConsent", consent);
+  return instance("setConsent", { consent });
 };

@@ -25,13 +25,27 @@ describe("Set Consent", () => {
       const action = createSetConsent({ instanceManager });
       const promiseReturnedFromAction = action({
         instanceName: "myinstance",
-        consent: { general: generalConsent }
+        consent: [
+          {
+            standard: "Adobe",
+            version: "1.0",
+            value: { general: generalConsent }
+          }
+        ]
       });
 
       expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
       expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
       expect(instance).toHaveBeenCalledWith("setConsent", {
-        general: generalConsent
+        consent: [
+          {
+            standard: "Adobe",
+            version: "1.0",
+            value: {
+              general: generalConsent
+            }
+          }
+        ]
       });
     });
   });

@@ -88,7 +88,7 @@ const getInstanceDefaults = initInfo => ({
   orgId: initInfo.company.orgId,
   edgeDomain: "edge.adobedc.net",
   edgeBasePath: "ee",
-  defaultConsent: { general: consentLevels.IN },
+  defaultConsent: consentLevels.IN,
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions.map(contextOption => contextOption.value),
@@ -201,7 +201,8 @@ const getSettings = ({ values, initInfo }) => {
         "idMigrationEnabled",
         "thirdPartyCookiesEnabled",
         "onBeforeEventSend",
-        "clickCollectionEnabled"
+        "clickCollectionEnabled",
+        "defaultConsent"
       ];
 
       if (instance.clickCollectionEnabled) {
@@ -217,9 +218,6 @@ const getSettings = ({ values, initInfo }) => {
 
       if (instance.contextGranularity === contextGranularityEnum.SPECIFIC) {
         trimmedInstance.context = instance.context;
-      }
-      if (instance.defaultConsent.general === consentLevels.PENDING) {
-        trimmedInstance.defaultConsent = { general: consentLevels.PENDING };
       }
 
       return trimmedInstance;
@@ -709,7 +707,7 @@ const Configuration = ({
                     <h3>Privacy</h3>
 
                     <div className="u-gapTop">
-                      <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent preferences.">
+                      <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent.">
                         <FieldLabel
                           labelFor="generalDefaultConsent"
                           label="Default Consent Level"
@@ -717,7 +715,7 @@ const Configuration = ({
                       </InfoTipLayout>
                       <WrappedField
                         id="generalDefaultConsent"
-                        name={`instances.${index}.defaultConsent.general`}
+                        name={`instances.${index}.defaultConsent`}
                         component={RadioGroup}
                         componentClassName="u-flexColumn"
                       >
