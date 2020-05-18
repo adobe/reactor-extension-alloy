@@ -11,61 +11,65 @@ governing permissions and limitations under the License.
 */
 
 import isFormStateValuePopulated from "../isFormStateValuePopulated";
+import { WHOLE } from "../../constants/populationStrategy";
+import { FULL, PARTIAL } from "../../constants/populationAmount";
+import computePopulationAmount from "../computePopulationAmount";
 
 export default ({
   treeNode,
   formStateNode,
+  treeNodeComponent,
   isAncestorUsingWholePopulationStrategy,
-  isUsingWholePopulationStrategy,
-  reportPopulationTally,
-  isHighestNodeUsingWholePopulationStrategy,
-  doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue,
-  value,
+  isCurrentNodeTheHighestNodeUsingWholePopulationStrategy,
+  doesHighestAncestorWithWholePopulationStrategyHaveAValue,
   confirmTouchedAtCurrentOrDescendantNode,
   errors,
   touched,
   getTreeNode
 }) => {
-  const { items } = formStateNode;
+  const { value, items, populationStrategy } = formStateNode;
 
   const populationTally = {
-    numLeafs: 0,
-    numPopulatedLeafs: 0
-  };
-
-  const confirmPopulationTally = childPopulationTally => {
-    populationTally.numLeafs += childPopulationTally.numLeafs;
-    populationTally.numPopulatedLeafs += childPopulationTally.numPopulatedLeafs;
+    numChildren: 0,
+    numPopulatedChildren: 0
   };
 
   if (items && items.length) {
     treeNode.children = items.map((itemFormStateNode, index) => {
       const childNode = getTreeNode({
         formStateNode: itemFormStateNode,
+        treeNodeComponent,
         displayName: `Item ${index + 1}`,
         isAncestorUsingWholePopulationStrategy:
           isAncestorUsingWholePopulationStrategy ||
-          isUsingWholePopulationStrategy,
-        doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue:
+          populationStrategy === WHOLE,
+        doesHighestAncestorWithWholePopulationStrategyHaveAValue:
           (isAncestorUsingWholePopulationStrategy &&
-            doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue) ||
-          (isHighestNodeUsingWholePopulationStrategy && value),
-        reportPopulationTally: confirmPopulationTally,
+            doesHighestAncestorWithWholePopulationStrategyHaveAValue) ||
+          (isCurrentNodeTheHighestNodeUsingWholePopulationStrategy &&
+            isFormStateValuePopulated(value)),
         notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
         errors: errors && errors.items ? errors.items[index] : undefined,
         touched: touched && touched.items ? touched.items[index] : undefined
       });
+
+      populationTally.numChildren += 1;
+
+      if (
+        childNode.populationAmount === PARTIAL ||
+        childNode.populationAmount === FULL
+      ) {
+        populationTally.numPopulatedChildren += 1;
+      }
+
       return childNode;
     });
   }
 
-  if (isUsingWholePopulationStrategy) {
-    if (isFormStateValuePopulated(value)) {
-      populationTally.numPopulatedLeafs = populationTally.numLeafs;
-    } else {
-      populationTally.numPopulatedLeafs = 0;
-    }
-  }
-
-  reportPopulationTally(populationTally);
+  treeNode.populationAmount = computePopulationAmount({
+    formStateNode,
+    isAncestorUsingWholePopulationStrategy,
+    doesHighestAncestorWithWholePopulationStrategyHaveAValue,
+    populationTally
+  });
 };

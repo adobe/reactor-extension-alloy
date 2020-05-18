@@ -10,33 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { PARTS, WHOLE } from "../constants/populationStrategy";
-import { ARRAY, OBJECT } from "../constants/schemaType";
-import { EMPTY, FULL, PARTIAL } from "../constants/populationAmount";
-import isFormStateValuePopulated from "./isFormStateValuePopulated";
+import { WHOLE } from "../constants/populationStrategy";
 import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
-
-const calculatePopulationAmountWhenAncestorUsingWholePopulationStrategy = doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue => {
-  return doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue
-    ? FULL
-    : EMPTY;
-};
-
-const calculatePopulationAmountForWholePopulationStrategy = wholeValue => {
-  return isFormStateValuePopulated(wholeValue) ? FULL : EMPTY;
-};
-
-const calculatePopulationAmountForPartsPopulationStrategy = fullPopulationTally => {
-  if (fullPopulationTally.numPopulatedLeafs === fullPopulationTally.numLeafs) {
-    return FULL;
-  }
-
-  if (fullPopulationTally.numPopulatedLeafs === 0) {
-    return EMPTY;
-  }
-
-  return PARTIAL;
-};
 
 /**
  * The model representing a node on the XDM tree.
@@ -78,33 +53,28 @@ const calculatePopulationAmountForPartsPopulationStrategy = fullPopulationTally 
  */
 const getTreeNode = ({
   formStateNode,
+  treeNodeComponent,
   displayName,
   isAncestorUsingWholePopulationStrategy = false,
-  doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue = false,
-  reportPopulationTally = () => {},
+  doesHighestAncestorWithWholePopulationStrategyHaveAValue = false,
   notifyParentOfTouched = () => {},
   errors,
   touched
 }) => {
-  const {
-    id,
-    schema,
-    populationStrategy,
-    value,
-    isAlwaysDisabled,
-    isAutoPopulated
-  } = formStateNode;
+  const { id, schema, populationStrategy, isAlwaysDisabled } = formStateNode;
 
   const treeNode = {
-    id,
+    key: id,
     displayName,
     type: schema.type,
-    disabled: isAlwaysDisabled || isAncestorUsingWholePopulationStrategy
+    disabled: isAlwaysDisabled || isAncestorUsingWholePopulationStrategy,
+    // The Tree component, when rendering a tree node, will pass the treeNode
+    // object into the component that renders the tree node, which is provided here.
+    title: treeNodeComponent
   };
 
-  const isUsingWholePopulationStrategy = populationStrategy === WHOLE;
-  const isHighestNodeUsingWholePopulationStrategy =
-    !isAncestorUsingWholePopulationStrategy && isUsingWholePopulationStrategy;
+  const isCurrentNodeTheHighestNodeUsingWholePopulationStrategy =
+    !isAncestorUsingWholePopulationStrategy && populationStrategy === WHOLE;
 
   let isTouchedAtCurrentOrDescendantNode = false;
 
@@ -119,45 +89,28 @@ const getTreeNode = ({
     confirmTouchedAtCurrentOrDescendantNode();
   }
 
-  const confirmPopulationTally = populationTally => {
-    if (isAutoPopulated) {
-      treeNode.populationAmount = FULL;
-    } else if (isAncestorUsingWholePopulationStrategy) {
-      treeNode.populationAmount = calculatePopulationAmountWhenAncestorUsingWholePopulationStrategy(
-        doesHighestAncestorWithWholePopulationStrategyHaveAWholeValue
-      );
-    } else if (populationStrategy === PARTS) {
-      treeNode.populationAmount = calculatePopulationAmountForPartsPopulationStrategy(
-        populationTally
-      );
-    } else {
-      treeNode.populationAmount = calculatePopulationAmountForWholePopulationStrategy(
-        value
-      );
-    }
-
-    reportPopulationTally(populationTally);
-  };
-
-  // Type specific helpers should set:
-  //  - children, if the node has children
   getTypeSpecificHelpers(schema.type).populateTreeNode({
     treeNode,
     formStateNode,
+    treeNodeComponent,
     isAncestorUsingWholePopulationStrategy,
-    isUsingWholePopulationStrategy,
-    reportPopulationTally: confirmPopulationTally,
+    isCurrentNodeTheHighestNodeUsingWholePopulationStrategy,
+    doesHighestAncestorWithWholePopulationStrategyHaveAValue,
     confirmTouchedAtCurrentOrDescendantNode,
-    isHighestNodeUsingWholePopulationStrategy,
-    value,
     errors,
     touched,
     getTreeNode
   });
 
-  if (isTouchedAtCurrentOrDescendantNode) {
-    treeNode.error =
-      errors && typeof errors.value === "string" ? errors.value : undefined;
+  // To illustrate why we check for isTouchedAtCurrentOrDescendantNode,
+  // if a user adds an item to an array node, we show an error if the
+  // item is empty. However, we don't want to show the error until
+  // we've given the user a chance to populate the item. For this reason,
+  // we wait until the user has touched the node or its descendants or
+  // has tried to save the data element (formik marks all fields as touched
+  // upon save).
+  if (isTouchedAtCurrentOrDescendantNode && errors) {
+    treeNode.error = errors.value;
   }
 
   return treeNode;
@@ -165,6 +118,14 @@ const getTreeNode = ({
 
 // Avoid exposing all of getTreeNode's parameters since
 // they're only used internally for recursion.
-export default ({ formState, errors, touched }) => {
-  return getTreeNode({ formStateNode: formState, errors, touched });
+export default ({ treeNodeComponent, formState, errors, touched }) => {
+  return getTreeNode({
+    formStateNode: formState,
+    treeNodeComponent,
+    // Display name for the top-level node doesn't really
+    // matter because it won't be shown in the tree anyway.
+    displayName: "",
+    errors,
+    touched
+  });
 };

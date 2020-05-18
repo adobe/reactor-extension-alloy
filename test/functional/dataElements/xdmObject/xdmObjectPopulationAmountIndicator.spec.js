@@ -11,16 +11,16 @@ governing permissions and limitations under the License.
 */
 
 import { t } from "testcafe";
-import createExtensionViewController from "../helpers/createExtensionViewController";
-import getAdobeIOAccessToken from "../helpers/getAdobeIOAccessToken";
-import xdmTree from "./xdmObject/helpers/xdmTree";
-import arrayEdit from "./xdmObject/helpers/arrayEdit";
-import booleanEdit from "./xdmObject/helpers/booleanEdit";
-import integerEdit from "./xdmObject/helpers/integerEdit";
-import numberEdit from "./xdmObject/helpers/numberEdit";
-import objectEdit from "./xdmObject/helpers/objectEdit";
-import stringEdit from "./xdmObject/helpers/stringEdit";
-import spectrum from "../helpers/spectrum";
+import createExtensionViewController from "../../helpers/createExtensionViewController";
+import getAdobeIOAccessToken from "../../helpers/getAdobeIOAccessToken";
+import xdmTree from "./helpers/xdmTree";
+import arrayEdit from "./helpers/arrayEdit";
+import booleanEdit from "./helpers/booleanEdit";
+import integerEdit from "./helpers/integerEdit";
+import numberEdit from "./helpers/numberEdit";
+import objectEdit from "./helpers/objectEdit";
+import stringEdit from "./helpers/stringEdit";
+import spectrum from "../../helpers/spectrum";
 
 const extensionViewController = createExtensionViewController(
   "dataElements/xdmObject.html"
@@ -38,28 +38,6 @@ const schemaSelectField = spectrum.select("schemaField");
 
 const selectSchemaFromSchemasMeta = async () => {
   await schemaSelectField.selectOption(schemaTitle);
-};
-
-/**
- * Asserts that the extension view returns settings whose data
- * matches the expected data. It also asserts that the schema is
- * correct with fuzzy matching for the schema version.
- */
-const expectSettingsToContainData = async data => {
-  const actualSettings = await extensionViewController.getSettings();
-  await t.expect(actualSettings.schema.id).eql(schema.id);
-  // We use a regex here because as changes are made to the schema (to support
-  // new tests), the schema version in Platform changes, which would make our
-  // tests fail if the version we were asserting were hard-coded in the test.
-  await t.expect(actualSettings.schema.version).match(/^\d+\.\d+$/);
-  await t
-    .expect(actualSettings.data)
-    .eql(
-      data,
-      `Expected data: ${JSON.stringify(data)} Actual data: ${JSON.stringify(
-        actualSettings.data
-      )}`
-    );
 };
 
 const initializeExtensionView = async additionalInitInfo => {
@@ -83,7 +61,7 @@ const initializeExtensionView = async additionalInitInfo => {
 
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
-fixture("XDM Object View")
+fixture("XDM Object View Core Functionality")
   .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
   .meta("requiresAdobeIOIntegration", true);
 

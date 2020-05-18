@@ -32,7 +32,7 @@ const populateNodeIdsContainingError = (treeNode, nodeIdsWithErrors) => {
     });
 
     if (descendantHasError) {
-      nodeIdsWithErrors.push(treeNode.id);
+      nodeIdsWithErrors.push(treeNode.key);
       return true;
     }
   }
