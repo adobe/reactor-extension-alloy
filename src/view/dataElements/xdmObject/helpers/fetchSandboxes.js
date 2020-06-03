@@ -13,29 +13,25 @@ governing permissions and limitations under the License.
 import getBaseRequestHeaders from "../../../utils/getBaseRequestHeaders";
 import platform from "./platform";
 
-export default ({ orgId, imsAccess, schemaMeta }) => {
-  if (!schemaMeta || !schemaMeta.$id) {
-    throw new Error("Invalid schema meta");
-  }
-
+export default ({ orgId, imsAccess }) => {
   const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
-  const schemaMajorVersion = schemaMeta.version.split(".")[0];
+
+  const SANDBOX_PERMISSION_ERROR = 403;
 
   return fetch(
-    `${platform.getHost()}/data/foundation/schemaregistry/tenant/schemas/${encodeURIComponent(
-      schemaMeta.$id
-    )}`,
+    `${platform.getHost()}/data/foundation/sandbox-management/sandboxes`,
     {
       headers: {
-        ...baseRequestHeaders,
-        // The first part of this ensures all json-schema refs are resolved within the schema we retrieve.
-        Accept: `application/vnd.adobe.xed-full+json;version=${schemaMajorVersion}`
+        ...baseRequestHeaders
       }
     }
   )
     .then(response => {
+      if (response.status === SANDBOX_PERMISSION_ERROR) {
+        return { sandboxes: null };
+      }
       if (!response.ok) {
-        throw new Error("Cannot fetch schema from schema registry");
+        throw new Error("Cannot fetch active sandboxes list");
       }
       return response.json();
     })

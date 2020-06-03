@@ -13,17 +13,33 @@ governing permissions and limitations under the License.
 import getBaseRequestHeaders from "../../../utils/getBaseRequestHeaders";
 import platform from "./platform";
 
-export default ({ orgId, imsAccess }) => {
+export default ({ orgId, imsAccess, sandboxName }) => {
   const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
+
+  const metaExtends = encodeURIComponent(
+    "https://ns.adobe.com/xdm/context/experienceevent"
+  );
+
+  const DEFAULT_SANDBOX = "prod";
+
+  const headers = {
+    ...baseRequestHeaders,
+    // request a summary response with title , $id , meta:altId , and version attributes
+    Accept: "application/vnd.adobe.xdm-v2+json"
+  };
+
+  if (sandboxName && sandboxName !== "") {
+    headers["x-sandbox-name"] = sandboxName;
+  } else {
+    headers["x-sandbox-name"] = DEFAULT_SANDBOX;
+  }
 
   // TODO: paginate this response using on responseBody._page.count or responseBody._links.next
   return fetch(
-    `${platform.getHost()}/data/foundation/schemaregistry/tenant/schemas?orderby=title`,
+    `${platform.getHost()}/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta:extends==${metaExtends}`,
     {
       headers: {
-        ...baseRequestHeaders,
-        // request a summary response with title , $id , meta:altId , and version attributes
-        Accept: "application/vnd.adobe.xed-id+json"
+        ...headers
       }
     }
   )
