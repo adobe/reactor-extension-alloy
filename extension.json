@@ -215,49 +215,6 @@
       },
       "libPath": "dist/lib/actions/setConsent/index.js",
       "viewPath": "actions/setConsent.html"
-    },
-    {
-      "displayName": "Sync Identity",
-      "name": "sync-identity",
-      "schema": {
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "type": "object",
-        "properties": {
-          "instanceName": {
-            "type": "string",
-            "minLength": 1
-          },
-          "identity": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "authenticatedState": {
-                  "type": "string",
-                  "enum": ["ambiguous", "authenticated", "loggedOut"]
-                },
-                "primary": {
-                  "type": "boolean"
-                },
-                "hashEnabled": {
-                  "type": "boolean"
-                }
-              },
-              "required": ["id", "authenticatedState"],
-              "additionalProperties": false
-            },
-            "minProperties": 1
-          }
-        },
-        "required": ["instanceName", "identity"],
-        "additionalProperties": false
-      },
-      "libPath": "dist/lib/actions/syncIdentity/index.js",
-      "viewPath": "actions/syncIdentity.html"
     }
   ],
   "events": [
