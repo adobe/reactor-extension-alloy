@@ -69,7 +69,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var instanceFactory = (function (executeCommand) {
+      var createInstance = (function (executeCommand) {
         return function (args) {
           // Would use destructuring, but destructuring doesn't work on IE
           // without polyfilling Symbol.
@@ -174,49 +174,6 @@ governing permissions and limitations under the License.
        */
       var clone = (function (value) {
         return JSON.parse(JSON.stringify(value));
-      });
-
-      var convertBufferToHex = (function (buffer) {
-        return Array.prototype.map.call(new Uint8Array(buffer), function (item) {
-          return ("00" + item.toString(16)).slice(-2);
-        }).join("");
-      });
-
-      var encodeText = function encodeText(str) {
-        if (window.TextEncoder) {
-          return new TextEncoder("utf-8").encode(str);
-        } // IE 11, which doesn't have TextEncoder
-
-
-        var cleanString = unescape(encodeURIComponent(str));
-        return new Uint8Array(cleanString.split("").map(function (char) {
-          return char.charCodeAt(0);
-        }));
-      };
-
-      var convertStringToSha256Buffer = (function (message) {
-        var data = encodeText(message);
-        var crypto = window.msCrypto || window.crypto;
-
-        if (!crypto.subtle) {
-          return false;
-        }
-
-        var result = crypto.subtle.digest("SHA-256", data);
-
-        if (result.then) {
-          return result;
-        } // IE 11, whose result is a CryptoOperation object instead of a promise
-
-
-        return new Promise(function (resolve, reject) {
-          result.addEventListener("complete", function () {
-            resolve(result.result);
-          });
-          result.addEventListener("error", function () {
-            reject();
-          });
-        });
       });
 
       /*
@@ -1181,8 +1138,6 @@ governing permissions and limitations under the License.
 */
 // Remember to also incorporate the org ID wherever cookies are read or written.
       var COOKIE_NAME_PREFIX = "kndctr";
-      var IDENTITY_COOKIE_KEY = "identity";
-      var CONSENT_COOKIE_KEY = "consent";
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -1578,7 +1533,7 @@ governing permissions and limitations under the License.
         };
       };
 
-      var storageFactory = (function (context) {
+      var injectStorage = (function (context) {
         return function (additionalNamespace) {
           var finalNamespace = baseNamespace + additionalNamespace;
           return {
@@ -1776,11 +1731,11 @@ governing permissions and limitations under the License.
         var console = _ref.console,
           locationSearch = _ref.locationSearch,
           createLogger = _ref.createLogger,
-          instanceNamespace = _ref.instanceNamespace,
-          createNamespacedStorage = _ref.createNamespacedStorage;
-        var loggerPrefix = "[" + instanceNamespace + "]";
+          instanceName = _ref.instanceName,
+          createNamespacedStorage = _ref.createNamespacedStorage,
+          getMonitors = _ref.getMonitors;
         var parsedQueryString = queryString.parse(locationSearch);
-        var storage = createNamespacedStorage("instance." + instanceNamespace + ".");
+        var storage = createNamespacedStorage("instance." + instanceName + ".");
         var debugSessionValue = storage.session.getItem("debug");
         var debugEnabled = debugSessionValue === "true";
         var debugEnabledWritableFromConfig = debugSessionValue === null;
@@ -1811,9 +1766,24 @@ governing permissions and limitations under the License.
 
         return {
           setDebugEnabled: setDebugEnabled,
-          logger: createLogger(console, getDebugEnabled, loggerPrefix),
-          createComponentLogger: function createComponentLogger(componentNamespace) {
-            return createLogger(console, getDebugEnabled, loggerPrefix + " [" + componentNamespace + "]");
+          logger: createLogger({
+            getDebugEnabled: getDebugEnabled,
+            context: {
+              instanceName: instanceName
+            },
+            getMonitors: getMonitors,
+            console: console
+          }),
+          createComponentLogger: function createComponentLogger(componentName) {
+            return createLogger({
+              getDebugEnabled: getDebugEnabled,
+              context: {
+                instanceName: instanceName,
+                componentName: componentName
+              },
+              getMonitors: getMonitors,
+              console: console
+            });
           }
         };
       });
@@ -1963,18 +1933,7 @@ governing permissions and limitations under the License.
         };
       });
 
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
-      var sendNetworkRequestFactory = (function (_ref) {
+      var injectSendNetworkRequest = (function (_ref) {
         var logger = _ref.logger,
           networkStrategy = _ref.networkStrategy,
           isRetryableHttpStatusCode = _ref.isRetryableHttpStatusCode;
@@ -1999,7 +1958,11 @@ governing permissions and limitations under the License.
           // JSON.parse is expensive so we short circuit if logging is disabled.
 
           if (logger.enabled) {
-            logger.log("Request " + requestId + ": Sending request.", JSON.parse(stringifiedPayload));
+            logger.logOnBeforeNetworkRequest({
+              url: url,
+              requestId: requestId,
+              payload: JSON.parse(stringifiedPayload)
+            });
           }
 
           var executeRequest = function executeRequest() {
@@ -2016,8 +1979,14 @@ governing permissions and limitations under the License.
               } catch (e) {// Non-JSON. Something went wrong.
               }
 
-              var messagesSuffix = parsedBody || response.body ? "response body:" : "no response body.";
-              logger.log("Request " + requestId + ": Received response with status code " + response.status + " and " + messagesSuffix, parsedBody || response.body);
+              logger.logOnNetworkResponse(_objectSpread2({
+                requestId: requestId,
+                url: url,
+                payload: JSON.parse(stringifiedPayload)
+              }, response, {
+                parsedBody: parsedBody,
+                retriesAttempted: retriesAttempted
+              }));
               return {
                 statusCode: response.status,
                 body: response.body,
@@ -2027,6 +1996,12 @@ governing permissions and limitations under the License.
           };
 
           return executeRequest().catch(function (error) {
+            logger.logOnNetworkError({
+              requestId: requestId,
+              url: url,
+              payload: JSON.parse(stringifiedPayload),
+              error: error
+            });
             throw stackError("Network request failed.", error);
           });
         };
@@ -2328,7 +2303,7 @@ governing permissions and limitations under the License.
         CONFIGURE: "configure",
         SET_DEBUG: "setDebug"
       };
-      var executeCommandFactory = (function (_ref) {
+      var injectExecuteCommand = (function (_ref) {
         var logger = _ref.logger,
           configureCommand = _ref.configureCommand,
           setDebugCommand = _ref.setDebugCommand,
@@ -2396,7 +2371,10 @@ governing permissions and limitations under the License.
             // We have to wrap the getExecutor() call in the promise so the promise
             // will be rejected if getExecutor() throws errors.
             var executor = getExecutor(commandName, options);
-            logger.log("Executing " + commandName + " command.", "Options:", options);
+            logger.logOnBeforeCommand({
+              commandName: commandName,
+              options: options
+            });
             resolve(executor());
           }).then(function (result) {
             // We should always be returning an object from every command.
@@ -2556,7 +2534,7 @@ governing permissions and limitations under the License.
 */
       var assertValid = (function (isValid, value, path, message) {
         if (!isValid) {
-          throw new Error("'" + path + "': Expected " + message + ", but got '" + value + "'.");
+          throw new Error("'" + path + "': Expected " + message + ", but got " + JSON.stringify(value) + ".");
         }
       });
 
@@ -3113,7 +3091,8 @@ governing permissions and limitations under the License.
           }),
           data: boundObjectOf({}),
           renderDecisions: boundBoolean(),
-          decisionScopes: boundArrayOf(boundString())
+          decisionScopes: boundArrayOf(boundString()),
+          datasetId: boundString()
         }).required();
         var validatedOptions = eventOptionsValidator(options);
         var type = validatedOptions.type,
@@ -3161,7 +3140,8 @@ governing permissions and limitations under the License.
                   _options$renderDecisi = options.renderDecisions,
                   renderDecisions = _options$renderDecisi === void 0 ? false : _options$renderDecisi,
                   _options$decisionScop = options.decisionScopes,
-                  decisionScopes = _options$decisionScop === void 0 ? [] : _options$decisionScop;
+                  decisionScopes = _options$decisionScop === void 0 ? [] : _options$decisionScop,
+                  datasetId = options.datasetId;
                 var event = eventManager.createEvent();
 
                 if (documentUnloading) {
@@ -3180,6 +3160,14 @@ governing permissions and limitations under the License.
                 if (mergeId) {
                   event.mergeXdm({
                     eventMergeId: mergeId
+                  });
+                }
+
+                if (datasetId) {
+                  event.mergeMeta({
+                    collect: {
+                      datasetId: datasetId
+                    }
                   });
                 }
 
@@ -3438,11 +3426,12 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+
       var createResultLogMessage = function createResultLogMessage(idSync, success) {
         return "ID sync " + (success ? "succeeded" : "failed") + ": " + idSync.spec.url;
       };
 
-      var processIdSyncsFactory = (function (_ref) {
+      var injectProcessIdSyncs = (function (_ref) {
         var fireReferrerHideableImage = _ref.fireReferrerHideableImage,
           logger = _ref.logger;
         return function (idSyncs) {
@@ -3463,7 +3452,7 @@ governing permissions and limitations under the License.
               // reject the promise handed back to the customer.
               logger.error(createResultLogMessage(idSync, false));
             });
-          }));
+          })).then(noop);
         };
       });
 
@@ -3516,14 +3505,12 @@ governing permissions and limitations under the License.
 
       var createComponent = (function (_ref) {
         var addEcidQueryToEvent = _ref.addEcidQueryToEvent,
-          identityManager = _ref.identityManager,
           ensureRequestHasIdentity = _ref.ensureRequestHasIdentity,
           setLegacyEcid = _ref.setLegacyEcid,
           handleResponseForIdSyncs = _ref.handleResponseForIdSyncs,
           getEcidFromResponse = _ref.getEcidFromResponse,
           getIdentity = _ref.getIdentity,
-          consent = _ref.consent,
-          validateSyncIdentityOptions = _ref.validateSyncIdentityOptions;
+          consent = _ref.consent;
         var ecid;
         return {
           lifecycle: {
@@ -3537,7 +3524,6 @@ governing permissions and limitations under the License.
             onBeforeRequest: function onBeforeRequest(_ref3) {
               var payload = _ref3.payload,
                 onResponse = _ref3.onResponse;
-              identityManager.addToPayload(payload);
               return ensureRequestHasIdentity({
                 payload: payload,
                 onResponse: onResponse
@@ -3559,12 +3545,6 @@ governing permissions and limitations under the License.
             }
           },
           commands: {
-            syncIdentity: {
-              optionsValidator: validateSyncIdentityOptions,
-              run: function run(options) {
-                return identityManager.sync(options.identity);
-              }
-            },
             getIdentity: {
               optionsValidator: getIdentityOptionsValidator,
               run: function run(options) {
@@ -3711,7 +3691,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var getEcidFromVisitorFactory = (function (_ref) {
+      var injectGetEcidFromVisitor = (function (_ref) {
         var logger = _ref.logger,
           orgId = _ref.orgId,
           awaitVisitorOptIn = _ref.awaitVisitorOptIn;
@@ -3749,7 +3729,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var handleResponseForIdSyncsFactory = (function (_ref) {
+      var injectHandleResponseForIdSyncs = (function (_ref) {
         var processIdSyncs = _ref.processIdSyncs;
         return function (response) {
           return processIdSyncs(response.getPayloadsByType("identity:exchange"));
@@ -3768,7 +3748,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 // TO-DOCUMENT: We queue subsequent requests until we have an identity cookie.
-      var ensureRequestHasIdentityFactory = (function (_ref) {
+      var injectEnsureRequestHasIdentity = (function (_ref) {
         var doesIdentityCookieExist = _ref.doesIdentityCookieExist,
           setDomainForInitialIdentityPayload = _ref.setDomainForInitialIdentityPayload,
           addLegacyEcidToPayload = _ref.addLegacyEcidToPayload,
@@ -3825,162 +3805,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var AMBIGUOUS = "ambiguous";
-      var AUTHENTICATED = "authenticated";
-      var LOGGED_OUT = "loggedOut";
-
-      var AUTH_STATES = /*#__PURE__*/Object.freeze({
-        __proto__: null,
-        AMBIGUOUS: AMBIGUOUS,
-        AUTHENTICATED: AUTHENTICATED,
-        LOGGED_OUT: LOGGED_OUT
-      });
-
-      var ERROR_MESSAGE = "Invalid identity format.";
-      var NOT_AN_OBJECT_ERROR = "Each namespace should be an object.";
-      var NO_ID_ERROR = "Each namespace object should have an ID.";
-      var PRIMARY_NOT_BOOLEAN = "The `primary` property should be true or false.";
-
-      var validateIdentities = function validateIdentities(identities) {
-        if (!isObject(identities)) {
-          throw new Error(ERROR_MESSAGE + " " + NOT_AN_OBJECT_ERROR);
-        }
-
-        Object.keys(identities).forEach(function (namespace) {
-          var primary = identities[namespace].primary;
-
-          if (!isObject(identities[namespace])) {
-            throw new Error(ERROR_MESSAGE + " " + NOT_AN_OBJECT_ERROR);
-          }
-
-          if (!identities[namespace].id) {
-            throw new Error(ERROR_MESSAGE + " " + NO_ID_ERROR);
-          }
-
-          if (!isNil(primary) && !isBoolean(primary)) {
-            throw new Error(ERROR_MESSAGE + " " + PRIMARY_NOT_BOOLEAN);
-          }
-        });
-      };
-      /**
-       * Creates a new object where properties are copied from the source object in
-       * alphabetical order. This provides consistency between two objects
-       * so that when they're hashed, the result is the same if the contents
-       * are the same.
-       */
-
-
-      var sortObjectKeyNames = function sortObjectKeyNames(object) {
-        return Object.keys(object).sort().reduce(function (newObject, key) {
-          newObject[key] = object[key];
-          return newObject;
-        }, {});
-      };
-
-      var normalizeIdentities = function normalizeIdentities(identities) {
-        var sortedIdentities = sortObjectKeyNames(identities); // TODO: This requires a change to the docs to list the possible values.
-        // Alternatively, maybe we should expose the enum on the instance.
-
-        var authStates = values(AUTH_STATES);
-        return Object.keys(sortedIdentities).reduce(function (normalizedIdentities, namespace) {
-          var _sortedIdentities$nam = sortedIdentities[namespace],
-            id = _sortedIdentities$nam.id,
-            authenticatedState = _sortedIdentities$nam.authenticatedState,
-            primary = _sortedIdentities$nam.primary;
-          normalizedIdentities[namespace] = {
-            id: id,
-            authenticatedState: includes(authStates, authenticatedState) ? authenticatedState // Set the auth state to the string value like `authenticated`.
-              : AMBIGUOUS
-          };
-
-          if (primary !== undefined) {
-            normalizedIdentities[namespace].primary = primary;
-          }
-
-          return normalizedIdentities;
-        }, {});
-      };
-
-      var createIdentityManager = (function (_ref) {
-        var eventManager = _ref.eventManager,
-          consent = _ref.consent,
-          logger = _ref.logger,
-          convertStringToSha256Buffer = _ref.convertStringToSha256Buffer;
-
-        var hash = function hash(originalIdentities, normalizedIdentities) {
-          var namespaces = Object.keys(normalizedIdentities);
-          var namespacesToHash = namespaces.filter(function (namespace) {
-            return originalIdentities[namespace].hashEnabled;
-          });
-          var idHashPromises = namespacesToHash.map(function (namespace) {
-            return convertStringToSha256Buffer(normalizedIdentities[namespace].id.trim().toLowerCase());
-          });
-          return Promise.all(idHashPromises).then(function (hashedIds) {
-            return hashedIds.reduce(function (finalIdentities, hashedId, index) {
-              if (!hashedId) {
-                delete finalIdentities[namespacesToHash[index]];
-                logger.warn("Unable to hash identity " + namespacesToHash[index] + " due to lack of browser support. Provided " + namespacesToHash[index] + " will not be sent to Adobe Experience Cloud.");
-              } else {
-                finalIdentities[namespacesToHash[index]].id = convertBufferToHex(hashedId);
-              }
-
-              return finalIdentities;
-            }, normalizedIdentities);
-          });
-        };
-
-        var state = {
-          identities: {},
-          hasIdentities: false
-        };
-
-        var setState = function setState(normalizedIdentities) {
-          state.identities = _objectSpread2({}, state.identities, {}, normalizedIdentities);
-          state.hasIdentities = !!Object.keys(state.identities).length;
-        };
-
-        var identityManager = {
-          addToPayload: function addToPayload(payload) {
-            if (state.hasIdentities) {
-              var identities = clone(state.identities);
-              Object.keys(identities).forEach(function (namespace) {
-                payload.addIdentity(namespace, identities[namespace]);
-              });
-            }
-          },
-          sync: function sync(originalIdentities) {
-            validateIdentities(originalIdentities);
-            var normalizedIdentities = normalizeIdentities(originalIdentities);
-            return hash(originalIdentities, normalizedIdentities).then(function (hashedIdentities) {
-              if (isEmptyObject(hashedIdentities)) {
-                return false;
-              }
-
-              setState(hashedIdentities);
-              var event = eventManager.createEvent();
-              return consent.awaitConsent().then(function () {
-                // FIXME: Konductor shouldn't require an event.
-                // we're now returning an object at onResponse
-                // here we need to add 'then(noop)' because we are not returning a value
-                return eventManager.sendEvent(event).then(noop);
-              });
-            });
-          }
-        };
-        return identityManager;
-      });
-
-      /*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
       var ecidNamespace = "ECID";
 
       /*
@@ -4003,6 +3827,20 @@ governing permissions and limitations under the License.
       });
 
       /*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+      var IDENTITY = "identity";
+      var CONSENT = "consent";
+
+      /*
 Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
@@ -4013,9 +3851,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var doesIdentityCookieExistFactory = (function (_ref) {
+      var injectDoesIdentityCookieExist = (function (_ref) {
         var orgId = _ref.orgId;
-        var identityCookieName = getNamespacedCookieName(orgId, IDENTITY_COOKIE_KEY);
+        var identityCookieName = getNamespacedCookieName(orgId, IDENTITY);
         /**
          * Returns whether the identity cookie exists.
          */
@@ -4059,7 +3897,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var setDomainForInitialIdentityPayloadFactory = (function (_ref) {
+      var injectSetDomainForInitialIdentityPayload = (function (_ref) {
         var thirdPartyCookiesEnabled = _ref.thirdPartyCookiesEnabled,
           areThirdPartyCookiesSupportedByDefault = _ref.areThirdPartyCookiesSupportedByDefault;
         return function (payload) {
@@ -4089,7 +3927,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var addLegacyEcidToPayloadFactory = (function (_ref) {
+      var injectAddLegacyEcidToPayload = (function (_ref) {
         var getLegacyEcid = _ref.getLegacyEcid,
           addEcidToPayload = _ref.addEcidToPayload;
         return function (payload) {
@@ -4129,7 +3967,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var awaitIdentityCookieFactory = (function (_ref) {
+      var injectAwaitIdentityCookie = (function (_ref) {
         var orgId = _ref.orgId,
           doesIdentityCookieExist = _ref.doesIdentityCookieExist;
 
@@ -4200,10 +4038,6 @@ governing permissions and limitations under the License.
           });
         };
       });
-
-      var validateSyncIdentityOptions = boundObjectOf({
-        identity: boundObjectOf({}).required()
-      }).noUnknownFields().required();
 
       /*
 Copyright 2019 Adobe. All rights reserved.
@@ -4306,17 +4140,10 @@ governing permissions and limitations under the License.
         var config = _ref.config,
           logger = _ref.logger,
           consent = _ref.consent,
-          eventManager = _ref.eventManager,
           sendEdgeNetworkRequest = _ref.sendEdgeNetworkRequest;
         var orgId = config.orgId,
           thirdPartyCookiesEnabled = config.thirdPartyCookiesEnabled;
-        var identityManager = createIdentityManager({
-          eventManager: eventManager,
-          consent: consent,
-          logger: logger,
-          convertStringToSha256Buffer: convertStringToSha256Buffer
-        });
-        var getEcidFromVisitor = getEcidFromVisitorFactory({
+        var getEcidFromVisitor = injectGetEcidFromVisitor({
           logger: logger,
           orgId: orgId,
           awaitVisitorOptIn: awaitVisitorOptIn
@@ -4325,49 +4152,47 @@ governing permissions and limitations under the License.
           config: config,
           getEcidFromVisitor: getEcidFromVisitor
         });
-        var doesIdentityCookieExist = doesIdentityCookieExistFactory({
+        var doesIdentityCookieExist = injectDoesIdentityCookieExist({
           orgId: orgId
         });
         var getIdentity = createGetIdentity({
           sendEdgeNetworkRequest: sendEdgeNetworkRequest,
           createIdentityPayload: createIdentityPayload
         });
-        var setDomainForInitialIdentityPayload = setDomainForInitialIdentityPayloadFactory({
+        var setDomainForInitialIdentityPayload = injectSetDomainForInitialIdentityPayload({
           thirdPartyCookiesEnabled: thirdPartyCookiesEnabled,
           areThirdPartyCookiesSupportedByDefault: areThirdPartyCookiesSupportedByDefault
         });
-        var addLegacyEcidToPayload = addLegacyEcidToPayloadFactory({
+        var addLegacyEcidToPayload = injectAddLegacyEcidToPayload({
           getLegacyEcid: legacyIdentity.getEcid,
           addEcidToPayload: addEcidToPayload
         });
-        var awaitIdentityCookie = awaitIdentityCookieFactory({
+        var awaitIdentityCookie = injectAwaitIdentityCookie({
           orgId: orgId,
           doesIdentityCookieExist: doesIdentityCookieExist
         });
-        var ensureRequestHasIdentity = ensureRequestHasIdentityFactory({
+        var ensureRequestHasIdentity = injectEnsureRequestHasIdentity({
           doesIdentityCookieExist: doesIdentityCookieExist,
           setDomainForInitialIdentityPayload: setDomainForInitialIdentityPayload,
           addLegacyEcidToPayload: addLegacyEcidToPayload,
           awaitIdentityCookie: awaitIdentityCookie,
           logger: logger
         });
-        var processIdSyncs = processIdSyncsFactory({
+        var processIdSyncs = injectProcessIdSyncs({
           fireReferrerHideableImage: fireReferrerHideableImage,
           logger: logger
         });
-        var handleResponseForIdSyncs = handleResponseForIdSyncsFactory({
+        var handleResponseForIdSyncs = injectHandleResponseForIdSyncs({
           processIdSyncs: processIdSyncs
         });
         return createComponent({
           addEcidQueryToEvent: addEcidQueryToEvent,
-          identityManager: identityManager,
           ensureRequestHasIdentity: ensureRequestHasIdentity,
           setLegacyEcid: legacyIdentity.setEcid,
           handleResponseForIdSyncs: handleResponseForIdSyncs,
           getEcidFromResponse: getEcidFromResponse,
           getIdentity: getIdentity,
-          consent: consent,
-          validateSyncIdentityOptions: validateSyncIdentityOptions
+          consent: consent
         });
       };
 
@@ -4424,7 +4249,7 @@ governing permissions and limitations under the License.
         });
       };
 
-      var processDestinationsFactory = (function (_ref) {
+      var injectProcessDestinations = (function (_ref) {
         var fireReferrerHideableImage = _ref.fireReferrerHideableImage,
           logger = _ref.logger;
         return function (destinations) {
@@ -4447,7 +4272,7 @@ governing permissions and limitations under the License.
 
       var createAudiences = function createAudiences(_ref) {
         var logger = _ref.logger;
-        var processDestinations = processDestinationsFactory({
+        var processDestinations = injectProcessDestinations({
           fireReferrerHideableImage: fireReferrerHideableImage,
           logger: logger
         });
@@ -5626,7 +5451,7 @@ governing permissions and limitations under the License.
       var JSON_CONTENT_ITEM = "https://ns.adobe.com/personalization/json-content-item";
       var REDIRECT_ITEM = "https://ns.adobe.com/personalization/redirect-item";
 
-      var SCHEMAS = /*#__PURE__*/Object.freeze({
+      var SCHEMA = /*#__PURE__*/Object.freeze({
         __proto__: null,
         DOM_ACTION: DOM_ACTION,
         HTML_CONTENT_ITEM: HTML_CONTENT_ITEM,
@@ -5904,7 +5729,7 @@ governing permissions and limitations under the License.
         return scopes;
       };
 
-      var ALL_SCHEMAS = values(SCHEMAS);
+      var allSchemas = values(SCHEMA);
       var mergeMeta = function mergeMeta(event, meta) {
         event.mergeMeta({
           personalization: _objectSpread2({}, meta)
@@ -5917,7 +5742,7 @@ governing permissions and limitations under the License.
       };
       var createQueryDetails = function createQueryDetails(decisionScopes) {
         return {
-          schemas: ALL_SCHEMAS,
+          schemas: allSchemas,
           decisionScopes: decisionScopes
         };
       };
@@ -6029,7 +5854,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var webFactory = (function (window) {
+      var injectWeb = (function (window) {
         return function (xdm) {
           var web = {
             webPageDetails: {
@@ -6089,7 +5914,7 @@ governing permissions and limitations under the License.
         return null;
       };
 
-      var deviceFactory = (function (window) {
+      var injectDevice = (function (window) {
         return function (xdm) {
           var _window$screen = window.screen,
             width = _window$screen.width,
@@ -6121,7 +5946,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var environmentFactory = (function (window) {
+      var injectEnvironment = (function (window) {
         return function (xdm) {
           var innerWidth = window.innerWidth,
             innerHeight = window.innerHeight;
@@ -6149,7 +5974,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var placeContextFactory = (function (dateProvider) {
+      var injectPlaceContext = (function (dateProvider) {
         return function (xdm) {
           var date = dateProvider();
           var placeContext = {
@@ -6173,7 +5998,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var timestampFactory = (function (dateProvider) {
+      var injectTimestamp = (function (dateProvider) {
         return function (xdm) {
           var timestamp = dateProvider().toISOString();
           deepAssign(xdm, {
@@ -6193,11 +6018,12 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var implementationDetailsFactory = (function (version) {
+      var injectImplementationDetails = (function (version) {
         return function (xdm) {
           var implementationDetails = {
             name: "https://ns.adobe.com/experience/alloy",
-            version: version
+            version: version,
+            environment: "browser"
           };
           deepAssign(xdm, {
             implementationDetails: implementationDetails
@@ -6256,16 +6082,16 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var web = webFactory(window);
-      var device = deviceFactory(window);
-      var environment = environmentFactory(window);
-      var placeContext = placeContextFactory(function () {
+      var web = injectWeb(window);
+      var device = injectDevice(window);
+      var environment = injectEnvironment(window);
+      var placeContext = injectPlaceContext(function () {
         return new Date();
       });
-      var timestamp = timestampFactory(function () {
+      var timestamp = injectTimestamp(function () {
         return new Date();
       });
-      var implementationDetails = implementationDetailsFactory(libraryVersion);
+      var implementationDetails = injectImplementationDetails(libraryVersion);
       var optionalContexts = {
         web: web,
         device: device,
@@ -6316,15 +6142,7 @@ governing permissions and limitations under the License.
                 return taskQueue.addTask(function () {
                   return sendSetConsentRequest(value);
                 }).catch(function (error) {
-                  readCookieIfQueueEmpty(); // This check re-writes the error message from Konductor to be more clear.
-                  // We could check for this before sending the request, but if we let the
-                  // request go out and Konductor adds this feature, customers don't need to
-                  // update Alloy to get the functionality.
-
-                  if (error && error.message && error.message.indexOf("User is opted out") > -1) {
-                    throw new Error("The user previously declined consent, which cannot be changed.");
-                  }
-
+                  readCookieIfQueueEmpty();
                   throw error;
                 }).then(readCookieIfQueueEmpty);
               }
@@ -6380,11 +6198,11 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var readStoredConsentFactory = (function (_ref) {
+      var injectReadStoredConsent = (function (_ref) {
         var parseConsentCookie = _ref.parseConsentCookie,
           orgId = _ref.orgId,
           cookieJar = _ref.cookieJar;
-        var consentCookieName = getNamespacedCookieName(orgId, CONSENT_COOKIE_KEY);
+        var consentCookieName = getNamespacedCookieName(orgId, CONSENT);
         return function () {
           var cookieValue = cookieJar.get(consentCookieName);
           return cookieValue ? parseConsentCookie(cookieValue) : undefined;
@@ -6402,7 +6220,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var sendSetConsentRequestFactory = (function (_ref) {
+      var injectSendSetConsentRequest = (function (_ref) {
         var createConsentRequestPayload = _ref.createConsentRequestPayload,
           sendEdgeNetworkRequest = _ref.sendEdgeNetworkRequest;
         return function (consent) {
@@ -6449,11 +6267,16 @@ governing permissions and limitations under the License.
       });
 
       var validateSetConsentOptions = boundObjectOf({
-        consent: boundArrayOf(boundObjectOf({
+        consent: boundArrayOf(boundAnyOf([boundObjectOf({
           standard: boundLiteral("Adobe").required(),
           version: boundLiteral("1.0").required(),
           value: boundObjectOf(_defineProperty({}, GENERAL, boundEnumOf(IN, OUT).required())).noUnknownFields().required()
-        }).noUnknownFields().required()).nonEmpty().required()
+        }).noUnknownFields().required(), boundObjectOf({
+          standard: boundLiteral("IAB").required(),
+          version: boundLiteral("2.0").required(),
+          value: boundString().required(),
+          gdprApplies: boundBoolean().required()
+        }).noUnknownFields().required()], "a valid consent object")).nonEmpty().required()
       }).noUnknownFields().required();
 
       /*
@@ -6474,13 +6297,13 @@ governing permissions and limitations under the License.
           sendEdgeNetworkRequest = _ref.sendEdgeNetworkRequest;
         var orgId = config.orgId,
           defaultConsent = config.defaultConsent;
-        var readStoredConsent = readStoredConsentFactory({
+        var readStoredConsent = injectReadStoredConsent({
           parseConsentCookie: parseConsentCookie,
           orgId: orgId,
           cookieJar: cookie
         });
         var taskQueue = createTaskQueue();
-        var sendSetConsentRequest = sendSetConsentRequestFactory({
+        var sendSetConsentRequest = injectSendSetConsentRequest({
           createConsentRequestPayload: createConsentRequestPayload,
           sendEdgeNetworkRequest: sendEdgeNetworkRequest
         });
@@ -6622,12 +6445,10 @@ governing permissions and limitations under the License.
         var config = createConfig(transformOptions(schema, options));
         setDebugEnabled(config.debugEnabled, {
           fromConfig: true
-        }); // toJson is expensive so we short circuit if logging is disabled
-
-        if (logger.enabled) {
-          logger.log("Computed configuration:", config);
-        }
-
+        });
+        logger.logOnInstanceConfigured({
+          config: config
+        });
         return config;
       });
 
@@ -6695,8 +6516,8 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var EDGE_DOMAIN = "edge.adobedc.net";
-      var ID_THIRD_PARTY_DOMAIN = "adobedc.demdex.net";
+      var EDGE$1 = "edge.adobedc.net";
+      var ID_THIRD_PARTY = "adobedc.demdex.net";
 
       var EDGE_BASE_PATH = "ee";
 
@@ -6716,7 +6537,7 @@ governing permissions and limitations under the License.
           debugEnabled: boundBoolean().default(false),
           defaultConsent: boundEnumOf(IN, PENDING).default(IN),
           edgeConfigId: boundString().unique().required(),
-          edgeDomain: boundString().domain().default(EDGE_DOMAIN),
+          edgeDomain: boundString().domain().default(EDGE$1),
           edgeBasePath: boundString().nonEmpty().default(EDGE_BASE_PATH),
           orgId: boundString().unique().required(),
           onBeforeEventSend: boundCallback().default(noop)
@@ -6734,8 +6555,8 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var handleErrorFactory = (function (_ref) {
-        var instanceNamespace = _ref.instanceNamespace,
+      var injectHandleError = (function (_ref) {
+        var instanceName = _ref.instanceName,
           logger = _ref.logger;
         return function (error, commandName) {
           // In the case of declined consent, we've opted to not reject the promise
@@ -6747,7 +6568,7 @@ governing permissions and limitations under the License.
           }
 
           var err = toError(error);
-          err.message = "[" + instanceNamespace + "] " + err.message;
+          err.message = "[" + instanceName + "] " + err.message;
           throw err;
         };
       });
@@ -6763,7 +6584,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var xhrRequestFactory = (function (XMLHttpRequest) {
+      var injectSendXhrRequest = (function (XMLHttpRequest) {
         return function (url, body) {
           return new Promise(function (resolve, reject) {
             var request = new XMLHttpRequest();
@@ -6806,7 +6627,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var fetchFactory = (function (fetch) {
+      var injectFetch = (function (fetch) {
         return function (url, body) {
           return fetch(url, {
             method: "POST",
@@ -6840,7 +6661,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var sendBeaconFactory = (function (navigator, fetch, logger) {
+      var injectSendBeacon = (function (navigator, fetch, logger) {
         return function (url, body) {
           var blob = new Blob([body], {
             type: "text/plain; charset=UTF-8"
@@ -6872,9 +6693,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var networkStrategyFactory = (function (window, logger) {
-        var fetch = isFunction(window.fetch) ? fetchFactory(window.fetch) : xhrRequestFactory(window.XMLHttpRequest);
-        var sendBeacon = window.navigator && isFunction(window.navigator.sendBeacon) ? sendBeaconFactory(window.navigator, fetch, logger) : fetch;
+      var injectNetworkStrategy = (function (window, logger) {
+        var fetch = isFunction(window.fetch) ? injectFetch(window.fetch) : injectSendXhrRequest(window.XMLHttpRequest);
+        var sendBeacon = window.navigator && isFunction(window.navigator.sendBeacon) ? injectSendBeacon(window.navigator, fetch, logger) : fetch;
         return function (url, body, documentMayUnload) {
           var method = documentMayUnload ? sendBeacon : fetch;
           return method(url, body);
@@ -6892,27 +6713,81 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var createLogger = (function (console, getDebugEnabled, prefix) {
-        var process = function process(level) {
-          if (getDebugEnabled()) {
-            for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-              rest[_key - 1] = arguments[_key];
-            }
+      var createLogger = (function (_ref) {
+        var getDebugEnabled = _ref.getDebugEnabled,
+          console = _ref.console,
+          getMonitors = _ref.getMonitors,
+          context = _ref.context;
+        var prefix = "[" + context.instanceName + "]";
 
+        if (context.componentName) {
+          prefix += " [" + context.componentName + "]";
+        }
+
+        var notifyMonitors = function notifyMonitors(method, data) {
+          var monitors = getMonitors();
+
+          if (monitors.length > 0) {
+            var dataWithContext = assign({}, context, data);
+            monitors.forEach(function (monitor) {
+              if (monitor[method]) {
+                monitor[method](dataWithContext);
+              }
+            });
+          }
+        };
+
+        var log = function log(level) {
+          for (var _len = arguments.length, rest = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+            rest[_key - 1] = arguments[_key];
+          }
+
+          notifyMonitors("onBeforeLog", {
+            level: level,
+            arguments: rest
+          });
+
+          if (getDebugEnabled()) {
             console[level].apply(console, [prefix].concat(rest));
           }
         };
 
         return {
           get enabled() {
-            return getDebugEnabled();
+            return getMonitors().length > 0 || getDebugEnabled();
+          },
+
+          logOnInstanceCreated: function logOnInstanceCreated(data) {
+            notifyMonitors("onInstanceCreated", data);
+            log("info", "Instance initialized.");
+          },
+          logOnInstanceConfigured: function logOnInstanceConfigured(data) {
+            notifyMonitors("onInstanceConfigured", data);
+            log("info", "Instance configured. Computed configuration:", data.config);
+          },
+          logOnBeforeCommand: function logOnBeforeCommand(data) {
+            notifyMonitors("onBeforeCommand", data);
+            log("info", "Executing " + data.commandName + " command. Options:", data.options);
+          },
+          logOnBeforeNetworkRequest: function logOnBeforeNetworkRequest(data) {
+            notifyMonitors("onBeforeNetworkRequest", data);
+            log("info", "Request " + data.requestId + ": Sending request.", data.payload);
+          },
+          logOnNetworkResponse: function logOnNetworkResponse(data) {
+            notifyMonitors("onNetworkResponse", data);
+            var messagesSuffix = data.parsedBody || data.body ? "response body:" : "no response body.";
+            log("info", "Request " + data.requestId + ": Received response with status code " + data.status + " and " + messagesSuffix, data.parsedBody || data.body);
+          },
+          logOnNetworkError: function logOnNetworkError(data) {
+            notifyMonitors("onNetworkError", data);
+            log("error", "Request " + data.requestId + ": Network request failed.", data.error);
           },
 
           /**
            * Outputs a message to the web console.
            * @param {...*} arg Any argument to be logged.
            */
-          log: process.bind(null, "log"),
+          log: log.bind(null, "log"),
 
           /**
            * Outputs informational message to the web console. In some
@@ -6920,19 +6795,19 @@ governing permissions and limitations under the License.
            * in the web console's log.
            * @param {...*} arg Any argument to be logged.
            */
-          info: process.bind(null, "info"),
+          info: log.bind(null, "info"),
 
           /**
            * Outputs a warning message to the web console.
            * @param {...*} arg Any argument to be logged.
            */
-          warn: process.bind(null, "warn"),
+          warn: log.bind(null, "warn"),
 
           /**
            * Outputs an error message to the web console.
            * @param {...*} arg Any argument to be logged.
            */
-          error: process.bind(null, "error")
+          error: log.bind(null, "error")
         };
       });
 
@@ -7125,7 +7000,7 @@ governing permissions and limitations under the License.
 
       var apiVersion = "v1";
 
-      var sendEdgeNetworkRequestFactory = (function (_ref) {
+      var injectSendEdgeNetworkRequest = (function (_ref) {
         var config = _ref.config,
           lifecycle = _ref.lifecycle,
           cookieTransfer = _ref.cookieTransfer,
@@ -7159,7 +7034,7 @@ governing permissions and limitations under the License.
             onResponse: onResponseCallbackAggregator.add,
             onRequestFailure: onRequestFailureCallbackAggregator.add
           }).then(function () {
-            var endpointDomain = payload.getUseIdThirdPartyDomain() ? ID_THIRD_PARTY_DOMAIN : edgeDomain;
+            var endpointDomain = payload.getUseIdThirdPartyDomain() ? ID_THIRD_PARTY : edgeDomain;
             var requestId = v4_1();
             var url = "https://" + endpointDomain + "/" + edgeBasePath + "/" + apiVersion + "/" + action + "?configId=" + edgeConfigId + "&requestId=" + requestId;
             cookieTransfer.cookiesToPayload(payload, endpointDomain);
@@ -7224,7 +7099,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-      var processWarningsAndErrorsFactory = (function (_ref) {
+      var injectProcessWarningsAndErrors = (function (_ref) {
         var logger = _ref.logger;
 
         /**
@@ -7321,27 +7196,36 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-      var instanceNamespaces = window.__alloyNS;
-      var createNamespacedStorage = storageFactory(window);
+      var instanceNames = window.__alloyNS;
+      var createNamespacedStorage = injectStorage(window);
       var _window = window,
-        console = _window.console;
+        console = _window.console; // set this up as a function so that monitors can be added at anytime
+// eslint-disable-next-line no-underscore-dangle
+
+      var getMonitors = function getMonitors() {
+        return window.__alloyMonitors || [];
+      };
+
       var coreConfigValidators = createCoreConfigs();
       var apexDomain$1 = getApexDomain(window, cookie);
 
-      if (instanceNamespaces) {
-        instanceNamespaces.forEach(function (instanceNamespace) {
-          var logController = createLogController({
-            console: console,
-            locationSearch: window.location.search,
-            createLogger: createLogger,
-            instanceNamespace: instanceNamespace,
-            createNamespacedStorage: createNamespacedStorage
-          });
-          var setDebugEnabled = logController.setDebugEnabled,
-            logger = logController.logger;
+      if (instanceNames) {
+        instanceNames.forEach(function (instanceName) {
+          var _createLogController = createLogController({
+              console: console,
+              locationSearch: window.location.search,
+              createLogger: createLogger,
+              instanceName: instanceName,
+              createNamespacedStorage: createNamespacedStorage,
+              getMonitors: getMonitors
+            }),
+            setDebugEnabled = _createLogController.setDebugEnabled,
+            logger = _createLogController.logger,
+            createComponentLogger = _createLogController.createComponentLogger;
+
           var componentRegistry = createComponentRegistry();
           var lifecycle = createLifecycle(componentRegistry);
-          var networkStrategy = networkStrategyFactory(window, logger);
+          var networkStrategy = injectNetworkStrategy(window, logger);
 
           var setDebugCommand = function setDebugCommand(options) {
             setDebugEnabled(options.enabled, {
@@ -7363,15 +7247,15 @@ governing permissions and limitations under the License.
               orgId: config.orgId,
               apexDomain: apexDomain$1
             });
-            var sendNetworkRequest = sendNetworkRequestFactory({
+            var sendNetworkRequest = injectSendNetworkRequest({
               logger: logger,
               networkStrategy: networkStrategy,
               isRetryableHttpStatusCode: isRetryableHttpStatusCode
             });
-            var processWarningsAndErrors = processWarningsAndErrorsFactory({
+            var processWarningsAndErrors = injectProcessWarningsAndErrors({
               logger: logger
             });
-            var sendEdgeNetworkRequest = sendEdgeNetworkRequestFactory({
+            var sendEdgeNetworkRequest = injectSendEdgeNetworkRequest({
               config: config,
               lifecycle: lifecycle,
               cookieTransfer: cookieTransfer,
@@ -7398,12 +7282,12 @@ governing permissions and limitations under the License.
               componentCreators: componentCreators,
               lifecycle: lifecycle,
               componentRegistry: componentRegistry,
-              getImmediatelyAvailableTools: function getImmediatelyAvailableTools(componentNamespace) {
+              getImmediatelyAvailableTools: function getImmediatelyAvailableTools(componentName) {
                 return {
                   config: config,
                   consent: consent,
                   eventManager: eventManager,
-                  logger: logController.createComponentLogger(componentNamespace),
+                  logger: createComponentLogger(componentName),
                   lifecycle: lifecycle,
                   sendEdgeNetworkRequest: sendEdgeNetworkRequest
                 };
@@ -7411,20 +7295,23 @@ governing permissions and limitations under the License.
             });
           };
 
-          var handleError = handleErrorFactory({
-            instanceNamespace: instanceNamespace,
+          var handleError = injectHandleError({
+            instanceName: instanceName,
             logger: logger
           });
-          var executeCommand = executeCommandFactory({
+          var executeCommand = injectExecuteCommand({
             logger: logger,
             configureCommand: configureCommand,
             setDebugCommand: setDebugCommand,
             handleError: handleError,
             validateCommandOptions: validateCommandOptions
           });
-          var instance = instanceFactory(executeCommand);
-          var queue = window[instanceNamespace].q;
+          var instance = createInstance(executeCommand);
+          var queue = window[instanceName].q;
           queue.push = instance;
+          logger.logOnInstanceCreated({
+            instance: instance
+          });
           queue.forEach(instance);
         });
       }
