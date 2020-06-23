@@ -6033,7 +6033,7 @@ governing permissions and limitations under the License.
 
 // The value will be swapped with the proper version at build time
 // see rollupPluginReplaceVersion.js
-      var libraryVersion = "1.0.0";
+      var libraryVersion = "2.0.0";
 
       /*
 Copyright 2019 Adobe. All rights reserved.
