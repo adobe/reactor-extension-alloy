@@ -153,6 +153,10 @@
           "mergeId": {
             "type": "string",
             "minLength": 1
+          },
+          "datasetId": {
+            "type": "string",
+            "minLength": 1
           }
         },
         "required": ["instanceName"],
