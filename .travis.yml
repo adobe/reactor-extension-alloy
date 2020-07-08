@@ -1,19 +1,16 @@
-dist: xenial
-os: linux
 language: node_js
-node_js: 'stable'
-install:
-- npm i -g npm
+node_js:
+ - "node"
+
 addons:
   chrome: stable
   firefox: latest
 services:
 - xvfb
 
-script:
+before_install:
 - npm ci
+script:
 - npm run build:prod
 - npm run test:unit
   
-before_install:
-- stty cols 80
