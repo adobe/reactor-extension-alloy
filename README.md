@@ -47,6 +47,7 @@ This steps listed below assume the new extension version includes changes from t
 1. Open the Alloy repository locally. 
 1. Make sure you're on the `master` branch and have pulled the latest changes.
 1. Version and tag Alloy by running `npm version major/minor/patch`. Whether you use `major`, `minor`, or `patch` depends on what has changed since the last release and how that matches [semantic versioning](https://semver.org/). Note that while the version is below 1.0.0, semantic versioning is flexible on how a project should be versioned. In our case, we have decided that breaking changes should bump the minor version (`npm version minor`) while any other change should bump the patch version (`npm version patch`).
+1. Rebase the `alloy-latest-release` branch on top of the tag, because this branch is used to run the Prod E2E tests against.
 1. Running `npm version major/minor/patch` should have changed `package.json` and `package-lock.json`, committed the changes, and created a new git tag. Push these changes to Github by running `git push origin master --follow-tags`. Go to Github and ensure you see the newly added commit and tag.
 1. Create a new production build of Alloy by running `npm run build:prod`.
 1. Open up `dist/reactor/alloy.js` and copy the file's contents.

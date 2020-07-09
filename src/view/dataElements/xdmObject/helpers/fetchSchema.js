@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import getBaseRequestHeaders from "./getBaseRequestHeaders";
+import getBaseRequestHeaders from "../../../utils/getBaseRequestHeaders";
 import platform from "./platform";
 
 export default ({ orgId, imsAccess, schemaMeta }) => {
@@ -36,4 +36,27 @@ export default ({ orgId, imsAccess, schemaMeta }) => {
       return response.json();
     })
     .then(responseBody => responseBody);
+};
+
+/**
+ * Retrieves the schema configured for the dataset that is configured
+ * for an edge configuration.
+ * @param {string} configId Edge configuration ID
+ * @param {string} orgId Experience Cloud organization ID
+ * @param {string} imsAccess IMS auth token
+ * @returns {Promise} Promise to be resolved with the schema.
+ */
+export default ({ configId, orgId, imsAccess }) => {
+  const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
+  return fetchDatasetIdFromEdgeConfig({ baseRequestHeaders, configId })
+    .then(datasetId => {
+      return datasetId
+        ? fetchSchemaRefFromDataSet({ baseRequestHeaders, datasetId })
+        : undefined;
+    })
+    .then(schemaRef => {
+      return schemaRef
+        ? fetchSchema({ baseRequestHeaders, schemaRef })
+        : undefined;
+    });
 };

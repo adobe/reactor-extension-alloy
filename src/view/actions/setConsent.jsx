@@ -37,14 +37,18 @@ const purposesEnum = {
  * The settings object for this action has the form of:
  * {
  *   instanceName, // the name of the instance
- *   consent: {
- *     general // valid values are "in" and "out"
- *   }
+ *   consent: [{
+ *    standard: "Adobe",
+ *    version: "1.0",
+ *    value: {
+ *      general // valid values are "in" and "out"
+ *    }
+ *   }]
  * }
  * ---OR---
  * {
  *   instanceName,
- *   // this should resolve to either { general: "in" } or { general: "out" }
+ *   // this should resolve to the preferences object above
  *   consent: "%dataElement123%"
  * }
  *
@@ -71,13 +75,8 @@ const getInitialValues = ({ initInfo }) => {
   if (typeof consent === "string") {
     initialValues.option = purposesEnum.DATA_ELEMENT;
     initialValues.dataElement = consent;
-  } else if (
-    consent &&
-    consent.general &&
-    (consent.general === purposesEnum.IN ||
-      consent.general === purposesEnum.OUT)
-  ) {
-    initialValues.option = consent.general;
+  } else if (consent) {
+    initialValues.option = consent[0].value.general;
     initialValues.dataElement = "";
   } else {
     initialValues.option = purposesEnum.IN;
@@ -95,7 +94,9 @@ const getSettings = ({ values }) => {
   };
 
   if (option === purposesEnum.IN || option === purposesEnum.OUT) {
-    settings.consent = { general: option };
+    settings.consent = [
+      { standard: "Adobe", version: "1.0", value: { general: option } }
+    ];
   } else {
     settings.consent = dataElement;
   }
@@ -163,7 +164,7 @@ const SetConsent = () => {
             </div>
             {formikProps.values.option === purposesEnum.DATA_ELEMENT ? (
               <div className="FieldSubset u-gapTop">
-                <InfoTipLayout tip='The data element should return { general: "in" } or { general: "out" }.'>
+                <InfoTipLayout tip="The data element should return an array of consent objects.">
                   <FieldLabel
                     labelFor="dataElementField"
                     label="Data Element"

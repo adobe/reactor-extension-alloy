@@ -10,66 +10,33 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import isFormStateValuePopulated from "../isFormStateValuePopulated";
-import { WHOLE } from "../../constants/populationStrategy";
-import { FULL, PARTIAL } from "../../constants/populationAmount";
-import computePopulationAmount from "../computePopulationAmount";
-
 export default ({
   treeNode,
   formStateNode,
-  treeNodeComponent,
   isAncestorUsingWholePopulationStrategy,
-  isCurrentNodeTheHighestNodeUsingWholePopulationStrategy,
-  doesHighestAncestorWithWholePopulationStrategyHaveAValue,
+  isUsingWholePopulationStrategy,
+  confirmDataPopulatedAtCurrentOrDescendantNode,
   confirmTouchedAtCurrentOrDescendantNode,
   errors,
   touched,
   getTreeNode
 }) => {
-  const { value, items, populationStrategy } = formStateNode;
-
-  const populationTally = {
-    numChildren: 0,
-    numPopulatedChildren: 0
-  };
+  const { items } = formStateNode;
 
   if (items && items.length) {
     treeNode.children = items.map((itemFormStateNode, index) => {
       const childNode = getTreeNode({
         formStateNode: itemFormStateNode,
-        treeNodeComponent,
         displayName: `Item ${index + 1}`,
         isAncestorUsingWholePopulationStrategy:
           isAncestorUsingWholePopulationStrategy ||
-          populationStrategy === WHOLE,
-        doesHighestAncestorWithWholePopulationStrategyHaveAValue:
-          (isAncestorUsingWholePopulationStrategy &&
-            doesHighestAncestorWithWholePopulationStrategyHaveAValue) ||
-          (isCurrentNodeTheHighestNodeUsingWholePopulationStrategy &&
-            isFormStateValuePopulated(value)),
+          isUsingWholePopulationStrategy,
+        notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode,
         notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
         errors: errors && errors.items ? errors.items[index] : undefined,
         touched: touched && touched.items ? touched.items[index] : undefined
       });
-
-      populationTally.numChildren += 1;
-
-      if (
-        childNode.populationAmount === PARTIAL ||
-        childNode.populationAmount === FULL
-      ) {
-        populationTally.numPopulatedChildren += 1;
-      }
-
       return childNode;
     });
   }
-
-  treeNode.populationAmount = computePopulationAmount({
-    formStateNode,
-    isAncestorUsingWholePopulationStrategy,
-    doesHighestAncestorWithWholePopulationStrategyHaveAValue,
-    populationTally
-  });
 };

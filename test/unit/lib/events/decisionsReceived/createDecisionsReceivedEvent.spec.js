@@ -10,6 +10,22 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+<<<<<<< HEAD:src/lib/actions/syncIdentity/createSyncIdentity.js
+module.exports = ({ instanceManager }) => settings => {
+  const { instanceName, identities } = settings;
+  const instance = instanceManager.getInstance(instanceName);
+
+  if (!instance) {
+    throw new Error(
+      `Failed to sync identity for instance "${instanceName}". No matching instance was configured with this name.`
+    );
+  }
+
+  return instance("syncIdentity", {
+    identities
+  });
+};
+=======
 import createDecisionsReceivedEvent from "../../../../../src/lib/events/decisionsReceived/createDecisionsReceivedEvent";
 
 describe("Decisions received event", () => {
@@ -29,3 +45,4 @@ describe("Decisions received event", () => {
     expect(decisionsCallbackStorage.add).toHaveBeenCalledWith(trigger);
   });
 });
+>>>>>>> master:test/unit/lib/events/decisionsReceived/createDecisionsReceivedEvent.spec.js

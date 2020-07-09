@@ -17,37 +17,50 @@ module.exports = ({ turbine, window, runAlloy, orgId }) => {
   );
   const instanceByName = {};
   let createEventMergeId;
-
   runAlloy(instanceNames);
 
-  instancesSettings.forEach(({ name, ...options }) => {
-    const instance = window[name];
-    instanceByName[name] = instance;
+  instancesSettings.forEach(
+    ({
+      name,
+      edgeConfigId,
+      stagingEdgeConfigId,
+      developmentEdgeConfigId,
+      ...options
+    }) => {
+      const computedEdgeConfigId =
+        (turbine.buildInfo.environment === "development" &&
+          developmentEdgeConfigId) ||
+        (turbine.buildInfo.environment === "staging" && stagingEdgeConfigId) ||
+        edgeConfigId;
 
-    instance("configure", {
-      ...options,
-      debugEnabled: turbine.debugEnabled,
-      orgId: options.orgId || orgId,
-      // The Alloy build we're using for this extension
-      // provides a backdoor to perform certain operations
-      // synchronously, because Reactor requires that data
-      // elements be resolved synchronously for now.
+      const instance = window[name];
+      instanceByName[name] = instance;
+      instance("configure", {
+        ...options,
+        edgeConfigId: computedEdgeConfigId,
+        debugEnabled: turbine.debugEnabled,
+        orgId: options.orgId || orgId,
+        // The Alloy build we're using for this extension
+        // provides a backdoor to perform certain operations
+        // synchronously, because Reactor requires that data
+        // elements be resolved synchronously for now.
 
-      // In this case, the function exposed from Alloy for
-      // creating an event merge ID is not instance-specific,
-      // so there's no need to segregate it by instance.
-      // This actually makes things a bit simpler, because
-      // when a user is creating an event merge ID data element,
-      // we don't need/want the user to have to bother with
-      // selecting a specific instance.
-      reactorRegisterCreateEventMergeId(_createEventMergeId) {
-        createEventMergeId = _createEventMergeId;
-      }
-    });
-    turbine.onDebugChanged(enabled => {
-      instance("setDebug", { enabled });
-    });
-  });
+        // In this case, the function exposed from Alloy for
+        // creating an event merge ID is not instance-specific,
+        // so there's no need to segregate it by instance.
+        // This actually makes things a bit simpler, because
+        // when a user is creating an event merge ID data element,
+        // we don't need/want the user to have to bother with
+        // selecting a specific instance.
+        reactorRegisterCreateEventMergeId(_createEventMergeId) {
+          createEventMergeId = _createEventMergeId;
+        }
+      });
+      turbine.onDebugChanged(enabled => {
+        instance("setDebug", { enabled });
+      });
+    }
+  );
 
   return {
     /**
