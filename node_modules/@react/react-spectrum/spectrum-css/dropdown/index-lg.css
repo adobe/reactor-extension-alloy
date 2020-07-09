@@ -1,0 +1,94 @@
+.spectrum-Dropdown {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  width: 240px;
+  min-width: 60px;
+}
+.spectrum-Dropdown select {
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    -ms-appearance: none;
+  }
+.spectrum-Dropdown select::-ms-expand {
+      display: none;
+    }
+.spectrum-Dropdown select::-ms-value {
+      background-color: transparent;
+    }
+.spectrum-Dropdown select + .spectrum-Dropdown-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      margin-top: -4px;
+    }
+.spectrum-Dropdown-trigger {
+  position: relative;
+  width: 100%;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+  -ms-flex-align: center;
+      align-items: center;
+}
+.spectrum-Dropdown-label {
+  -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
+
+  white-space: nowrap;
+  overflow: hidden;
+
+  height: 38px;
+  line-height: 38px;
+
+  font-size: 17px;
+
+  text-overflow: ellipsis;
+  text-align: left;
+}
+.spectrum-Dropdown-label.is-placeholder {
+    font-weight: 400;
+    font-style: italic;
+    transition: color 130ms ease-in-out;
+  }
+.spectrum-Dropdown-label + .spectrum-Dropdown-icon {
+  margin-left: 15px;
+}
+.spectrum-Icon + .spectrum-Dropdown-label {
+  margin-left: 10px;
+}
+.spectrum-Dropdown-label ~ .spectrum-Dropdown-icon {
+  margin-left: 15px;
+}
+.spectrum-Dropdown-icon {
+  display: inline-block;
+  position: relative;
+  vertical-align: top;
+  transition: color 130ms ease-out;
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+  opacity: 1;
+}
+.spectrum-Dropdown-trigger .spectrum-Icon:not(.spectrum-Dropdown-icon) {
+  margin-top: 8px;
+    margin-bottom: 8px;
+  }
+.spectrum-Dropdown-trigger .spectrum-Dropdown-label + .spectrum-Icon:not(.spectrum-Dropdown-icon) {
+    margin-left: 15px;
+  }
+.spectrum-Icon + .spectrum-Dropdown-icon {
+  margin-left: 10px;
+}
+.spectrum-Dropdown--quiet {
+  width: auto;
+  min-width: 60px;
+}
+.spectrum-Dropdown-popover {
+  max-width: 300px;
+}
+.spectrum-Dropdown-popover--quiet {
+  margin-left: -16px;
+}

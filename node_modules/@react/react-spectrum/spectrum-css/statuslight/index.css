@@ -1,0 +1,30 @@
+.spectrum-StatusLight {
+  min-height: 32px;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: row;
+      flex-direction: row;
+  -ms-flex-align: start;
+      align-items: flex-start;
+
+  padding: 6px 0px;
+  box-sizing: border-box;
+
+  font-size: 14px;
+  font-weight: 400;
+}
+.spectrum-StatusLight::before {
+    content: '';
+    -ms-flex-positive: 0;
+        flex-grow: 0;
+    -ms-flex-negative: 0;
+        flex-shrink: 0;
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin: 6px 12px;
+  }
+.spectrum-StatusLight--neutral {
+  font-style: italic;
+}

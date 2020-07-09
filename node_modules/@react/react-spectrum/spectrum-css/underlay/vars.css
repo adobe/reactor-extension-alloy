@@ -1,0 +1,7 @@
+
+.spectrum-Underlay {
+  --spectrum-dialog-background-exit-animation-duration: var(--spectrum-global-animation-duration-300);
+  --spectrum-dialog-background-exit-animation-delay: var(--spectrum-global-animation-duration-200);
+  --spectrum-dialog-background-entry-animation-duration: var(--spectrum-global-animation-duration-600);
+  --spectrum-dialog-underlay-background-color: var(--spectrum-alias-background-color-modal-overlay);
+}

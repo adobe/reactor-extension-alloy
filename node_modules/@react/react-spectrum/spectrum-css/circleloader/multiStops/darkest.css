@@ -1,0 +1,18 @@
+.spectrum--darkest .spectrum-CircleLoader-track {
+  border-color: rgb(57, 57, 57);
+}
+.spectrum--darkest .spectrum-CircleLoader-fill {
+  border-color: rgb(38, 128, 235);
+}
+.spectrum--darkest .spectrum-CircleLoader--overBackground .spectrum-CircleLoader-track {
+    border-color: rgba(255,255,255,0.2);
+  }
+.spectrum--darkest .spectrum-CircleLoader--overBackground .spectrum-CircleLoader-fill {
+    border-color: rgb(255, 255, 255);
+  }
+.spectrum--darkest .spectrum-CircleLoader--indeterminate.spectrum-CircleLoader--overBackground .spectrum-CircleLoader-track {
+    border-color: rgba(255,255,255,0.2);
+  }
+.spectrum--darkest .spectrum-CircleLoader--indeterminate.spectrum-CircleLoader--overBackground .spectrum-CircleLoader-fill {
+    border-color: rgb(255, 255, 255);
+  }

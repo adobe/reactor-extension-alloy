@@ -1,0 +1,13 @@
+
+.spectrum-Link {
+  --spectrum-link-text-color: var(--spectrum-global-color-blue-600);
+  --spectrum-link-text-color-hover: var(--spectrum-global-color-blue-600);
+  --spectrum-link-text-color-down: var(--spectrum-global-color-blue-700);
+  --spectrum-link-text-color-key-focus: var(--spectrum-alias-text-color-key-focus);
+  --spectrum-link-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-link-over-background-text-color: var(--spectrum-global-color-static-white);
+  --spectrum-link-over-background-text-color-hover: var(--spectrum-global-color-static-white);
+  --spectrum-link-over-background-text-color-down: var(--spectrum-global-color-static-white);
+  --spectrum-link-over-background-text-color-key-focus: var(--spectrum-global-color-static-white);
+  --spectrum-link-over-background-text-color-disabled: rgba(255,255,255,0.5);
+}

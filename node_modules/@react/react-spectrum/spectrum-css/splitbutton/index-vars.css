@@ -1,0 +1,89 @@
+.spectrum-SplitButton {
+  position: relative;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -ms-flex-direction: row;
+      flex-direction: row;
+  vertical-align: top;
+}
+
+.spectrum-SplitButton + .spectrum-SplitButton,
+  .spectrum-SplitButton + .spectrum-Button {
+    margin-left: var(--spectrum-global-dimension-size-150);
+  }
+
+.spectrum-Button + .spectrum-SplitButton {
+  margin-left: var(--spectrum-global-dimension-size-150);
+}
+
+.spectrum-SplitButton-action {
+  margin-left: 0;
+
+  border-radius: var(--spectrum-button-primary-border-radius, var(--spectrum-alias-border-radius-large)) 0 0 var(--spectrum-button-primary-border-radius, var(--spectrum-alias-border-radius-large));
+}
+
+.spectrum-SplitButton-action.spectrum-Button--cta {
+    border-right: 0;
+    margin-right: var(--spectrum-button-primary-border-size, var(--spectrum-alias-border-size-thick));
+  }
+
+.spectrum-SplitButton-action + .spectrum-SplitButton-trigger {
+    margin-left: 0;
+  }
+
+.spectrum-SplitButton-trigger {
+  margin-left: 0;
+
+  border-radius: 0 var(--spectrum-button-primary-border-radius, var(--spectrum-alias-border-radius-large)) var(--spectrum-button-primary-border-radius, var(--spectrum-alias-border-radius-large)) 0;
+  border-left-width: 0;
+
+  padding-left: calc(var(--spectrum-global-dimension-size-150) * 0.66667);
+  padding-right: calc(var(--spectrum-global-dimension-size-150) - var(--spectrum-button-primary-border-size, var(--spectrum-alias-border-size-thick)));
+
+  min-width: 0;
+}
+
+.spectrum-SplitButton-trigger.focus-ring {
+    box-shadow: none;
+  }
+
+.spectrum-SplitButton-icon {
+  display: block;
+  margin-top: 1px;
+}
+
+.spectrum-SplitButton-action,
+.spectrum-SplitButton-trigger {
+  position: relative;
+}
+
+.spectrum-SplitButton-action:focus, .spectrum-SplitButton-trigger:focus {
+    z-index: 1;
+  }
+
+.spectrum-SplitButton-action .spectrum-Button-label + .spectrum-Icon {
+    margin-left: var(--spectrum-global-dimension-size-150);
+  }
+
+.spectrum-SplitButton--left .spectrum-SplitButton-action {
+    border-radius: 0 var(--spectrum-button-primary-border-radius, var(--spectrum-alias-border-radius-large)) var(--spectrum-button-primary-border-radius, var(--spectrum-alias-border-radius-large)) 0;
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+.spectrum-SplitButton--left .spectrum-SplitButton-action.spectrum-Button--cta {
+      border-left: 0;
+      margin-left: var(--spectrum-button-primary-border-size, var(--spectrum-alias-border-size-thick));
+    }
+
+.spectrum-SplitButton--left .spectrum-SplitButton-trigger {
+    margin-right: 0;
+
+    border-radius: var(--spectrum-button-primary-border-radius, var(--spectrum-alias-border-radius-large)) 0 0 var(--spectrum-button-primary-border-radius, var(--spectrum-alias-border-radius-large));
+
+    border-left-width: var(--spectrum-button-primary-border-size, var(--spectrum-alias-border-size-thick));
+    border-right-width: 0;
+
+    padding-right: calc(var(--spectrum-global-dimension-size-150) * 0.66667);
+    padding-left: calc(var(--spectrum-global-dimension-size-150) - var(--spectrum-button-primary-border-size, var(--spectrum-alias-border-size-thick)));
+  }

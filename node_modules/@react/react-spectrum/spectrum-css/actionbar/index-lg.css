@@ -1,0 +1,54 @@
+.spectrum-ActionBar {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: center;
+      justify-content: center;
+
+  bottom: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  padding: 0 20px;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  transition: height 130ms ease-in-out,
+              opacity 130ms ease-in-out;
+}
+.spectrum-ActionBar.is-open {
+    height: 100px;
+    opacity: 1;
+  }
+.spectrum-ActionBar--sticky {
+  left: 0;
+  right: 0;
+  position: -webkit-sticky;
+  position: sticky;
+}
+.spectrum-ActionBar--flexible .spectrum-ActionBar-popover {
+    width: auto;
+  }
+.spectrum-ActionBar--fixed {
+   position: fixed;
+}
+.spectrum-ActionBar-popover {
+  position: relative;
+
+  box-sizing: border-box;
+  width: 100%;
+  margin: auto;
+  height: 60px;
+  min-width: 280px;
+  max-width: 960px;
+  padding: 0 20px;
+
+  -ms-flex-direction: row;
+
+      flex-direction: row;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+  pointer-events: auto;
+}

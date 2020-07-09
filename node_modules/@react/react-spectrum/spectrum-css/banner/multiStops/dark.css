@@ -1,0 +1,12 @@
+.spectrum--dark .spectrum-Banner {
+  color: rgb(255, 255, 255);
+}
+.spectrum--dark .spectrum-Banner--info {
+  background-color: rgb(55, 142, 240);
+}
+.spectrum--dark .spectrum-Banner--warning {
+  background-color: rgb(242, 148, 35);
+}
+.spectrum--dark .spectrum-Banner--error {
+  background-color: rgb(236, 91, 98);
+}

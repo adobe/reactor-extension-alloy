@@ -1,0 +1,6 @@
+.spectrum--dark .spectrum-QuickActions-overlay {
+  background-color: rgba(0,0,0,0.2);
+}
+.spectrum--dark .spectrum-QuickActions {
+  background-color: rgba(50,50,50,0.9);
+}

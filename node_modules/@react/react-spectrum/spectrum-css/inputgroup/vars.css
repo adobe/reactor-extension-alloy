@@ -1,0 +1,21 @@
+
+.spectrum-InputGroup,
+.spectrum-Datepicker {
+  --spectrum-alias-single-line-width: var(--spectrum-global-dimension-size-2400);
+  --spectrum-dropdown-padding-x: var(--spectrum-global-dimension-size-150);
+  --spectrum-combobox-fieldbutton-border-top-left-radius: 0;
+  --spectrum-combobox-fieldbutton-border-bottom-left-radius: 0;
+  --spectrum-combobox-textfield-border-top-right-radius: 0;
+  --spectrum-combobox-textfield-border-bottom-right-radius: 0;
+  --spectrum-textfield-quiet-affixed-border-size: var(--spectrum-global-dimension-static-size-10);
+  --spectrum-textfield-height: var(--spectrum-alias-single-line-height);
+  --spectrum-textfield-border-color-key-focus: var(--spectrum-alias-border-color-focus);
+  --spectrum-textfield-border-color-hover: var(--spectrum-global-color-gray-400);
+  --spectrum-dropdown-border-color-key-focus: var(--spectrum-alias-border-color-focus);
+  --spectrum-dropdown-border-color-error: var(--spectrum-global-color-red-500);
+  --spectrum-textfield-quiet-border-color: var(--spectrum-global-color-gray-300);
+  --spectrum-textfield-quiet-border-color-hover: var(--spectrum-global-color-gray-400);
+  --spectrum-textfield-border-color-error: var(--spectrum-global-color-red-500);
+  --spectrum-textfield-quiet-border-color-key-focus: var(--spectrum-alias-border-color-focus);
+  --spectrum-textfield-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+}

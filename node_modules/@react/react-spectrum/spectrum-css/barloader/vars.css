@@ -1,0 +1,26 @@
+
+.spectrum-BarLoader {
+  --spectrum-barloader-large-width: var(--spectrum-global-dimension-size-2400);
+  --spectrum-barloader-large-height: var(--spectrum-global-dimension-size-75);
+  --spectrum-barloader-large-border-radius: undefined;
+  --spectrum-fieldlabel-text-size: var(--spectrum-global-dimension-font-size-75);
+  --spectrum-fieldlabel-text-font-weight: var(--spectrum-global-font-weight-regular);
+  --spectrum-fieldlabel-text-line-height: var(--spectrum-global-font-line-height-small);
+  --spectrum-barloader-large-label-gap-y: var(--spectrum-global-dimension-size-115);
+  --spectrum-barloader-small-label-gap-x: var(--spectrum-global-dimension-size-150);
+  --spectrum-barloader-large-label-gap-x: var(--spectrum-global-dimension-size-150);
+  --spectrum-barloader-small-width: var(--spectrum-global-dimension-size-2400);
+  --spectrum-barloader-small-height: var(--spectrum-global-dimension-size-50);
+  --spectrum-barloader-small-border-radius: undefined;
+  --spectrum-barloader-large-indeterminate-fill-width: var(--spectrum-global-dimension-size-1700);
+  --spectrum-barloader-large-indeterminate-duration: var(--spectrum-global-animation-duration-2000);
+  --spectrum-barloader-large-indeterminate-animation-ease: var(--spectrum-global-animation-ease-in-out);
+  --spectrum-barloader-large-track-fill-color: var(--spectrum-global-color-blue-500);
+  --spectrum-barloader-large-track-color: var(--spectrum-alias-track-color-default);
+  --spectrum-barloader-large-over-background-track-fill-color: var(--spectrum-global-color-static-white);
+  --spectrum-barloader-large-over-background-track-color: var(--spectrum-alias-track-color-over-background);
+  --spectrum-meter-large-track-color-positive: var(--spectrum-semantic-positive-color-status);
+  --spectrum-meter-large-track-color-warning: var(--spectrum-semantic-notice-color-status);
+  --spectrum-meter-large-track-color-critical: var(--spectrum-semantic-negative-color-status);
+  --spectrum-fieldlabel-text-color: var(--spectrum-alias-label-text-color);
+}

@@ -1,0 +1,10 @@
+.spectrum--lightest .spectrum-Asset-folderBackground {
+  fill: rgb(234, 234, 234);
+}
+.spectrum--lightest .spectrum-Asset-fileBackground {
+  fill: rgb(255, 255, 255);
+}
+.spectrum--lightest .spectrum-Asset-folderOutline,
+.spectrum--lightest .spectrum-Asset-fileOutline {
+  fill: rgb(188, 188, 188);
+}

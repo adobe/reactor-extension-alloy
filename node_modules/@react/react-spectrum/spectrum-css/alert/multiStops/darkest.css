@@ -1,0 +1,40 @@
+.spectrum--darkest .spectrum-Alert {
+  background-color: rgb(8, 8, 8);
+  color: rgb(162, 162, 162);
+}
+.spectrum--darkest .spectrum-Alert-header {
+  color: rgb(239, 239, 239);
+}
+.spectrum--darkest .spectrum-Alert-content {
+  color: rgb(162, 162, 162);
+}
+.spectrum--darkest .spectrum-Alert--info {
+  border-color: rgb(20, 115, 230);
+}
+.spectrum--darkest .spectrum-Alert--info .spectrum-Alert-icon {
+    color: rgb(55, 142, 240);
+  }
+.spectrum--darkest .spectrum-Alert--help {
+  border-color: rgb(20, 115, 230);
+}
+.spectrum--darkest .spectrum-Alert--help .spectrum-Alert-icon {
+    color: rgb(55, 142, 240);
+  }
+.spectrum--darkest .spectrum-Alert--error {
+  border-color: rgb(215, 55, 63);
+}
+.spectrum--darkest .spectrum-Alert--error .spectrum-Alert-icon {
+    color: rgb(236, 91, 98);
+  }
+.spectrum--darkest .spectrum-Alert--success {
+  border-color: rgb(38, 142, 108);
+}
+.spectrum--darkest .spectrum-Alert--success .spectrum-Alert-icon {
+    color: rgb(51, 171, 132);
+  }
+.spectrum--darkest .spectrum-Alert--warning {
+  border-color: rgb(218, 123, 17);
+}
+.spectrum--darkest .spectrum-Alert--warning .spectrum-Alert-icon {
+    color: rgb(242, 148, 35);
+  }

@@ -1,0 +1,22 @@
+.spectrum--lightest .spectrum-Dropzone {
+  border-color: rgb(234, 234, 234);
+}
+.spectrum--lightest .spectrum-Dropzone.is-dragged {
+    border-color: rgb(55, 142, 240);
+    background-color: rgba(38,128,235,0.1);
+  }
+.spectrum--lightest .spectrum-Dropzone.is-dragged .spectrum-IllustratedMessage-illustration {
+      color: rgb(55, 142, 240);
+    }
+.spectrum--lightest .spectrum-Dropzone:focus {
+    border-color: rgb(234, 234, 234);
+  }
+.spectrum--lightest .spectrum-Dropzone:focus .spectrum-IllustratedMessage-illustration {
+      color: rgb(188, 188, 188);
+    }
+.spectrum--lightest .spectrum-Dropzone:focus.focus-ring {
+      border-color: rgb(55, 142, 240);
+    }
+.spectrum--lightest .spectrum-Dropzone:focus.is-dragged.focus-ring .spectrum-IllustratedMessage-illustration {
+        color: rgb(55, 142, 240);
+      }

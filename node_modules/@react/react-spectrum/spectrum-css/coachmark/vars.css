@@ -1,0 +1,43 @@
+
+.spectrum-CoachMarkPopover,
+.spectrum-CoachMarkIndicator {
+  --spectrum-coachmark-animation-indicator-keyframe-0-scale: 1;
+  --spectrum-coachmark-animation-indicator-keyframe-0-opacity: 0;
+  --spectrum-coachmark-animation-indicator-keyframe-50-scale: 1.5;
+  --spectrum-coachmark-animation-indicator-keyframe-50-opacity: 1;
+  --spectrum-coachmark-animation-indicator-keyframe-100-scale: 2;
+  --spectrum-coachmark-animation-indicator-keyframe-100-opacity: 0;
+  --spectrum-coachmark-quiet-animation-indicator-keyframe-0-scale: 0.8;
+  --spectrum-coachmark-min-width: var(--spectrum-global-dimension-size-3400);
+  --spectrum-coachmark-max-width: var(--spectrum-global-dimension-size-5000);
+  --spectrum-coachmark-border-radius: var(--spectrum-global-dimension-size-50);
+  --spectrum-coachmark-border-size: var(--spectrum-alias-border-size-thin);
+  --spectrum-coachmark-padding-x: var(--spectrum-global-dimension-size-300);
+  --spectrum-coachmark-padding-y: var(--spectrum-global-dimension-size-300);
+  --spectrum-coachmark-title-margin-bottom: var(--spectrum-global-dimension-size-200);
+  --spectrum-coachmark-title-text-size: var(--spectrum-global-dimension-font-size-200);
+  --spectrum-coachmark-title-text-font-weight: var(--spectrum-global-font-weight-bold);
+  --spectrum-coachmark-title-text-line-height: var(--spectrum-alias-heading-text-line-height);
+  --spectrum-coachmark-step-text-size: var(--spectrum-global-dimension-font-size-100);
+  --spectrum-coachmark-step-text-font-weight: var(--spectrum-global-font-weight-regular);
+  --spectrum-coachmark-step-text-line-height: var(--spectrum-alias-body-text-line-height);
+  --spectrum-coachmark-content-margin-bottom: var(--spectrum-global-dimension-size-200);
+  --spectrum-coachmark-indicator-gap: var(--spectrum-global-dimension-size-75);
+  --spectrum-coachmark-indicator-ring-border-size: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-coachmark-animation-indicator-ring-duration: 3000ms;
+  --spectrum-coachmark-animation-inticator-ring-center-delay-multiple: -0.66;
+  --spectrum-coachmark-animation-inticator-ring-outer-delay-multiple: -1;
+  --spectrum-coachmark-indicator-ring-diameter: var(--spectrum-global-dimension-size-200);
+  --spectrum-coachmark-animation-inticator-ring-inner-delay-multiple: -0.5;
+  --spectrum-coachmark-quiet-indicator-ring-diameter: var(--spectrum-global-dimension-size-100);
+  --spectrum-coachmark-quiet-animation-inticator-ring-inner-delay-multiple: -0.33;
+  --spectrum-coachmark-background-color: var(--spectrum-global-color-gray-50);
+  --spectrum-coachmark-border-color: var(--spectrum-alias-border-color-dark);
+  --spectrum-coachmark-shadow-color: var(--spectrum-alias-dropshadow-color);
+  --spectrum-coachmark-title-text-color: var(--spectrum-alias-title-text-color);
+  --spectrum-coachmark-step-text-color: var(--spectrum-alias-label-text-color);
+  --spectrum-coachmark-content-text-color: var(--spectrum-alias-text-color);
+  --spectrum-coachmark-indicator-ring-default-color: var(--spectrum-alias-focus-color);
+  --spectrum-coachmark-indicator-ring-low-contrast-color: var(--spectrum-global-color-gray-50);
+  --spectrum-coachmark-indicator-ring-high-contrast-color: var(--spectrum-global-color-gray-900);
+}

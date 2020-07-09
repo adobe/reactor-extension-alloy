@@ -1,0 +1,13 @@
+.spectrum-Avatar {
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50%;
+  border-style: none;
+
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}

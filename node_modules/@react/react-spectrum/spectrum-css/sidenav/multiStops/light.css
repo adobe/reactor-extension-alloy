@@ -1,0 +1,35 @@
+.spectrum--light .spectrum-SideNav-item.is-selected > .spectrum-SideNav-itemLink {
+      color: rgb(44, 44, 44);
+      background-color: rgba(44,44,44,0.06);
+    }
+.spectrum--light .spectrum-SideNav-item .is-active > .spectrum-SideNav-itemLink {
+      background-color: rgba(44,44,44,0.06);
+    }
+.spectrum--light .spectrum-SideNav-item.is-disabled .spectrum-SideNav-itemLink {
+      background-color: transparent;
+      color: rgb(179, 179, 179);
+
+      cursor: default;
+      pointer-events: none;
+    }
+.spectrum--light .spectrum-SideNav-itemLink {
+  background-color: transparent;
+  color: rgb(75, 75, 75);
+}
+.spectrum--light .spectrum-SideNav-itemLink:hover {
+    background-color: rgba(44,44,44,0.06);
+    color: rgb(44, 44, 44);
+  }
+.spectrum--light .spectrum-SideNav-itemLink:active {
+    background-color: rgba(44,44,44,0.06);
+  }
+.spectrum--light .spectrum-SideNav-itemLink.focus-ring {
+    background-color: rgba(44,44,44,0.06);
+    color: rgb(44, 44, 44);
+  }
+.spectrum--light .spectrum-SideNav-itemLink.focus-ring::before {
+      border-color: rgb(38, 128, 235);
+    }
+.spectrum--light .spectrum-SideNav-heading {
+  color: rgb(110, 110, 110);
+}

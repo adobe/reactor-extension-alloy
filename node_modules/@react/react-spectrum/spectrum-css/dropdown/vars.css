@@ -1,0 +1,29 @@
+
+.spectrum-Dropdown {
+  --spectrum-dropdown-min-width: var(--spectrum-global-dimension-size-600);
+  --spectrum-dropdown-padding-x: var(--spectrum-global-dimension-size-150);
+  --spectrum-icon-chevron-down-medium-height: var(--spectrum-global-dimension-size-75);
+  --spectrum-dropdown-height: var(--spectrum-global-dimension-size-400);
+  --spectrum-dropdown-border-size: var(--spectrum-alias-border-size-thin);
+  --spectrum-dropdown-text-size: var(--spectrum-alias-font-size-default);
+  --spectrum-dropdown-placeholder-text-font-weight: var(--spectrum-global-font-weight-regular);
+  --spectrum-dropdown-placeholder-text-font-style: var(--spectrum-global-font-style-italic);
+  --spectrum-dropdown-icon-margin-left: var(--spectrum-global-dimension-size-150);
+  --spectrum-selectlist-thumbnail-image-padding-x: var(--spectrum-global-dimension-size-100);
+  --spectrum-dropdown-icon-size: var(--spectrum-alias-workflow-icon-size);
+  --spectrum-dropdown-icon-gap: var(--spectrum-global-dimension-size-100);
+  --spectrum-dropdown-quiet-min-width: var(--spectrum-global-dimension-size-600);
+  --spectrum-dropdown-quiet-popover-offset-x: var(--spectrum-global-dimension-size-150);
+  --spectrum-popover-border-size: var(--spectrum-alias-border-size-thin);
+  --spectrum-dropdown-icon-color-hover: var(--spectrum-alias-icon-color-hover);
+  --spectrum-dropdown-placeholder-text-color-down: var(--spectrum-global-color-gray-900);
+  --spectrum-dropdown-validation-icon-color-error: var(--spectrum-semantic-negative-color-icon);
+  --spectrum-dropdown-icon-color-disabled: var(--spectrum-alias-icon-color-disabled);
+  --spectrum-dropdown-placeholder-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-dropdown-icon-color: var(--spectrum-alias-icon-color);
+  --spectrum-dropdown-placeholder-text-color: var(--spectrum-alias-placeholder-text-color);
+  --spectrum-dropdown-placeholder-text-color-hover: var(--spectrum-alias-placeholder-text-color-hover);
+  --spectrum-dropdown-placeholder-text-color-mouse-focus: var(--spectrum-global-color-gray-900);
+  --spectrum-dropdown-placeholder-text-color-key-focus: var(--spectrum-alias-placeholder-text-color-hover);
+  --spectrum-dropdown-icon-color-key-focus: var(--spectrum-alias-icon-color-focus);
+}

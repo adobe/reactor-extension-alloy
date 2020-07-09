@@ -1,0 +1,9 @@
+
+.spectrum-ButtonGroup {
+  --spectrum-buttongroup-button-gap-x: var(--spectrum-global-dimension-static-size-200);
+  --spectrum-actionbuttongroup-text-button-gap-x: var(--spectrum-global-dimension-size-100);
+  --spectrum-toolgroup-text-button-gap-x: var(--spectrum-global-dimension-size-100);
+  --spectrum-buttongroup-button-gap-y: var(--spectrum-global-dimension-static-size-200);
+  --spectrum-actionbuttongroup-text-button-gap-y: var(--spectrum-global-dimension-size-100);
+  --spectrum-toolgroup-text-button-gap-y: var(--spectrum-global-dimension-size-100);
+}

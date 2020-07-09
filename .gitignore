@@ -1,4 +1,9 @@
-node_modules
+!/node_modules/
+/node_modules/*
+!/node_modules/@adobe/
+!/node_modules/
+/node_modules/*
+!/node_modules/@react/
 dist
 .cache
 coverage

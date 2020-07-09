@@ -1,0 +1,11 @@
+.spectrum--large .spectrum-Search-input {
+  padding-left: 36px;
+  padding-right: 28px;
+}
+.spectrum--large .spectrum-Search-input.spectrum-Textfield--quiet {
+    padding-left: 24px;
+    padding-right: 20px
+  }
+.spectrum--large .spectrum-Search-icon {
+  top: 10px;
+}

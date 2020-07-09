@@ -1,0 +1,45 @@
+.spectrum--darkest .spectrum-Rating.is-focused {
+    box-shadow: 0 0 0 2px rgb(20, 115, 230);
+  }
+.spectrum--darkest .spectrum-Rating:hover .spectrum-Rating-icon {
+      color: rgb(162, 162, 162);
+    }
+.spectrum--darkest .spectrum-Rating:hover .spectrum-Rating-icon:hover {
+        color: rgb(200, 200, 200);
+      }
+.spectrum--darkest .spectrum-Rating:hover .spectrum-Rating-icon:active {
+        color: rgb(239, 239, 239);
+      }
+.spectrum--darkest .spectrum-Rating:hover .spectrum-Rating-icon.is-currentValue:after {
+          background: currentColor;
+        }
+.spectrum--darkest .spectrum-Rating-icon {
+  color: rgb(162, 162, 162);
+}
+.spectrum--darkest .spectrum-Rating-icon.is-selected {
+    color: rgb(38, 128, 235);
+  }
+.spectrum--darkest .spectrum-Rating-icon:hover ~ .spectrum-Rating-icon {
+      color: rgb(162, 162, 162);
+    }
+.spectrum--darkest .spectrum-Rating--quiet .spectrum-Rating-icon {
+    color: rgb(162, 162, 162);
+  }
+.spectrum--darkest .spectrum-Rating--quiet .spectrum-Rating-icon.is-selected {
+      color: rgb(162, 162, 162);
+    }
+.spectrum--darkest .spectrum-Rating--quiet:hover .spectrum-Rating-icon {
+      color: rgb(162, 162, 162);
+    }
+.spectrum--darkest .spectrum-Rating--quiet:hover .spectrum-Rating-icon:hover {
+        color: rgb(200, 200, 200);
+      }
+.spectrum--darkest .spectrum-Rating--quiet:hover .spectrum-Rating-icon:active {
+        color: rgb(239, 239, 239);
+      }
+.spectrum--darkest .spectrum-Rating.is-disabled .spectrum-Rating-icon {
+      color: rgb(73, 73, 73);
+    }
+.spectrum--darkest .spectrum-Rating.is-disabled .spectrum-Rating-icon.is-selected {
+        color: rgb(73, 73, 73);
+      }

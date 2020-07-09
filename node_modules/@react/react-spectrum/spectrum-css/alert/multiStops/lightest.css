@@ -1,0 +1,40 @@
+.spectrum--lightest .spectrum-Alert {
+  background-color: rgb(255, 255, 255);
+  color: rgb(116, 116, 116);
+}
+.spectrum--lightest .spectrum-Alert-header {
+  color: rgb(50, 50, 50);
+}
+.spectrum--lightest .spectrum-Alert-content {
+  color: rgb(116, 116, 116);
+}
+.spectrum--lightest .spectrum-Alert--info {
+  border-color: rgb(55, 142, 240);
+}
+.spectrum--lightest .spectrum-Alert--info .spectrum-Alert-icon {
+    color: rgb(20, 115, 230);
+  }
+.spectrum--lightest .spectrum-Alert--help {
+  border-color: rgb(55, 142, 240);
+}
+.spectrum--lightest .spectrum-Alert--help .spectrum-Alert-icon {
+    color: rgb(20, 115, 230);
+  }
+.spectrum--lightest .spectrum-Alert--error {
+  border-color: rgb(236, 91, 98);
+}
+.spectrum--lightest .spectrum-Alert--error .spectrum-Alert-icon {
+    color: rgb(215, 55, 63);
+  }
+.spectrum--lightest .spectrum-Alert--success {
+  border-color: rgb(51, 171, 132);
+}
+.spectrum--lightest .spectrum-Alert--success .spectrum-Alert-icon {
+    color: rgb(38, 142, 108);
+  }
+.spectrum--lightest .spectrum-Alert--warning {
+  border-color: rgb(242, 148, 35);
+}
+.spectrum--lightest .spectrum-Alert--warning .spectrum-Alert-icon {
+    color: rgb(218, 123, 17);
+  }

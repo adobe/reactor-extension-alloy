@@ -1,0 +1,5 @@
+
+.spectrum-DecoratedTextfield {
+  --spectrum-textfield-icon-size: var(--spectrum-global-dimension-size-225);
+  --spectrum-textfield-icon-frame: undefined;
+}

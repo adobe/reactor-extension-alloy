@@ -1,0 +1,30 @@
+.spectrum--lightest .spectrum-Steplist .spectrum-Steplist-label {
+    color: rgb(149, 149, 149)
+  }
+.spectrum--lightest .spectrum-Steplist .spectrum-Steplist-marker {
+    border-color: rgb(234, 234, 234)
+  }
+.spectrum--lightest .spectrum-Steplist .spectrum-Steplist-segment {
+    border-bottom-color: rgb(234, 234, 234)
+  }
+.spectrum--lightest .spectrum-Steplist .spectrum-Steplist-item.is-complete .spectrum-Steplist-label {
+        color: rgb(116, 116, 116)
+      }
+.spectrum--lightest .spectrum-Steplist .spectrum-Steplist-item.is-complete .spectrum-Steplist-marker {
+        background-color: rgb(149, 149, 149)
+      }
+.spectrum--lightest .spectrum-Steplist .spectrum-Steplist-item.is-selected .spectrum-Steplist-label {
+        color: rgb(80, 80, 80)
+      }
+.spectrum--lightest .spectrum-Steplist .spectrum-Steplist-item.is-selected .spectrum-Steplist-marker {
+        background-color: rgb(80, 80, 80)
+      }
+.spectrum--lightest .spectrum-Steplist .spectrum-Steplist-item.is-complete .spectrum-Steplist-segment,
+.spectrum--lightest .spectrum-Steplist .spectrum-Steplist-item.is-selected .spectrum-Steplist-segment {
+        border-bottom-color: rgb(188, 188, 188)
+      }
+.spectrum--lightest .spectrum-Steplist.spectrum-Steplist--interactive .spectrum-Steplist-item:focus .spectrum-Steplist-marker,
+.spectrum--lightest .spectrum-Steplist.spectrum-Steplist--interactive .spectrum-Steplist-item.is-focused .spectrum-Steplist-marker,
+.spectrum--lightest .spectrum-Steplist.spectrum-Steplist--interactive .spectrum-Steplist-item *:focus .spectrum-Steplist-marker {
+          background-color: rgb(55, 142, 240)
+        }

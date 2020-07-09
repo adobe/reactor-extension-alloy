@@ -1,0 +1,16 @@
+
+.spectrum-CircleLoader {
+  --spectrum-loader-circle-medium-width: var(--spectrum-global-dimension-static-size-400);
+  --spectrum-loader-circle-medium-height: var(--spectrum-global-dimension-static-size-400);
+  --spectrum-loader-circle-medium-border-size: undefined;
+  --spectrum-loader-circle-small-width: var(--spectrum-global-dimension-static-size-200);
+  --spectrum-loader-circle-small-height: var(--spectrum-global-dimension-static-size-200);
+  --spectrum-loader-circle-small-border-size: undefined;
+  --spectrum-loader-circle-large-width: var(--spectrum-global-dimension-size-800);
+  --spectrum-loader-circle-large-height: var(--spectrum-global-dimension-size-800);
+  --spectrum-loader-circle-large-border-size: var(--spectrum-global-dimension-size-50);
+  --spectrum-loader-circle-medium-track-color: var(--spectrum-alias-track-color-default);
+  --spectrum-loader-circle-medium-track-fill-color: var(--spectrum-global-color-blue-500);
+  --spectrum-loader-circle-medium-over-background-track-color: var(--spectrum-alias-track-color-over-background);
+  --spectrum-loader-circle-medium-over-background-track-fill-color: var(--spectrum-global-color-static-white);
+}

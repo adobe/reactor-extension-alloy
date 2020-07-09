@@ -1,0 +1,7 @@
+
+.spectrum-DropIndicator {
+  --spectrum-dropindicator-circle-size: var(--spectrum-global-dimension-static-size-150);
+  --spectrum-dropindicator-border-size: var(--spectrum-alias-border-size-thick);
+  --spectrum-dropindicator-border-color: var(--spectrum-global-color-blue-400);
+  --spectrum-dropindicator-circle-border-color: var(--spectrum-global-color-blue-400);
+}

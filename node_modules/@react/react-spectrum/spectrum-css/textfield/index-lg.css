@@ -1,0 +1,105 @@
+.spectrum-Textfield {
+  box-sizing: border-box;
+  border: 1px solid;
+  border-radius: 5px;
+  padding: 3px 15px 5px 15px;
+  text-indent: 0;
+
+  min-width: 60px;
+  height: 40px;
+  width: 240px;
+
+  vertical-align: top;
+  margin: 0;
+  overflow: visible;
+  font-family: adobe-clean, Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+
+  transition: border-color 130ms ease-in-out, box-shadow 130ms ease-in-out;
+
+  outline: none;
+
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+.spectrum-Textfield::placeholder {
+    font-weight: 400;
+    font-style: italic;
+    transition: color 130ms ease-in-out;
+    opacity: 1;
+  }
+.spectrum-Textfield::-ms-input-placeholder {
+    font-weight: 400;
+    font-style: italic;
+    transition: color 130ms ease-in-out;
+    opacity: 1;
+  }
+.spectrum-Textfield:lang(ja)::placeholder, .spectrum-Textfield:lang(zh)::placeholder, .spectrum-Textfield:lang(ko)::placeholder {
+       font-style: normal;
+    }
+.spectrum-Textfield:lang(ja)::-ms-input-placeholder, .spectrum-Textfield:lang(zh)::-ms-input-placeholder, .spectrum-Textfield:lang(ko)::-ms-input-placeholder {
+       font-style: normal;
+    }
+.spectrum-Textfield:hover::placeholder {
+      font-weight: 400;
+    }
+.spectrum-Textfield:disabled {
+    opacity: 1;
+  }
+.spectrum-Textfield:disabled::placeholder {
+      font-weight: 400;
+    }
+.spectrum-Textfield::-ms-clear {
+    width: 0;
+    height: 0;
+  }
+.spectrum-Textfield::-webkit-inner-spin-button,
+  .spectrum-Textfield::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+.spectrum-Textfield:-moz-ui-invalid {
+    box-shadow: none;
+  }
+.spectrum-Textfield.is-invalid,
+  .spectrum-Textfield:invalid,
+  .spectrum-Textfield.is-valid {
+    background-repeat: no-repeat;
+  }
+.spectrum-Textfield.is-invalid,
+  .spectrum-Textfield:invalid {
+    background-size: 22px 22px;
+    background-position: calc(100% - 15px) 50%;
+    padding-right: 52px;
+  }
+.spectrum-Textfield.is-valid {
+    background-size: 16px 16px;
+    background-position: calc(100% - 15px) 50%;
+    padding-right: 46px;
+  }
+.spectrum-Textfield--multiline {
+  height: auto;
+  min-height: 70px;
+  padding: 3px 15px 5px 15px;
+  overflow: auto;
+}
+.spectrum-Textfield--multiline.is-invalid,
+  .spectrum-Textfield--multiline:invalid,
+  .spectrum-Textfield--multiline.is-valid {
+    background-position: calc(100% - 11px) calc(100% - 11px);
+  }
+.spectrum-Textfield--quiet {
+  border-radius: 0;
+  border-width: 0 0 1px 0;
+  padding-left: 0;
+  padding-right: 0;
+  resize: none;
+  overflow-y: hidden;
+}
+.spectrum-Textfield--quiet.is-invalid,
+  .spectrum-Textfield--quiet:invalid,
+  .spectrum-Textfield--quiet.is-valid {
+    background-position: 100% 50%;
+  }

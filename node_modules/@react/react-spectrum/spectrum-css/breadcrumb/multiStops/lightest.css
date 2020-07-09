@@ -1,0 +1,40 @@
+.spectrum--lightest .spectrum-Breadcrumbs-item {
+  color: rgb(116, 116, 116);
+}
+.spectrum--lightest .spectrum-Breadcrumbs-item.is-dragged .spectrum-Breadcrumbs-itemLink {
+      color: rgb(50, 50, 50);
+      background-color: rgba(38,128,235,0.1);
+    }
+.spectrum--lightest .spectrum-Breadcrumbs-item.is-dragged .spectrum-Breadcrumbs-itemLink:before {
+        border-color: rgb(38, 128, 235);
+      }
+.spectrum--lightest .spectrum-Breadcrumbs-item .spectrum-Breadcrumbs-itemSeparator {
+    color: rgb(188, 188, 188);
+  }
+.spectrum--lightest .spectrum-Breadcrumbs-item .spectrum-Breadcrumbs-itemLink {
+    color: inherit;
+  }
+.spectrum--lightest .spectrum-Breadcrumbs-item .spectrum-Breadcrumbs-itemLink:hover {
+      color: rgb(50, 50, 50);
+    }
+.spectrum--lightest .spectrum-Breadcrumbs-item .spectrum-Breadcrumbs-itemLink.focus-ring {
+      color: rgb(50, 50, 50);
+    }
+.spectrum--lightest .spectrum-Breadcrumbs-item .spectrum-Breadcrumbs-itemLink.focus-ring:before {
+        border-color: rgb(55, 142, 240);
+      }
+.spectrum--lightest .spectrum-Breadcrumbs-item .spectrum-Breadcrumbs-itemLink:active {
+      color: rgb(50, 50, 50);
+      border-bottom: 0;
+    }
+.spectrum--lightest .spectrum-Breadcrumbs-item.is-selected,
+.spectrum--lightest .spectrum-Breadcrumbs-item:last-of-type {
+    color: rgb(50, 50, 50);
+  }
+.spectrum--lightest .spectrum-Breadcrumbs-item.is-selected ~ .spectrum-Breadcrumb:last-of-type {
+        color: rgb(116, 116, 116);
+      }
+.spectrum--lightest .spectrum-Breadcrumbs-item.is-selected .spectrum-Breadcrumbs-itemLink.focus-ring {
+        color: rgb(50, 50, 50);
+        border-bottom: 0;
+      }

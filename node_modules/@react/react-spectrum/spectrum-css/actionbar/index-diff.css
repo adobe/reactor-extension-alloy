@@ -1,0 +1,15 @@
+.spectrum--large .spectrum-ActionBar {
+  padding: 0 20px;
+
+  transition: height 130ms ease-in-out,
+              opacity 130ms ease-in-out;
+}
+.spectrum--large .spectrum-ActionBar.is-open {
+    height: 100px;
+  }
+.spectrum--large .spectrum-ActionBar-popover {
+  height: 60px;
+  min-width: 280px;
+  max-width: 960px;
+  padding: 0 20px;
+}

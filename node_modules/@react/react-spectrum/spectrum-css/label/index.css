@@ -1,0 +1,27 @@
+.spectrum-Label {
+  display: inline-block;
+  position: relative;
+
+  width: auto;
+
+  padding: 4px 10px;
+
+  border-radius: 4px;
+
+  font-size: 12px;
+  line-height: 1.5;
+
+  cursor: default;
+
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+  font-smoothing: subpixel-antialiased;
+}
+.spectrum-Label--large {
+  font-size: 14px;
+  padding: 8px 12px;
+}
+.spectrum-Label--small {
+  font-size: 11px;
+  padding: 3px 7px;
+}

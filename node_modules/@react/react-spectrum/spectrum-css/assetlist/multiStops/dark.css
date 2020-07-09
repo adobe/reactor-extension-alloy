@@ -1,0 +1,25 @@
+.spectrum--dark .spectrum-AssetList-item:hover {
+    background-color: rgb(62, 62, 62);
+  }
+.spectrum--dark .spectrum-AssetList-item:focus.focus-ring,
+.spectrum--dark .spectrum-AssetList-item:focus.is-focused {
+      background-color: rgb(62, 62, 62);
+    }
+.spectrum--dark .spectrum-AssetList-item:focus.focus-ring::before,
+.spectrum--dark .spectrum-AssetList-item:focus.is-focused::before {
+        box-shadow: 0px 0px 0px 2px rgb(38, 128, 235) inset;
+      }
+.spectrum--dark .spectrum-AssetList-item.is-navigated {
+    background-color: rgb(74, 74, 74);
+  }
+.spectrum--dark .spectrum-AssetList-item.is-navigated:hover,
+.spectrum--dark .spectrum-AssetList-item.is-navigated:focus {
+      background-color: rgb(74, 74, 74);
+    }
+.spectrum--dark .spectrum-AssetList-item.is-selected {
+    background-color: rgba(55,142,240,0.1);
+  }
+.spectrum--dark .spectrum-AssetList-item.is-selected:hover,
+.spectrum--dark .spectrum-AssetList-item.is-selected:focus {
+      background-color: rgba(55,142,240,0.2);
+    }

@@ -1,0 +1,152 @@
+.spectrum--large .spectrum-Site-header {
+  height: 60px;
+  padding: 10px;
+}
+.spectrum--large .spectrum-Site-sideBarHeader {
+
+  padding: 40px;
+}
+.spectrum--large .spectrum-Site-search {
+  padding: 0 40px 40px 40px;
+}
+.spectrum--large .spectrum-Site-noSearchResults {
+  padding: 40px 40px 40px;
+}
+.spectrum--large .spectrum-Site-logo {
+  margin-right: 18px;
+}
+.spectrum--large .spectrum-Site-nav {
+
+  padding: 0px 24px 40px;
+}
+.spectrum--large .spectrum-Site-bottomNav {
+  margin-top: 80px;
+}
+@media screen and (max-width: 960px) {
+  .spectrum--large .spectrum-Site-overlay {
+    transition: opacity 160ms ease-out 0ms,
+                visibility 0ms linear 160ms;
+  }
+
+  .spectrum--large .spectrum-Site-overlay.is-open {
+    transition: opacity 160ms ease-in 0ms;
+  }
+
+  .spectrum--large .spectrum-Site-sideBar {
+    transition: transform 160ms ease-in-out;
+  }
+
+  .spectrum--large .spectrum-Site-page {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .spectrum--large .spectrum-Site-heroHeading h1.spectrum-Heading1--display {
+    font-size: 44px;
+  }
+}
+.spectrum--large .spectrum-CSSComponent {
+  max-width: 1080px;
+  margin: 50px auto;
+  padding: 0 70px;
+}
+.spectrum--large .spectrum-CSSComponent-heading {
+  margin-bottom: 50px;
+}
+.spectrum--large .spectrum-CSSComponent-statusContainer {
+  margin: 0 20px;
+}
+.spectrum--large .spectrum-CSSComponent-detailsTable th {
+  height: 35px;
+  font-weight: 400;
+  padding-right: 30px;
+}
+.spectrum--large .spectrum-CSSComponent-detailsTable {
+  margin-top: 50px;
+  margin-bottom: 45px;
+}
+.spectrum--large .spectrum-CSSComponent-sectionHeading {
+  margin-top: 70px;
+  margin-bottom: 50px;
+}
+.spectrum--large .spectrum-CSSExample-status {
+  margin-left: 20px;
+}
+.spectrum--large .spectrum-CSSComponent-description {
+  margin-top: 30px;
+  margin-bottom: 112px;
+}
+.spectrum--large .spectrum-CSSComponent-resources {
+  margin-bottom: 70px;
+}
+.spectrum--large .spectrum-CSSComponent-resources .spectrum-Card {
+  margin-right: 30px;
+  margin-bottom: 30px;
+}
+.spectrum--large .spectrum-CSS-switcherContainer {
+  margin-left: 40px;
+}
+.spectrum--large .spectrum-CSSExample {
+  margin-bottom: 80px;
+}
+.spectrum--large .spectrum-CSSExample-container {
+
+  border-radius: 5px;
+}
+.spectrum--large .spectrum-CSSExample-heading {
+  margin-bottom: 10px !important;
+}
+.spectrum--large .spectrum-CSSExample-example {
+
+  min-height: --spectrum-global-dimension-size-2400;
+
+  padding: 40px 50px;
+
+  border-radius: 5px 5px 0 0;
+}
+.spectrum--large .spectrum-CSSExample-markup {
+  max-height: 240px;
+
+  padding: 13px 22px;
+
+  border-radius: 0 0 5px 5px;
+
+  font-size: 12px;
+}
+.spectrum--large .spectrum-CSSExample-markup.is-open {
+
+  padding-bottom: 70px;
+}
+.spectrum--large .spectrum-CSSExample-markupToggle + pre {
+  padding-bottom: 10px;
+}
+.spectrum--large .spectrum-CSSExample-markupToggle {
+  padding: 30px 30px;
+
+  font-size: 18px
+}
+@media screen and (max-width: 960px) {
+  .spectrum--large .spectrum-CSSComponent {
+    padding: 0 25px;
+    margin: 10px auto;
+  }
+
+  .spectrum--large .spectrum-CSSComponent-description {
+    margin-bottom: 15px;
+  }
+
+  .spectrum--large .spectrum-CSSExample {
+    margin-bottom: 20px;
+  }
+
+  .spectrum--large .spectrum-CSSExample-example {
+    padding: 20px 20px;
+  }
+
+  .spectrum--large .spectrum-CSSComponent-header {
+    margin-bottom: 15px;
+  }
+  .spectrum--large .spectrum-CSSComponent-title {
+    font-size: 34px;
+  }
+}

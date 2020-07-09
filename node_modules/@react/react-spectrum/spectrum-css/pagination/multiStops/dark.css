@@ -1,0 +1,10 @@
+.spectrum--dark .spectrum-Pagination-pageButton:hover {
+    background-color: rgba(255,255,255,0.06);
+  }
+.spectrum--dark .spectrum-Pagination-pageButton:focus {
+    border-color: rgb(38, 128, 235);
+  }
+.spectrum--dark .spectrum-Pagination-pageButton.is-selected {
+    background-color: rgb(227, 227, 227);
+    color: rgb(255, 255, 255);
+  }

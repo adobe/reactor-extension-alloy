@@ -1,0 +1,15 @@
+.spectrum--dark .spectrum-Popover {
+  background-color: rgb(37, 37, 37);
+  border-color: rgb(90, 90, 90);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+.spectrum--dark .spectrum-Popover .spectrum-Dialog-header,
+.spectrum--dark .spectrum-Popover .spectrum-Dialog-footer,
+.spectrum--dark .spectrum-Popover .spectrum-Dialog-wrapper {
+    background-color: transparent;
+  }
+.spectrum--dark .spectrum-Popover .spectrum-Popover-tip::after {
+    background-color: rgb(37, 37, 37);
+    border-color: rgb(90, 90, 90);
+    box-shadow: -1px -1px 4px rgba(0,0,0,0.5);
+  }

@@ -1,0 +1,4 @@
+
+.spectrum-MillerColumns {
+  --spectrum-miller-column-width: var(--spectrum-global-dimension-static-size-3400);
+}

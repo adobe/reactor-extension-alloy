@@ -1,0 +1,109 @@
+.spectrum-TreeView {
+  display: block;
+  list-style: none;
+  position: relative;
+  padding: 0;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  outline: none;
+}
+.spectrum-TreeView-item {
+  overflow: hidden;
+}
+.spectrum-TreeView-item.is-open > .spectrum-TreeView-itemLink > .spectrum-TreeView-indicator {
+      transform: rotate(90deg);
+    }
+.spectrum-TreeView-item.is-open > .spectrum-TreeView {
+      height: auto;
+      visibility: visible;
+    }
+.spectrum-TreeView-itemLink {
+  display: block;
+  box-sizing: border-box;
+  cursor: pointer;
+
+  padding: 12px 30px;
+
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spectrum-TreeView-itemLink:focus {
+    outline: none;
+  }
+.spectrum-TreeView-itemLink .spectrum-Icon {
+    vertical-align: top;
+    margin-right: 10px;
+  }
+.spectrum-TreeView-itemLink::before {
+    content: '';
+
+    position: absolute;
+    left: 2px;
+    right: 0;
+    z-index: -1;
+    margin-top: -8px;
+
+    height: 45px;
+
+    background-color: transparent;
+
+    border-radius: 5px;
+  }
+.spectrum-TreeView-indicator {
+  display: block;
+
+  float: left;
+  position: relative;
+
+  left: 13px;
+  top: -6px;
+  margin-left: -42px;
+  margin-bottom: -13px;
+
+  padding: 13px;
+
+  transition: transform ease 130ms;
+
+  pointer-events: all !important;
+}
+.spectrum-TreeView .spectrum-TreeView {
+  position: static;
+
+  padding-left: 35px;
+  height: 0;
+  visibility: hidden;
+}
+.spectrum-TreeView-item--indent1 {
+  padding-left: 35px;
+}
+.spectrum-TreeView-item--indent2 {
+  padding-left: 70px;
+}
+.spectrum-TreeView-item--indent3 {
+  padding-left: 105px;
+}
+.spectrum-TreeView-item--indent4 {
+  padding-left: 140px;
+}
+.spectrum-TreeView-item--indent5 {
+  padding-left: 175px;
+}
+.spectrum-TreeView-item--indent6 {
+  padding-left: 210px;
+}
+.spectrum-TreeView-item--indent7 {
+  padding-left: 245px;
+}
+.spectrum-TreeView-item--indent8 {
+  padding-left: 280px;
+}
+.spectrum-TreeView-item--indent9 {
+  padding-left: 315px;
+}
+.spectrum-TreeView-item--indent10 {
+  padding-left: 350px;
+}

@@ -1,0 +1,33 @@
+.spectrum-Link {
+  background-color: transparent;
+  -webkit-text-decoration-skip: objects;
+  text-decoration: none;
+  transition: color 130ms ease-in-out;
+  outline: none;
+}
+.spectrum-Link:hover {
+    text-decoration: underline;
+  }
+.spectrum-Link.focus-ring {
+    text-decoration: underline;
+  }
+.spectrum-Link.focus-ring {
+    text-decoration: underline;
+    -webkit-text-decoration-style: double;
+            text-decoration-style: double;
+  }
+.spectrum-Link.is-disabled {
+    cursor: default;
+    pointer-events: none;
+  }
+.spectrum-Link.is-disabled:hover,
+    .spectrum-Link.is-disabled:focus {
+      text-decoration: none;
+    }
+.spectrum-Link--subtle,
+/** @deprecated */.spectrum-Link--quiet {
+  text-decoration: underline;
+}
+.spectrum-Link--overBackground {
+  text-decoration: underline;
+}

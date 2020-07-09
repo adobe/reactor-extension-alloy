@@ -1,0 +1,6 @@
+.spectrum--darkest .spectrum-Avatar {
+  opacity: 1;
+}
+.spectrum--darkest .spectrum-Avatar.is-disabled {
+    opacity: 0.3;
+  }

@@ -1,0 +1,47 @@
+.spectrum--darkest .spectrum-Site {
+  background-color: rgb(8, 8, 8);
+}
+.spectrum--darkest .spectrum-Site-header {
+  border-bottom-color: rgb(57, 57, 57);
+  background-color: rgb(8, 8, 8);
+}
+.spectrum--darkest .spectrum-Site-sideBar {
+  background-color: rgb(26, 26, 26);
+}
+.spectrum--darkest .spectrum-Site-mainContainer {
+  background: rgb(8, 8, 8);
+}
+.spectrum--darkest .spectrum-Site-overlay {
+  background: rgba(0, 0, 0, 0.2);
+}
+.spectrum--darkest .u-scrollable::-webkit-scrollbar-track,
+.spectrum--darkest .u-scrollable::-webkit-scrollbar-track-piece {
+  background: rgb(26, 26, 26);
+}
+.spectrum--darkest .u-scrollable::-webkit-scrollbar-thumb {
+  background-color: rgb(26, 26, 26);
+}
+.spectrum--darkest .u-scrollable:hover::-webkit-scrollbar-thumb {
+  background-color: rgb(73, 73, 73);
+}
+.spectrum--darkest .spectrum-CSSExample-example {
+  background-color: rgb(30, 30, 30);
+  background-color: rgb(30, 30, 30);
+}
+.spectrum--darkest .spectrum-CSSExample-markup {
+  border-top: 1px solid rgb(30, 30, 30);
+
+  background: rgb(26, 26, 26);
+}
+.spectrum--darkest .spectrum-CSSExample-markupToggle {
+  z-index: 1;
+
+  background: rgb(26, 26, 26);
+}
+.spectrum--darkest .spectrum-CSSExample-markup.is-open .spectrum-CSSExample-markupToggle {
+  background-color: transparent;
+}
+.spectrum--darkest .spectrum-CSSExample-example--overlay {
+  background: rgba(0,0,0,0.4);
+  color: rgba(0,0,0,0.4);
+}

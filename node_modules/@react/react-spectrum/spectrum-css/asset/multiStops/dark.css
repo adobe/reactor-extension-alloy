@@ -1,0 +1,10 @@
+.spectrum--dark .spectrum-Asset-folderBackground {
+  fill: rgb(74, 74, 74);
+}
+.spectrum--dark .spectrum-Asset-fileBackground {
+  fill: rgb(37, 37, 37);
+}
+.spectrum--dark .spectrum-Asset-folderOutline,
+.spectrum--dark .spectrum-Asset-fileOutline {
+  fill: rgb(110, 110, 110);
+}

@@ -1,0 +1,10 @@
+
+.spectrum-Stepper {
+  --spectrum-alias-single-line-width: var(--spectrum-global-dimension-size-2400);
+  --spectrum-alias-single-line-height: var(--spectrum-global-dimension-size-400);
+  --spectrum-textfield-border-color-key-focus: var(--spectrum-alias-border-color-focus);
+  --spectrum-textfield-border-color-error: var(--spectrum-global-color-red-500);
+  --spectrum-textfield-border-color: var(--spectrum-global-color-gray-300);
+  --spectrum-textfield-border-color-disabled: var(--spectrum-alias-border-color-transparent);
+  --spectrum-textfield-quiet-border-color-disabled: var(--spectrum-alias-border-color-mid);
+}

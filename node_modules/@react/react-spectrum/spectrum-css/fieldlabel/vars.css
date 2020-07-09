@@ -1,0 +1,18 @@
+
+.spectrum-FieldLabel,
+.spectrum-Form {
+  --spectrum-fieldlabel-padding-top: var(--spectrum-global-dimension-size-50);
+  --spectrum-fieldlabel-padding-bottom: var(--spectrum-global-dimension-size-65);
+  --spectrum-fieldlabel-text-size: var(--spectrum-global-dimension-font-size-75);
+  --spectrum-fieldlabel-text-font-weight: var(--spectrum-global-font-weight-regular);
+  --spectrum-fieldlabel-text-line-height: var(--spectrum-global-font-line-height-small);
+  --spectrum-fieldlabel-asterisk-margin-y: var(--spectrum-global-dimension-size-50);
+  --spectrum-fieldlabel-asterisk-gap: var(--spectrum-global-dimension-size-25);
+  --spectrum-fieldlabel-side-padding-top: var(--spectrum-global-dimension-size-100);
+  --spectrum-fieldlabel-side-padding-x: var(--spectrum-global-dimension-size-100);
+  --spectrum-fieldlabel-side-asterisk-margin-y: 0px;
+  --spectrum-fieldlabel-text-color: var(--spectrum-alias-label-text-color);
+  --spectrum-fieldlabel-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-fieldlabel-asterisk-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-fieldlabel-asterisk-color: var(--spectrum-global-color-gray-600);
+}

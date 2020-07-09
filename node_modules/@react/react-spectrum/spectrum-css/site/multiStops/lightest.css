@@ -1,0 +1,47 @@
+.spectrum--lightest .spectrum-Site {
+  background-color: rgb(255, 255, 255);
+}
+.spectrum--lightest .spectrum-Site-header {
+  border-bottom-color: rgb(234, 234, 234);
+  background-color: rgb(255, 255, 255);
+}
+.spectrum--lightest .spectrum-Site-sideBar {
+  background-color: rgb(255, 255, 255);
+}
+.spectrum--lightest .spectrum-Site-mainContainer {
+  background: rgb(255, 255, 255);
+}
+.spectrum--lightest .spectrum-Site-overlay {
+  background: rgba(0, 0, 0, 0.2);
+}
+.spectrum--lightest .u-scrollable::-webkit-scrollbar-track,
+.spectrum--lightest .u-scrollable::-webkit-scrollbar-track-piece {
+  background: rgb(255, 255, 255);
+}
+.spectrum--lightest .u-scrollable::-webkit-scrollbar-thumb {
+  background-color: rgb(255, 255, 255);
+}
+.spectrum--lightest .u-scrollable:hover::-webkit-scrollbar-thumb {
+  background-color: rgb(211, 211, 211);
+}
+.spectrum--lightest .spectrum-CSSExample-example {
+  background-color: rgb(255, 255, 255);
+  background-color: rgb(255, 255, 255);
+}
+.spectrum--lightest .spectrum-CSSExample-markup {
+  border-top: 1px solid rgb(255, 255, 255);
+
+  background: rgb(255, 255, 255);
+}
+.spectrum--lightest .spectrum-CSSExample-markupToggle {
+  z-index: 1;
+
+  background: rgb(255, 255, 255);
+}
+.spectrum--lightest .spectrum-CSSExample-markup.is-open .spectrum-CSSExample-markupToggle {
+  background-color: transparent;
+}
+.spectrum--lightest .spectrum-CSSExample-example--overlay {
+  background: rgba(0,0,0,0.4);
+  color: rgba(0,0,0,0.4);
+}

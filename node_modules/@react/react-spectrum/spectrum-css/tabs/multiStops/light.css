@@ -1,0 +1,56 @@
+.spectrum--light .spectrum-Tabs {
+  border-bottom-color: rgb(234, 234, 234);
+}
+.spectrum--light .spectrum-Tabs--vertical {
+  border-left-color: rgb(234, 234, 234);
+}
+.spectrum--light .spectrum-Tabs-selectionIndicator {
+  background-color: rgb(44, 44, 44);
+}
+.spectrum--light .spectrum-Tabs-item {
+  color: rgb(110, 110, 110);
+}
+.spectrum--light .spectrum-Tabs-item .spectrum-Icon {
+    color: rgb(110, 110, 110)
+  }
+.spectrum--light .spectrum-Tabs-item:hover {
+    color: rgb(44, 44, 44);
+  }
+.spectrum--light .spectrum-Tabs-item:hover .spectrum-Icon {
+      color: rgb(44, 44, 44)
+    }
+.spectrum--light .spectrum-Tabs-item.is-selected {
+    color: rgb(44, 44, 44);
+  }
+.spectrum--light .spectrum-Tabs-item.is-selected .spectrum-Icon {
+      color: rgb(44, 44, 44)
+    }
+.spectrum--light .spectrum-Tabs-item.focus-ring {
+    color: rgb(44, 44, 44);
+  }
+.spectrum--light .spectrum-Tabs-item.focus-ring::before {
+      border-color: rgb(38, 128, 235);
+    }
+.spectrum--light .spectrum-Tabs-item.focus-ring .spectrum-Icon {
+      color: rgb(44, 44, 44)
+    }
+.spectrum--light .spectrum-Tabs-item.is-disabled {
+    color: rgb(179, 179, 179);
+  }
+.spectrum--light .spectrum-Tabs-item.is-disabled .spectrum-Icon {
+      color: rgb(202, 202, 202)
+    }
+.spectrum--light .spectrum-Tabs--quiet {
+  border-bottom-color: transparent;
+}
+.spectrum--light .spectrum-Tabs--quiet .spectrum-Tabs-selectionIndicator {
+    background-color: rgb(44, 44, 44);
+  }
+.spectrum--light .spectrum-Tabs--vertical.spectrum-Tabs--quiet,
+.spectrum--light .spectrum-Tabs--vertical.spectrum-Tabs--compact {
+    border-left-color: transparent;
+  }
+.spectrum--light .spectrum-Tabs--vertical.spectrum-Tabs--quiet .spectrum-Tabs-selectionIndicator,
+.spectrum--light .spectrum-Tabs--vertical.spectrum-Tabs--compact .spectrum-Tabs-selectionIndicator {
+      background-color: rgb(44, 44, 44);
+    }

@@ -1,0 +1,25 @@
+
+.spectrum-StatusLight {
+  --spectrum-statuslight-height: var(--spectrum-alias-single-line-height);
+  --spectrum-statuslight-text-size: var(--spectrum-alias-font-size-default);
+  --spectrum-statuslight-text-font-weight: var(--spectrum-alias-body-text-font-weight);
+  --spectrum-statuslight-dot-size: var(--spectrum-global-dimension-size-100);
+  --spectrum-statuslight-text-gap: var(--spectrum-global-dimension-size-150);
+  --spectrum-statuslight-text-color: var(--spectrum-alias-text-color);
+  --spectrum-statuslight-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-statuslight-dot-color-disabled: var(--spectrum-global-color-gray-400);
+  --spectrum-statuslight-negative-dot-color: var(--spectrum-semantic-negative-color-status);
+  --spectrum-statuslight-notice-dot-color: var(--spectrum-semantic-notice-color-status);
+  --spectrum-statuslight-positive-dot-color: var(--spectrum-semantic-positive-color-status);
+  --spectrum-statuslight-info-dot-color: var(--spectrum-semantic-informative-color-status);
+  --spectrum-statuslight-neutral-text-color: var(--spectrum-global-color-gray-700);
+  --spectrum-statuslight-neutral-dot-color: var(--spectrum-global-color-gray-500);
+  --spectrum-statuslight-dot-color-label-celery: var(--spectrum-global-color-celery-400);
+  --spectrum-statuslight-dot-color-label-yellow: var(--spectrum-global-color-yellow-400);
+  --spectrum-statuslight-dot-color-label-fuchsia: var(--spectrum-global-color-fuchsia-400);
+  --spectrum-statuslight-dot-color-label-indigo: var(--spectrum-global-color-indigo-400);
+  --spectrum-statuslight-dot-color-label-seafoam: var(--spectrum-global-color-seafoam-400);
+  --spectrum-statuslight-dot-color-label-chartreuse: var(--spectrum-global-color-chartreuse-400);
+  --spectrum-statuslight-dot-color-label-magenta: var(--spectrum-global-color-magenta-400);
+  --spectrum-statuslight-dot-color-label-purple: var(--spectrum-global-color-purple-400);
+}

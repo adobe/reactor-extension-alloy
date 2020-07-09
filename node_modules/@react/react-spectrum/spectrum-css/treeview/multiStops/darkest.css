@@ -1,0 +1,28 @@
+.spectrum--darkest .spectrum-TreeView-item.is-disabled > .spectrum-TreeView-itemLink {
+      color: rgb(92, 92, 92);
+    }
+.spectrum--darkest .spectrum-TreeView-item.is-disabled > .spectrum-TreeView-itemLink .spectrum-Icon {
+        color: rgb(73, 73, 73);
+      }
+.spectrum--darkest .spectrum-TreeView-itemLink {
+  color: rgb(200, 200, 200);
+}
+.spectrum--darkest .spectrum-TreeView-itemLink:hover,
+.spectrum--darkest .spectrum-TreeView-itemLink.is-selected {
+    color: rgb(239, 239, 239);
+  }
+.spectrum--darkest .spectrum-TreeView-itemLink:hover::before,
+.spectrum--darkest .spectrum-TreeView-itemLink.is-selected::before {
+      background-color: rgba(239,239,239,0.08);
+    }
+.spectrum--darkest .spectrum-TreeView-itemLink.focus-ring {
+    color: rgb(239, 239, 239);
+  }
+.spectrum--darkest .spectrum-TreeView-itemLink.focus-ring::before {
+      background-color: rgba(239,239,239,0.08);
+      box-shadow: 0px 0px 0px 2px rgb(20, 115, 230) inset;
+    }
+.spectrum--darkest .spectrum-TreeView-itemLink.is-drop-target::before {
+      background-color: rgba(38,128,235,0.2);
+      box-shadow: 0px 0px 0px 2px rgb(20, 115, 230) inset;
+    }

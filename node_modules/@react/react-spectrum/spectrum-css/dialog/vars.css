@@ -1,0 +1,26 @@
+
+.spectrum-Dialog {
+  --spectrum-dialog-entry-animation-distance: var(--spectrum-global-dimension-size-250);
+  --spectrum-dialog-min-width: var(--spectrum-global-dimension-static-size-3600);
+  --spectrum-dialog-padding: undefined;
+  --spectrum-dialog-border-radius: var(--spectrum-global-dimension-size-50);
+  --spectrum-dialog-exit-animation-duration: var(--spectrum-global-animation-duration-100);
+  --spectrum-dialog-entry-animation-duration: var(--spectrum-global-animation-duration-500);
+  --spectrum-dialog-entry-animation-delay: var(--spectrum-global-animation-duration-200);
+  --spectrum-dialog-rule-margin-top: var(--spectrum-global-dimension-static-size-150);
+  --spectrum-dialog-rule-margin-bottom: var(--spectrum-global-dimension-static-size-200);
+  --spectrum-dialog-rule-height: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-dialog-content-text-size: undefined;
+  --spectrum-dialog-content-text-font-weight: var(--spectrum-global-font-weight-regular);
+  --spectrum-dialog-content-text-line-height: var(--spectrum-alias-body-text-line-height);
+  --spectrum-dialog-title-text-size: undefined;
+  --spectrum-dialog-title-text-font-weight: var(--spectrum-global-font-weight-bold);
+  --spectrum-dialog-title-text-line-height: var(--spectrum-alias-heading-text-line-height);
+  --spectrum-dialog-background-color: var(--spectrum-alias-background-color-default);
+  --spectrum-dialog-rule-color: var(--spectrum-global-color-gray-300);
+  --spectrum-dialog-title-text-color: var(--spectrum-global-color-gray-900);
+  --spectrum-dialog-content-text-color: var(--spectrum-global-color-gray-800);
+  --spectrum-dialog-icon-color: var(--spectrum-global-color-gray-900);
+  --spectrum-dialog-error-title-text-color: var(--spectrum-semantic-negative-color-text-small);
+  --spectrum-dialog-error-icon-color: var(--spectrum-semantic-negative-color-icon);
+}

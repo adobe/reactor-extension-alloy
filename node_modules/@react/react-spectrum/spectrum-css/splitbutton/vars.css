@@ -1,0 +1,5 @@
+
+.spectrum-SplitButton {
+  --spectrum-button-primary-border-radius: var(--spectrum-alias-border-radius-large);
+  --spectrum-button-primary-border-size: var(--spectrum-alias-border-size-thick);
+}

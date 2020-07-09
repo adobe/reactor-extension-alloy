@@ -1,0 +1,47 @@
+.spectrum--light .spectrum-Site {
+  background-color: rgb(255, 255, 255);
+}
+.spectrum--light .spectrum-Site-header {
+  border-bottom-color: rgb(225, 225, 225);
+  background-color: rgb(255, 255, 255);
+}
+.spectrum--light .spectrum-Site-sideBar {
+  background-color: rgb(250, 250, 250);
+}
+.spectrum--light .spectrum-Site-mainContainer {
+  background: rgb(255, 255, 255);
+}
+.spectrum--light .spectrum-Site-overlay {
+  background: rgba(0, 0, 0, 0.2);
+}
+.spectrum--light .u-scrollable::-webkit-scrollbar-track,
+.spectrum--light .u-scrollable::-webkit-scrollbar-track-piece {
+  background: rgb(250, 250, 250);
+}
+.spectrum--light .u-scrollable::-webkit-scrollbar-thumb {
+  background-color: rgb(250, 250, 250);
+}
+.spectrum--light .u-scrollable:hover::-webkit-scrollbar-thumb {
+  background-color: rgb(202, 202, 202);
+}
+.spectrum--light .spectrum-CSSExample-example {
+  background-color: rgb(245, 245, 245);
+  background-color: rgb(245, 245, 245);
+}
+.spectrum--light .spectrum-CSSExample-markup {
+  border-top: 1px solid rgb(245, 245, 245);
+
+  background: rgb(250, 250, 250);
+}
+.spectrum--light .spectrum-CSSExample-markupToggle {
+  z-index: 1;
+
+  background: rgb(250, 250, 250);
+}
+.spectrum--light .spectrum-CSSExample-markup.is-open .spectrum-CSSExample-markupToggle {
+  background-color: transparent;
+}
+.spectrum--light .spectrum-CSSExample-example--overlay {
+  background: rgba(0,0,0,0.4);
+  color: rgba(0,0,0,0.4);
+}

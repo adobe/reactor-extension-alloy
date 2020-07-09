@@ -1,0 +1,12 @@
+.spectrum--darkest .spectrum-Banner {
+  color: rgb(255, 255, 255);
+}
+.spectrum--darkest .spectrum-Banner--info {
+  background-color: rgb(38, 128, 235);
+}
+.spectrum--darkest .spectrum-Banner--warning {
+  background-color: rgb(230, 134, 25);
+}
+.spectrum--darkest .spectrum-Banner--error {
+  background-color: rgb(227, 72, 80);
+}

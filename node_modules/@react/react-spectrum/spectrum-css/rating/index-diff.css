@@ -1,0 +1,23 @@
+.spectrum--large .spectrum-Rating {
+
+  width: 150px;
+
+  border-radius: 5px;
+}
+.spectrum--large .spectrum-Rating-icon {
+  width: 30px;
+  height: 22px;
+  padding: 9px 0;
+}
+.spectrum--large .spectrum-Rating-icon.is-currentValue:after {
+      border-radius: 2px;
+      height: 2px;
+      bottom: 2px;
+      left: 5px;
+      right: 5px;
+    }
+.spectrum--large .spectrum-Rating-starActive,
+.spectrum--large .spectrum-Rating-starInactive {
+  width: 22px;
+  height: 22px;
+}

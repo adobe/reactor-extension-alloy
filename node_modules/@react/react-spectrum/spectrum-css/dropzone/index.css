@@ -1,0 +1,17 @@
+.spectrum-Dropzone {
+  text-align: center;
+  border-width: 2px;
+  border-radius: 4px;
+  padding: 72px;
+  border-style: dashed;
+}
+.spectrum-Dropzone.is-dragged {
+    border-style: solid;
+  }
+.spectrum-Dropzone:focus {
+    outline: 0;
+    border-style: dashed;
+  }
+.spectrum-Dropzone:focus.focus-ring {
+      border-style: solid;
+    }

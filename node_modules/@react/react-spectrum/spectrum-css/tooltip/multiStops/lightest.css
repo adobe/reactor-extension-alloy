@@ -1,0 +1,32 @@
+.spectrum--lightest .spectrum-Tooltip {
+  background-color: rgb(116, 116, 116);
+
+  color: rgb(255, 255, 255);
+}
+.spectrum--lightest .spectrum-Tooltip-tip {
+  border-top-color: rgb(116, 116, 116);
+}
+.spectrum--lightest .spectrum-Tooltip--negative,
+.spectrum--lightest .spectrum-Tooltip--error {
+  background-color: rgb(201, 37, 45);
+}
+.spectrum--lightest .spectrum-Tooltip--negative .spectrum-Tooltip-tip,
+.spectrum--lightest .spectrum-Tooltip--error .spectrum-Tooltip-tip {
+    border-top-color: rgb(201, 37, 45);
+  }
+.spectrum--lightest .spectrum-Tooltip--info,
+.spectrum--lightest .spectrum-Tooltip--help {
+  background-color: rgb(13, 102, 208);
+}
+.spectrum--lightest .spectrum-Tooltip--info .spectrum-Tooltip-tip,
+.spectrum--lightest .spectrum-Tooltip--help .spectrum-Tooltip-tip {
+    border-top-color: rgb(13, 102, 208);
+  }
+.spectrum--lightest .spectrum-Tooltip--positive,
+.spectrum--lightest .spectrum-Tooltip--success {
+  background-color: rgb(18, 128, 92);
+}
+.spectrum--lightest .spectrum-Tooltip--positive .spectrum-Tooltip-tip,
+.spectrum--lightest .spectrum-Tooltip--success .spectrum-Tooltip-tip {
+    border-top-color: rgb(18, 128, 92);
+  }

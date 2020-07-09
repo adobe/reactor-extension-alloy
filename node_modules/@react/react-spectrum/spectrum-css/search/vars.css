@@ -1,0 +1,11 @@
+
+.spectrum-Search {
+  --spectrum-search-padding-left: 36px;
+  --spectrum-search-padding-right: 28px;
+  --spectrum-search-quiet-padding-left: 24px;
+  --spectrum-search-quiet-padding-right: 20px;
+  --spectrum-textfield-height: var(--spectrum-alias-single-line-height);
+  --spectrum-icon-magnifier-width: var(--spectrum-global-dimension-size-200);
+  --spectrum-textfield-icon-color: var(--spectrum-alias-icon-color);
+  --spectrum-textfield-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+}

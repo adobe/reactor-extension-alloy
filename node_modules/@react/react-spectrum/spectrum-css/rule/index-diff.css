@@ -1,0 +1,28 @@
+.spectrum--large .spectrum-Rule {
+  border-width: 2px;
+  border-radius: 2px;
+}
+.spectrum--large .spectrum-Rule--large {
+  height: 4px;
+
+  border-radius: 2px;
+}
+.spectrum--large .spectrum-Rule--medium {
+  height: 2px;
+
+  border-radius: 1px;
+}
+.spectrum--large .spectrum-Rule--small {
+  height: 1px;
+
+  border-radius: 1px;
+}
+.spectrum--large .spectrum-Rule--vertical.spectrum-Rule--large {
+    width: 4px;
+  }
+.spectrum--large .spectrum-Rule--vertical.spectrum-Rule--medium {
+    width: 2px;
+  }
+.spectrum--large .spectrum-Rule--vertical.spectrum-Rule--small {
+    width: 1px;
+  }

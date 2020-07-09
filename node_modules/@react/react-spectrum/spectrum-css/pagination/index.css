@@ -1,0 +1,22 @@
+.spectrum-Pagination--explicit,
+.spectrum-Pagination--listing {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: row;
+      flex-direction: row;
+  -ms-flex-align: center;
+      align-items: center;
+}
+.spectrum-Pagination-input {
+  width: 48px;
+  min-width: 48px;
+}
+.spectrum-Pagination-counter {
+  margin-left: 5px;
+}
+.spectrum-Pagination-prevButton {
+  margin-right: 5px;
+}
+.spectrum-Pagination-nextButton {
+  margin-left: 5px;
+}

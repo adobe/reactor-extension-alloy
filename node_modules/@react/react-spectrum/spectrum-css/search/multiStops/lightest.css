@@ -1,0 +1,6 @@
+.spectrum--lightest .spectrum-Search-icon {
+  color: rgb(116, 116, 116);
+}
+.spectrum--lightest .spectrum-Search-input:disabled ~ .spectrum-Search-icon {
+      color: rgb(188, 188, 188);
+    }
