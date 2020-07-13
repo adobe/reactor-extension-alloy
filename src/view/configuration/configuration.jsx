@@ -240,8 +240,6 @@ const validateDuplicateValue = (createError, instances, key, message) => {
   );
 };
 
-const onBeforeEventSendValidationMessage = "Please specify a data element.";
-
 const validationSchema = object()
   .shape({
     instances: array().of(
@@ -332,7 +330,6 @@ const Configuration = ({
     setFieldValue,
     initialValues
   } = formikProps;
-
   // On the initial render, only expand the first accordion item
   // if there's one instance, because users may get disoriented if we
   // automatically expand the first item when there are multiple instances.
@@ -710,7 +707,7 @@ const Configuration = ({
                     <h3>Privacy</h3>
 
                     <div className="u-gapTop">
-                      <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent preferences.">
+                      <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent.">
                         <FieldLabel
                           labelFor="generalDefaultConsent"
                           label="Default Consent Level"
@@ -718,7 +715,7 @@ const Configuration = ({
                       </InfoTipLayout>
                       <WrappedField
                         id="generalDefaultConsent"
-                        name={`instances.${index}.defaultConsent.general`}
+                        name={`instances.${index}.defaultConsent`}
                         component={RadioGroup}
                         componentClassName="u-flexColumn"
                       >

@@ -17,15 +17,9 @@ import Textfield from "@react/react-spectrum/Textfield";
 import WrappedField from "../../../components/wrappedField";
 
 /**
-<<<<<<< HEAD:src/view/dataElements/xdmObject/components/numberEdit.jsx
- * The form for editing a number or integer field.
- */
-const NumberOrIntegerEdit = props => {
-=======
  * The form for editing a string field.
  */
 const StringEdit = props => {
->>>>>>> master:src/view/dataElements/xdmObject/components/stringEdit.jsx
   const { fieldName } = props;
 
   return (
@@ -37,26 +31,14 @@ const StringEdit = props => {
         name={`${fieldName}.value`}
         component={Textfield}
         componentClassName="u-fieldLong"
-<<<<<<< HEAD:src/view/dataElements/xdmObject/components/numberEdit.jsx
-        supportDataElement="replace"
-=======
         supportDataElement="append"
->>>>>>> master:src/view/dataElements/xdmObject/components/stringEdit.jsx
       />
     </div>
   );
 };
 
-<<<<<<< HEAD:src/view/dataElements/xdmObject/components/numberEdit.jsx
-NumberOrIntegerEdit.propTypes = {
-  fieldName: PropTypes.string.isRequired
-};
-
-export default NumberOrIntegerEdit;
-=======
 StringEdit.propTypes = {
   fieldName: PropTypes.string.isRequired
 };
 
 export default StringEdit;
->>>>>>> master:src/view/dataElements/xdmObject/components/stringEdit.jsx

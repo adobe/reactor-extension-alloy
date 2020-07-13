@@ -29,7 +29,7 @@ const extensionViewController = createExtensionViewController(
 const schema = {
   id:
     "https://ns.adobe.com/alloyengineering/schemas/2c70e73b33329135dea3aac47bb52ec2",
-  version: "1.6"
+  version: "2.0"
 };
 
 const schemaTitle = "XDM Object Data Element Tests";
@@ -473,3 +473,4 @@ test("allows user to select no constant value for property with boolean type", a
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({});
 });
+

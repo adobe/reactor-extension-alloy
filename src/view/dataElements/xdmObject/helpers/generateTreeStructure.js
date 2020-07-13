@@ -85,7 +85,7 @@ const getTreeNode = ({
     }
   };
 
-  if (touched && touched.wholeValue) {
+  if (touched && touched.value) {
     confirmTouchedAtCurrentOrDescendantNode();
   }
 

@@ -37,26 +37,3 @@ export default ({ orgId, imsAccess, schemaMeta }) => {
     })
     .then(responseBody => responseBody);
 };
-
-/**
- * Retrieves the schema configured for the dataset that is configured
- * for an edge configuration.
- * @param {string} configId Edge configuration ID
- * @param {string} orgId Experience Cloud organization ID
- * @param {string} imsAccess IMS auth token
- * @returns {Promise} Promise to be resolved with the schema.
- */
-export default ({ configId, orgId, imsAccess }) => {
-  const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
-  return fetchDatasetIdFromEdgeConfig({ baseRequestHeaders, configId })
-    .then(datasetId => {
-      return datasetId
-        ? fetchSchemaRefFromDataSet({ baseRequestHeaders, datasetId })
-        : undefined;
-    })
-    .then(schemaRef => {
-      return schemaRef
-        ? fetchSchema({ baseRequestHeaders, schemaRef })
-        : undefined;
-    });
-};
