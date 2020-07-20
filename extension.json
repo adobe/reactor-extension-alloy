@@ -249,6 +249,17 @@
       "viewPath": "dataElements/eventMergeId.html"
     },
     {
+      "displayName": "Identity Map",
+      "name": "identity-map",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "additionalProperties": true
+      },
+      "libPath": "dist/lib/dataElements/identityMap/index.js",
+      "viewPath": "dataElements/identityMap.html"
+    },
+    {
       "displayName": "XDM Object",
       "name": "xdm-object",
       "schema": {

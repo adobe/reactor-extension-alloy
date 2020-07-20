@@ -15,22 +15,12 @@ import WrappedField from "./wrappedField";
 import authenticatedStateOptions from "../constants/authenticatedStateOptions";
 import getDefaultIdentifier from "../utils/getDefaultIdentifier";
 import InfoTipLayout from "./infoTipLayout";
-import getInstanceOptions from "../utils/getInstanceOptions";
+import getDefaultIdentity from "../utils/getDefaultIdentity";
+import { Accordion, AccordionItem } from "@react/react-spectrum/Accordion";
 
-function IdentityWrapper({ values, initInfo }) {
+function IdentityWrapper({ values }) {
   return (
     <React.Fragment>
-      <FieldLabel labelFor="instanceNameField" label="Instance" />
-      <div>
-        <WrappedField
-          data-test-id="instanceNameField"
-          id="instanceNameField"
-          name="instanceName"
-          component={Select}
-          componentClassName="u-fieldLong"
-          options={getInstanceOptions(initInfo)}
-        />
-      </div>
       <FieldArray
         name="identifiers"
         render={arrayHelpers => {
@@ -45,10 +35,16 @@ function IdentityWrapper({ values, initInfo }) {
                   }}
                 />
               </div>
-              <Heading variant="subtitle2">Identifier</Heading>
-              <div>
+              <Heading variant="subtitle2">Identifiers</Heading>
+              <Accordion
+                data-test-id="identifiersAccordion"
+                className="u-gapTop2x"
+              >
                 {values.identifiers.map((identifier, index) => (
-                  <Well key={index}>
+                  <AccordionItem
+                    key={index}
+                    header={identifier.namespace || "unnamed identifier"}
+                  >
                     <div>
                       <FieldLabel
                         labelFor={`namespace${index}Field`}
@@ -59,61 +55,107 @@ function IdentityWrapper({ values, initInfo }) {
                           data-test-id={`namespace${index}Field`}
                           id={`namespace${index}Field`}
                           name={`identifiers.${index}.namespace`}
-                          // component={Select}
                           component={Textfield}
                           componentClassName="u-fieldLong"
-                          // options={namespaceOptions}
                         />
                       </div>
                     </div>
-                    <div className="u-gapTop">
-                      <FieldLabel labelFor={`id${index}Field`} label="ID" />
-                      <div>
-                        <WrappedField
-                          data-test-id={`id${index}Field`}
-                          id={`id${index}Field`}
-                          name={`identifiers.${index}.id`}
-                          component={Textfield}
-                          componentClassName="u-fieldLong"
-                          supportDataElement="replace"
-                        />
-                      </div>
-                    </div>
-                    <div className="u-gapTop">
-                      <InfoTipLayout tip="Uses the SHA-256 hashing algorithm that allows you to pass in identifiers or email addresses, and pass out hashed IDs. This is an optional Javascript method for sending hashed identifiers. You can continue to use your own methods of hashing prior to sending identifiers. Note: if this is set to true for an identifier and the page is HTTP, the identifier will be removed from the call because hashing cannot be completed in this case.">
-                        <WrappedField
-                          data-test-id={`hashEnabled${index}Field`}
-                          name={`identifiers.${index}.hashEnabled`}
-                          component={Checkbox}
-                          label="Convert ID to sha256 hash"
-                        />
-                      </InfoTipLayout>
-                    </div>
-                    <div className="u-gapTop">
-                      <FieldLabel
-                        labelFor={`authenticatedState${index}Field`}
-                        label="Authenticated State"
+                    <div>
+                      <FieldArray
+                        id={`identifiers.${index}.identities`}
+                        name={`identifiers.${index}.identities`}
+                        render={identityArrayHelpers => {
+                          return (
+                            <React.Fragment>
+                              <div className="u-gapTop u-alignRight">
+                                <Button
+                                  data-test-id="addIdentityButton"
+                                  label="Add Identity"
+                                  onClick={() => {
+                                    identityArrayHelpers.push(
+                                      getDefaultIdentity()
+                                    );
+                                  }}
+                                />
+                              </div>
+                              {identifier.identities.map(
+                                (identity, identityIndex) => (
+                                  <Well
+                                    key={`identifier${index}identity${identityIndex}`}
+                                  >
+                                    <div className="u-gapTop">
+                                      <FieldLabel
+                                        labelFor={`identifier${index}idField${identityIndex}`}
+                                        label="ID"
+                                      />
+                                      <div>
+                                        <WrappedField
+                                          data-test-id={`identifier${index}idField${identityIndex}`}
+                                          id={`identifier${index}idField${identityIndex}`}
+                                          name={`identifiers.${index}.identities.${identityIndex}.id`}
+                                          component={Textfield}
+                                          componentClassName="u-fieldLong"
+                                          supportDataElement="replace"
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div className="u-gapTop">
+                                      <FieldLabel
+                                        labelFor={`identifier${index}authenticatedStateField${identityIndex}`}
+                                        label="Authenticated State"
+                                      />
+                                      <div>
+                                        <WrappedField
+                                          data-test-id={`identifier${index}authenticatedStateField${identityIndex}`}
+                                          id={`identifier${index}authenticatedStateField${identityIndex}`}
+                                          name={`identifiers.${index}.identities.${identityIndex}.authenticatedState`}
+                                          component={Select}
+                                          componentClassName="u-fieldLong"
+                                          options={authenticatedStateOptions}
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="u-gapTop">
+                                      <InfoTipLayout tip="Adobe Experience Platform will use the identity as an identifier to help stitch together more information about that individual. If left unchecked, the identifier within this namespace will still be collected but the ECID will be used as the primary identifier for stitching.">
+                                        <WrappedField
+                                          data-test-id={`identifier${index}primaryField${identityIndex}`}
+                                          name={`identifiers.${index}.identities.${identityIndex}.primary`}
+                                          component={Checkbox}
+                                          label="Primary"
+                                        />
+                                      </InfoTipLayout>
+                                    </div>
+                                    <div className="u-gapTop">
+                                      <Button
+                                        data-test-id={`deleteIdentity${index}Button${identityIndex}`}
+                                        label="Delete Identity"
+                                        icon={<Delete />}
+                                        disabled={
+                                          values.identifiers[index].identities
+                                            .length === 1
+                                        }
+                                        onClick={() => {
+                                          identityArrayHelpers.remove(
+                                            identityIndex
+                                          );
+                                        }}
+                                      />
+                                      {values.identifiers[index].identities
+                                        .length === 1 ? (
+                                        <span className="Note u-gapLeft">
+                                          You must have at least one identity to
+                                          use this action.
+                                        </span>
+                                      ) : null}
+                                    </div>
+                                  </Well>
+                                )
+                              )}
+                            </React.Fragment>
+                          );
+                        }}
                       />
-                      <div>
-                        <WrappedField
-                          data-test-id={`authenticatedState${index}Field`}
-                          id={`authenticatedState${index}Field`}
-                          name={`identifiers.${index}.authenticatedState`}
-                          component={Select}
-                          componentClassName="u-fieldLong"
-                          options={authenticatedStateOptions}
-                        />
-                      </div>
-                    </div>
-                    <div className="u-gapTop">
-                      <InfoTipLayout tip="Adobe Experience Platform will use the identifier to help stitch together more information about that individual. If left unchecked, the identifier within this namespace will still be collected but the ECID will be used as the primary identifier for stitching.">
-                        <WrappedField
-                          data-test-id={`primary${index}Field`}
-                          name={`identifiers.${index}.primary`}
-                          component={Checkbox}
-                          label="Primary"
-                        />
-                      </InfoTipLayout>
                     </div>
                     <div className="u-gapTop">
                       <Button
@@ -132,9 +174,9 @@ function IdentityWrapper({ values, initInfo }) {
                         </span>
                       ) : null}
                     </div>
-                  </Well>
+                  </AccordionItem>
                 ))}
-              </div>
+              </Accordion>
             </React.Fragment>
           );
         }}
