@@ -15,7 +15,6 @@ governing permissions and limitations under the License.
  */
 export default [
   "_id",
-  "identityMap",
   "eventType",
   "timestamp",
   "eventMergeId",
