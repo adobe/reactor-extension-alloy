@@ -11,14 +11,21 @@ governing permissions and limitations under the License.
 */
 
 import "regenerator-runtime"; // needed for some of react-spectrum
-import React from "react";
+import React, { Fragment } from "react";
+import PropTypes from "prop-types";
+import { FieldArray } from "formik";
 import Select from "@react/react-spectrum/Select";
 import RadioGroup from "@react/react-spectrum/RadioGroup";
 import Radio from "@react/react-spectrum/Radio";
 import Textfield from "@react/react-spectrum/Textfield";
+import Button from "@react/react-spectrum/Button";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
+import Delete from "@react/react-spectrum/Icon/Delete";
+import Add from "@react/react-spectrum/Icon/Add";
+import Well from "@react/react-spectrum/Well";
+import Heading from "@react/react-spectrum/Heading";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
-import { object, string } from "yup";
+import { object, string, array, mixed } from "yup";
 import render from "../render";
 import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
@@ -26,12 +33,16 @@ import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./setConsent.styl";
 import InfoTipLayout from "../components/infoTipLayout";
+import OptionsWithDataElement from "../components/optionsWithDataElement";
 
-const purposesEnum = {
-  IN: "in",
-  OUT: "out",
-  DATA_ELEMENT: "dataElement"
-};
+const IN = { value: "in", label: "In" };
+const OUT = { value: "out", label: "Out" };
+const DATA_ELEMENT = { value: "dataElement", label: "Data Element" };
+const YES = { value: "yes", label: "Yes" };
+const NO = { value: "no", label: "No" };
+const ADOBE = { value: "adobe", label: "Adobe" };
+const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
+const FORM = { value: "form", label: "Guided Form" };
 
 /*
  * The settings object for this action has the form of:
@@ -43,7 +54,15 @@ const purposesEnum = {
  *    value: {
  *      general // valid values are "in" and "out"
  *    }
- *   }]
+ *   },
+ *   {
+ *     standard: "IAB TCF",
+ *     version: "2.0",
+ *     value: "1234abcd",
+ *     gdprApplies: true,
+ *     containsPersonalData: false
+ *   },
+ *   ...]
  * }
  * ---OR---
  * {
@@ -55,13 +74,60 @@ const purposesEnum = {
  * The formik object looks like this:
  * {
  *   instanceName,
- *   option, // "in", "out", or "dataElement"
- *   dataElement
+ *   inputMethod, // "dataElement" or "form"
+ *   dataElement: "%data_element%" or
+ *   consent: [
+ *     {
+ *       standard: ("adobe" or "iab_tcf"),
+ *       version: "1.0",
+ *       general: optionsWithDataElement("in", "out"),
+ *       iabValue: "1234abcd", // or data_element
+ *       gdprApplies: optionsWithDataElement(true, false),
+ *       containsPersonalData: optionsWithDataElement(true, false)
+ *     },
+ *     ...
+ *   ]
  * }
  *
  * When we get to more granular purposes, we can augment the settings object to include
  * additional purposes. We will need to re-vamp the UI and the formik object when that happens.
  */
+
+const createBlankConsentObject = () => {
+  return {
+    standard: "adobe",
+    version: "",
+    general: { radio: IN.value, dataElement: "" },
+    iabValue: "",
+    gdprApplies: { radio: YES.value, dataElement: "" },
+    containsPersonalData: { radio: YES.value, dataElement: "" }
+  };
+};
+
+const applyInitialValuesForOptionsWithDataElement = (
+  value,
+  formikValues,
+  options
+) => {
+  if (singleDataElementRegex.matches(value)) {
+    formikValues.radio = DATA_ELEMENT.value;
+    formikValues.dataElement = value;
+  } else if (options.includes(value)) {
+    formikValues.radio = value;
+  }
+};
+
+const booleanToYesNo = value => {
+  if (value === true) {
+    return YES.value;
+  }
+  if (value === false) {
+    return NO.value;
+  }
+  // in this case it most likely is a dataElement string
+  return value;
+};
+
 const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
@@ -73,44 +139,257 @@ const getInitialValues = ({ initInfo }) => {
   };
 
   if (typeof consent === "string") {
-    initialValues.option = purposesEnum.DATA_ELEMENT;
+    initialValues.inputMethod = DATA_ELEMENT.value;
     initialValues.dataElement = consent;
-  } else if (consent) {
-    initialValues.option = consent[0].value.general;
-    initialValues.dataElement = "";
+    initialValues.consentObjects = [createBlankConsentObject()];
+  } else if (Array.isArray(consent)) {
+    initialValues.inputMethod = FORM.value;
+    initialValues.consent = consent.reduce((memo, consentObject) => {
+      const formikConsentObject = createBlankConsentObject();
+      if (consentObject.version) {
+        formikConsentObject.version = consentObject.version;
+      }
+      if (consentObject.standard === ADOBE.label) {
+        formikConsentObject.standard = ADOBE.value;
+        if (consentObject.value && consentObject.value.general) {
+          applyInitialValuesForOptionsWithDataElement(
+            consentObject.value.general,
+            formikConsentObject.general,
+            [IN, OUT]
+          );
+        }
+      } else if (consentObject.standard === IAB_TCF.label) {
+        formikConsentObject.standard = IAB_TCF.value;
+        if (consentObject.value) {
+          formikConsentObject.iabValue = consentObject.value;
+        }
+        if (consentObject.gdprApplies != null) {
+          applyInitialValuesForOptionsWithDataElement(
+            booleanToYesNo(consentObject.gdprApplies),
+            formikConsentObject.gdprApplies,
+            [YES.value, NO.value]
+          );
+        }
+        if (consentObject.containsPersonalData != null) {
+          applyInitialValuesForOptionsWithDataElement(
+            booleanToYesNo(consentObject.containsPersonalData),
+            formikConsentObject.containsPersonalData,
+            [YES.value, NO.value]
+          );
+        }
+      }
+      memo.push(formikConsentObject);
+      return memo;
+    }, []);
   } else {
-    initialValues.option = purposesEnum.IN;
+    initialValues.inputMethod = FORM.value;
     initialValues.dataElement = "";
+    initialValues.consent = [createBlankConsentObject()];
   }
 
   return initialValues;
 };
 
+const getSettingsForOptionsWithDataElement = value => {
+  if (value.radio === DATA_ELEMENT.value) {
+    return value.dataElement;
+  }
+  return value.radio;
+};
+
+const yesNoToBoolean = value => {
+  if (value === YES.value) {
+    return true;
+  }
+  if (value === NO.value) {
+    return false;
+  }
+  // handle dataElement strings
+  return value;
+};
+
 const getSettings = ({ values }) => {
-  const { instanceName, option, dataElement } = values;
+  const { instanceName, inputMethod, dataElement, consent } = values;
 
   const settings = {
     instanceName
   };
 
-  if (option === purposesEnum.IN || option === purposesEnum.OUT) {
-    settings.consent = [
-      { standard: "Adobe", version: "1.0", value: { general: option } }
-    ];
-  } else {
+  if (inputMethod === DATA_ELEMENT.value) {
     settings.consent = dataElement;
+  } else {
+    settings.consent = consent.reduce((memo, formikConsentObject) => {
+      if (formikConsentObject.standard === ADOBE.value) {
+        memo.push({
+          standard: ADOBE.label,
+          version: formikConsentObject.version,
+          value: {
+            general: getSettingsForOptionsWithDataElement(
+              formikConsentObject.general
+            )
+          }
+        });
+      } else if (formikConsentObject.standard === IAB_TCF.value) {
+        memo.push({
+          standard: IAB_TCF.label,
+          version: formikConsentObject.version,
+          value: formikConsentObject.iabValue,
+          gdprApplies: yesNoToBoolean(
+            getSettingsForOptionsWithDataElement(
+              formikConsentObject.gdprApplies
+            )
+          ),
+          containsPersonalData: yesNoToBoolean(
+            getSettingsForOptionsWithDataElement(
+              formikConsentObject.containsPersonalData
+            )
+          )
+        });
+      }
+      return memo;
+    }, []);
   }
 
   return settings;
 };
 
-const invalidDataMessage = "Please specify a data element";
+const invalidDataMessage = "Please specify a data element.";
 const validationSchema = object().shape({
-  dataElement: string().matches(singleDataElementRegex, {
-    message: invalidDataMessage,
-    excludeEmptyString: true
+  instanceName: string().required(),
+  dataElement: mixed().when("inputMethod", {
+    is: DATA_ELEMENT.value,
+    then: string()
+      .matches(singleDataElementRegex, invalidDataMessage)
+      .required(invalidDataMessage)
+  }),
+  consent: array().when("inputMethod", {
+    is: FORM.value,
+    then: array().of(
+      object().shape({
+        standard: string().required("Plesase specify a standard."),
+        version: string().required("Please specify a version."),
+        general: mixed().when("standard", {
+          is: ADOBE.value,
+          then: object().shape({
+            dataElement: mixed().when("radio", {
+              is: DATA_ELEMENT.value,
+              then: string().matches(singleDataElementRegex, invalidDataMessage)
+            })
+          })
+        }),
+        iabValue: mixed().when("standard", {
+          is: IAB_TCF.value,
+          then: string().required("Please specify a value.")
+        }),
+        gdprApplies: mixed().when("standard", {
+          is: IAB_TCF.value,
+          then: object().shape({
+            radio: string().required(),
+            dataElement: mixed().when("radio", {
+              is: DATA_ELEMENT.value,
+              then: string().matches(singleDataElementRegex, invalidDataMessage)
+            })
+          })
+        }),
+        containsPersonalData: mixed().when("standard", {
+          is: IAB_TCF.value,
+          then: object().shape({
+            radio: string().required(),
+            dataElement: mixed().when("radio", {
+              is: DATA_ELEMENT.value,
+              then: string().matches(singleDataElementRegex, invalidDataMessage)
+            })
+          })
+        })
+      })
+    )
   })
 });
+
+const ConsentObject = ({ formikConsentObject, index }) => {
+  return (
+    <div>
+      <div className="u-gapTop">
+        <InfoTipLayout tip="The consent standard for this consent object">
+          <FieldLabel labelFor={`consent.${index}.standard`} label="Standard" />
+        </InfoTipLayout>
+        <WrappedField
+          data-test-id={`consent.${index}.standard`}
+          id={`consent.${index}.standard`}
+          name={`consent.${index}.standard`}
+          component={Select}
+          options={[ADOBE, IAB_TCF]}
+          componentClassName="u-fieldLong"
+        />
+      </div>
+      <div className="u-gapTop">
+        <InfoTipLayout tip="The consent standard version for this consent object">
+          <FieldLabel labelFor={`consent.${index}.version`} label="Version" />
+        </InfoTipLayout>
+        <WrappedField
+          data-test-id={`consent.${index}.version`}
+          id={`consent.${index}.version`}
+          name={`consent.${index}.version`}
+          component={Textfield}
+          componentClassName="u-fieldLong"
+        />
+      </div>
+      {formikConsentObject.standard === ADOBE.value && (
+        <OptionsWithDataElement
+          label="General Consent"
+          infoTip="The general consent level. If provided through a data element, it should resolve to 'in' or 'out'."
+          id={`consent_${index}_general`}
+          data-test-id={`consent_${index}_general`}
+          name={`consent.${index}.general`}
+          options={[IN, OUT]}
+          values={formikConsentObject.general}
+        />
+      )}
+      {formikConsentObject.standard === IAB_TCF.value && (
+        <div>
+          <div className="u-gapTop">
+            <InfoTipLayout tip="The encoded IAB TCF consent value">
+              <FieldLabel
+                labelFor={`consent_${index}_iabValue`}
+                label="Value"
+              />
+            </InfoTipLayout>
+            <WrappedField
+              data-test-id={`consent_${index}_iabValue`}
+              id={`consent_${index}_iabValue`}
+              name={`consent.${index}.iabValue`}
+              component={Textfield}
+              componentClassName="u-fieldLong"
+              supportDataElement="append"
+            />
+          </div>
+          <OptionsWithDataElement
+            label="GDPR Applies"
+            infoTip="Does GDPR apply to this consent value? A data element should resolve to true or false."
+            id={`consent_${index}_gdprApplies`}
+            data-test-id={`consent_${index}_gdprApplies`}
+            name={`consent.${index}.gdprApplies`}
+            options={[YES, NO]}
+            values={formikConsentObject.gdprApplies}
+          />
+          <OptionsWithDataElement
+            label="Contains Personal Data"
+            infoTip="Does the event data associated with this user contain personal data? A data element should resolve to true or false."
+            id={`consent_${index}_containsPersonalData`}
+            data-test-id={`consent_${index}_containsPersonalData`}
+            name={`consent.${index}.containsPersonalData`}
+            options={[YES, NO]}
+            values={formikConsentObject.containsPersonalData}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+ConsentObject.propTypes = {
+  formikConsentObject: PropTypes.object,
+  index: PropTypes.number
+};
 
 const SetConsent = () => {
   return (
@@ -119,6 +398,7 @@ const SetConsent = () => {
       getSettings={getSettings}
       validationSchema={validationSchema}
       render={({ initInfo, formikProps }) => {
+        const { values } = formikProps;
         return (
           <div>
             <div>
@@ -135,53 +415,85 @@ const SetConsent = () => {
               </div>
             </div>
             <div className="u-gapTop">
-              <FieldLabel
-                labelFor="generalConsent"
-                label="The user consented:"
-              />
+              <InfoTipLayout
+                tip="You can use a guided form to enter the consent information,
+                     or provide a data element."
+              >
+                <Heading variant="subtitle2">Consent Information</Heading>
+              </InfoTipLayout>
               <WrappedField
-                id="generalConsentField"
-                name="option"
+                name="inputMethod"
+                id="inputMethod"
                 component={RadioGroup}
-                componentClassName="u-flexColumn"
               >
                 <Radio
-                  data-test-id="inOptionField"
-                  value={purposesEnum.IN}
-                  label="In"
+                  data-test-id="inputMethodFormRadio"
+                  value={FORM.value}
+                  label={FORM.label}
                 />
                 <Radio
-                  data-test-id="outOptionField"
-                  value={purposesEnum.OUT}
-                  label="Out"
-                />
-                <Radio
-                  data-test-id="dataElementOptionField"
-                  value={purposesEnum.DATA_ELEMENT}
-                  label="Consent provided by data element"
+                  data-test-id="inputMethodDataElement"
+                  value={FORM.value}
+                  label={FORM.label}
+                  className="u-gapLeft2x"
                 />
               </WrappedField>
             </div>
-            {formikProps.values.option === purposesEnum.DATA_ELEMENT ? (
-              <div className="FieldSubset u-gapTop">
-                <InfoTipLayout tip="The data element should return an array of consent objects.">
-                  <FieldLabel
-                    labelFor="dataElementField"
-                    label="Data Element"
-                  />
-                </InfoTipLayout>
-                <div>
-                  <WrappedField
-                    data-test-id="dataElementField"
-                    id="dataElementField"
-                    name="dataElement"
-                    component={Textfield}
-                    componentClassName="u-fieldLong"
-                    supportDataElement="replace"
-                  />
-                </div>
+            {values.inputMethod === FORM.value && (
+              <div>
+                <FieldArray
+                  name="consent"
+                  render={arrayHelpers => (
+                    <Fragment>
+                      <div className="u-gapTop u-alignRight">
+                        <Button
+                          data-test-id="addConsent"
+                          label="Add Consent Object"
+                          icon={<Add />}
+                          onClick={() => {
+                            arrayHelpers.push(createBlankConsentObject());
+                          }}
+                        />
+                      </div>
+                      {values.consent.map((formikConsentObject, index) => (
+                        <Well key={`consent${index}`} className="u-gapTop">
+                          <ConsentObject
+                            formikConsentObject={formikConsentObject}
+                            index={index}
+                          />
+                          <Button
+                            data-test-id={`consent_${index}_delete`}
+                            label="Delete Consent Object"
+                            icon={<Delete />}
+                            variant="action"
+                            disabled={values.consent.length === 1}
+                            onClick={() => {
+                              arrayHelpers.remove(index);
+                            }}
+                            className="u-gapTop"
+                          />
+                        </Well>
+                      ))}
+                    </Fragment>
+                  )}
+                />
               </div>
-            ) : null}
+            )}
+            {values.inputMethod === DATA_ELEMENT.value && (
+              <div className="u-gapTop">
+                <InfoTipLayout tip="A data element containing an array of consent objects">
+                  <FieldLabel labelFor="dataElement" label="Data Element" />
+                </InfoTipLayout>
+                <WrappedField
+                  data-test-id="dataElement"
+                  id="dataElement"
+                  name="dataElement"
+                  component={Textfield}
+                  componentClassName="u-fieldLong"
+                  supportDataElement="replace"
+                />
+              </div>
+            )}
           </div>
         );
       }}

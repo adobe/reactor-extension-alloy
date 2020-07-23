@@ -181,30 +181,57 @@
               {
                 "type": "array",
                 "minItems": 1,
-                "maxItems": 1,
                 "items": {
-                  "type": "object",
-                  "properties": {
-                    "standard": {
-                      "type": "string",
-                      "enum": ["Adobe"]
-                    },
-                    "version": {
-                      "type": "string",
-                      "enum": ["1.0"]
-                    },
-                    "value": {
+                  "anyOf": [
+                    {
                       "type": "object",
+                      "required": ["standard", "version", "value"],
                       "properties": {
-                        "general": {
-                          "type": "string",
-                          "enum": ["in", "out"]
+                        "standard": { "type": "string", "enum": ["Adobe"] },
+                        "version": { "type": "string" },
+                        "value": {
+                          "type": "object",
+                          "required": ["general"],
+                          "properties": {
+                            "general": {
+                              "oneOf": [
+                                {
+                                  "type": "string",
+                                  "enum": ["in", "out"]
+                                },
+                                {
+                                 "type": "string",
+                                  "pattern": "^%[^%]+%$"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "required": ["standard", "version", "value"],
+                      "properties": {
+                        "standard": { "type": "string", "enum": ["IAB TCF"] },
+                        "version": { "type": "string" },
+                        "value": { "type": "string" },
+                        "gdprApplies": {
+                          "anyOf": [
+                            { "type": "boolean" },
+                            { "type": "string", "pattern": "^%[^%]+%$" }
+                          ]
+                        },
+                        "containsPersonalData": {
+                          "anyOf": [
+                            { "type": "boolean" },
+                            { "type": "string", "pattern": "^%[^%]+%$" }
+                          ]
                         }
                       },
                       "additionalProperties": false
                     }
-                  },
-                  "additionalProperties": false
+                  ]
                 }
               },
               {
