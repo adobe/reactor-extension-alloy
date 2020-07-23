@@ -66,6 +66,9 @@
               "clickCollectionEnabled": {
                 "type": "boolean"
               },
+              "showAdvancedSettings": {
+                "type": "boolean"
+              },
               "downloadLinkQualifier": {
                 "type": "string",
                 "minLength": 1
