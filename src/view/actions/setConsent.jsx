@@ -256,6 +256,7 @@ const getSettings = ({ values }) => {
 const invalidDataMessage = "Please specify a data element.";
 const validationSchema = object().shape({
   instanceName: string().required(),
+  identityMap: string().matches(singleDataElementRegex, invalidDataMessage),
   dataElement: mixed().when("inputMethod", {
     is: DATA_ELEMENT.value,
     then: string()
@@ -413,6 +414,18 @@ const SetConsent = () => {
                   options={getInstanceOptions(initInfo)}
                 />
               </div>
+            </div>
+            <div className="u-gapTop">
+              <InfoTipLayout tip="Use a data element to provide custom identity information as part of the setConsent command. This data element should resolve to an identity map object.">
+                <FieldLabel labelFor="identityMapField" label="IdentityMap" />
+              </InfoTipLayout>
+              <WrappedField
+                name="identityMap"
+                id="identityMapField"
+                component={Textfield}
+                componentClassName="u-fieldLong"
+                supportDataElement="replace"
+              />
             </div>
             <div className="u-gapTop">
               <InfoTipLayout

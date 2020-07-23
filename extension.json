@@ -176,6 +176,10 @@
             "type": "string",
             "minLength": 1
           },
+          "identityMap": {
+            "type": "string",
+            "pattern": "^%[^%]+%$"
+          },
           "consent": {
             "anyOf": [
               {
