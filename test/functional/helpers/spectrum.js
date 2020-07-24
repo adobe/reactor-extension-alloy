@@ -12,7 +12,10 @@ governing permissions and limitations under the License.
 
 import { Selector, t } from "testcafe";
 import switchToIframe from "./switchToIframe";
-import { createTestIdSelector } from "./dataTestIdSelectors";
+import {
+  createTestIdSelector,
+  createTestIdSelectorString
+} from "./dataTestIdSelectors";
 
 const popoverSelector = Selector(".spectrum-Popover");
 const menuItemLabelCssSelector = ".spectrum-Menu-itemLabel";
@@ -28,6 +31,13 @@ const createExpectError = selector => async () => {
   await t
     .expect(selector.hasClass(isInvalidClassName))
     .ok("Expected field to have error when it did not");
+};
+
+const createExpectNoError = selector => async () => {
+  await switchToIframe();
+  await t
+    .expect(selector.hasClass(isInvalidClassName))
+    .notOk("Expected field to have no error when it did");
 };
 
 const createExpectErrorByAttribute = selector => async () => {
@@ -105,6 +115,7 @@ const componentWrappers = {
   select(selector) {
     return {
       expectError: createExpectError(selector),
+      expectNoError: createExpectNoError(selector),
       expectValue: createExpectValue(selector),
       async expectSelectedOptionLabel(label) {
         await switchToIframe();
@@ -132,6 +143,7 @@ const componentWrappers = {
   textfield(selector) {
     return {
       expectError: createExpectError(selector),
+      expectNoError: createExpectNoError(selector),
       expectValue: createExpectValue(selector),
       expectMatch: createExpectMatch(selector),
       async typeText(text) {
@@ -201,6 +213,24 @@ const componentWrappers = {
         await selector.find(".spectrum-Alert-header").withText(title);
       }
     };
+  },
+  // You can chain additional component methods after calling this method
+  container(selector) {
+    const that = this;
+    return Object.keys(this).reduce(
+      (containerComponents, key) => ({
+        ...containerComponents,
+        // Using the function keyword here so this is defined
+        // eslint-disable-next-line object-shorthand
+        [key]: function containerComponent(childTestId) {
+          return that[key].call(
+            this,
+            selector.find(createTestIdSelectorString(childTestId))
+          );
+        }
+      }),
+      {}
+    );
   }
 };
 
@@ -218,10 +248,12 @@ const selectorize = testIdOrSelector => {
 // This adds certain properties to all component wrappers.
 Object.keys(componentWrappers).forEach(componentName => {
   const componentWrapper = componentWrappers[componentName];
-  componentWrappers[componentName] = testIdOrSelector => {
+  componentWrappers[componentName] = function selectorizedComponent(
+    testIdOrSelector
+  ) {
     const selector = selectorize(testIdOrSelector);
     return {
-      ...componentWrapper(selector),
+      ...componentWrapper.call(this, selector),
       selector,
       expectExists: createExpectExists(selector),
       expectNotExists: createExpectNotExists(selector),

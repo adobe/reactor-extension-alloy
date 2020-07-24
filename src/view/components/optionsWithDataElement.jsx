@@ -42,13 +42,13 @@ const OptionsWithDataElement = ({
         {options.map(({ value: optionValue, label: optionLabel }) => (
           <Radio
             key={optionValue}
-            data-test-id={`${dataTestId}_${optionValue}`}
+            data-test-id={`${dataTestId}${optionLabel}Radio`}
             value={optionValue}
             label={optionLabel}
           />
         ))}
         <Radio
-          data-test-id={`${dataTestId}_dataElement`}
+          data-test-id={`${dataTestId}DataElementRadio`}
           value="dataElement"
           label="Provided by data element"
         />
@@ -58,7 +58,7 @@ const OptionsWithDataElement = ({
         <div>
           <WrappedField
             id={`${id}DataElement`}
-            data-test-id={`${dataTestId}DataElement`}
+            data-test-id={`${dataTestId}DataElementField`}
             name={`${name}.dataElement`}
             component={Textfield}
             componentClassName="u-fieldLong"

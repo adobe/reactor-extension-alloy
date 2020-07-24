@@ -37,12 +37,12 @@ import OptionsWithDataElement from "../components/optionsWithDataElement";
 
 const IN = { value: "in", label: "In" };
 const OUT = { value: "out", label: "Out" };
-const DATA_ELEMENT = { value: "dataElement", label: "Data Element" };
+const FORM = { value: "form", label: "Fill out a form" };
+const DATA_ELEMENT = { value: "dataElement", label: "Use a data element" };
 const YES = { value: "yes", label: "Yes" };
 const NO = { value: "no", label: "No" };
 const ADOBE = { value: "adobe", label: "Adobe" };
 const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
-const FORM = { value: "form", label: "Guided Form" };
 
 /*
  * The settings object for this action has the form of:
@@ -100,7 +100,7 @@ const createBlankConsentObject = () => {
     general: { radio: IN.value, dataElement: "" },
     iabValue: "",
     gdprApplies: { radio: YES.value, dataElement: "" },
-    containsPersonalData: { radio: YES.value, dataElement: "" }
+    containsPersonalData: { radio: NO.value, dataElement: "" }
   };
 };
 
@@ -109,7 +109,7 @@ const applyInitialValuesForOptionsWithDataElement = (
   formikValues,
   options
 ) => {
-  if (singleDataElementRegex.matches(value)) {
+  if (singleDataElementRegex.test(value)) {
     formikValues.radio = DATA_ELEMENT.value;
     formikValues.dataElement = value;
   } else if (options.includes(value)) {
@@ -131,11 +131,13 @@ const booleanToYesNo = value => {
 const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
-    consent
+    consent,
+    identityMap
   } = initInfo.settings || {};
 
   const initialValues = {
-    instanceName
+    instanceName,
+    identityMap
   };
 
   if (typeof consent === "string") {
@@ -155,7 +157,7 @@ const getInitialValues = ({ initInfo }) => {
           applyInitialValuesForOptionsWithDataElement(
             consentObject.value.general,
             formikConsentObject.general,
-            [IN, OUT]
+            [IN.value, OUT.value]
           );
         }
       } else if (consentObject.standard === IAB_TCF.label) {
@@ -186,7 +188,6 @@ const getInitialValues = ({ initInfo }) => {
     initialValues.dataElement = "";
     initialValues.consent = [createBlankConsentObject()];
   }
-
   return initialValues;
 };
 
@@ -209,11 +210,21 @@ const yesNoToBoolean = value => {
 };
 
 const getSettings = ({ values }) => {
-  const { instanceName, inputMethod, dataElement, consent } = values;
+  const {
+    instanceName,
+    identityMap,
+    inputMethod,
+    dataElement,
+    consent
+  } = values;
 
   const settings = {
     instanceName
   };
+
+  if (identityMap) {
+    settings.identityMap = identityMap;
+  }
 
   if (inputMethod === DATA_ELEMENT.value) {
     settings.consent = dataElement;
@@ -315,7 +326,7 @@ const ConsentObject = ({ formikConsentObject, index }) => {
           <FieldLabel labelFor={`consent.${index}.standard`} label="Standard" />
         </InfoTipLayout>
         <WrappedField
-          data-test-id={`consent.${index}.standard`}
+          data-test-id="standardSelect"
           id={`consent.${index}.standard`}
           name={`consent.${index}.standard`}
           component={Select}
@@ -328,7 +339,7 @@ const ConsentObject = ({ formikConsentObject, index }) => {
           <FieldLabel labelFor={`consent.${index}.version`} label="Version" />
         </InfoTipLayout>
         <WrappedField
-          data-test-id={`consent.${index}.version`}
+          data-test-id="versionField"
           id={`consent.${index}.version`}
           name={`consent.${index}.version`}
           component={Textfield}
@@ -340,7 +351,7 @@ const ConsentObject = ({ formikConsentObject, index }) => {
           label="General Consent"
           infoTip="The general consent level. If provided through a data element, it should resolve to 'in' or 'out'."
           id={`consent_${index}_general`}
-          data-test-id={`consent_${index}_general`}
+          data-test-id="general"
           name={`consent.${index}.general`}
           options={[IN, OUT]}
           values={formikConsentObject.general}
@@ -356,7 +367,7 @@ const ConsentObject = ({ formikConsentObject, index }) => {
               />
             </InfoTipLayout>
             <WrappedField
-              data-test-id={`consent_${index}_iabValue`}
+              data-test-id="iabValueField"
               id={`consent_${index}_iabValue`}
               name={`consent.${index}.iabValue`}
               component={Textfield}
@@ -368,7 +379,7 @@ const ConsentObject = ({ formikConsentObject, index }) => {
             label="GDPR Applies"
             infoTip="Does GDPR apply to this consent value? A data element should resolve to true or false."
             id={`consent_${index}_gdprApplies`}
-            data-test-id={`consent_${index}_gdprApplies`}
+            data-test-id="gdprApplies"
             name={`consent.${index}.gdprApplies`}
             options={[YES, NO]}
             values={formikConsentObject.gdprApplies}
@@ -377,7 +388,7 @@ const ConsentObject = ({ formikConsentObject, index }) => {
             label="Contains Personal Data"
             infoTip="Does the event data associated with this user contain personal data? A data element should resolve to true or false."
             id={`consent_${index}_containsPersonalData`}
-            data-test-id={`consent_${index}_containsPersonalData`}
+            data-test-id="containsPersonalData"
             name={`consent.${index}.containsPersonalData`}
             options={[YES, NO]}
             values={formikConsentObject.containsPersonalData}
@@ -406,7 +417,7 @@ const SetConsent = () => {
               <FieldLabel labelFor="instanceNameField" label="Instance" />
               <div>
                 <WrappedField
-                  data-test-id="instanceNameField"
+                  data-test-id="instanceNameSelect"
                   id="instanceNameField"
                   name="instanceName"
                   component={Select}
@@ -417,11 +428,15 @@ const SetConsent = () => {
             </div>
             <div className="u-gapTop">
               <InfoTipLayout tip="Use a data element to provide custom identity information as part of the setConsent command. This data element should resolve to an identity map object.">
-                <FieldLabel labelFor="identityMapField" label="IdentityMap" />
+                <FieldLabel
+                  labelFor="identityMapField"
+                  label="Identity Map (Optional)"
+                />
               </InfoTipLayout>
               <WrappedField
-                name="identityMap"
+                data-test-id="identityMapField"
                 id="identityMapField"
+                name="identityMap"
                 component={Textfield}
                 componentClassName="u-fieldLong"
                 supportDataElement="replace"
@@ -445,9 +460,9 @@ const SetConsent = () => {
                   label={FORM.label}
                 />
                 <Radio
-                  data-test-id="inputMethodDataElement"
-                  value={FORM.value}
-                  label={FORM.label}
+                  data-test-id="inputMethodDataElementRadio"
+                  value={DATA_ELEMENT.value}
+                  label={DATA_ELEMENT.label}
                   className="u-gapLeft2x"
                 />
               </WrappedField>
@@ -460,7 +475,7 @@ const SetConsent = () => {
                     <Fragment>
                       <div className="u-gapTop u-alignRight">
                         <Button
-                          data-test-id="addConsent"
+                          data-test-id="addConsentButton"
                           label="Add Consent Object"
                           icon={<Add />}
                           onClick={() => {
@@ -469,13 +484,17 @@ const SetConsent = () => {
                         />
                       </div>
                       {values.consent.map((formikConsentObject, index) => (
-                        <Well key={`consent${index}`} className="u-gapTop">
+                        <Well
+                          key={`consent${index}`}
+                          className="u-gapTop"
+                          data-test-id={`instance${index}`}
+                        >
                           <ConsentObject
                             formikConsentObject={formikConsentObject}
                             index={index}
                           />
                           <Button
-                            data-test-id={`consent_${index}_delete`}
+                            data-test-id="deleteConsentButton"
                             label="Delete Consent Object"
                             icon={<Delete />}
                             variant="action"
@@ -498,7 +517,7 @@ const SetConsent = () => {
                   <FieldLabel labelFor="dataElement" label="Data Element" />
                 </InfoTipLayout>
                 <WrappedField
-                  data-test-id="dataElement"
+                  data-test-id="dataElementField"
                   id="dataElement"
                   name="dataElement"
                   component={Textfield}
