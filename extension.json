@@ -3,7 +3,7 @@
   "name": "adobe-alloy",
   "iconPath": "resources/images/icon.svg",
   "platform": "web",
-  "version": "0.1.3",
+  "version": "2.0.0",
   "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
   "author": {
     "name": "Adobe"
@@ -153,6 +153,10 @@
           "mergeId": {
             "type": "string",
             "minLength": 1
+          },
+          "datasetId": {
+            "type": "string",
+            "minLength": 1
           }
         },
         "required": ["instanceName"],
@@ -215,49 +219,6 @@
       },
       "libPath": "dist/lib/actions/setConsent/index.js",
       "viewPath": "actions/setConsent.html"
-    },
-    {
-      "displayName": "Sync Identity",
-      "name": "sync-identity",
-      "schema": {
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "type": "object",
-        "properties": {
-          "instanceName": {
-            "type": "string",
-            "minLength": 1
-          },
-          "identity": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "minLength": 1
-                },
-                "authenticatedState": {
-                  "type": "string",
-                  "enum": ["ambiguous", "authenticated", "loggedOut"]
-                },
-                "primary": {
-                  "type": "boolean"
-                },
-                "hashEnabled": {
-                  "type": "boolean"
-                }
-              },
-              "required": ["id", "authenticatedState"],
-              "additionalProperties": false
-            },
-            "minProperties": 1
-          }
-        },
-        "required": ["instanceName", "identity"],
-        "additionalProperties": false
-      },
-      "libPath": "dist/lib/actions/syncIdentity/index.js",
-      "viewPath": "actions/syncIdentity.html"
     }
   ],
   "events": [
