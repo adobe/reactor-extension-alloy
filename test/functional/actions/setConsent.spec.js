@@ -51,7 +51,7 @@ for (let i = 0; i < 2; i += 1) {
     ...generateOptionsWithDataElement(container, "general", ["In", "Out"]),
     iabValueField: container.textfield("iabValueField"),
     ...generateOptionsWithDataElement(container, "gdprApplies", ["Yes", "No"]),
-    ...generateOptionsWithDataElement(container, "containsPersonalData", [
+    ...generateOptionsWithDataElement(container, "gdprContainsPersonalData", [
       "Yes",
       "No"
     ]),
@@ -92,7 +92,7 @@ test("initializes form fields with settings containing a static consent array", 
           version: "2.0",
           value: "1234abcd",
           gdprApplies: false,
-          containsPersonalData: true
+          gdprContainsPersonalData: true
         }
       ]
     }
@@ -115,10 +115,10 @@ test("initializes form fields with settings containing a static consent array", 
   await instances[0].gdprAppliesNoRadio.expectNotExists();
   await instances[0].gdprAppliesDataElementRadio.expectNotExists();
   await instances[0].gdprAppliesDataElementField.expectNotExists();
-  await instances[0].containsPersonalDataYesRadio.expectNotExists();
-  await instances[0].containsPersonalDataNoRadio.expectNotExists();
-  await instances[0].containsPersonalDataDataElementRadio.expectNotExists();
-  await instances[0].containsPersonalDataDataElementField.expectNotExists();
+  await instances[0].gdprContainsPersonalDataYesRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataNoRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementField.expectNotExists();
 
   await instances[1].standardSelect.expectValue("iab_tcf");
   await instances[1].versionField.expectValue("2.0");
@@ -131,10 +131,10 @@ test("initializes form fields with settings containing a static consent array", 
   await instances[1].gdprAppliesNoRadio.expectChecked();
   await instances[1].gdprAppliesDataElementRadio.expectUnchecked();
   await instances[1].gdprAppliesDataElementField.expectNotExists();
-  await instances[1].containsPersonalDataYesRadio.expectChecked();
-  await instances[1].containsPersonalDataNoRadio.expectUnchecked();
-  await instances[1].containsPersonalDataDataElementRadio.expectUnchecked();
-  await instances[1].containsPersonalDataDataElementField.expectNotExists();
+  await instances[1].gdprContainsPersonalDataYesRadio.expectChecked();
+  await instances[1].gdprContainsPersonalDataNoRadio.expectUnchecked();
+  await instances[1].gdprContainsPersonalDataDataElementRadio.expectUnchecked();
+  await instances[1].gdprContainsPersonalDataDataElementField.expectNotExists();
 });
 
 test("initializes form fields with settings containing many data elements for parts", async () => {
@@ -150,7 +150,7 @@ test("initializes form fields with settings containing many data elements for pa
           version: "2.0",
           value: "%data2%",
           gdprApplies: "%data3%",
-          containsPersonalData: "%data4%"
+          gdprContainsPersonalData: "%data4%"
         }
       ]
     }
@@ -173,10 +173,10 @@ test("initializes form fields with settings containing many data elements for pa
   await instances[0].gdprAppliesNoRadio.expectNotExists();
   await instances[0].gdprAppliesDataElementRadio.expectNotExists();
   await instances[0].gdprAppliesDataElementField.expectNotExists();
-  await instances[0].containsPersonalDataYesRadio.expectNotExists();
-  await instances[0].containsPersonalDataNoRadio.expectNotExists();
-  await instances[0].containsPersonalDataDataElementRadio.expectNotExists();
-  await instances[0].containsPersonalDataDataElementField.expectNotExists();
+  await instances[0].gdprContainsPersonalDataYesRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataNoRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementField.expectNotExists();
 
   await instances[1].standardSelect.expectValue("iab_tcf");
   await instances[1].versionField.expectValue("2.0");
@@ -189,10 +189,10 @@ test("initializes form fields with settings containing many data elements for pa
   await instances[1].gdprAppliesNoRadio.expectUnchecked();
   await instances[1].gdprAppliesDataElementRadio.expectChecked();
   await instances[1].gdprAppliesDataElementField.expectValue("%data3%");
-  await instances[1].containsPersonalDataYesRadio.expectUnchecked();
-  await instances[1].containsPersonalDataNoRadio.expectUnchecked();
-  await instances[1].containsPersonalDataDataElementRadio.expectChecked();
-  await instances[1].containsPersonalDataDataElementField.expectValue(
+  await instances[1].gdprContainsPersonalDataYesRadio.expectUnchecked();
+  await instances[1].gdprContainsPersonalDataNoRadio.expectUnchecked();
+  await instances[1].gdprContainsPersonalDataDataElementRadio.expectChecked();
+  await instances[1].gdprContainsPersonalDataDataElementField.expectValue(
     "%data4%"
   );
 });
@@ -237,10 +237,10 @@ test("initializes form fields with no settings", async () => {
   await instances[0].gdprAppliesNoRadio.expectNotExists();
   await instances[0].gdprAppliesDataElementRadio.expectNotExists();
   await instances[0].gdprAppliesDataElementField.expectNotExists();
-  await instances[0].containsPersonalDataYesRadio.expectNotExists();
-  await instances[0].containsPersonalDataNoRadio.expectNotExists();
-  await instances[0].containsPersonalDataDataElementRadio.expectNotExists();
-  await instances[0].containsPersonalDataDataElementField.expectNotExists();
+  await instances[0].gdprContainsPersonalDataYesRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataNoRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementField.expectNotExists();
   await instances[1].container.expectNotExists();
 
   await instances[0].standardSelect.selectOption("IAB TCF");
@@ -256,10 +256,10 @@ test("initializes form fields with no settings", async () => {
   await instances[0].gdprAppliesNoRadio.expectUnchecked();
   await instances[0].gdprAppliesDataElementRadio.expectUnchecked();
   await instances[0].gdprAppliesDataElementField.expectNotExists();
-  await instances[0].containsPersonalDataYesRadio.expectUnchecked();
-  await instances[0].containsPersonalDataNoRadio.expectChecked();
-  await instances[0].containsPersonalDataDataElementRadio.expectUnchecked();
-  await instances[0].containsPersonalDataDataElementField.expectNotExists();
+  await instances[0].gdprContainsPersonalDataYesRadio.expectUnchecked();
+  await instances[0].gdprContainsPersonalDataNoRadio.expectChecked();
+  await instances[0].gdprContainsPersonalDataDataElementRadio.expectUnchecked();
+  await instances[0].gdprContainsPersonalDataDataElementField.expectNotExists();
   await instances[1].container.expectNotExists();
 });
 
@@ -287,7 +287,7 @@ test("returns minimal valid settings", async () => {
         version: "2.1",
         value: "1234abcd",
         gdprApplies: true,
-        containsPersonalData: false
+        gdprContainsPersonalData: false
       }
     ]
   });
@@ -303,7 +303,7 @@ test("returns full valid settings", async () => {
   await instances[0].versionField.typeText("2.2");
   await instances[0].iabValueField.typeText("a");
   await instances[0].gdprAppliesNoRadio.click();
-  await instances[0].containsPersonalDataYesRadio.click();
+  await instances[0].gdprContainsPersonalDataYesRadio.click();
   await addConsentButton.click();
   await instances[1].versionField.typeText("1.2");
   await instances[1].generalOutRadio.click();
@@ -318,7 +318,7 @@ test("returns full valid settings", async () => {
         version: "2.2",
         value: "a",
         gdprApplies: false,
-        containsPersonalData: true
+        gdprContainsPersonalData: true
       },
       {
         standard: "Adobe",
@@ -342,8 +342,10 @@ test("returns valid setting for guided form data elements", async () => {
   await instances[1].iabValueField.typeText("%data2%");
   await instances[1].gdprAppliesDataElementRadio.click();
   await instances[1].gdprAppliesDataElementField.typeText("%data3%");
-  await instances[1].containsPersonalDataDataElementRadio.click();
-  await instances[1].containsPersonalDataDataElementField.typeText("%data4%");
+  await instances[1].gdprContainsPersonalDataDataElementRadio.click();
+  await instances[1].gdprContainsPersonalDataDataElementField.typeText(
+    "%data4%"
+  );
 
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
@@ -359,7 +361,7 @@ test("returns valid setting for guided form data elements", async () => {
         version: "2.3",
         value: "%data2%",
         gdprApplies: "%data3%",
-        containsPersonalData: "%data4%"
+        gdprContainsPersonalData: "%data4%"
       }
     ]
   });
@@ -406,7 +408,7 @@ test("shows errors for empty values", async () => {
   await addConsentButton.click();
   await instances[1].standardSelect.selectOption("IAB TCF");
   await instances[1].gdprAppliesDataElementRadio.click();
-  await instances[1].containsPersonalDataDataElementRadio.click();
+  await instances[1].gdprContainsPersonalDataDataElementRadio.click();
 
   await extensionViewController.expectIsNotValid();
   await instances[0].versionField.expectError();
@@ -414,7 +416,7 @@ test("shows errors for empty values", async () => {
   await instances[1].versionField.expectError();
   await instances[1].iabValueField.expectError();
   await instances[1].gdprAppliesDataElementField.expectError();
-  await instances[1].containsPersonalDataDataElementField.expectError();
+  await instances[1].gdprContainsPersonalDataDataElementField.expectError();
 });
 
 test("shows errors for things that aren't data elements and does not show errors for hidden invalid fields", async () => {
@@ -430,8 +432,8 @@ test("shows errors for things that aren't data elements and does not show errors
   await instances[1].iabValueField.typeText("notadataelement");
   await instances[1].gdprAppliesDataElementRadio.click();
   await instances[1].gdprAppliesDataElementField.typeText("%data1%%data2%");
-  await instances[1].containsPersonalDataDataElementRadio.click();
-  await instances[1].containsPersonalDataDataElementField.typeText(
+  await instances[1].gdprContainsPersonalDataDataElementRadio.click();
+  await instances[1].gdprContainsPersonalDataDataElementField.typeText(
     "%notadataelement"
   );
 
@@ -439,7 +441,7 @@ test("shows errors for things that aren't data elements and does not show errors
   await instances[0].generalDataElementField.expectError();
   await instances[1].iabValueField.expectNoError();
   await instances[1].gdprAppliesDataElementField.expectError();
-  await instances[1].containsPersonalDataDataElementField.expectError();
+  await instances[1].gdprContainsPersonalDataDataElementField.expectError();
 
   await inputMethodDataElementRadio.click();
   await dataElementField.typeText("%dataelement%");
@@ -452,7 +454,7 @@ test("shows errors for things that aren't data elements and does not show errors
   await inputMethodFormRadio.click();
   await instances[0].generalInRadio.click();
   await instances[1].gdprAppliesYesRadio.click();
-  await instances[1].containsPersonalDataYesRadio.click();
+  await instances[1].gdprContainsPersonalDataYesRadio.click();
   await extensionViewController.expectIsValid();
 });
 

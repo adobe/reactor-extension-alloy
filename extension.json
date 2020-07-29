@@ -226,7 +226,7 @@
                             { "type": "string", "pattern": "^%[^%]+%$" }
                           ]
                         },
-                        "containsPersonalData": {
+                        "gdprContainsPersonalData": {
                           "anyOf": [
                             { "type": "boolean" },
                             { "type": "string", "pattern": "^%[^%]+%$" }

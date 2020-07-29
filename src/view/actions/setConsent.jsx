@@ -60,7 +60,7 @@ const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
  *     version: "2.0",
  *     value: "1234abcd",
  *     gdprApplies: true,
- *     containsPersonalData: false
+ *     gdprContainsPersonalData: false
  *   },
  *   ...]
  * }
@@ -83,7 +83,7 @@ const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
  *       general: optionsWithDataElement("in", "out"),
  *       iabValue: "1234abcd", // or data_element
  *       gdprApplies: optionsWithDataElement(true, false),
- *       containsPersonalData: optionsWithDataElement(true, false)
+ *       gdprContainsPersonalData: optionsWithDataElement(true, false)
  *     },
  *     ...
  *   ]
@@ -100,7 +100,7 @@ const createBlankConsentObject = () => {
     general: { radio: IN.value, dataElement: "" },
     iabValue: "",
     gdprApplies: { radio: YES.value, dataElement: "" },
-    containsPersonalData: { radio: NO.value, dataElement: "" }
+    gdprContainsPersonalData: { radio: NO.value, dataElement: "" }
   };
 };
 
@@ -172,10 +172,10 @@ const getInitialValues = ({ initInfo }) => {
             [YES.value, NO.value]
           );
         }
-        if (consentObject.containsPersonalData != null) {
+        if (consentObject.gdprContainsPersonalData != null) {
           applyInitialValuesForOptionsWithDataElement(
-            booleanToYesNo(consentObject.containsPersonalData),
-            formikConsentObject.containsPersonalData,
+            booleanToYesNo(consentObject.gdprContainsPersonalData),
+            formikConsentObject.gdprContainsPersonalData,
             [YES.value, NO.value]
           );
         }
@@ -250,9 +250,9 @@ const getSettings = ({ values }) => {
               formikConsentObject.gdprApplies
             )
           ),
-          containsPersonalData: yesNoToBoolean(
+          gdprContainsPersonalData: yesNoToBoolean(
             getSettingsForOptionsWithDataElement(
-              formikConsentObject.containsPersonalData
+              formikConsentObject.gdprContainsPersonalData
             )
           )
         });
@@ -303,7 +303,7 @@ const validationSchema = object().shape({
             })
           })
         }),
-        containsPersonalData: mixed().when("standard", {
+        gdprContainsPersonalData: mixed().when("standard", {
           is: IAB_TCF.value,
           then: object().shape({
             radio: string().required(),
@@ -385,13 +385,13 @@ const ConsentObject = ({ formikConsentObject, index }) => {
             values={formikConsentObject.gdprApplies}
           />
           <OptionsWithDataElement
-            label="Contains Personal Data"
+            label="GDPR Contains Personal Data"
             infoTip="Does the event data associated with this user contain personal data? A data element should resolve to true or false."
-            id={`consent_${index}_containsPersonalData`}
-            data-test-id="containsPersonalData"
-            name={`consent.${index}.containsPersonalData`}
+            id={`consent_${index}_gdprContainsPersonalData`}
+            data-test-id="gdprContainsPersonalData"
+            name={`consent.${index}.gdprContainsPersonalData`}
             options={[YES, NO]}
-            values={formikConsentObject.containsPersonalData}
+            values={formikConsentObject.gdprContainsPersonalData}
           />
         </div>
       )}
