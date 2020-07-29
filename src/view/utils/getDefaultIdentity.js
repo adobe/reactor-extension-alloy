@@ -10,15 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import getDefaultIdentifier from "./getDefaultIdentifier";
+
 export default () => {
   return {
     namespace: "",
-    identities: [
-      {
-        id: "",
-        authenticatedState: "",
-        primary: false
-      }
-    ]
+    identifiers: [ getDefaultIdentifier ]
   };
 };

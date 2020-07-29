@@ -31,7 +31,6 @@ import InfoTipLayout from "./infoTipLayout";
 import getDefaultIdentity from "../utils/getDefaultIdentity";
 
 function IdentityWrapper({ values }) {
-  console.log("values", values);
   return (
     <React.Fragment>
       <FieldArray

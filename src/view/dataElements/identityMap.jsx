@@ -20,17 +20,17 @@ import IdentityWrapper from "../components/identityWrapper";
 import getDefaultIdentity from "../utils/getDefaultIdentity";
 import "./identityMap.styl";
 
-const identitiesMapToArray = identifierMap => {
-  return Object.keys(identifierMap).map(namespace => {
+const identitiesMapToArray = identityMap => {
+  return Object.keys(identityMap).map(namespace => {
     return {
       namespace,
-      identifiers: identifierMap[namespace]
+      identifiers: identityMap[namespace]
     };
   });
 };
 
-const identitiesArrayToMap = identifiersArray => {
-  return identifiersArray.reduce((identityMap, identity) => {
+const identitiesArrayToMap = identitiesArray => {
+  return identitiesArray.reduce((identityMap, identity) => {
     const { namespace, identifiers } = identity;
     identityMap[namespace] = identifiers;
     return identityMap;
