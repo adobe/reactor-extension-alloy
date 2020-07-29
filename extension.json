@@ -254,7 +254,24 @@
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
-        "additionalProperties": true
+        "additionalProperties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "authenticatedState": {
+                "type": "string",
+                "enum": ["loggedOut", "authenticated", "ambiguous"]
+              },
+              "primary": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
       },
       "libPath": "dist/lib/dataElements/identityMap/index.js",
       "viewPath": "dataElements/identityMap.html"
