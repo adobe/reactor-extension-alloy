@@ -20,8 +20,6 @@ export default ({ orgId, imsAccess, sandboxName }) => {
     "https://ns.adobe.com/xdm/context/experienceevent"
   );
 
-  const DEFAULT_SANDBOX = "prod";
-
   const headers = {
     ...baseRequestHeaders,
     // request a summary response with title , $id , meta:altId , and version attributes
@@ -31,7 +29,7 @@ export default ({ orgId, imsAccess, sandboxName }) => {
   if (sandboxName && sandboxName !== "") {
     headers["x-sandbox-name"] = sandboxName;
   } else {
-    headers["x-sandbox-name"] = DEFAULT_SANDBOX;
+    headers["x-sandbox-name"] = platform.getDefaultSandbox();
   }
 
   // TODO: paginate this response using on responseBody._page.count or responseBody._links.next
@@ -50,6 +48,9 @@ export default ({ orgId, imsAccess, sandboxName }) => {
       return response.json();
     })
     .then(responseBody => {
-      return responseBody.results;
+      return {
+        sandboxName,
+        results: responseBody.results
+      };
     });
 };

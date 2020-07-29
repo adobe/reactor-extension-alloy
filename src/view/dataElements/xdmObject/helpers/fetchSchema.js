@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import getBaseRequestHeaders from "../../../utils/getBaseRequestHeaders";
 import platform from "./platform";
 
-export default ({ orgId, imsAccess, schemaMeta }) => {
+export default ({ orgId, imsAccess, schemaMeta, sandboxName }) => {
   if (!schemaMeta || !schemaMeta.$id) {
     throw new Error("Invalid schema meta");
   }
@@ -21,13 +21,25 @@ export default ({ orgId, imsAccess, schemaMeta }) => {
   const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
   const schemaMajorVersion = schemaMeta.version.split(".")[0];
 
+  const headers = {
+    ...baseRequestHeaders,
+    // request a summary response with title , $id , meta:altId , and version attributes
+    Accept: "application/vnd.adobe.xdm-v2+json"
+  };
+
+  if (sandboxName && sandboxName !== "") {
+    headers["x-sandbox-name"] = sandboxName;
+  } else {
+    headers["x-sandbox-name"] = platform.getDefaultSandbox();
+  }
+
   return fetch(
     `${platform.getHost()}/data/foundation/schemaregistry/tenant/schemas/${encodeURIComponent(
       schemaMeta.$id
     )}`,
     {
       headers: {
-        ...baseRequestHeaders,
+        ...headers,
         // The first part of this ensures all json-schema refs are resolved within the schema we retrieve.
         Accept: `application/vnd.adobe.xed-full+json;version=${schemaMajorVersion}`
       }

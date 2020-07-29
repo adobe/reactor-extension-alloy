@@ -244,10 +244,10 @@ const XdmExtensionView = () => {
               sandboxName
             });
           })
-          .then(_schemasMeta => {
-            setSchemasMeta(_schemasMeta);
+          .then(response => {
+            setSchemasMeta(response.results);
 
-            if (!_schemasMeta.length) {
+            if (!response.results.length) {
               setSchemasMetaStatus(STATUS_ERROR || null);
               return {};
             }
@@ -255,11 +255,11 @@ const XdmExtensionView = () => {
             setSchemasMetaStatus(STATUS_LOADED || null);
 
             // TODO: don't initialize form state if the schema doesn't match
-            let schemaMeta = _schemasMeta[0];
+            let schemaMeta = response.results[0];
 
             // if a schema exists in settings, use it
             if (initInfo.settings && initInfo.settings.schema) {
-              schemaMeta = _schemasMeta.find(
+              schemaMeta = response.results.find(
                 _schemaMeta => _schemaMeta.$id === initInfo.settings.schema.id
               );
             }
@@ -267,10 +267,12 @@ const XdmExtensionView = () => {
             setSelectedSchemaMeta(schemaMeta);
             setSchemaStatus(STATUS_LOADING || null);
 
+            const { sandboxName } = response;
             return fetchSchema({
               orgId: initInfo.company.orgId,
               imsAccess: initInfo.tokens.imsAccess,
-              schemaMeta
+              schemaMeta,
+              sandboxName
             })
               .then(schema => {
                 setSchemaStatus(STATUS_LOADED || null);
@@ -320,13 +322,13 @@ const XdmExtensionView = () => {
             sandboxName:
               sandboxMeta && sandboxMeta.name ? sandboxMeta.name : null
           })
-            .then(_schemasMeta => {
-              if (!_schemasMeta.length) {
+            .then(response => {
+              if (!response.results.length) {
                 throw new Error("No schemas found");
               }
               setSchemasMetaStatus(STATUS_LOADED || null);
-              setSchemasMeta(_schemasMeta);
-              setSelectedSchemaMeta(_schemasMeta[0]);
+              setSchemasMeta(response.results);
+              setSelectedSchemaMeta(response.results[0]);
             })
             .catch(() => {
               setSchemasMetaStatus(STATUS_ERROR || null);
@@ -341,7 +343,10 @@ const XdmExtensionView = () => {
           fetchSchema({
             orgId: options.initInfo.company.orgId,
             imsAccess: options.initInfo.tokens.imsAccess,
-            schemaMeta
+            schemaMeta,
+            sandboxName: selectedSandboxMeta.name
+              ? selectedSandboxMeta.name
+              : null
           })
             .then(schema => {
               setSchemaStatus(STATUS_LOADED || null);
