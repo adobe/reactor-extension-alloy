@@ -17,48 +17,48 @@ import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import IdentityWrapper from "../components/identityWrapper";
-import getDefaultIdentity from "../utils/getDefaultIdentifier";
+import getDefaultIdentity from "../utils/getDefaultIdentity";
 import "./identityMap.styl";
 
-const identifiersMapToArray = identifierMap => {
+const identitiesMapToArray = identifierMap => {
   return Object.keys(identifierMap).map(namespace => {
     return {
       namespace,
-      identities: identifierMap[namespace]
+      identifiers: identifierMap[namespace]
     };
   });
 };
 
-const identifiersArrayToMap = identifiersArray => {
-  return identifiersArray.reduce((identifierMap, identifier) => {
-    const { namespace, identities } = identifier;
-    identifierMap[namespace] = identities;
-    return identifierMap;
+const identitiesArrayToMap = identifiersArray => {
+  return identifiersArray.reduce((identityMap, identity) => {
+    const { namespace, identifiers } = identity;
+    identityMap[namespace] = identifiers;
+    return identityMap;
   }, {});
 };
 
 const getInitialValues = ({ initInfo }) => {
-  const identifiers = initInfo.settings
-    ? identifiersMapToArray(initInfo.settings)
+  const identities = initInfo.settings
+    ? identitiesMapToArray(initInfo.settings)
     : [getDefaultIdentity()];
 
   return {
-    identifiers
+    identities
   };
 };
 
 const getSettings = ({ values }) => {
-  return identifiersArrayToMap(values.identifiers);
+  return identitiesArrayToMap(values.identities);
 };
 
 const validateDuplicateValue = (
   createError,
-  identifiers,
+  identities,
   key,
   message,
   validateBooleanTrue
 ) => {
-  const values = identifiers.map(identifier => identifier[key]);
+  const values = identities.map(identity => identity[key]);
   const duplicateIndex = values.findIndex(
     (value, index) =>
       values.indexOf(value) < index && (!validateBooleanTrue || value === true)
@@ -75,7 +75,7 @@ const validateDuplicateValue = (
 
 const validationSchema = object()
   .shape({
-    identifiers: array().of(
+    identities: array().of(
       object().shape({
         namespace: string()
           .required("Please select a namespace.")
@@ -86,7 +86,7 @@ const validationSchema = object()
               return value !== "ECID";
             }
           }),
-        identities: array().of(
+        identifiers: array().of(
           object().shape({
             id: string().required("Please specify an ID."),
             authenticatedState: string().required(
@@ -97,24 +97,18 @@ const validationSchema = object()
       })
     )
   })
-  // TestCafe doesn't allow this to be an arrow function because of
-  // how it scopes "this".
-  // eslint-disable-next-line func-names
-  .test("uniqueNamespace", function(settings) {
+  .test("uniqueNamespace", function uniqueNamespace(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
-      settings.identifiers,
+      settings.identities,
       "namespace",
       "Please provide a unique namespace."
     );
   })
-  // TestCafe doesn't allow this to be an arrow function because of
-  // how it scopes "this".
-  // eslint-disable-next-line func-names
-  .test("uniquePrimary", function(settings) {
+  .test("uniquePrimary", function uniquePrimary(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
-      settings.identifiers,
+      settings.identities,
       "primary",
       "Only one namespace can be primary.",
       true
