@@ -18,6 +18,15 @@ export default ({ orgId, imsAccess }) => {
 
   const SANDBOX_PERMISSION_ERROR = 403;
 
+  const DEFAULT_SANDBOX = {
+    name: platform.getDefaultSandbox(),
+    title: "Prod",
+    type: "production",
+    isDefault: true,
+    region: null,
+    state: "active"
+  };
+
   return fetch(
     `${platform.getHost()}/data/foundation/sandbox-management/sandboxes`,
     {
@@ -28,7 +37,10 @@ export default ({ orgId, imsAccess }) => {
   )
     .then(response => {
       if (response.status === SANDBOX_PERMISSION_ERROR) {
-        return { sandboxes: null };
+        return {
+          sandboxes: [DEFAULT_SANDBOX],
+          disabled: true
+        };
       }
       if (!response.ok) {
         throw new Error("Cannot fetch active sandboxes list");

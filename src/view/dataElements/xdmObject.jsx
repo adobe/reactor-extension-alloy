@@ -38,7 +38,6 @@ const XdmObject = ({
   initInfo,
   formikProps,
   sandboxesMeta,
-  sandboxOptionsTooltip,
   selectedSandboxMeta,
   setSelectedSandboxMeta,
   schemasMeta,
@@ -51,18 +50,16 @@ const XdmObject = ({
   const { values: formState } = formikProps;
   const [selectedNodeId, setSelectedNodeId] = useState();
 
-  const sandboxOptions = sandboxesMeta
-    ? sandboxesMeta
-        .filter(sandbox => sandbox.state === "active")
-        .map(sandbox => {
-          return {
-            value: sandbox.name,
-            label: `${sandbox.type.toUpperCase()}  ${
-              sandbox.title
-            } (${sandbox.region.toUpperCase()})`
-          };
-        })
-    : [];
+  const sandboxOptions = sandboxesMeta.sandboxes
+    .filter(sandbox => sandbox.state === "active")
+    .map(sandbox => {
+      return {
+        value: sandbox.name,
+        label: `${sandbox.type.toUpperCase()}  ${sandbox.title}${
+          sandbox.region ? ` (${sandbox.region.toUpperCase()})` : ""
+        }`
+      };
+    });
 
   const schemaOptions = schemasMeta.map(schemaMeta => {
     return {
@@ -74,7 +71,13 @@ const XdmObject = ({
   return (
     <div>
       <div className="u-gapTop">
-        <InfoTipLayout tip={sandboxOptionsTooltip}>
+        <InfoTipLayout
+          tip={
+            sandboxesMeta.disabled && sandboxesMeta.disabled === true
+              ? "This option is disabled because your account has not been configured for multiple sandboxes."
+              : "Choose a sandbox which contains the schema you wish to use."
+          }
+        >
           <FieldLabel labelFor="sandboxField" label="Sandbox" />
         </InfoTipLayout>
       </div>
@@ -90,12 +93,12 @@ const XdmObject = ({
               setSelectedNodeId(undefined);
               setSchemasMetaStatus(STATUS_LOADING);
               setSelectedSandboxMeta(
-                sandboxesMeta.find(
+                sandboxesMeta.sandboxes.find(
                   sandboxMeta => sandboxMeta.name === sandboxMetaName
                 )
               );
             }}
-            disabled={sandboxOptions.length === 0}
+            disabled={sandboxesMeta.disabled}
             placeholder="PRODUCTION Prod"
           />
         )}
@@ -180,7 +183,6 @@ XdmObject.propTypes = {
   initInfo: PropTypes.object.isRequired,
   formikProps: PropTypes.object.isRequired,
   sandboxesMeta: PropTypes.array,
-  sandboxOptionsTooltip: PropTypes.string,
   selectedSandboxMeta: PropTypes.object,
   setSelectedSandboxMeta: PropTypes.func,
   schemasMeta: PropTypes.array,
@@ -193,7 +195,6 @@ XdmObject.propTypes = {
 
 const XdmExtensionView = () => {
   const [sandboxesMeta, setSandboxesMeta] = useState();
-  const [sandboxOptionsTooltip, setSandboxOptionsTooltip] = useState();
   const [schemasMeta, setSchemasMeta] = useState();
   const [schemasMetaStatus, setSchemasMetaStatus] = useState();
   const [selectedSandboxMeta, setSelectedSandboxMeta] = useState();
@@ -212,7 +213,7 @@ const XdmExtensionView = () => {
             let sandboxName = null;
             // if sandboxes are returned from the api call
             if (_sandboxesMeta.sandboxes && _sandboxesMeta.sandboxes.length) {
-              setSandboxesMeta(_sandboxesMeta.sandboxes);
+              setSandboxesMeta(_sandboxesMeta);
               // default to the first item in the list
               let sandboxMeta = _sandboxesMeta.sandboxes[0];
               // if a sandbox exists in settings and is in the list, choose that item
@@ -226,16 +227,6 @@ const XdmExtensionView = () => {
                 sandboxName = sandboxMeta.name;
               }
               setSelectedSandboxMeta(sandboxMeta);
-              setSandboxOptionsTooltip(
-                "Choose a sandbox which contains the schema you wish to use."
-              );
-            } else {
-              // no sandboxes are available
-              const defaultSandbox = { name: "PRODUCTION Prod" };
-              setSelectedSandboxMeta(defaultSandbox);
-              setSandboxOptionsTooltip(
-                "This option is disabled because your account has not been configured for multiple sandboxes."
-              );
             }
 
             return fetchSchemasMeta({
@@ -313,6 +304,7 @@ const XdmExtensionView = () => {
       validate={validate}
       render={options => {
         const onSandboxesMetaSelected = sandboxMeta => {
+          console.log(sandboxMeta);
           setSelectedSandboxMeta(sandboxMeta);
           setSchemasMetaStatus(STATUS_LOADING || null);
 
@@ -365,7 +357,6 @@ const XdmExtensionView = () => {
           <XdmObject
             {...options}
             sandboxesMeta={sandboxesMeta}
-            sandboxOptionsTooltip={sandboxOptionsTooltip}
             selectedSandboxMeta={selectedSandboxMeta}
             setSelectedSandboxMeta={onSandboxesMetaSelected}
             schemasMeta={schemasMeta}
