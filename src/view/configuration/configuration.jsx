@@ -97,7 +97,6 @@ const getInstanceDefaults = initInfo => ({
   idMigrationEnabled: true,
   thirdPartyCookiesEnabled: true,
   clickCollectionEnabled: true,
-  showAdvancedSettings: false,
   onBeforeEventSend: "",
   downloadLinkQualifier:
     "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$"
@@ -205,8 +204,7 @@ const getSettings = ({ values, initInfo }) => {
         "thirdPartyCookiesEnabled",
         "onBeforeEventSend",
         "clickCollectionEnabled",
-        "defaultConsent",
-        "showAdvancedSettings"
+        "defaultConsent"
       ];
 
       if (instance.clickCollectionEnabled) {
@@ -565,9 +563,7 @@ const Configuration = ({
                     <div>
                       <h2 className="Rule">Edge Configurations</h2>
                       <Rule variant="small" />
-                      <Link href="https://docs.adobe.com/content/help/en/experience-platform/edge/fundamentals/edge-configuration.html">
-                        Learn more
-                      </Link>
+                      <Link href="https://adobe.ly/3eY91Er">Learn more</Link>
 
                       <div className="u-gapTop">
                         {index === 0 && (
@@ -717,9 +713,7 @@ const Configuration = ({
                     <div>
                       <h2 className="Rule">Privacy</h2>
                       <Rule variant="small" />
-                      <Link href="https://docs.adobe.com/content/help/en/experience-platform/edge/fundamentals/configuring-the-sdk.html#privacy-options">
-                        Learn more
-                      </Link>
+                      <Link href="https://adobe.ly/2WSngEh">Learn more</Link>
 
                       <div className="u-gapTop2x">
                         <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent.">
@@ -751,9 +745,7 @@ const Configuration = ({
                     <div>
                       <h2 className="Rule">Identity</h2>
                       <Rule variant="small" />
-                      <Link href="https://docs.adobe.com/content/help/en/experience-platform/edge/fundamentals/configuring-the-sdk.html#identity-options">
-                        Learn more
-                      </Link>
+                      <Link href="https://adobe.ly/39ouRzA">Learn more</Link>
 
                       <div className="u-gapTop">
                         <InfoTipLayout tip="Enables the AEP Web SDK to preserve the ECID by reading/writing the AMCV cookie. Use this config until users are fully migrated to the Alloy cookie and in situations where you have mixed pages on your website.">
@@ -781,9 +773,7 @@ const Configuration = ({
                     <div>
                       <h2 className="Rule">Personalization</h2>
                       <Rule variant="small" />
-                      <Link href="https://docs.adobe.com/content/help/en/experience-platform/edge/fundamentals/configuring-the-sdk.html#personalization-options">
-                        Learn more
-                      </Link>
+                      <Link href="https://adobe.ly/3fYDkfh">Learn more</Link>
 
                       <div className="u-gapTop">
                         <InfoTipLayout tip="A CSS style definition that will hide content areas of your web page while personalized content is loaded from the server.">
@@ -826,9 +816,7 @@ const Configuration = ({
                     <div>
                       <h2 className="Rule">Data Collection</h2>
                       <Rule variant="small" />
-                      <Link href="https://docs.adobe.com/content/help/en/experience-platform/edge/fundamentals/configuring-the-sdk.html#data-collection">
-                        Learn more
-                      </Link>
+                      <Link href="https://adobe.ly/2CYnq65">Learn more</Link>
                       <div className="u-gapTop">
                         <InfoTipLayout tip='A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'>
                           <FieldLabel
@@ -849,7 +837,7 @@ const Configuration = ({
                           />
                         </div>
                       </div>
-                      <div className="u-gapTop">
+                      <div className="u-gapTop2x u-gapBottom2x">
                         <InfoTipLayout tip="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected.">
                           <WrappedField
                             data-test-id="clickCollectionEnabledField"
@@ -860,7 +848,7 @@ const Configuration = ({
                         </InfoTipLayout>
                       </div>
                       {values.instances[index].clickCollectionEnabled ? (
-                        <div className="FieldSubset u-gapTop">
+                        <div className="FieldSubset u-gapTop u-gapBottom">
                           <InfoTipLayout tip="Regular expression that qualifies a link URL as a download link.">
                             <FieldLabel
                               labelFor="downloadLinkQualifier"
@@ -957,56 +945,48 @@ const Configuration = ({
                     </div>
 
                     <div className="u-gapTop2x">
-                      <WrappedField
-                        name={`instances.${index}.showAdvancedSettings`}
-                        component={Checkbox}
-                      >
-                        Show Advanced Settings
-                      </WrappedField>
-                      {values.instances[index].showAdvancedSettings ? (
-                        <div>
-                          <h2 className="AdvancedSettings">Advanced Settings</h2>
-                          <Rule variant="small" />
+                      <div>
+                        <h2 className="AdvancedSettings">Advanced Settings</h2>
+                        <Rule variant="small" />
 
-                          <div className="u-gapTop">
-                            <InfoTipLayout
-                              tip="Specifies the base path of the endpoint used
+                        <div className="u-gapTop">
+                          <InfoTipLayout
+                            tip="Specifies the base path of the endpoint used
                       to interact with Adobe Services. This setting
                       should only be changed if you are not intending
                       to use the default production environment."
-                            >
-                              <FieldLabel
-                                labelFor="edgeBasePathField"
-                                label="Edge Base Path"
-                              />
-                            </InfoTipLayout>
-                            <div>
-                              <WrappedField
-                                data-test-id="edgeBasePathField"
-                                id="edgeBasePathField"
-                                name={`instances.${index}.edgeBasePath`}
-                                component={Textfield}
-                                componentClassName="u-fieldLong"
-                                supportDataElement="replace"
-                              />
-                              <Button
-                                data-test-id="edgeBasePathRestoreButton"
-                                label="Restore to default"
-                                onClick={() => {
-                                  const instanceDefaults = getInstanceDefaults(
-                                    initInfo
-                                  );
-                                  setFieldValue(
-                                    `instances.${index}.edgeBasePath`,
-                                    instanceDefaults.edgeBasePath
-                                  );
-                                }}
-                                quiet
-                              />
-                            </div>
+                          >
+                            <FieldLabel
+                              labelFor="edgeBasePathField"
+                              label="Edge Base Path"
+                            />
+                          </InfoTipLayout>
+                          <div>
+                            <WrappedField
+                              data-test-id="edgeBasePathField"
+                              id="edgeBasePathField"
+                              name={`instances.${index}.edgeBasePath`}
+                              component={Textfield}
+                              componentClassName="u-fieldLong"
+                              supportDataElement="replace"
+                            />
+                            <Button
+                              data-test-id="edgeBasePathRestoreButton"
+                              label="Restore to default"
+                              onClick={() => {
+                                const instanceDefaults = getInstanceDefaults(
+                                  initInfo
+                                );
+                                setFieldValue(
+                                  `instances.${index}.edgeBasePath`,
+                                  instanceDefaults.edgeBasePath
+                                );
+                              }}
+                              quiet
+                            />
                           </div>
                         </div>
-                      ) : null}
+                      </div>
                       <div className="u-gapTop2x">
                         <ModalTrigger>
                           <Button
