@@ -284,17 +284,11 @@ const XdmExtensionView = () => {
       getSettings={({ values }) => {
         return {
           sandbox: {
-            name: selectedSandboxMeta ? selectedSandboxMeta.name : null
+            name: selectedSandboxMeta.name
           },
           schema: {
-            id:
-              selectedSchemaMeta && selectedSchemaMeta.$id
-                ? selectedSchemaMeta.$id
-                : null,
-            version:
-              selectedSchemaMeta && selectedSchemaMeta.version
-                ? selectedSchemaMeta.version
-                : null
+            id: selectedSchemaMeta.$id,
+            version: selectedSchemaMeta.version
           },
           data: getValueFromFormState({ formStateNode: values }) || {}
         };
