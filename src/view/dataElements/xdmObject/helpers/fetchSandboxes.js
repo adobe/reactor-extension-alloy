@@ -30,12 +30,13 @@ export default ({ orgId, imsAccess }) => {
   return fetch(
     `${platform.getHost()}/data/foundation/sandbox-management/sandboxes`,
     {
-      headers: {
-        ...baseRequestHeaders
-      }
+      headers: baseRequestHeaders
     }
   )
     .then(response => {
+      // Some platform users may not have permission to call the sandbox-management API endpoint.
+      // In this case we return a default sandbox representing production. This allows schema meta
+      // and schemas to be loaded using the organization's default sandbox name 'prod'.
       if (response.status === SANDBOX_PERMISSION_ERROR) {
         return {
           sandboxes: [DEFAULT_SANDBOX],

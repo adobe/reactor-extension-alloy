@@ -215,7 +215,10 @@ const XdmExtensionView = () => {
             if (_sandboxesMeta.sandboxes && _sandboxesMeta.sandboxes.length) {
               setSandboxesMeta(_sandboxesMeta);
               // default to the first item in the list
-              let sandboxMeta = _sandboxesMeta.sandboxes[0];
+              let sandboxMeta = _sandboxesMeta.sandboxes.find(
+                _sandboxMeta => _sandboxMeta.isDefault === true
+              );
+
               // if a sandbox exists in settings and is in the list, choose that item
               if (initInfo.settings && initInfo.settings.sandbox) {
                 sandboxMeta = _sandboxesMeta.sandboxes.find(
@@ -239,11 +242,11 @@ const XdmExtensionView = () => {
             setSchemasMeta(response.results);
 
             if (!response.results.length) {
-              setSchemasMetaStatus(STATUS_ERROR || null);
+              setSchemasMetaStatus(STATUS_ERROR);
               return {};
             }
 
-            setSchemasMetaStatus(STATUS_LOADED || null);
+            setSchemasMetaStatus(STATUS_LOADED);
 
             // TODO: don't initialize form state if the schema doesn't match
             let schemaMeta = response.results[0];
@@ -256,7 +259,7 @@ const XdmExtensionView = () => {
             }
 
             setSelectedSchemaMeta(schemaMeta);
-            setSchemaStatus(STATUS_LOADING || null);
+            setSchemaStatus(STATUS_LOADING);
 
             const { sandboxName } = response;
             return fetchSchema({
@@ -264,17 +267,12 @@ const XdmExtensionView = () => {
               imsAccess: initInfo.tokens.imsAccess,
               schemaMeta,
               sandboxName
-            })
-              .then(schema => {
-                setSchemaStatus(STATUS_LOADED || null);
-
-                return schema;
-              })
-              .catch(() => {
-                setSchemaStatus(STATUS_ERROR || null);
-              });
+            }).catch(() => {
+              setSchemaStatus(STATUS_ERROR);
+            });
           })
           .then(schema => {
+            setSchemaStatus(STATUS_LOADED);
             const initialValues = getInitialFormState({
               value: (initInfo.settings && initInfo.settings.data) || {},
               schema
@@ -304,9 +302,8 @@ const XdmExtensionView = () => {
       validate={validate}
       render={options => {
         const onSandboxesMetaSelected = sandboxMeta => {
-          console.log(sandboxMeta);
           setSelectedSandboxMeta(sandboxMeta);
-          setSchemasMetaStatus(STATUS_LOADING || null);
+          setSchemasMetaStatus(STATUS_LOADING);
 
           fetchSchemasMeta({
             orgId: options.initInfo.company.orgId,
@@ -318,12 +315,12 @@ const XdmExtensionView = () => {
               if (!response.results.length) {
                 throw new Error("No schemas found");
               }
-              setSchemasMetaStatus(STATUS_LOADED || null);
+              setSchemasMetaStatus(STATUS_LOADED);
               setSchemasMeta(response.results);
               setSelectedSchemaMeta(response.results[0]);
             })
             .catch(() => {
-              setSchemasMetaStatus(STATUS_ERROR || null);
+              setSchemasMetaStatus(STATUS_ERROR);
             });
         };
 
@@ -331,7 +328,7 @@ const XdmExtensionView = () => {
         //  a secondary selected item
         const onSchemaMetaSelected = schemaMeta => {
           setSelectedSchemaMeta(schemaMeta);
-          setSchemaStatus(STATUS_LOADING || null);
+          setSchemaStatus(STATUS_LOADING);
           fetchSchema({
             orgId: options.initInfo.company.orgId,
             imsAccess: options.initInfo.tokens.imsAccess,
@@ -341,7 +338,7 @@ const XdmExtensionView = () => {
               : null
           })
             .then(schema => {
-              setSchemaStatus(STATUS_LOADED || null);
+              setSchemaStatus(STATUS_LOADED);
               const initialValues = getInitialFormState({
                 value: {},
                 schema
@@ -349,7 +346,7 @@ const XdmExtensionView = () => {
               options.resetForm(initialValues);
             })
             .catch(() => {
-              setSchemaStatus(STATUS_ERROR || null);
+              setSchemaStatus(STATUS_ERROR);
             });
         };
 

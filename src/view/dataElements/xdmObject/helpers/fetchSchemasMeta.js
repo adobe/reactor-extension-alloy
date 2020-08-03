@@ -26,7 +26,7 @@ export default ({ orgId, imsAccess, sandboxName }) => {
     Accept: "application/vnd.adobe.xdm-v2+json"
   };
 
-  if (sandboxName && sandboxName !== "") {
+  if (sandboxName) {
     headers["x-sandbox-name"] = sandboxName;
   } else {
     headers["x-sandbox-name"] = platform.getDefaultSandbox();
@@ -35,11 +35,7 @@ export default ({ orgId, imsAccess, sandboxName }) => {
   // TODO: paginate this response using on responseBody._page.count or responseBody._links.next
   return fetch(
     `${platform.getHost()}/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta:extends==${metaExtends}`,
-    {
-      headers: {
-        ...headers
-      }
-    }
+    { headers }
   )
     .then(response => {
       if (!response.ok) {
