@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
-import { array, object, string } from "yup";
+import { array, boolean, object, string } from "yup";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../render";
 import ExtensionView from "../components/extensionView";
@@ -67,7 +67,7 @@ const validateDuplicateValue = (
   return (
     duplicateIndex === -1 ||
     createError({
-      path: `identifiers[${duplicateIndex}].${key}`,
+      path: `identities[${duplicateIndex}].${key}`,
       message
     })
   );
@@ -91,7 +91,8 @@ const validationSchema = object()
             id: string().required("Please specify an ID."),
             authenticatedState: string().required(
               "Please select an authenticated state."
-            )
+            ),
+            primary: boolean().default(false)
           })
         )
       })
@@ -104,8 +105,10 @@ const validationSchema = object()
       "namespace",
       "Please provide a unique namespace."
     );
-  })
-  .test("uniquePrimary", function uniquePrimary(settings) {
+  });
+
+ /* will work on this as part of identityMap phase 2
+ .test("uniquePrimary", function uniquePrimary(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
       settings.identities,
@@ -113,7 +116,7 @@ const validationSchema = object()
       "Only one namespace can be primary.",
       true
     );
-  });
+  });*/
 
 const IdentityMap = () => {
   return (

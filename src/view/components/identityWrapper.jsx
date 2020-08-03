@@ -81,7 +81,7 @@ function IdentityWrapper({ values }) {
                             <React.Fragment>
                               <div className="u-gapTop u-alignRight">
                                 <Button
-                                  data-test-id="addIdentifierButton"
+                                  data-test-id={`addIdentifier${index}Button`}
                                   label="Add Identifier"
                                   onClick={() => {
                                     identityArrayHelpers.push(
@@ -140,7 +140,7 @@ function IdentityWrapper({ values }) {
                                     </div>
                                     <div className="u-gapTop">
                                       <Button
-                                        data-test-id={`deleteIdentity${index}Button${identifierIndex}`}
+                                        data-test-id={`deleteIdentifier${index}Button${identifierIndex}`}
                                         label="Delete Identifier"
                                         icon={<Delete />}
                                         disabled={
@@ -171,7 +171,7 @@ function IdentityWrapper({ values }) {
                     </div>
                     <div className="u-gapTop">
                       <Button
-                        data-test-id={`delete${index}Button`}
+                        data-test-id={`deleteIdentity${index}Button`}
                         label="Delete Identity"
                         icon={<Delete />}
                         disabled={values.identities.length === 1}
