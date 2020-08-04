@@ -25,15 +25,17 @@ for (let i = 0; i < 2; i += 1) {
   const identifiers = [];
   for (let j = 0; j < 2; j += 1) {
     identifiers.push({
-      id: spectrum.textfield(`identity${i}idField${j}` ),
-      authenticatedState: spectrum.select(`identity${i}authenticatedStateField${j}`),
+      id: spectrum.textfield(`identity${i}idField${j}`),
+      authenticatedState: spectrum.select(
+        `identity${i}authenticatedStateField${j}`
+      ),
       primary: spectrum.checkbox(`identity${i}primaryField${j}`),
       deleteButton: spectrum.button(`deleteIdentifier${i}Button${j}`)
     });
   }
   identities.push({
     namespace: spectrum.textfield(`namespace${i}Field`),
-    identifiers: identifiers,
+    identifiers,
     deleteButton: spectrum.button(`deleteIdentity${i}Button`),
     addIdentifierButton: spectrum.button(`addIdentifier${i}Button`)
   });
@@ -62,7 +64,7 @@ test("initializes Identity map with default settings", async () => {
   await identities[0].namespace.expectValue("");
   await identities[0].identifiers[0].id.expectValue("");
   await identities[0].identifiers[0].authenticatedState.expectSelectedOptionLabel(
-    "Select an option"
+    "Ambiguous"
   );
   await identities[0].identifiers[0].primary.expectUnchecked();
   await identities[0].identifiers[0].deleteButton.expectDisabled();
@@ -264,7 +266,6 @@ test("invalid Identifier trigger validation error", async () => {
   await identityMapViewController.expectIsNotValid();
   await accordion.clickHeader("CUSTOM_IDENTITY");
   await identities[0].identifiers[0].id.expectError();
-  await identities[0].identifiers[0].authenticatedState.expectError();
 });
 test("double Identity namespace trigger validation error", async () => {
   await identityMapViewController.init({

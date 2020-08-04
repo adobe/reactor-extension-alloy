@@ -19,6 +19,7 @@ import ExtensionView from "../components/extensionView";
 import IdentityWrapper from "../components/identityWrapper";
 import getDefaultIdentity from "../utils/getDefaultIdentity";
 import "./identityMap.styl";
+import { AMBIGUOUS } from "../utils/authenticatedState";
 
 const identitiesMapToArray = identityMap => {
   return Object.keys(identityMap).map(namespace => {
@@ -89,9 +90,7 @@ const validationSchema = object()
         identifiers: array().of(
           object().shape({
             id: string().required("Please specify an ID."),
-            authenticatedState: string().required(
-              "Please select an authenticated state."
-            ),
+            authenticatedState: string().default(AMBIGUOUS),
             primary: boolean().default(false)
           })
         )
@@ -107,7 +106,7 @@ const validationSchema = object()
     );
   });
 
- /* will work on this as part of identityMap phase 2
+/* will work on this as part of identityMap phase 2
  .test("uniquePrimary", function uniquePrimary(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
