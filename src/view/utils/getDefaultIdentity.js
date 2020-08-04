@@ -10,12 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { AMBIGUOUS } from "./authenticatedState";
+import getDefaultIdentifier from "./getDefaultIdentifier";
 
 export default () => {
   return {
-    id: "",
-    authenticatedState: AMBIGUOUS,
-    primary: false
+    namespace: "",
+    identifiers: [getDefaultIdentifier()]
   };
 };

@@ -10,12 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { AMBIGUOUS } from "./authenticatedState";
-
-export default () => {
-  return {
-    id: "",
-    authenticatedState: AMBIGUOUS,
-    primary: false
-  };
-};
+export const AMBIGUOUS = "ambiguous";
+export const AUTHENTICATED = "authenticated";
+export const LOGGED_OUT = "loggedOut";

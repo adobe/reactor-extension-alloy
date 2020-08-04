@@ -10,17 +10,23 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import {
+  AMBIGUOUS,
+  AUTHENTICATED,
+  LOGGED_OUT
+} from "../utils/authenticatedState";
+
 export default [
   {
-    value: "ambiguous",
+    value: AMBIGUOUS,
     label: "Ambiguous"
   },
   {
-    value: "authenticated",
+    value: AUTHENTICATED,
     label: "Authenticated"
   },
   {
-    value: "loggedOut",
+    value: LOGGED_OUT,
     label: "Logged Out"
   }
 ];
