@@ -64,6 +64,7 @@ const generateNodeId = () => {
  * and is made available for convenient access so it doesn't have to
  * be repeatedly computed on every render.
  *
+ * @param {Object} sandboxMeta The sandbox meta object.
  * @param {Object} schema The XDM schema that describes the node.
  * @param {*} [value] The previously persisted value for the node. This
  * will only be defined when the user is reloading the extension view
@@ -74,7 +75,7 @@ const generateNodeId = () => {
  * The path for bar would be "foo.bar".
  * @returns FormStateNode
  */
-const getInitialFormStateNode = ({ schema, value, nodePath }) => {
+const getInitialFormStateNode = ({ sandboxMeta, schema, value, nodePath }) => {
   const formStateNode = {
     // We generate an ID rather than use something like a schema path
     // or field path because those paths would need to incorporate indexes
@@ -82,6 +83,7 @@ const getInitialFormStateNode = ({ schema, value, nodePath }) => {
     // from their parent arrays. We want the ID to remain constant
     // for as long as the node exists.
     id: generateNodeId(),
+    sandboxMeta,
     schema,
     isAutoPopulated: autoPopulatedFields.includes(nodePath),
     isAlwaysDisabled: alwaysDisabledFields.includes(nodePath)
@@ -104,8 +106,8 @@ const getInitialFormStateNode = ({ schema, value, nodePath }) => {
 
 // Avoid exposing all of getInitialFormStateNode's parameters since
 // they're only used internally for recursion.
-export default ({ schema, value }) => {
-  return getInitialFormStateNode({ schema, value });
+export default ({ sandboxMeta, schema, value }) => {
+  return getInitialFormStateNode({ sandboxMeta, schema, value });
 };
 
 const formStateNodeShape = {

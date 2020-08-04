@@ -255,6 +255,17 @@
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
         "properties": {
+          "sandbox": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": ["name"],
+            "additionalProperties": false
+          },
           "schema": {
             "type": "object",
             "properties": {

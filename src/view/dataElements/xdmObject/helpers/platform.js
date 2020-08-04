@@ -15,5 +15,8 @@ const PROD = "https://platform.adobe.io";
 export default {
   getHost: () => {
     return PROD;
+  },
+  getDefaultSandbox: () => {
+    return "prod";
   }
 };
