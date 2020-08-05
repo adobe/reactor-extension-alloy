@@ -115,7 +115,8 @@ const validationSchema = object()
       "Only one namespace can be primary.",
       true
     );
-  });*/
+  });
+*/
 
 const IdentityMap = () => {
   return (
