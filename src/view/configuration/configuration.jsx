@@ -563,7 +563,7 @@ const Configuration = ({
                     <div>
                       <h2 className="Rule">Edge Configurations</h2>
                       <Rule variant="small" />
-                      <Link href="https://adobe.ly/3eY91Er">Learn more</Link>
+                      <Link href="https://adobe.ly/3eY91Er" target="_blank">Learn more</Link>
 
                       <div className="u-gapTop">
                         {index === 0 && (
@@ -713,7 +713,7 @@ const Configuration = ({
                     <div>
                       <h2 className="Rule">Privacy</h2>
                       <Rule variant="small" />
-                      <Link href="https://adobe.ly/2WSngEh">Learn more</Link>
+                      <Link href="https://adobe.ly/2WSngEh" target="_blank">Learn more</Link>
 
                       <div className="u-gapTop2x">
                         <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent.">
@@ -745,7 +745,7 @@ const Configuration = ({
                     <div>
                       <h2 className="Rule">Identity</h2>
                       <Rule variant="small" />
-                      <Link href="https://adobe.ly/39ouRzA">Learn more</Link>
+                      <Link href="https://adobe.ly/39ouRzA" target="_blank">Learn more</Link>
 
                       <div className="u-gapTop">
                         <InfoTipLayout tip="Enables the AEP Web SDK to preserve the ECID by reading/writing the AMCV cookie. Use this config until users are fully migrated to the Alloy cookie and in situations where you have mixed pages on your website.">
@@ -773,7 +773,7 @@ const Configuration = ({
                     <div>
                       <h2 className="Rule">Personalization</h2>
                       <Rule variant="small" />
-                      <Link href="https://adobe.ly/3fYDkfh">Learn more</Link>
+                      <Link href="https://adobe.ly/3fYDkfh" target="_blank">Learn more</Link>
 
                       <div className="u-gapTop">
                         <InfoTipLayout tip="A CSS style definition that will hide content areas of your web page while personalized content is loaded from the server.">
@@ -816,7 +816,7 @@ const Configuration = ({
                     <div>
                       <h2 className="Rule">Data Collection</h2>
                       <Rule variant="small" />
-                      <Link href="https://adobe.ly/2CYnq65">Learn more</Link>
+                      <Link href="https://adobe.ly/2CYnq65" target="_blank">Learn more</Link>
                       <div className="u-gapTop">
                         <InfoTipLayout tip='A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'>
                           <FieldLabel
