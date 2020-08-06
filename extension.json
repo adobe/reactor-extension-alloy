@@ -189,13 +189,11 @@
                   "anyOf": [
                     {
                       "type": "object",
-                      "required": ["standard", "version", "value"],
                       "properties": {
                         "standard": { "type": "string", "enum": ["Adobe"] },
                         "version": { "type": "string" },
                         "value": {
                           "type": "object",
-                          "required": ["general"],
                           "properties": {
                             "general": {
                               "oneOf": [
@@ -211,11 +209,11 @@
                             }
                           }
                         }
-                      }
+                      },
+                      "additionalProperties": false
                     },
                     {
                       "type": "object",
-                      "required": ["standard", "version", "value"],
                       "properties": {
                         "standard": { "type": "string", "enum": ["IAB TCF"] },
                         "version": { "type": "string" },
