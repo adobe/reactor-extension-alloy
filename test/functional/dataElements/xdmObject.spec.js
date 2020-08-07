@@ -87,7 +87,8 @@ const initializeExtensionView = async additionalInitInfo => {
 // https://github.com/DevExpress/testcafe/issues/1770
 fixture("XDM Object View")
   .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
-  .meta("requiresAdobeIOIntegration", true);
+  .meta("requiresAdobeIOIntegration", true)
+  .requestHooks(platformMocks.sandboxes);
 
 test("initializes form fields with individual object attribute values", async () => {
   await initializeExtensionView({
@@ -108,27 +109,27 @@ test("initializes form fields with individual object attribute values", async ()
   await stringEdit.expectValue("Adobe");
 });
 
-test.requestHooks(platformMocks.sandboxesUnauthorized)(
-  "disables user from selecting a sandbox",
-  async () => {
-    await initializeExtensionView();
-    await spectrum.select("sandboxField").expectDisabled();
-    await selectSchemaFromSchemasMeta();
-    await xdmTree.toggleExpansion("_alloyengineering");
-  }
-);
+test("disables user from selecting a sandbox", async () => {
+  // temporarily remove sandboxes mock
+  await t.removeRequestHooks(platformMocks.sandboxes);
+  // replace with unaurhotized mock
+  await t.addRequestHooks(platformMocks.sandboxesUnauthorized);
+  await initializeExtensionView();
+  await spectrum.select("sandboxField").expectDisabled();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("_alloyengineering");
+  // restore original sandboxes mock
+  await t.addRequestHooks(platformMocks.sandboxes);
+});
 
-test.requestHooks(platformMocks.sandboxes)(
-  "checks sandbox with no schemas",
-  async () => {
-    await initializeExtensionView();
-    await spectrum.select("sandboxField").expectEnabled();
-    await spectrum
-      .select("sandboxField")
-      .selectOption("PRODUCTION Alloy Test (FOO)");
-    await spectrum.alert("selectedSandboxWarning").expectExists();
-  }
-);
+test("checks sandbox with no schemas", async () => {
+  await initializeExtensionView();
+  await spectrum.select("sandboxField").expectEnabled();
+  await spectrum
+    .select("sandboxField")
+    .selectOption("PRODUCTION Alloy Test (FOO)");
+  await spectrum.alert("selectedSandboxWarning").expectExists();
+});
 
 test.requestHooks(platformMocks.schemasMeta)(
   "attempts to load an invalid schema",
