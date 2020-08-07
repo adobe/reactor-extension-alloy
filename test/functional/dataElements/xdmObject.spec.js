@@ -36,8 +36,10 @@ const schema = {
 
 const schemaTitle = "XDM Object Data Element Tests";
 
+const schemaField = spectrum.select("schemaField");
+
 const selectSchemaFromSchemasMeta = async () => {
-  await spectrum.select("schemaField").selectOption(schemaTitle);
+  await schemaField.selectOption(schemaTitle);
 };
 
 /**
