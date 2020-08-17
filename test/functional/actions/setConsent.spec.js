@@ -17,12 +17,47 @@ import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
 const extensionViewController = createExtensionViewController(
   "actions/setConsent.html"
 );
-const instanceNameField = spectrum.select("instanceNameField");
-const radioGroup = {
-  inField: spectrum.radio("inOptionField"),
-  outField: spectrum.radio("outOptionField"),
-  dataElementField: spectrum.radio("dataElementOptionField")
-};
+
+const generateOptionsWithDataElement = (container, prefix, options) =>
+  [...options, "DataElement"].reduce(
+    (elements, option) => {
+      elements[`${prefix}${option}Radio`] = container.radio(
+        `${prefix}${option}Radio`
+      );
+      return elements;
+    },
+    {
+      [`${prefix}DataElementField`]: container.textfield(
+        `${prefix}DataElementField`
+      )
+    }
+  );
+
+const instanceNameSelect = spectrum.select("instanceNameSelect");
+const identityMapField = spectrum.textfield("identityMapField");
+const inputMethodFormRadio = spectrum.radio("inputMethodFormRadio");
+const inputMethodDataElementRadio = spectrum.radio(
+  "inputMethodDataElementRadio"
+);
+const addConsentButton = spectrum.button("addConsentButton");
+const instances = [];
+
+for (let i = 0; i < 2; i += 1) {
+  const container = spectrum.container(`instance${i}`);
+  instances.push({
+    container,
+    standardSelect: container.select("standardSelect"),
+    versionField: container.textfield("versionField"),
+    ...generateOptionsWithDataElement(container, "general", ["In", "Out"]),
+    iabValueField: container.textfield("iabValueField"),
+    ...generateOptionsWithDataElement(container, "gdprApplies", ["Yes", "No"]),
+    ...generateOptionsWithDataElement(container, "gdprContainsPersonalData", [
+      "Yes",
+      "No"
+    ]),
+    deleteConsentButton: container.button("deleteConsentButton")
+  });
+}
 const dataElementField = spectrum.textfield("dataElementField");
 
 const mockExtensionSettings = {
@@ -44,94 +79,383 @@ fixture("Set Consent View").disablePageReloads.page(
   "http://localhost:3000/viewSandbox.html"
 );
 
-test("initializes form fields with settings containing static purposes", async () => {
+test("initializes form fields with settings containing a static consent array", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
+      identityMap: "%dataelement1%",
       consent: [
-        { standard: "Adobe", version: "1.0", value: { general: "out" } }
+        { standard: "Adobe", version: "1.0", value: { general: "out" } },
+        {
+          standard: "IAB TCF",
+          version: "2.0",
+          value: "1234abcd",
+          gdprApplies: false,
+          gdprContainsPersonalData: true
+        }
       ]
     }
   });
-  await instanceNameField.expectValue("alloy2");
-  await radioGroup.inField.expectUnchecked();
-  await radioGroup.outField.expectChecked();
-  await radioGroup.dataElementField.expectUnchecked();
+  await instanceNameSelect.expectValue("alloy2");
+  await identityMapField.expectValue("%dataelement1%");
+  await inputMethodFormRadio.expectChecked();
+  await inputMethodDataElementRadio.expectUnchecked();
+  await dataElementField.expectNotExists();
+  await addConsentButton.expectExists();
+
+  await instances[0].standardSelect.expectValue("adobe");
+  await instances[0].versionField.expectValue("1.0");
+  await instances[0].generalInRadio.expectUnchecked();
+  await instances[0].generalOutRadio.expectChecked();
+  await instances[0].generalDataElementRadio.expectUnchecked();
+  await instances[0].generalDataElementField.expectNotExists();
+  await instances[0].iabValueField.expectNotExists();
+  await instances[0].gdprAppliesYesRadio.expectNotExists();
+  await instances[0].gdprAppliesNoRadio.expectNotExists();
+  await instances[0].gdprAppliesDataElementRadio.expectNotExists();
+  await instances[0].gdprAppliesDataElementField.expectNotExists();
+  await instances[0].gdprContainsPersonalDataYesRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataNoRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementField.expectNotExists();
+
+  await instances[1].standardSelect.expectValue("iab_tcf");
+  await instances[1].versionField.expectValue("2.0");
+  await instances[1].generalInRadio.expectNotExists();
+  await instances[1].generalOutRadio.expectNotExists();
+  await instances[1].generalDataElementRadio.expectNotExists();
+  await instances[1].generalDataElementField.expectNotExists();
+  await instances[1].iabValueField.expectValue("1234abcd");
+  await instances[1].gdprAppliesYesRadio.expectUnchecked();
+  await instances[1].gdprAppliesNoRadio.expectChecked();
+  await instances[1].gdprAppliesDataElementRadio.expectUnchecked();
+  await instances[1].gdprAppliesDataElementField.expectNotExists();
+  await instances[1].gdprContainsPersonalDataYesRadio.expectChecked();
+  await instances[1].gdprContainsPersonalDataNoRadio.expectUnchecked();
+  await instances[1].gdprContainsPersonalDataDataElementRadio.expectUnchecked();
+  await instances[1].gdprContainsPersonalDataDataElementField.expectNotExists();
 });
 
-test("initializes form fields with settings containing data element for purposes", async () => {
+test("initializes form fields with settings containing many data elements for parts", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
-      consent: "%foo%"
+      identityMap: "%data0%",
+      consent: [
+        { standard: "Adobe", version: "1.0", value: { general: "%data1%" } },
+        {
+          standard: "IAB TCF",
+          version: "2.0",
+          value: "%data2%",
+          gdprApplies: "%data3%",
+          gdprContainsPersonalData: "%data4%"
+        }
+      ]
     }
   });
-  await instanceNameField.expectValue("alloy2");
-  await radioGroup.inField.expectUnchecked();
-  await radioGroup.outField.expectUnchecked();
-  await radioGroup.dataElementField.expectChecked();
-  await dataElementField.expectValue("%foo%");
+  await instanceNameSelect.expectValue("alloy2");
+  await identityMapField.expectValue("%data0%");
+  await inputMethodFormRadio.expectChecked();
+  await inputMethodDataElementRadio.expectUnchecked();
+  await dataElementField.expectNotExists();
+  await addConsentButton.expectExists();
+
+  await instances[0].standardSelect.expectValue("adobe");
+  await instances[0].versionField.expectValue("1.0");
+  await instances[0].generalInRadio.expectUnchecked();
+  await instances[0].generalOutRadio.expectUnchecked();
+  await instances[0].generalDataElementRadio.expectChecked();
+  await instances[0].generalDataElementField.expectValue("%data1%");
+  await instances[0].iabValueField.expectNotExists();
+  await instances[0].gdprAppliesYesRadio.expectNotExists();
+  await instances[0].gdprAppliesNoRadio.expectNotExists();
+  await instances[0].gdprAppliesDataElementRadio.expectNotExists();
+  await instances[0].gdprAppliesDataElementField.expectNotExists();
+  await instances[0].gdprContainsPersonalDataYesRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataNoRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementField.expectNotExists();
+
+  await instances[1].standardSelect.expectValue("iab_tcf");
+  await instances[1].versionField.expectValue("2.0");
+  await instances[1].generalInRadio.expectNotExists();
+  await instances[1].generalOutRadio.expectNotExists();
+  await instances[1].generalDataElementRadio.expectNotExists();
+  await instances[1].generalDataElementField.expectNotExists();
+  await instances[1].iabValueField.expectValue("%data2%");
+  await instances[1].gdprAppliesYesRadio.expectUnchecked();
+  await instances[1].gdprAppliesNoRadio.expectUnchecked();
+  await instances[1].gdprAppliesDataElementRadio.expectChecked();
+  await instances[1].gdprAppliesDataElementField.expectValue("%data3%");
+  await instances[1].gdprContainsPersonalDataYesRadio.expectUnchecked();
+  await instances[1].gdprContainsPersonalDataNoRadio.expectUnchecked();
+  await instances[1].gdprContainsPersonalDataDataElementRadio.expectChecked();
+  await instances[1].gdprContainsPersonalDataDataElementField.expectValue(
+    "%data4%"
+  );
+});
+
+test("initializes form fields with settings containing data element for consent", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings,
+    settings: {
+      instanceName: "alloy2",
+      identityMap: "%data1%",
+      consent: "%data2%"
+    }
+  });
+  await instanceNameSelect.expectValue("alloy2");
+  await identityMapField.expectValue("%data1%");
+  await inputMethodFormRadio.expectUnchecked();
+  await inputMethodDataElementRadio.expectChecked();
+  await dataElementField.expectValue("%data2%");
+  await addConsentButton.expectNotExists();
+  await instances[0].container.expectNotExists();
 });
 
 test("initializes form fields with no settings", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await instanceNameField.expectValue("alloy1");
-  await radioGroup.inField.expectChecked();
-  await radioGroup.outField.expectUnchecked();
-  await radioGroup.dataElementField.expectUnchecked();
+  await instanceNameSelect.expectValue("alloy1");
+  await identityMapField.expectValue("");
+  await inputMethodFormRadio.expectChecked();
+  await inputMethodDataElementRadio.expectUnchecked();
+  await dataElementField.expectNotExists();
+  await addConsentButton.expectExists();
+
+  await instances[0].standardSelect.expectValue("adobe");
+  await instances[0].versionField.expectValue("");
+  await instances[0].generalInRadio.expectChecked();
+  await instances[0].generalOutRadio.expectUnchecked();
+  await instances[0].generalDataElementRadio.expectUnchecked();
+  await instances[0].generalDataElementField.expectNotExists();
+  await instances[0].iabValueField.expectNotExists();
+  await instances[0].gdprAppliesYesRadio.expectNotExists();
+  await instances[0].gdprAppliesNoRadio.expectNotExists();
+  await instances[0].gdprAppliesDataElementRadio.expectNotExists();
+  await instances[0].gdprAppliesDataElementField.expectNotExists();
+  await instances[0].gdprContainsPersonalDataYesRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataNoRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementRadio.expectNotExists();
+  await instances[0].gdprContainsPersonalDataDataElementField.expectNotExists();
+  await instances[1].container.expectNotExists();
+
+  await instances[0].standardSelect.selectOption("IAB TCF");
+
+  await instances[0].standardSelect.expectValue("iab_tcf");
+  await instances[0].versionField.expectValue("");
+  await instances[0].generalInRadio.expectNotExists();
+  await instances[0].generalOutRadio.expectNotExists();
+  await instances[0].generalDataElementRadio.expectNotExists();
+  await instances[0].generalDataElementField.expectNotExists();
+  await instances[0].iabValueField.expectValue("");
+  await instances[0].gdprAppliesYesRadio.expectChecked();
+  await instances[0].gdprAppliesNoRadio.expectUnchecked();
+  await instances[0].gdprAppliesDataElementRadio.expectUnchecked();
+  await instances[0].gdprAppliesDataElementField.expectNotExists();
+  await instances[0].gdprContainsPersonalDataYesRadio.expectUnchecked();
+  await instances[0].gdprContainsPersonalDataNoRadio.expectChecked();
+  await instances[0].gdprContainsPersonalDataDataElementRadio.expectUnchecked();
+  await instances[0].gdprContainsPersonalDataDataElementField.expectNotExists();
+  await instances[1].container.expectNotExists();
 });
 
-test("returns valid settings containing static purposes", async () => {
+test("returns minimal valid settings", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
+  await instances[0].versionField.typeText("1.1");
+  await addConsentButton.click();
+  await instances[1].standardSelect.selectOption("IAB TCF");
+  await instances[1].versionField.typeText("2.1");
+  await instances[1].iabValueField.typeText("1234abcd");
 
-  await instanceNameField.selectOption("alloy2");
-  await radioGroup.outField.click();
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
+    instanceName: "alloy1",
+    consent: [
+      {
+        standard: "Adobe",
+        version: "1.1",
+        value: { general: "in" }
+      },
+      {
+        standard: "IAB TCF",
+        version: "2.1",
+        value: "1234abcd",
+        gdprApplies: true,
+        gdprContainsPersonalData: false
+      }
+    ]
+  });
+});
+
+test("returns full valid settings", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await instanceNameSelect.selectOption("alloy2");
+  await identityMapField.typeText("%data0%");
+  await instances[0].standardSelect.selectOption("IAB TCF");
+  await instances[0].versionField.typeText("2.2");
+  await instances[0].iabValueField.typeText("a");
+  await instances[0].gdprAppliesNoRadio.click();
+  await instances[0].gdprContainsPersonalDataYesRadio.click();
+  await addConsentButton.click();
+  await instances[1].versionField.typeText("1.2");
+  await instances[1].generalOutRadio.click();
+
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy2",
-    consent: [{ standard: "Adobe", version: "1.0", value: { general: "out" } }]
+    identityMap: "%data0%",
+    consent: [
+      {
+        standard: "IAB TCF",
+        version: "2.2",
+        value: "a",
+        gdprApplies: false,
+        gdprContainsPersonalData: true
+      },
+      {
+        standard: "Adobe",
+        version: "1.2",
+        value: { general: "out" }
+      }
+    ]
   });
 });
 
-test("returns valid settings containing data element for purposes", async () => {
+test("returns valid setting for guided form data elements", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
+  await instances[0].versionField.typeText("1.3");
+  await instances[0].generalDataElementRadio.click();
+  await instances[0].generalDataElementField.typeText("%data1%");
+  await addConsentButton.click();
+  await instances[1].standardSelect.selectOption("IAB TCF");
+  await instances[1].versionField.typeText("2.3");
+  await instances[1].iabValueField.typeText("%data2%");
+  await instances[1].gdprAppliesDataElementRadio.click();
+  await instances[1].gdprAppliesDataElementField.typeText("%data3%");
+  await instances[1].gdprContainsPersonalDataDataElementRadio.click();
+  await instances[1].gdprContainsPersonalDataDataElementField.typeText(
+    "%data4%"
+  );
 
-  await instanceNameField.selectOption("alloy2");
-  await radioGroup.dataElementField.click();
-  await dataElementField.typeText("%foo%");
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    instanceName: "alloy2",
-    consent: "%foo%"
+    instanceName: "alloy1",
+    consent: [
+      {
+        standard: "Adobe",
+        version: "1.3",
+        value: { general: "%data1%" }
+      },
+      {
+        standard: "IAB TCF",
+        version: "2.3",
+        value: "%data2%",
+        gdprApplies: "%data3%",
+        gdprContainsPersonalData: "%data4%"
+      }
+    ]
   });
 });
 
-test("shows error for purposes data element value that is not a data element", async () => {
+test("returns valid settings for data element", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await radioGroup.dataElementField.click();
-  await dataElementField.typeText("foo");
-  await extensionViewController.expectIsNotValid();
-  await dataElementField.expectError();
+  await inputMethodDataElementRadio.click();
+  await dataElementField.typeText("%data2%");
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
+    instanceName: "alloy1",
+    consent: "%data2%"
+  });
 });
 
-test("shows error for purposes data element value that is more than one data element", async () => {
+test("deletes consent objects", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await radioGroup.dataElementField.click();
-  await dataElementField.typeText("%foo%%bar%");
-  await extensionViewController.expectIsNotValid();
-  await dataElementField.expectError();
+  await instances[0].versionField.typeText("1");
+  await instances[0].deleteConsentButton.expectDisabled();
+  await instances[1].container.expectNotExists();
+  await addConsentButton.click();
+  await instances[0].deleteConsentButton.expectEnabled();
+  await instances[1].versionField.typeText("2");
+  await instances[0].deleteConsentButton.click();
+  await instances[0].versionField.expectValue("2");
+  await instances[1].container.expectNotExists();
+  await addConsentButton.click();
+  await instances[1].versionField.typeText("3");
+  await instances[1].deleteConsentButton.click();
+  await instances[1].container.expectNotExists();
+  await instances[0].versionField.expectValue("2");
 });
 
-testInstanceNameOptions(extensionViewController, instanceNameField);
+test("shows errors for empty values", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await instances[0].generalDataElementRadio.click();
+  await addConsentButton.click();
+  await instances[1].standardSelect.selectOption("IAB TCF");
+  await instances[1].gdprAppliesDataElementRadio.click();
+  await instances[1].gdprContainsPersonalDataDataElementRadio.click();
+
+  await extensionViewController.expectIsNotValid();
+  await instances[0].versionField.expectError();
+  await instances[0].generalDataElementField.expectError();
+  await instances[1].versionField.expectError();
+  await instances[1].iabValueField.expectError();
+  await instances[1].gdprAppliesDataElementField.expectError();
+  await instances[1].gdprContainsPersonalDataDataElementField.expectError();
+});
+
+test("shows errors for things that aren't data elements and does not show errors for hidden invalid fields", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await instances[0].versionField.typeText("1");
+  await instances[0].generalDataElementRadio.click();
+  await instances[0].generalDataElementField.typeText("notadataelement");
+  await addConsentButton.click();
+  await instances[1].standardSelect.selectOption("IAB TCF");
+  await instances[1].versionField.typeText("2");
+  await instances[1].iabValueField.typeText("notadataelement");
+  await instances[1].gdprAppliesDataElementRadio.click();
+  await instances[1].gdprAppliesDataElementField.typeText("%data1%%data2%");
+  await instances[1].gdprContainsPersonalDataDataElementRadio.click();
+  await instances[1].gdprContainsPersonalDataDataElementField.typeText(
+    "%notadataelement"
+  );
+
+  await extensionViewController.expectIsNotValid();
+  await instances[0].generalDataElementField.expectError();
+  await instances[1].iabValueField.expectNoError();
+  await instances[1].gdprAppliesDataElementField.expectError();
+  await instances[1].gdprContainsPersonalDataDataElementField.expectError();
+
+  await inputMethodDataElementRadio.click();
+  await dataElementField.typeText("%dataelement%");
+  await extensionViewController.expectIsValid();
+
+  await dataElementField.typeText("notadataelement");
+  await extensionViewController.expectIsNotValid();
+  await dataElementField.expectError();
+
+  await inputMethodFormRadio.click();
+  await instances[0].generalInRadio.click();
+  await instances[1].gdprAppliesYesRadio.click();
+  await instances[1].gdprContainsPersonalDataYesRadio.click();
+  await extensionViewController.expectIsValid();
+});
+
+testInstanceNameOptions(extensionViewController, instanceNameSelect);

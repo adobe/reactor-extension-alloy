@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 module.exports = ({ instanceManager }) => settings => {
-  const { instanceName, consent } = settings;
+  const { instanceName, identityMap, consent } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -19,6 +19,8 @@ module.exports = ({ instanceManager }) => settings => {
       `Failed to set consent for instance "${instanceName}". No matching instance was configured with this name.`
     );
   }
-
+  if (identityMap) {
+    return instance("setConsent", { identityMap, consent });
+  }
   return instance("setConsent", { consent });
 };

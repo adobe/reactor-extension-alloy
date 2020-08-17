@@ -10,12 +10,4 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { AMBIGUOUS } from "./authenticatedState";
-
-export default () => {
-  return {
-    id: "",
-    authenticatedState: AMBIGUOUS,
-    primary: false
-  };
-};
+module.exports = settings => settings;

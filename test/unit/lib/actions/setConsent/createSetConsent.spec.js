@@ -25,6 +25,7 @@ describe("Set Consent", () => {
       const action = createSetConsent({ instanceManager });
       const promiseReturnedFromAction = action({
         instanceName: "myinstance",
+        identityMap: "%dataelement123%",
         consent: [
           {
             standard: "Adobe",
@@ -37,6 +38,7 @@ describe("Set Consent", () => {
       expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
       expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
       expect(instance).toHaveBeenCalledWith("setConsent", {
+        identityMap: "%dataelement123%",
         consent: [
           {
             standard: "Adobe",
@@ -46,6 +48,24 @@ describe("Set Consent", () => {
             }
           }
         ]
+      });
+    });
+  });
+
+  ["", null, undefined].forEach(identityMap => {
+    it(`doesn't pass identityMap when it is ${JSON.stringify(
+      identityMap
+    )}`, () => {
+      const instance = jasmine.createSpy();
+      const instanceManager = { getInstance: () => instance };
+      const action = createSetConsent({ instanceManager });
+      action({
+        instanceName: "myinstance",
+        identityMap,
+        consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }]
+      });
+      expect(instance).toHaveBeenCalledWith("setConsent", {
+        consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }]
       });
     });
   });

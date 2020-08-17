@@ -24,30 +24,42 @@ import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import NodeEdit from "./xdmObject/components/nodeEdit";
 import validate from "./xdmObject/helpers/validate";
 import render from "../render";
+import fetchSandboxes from "./xdmObject/helpers/fetchSandboxes";
 import fetchSchema from "./xdmObject/helpers/fetchSchema";
 import fetchSchemasMeta from "./xdmObject/helpers/fetchSchemasMeta";
 import "./xdmObject.styl";
+import InfoTipLayout from "../components/infoTipLayout";
+
+const STATUS_LOADING = "loading";
+const STATUS_LOADED = "loaded";
+const STATUS_ERROR = "error";
 
 const XdmObject = ({
   initInfo,
   formikProps,
+  sandboxesMeta,
+  selectedSandboxMeta,
+  setSelectedSandboxMeta,
   schemasMeta,
+  schemasMetaStatus,
+  setSchemasMetaStatus,
   selectedSchemaMeta,
-  setSelectedSchemaMeta
+  setSelectedSchemaMeta,
+  schemaStatus
 }) => {
   const { values: formState } = formikProps;
   const [selectedNodeId, setSelectedNodeId] = useState();
 
-  if (!schemasMeta.length) {
-    return (
-      <div className="u-flex u-fullHeight u-alignItemsCenter u-justifyContentCenter">
-        <Alert variant="error" header="No Schema Found">
-          No XDM schema was found. Please ensure you have created an XDM schema
-          within Adobe Experience Platform.
-        </Alert>
-      </div>
-    );
-  }
+  const sandboxOptions = sandboxesMeta.sandboxes
+    .filter(sandbox => sandbox.state === "active")
+    .map(sandbox => {
+      return {
+        value: sandbox.name,
+        label: `${sandbox.type.toUpperCase()}  ${sandbox.title}${
+          sandbox.region ? ` (${sandbox.region.toUpperCase()})` : ""
+        }`
+      };
+    });
 
   const schemaOptions = schemasMeta.map(schemaMeta => {
     return {
@@ -57,54 +69,112 @@ const XdmObject = ({
   });
 
   return (
-    <div className="u-flex u-flexColumn u-fullHeight">
-      <FieldLabel
-        className="u-flex"
-        labelFor="schemaField"
-        label="Schema"
-        position="left"
-      >
-        <Select
-          id="schemaField"
-          data-test-id="schemaField"
-          className="u-widthAuto u-gapBottom"
-          options={schemaOptions}
-          value={selectedSchemaMeta.$id}
-          onChange={schemaMetaId => {
-            setSelectedNodeId(undefined);
-            setSelectedSchemaMeta(
-              schemasMeta.find(schemaMeta => schemaMeta.$id === schemaMetaId)
-            );
-          }}
-        />
-      </FieldLabel>
-      <div className="u-flex u-minHeight0">
-        <div className="XdmObject-treeContainer u-flexShrink0 u-overflowXAuto u-overflowYAuto">
-          <XdmTree
-            formikProps={formikProps}
-            selectedNodeId={selectedNodeId}
-            onSelect={setSelectedNodeId}
+    <div>
+      <div className="u-gapTop">
+        <InfoTipLayout
+          tip={
+            sandboxesMeta.disabled && sandboxesMeta.disabled === true
+              ? "This option is disabled because your account has not been configured for multiple sandboxes."
+              : "Choose a sandbox which contains the schema you wish to use."
+          }
+        >
+          <FieldLabel labelFor="sandboxField" label="Sandbox" />
+        </InfoTipLayout>
+      </div>
+      <div>
+        {selectedSandboxMeta && (
+          <Select
+            id="sandboxField"
+            data-test-id="sandboxField"
+            className="u-widthAuto u-gapBottom u-fieldLong"
+            options={sandboxOptions}
+            value={selectedSandboxMeta.name}
+            onChange={sandboxMetaName => {
+              setSelectedNodeId(undefined);
+              setSchemasMetaStatus(STATUS_LOADING);
+              setSelectedSandboxMeta(
+                sandboxesMeta.sandboxes.find(
+                  sandboxMeta => sandboxMeta.name === sandboxMetaName
+                )
+              );
+            }}
+            disabled={sandboxesMeta.disabled}
+            placeholder="PRODUCTION Prod"
           />
-        </div>
-        <div className="u-gapLeft2x">
+        )}
+      </div>
+      {schemasMetaStatus === STATUS_ERROR && (
+        <Alert variant="warning">
+          Unable to load schemas for the selected sandbox. Please check the
+          settings or choose a different sandbox.
+        </Alert>
+      )}
+
+      {schemasMetaStatus === STATUS_LOADED && (
+        <div>
+          <div className="u-gapTop">
+            <InfoTipLayout tip="Choose a schema which contains the xdm object you wish to use.">
+              <FieldLabel labelFor="schemaField" label="Schema" />
+            </InfoTipLayout>
+          </div>
           <div>
-            {selectedNodeId ? (
-              <NodeEdit
-                formState={formState}
-                onNodeSelect={setSelectedNodeId}
-                selectedNodeId={selectedNodeId}
-              />
-            ) : (
-              <NoSelectedNodeView
-                schemaMeta={selectedSchemaMeta}
-                previouslySavedSchemaInfo={
-                  initInfo.settings && initInfo.settings.schema
-                }
-              />
-            )}
+            <Select
+              id="schemaField"
+              data-test-id="schemaField"
+              className="u-widthAuto u-gapBottom u-fieldLong"
+              options={schemaOptions}
+              value={selectedSchemaMeta.$id}
+              onChange={schemaMetaId => {
+                setSelectedNodeId(undefined);
+                setSelectedSchemaMeta(
+                  schemasMeta.find(
+                    schemaMeta => schemaMeta.$id === schemaMetaId
+                  )
+                );
+              }}
+            />
           </div>
         </div>
-      </div>
+      )}
+      {schemasMetaStatus === STATUS_LOADED && schemaStatus === STATUS_ERROR && (
+        <Alert variant="error">
+          An error occurred while loading the selected schema. Please try again
+          or choose a different schema.
+        </Alert>
+      )}
+      {schemasMetaStatus === STATUS_LOADED && schemaStatus === STATUS_LOADED && (
+        <div className="u-flex u-gapTop u-minHeight0">
+          <div className="XdmObject-treeContainer u-flexShrink0 u-overflowXAuto u-overflowYAuto">
+            <InfoTipLayout tip="Here you can use the form to explore and edit the xdm object of the selected schema.">
+              <FieldLabel labelFor="xdmTree" label="XDM Object" />
+            </InfoTipLayout>
+            <XdmTree
+              formikProps={formikProps}
+              selectedNodeId={selectedNodeId}
+              onSelect={setSelectedNodeId}
+            />
+          </div>
+          <div className="u-gapLeft2x">
+            <div>
+              {selectedNodeId ? (
+                <NodeEdit
+                  formState={formState}
+                  onNodeSelect={setSelectedNodeId}
+                  selectedNodeId={selectedNodeId}
+                />
+              ) : (
+                <NoSelectedNodeView
+                  sandboxMeta={selectedSandboxMeta}
+                  schemaMeta={selectedSchemaMeta}
+                  previouslySavedSchemaInfo={
+                    initInfo.settings && initInfo.settings.schema
+                  }
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -112,48 +182,97 @@ const XdmObject = ({
 XdmObject.propTypes = {
   initInfo: PropTypes.object.isRequired,
   formikProps: PropTypes.object.isRequired,
+  sandboxesMeta: PropTypes.array,
+  selectedSandboxMeta: PropTypes.object,
+  setSelectedSandboxMeta: PropTypes.func,
   schemasMeta: PropTypes.array,
+  schemasMetaStatus: PropTypes.string,
+  setSchemasMetaStatus: PropTypes.func,
   selectedSchemaMeta: PropTypes.object,
-  setSelectedSchemaMeta: PropTypes.func
+  setSelectedSchemaMeta: PropTypes.func,
+  schemaStatus: PropTypes.string
 };
 
 const XdmExtensionView = () => {
+  const [sandboxesMeta, setSandboxesMeta] = useState();
   const [schemasMeta, setSchemasMeta] = useState();
+  const [schemasMetaStatus, setSchemasMetaStatus] = useState();
+  const [selectedSandboxMeta, setSelectedSandboxMeta] = useState();
   const [selectedSchemaMeta, setSelectedSchemaMeta] = useState();
+  const [schemaStatus, setSchemaStatus] = useState();
 
   // TODO: break apart this extension view
   return (
     <ExtensionView
       getInitialValues={({ initInfo }) => {
-        return fetchSchemasMeta({
+        return fetchSandboxes({
           orgId: initInfo.company.orgId,
           imsAccess: initInfo.tokens.imsAccess
         })
-          .then(_schemasMeta => {
-            setSchemasMeta(_schemasMeta);
+          .then(_sandboxesMeta => {
+            let sandboxName = null;
+            // if sandboxes are returned from the api call
+            if (_sandboxesMeta.sandboxes && _sandboxesMeta.sandboxes.length) {
+              setSandboxesMeta(_sandboxesMeta);
+              // default to the first item in the list
+              let sandboxMeta = _sandboxesMeta.sandboxes.find(
+                _sandboxMeta => _sandboxMeta.isDefault === true
+              );
 
-            if (!_schemasMeta.length) {
+              // if a sandbox exists in settings and is in the list, choose that item
+              if (initInfo.settings && initInfo.settings.sandbox) {
+                sandboxMeta = _sandboxesMeta.sandboxes.find(
+                  _sandboxMeta =>
+                    _sandboxMeta.name === initInfo.settings.sandbox.name
+                );
+              }
+              if (sandboxMeta && sandboxMeta.name) {
+                sandboxName = sandboxMeta.name;
+              }
+              setSelectedSandboxMeta(sandboxMeta);
+            }
+
+            return fetchSchemasMeta({
+              orgId: initInfo.company.orgId,
+              imsAccess: initInfo.tokens.imsAccess,
+              sandboxName
+            });
+          })
+          .then(response => {
+            setSchemasMeta(response.results);
+
+            if (!response.results.length) {
+              setSchemasMetaStatus(STATUS_ERROR);
               return {};
             }
 
-            // TODO: don't initialize form state if the schema doesn't match
-            let schemaMeta = _schemasMeta[0];
+            setSchemasMetaStatus(STATUS_LOADED);
 
+            // TODO: don't initialize form state if the schema doesn't match
+            let schemaMeta = response.results[0];
+
+            // if a schema exists in settings, use it
             if (initInfo.settings && initInfo.settings.schema) {
-              schemaMeta = _schemasMeta.find(
+              schemaMeta = response.results.find(
                 _schemaMeta => _schemaMeta.$id === initInfo.settings.schema.id
               );
             }
 
             setSelectedSchemaMeta(schemaMeta);
+            setSchemaStatus(STATUS_LOADING);
 
+            const { sandboxName } = response;
             return fetchSchema({
               orgId: initInfo.company.orgId,
               imsAccess: initInfo.tokens.imsAccess,
-              schemaMeta
+              schemaMeta,
+              sandboxName
+            }).catch(() => {
+              setSchemaStatus(STATUS_ERROR);
             });
           })
           .then(schema => {
+            setSchemaStatus(STATUS_LOADED);
             const initialValues = getInitialFormState({
               value: (initInfo.settings && initInfo.settings.data) || {},
               schema
@@ -164,6 +283,9 @@ const XdmExtensionView = () => {
       }}
       getSettings={({ values }) => {
         return {
+          sandbox: {
+            name: selectedSandboxMeta.name
+          },
           schema: {
             id: selectedSchemaMeta.$id,
             version: selectedSchemaMeta.version
@@ -173,29 +295,68 @@ const XdmExtensionView = () => {
       }}
       validate={validate}
       render={options => {
+        const onSandboxesMetaSelected = sandboxMeta => {
+          setSelectedSandboxMeta(sandboxMeta);
+          setSchemasMetaStatus(STATUS_LOADING);
+
+          fetchSchemasMeta({
+            orgId: options.initInfo.company.orgId,
+            imsAccess: options.initInfo.tokens.imsAccess,
+            sandboxName:
+              sandboxMeta && sandboxMeta.name ? sandboxMeta.name : null
+          })
+            .then(response => {
+              if (!response.results.length) {
+                throw new Error("No schemas found");
+              }
+              setSchemasMetaStatus(STATUS_LOADED);
+              setSchemasMeta(response.results);
+              setSelectedSchemaMeta(response.results[0]);
+            })
+            .catch(() => {
+              setSchemasMetaStatus(STATUS_ERROR);
+            });
+        };
+
         // TODO: address a suspected race condition where a previous selected item may return before
         //  a secondary selected item
         const onSchemaMetaSelected = schemaMeta => {
           setSelectedSchemaMeta(schemaMeta);
+          setSchemaStatus(STATUS_LOADING);
           fetchSchema({
             orgId: options.initInfo.company.orgId,
             imsAccess: options.initInfo.tokens.imsAccess,
-            schemaMeta
-          }).then(schema => {
-            const initialValues = getInitialFormState({
-              value: {},
-              schema
+            schemaMeta,
+            sandboxName: selectedSandboxMeta.name
+              ? selectedSandboxMeta.name
+              : null
+          })
+            .then(schema => {
+              setSchemaStatus(STATUS_LOADED);
+              const initialValues = getInitialFormState({
+                value: {},
+                schema
+              });
+              options.resetForm(initialValues);
+            })
+            .catch(() => {
+              setSchemaStatus(STATUS_ERROR);
             });
-            options.resetForm(initialValues);
-          });
         };
 
         return (
           <XdmObject
             {...options}
+            sandboxesMeta={sandboxesMeta}
+            selectedSandboxMeta={selectedSandboxMeta}
+            setSelectedSandboxMeta={onSandboxesMetaSelected}
             schemasMeta={schemasMeta}
+            schemasMetaStatus={schemasMetaStatus}
+            setSchemasMetaStatus={setSchemasMetaStatus}
             selectedSchemaMeta={selectedSchemaMeta}
             setSelectedSchemaMeta={onSchemaMetaSelected}
+            schemaStatus={schemaStatus}
+            setSchemaStatus={setSchemaStatus}
           />
         );
       }}
