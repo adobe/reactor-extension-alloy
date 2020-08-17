@@ -473,4 +473,3 @@ test("allows user to select no constant value for property with boolean type", a
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({});
 });
-
