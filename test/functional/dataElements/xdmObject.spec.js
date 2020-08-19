@@ -113,7 +113,7 @@ test("disables user from selecting a sandbox", async () => {
   // temporarily remove sandboxes mock
   await t.removeRequestHooks(platformMocks.sandboxes);
   // replace with unaurhotized mock
-  await t.addRequestHooks(platformMocks.sandboxesUnauthorized);
+  await t.addRequestHooks(platformMocks.sandboxesEmpty);
   await initializeExtensionView();
   await spectrum.select("sandboxField").expectDisabled();
   await selectSchemaFromSchemasMeta();

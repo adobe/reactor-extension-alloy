@@ -1,20 +1,16 @@
 import { RequestMock } from "testcafe";
 
 /**
- * Mocks a 403 unauthorized response from the platform sandboxes endpoint
+ * Mocks an empty response from the platform sandboxes endpoint
  * @type {RequestMock}
  */
-const sandboxesUnauthorized = RequestMock()
-  .onRequestTo(
-    "https://platform.adobe.io/data/foundation/sandbox-management/sandboxes"
-  )
+const sandboxesEmpty = RequestMock()
+  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
   .respond(
     {
-      status: 403,
-      title: "User does not have READ permission to access the sandbox.",
-      type: "http://ns.adobe.com/aep/errors/SMS-2010-403"
+      sandboxes: []
     },
-    403,
+    200,
     { "Access-Control-Allow-Origin": "*" }
   );
 
@@ -23,9 +19,7 @@ const sandboxesUnauthorized = RequestMock()
  * @type {RequestMock}
  */
 const sandboxes = RequestMock()
-  .onRequestTo(
-    "https://platform.adobe.io/data/foundation/sandbox-management/sandboxes"
-  )
+  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
   .respond(
     {
       sandboxes: [
@@ -80,6 +74,6 @@ const schemasMeta = RequestMock()
 
 export default {
   sandboxes,
-  sandboxesUnauthorized,
+  sandboxesEmpty,
   schemasMeta
 };
