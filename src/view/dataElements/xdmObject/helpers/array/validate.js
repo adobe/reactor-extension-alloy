@@ -33,16 +33,14 @@ export default ({
   }
 
   if (items) {
-    const itemErrors = items
-      .map(itemFormStateNode => {
-        return validate({
-          formStateNode: itemFormStateNode,
-          isParentAnArray: true,
-          notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode
-        });
-      })
-      .filter(error => error);
-    if (itemErrors.length) {
+    const itemErrors = items.map(itemFormStateNode => {
+      return validate({
+        formStateNode: itemFormStateNode,
+        isParentAnArray: true,
+        notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode
+      });
+    });
+    if (itemErrors.filter(error => error).length) {
       return { items: itemErrors };
     }
   }

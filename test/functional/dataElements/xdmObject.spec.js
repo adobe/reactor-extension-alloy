@@ -273,6 +273,24 @@ test("initializes form fields with whole array value", async () => {
   await arrayEdit.expectValue("%industries%");
 });
 
+test.only("Arrays with no values are invalid", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("vendor");
+  await xdmTree.click("industries");
+  await arrayEdit.selectPartsPopulationStrategy();
+  await arrayEdit.addItem();
+  await arrayEdit.addItem();
+  await arrayEdit.clickItem(0);
+  await arrayEdit.enterValue("%item1%");
+  await xdmTree.toggleExpansion("industries");
+
+  await extensionViewController.expectIsNotValid();
+  await xdmTree.expectIsValid("Item 1");
+  await xdmTree.expectIsNotValid("Item 2");
+});
+
 test("allows user to provide value for property with string type", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
