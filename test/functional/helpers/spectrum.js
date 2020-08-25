@@ -137,7 +137,9 @@ const componentWrappers = {
         await switchToIframe();
         await t.click(selector.find("button"));
         await selectMenuItem(popoverSelector, label);
-      }
+      },
+      expectDisabled: createExpectDisabled(selector.find("button")),
+      expectEnabled: createExpectEnabled(selector.find("button"))
     };
   },
   textfield(selector) {
@@ -253,12 +255,12 @@ Object.keys(componentWrappers).forEach(componentName => {
   ) {
     const selector = selectorize(testIdOrSelector);
     return {
-      ...componentWrapper.call(this, selector),
-      selector,
+      expectEnabled: createExpectEnabled(selector),
+      expectDisabled: createExpectDisabled(selector),
       expectExists: createExpectExists(selector),
       expectNotExists: createExpectNotExists(selector),
-      expectEnabled: createExpectEnabled(selector),
-      expectDisabled: createExpectDisabled(selector)
+      ...componentWrapper.call(this, selector),
+      selector
     };
   };
 });

@@ -29,7 +29,7 @@ export default ({ orgId, imsAccess, sandboxName }) => {
   if (sandboxName) {
     headers["x-sandbox-name"] = sandboxName;
   } else {
-    headers["x-sandbox-name"] = platform.getDefaultSandbox();
+    headers["x-sandbox-name"] = platform.getDefaultSandboxName();
   }
 
   // TODO: paginate this response using on responseBody._page.count or responseBody._links.next
