@@ -92,7 +92,7 @@ fixture("XDM Object View")
   })
   .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
   .meta("requiresAdobeIOIntegration", true)
-  .requestHooks(platformMocks.sandboxes)
+  .requestHooks(platformMocks.sandboxes);
 
 test("initializes form fields with individual object attribute values", async () => {
   await initializeExtensionView({
@@ -508,4 +508,11 @@ test("allows user to select no constant value for property with boolean type", a
 
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({});
+});
+
+test("disables auto-populated fields", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.click("_id");
+  await stringEdit.expectNotExists();
 });

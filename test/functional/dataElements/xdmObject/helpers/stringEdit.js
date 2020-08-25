@@ -20,5 +20,11 @@ export default {
   },
   expectValue: async text => {
     await spectrum.textfield("valueField").expectValue(text);
+  },
+  expectExists: async () => {
+    await spectrum.textfield("valueField").expectExists();
+  },
+  expectNotExists: async () => {
+    await spectrum.textfield("valueField").expectNotExists();
   }
 };

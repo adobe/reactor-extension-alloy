@@ -20,5 +20,6 @@ export default [
   "eventMergeId",
   "implementationDetails",
   "implementationDetails.name",
-  "implementationDetails.version"
+  "implementationDetails.version",
+  "implementationDetails.environment"
 ];
