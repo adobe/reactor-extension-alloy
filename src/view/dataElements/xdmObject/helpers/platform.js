@@ -16,7 +16,7 @@ export default {
   getHost: () => {
     return PROD;
   },
-  getDefaultSandbox: () => {
+  getDefaultSandboxName: () => {
     return "prod";
   }
 };

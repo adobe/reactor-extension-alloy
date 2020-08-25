@@ -86,9 +86,13 @@ const initializeExtensionView = async additionalInitInfo => {
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
 fixture("XDM Object View")
+  .beforeEach(async () => {
+    // adds a mocked sandboxes response
+    await t.addRequestHooks(platformMocks.sandboxes);
+  })
   .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
   .meta("requiresAdobeIOIntegration", true)
-  .requestHooks(platformMocks.sandboxes);
+  .requestHooks(platformMocks.sandboxes)
 
 test("initializes form fields with individual object attribute values", async () => {
   await initializeExtensionView({
@@ -118,8 +122,6 @@ test("disables user from selecting a sandbox", async () => {
   await spectrum.select("sandboxField").expectDisabled();
   await selectSchemaFromSchemasMeta();
   await xdmTree.toggleExpansion("_alloyengineering");
-  // restore original sandboxes mock
-  await t.addRequestHooks(platformMocks.sandboxes);
 });
 
 test("checks sandbox with no schemas", async () => {

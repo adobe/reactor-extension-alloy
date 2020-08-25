@@ -270,9 +270,7 @@ const XdmExtensionView = () => {
             });
           })
           .then(schema => {
-            if (schema) {
-              setSchemaStatus(STATUS_LOADED);
-            }
+            setSchemaStatus(STATUS_LOADED);
             const initialValues = getInitialFormState({
               value: (initInfo.settings && initInfo.settings.data) || {},
               schema: schema || {}

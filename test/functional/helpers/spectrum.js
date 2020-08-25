@@ -257,10 +257,10 @@ Object.keys(componentWrappers).forEach(componentName => {
     return {
       expectEnabled: createExpectEnabled(selector),
       expectDisabled: createExpectDisabled(selector),
-      ...componentWrapper.call(this, selector),
-      selector,
       expectExists: createExpectExists(selector),
-      expectNotExists: createExpectNotExists(selector)
+      expectNotExists: createExpectNotExists(selector),
+      ...componentWrapper.call(this, selector),
+      selector
     };
   };
 });

@@ -16,10 +16,10 @@ import platform from "./platform";
 export default ({ orgId, imsAccess }) => {
   const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
 
-  const DEFAULT_SANDBOX = {
+  const DEFAULT_SANDBOX_RESPONSE_BODY = {
     sandboxes: [
       {
-        name: platform.getDefaultSandbox(),
+        name: platform.getDefaultSandboxName(),
         title: "Prod",
         type: "production",
         isDefault: true,
@@ -41,7 +41,7 @@ export default ({ orgId, imsAccess }) => {
     })
     .then(responseBody => {
       if (responseBody.sandboxes && responseBody.sandboxes.length === 0) {
-        return DEFAULT_SANDBOX;
+        return DEFAULT_SANDBOX_RESPONSE_BODY;
       }
       return responseBody;
     });
