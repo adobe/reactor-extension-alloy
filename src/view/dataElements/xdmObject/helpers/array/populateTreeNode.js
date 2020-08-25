@@ -16,6 +16,7 @@ export default ({
   treeNode,
   formStateNode,
   treeNodeComponent,
+  isUsingWholePopulationStrategy,
   isAncestorUsingWholePopulationStrategy,
   confirmTouchedAtCurrentOrDescendantNode,
   errors,
@@ -24,7 +25,14 @@ export default ({
 }) => {
   const { items, populationStrategy } = formStateNode;
 
-  if (items && items.length) {
+  // Arrays using the whole population strategy do not have children visible in the tree
+  // Also, arrays with an ancestor using the whole population strategy do not have children visible in the tree.
+  if (
+    items &&
+    items.length &&
+    !isUsingWholePopulationStrategy &&
+    !isAncestorUsingWholePopulationStrategy
+  ) {
     treeNode.children = items.map((itemFormStateNode, index) => {
       const childNode = getTreeNode({
         formStateNode: itemFormStateNode,

@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { t } from "testcafe";
+
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import getAdobeIOAccessToken from "../helpers/getAdobeIOAccessToken";
 import xdmTree from "./xdmObject/helpers/xdmTree";
@@ -19,6 +20,7 @@ import booleanEdit from "./xdmObject/helpers/booleanEdit";
 import integerEdit from "./xdmObject/helpers/integerEdit";
 import numberEdit from "./xdmObject/helpers/numberEdit";
 import objectEdit from "./xdmObject/helpers/objectEdit";
+import platformMocks from "./xdmObject/helpers/platformMocks";
 import stringEdit from "./xdmObject/helpers/stringEdit";
 import spectrum from "../helpers/spectrum";
 
@@ -34,10 +36,10 @@ const schema = {
 
 const schemaTitle = "XDM Object Data Element Tests";
 
-const schemaSelectField = spectrum.select("schemaField");
+const schemaField = spectrum.select("schemaField");
 
 const selectSchemaFromSchemasMeta = async () => {
-  await schemaSelectField.selectOption(schemaTitle);
+  await schemaField.selectOption(schemaTitle);
 };
 
 /**
@@ -84,25 +86,13 @@ const initializeExtensionView = async additionalInitInfo => {
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
 fixture("XDM Object View")
+  .beforeEach(async () => {
+    // adds a mocked sandboxes response
+    await t.addRequestHooks(platformMocks.sandboxes);
+  })
   .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
-  .meta("requiresAdobeIOIntegration", true);
-
-test("allows user to provide individual object attribute values", async () => {
-  await initializeExtensionView();
-  await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
-  await xdmTree.toggleExpansion("vendor");
-  await xdmTree.click("name");
-  await stringEdit.enterValue("Adobe");
-  await extensionViewController.expectIsValid();
-  await expectSettingsToContainData({
-    _alloyengineering: {
-      vendor: {
-        name: "Adobe"
-      }
-    }
-  });
-});
+  .meta("requiresAdobeIOIntegration", true)
+  .requestHooks(platformMocks.sandboxes);
 
 test("initializes form fields with individual object attribute values", async () => {
   await initializeExtensionView({
@@ -121,6 +111,52 @@ test("initializes form fields with individual object attribute values", async ()
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
   await stringEdit.expectValue("Adobe");
+});
+
+test("disables user from selecting a sandbox", async () => {
+  // temporarily remove sandboxes mock
+  await t.removeRequestHooks(platformMocks.sandboxes);
+  // replace with unaurhotized mock
+  await t.addRequestHooks(platformMocks.sandboxesEmpty);
+  await initializeExtensionView();
+  await spectrum.select("sandboxField").expectDisabled();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("_alloyengineering");
+});
+
+test("checks sandbox with no schemas", async () => {
+  await initializeExtensionView();
+  await spectrum.select("sandboxField").expectEnabled();
+  await spectrum
+    .select("sandboxField")
+    .selectOption("PRODUCTION Alloy Test (FOO)");
+  await spectrum.alert("selectedSandboxWarning").expectExists();
+});
+
+test.requestHooks(platformMocks.schemasMeta)(
+  "attempts to load an invalid schema",
+  async () => {
+    await initializeExtensionView();
+    await spectrum.select("schemaField").selectOption("Foo2");
+    await spectrum.alert("selectedSchemaError").expectExists();
+  }
+);
+
+test("allows user to provide individual object attribute values", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("vendor");
+  await xdmTree.click("name");
+  await stringEdit.enterValue("Adobe");
+  await extensionViewController.expectIsValid();
+  await expectSettingsToContainData({
+    _alloyengineering: {
+      vendor: {
+        name: "Adobe"
+      }
+    }
+  });
 });
 
 test("allows user to provide whole object value", async () => {
@@ -235,6 +271,53 @@ test("initializes form fields with whole array value", async () => {
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
   await arrayEdit.expectValue("%industries%");
+});
+
+test("arrays with no values are invalid", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("vendor");
+  await xdmTree.click("industries");
+  await arrayEdit.selectPartsPopulationStrategy();
+  await arrayEdit.addItem();
+  await arrayEdit.addItem();
+  await arrayEdit.clickItem(0);
+  await arrayEdit.enterValue("%item1%");
+  await xdmTree.toggleExpansion("industries");
+
+  await extensionViewController.expectIsNotValid();
+  await xdmTree.expectIsValid("Item 1");
+  await xdmTree.expectIsNotValid("Item 2");
+});
+
+test("arrays using whole population strategy do not have children", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("vendor");
+  await xdmTree.click("industries");
+  await arrayEdit.selectPartsPopulationStrategy();
+  await arrayEdit.addItem();
+  await xdmTree.toggleExpansion("industries");
+  await xdmTree.expectExists("Item 1");
+  await arrayEdit.selectWholePopulationStrategy();
+  await xdmTree.expectNotExists("Item 1");
+});
+
+test("arrays with a whole population strategy ancestor do not have children", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("vendor");
+  await xdmTree.click("industries");
+  await arrayEdit.selectPartsPopulationStrategy();
+  await arrayEdit.addItem();
+  await xdmTree.toggleExpansion("industries");
+  await xdmTree.expectExists("Item 1");
+  await xdmTree.click("vendor");
+  await objectEdit.selectWholePopulationStrategy();
+  await xdmTree.expectNotExists("Item 1");
 });
 
 test("allows user to provide value for property with string type", async () => {
@@ -472,4 +555,11 @@ test("allows user to select no constant value for property with boolean type", a
 
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({});
+});
+
+test("disables auto-populated fields", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.click("_id");
+  await stringEdit.expectNotExists();
 });

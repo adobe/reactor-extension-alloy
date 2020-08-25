@@ -16,37 +16,33 @@ import platform from "./platform";
 export default ({ orgId, imsAccess }) => {
   const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
 
-  const SANDBOX_PERMISSION_ERROR = 403;
-
-  const DEFAULT_SANDBOX = {
-    name: platform.getDefaultSandbox(),
-    title: "Prod",
-    type: "production",
-    isDefault: true,
-    region: null,
-    state: "active"
+  const DEFAULT_SANDBOX_RESPONSE_BODY = {
+    sandboxes: [
+      {
+        name: platform.getDefaultSandboxName(),
+        title: "Prod",
+        type: "production",
+        isDefault: true,
+        region: null,
+        state: "active"
+      }
+    ],
+    disabled: true
   };
 
-  return fetch(
-    `${platform.getHost()}/data/foundation/sandbox-management/sandboxes`,
-    {
-      headers: baseRequestHeaders
-    }
-  )
+  return fetch(`${platform.getHost()}/data/foundation/sandbox-management/`, {
+    headers: baseRequestHeaders
+  })
     .then(response => {
-      // Some platform users may not have permission to call the sandbox-management API endpoint.
-      // In this case we return a default sandbox representing production. This allows schema meta
-      // and schemas to be loaded using the organization's default sandbox name 'prod'.
-      if (response.status === SANDBOX_PERMISSION_ERROR) {
-        return {
-          sandboxes: [DEFAULT_SANDBOX],
-          disabled: true
-        };
-      }
       if (!response.ok) {
         throw new Error("Cannot fetch active sandboxes list");
       }
       return response.json();
     })
-    .then(responseBody => responseBody);
+    .then(responseBody => {
+      if (responseBody.sandboxes && responseBody.sandboxes.length === 0) {
+        return DEFAULT_SANDBOX_RESPONSE_BODY;
+      }
+      return responseBody;
+    });
 };

@@ -82,29 +82,27 @@ const XdmObject = ({
         </InfoTipLayout>
       </div>
       <div>
-        {selectedSandboxMeta && (
-          <Select
-            id="sandboxField"
-            data-test-id="sandboxField"
-            className="u-widthAuto u-gapBottom u-fieldLong"
-            options={sandboxOptions}
-            value={selectedSandboxMeta.name}
-            onChange={sandboxMetaName => {
-              setSelectedNodeId(undefined);
-              setSchemasMetaStatus(STATUS_LOADING);
-              setSelectedSandboxMeta(
-                sandboxesMeta.sandboxes.find(
-                  sandboxMeta => sandboxMeta.name === sandboxMetaName
-                )
-              );
-            }}
-            disabled={sandboxesMeta.disabled}
-            placeholder="PRODUCTION Prod"
-          />
-        )}
+        <Select
+          id="sandboxField"
+          data-test-id="sandboxField"
+          className="u-widthAuto u-gapBottom u-fieldLong"
+          options={sandboxOptions}
+          value={selectedSandboxMeta.name}
+          onChange={sandboxMetaName => {
+            setSelectedNodeId(undefined);
+            setSchemasMetaStatus(STATUS_LOADING);
+            setSelectedSandboxMeta(
+              sandboxesMeta.sandboxes.find(
+                sandboxMeta => sandboxMeta.name === sandboxMetaName
+              )
+            );
+          }}
+          disabled={sandboxesMeta.disabled}
+          placeholder="PRODUCTION Prod"
+        />
       </div>
       {schemasMetaStatus === STATUS_ERROR && (
-        <Alert variant="warning">
+        <Alert data-test-id="selectedSandboxWarning" variant="warning">
           Unable to load schemas for the selected sandbox. Please check the
           settings or choose a different sandbox.
         </Alert>
@@ -137,7 +135,7 @@ const XdmObject = ({
         </div>
       )}
       {schemasMetaStatus === STATUS_LOADED && schemaStatus === STATUS_ERROR && (
-        <Alert variant="error">
+        <Alert data-test-id="selectedSchemaError" variant="error">
           An error occurred while loading the selected schema. Please try again
           or choose a different schema.
         </Alert>
@@ -275,7 +273,7 @@ const XdmExtensionView = () => {
             setSchemaStatus(STATUS_LOADED);
             const initialValues = getInitialFormState({
               value: (initInfo.settings && initInfo.settings.data) || {},
-              schema
+              schema: schema || {}
             });
 
             return initialValues;

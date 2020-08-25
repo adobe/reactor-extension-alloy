@@ -30,7 +30,7 @@ export default ({ orgId, imsAccess, schemaMeta, sandboxName }) => {
   if (sandboxName) {
     headers["x-sandbox-name"] = sandboxName;
   } else {
-    headers["x-sandbox-name"] = platform.getDefaultSandbox();
+    headers["x-sandbox-name"] = platform.getDefaultSandboxName();
   }
 
   return fetch(

@@ -20,6 +20,7 @@ export default [
   "implementationDetails",
   "implementationDetails.name",
   "implementationDetails.version",
+  "implementationDetails.environment",
   // Customers are expected to provide these values through
   // the Send Event action.
   "eventType",
