@@ -12,11 +12,11 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { FULL, PARTIAL, EMPTY } from "../constants/populationAmount";
+import { FULL, PARTIAL, EMPTY, BLANK } from "../constants/populationAmount";
 import "./populationAmountIndictor.styl";
 
 const PopulationAmountIndicator = ({ className, populationAmount }) => {
-  return (
+  return populationAmount && populationAmount !== BLANK ? (
     <svg
       width="100%"
       height="100%"
@@ -42,15 +42,16 @@ const PopulationAmountIndicator = ({ className, populationAmount }) => {
         r="15.91549430918954"
         fill="transparent"
         strokeDashoffset="25"
+        data-test-id="populationAmountIndicator"
         // strokeDasharray={`${100 * populationAmount} ${100 * (1 - populationAmount)}`}
       />
     </svg>
-  );
+  ) : null;
 };
 
 PopulationAmountIndicator.propTypes = {
   className: PropTypes.string,
-  populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY])
+  populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY, BLANK])
 };
 
 export default PopulationAmountIndicator;

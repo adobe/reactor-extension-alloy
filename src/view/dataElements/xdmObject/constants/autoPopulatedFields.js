@@ -11,21 +11,15 @@ governing permissions and limitations under the License.
 */
 
 /**
- * Fields that are auto-populated by Alloy.
+ * Fields that are auto-populated by Alloy that can be overwritten by the XDM object
  */
 export default [
-  "_id",
-  "eventType",
-  "timestamp",
-  "eventMergeId",
   "device.screenHeight",
   "device.screenWidth",
   "device.screenOrientation",
   "environment.type",
   "environment.browserDetails.viewportWidth",
   "environment.browserDetails.viewportHeight",
-  "implementationDetails.name",
-  "implementationDetails.version",
   "placeContext.localTime",
   "placeContext.localTimezoneOffset",
   "placeContext.localTimezoneOffset",

@@ -10,15 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { EMPTY, FULL, PARTIAL } from "../constants/populationAmount";
+import { EMPTY, FULL, PARTIAL, BLANK } from "../constants/populationAmount";
 import { PARTS } from "../constants/populationStrategy";
 import isFormStateValuePopulated from "./isFormStateValuePopulated";
-
-const calculatePopulationAmountWhenAncestorUsingWholePopulationStrategy = doesHighestAncestorWithWholePopulationStrategyHaveAValue => {
-  return doesHighestAncestorWithWholePopulationStrategyHaveAValue
-    ? FULL
-    : EMPTY;
-};
 
 const calculatePopulationAmountForWholePopulationStrategy = wholeValue => {
   return isFormStateValuePopulated(wholeValue) ? FULL : EMPTY;
@@ -34,7 +28,8 @@ const calculatePopulationAmountForPartsPopulationStrategy = childrenTreeNodes =>
       {
         [FULL]: 0,
         [PARTIAL]: 0,
-        [EMPTY]: 0
+        [EMPTY]: 0,
+        [BLANK]: 0
       }
     );
 
@@ -53,19 +48,20 @@ const calculatePopulationAmountForPartsPopulationStrategy = childrenTreeNodes =>
 export default ({
   formStateNode,
   isAncestorUsingWholePopulationStrategy,
-  doesHighestAncestorWithWholePopulationStrategyHaveAValue,
   childrenTreeNodes
 }) => {
-  const { populationStrategy, value, isAutoPopulated } = formStateNode;
+  const {
+    populationStrategy,
+    value,
+    isAutoPopulated,
+    isAlwaysDisabled
+  } = formStateNode;
 
+  if (isAlwaysDisabled || isAncestorUsingWholePopulationStrategy) {
+    return BLANK;
+  }
   if (isAutoPopulated) {
     return FULL;
-  }
-
-  if (isAncestorUsingWholePopulationStrategy) {
-    return calculatePopulationAmountWhenAncestorUsingWholePopulationStrategy(
-      doesHighestAncestorWithWholePopulationStrategyHaveAValue
-    );
   }
 
   if (populationStrategy === PARTS) {

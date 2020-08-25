@@ -18,7 +18,7 @@ import IconTip, {
 } from "../../../components/iconTip";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import "./xdmTreeNodeTitle.styl";
-import { EMPTY, FULL, PARTIAL } from "../constants/populationAmount";
+import { EMPTY, FULL, PARTIAL, BLANK } from "../constants/populationAmount";
 
 const XdmTreeNodeTitle = props => {
   const { displayName, type, populationAmount, error } = props;
@@ -57,7 +57,7 @@ const XdmTreeNodeTitle = props => {
 XdmTreeNodeTitle.propTypes = {
   displayName: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY]),
+  populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY, BLANK]),
   error: PropTypes.string
 };
 

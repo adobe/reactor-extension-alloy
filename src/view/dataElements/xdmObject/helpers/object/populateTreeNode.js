@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import isFormStateValuePopulated from "../isFormStateValuePopulated";
 import { WHOLE } from "../../constants/populationStrategy";
 import computePopulationAmount from "../computePopulationAmount";
 
@@ -19,14 +18,12 @@ export default ({
   formStateNode,
   treeNodeComponent,
   isAncestorUsingWholePopulationStrategy,
-  isCurrentNodeTheHighestNodeUsingWholePopulationStrategy,
-  doesHighestAncestorWithWholePopulationStrategyHaveAValue,
   confirmTouchedAtCurrentOrDescendantNode,
   errors,
   touched,
   getTreeNode
 }) => {
-  const { value, properties, populationStrategy } = formStateNode;
+  const { properties, populationStrategy } = formStateNode;
 
   if (properties) {
     const propertyNames = Object.keys(properties);
@@ -40,11 +37,6 @@ export default ({
           isAncestorUsingWholePopulationStrategy:
             isAncestorUsingWholePopulationStrategy ||
             populationStrategy === WHOLE,
-          doesHighestAncestorWithWholePopulationStrategyHaveAValue:
-            (isAncestorUsingWholePopulationStrategy &&
-              doesHighestAncestorWithWholePopulationStrategyHaveAValue) ||
-            (isCurrentNodeTheHighestNodeUsingWholePopulationStrategy &&
-              isFormStateValuePopulated(value)),
           notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
           errors:
             errors && errors.properties
@@ -63,7 +55,6 @@ export default ({
   treeNode.populationAmount = computePopulationAmount({
     formStateNode,
     isAncestorUsingWholePopulationStrategy,
-    doesHighestAncestorWithWholePopulationStrategyHaveAValue,
     childrenTreeNodes: treeNode.children
   });
 };

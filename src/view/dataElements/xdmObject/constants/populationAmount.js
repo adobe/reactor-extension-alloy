@@ -13,3 +13,4 @@ governing permissions and limitations under the License.
 export const FULL = "full";
 export const PARTIAL = "partial";
 export const EMPTY = "empty";
+export const BLANK = "blank";

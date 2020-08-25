@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import populateInitialFormStateNode from "./populateInitialFormStateNode";
 import getValueFromFormState from "./getValueFromFormState";
 import validate from "./validate";
-import populateTreeNode from "../boolean/populateTreeNode";
+import populateTreeNode from "./populateTreeNode";
 
 export default {
   populateInitialFormStateNode,
