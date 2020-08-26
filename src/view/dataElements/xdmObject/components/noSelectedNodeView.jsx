@@ -13,7 +13,8 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import Alert from "@react/react-spectrum/Alert";
-import "./noSelectedNodeView.styl";
+import PopulationAmountIndicator from "./populationAmountIndicator";
+import { EMPTY, PARTIAL, FULL } from "../constants/populationAmount";
 
 /**
  * Shown when no node is selected within the XDM tree.
@@ -40,8 +41,22 @@ const NoSelectedNodeView = props => {
         </Alert>
       )}
       <div className="NoSelectedNodeView-description">
-        Build an object that complies with your configured schema by selecting
-        attributes on the left and providing their values.
+        <p>Build an object that complies with your configured schema by selecting
+        attributes on the left and providing their values here.</p>
+        <p className="u-flex u-alignItemsCenter">
+          <PopulationAmountIndicator populationAmount={EMPTY} className="u-gapRight"/>
+          An empty circle like this indicates no attributes have been filled in.
+        </p>
+        <p className="u-flex u-alignItemsCenter">
+          <PopulationAmountIndicator populationAmount={PARTIAL} className="u-gapRight"/>
+          A partially filled in circle like this indicates some of the attributes have been filled in.
+        </p>
+        <p className="u-flex u-alignItemsCenter">
+          <PopulationAmountIndicator populationAmount={FULL} className="u-gapRight"/>
+          A full circle like this indicates all of the attributes have been filled in.
+        </p>
+        <p>Some attributes show that they are already filled in. These attributes will be populated automatically, but you are free to overwrite them.</p>
+        <p>You cannot edit attributes that are disabled because the AEP Web SDK does not allow you to overwrite these attributes.</p>
       </div>
     </div>
   );
