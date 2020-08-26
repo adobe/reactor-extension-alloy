@@ -92,7 +92,7 @@ fixture("XDM Object View")
   })
   .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
   .meta("requiresAdobeIOIntegration", true)
-  .requestHooks(platformMocks.sandboxes)
+  .requestHooks(platformMocks.sandboxes);
 
 test("initializes form fields with individual object attribute values", async () => {
   await initializeExtensionView({
