@@ -10,15 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import initializeExtensionView from "./helpers/initializeExtensionView";
-import xdmTree from "./helpers/xdmTree";
-import arrayEdit from "./helpers/arrayEdit";
-import booleanEdit from "./helpers/booleanEdit";
-import integerEdit from "./helpers/integerEdit";
-import numberEdit from "./helpers/numberEdit";
-import objectEdit from "./helpers/objectEdit";
-import stringEdit from "./helpers/stringEdit";
-import spectrum from "../../helpers/spectrum";
+import initializeExtensionView from "./xdmObject/helpers/initializeExtensionView";
+import xdmTree from "./xdmObject/helpers/xdmTree";
+import arrayEdit from "./xdmObject/helpers/arrayEdit";
+import booleanEdit from "./xdmObject/helpers/booleanEdit";
+import integerEdit from "./xdmObject/helpers/integerEdit";
+import numberEdit from "./xdmObject/helpers/numberEdit";
+import objectEdit from "./xdmObject/helpers/objectEdit";
+import stringEdit from "./xdmObject/helpers/stringEdit";
+import spectrum from "../helpers/spectrum";
 
 const schemaTitle = "XDM Object Data Element Tests";
 const schemaSelectField = spectrum.select("schemaField");

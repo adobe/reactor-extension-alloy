@@ -16,7 +16,6 @@ export default ({
   treeNode,
   formStateNode,
   treeNodeComponent,
-  isUsingWholePopulationStrategy,
   isAncestorUsingWholePopulationStrategy,
   confirmTouchedAtCurrentOrDescendantNode,
   errors,
@@ -30,7 +29,7 @@ export default ({
   if (
     items &&
     items.length &&
-    !isUsingWholePopulationStrategy &&
+    populationStrategy !== WHOLE &&
     !isAncestorUsingWholePopulationStrategy
   ) {
     treeNode.children = items.map((itemFormStateNode, index) => {
