@@ -41,5 +41,21 @@ export default {
         .nth(0)
         .find(".ant-tree-switcher")
     );
+  },
+  expectIsValid: async title => {
+    const node = await getNode(title);
+    await t.expect(node.hasClass("is-invalid")).notOk();
+  },
+  expectIsNotValid: async title => {
+    const node = await getNode(title);
+    await t.expect(node.hasClass("is-invalid")).ok();
+  },
+  expectExists: async title => {
+    const node = await getNode(title);
+    await t.expect(node.exists).ok();
+  },
+  expectNotExists: async title => {
+    const node = await getNode(title);
+    await t.expect(node.exists).notOk();
   }
 };

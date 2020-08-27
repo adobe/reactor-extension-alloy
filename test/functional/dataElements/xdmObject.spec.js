@@ -273,6 +273,53 @@ test("initializes form fields with whole array value", async () => {
   await arrayEdit.expectValue("%industries%");
 });
 
+test("arrays with no values are invalid", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("vendor");
+  await xdmTree.click("industries");
+  await arrayEdit.selectPartsPopulationStrategy();
+  await arrayEdit.addItem();
+  await arrayEdit.addItem();
+  await arrayEdit.clickItem(0);
+  await arrayEdit.enterValue("%item1%");
+  await xdmTree.toggleExpansion("industries");
+
+  await extensionViewController.expectIsNotValid();
+  await xdmTree.expectIsValid("Item 1");
+  await xdmTree.expectIsNotValid("Item 2");
+});
+
+test("arrays using whole population strategy do not have children", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("vendor");
+  await xdmTree.click("industries");
+  await arrayEdit.selectPartsPopulationStrategy();
+  await arrayEdit.addItem();
+  await xdmTree.toggleExpansion("industries");
+  await xdmTree.expectExists("Item 1");
+  await arrayEdit.selectWholePopulationStrategy();
+  await xdmTree.expectNotExists("Item 1");
+});
+
+test("arrays with a whole population strategy ancestor do not have children", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("vendor");
+  await xdmTree.click("industries");
+  await arrayEdit.selectPartsPopulationStrategy();
+  await arrayEdit.addItem();
+  await xdmTree.toggleExpansion("industries");
+  await xdmTree.expectExists("Item 1");
+  await xdmTree.click("vendor");
+  await objectEdit.selectWholePopulationStrategy();
+  await xdmTree.expectNotExists("Item 1");
+});
+
 test("allows user to provide value for property with string type", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
@@ -508,4 +555,11 @@ test("allows user to select no constant value for property with boolean type", a
 
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({});
+});
+
+test("disables auto-populated fields", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.click("_id");
+  await stringEdit.expectNotExists();
 });
