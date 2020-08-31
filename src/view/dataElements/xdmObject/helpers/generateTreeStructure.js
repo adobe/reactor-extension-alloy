@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { WHOLE } from "../constants/populationStrategy";
 import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 /**
@@ -56,12 +55,11 @@ const getTreeNode = ({
   treeNodeComponent,
   displayName,
   isAncestorUsingWholePopulationStrategy = false,
-  doesHighestAncestorWithWholePopulationStrategyHaveAValue = false,
   notifyParentOfTouched = () => {},
   errors,
   touched
 }) => {
-  const { id, schema, populationStrategy, isAlwaysDisabled } = formStateNode;
+  const { id, schema, isAlwaysDisabled } = formStateNode;
 
   const treeNode = {
     key: id,
@@ -72,9 +70,6 @@ const getTreeNode = ({
     // object into the component that renders the tree node, which is provided here.
     title: treeNodeComponent
   };
-
-  const isCurrentNodeTheHighestNodeUsingWholePopulationStrategy =
-    !isAncestorUsingWholePopulationStrategy && populationStrategy === WHOLE;
 
   let isTouchedAtCurrentOrDescendantNode = false;
 
@@ -94,8 +89,6 @@ const getTreeNode = ({
     formStateNode,
     treeNodeComponent,
     isAncestorUsingWholePopulationStrategy,
-    isCurrentNodeTheHighestNodeUsingWholePopulationStrategy,
-    doesHighestAncestorWithWholePopulationStrategyHaveAValue,
     confirmTouchedAtCurrentOrDescendantNode,
     errors,
     touched,
