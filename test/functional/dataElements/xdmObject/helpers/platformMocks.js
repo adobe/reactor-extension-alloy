@@ -72,8 +72,62 @@ const schemasMeta = RequestMock()
     { "Access-Control-Allow-Origin": "*" }
   );
 
+const namespaces = RequestMock()
+  .onRequestTo("https://platform.adobe.io/data/core/idnamespace/identities")
+  .respond(
+    [
+      {
+        updateTime: 1551688425455,
+        code: "CORE",
+        status: "ACTIVE",
+        description: "Adobe Audience Manger UUID"
+      },
+      {
+        updateTime: 1551688425455,
+        code: "AAID",
+        status: "ACTIVE",
+        description: "Adobe Analytics (Legacy ID)",
+        id: 10
+      },
+      {
+        updateTime: 1551688425455,
+        code: "ECID",
+        status: "ACTIVE",
+        description: "Adobe Experience Cloud ID",
+        id: 4
+      },
+      {
+        updateTime: 1551688425455,
+        code: "Email",
+        status: "ACTIVE",
+        description: "Email",
+        id: 6
+      },
+      {
+        updateTime: 1551688425455,
+        code: "WAID",
+        status: "ACTIVE",
+        description: "Windows AID",
+        id: 8
+      }
+    ],
+    200,
+    { "Access-Control-Allow-Origin": "*" }
+  );
+
+const namespacesEmpty = RequestMock()
+  .onRequestTo("https://platform.adobe.io/data/core/idnamespace/identities")
+  .respond([], 200, { "Access-Control-Allow-Origin": "*" });
+
+const namespacesError = RequestMock()
+  .onRequestTo("https://platform.adobe.io/data/core/idnamespace/identities")
+  .respond({}, 403, { "Access-Control-Allow-Origin": "*" });
+
 export default {
   sandboxes,
   sandboxesEmpty,
-  schemasMeta
+  schemasMeta,
+  namespaces,
+  namespacesError,
+  namespacesEmpty
 };
