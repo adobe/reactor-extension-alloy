@@ -34,7 +34,9 @@ export default ({ orgId, imsAccess, schemaMeta, sandboxName }) => {
   }
 
   return fetch(
-    `${platform.getHost()}/data/foundation/schemaregistry/tenant/schemas/${encodeURIComponent(
+    `${platform.getHost({
+      imsAccess
+    })}/data/foundation/schemaregistry/tenant/schemas/${encodeURIComponent(
       schemaMeta.$id
     )}`,
     {
