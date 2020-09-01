@@ -34,7 +34,9 @@ export default ({ orgId, imsAccess, sandboxName }) => {
 
   // TODO: paginate this response using on responseBody._page.count or responseBody._links.next
   return fetch(
-    `${platform.getHost()}/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta:extends==${metaExtends}`,
+    `${platform.getHost({
+      imsAccess
+    })}/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta:extends==${metaExtends}`,
     { headers }
   )
     .then(response => {

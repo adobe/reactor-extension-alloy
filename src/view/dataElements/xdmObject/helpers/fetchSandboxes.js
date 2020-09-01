@@ -30,9 +30,12 @@ export default ({ orgId, imsAccess }) => {
     disabled: true
   };
 
-  return fetch(`${platform.getHost()}/data/foundation/sandbox-management/`, {
-    headers: baseRequestHeaders
-  })
+  return fetch(
+    `${platform.getHost({ imsAccess })}/data/foundation/sandbox-management/`,
+    {
+      headers: baseRequestHeaders
+    }
+  )
     .then(response => {
       if (!response.ok) {
         throw new Error("Cannot fetch active sandboxes list");

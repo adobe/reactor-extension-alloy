@@ -10,11 +10,42 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const PROD = "https://platform.adobe.io";
+const PLATFORM_HOST_PROD = "https://platform.adobe.io";
+const PLATFORM_HOST_STAGING = "https://platform-stage.adobe.io";
+
+const IMS_HOST_PREFIX_PROD = "ims-na1";
+const IMS_HOST_PREFIX_STAGING = "ims-na1-stg1";
 
 export default {
-  getHost: () => {
-    return PROD;
+  /**
+   * Returns the platform hostname appropriate for the token IMS environment
+   * @return {string}
+   */
+  getHost: ({ imsAccess }) => {
+    const tokenParts = imsAccess.split(".");
+    if (!tokenParts[1]) {
+      return PLATFORM_HOST_PROD;
+    }
+
+    /**
+     * attempts to read `as` field from access token and use as environment reference
+     * NOTE: assumes production
+     */
+    let environment;
+    try {
+      environment = imsAccess
+        ? JSON.parse(atob(tokenParts[1])).as
+        : IMS_HOST_PREFIX_PROD;
+    } catch (e) {
+      // catches json parsing issues
+      // NOTE: this token is unlikely to work anyway
+      environment = IMS_HOST_PREFIX_PROD;
+    }
+
+    // return platform host corresponding to IMS environment
+    return environment === IMS_HOST_PREFIX_STAGING
+      ? PLATFORM_HOST_STAGING
+      : PLATFORM_HOST_PROD;
   },
   getDefaultSandboxName: () => {
     return "prod";
