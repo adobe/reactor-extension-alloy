@@ -20,6 +20,7 @@ import IdentityWrapper from "../components/identityWrapper";
 import getDefaultIdentity from "../utils/getDefaultIdentity";
 import "./identityMap.styl";
 import { AMBIGUOUS } from "../utils/authenticatedState";
+import fetchNamespaces from "./identityMap/fetchNamespaces";
 
 const identitiesMapToArray = identityMap => {
   return Object.keys(identityMap).map(namespace => {
@@ -43,9 +44,29 @@ const getInitialValues = ({ initInfo }) => {
     ? identitiesMapToArray(initInfo.settings)
     : [getDefaultIdentity()];
 
-  return {
-    identities
-  };
+  return fetchNamespaces({
+    orgId: initInfo.company.orgId,
+    imsAccess: initInfo.tokens.imsAccess
+  }).then(response => {
+    if (response.length > 0) {
+      const namespaces = response.map(namespace => {
+        return {
+          value: namespace.code,
+          label: namespace.code
+        };
+      });
+
+      return {
+        identities,
+        namespaces
+      };
+    }
+
+    return {
+      identities,
+      namespaces: []
+    };
+  });
 };
 
 const getSettings = ({ values }) => {

@@ -10,12 +10,35 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { t } from "testcafe";
 import createExtensionViewController from "../../helpers/createExtensionViewController";
 import spectrum from "../../helpers/spectrum";
+import getAdobeIOAccessToken from "../../helpers/getAdobeIOAccessToken";
+import platformMocks from "../xdmObject/helpers/platformMocks";
 
 const identityMapViewController = createExtensionViewController(
   "dataElements/identityMap.html"
 );
+
+const initializeExtensionView = async additionalInitInfo => {
+  const accessToken = await getAdobeIOAccessToken();
+  const initInfo = {
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "74580452-647b-4797-99af-6d0e042435ec"
+        }
+      ]
+    },
+    company: {
+      orgId: "334F60F35E1597910A495EC2@AdobeOrg"
+    },
+    tokens: { imsAccess: accessToken },
+    ...additionalInitInfo
+  };
+  await identityMapViewController.init(initInfo);
+};
 
 const addIdentityButton = spectrum.button("addIdentityButton");
 const accordion = spectrum.accordion("identitiesAccordion");
@@ -37,29 +60,22 @@ for (let i = 0; i < 2; i += 1) {
     namespace: spectrum.textfield(`namespace${i}Field`),
     identifiers,
     deleteButton: spectrum.button(`deleteIdentity${i}Button`),
-    addIdentifierButton: spectrum.button(`addIdentifier${i}Button`)
+    addIdentifierButton: spectrum.button(`addIdentifier${i}Button`),
+    namespaceSelect: spectrum.select(`namespaceSelect${i}Field`)
   });
 }
 
-fixture("Identity Map Data Element View").disablePageReloads.page(
-  "http://localhost:3000/viewSandbox.html"
-);
+fixture("Identity Map Data Element View")
+  .beforeEach(async () => {
+    await t.addRequestHooks(platformMocks.namespacesEmpty);
+  })
+  .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
+  .meta("requiresAdobeIOIntegration", true)
+  .requestHooks(platformMocks.namespacesEmpty);
 
-const mockExtensionSettings = {
-  instances: [
-    {
-      name: "alloy1",
-      edgeConfigId: "PR123"
-    }
-  ]
-};
 test("initializes Identity map with default settings", async () => {
-  await identityMapViewController.init({
-    extensionSettings: mockExtensionSettings
-  });
+  await initializeExtensionView();
 
-  // When initializing with multiple instances, the accordion should
-  // be fully collapsed.
   await accordion.clickHeader("UNNAMED IDENTITY");
   await identities[0].namespace.expectValue("");
   await identities[0].identifiers[0].id.expectValue("");
@@ -70,9 +86,9 @@ test("initializes Identity map with default settings", async () => {
   await identities[0].identifiers[0].deleteButton.expectDisabled();
   await identities[0].deleteButton.expectDisabled();
 });
+
 test("initializes Identity map with full settings", async () => {
-  await identityMapViewController.init({
-    extensionSettings: mockExtensionSettings,
+  await initializeExtensionView({
     settings: {
       CUSTOM_IDENTITY: [
         {
@@ -126,8 +142,7 @@ test("initializes Identity map with full settings", async () => {
   await identities[1].deleteButton.expectEnabled();
 });
 test("adds a new Identity and new Identifier with minimal settings", async () => {
-  await identityMapViewController.init({
-    extensionSettings: mockExtensionSettings,
+  await initializeExtensionView({
     settings: {
       CUSTOM_IDENTITY: [
         {
@@ -187,8 +202,7 @@ test("adds a new Identity and new Identifier with minimal settings", async () =>
   });
 });
 test("removing Identifier returns the correct settings", async () => {
-  await identityMapViewController.init({
-    extensionSettings: mockExtensionSettings,
+  await initializeExtensionView({
     settings: {
       CUSTOM_IDENTITY: [
         {
@@ -234,42 +248,32 @@ test("removing Identifier returns the correct settings", async () => {
   });
 });
 test("invalid Identity trigger validation error", async () => {
-  await identityMapViewController.init({
-    extensionSettings: mockExtensionSettings,
-    settings: {
-      "": [
-        {
-          id: "test1",
-          authenticatedState: "loggedOut",
-          primary: false
-        }
-      ]
-    }
-  });
-  await identityMapViewController.expectIsNotValid();
+  await initializeExtensionView();
+
   await accordion.clickHeader("UNNAMED IDENTITY");
+  await identities[0].identifiers[0].id.typeText("test3");
+  await identities[0].identifiers[0].authenticatedState.selectOption(
+    "Authenticated"
+  );
+
+  await identityMapViewController.expectIsNotValid();
   await identities[0].namespace.expectError();
 });
 test("invalid Identifier trigger validation error", async () => {
-  await identityMapViewController.init({
-    extensionSettings: mockExtensionSettings,
-    settings: {
-      CUSTOM_IDENTITY: [
-        {
-          id: "",
-          authenticatedState: "",
-          primary: false
-        }
-      ]
-    }
-  });
+  await initializeExtensionView();
+
+  await accordion.clickHeader("UNNAMED IDENTITY");
+  await identities[0].namespace.typeText("CUSTOM_IDENTITY");
+  await identities[0].identifiers[0].authenticatedState.selectOption(
+    "Authenticated"
+  );
+
   await identityMapViewController.expectIsNotValid();
-  await accordion.clickHeader("CUSTOM_IDENTITY");
   await identities[0].identifiers[0].id.expectError();
 });
+
 test("double Identity namespace trigger validation error", async () => {
-  await identityMapViewController.init({
-    extensionSettings: mockExtensionSettings,
+  await initializeExtensionView({
     settings: {
       CUSTOM_IDENTITY: [
         {
@@ -290,4 +294,38 @@ test("double Identity namespace trigger validation error", async () => {
 
   await identityMapViewController.expectIsNotValid();
   await identities[1].namespace.expectError();
+});
+
+test("initialization of namespaces as dropdown with values", async () => {
+  await t.removeRequestHooks(platformMocks.namespacesEmpty);
+
+  await t.addRequestHooks(platformMocks.namespaces);
+
+  await initializeExtensionView();
+
+  await accordion.clickHeader("UNNAMED IDENTITY");
+  await identities[0].namespaceSelect.selectOption("AAID");
+  await identities[0].identifiers[0].id.typeText("test3");
+
+  await identityMapViewController.expectIsValid();
+  await identityMapViewController.expectSettings({
+    AAID: [
+      {
+        id: "test3",
+        authenticatedState: "ambiguous",
+        primary: false
+      }
+    ]
+  });
+});
+
+test("when namespaces call fails instantiate form with textfield", async () => {
+  await t.removeRequestHooks(platformMocks.namespacesEmpty);
+
+  await t.addRequestHooks(platformMocks.namespacesError);
+
+  await initializeExtensionView();
+
+  await accordion.clickHeader("UNNAMED IDENTITY");
+  await identities[0].namespace.expectValue("");
 });
