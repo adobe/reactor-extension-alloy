@@ -49,12 +49,10 @@ const getInitialValues = ({ initInfo }) => {
     imsAccess: initInfo.tokens.imsAccess
   }).then(response => {
     if (response.length > 0) {
-      const namespaces = response.map(namespace => {
-        return {
-          value: namespace.code,
-          label: namespace.code
-        };
-      });
+      const namespaces = response.map(namespace => ({
+        value: namespace.code,
+        label: namespace.code
+      }));
 
       return {
         identities,
@@ -105,7 +103,7 @@ const validationSchema = object()
             name: "notECID",
             message: "ECID is not allowed",
             test(value) {
-              return value !== "ECID";
+              return value.toUpperCase() !== "ECID";
             }
           }),
         identifiers: array().of(
