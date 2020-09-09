@@ -80,7 +80,7 @@ const validateDuplicateValue = (
   message,
   validateBooleanTrue
 ) => {
-  const values = identities.map(identity => identity[key]);
+  const values = identities.map(identity => identity[key].toUpperCase());
   const duplicateIndex = values.findIndex(
     (value, index) =>
       values.indexOf(value) < index && (!validateBooleanTrue || value === true)

@@ -16,9 +16,12 @@ import platform from "../xdmObject/helpers/platform";
 export default ({ orgId, imsAccess }) => {
   const headers = getBaseRequestHeaders({ orgId, imsAccess });
 
-  return fetch(`${platform.getHost()}/data/core/idnamespace/identities`, {
-    headers
-  })
+  return fetch(
+    `${platform.getHost({ imsAccess })}/data/core/idnamespace/identities`,
+    {
+      headers
+    }
+  )
     .then(response => {
       if (!response.ok) {
         return [];
@@ -26,5 +29,6 @@ export default ({ orgId, imsAccess }) => {
 
       return response.json();
     })
-    .then(responseBody => responseBody);
+    .then(responseBody => responseBody)
+    .catch(() => []);
 };
