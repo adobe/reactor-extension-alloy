@@ -368,3 +368,26 @@ test("when namespaces call fails instantiate form with textfield", async () => {
 
   await identities[0].namespace.expectValue("");
 });
+
+test("multiple primary identifiers trigger validation error", async () => {
+  await initializeExtensionView({
+    settings: {
+      CUSTOM_IDENTITY: [
+        {
+          id: "123",
+          authenticatedState: "authenticated",
+          primary: true
+        },
+        {
+          id: "12w3",
+          authenticatedState: "authenticated",
+          primary: true
+        }
+      ]
+    }
+  });
+  await accordion.clickHeader("CUSTOM_IDENTITY");
+
+  await identityMapViewController.expectIsNotValid();
+  await identities[0].identifiers[1].primary.expectError();
+});
