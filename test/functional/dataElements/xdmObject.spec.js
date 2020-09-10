@@ -563,3 +563,18 @@ test("disables auto-populated fields", async () => {
   await xdmTree.click("_id");
   await stringEdit.expectNotExists();
 });
+
+test("doesn't allow you to edit _id", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.click("_id");
+  await stringEdit.expectNotExists();
+});
+
+test("allows you to edit context fields", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("environment");
+  await xdmTree.click("type");
+  await stringEdit.expectExists();
+});

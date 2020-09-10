@@ -28,25 +28,25 @@ const selectSchemaFromSchemasMeta = async () => {
 
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
-fixture("XDM Object View Core Functionality")
+fixture("XDM Object Population Indicator")
   .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
   .meta("requiresAdobeIOIntegration", true);
 
-test("doesn't show population amount for disabled fields", async () => {
+test("shows empty population amount for _id", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
   const idPop = await xdmTree.populationIndicator("_id");
-  await idPop.expectBlank();
+  await idPop.expectEmpty();
 });
 
-test("shows population amount for auto-populated fields", async () => {
+test("shows empty population amount for context fields", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
   const environmentPop = await xdmTree.populationIndicator("environment");
-  await environmentPop.expectPartial();
+  await environmentPop.expectEmpty();
   await xdmTree.toggleExpansion("environment");
   const typePop = await xdmTree.populationIndicator("type");
-  await typePop.expectFull();
+  await typePop.expectEmpty();
 });
 
 test("shows correct population amount for data element objects", async () => {

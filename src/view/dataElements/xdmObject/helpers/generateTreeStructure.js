@@ -25,6 +25,7 @@ import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
  * @property {string} error If an error should be shown for the node,
  * this will be the error message.
  * @property {Array} children Children tree nodes, if any.
+ * @property {string} infoTip The InfoTip to show on the node (if any)
  */
 
 /**

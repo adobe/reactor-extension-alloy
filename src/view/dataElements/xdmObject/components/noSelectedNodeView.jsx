@@ -15,6 +15,7 @@ import PropTypes from "prop-types";
 import Alert from "@react/react-spectrum/Alert";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import { EMPTY, PARTIAL, FULL } from "../constants/populationAmount";
+import IconTip from "../../../components/iconTip";
 
 /**
  * Shown when no node is selected within the XDM tree.
@@ -45,36 +46,38 @@ const NoSelectedNodeView = props => {
           Build an object that complies with your configured schema by selecting
           attributes on the left and providing their values here.
         </p>
-        <p className="u-flex u-alignItemsCenter">
+        <p className="u-flex">
           <PopulationAmountIndicator
             populationAmount={EMPTY}
-            className="u-gapRight"
+            className="u-gapRight u-gapTopHalf"
           />
           An empty circle like this indicates no attributes have been filled in.
         </p>
-        <p className="u-flex u-alignItemsCenter">
+        <p className="u-flex">
           <PopulationAmountIndicator
             populationAmount={PARTIAL}
-            className="u-gapRight"
+            className="u-gapRight u-gapTopHalf"
           />
           A partially filled in circle like this indicates some of the
           attributes have been filled in.
         </p>
-        <p className="u-flex u-alignItemsCenter">
+        <p className="u-flex">
           <PopulationAmountIndicator
             populationAmount={FULL}
-            className="u-gapRight"
+            className="u-gapRight u-gapTopHalf"
           />
           A full circle like this indicates all of the attributes have been
           filled in.
         </p>
-        <p>
-          Some attributes show that they are already filled in. These attributes
-          will be populated automatically, but you are free to overwrite them.
-        </p>
-        <p>
-          You cannot edit attributes that are disabled because the AEP Web SDK
-          does not allow you to overwrite these attributes.
+        <p className="u-flex">
+          <IconTip className="u-gapRight u-gapTopHalf">
+            Hovering over this icon shows a popup explaining when the field will
+            be auto-populated.
+          </IconTip>
+          Fields that may be auto-populated when this data element is passed to
+          the XDM option of the &quot;Send Event&quot; action have this
+          informational icon. Hovering over the icon shows a popup explaining
+          when the field will be auto-populated.
         </p>
       </div>
     </div>

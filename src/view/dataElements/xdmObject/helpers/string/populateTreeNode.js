@@ -10,6 +10,7 @@ governing permissions and limitations under the License.
 */
 
 import computePopulationAmount from "../computePopulationAmount";
+import computeInfoTip from "../computeInfoTip";
 
 export default ({
   treeNode,
@@ -19,5 +20,8 @@ export default ({
   treeNode.populationAmount = computePopulationAmount({
     formStateNode,
     isAncestorUsingWholePopulationStrategy
+  });
+  treeNode.infoTip = computeInfoTip({
+    formStateNode
   });
 };
