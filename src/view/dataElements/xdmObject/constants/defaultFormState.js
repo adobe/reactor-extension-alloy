@@ -1,25 +1,44 @@
+/*
+Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
 import * as autoPopulationSource from "./autoPopulationSource";
 import * as contextKey from "./contextKey";
 
+// fields that are always auto-populated
 const ALWAYS = { autoPopulationSource: autoPopulationSource.ALWAYS };
+// fields that may be specified as an option to the sendEvent command
 const COMMAND = { autoPopulationSource: autoPopulationSource.COMMAND };
+// fields that are auto-populated as part of the "device" context
 const CONTEXT_DEVICE = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
   contextKey: contextKey.DEVICE
 };
+// fields that are auto-populated as part of the "environment" context
 const CONTEXT_ENVIRONMENT = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
   contextKey: contextKey.ENVIRONMENT
 };
+// fields that are auto-populated as part of the "placeContext" context
 const CONTEXT_PLACE_CONTEXT = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
   contextKey: contextKey.PLACE_CONTEXT
 };
+// fields that are auto-populated as part of the "web" context
 const CONTEXT_WEB = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
   contextKey: contextKey.WEB
 };
 
+// These properties are applied to the form state in "getInitialFormState.js"
 export default {
   _id: ALWAYS,
   timestamp: ALWAYS,

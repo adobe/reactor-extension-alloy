@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import classNames from "classnames";
 import InfoIcon from "@react/react-spectrum/Icon/Info";
+import AsteriskIcon from "@react/react-spectrum/Icon/Asterisk";
 import AlertIcon from "@react/react-spectrum/Icon/Alert";
 import Tooltip from "@react/react-spectrum/Tooltip";
 import OverlayTrigger from "@react/react-spectrum/OverlayTrigger";
@@ -22,6 +23,7 @@ import PropTypes from "prop-types";
 
 export const VARIANT_INSPECT = "inspect";
 export const VARIANT_ERROR = "error";
+export const VARIANT_NOTE = "note";
 
 export const PLACEMENT_TOP = "top";
 export const PLACEMENT_RIGHT = "right";
@@ -34,6 +36,23 @@ export const ICON_SIZE_M = "M";
 export const ICON_SIZE_L = "L";
 export const ICON_SIZE_XL = "XL";
 
+const getIcon = variant => {
+  if (variant === VARIANT_ERROR) {
+    return AlertIcon;
+  }
+  if (variant === VARIANT_NOTE) {
+    return AsteriskIcon;
+  }
+  return InfoIcon;
+};
+
+const getTooltipVariant = variant => {
+  if (variant === VARIANT_NOTE) {
+    return VARIANT_INSPECT;
+  }
+  return variant;
+};
+
 /**
  * Displays an icon that, when hovered over, displays a tooltip.
  */
@@ -44,7 +63,9 @@ const IconTip = ({
   iconSize = ICON_SIZE_XS,
   children
 }) => {
-  const Icon = variant === VARIANT_ERROR ? AlertIcon : InfoIcon;
+  const Icon = getIcon(variant);
+  const tooltipVariant = getTooltipVariant(variant);
+
   return (
     <div
       className={classNames(className, "IconTip", {
@@ -55,7 +76,7 @@ const IconTip = ({
         <span className="u-flex">
           <Icon className="IconTip-icon" size={iconSize} />
         </span>
-        <Tooltip variant={variant} className="IconTip-tooltip">
+        <Tooltip variant={tooltipVariant} className="IconTip-tooltip">
           {children}
         </Tooltip>
       </OverlayTrigger>
@@ -65,7 +86,7 @@ const IconTip = ({
 
 IconTip.propTypes = {
   className: PropTypes.string,
-  variant: PropTypes.oneOf([VARIANT_INSPECT, VARIANT_ERROR]),
+  variant: PropTypes.oneOf([VARIANT_INSPECT, VARIANT_ERROR, VARIANT_NOTE]),
   placement: PropTypes.oneOf([
     PLACEMENT_TOP,
     PLACEMENT_RIGHT,

@@ -18,17 +18,22 @@ import IconTip from "./iconTip";
 /**
  * Strives to provide an InfoTip that's laid out nicely next to provided children.
  */
-const InfoTipLayout = ({ children, className, tip }) => (
+const InfoTipLayout = ({ children, className, tip, variant }) => (
   <div className={classNames("u-flex", "u-alignItemsCenter", className)}>
     {children}
-    {tip ? <IconTip className="u-gapLeft">{tip}</IconTip> : null}
+    {tip ? (
+      <IconTip variant={variant} className="u-gapLeft">
+        {tip}
+      </IconTip>
+    ) : null}
   </div>
 );
 
 InfoTipLayout.propTypes = {
   children: PropTypes.node.isRequired,
   className: PropTypes.string,
-  tip: PropTypes.string
+  tip: PropTypes.string,
+  variant: PropTypes.string
 };
 
 export default InfoTipLayout;

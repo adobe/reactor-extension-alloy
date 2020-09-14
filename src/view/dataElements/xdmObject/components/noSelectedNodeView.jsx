@@ -13,9 +13,11 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import Alert from "@react/react-spectrum/Alert";
+import AsteriskIcon from "@react/react-spectrum/Icon/Asterisk";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import { EMPTY, PARTIAL, FULL } from "../constants/populationAmount";
-import IconTip from "../../../components/iconTip";
+
+import "../../../components/iconTip.styl";
 
 /**
  * Shown when no node is selected within the XDM tree.
@@ -70,14 +72,16 @@ const NoSelectedNodeView = props => {
           filled in.
         </p>
         <p className="u-flex">
-          <IconTip className="u-gapRight u-gapTopHalf">
-            Hovering over this icon shows a popup explaining when the field will
-            be auto-populated.
-          </IconTip>
+          <span className="u-flex">
+            <AsteriskIcon
+              className="IconTip-icon u-gapRight u-gapTopHalf"
+              size="XS"
+            />
+          </span>
           Fields that may be auto-populated when this data element is passed to
-          the XDM option of the &quot;Send Event&quot; action have this
-          informational icon. Hovering over the icon shows a popup explaining
-          when the field will be auto-populated.
+          the XDM option of the &quot;Send Event&quot; action have this icon.
+          Hovering over the icon shows a popup explaining when the field will be
+          auto-populated.
         </p>
       </div>
     </div>

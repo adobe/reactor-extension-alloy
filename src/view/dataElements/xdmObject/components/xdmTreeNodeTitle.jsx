@@ -49,7 +49,7 @@ const XdmTreeNodeTitle = props => {
         className="u-gapRight"
         populationAmount={populationAmount}
       />
-      <InfoTipLayout tip={infoTip}>
+      <InfoTipLayout tip={infoTip} variant="note">
         <span data-test-id="xdmTreeNodeTitleDisplayName">{displayName}</span>
       </InfoTipLayout>
       <span className="XdmTreeNodeTitle-type u-gapLeft u-gapRight">{type}</span>
