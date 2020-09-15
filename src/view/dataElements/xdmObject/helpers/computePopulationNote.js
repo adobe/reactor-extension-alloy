@@ -13,9 +13,15 @@ governing permissions and limitations under the License.
 import { ALWAYS, COMMAND, CONTEXT } from "../constants/autoPopulationSource";
 import { OBJECT } from "../constants/schemaType";
 
-export default ({ formStateNode }) => {
+export default ({
+  formStateNode,
+  isAncestorUsingWholePopulationStrategy
+}) => {
   const { autoPopulationSource, schema } = formStateNode;
 
+  if (isAncestorUsingWholePopulationStrategy) {
+    return "";
+  }
   if (autoPopulationSource === ALWAYS) {
     return "This field will be auto-populated when provided as the XDM object for a Send Event action";
   }

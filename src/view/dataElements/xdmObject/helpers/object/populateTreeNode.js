@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import { WHOLE } from "../../constants/populationStrategy";
 import computePopulationAmount from "../computePopulationAmount";
-import computeInfoTip from "../computeInfoTip";
+import computePopulationNote from "../computePopulationNote";
 
 export default ({
   treeNode,
@@ -58,7 +58,8 @@ export default ({
     isAncestorUsingWholePopulationStrategy,
     childrenTreeNodes: treeNode.children
   });
-  treeNode.infoTip = computeInfoTip({
-    formStateNode
+  treeNode.infoTip = computePopulationNote({
+    formStateNode,
+    isAncestorUsingWholePopulationStrategy
   });
 };
