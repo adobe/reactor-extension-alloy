@@ -18,6 +18,7 @@ import PopulationAmountIndicator from "./populationAmountIndicator";
 import { EMPTY, PARTIAL, FULL } from "../constants/populationAmount";
 
 import "../../../components/iconTip.styl";
+import "./noSelectedNodeView.styl";
 
 /**
  * Shown when no node is selected within the XDM tree.
@@ -51,14 +52,14 @@ const NoSelectedNodeView = props => {
         <p className="u-flex">
           <PopulationAmountIndicator
             populationAmount={EMPTY}
-            className="u-gapRight u-gapTopHalf"
+            className="u-gapRight NoSelectedNodeView-icon"
           />
           An empty circle like this indicates no attributes have been filled in.
         </p>
         <p className="u-flex">
           <PopulationAmountIndicator
             populationAmount={PARTIAL}
-            className="u-gapRight u-gapTopHalf"
+            className="u-gapRight NoSelectedNodeView-icon"
           />
           A partially filled in circle like this indicates some of the
           attributes have been filled in.
@@ -66,7 +67,7 @@ const NoSelectedNodeView = props => {
         <p className="u-flex">
           <PopulationAmountIndicator
             populationAmount={FULL}
-            className="u-gapRight u-gapTopHalf"
+            className="u-gapRight NoSelectedNodeView-icon"
           />
           A full circle like this indicates all of the attributes have been
           filled in.
@@ -74,7 +75,7 @@ const NoSelectedNodeView = props => {
         <p className="u-flex">
           <span className="u-flex">
             <AsteriskIcon
-              className="IconTip-icon u-gapRight u-gapTopHalf"
+              className="IconTip-icon u-gapRight NoSelectedNodeView-icon"
               size="XS"
             />
           </span>

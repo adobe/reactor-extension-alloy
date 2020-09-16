@@ -13,10 +13,7 @@ governing permissions and limitations under the License.
 import { ALWAYS, COMMAND, CONTEXT } from "../constants/autoPopulationSource";
 import { OBJECT } from "../constants/schemaType";
 
-export default ({
-  formStateNode,
-  isAncestorUsingWholePopulationStrategy
-}) => {
+export default ({ formStateNode, isAncestorUsingWholePopulationStrategy }) => {
   const { autoPopulationSource, schema } = formStateNode;
 
   if (isAncestorUsingWholePopulationStrategy) {
