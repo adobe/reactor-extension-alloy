@@ -10,25 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/**
- * Fields that are auto-populated by Alloy.
- */
-export default [
-  "_id",
-  "eventType",
-  "timestamp",
-  "eventMergeId",
-  "device.screenHeight",
-  "device.screenWidth",
-  "device.screenOrientation",
-  "environment.type",
-  "environment.browserDetails.viewportWidth",
-  "environment.browserDetails.viewportHeight",
-  "implementationDetails.name",
-  "implementationDetails.version",
-  "placeContext.localTime",
-  "placeContext.localTimezoneOffset",
-  "placeContext.localTimezoneOffset",
-  "web.webPageDetails.URL",
-  "web.webReferrer.URL"
-];
+// These correspond to the configured contexts
+export const WEB = "Web";
+export const DEVICE = "Device";
+export const ENVIRONMENT = "Environment";
+export const PLACE_CONTEXT = "Place Context";
+// Not Applicable - Meaning this field is not autopopulated by a context configuration
+export const NA = "NA";

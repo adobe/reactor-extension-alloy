@@ -10,4 +10,20 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-export default () => {};
+import computePopulationAmount from "../computePopulationAmount";
+import computePopulationNote from "../computePopulationNote";
+
+export default ({
+  treeNode,
+  formStateNode,
+  isAncestorUsingWholePopulationStrategy
+}) => {
+  treeNode.populationAmount = computePopulationAmount({
+    formStateNode,
+    isAncestorUsingWholePopulationStrategy
+  });
+  treeNode.infoTip = computePopulationNote({
+    formStateNode,
+    isAncestorUsingWholePopulationStrategy
+  });
+};

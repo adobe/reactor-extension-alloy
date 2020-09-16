@@ -12,16 +12,63 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import Alert from "@react/react-spectrum/Alert";
-
+import { ALWAYS, COMMAND, CONTEXT } from "../constants/autoPopulationSource";
+import { OBJECT } from "../constants/schemaType";
+import { formStateNodePropTypes } from "../helpers/getInitialFormState";
 /**
  * Shown on the edit form for any fields that get populated
  * automatically by Alloy.
  */
-const AutoPopulationAlert = () => (
-  <Alert header="Auto-populated Field">
-    The value for this field will be auto-populated by the Adobe Experience
-    Platform Web SDK, but can be overwritten below.
-  </Alert>
-);
+const AutoPopulationAlert = ({ formStateNode }) => {
+  const { autoPopulationSource, contextKey, schema } = formStateNode;
+
+  return (
+    <Alert header="Auto-populated Field">
+      {autoPopulationSource === ALWAYS && (
+        <p>
+          The value for this field will be auto-populated when this data element
+          is provided as the XDM object for a &quot;Send Event&quot; action.
+          This value cannot be overwritten.
+        </p>
+      )}
+      {autoPopulationSource === COMMAND && (
+        <p>
+          The value for this field may be specified as an option to the
+          &quot;Send Event&quot; action. You can provide a value here, but it
+          will be overwritten if this field is also specified in the action.
+        </p>
+      )}
+      {autoPopulationSource === CONTEXT && schema.type !== OBJECT && (
+        <p>
+          The value for this field will be auto-populated when this data element
+          is provided as the XDM object for a &quot;Send Event&quot; action if
+          the &quot;{contextKey}&quot; context is configured. If you provide a
+          value here, it will overwrite the auto-populated value.
+        </p>
+      )}
+      {autoPopulationSource === CONTEXT && schema.type === OBJECT && (
+        <p>
+          Some of the attributes of this field will be auto-populated when this
+          data element is provided as the XDM object for a &quot;Send
+          Event&quot; action if the &quot;{contextKey}&quot; context is
+          configured. If you provide a data element here, it will overwrite the
+          auto-populated value.
+        </p>
+      )}
+      {autoPopulationSource === CONTEXT && (
+        <p>
+          You can configure which contexts are enabled in the AEP Web SDK
+          extension configuration in the section &quot;Data Collection&quot;
+          under the options labeled &quot;When sending event data, automatically
+          include&quot;.
+        </p>
+      )}
+    </Alert>
+  );
+};
+
+AutoPopulationAlert.propTypes = {
+  formStateNode: formStateNodePropTypes.isRequired
+};
 
 export default AutoPopulationAlert;

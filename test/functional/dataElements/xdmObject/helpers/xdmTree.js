@@ -42,6 +42,26 @@ export default {
         .find(".ant-tree-switcher")
     );
   },
+  populationIndicator: async title => {
+    const node = await getNode(title);
+    const populationIndicator = node.find(
+      createTestIdSelectorString("populationAmountIndicator")
+    );
+    return {
+      expectFull() {
+        return t.expect(populationIndicator.hasClass("is-full")).ok();
+      },
+      expectPartial() {
+        return t.expect(populationIndicator.hasClass("is-partial")).ok();
+      },
+      expectEmpty() {
+        return t.expect(populationIndicator.hasClass("is-empty")).ok();
+      },
+      expectBlank() {
+        return t.expect(populationIndicator.exists).notOk();
+      }
+    };
+  },
   expectIsValid: async title => {
     const node = await getNode(title);
     await t.expect(node.hasClass("is-invalid")).notOk();

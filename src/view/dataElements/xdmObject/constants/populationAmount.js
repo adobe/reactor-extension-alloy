@@ -10,20 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import computePopulationAmount from "../computePopulationAmount";
-import computePopulationNote from "../computePopulationNote";
-
-export default ({
-  treeNode,
-  formStateNode,
-  isAncestorUsingWholePopulationStrategy
-}) => {
-  treeNode.populationAmount = computePopulationAmount({
-    formStateNode,
-    isAncestorUsingWholePopulationStrategy
-  });
-  treeNode.infoTip = computePopulationNote({
-    formStateNode,
-    isAncestorUsingWholePopulationStrategy
-  });
-};
+export const FULL = "full";
+export const PARTIAL = "partial";
+export const EMPTY = "empty";
+export const BLANK = "blank";

@@ -31,7 +31,7 @@ const extensionViewController = createExtensionViewController(
 const schema = {
   id:
     "https://ns.adobe.com/alloyengineering/schemas/2c70e73b33329135dea3aac47bb52ec2",
-  version: "1.6"
+  version: "2.0"
 };
 
 const schemaTitle = "XDM Object Data Element Tests";
@@ -562,4 +562,19 @@ test("disables auto-populated fields", async () => {
   await selectSchemaFromSchemasMeta();
   await xdmTree.click("_id");
   await stringEdit.expectNotExists();
+});
+
+test("doesn't allow you to edit _id", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.click("_id");
+  await stringEdit.expectNotExists();
+});
+
+test("allows you to edit context fields", async () => {
+  await initializeExtensionView();
+  await selectSchemaFromSchemasMeta();
+  await xdmTree.toggleExpansion("environment");
+  await xdmTree.click("type");
+  await stringEdit.expectExists();
 });

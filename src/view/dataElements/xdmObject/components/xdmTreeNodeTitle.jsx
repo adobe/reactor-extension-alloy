@@ -11,31 +11,18 @@ governing permissions and limitations under the License.
 */
 import React from "react";
 import PropTypes from "prop-types";
-import Checkmark from "@react/react-spectrum/Icon/Checkmark";
 import classNames from "classnames";
 import IconTip, {
   ICON_SIZE_S,
   VARIANT_ERROR
 } from "../../../components/iconTip";
+import PopulationAmountIndicator from "./populationAmountIndicator";
 import "./xdmTreeNodeTitle.styl";
+import { EMPTY, FULL, PARTIAL, BLANK } from "../constants/populationAmount";
+import InfoTipLayout from "../../../components/infoTipLayout";
 
-/**
- * The display for a specific node within the XDM tree.
- * @param {Object} props
- * @param {string} props.displayName The node's user-friendly name.
- * @param {string} props.type The node type (object, array, string, etc.)
- * @param {boolean} props.isPopulated Whether the node has been directly
- * populated (if using the WHOLE population method) or at least one of its
- * descendants has been populated (if using the PARTS population method).
- * @param {string} [error] The validation error message pertaining to
- * this node, if any.
- */
 const XdmTreeNodeTitle = props => {
-  const { displayName, type, isPopulated, error } = props;
-
-  const populatedIcon = isPopulated ? (
-    <Checkmark size="XS" className="u-gapRight" />
-  ) : null;
+  const { displayName, type, populationAmount, error, infoTip } = props;
 
   return (
     <div
@@ -58,8 +45,13 @@ const XdmTreeNodeTitle = props => {
           {error}
         </IconTip>
       )}
-      {populatedIcon}
-      <span data-test-id="xdmTreeNodeTitleDisplayName">{displayName}</span>
+      <PopulationAmountIndicator
+        className="u-gapRight"
+        populationAmount={populationAmount}
+      />
+      <InfoTipLayout tip={infoTip} variant="note">
+        <span data-test-id="xdmTreeNodeTitleDisplayName">{displayName}</span>
+      </InfoTipLayout>
       <span className="XdmTreeNodeTitle-type u-gapLeft u-gapRight">{type}</span>
     </div>
   );
@@ -68,8 +60,9 @@ const XdmTreeNodeTitle = props => {
 XdmTreeNodeTitle.propTypes = {
   displayName: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
-  isPopulated: PropTypes.bool.isRequired,
-  error: PropTypes.string
+  populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY, BLANK]),
+  error: PropTypes.string,
+  infoTip: PropTypes.string
 };
 
 export default XdmTreeNodeTitle;

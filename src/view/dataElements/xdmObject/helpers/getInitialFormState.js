@@ -12,8 +12,9 @@ governing permissions and limitations under the License.
 
 import PropTypes from "prop-types";
 import { WHOLE, PARTS } from "../constants/populationStrategy";
-import autoPopulatedFields from "../constants/autoPopulatedFields";
-import alwaysDisabledFields from "../constants/alwaysDisabledFields";
+import defaultFormState from "../constants/defaultFormState";
+import * as contextKey from "../constants/contextKey";
+import * as autoPopulationSource from "../constants/autoPopulationSource";
 import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 let lastGeneratedNodeId = 0;
@@ -27,10 +28,8 @@ const generateNodeId = () => {
  * @typedef {Object} FormStateNode
  * @property {string} id A unique identifier for the node.
  * @property {Object} schema The XDM schema for the node.
- * @property {boolean} isAutoPopulated Whether the node's value
- * is auto-populated by Alloy.
- * @property {boolean} isAlwaysDisabled Whether editing the node's
- * value should always be disabled.
+ * @property {string} autoPopulationSource The source of auto population for this node
+ * @property {string} contextKey The context that could auto populate this field
  * @property {Object} properties If the schema type is an object,
  * this will represent properties of the object.
  * @property {Object} properties If the schema type is "object"",
@@ -77,6 +76,9 @@ const generateNodeId = () => {
  */
 const getInitialFormStateNode = ({ sandboxMeta, schema, value, nodePath }) => {
   const formStateNode = {
+    autoPopulationSource: autoPopulationSource.NONE,
+    contextKey: contextKey.NA,
+    ...defaultFormState[nodePath],
     // We generate an ID rather than use something like a schema path
     // or field path because those paths would need to incorporate indexes
     // of items, and indexes of items can change as items are removed
@@ -84,9 +86,7 @@ const getInitialFormStateNode = ({ sandboxMeta, schema, value, nodePath }) => {
     // for as long as the node exists.
     id: generateNodeId(),
     sandboxMeta,
-    schema,
-    isAutoPopulated: autoPopulatedFields.includes(nodePath),
-    isAlwaysDisabled: alwaysDisabledFields.includes(nodePath)
+    schema
   };
 
   // Type specific helpers should set:
@@ -113,8 +113,8 @@ export default ({ sandboxMeta, schema, value }) => {
 const formStateNodeShape = {
   id: PropTypes.string.isRequired,
   schema: PropTypes.object,
-  isAutoPopulated: PropTypes.bool.isRequired,
-  isAlwaysDisabled: PropTypes.bool.isRequired,
+  autoPopulationSource: PropTypes.string.isRequired,
+  contextKey: PropTypes.string.isRequired,
   isPartsPopulationStrategySupported: PropTypes.bool.isRequired,
   value: PropTypes.any.isRequired,
   populationStrategy: PropTypes.oneOf([WHOLE, PARTS]).isRequired

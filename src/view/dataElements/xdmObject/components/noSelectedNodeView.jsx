@@ -13,6 +13,11 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import Alert from "@react/react-spectrum/Alert";
+import AsteriskIcon from "@react/react-spectrum/Icon/Asterisk";
+import PopulationAmountIndicator from "./populationAmountIndicator";
+import { EMPTY, PARTIAL, FULL } from "../constants/populationAmount";
+
+import "../../../components/iconTip.styl";
 import "./noSelectedNodeView.styl";
 
 /**
@@ -39,9 +44,46 @@ const NoSelectedNodeView = props => {
           also no longer be included on the XDM object.
         </Alert>
       )}
-      <div className="NoSelectedNodeView-description">
-        Build an object that complies with your configured schema by selecting
-        attributes on the left and providing their values.
+      <div>
+        <p>
+          Build an object that complies with your configured schema by selecting
+          attributes on the left and providing their values here.
+        </p>
+        <p className="u-flex">
+          <PopulationAmountIndicator
+            populationAmount={EMPTY}
+            className="u-gapRight NoSelectedNodeView-icon"
+          />
+          An empty circle like this indicates no attributes have been filled in.
+        </p>
+        <p className="u-flex">
+          <PopulationAmountIndicator
+            populationAmount={PARTIAL}
+            className="u-gapRight NoSelectedNodeView-icon"
+          />
+          A partially filled in circle like this indicates some of the
+          attributes have been filled in.
+        </p>
+        <p className="u-flex">
+          <PopulationAmountIndicator
+            populationAmount={FULL}
+            className="u-gapRight NoSelectedNodeView-icon"
+          />
+          A full circle like this indicates all of the attributes have been
+          filled in.
+        </p>
+        <p className="u-flex">
+          <span className="u-flex">
+            <AsteriskIcon
+              className="IconTip-icon u-gapRight NoSelectedNodeView-icon"
+              size="XS"
+            />
+          </span>
+          Fields that may be auto-populated when this data element is passed to
+          the XDM option of the &quot;Send Event&quot; action have this icon.
+          Hovering over the icon shows a popup explaining when the field will be
+          auto-populated.
+        </p>
       </div>
     </div>
   );

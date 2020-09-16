@@ -10,18 +10,21 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { WHOLE } from "../../constants/populationStrategy";
+import computePopulationAmount from "../computePopulationAmount";
+import computePopulationNote from "../computePopulationNote";
+
 export default ({
   treeNode,
   formStateNode,
+  treeNodeComponent,
   isAncestorUsingWholePopulationStrategy,
-  isUsingWholePopulationStrategy,
-  confirmDataPopulatedAtCurrentOrDescendantNode,
   confirmTouchedAtCurrentOrDescendantNode,
   errors,
   touched,
   getTreeNode
 }) => {
-  const { properties } = formStateNode;
+  const { properties, populationStrategy } = formStateNode;
 
   if (properties) {
     const propertyNames = Object.keys(properties);
@@ -30,11 +33,11 @@ export default ({
         const propertyFormStateNode = properties[propertyName];
         const childNode = getTreeNode({
           formStateNode: propertyFormStateNode,
+          treeNodeComponent,
           displayName: propertyName,
           isAncestorUsingWholePopulationStrategy:
             isAncestorUsingWholePopulationStrategy ||
-            isUsingWholePopulationStrategy,
-          notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode,
+            populationStrategy === WHOLE,
           notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
           errors:
             errors && errors.properties
@@ -49,4 +52,14 @@ export default ({
       });
     }
   }
+
+  treeNode.populationAmount = computePopulationAmount({
+    formStateNode,
+    isAncestorUsingWholePopulationStrategy,
+    childrenTreeNodes: treeNode.children
+  });
+  treeNode.infoTip = computePopulationNote({
+    formStateNode,
+    isAncestorUsingWholePopulationStrategy
+  });
 };

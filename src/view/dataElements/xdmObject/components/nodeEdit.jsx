@@ -29,6 +29,7 @@ import integerEdit from "./integerEdit";
 import numberEdit from "./numberEdit";
 import objectEdit from "./objectEdit";
 import stringEdit from "./stringEdit";
+import { ALWAYS, NONE } from "../constants/autoPopulationSource";
 
 const getViewBySchemaType = schemaType => {
   switch (schemaType) {
@@ -69,12 +70,16 @@ const NodeEdit = props => {
         onBreadcrumbClick={item => onNodeSelect(item.nodeId)}
       />
       <div>
-        {formStateNode.isAutoPopulated && <AutoPopulationAlert />}
-        <TypeSpecificNodeEdit
-          formStateNode={formStateNode}
-          fieldName={fieldName}
-          onNodeSelect={onNodeSelect}
-        />
+        {formStateNode.autoPopulationSource !== NONE && (
+          <AutoPopulationAlert formStateNode={formStateNode} />
+        )}
+        {formStateNode.autoPopulationSource !== ALWAYS && (
+          <TypeSpecificNodeEdit
+            formStateNode={formStateNode}
+            fieldName={fieldName}
+            onNodeSelect={onNodeSelect}
+          />
+        )}
       </div>
     </div>
   );

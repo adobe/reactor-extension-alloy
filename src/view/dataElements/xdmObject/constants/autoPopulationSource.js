@@ -10,16 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/**
- * Fields that users should not be allowed to edit.
- */
-export default [
-  "_id",
-  "eventType",
-  "timestamp",
-  "eventMergeId",
-  "implementationDetails",
-  "implementationDetails.name",
-  "implementationDetails.version",
-  "implementationDetails.environment"
-];
+// Always auto-populated like _id or timestamp
+export const ALWAYS = "always";
+// May be specified as an option for the Send Event command
+export const COMMAND = "command";
+// May be auto-populated as part of an optional configured context
+export const CONTEXT = "context";
+// Never auto-populated
+export const NONE = "none";

@@ -20,41 +20,6 @@ import getNodeIdsToExpandForValidation from "../helpers/getNodeIdsToExpandForVal
 import XdmTreeNodeTitle from "./xdmTreeNodeTitle";
 import useNewlyValidatedFormSubmission from "../../../utils/useNewlyValidatedFormSubmission";
 
-const { TreeNode } = Tree;
-
-/**
- * Recursively renders tree nodes.
- */
-const renderTreeNodes = (nodes = []) => {
-  return nodes.map(node => {
-    const {
-      id,
-      disabled,
-      children,
-      displayName,
-      type,
-      isPopulated,
-      error
-    } = node;
-    return (
-      <TreeNode
-        title={
-          <XdmTreeNodeTitle
-            displayName={displayName}
-            type={type}
-            isPopulated={isPopulated}
-            error={error}
-          />
-        }
-        key={id}
-        disabled={disabled}
-      >
-        {children ? renderTreeNodes(children) : null}
-      </TreeNode>
-    );
-  });
-};
-
 /**
  * Displays the XDM object as a tree.
  */
@@ -65,6 +30,7 @@ const XdmTree = props => {
   const { values: formState, errors, touched } = formikProps;
   const [expandedNodeIds, setExpandedNodeIds] = useState([]);
   const treeStructure = generateTreeStructure({
+    treeNodeComponent: XdmTreeNodeTitle,
     formState,
     errors,
     touched
@@ -99,14 +65,13 @@ const XdmTree = props => {
     <Tree
       data-test-id="xdmTree"
       className="XdmTree"
+      treeData={treeStructure.children}
       onSelect={onTreeSelect}
       onExpand={onTreeExpand}
       selectedKeys={selectedNodeId ? [selectedNodeId] : []}
       expandedKeys={expandedNodeIds}
       showLine
-    >
-      {renderTreeNodes(treeStructure.children)}
-    </Tree>
+    />
   );
 };
 

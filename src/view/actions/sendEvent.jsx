@@ -257,7 +257,7 @@ const SendEvent = () => {
             </div>
             <div className="u-gapTop">
               <InfoTipLayout
-                tip="A platform experience event dataset ID that is different from the 
+                tip="A platform experience event dataset ID that is different from the
                 dataset provided in the Edge configuration."
               >
                 <FieldLabel

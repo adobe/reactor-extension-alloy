@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { WHOLE } from "../constants/populationStrategy";
-import isFormStateValuePopulated from "./isFormStateValuePopulated";
 import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 /**
@@ -27,6 +25,7 @@ import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
  * @property {string} error If an error should be shown for the node,
  * this will be the error message.
  * @property {Array} children Children tree nodes, if any.
+ * @property {string} infoTip The InfoTip to show on the node (if any)
  */
 
 /**
@@ -54,44 +53,26 @@ import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
  */
 const getTreeNode = ({
   formStateNode,
+  treeNodeComponent,
   displayName,
   isAncestorUsingWholePopulationStrategy = false,
-  notifyParentOfDataPopulation = () => {},
   notifyParentOfTouched = () => {},
   errors,
   touched
 }) => {
-  const {
-    id,
-    schema,
-    populationStrategy,
-    value,
-    isAlwaysDisabled,
-    isAutoPopulated
-  } = formStateNode;
+  const { id, schema, isAlwaysDisabled } = formStateNode;
 
   const treeNode = {
-    id,
+    key: id,
     displayName,
     type: schema.type,
     disabled: isAlwaysDisabled || isAncestorUsingWholePopulationStrategy,
-    isPopulated: false
+    // The Tree component, when rendering a tree node, will pass the treeNode
+    // object into the component that renders the tree node, which is provided here.
+    title: treeNodeComponent
   };
-
-  const isUsingWholePopulationStrategy = populationStrategy === WHOLE;
 
   let isTouchedAtCurrentOrDescendantNode = false;
-
-  const confirmDataPopulatedAtCurrentOrDescendantNode = () => {
-    if (!treeNode.isPopulated) {
-      notifyParentOfDataPopulation();
-      treeNode.isPopulated = true;
-    }
-  };
-
-  if (isAutoPopulated) {
-    confirmDataPopulatedAtCurrentOrDescendantNode();
-  }
 
   const confirmTouchedAtCurrentOrDescendantNode = () => {
     if (!isTouchedAtCurrentOrDescendantNode) {
@@ -104,31 +85,26 @@ const getTreeNode = ({
     confirmTouchedAtCurrentOrDescendantNode();
   }
 
-  if (
-    !isAncestorUsingWholePopulationStrategy &&
-    isUsingWholePopulationStrategy &&
-    isFormStateValuePopulated(value)
-  ) {
-    confirmDataPopulatedAtCurrentOrDescendantNode();
-  }
-
-  // Type specific helpers should set:
-  //  - children, if the node has children
   getTypeSpecificHelpers(schema.type).populateTreeNode({
     treeNode,
     formStateNode,
+    treeNodeComponent,
     isAncestorUsingWholePopulationStrategy,
-    isUsingWholePopulationStrategy,
-    confirmDataPopulatedAtCurrentOrDescendantNode,
     confirmTouchedAtCurrentOrDescendantNode,
     errors,
     touched,
     getTreeNode
   });
 
-  if (isTouchedAtCurrentOrDescendantNode) {
-    treeNode.error =
-      errors && typeof errors.value === "string" ? errors.value : undefined;
+  // To illustrate why we check for isTouchedAtCurrentOrDescendantNode,
+  // if a user adds an item to an array node, we show an error if the
+  // item is empty. However, we don't want to show the error until
+  // we've given the user a chance to populate the item. For this reason,
+  // we wait until the user has touched the node or its descendants or
+  // has tried to save the data element (formik marks all fields as touched
+  // upon save).
+  if (isTouchedAtCurrentOrDescendantNode && errors) {
+    treeNode.error = errors.value;
   }
 
   return treeNode;
@@ -136,6 +112,14 @@ const getTreeNode = ({
 
 // Avoid exposing all of getTreeNode's parameters since
 // they're only used internally for recursion.
-export default ({ formState, errors, touched }) => {
-  return getTreeNode({ formStateNode: formState, errors, touched });
+export default ({ treeNodeComponent, formState, errors, touched }) => {
+  return getTreeNode({
+    formStateNode: formState,
+    treeNodeComponent,
+    // Display name for the top-level node doesn't really
+    // matter because it won't be shown in the tree anyway.
+    displayName: "",
+    errors,
+    touched
+  });
 };
