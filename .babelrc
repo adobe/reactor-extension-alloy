@@ -1,5 +1,10 @@
 {
-  "plugins": ["@babel/plugin-proposal-class-properties"],
+  "plugins": [
+    "@babel/plugin-proposal-class-properties",
+    ["version", {
+      "define": "__EXTENSION_VERSION__"
+    }]
+  ],
   "presets": [["@babel/preset-env"]],
   "env": {
     "production": {
