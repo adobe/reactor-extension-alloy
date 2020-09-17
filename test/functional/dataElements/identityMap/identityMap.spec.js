@@ -44,7 +44,7 @@ const addIdentityButton = spectrum.button("addIdentityButton");
 const accordion = spectrum.accordion("identitiesAccordion");
 
 const identities = [];
-for (let i = 0; i < 2; i += 1) {
+for (let i = 0; i < 3; i += 1) {
   const identifiers = [];
   for (let j = 0; j < 2; j += 1) {
     identifiers.push({
@@ -76,7 +76,6 @@ fixture("Identity Map Data Element View")
 test("initializes Identity map with default settings", async () => {
   await initializeExtensionView();
 
-  await accordion.clickHeader("UNNAMED IDENTITY");
   await identities[0].namespace.expectValue("");
   await identities[0].identifiers[0].id.expectValue("");
   await identities[0].identifiers[0].authenticatedState.expectSelectedOptionLabel(
@@ -87,10 +86,10 @@ test("initializes Identity map with default settings", async () => {
   await identities[0].deleteButton.expectDisabled();
 });
 
-test("initializes Identity map with full settings", async () => {
+test("initializes Identity map with sorted namespaces", async () => {
   await initializeExtensionView({
     settings: {
-      CUSTOM_IDENTITY: [
+      S_CUSTOM_IDENTITY: [
         {
           id: "test1",
           authenticatedState: "loggedOut",
@@ -102,7 +101,14 @@ test("initializes Identity map with full settings", async () => {
           primary: true
         }
       ],
-      CUSTOM_IDENTITY2: [
+      W_CUSTOM_IDENTITY2: [
+        {
+          id: "test3",
+          authenticatedState: "authenticated",
+          primary: false
+        }
+      ],
+      B_CUSTOM_IDENTITY2: [
         {
           id: "test3",
           authenticatedState: "authenticated",
@@ -112,34 +118,74 @@ test("initializes Identity map with full settings", async () => {
     }
   });
 
-  await accordion.clickHeader("CUSTOM_IDENTITY");
-  await identities[0].namespace.expectValue("CUSTOM_IDENTITY");
-  await identities[0].identifiers[0].id.expectValue("test1");
+  await accordion.clickHeader("B_CUSTOM_IDENTITY2");
+  await identities[0].namespace.expectValue("B_CUSTOM_IDENTITY2");
+  await identities[0].identifiers[0].id.expectValue("test3");
   await identities[0].identifiers[0].authenticatedState.expectSelectedOptionLabel(
-    "Logged Out"
-  );
-  await identities[0].identifiers[0].primary.expectUnchecked();
-  await identities[0].identifiers[0].deleteButton.expectEnabled();
-
-  await identities[0].identifiers[1].id.expectValue("test2");
-  await identities[0].identifiers[1].authenticatedState.expectSelectedOptionLabel(
-    "Ambiguous"
-  );
-  await identities[0].identifiers[1].primary.expectChecked();
-  await identities[0].identifiers[1].deleteButton.expectEnabled();
-
-  await identities[0].deleteButton.expectEnabled();
-
-  await accordion.clickHeader("CUSTOM_IDENTITY2");
-  await identities[1].namespace.expectValue("CUSTOM_IDENTITY2");
-  await identities[1].identifiers[0].id.expectValue("test3");
-  await identities[1].identifiers[0].authenticatedState.expectSelectedOptionLabel(
     "Authenticated"
   );
+  await identities[0].identifiers[0].primary.expectUnchecked();
+  await identities[0].identifiers[0].deleteButton.expectDisabled();
+  await identities[0].deleteButton.expectEnabled();
+
+  await accordion.clickHeader("S_CUSTOM_IDENTITY");
+  await identities[1].namespace.expectValue("S_CUSTOM_IDENTITY");
+
+  await identities[1].identifiers[0].id.expectValue("test1");
+  await identities[1].identifiers[0].authenticatedState.expectSelectedOptionLabel(
+    "Logged Out"
+  );
   await identities[1].identifiers[0].primary.expectUnchecked();
-  await identities[1].identifiers[0].deleteButton.expectDisabled();
+  await identities[1].identifiers[0].deleteButton.expectEnabled();
+
+  await identities[1].identifiers[1].id.expectValue("test2");
+  await identities[1].identifiers[1].authenticatedState.expectSelectedOptionLabel(
+    "Ambiguous"
+  );
+  await identities[1].identifiers[1].primary.expectChecked();
+  await identities[1].identifiers[1].deleteButton.expectEnabled();
 
   await identities[1].deleteButton.expectEnabled();
+
+  await accordion.clickHeader("W_CUSTOM_IDENTITY2");
+  await identities[2].namespace.expectValue("W_CUSTOM_IDENTITY2");
+  await identities[2].identifiers[0].id.expectValue("test3");
+  await identities[2].identifiers[0].authenticatedState.expectSelectedOptionLabel(
+    "Authenticated"
+  );
+  await identities[2].identifiers[0].primary.expectUnchecked();
+  await identities[2].identifiers[0].deleteButton.expectDisabled();
+  await identities[2].deleteButton.expectEnabled();
+
+  await identityMapViewController.expectIsValid();
+  await identityMapViewController.expectSettings({
+    B_CUSTOM_IDENTITY2: [
+      {
+        id: "test3",
+        authenticatedState: "authenticated",
+        primary: false
+      }
+    ],
+    S_CUSTOM_IDENTITY: [
+      {
+        id: "test1",
+        authenticatedState: "loggedOut",
+        primary: false
+      },
+      {
+        id: "test2",
+        authenticatedState: "ambiguous",
+        primary: true
+      }
+    ],
+    W_CUSTOM_IDENTITY2: [
+      {
+        id: "test3",
+        authenticatedState: "authenticated",
+        primary: false
+      }
+    ]
+  });
 });
 test("adds a new Identity and new Identifier with minimal settings", async () => {
   await initializeExtensionView({
@@ -154,7 +200,6 @@ test("adds a new Identity and new Identifier with minimal settings", async () =>
     }
   });
 
-  await accordion.clickHeader("CUSTOM_IDENTITY");
   await identities[0].namespace.expectValue("CUSTOM_IDENTITY");
   await identities[0].identifiers[0].id.expectValue("test1");
   await identities[0].identifiers[0].authenticatedState.expectSelectedOptionLabel(
@@ -171,7 +216,6 @@ test("adds a new Identity and new Identifier with minimal settings", async () =>
   await identities[0].identifiers[1].primary.click();
 
   await addIdentityButton.click();
-  await accordion.clickHeader("UNNAMED IDENTITY");
   await identities[1].namespace.typeText("CUSTOM_IDENTITY2");
   await identities[1].identifiers[0].id.typeText("test3");
   await identities[1].identifiers[0].authenticatedState.selectOption(
@@ -250,7 +294,6 @@ test("removing Identifier returns the correct settings", async () => {
 test("invalid Identity trigger validation error", async () => {
   await initializeExtensionView();
 
-  await accordion.clickHeader("UNNAMED IDENTITY");
   await identities[0].identifiers[0].id.typeText("test3");
   await identities[0].identifiers[0].authenticatedState.selectOption(
     "Authenticated"
@@ -262,7 +305,6 @@ test("invalid Identity trigger validation error", async () => {
 test("invalid Identifier trigger validation error", async () => {
   await initializeExtensionView();
 
-  await accordion.clickHeader("UNNAMED IDENTITY");
   await identities[0].namespace.typeText("CUSTOM_IDENTITY");
   await identities[0].identifiers[0].authenticatedState.selectOption(
     "Authenticated"
@@ -285,7 +327,6 @@ test("double Identity namespace trigger validation error", async () => {
     }
   });
   await addIdentityButton.click();
-  await accordion.clickHeader("UNNAMED IDENTITY");
   await identities[1].namespace.typeText("CUSTOM_IDENTITY");
   await identities[1].identifiers[0].id.typeText("test3");
   await identities[1].identifiers[0].authenticatedState.selectOption(
@@ -303,7 +344,6 @@ test("initialization of namespaces as dropdown with values", async () => {
 
   await initializeExtensionView();
 
-  await accordion.clickHeader("UNNAMED IDENTITY");
   await identities[0].namespaceSelect.selectOption("AAID");
   await identities[0].identifiers[0].id.typeText("test3");
 
@@ -326,6 +366,5 @@ test("when namespaces call fails instantiate form with textfield", async () => {
 
   await initializeExtensionView();
 
-  await accordion.clickHeader("UNNAMED IDENTITY");
   await identities[0].namespace.expectValue("");
 });
