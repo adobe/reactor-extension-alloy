@@ -22,13 +22,18 @@ import "./identityMap.styl";
 import { AMBIGUOUS } from "../utils/authenticatedState";
 import fetchNamespaces from "./identityMap/fetchNamespaces";
 
+const isNotECID = namespace => {
+  return namespace.code !== "ECID";
+};
 const identitiesMapToArray = identityMap => {
-  return Object.keys(identityMap).map(namespace => {
-    return {
-      namespace,
-      identifiers: identityMap[namespace]
-    };
-  });
+  return Object.keys(identityMap)
+    .sort((first, second) => first.localeCompare(second))
+    .map(namespace => {
+      return {
+        namespace,
+        identifiers: identityMap[namespace]
+      };
+    });
 };
 
 const identitiesArrayToMap = identitiesArray => {
@@ -49,10 +54,13 @@ const getInitialValues = ({ initInfo }) => {
     imsAccess: initInfo.tokens.imsAccess
   }).then(response => {
     if (response.length > 0) {
-      const namespaces = response.map(namespace => ({
-        value: namespace.code,
-        label: namespace.code
-      }));
+      const namespaces = response
+        .filter(isNotECID)
+        .map(namespace => ({
+          value: namespace.code,
+          label: namespace.code
+        }))
+        .sort((first, second) => first.value.localeCompare(second.value));
 
       return {
         identities,

@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import "regenerator-runtime"; // needed for some of react-spectrum
-import React from "react";
+import React, { useState } from "react";
 import { FieldArray } from "formik";
 import Textfield from "@react/react-spectrum/Textfield";
 import Checkbox from "@react/react-spectrum/Checkbox";
@@ -33,6 +33,9 @@ import NamespaceComponent from "./namespaceComponent";
 
 function IdentityWrapper({ values }) {
   const { namespaces } = values;
+  const [selectedAccordionIndex, setSelectedAccordionIndex] = useState(
+    values.identities.length === 1 ? 0 : undefined
+  );
 
   return (
     <React.Fragment>
@@ -47,6 +50,7 @@ function IdentityWrapper({ values }) {
                   label="Add Identity"
                   onClick={() => {
                     arrayHelpers.push(getDefaultIdentity());
+                    setSelectedAccordionIndex(values.identities.length);
                   }}
                 />
               </div>
@@ -54,6 +58,8 @@ function IdentityWrapper({ values }) {
               <Accordion
                 data-test-id="identitiesAccordion"
                 className="u-gapTop2x"
+                selectedIndex={selectedAccordionIndex}
+                onChange={setSelectedAccordionIndex}
               >
                 {values.identities.map((identity, index) => (
                   <AccordionItem
@@ -181,6 +187,7 @@ function IdentityWrapper({ values }) {
                         disabled={values.identities.length === 1}
                         onClick={() => {
                           arrayHelpers.remove(index);
+                          setSelectedAccordionIndex(0);
                         }}
                       />
                       {values.identities.length === 1 ? (
