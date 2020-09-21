@@ -20,14 +20,20 @@ import IdentityWrapper from "../components/identityWrapper";
 import getDefaultIdentity from "../utils/getDefaultIdentity";
 import "./identityMap.styl";
 import { AMBIGUOUS } from "../utils/authenticatedState";
+import fetchNamespaces from "./identityMap/fetchNamespaces";
 
+const isNotECID = namespace => {
+  return namespace.code !== "ECID";
+};
 const identitiesMapToArray = identityMap => {
-  return Object.keys(identityMap).map(namespace => {
-    return {
-      namespace,
-      identifiers: identityMap[namespace]
-    };
-  });
+  return Object.keys(identityMap)
+    .sort((first, second) => first.localeCompare(second))
+    .map(namespace => {
+      return {
+        namespace,
+        identifiers: identityMap[namespace]
+      };
+    });
 };
 
 const identitiesArrayToMap = identitiesArray => {
@@ -43,9 +49,30 @@ const getInitialValues = ({ initInfo }) => {
     ? identitiesMapToArray(initInfo.settings)
     : [getDefaultIdentity()];
 
-  return {
-    identities
-  };
+  return fetchNamespaces({
+    orgId: initInfo.company.orgId,
+    imsAccess: initInfo.tokens.imsAccess
+  }).then(response => {
+    if (response.length > 0) {
+      const namespaces = response
+        .filter(isNotECID)
+        .map(namespace => ({
+          value: namespace.code,
+          label: namespace.code
+        }))
+        .sort((first, second) => first.value.localeCompare(second.value));
+
+      return {
+        identities,
+        namespaces
+      };
+    }
+
+    return {
+      identities,
+      namespaces: []
+    };
+  });
 };
 
 const getSettings = ({ values }) => {
@@ -59,7 +86,7 @@ const validateDuplicateValue = (
   message,
   validateBooleanTrue
 ) => {
-  const values = identities.map(identity => identity[key]);
+  const values = identities.map(identity => identity[key].toUpperCase());
   const duplicateIndex = values.findIndex(
     (value, index) =>
       values.indexOf(value) < index && (!validateBooleanTrue || value === true)
@@ -84,7 +111,7 @@ const validationSchema = object()
             name: "notECID",
             message: "ECID is not allowed",
             test(value) {
-              return value !== "ECID";
+              return value.toUpperCase() !== "ECID";
             }
           }),
         identifiers: array().of(

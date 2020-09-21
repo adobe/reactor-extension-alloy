@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import "regenerator-runtime"; // needed for some of react-spectrum
-import React from "react";
+import React, { useState } from "react";
 import { FieldArray } from "formik";
 import Textfield from "@react/react-spectrum/Textfield";
 import Checkbox from "@react/react-spectrum/Checkbox";
@@ -29,8 +29,14 @@ import authenticatedStateOptions from "../constants/authenticatedStateOptions";
 import getDefaultIdentifier from "../utils/getDefaultIdentifier";
 import InfoTipLayout from "./infoTipLayout";
 import getDefaultIdentity from "../utils/getDefaultIdentity";
+import NamespaceComponent from "./namespaceComponent";
 
 function IdentityWrapper({ values }) {
+  const { namespaces } = values;
+  const [selectedAccordionIndex, setSelectedAccordionIndex] = useState(
+    values.identities.length === 1 ? 0 : undefined
+  );
+
   return (
     <React.Fragment>
       <FieldArray
@@ -44,6 +50,7 @@ function IdentityWrapper({ values }) {
                   label="Add Identity"
                   onClick={() => {
                     arrayHelpers.push(getDefaultIdentity());
+                    setSelectedAccordionIndex(values.identities.length);
                   }}
                 />
               </div>
@@ -51,6 +58,8 @@ function IdentityWrapper({ values }) {
               <Accordion
                 data-test-id="identitiesAccordion"
                 className="u-gapTop2x"
+                selectedIndex={selectedAccordionIndex}
+                onChange={setSelectedAccordionIndex}
               >
                 {values.identities.map((identity, index) => (
                   <AccordionItem
@@ -59,18 +68,19 @@ function IdentityWrapper({ values }) {
                   >
                     <div>
                       <FieldLabel
-                        labelFor={`namespace${index}Field`}
+                        labelFor={
+                          namespaces.length > 0
+                            ? `namespaceSelect${index}Field`
+                            : `namespace${index}Field`
+                        }
                         label="Namespace"
                       />
-                      <div>
-                        <WrappedField
-                          data-test-id={`namespace${index}Field`}
-                          id={`namespace${index}Field`}
-                          name={`identities.${index}.namespace`}
-                          component={Textfield}
-                          componentClassName="u-fieldLong"
-                        />
-                      </div>
+                      <NamespaceComponent
+                        name={`identities.${index}.namespace`}
+                        namespace={identity.namespace}
+                        options={namespaces}
+                        index={index}
+                      />
                     </div>
                     <div>
                       <FieldArray
@@ -177,6 +187,7 @@ function IdentityWrapper({ values }) {
                         disabled={values.identities.length === 1}
                         onClick={() => {
                           arrayHelpers.remove(index);
+                          setSelectedAccordionIndex(0);
                         }}
                       />
                       {values.identities.length === 1 ? (
