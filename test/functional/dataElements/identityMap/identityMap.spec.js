@@ -386,7 +386,6 @@ test("multiple primary identifiers trigger validation error", async () => {
       ]
     }
   });
-  await accordion.clickHeader("CUSTOM_IDENTITY");
 
   await identityMapViewController.expectIsNotValid();
   await identities[0].identifiers[1].primary.expectError();
