@@ -50,8 +50,16 @@
                 "minLength": 1
               },
               "defaultConsent": {
-                "type": "string",
-                "enum": ["in", "pending"]
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^%[^%]+%$"
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["in", "pending"]
+                  }
+                ]
               },
               "idMigrationEnabled": {
                 "type": "boolean"

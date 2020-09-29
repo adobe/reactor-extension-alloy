@@ -45,6 +45,8 @@ import fetchEnvironments from "./utils/fetchEnvironments";
 import prehidingSnippet from "./constants/prehidingSnippet";
 import "./configuration.styl";
 import EnvironmentSelector from "../components/environmentSelector";
+import OptionsWithDataElement from "../components/optionsWithDataElement";
+import singleDataElementRegex from "../constants/singleDataElementRegex";
 
 const edgeConfigInputMethods = {
   SELECT: "select",
@@ -90,7 +92,7 @@ const getInstanceDefaults = initInfo => ({
   orgId: initInfo.company.orgId,
   edgeDomain: "edge.adobedc.net",
   edgeBasePath: "ee",
-  defaultConsent: consentLevels.IN,
+  defaultConsent: { radio: consentLevels.IN, dataElement: "" },
   prehidingStyle: "",
   contextGranularity: contextGranularityEnum.ALL,
   context: contextOptions.map(contextOption => contextOption.value),
@@ -146,6 +148,18 @@ const getInitialValues = ({ initInfo, setConfigs, setEnvironments }) => {
           if (instance.context) {
             instance.contextGranularity = contextGranularityEnum.SPECIFIC;
           }
+          if (singleDataElementRegex.test(instance.defaultConsent)) {
+            instance.defaultConsent = {
+              radio: "dataElement",
+              dataElement: instance.defaultConsent
+            };
+          } else {
+            instance.defaultConsent = {
+              radio: instance.defaultConsent || consentLevels.IN,
+              dataElement: ""
+            };
+          }
+
           // if one environment is empty (and there are some), or not found, use the textfield input method.
           if (
             index === 0 &&
@@ -203,8 +217,7 @@ const getSettings = ({ values, initInfo }) => {
         "idMigrationEnabled",
         "thirdPartyCookiesEnabled",
         "onBeforeEventSend",
-        "clickCollectionEnabled",
-        "defaultConsent"
+        "clickCollectionEnabled"
       ];
 
       if (instance.clickCollectionEnabled) {
@@ -217,6 +230,12 @@ const getSettings = ({ values, initInfo }) => {
         instanceDefaults,
         copyPropertyKeys
       );
+
+      if (instance.defaultConsent.radio === "dataElement") {
+        trimmedInstance.defaultConsent = instance.defaultConsent.dataElement;
+      } else if (instance.defaultConsent.radio === consentLevels.PENDING) {
+        trimmedInstance.defaultConsent = consentLevels.PENDING;
+      }
 
       if (instance.contextGranularity === contextGranularityEnum.SPECIFIC) {
         trimmedInstance.context = instance.context;
@@ -720,29 +739,27 @@ const Configuration = ({
                       </Link>
 
                       <div className="u-gapTop2x">
-                        <InfoTipLayout tip="The consent level to be used if the user has not previously provided consent.">
-                          <FieldLabel
-                            labelFor="generalDefaultConsent"
-                            label="Default Consent Level"
-                          />
-                        </InfoTipLayout>
-                        <WrappedField
+                        <OptionsWithDataElement
+                          options={[
+                            {
+                              value: consentLevels.IN,
+                              label: "In - Do not wait for explicit consent.",
+                              testId: "In"
+                            },
+                            {
+                              value: consentLevels.PENDING,
+                              label:
+                                "Pending - Queue privacy-sensitive work unti lthe user gives consent.",
+                              testId: "Pending"
+                            }
+                          ]}
+                          label="Default Consent Level"
+                          infoTip="The consent level to be used if the user has not previously provided consent."
                           id="generalDefaultConsent"
+                          data-test-id="defaultConsent"
                           name={`instances.${index}.defaultConsent`}
-                          component={RadioGroup}
-                          componentClassName="u-flexColumn"
-                        >
-                          <Radio
-                            data-test-id="defaultConsentInField"
-                            value={consentLevels.IN}
-                            label="In - Do not wait for explicit consent."
-                          />
-                          <Radio
-                            data-test-id="defaultConsentOutField"
-                            value={consentLevels.PENDING}
-                            label="Pending - Queue privacy-sensitive work until the user gives consent."
-                          />
-                        </WrappedField>
+                          values={instance.defaultConsent}
+                        />
                       </div>
                     </div>
 

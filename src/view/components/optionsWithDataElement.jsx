@@ -39,14 +39,20 @@ const OptionsWithDataElement = ({
         component={RadioGroup}
         componentClassName="u-flexColumn"
       >
-        {options.map(({ value: optionValue, label: optionLabel }) => (
-          <Radio
-            key={optionValue}
-            data-test-id={`${dataTestId}${optionLabel}Radio`}
-            value={optionValue}
-            label={optionLabel}
-          />
-        ))}
+        {options.map(
+          ({
+            value: optionValue,
+            label: optionLabel,
+            testId: optionTestId
+          }) => (
+            <Radio
+              key={optionValue}
+              data-test-id={`${dataTestId}${optionTestId || optionLabel}Radio`}
+              value={optionValue}
+              label={optionLabel}
+            />
+          )
+        )}
         <Radio
           data-test-id={`${dataTestId}DataElementRadio`}
           value="dataElement"
