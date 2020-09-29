@@ -3749,9 +3749,9 @@ var awaitVisitorOptIn = (function (_ref) {
         if (optInOld.isApproved([optInOld.Categories.ECID])) {
           logger.log("Received legacy opt-in approval to let Visitor retrieve ECID from server.");
           resolve();
+        } else {
+          reject(new Error("Legacy opt-in was declined."));
         }
-
-        reject(new Error("Legacy opt-in was declined."));
       }, true);
     } else {
       resolve();
@@ -3806,6 +3806,15 @@ var injectGetEcidFromVisitor = (function (_ref) {
             resolve(ecid);
           }, true);
         });
+      }).catch(function (error) {
+        // If consent was denied, get the ECID from experience edge. OptIn and AEP Web SDK
+        // consent should operate independently, but during id migration AEP Web SDK needs
+        // to wait for optIn object consent resolution so that only one ECID is generated.
+        if (error) {
+          logger.log(error.message + ", retrieving ECID from experience edge");
+        } else {
+          logger.log("An error occurred while obtaining the ECID from Visitor.");
+        }
       });
     }
 
@@ -4491,7 +4500,6 @@ var createComponent$1 = (function (_ref) {
         var scopes = getDecisionScopes(renderDecisions, decisionScopes);
 
         if (!hasScopes(scopes)) {
-          showContainers();
           return;
         } // For renderDecisions we try to hide the personalization containers
 
@@ -5604,14 +5612,6 @@ var HTML_CONTENT_ITEM = "https://ns.adobe.com/personalization/html-content-item"
 var JSON_CONTENT_ITEM = "https://ns.adobe.com/personalization/json-content-item";
 var REDIRECT_ITEM = "https://ns.adobe.com/personalization/redirect-item";
 
-var SCHEMA = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  DOM_ACTION: DOM_ACTION,
-  HTML_CONTENT_ITEM: HTML_CONTENT_ITEM,
-  JSON_CONTENT_ITEM: JSON_CONTENT_ITEM,
-  REDIRECT_ITEM: REDIRECT_ITEM
-});
-
 var isDomActionItem = function isDomActionItem(item) {
   return item.schema === DOM_ACTION;
 };
@@ -5742,6 +5742,17 @@ var createExecuteDecisions = (function (_ref) {
   };
 });
 
+/*
+Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 var DECISIONS_HANDLE = "personalization:decisions";
 var createOnResponseHandler = (function (_ref) {
   var extractDecisions = _ref.extractDecisions,
@@ -5752,7 +5763,13 @@ var createOnResponseHandler = (function (_ref) {
         response = _ref2.response;
     var unprocessedDecisions = response.getPayloadsByType(DECISIONS_HANDLE);
 
-    if (!isNonEmptyArray(unprocessedDecisions)) {
+    if (!renderDecisions) {
+      return {
+        decisions: unprocessedDecisions
+      };
+    }
+
+    if (unprocessedDecisions.length === 0) {
       showContainers();
       return {
         decisions: []
@@ -5764,16 +5781,10 @@ var createOnResponseHandler = (function (_ref) {
         renderableDecisions = _extractDecisions2[0],
         decisions = _extractDecisions2[1];
 
-    if (renderDecisions) {
-      executeDecisions(renderableDecisions);
-      showContainers();
-      return {
-        decisions: decisions
-      };
-    }
-
+    executeDecisions(renderableDecisions);
+    showContainers();
     return {
-      decisions: unprocessedDecisions
+      decisions: decisions
     };
   };
 });
@@ -5858,7 +5869,19 @@ var collectClicks = (function (clickedElement, values) {
   return result;
 });
 
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 var PAGE_WIDE_SCOPE = "__view__";
+
 var hasScopes = function hasScopes(scopes) {
   return isNonEmptyArray(scopes);
 };
@@ -5876,7 +5899,6 @@ var getDecisionScopes = function getDecisionScopes(renderDecisions, decisionScop
   return scopes;
 };
 
-var allSchemas = values(SCHEMA);
 var mergeMeta = function mergeMeta(event, meta) {
   event.mergeMeta({
     personalization: _objectSpread2({}, meta)
@@ -5888,8 +5910,14 @@ var mergeQuery = function mergeQuery(event, details) {
   });
 };
 var createQueryDetails = function createQueryDetails(decisionScopes) {
+  var schemas = [HTML_CONTENT_ITEM, JSON_CONTENT_ITEM, REDIRECT_ITEM];
+
+  if (includes(decisionScopes, PAGE_WIDE_SCOPE)) {
+    schemas.push(DOM_ACTION);
+  }
+
   return {
-    schemas: allSchemas,
+    schemas: schemas,
     decisionScopes: decisionScopes
   };
 };
@@ -6165,22 +6193,45 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-var injectImplementationDetails = (function (version) {
+var injectImplementationDetails = (function (implementationDetails) {
   return function (xdm) {
-    var implementationDetails = {
-      name: "https://ns.adobe.com/experience/alloy",
-      version: version,
-      environment: "browser"
-    };
     deepAssign(xdm, {
       implementationDetails: implementationDetails
     });
   };
 });
 
-// The value will be swapped with the proper version at build time
-// see rollupPluginReplaceVersion.js
-var libraryVersion = "2.1.0";
+/*
+Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+// The __VERSION__ keyword will be replace at alloy build time with the package.json version.
+// The __EXTENSION_VERSION__ keyword will be replaced at extension build time with the
+// launch extension's package.json version.
+// see babel-plugin-version
+var alloyVersion = "2.2.0";
+var extensionVersion = "__EXTENSION_VERSION__";
+var libraryVersion = alloyVersion + "+" + extensionVersion;
+
+/*
+Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+var libraryName = "https://ns.adobe.com/experience/alloy/reactor";
 
 /*
 Copyright 2019 Adobe. All rights reserved.
@@ -6238,7 +6289,11 @@ var placeContext = injectPlaceContext(function () {
 var timestamp = injectTimestamp(function () {
   return new Date();
 });
-var implementationDetails = injectImplementationDetails(libraryVersion);
+var implementationDetails = injectImplementationDetails({
+  name: libraryName,
+  version: libraryVersion,
+  environment: "browser"
+});
 var optionalContexts = {
   web: web,
   device: device,
@@ -7490,6 +7545,7 @@ if (instanceNames) {
 
   })();
 }
+
 
 /////////////////////////////
 // END OF LIBRARY CODE
