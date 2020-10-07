@@ -236,7 +236,6 @@ const XdmExtensionView = () => {
               setSelectedSandboxMeta(sandboxMeta);
             }
 
-            // return { "results": []};
             return fetchSchemasMeta({
               orgId: initInfo.company.orgId,
               imsAccess: initInfo.tokens.imsAccess,
