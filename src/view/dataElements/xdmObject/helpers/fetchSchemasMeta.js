@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import getBaseRequestHeaders from "../../../utils/getBaseRequestHeaders";
 import platform from "./platform";
 
-export default ({ orgId, imsAccess, sandboxName }) => {
+export default ({ orgId, imsAccess, sandboxName, search }) => {
   const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
 
   const metaExtends = encodeURIComponent(
@@ -32,11 +32,21 @@ export default ({ orgId, imsAccess, sandboxName }) => {
     headers["x-sandbox-name"] = platform.getDefaultSandboxName();
   }
 
+  const path = `/data/foundation/schemaregistry/tenant/schemas`;
+
+  const params = new URLSearchParams();
+  params.append("orderby", "title");
+  params.append("property", `meta:extends==${metaExtends}`);
+
+  if (search) {
+    params.append("property", `title~${search}`);
+  }
+
   // TODO: paginate this response using on responseBody._page.count or responseBody._links.next
   return fetch(
     `${platform.getHost({
       imsAccess
-    })}/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta:extends==${metaExtends}`,
+    })}${path}?${params.toString()}`,
     { headers }
   )
     .then(response => {

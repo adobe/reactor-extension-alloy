@@ -37,6 +37,7 @@
     "@react/react-spectrum": "^2.28.0",
     "antd": "^4.0.3",
     "classnames": "^2.2.6",
+    "debounce": "^1.2.0",
     "formik": "^1.5.7",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",

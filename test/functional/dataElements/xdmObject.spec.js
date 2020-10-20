@@ -36,7 +36,7 @@ const schema = {
 
 const schemaTitle = "XDM Object Data Element Tests";
 
-const schemaField = spectrum.select("schemaField");
+const schemaField = spectrum.combobox("schemaField");
 
 const selectSchemaFromSchemasMeta = async () => {
   await schemaField.selectOption(schemaTitle);
@@ -113,10 +113,10 @@ test("initializes form fields with individual object attribute values", async ()
   await stringEdit.expectValue("Adobe");
 });
 
-test("disables user from selecting a sandbox", async () => {
+test.only("disables user from selecting a sandbox", async () => {
   // temporarily remove sandboxes mock
   await t.removeRequestHooks(platformMocks.sandboxes);
-  // replace with unaurhotized mock
+  // replace with unauthorized mock
   await t.addRequestHooks(platformMocks.sandboxesEmpty);
   await initializeExtensionView();
   await spectrum.select("sandboxField").expectDisabled();

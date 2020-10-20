@@ -112,6 +112,17 @@ const createExpectDisabled = selector => async () => {
 // and TestCafe APIs directly. A test ID string or a Selector can
 // be passed into each component wrapper.
 const componentWrappers = {
+  combobox(selector) {
+    return {
+      async selectOption(label) {
+        await switchToIframe();
+        await t.click(selector.find("button"));
+        await selectMenuItem(popoverSelector, label);
+      },
+      expectDisabled: createExpectDisabled(selector.find("button")),
+      expectEnabled: createExpectEnabled(selector.find("button"))
+    };
+  },
   select(selector) {
     return {
       expectError: createExpectError(selector),
