@@ -9,7 +9,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
 
 describe("Instance Manager", () => {
@@ -17,13 +16,15 @@ describe("Instance Manager", () => {
   let runAlloy;
   let instanceManager;
   let mockWindow;
+  let createEventMergeId;
 
   const build = () => {
     instanceManager = createInstanceManager({
       turbine,
       window: mockWindow,
       runAlloy,
-      orgId: "ABC@AdobeOrg"
+      orgId: "ABC@AdobeOrg",
+      createEventMergeId
     });
   };
 
@@ -51,15 +52,7 @@ describe("Instance Manager", () => {
     mockWindow = {};
     runAlloy = jasmine.createSpy().and.callFake(names => {
       names.forEach(name => {
-        mockWindow[name] = jasmine
-          .createSpy()
-          .and.callFake((commandName, options) => {
-            if (commandName === "configure") {
-              options.reactorRegisterCreateEventMergeId(
-                () => `randomEventMergeId`
-              );
-            }
-          });
+        mockWindow[name] = jasmine.createSpy();
       });
     });
   });
@@ -81,13 +74,13 @@ describe("Instance Manager", () => {
       edgeConfigId: "PR123",
       debugEnabled: false,
       orgId: "ABC@AdobeOrg",
-      reactorRegisterCreateEventMergeId: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function)
     });
     expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
       edgeConfigId: "PR456",
       debugEnabled: false,
       orgId: "DIFFERENTORG@AdobeOrg",
-      reactorRegisterCreateEventMergeId: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function)
     });
   });
 
@@ -98,7 +91,7 @@ describe("Instance Manager", () => {
       edgeConfigId: "PR123",
       debugEnabled: true,
       orgId: "ABC@AdobeOrg",
-      reactorRegisterCreateEventMergeId: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function)
     });
   });
 
@@ -125,6 +118,9 @@ describe("Instance Manager", () => {
   });
 
   it("creates an event merge ID", () => {
+    createEventMergeId = jasmine
+      .createSpy()
+      .and.returnValue("randomEventMergeId");
     build();
     const eventMergeId = instanceManager.createEventMergeId();
     expect(eventMergeId).toBe("randomEventMergeId");
@@ -146,5 +142,34 @@ describe("Instance Manager", () => {
       "PR123:dev"
     );
     expect(mockWindow.alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
+  });
+
+  it("sets an onBeforeEventSend that updates the implementation details", () => {
+    build();
+    const onBeforeEventSend = mockWindow.alloy1.calls.argsFor(0)[1]
+      .onBeforeEventSend;
+    const xdm = {
+      foo: "bar",
+      implementationDetails: {
+        name: "https://ns.adobe.com/experience/alloy",
+        version: "1.2.3",
+        environment: "browser"
+      }
+    };
+    const data = {
+      answer: 42
+    };
+
+    onBeforeEventSend({ xdm, data: {} });
+    expect(xdm).toEqual({
+      foo: "bar",
+      implementationDetails: {
+        name: "https://ns.adobe.com/experience/alloy/reactor",
+        version: xdm.implementationDetails.version,
+        environment: "browser"
+      }
+    });
+    expect(xdm.implementationDetails.version).toMatch(/1\.2\.3\+\d+\.\d+\.\d+/);
+    expect(data).toEqual({ answer: 42 });
   });
 });

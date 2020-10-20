@@ -24,11 +24,14 @@ const libInDir = path.join(inputDir, "lib");
 const libOutDir = path.join(outputDir, "lib");
 const viewEntries = path.join(inputDir, "view/**/*.html");
 const viewOutDir = path.join(outputDir, "view");
+const runAlloy = path.join(libInDir, "runAlloy.js");
 
 rimraf.sync(outputDir);
 
 module.exports = (options = {}) => {
   const { watch } = options;
+
+  // Build UI with Parcel
   const parcelPromise = new Promise(resolve => {
     const bundler = new Bundler(viewEntries, {
       publicUrl: "../",
@@ -46,8 +49,9 @@ module.exports = (options = {}) => {
     bundler.bundle();
   });
 
+  // Compile runtime code with Babel
   const babelPromise = new Promise((resolve, reject) => {
-    spawn("babel", [libInDir, "--out-dir", libOutDir], {
+    spawn("babel", [libInDir, "--out-dir", libOutDir, "--ignore", runAlloy], {
       stdio: "inherit"
     }).on("exit", code => {
       if (code) {
@@ -68,5 +72,16 @@ module.exports = (options = {}) => {
     }
   });
 
-  return Promise.all([babelPromise, parcelPromise]);
+  // Import the Alloy code from NPM with rollup
+  const rollupPromise = new Promise((resolve, reject) => {
+    spawn("rollup", ["-c"]).on("exit", code => {
+      if (code) {
+        reject();
+      } else {
+        resolve();
+      }
+    });
+  });
+
+  return Promise.all([babelPromise, parcelPromise, rollupPromise]);
 };
