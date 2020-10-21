@@ -113,7 +113,7 @@ test("initializes form fields with individual object attribute values", async ()
   await stringEdit.expectValue("Adobe");
 });
 
-test.only("disables user from selecting a sandbox", async () => {
+test("disables user from selecting a sandbox", async () => {
   // temporarily remove sandboxes mock
   await t.removeRequestHooks(platformMocks.sandboxes);
   // replace with unauthorized mock
@@ -125,6 +125,7 @@ test.only("disables user from selecting a sandbox", async () => {
 });
 
 test("checks sandbox with no schemas", async () => {
+  await t.addRequestHooks(platformMocks.schemasMetaEmpty);
   await initializeExtensionView();
   await spectrum.select("sandboxField").expectEnabled();
   await spectrum
@@ -137,7 +138,7 @@ test.requestHooks(platformMocks.schemasMeta)(
   "attempts to load an invalid schema",
   async () => {
     await initializeExtensionView();
-    await spectrum.select("schemaField").selectOption("Foo2");
+    await spectrum.combobox("schemaField").selectOption("Foo2");
     await spectrum.alert("selectedSchemaError").expectExists();
   }
 );

@@ -87,7 +87,6 @@ const XdmObject = ({
         search
       }).then(response => {
         if (!response.results.length) {
-          setSchemasMetaStatus(STATUS_ERROR);
           return;
         }
         setSchemasMeta(response.results);
@@ -358,18 +357,20 @@ const XdmExtensionView = () => {
             orgId: options.initInfo.company.orgId,
             imsAccess: options.initInfo.tokens.imsAccess,
             sandboxName: sandbox.name
-          }).then(response => {
-            if (!response.results.length) {
+          })
+            .then(response => {
+              if (!response.results.length) {
+                throw new Error("No schemas found");
+              }
+              setSchemasMeta(response.results);
+              setSchemaOptions(
+                getSchemaOptions({ schemasMeta: response.results })
+              );
+              setSelectedSchemaMeta(undefined);
+              setSchemasMetaStatus(STATUS_LOADED);
+            }).catch(() => {
               setSchemasMetaStatus(STATUS_ERROR);
-              return;
-            }
-            setSchemasMeta(response.results);
-            setSchemaOptions(
-              getSchemaOptions({ schemasMeta: response.results })
-            );
-            setSelectedSchemaMeta(undefined);
-            setSchemasMetaStatus(STATUS_LOADED);
-          });
+            });
         };
 
         // TODO: address a suspected race condition where a previous selected item may return before

@@ -116,11 +116,11 @@ const componentWrappers = {
     return {
       async selectOption(label) {
         await switchToIframe();
-        await t.click(selector.find("button"));
+        await t.click(selector.parent().find("button"));
         await selectMenuItem(popoverSelector, label);
       },
-      expectDisabled: createExpectDisabled(selector.find("button")),
-      expectEnabled: createExpectEnabled(selector.find("button"))
+      expectDisabled: createExpectDisabled(selector.parent().find("button")),
+      expectEnabled: createExpectEnabled(selector.parent().find("button"))
     };
   },
   select(selector) {
