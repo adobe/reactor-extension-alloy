@@ -119,6 +119,14 @@ const componentWrappers = {
         await t.click(selector.parent().find("button"));
         await selectMenuItem(popoverSelector, label);
       },
+      async enterSearch(text) {
+        await switchToIframe();
+        await t.typeText(selector, text).pressKey("enter");
+      },
+      async clear() {
+        await switchToIframe();
+        await t.selectText(selector).pressKey("delete");
+      },
       expectDisabled: createExpectDisabled(selector.parent().find("button")),
       expectEnabled: createExpectEnabled(selector.parent().find("button"))
     };
