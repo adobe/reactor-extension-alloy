@@ -11,16 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import "regenerator-runtime"; // needed for some of react-spectrum
-import React, { useCallback, useState } from "react";
+import React, { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import Alert from "@react/react-spectrum/Alert";
-import ComboBox from "@react/react-spectrum/ComboBox";
 import Select from "@react/react-spectrum/Select";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
-import Wait from "@react/react-spectrum/Wait";
-import debounce from "debounce";
 import NoSelectedNodeView from "./xdmObject/components/noSelectedNodeView";
 import ExtensionView from "../components/extensionView";
+import CompletionComboBox from "../components/completionComboBox";
 import XdmTree from "./xdmObject/components/xdmTree";
 import getInitialFormState from "./xdmObject/helpers/getInitialFormState";
 import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
@@ -33,6 +31,7 @@ import fetchSchemasMeta from "./xdmObject/helpers/fetchSchemasMeta";
 import getSchemaOptions from "./xdmObject/helpers/getSchemaOptions";
 import "./xdmObject.styl";
 import InfoTipLayout from "../components/infoTipLayout";
+import debouncePromise from "../utils/debouncePromise";
 
 const STATUS_LOADING = "loading";
 const STATUS_LOADED = "loaded";
@@ -48,19 +47,11 @@ const XdmObject = ({
   selectedSandbox,
   setSelectedSandbox,
   schemasMeta,
-  setSchemasMeta,
-  schemaOptions,
-  setSchemaOptions,
-  schemaSearchInProgress,
-  setSchemaSearchInProgress,
   schemasMetaSearch,
   schemasMetaStatus,
   setSchemasMetaSearch,
-  setSchemasMetaStatus,
   selectedSchemaMeta,
   setSelectedSchemaMeta,
-  showComboMenu,
-  setShowComboMenu,
   schemaStatus
 }) => {
   const { values: formState } = formikProps;
@@ -77,26 +68,32 @@ const XdmObject = ({
       };
     });
 
-  const doSearch = useCallback(
-    debounce(({ sandboxName, search }) => {
-      setSchemaSearchInProgress(true);
+  const getCompletions = useMemo(() => {
+    let lastSearch;
+    let lastResults;
+    return debouncePromise(search => {
+      if (lastSearch === search) {
+        return Promise.resolve(lastResults);
+      }
+
+      lastSearch = search;
       return fetchSchemasMeta({
         orgId: initInfo.company.orgId,
         imsAccess: initInfo.tokens.imsAccess,
-        sandboxName,
+        sandboxName: selectedSandbox.name,
         search
       }).then(response => {
-        if (!response.results.length) {
-          return;
+        if (lastSearch === search) {
+          if (!response.results.length) {
+            lastResults = [];
+          } else {
+            lastResults = getSchemaOptions({ schemasMeta: response.results });
+          }
         }
-        setSchemasMeta(response.results);
-        setSchemaOptions(getSchemaOptions({ schemasMeta: response.results }));
-        setSchemaSearchInProgress(false);
-        setSchemasMetaStatus(STATUS_LOADED);
+        return lastResults;
       });
-    }, SCHEMA_SEARCH_WAIT_MS),
-    []
-  );
+    }, SCHEMA_SEARCH_WAIT_MS);
+  }, [selectedSandbox.name]);
 
   return (
     <div>
@@ -143,16 +140,14 @@ const XdmObject = ({
             </InfoTipLayout>
           </div>
           <div className="u-flex">
-            <ComboBox
+            <CompletionComboBox
               id="schemaField"
               data-test-id="schemaField"
               className="u-widthAuto u-gapBottom u-fieldLong"
-              options={schemaOptions}
+              getCompletions={getCompletions}
               value={schemasMetaSearch}
-              showMenu={showComboMenu}
               onChange={search => {
                 setSchemasMetaSearch(search);
-                doSearch({ sandboxName: selectedSandbox.name, search });
               }}
               onSelect={item => {
                 setSelectedNodeId(undefined);
@@ -160,14 +155,22 @@ const XdmObject = ({
                   schemasMeta.find(schemaMeta => schemaMeta.$id === item.value)
                 );
               }}
-              onMenuToggle={menuState => {
-                setShowComboMenu(menuState);
+              onBlur={() => {
+                if (
+                  !selectedSchemaMeta ||
+                  selectedSchemaMeta.title !== schemasMetaSearch
+                ) {
+                  setSelectedNodeId(undefined);
+                  // try to find the selected schema
+                  setSelectedSchemaMeta(
+                    schemasMeta.find(
+                      schemaMeta => schemaMeta.name === schemasMetaSearch
+                    )
+                  );
+                }
               }}
               placeholder="Search for or select a schema"
             />
-            <div className="u-gapTop u-gapLeft">
-              {schemaSearchInProgress === true && <Wait size="S" />}
-            </div>
           </div>
         </div>
       )}
@@ -223,32 +226,21 @@ XdmObject.propTypes = {
   selectedSandbox: PropTypes.object,
   setSelectedSandbox: PropTypes.func,
   schemasMeta: PropTypes.array,
-  setSchemasMeta: PropTypes.func,
-  schemaOptions: PropTypes.array,
-  setSchemaOptions: PropTypes.func,
-  schemaSearchInProgress: PropTypes.bool,
-  setSchemaSearchInProgress: PropTypes.func,
   schemasMetaSearch: PropTypes.string,
   schemasMetaStatus: PropTypes.string,
   setSchemasMetaSearch: PropTypes.func,
-  setSchemasMetaStatus: PropTypes.func,
   selectedSchemaMeta: PropTypes.object,
   setSelectedSchemaMeta: PropTypes.func,
-  schemaStatus: PropTypes.string,
-  showComboMenu: PropTypes.bool,
-  setShowComboMenu: PropTypes.func
+  schemaStatus: PropTypes.string
 };
 
 const XdmExtensionView = () => {
   const [sandboxes, setSandboxes] = useState();
   const [schemasMeta, setSchemasMeta] = useState([]);
-  const [schemaOptions, setSchemaOptions] = useState([]);
-  const [schemaSearchInProgress, setSchemaSearchInProgress] = useState();
   const [schemasMetaSearch, setSchemasMetaSearch] = useState();
   const [schemasMetaStatus, setSchemasMetaStatus] = useState();
   const [selectedSandbox, setSelectedSandbox] = useState();
   const [selectedSchemaMeta, setSelectedSchemaMeta] = useState();
-  const [showComboMenu, setShowComboMenu] = useState();
   const [schemaStatus, setSchemaStatus] = useState();
 
   // TODO: break apart this extension view
@@ -293,9 +285,6 @@ const XdmExtensionView = () => {
               setSchemasMetaStatus(STATUS_ERROR);
             } else {
               setSchemasMeta(response.results);
-              setSchemaOptions(
-                getSchemaOptions({ schemasMeta: response.results })
-              );
               setSchemasMetaStatus(STATUS_LOADED);
 
               // if a schema exists in settings, use it
@@ -363,12 +352,10 @@ const XdmExtensionView = () => {
                 throw new Error("No schemas found");
               }
               setSchemasMeta(response.results);
-              setSchemaOptions(
-                getSchemaOptions({ schemasMeta: response.results })
-              );
               setSelectedSchemaMeta(undefined);
               setSchemasMetaStatus(STATUS_LOADED);
-            }).catch(() => {
+            })
+            .catch(() => {
               setSchemasMetaStatus(STATUS_ERROR);
             });
         };
@@ -376,26 +363,30 @@ const XdmExtensionView = () => {
         // TODO: address a suspected race condition where a previous selected item may return before
         //  a secondary selected item
         const onSchemaMetaSelected = schemaMeta => {
-          setSelectedSchemaMeta(schemaMeta);
-          setSchemasMetaSearch(schemaMeta.title);
-          setSchemaStatus(STATUS_LOADING);
-          fetchSchema({
-            orgId: options.initInfo.company.orgId,
-            imsAccess: options.initInfo.tokens.imsAccess,
-            schemaMeta,
-            sandboxName: selectedSandbox.name ? selectedSandbox.name : null
-          })
-            .then(schema => {
-              setSchemaStatus(STATUS_LOADED);
-              const initialValues = getInitialFormState({
-                value: {},
-                schema
-              });
-              options.resetForm(initialValues);
+          if (!schemaMeta) {
+            setSchemaStatus(STATUS_ERROR);
+          } else {
+            setSelectedSchemaMeta(schemaMeta);
+            setSchemasMetaSearch(schemaMeta.title);
+            setSchemaStatus(STATUS_LOADING);
+            fetchSchema({
+              orgId: options.initInfo.company.orgId,
+              imsAccess: options.initInfo.tokens.imsAccess,
+              schemaMeta,
+              sandboxName: selectedSandbox.name ? selectedSandbox.name : null
             })
-            .catch(() => {
-              setSchemaStatus(STATUS_ERROR);
-            });
+              .then(schema => {
+                setSchemaStatus(STATUS_LOADED);
+                const initialValues = getInitialFormState({
+                  value: {},
+                  schema
+                });
+                options.resetForm(initialValues);
+              })
+              .catch(() => {
+                setSchemaStatus(STATUS_ERROR);
+              });
+          }
         };
 
         return (
@@ -405,19 +396,11 @@ const XdmExtensionView = () => {
             selectedSandbox={selectedSandbox}
             setSelectedSandbox={onSandboxSelected}
             schemasMeta={schemasMeta}
-            setSchemasMeta={setSchemasMeta}
-            schemaOptions={schemaOptions}
-            setSchemaOptions={setSchemaOptions}
-            schemaSearchInProgress={schemaSearchInProgress}
-            setSchemaSearchInProgress={setSchemaSearchInProgress}
             schemasMetaSearch={schemasMetaSearch}
             schemasMetaStatus={schemasMetaStatus}
             setSchemasMetaSearch={setSchemasMetaSearch}
-            setSchemasMetaStatus={setSchemasMetaStatus}
             selectedSchemaMeta={selectedSchemaMeta}
             setSelectedSchemaMeta={onSchemaMetaSelected}
-            showComboMenu={showComboMenu}
-            setShowComboMenu={setShowComboMenu}
             schemaStatus={schemaStatus}
             setSchemaStatus={setSchemaStatus}
           />
