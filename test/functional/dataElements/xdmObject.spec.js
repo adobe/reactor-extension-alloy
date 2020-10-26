@@ -134,6 +134,21 @@ test("checks sandbox with no schemas", async () => {
   await spectrum.alert("selectedSandboxWarning").expectExists();
 });
 
+test("tests entering a valid search query with results", async () => {
+  await initializeExtensionView();
+  await spectrum.combobox("schemaField").enterSearch(schemaTitle);
+  await spectrum.alert("selectedSchemaError").expectNotExists();
+});
+
+test("tests entering an invalid search query with no results", async () => {
+  await initializeExtensionView();
+  await spectrum.combobox("schemaField").enterSearch("Foo2");
+  await spectrum.alert("selectedSchemaError").expectNotExists();
+  await spectrum.combobox("schemaField").clear();
+  await spectrum.combobox("schemaField").enterSearch(schemaTitle);
+  await spectrum.alert("selectedSchemaError").expectNotExists();
+});
+
 test.requestHooks(platformMocks.schemasMeta)(
   "attempts to load an invalid schema",
   async () => {
