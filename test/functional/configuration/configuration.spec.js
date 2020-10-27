@@ -57,8 +57,10 @@ for (let i = 0; i < 2; i += 1) {
     edgeBasePathField: spectrum.textfield("edgeBasePathField"),
     edgeBasePathRestoreButton: spectrum.button("edgeBasePathRestoreButton"),
     defaultConsent: {
-      inField: spectrum.radio("defaultConsentInField"),
-      pendingField: spectrum.radio("defaultConsentOutField")
+      inRadio: spectrum.radio("defaultConsentInRadio"),
+      pendingRadio: spectrum.radio("defaultConsentPendingRadio"),
+      dataElementRadio: spectrum.radio("defaultConsentDataElementRadio"),
+      dataElementField: spectrum.textfield("defaultConsentDataElementField")
     },
     idMigrationEnabled: spectrum.checkbox("idMigrationEnabledField"),
     thirdPartyCookiesEnabled: spectrum.checkbox(
@@ -141,7 +143,7 @@ test("initializes form fields with full settings", async () => {
             edgeConfigId: "PR456",
             stagingEdgeConfigId: "PR456:stage",
             developmentEdgeConfigId: "PR456:dev3",
-            defaultConsent: "in",
+            defaultConsent: "%dataelement123%",
             idMigrationEnabled: false,
             thirdPartyCookiesEnabled: false,
             context: []
@@ -179,8 +181,10 @@ test("initializes form fields with full settings", async () => {
   await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
   await instances[0].edgeDomainField.expectValue("testedge.com");
   await instances[0].edgeBasePathField.expectValue("ee-beta");
-  await instances[0].defaultConsent.inField.expectUnchecked();
-  await instances[0].defaultConsent.pendingField.expectChecked();
+  await instances[0].defaultConsent.inRadio.expectUnchecked();
+  await instances[0].defaultConsent.pendingRadio.expectChecked();
+  await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
+  await instances[0].defaultConsent.dataElementField.expectNotExists();
   await instances[0].idMigrationEnabled.expectChecked();
   await instances[0].thirdPartyCookiesEnabled.expectChecked();
   await instances[0].clickCollectionEnabledField.expectUnchecked();
@@ -213,8 +217,12 @@ test("initializes form fields with full settings", async () => {
   await instances[1].orgIdField.expectValue("ABC123@AdobeOrg");
   await instances[1].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[1].edgeBasePathField.expectValue(defaultEdgeBasePath);
-  await instances[1].defaultConsent.inField.expectChecked();
-  await instances[1].defaultConsent.pendingField.expectUnchecked();
+  await instances[1].defaultConsent.inRadio.expectUnchecked();
+  await instances[1].defaultConsent.pendingRadio.expectUnchecked();
+  await instances[1].defaultConsent.dataElementRadio.expectChecked();
+  await instances[1].defaultConsent.dataElementField.expectValue(
+    "%dataelement123%"
+  );
   await instances[1].idMigrationEnabled.expectUnchecked();
   await instances[1].thirdPartyCookiesEnabled.expectUnchecked();
   await instances[1].clickCollectionEnabledField.expectChecked();
@@ -249,8 +257,10 @@ test("initializes form fields with minimal settings", async () => {
   await instances[0].orgIdField.expectValue("ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
-  await instances[0].defaultConsent.inField.expectChecked();
-  await instances[0].defaultConsent.pendingField.expectUnchecked();
+  await instances[0].defaultConsent.inRadio.expectChecked();
+  await instances[0].defaultConsent.pendingRadio.expectUnchecked();
+  await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
+  await instances[0].defaultConsent.dataElementField.expectNotExists();
   await instances[0].idMigrationEnabled.expectChecked();
   await instances[0].thirdPartyCookiesEnabled.expectChecked();
   await instances[0].clickCollectionEnabledField.expectChecked();
@@ -282,8 +292,10 @@ test("initializes form fields with no settings", async () => {
   await instances[0].orgIdField.expectValue("ABC123@AdobeOrg");
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
-  await instances[0].defaultConsent.inField.expectChecked();
-  await instances[0].defaultConsent.pendingField.expectUnchecked();
+  await instances[0].defaultConsent.inRadio.expectChecked();
+  await instances[0].defaultConsent.pendingRadio.expectUnchecked();
+  await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
+  await instances[0].defaultConsent.dataElementField.expectNotExists();
   await instances[0].idMigrationEnabled.expectChecked();
   await instances[0].thirdPartyCookiesEnabled.expectChecked();
   await instances[0].clickCollectionEnabledField.expectChecked();
@@ -327,7 +339,7 @@ test("returns full valid settings", async () => {
   await instances[0].developmentEnvironment.manualField.typeText("PR123:dev1");
   await instances[0].edgeDomainField.typeText("2");
   await instances[0].edgeBasePathField.typeText("-alpha");
-  await instances[0].defaultConsent.pendingField.click();
+  await instances[0].defaultConsent.pendingRadio.click();
   await instances[0].idMigrationEnabled.click();
   await instances[0].thirdPartyCookiesEnabled.click();
   await instances[0].prehidingStyleEditorButton.click();
@@ -338,7 +350,10 @@ test("returns full valid settings", async () => {
   await instances[1].stagingEnvironment.manualField.typeText("PR456:stage");
   await instances[1].developmentEnvironment.manualField.typeText("PR456:dev1");
   await instances[1].orgIdField.typeText("2");
-  await instances[1].defaultConsent.pendingField.click();
+  await instances[1].defaultConsent.dataElementRadio.click();
+  await instances[1].defaultConsent.dataElementField.typeText(
+    "%dataelement123%"
+  );
   await instances[1].idMigrationEnabled.click();
   await instances[1].thirdPartyCookiesEnabled.click();
   await instances[1].onBeforeEventSendEditorButton.click();
@@ -368,7 +383,7 @@ test("returns full valid settings", async () => {
         stagingEdgeConfigId: "PR456:stage",
         developmentEdgeConfigId: "PR456:dev1",
         orgId: "ABC123@AdobeOrg2",
-        defaultConsent: "pending",
+        defaultConsent: "%dataelement123%",
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
         onBeforeEventSend:
