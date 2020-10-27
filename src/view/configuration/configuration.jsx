@@ -45,7 +45,9 @@ import fetchEnvironments from "./utils/fetchEnvironments";
 import prehidingSnippet from "./constants/prehidingSnippet";
 import "./configuration.styl";
 import EnvironmentSelector from "../components/environmentSelector";
-import OptionsWithDataElement from "../components/optionsWithDataElement";
+import OptionsWithDataElement, {
+  DATA_ELEMENT
+} from "../components/optionsWithDataElement";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 
 const edgeConfigInputMethods = {
@@ -150,7 +152,7 @@ const getInitialValues = ({ initInfo, setConfigs, setEnvironments }) => {
           }
           if (singleDataElementRegex.test(instance.defaultConsent)) {
             instance.defaultConsent = {
-              radio: "dataElement",
+              radio: DATA_ELEMENT,
               dataElement: instance.defaultConsent
             };
           } else {
@@ -231,7 +233,7 @@ const getSettings = ({ values, initInfo }) => {
         copyPropertyKeys
       );
 
-      if (instance.defaultConsent.radio === "dataElement") {
+      if (instance.defaultConsent.radio === DATA_ELEMENT) {
         trimmedInstance.defaultConsent = instance.defaultConsent.dataElement;
       } else if (instance.defaultConsent.radio === consentLevels.PENDING) {
         trimmedInstance.defaultConsent = consentLevels.PENDING;
@@ -749,12 +751,12 @@ const Configuration = ({
                             {
                               value: consentLevels.PENDING,
                               label:
-                                "Pending - Queue privacy-sensitive work unti lthe user gives consent.",
+                                "Pending - Queue privacy-sensitive work until the user provides consent preferences.",
                               testId: "Pending"
                             }
                           ]}
                           label="Default Consent Level"
-                          infoTip="The consent level to be used if the user has not previously provided consent."
+                          infoTip="The consent level to be used if the user has not previously provided consent preferences."
                           id="generalDefaultConsent"
                           data-test-id="defaultConsent"
                           name={`instances.${index}.defaultConsent`}
