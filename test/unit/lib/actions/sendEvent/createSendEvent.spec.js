@@ -29,21 +29,44 @@ describe("Send Event", () => {
       instanceManager,
       decisionsCallbackStorage
     });
+    const dataLayer = {
+      fruits: [
+        {
+          name: "banana",
+          calories: 105
+        },
+        {
+          name: "blueberry",
+          calories: 5
+        }
+      ]
+    };
     const promiseReturnedFromAction = action({
       instanceName: "myinstance",
       renderDecisions: true,
-      xdm: {
-        foo: "bar"
-      }
+      xdm: dataLayer
     });
 
     expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
     expect(instance).toHaveBeenCalledWith("sendEvent", {
       renderDecisions: true,
       xdm: {
-        foo: "bar"
+        fruits: [
+          {
+            name: "banana",
+            calories: 105
+          },
+          {
+            name: "blueberry",
+            calories: 5
+          }
+        ]
       }
     });
+    // Ensure the XDM object was cloned
+    const xdmOption = instance.calls.argsFor(0)[1].xdm;
+    expect(xdmOption).not.toBe(dataLayer);
+    expect(xdmOption.fruits[0]).not.toBe(dataLayer.fruits[0]);
 
     return promiseReturnedFromAction.then(() => {
       expect(decisionsCallbackStorage.triggerEvent).toHaveBeenCalledWith({
