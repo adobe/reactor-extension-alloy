@@ -54,14 +54,7 @@ const expectSettingsToContainData = async data => {
   // new tests), the schema version in Platform changes, which would make our
   // tests fail if the version we were asserting were hard-coded in the test.
   await t.expect(actualSettings.schema.version).match(/^\d+\.\d+$/);
-  await t
-    .expect(actualSettings.data)
-    .eql(
-      data,
-      `Expected data: ${JSON.stringify(data)} Actual data: ${JSON.stringify(
-        actualSettings.data
-      )}`
-    );
+  await t.expect(actualSettings.data).eql(data);
 };
 
 const initializeExtensionView = async additionalInitInfo => {
