@@ -11,13 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import "regenerator-runtime"; // needed for some of react-spectrum
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import Alert from "@react/react-spectrum/Alert";
 import Select from "@react/react-spectrum/Select";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import NoSelectedNodeView from "./xdmObject/components/noSelectedNodeView";
 import ExtensionView from "../components/extensionView";
+import CompletionComboBox from "../components/completionComboBox";
 import XdmTree from "./xdmObject/components/xdmTree";
 import getInitialFormState from "./xdmObject/helpers/getInitialFormState";
 import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
@@ -27,22 +28,28 @@ import render from "../render";
 import fetchSandboxes from "./xdmObject/helpers/fetchSandboxes";
 import fetchSchema from "./xdmObject/helpers/fetchSchema";
 import fetchSchemasMeta from "./xdmObject/helpers/fetchSchemasMeta";
+import getSchemaOptions from "./xdmObject/helpers/getSchemaOptions";
 import "./xdmObject.styl";
 import InfoTipLayout from "../components/infoTipLayout";
+import debouncePromise from "../utils/debouncePromise";
 
 const STATUS_LOADING = "loading";
 const STATUS_LOADED = "loaded";
 const STATUS_ERROR = "error";
 
+const SCHEMA_SEARCH_WAIT_MS = 250;
+const SCHEMA_SEARCH_DEFAULT = "";
+
 const XdmObject = ({
   initInfo,
   formikProps,
-  sandboxesMeta,
-  selectedSandboxMeta,
-  setSelectedSandboxMeta,
+  sandboxes,
+  selectedSandbox,
+  setSelectedSandbox,
   schemasMeta,
   schemasMetaStatus,
-  setSchemasMetaStatus,
+  schemaOptionsSearch,
+  setSchemaOptionsSearch,
   selectedSchemaMeta,
   setSelectedSchemaMeta,
   schemaStatus
@@ -50,7 +57,7 @@ const XdmObject = ({
   const { values: formState } = formikProps;
   const [selectedNodeId, setSelectedNodeId] = useState();
 
-  const sandboxOptions = sandboxesMeta.sandboxes
+  const sandboxOptions = sandboxes.sandboxes
     .filter(sandbox => sandbox.state === "active")
     .map(sandbox => {
       return {
@@ -61,19 +68,39 @@ const XdmObject = ({
       };
     });
 
-  const schemaOptions = schemasMeta.map(schemaMeta => {
-    return {
-      value: schemaMeta.$id,
-      label: schemaMeta.title
-    };
-  });
+  const getCompletions = useMemo(() => {
+    let lastSearch;
+    let lastResults;
+    return debouncePromise(search => {
+      if (lastSearch === search) {
+        return Promise.resolve(lastResults);
+      }
+
+      lastSearch = search;
+      return fetchSchemasMeta({
+        orgId: initInfo.company.orgId,
+        imsAccess: initInfo.tokens.imsAccess,
+        sandboxName: selectedSandbox.name,
+        search
+      }).then(response => {
+        if (lastSearch === search) {
+          if (!response.results.length) {
+            lastResults = [];
+          } else {
+            lastResults = getSchemaOptions({ schemasMeta: response.results });
+          }
+        }
+        return lastResults;
+      });
+    }, SCHEMA_SEARCH_WAIT_MS);
+  }, [selectedSandbox.name]);
 
   return (
     <div>
       <div className="u-gapTop">
         <InfoTipLayout
           tip={
-            sandboxesMeta.disabled && sandboxesMeta.disabled === true
+            sandboxes.disabled === true
               ? "This option is disabled because your account has not been configured for multiple sandboxes."
               : "Choose a sandbox which contains the schema you wish to use."
           }
@@ -87,17 +114,14 @@ const XdmObject = ({
           data-test-id="sandboxField"
           className="u-widthAuto u-gapBottom u-fieldLong"
           options={sandboxOptions}
-          value={selectedSandboxMeta.name}
-          onChange={sandboxMetaName => {
+          value={selectedSandbox.name}
+          onChange={sandboxName => {
             setSelectedNodeId(undefined);
-            setSchemasMetaStatus(STATUS_LOADING);
-            setSelectedSandboxMeta(
-              sandboxesMeta.sandboxes.find(
-                sandboxMeta => sandboxMeta.name === sandboxMetaName
-              )
+            setSelectedSandbox(
+              sandboxes.sandboxes.find(sandbox => sandbox.name === sandboxName)
             );
           }}
-          disabled={sandboxesMeta.disabled}
+          disabled={sandboxes.disabled}
           placeholder="PRODUCTION Prod"
         />
       </div>
@@ -115,21 +139,33 @@ const XdmObject = ({
               <FieldLabel labelFor="schemaField" label="Schema" />
             </InfoTipLayout>
           </div>
-          <div>
-            <Select
+          <div className="u-flex">
+            <CompletionComboBox
               id="schemaField"
               data-test-id="schemaField"
               className="u-widthAuto u-gapBottom u-fieldLong"
-              options={schemaOptions}
-              value={selectedSchemaMeta.$id}
-              onChange={schemaMetaId => {
+              getCompletions={getCompletions}
+              value={schemaOptionsSearch}
+              onChange={search => {
+                setSchemaOptionsSearch(search);
+              }}
+              onSelect={item => {
                 setSelectedNodeId(undefined);
                 setSelectedSchemaMeta(
-                  schemasMeta.find(
-                    schemaMeta => schemaMeta.$id === schemaMetaId
-                  )
+                  schemasMeta.find(schemaMeta => schemaMeta.$id === item.value)
                 );
               }}
+              onBlur={() => {
+                if (
+                  !selectedSchemaMeta ||
+                  !schemaOptionsSearch ||
+                  schemaOptionsSearch === ""
+                ) {
+                  setSelectedNodeId(undefined);
+                  setSelectedSchemaMeta(undefined);
+                }
+              }}
+              placeholder="Search for or select a schema"
             />
           </div>
         </div>
@@ -140,39 +176,41 @@ const XdmObject = ({
           or choose a different schema.
         </Alert>
       )}
-      {schemasMetaStatus === STATUS_LOADED && schemaStatus === STATUS_LOADED && (
-        <div className="u-flex u-gapTop u-minHeight0">
-          <div className="XdmObject-treeContainer u-flexShrink0 u-overflowXAuto u-overflowYAuto">
-            <InfoTipLayout tip="Here you can use the form to explore and edit the xdm object of the selected schema.">
-              <FieldLabel labelFor="xdmTree" label="XDM Object" />
-            </InfoTipLayout>
-            <XdmTree
-              formikProps={formikProps}
-              selectedNodeId={selectedNodeId}
-              onSelect={setSelectedNodeId}
-            />
-          </div>
-          <div className="u-gapLeft2x">
-            <div>
-              {selectedNodeId ? (
-                <NodeEdit
-                  formState={formState}
-                  onNodeSelect={setSelectedNodeId}
-                  selectedNodeId={selectedNodeId}
-                />
-              ) : (
-                <NoSelectedNodeView
-                  sandboxMeta={selectedSandboxMeta}
-                  schemaMeta={selectedSchemaMeta}
-                  previouslySavedSchemaInfo={
-                    initInfo.settings && initInfo.settings.schema
-                  }
-                />
-              )}
+      {selectedSchemaMeta &&
+        schemasMetaStatus === STATUS_LOADED &&
+        schemaStatus === STATUS_LOADED && (
+          <div className="u-flex u-gapTop u-minHeight0">
+            <div className="XdmObject-treeContainer u-flexShrink0 u-overflowXAuto u-overflowYAuto">
+              <InfoTipLayout tip="Here you can use the form to explore and edit the xdm object of the selected schema.">
+                <FieldLabel labelFor="xdmTree" label="XDM Object" />
+              </InfoTipLayout>
+              <XdmTree
+                formikProps={formikProps}
+                selectedNodeId={selectedNodeId}
+                onSelect={setSelectedNodeId}
+              />
+            </div>
+            <div className="u-gapLeft2x">
+              <div>
+                {selectedNodeId ? (
+                  <NodeEdit
+                    formState={formState}
+                    onNodeSelect={setSelectedNodeId}
+                    selectedNodeId={selectedNodeId}
+                  />
+                ) : (
+                  <NoSelectedNodeView
+                    sandbox={selectedSandbox}
+                    schemaMeta={selectedSchemaMeta}
+                    previouslySavedSchemaInfo={
+                      initInfo.settings && initInfo.settings.schema
+                    }
+                  />
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 };
@@ -180,22 +218,24 @@ const XdmObject = ({
 XdmObject.propTypes = {
   initInfo: PropTypes.object.isRequired,
   formikProps: PropTypes.object.isRequired,
-  sandboxesMeta: PropTypes.array,
-  selectedSandboxMeta: PropTypes.object,
-  setSelectedSandboxMeta: PropTypes.func,
+  sandboxes: PropTypes.object,
+  selectedSandbox: PropTypes.object,
+  setSelectedSandbox: PropTypes.func,
   schemasMeta: PropTypes.array,
   schemasMetaStatus: PropTypes.string,
-  setSchemasMetaStatus: PropTypes.func,
   selectedSchemaMeta: PropTypes.object,
   setSelectedSchemaMeta: PropTypes.func,
+  schemaOptionsSearch: PropTypes.string,
+  setSchemaOptionsSearch: PropTypes.func,
   schemaStatus: PropTypes.string
 };
 
 const XdmExtensionView = () => {
-  const [sandboxesMeta, setSandboxesMeta] = useState();
-  const [schemasMeta, setSchemasMeta] = useState();
+  const [sandboxes, setSandboxes] = useState();
+  const [schemasMeta, setSchemasMeta] = useState([]);
+  const [schemaOptionsSearch, setSchemaOptionsSearch] = useState();
   const [schemasMetaStatus, setSchemasMetaStatus] = useState();
-  const [selectedSandboxMeta, setSelectedSandboxMeta] = useState();
+  const [selectedSandbox, setSelectedSandbox] = useState();
   const [selectedSchemaMeta, setSelectedSchemaMeta] = useState();
   const [schemaStatus, setSchemaStatus] = useState();
 
@@ -207,109 +247,109 @@ const XdmExtensionView = () => {
           orgId: initInfo.company.orgId,
           imsAccess: initInfo.tokens.imsAccess
         })
-          .then(_sandboxesMeta => {
-            let sandboxName = null;
+          .then(response => {
+            let sandbox = { name: null };
             // if sandboxes are returned from the api call
-            if (_sandboxesMeta.sandboxes && _sandboxesMeta.sandboxes.length) {
-              setSandboxesMeta(_sandboxesMeta);
+            if (response.sandboxes && response.sandboxes.length) {
+              setSandboxes(response);
               // default to the first item in the list
-              let sandboxMeta = _sandboxesMeta.sandboxes.find(
-                _sandboxMeta => _sandboxMeta.isDefault === true
+              sandbox = response.sandboxes.find(
+                _sandbox => _sandbox.isDefault === true
               );
 
               // if a sandbox exists in settings and is in the list, choose that item
               if (initInfo.settings && initInfo.settings.sandbox) {
-                sandboxMeta = _sandboxesMeta.sandboxes.find(
-                  _sandboxMeta =>
-                    _sandboxMeta.name === initInfo.settings.sandbox.name
+                sandbox = response.sandboxes.find(
+                  _sandbox => _sandbox.name === initInfo.settings.sandbox.name
                 );
               }
-              if (sandboxMeta && sandboxMeta.name) {
-                sandboxName = sandboxMeta.name;
-              }
-              setSelectedSandboxMeta(sandboxMeta);
+              setSelectedSandbox(sandbox);
             }
 
+            return sandbox;
+          })
+          .then(sandbox => {
             return fetchSchemasMeta({
               orgId: initInfo.company.orgId,
               imsAccess: initInfo.tokens.imsAccess,
-              sandboxName
+              sandboxName: sandbox.name
             });
           })
           .then(response => {
-            setSchemasMeta(response.results);
-
+            let schemaMeta = null;
             if (!response.results.length) {
               setSchemasMetaStatus(STATUS_ERROR);
-              return {};
+            } else {
+              setSchemasMeta(response.results);
+              setSchemasMetaStatus(STATUS_LOADED);
+
+              // if a schema exists in settings, use it
+              if (initInfo.settings && initInfo.settings.schema) {
+                schemaMeta = response.results.find(
+                  _schemaMeta => _schemaMeta.$id === initInfo.settings.schema.id
+                );
+                if (schemaMeta) {
+                  setSchemaOptionsSearch(schemaMeta.title);
+                  setSelectedSchemaMeta(schemaMeta);
+                }
+              }
+            }
+            if (schemaMeta) {
+              return fetchSchema({
+                orgId: initInfo.company.orgId,
+                imsAccess: initInfo.tokens.imsAccess,
+                schemaMeta,
+                sandboxName: response.sandboxName ? response.sandboxName : null
+              });
             }
 
-            setSchemasMetaStatus(STATUS_LOADED);
-
-            // TODO: don't initialize form state if the schema doesn't match
-            let schemaMeta = response.results[0];
-
-            // if a schema exists in settings, use it
-            if (initInfo.settings && initInfo.settings.schema) {
-              schemaMeta = response.results.find(
-                _schemaMeta => _schemaMeta.$id === initInfo.settings.schema.id
-              );
-            }
-
-            setSelectedSchemaMeta(schemaMeta);
-            setSchemaStatus(STATUS_LOADING);
-
-            const { sandboxName } = response;
-            return fetchSchema({
-              orgId: initInfo.company.orgId,
-              imsAccess: initInfo.tokens.imsAccess,
-              schemaMeta,
-              sandboxName
-            }).catch(() => {
-              setSchemaStatus(STATUS_ERROR);
-            });
+            return {};
           })
           .then(schema => {
-            setSchemaStatus(STATUS_LOADED);
+            if (schema) {
+              setSchemaStatus(STATUS_LOADED);
+            }
             const initialValues = getInitialFormState({
               value: (initInfo.settings && initInfo.settings.data) || {},
-              schema: schema || {}
+              schema
             });
 
             return initialValues;
           });
       }}
       getSettings={({ values }) => {
-        return {
-          sandbox: {
-            name: selectedSandboxMeta.name
-          },
-          schema: {
+        let schema = null;
+        if (selectedSchemaMeta) {
+          schema = {
             id: selectedSchemaMeta.$id,
             version: selectedSchemaMeta.version
+          };
+        }
+        return {
+          sandbox: {
+            name: selectedSandbox.name
           },
+          schema,
           data: getValueFromFormState({ formStateNode: values }) || {}
         };
       }}
       validate={validate}
       render={options => {
-        const onSandboxesMetaSelected = sandboxMeta => {
-          setSelectedSandboxMeta(sandboxMeta);
-          setSchemasMetaStatus(STATUS_LOADING);
-
+        const onSandboxSelected = sandbox => {
+          setSelectedSandbox(sandbox);
+          setSchemaOptionsSearch(SCHEMA_SEARCH_DEFAULT);
           fetchSchemasMeta({
             orgId: options.initInfo.company.orgId,
             imsAccess: options.initInfo.tokens.imsAccess,
-            sandboxName:
-              sandboxMeta && sandboxMeta.name ? sandboxMeta.name : null
+            sandboxName: sandbox.name
           })
             .then(response => {
               if (!response.results.length) {
                 throw new Error("No schemas found");
               }
-              setSchemasMetaStatus(STATUS_LOADED);
               setSchemasMeta(response.results);
-              setSelectedSchemaMeta(response.results[0]);
+              setSelectedSchemaMeta(undefined);
+              setSchemasMetaStatus(STATUS_LOADED);
             })
             .catch(() => {
               setSchemasMetaStatus(STATUS_ERROR);
@@ -320,39 +360,43 @@ const XdmExtensionView = () => {
         //  a secondary selected item
         const onSchemaMetaSelected = schemaMeta => {
           setSelectedSchemaMeta(schemaMeta);
-          setSchemaStatus(STATUS_LOADING);
-          fetchSchema({
-            orgId: options.initInfo.company.orgId,
-            imsAccess: options.initInfo.tokens.imsAccess,
-            schemaMeta,
-            sandboxName: selectedSandboxMeta.name
-              ? selectedSandboxMeta.name
-              : null
-          })
-            .then(schema => {
-              setSchemaStatus(STATUS_LOADED);
-              const initialValues = getInitialFormState({
-                value: {},
-                schema
-              });
-              options.resetForm(initialValues);
+          if (schemaMeta) {
+            setSchemaOptionsSearch(schemaMeta.title);
+            setSchemaStatus(STATUS_LOADING);
+            fetchSchema({
+              orgId: options.initInfo.company.orgId,
+              imsAccess: options.initInfo.tokens.imsAccess,
+              schemaMeta,
+              sandboxName: selectedSandbox.name ? selectedSandbox.name : null
             })
-            .catch(() => {
-              setSchemaStatus(STATUS_ERROR);
-            });
+              .then(schema => {
+                setSchemaStatus(STATUS_LOADED);
+                const initialValues = getInitialFormState({
+                  value: {},
+                  schema
+                });
+                options.resetForm(initialValues);
+              })
+              .catch(() => {
+                setSchemaStatus(STATUS_ERROR);
+              });
+          } else {
+            setSchemaStatus(STATUS_LOADED);
+          }
         };
 
         return (
           <XdmObject
             {...options}
-            sandboxesMeta={sandboxesMeta}
-            selectedSandboxMeta={selectedSandboxMeta}
-            setSelectedSandboxMeta={onSandboxesMetaSelected}
+            sandboxes={sandboxes}
+            selectedSandbox={selectedSandbox}
+            setSelectedSandbox={onSandboxSelected}
             schemasMeta={schemasMeta}
             schemasMetaStatus={schemasMetaStatus}
-            setSchemasMetaStatus={setSchemasMetaStatus}
             selectedSchemaMeta={selectedSchemaMeta}
             setSelectedSchemaMeta={onSchemaMetaSelected}
+            schemaOptionsSearch={schemaOptionsSearch}
+            setSchemaOptionsSearch={setSchemaOptionsSearch}
             schemaStatus={schemaStatus}
             setSchemaStatus={setSchemaStatus}
           />
