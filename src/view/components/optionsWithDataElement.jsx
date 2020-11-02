@@ -19,6 +19,8 @@ import FieldLabel from "@react/react-spectrum/FieldLabel";
 import InfoTipLayout from "./infoTipLayout";
 import WrappedField from "./wrappedField";
 
+export const DATA_ELEMENT = "dataElement";
+
 const OptionsWithDataElement = ({
   label,
   infoTip,
@@ -39,22 +41,28 @@ const OptionsWithDataElement = ({
         component={RadioGroup}
         componentClassName="u-flexColumn"
       >
-        {options.map(({ value: optionValue, label: optionLabel }) => (
-          <Radio
-            key={optionValue}
-            data-test-id={`${dataTestId}${optionLabel}Radio`}
-            value={optionValue}
-            label={optionLabel}
-          />
-        ))}
+        {options.map(
+          ({
+            value: optionValue,
+            label: optionLabel,
+            testId: optionTestId
+          }) => (
+            <Radio
+              key={optionValue}
+              data-test-id={`${dataTestId}${optionTestId || optionLabel}Radio`}
+              value={optionValue}
+              label={optionLabel}
+            />
+          )
+        )}
         <Radio
           data-test-id={`${dataTestId}DataElementRadio`}
-          value="dataElement"
+          value={DATA_ELEMENT}
           label="Provided by data element"
         />
       </WrappedField>
 
-      {values && values.radio === "dataElement" && (
+      {values && values.radio === DATA_ELEMENT && (
         <div>
           <WrappedField
             id={`${id}DataElement`}

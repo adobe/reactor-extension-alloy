@@ -33,7 +33,9 @@ import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./setConsent.styl";
 import InfoTipLayout from "../components/infoTipLayout";
-import OptionsWithDataElement from "../components/optionsWithDataElement";
+import OptionsWithDataElement, {
+  DATA_ELEMENT as DATA_ELEMENT_OPTION
+} from "../components/optionsWithDataElement";
 
 const IN = { value: "in", label: "In" };
 const OUT = { value: "out", label: "Out" };
@@ -110,7 +112,7 @@ const applyInitialValuesForOptionsWithDataElement = (
   options
 ) => {
   if (singleDataElementRegex.test(value)) {
-    formikValues.radio = DATA_ELEMENT.value;
+    formikValues.radio = DATA_ELEMENT_OPTION;
     formikValues.dataElement = value;
   } else if (options.includes(value)) {
     formikValues.radio = value;
@@ -192,7 +194,7 @@ const getInitialValues = ({ initInfo }) => {
 };
 
 const getSettingsForOptionsWithDataElement = value => {
-  if (value.radio === DATA_ELEMENT.value) {
+  if (value.radio === DATA_ELEMENT_OPTION) {
     return value.dataElement;
   }
   return value.radio;
@@ -284,7 +286,7 @@ const validationSchema = object().shape({
           is: ADOBE.value,
           then: object().shape({
             dataElement: mixed().when("radio", {
-              is: DATA_ELEMENT.value,
+              is: DATA_ELEMENT_OPTION,
               then: string().matches(singleDataElementRegex, invalidDataMessage)
             })
           })
@@ -298,7 +300,7 @@ const validationSchema = object().shape({
           then: object().shape({
             radio: string().required(),
             dataElement: mixed().when("radio", {
-              is: DATA_ELEMENT.value,
+              is: DATA_ELEMENT_OPTION,
               then: string().matches(singleDataElementRegex, invalidDataMessage)
             })
           })
@@ -308,7 +310,7 @@ const validationSchema = object().shape({
           then: object().shape({
             radio: string().required(),
             dataElement: mixed().when("radio", {
-              is: DATA_ELEMENT.value,
+              is: DATA_ELEMENT_OPTION,
               then: string().matches(singleDataElementRegex, invalidDataMessage)
             })
           })
