@@ -56,12 +56,7 @@ const expectSettingsToContainData = async data => {
   await t.expect(actualSettings.schema.version).match(/^\d+\.\d+$/);
   await t
     .expect(actualSettings.data)
-    .eql(
-      data,
-      `Expected data: ${JSON.stringify(data)} Actual data: ${JSON.stringify(
-        actualSettings.data
-      )}`
-    );
+    .eql(data, "Expected data does not match actual data");
 };
 
 const initializeExtensionView = async additionalInitInfo => {

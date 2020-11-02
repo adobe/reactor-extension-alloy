@@ -158,15 +158,11 @@ const XdmObject = ({
               onBlur={() => {
                 if (
                   !selectedSchemaMeta ||
-                  selectedSchemaMeta.title !== schemaOptionsSearch
+                  !schemaOptionsSearch ||
+                  schemaOptionsSearch === ""
                 ) {
                   setSelectedNodeId(undefined);
-                  // try to find the selected schema
-                  setSelectedSchemaMeta(
-                    schemasMeta.find(
-                      schemaMeta => schemaMeta.name === schemaOptionsSearch
-                    )
-                  );
+                  setSelectedSchemaMeta(undefined);
                 }
               }}
               placeholder="Search for or select a schema"
@@ -363,10 +359,8 @@ const XdmExtensionView = () => {
         // TODO: address a suspected race condition where a previous selected item may return before
         //  a secondary selected item
         const onSchemaMetaSelected = schemaMeta => {
-          if (!schemaMeta) {
-            setSchemaStatus(STATUS_ERROR);
-          } else {
-            setSelectedSchemaMeta(schemaMeta);
+          setSelectedSchemaMeta(schemaMeta);
+          if (schemaMeta) {
             setSchemaOptionsSearch(schemaMeta.title);
             setSchemaStatus(STATUS_LOADING);
             fetchSchema({
@@ -386,6 +380,8 @@ const XdmExtensionView = () => {
               .catch(() => {
                 setSchemaStatus(STATUS_ERROR);
               });
+          } else {
+            setSchemaStatus(STATUS_LOADED);
           }
         };
 
