@@ -138,8 +138,14 @@ const componentWrappers = {
       expectValue: createExpectValue(selector),
       async expectSelectedOptionLabel(label) {
         await switchToIframe();
+        // There's a bug in TestCafe that incorrectly logs a warning
+        // if this line is formatted differently.
+        // https://github.com/DevExpress/testcafe/issues/5449
+        // prettier-ignore
         await t
-          .expect(selector.find(".spectrum-Dropdown-label").innerText)
+          .expect(
+            selector.find(".spectrum-Dropdown-label").innerText
+          )
           .eql(label);
       },
       async expectOptionLabels(labels) {
