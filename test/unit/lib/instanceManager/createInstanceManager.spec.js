@@ -13,7 +13,8 @@ import createInstanceManager from "../../../../src/lib/instanceManager/createIns
 
 describe("Instance Manager", () => {
   let turbine;
-  let runAlloy;
+  let baseCode;
+  let core;
   let instanceManager;
   let mockWindow;
   let createEventMergeId;
@@ -22,7 +23,8 @@ describe("Instance Manager", () => {
     instanceManager = createInstanceManager({
       turbine,
       window: mockWindow,
-      runAlloy,
+      baseCode,
+      core,
       orgId: "ABC@AdobeOrg",
       createEventMergeId
     });
@@ -50,16 +52,18 @@ describe("Instance Manager", () => {
     });
     turbine.debugEnabled = false;
     mockWindow = {};
-    runAlloy = jasmine.createSpy().and.callFake(names => {
+    baseCode = jasmine.createSpy().and.callFake(names => {
       names.forEach(name => {
         mockWindow[name] = jasmine.createSpy();
       });
     });
+    core = jasmine.createSpy();
   });
 
   it("runs alloy", () => {
     build();
-    expect(runAlloy).toHaveBeenCalledWith(["alloy1", "alloy2"]);
+    expect(baseCode).toHaveBeenCalledWith(["alloy1", "alloy2"]);
+    expect(core).toHaveBeenCalledWith();
   });
 
   it("creates an SDK instance for each configured instance", () => {
