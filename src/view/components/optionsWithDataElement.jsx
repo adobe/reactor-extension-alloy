@@ -19,6 +19,8 @@ import FieldLabel from "@react/react-spectrum/FieldLabel";
 import InfoTipLayout from "./infoTipLayout";
 import WrappedField from "./wrappedField";
 
+export const DATA_ELEMENT = "dataElement";
+
 const OptionsWithDataElement = ({
   label,
   infoTip,
@@ -55,12 +57,12 @@ const OptionsWithDataElement = ({
         )}
         <Radio
           data-test-id={`${dataTestId}DataElementRadio`}
-          value="dataElement"
+          value={DATA_ELEMENT}
           label="Provided by data element"
         />
       </WrappedField>
 
-      {values && values.radio === "dataElement" && (
+      {values && values.radio === DATA_ELEMENT && (
         <div>
           <WrappedField
             id={`${id}DataElement`}

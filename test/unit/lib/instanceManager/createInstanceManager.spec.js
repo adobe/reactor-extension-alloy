@@ -146,8 +146,7 @@ describe("Instance Manager", () => {
 
   it("sets an onBeforeEventSend that updates the implementation details", () => {
     build();
-    const onBeforeEventSend = mockWindow.alloy1.calls.argsFor(0)[1]
-      .onBeforeEventSend;
+    const { onBeforeEventSend } = mockWindow.alloy1.calls.argsFor(0)[1];
     const xdm = {
       foo: "bar",
       implementationDetails: {

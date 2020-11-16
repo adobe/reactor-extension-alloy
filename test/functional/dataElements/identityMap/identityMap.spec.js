@@ -377,16 +377,18 @@ test("multiple primary identifiers trigger validation error", async () => {
           id: "123",
           authenticatedState: "authenticated",
           primary: true
-        },
-        {
-          id: "12w3",
-          authenticatedState: "authenticated",
-          primary: true
         }
       ]
     }
   });
+  await addIdentityButton.click();
+  await identities[1].namespace.typeText("CUSTOM_IDENTITY2");
+  await identities[1].identifiers[0].id.typeText("test3");
+  await identities[1].identifiers[0].authenticatedState.selectOption(
+    "Authenticated"
+  );
+  await identities[1].identifiers[0].primary.click();
 
   await identityMapViewController.expectIsNotValid();
-  await identities[0].identifiers[1].primary.expectError();
+  await identities[1].identifiers[0].primary.expectError();
 });

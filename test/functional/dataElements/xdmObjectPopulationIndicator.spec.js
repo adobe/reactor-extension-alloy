@@ -21,7 +21,7 @@ import stringEdit from "./xdmObject/helpers/stringEdit";
 import spectrum from "../helpers/spectrum";
 
 const schemaTitle = "XDM Object Data Element Tests";
-const schemaSelectField = spectrum.select("schemaField");
+const schemaSelectField = spectrum.combobox("schemaField");
 const selectSchemaFromSchemasMeta = async () => {
   await schemaSelectField.selectOption(schemaTitle);
 };

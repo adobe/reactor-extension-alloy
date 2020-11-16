@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const clone = require("../../utils/clone");
+
 module.exports = ({
   instanceManager,
   decisionsCallbackStorage
@@ -21,6 +23,14 @@ module.exports = ({
     throw new Error(
       `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
     );
+  }
+
+  // If the customer modifies the xdm object (or anything nested in the object) after this action runs, we want to
+  // make sure those modifications are not reflected in the data sent to the server. By cloning the object here,
+  // we ensure we use a snapshot that will remain unchanged during the time period between when sendEvent
+  // is called and the network request is made.
+  if (otherSettings.xdm) {
+    otherSettings.xdm = clone(otherSettings.xdm);
   }
 
   return instance("sendEvent", otherSettings).then(result => {

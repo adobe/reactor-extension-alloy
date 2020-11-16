@@ -50,9 +50,13 @@ const sandboxes = RequestMock()
  * @type {RequestMock}
  */
 const schemasMeta = RequestMock()
-  .onRequestTo(
-    "https://platform.adobe.io/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta:extends==https%3A%2F%2Fns.adobe.com%2Fxdm%2Fcontext%2Fexperienceevent"
-  )
+  .onRequestTo({
+    url:
+      "https://platform.adobe.io/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta%3Aextends%3D%3Dhttps%253A%252F%252Fns.adobe.com%252Fxdm%252Fcontext%252Fexperienceevent",
+    headers: {
+      "x-sandbox-name": "prod"
+    }
+  })
   .respond(
     {
       results: [
@@ -67,6 +71,26 @@ const schemasMeta = RequestMock()
           title: "Foo2"
         }
       ]
+    },
+    200,
+    { "Access-Control-Allow-Origin": "*" }
+  );
+
+/**
+ * Mocks a response from the platform schema meta endpoint
+ * @type {RequestMock}
+ */
+const schemasMetaEmpty = RequestMock()
+  .onRequestTo({
+    url:
+      "https://platform.adobe.io/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta%3Aextends%3D%3Dhttps%253A%252F%252Fns.adobe.com%252Fxdm%252Fcontext%252Fexperienceevent",
+    headers: {
+      "x-sandbox-name": "alloy-test"
+    }
+  })
+  .respond(
+    {
+      results: []
     },
     200,
     { "Access-Control-Allow-Origin": "*" }
@@ -127,6 +151,7 @@ export default {
   sandboxes,
   sandboxesEmpty,
   schemasMeta,
+  schemasMetaEmpty,
   namespaces,
   namespacesError,
   namespacesEmpty

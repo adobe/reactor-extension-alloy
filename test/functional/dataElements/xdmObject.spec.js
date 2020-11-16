@@ -36,7 +36,7 @@ const schema = {
 
 const schemaTitle = "XDM Object Data Element Tests";
 
-const schemaField = spectrum.select("schemaField");
+const schemaField = spectrum.combobox("schemaField");
 
 const selectSchemaFromSchemasMeta = async () => {
   await schemaField.selectOption(schemaTitle);
@@ -56,12 +56,7 @@ const expectSettingsToContainData = async data => {
   await t.expect(actualSettings.schema.version).match(/^\d+\.\d+$/);
   await t
     .expect(actualSettings.data)
-    .eql(
-      data,
-      `Expected data: ${JSON.stringify(data)} Actual data: ${JSON.stringify(
-        actualSettings.data
-      )}`
-    );
+    .eql(data, "Expected data does not match actual data");
 };
 
 const initializeExtensionView = async additionalInitInfo => {
@@ -116,7 +111,7 @@ test("initializes form fields with individual object attribute values", async ()
 test("disables user from selecting a sandbox", async () => {
   // temporarily remove sandboxes mock
   await t.removeRequestHooks(platformMocks.sandboxes);
-  // replace with unaurhotized mock
+  // replace with unauthorized mock
   await t.addRequestHooks(platformMocks.sandboxesEmpty);
   await initializeExtensionView();
   await spectrum.select("sandboxField").expectDisabled();
@@ -125,6 +120,7 @@ test("disables user from selecting a sandbox", async () => {
 });
 
 test("checks sandbox with no schemas", async () => {
+  await t.addRequestHooks(platformMocks.schemasMetaEmpty);
   await initializeExtensionView();
   await spectrum.select("sandboxField").expectEnabled();
   await spectrum
@@ -133,11 +129,26 @@ test("checks sandbox with no schemas", async () => {
   await spectrum.alert("selectedSandboxWarning").expectExists();
 });
 
+test("allows user to enter a valid search query and get results", async () => {
+  await initializeExtensionView();
+  await spectrum.combobox("schemaField").enterSearch(schemaTitle);
+  await spectrum.alert("selectedSchemaError").expectNotExists();
+});
+
+test("allows user to enter an invalid search query and get no results", async () => {
+  await initializeExtensionView();
+  await spectrum.combobox("schemaField").enterSearch("Foo2");
+  await spectrum.alert("selectedSchemaError").expectNotExists();
+  await spectrum.combobox("schemaField").clear();
+  await spectrum.combobox("schemaField").enterSearch(schemaTitle);
+  await spectrum.alert("selectedSchemaError").expectNotExists();
+});
+
 test.requestHooks(platformMocks.schemasMeta)(
   "attempts to load an invalid schema",
   async () => {
     await initializeExtensionView();
-    await spectrum.select("schemaField").selectOption("Foo2");
+    await spectrum.combobox("schemaField").selectOption("Foo2");
     await spectrum.alert("selectedSchemaError").expectExists();
   }
 );

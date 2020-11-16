@@ -10,14 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { baseCode, core, createEventMergeId } from "@adobe/alloy";
+/**
+ * A simple utility for managing a promise's state outside of
+ * the promise's "executor" (the function passed into the constructor).
+ */
+export default () => {
+  const deferred = {};
 
-const runAlloy = instanceNames => {
-  baseCode(instanceNames);
-  core();
-};
+  deferred.promise = new Promise((resolve, reject) => {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
 
-export {
-  runAlloy,
-  createEventMergeId
+  return deferred;
 };

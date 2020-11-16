@@ -112,6 +112,25 @@ const createExpectDisabled = selector => async () => {
 // and TestCafe APIs directly. A test ID string or a Selector can
 // be passed into each component wrapper.
 const componentWrappers = {
+  combobox(selector) {
+    return {
+      async selectOption(label) {
+        await switchToIframe();
+        await t.click(selector.parent().find("button"));
+        await selectMenuItem(popoverSelector, label);
+      },
+      async enterSearch(text) {
+        await switchToIframe();
+        await t.typeText(selector, text).pressKey("enter");
+      },
+      async clear() {
+        await switchToIframe();
+        await t.selectText(selector).pressKey("delete");
+      },
+      expectDisabled: createExpectDisabled(selector.parent().find("button")),
+      expectEnabled: createExpectEnabled(selector.parent().find("button"))
+    };
+  },
   select(selector) {
     return {
       expectError: createExpectError(selector),
@@ -119,8 +138,14 @@ const componentWrappers = {
       expectValue: createExpectValue(selector),
       async expectSelectedOptionLabel(label) {
         await switchToIframe();
+        // There's a bug in TestCafe that incorrectly logs a warning
+        // if this line is formatted differently.
+        // https://github.com/DevExpress/testcafe/issues/5449
+        // prettier-ignore
         await t
-          .expect(selector.find(".spectrum-Dropdown-label").innerText)
+          .expect(
+            selector.find(".spectrum-Dropdown-label").innerText
+          )
           .eql(label);
       },
       async expectOptionLabels(labels) {

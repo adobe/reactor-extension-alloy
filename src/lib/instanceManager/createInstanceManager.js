@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const version = __VERSION__;
+const version = "__VERSION__";
 
 module.exports = ({ turbine, window, runAlloy, createEventMergeId, orgId }) => {
   const { instances: instancesSettings } = turbine.getExtensionSettings();
