@@ -12,13 +12,21 @@ governing permissions and limitations under the License.
 
 const version = "__VERSION__";
 
-module.exports = ({ turbine, window, runAlloy, createEventMergeId, orgId }) => {
+module.exports = ({
+  turbine,
+  window,
+  baseCode,
+  core,
+  createEventMergeId,
+  orgId
+}) => {
   const { instances: instancesSettings } = turbine.getExtensionSettings();
   const instanceNames = instancesSettings.map(
     instanceSettings => instanceSettings.name
   );
   const instanceByName = {};
-  runAlloy(instanceNames);
+  baseCode(instanceNames);
+  core();
 
   instancesSettings.forEach(
     ({
@@ -26,6 +34,7 @@ module.exports = ({ turbine, window, runAlloy, createEventMergeId, orgId }) => {
       edgeConfigId,
       stagingEdgeConfigId,
       developmentEdgeConfigId,
+      onBeforeEventSend,
       ...options
     }) => {
       const computedEdgeConfigId =
@@ -41,9 +50,14 @@ module.exports = ({ turbine, window, runAlloy, createEventMergeId, orgId }) => {
         edgeConfigId: computedEdgeConfigId,
         debugEnabled: turbine.debugEnabled,
         orgId: options.orgId || orgId,
-        onBeforeEventSend({ xdm }) {
+        onBeforeEventSend(argObject) {
+          const { xdm } = argObject;
           xdm.implementationDetails.name = `${xdm.implementationDetails.name}/reactor`;
           xdm.implementationDetails.version = `${xdm.implementationDetails.version}+${version}`;
+          // TODO: if this client function throws an error the version details will be lost.
+          if (onBeforeEventSend) {
+            onBeforeEventSend(argObject);
+          }
         }
       });
       turbine.onDebugChanged(enabled => {

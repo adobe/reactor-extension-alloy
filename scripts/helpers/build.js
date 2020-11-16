@@ -72,16 +72,5 @@ module.exports = (options = {}) => {
     }
   });
 
-  // Import the Alloy code from NPM with rollup
-  const rollupPromise = new Promise((resolve, reject) => {
-    spawn("rollup", ["-c"]).on("exit", code => {
-      if (code) {
-        reject();
-      } else {
-        resolve();
-      }
-    });
-  });
-
-  return Promise.all([babelPromise, parcelPromise, rollupPromise]);
+  return Promise.all([babelPromise, parcelPromise]);
 };

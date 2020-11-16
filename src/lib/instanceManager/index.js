@@ -10,13 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { runAlloy, createEventMergeId } = require("../runAlloy");
+const {
+  baseCode,
+  core,
+  createEventMergeId
+} = require("../../../node_modules/@adobe/alloy/dist/main");
 const createInstanceManager = require("./createInstanceManager");
 
 module.exports = createInstanceManager({
   turbine,
   window,
-  runAlloy,
+  baseCode,
+  core,
   createEventMergeId,
   orgId: _satellite.company.orgId
 });
