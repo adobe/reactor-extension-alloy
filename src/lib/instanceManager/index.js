@@ -10,6 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+// The Adobe Launch bundler doesn't handle requiring npm packages, but this is
+// equivalent to require("@adobe/alloy"). We could run our own bundler to do this,
+// but this works. If Alloy changed the location of its cjs entry point we would
+// need to change the path here.
 const {
   baseCode,
   core,
