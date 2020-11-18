@@ -1,0 +1,37 @@
+/*
+Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+const clone = require("../utils/clone");
+
+const copyTo = (target, source) => {
+  Object.keys(target).forEach(key => {
+    delete target[key];
+  });
+  Object.keys(source).forEach(key => {
+    target[key] = source[key];
+  });
+};
+
+module.exports = ({ version, turbine }) => onBeforeEventSend => content => {
+  content.xdm.implementationDetails.name = `${content.xdm.implementationDetails.name}/reactor`;
+  content.xdm.implementationDetails.version = `${content.xdm.implementationDetails.version}+${version}`;
+  if (onBeforeEventSend) {
+    const contentClone = clone(content);
+    try {
+      onBeforeEventSend(contentClone);
+      copyTo(content.xdm, contentClone.xdm);
+      copyTo(content.data, contentClone.data);
+    } catch (e) {
+      turbine.logger.error(e);
+    }
+  }
+};

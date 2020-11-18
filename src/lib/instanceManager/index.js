@@ -20,6 +20,11 @@ const {
   createEventMergeId
 } = require("../../../node_modules/@adobe/alloy/dist/main");
 const createInstanceManager = require("./createInstanceManager");
+const injectWrapOnBeforeEventSend = require("./injectWrapOnBeforeEventSend");
+
+const version = "__VERSION__";
+
+const wrapOnBeforeEventSend = injectWrapOnBeforeEventSend({ turbine, version });
 
 module.exports = createInstanceManager({
   turbine,
@@ -27,5 +32,6 @@ module.exports = createInstanceManager({
   baseCode,
   core,
   createEventMergeId,
-  orgId: _satellite.company.orgId
+  orgId: _satellite.company.orgId,
+  wrapOnBeforeEventSend
 });

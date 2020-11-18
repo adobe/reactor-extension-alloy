@@ -18,6 +18,8 @@ describe("Instance Manager", () => {
   let instanceManager;
   let mockWindow;
   let createEventMergeId;
+  let wrapOnBeforeEventSend;
+  let onBeforeEventSend;
 
   const build = () => {
     instanceManager = createInstanceManager({
@@ -26,7 +28,8 @@ describe("Instance Manager", () => {
       baseCode,
       core,
       orgId: "ABC@AdobeOrg",
-      createEventMergeId
+      createEventMergeId,
+      wrapOnBeforeEventSend
     });
   };
 
@@ -58,6 +61,10 @@ describe("Instance Manager", () => {
       });
     });
     core = jasmine.createSpy();
+    onBeforeEventSend = jasmine.createSpy();
+    wrapOnBeforeEventSend = jasmine
+      .createSpy()
+      .and.returnValue(onBeforeEventSend);
   });
 
   it("runs alloy", () => {
@@ -148,31 +155,11 @@ describe("Instance Manager", () => {
     expect(mockWindow.alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
   });
 
-  it("sets an onBeforeEventSend that updates the implementation details", () => {
+  it("wraps onBeforeEventSend", () => {
     build();
-    const { onBeforeEventSend } = mockWindow.alloy1.calls.argsFor(0)[1];
-    const xdm = {
-      foo: "bar",
-      implementationDetails: {
-        name: "https://ns.adobe.com/experience/alloy",
-        version: "1.2.3",
-        environment: "browser"
-      }
-    };
-    const data = {
-      answer: 42
-    };
-
-    onBeforeEventSend({ xdm, data: {} });
-    expect(xdm).toEqual({
-      foo: "bar",
-      implementationDetails: {
-        name: "https://ns.adobe.com/experience/alloy/reactor",
-        version: xdm.implementationDetails.version,
-        environment: "browser"
-      }
-    });
-    expect(xdm.implementationDetails.version).toMatch(/1\.2\.3\+\d+\.\d+\.\d+/);
-    expect(data).toEqual({ answer: 42 });
+    const {
+      onBeforeEventSend: configuredOnBeforeEventSend
+    } = mockWindow.alloy1.calls.argsFor(0)[1];
+    expect(configuredOnBeforeEventSend).toBe(onBeforeEventSend);
   });
 });

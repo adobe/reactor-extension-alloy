@@ -10,15 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const version = "__VERSION__";
-
 module.exports = ({
   turbine,
   window,
   baseCode,
   core,
   createEventMergeId,
-  orgId
+  orgId,
+  wrapOnBeforeEventSend
 }) => {
   const { instances: instancesSettings } = turbine.getExtensionSettings();
   const instanceNames = instancesSettings.map(
@@ -50,15 +49,7 @@ module.exports = ({
         edgeConfigId: computedEdgeConfigId,
         debugEnabled: turbine.debugEnabled,
         orgId: options.orgId || orgId,
-        onBeforeEventSend(argObject) {
-          const { xdm } = argObject;
-          xdm.implementationDetails.name = `${xdm.implementationDetails.name}/reactor`;
-          xdm.implementationDetails.version = `${xdm.implementationDetails.version}+${version}`;
-          // TODO: if this client function throws an error the version details will be lost.
-          if (onBeforeEventSend) {
-            onBeforeEventSend(argObject);
-          }
-        }
+        onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend)
       });
       turbine.onDebugChanged(enabled => {
         instance("setDebug", { enabled });
