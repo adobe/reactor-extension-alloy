@@ -15,10 +15,9 @@ governing permissions and limitations under the License.
 // but this works. If Alloy changed the location of its cjs entry point we would
 // need to change the path here.
 const {
-  baseCode,
-  core,
-  createEventMergeId
-} = require("../../../node_modules/@adobe/alloy/dist/main");
+  createInstance
+} = require("../../../node_modules/@adobe/alloy/dist/es5/index");
+const createEventMergeId = require("../../../node_modules/@adobe/alloy/dist/es5/components/EventMerge/createEventMergeId");
 const createInstanceManager = require("./createInstanceManager");
 const injectWrapOnBeforeEventSend = require("./injectWrapOnBeforeEventSend");
 
@@ -29,8 +28,7 @@ const wrapOnBeforeEventSend = injectWrapOnBeforeEventSend({ turbine, version });
 module.exports = createInstanceManager({
   turbine,
   window,
-  baseCode,
-  core,
+  createInstance,
   createEventMergeId,
   orgId: _satellite.company.orgId,
   wrapOnBeforeEventSend

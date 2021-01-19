@@ -13,19 +13,13 @@ governing permissions and limitations under the License.
 module.exports = ({
   turbine,
   window,
-  baseCode,
-  core,
+  createInstance,
   createEventMergeId,
   orgId,
   wrapOnBeforeEventSend
 }) => {
   const { instances: instancesSettings } = turbine.getExtensionSettings();
-  const instanceNames = instancesSettings.map(
-    instanceSettings => instanceSettings.name
-  );
   const instanceByName = {};
-  baseCode(instanceNames);
-  core();
 
   instancesSettings.forEach(
     ({
@@ -36,14 +30,16 @@ module.exports = ({
       onBeforeEventSend,
       ...options
     }) => {
+      const instance = createInstance({ instanceName: name });
+      window[name] = instance;
+      instanceByName[name] = instance;
+
       const computedEdgeConfigId =
         (turbine.buildInfo.environment === "development" &&
           developmentEdgeConfigId) ||
         (turbine.buildInfo.environment === "staging" && stagingEdgeConfigId) ||
         edgeConfigId;
 
-      const instance = window[name];
-      instanceByName[name] = instance;
       instance("configure", {
         ...options,
         edgeConfigId: computedEdgeConfigId,
