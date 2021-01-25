@@ -17,13 +17,38 @@ const { spawn } = require("child_process");
 const rimraf = require("rimraf");
 const Bundler = require("parcel-bundler");
 const path = require("path");
+const fsPromises = require("fs").promises;
 
 const inputDir = path.join(__dirname, "../../src");
+const tempDir = path.join(__dirname, "../../temp");
 const outputDir = path.join(__dirname, "../../dist");
 const libInDir = path.join(inputDir, "lib");
 const libOutDir = path.join(outputDir, "lib");
 const viewEntries = path.join(inputDir, "view/**/*.html");
 const viewOutDir = path.join(outputDir, "view");
+const alloyInFile = path.join(libInDir, "alloy.js");
+const alloyTempFile = path.join(tempDir, "alloy.js");
+const browserslistrcFile = path.join(libInDir, ".browserslistrc");
+const browserslistrcTempFile = path.join(tempDir, ".browserslistrc");
+
+const toPromise = func => {
+  return new Promise((resolve, reject) => {
+    const callback = error => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    };
+    func(callback);
+  });
+};
+
+const run = (command, options) => {
+  return toPromise(callback =>
+    spawn(command, options, { stdio: "inherit" }).on("exit", callback)
+  );
+};
 
 rimraf.sync(outputDir);
 
@@ -46,27 +71,37 @@ module.exports = (options = {}) => {
     bundler.bundle();
   });
 
-  const babelPromise = new Promise((resolve, reject) => {
-    spawn("babel", [libInDir, "--out-dir", libOutDir], {
-      stdio: "inherit"
-    }).on("exit", code => {
-      if (code) {
-        reject();
-      } else {
-        resolve();
-      }
-    });
+  // ignore alloy.js because it will be built separately below.
+  const babelPromise = run("babel", [
+    libInDir,
+    "--out-dir",
+    libOutDir,
+    "--ignore",
+    alloyInFile
+  ]);
 
-    if (watch) {
-      spawn(
-        "babel",
-        [libInDir, "--out-dir", libOutDir, "--watch", "--skip-initial-build"],
-        {
-          stdio: "inherit"
-        }
-      );
-    }
-  });
+  if (watch) {
+    run("babel", [
+      libInDir,
+      "--out-dir",
+      libOutDir,
+      "--watch",
+      "--skip-initial-build",
+      "--ignore",
+      alloyInFile
+    ]);
+  }
 
-  return Promise.all([babelPromise, parcelPromise]);
+  // The package resolution in launch does not follow dependencies on npm packages, so we need to build our
+  // own Alloy file here.
+  // I tried having rollup run Babel, but it didn't respect the .browserslistrc located in the src/lib directory.
+  const alloyPromise = fsPromises
+    .mkdir(tempDir)
+    .catch(() => undefined)
+    .then(() => fsPromises.copyFile(browserslistrcFile, browserslistrcTempFile))
+    .then(() => run("rollup", ["-c"]))
+    .then(() => run("babel", [alloyTempFile, "--out-dir", libOutDir]))
+    .then(() => toPromise(callback => rimraf(tempDir, callback)));
+
+  return Promise.all([babelPromise, parcelPromise, alloyPromise]);
 };
