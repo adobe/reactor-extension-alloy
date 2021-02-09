@@ -64,6 +64,11 @@ const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
  *     gdprApplies: true,
  *     gdprContainsPersonalData: false
  *   },
+ *   {
+ *     standard: "Adobe",
+ *     version: "2.0",
+ *     value: "%dataElement123%"
+ *   }
  *   ...]
  * }
  * ---OR---
@@ -83,6 +88,7 @@ const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
  *       standard: ("adobe" or "iab_tcf"),
  *       version: "1.0",
  *       general: optionsWithDataElement("in", "out"),
+ *       value: "%data_element%"
  *       iabValue: "1234abcd", // or data_element
  *       gdprApplies: optionsWithDataElement(true, false),
  *       gdprContainsPersonalData: optionsWithDataElement(true, false)
@@ -100,6 +106,7 @@ const createBlankConsentObject = () => {
     standard: "adobe",
     version: "",
     general: { radio: IN.value, dataElement: "" },
+    value: "",
     iabValue: "",
     gdprApplies: { radio: YES.value, dataElement: "" },
     gdprContainsPersonalData: { radio: NO.value, dataElement: "" }
@@ -161,6 +168,8 @@ const getInitialValues = ({ initInfo }) => {
             formikConsentObject.general,
             [IN.value, OUT.value]
           );
+        } else if (consentObject.value) {
+          formikConsentObject.value = consentObject.value;
         }
       } else if (consentObject.standard === IAB_TCF.label) {
         formikConsentObject.standard = IAB_TCF.value;
@@ -233,15 +242,23 @@ const getSettings = ({ values }) => {
   } else {
     settings.consent = consent.reduce((memo, formikConsentObject) => {
       if (formikConsentObject.standard === ADOBE.value) {
-        memo.push({
-          standard: ADOBE.label,
-          version: formikConsentObject.version,
-          value: {
-            general: getSettingsForOptionsWithDataElement(
-              formikConsentObject.general
-            )
-          }
-        });
+        if (formikConsentObject.version === "1.0") {
+          memo.push({
+            standard: ADOBE.label,
+            version: formikConsentObject.version,
+            value: {
+              general: getSettingsForOptionsWithDataElement(
+                formikConsentObject.general
+              )
+            }
+          });
+        } else {
+          memo.push({
+            standard: ADOBE.label,
+            version: formikConsentObject.version,
+            value: formikConsentObject.value
+          });
+        }
       } else if (formikConsentObject.standard === IAB_TCF.value) {
         memo.push({
           standard: IAB_TCF.label,
@@ -282,14 +299,22 @@ const validationSchema = object().shape({
       object().shape({
         standard: string().required("Plesase specify a standard."),
         version: string().required("Please specify a version."),
-        general: mixed().when("standard", {
-          is: ADOBE.value,
+        general: mixed().when(["standard", "version"], {
+          is: (standard, version) =>
+            standard === ADOBE.value && version === "1.0",
           then: object().shape({
             dataElement: mixed().when("radio", {
               is: DATA_ELEMENT_OPTION,
               then: string().matches(singleDataElementRegex, invalidDataMessage)
             })
           })
+        }),
+        value: mixed().when(["standard", "version"], {
+          is: (standard, version) =>
+            standard === ADOBE.value && version !== "1.0",
+          then: string()
+            .required()
+            .matches(singleDataElementRegex, invalidDataMessage)
         }),
         iabValue: mixed().when("standard", {
           is: IAB_TCF.value,
@@ -348,17 +373,34 @@ const ConsentObject = ({ formikConsentObject, index }) => {
           componentClassName="u-fieldLong"
         />
       </div>
-      {formikConsentObject.standard === ADOBE.value && (
-        <OptionsWithDataElement
-          label="General Consent"
-          infoTip="The general consent level. If provided through a data element, it should resolve to 'in' or 'out'."
-          id={`consent_${index}_general`}
-          data-test-id="general"
-          name={`consent.${index}.general`}
-          options={[IN, OUT]}
-          values={formikConsentObject.general}
-        />
-      )}
+      {formikConsentObject.standard === ADOBE.value &&
+        formikConsentObject.version === "1.0" && (
+          <OptionsWithDataElement
+            label="General Consent"
+            infoTip="The general consent level. If provided through a data element, it should resolve to 'in' or 'out'."
+            id={`consent_${index}_general`}
+            data-test-id="general"
+            name={`consent.${index}.general`}
+            options={[IN, OUT]}
+            values={formikConsentObject.general}
+          />
+        )}
+      {formikConsentObject.standard === ADOBE.value &&
+        formikConsentObject.version !== "1.0" && (
+          <Fragment>
+            <InfoTipLayout tip="A data element containing the Adobe consent XDM object">
+              <FieldLabel labelFor={`consent_${index}_value`} label="Value" />
+            </InfoTipLayout>
+            <WrappedField
+              data-test-id="valueField"
+              id={`consent_${index}_value`}
+              name={`consent.${index}.value`}
+              component={Textfield}
+              componentClassName="u-fieldLong"
+              supportDataElement="replace"
+            />
+          </Fragment>
+        )}
       {formikConsentObject.standard === IAB_TCF.value && (
         <div>
           <div className="u-gapTop">

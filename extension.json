@@ -223,6 +223,14 @@
                     {
                       "type": "object",
                       "properties": {
+                        "standard": { "type": "string", "enum": ["Adobe"] },
+                        "version": { "type": "string" },
+                        "value": { "type": "string", "pattern": "^%[^%]+%$" }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
                         "standard": { "type": "string", "enum": ["IAB TCF"] },
                         "version": { "type": "string" },
                         "value": { "type": "string" },
