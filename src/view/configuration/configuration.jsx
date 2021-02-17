@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import "regenerator-runtime"; // needed for some of react-spectrum
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import { object, array, string } from "yup";
+import { object, array, string, mixed } from "yup";
 import { FieldArray } from "formik";
 import Textfield from "@react/react-spectrum/Textfield";
 import RadioGroup from "@react/react-spectrum/RadioGroup";
@@ -60,6 +60,7 @@ const contextGranularityEnum = {
 };
 const consentLevels = {
   IN: "in",
+  OUT: "out",
   PENDING: "pending"
 };
 const contextOptions = [
@@ -235,8 +236,8 @@ const getSettings = ({ values, initInfo }) => {
 
       if (instance.defaultConsent.radio === DATA_ELEMENT) {
         trimmedInstance.defaultConsent = instance.defaultConsent.dataElement;
-      } else if (instance.defaultConsent.radio === consentLevels.PENDING) {
-        trimmedInstance.defaultConsent = consentLevels.PENDING;
+      } else {
+        trimmedInstance.defaultConsent = instance.defaultConsent.radio;
       }
 
       if (instance.contextGranularity === contextGranularityEnum.SPECIFIC) {
@@ -300,6 +301,14 @@ const validationSchema = object()
                 }
               }
             })
+        }),
+        defaultConsent: object().shape({
+          dataElement: mixed().when("radio", {
+            is: DATA_ELEMENT,
+            then: string()
+              .required("Please specify a data element")
+              .matches(singleDataElementRegex, "Please specify a data element.")
+          })
         })
       })
     )
@@ -745,18 +754,23 @@ const Configuration = ({
                           options={[
                             {
                               value: consentLevels.IN,
-                              label: "In - Do not wait for explicit consent.",
+                              label: "In - Send events even without the user's explicit consent.",
                               testId: "In"
+                            },
+                            {
+                              value: consentLevels.OUT,
+                              label: "Out - Drop events that occur before the user provides explicit consent.",
+                              testId: "Out"
                             },
                             {
                               value: consentLevels.PENDING,
                               label:
-                                "Pending - Queue privacy-sensitive work until the user provides consent preferences.",
+                                "Pending - Queue events until the user provides consent preferences.",
                               testId: "Pending"
                             }
                           ]}
-                          label="Default Consent Level"
-                          infoTip="The consent level to be used if the user has not previously provided consent preferences."
+                          label="Default Consent"
+                          infoTip="How to handle sending events when the SDK does not have the user's consent preferences. This setting is not persisted to a new user's profile."
                           id="generalDefaultConsent"
                           data-test-id="defaultConsent"
                           name={`instances.${index}.defaultConsent`}
