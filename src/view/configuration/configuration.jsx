@@ -236,7 +236,7 @@ const getSettings = ({ values, initInfo }) => {
 
       if (instance.defaultConsent.radio === DATA_ELEMENT) {
         trimmedInstance.defaultConsent = instance.defaultConsent.dataElement;
-      } else {
+      } else if (instance.defaultConsent.radio !== consentLevels.IN) {
         trimmedInstance.defaultConsent = instance.defaultConsent.radio;
       }
 
@@ -754,12 +754,14 @@ const Configuration = ({
                           options={[
                             {
                               value: consentLevels.IN,
-                              label: "In - Send events even without the user's explicit consent.",
+                              label:
+                                "In - Send events even without the user's explicit consent.",
                               testId: "In"
                             },
                             {
                               value: consentLevels.OUT,
-                              label: "Out - Drop events that occur before the user provides explicit consent.",
+                              label:
+                                "Out - Drop events that occur before the user provides explicit consent.",
                               testId: "Out"
                             },
                             {
