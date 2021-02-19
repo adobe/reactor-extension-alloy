@@ -31,6 +31,10 @@ module.exports = (options = {}) => {
   const { watch } = options;
   const parcelPromise = new Promise(resolve => {
     const bundler = new Bundler(viewEntries, {
+      // By default, Parcel updates script tags on HTML files to reference post-processed JavaScript files
+      // by using an absolute directory. We can't use absolute directories, because our extension's view files
+      // are deployed by Launch to Akamai under a deep subdirectory. We use publicUrl to ensure we use a relative
+      // path for loading JavaScript files.
       publicUrl: "../",
       outDir: viewOutDir,
       watch,

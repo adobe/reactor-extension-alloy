@@ -23,6 +23,7 @@ import objectEdit from "./xdmObject/helpers/objectEdit";
 import platformMocks from "./xdmObject/helpers/platformMocks";
 import stringEdit from "./xdmObject/helpers/stringEdit";
 import spectrum from "../helpers/spectrum";
+import adobeIOClientCredentials from "../helpers/adobeIOClientCredentials";
 
 const extensionViewController = createExtensionViewController(
   "dataElements/xdmObject.html"
@@ -30,8 +31,8 @@ const extensionViewController = createExtensionViewController(
 
 const schema = {
   id:
-    "https://ns.adobe.com/alloyengineering/schemas/2c70e73b33329135dea3aac47bb52ec2",
-  version: "2.0"
+    "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+  version: "1.2"
 };
 
 const schemaTitle = "XDM Object Data Element Tests";
@@ -62,15 +63,9 @@ const expectSettingsToContainData = async data => {
 const initializeExtensionView = async additionalInitInfo => {
   const accessToken = await getAdobeIOAccessToken();
   const initInfo = {
-    extensionSettings: {
-      instances: [
-        {
-          edgeConfigId: "74580452-647b-4797-99af-6d0e042435ec"
-        }
-      ]
-    },
+    extensionSettings: {},
     company: {
-      orgId: "334F60F35E1597910A495EC2@AdobeOrg"
+      orgId: adobeIOClientCredentials.orgId
     },
     tokens: { imsAccess: accessToken },
     ...additionalInitInfo
@@ -94,7 +89,7 @@ test("initializes form fields with individual object attribute values", async ()
     settings: {
       schema,
       data: {
-        _alloyengineering: {
+        _unifiedjsqeonly: {
           vendor: {
             name: "Adobe"
           }
@@ -102,7 +97,7 @@ test("initializes form fields with individual object attribute values", async ()
       }
     }
   });
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
   await stringEdit.expectValue("Adobe");
@@ -116,7 +111,7 @@ test("disables user from selecting a sandbox", async () => {
   await initializeExtensionView();
   await spectrum.select("sandboxField").expectDisabled();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
 });
 
 test("checks sandbox with no schemas", async () => {
@@ -156,13 +151,13 @@ test.requestHooks(platformMocks.schemasMeta)(
 test("allows user to provide individual object attribute values", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
   await stringEdit.enterValue("Adobe");
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({
-    _alloyengineering: {
+    _unifiedjsqeonly: {
       vendor: {
         name: "Adobe"
       }
@@ -173,13 +168,13 @@ test("allows user to provide individual object attribute values", async () => {
 test("allows user to provide whole object value", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.click("vendor");
   await objectEdit.selectWholePopulationStrategy();
   await objectEdit.enterValue("%vendor%");
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({
-    _alloyengineering: {
+    _unifiedjsqeonly: {
       vendor: "%vendor%"
     }
   });
@@ -190,13 +185,13 @@ test("initializes form fields with whole object value", async () => {
     settings: {
       schema,
       data: {
-        _alloyengineering: {
+        _unifiedjsqeonly: {
           vendor: "%vendor%"
         }
       }
     }
   });
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.click("vendor");
   await objectEdit.expectValue("%vendor%");
 });
@@ -204,7 +199,7 @@ test("initializes form fields with whole object value", async () => {
 test("allows user to provide individual array items", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
   await arrayEdit.addItem();
@@ -218,7 +213,7 @@ test("allows user to provide individual array items", async () => {
 
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({
-    _alloyengineering: {
+    _unifiedjsqeonly: {
       vendor: {
         industries: ["%industry%"]
       }
@@ -231,7 +226,7 @@ test("initializes form fields with individual array items", async () => {
     settings: {
       schema,
       data: {
-        _alloyengineering: {
+        _unifiedjsqeonly: {
           vendor: {
             industries: ["%industry%"]
           }
@@ -239,7 +234,7 @@ test("initializes form fields with individual array items", async () => {
       }
     }
   });
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.toggleExpansion("industries");
   await xdmTree.click("Item 1");
@@ -249,7 +244,7 @@ test("initializes form fields with individual array items", async () => {
 test("allows user to provide whole array value", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
   await arrayEdit.selectWholePopulationStrategy();
@@ -257,7 +252,7 @@ test("allows user to provide whole array value", async () => {
 
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({
-    _alloyengineering: {
+    _unifiedjsqeonly: {
       vendor: {
         industries: "%industries%"
       }
@@ -270,7 +265,7 @@ test("initializes form fields with whole array value", async () => {
     settings: {
       schema,
       data: {
-        _alloyengineering: {
+        _unifiedjsqeonly: {
           vendor: {
             industries: "%industries%"
           }
@@ -278,7 +273,7 @@ test("initializes form fields with whole array value", async () => {
       }
     }
   });
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
   await arrayEdit.expectValue("%industries%");
@@ -287,7 +282,7 @@ test("initializes form fields with whole array value", async () => {
 test("arrays with no values are invalid", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
   await arrayEdit.selectPartsPopulationStrategy();
@@ -305,7 +300,7 @@ test("arrays with no values are invalid", async () => {
 test("arrays using whole population strategy do not have children", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
   await arrayEdit.selectPartsPopulationStrategy();
@@ -319,7 +314,7 @@ test("arrays using whole population strategy do not have children", async () => 
 test("arrays with a whole population strategy ancestor do not have children", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("industries");
   await arrayEdit.selectPartsPopulationStrategy();
@@ -334,14 +329,14 @@ test("arrays with a whole population strategy ancestor do not have children", as
 test("allows user to provide value for property with string type", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
   await stringEdit.enterValue("%name%");
 
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({
-    _alloyengineering: {
+    _unifiedjsqeonly: {
       vendor: {
         name: "%name%"
       }
@@ -354,7 +349,7 @@ test("initializes form fields with string value", async () => {
     settings: {
       schema,
       data: {
-        _alloyengineering: {
+        _unifiedjsqeonly: {
           vendor: {
             name: "%name%"
           }
@@ -362,7 +357,7 @@ test("initializes form fields with string value", async () => {
       }
     }
   });
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
   await stringEdit.expectValue("%name%");
@@ -371,14 +366,14 @@ test("initializes form fields with string value", async () => {
 test("allows user to provide value for property with integer type", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("numEmployees");
   await integerEdit.enterValue("123");
 
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({
-    _alloyengineering: {
+    _unifiedjsqeonly: {
       vendor: {
         numEmployees: 123
       }
@@ -391,7 +386,7 @@ test("initializes form fields with integer value", async () => {
     settings: {
       schema,
       data: {
-        _alloyengineering: {
+        _unifiedjsqeonly: {
           vendor: {
             numEmployees: 123
           }
@@ -399,7 +394,7 @@ test("initializes form fields with integer value", async () => {
       }
     }
   });
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("numEmployees");
   await integerEdit.expectValue("123");
@@ -408,14 +403,14 @@ test("initializes form fields with integer value", async () => {
 test("allows user to provide value for property with number type", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("revenue");
   await integerEdit.enterValue("123.123");
 
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({
-    _alloyengineering: {
+    _unifiedjsqeonly: {
       vendor: {
         revenue: 123.123
       }
@@ -428,7 +423,7 @@ test("initializes form fields with number value", async () => {
     settings: {
       schema,
       data: {
-        _alloyengineering: {
+        _unifiedjsqeonly: {
           vendor: {
             revenue: 123.123
           }
@@ -436,7 +431,7 @@ test("initializes form fields with number value", async () => {
       }
     }
   });
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("revenue");
   await numberEdit.expectValue("123.123");
@@ -445,14 +440,14 @@ test("initializes form fields with number value", async () => {
 test("allows user to enter data element value for property with boolean type", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
   await booleanEdit.enterDataElementValue("%isLicensed%");
 
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({
-    _alloyengineering: {
+    _unifiedjsqeonly: {
       vendor: {
         isLicensed: "%isLicensed%"
       }
@@ -465,7 +460,7 @@ test("initializes form fields with boolean data element value", async () => {
     settings: {
       schema,
       data: {
-        _alloyengineering: {
+        _unifiedjsqeonly: {
           vendor: {
             isLicensed: "%isLicensed%"
           }
@@ -473,7 +468,7 @@ test("initializes form fields with boolean data element value", async () => {
       }
     }
   });
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
   await booleanEdit.expectDataElementValue("%isLicensed%");
@@ -482,7 +477,7 @@ test("initializes form fields with boolean data element value", async () => {
 test("allows user to select true constant value for property with boolean type", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
   await booleanEdit.selectConstantInputMethod();
@@ -490,7 +485,7 @@ test("allows user to select true constant value for property with boolean type",
 
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({
-    _alloyengineering: {
+    _unifiedjsqeonly: {
       vendor: {
         isLicensed: true
       }
@@ -503,7 +498,7 @@ test("initializes form fields with boolean constant value of true", async () => 
     settings: {
       schema,
       data: {
-        _alloyengineering: {
+        _unifiedjsqeonly: {
           vendor: {
             isLicensed: true
           }
@@ -511,7 +506,7 @@ test("initializes form fields with boolean constant value of true", async () => 
       }
     }
   });
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
   await booleanEdit.expectConstantValue("True");
@@ -520,7 +515,7 @@ test("initializes form fields with boolean constant value of true", async () => 
 test("allows user to select false constant value for property with boolean type", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
   await booleanEdit.selectConstantInputMethod();
@@ -528,7 +523,7 @@ test("allows user to select false constant value for property with boolean type"
 
   await extensionViewController.expectIsValid();
   await expectSettingsToContainData({
-    _alloyengineering: {
+    _unifiedjsqeonly: {
       vendor: {
         isLicensed: false
       }
@@ -541,7 +536,7 @@ test("initializes form fields with boolean constant value of false", async () =>
     settings: {
       schema,
       data: {
-        _alloyengineering: {
+        _unifiedjsqeonly: {
           vendor: {
             isLicensed: false
           }
@@ -549,7 +544,7 @@ test("initializes form fields with boolean constant value of false", async () =>
       }
     }
   });
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
   await booleanEdit.expectConstantValue("False");
@@ -558,7 +553,7 @@ test("initializes form fields with boolean constant value of false", async () =>
 test("allows user to select no constant value for property with boolean type", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
   await booleanEdit.selectConstantInputMethod();
