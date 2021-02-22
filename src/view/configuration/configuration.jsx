@@ -772,7 +772,7 @@ const Configuration = ({
                             }
                           ]}
                           label="Default Consent"
-                          infoTip="How to handle sending events when the SDK does not have the user's consent preferences. This setting is not persisted to a new user's profile."
+                          infoTip="How to handle sending events when the SDK does not have the user's consent preferences. This setting is not persisted to users' profiles. If provided through a data element, it should resolve to 'in', 'out', or 'pending'."
                           id="generalDefaultConsent"
                           data-test-id="defaultConsent"
                           name={`instances.${index}.defaultConsent`}
