@@ -45,6 +45,8 @@ const YES = { value: "yes", label: "Yes" };
 const NO = { value: "no", label: "No" };
 const ADOBE = { value: "adobe", label: "Adobe" };
 const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
+const VERSION_1_0 = { value: "1.0", label: "1.0" };
+const VERSION_2_0 = { value: "2.0", label: "2.0" };
 
 /*
  * The settings object for this action has the form of:
@@ -86,7 +88,8 @@ const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
  *   consent: [
  *     {
  *       standard: ("adobe" or "iab_tcf"),
- *       version: "1.0",
+ *       adobeVersion: "1.0",
+ *       iabVersion: "2.0",
  *       general: optionsWithDataElement("in", "out"),
  *       value: "%data_element%"
  *       iabValue: "1234abcd", // or data_element
@@ -104,7 +107,8 @@ const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
 const createBlankConsentObject = () => {
   return {
     standard: "adobe",
-    version: "",
+    adobeVersion: "1.0",
+    iabVersion: "2.0",
     general: { radio: IN.value, dataElement: "" },
     value: "",
     iabValue: "",
@@ -157,11 +161,11 @@ const getInitialValues = ({ initInfo }) => {
     initialValues.inputMethod = FORM.value;
     initialValues.consent = consent.reduce((memo, consentObject) => {
       const formikConsentObject = createBlankConsentObject();
-      if (consentObject.version) {
-        formikConsentObject.version = consentObject.version;
-      }
       if (consentObject.standard === ADOBE.label) {
         formikConsentObject.standard = ADOBE.value;
+        if (consentObject.version) {
+          formikConsentObject.adobeVersion = consentObject.version;
+        }
         if (consentObject.value && consentObject.value.general) {
           applyInitialValuesForOptionsWithDataElement(
             consentObject.value.general,
@@ -173,6 +177,9 @@ const getInitialValues = ({ initInfo }) => {
         }
       } else if (consentObject.standard === IAB_TCF.label) {
         formikConsentObject.standard = IAB_TCF.value;
+        if (consentObject.version) {
+          formikConsentObject.iabVersion = consentObject.version;
+        }
         if (consentObject.value) {
           formikConsentObject.iabValue = consentObject.value;
         }
@@ -242,10 +249,10 @@ const getSettings = ({ values }) => {
   } else {
     settings.consent = consent.reduce((memo, formikConsentObject) => {
       if (formikConsentObject.standard === ADOBE.value) {
-        if (formikConsentObject.version === "1.0") {
+        if (formikConsentObject.adobeVersion === "1.0") {
           memo.push({
             standard: ADOBE.label,
-            version: formikConsentObject.version,
+            version: formikConsentObject.adobeVersion,
             value: {
               general: getSettingsForOptionsWithDataElement(
                 formikConsentObject.general
@@ -255,14 +262,14 @@ const getSettings = ({ values }) => {
         } else {
           memo.push({
             standard: ADOBE.label,
-            version: formikConsentObject.version,
+            version: formikConsentObject.adobeVersion,
             value: formikConsentObject.value
           });
         }
       } else if (formikConsentObject.standard === IAB_TCF.value) {
         memo.push({
           standard: IAB_TCF.label,
-          version: formikConsentObject.version,
+          version: formikConsentObject.iabVersion,
           value: formikConsentObject.iabValue,
           gdprApplies: yesNoToBoolean(
             getSettingsForOptionsWithDataElement(
@@ -298,10 +305,9 @@ const validationSchema = object().shape({
     then: array().of(
       object().shape({
         standard: string().required("Plesase specify a standard."),
-        version: string().required("Please specify a version."),
-        general: mixed().when(["standard", "version"], {
-          is: (standard, version) =>
-            standard === ADOBE.value && version === "1.0",
+        general: mixed().when(["standard", "adobeVersion"], {
+          is: (standard, adobeVersion) =>
+            standard === ADOBE.value && adobeVersion === "1.0",
           then: object().shape({
             dataElement: mixed().when("radio", {
               is: DATA_ELEMENT_OPTION,
@@ -309,12 +315,16 @@ const validationSchema = object().shape({
             })
           })
         }),
-        value: mixed().when(["standard", "version"], {
-          is: (standard, version) =>
-            standard === ADOBE.value && version !== "1.0",
+        value: mixed().when(["standard", "adobeVersion"], {
+          is: (standard, adobeVersion) =>
+            standard === ADOBE.value && adobeVersion !== "1.0",
           then: string()
             .required()
             .matches(singleDataElementRegex, invalidDataMessage)
+        }),
+        iabVersion: mixed().when(["standard"], {
+          is: IAB_TCF.value,
+          then: string().required("Please specify a version.")
         }),
         iabValue: mixed().when("standard", {
           is: IAB_TCF.value,
@@ -361,20 +371,24 @@ const ConsentObject = ({ formikConsentObject, index }) => {
           componentClassName="u-fieldLong"
         />
       </div>
-      <div className="u-gapTop">
-        <InfoTipLayout tip="The consent standard version for this consent object">
-          <FieldLabel labelFor={`consent.${index}.version`} label="Version" />
-        </InfoTipLayout>
-        <WrappedField
-          data-test-id="versionField"
-          id={`consent.${index}.version`}
-          name={`consent.${index}.version`}
-          component={Textfield}
-          componentClassName="u-fieldLong"
-        />
-      </div>
+
+      {formikConsentObject.standard === ADOBE.value && (
+        <div className="u-gapTop">
+          <InfoTipLayout tip="The consent standard version for this consent object">
+            <FieldLabel labelFor={`consent.${index}.adobeVersion`} label="Version" />
+          </InfoTipLayout>
+          <WrappedField
+            data-test-id="adobeVersionSelect"
+            id={`consent.${index}.adobeVersion`}
+            name={`consent.${index}.adobeVersion`}
+            component={Select}
+            options={[VERSION_1_0, VERSION_2_0]}
+            componentClassName="u-fieldLong"
+          />
+        </div>
+      )}
       {formikConsentObject.standard === ADOBE.value &&
-        formikConsentObject.version === "1.0" && (
+        formikConsentObject.adobeVersion === "1.0" && (
           <OptionsWithDataElement
             label="General Consent"
             infoTip="The general consent level. If provided through a data element, it should resolve to 'in' or 'out'."
@@ -386,7 +400,7 @@ const ConsentObject = ({ formikConsentObject, index }) => {
           />
         )}
       {formikConsentObject.standard === ADOBE.value &&
-        formikConsentObject.version !== "1.0" && (
+        formikConsentObject.adobeVersion !== "1.0" && (
           <Fragment>
             <InfoTipLayout tip="A data element containing the Adobe consent XDM object">
               <FieldLabel labelFor={`consent_${index}_value`} label="Value" />
@@ -403,6 +417,18 @@ const ConsentObject = ({ formikConsentObject, index }) => {
         )}
       {formikConsentObject.standard === IAB_TCF.value && (
         <div>
+          <div className="u-gapTop">
+            <InfoTipLayout tip="The consent standard version for this consent object">
+              <FieldLabel labelFor={`consent.${index}.iabVersion`} label="Version" />
+            </InfoTipLayout>
+            <WrappedField
+              data-test-id="iabVersionField"
+              id={`consent.${index}.iabVersion`}
+              name={`consent.${index}.iabVersion`}
+              component={Textfield}
+              componentClassName="u-fieldLong"
+            />
+          </div>
           <div className="u-gapTop">
             <InfoTipLayout tip="The encoded IAB TCF consent value">
               <FieldLabel
