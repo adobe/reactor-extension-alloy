@@ -1,6 +1,21 @@
 import { RequestMock } from "testcafe";
 
 /**
+ * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
+ * @type {RequestMock}
+ */
+const sandboxesUserRegionMissing = RequestMock()
+  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
+  .respond(
+    {
+      error_code: "403027",
+      message: "User region is missing"
+    },
+    403,
+    { "Access-Control-Allow-Origin": "*" }
+  );
+
+/**
  * Mocks an empty response from the platform sandboxes endpoint
  * @type {RequestMock}
  */
@@ -150,6 +165,7 @@ const namespacesError = RequestMock()
 export default {
   sandboxes,
   sandboxesEmpty,
+  sandboxesUserRegionMissing,
   schemasMeta,
   schemasMetaEmpty,
   namespaces,

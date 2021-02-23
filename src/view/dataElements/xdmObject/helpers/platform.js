@@ -10,11 +10,16 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import parseResponseJson from "./parseResponseJson";
+
 const PLATFORM_HOST_PROD = "https://platform.adobe.io";
 const PLATFORM_HOST_STAGING = "https://platform-stage.adobe.io";
 
 const IMS_HOST_PREFIX_PROD = "ims-na1";
 const IMS_HOST_PREFIX_STAGING = "ims-na1-stg1";
+
+const HTTP_STATUS_FORBIDDEN = 403;
+const ADOBEIO_ERROR_CODE_USER_REGION_MISSING = "403027";
 
 export default {
   /**
@@ -49,5 +54,28 @@ export default {
   },
   getDefaultSandboxName: () => {
     return "prod";
+  },
+  /**
+   * NOTE: This requires the response body to have already been parsed
+   * @param response
+   * @return {{body}|*}
+   */
+  checkAccess: response => {
+    return parseResponseJson(response).then(parsedResponse => {
+      if (parsedResponse.json() && parsedResponse.json().error_code) {
+        // HTTP 403 error + error_code "403027" means the user doesn't have platform access
+        if (
+          parsedResponse.status === HTTP_STATUS_FORBIDDEN &&
+          parsedResponse.json().error_code ===
+            ADOBEIO_ERROR_CODE_USER_REGION_MISSING
+        ) {
+          throw new Error(
+            "Your user account is not enabled for AEP access. Please contact your organization administrator."
+          );
+        }
+      }
+
+      return parsedResponse;
+    });
   }
 };

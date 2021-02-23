@@ -108,6 +108,15 @@ test("initializes form fields with individual object attribute values", async ()
   await stringEdit.expectValue("Adobe");
 });
 
+test("ensures non-AEP users get AEP access error", async () => {
+  // temporarily remove sandboxes mock
+  await t.removeRequestHooks(platformMocks.sandboxes);
+  // replace with unauthorized mock
+  await t.addRequestHooks(platformMocks.sandboxesUserRegionMissing);
+  await initializeExtensionView();
+  await spectrum.select("sandboxField").expectNotExists();
+});
+
 test("disables user from selecting a sandbox", async () => {
   // temporarily remove sandboxes mock
   await t.removeRequestHooks(platformMocks.sandboxes);

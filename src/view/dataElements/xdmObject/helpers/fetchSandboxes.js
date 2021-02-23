@@ -36,9 +36,10 @@ export default ({ orgId, imsAccess }) => {
       headers: baseRequestHeaders
     }
   )
+    .then(platform.checkAccess)
     .then(response => {
       if (!response.ok) {
-        throw new Error("Cannot fetch active sandboxes list");
+        throw new Error("Cannot fetch active sandboxes list.");
       }
       return response.json();
     })

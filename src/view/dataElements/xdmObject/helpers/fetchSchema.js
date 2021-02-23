@@ -47,9 +47,10 @@ export default ({ orgId, imsAccess, schemaMeta, sandboxName }) => {
       }
     }
   )
+    .then(platform.checkAccess)
     .then(response => {
       if (!response.ok) {
-        throw new Error("Cannot fetch schema from schema registry");
+        throw new Error("Cannot fetch schema from schema registry.");
       }
       return response.json();
     })
