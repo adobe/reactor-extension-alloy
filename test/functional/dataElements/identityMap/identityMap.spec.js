@@ -15,6 +15,7 @@ import createExtensionViewController from "../../helpers/createExtensionViewCont
 import spectrum from "../../helpers/spectrum";
 import getAdobeIOAccessToken from "../../helpers/getAdobeIOAccessToken";
 import platformMocks from "../xdmObject/helpers/platformMocks";
+import credentials from "../../helpers/adobeIOClientCredentials";
 
 const identityMapViewController = createExtensionViewController(
   "dataElements/identityMap.html"
@@ -23,16 +24,9 @@ const identityMapViewController = createExtensionViewController(
 const initializeExtensionView = async additionalInitInfo => {
   const accessToken = await getAdobeIOAccessToken();
   const initInfo = {
-    extensionSettings: {
-      instances: [
-        {
-          name: "alloy1",
-          edgeConfigId: "74580452-647b-4797-99af-6d0e042435ec"
-        }
-      ]
-    },
+    extensionSettings: {},
     company: {
-      orgId: "334F60F35E1597910A495EC2@AdobeOrg"
+      orgId: credentials.orgId
     },
     tokens: { imsAccess: accessToken },
     ...additionalInitInfo

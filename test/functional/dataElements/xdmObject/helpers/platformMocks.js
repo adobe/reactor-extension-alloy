@@ -61,12 +61,12 @@ const schemasMeta = RequestMock()
     {
       results: [
         {
-          $id: "https://ns.adobe.com/alloyengineering/schemas/foo",
+          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/foo",
           version: "1.0",
           title: "Foo1"
         },
         {
-          $id: "https://ns.adobe.com/alloyengineering/schemas/foo2",
+          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/foo2",
           version: "1.0",
           title: "Foo2"
         }
