@@ -755,24 +755,24 @@ const Configuration = ({
                             {
                               value: consentLevels.IN,
                               label:
-                                "In - Send events even without the user's explicit consent.",
+                                "In - Collect events that occur before the user provides consent preferences.",
                               testId: "In"
                             },
                             {
                               value: consentLevels.OUT,
                               label:
-                                "Out - Drop events that occur before the user provides explicit consent.",
+                                "Out - Drop events that occur before the user provides consent preferences.",
                               testId: "Out"
                             },
                             {
                               value: consentLevels.PENDING,
                               label:
-                                "Pending - Queue events until the user provides consent preferences.",
+                                "Pending - Queue events that occur before the user provides consent preferences.",
                               testId: "Pending"
                             }
                           ]}
                           label="Default Consent"
-                          infoTip="How to handle sending events when the SDK does not have the user's consent preferences. This setting is not persisted to users' profiles. If provided through a data element, it should resolve to 'in', 'out', or 'pending'."
+                          infoTip="How to handle events that occur before the user provides consent preferences. This setting is not persisted to users' profiles. If provided through a data element, it should resolve to 'in', 'out', or 'pending'."
                           id="generalDefaultConsent"
                           data-test-id="defaultConsent"
                           name={`instances.${index}.defaultConsent`}

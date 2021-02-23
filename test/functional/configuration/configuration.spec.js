@@ -119,7 +119,7 @@ const defaultInitInfo = {
   }
 };
 
-test.only("initializes form fields with full settings", async () => {
+test("initializes form fields with full settings", async () => {
   await extensionViewController.init(
     Object.assign({}, defaultInitInfo, {
       settings: {
