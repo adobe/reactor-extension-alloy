@@ -86,7 +86,8 @@ const getInitialValues = ({ initInfo }) => {
     xdm = "",
     type = "",
     mergeId = "",
-    datasetId = ""
+    datasetId = "",
+    documentUnloading = false
   } = initInfo.settings || {};
   const initialPersonalizationData = getInitialDecisionScopesData(
     decisionScopes
@@ -99,6 +100,7 @@ const getInitialValues = ({ initInfo }) => {
     type,
     mergeId,
     datasetId,
+    documentUnloading,
     ...initialPersonalizationData
   };
 };
@@ -120,8 +122,11 @@ const getSettings = ({ values }) => {
   if (values.datasetId) {
     settings.datasetId = values.datasetId;
   }
-
-  // Only add renderDecisions if the value is different than the default (false).
+  // Only add if the value is different than the default (false).
+  if (values.documentUnloading) {
+    settings.documentUnloading = true;
+  }
+  // Only add if the value is different than the default (false).
   if (values.renderDecisions) {
     settings.renderDecisions = true;
   }
@@ -275,6 +280,16 @@ const SendEvent = () => {
                   supportDataElement="replace"
                 />
               </div>
+            </div>
+            <div className="u-gapTop">
+              <InfoTipLayout tip="Ensures the event will reach the server even if the user is navigating away from the current document (page), but any response from the server will be ignored.">
+                <WrappedField
+                  data-test-id="documentUnloadingField"
+                  name="documentUnloading"
+                  component={Checkbox}
+                  label="Document will unload"
+                />
+              </InfoTipLayout>
             </div>
             <div className="u-gapTop">
               <InfoTipLayout tip="Influences whether the SDK should automatically render personalization and pre-hide the content to prevent flicker.">
