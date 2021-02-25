@@ -57,7 +57,7 @@
                   },
                   {
                     "type": "string",
-                    "enum": ["in", "pending"]
+                    "enum": ["in", "out", "pending"]
                   }
                 ]
               },
