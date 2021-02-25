@@ -77,9 +77,9 @@ const mockExtensionSettings = {
 
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
-fixture
-  .only("Set Consent View")
-  .disablePageReloads.page("http://localhost:3000/viewSandbox.html");
+fixture("Set Consent View").disablePageReloads.page(
+  "http://localhost:3000/viewSandbox.html"
+);
 
 test("initializes form fields with settings containing a static consent array", async () => {
   await extensionViewController.init({
