@@ -57,7 +57,7 @@
                   },
                   {
                     "type": "string",
-                    "enum": ["in", "pending"]
+                    "enum": ["in", "out", "pending"]
                   }
                 ]
               },
@@ -219,6 +219,14 @@
                         }
                       },
                       "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "standard": { "type": "string", "enum": ["Adobe"] },
+                        "version": { "type": "string" },
+                        "value": { "type": "string", "pattern": "^%[^%]+%$" }
+                      }
                     },
                     {
                       "type": "object",

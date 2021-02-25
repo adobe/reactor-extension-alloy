@@ -38,9 +38,9 @@ if (clientSecret && privateKeyPath) {
 
   if (privateKey) {
     credentials = {
-      clientId: "4d865632c8004ba1925557eb83cd56f2",
-      technicalAccountId: "22604A385E6697310A495F8F@techacct.adobe.com",
-      orgId: "334F60F35E1597910A495EC2@AdobeOrg",
+      clientId: "0c1c7478c4994c69866b64c8341578ed",
+      technicalAccountId: "52202EB9602F004D0A495F8C@techacct.adobe.com",
+      orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
       clientSecret,
       privateKey,
       metaScopes: ["https://ims-na1.adobelogin.com/s/ent_dataservices_sdk"],

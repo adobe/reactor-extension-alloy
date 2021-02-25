@@ -52,7 +52,7 @@ test("shows empty population amount for context fields", async () => {
 test("shows correct population amount for data element objects", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   const vendorPop = await xdmTree.populationIndicator("vendor");
   await vendorPop.expectEmpty();
   await xdmTree.toggleExpansion("vendor");
@@ -70,7 +70,7 @@ test("shows correct population amount for data element objects", async () => {
 test("shows partial population amount for objects", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   const vendorPop = await xdmTree.populationIndicator("vendor");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
@@ -81,7 +81,7 @@ test("shows partial population amount for objects", async () => {
 test("show correct population amount for arrays", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   const industriesPop = await xdmTree.populationIndicator("industries");
   await industriesPop.expectEmpty();
@@ -154,7 +154,7 @@ test("show correct population amount for arrays", async () => {
   test(`shows correct population amount for ${title}`, async () => {
     await initializeExtensionView();
     await selectSchemaFromSchemasMeta();
-    await xdmTree.toggleExpansion("_alloyengineering");
+    await xdmTree.toggleExpansion("_unifiedjsqeonly");
     await xdmTree.toggleExpansion("vendor");
     await xdmTree.click(field);
     const fieldPop = await xdmTree.populationIndicator(field);
@@ -167,7 +167,7 @@ test("show correct population amount for arrays", async () => {
 test("shows empty population indicator for booleans with No Value selected", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_alloyengineering");
+  await xdmTree.toggleExpansion("_unifiedjsqeonly");
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("isLicensed");
   const isLicensedPop = await xdmTree.populationIndicator("isLicensed");

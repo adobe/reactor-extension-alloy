@@ -36,7 +36,7 @@ const environmentFields = env => {
   };
 };
 
-for (let i = 0; i < 2; i += 1) {
+for (let i = 0; i < 3; i += 1) {
   instances.push({
     nameField: spectrum.textfield("nameField"),
     nameChangeAlert: spectrum.alert("nameChangeAlert"),
@@ -58,6 +58,7 @@ for (let i = 0; i < 2; i += 1) {
     edgeBasePathRestoreButton: spectrum.button("edgeBasePathRestoreButton"),
     defaultConsent: {
       inRadio: spectrum.radio("defaultConsentInRadio"),
+      outRadio: spectrum.radio("defaultConsentOutRadio"),
       pendingRadio: spectrum.radio("defaultConsentPendingRadio"),
       dataElementRadio: spectrum.radio("defaultConsentDataElementRadio"),
       dataElementField: spectrum.textfield("defaultConsentDataElementField")
@@ -147,6 +148,11 @@ test("initializes form fields with full settings", async () => {
             idMigrationEnabled: false,
             thirdPartyCookiesEnabled: false,
             context: []
+          },
+          {
+            name: "alloy3",
+            edgeConfigId: "PR789",
+            defaultConsent: "out"
           }
         ]
       }
@@ -182,6 +188,7 @@ test("initializes form fields with full settings", async () => {
   await instances[0].edgeDomainField.expectValue("testedge.com");
   await instances[0].edgeBasePathField.expectValue("ee-beta");
   await instances[0].defaultConsent.inRadio.expectUnchecked();
+  await instances[0].defaultConsent.outRadio.expectUnchecked();
   await instances[0].defaultConsent.pendingRadio.expectChecked();
   await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
   await instances[0].defaultConsent.dataElementField.expectNotExists();
@@ -218,6 +225,7 @@ test("initializes form fields with full settings", async () => {
   await instances[1].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[1].edgeBasePathField.expectValue(defaultEdgeBasePath);
   await instances[1].defaultConsent.inRadio.expectUnchecked();
+  await instances[1].defaultConsent.outRadio.expectUnchecked();
   await instances[1].defaultConsent.pendingRadio.expectUnchecked();
   await instances[1].defaultConsent.dataElementRadio.expectChecked();
   await instances[1].defaultConsent.dataElementField.expectValue(
@@ -234,6 +242,14 @@ test("initializes form fields with full settings", async () => {
   await instances[1].specificContext.deviceField.expectUnchecked();
   await instances[1].specificContext.environmentField.expectUnchecked();
   await instances[1].specificContext.placeContextField.expectUnchecked();
+
+  await accordion.clickHeader("ALLOY3");
+
+  await instances[2].defaultConsent.inRadio.expectUnchecked();
+  await instances[2].defaultConsent.outRadio.expectChecked();
+  await instances[2].defaultConsent.pendingRadio.expectUnchecked();
+  await instances[2].defaultConsent.dataElementRadio.expectUnchecked();
+  await instances[2].defaultConsent.dataElementField.expectNotExists();
 });
 
 test("initializes form fields with minimal settings", async () => {
@@ -258,6 +274,7 @@ test("initializes form fields with minimal settings", async () => {
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
   await instances[0].defaultConsent.inRadio.expectChecked();
+  await instances[0].defaultConsent.outRadio.expectUnchecked();
   await instances[0].defaultConsent.pendingRadio.expectUnchecked();
   await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
   await instances[0].defaultConsent.dataElementField.expectNotExists();
@@ -293,6 +310,7 @@ test("initializes form fields with no settings", async () => {
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
   await instances[0].defaultConsent.inRadio.expectChecked();
+  await instances[0].defaultConsent.outRadio.expectUnchecked();
   await instances[0].defaultConsent.pendingRadio.expectUnchecked();
   await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
   await instances[0].defaultConsent.dataElementField.expectNotExists();
@@ -339,7 +357,7 @@ test("returns full valid settings", async () => {
   await instances[0].developmentEnvironment.manualField.typeText("PR123:dev1");
   await instances[0].edgeDomainField.typeText("2");
   await instances[0].edgeBasePathField.typeText("-alpha");
-  await instances[0].defaultConsent.pendingRadio.click();
+  await instances[0].defaultConsent.outRadio.click();
   await instances[0].idMigrationEnabled.click();
   await instances[0].thirdPartyCookiesEnabled.click();
   await instances[0].prehidingStyleEditorButton.click();
@@ -361,6 +379,12 @@ test("returns full valid settings", async () => {
   await instances[1].downloadLinkQualifierField.typeText("[]");
   await instances[1].contextGranularity.specificField.click();
 
+  await addInstanceButton.click();
+  await instances[2].nameField.typeText("3");
+  await instances[2].productionEnvironment.manualField.typeText("PR789");
+  await instances[2].orgIdField.typeText("3");
+  await instances[2].defaultConsent.pendingRadio.click();
+
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instances: [
@@ -371,7 +395,7 @@ test("returns full valid settings", async () => {
         developmentEdgeConfigId: "PR123:dev1",
         edgeDomain: `${defaultEdgeDomain}2`,
         edgeBasePath: `${defaultEdgeBasePath}-alpha`,
-        defaultConsent: "pending",
+        defaultConsent: "out",
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
         prehidingStyle:
@@ -390,6 +414,12 @@ test("returns full valid settings", async () => {
           'language=javascript;code=// Modify content.xdm as necessary. There is no need to wrap the code in a function\n// or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";',
         context: ["web", "device", "environment", "placeContext"],
         downloadLinkQualifier: "[]"
+      },
+      {
+        name: "alloy3",
+        edgeConfigId: "PR789",
+        orgId: "ABC123@AdobeOrg3",
+        defaultConsent: "pending"
       }
     ]
   });
@@ -498,6 +528,23 @@ test("shows error for duplicate IMS org ID", async () => {
   await accordion.clickHeader("ALLOY");
   await extensionViewController.expectIsNotValid();
   await instances[1].orgIdField.expectError();
+});
+
+test("shows error for bad default consent data element", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].defaultConsent.dataElementRadio.click();
+  await instances[0].defaultConsent.dataElementField.typeText(
+    "notadataelement"
+  );
+  await extensionViewController.expectIsNotValid();
+  await instances[0].defaultConsent.dataElementField.expectError();
+});
+
+test("shows error for empty default consent data element", async () => {
+  await extensionViewController.init(defaultInitInfo);
+  await instances[0].defaultConsent.dataElementRadio.click();
+  await extensionViewController.expectIsNotValid();
+  await instances[0].defaultConsent.dataElementField.expectError();
 });
 
 test("shows error for invalid download link qualifier", async () => {

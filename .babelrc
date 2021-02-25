@@ -1,6 +1,5 @@
 {
   "plugins": [
-    "@babel/plugin-proposal-class-properties",
     "version"
   ],
   "presets": [["@babel/preset-env"]],

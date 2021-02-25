@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import { t } from "testcafe";
 import getAdobeIOAccessToken from "../../../helpers/getAdobeIOAccessToken";
 import createExtensionViewController from "../../../helpers/createExtensionViewController";
+import adobeIOClientCredentials from "../../../helpers/adobeIOClientCredentials";
 
 export default async additionalInitInfo => {
   const extensionViewController = createExtensionViewController(
@@ -43,15 +44,9 @@ export default async additionalInitInfo => {
 
   const accessToken = await getAdobeIOAccessToken();
   const initInfo = {
-    extensionSettings: {
-      instances: [
-        {
-          edgeConfigId: "74580452-647b-4797-99af-6d0e042435ec"
-        }
-      ]
-    },
+    extensionSettings: {},
     company: {
-      orgId: "334F60F35E1597910A495EC2@AdobeOrg"
+      orgId: adobeIOClientCredentials.orgId
     },
     tokens: { imsAccess: accessToken },
     ...additionalInitInfo

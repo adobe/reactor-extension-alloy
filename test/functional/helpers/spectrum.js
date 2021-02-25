@@ -173,9 +173,9 @@ const componentWrappers = {
       expectNoError: createExpectNoError(selector),
       expectValue: createExpectValue(selector),
       expectMatch: createExpectMatch(selector),
-      async typeText(text) {
+      async typeText(text, options) {
         await switchToIframe();
-        await t.typeText(selector, text);
+        await t.typeText(selector, text, options);
       },
       async clear() {
         await switchToIframe();
