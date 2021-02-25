@@ -375,7 +375,10 @@ const ConsentObject = ({ formikConsentObject, index }) => {
       {formikConsentObject.standard === ADOBE.value && (
         <div className="u-gapTop">
           <InfoTipLayout tip="The consent standard version for this consent object">
-            <FieldLabel labelFor={`consent.${index}.adobeVersion`} label="Version" />
+            <FieldLabel
+              labelFor={`consent.${index}.adobeVersion`}
+              label="Version"
+            />
           </InfoTipLayout>
           <WrappedField
             data-test-id="adobeVersionSelect"
@@ -419,7 +422,10 @@ const ConsentObject = ({ formikConsentObject, index }) => {
         <div>
           <div className="u-gapTop">
             <InfoTipLayout tip="The consent standard version for this consent object">
-              <FieldLabel labelFor={`consent.${index}.iabVersion`} label="Version" />
+              <FieldLabel
+                labelFor={`consent.${index}.iabVersion`}
+                label="Version"
+              />
             </InfoTipLayout>
             <WrappedField
               data-test-id="iabVersionField"
