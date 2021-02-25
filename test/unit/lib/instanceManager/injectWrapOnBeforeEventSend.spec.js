@@ -12,12 +12,10 @@ governing permissions and limitations under the License.
 import injectWrapOnBeforeEventSend from "../../../../src/lib/instanceManager/injectWrapOnBeforeEventSend";
 
 describe("injectWrapOnBeforeEventSend", () => {
-  let turbine;
   let xdm;
   let data;
   let wrapOnBeforeEventSend;
   beforeEach(() => {
-    turbine = { logger: { error: jasmine.createSpy() } };
     xdm = {
       implementationDetails: {
         name: "myname",
@@ -29,14 +27,13 @@ describe("injectWrapOnBeforeEventSend", () => {
       b: "2"
     };
     wrapOnBeforeEventSend = injectWrapOnBeforeEventSend({
-      turbine,
       version: "reactorversion"
     });
   });
 
   it("works with no callback", () => {
     const subject = wrapOnBeforeEventSend(undefined);
-    subject({ xdm, data });
+    expect(subject({ xdm, data })).toBe(undefined);
     expect(xdm).toEqual({
       implementationDetails: {
         name: "myname/reactor",
@@ -47,7 +44,6 @@ describe("injectWrapOnBeforeEventSend", () => {
     expect(data).toEqual({
       b: "2"
     });
-    expect(turbine.logger.error).not.toHaveBeenCalled();
   });
 
   it("works with a callback", () => {
@@ -55,9 +51,10 @@ describe("injectWrapOnBeforeEventSend", () => {
       content.xdm.c = "3";
       delete content.xdm.a;
       content.data.d = "4";
+      return false;
     };
     const subject = wrapOnBeforeEventSend(onBeforeEventSend);
-    subject({ xdm, data });
+    expect(subject({ xdm, data })).toBe(false);
     expect(xdm).toEqual({
       implementationDetails: {
         name: "myname/reactor",
@@ -69,28 +66,28 @@ describe("injectWrapOnBeforeEventSend", () => {
       b: "2",
       d: "4"
     });
-    expect(turbine.logger.error).not.toHaveBeenCalled();
   });
 
   it("works when the callback throws an exception", () => {
+    const myerror = new Error("myerror");
     const onBeforeEventSend = content => {
       content.xdm.c = "3";
       delete content.xdm.a;
       content.data.d = "4";
-      throw Error("myerror");
+      throw myerror;
     };
     const subject = wrapOnBeforeEventSend(onBeforeEventSend);
-    subject({ xdm, data });
+    expect(() => subject({ xdm, data })).toThrow(myerror);
     expect(xdm).toEqual({
       implementationDetails: {
         name: "myname/reactor",
         version: "myversion+reactorversion"
       },
-      a: "1"
+      c: "3"
     });
     expect(data).toEqual({
-      b: "2"
+      b: "2",
+      d: "4"
     });
-    expect(turbine.logger.error).toHaveBeenCalled();
   });
 });
