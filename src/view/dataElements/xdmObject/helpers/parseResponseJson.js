@@ -7,15 +7,13 @@
  * @return {object}          The parsed JSON, status from the response
  */
 export default response => {
-  return new Promise(resolve => {
-    response.json().then(body =>
-      resolve({
-        status: response.status,
-        ok: response.ok,
-        json: () => {
-          return body;
-        }
-      })
-    );
+  return response.json().then(body => {
+    return {
+      status: response.status,
+      ok: response.ok,
+      json() {
+        return body;
+      }
+    };
   });
 };

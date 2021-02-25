@@ -18,8 +18,11 @@ const PLATFORM_HOST_STAGING = "https://platform-stage.adobe.io";
 const IMS_HOST_PREFIX_PROD = "ims-na1";
 const IMS_HOST_PREFIX_STAGING = "ims-na1-stg1";
 
+const HTTP_STATUS_UNAUTHORIZED = 401;
 const HTTP_STATUS_FORBIDDEN = 403;
-const ADOBEIO_ERROR_CODE_USER_REGION_MISSING = "403027";
+
+const ERROR_CODE_OAUTH_TOKEN_NOT_VALID = "401013";
+const ERROR_CODE_USER_REGION_MISSING = "403027";
 
 export default {
   /**
@@ -63,11 +66,17 @@ export default {
   checkAccess: response => {
     return parseResponseJson(response).then(parsedResponse => {
       if (parsedResponse.json() && parsedResponse.json().error_code) {
+        // HTTP 401 error + error_code "401013" means the user token is invalid
+        if (
+          parsedResponse.status === HTTP_STATUS_UNAUTHORIZED &&
+          parsedResponse.json().error_code === ERROR_CODE_OAUTH_TOKEN_NOT_VALID
+        ) {
+          throw new Error("Your access token appears to be invalid.");
+        }
         // HTTP 403 error + error_code "403027" means the user doesn't have platform access
         if (
           parsedResponse.status === HTTP_STATUS_FORBIDDEN &&
-          parsedResponse.json().error_code ===
-            ADOBEIO_ERROR_CODE_USER_REGION_MISSING
+          parsedResponse.json().error_code === ERROR_CODE_USER_REGION_MISSING
         ) {
           throw new Error(
             "Your user account is not enabled for AEP access. Please contact your organization administrator."

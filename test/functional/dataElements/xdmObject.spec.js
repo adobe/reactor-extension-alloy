@@ -105,11 +105,20 @@ test("initializes form fields with individual object attribute values", async ()
   await stringEdit.expectValue("Adobe");
 });
 
+test.only("ensures invalid token error", async () => {
+  // temporarily remove sandboxes mock
+  await t.removeRequestHooks(platformMocks.sandboxes);
+  // replace with unauthorized mock
+  await t.addRequestHooks(platformMocks.unauthorized);
+  await initializeExtensionView();
+  await genericAlert.expectTitle("Your access token appears to be invalid.");
+});
+
 test("ensures non-AEP users get AEP access error", async () => {
   // temporarily remove sandboxes mock
   await t.removeRequestHooks(platformMocks.sandboxes);
   // replace with unauthorized mock
-  await t.addRequestHooks(platformMocks.sandboxesUserRegionMissing);
+  await t.addRequestHooks(platformMocks.userRegionMissing);
   await initializeExtensionView();
   await genericAlert.expectTitle(
     "Your user account is not enabled for AEP access. Please contact your organization administrator."

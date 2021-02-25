@@ -4,7 +4,21 @@ import { RequestMock } from "testcafe";
  * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
  * @type {RequestMock}
  */
-const sandboxesUserRegionMissing = RequestMock()
+const unauthorized = RequestMock()
+  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
+  .respond(
+    {
+      error_code: "401013",
+      message: "Oauth token is not valid"
+    },
+    401
+  );
+
+/**
+ * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
+ * @type {RequestMock}
+ */
+const userRegionMissing = RequestMock()
   .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
   .respond(
     {
@@ -165,7 +179,8 @@ const namespacesError = RequestMock()
 export default {
   sandboxes,
   sandboxesEmpty,
-  sandboxesUserRegionMissing,
+  unauthorized,
+  userRegionMissing,
   schemasMeta,
   schemasMetaEmpty,
   namespaces,
