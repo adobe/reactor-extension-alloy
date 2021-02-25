@@ -10,28 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const clone = require("../utils/clone");
-
-const copyTo = (target, source) => {
-  Object.keys(target).forEach(key => {
-    delete target[key];
-  });
-  Object.keys(source).forEach(key => {
-    target[key] = source[key];
-  });
-};
-
-module.exports = ({ version, turbine }) => onBeforeEventSend => content => {
-  content.xdm.implementationDetails.name = `${content.xdm.implementationDetails.name}/reactor`;
-  content.xdm.implementationDetails.version = `${content.xdm.implementationDetails.version}+${version}`;
+module.exports = ({ version }) => onBeforeEventSend => content => {
+  content.xdm.implementationDetails.name = `${
+    content.xdm.implementationDetails.name
+  }/reactor`;
+  content.xdm.implementationDetails.version = `${
+    content.xdm.implementationDetails.version
+  }+${version}`;
   if (onBeforeEventSend) {
-    const contentClone = clone(content);
-    try {
-      onBeforeEventSend(contentClone);
-      copyTo(content.xdm, contentClone.xdm);
-      copyTo(content.data, contentClone.data);
-    } catch (e) {
-      turbine.logger.error(e);
-    }
+    return onBeforeEventSend(content);
   }
+  return undefined;
 };

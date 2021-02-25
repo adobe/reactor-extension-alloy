@@ -105,7 +105,7 @@ module.exports = (options = {}) => {
     .then(() => fsPromises.copyFile(browserslistrcFile, browserslistrcTempFile))
     .then(() => run("rollup", ["-c"]))
     .then(() => run("babel", [alloyTempFile, "--out-dir", libOutDir]))
-    .then(() => toPromise(callback => rimraf(tempDir, callback)));
+    .finally(() => toPromise(callback => rimraf(tempDir, callback)));
 
   return Promise.all([babelPromise, parcelPromise, alloyPromise]);
 };

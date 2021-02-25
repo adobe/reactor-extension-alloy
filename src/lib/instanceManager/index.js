@@ -20,7 +20,7 @@ const injectWrapOnBeforeEventSend = require("./injectWrapOnBeforeEventSend");
 
 const version = "__VERSION__";
 
-const wrapOnBeforeEventSend = injectWrapOnBeforeEventSend({ turbine, version });
+const wrapOnBeforeEventSend = injectWrapOnBeforeEventSend({ version });
 
 module.exports = createInstanceManager({
   turbine,
