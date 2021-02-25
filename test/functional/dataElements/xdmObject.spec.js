@@ -35,6 +35,8 @@ const schema = {
   version: "1.2"
 };
 
+const genericAlert = spectrum.alert(".spectrum-Alert-header");
+
 const schemaTitle = "XDM Object Data Element Tests";
 
 const schemaField = spectrum.combobox("schemaField");
@@ -109,7 +111,9 @@ test("ensures non-AEP users get AEP access error", async () => {
   // replace with unauthorized mock
   await t.addRequestHooks(platformMocks.sandboxesUserRegionMissing);
   await initializeExtensionView();
-  await spectrum.select("sandboxField").expectNotExists();
+  await genericAlert.expectTitle(
+    "Your user account is not enabled for AEP access. Please contact your organization administrator."
+  );
 });
 
 test("disables user from selecting a sandbox", async () => {
