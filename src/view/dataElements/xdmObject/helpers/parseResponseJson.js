@@ -7,13 +7,18 @@
  * @return {object}          The parsed JSON, status from the response
  */
 export default response => {
-  return response.json().then(body => {
-    return {
-      status: response.status,
-      ok: response.ok,
-      json() {
-        return body;
-      }
-    };
-  });
+  return response
+    .json()
+    .catch(() => {
+      throw new Error("An unexpected response was received from the server.");
+    })
+    .then(body => {
+      return {
+        status: response.status,
+        ok: response.ok,
+        json() {
+          return body;
+        }
+      };
+    });
 };

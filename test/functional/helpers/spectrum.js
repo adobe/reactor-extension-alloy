@@ -217,7 +217,10 @@ const componentWrappers = {
     return {
       async expectTitle(title) {
         await switchToIframe();
-        await selector.find(".spectrum-Dialog-header").withText(title);
+        const dialogHeaderSelector = selector.find(".spectrum-Dialog-header");
+        await t
+          .expect(dialogHeaderSelector.withText(title).exists)
+          .ok(`Did not find dialog with title ${title}`);
       },
       async clickConfirm() {
         await switchToIframe();
@@ -237,7 +240,17 @@ const componentWrappers = {
     return {
       async expectTitle(title) {
         await switchToIframe();
-        await selector.find(".spectrum-Alert-header").withText(title);
+        const headerSelector = selector.find(".spectrum-Alert-header");
+        await t
+          .expect(headerSelector.withText(title).exists)
+          .ok(`Did not find alert with title: ${title}`);
+      },
+      async expectMessage(message) {
+        await switchToIframe();
+        const contentSelector = selector.find(".spectrum-Alert-content");
+        await t
+          .expect(contentSelector.withText(message).exists)
+          .ok(`Did not find alert with message: ${message}`);
       }
     };
   },
