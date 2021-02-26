@@ -57,11 +57,11 @@ describe("Instance Manager", () => {
     mockWindow = {};
     alloy1 = jasmine.createSpy("alloy1");
     alloy2 = jasmine.createSpy("alloy2");
-    createInstance = jasmine.createSpy().and.callFake(({ instanceName }) => {
-      if (instanceName === "alloy1") {
+    createInstance = jasmine.createSpy().and.callFake(({ name }) => {
+      if (name === "alloy1") {
         return alloy1;
       }
-      if (instanceName === "alloy2") {
+      if (name === "alloy2") {
         return alloy2;
       }
       return undefined;
