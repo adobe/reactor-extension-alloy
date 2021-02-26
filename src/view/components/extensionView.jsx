@@ -115,7 +115,11 @@ const ExtensionView = ({
   if (initializationError) {
     return (
       <FillParentAndCenterChildren>
-        <Alert header="Initialization Error" variant="error">
+        <Alert
+          data-test-id="initializationErrorAlert"
+          header="Initialization Error"
+          variant="error"
+        >
           An error occurred during initialization: {initializationError.message}
         </Alert>
       </FillParentAndCenterChildren>

@@ -35,6 +35,8 @@ const schema = {
   version: "1.2"
 };
 
+const initializationErrorAlert = spectrum.alert("initializationErrorAlert");
+
 const schemaTitle = "XDM Object Data Element Tests";
 
 const schemaField = spectrum.combobox("schemaField");
@@ -101,6 +103,40 @@ test("initializes form fields with individual object attribute values", async ()
   await xdmTree.toggleExpansion("vendor");
   await xdmTree.click("name");
   await stringEdit.expectValue("Adobe");
+});
+
+test("ensures invalid token error", async () => {
+  // temporarily remove sandboxes mock
+  await t.removeRequestHooks(platformMocks.sandboxes);
+  // replace with unauthorized mock
+  await t.addRequestHooks(platformMocks.unauthorized);
+  await initializeExtensionView();
+  await initializationErrorAlert.expectMessage(
+    /Your access token appears to be invalid\./
+  );
+});
+
+test("ensures non-AEP users get AEP access error", async () => {
+  // temporarily remove sandboxes mock
+  await t.removeRequestHooks(platformMocks.sandboxes);
+  // replace with unauthorized mock
+  await t.addRequestHooks(platformMocks.userRegionMissing);
+  await initializeExtensionView();
+  await initializationErrorAlert.expectMessage(
+    /Your user account is not enabled for AEP access\. Please contact your organization administrator\./
+  );
+});
+
+// We're not sure if this will ever occur, but we're covering it just in case
+test("ensures non-JSON response body shows a reasonable error", async () => {
+  // temporarily remove sandboxes mock
+  await t.removeRequestHooks(platformMocks.sandboxes);
+  // replace with unauthorized mock
+  await t.addRequestHooks(platformMocks.nonJsonBody);
+  await initializeExtensionView();
+  await initializationErrorAlert.expectMessage(
+    /An unexpected response was received from the server\./
+  );
 });
 
 test("disables user from selecting a sandbox", async () => {

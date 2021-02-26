@@ -1,5 +1,45 @@
 import { RequestMock } from "testcafe";
 
+const responseHeaders = { "Access-Control-Allow-Origin": "*" };
+
+/**
+ * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
+ * @type {RequestMock}
+ */
+const unauthorized = RequestMock()
+  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
+  .respond(
+    {
+      error_code: "401013",
+      message: "Oauth token is not valid"
+    },
+    401,
+    responseHeaders
+  );
+
+/**
+ * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
+ * @type {RequestMock}
+ */
+const userRegionMissing = RequestMock()
+  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
+  .respond(
+    {
+      error_code: "403027",
+      message: "User region is missing"
+    },
+    403,
+    responseHeaders
+  );
+
+/**
+ * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
+ * @type {RequestMock}
+ */
+const nonJsonBody = RequestMock()
+  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
+  .respond("non-json body", 401, responseHeaders);
+
 /**
  * Mocks an empty response from the platform sandboxes endpoint
  * @type {RequestMock}
@@ -11,7 +51,7 @@ const sandboxesEmpty = RequestMock()
       sandboxes: []
     },
     200,
-    { "Access-Control-Allow-Origin": "*" }
+    responseHeaders
   );
 
 /**
@@ -42,7 +82,7 @@ const sandboxes = RequestMock()
       ]
     },
     200,
-    { "Access-Control-Allow-Origin": "*" }
+    responseHeaders
   );
 
 /**
@@ -73,7 +113,7 @@ const schemasMeta = RequestMock()
       ]
     },
     200,
-    { "Access-Control-Allow-Origin": "*" }
+    responseHeaders
   );
 
 /**
@@ -93,7 +133,7 @@ const schemasMetaEmpty = RequestMock()
       results: []
     },
     200,
-    { "Access-Control-Allow-Origin": "*" }
+    responseHeaders
   );
 
 const namespaces = RequestMock()
@@ -136,20 +176,23 @@ const namespaces = RequestMock()
       }
     ],
     200,
-    { "Access-Control-Allow-Origin": "*" }
+    responseHeaders
   );
 
 const namespacesEmpty = RequestMock()
   .onRequestTo("https://platform.adobe.io/data/core/idnamespace/identities")
-  .respond([], 200, { "Access-Control-Allow-Origin": "*" });
+  .respond([], 200, responseHeaders);
 
 const namespacesError = RequestMock()
   .onRequestTo("https://platform.adobe.io/data/core/idnamespace/identities")
-  .respond({}, 403, { "Access-Control-Allow-Origin": "*" });
+  .respond({}, 403, responseHeaders);
 
 export default {
   sandboxes,
   sandboxesEmpty,
+  unauthorized,
+  userRegionMissing,
+  nonJsonBody,
   schemasMeta,
   schemasMetaEmpty,
   namespaces,

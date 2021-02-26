@@ -49,6 +49,7 @@ export default ({ orgId, imsAccess, sandboxName, search }) => {
     })}${path}?${params.toString()}`,
     { headers }
   )
+    .then(platform.checkAccess)
     .then(response => {
       if (!response.ok) {
         throw new Error("Cannot fetch schemas from schema registry");

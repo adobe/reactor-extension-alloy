@@ -22,6 +22,7 @@ export default ({ orgId, imsAccess }) => {
       headers
     }
   )
+    .then(platform.checkAccess)
     .then(response => {
       if (!response.ok) {
         return [];
