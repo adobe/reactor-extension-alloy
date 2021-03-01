@@ -30,7 +30,7 @@ module.exports = ({
       onBeforeEventSend,
       ...options
     }) => {
-      const instance = createInstance({ name: name });
+      const instance = createInstance({ name });
       window[name] = instance;
       instanceByName[name] = instance;
 
