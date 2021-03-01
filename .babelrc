@@ -1,8 +1,6 @@
 {
   "plugins": [
-    ["version", {
-      "define": "__EXTENSION_VERSION__"
-    }]
+    "version"
   ],
   "presets": [["@babel/preset-env"]],
   "env": {

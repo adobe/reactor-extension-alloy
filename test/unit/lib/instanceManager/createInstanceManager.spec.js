@@ -9,21 +9,27 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
 
 describe("Instance Manager", () => {
-  let turbine;
-  let runAlloy;
   let instanceManager;
+  let turbine;
   let mockWindow;
+  let createInstance;
+  let createEventMergeId;
+  let wrapOnBeforeEventSend;
+  let onBeforeEventSend;
+  let alloy1;
+  let alloy2;
 
   const build = () => {
     instanceManager = createInstanceManager({
       turbine,
       window: mockWindow,
-      runAlloy,
-      orgId: "ABC@AdobeOrg"
+      createInstance,
+      orgId: "ABC@AdobeOrg",
+      createEventMergeId,
+      wrapOnBeforeEventSend
     });
   };
 
@@ -49,56 +55,52 @@ describe("Instance Manager", () => {
     });
     turbine.debugEnabled = false;
     mockWindow = {};
-    runAlloy = jasmine.createSpy().and.callFake(names => {
-      names.forEach(name => {
-        mockWindow[name] = jasmine
-          .createSpy()
-          .and.callFake((commandName, options) => {
-            if (commandName === "configure") {
-              options.reactorRegisterCreateEventMergeId(
-                () => `randomEventMergeId`
-              );
-            }
-          });
-      });
+    alloy1 = jasmine.createSpy("alloy1");
+    alloy2 = jasmine.createSpy("alloy2");
+    createInstance = jasmine.createSpy().and.callFake(({ name }) => {
+      if (name === "alloy1") {
+        return alloy1;
+      }
+      if (name === "alloy2") {
+        return alloy2;
+      }
+      return undefined;
     });
+    onBeforeEventSend = jasmine.createSpy();
+    wrapOnBeforeEventSend = jasmine
+      .createSpy()
+      .and.returnValue(onBeforeEventSend);
   });
 
-  it("runs alloy", () => {
+  it("creates SDK instances", () => {
     build();
-    expect(runAlloy).toHaveBeenCalledWith(["alloy1", "alloy2"]);
-  });
-
-  it("creates an SDK instance for each configured instance", () => {
-    build();
-    expect(mockWindow.alloy1).toEqual(jasmine.any(Function));
-    expect(mockWindow.alloy2).toEqual(jasmine.any(Function));
+    expect(mockWindow).toEqual({ alloy1, alloy2 });
   });
 
   it("configures an SDK instance for each configured instance", () => {
     build();
-    expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
+    expect(alloy1).toHaveBeenCalledWith("configure", {
       edgeConfigId: "PR123",
       debugEnabled: false,
       orgId: "ABC@AdobeOrg",
-      reactorRegisterCreateEventMergeId: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function)
     });
-    expect(mockWindow.alloy2).toHaveBeenCalledWith("configure", {
+    expect(alloy2).toHaveBeenCalledWith("configure", {
       edgeConfigId: "PR456",
       debugEnabled: false,
       orgId: "DIFFERENTORG@AdobeOrg",
-      reactorRegisterCreateEventMergeId: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function)
     });
   });
 
   it("configures SDK instance with debugging enabled if Launch debugging is enabled", () => {
     turbine.debugEnabled = true;
     build();
-    expect(mockWindow.alloy1).toHaveBeenCalledWith("configure", {
+    expect(alloy1).toHaveBeenCalledWith("configure", {
       edgeConfigId: "PR123",
       debugEnabled: true,
       orgId: "ABC@AdobeOrg",
-      reactorRegisterCreateEventMergeId: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function)
     });
   });
 
@@ -109,11 +111,11 @@ describe("Instance Manager", () => {
     });
     build();
     onDebugChangedCallbacks.forEach(callback => callback(true));
-    expect(mockWindow.alloy1).toHaveBeenCalledWith("setDebug", {
+    expect(alloy1).toHaveBeenCalledWith("setDebug", {
       enabled: true
     });
     onDebugChangedCallbacks.forEach(callback => callback(false));
-    expect(mockWindow.alloy1).toHaveBeenCalledWith("setDebug", {
+    expect(alloy1).toHaveBeenCalledWith("setDebug", {
       enabled: false
     });
   });
@@ -121,10 +123,13 @@ describe("Instance Manager", () => {
   it("returns instance by name", () => {
     build();
     const instance = instanceManager.getInstance("alloy2");
-    expect(instance).toBe(mockWindow.alloy2);
+    expect(instance).toBe(alloy2);
   });
 
   it("creates an event merge ID", () => {
+    createEventMergeId = jasmine
+      .createSpy()
+      .and.returnValue("randomEventMergeId");
     build();
     const eventMergeId = instanceManager.createEventMergeId();
     expect(eventMergeId).toBe("randomEventMergeId");
@@ -133,18 +138,22 @@ describe("Instance Manager", () => {
   it("handles a staging environment", () => {
     turbine.buildInfo.environment = "staging";
     build();
-    expect(mockWindow.alloy1.calls.argsFor(0)[1].edgeConfigId).toEqual(
-      "PR123:stage"
-    );
-    expect(mockWindow.alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
+    expect(alloy1.calls.argsFor(0)[1].edgeConfigId).toEqual("PR123:stage");
+    expect(alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
   });
 
   it("handles a development environment", () => {
     turbine.buildInfo.environment = "development";
     build();
-    expect(mockWindow.alloy1.calls.argsFor(0)[1].edgeConfigId).toEqual(
-      "PR123:dev"
-    );
-    expect(mockWindow.alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
+    expect(alloy1.calls.argsFor(0)[1].edgeConfigId).toEqual("PR123:dev");
+    expect(alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
+  });
+
+  it("wraps onBeforeEventSend", () => {
+    build();
+    const {
+      onBeforeEventSend: configuredOnBeforeEventSend
+    } = alloy1.calls.argsFor(0)[1];
+    expect(configuredOnBeforeEventSend).toBe(onBeforeEventSend);
   });
 });
