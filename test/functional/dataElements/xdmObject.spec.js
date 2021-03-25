@@ -315,24 +315,6 @@ test("initializes form fields with whole array value", async () => {
   await arrayEdit.expectValue("%industries%");
 });
 
-test("arrays with no values are invalid", async () => {
-  await initializeExtensionView();
-  await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_unifiedjsqeonly");
-  await xdmTree.toggleExpansion("vendor");
-  await xdmTree.click("industries");
-  await arrayEdit.selectPartsPopulationStrategy();
-  await arrayEdit.addItem();
-  await arrayEdit.addItem();
-  await arrayEdit.clickItem(0);
-  await arrayEdit.enterValue("%item1%");
-  await xdmTree.toggleExpansion("industries");
-
-  await extensionViewController.expectIsNotValid();
-  await xdmTree.expectIsValid("Item 1");
-  await xdmTree.expectIsNotValid("Item 2");
-});
-
 test("arrays using whole population strategy do not have children", async () => {
   await initializeExtensionView();
   await selectSchemaFromSchemasMeta();

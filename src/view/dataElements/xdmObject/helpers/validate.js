@@ -10,63 +10,37 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import once from "once";
 import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 
 /**
  * Validates the user's XDM input.
  * @param {FormStateNode} formStateNode
  * @param {boolean} isParentAnArray Whether the parent node is an array type.
- * @param {Function} notifyParentOfDataPopulation A function that should be called if
+ * @param {Function} confirmDataPopulatedAtCurrentOrDescendantNode A function that should be called if
  * the current node or a descendant has been populated with a value.
  * @returns {Object} An errors object in the same structure as the formStateNode,
  * but where values within the object are any error messages that should be displayed.
  */
 const validate = ({
   formStateNode,
-  isParentAnArray = false,
-  notifyParentOfDataPopulation = () => {}
+  confirmDataPopulatedAtCurrentOrDescendantNode = () => {}
 }) => {
-  const { schema, isAutoPopulated } = formStateNode;
-
-  let isPopulatedAtCurrentOrDescendantNode = false;
-
-  const confirmDataPopulatedAtCurrentOrDescendantNode = () => {
-    if (!isPopulatedAtCurrentOrDescendantNode) {
-      notifyParentOfDataPopulation();
-      isPopulatedAtCurrentOrDescendantNode = true;
-    }
-  };
+  const { schema } = formStateNode;
 
   const errors = getTypeSpecificHelpers(schema.type).validate({
     formStateNode,
-    confirmDataPopulatedAtCurrentOrDescendantNode,
+    // By using "once", we ensure that the parent is notified that
+    // data is populated at the current or descendant node at most
+    // a single time. This is primarily for optimization but it's
+    // also easier to reason about from the parent node's perspective.
+    confirmDataPopulatedAtCurrentOrDescendantNode: once(
+      confirmDataPopulatedAtCurrentOrDescendantNode
+    ),
     validate
   });
 
-  if (errors) {
-    return errors;
-  }
-
-  if (
-    isParentAnArray &&
-    !isAutoPopulated &&
-    !isPopulatedAtCurrentOrDescendantNode
-  ) {
-    return {
-      value:
-        "Items within arrays must not be empty. Please populate or remove the item."
-    };
-  }
-
-  if (
-    schema.isRequired &&
-    !isAutoPopulated &&
-    !isPopulatedAtCurrentOrDescendantNode
-  ) {
-    return { value: "This is a required field and must be populated." };
-  }
-
-  return undefined;
+  return errors;
 };
 
 // Avoid exposing all of validate's parameters since
