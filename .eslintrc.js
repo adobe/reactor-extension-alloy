@@ -10,8 +10,18 @@ module.exports = {
     node: true,
     jasmine: true
   },
-  plugins: ["prettier", "testcafe"],
+  plugins: ["ban", "prettier", "testcafe"],
   rules: {
+    "ban/ban": [
+      "error",
+      { name: ["describe", "only"], message: "don't focus tests" },
+      { name: "fdescribe", message: "don't focus tests" },
+      { name: ["it", "only"], message: "don't focus tests" },
+      { name: "fit", message: "don't focus tests" },
+      { name: ["fixture", "only"], message: "don't focus tests" },
+      { name: ["test", "only"], message: "don't focus tests" },
+      { name: "ftest", message: "don't focus tests" }
+    ],
     "no-param-reassign": "off",
     "prettier/prettier": "error",
     "react/require-default-props": "off",
