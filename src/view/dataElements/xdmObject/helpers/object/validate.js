@@ -35,25 +35,23 @@ export default ({
 
   if (properties) {
     const namesOfPopulatedProperties = new Set();
+    const propertyErrors = {};
     const propertyNames = Object.keys(properties);
-    let propertyErrors = propertyNames.reduce(
-      (propertyErrorsMemo, propertyName) => {
-        const propertyFormStateNode = properties[propertyName];
-        const error = validate({
-          formStateNode: propertyFormStateNode,
-          confirmDataPopulatedAtCurrentOrDescendantNode() {
-            namesOfPopulatedProperties.add(propertyName);
-            confirmDataPopulatedAtCurrentOrDescendantNode();
-          }
-        });
 
-        if (error) {
-          propertyErrorsMemo[propertyName] = error;
+    propertyNames.forEach(propertyName => {
+      const propertyFormStateNode = properties[propertyName];
+      const error = validate({
+        formStateNode: propertyFormStateNode,
+        confirmDataPopulatedAtCurrentOrDescendantNode() {
+          namesOfPopulatedProperties.add(propertyName);
+          confirmDataPopulatedAtCurrentOrDescendantNode();
         }
-        return propertyErrorsMemo;
-      },
-      {}
-    );
+      });
+
+      if (error) {
+        propertyErrors[propertyName] = error;
+      }
+    });
 
     // Properties marked required are only actually required if the property's owning
     // object exists in the XDM payload. The owning object will only be included in
@@ -66,29 +64,25 @@ export default ({
     // stating that the property is required.
     // https://jira.corp.adobe.com/browse/PDCL-4413
     if (namesOfPopulatedProperties.size) {
-      propertyErrors = propertyNames.reduce(
-        (propertyErrorsMemo, propertyName) => {
+      propertyNames.forEach(propertyName => {
+        if (
+          // If the property is already populated, it won't qualify for an error.
+          !namesOfPopulatedProperties.has(propertyName) &&
+          // If the property already has some other type of error, we won't
+          // override it with a "required" error.
+          !propertyErrors[propertyName]
+        ) {
+          const propertyFormStateNode = properties[propertyName];
           if (
-            // If the property is already populated, it won't qualify for an error.
-            !namesOfPopulatedProperties.has(propertyName) &&
-            // If the property already has some other type of error, we won't
-            // override it with a "required" error.
-            !propertyErrorsMemo[propertyName]
+            propertyFormStateNode.schema.isRequired &&
+            propertyFormStateNode.autoPopulationSource === NONE
           ) {
-            const propertyFormStateNode = properties[propertyName];
-            if (
-              propertyFormStateNode.schema.isRequired &&
-              propertyFormStateNode.autoPopulationSource === NONE
-            ) {
-              propertyErrorsMemo[propertyName] = {
-                value: "This is a required field and must be populated."
-              };
-            }
+            propertyErrors[propertyName] = {
+              value: "This is a required field and must be populated."
+            };
           }
-          return propertyErrorsMemo;
-        },
-        propertyErrors
-      );
+        }
+      });
     }
 
     if (Object.keys(propertyErrors).length) {
