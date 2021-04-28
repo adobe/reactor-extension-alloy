@@ -32,13 +32,12 @@ import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
  * Generates an object representing a node on the XDM tree. The node
  * may contain child nodes.
  * @param {FormStateNode} formStateNode A node from the form state.
+ * @param {Function} treeNodeComponent A React component that renders a node
+ * on the XDM tree.
  * @param {string} [displayName] A user-friendly display name for the node.
  * @param {boolean} [isAncestorUsingWholePopulationStrategy=false] Whether any ancestor
  * node is using the WHOLE population strategy. If this is true, this node will
  * be disabled.
- * @param {Function} [notifyParentOfDataPopulation] When called, notifies the
- * parent node that this node or a descendant of this node has been populated
- * with a value by the user.
  * @param {Function} [notifyParentOfTouched] When called, notifies the parent
  * node that the "whole value" field of this node or a descendant node has
  * been touched by the user. This helps determine if validation errors should

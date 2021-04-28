@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import { WHOLE } from "../../constants/populationStrategy";
 import isFormStateValuePopulated from "../isFormStateValuePopulated";
 import singleDataElementRegex from "../../../../constants/singleDataElementRegex";
+import { NONE } from "../../constants/autoPopulationSource";
 
 export default ({
   formStateNode,
@@ -33,20 +34,56 @@ export default ({
   }
 
   if (properties) {
+    const namesOfPopulatedProperties = new Set();
+    const propertyErrors = {};
     const propertyNames = Object.keys(properties);
-    const propertyErrors = propertyNames.reduce((memo, propertyName) => {
+
+    propertyNames.forEach(propertyName => {
       const propertyFormStateNode = properties[propertyName];
       const error = validate({
         formStateNode: propertyFormStateNode,
-        isParentAnArray: false,
-        notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode
+        confirmDataPopulatedAtCurrentOrDescendantNode() {
+          namesOfPopulatedProperties.add(propertyName);
+          confirmDataPopulatedAtCurrentOrDescendantNode();
+        }
       });
 
       if (error) {
-        memo[propertyName] = error;
+        propertyErrors[propertyName] = error;
       }
-      return memo;
-    }, {});
+    });
+
+    // Properties marked required are only actually required if the property's owning
+    // object exists in the XDM payload. The owning object will only be included in
+    // in the XDM payload if the object has at least one property with a populated value.
+    // At this point in the code, we know the names of the object properties that
+    // have a populated value. If at least one property has a populated value,
+    // we know the owning object will exist in the XDM payload, so we need to
+    // find any other properties in the object's schema that are required but
+    // don't yet have values. We'll ensure that these properties are given an error
+    // stating that the property is required.
+    // https://jira.corp.adobe.com/browse/PDCL-4413
+    if (namesOfPopulatedProperties.size) {
+      propertyNames.forEach(propertyName => {
+        if (
+          // If the property is already populated, it won't qualify for an error.
+          !namesOfPopulatedProperties.has(propertyName) &&
+          // If the property already has some other type of error, we won't
+          // override it with a "required" error.
+          !propertyErrors[propertyName]
+        ) {
+          const propertyFormStateNode = properties[propertyName];
+          if (
+            propertyFormStateNode.schema.isRequired &&
+            propertyFormStateNode.autoPopulationSource === NONE
+          ) {
+            propertyErrors[propertyName] = {
+              value: "This is a required field and must be populated."
+            };
+          }
+        }
+      });
+    }
 
     if (Object.keys(propertyErrors).length) {
       return { properties: propertyErrors };

@@ -34,11 +34,21 @@ export default ({
 
   if (items) {
     const itemErrors = items.map(itemFormStateNode => {
-      return validate({
+      let itemIsPopulated = false;
+      let itemError = validate({
         formStateNode: itemFormStateNode,
-        isParentAnArray: true,
-        notifyParentOfDataPopulation: confirmDataPopulatedAtCurrentOrDescendantNode
+        confirmDataPopulatedAtCurrentOrDescendantNode() {
+          itemIsPopulated = true;
+          confirmDataPopulatedAtCurrentOrDescendantNode();
+        }
       });
+      if (!itemIsPopulated && !itemError) {
+        itemError = {
+          value:
+            "Items within arrays must not be empty. Please populate or remove the item."
+        };
+      }
+      return itemError;
     });
     if (itemErrors.filter(error => error).length) {
       return { items: itemErrors };
