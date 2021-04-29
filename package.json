@@ -5,6 +5,7 @@
   "author": "Adobe",
   "license": "Apache-2.0",
   "scripts": {
+    "prepare": "husky install",
     "prepush-msg": "echo 'Running pre-push scripts...' && exit 0",
     "precommit-msg": "echo 'Running pre-commit scripts...' && exit 0",
     "postinstall": "patch-package",
@@ -13,8 +14,8 @@
     "build:prod": "NODE_ENV=production npm run build",
     "package": "npm run build:prod && npx @adobe/reactor-packager",
     "dev": "./scripts/dev.js",
-    "lint": "eslint \"*.js\" \"src/**/*.{js,jsx}\" \"test/**/*.{js,jsx}\" \"scripts/**/*.js\" --fix",
-    "format": "prettier --write \"*.{js,jsx}\" \"{src,test}/**/*.{js,jsx}\" \"scripts/**/*.js\"",
+    "lint": "eslint \"*.{js,jsx}\" \"{src,test,scripts}/**/*.{js,jsx}\" --cache --fix",
+    "format": "prettier --write \"*.{js,jsx,html}\" \"{src,test,scripts}/**/*.{js,jsx,html}\"",
     "test:unit": "karma start --single-run",
     "test:unit:coverage": "karma start --single-run --reporters spec,coverage",
     "test:unit:watch": "karma start",
@@ -25,15 +26,24 @@
     "test": "npm-run-all --parallel test:unit test:functional",
     "token": "node scripts/token.js"
   },
-  "pre-commit": [
-    "precommit-msg",
-    "format",
-    "lint"
-  ],
-  "pre-push": [
-    "prepush-msg",
-    "test"
-  ],
+  "lint-staged": {
+    "./*.{js,jsx}": [
+      "eslint --cache --fix",
+      "git add"
+    ],
+    "./{src,test,scripts}/**/*.{js,jsx}": [
+      "eslint --cache --fix",
+      "git add"
+    ],
+    "./*.{js,jsx,html}": [
+      "prettier --write",
+      "git add"
+    ],
+    "./{src,test,scripts}/**/*.{js,jsx,html}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
   "dependencies": {
     "@adobe/alloy": "^2.4.0",
     "@react/react-spectrum": "^2.34.0",
@@ -74,6 +84,7 @@
     "eslint-plugin-testcafe": "^0.2.1",
     "fs-extra": "^9.1.0",
     "glob": "^7.1.6",
+    "husky": "^6.0.0",
     "jasmine-core": "^3.6.0",
     "karma": "^6.1.1",
     "karma-chrome-launcher": "^3.1.0",
@@ -83,12 +94,11 @@
     "karma-jasmine-matchers": "^4.0.2",
     "karma-rollup-preprocessor": "^7.0.5",
     "karma-spec-reporter": "0.0.32",
+    "lint-staged": "^10.5.4",
     "minimist": "^1.2.5",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.4",
     "patch-package": "^6.2.2",
-    "pre-commit": "^1.2.2",
-    "pre-push": "^0.1.1",
     "prettier": "^1.17.0",
     "puppeteer": "^7.1.0",
     "rimraf": "^3.0.2",
