@@ -28,20 +28,16 @@
   },
   "lint-staged": {
     "./*.{js,jsx}": [
-      "eslint --cache --fix",
-      "git add"
+      "eslint --cache --fix"
     ],
     "./{src,test,scripts}/**/*.{js,jsx}": [
-      "eslint --cache --fix",
-      "git add"
+      "eslint --cache --fix"
     ],
     "./*.{js,jsx,html}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ],
     "./{src,test,scripts}/**/*.{js,jsx,html}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   },
   "dependencies": {
