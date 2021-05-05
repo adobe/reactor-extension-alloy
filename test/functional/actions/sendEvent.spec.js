@@ -20,6 +20,7 @@ const extensionViewController = createExtensionViewController(
 const instanceNameField = spectrum.select("instanceNameField");
 const renderDecisionsField = spectrum.checkbox("renderDecisionsField");
 const xdmField = spectrum.textfield("xdmField");
+const dataField = spectrum.textfield("dataField");
 const typeField = spectrum.textfield("typeField");
 const mergeIdField = spectrum.textfield("mergeIdField");
 const datasetIdField = spectrum.textfield("datasetIdField");
@@ -54,9 +55,8 @@ const mockExtensionSettings = {
 
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
-fixture("Send Event View").disablePageReloads.page(
-  "http://localhost:3000/viewSandbox.html"
-);
+fixture("Send Event View")
+  .disablePageReloads.page("http://localhost:3000/viewSandbox.html");
 
 test("initializes form fields with full settings, when decision scopes is data element", async () => {
   await extensionViewController.init({
@@ -65,6 +65,7 @@ test("initializes form fields with full settings, when decision scopes is data e
       instanceName: "alloy2",
       renderDecisions: true,
       xdm: "%myDataLayer%",
+      data: "%myData%",
       type: "myType1",
       mergeId: "%myMergeId%",
       decisionScopes: "%myDecisionScope%",
@@ -75,6 +76,7 @@ test("initializes form fields with full settings, when decision scopes is data e
   await instanceNameField.expectValue("alloy2");
   await renderDecisionsField.expectChecked();
   await xdmField.expectValue("%myDataLayer%");
+  await dataField.expectValue("%myData%");
   await typeField.expectValue("myType1");
   await mergeIdField.expectValue("%myMergeId%");
   await datasetIdField.expectValue("%myDatasetId%");
@@ -151,6 +153,7 @@ test("returns full valid settings with decision scopes as data element", async (
   await instanceNameField.selectOption("alloy2");
   await renderDecisionsField.click();
   await xdmField.typeText("%myDataLayer%");
+  await dataField.typeText("%myData%");
   await typeField.typeText("mytype1");
   await mergeIdField.typeText("%myMergeId%");
   await datasetIdField.typeText("%myDatasetId%");
@@ -162,6 +165,7 @@ test("returns full valid settings with decision scopes as data element", async (
     instanceName: "alloy2",
     renderDecisions: true,
     xdm: "%myDataLayer%",
+    data: "%myData%",
     type: "mytype1",
     mergeId: "%myMergeId%",
     datasetId: "%myDatasetId%",
@@ -208,6 +212,15 @@ test("shows error for xdm value that is not a data element", async () => {
   await xdmField.expectError();
 });
 
+test("shows error for data value that is not a data element", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await dataField.typeText("myData");
+  await extensionViewController.expectIsNotValid();
+  await dataField.expectError();
+});
+
 test("shows error for decision scope value that is not a data element", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
@@ -225,6 +238,15 @@ test("shows error for xdm value that is more than one data element", async () =>
   await xdmField.typeText("%a%%b%");
   await extensionViewController.expectIsNotValid();
   await xdmField.expectError();
+});
+
+test("shows error for data value that is more than one data element", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await dataField.typeText("%a%%b%");
+  await extensionViewController.expectIsNotValid();
+  await dataField.expectError();
 });
 
 testInstanceNameOptions(extensionViewController, instanceNameField);

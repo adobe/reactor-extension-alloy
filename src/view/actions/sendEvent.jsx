@@ -84,6 +84,7 @@ const getInitialValues = ({ initInfo }) => {
     renderDecisions = false,
     decisionScopes = null,
     xdm = "",
+    data = "",
     type = "",
     mergeId = "",
     datasetId = "",
@@ -97,6 +98,7 @@ const getInitialValues = ({ initInfo }) => {
     instanceName,
     renderDecisions,
     xdm,
+    data,
     type,
     mergeId,
     datasetId,
@@ -112,6 +114,9 @@ const getSettings = ({ values }) => {
 
   if (values.xdm) {
     settings.xdm = values.xdm;
+  }
+  if (values.data) {
+    settings.data = values.data;
   }
   if (values.type) {
     settings.type = values.type;
@@ -140,6 +145,10 @@ const getSettings = ({ values }) => {
 
 const validationSchema = object().shape({
   xdm: string().matches(
+    singleDataElementRegex,
+    "Please specify a data element"
+  ),
+  data: string().matches(
     singleDataElementRegex,
     "Please specify a data element"
   ),
@@ -233,6 +242,24 @@ const SendEvent = () => {
                   data-test-id="xdmField"
                   id="xdmField"
                   name="xdm"
+                  component={Textfield}
+                  componentClassName="u-fieldLong"
+                  supportDataElement="replace"
+                />
+              </div>
+            </div>
+            <div className="u-gapTop">
+              <InfoTipLayout
+                tip="Optionally specify a data element that will return a JavaScript
+                  object to send as free-form data."
+              >
+                <FieldLabel labelFor="dataField" label="Data" />
+              </InfoTipLayout>
+              <div>
+                <WrappedField
+                  data-test-id="dataField"
+                  id="dataField"
+                  name="data"
                   component={Textfield}
                   componentClassName="u-fieldLong"
                   supportDataElement="replace"

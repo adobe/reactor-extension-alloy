@@ -154,6 +154,10 @@
             "type": "string",
             "pattern": "^%[^%]+%$"
           },
+          "data": {
+            "type": "string",
+            "pattern": "^%[^%]+%$"
+          },
           "type": {
             "type": "string",
             "minLength": 1
