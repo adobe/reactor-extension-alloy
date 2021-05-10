@@ -11,20 +11,20 @@ governing permissions and limitations under the License.
 */
 
 import createExtensionViewController from "../helpers/createExtensionViewController";
-import spectrum from "../helpers/spectrum";
+import spectrum from "../helpers/spectrum3";
 import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
 
 const extensionViewController = createExtensionViewController(
   "actions/sendEvent.html"
 );
-const instanceNameField = spectrum.select("instanceNameField");
-const renderDecisionsField = spectrum.checkbox("renderDecisionsField");
-const xdmField = spectrum.textfield("xdmField");
-const typeField = spectrum.textfield("typeField");
-const mergeIdField = spectrum.textfield("mergeIdField");
-const datasetIdField = spectrum.textfield("datasetIdField");
+const instanceNameField = spectrum.picker("instanceNameField");
+const typeField = spectrum.comboBox("typeField");
+const xdmField = spectrum.textField("xdmField");
+const mergeIdField = spectrum.textField("mergeIdField");
+const datasetIdField = spectrum.textField("datasetIdField");
 const documentUnloadingField = spectrum.checkbox("documentUnloadingField");
-const scopeDataElementField = spectrum.textfield("scopeDataElementField");
+const renderDecisionsField = spectrum.checkbox("renderDecisionsField");
+const scopeDataElementField = spectrum.textField("scopeDataElementField");
 const scopesRadioGroup = {
   dataElement: spectrum.radio("dataElementOptionField"),
   values: spectrum.radio("constantOptionField")
@@ -34,7 +34,7 @@ const scopeArrayValues = [];
 
 for (let i = 0; i < 3; i += 1) {
   scopeArrayValues.push({
-    value: spectrum.textfield(`scope${i}Field`),
+    value: spectrum.textField(`scope${i}Field`),
     deleteButton: spectrum.button(`deleteScope${i}Button`)
   });
 }
@@ -63,22 +63,22 @@ test("initializes form fields with full settings, when decision scopes is data e
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy2",
-      renderDecisions: true,
-      xdm: "%myDataLayer%",
       type: "myType1",
+      xdm: "%myDataLayer%",
       mergeId: "%myMergeId%",
       decisionScopes: "%myDecisionScope%",
       datasetId: "%myDatasetId%",
-      documentUnloading: true
+      documentUnloading: true,
+      renderDecisions: true
     }
   });
-  await instanceNameField.expectValue("alloy2");
-  await renderDecisionsField.expectChecked();
-  await xdmField.expectValue("%myDataLayer%");
+  await instanceNameField.expectText("alloy2");
   await typeField.expectValue("myType1");
+  await xdmField.expectValue("%myDataLayer%");
   await mergeIdField.expectValue("%myMergeId%");
   await datasetIdField.expectValue("%myDatasetId%");
   await documentUnloadingField.expectChecked();
+  await renderDecisionsField.expectChecked();
   await scopesRadioGroup.dataElement.expectChecked();
   await scopesRadioGroup.values.expectUnchecked();
   await scopeDataElementField.expectValue("%myDecisionScope%");
@@ -88,6 +88,7 @@ test("initializes decision scopes form fields, when decision scopes is an array 
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
+      instanceName: "alloy1",
       decisionScopes: ["foo1", "foo2", "foo3"]
     }
   });
@@ -105,14 +106,14 @@ test("initializes form fields with minimal settings", async () => {
       instanceName: "alloy1"
     }
   });
-  await instanceNameField.expectValue("alloy1");
-  await renderDecisionsField.expectUnchecked();
-  await xdmField.expectValue("");
+  await instanceNameField.expectText("alloy1");
   await typeField.expectValue("");
+  await xdmField.expectValue("");
   await mergeIdField.expectValue("");
   await scopesRadioGroup.values.expectChecked();
   await datasetIdField.expectValue("");
   await documentUnloadingField.expectUnchecked();
+  await renderDecisionsField.expectUnchecked();
   await scopesRadioGroup.dataElement.expectUnchecked();
   await scopeArrayValues[0].value.expectValue("");
 });
@@ -121,13 +122,13 @@ test("initializes form fields with no settings", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
   });
-  await instanceNameField.expectValue("alloy1");
-  await renderDecisionsField.expectUnchecked();
-  await xdmField.expectValue("");
+  await instanceNameField.expectText("alloy1");
   await typeField.expectValue("");
+  await xdmField.expectValue("");
   await mergeIdField.expectValue("");
   await datasetIdField.expectValue("");
   await documentUnloadingField.expectUnchecked();
+  await renderDecisionsField.expectUnchecked();
   await scopesRadioGroup.values.expectChecked();
   await scopesRadioGroup.dataElement.expectUnchecked();
   await scopeArrayValues[0].value.expectValue("");
@@ -149,23 +150,23 @@ test("returns full valid settings with decision scopes as data element", async (
     extensionSettings: mockExtensionSettings
   });
   await instanceNameField.selectOption("alloy2");
-  await renderDecisionsField.click();
+  await typeField.enterSearch("mytype1");
   await xdmField.typeText("%myDataLayer%");
-  await typeField.typeText("mytype1");
   await mergeIdField.typeText("%myMergeId%");
   await datasetIdField.typeText("%myDatasetId%");
   await documentUnloadingField.click();
+  await renderDecisionsField.click();
   await scopesRadioGroup.dataElement.click();
   await scopeDataElementField.typeText("%myScope%");
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy2",
-    renderDecisions: true,
-    xdm: "%myDataLayer%",
     type: "mytype1",
+    xdm: "%myDataLayer%",
     mergeId: "%myMergeId%",
     datasetId: "%myDatasetId%",
     documentUnloading: true,
+    renderDecisions: true,
     decisionScopes: "%myScope%"
   });
 });

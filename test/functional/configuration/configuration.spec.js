@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import { Selector } from "testcafe";
 import createExtensionViewController from "../helpers/createExtensionViewController";
-import spectrum from "../helpers/spectrum";
+import spectrum from "../helpers/spectrum2";
 
 const extensionViewController = createExtensionViewController(
   "configuration/configuration.html"

@@ -10,116 +10,99 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
-import { FieldArray } from "formik";
-import Button from "@react/react-spectrum/Button";
-import "@react/react-spectrum/Form"; // needed for spectrum form styles
-import PropTypes from "prop-types";
-import Textfield from "@react/react-spectrum/Textfield";
-import FieldLabel from "@react/react-spectrum/FieldLabel";
-import Delete from "@react/react-spectrum/Icon/Delete";
-import RadioGroup from "@react/react-spectrum/RadioGroup";
-import Radio from "@react/react-spectrum/Radio";
-import InfoTipLayout from "./infoTipLayout";
-import WrappedField from "./wrappedField";
+import { useWatch, useFieldArray } from "react-hook-form";
+import { Radio, Button } from "@adobe/react-spectrum";
+import Delete from "@spectrum-icons/workflow/Delete";
+import { RadioGroup, TextField } from "./hookFormReactSpectrum";
+import DataElementSelector from "./dataElementSelector";
+import { CONSTANT, DATA_ELEMENT } from "../constants/decisionScopesInputMethod";
 
-function DecisionScopesComponent({ values, options }) {
+function DecisionScopesComponent() {
+  const decisionsInputMethod = useWatch({
+    name: "decisionsInputMethod"
+  });
+  const decisionScopesArray = useWatch({
+    name: "decisionScopesArray"
+  });
+  const {
+    fields: decisionScopeFields,
+    append: appendDecisionScope,
+    remove: removeDecisionScope
+  } = useFieldArray({
+    name: "decisionScopesArray"
+  });
   return (
     <div>
-      <div className="u-gapTop">
-        <InfoTipLayout
-          tip="You may provide scopes as a data element or enter each scope individually.
-           If a data element is provided, it must return an array of scopes."
-        >
-          <FieldLabel
-            labelFor="decisionScopesType"
-            label="Decision Scopes (optional)"
-          />
-        </InfoTipLayout>
-        <WrappedField
-          id="decisionScopesTypeField"
+      <div className="u-gapBottom">
+        <RadioGroup
           name="decisionsInputMethod"
-          component={RadioGroup}
-          componentClassName="u-flexRow"
+          orientation="horizontal"
+          label="Decision scopes"
         >
-          <Radio
-            data-test-id="constantOptionField"
-            value={options.CONSTANT}
-            label="Enter values"
-            className="u-gapLeft"
-          />
-          <Radio
-            data-test-id="dataElementOptionField"
-            value={options.DATA_ELEMENT}
-            label="Data Element"
-            className="u-gapLeft"
-          />
-        </WrappedField>
+          <Radio data-test-id="constantOptionField" value={CONSTANT}>
+            Manually enter scopes
+          </Radio>
+          <Radio data-test-id="dataElementOptionField" value={DATA_ELEMENT}>
+            Provide data element returning array of scopes
+          </Radio>
+        </RadioGroup>
       </div>
-      {values.decisionsInputMethod === options.DATA_ELEMENT && (
-        <div className="FieldSubset u-gapTop">
-          <div>
-            <WrappedField
+      {decisionsInputMethod === DATA_ELEMENT && (
+        <div className="FieldSubset">
+          <DataElementSelector name="decisionScopesDataElement">
+            <TextField
               data-test-id="scopeDataElementField"
-              id="scopeDataElementField"
               name="decisionScopesDataElement"
-              component={Textfield}
-              componentClassName="u-fieldLong"
-              supportDataElement="replace"
+              width="size-5000"
             />
-          </div>
+          </DataElementSelector>
         </div>
       )}
-      {values.decisionsInputMethod === options.CONSTANT && (
-        <div className="FieldSubset u-gapTop">
-          <FieldArray
-            name="decisionScopesArray"
-            render={arrayHelpers => {
-              return (
-                <div className="u-gapTop">
-                  {values.decisionScopesArray.map((scope, index) => (
-                    <div className="u-gapTop" key={index}>
-                      <WrappedField
-                        data-test-id={`scope${index}Field`}
-                        id={`scope${index}Field`}
-                        name={`decisionScopesArray.${index}`}
-                        component={Textfield}
-                        componentClassName="u-fieldLong"
-                      />
-                      <Button
-                        data-test-id={`deleteScope${index}Button`}
-                        icon={<Delete />}
-                        disabled={values.decisionScopesArray.length === 1}
-                        variant="tool"
-                        onClick={() => {
-                          arrayHelpers.remove(index);
-                        }}
-                      />
-                    </div>
-                  ))}
-                  <div className="u-gapTop">
-                    <Button
-                      data-test-id="addDecisionScopeButton"
-                      label="Add scope"
-                      onClick={() => {
-                        arrayHelpers.push("");
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            }}
-          />
+      {decisionsInputMethod === CONSTANT && (
+        <div className="FieldSubset">
+          {decisionScopeFields.map((field, index) => {
+            return (
+              <div className="u-gapBottom" key={field.id}>
+                <TextField
+                  data-test-id={`scope${index}Field`}
+                  name={`decisionScopesArray.${index}.value`}
+                  width="size-5000"
+                  defaultValue={field.value}
+                  aria-label="Decision scope"
+                />
+                <Button
+                  data-test-id={`deleteScope${index}Button`}
+                  isQuiet
+                  isDisabled={decisionScopesArray.length === 1}
+                  variant="secondary"
+                  onPress={() => {
+                    removeDecisionScope(index);
+                  }}
+                  aria-label="Remove decision scope"
+                  UNSAFE_className="u-verticalCenterBottom"
+                  minWidth={0}
+                >
+                  <Delete />
+                </Button>
+              </div>
+            );
+          })}
+          <div className="u-gapTop">
+            <Button
+              variant="secondary"
+              data-test-id="addDecisionScopeButton"
+              onPress={() => {
+                appendDecisionScope({ value: "" });
+              }}
+            >
+              Add scope
+            </Button>
+          </div>
         </div>
       )}
     </div>
   );
 }
-
-DecisionScopesComponent.propTypes = {
-  values: PropTypes.object,
-  options: PropTypes.object
-};
 
 export default DecisionScopesComponent;

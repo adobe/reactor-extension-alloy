@@ -10,48 +10,43 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import { object, string } from "yup";
-import Textfield from "@react/react-spectrum/Textfield";
-import Checkbox from "@react/react-spectrum/Checkbox";
-import ComboBox from "@react/react-spectrum/ComboBox";
-import Select from "@react/react-spectrum/Select";
-import FieldLabel from "@react/react-spectrum/FieldLabel";
-import "@react/react-spectrum/Form"; // needed for spectrum form styles
-import render from "../render";
-import WrappedField from "../components/wrappedField";
-import ExtensionView from "../components/extensionView";
+import { Form, Item } from "@adobe/react-spectrum";
+import {
+  ComboBox,
+  Picker,
+  TextField,
+  Checkbox
+} from "../components/hookFormReactSpectrum";
+import DataElementSelector from "../components/dataElementSelector";
+import render from "../spectrum3Render";
+import ExtensionView from "../components/hookFormExtensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
-import "./sendEvent.styl";
-import InfoTipLayout from "../components/infoTipLayout";
+// import "./sendEvent.styl";
 import DecisionScopesComponent from "../components/decisionScopesComponent";
-
-const decisionScopesOptions = {
-  CONSTANT: "constant",
-  DATA_ELEMENT: "dataElement"
-};
+import { CONSTANT, DATA_ELEMENT } from "../constants/decisionScopesInputMethod";
 
 const filterDecisionScopes = scopes => {
-  return scopes.filter(s => s !== "");
+  return scopes.filter(scope => scope.value !== "");
 };
 
 const getDecisionScopesFromFormState = values => {
   if (
-    values.decisionsInputMethod === decisionScopesOptions.DATA_ELEMENT &&
+    values.decisionsInputMethod === DATA_ELEMENT &&
     values.decisionScopesDataElement
   ) {
     return values.decisionScopesDataElement;
   }
 
   if (
-    values.decisionsInputMethod === decisionScopesOptions.CONSTANT &&
+    values.decisionsInputMethod === CONSTANT &&
     values.decisionScopesArray.length > 0
   ) {
     const scopes = filterDecisionScopes(values.decisionScopesArray);
     if (scopes.length > 0) {
-      return scopes;
+      return scopes.map(scope => scope.value);
     }
   }
   return undefined;
@@ -60,22 +55,22 @@ const getDecisionScopesFromFormState = values => {
 const getInitialDecisionScopesData = decisionScopes => {
   if (Array.isArray(decisionScopes)) {
     return {
-      decisionsInputMethod: decisionScopesOptions.CONSTANT,
-      decisionScopesArray: decisionScopes,
+      decisionsInputMethod: CONSTANT,
+      decisionScopesArray: decisionScopes.map(scope => ({ value: scope })),
       decisionScopesDataElement: ""
     };
   }
   if (typeof decisionScopes === "string") {
     return {
-      decisionsInputMethod: decisionScopesOptions.DATA_ELEMENT,
+      decisionsInputMethod: DATA_ELEMENT,
       decisionScopesDataElement: decisionScopes,
-      decisionScopesArray: [""]
+      decisionScopesArray: [{ value: "" }]
     };
   }
   return {
-    decisionsInputMethod: decisionScopesOptions.CONSTANT,
+    decisionsInputMethod: CONSTANT,
     decisionScopesDataElement: "",
-    decisionScopesArray: [""]
+    decisionScopesArray: [{ value: "" }]
   };
 };
 const getInitialValues = ({ initInfo }) => {
@@ -139,12 +134,12 @@ const getSettings = ({ values }) => {
 };
 
 const validationSchema = object().shape({
-  xdm: string().matches(
-    singleDataElementRegex,
-    "Please specify a data element"
-  ),
+  xdm: string().matches(singleDataElementRegex, {
+    excludeEmptyString: true,
+    message: "Please specify a data element"
+  }),
   decisionScopesDataElement: string().when("decisionsInputMethod", {
-    is: decisionScopesOptions.DATA_ELEMENT,
+    is: DATA_ELEMENT,
     then: string().matches(
       singleDataElementRegex,
       "Please specify a data element"
@@ -152,7 +147,7 @@ const validationSchema = object().shape({
   })
 });
 
-const knownEventTypes = [
+const knownEventTypeOptions = [
   "advertising.completes",
   "advertising.timePlayed",
   "advertising.federated",
@@ -174,7 +169,7 @@ const knownEventTypes = [
   "commerce.productViews",
   "commerce.purchases",
   "commerce.saveForLaters"
-];
+].map(type => ({ type }));
 
 const SendEvent = () => {
   return (
@@ -182,130 +177,77 @@ const SendEvent = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}
-      render={({ formikProps, initInfo }) => {
-        const { values } = formikProps;
-
+      render={({ initInfo }) => {
         return (
-          <div>
-            <div>
-              <FieldLabel labelFor="instanceNameField" label="Instance" />
-              <div>
-                <WrappedField
-                  data-test-id="instanceNameField"
-                  id="instanceNameField"
-                  name="instanceName"
-                  component={Select}
-                  componentClassName="u-fieldLong"
-                  options={getInstanceOptions(initInfo)}
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="The type of the experience event. Choose a predefined type or create
-                  your own. This will be added to the XDM object as the field `eventType`."
+          <Form>
+            <Picker
+              data-test-id="instanceNameField"
+              name="instanceName"
+              label="Instance"
+              items={getInstanceOptions(initInfo)}
+              width="size-5000"
+            >
+              {item => <Item key={item.value}>{item.label}</Item>}
+            </Picker>
+            <DataElementSelector name="type">
+              <ComboBox
+                data-test-id="typeField"
+                name="type"
+                label="Type"
+                description="Enter an event type to populate the `eventType` XDM field. Select a predefined value or enter a custom value."
+                items={knownEventTypeOptions}
+                allowsCustomValue
+                width="size-5000"
               >
-                <FieldLabel labelFor="typeField" label="Type (optional)" />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  data-test-id="typeField"
-                  id="typeField"
-                  name="type"
-                  component={ComboBox}
-                  componentClassName="u-fieldLong"
-                  supportDataElement="replace"
-                  allowCreate
-                  options={knownEventTypes}
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="Please specify a data element that will return a JavaScript
-                  object in XDM format. This object will be sent to the Adobe
-                  Experience Platform."
-              >
-                <FieldLabel labelFor="xdmField" label="XDM Data" />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  data-test-id="xdmField"
-                  id="xdmField"
-                  name="xdm"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement="replace"
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="The merge ID of the experience event. This will be added to
-                  the XDM object as the field `eventMergeId`."
-              >
-                <FieldLabel
-                  labelFor="mergeIdField"
-                  label="Merge ID (optional)"
-                />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  data-test-id="mergeIdField"
-                  id="mergeIdField"
-                  name="mergeId"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement="replace"
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="A platform experience event dataset ID that is different from the
-                dataset provided in the Edge configuration."
-              >
-                <FieldLabel
-                  labelFor="datasetIdField"
-                  label="Dataset ID (optional)"
-                />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  data-test-id="datasetIdField"
-                  id="datasetIdField"
-                  name="datasetId"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement="replace"
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout tip="Ensures the event will reach the server even if the user is navigating away from the current document (page), but any response from the server will be ignored.">
-                <WrappedField
-                  data-test-id="documentUnloadingField"
-                  name="documentUnloading"
-                  component={Checkbox}
-                  label="Document will unload"
-                />
-              </InfoTipLayout>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout tip="Influences whether the SDK should automatically render personalization and pre-hide the content to prevent flicker.">
-                <WrappedField
-                  data-test-id="renderDecisionsField"
-                  name="renderDecisions"
-                  component={Checkbox}
-                  label="Render visual personalization decisions"
-                />
-              </InfoTipLayout>
-            </div>
-            <DecisionScopesComponent
-              values={values}
-              options={decisionScopesOptions}
-            />
-          </div>
+                {item => <Item key={item.type}>{item.type}</Item>}
+              </ComboBox>
+            </DataElementSelector>
+            <DataElementSelector name="xdm">
+              <TextField
+                data-test-id="xdmField"
+                name="xdm"
+                label="XDM Data"
+                description="Provide a data element which returns an object matching your XDM schema."
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <DataElementSelector name="mergeId">
+              <TextField
+                data-test-id="mergeIdField"
+                name="mergeId"
+                description="Provide an identifier used to merge multiple events. This will
+                  populate the `eventMergeId` XDM field."
+                label="Merge ID"
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <DataElementSelector name="datasetId">
+              <TextField
+                data-test-id="datasetIdField"
+                name="datasetId"
+                description="Send data to a different dataset than what's been provided in the Edge configuration."
+                label="Dataset ID"
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <Checkbox
+              data-test-id="documentUnloadingField"
+              name="documentUnloading"
+              description="This will ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
+              width="size-5000"
+            >
+              Document will unload
+            </Checkbox>
+            <Checkbox
+              data-test-id="renderDecisionsField"
+              name="renderDecisions"
+              description="This will influence whether the SDK should automatically render personalization and pre-hide the content to prevent flicker."
+              width="size-5000"
+            >
+              Render visual personalization decisions
+            </Checkbox>
+            <DecisionScopesComponent />
+          </Form>
         );
       }}
     />

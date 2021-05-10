@@ -15,8 +15,8 @@ import React from "react";
 import Alert from "@react/react-spectrum/Alert";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import { v4 as uuid } from "uuid";
-import render from "../render";
-import ExtensionView from "../components/extensionView";
+import render from "../spectrum2Render";
+import ExtensionView from "../components/formikExtensionView";
 import "./eventMergeId.styl";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 

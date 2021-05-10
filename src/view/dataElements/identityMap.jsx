@@ -14,8 +14,8 @@ import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import { array, boolean, object, string } from "yup";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
-import render from "../render";
-import ExtensionView from "../components/extensionView";
+import render from "../spectrum2Render";
+import ExtensionView from "../components/formikExtensionView";
 import IdentityWrapper from "../components/identityWrapper";
 import getDefaultIdentity from "../utils/getDefaultIdentity";
 import "./identityMap.styl";

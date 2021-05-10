@@ -16,9 +16,9 @@ import { object, string } from "yup";
 import Textfield from "@react/react-spectrum/Textfield";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
-import render from "../render";
+import render from "../spectrum2Render";
 import WrappedField from "../components/wrappedField";
-import ExtensionView from "../components/extensionView";
+import ExtensionView from "../components/formikExtensionView";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import InfoTipLayout from "../components/infoTipLayout";
 import "./resetEventMergeId.styl";

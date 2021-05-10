@@ -95,7 +95,7 @@ const registerWithExtensionBridge = () => {
 
 // This component sets up Formik and wires it up to Launch's extension bridge.
 // It should be used for each view inside an extension.
-const ExtensionView = ({
+const FormikExtensionView = ({
   getInitialValues,
   getSettings,
   validate,
@@ -155,7 +155,7 @@ const ExtensionView = ({
   );
 };
 
-ExtensionView.propTypes = {
+FormikExtensionView.propTypes = {
   getInitialValues: PropTypes.func.isRequired,
   getSettings: PropTypes.func.isRequired,
   validate: PropTypes.func,
@@ -163,4 +163,4 @@ ExtensionView.propTypes = {
   render: PropTypes.func.isRequired
 };
 
-export default ExtensionView;
+export default FormikExtensionView;

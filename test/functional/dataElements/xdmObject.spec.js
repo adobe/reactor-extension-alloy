@@ -22,7 +22,7 @@ import numberEdit from "./xdmObject/helpers/numberEdit";
 import objectEdit from "./xdmObject/helpers/objectEdit";
 import platformMocks from "./xdmObject/helpers/platformMocks";
 import stringEdit from "./xdmObject/helpers/stringEdit";
-import spectrum from "../helpers/spectrum";
+import spectrum from "../helpers/spectrum2";
 import adobeIOClientCredentials from "../helpers/adobeIOClientCredentials";
 
 const extensionViewController = createExtensionViewController(

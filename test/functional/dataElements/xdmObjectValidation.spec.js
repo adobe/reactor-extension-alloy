@@ -14,7 +14,7 @@ import initializeExtensionView from "./xdmObject/helpers/initializeExtensionView
 import xdmTree from "./xdmObject/helpers/xdmTree";
 import arrayEdit from "./xdmObject/helpers/arrayEdit";
 import stringEdit from "./xdmObject/helpers/stringEdit";
-import spectrum from "../helpers/spectrum";
+import spectrum from "../helpers/spectrum2";
 import createExtensionViewController from "../helpers/createExtensionViewController";
 
 const schemaTitle = "XDM Object Data Element Tests";
