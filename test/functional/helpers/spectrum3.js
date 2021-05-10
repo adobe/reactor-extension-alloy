@@ -207,60 +207,9 @@ const componentWrappers = {
       click: createClick(selector)
     };
   },
-  accordion(selector) {
-    return {
-      async clickHeader(label) {
-        await switchToIframe();
-        await t.click(
-          selector.find(".spectrum-Accordion-itemHeader").withText(label)
-        );
-      }
-    };
-  },
   button(selector) {
     return {
       click: createClick(selector)
-    };
-  },
-  dialog(selector) {
-    return {
-      async expectTitle(title) {
-        await switchToIframe();
-        const dialogHeaderSelector = selector.find(".spectrum-Dialog-header");
-        await t
-          .expect(dialogHeaderSelector.withText(title).exists)
-          .ok(`Did not find dialog with title ${title}`);
-      },
-      async clickConfirm() {
-        await switchToIframe();
-        await t.click(
-          selector.find(".spectrum-Dialog-footer .spectrum-Button--cta")
-        );
-      },
-      async clickCancel() {
-        await switchToIframe();
-        await t.click(
-          selector.find(".spectrum-Dialog-footer .spectrum-Button--secondary")
-        );
-      }
-    };
-  },
-  alert(selector) {
-    return {
-      async expectTitle(title) {
-        await switchToIframe();
-        const headerSelector = selector.find(".spectrum-Alert-header");
-        await t
-          .expect(headerSelector.withText(title).exists)
-          .ok(`Did not find alert with title: ${title}`);
-      },
-      async expectMessage(message) {
-        await switchToIframe();
-        const contentSelector = selector.find(".spectrum-Alert-content");
-        await t
-          .expect(contentSelector.withText(message).exists)
-          .ok(`Did not find alert with message: ${message}`);
-      }
     };
   },
   // You can chain additional component methods after calling this method
