@@ -17,16 +17,16 @@ import Data from "@spectrum-icons/workflow/Data";
 import { Button } from "@adobe/react-spectrum";
 import "./dataElementSelector.styl";
 
-const DataElementSelector = ({ children, name, augmentValue }) => {
+const DataElementSelector = ({ children, augmentValue }) => {
   // We have to vertically nudge down the data element selector
   // button if the field has a label so the button aligns
   // with the input box.
-  let adjustForLabel = false;
-  React.Children.forEach(children, child => {
-    if (Object.keys(child.props).includes("label")) {
-      adjustForLabel = true;
-    }
-  });
+  const inputChild = React.Children.toArray(children).find(
+    child => child.props.name
+  );
+  const name = inputChild.props.name;
+  const adjustForLabel = Boolean(inputChild.props.label);
+
   const { getValues, setValue } = useFormContext();
   const openDataElementSelector = () => {
     window.extensionBridge.openDataElementSelector().then(dataElement => {
@@ -64,7 +64,6 @@ const DataElementSelector = ({ children, name, augmentValue }) => {
 
 DataElementSelector.propTypes = {
   children: PropTypes.node.isRequired,
-  name: PropTypes.string.isRequired,
   augmentValue: PropTypes.bool
 };
 

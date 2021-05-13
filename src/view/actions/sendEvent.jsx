@@ -189,7 +189,7 @@ const SendEvent = () => {
             >
               {item => <Item key={item.value}>{item.label}</Item>}
             </Picker>
-            <DataElementSelector name="type">
+            <DataElementSelector>
               <ComboBox
                 data-test-id="typeField"
                 name="type"
@@ -202,7 +202,7 @@ const SendEvent = () => {
                 {item => <Item key={item.type}>{item.type}</Item>}
               </ComboBox>
             </DataElementSelector>
-            <DataElementSelector name="xdm">
+            <DataElementSelector>
               <TextField
                 data-test-id="xdmField"
                 name="xdm"
@@ -211,7 +211,7 @@ const SendEvent = () => {
                 width="size-5000"
               />
             </DataElementSelector>
-            <DataElementSelector name="mergeId">
+            <DataElementSelector>
               <TextField
                 data-test-id="mergeIdField"
                 name="mergeId"
@@ -221,7 +221,7 @@ const SendEvent = () => {
                 width="size-5000"
               />
             </DataElementSelector>
-            <DataElementSelector name="datasetId">
+            <DataElementSelector>
               <TextField
                 data-test-id="datasetIdField"
                 name="datasetId"
@@ -233,7 +233,7 @@ const SendEvent = () => {
             <Checkbox
               data-test-id="documentUnloadingField"
               name="documentUnloading"
-              description="This will ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
+              description="Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
               width="size-5000"
             >
               Document will unload
@@ -241,7 +241,7 @@ const SendEvent = () => {
             <Checkbox
               data-test-id="renderDecisionsField"
               name="renderDecisions"
-              description="This will influence whether the SDK should automatically render personalization and pre-hide the content to prevent flicker."
+              description="Check this to automatically render personalization and pre-hide the content to prevent flicker."
               width="size-5000"
             >
               Render visual personalization decisions

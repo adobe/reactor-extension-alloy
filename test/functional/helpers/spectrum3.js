@@ -141,8 +141,6 @@ const componentWrappers = {
         await switchToIframe();
         await t.selectText(selector).pressKey("delete");
       }
-      // expectDisabled: createExpectDisabled(selector.parent().find("button")),
-      // expectEnabled: createExpectEnabled(selector.parent().find("button")),
     };
   },
   picker(selector) {

@@ -50,7 +50,7 @@ function DecisionScopesComponent() {
       </div>
       {decisionsInputMethod === DATA_ELEMENT && (
         <div className="FieldSubset">
-          <DataElementSelector name="decisionScopesDataElement">
+          <DataElementSelector>
             <TextField
               data-test-id="scopeDataElementField"
               name="decisionScopesDataElement"
