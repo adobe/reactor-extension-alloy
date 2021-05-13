@@ -25,12 +25,15 @@ module.exports = ({
     );
   }
 
-  // If the customer modifies the xdm object (or anything nested in the object) after this action runs, we want to
-  // make sure those modifications are not reflected in the data sent to the server. By cloning the object here,
-  // we ensure we use a snapshot that will remain unchanged during the time period between when sendEvent
-  // is called and the network request is made.
+  // If the customer modifies the xdm or data object (or anything nested in the object) after this action runs,
+  // we want to make sure those modifications are not reflected in the data sent to the server. By cloning the
+  // objects here, we ensure we use a snapshot that will remain unchanged during the time period between when
+  // sendEvent is called and the network request is made.
   if (otherSettings.xdm) {
     otherSettings.xdm = clone(otherSettings.xdm);
+  }
+  if (otherSettings.data) {
+    otherSettings.data = clone(otherSettings.data);
   }
 
   return instance("sendEvent", otherSettings).then(result => {

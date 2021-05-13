@@ -35,6 +35,7 @@ const getInitialValues = ({ initInfo }) => {
     instanceName = initInfo.extensionSettings.instances[0].name,
     renderDecisions = false,
     xdm = "",
+    data = "",
     type = "",
     mergeId = "",
     datasetId = "",
@@ -45,6 +46,7 @@ const getInitialValues = ({ initInfo }) => {
     instanceName,
     renderDecisions,
     xdm,
+    data,
     type,
     mergeId,
     datasetId,
@@ -60,6 +62,9 @@ const getSettings = ({ values }) => {
 
   if (values.xdm) {
     settings.xdm = values.xdm;
+  }
+  if (values.data) {
+    settings.data = values.data;
   }
   if (values.type) {
     settings.type = values.type;
@@ -88,6 +93,10 @@ const validationSchema = object().shape({
   xdm: string().matches(singleDataElementRegex, {
     message: "Please specify a data element"
   }),
+  data: string().matches(
+    singleDataElementRegex,
+    "Please specify a data element"
+  ),
   ...decisionScopesValidationSchema
 });
 
@@ -153,6 +162,15 @@ const SendEvent = () => {
                 name="xdm"
                 label="XDM Data"
                 description="Provide a data element which returns an object matching your XDM schema."
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <DataElementSelector>
+              <TextField
+                data-test-id="dataField"
+                name="data"
+                label="Data"
+                description="Provide a data element which returns an object to send as free-form data."
                 width="size-5000"
               />
             </DataElementSelector>

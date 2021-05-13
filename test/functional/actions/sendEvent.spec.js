@@ -20,6 +20,7 @@ const extensionViewController = createExtensionViewController(
 const instanceNameField = spectrum.picker("instanceNameField");
 const typeField = spectrum.comboBox("typeField");
 const xdmField = spectrum.textField("xdmField");
+const dataField = spectrum.textField("dataField");
 const mergeIdField = spectrum.textField("mergeIdField");
 const datasetIdField = spectrum.textField("datasetIdField");
 const documentUnloadingField = spectrum.checkbox("documentUnloadingField");
@@ -65,6 +66,7 @@ test("initializes form fields with full settings, when decision scopes is data e
       instanceName: "alloy2",
       type: "myType1",
       xdm: "%myDataLayer%",
+      data: "%myData%",
       mergeId: "%myMergeId%",
       decisionScopes: "%myDecisionScope%",
       datasetId: "%myDatasetId%",
@@ -75,6 +77,7 @@ test("initializes form fields with full settings, when decision scopes is data e
   await instanceNameField.expectText("alloy2");
   await typeField.expectValue("myType1");
   await xdmField.expectValue("%myDataLayer%");
+  await dataField.expectValue("%myData%");
   await mergeIdField.expectValue("%myMergeId%");
   await datasetIdField.expectValue("%myDatasetId%");
   await documentUnloadingField.expectChecked();
@@ -109,6 +112,7 @@ test("initializes form fields with minimal settings", async () => {
   await instanceNameField.expectText("alloy1");
   await typeField.expectValue("");
   await xdmField.expectValue("");
+  await dataField.expectValue("");
   await mergeIdField.expectValue("");
   await scopesRadioGroup.values.expectChecked();
   await datasetIdField.expectValue("");
@@ -125,6 +129,7 @@ test("initializes form fields with no settings", async () => {
   await instanceNameField.expectText("alloy1");
   await typeField.expectValue("");
   await xdmField.expectValue("");
+  await dataField.expectValue("");
   await mergeIdField.expectValue("");
   await datasetIdField.expectValue("");
   await documentUnloadingField.expectUnchecked();
@@ -152,6 +157,7 @@ test("returns full valid settings with decision scopes as data element", async (
   await instanceNameField.selectOption("alloy2");
   await typeField.enterSearch("mytype1");
   await xdmField.typeText("%myDataLayer%");
+  await dataField.typeText("%myData%");
   await mergeIdField.typeText("%myMergeId%");
   await datasetIdField.typeText("%myDatasetId%");
   await documentUnloadingField.click();
@@ -163,6 +169,7 @@ test("returns full valid settings with decision scopes as data element", async (
     instanceName: "alloy2",
     type: "mytype1",
     xdm: "%myDataLayer%",
+    data: "%myData%",
     mergeId: "%myMergeId%",
     datasetId: "%myDatasetId%",
     documentUnloading: true,
@@ -170,6 +177,16 @@ test("returns full valid settings with decision scopes as data element", async (
     decisionScopes: "%myScope%"
   });
 });
+
+test("shows error for data value that is not a data element", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await dataField.typeText("myData");
+  await extensionViewController.expectIsNotValid();
+  await dataField.expectError();
+});
+
 test("returns decision scopes settings as an array", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
@@ -187,6 +204,7 @@ test("returns decision scopes settings as an array", async () => {
     decisionScopes: ["foo", "foo2"]
   });
 });
+
 test("does not return decision scopes settings when provided with array of empty strings", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
@@ -209,6 +227,15 @@ test("shows error for xdm value that is not a data element", async () => {
   await xdmField.expectError();
 });
 
+test("shows error for data value that is not a data element", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await dataField.typeText("myData");
+  await extensionViewController.expectIsNotValid();
+  await dataField.expectError();
+});
+
 test("shows error for decision scope value that is not a data element", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
@@ -219,6 +246,15 @@ test("shows error for decision scope value that is not a data element", async ()
   await scopeDataElementField.expectError();
 });
 
+test("shows error for data value that is more than one data element", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await dataField.typeText("%a%%b%");
+  await extensionViewController.expectIsNotValid();
+  await dataField.expectError();
+});
+
 test("shows error for xdm value that is more than one data element", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings
@@ -226,6 +262,15 @@ test("shows error for xdm value that is more than one data element", async () =>
   await xdmField.typeText("%a%%b%");
   await extensionViewController.expectIsNotValid();
   await xdmField.expectError();
+});
+
+test("shows error for data value that is more than one data element", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await dataField.typeText("%a%%b%");
+  await extensionViewController.expectIsNotValid();
+  await dataField.expectError();
 });
 
 testInstanceNameOptions(extensionViewController, instanceNameField);
