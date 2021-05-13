@@ -17,7 +17,7 @@ import Alert from "@react/react-spectrum/Alert";
 import Select from "@react/react-spectrum/Select";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import NoSelectedNodeView from "./xdmObject/components/noSelectedNodeView";
-import ExtensionView from "../components/formikExtensionView";
+import ExtensionView from "../components/spectrum2ExtensionView";
 import CompletionComboBox from "../components/completionComboBox";
 import XdmTree from "./xdmObject/components/xdmTree";
 import getInitialFormState from "./xdmObject/helpers/getInitialFormState";

@@ -34,8 +34,6 @@ const FieldDescriptionAndError = ({
   } else if (description) {
     messageClassName = "FieldDescriptionAndError-description";
     message = description;
-  } else {
-    return children;
   }
 
   // By providing a width directly on the error and description
@@ -46,14 +44,16 @@ const FieldDescriptionAndError = ({
     ? `var(--spectrum-global-dimension-${width}, var(--spectrum-alias-${width}))`
     : `var(--spectrum-field-default-width)`;
   return (
-    <div className="u-inlineFlex u-flexColumn u-gapBottom">
+    <div className="u-inlineFlex u-flexColumn">
       {children}
-      <div
-        className={classNames(messageClassName, className)}
-        style={{ width: widthStyle }}
-      >
-        {message}
-      </div>
+      {message && (
+        <div
+          className={classNames("u-gapBottom", messageClassName, className)}
+          style={{ width: widthStyle }}
+        >
+          {message}
+        </div>
+      )}
     </div>
   );
 };

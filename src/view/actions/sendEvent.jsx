@@ -21,72 +21,25 @@ import {
 } from "../components/hookFormReactSpectrum";
 import DataElementSelector from "../components/dataElementSelector";
 import render from "../spectrum3Render";
-import ExtensionView from "../components/hookFormExtensionView";
+import ExtensionView from "../components/spectrum3ExtensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
-// import "./sendEvent.styl";
-import DecisionScopesComponent from "../components/decisionScopesComponent";
-import { CONSTANT, DATA_ELEMENT } from "../constants/decisionScopesInputMethod";
+import DecisionScopes, {
+  getInitialValues as getDecisionScopesInitialValues,
+  getSettings as getDecisionScopesSettings,
+  validationSchema as decisionScopesValidationSchema
+} from "../components/decisionScopes";
 
-const filterDecisionScopes = scopes => {
-  return scopes.filter(scope => scope.value !== "");
-};
-
-const getDecisionScopesFromFormState = values => {
-  if (
-    values.decisionsInputMethod === DATA_ELEMENT &&
-    values.decisionScopesDataElement
-  ) {
-    return values.decisionScopesDataElement;
-  }
-
-  if (
-    values.decisionsInputMethod === CONSTANT &&
-    values.decisionScopesArray.length > 0
-  ) {
-    const scopes = filterDecisionScopes(values.decisionScopesArray);
-    if (scopes.length > 0) {
-      return scopes.map(scope => scope.value);
-    }
-  }
-  return undefined;
-};
-
-const getInitialDecisionScopesData = decisionScopes => {
-  if (Array.isArray(decisionScopes)) {
-    return {
-      decisionsInputMethod: CONSTANT,
-      decisionScopesArray: decisionScopes.map(scope => ({ value: scope })),
-      decisionScopesDataElement: ""
-    };
-  }
-  if (typeof decisionScopes === "string") {
-    return {
-      decisionsInputMethod: DATA_ELEMENT,
-      decisionScopesDataElement: decisionScopes,
-      decisionScopesArray: [{ value: "" }]
-    };
-  }
-  return {
-    decisionsInputMethod: CONSTANT,
-    decisionScopesDataElement: "",
-    decisionScopesArray: [{ value: "" }]
-  };
-};
 const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
     renderDecisions = false,
-    decisionScopes = null,
     xdm = "",
     type = "",
     mergeId = "",
     datasetId = "",
     documentUnloading = false
   } = initInfo.settings || {};
-  const initialPersonalizationData = getInitialDecisionScopesData(
-    decisionScopes
-  );
 
   return {
     instanceName,
@@ -96,7 +49,7 @@ const getInitialValues = ({ initInfo }) => {
     mergeId,
     datasetId,
     documentUnloading,
-    ...initialPersonalizationData
+    ...getDecisionScopesInitialValues({ initInfo })
   };
 };
 
@@ -125,26 +78,17 @@ const getSettings = ({ values }) => {
   if (values.renderDecisions) {
     settings.renderDecisions = true;
   }
-  const scopes = getDecisionScopesFromFormState(values);
-  if (scopes) {
-    settings.decisionScopes = scopes;
-  }
+
+  Object.assign(settings, getDecisionScopesSettings({ values }));
 
   return settings;
 };
 
 const validationSchema = object().shape({
   xdm: string().matches(singleDataElementRegex, {
-    excludeEmptyString: true,
     message: "Please specify a data element"
   }),
-  decisionScopesDataElement: string().when("decisionsInputMethod", {
-    is: DATA_ELEMENT,
-    then: string().matches(
-      singleDataElementRegex,
-      "Please specify a data element"
-    )
-  })
+  ...decisionScopesValidationSchema
 });
 
 const knownEventTypeOptions = [
@@ -186,6 +130,7 @@ const SendEvent = () => {
               label="Instance"
               items={getInstanceOptions(initInfo)}
               width="size-5000"
+              isRequired
             >
               {item => <Item key={item.value}>{item.label}</Item>}
             </Picker>
@@ -246,7 +191,7 @@ const SendEvent = () => {
             >
               Render visual personalization decisions
             </Checkbox>
-            <DecisionScopesComponent />
+            <DecisionScopes />
           </Form>
         );
       }}

@@ -15,7 +15,7 @@ import React from "react";
 import { array, boolean, object, string } from "yup";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../spectrum2Render";
-import ExtensionView from "../components/formikExtensionView";
+import ExtensionView from "../components/spectrum2ExtensionView";
 import IdentityWrapper from "../components/identityWrapper";
 import getDefaultIdentity from "../utils/getDefaultIdentity";
 import "./identityMap.styl";

@@ -13,48 +13,32 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { TextField as ReactTextField } from "@adobe/react-spectrum";
-import { Controller } from "react-hook-form";
+import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const TextField = ({
-  name,
-  defaultValue,
-  description,
-  width,
-  ...otherProps
-}) => {
+const TextField = ({ name, description, width, ...otherProps }) => {
+  const [{ value, onBlur }, { error }, { setValue }] = useField(name);
+
   return (
-    <Controller
-      name={name}
-      defaultValue={defaultValue}
-      render={({
-        field: { value, onChange, onBlur },
-        fieldState: { invalid, error }
-      }) => {
-        return (
-          <FieldDescriptionAndError
-            description={description}
-            error={error && error.message}
-            width={width}
-          >
-            <ReactTextField
-              {...otherProps}
-              value={value}
-              onChange={onChange}
-              onBlur={onBlur}
-              validationState={invalid ? "invalid" : ""}
-              width={width}
-            />
-          </FieldDescriptionAndError>
-        );
-      }}
-    />
+    <FieldDescriptionAndError
+      description={description}
+      error={error}
+      width={width}
+    >
+      <ReactTextField
+        {...otherProps}
+        value={value}
+        onChange={setValue}
+        onBlur={onBlur}
+        validationState={error ? "invalid" : ""}
+        width={width}
+      />
+    </FieldDescriptionAndError>
   );
 };
 
 TextField.propTypes = {
   name: PropTypes.string.isRequired,
-  defaultValue: PropTypes.any,
   description: PropTypes.string,
   width: PropTypes.string
 };

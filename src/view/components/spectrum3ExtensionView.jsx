@@ -10,9 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useRef, useState, useEffect } from "react";
-import { useForm, FormProvider } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import React, { useState } from "react";
+import { useFormik, FormikProvider } from "formik";
 import PropTypes from "prop-types";
 import {
   IllustratedMessage,
@@ -21,36 +20,9 @@ import {
   Content
 } from "@adobe/react-spectrum";
 import Error from "@spectrum-icons/illustrations/Error";
-
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
-
-const useExtensionBridge = currentViewMethods => {
-  const viewMethods = useRef();
-  viewMethods.current = currentViewMethods;
-
-  useEffect(() => {
-    // We use "useRef" so that whenever Launch calls the init, getSettings, or validate
-    // methods below, we can be sure we're executing the view methods from the most
-    // recent render. If our init, getSettings, and validate functions below referenced
-    // currentViewMethods directly, currentViewMethods would be captured via closure
-    // the first time useExtensionBridge is executed and those references
-    // would never be updated on subsequent executions of useExtensionBridge, since
-    // this effect only runs once.
-    window.extensionBridge.register({
-      init(initInfo) {
-        return viewMethods.current.init({
-          initInfo
-        });
-      },
-      getSettings() {
-        return viewMethods.current.getSettings();
-      },
-      validate() {
-        return viewMethods.current.validate();
-      }
-    });
-  }, []);
-};
+import useExtensionBridge from "../utils/useExtensionBridge";
+import wrapValidateWithErrorLogging from "../utils/wrapValidateWithErrorLogging";
 
 // This component sets up Formik and wires it up to Launch's extension bridge.
 // It should be used for each view inside an extension.
@@ -61,16 +33,20 @@ const ExtensionView = ({
   validationSchema,
   render
 }) => {
-  const formMethods = useForm({
-    mode: "onTouched",
-    resolver: validationSchema ? yupResolver(validationSchema) : validate
+  const formikProps = useFormik({
+    enableReinitialize: true,
+    onSubmit: () => {},
+    validate: wrapValidateWithErrorLogging(validate),
+    validationSchema
   });
   const [initialized, setInitialized] = useState(false);
   const [runtimeError, setRuntimeError] = useState();
   const [initInfo, setInitInfo] = useState();
 
-  const setInitialValues = (initialValues = {}) => {
-    formMethods.reset(initialValues);
+  const resetForm = (initialValues = {}) => {
+    formikProps.resetForm({
+      values: initialValues
+    });
   };
 
   useExtensionBridge({
@@ -89,7 +65,7 @@ const ExtensionView = ({
       });
       return initialValuesPromise
         .then(initialValues => {
-          setInitialValues(initialValues);
+          resetForm(initialValues);
           setInitialized(true);
         })
         .catch(error => {
@@ -100,12 +76,20 @@ const ExtensionView = ({
     },
     getSettings: () => {
       return getSettings({
-        values: formMethods.getValues(),
+        values: formikProps.values,
         initInfo
       });
     },
     validate: () => {
-      return formMethods.trigger();
+      // The docs say that the promise submitForm returns
+      // will be rejected if there are errors, but that is not the case.
+      // Therefore, after the promise is resolved, we pull formikProps.errors
+      // (which were set during submitForm()) to see if the form is valid.
+      // https://github.com/jaredpalmer/formik/issues/1580
+      return formikProps.submitForm().then(() => {
+        formikProps.setSubmitting(false);
+        return Object.keys(formikProps.errors).length === 0;
+      });
     }
   });
 
@@ -121,28 +105,29 @@ const ExtensionView = ({
     );
   }
 
-  if (initialized) {
-    const renderAndCatchError = () => {
-      try {
-        return render({
-          initInfo,
-          resetForm: setInitialValues
-        });
-      } catch (e) {
-        setRuntimeError(e);
-        return null;
-      }
-    };
-
+  if (!initialized) {
     return (
-      <FormProvider {...formMethods}>{renderAndCatchError()}</FormProvider>
+      <FillParentAndCenterChildren>
+        <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
+      </FillParentAndCenterChildren>
     );
   }
 
+  const renderAndCatchError = () => {
+    try {
+      return render({
+        formikProps,
+        initInfo,
+        resetForm
+      });
+    } catch (e) {
+      setRuntimeError(e);
+      return null;
+    }
+  };
+
   return (
-    <FillParentAndCenterChildren>
-      <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
-    </FillParentAndCenterChildren>
+    <FormikProvider value={formikProps}>{renderAndCatchError()}</FormikProvider>
   );
 };
 

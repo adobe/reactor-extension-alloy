@@ -13,50 +13,37 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { Checkbox as ReactSpectrumCheckbox } from "@adobe/react-spectrum";
-import { Controller } from "react-hook-form";
+import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 import "./checkbox.styl";
 
-const Checkbox = ({
-  name,
-  defaultValue,
-  description,
-  width,
-  ...otherProps
-}) => {
+const Checkbox = ({ name, description, width, ...otherProps }) => {
+  const [{ value }, { error }, { setValue, setTouched }] = useField(name);
   return (
-    <Controller
-      name={name}
-      defaultValue={defaultValue}
-      render={({
-        field: { value, onChange, onBlur },
-        fieldState: { invalid, error }
-      }) => {
-        return (
-          <FieldDescriptionAndError
-            description={description}
-            error={error && error.message}
-            width={width}
-            className="Checkbox-descriptionAndError"
-          >
-            <ReactSpectrumCheckbox
-              {...otherProps}
-              isSelected={value}
-              onChange={onChange}
-              onBlur={onBlur}
-              validationState={invalid ? "invalid" : ""}
-              width={width}
-            />
-          </FieldDescriptionAndError>
-        );
-      }}
-    />
+    <FieldDescriptionAndError
+      description={description}
+      error={error}
+      width={width}
+      className="Checkbox-descriptionAndError"
+    >
+      <ReactSpectrumCheckbox
+        {...otherProps}
+        isSelected={value}
+        onChange={setValue}
+        onBlur={() => {
+          // If we were to call Formik's `onBlur`, it would result in a warning:
+          // Similar to this: https://github.com/formium/formik/issues/2622
+          setTouched(true);
+        }}
+        validationState={error ? "invalid" : ""}
+        width={width}
+      />
+    </FieldDescriptionAndError>
   );
 };
 
 Checkbox.propTypes = {
   name: PropTypes.string.isRequired,
-  defaultValue: PropTypes.any,
   description: PropTypes.string,
   width: PropTypes.string
 };

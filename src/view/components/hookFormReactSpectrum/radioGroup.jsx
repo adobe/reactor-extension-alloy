@@ -13,59 +13,41 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { RadioGroup as ReactSpectrumRadioGroup } from "@adobe/react-spectrum";
-import { Controller } from "react-hook-form";
+import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const RadioGroup = ({
-  name,
-  children,
-  defaultValue,
-  description,
-  width,
-  ...otherProps
-}) => {
+const RadioGroup = ({ name, children, description, width, ...otherProps }) => {
+  const [{ value, onBlur }, { error }, { setValue }] = useField(name);
+  // Not entirely sure this is the right approach, but there's
+  // no onBlur prop for RadioGroup, so we wire up React Hook Form's
+  // onBlur to every radio.
+  const childrenWithOnBlur = React.Children.map(children, child => {
+    return React.cloneElement(child, {
+      onBlur
+    });
+  });
   return (
-    <Controller
-      name={name}
-      defaultValue={defaultValue}
-      render={({
-        field: { value, onChange, onBlur },
-        fieldState: { invalid, error }
-      }) => {
-        // Not entirely sure this is the right approach, but there's
-        // no onBlur prop for RadioGroup, so we wire up React Hook Form's
-        // onBlur to every radio.
-        const childrenWithOnBlur = React.Children.map(children, child => {
-          return React.cloneElement(child, {
-            onBlur
-          });
-        });
-        return (
-          <FieldDescriptionAndError
-            description={description}
-            error={error && error.message}
-            width={width}
-          >
-            <ReactSpectrumRadioGroup
-              {...otherProps}
-              value={value}
-              onChange={onChange}
-              validationState={invalid ? "invalid" : ""}
-              width={width}
-            >
-              {childrenWithOnBlur}
-            </ReactSpectrumRadioGroup>
-          </FieldDescriptionAndError>
-        );
-      }}
-    />
+    <FieldDescriptionAndError
+      description={description}
+      error={error}
+      width={width}
+    >
+      <ReactSpectrumRadioGroup
+        {...otherProps}
+        value={value}
+        onChange={setValue}
+        validationState={error ? "invalid" : ""}
+        width={width}
+      >
+        {childrenWithOnBlur}
+      </ReactSpectrumRadioGroup>
+    </FieldDescriptionAndError>
   );
 };
 
 RadioGroup.propTypes = {
   name: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
-  defaultValue: PropTypes.any,
   description: PropTypes.string,
   width: PropTypes.string
 };

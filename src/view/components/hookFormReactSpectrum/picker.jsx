@@ -13,42 +13,32 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { Picker as ReactSpectrumPicker } from "@adobe/react-spectrum";
-import { Controller } from "react-hook-form";
+import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const Picker = ({ name, defaultValue, description, width, ...otherProps }) => {
+const Picker = ({ name, description, width, ...otherProps }) => {
+  const [{ value, onBlur }, { error }, { setValue }] = useField(name);
+
   return (
-    <Controller
-      name={name}
-      defaultValue={defaultValue}
-      render={({
-        field: { value, onChange, onBlur },
-        fieldState: { invalid, error }
-      }) => {
-        return (
-          <FieldDescriptionAndError
-            description={description}
-            error={error && error.message}
-            width={width}
-          >
-            <ReactSpectrumPicker
-              {...otherProps}
-              selectedKey={value}
-              onSelectionChange={onChange}
-              onBlur={onBlur}
-              validationState={invalid ? "invalid" : ""}
-              width={width}
-            />
-          </FieldDescriptionAndError>
-        );
-      }}
-    />
+    <FieldDescriptionAndError
+      description={description}
+      error={error}
+      width={width}
+    >
+      <ReactSpectrumPicker
+        {...otherProps}
+        selectedKey={value}
+        onSelectionChange={setValue}
+        onBlur={onBlur}
+        validationState={error ? "invalid" : ""}
+        width={width}
+      />
+    </FieldDescriptionAndError>
   );
 };
 
 Picker.propTypes = {
   name: PropTypes.string.isRequired,
-  defaultValue: PropTypes.any,
   description: PropTypes.string,
   width: PropTypes.string
 };

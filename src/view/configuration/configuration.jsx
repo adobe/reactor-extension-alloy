@@ -34,7 +34,7 @@ import CheckboxList from "../components/checkboxList";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import render from "../spectrum2Render";
 import WrappedField from "../components/wrappedField";
-import ExtensionView from "../components/formikExtensionView";
+import ExtensionView from "../components/spectrum2ExtensionView";
 import EditorButton from "../components/editorButton";
 import InfoTipLayout from "../components/infoTipLayout";
 

@@ -10,5 +10,24 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-export const CONSTANT = "constant";
-export const DATA_ELEMENT = "dataElement";
+// Wraps any validate function that will be called by Formik.
+// Without this, if an error is thrown during validation, Formik
+// swallows the error and it's difficult to figure out where the problem is.
+// https://github.com/jaredpalmer/formik/issues/1329
+export default validate => {
+  if (!validate) {
+    return undefined;
+  }
+
+  return (...args) => {
+    let result;
+    try {
+      result = validate(...args);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Error executing validation", error);
+      throw error;
+    }
+    return result;
+  };
+};

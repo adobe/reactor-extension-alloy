@@ -28,7 +28,7 @@ import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import { object, string, array, mixed } from "yup";
 import render from "../spectrum2Render";
 import WrappedField from "../components/wrappedField";
-import ExtensionView from "../components/formikExtensionView";
+import ExtensionView from "../components/spectrum2ExtensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import "./setConsent.styl";
