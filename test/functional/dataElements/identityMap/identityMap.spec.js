@@ -14,7 +14,7 @@ import { t } from "testcafe";
 import createExtensionViewController from "../../helpers/createExtensionViewController";
 import spectrum from "../../helpers/spectrum";
 import getAdobeIOAccessToken from "../../helpers/getAdobeIOAccessToken";
-import platformMocks from "../xdmObject/helpers/platformMocks";
+import * as platformMocks from "../xdmObject/helpers/platformMocks";
 import credentials from "../../helpers/adobeIOClientCredentials";
 
 const identityMapViewController = createExtensionViewController(

@@ -20,7 +20,7 @@ import booleanEdit from "./xdmObject/helpers/booleanEdit";
 import integerEdit from "./xdmObject/helpers/integerEdit";
 import numberEdit from "./xdmObject/helpers/numberEdit";
 import objectEdit from "./xdmObject/helpers/objectEdit";
-import platformMocks from "./xdmObject/helpers/platformMocks";
+import * as platformMocks from "./xdmObject/helpers/platformMocks";
 import stringEdit from "./xdmObject/helpers/stringEdit";
 import spectrum from "../helpers/spectrum";
 import adobeIOClientCredentials from "../helpers/adobeIOClientCredentials";
@@ -39,6 +39,7 @@ const initializationErrorAlert = spectrum.alert("initializationErrorAlert");
 
 const schemaTitle = "XDM Object Data Element Tests";
 
+const sandboxField = spectrum.select("sandboxField");
 const schemaField = spectrum.combobox("schemaField");
 
 const selectSchemaFromSchemasMeta = async () => {
@@ -78,13 +79,8 @@ const initializeExtensionView = async additionalInitInfo => {
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
 fixture("XDM Object View")
-  .beforeEach(async () => {
-    // adds a mocked sandboxes response
-    await t.addRequestHooks(platformMocks.sandboxes);
-  })
   .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
-  .meta("requiresAdobeIOIntegration", true)
-  .requestHooks(platformMocks.sandboxes);
+  .meta("requiresAdobeIOIntegration", true);
 
 test("initializes form fields with individual object attribute values", async () => {
   await initializeExtensionView({
@@ -105,60 +101,68 @@ test("initializes form fields with individual object attribute values", async ()
   await stringEdit.expectValue("Adobe");
 });
 
-test("ensures invalid token error", async () => {
-  // temporarily remove sandboxes mock
-  await t.removeRequestHooks(platformMocks.sandboxes);
-  // replace with unauthorized mock
-  await t.addRequestHooks(platformMocks.unauthorized);
-  await initializeExtensionView();
-  await initializationErrorAlert.expectMessage(
-    /Your access token appears to be invalid\./
-  );
-});
+test.requestHooks(platformMocks.unauthorized)(
+  "ensures invalid token error",
+  async () => {
+    await initializeExtensionView();
+    await initializationErrorAlert.expectMessage(
+      /Your access token appears to be invalid\./
+    );
+  }
+);
 
-test("ensures non-AEP users get AEP access error", async () => {
-  // temporarily remove sandboxes mock
-  await t.removeRequestHooks(platformMocks.sandboxes);
-  // replace with unauthorized mock
-  await t.addRequestHooks(platformMocks.userRegionMissing);
-  await initializeExtensionView();
-  await initializationErrorAlert.expectMessage(
-    /Your user account is not enabled for AEP access\. Please contact your organization administrator\./
-  );
-});
+test.requestHooks(platformMocks.userRegionMissing)(
+  "ensures non-AEP users get AEP access error",
+  async () => {
+    await initializeExtensionView();
+    await initializationErrorAlert.expectMessage(
+      /Your user account is not enabled for AEP access\. Please contact your organization administrator\./
+    );
+  }
+);
 
 // We're not sure if this will ever occur, but we're covering it just in case
-test("ensures non-JSON response body shows a reasonable error", async () => {
-  // temporarily remove sandboxes mock
-  await t.removeRequestHooks(platformMocks.sandboxes);
-  // replace with unauthorized mock
-  await t.addRequestHooks(platformMocks.nonJsonBody);
-  await initializeExtensionView();
-  await initializationErrorAlert.expectMessage(
-    /An unexpected response was received from the server\./
-  );
-});
+test.requestHooks(platformMocks.nonJsonBody)(
+  "ensures non-JSON response body shows a reasonable error",
+  async () => {
+    await initializeExtensionView();
+    await initializationErrorAlert.expectMessage(
+      /An unexpected response was received from the server\./
+    );
+  }
+);
 
-test("disables user from selecting a sandbox", async () => {
-  // temporarily remove sandboxes mock
-  await t.removeRequestHooks(platformMocks.sandboxes);
-  // replace with unauthorized mock
-  await t.addRequestHooks(platformMocks.sandboxesEmpty);
-  await initializeExtensionView();
-  await spectrum.select("sandboxField").expectDisabled();
-  await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_unifiedjsqeonly");
-});
+test.requestHooks(platformMocks.sandboxesEmpty)(
+  "disables user from selecting a sandbox",
+  async () => {
+    await initializeExtensionView();
+    await sandboxField.expectDisabled();
+    await selectSchemaFromSchemasMeta();
+    await xdmTree.toggleExpansion("_unifiedjsqeonly");
+  }
+);
 
-test("checks sandbox with no schemas", async () => {
-  await t.addRequestHooks(platformMocks.schemasMetaEmpty);
-  await initializeExtensionView();
-  await spectrum.select("sandboxField").expectEnabled();
-  await spectrum
-    .select("sandboxField")
-    .selectOption("PRODUCTION Alloy Test (FOO)");
-  await spectrum.alert("selectedSandboxWarning").expectExists();
-});
+test.requestHooks(
+  platformMocks.schemasMeta,
+  platformMocks.sandboxesWithoutDefault
+)(
+  "auto-selects first sandbox if response contains no default sandbox",
+  async () => {
+    await initializeExtensionView();
+    await sandboxField.expectEnabled();
+    await sandboxField.expectValue("prod");
+  }
+);
+
+test.requestHooks(platformMocks.sandboxes, platformMocks.schemasMetaEmpty)(
+  "checks sandbox with no schemas",
+  async () => {
+    await initializeExtensionView();
+    await sandboxField.expectEnabled();
+    await sandboxField.selectOption("PRODUCTION Alloy Test (FOO)");
+    await spectrum.alert("selectedSandboxWarning").expectExists();
+  }
+);
 
 test("allows user to enter a valid search query and get results", async () => {
   await initializeExtensionView();
