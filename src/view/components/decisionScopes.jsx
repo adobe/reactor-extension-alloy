@@ -15,7 +15,7 @@ import { Radio, Button } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { useField, FieldArray } from "formik";
 import { string } from "yup";
-import { RadioGroup, TextField } from "./hookFormReactSpectrum";
+import { RadioGroup, TextField } from "./formikReactSpectrum";
 import DataElementSelector from "./dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 

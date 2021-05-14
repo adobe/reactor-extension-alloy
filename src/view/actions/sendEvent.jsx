@@ -18,7 +18,7 @@ import {
   Picker,
   TextField,
   Checkbox
-} from "../components/hookFormReactSpectrum";
+} from "../components/formikReactSpectrum";
 import DataElementSelector from "../components/dataElementSelector";
 import render from "../spectrum3Render";
 import ExtensionView from "../components/spectrum3ExtensionView";
