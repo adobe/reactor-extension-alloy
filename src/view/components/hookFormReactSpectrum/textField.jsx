@@ -17,7 +17,7 @@ import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
 const TextField = ({ name, description, width, ...otherProps }) => {
-  const [{ value, onBlur }, { error }, { setValue }] = useField(name);
+  const [{ value }, { error }, { setValue, setTouched }] = useField(name);
 
   return (
     <FieldDescriptionAndError
@@ -29,7 +29,9 @@ const TextField = ({ name, description, width, ...otherProps }) => {
         {...otherProps}
         value={value}
         onChange={setValue}
-        onBlur={onBlur}
+        onBlur={() => {
+          setTouched(true);
+        }}
         validationState={error ? "invalid" : ""}
         width={width}
       />

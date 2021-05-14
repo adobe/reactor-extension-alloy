@@ -37,7 +37,8 @@ const ExtensionView = ({
     enableReinitialize: true,
     onSubmit: () => {},
     validate: wrapValidateWithErrorLogging(validate),
-    validationSchema
+    validationSchema,
+    validateOnChange: false
   });
   const [initialized, setInitialized] = useState(false);
   const [runtimeError, setRuntimeError] = useState();

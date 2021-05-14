@@ -17,7 +17,7 @@ import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
 const Picker = ({ name, description, width, ...otherProps }) => {
-  const [{ value, onBlur }, { error }, { setValue }] = useField(name);
+  const [{ value }, { error }, { setValue, setTouched }] = useField(name);
 
   return (
     <FieldDescriptionAndError
@@ -29,7 +29,9 @@ const Picker = ({ name, description, width, ...otherProps }) => {
         {...otherProps}
         selectedKey={value}
         onSelectionChange={setValue}
-        onBlur={onBlur}
+        onBlur={() => {
+          setTouched(true);
+        }}
         validationState={error ? "invalid" : ""}
         width={width}
       />

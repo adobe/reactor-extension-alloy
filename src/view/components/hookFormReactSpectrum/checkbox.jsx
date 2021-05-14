@@ -31,8 +31,6 @@ const Checkbox = ({ name, description, width, ...otherProps }) => {
         isSelected={value}
         onChange={setValue}
         onBlur={() => {
-          // If we were to call Formik's `onBlur`, it would result in a warning:
-          // Similar to this: https://github.com/formium/formik/issues/2622
           setTouched(true);
         }}
         validationState={error ? "invalid" : ""}

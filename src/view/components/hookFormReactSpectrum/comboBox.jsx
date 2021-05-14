@@ -17,7 +17,7 @@ import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
 const ComboBox = ({ name, description, width, ...otherProps }) => {
-  const [{ value, onBlur }, { error }, { setValue }] = useField(name);
+  const [{ value }, { error }, { setValue, setTouched }] = useField(name);
   return (
     <FieldDescriptionAndError
       description={description}
@@ -28,7 +28,9 @@ const ComboBox = ({ name, description, width, ...otherProps }) => {
         {...otherProps}
         inputValue={value}
         onInputChange={setValue}
-        onBlur={onBlur}
+        onBlur={() => {
+          setTouched(true);
+        }}
         validationState={error ? "invalid" : ""}
         width={width}
       />

@@ -17,13 +17,15 @@ import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
 const RadioGroup = ({ name, children, description, width, ...otherProps }) => {
-  const [{ value, onBlur }, { error }, { setValue }] = useField(name);
+  const [{ value }, { error }, { setValue, setTouched }] = useField(name);
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for RadioGroup, so we wire up React Hook Form's
   // onBlur to every radio.
   const childrenWithOnBlur = React.Children.map(children, child => {
     return React.cloneElement(child, {
-      onBlur
+      onBlur: () => {
+        setTouched(true);
+      }
     });
   });
   return (
