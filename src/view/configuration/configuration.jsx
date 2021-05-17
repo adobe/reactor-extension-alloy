@@ -32,9 +32,9 @@ import Link from "@react/react-spectrum/Link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import CheckboxList from "../components/checkboxList";
 import "@react/react-spectrum/Form"; // needed for spectrum form styles
-import render from "../render";
+import render from "../spectrum2Render";
 import WrappedField from "../components/wrappedField";
-import ExtensionView from "../components/extensionView";
+import ExtensionView from "../components/spectrum2ExtensionView";
 import EditorButton from "../components/editorButton";
 import InfoTipLayout from "../components/infoTipLayout";
 

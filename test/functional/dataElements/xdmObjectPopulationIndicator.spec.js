@@ -18,7 +18,7 @@ import integerEdit from "./xdmObject/helpers/integerEdit";
 import numberEdit from "./xdmObject/helpers/numberEdit";
 import objectEdit from "./xdmObject/helpers/objectEdit";
 import stringEdit from "./xdmObject/helpers/stringEdit";
-import spectrum from "../helpers/spectrum";
+import spectrum from "../helpers/spectrum2";
 
 const schemaTitle = "XDM Object Data Element Tests";
 const schemaSelectField = spectrum.combobox("schemaField");

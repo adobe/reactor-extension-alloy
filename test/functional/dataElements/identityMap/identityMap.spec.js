@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import { t } from "testcafe";
 import createExtensionViewController from "../../helpers/createExtensionViewController";
-import spectrum from "../../helpers/spectrum";
+import spectrum from "../../helpers/spectrum2";
 import getAdobeIOAccessToken from "../../helpers/getAdobeIOAccessToken";
 import platformMocks from "../xdmObject/helpers/platformMocks";
 import credentials from "../../helpers/adobeIOClientCredentials";

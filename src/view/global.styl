@@ -14,12 +14,17 @@ governing permissions and limitations under the License.
 
 // Simplifies centering things vertically in the middle of the view (like loading errors) or
 // creating columns that are the full height of the view and separately scrollable.
-html,
+html {
+  height: 100%
+}
+
+html
 body,
 #root,
 .react-spectrum-provider {
-  box-sizing: border-box;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1
 }
 
 // This is padding that goes around all the content. We put the padding on the Provider container
