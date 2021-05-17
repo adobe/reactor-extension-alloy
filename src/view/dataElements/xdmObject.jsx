@@ -272,10 +272,6 @@ const XdmExtensionView = () => {
               }
             }
 
-            if (!sandbox) {
-              sandbox = { name: null };
-            }
-
             setSelectedSandbox(sandbox);
 
             return sandbox;
