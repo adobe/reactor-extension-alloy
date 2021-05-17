@@ -24,6 +24,13 @@ const DataElementSelector = ({ children, augmentValue }) => {
   const inputChild = React.Children.toArray(children).find(
     child => child.props.name
   );
+
+  if (!inputChild) {
+    throw new Error(
+      "DataElementSelector must wrap a component with its `name` prop set."
+    );
+  }
+
   const name = inputChild.props.name;
   const adjustForLabel = Boolean(inputChild.props.label);
   // eslint-disable-next-line no-empty-pattern

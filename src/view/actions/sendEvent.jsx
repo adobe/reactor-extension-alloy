@@ -18,7 +18,7 @@ import {
   Picker,
   TextField,
   Checkbox
-} from "../components/formikReactSpectrum";
+} from "../components/formikReactSpectrum3";
 import DataElementSelector from "../components/dataElementSelector";
 import render from "../spectrum3Render";
 import ExtensionView from "../components/spectrum3ExtensionView";
@@ -90,9 +90,10 @@ const getSettings = ({ values }) => {
 };
 
 const validationSchema = object().shape({
-  xdm: string().matches(singleDataElementRegex, {
-    message: "Please specify a data element"
-  }),
+  xdm: string().matches(
+    singleDataElementRegex,
+    "Please specify a data element"
+  ),
   data: string().matches(
     singleDataElementRegex,
     "Please specify a data element"
