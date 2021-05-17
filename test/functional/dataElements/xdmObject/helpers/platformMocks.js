@@ -78,37 +78,6 @@ export const sandboxesWithoutDefault = RequestMock()
   );
 
 /**
- * Mocks a response from the platform sandboxes endpoint
- * @type {RequestMock}
- */
-export const sandboxes = RequestMock()
-  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
-  .respond(
-    {
-      sandboxes: [
-        {
-          name: "prod",
-          title: "Prod",
-          type: "production",
-          isDefault: true,
-          region: "VA7",
-          state: "active"
-        },
-        {
-          name: "alloy-test",
-          title: "Alloy Test",
-          type: "production",
-          isDefault: false,
-          region: "FOO",
-          state: "active"
-        }
-      ]
-    },
-    200,
-    responseHeaders
-  );
-
-/**
  * Mocks a response from the platform schema meta endpoint
  * @type {RequestMock}
  */

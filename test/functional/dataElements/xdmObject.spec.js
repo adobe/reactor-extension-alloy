@@ -154,12 +154,12 @@ test.requestHooks(
   }
 );
 
-test.requestHooks(platformMocks.sandboxes, platformMocks.schemasMetaEmpty)(
+test.requestHooks(platformMocks.schemasMetaEmpty)(
   "checks sandbox with no schemas",
   async () => {
     await initializeExtensionView();
     await sandboxField.expectEnabled();
-    await sandboxField.selectOption("PRODUCTION Alloy Test (FOO)");
+    await sandboxField.selectOption("PRODUCTION Prod (VA7)");
     await spectrum.alert("selectedSandboxWarning").expectExists();
   }
 );
