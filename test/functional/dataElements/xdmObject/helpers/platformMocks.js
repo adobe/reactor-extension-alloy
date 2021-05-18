@@ -6,7 +6,7 @@ const responseHeaders = { "Access-Control-Allow-Origin": "*" };
  * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
  * @type {RequestMock}
  */
-const unauthorized = RequestMock()
+export const unauthorized = RequestMock()
   .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
   .respond(
     {
@@ -21,7 +21,7 @@ const unauthorized = RequestMock()
  * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
  * @type {RequestMock}
  */
-const userRegionMissing = RequestMock()
+export const userRegionMissing = RequestMock()
   .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
   .respond(
     {
@@ -36,7 +36,7 @@ const userRegionMissing = RequestMock()
  * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
  * @type {RequestMock}
  */
-const nonJsonBody = RequestMock()
+export const nonJsonBody = RequestMock()
   .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
   .respond("non-json body", 401, responseHeaders);
 
@@ -44,7 +44,7 @@ const nonJsonBody = RequestMock()
  * Mocks an empty response from the platform sandboxes endpoint
  * @type {RequestMock}
  */
-const sandboxesEmpty = RequestMock()
+export const sandboxesEmpty = RequestMock()
   .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
   .respond(
     {
@@ -58,7 +58,7 @@ const sandboxesEmpty = RequestMock()
  * Mocks a response from the platform sandboxes endpoint
  * @type {RequestMock}
  */
-const sandboxes = RequestMock()
+export const sandboxesWithoutDefault = RequestMock()
   .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
   .respond(
     {
@@ -67,16 +67,8 @@ const sandboxes = RequestMock()
           name: "prod",
           title: "Prod",
           type: "production",
-          isDefault: true,
-          region: "VA7",
-          state: "active"
-        },
-        {
-          name: "alloy-test",
-          title: "Alloy Test",
-          type: "production",
           isDefault: false,
-          region: "FOO",
+          region: "VA7",
           state: "active"
         }
       ]
@@ -89,7 +81,7 @@ const sandboxes = RequestMock()
  * Mocks a response from the platform schema meta endpoint
  * @type {RequestMock}
  */
-const schemasMeta = RequestMock()
+export const schemasMeta = RequestMock()
   .onRequestTo({
     url:
       "https://platform.adobe.io/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta%3Aextends%3D%3Dhttps%253A%252F%252Fns.adobe.com%252Fxdm%252Fcontext%252Fexperienceevent",
@@ -120,7 +112,7 @@ const schemasMeta = RequestMock()
  * Mocks a response from the platform schema meta endpoint
  * @type {RequestMock}
  */
-const schemasMetaEmpty = RequestMock()
+export const schemasMetaEmpty = RequestMock()
   .onRequestTo({
     url:
       "https://platform.adobe.io/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta%3Aextends%3D%3Dhttps%253A%252F%252Fns.adobe.com%252Fxdm%252Fcontext%252Fexperienceevent",
@@ -136,7 +128,7 @@ const schemasMetaEmpty = RequestMock()
     responseHeaders
   );
 
-const namespaces = RequestMock()
+export const namespaces = RequestMock()
   .onRequestTo("https://platform.adobe.io/data/core/idnamespace/identities")
   .respond(
     [
@@ -179,23 +171,10 @@ const namespaces = RequestMock()
     responseHeaders
   );
 
-const namespacesEmpty = RequestMock()
+export const namespacesEmpty = RequestMock()
   .onRequestTo("https://platform.adobe.io/data/core/idnamespace/identities")
   .respond([], 200, responseHeaders);
 
-const namespacesError = RequestMock()
+export const namespacesError = RequestMock()
   .onRequestTo("https://platform.adobe.io/data/core/idnamespace/identities")
   .respond({}, 403, responseHeaders);
-
-export default {
-  sandboxes,
-  sandboxesEmpty,
-  unauthorized,
-  userRegionMissing,
-  nonJsonBody,
-  schemasMeta,
-  schemasMetaEmpty,
-  namespaces,
-  namespacesError,
-  namespacesEmpty
-};

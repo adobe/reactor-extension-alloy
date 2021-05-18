@@ -248,14 +248,10 @@ const XdmExtensionView = () => {
           imsAccess: initInfo.tokens.imsAccess
         })
           .then(response => {
-            let sandbox = { name: null };
+            let sandbox;
             // if sandboxes are returned from the api call
             if (response.sandboxes && response.sandboxes.length) {
               setSandboxes(response);
-              // default to the first item in the list
-              sandbox = response.sandboxes.find(
-                _sandbox => _sandbox.isDefault === true
-              );
 
               // if a sandbox exists in settings and is in the list, choose that item
               if (initInfo.settings && initInfo.settings.sandbox) {
@@ -263,8 +259,20 @@ const XdmExtensionView = () => {
                   _sandbox => _sandbox.name === initInfo.settings.sandbox.name
                 );
               }
-              setSelectedSandbox(sandbox);
+
+              // default to the first item in the list
+              if (!sandbox) {
+                sandbox = response.sandboxes.find(
+                  _sandbox => _sandbox.isDefault
+                );
+              }
+
+              if (!sandbox) {
+                [sandbox] = response.sandboxes;
+              }
             }
+
+            setSelectedSandbox(sandbox);
 
             return sandbox;
           })
