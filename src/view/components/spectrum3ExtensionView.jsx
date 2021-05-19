@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useFormik, FormikProvider } from "formik";
 import PropTypes from "prop-types";
 import {
@@ -23,6 +23,8 @@ import Error from "@spectrum-icons/illustrations/Error";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 import useExtensionBridge from "../utils/useExtensionBridge";
 import wrapValidateWithErrorLogging from "../utils/wrapValidateWithErrorLogging";
+import ExtensionViewContext from "./extensionViewContext";
+import useExtensionViewAggregators from "../utils/useExtensionViewAggregators";
 
 // This component sets up Formik and wires it up to Launch's extension bridge.
 // It should be used for each view inside an extension.
@@ -50,21 +52,32 @@ const ExtensionView = ({
     });
   };
 
+  // TODO: try removing this ref for formikProps?
+  const ref = useRef();
+  ref.current = { getInitialValues, getSettings, formikProps, initInfo };
+  const { extensionViewContext, getCombinedSettings } = useExtensionViewAggregators(initInfo);
+  useEffect(() => {
+    extensionViewContext.registerGetSettings(() => {
+      console.log("FormikProps settings", ref.current.formikProps.values);
+      return ref.current.getSettings({
+        values: ref.current.formikProps.values,
+        initInfo: ref.current.initInfo
+      });
+    });
+  }, []);
+
   useExtensionBridge({
     init: ({ initInfo: _initInfo }) => {
       setInitInfo(_initInfo);
-      const initialValuesPromise = new Promise((resolve, reject) => {
+      const initPromise = new Promise((resolve, reject) => {
         // This is inside of a promise "executor" because we want to catch
         // any errors that may occur inside getInitialValues.
         // getInitialValues may return the initial values or a promise
         // that gets resolved with the initial values, which is why
         // we do the Promise.resolve here.
-        Promise.resolve(getInitialValues({ initInfo: _initInfo })).then(
-          resolve,
-          reject
-        );
+        Promise.resolve(getInitialValues({ initInfo: _initInfo })).then(resolve, reject);
       });
-      return initialValuesPromise
+      return initPromise
         .then(initialValues => {
           resetForm(initialValues);
           setInitialized(true);
@@ -76,10 +89,7 @@ const ExtensionView = ({
         });
     },
     getSettings: () => {
-      return getSettings({
-        values: formikProps.values,
-        initInfo
-      });
+      return getCombinedSettings();
     },
     validate: () => {
       // The docs say that the promise submitForm returns
@@ -128,7 +138,9 @@ const ExtensionView = ({
   };
 
   return (
-    <FormikProvider value={formikProps}>{renderAndCatchError()}</FormikProvider>
+    <ExtensionViewContext.Provider value={extensionViewContext}>
+      <FormikProvider value={formikProps}>{renderAndCatchError()}</FormikProvider>
+    </ExtensionViewContext.Provider>
   );
 };
 

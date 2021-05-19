@@ -28,8 +28,12 @@ const TextField = ({ name, description, width, ...otherProps }) => {
       <ReactTextField
         {...otherProps}
         value={value}
-        onChange={setValue}
+        onChange={newValue => {
+          console.log("TextField newValue", newValue);
+          setValue(newValue);
+        }}
         onBlur={() => {
+          console.log("TextField touched");
           setTouched(true);
         }}
         validationState={error ? "invalid" : ""}
