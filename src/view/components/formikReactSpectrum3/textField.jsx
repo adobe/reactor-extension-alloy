@@ -29,11 +29,9 @@ const TextField = ({ name, description, width, ...otherProps }) => {
         {...otherProps}
         value={value}
         onChange={newValue => {
-          console.log("TextField newValue", newValue);
           setValue(newValue);
         }}
         onBlur={() => {
-          console.log("TextField touched");
           setTouched(true);
         }}
         validationState={error ? "invalid" : ""}

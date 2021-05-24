@@ -21,7 +21,7 @@ import {
 } from "../components/formikReactSpectrum3";
 import DataElementSelector from "../components/dataElementSelector";
 import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionView";
+import ExtensionViewWithForm from "../components/spectrum3ExtensionViewWithForm";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DecisionScopes, {
@@ -127,7 +127,7 @@ const knownEventTypeOptions = [
 
 const SendEvent = () => {
   return (
-    <ExtensionView
+    <ExtensionViewWithForm
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       validationSchema={validationSchema}

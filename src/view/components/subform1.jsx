@@ -1,37 +1,60 @@
-import React from "react";
+import React, { Fragment, useEffect, useContext } from "react";
 import { TextField } from "../components/formikReactSpectrum3";
-import Subform from "../components/subform";
 import { object, string } from "yup";
+import ExtensionViewForm from "./extensionViewForm";
+import ExtensionViewContext from "./extensionViewContext";
 
-const getInitialValues = ({ initInfo }) => {
-  return new Promise(resolve => setTimeout(() => {
-    resolve(initInfo.settings || { field2: "foo" });
-  },3000));
-};
-const getSettings = ({ values }) => {
-  return {
-    field2: `[${values.field2}]`
-  };
-};
 const validationSchema = object().shape({
-  field2: string().matches(/-/, "Field 2 must include a dash.")
+  first: string().required(),
+  last: string().required()
 });
 
-const Subform1 = () => {
-  return (
-    <Subform
-      getInitialValues={getInitialValues}
+const Subform1 = ({ name }) => {
+
+  const {
+    settings
+  } = useContext(ExtensionViewContext);
+
+  const initialValues = { first: "", last: "" };
+  if (settings && settings[name]) {
+    const i = settings[name].indexOf(" ");
+    if (i !== -1) {
+      initialValues.first = settings[name].substring(0,i);
+      initialValues.last = settings[name].substring(i+1);
+    } else {
+      initialValues.first = settings[name];
+    }
+  }
+
+  const getSettings = ({ values }) => {
+    return {
+      [name]: `${values.first} ${values.last}`
+    };
+  };
+
+    return (
+    <ExtensionViewForm
+      initialValues={initialValues}
       getSettings={getSettings}
+      claimedFields={[name]}
       validationSchema={validationSchema}
       render={() => {
         return (
-          <TextField
-            name="field2"
-            label="Field 2"
-            description="Fill in the awesome field 2"
-            width="size-5000"
-          />
-        );
+          <Fragment>
+            <TextField
+              name="first"
+              label="First Name"
+              description="Enter a first name"
+              width="size-5000"
+            />
+            <TextField
+              name="last"
+              label="Last Name"
+              description="Enter a last name"
+              width="size-5000"
+            />
+          </Fragment>
+        )
       }}
     />
   );

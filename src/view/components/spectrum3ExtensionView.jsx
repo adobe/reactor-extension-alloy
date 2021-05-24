@@ -10,145 +10,80 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useState, useRef } from "react";
-import { useFormik, FormikProvider } from "formik";
+import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
-import {
-  IllustratedMessage,
-  ProgressCircle,
-  Heading,
-  Content
-} from "@adobe/react-spectrum";
-import Error from "@spectrum-icons/illustrations/Error";
-import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 import useExtensionBridge from "../utils/useExtensionBridge";
-import wrapValidateWithErrorLogging from "../utils/wrapValidateWithErrorLogging";
 import ExtensionViewContext from "./extensionViewContext";
-import useExtensionViewAggregators from "../utils/useExtensionViewAggregators";
+import useSettings from "../utils/useSettings";
 
-// This component sets up Formik and wires it up to Launch's extension bridge.
-// It should be used for each view inside an extension.
+// This component wires up Launch's extension bridge, and creates the
+// ExtensionViewContext. It should be used for each view inside an extension.
 const ExtensionView = ({
-  getInitialValues,
-  getSettings,
-  validate,
-  validationSchema,
   render
 }) => {
-  const formikProps = useFormik({
-    enableReinitialize: true,
-    onSubmit: () => {},
-    validate: wrapValidateWithErrorLogging(validate),
-    validationSchema,
-    validateOnChange: false
-  });
-  const [initialized, setInitialized] = useState(false);
-  const [runtimeError, setRuntimeError] = useState();
+
   const [initInfo, setInitInfo] = useState();
+  const [settings, setSettings, saveSubset, applySubset] = useSettings();
 
-  const resetForm = (initialValues = {}) => {
-    formikProps.resetForm({
-      values: initialValues
-    });
-  };
-
-  // TODO: try removing this ref for formikProps?
-  const ref = useRef();
-  ref.current = { getInitialValues, getSettings, formikProps, initInfo };
-  const { extensionViewContext, getCombinedSettings } = useExtensionViewAggregators(initInfo);
-  useEffect(() => {
-    extensionViewContext.registerGetSettings(() => {
-      console.log("FormikProps settings", ref.current.formikProps.values);
-      return ref.current.getSettings({
-        values: ref.current.formikProps.values,
-        initInfo: ref.current.initInfo
-      });
-    });
-  }, []);
+  const registeredGetSettingsRef = useRef([]);
+  const registeredValidateRef = useRef([]);
 
   useExtensionBridge({
-    init: ({ initInfo: _initInfo }) => {
+    init({ initInfo: _initInfo }) {
+      console.log("Setting initInfo", _initInfo);
       setInitInfo(_initInfo);
-      const initPromise = new Promise((resolve, reject) => {
-        // This is inside of a promise "executor" because we want to catch
-        // any errors that may occur inside getInitialValues.
-        // getInitialValues may return the initial values or a promise
-        // that gets resolved with the initial values, which is why
-        // we do the Promise.resolve here.
-        Promise.resolve(getInitialValues({ initInfo: _initInfo })).then(resolve, reject);
-      });
-      return initPromise
-        .then(initialValues => {
-          resetForm(initialValues);
-          setInitialized(true);
-        })
-        .catch(error => {
-          // eslint-disable-next-line no-console
-          console.error(error);
-          setRuntimeError(error);
-        });
+      setSettings(_initInfo.settings);
     },
-    getSettings: () => {
-      return getCombinedSettings();
+    getSettings() {
+      return registeredGetSettingsRef.current.reduce((to, { getSettings, claimedFields }) => {
+        const settingsSubset = getSettings();
+        return applySubset(to, settingsSubset, claimedFields);
+      }, settings);
     },
-    validate: () => {
-      // The docs say that the promise submitForm returns
-      // will be rejected if there are errors, but that is not the case.
-      // Therefore, after the promise is resolved, we pull formikProps.errors
-      // (which were set during submitForm()) to see if the form is valid.
-      // https://github.com/jaredpalmer/formik/issues/1580
-      return formikProps.submitForm().then(() => {
-        formikProps.setSubmitting(false);
-        return Object.keys(formikProps.errors).length === 0;
-      });
+    validate() {
+      return Promise.all(registeredValidateRef.current.map(validate => validate()))
+        .then(areValid => areValid.every(isValid => isValid));
     }
   });
 
-  if (runtimeError) {
-    return (
-      <FillParentAndCenterChildren>
-        <IllustratedMessage data-test-id="initializationErrorAlert">
-          <Error />
-          <Heading>An error occurred</Heading>
-          <Content>{runtimeError.message}</Content>
-        </IllustratedMessage>
-      </FillParentAndCenterChildren>
-    );
+  if (!initInfo) {
+    return (null);
   }
 
-  if (!initialized) {
-    return (
-      <FillParentAndCenterChildren>
-        <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
-      </FillParentAndCenterChildren>
-    );
-  }
-
-  const renderAndCatchError = () => {
-    try {
-      return render({
-        formikProps,
-        initInfo,
-        resetForm
+  const context = {
+    registerGetSettings(getSettings, claimedFields) {
+      registeredGetSettingsRef.current.push({ getSettings, claimedFields });
+    },
+    deregisterGetSettings(getSettings, shouldApply) {
+      console.log("Deregister Get Settings, shouldApply:", shouldApply);
+      registeredGetSettingsRef.current = registeredGetSettingsRef.current.filter(other => {
+        if (other.getSettings !== getSettings) {
+          return true;
+        }
+        if (shouldApply) {
+          saveSubset(other.getSettings(), other.claimedFields);
+        }
+        return false;
       });
-    } catch (e) {
-      setRuntimeError(e);
-      return null;
-    }
+    },
+    registerValidate(validate) {
+      registeredValidateRef.current.push(validate);
+    },
+    deregisterValidate(validate) {
+      registeredValidateRef.current = registeredValidateRef.current.filter(other => other !== validate);
+    },
+    initInfo,
+    settings
   };
 
   return (
-    <ExtensionViewContext.Provider value={extensionViewContext}>
-      <FormikProvider value={formikProps}>{renderAndCatchError()}</FormikProvider>
+    <ExtensionViewContext.Provider value={context}>
+      {render()}
     </ExtensionViewContext.Provider>
   );
 };
 
 ExtensionView.propTypes = {
-  getInitialValues: PropTypes.func.isRequired,
-  getSettings: PropTypes.func.isRequired,
-  validate: PropTypes.func,
-  validationSchema: PropTypes.object,
   render: PropTypes.func.isRequired
 };
 
