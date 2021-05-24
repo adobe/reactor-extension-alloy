@@ -24,6 +24,8 @@ const ExtensionView = ({
 
   const [initInfo, setInitInfo] = useState();
   const [settings, setSettings, saveSubset, applySubset] = useSettings();
+  const saveSubsetRef = useRef();
+  saveSubsetRef.current = saveSubset;
 
   const registeredGetSettingsRef = useRef([]);
   const registeredValidateRef = useRef([]);
@@ -31,8 +33,9 @@ const ExtensionView = ({
   useExtensionBridge({
     init({ initInfo: _initInfo }) {
       console.log("Setting initInfo", _initInfo);
-      setInitInfo(_initInfo);
+      console.log("Setting Settings", _initInfo.settings);
       setSettings(_initInfo.settings);
+      setInitInfo(_initInfo);
     },
     getSettings() {
       return registeredGetSettingsRef.current.reduce((to, { getSettings, claimedFields }) => {
@@ -54,15 +57,12 @@ const ExtensionView = ({
     registerGetSettings(getSettings, claimedFields) {
       registeredGetSettingsRef.current.push({ getSettings, claimedFields });
     },
-    deregisterGetSettings(getSettings, shouldApply) {
-      console.log("Deregister Get Settings, shouldApply:", shouldApply);
+    deregisterGetSettings(getSettings) {
       registeredGetSettingsRef.current = registeredGetSettingsRef.current.filter(other => {
         if (other.getSettings !== getSettings) {
           return true;
         }
-        if (shouldApply) {
-          saveSubset(other.getSettings(), other.claimedFields);
-        }
+        saveSubsetRef.current(other.getSettings(), other.claimedFields);
         return false;
       });
     },

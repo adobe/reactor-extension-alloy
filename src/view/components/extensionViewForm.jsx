@@ -34,15 +34,15 @@ const ExtensionViewForm = ({
   formikPropsRef.current = formikProps;
 
   const resetForm = (values = {}) => {
-    formikProps.current.resetForm({ values });
+    formikPropsRef.current.resetForm({ values });
   };
 /*
   // only resetForm when initialValues changes
   // formikProps aleady has the initialValues
-  const firstRender = useRef(true);
+  const firstRenderRef = useRef(true);
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
+    if (firstRenderRef.current) {
+      firstRenderRef.current = false;
     } else {
       resetForm(initialValues);
     }
@@ -64,6 +64,7 @@ const ExtensionViewForm = ({
     registerValidate(extensionViewFormValidate);
 
     return () => {
+      console.log("Extension View Form cleanup!",claimedFields);
       deregisterGetSettings(extensionViewFormGetSettings);
       deregisterValidate(extensionViewFormValidate);
     };

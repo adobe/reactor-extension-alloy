@@ -22,7 +22,10 @@ export default () => {
   }
 
   const saveSubset = (settingsSubset, claimedFields) => {
-    setSettings(applySubset(settings, settingsSubset, claimedFields));
+    console.log("SaveSubset", settings, settingsSubset, claimedFields);
+    const newSettings = applySubset(settings, settingsSubset, claimedFields);
+    setSettings(newSettings);
+    console.log("New Settings", newSettings);
   };
 
 

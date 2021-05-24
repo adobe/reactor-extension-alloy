@@ -27,6 +27,9 @@ const Subform1 = ({ name }) => {
   }
 
   const getSettings = ({ values }) => {
+    if (!values.first || !values.last) {
+      return {};
+    }
     return {
       [name]: `${values.first} ${values.last}`
     };
