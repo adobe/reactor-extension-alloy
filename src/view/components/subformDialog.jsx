@@ -1,8 +1,18 @@
-import React, { Fragment, useContext, useEffect } from "react";
-import { TextField } from "../components/formikReactSpectrum3";
+import React, { useContext } from "react";
 import { object, string } from "yup";
+import {
+  DialogTrigger,
+  ActionButton,
+  Dialog,
+  Heading,
+  Divider,
+  Content,
+  ButtonGroup,
+  Button
+} from "@adobe/react-spectrum";
+import PropTypes from "prop-types";
+import { TextField } from "./formikReactSpectrum3";
 import ExtensionViewForm from "./extensionViewForm";
-import { DialogTrigger, ActionButton, Dialog, Heading, Divider, Content, ButtonGroup, Button } from "@adobe/react-spectrum";
 import Subform1 from "./subform1";
 import ExtensionViewContext from "./extensionViewContext";
 
@@ -11,10 +21,7 @@ const validationSchema = object().shape({
 });
 
 const SubformDialog = ({ name }) => {
-
-  const {
-    settings
-  } = useContext(ExtensionViewContext);
+  const { settings } = useContext(ExtensionViewContext);
 
   const initialValues = { text: "" };
   if (settings && settings[name]) {
@@ -27,7 +34,7 @@ const SubformDialog = ({ name }) => {
     };
   };
 
-    return (
+  return (
     <ExtensionViewForm
       initialValues={initialValues}
       getSettings={getSettings}
@@ -37,7 +44,7 @@ const SubformDialog = ({ name }) => {
         return (
           <DialogTrigger type="modal">
             <ActionButton>Edit</ActionButton>
-            {(close) => (
+            {close => (
               <Dialog size="fullscreen">
                 <Heading>Edit Text</Heading>
                 <Divider />
@@ -51,24 +58,34 @@ const SubformDialog = ({ name }) => {
                   <Subform1 name="dialogNames" />
                 </Content>
                 <ButtonGroup>
-                  <Button variant="secondary" onPress={() => {
-                    close();
-                  }}>
+                  <Button
+                    variant="secondary"
+                    onPress={() => {
+                      close();
+                    }}
+                  >
                     Cancel
                   </Button>
-                  <Button variant="cta" onPress={() => {
-                    close();
-                  }}>
+                  <Button
+                    variant="cta"
+                    onPress={() => {
+                      close();
+                    }}
+                  >
                     Save
                   </Button>
                 </ButtonGroup>
               </Dialog>
             )}
           </DialogTrigger>
-        )
+        );
       }}
     />
   );
+};
+
+SubformDialog.propTypes = {
+  name: PropTypes.string.isRequired
 };
 
 export default SubformDialog;

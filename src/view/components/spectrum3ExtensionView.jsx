@@ -14,63 +14,75 @@ import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
 import useExtensionBridge from "../utils/useExtensionBridge";
 import ExtensionViewContext from "./extensionViewContext";
-import useSettings from "../utils/useSettings";
+import applyClaimedFields from "../utils/applyClaimedFields";
 
 // This component wires up Launch's extension bridge, and creates the
 // ExtensionViewContext. It should be used for each view inside an extension.
-const ExtensionView = ({
-  render
-}) => {
-
+const ExtensionView = ({ render }) => {
+  // initInfo is the initial info passed in through the extension bridge
   const [initInfo, setInitInfo] = useState();
-  const [settings, setSettings, saveSubset, applySubset] = useSettings();
-  const saveSubsetRef = useRef();
-  saveSubsetRef.current = saveSubset;
+  // settings is the initial settings object, but changes when ExtensionViewForm
+  // components are un-mounted.
+  const [settings, setSettings] = useState();
 
   const registeredGetSettingsRef = useRef([]);
   const registeredValidateRef = useRef([]);
+  const saveSubsetRef = useRef();
 
   useExtensionBridge({
     init({ initInfo: _initInfo }) {
-      console.log("Setting initInfo", _initInfo);
-      console.log("Setting Settings", _initInfo.settings);
       setSettings(_initInfo.settings);
       setInitInfo(_initInfo);
     },
     getSettings() {
-      return registeredGetSettingsRef.current.reduce((to, { getSettings, claimedFields }) => {
-        const settingsSubset = getSettings();
-        return applySubset(to, settingsSubset, claimedFields);
-      }, settings);
+      // start with the current settings object, and apply all the claimedFields from
+      // currently rendered ExtensionViewForms
+      return registeredGetSettingsRef.current.reduce(
+        (to, { getSettings, claimedFields }) => {
+          const settingsSubset = getSettings();
+          return applyClaimedFields(to, settingsSubset, claimedFields);
+        },
+        settings
+      );
     },
     validate() {
-      return Promise.all(registeredValidateRef.current.map(validate => validate()))
-        .then(areValid => areValid.every(isValid => isValid));
+      // Check if all currently rendered ExtensionViewForms are valid
+      return Promise.all(
+        registeredValidateRef.current.map(validate => validate())
+      ).then(areValid => areValid.every(isValid => isValid));
     }
   });
 
   if (!initInfo) {
-    return (null);
+    return null;
   }
+
+  saveSubsetRef.current = (settingsSubset, claimedFields) => {
+    setSettings(applyClaimedFields(settings, settingsSubset, claimedFields));
+  };
 
   const context = {
     registerGetSettings(getSettings, claimedFields) {
       registeredGetSettingsRef.current.push({ getSettings, claimedFields });
     },
     deregisterGetSettings(getSettings) {
-      registeredGetSettingsRef.current = registeredGetSettingsRef.current.filter(other => {
-        if (other.getSettings !== getSettings) {
-          return true;
+      registeredGetSettingsRef.current = registeredGetSettingsRef.current.filter(
+        other => {
+          if (other.getSettings !== getSettings) {
+            return true;
+          }
+          saveSubsetRef.current(other.getSettings(), other.claimedFields);
+          return false;
         }
-        saveSubsetRef.current(other.getSettings(), other.claimedFields);
-        return false;
-      });
+      );
     },
     registerValidate(validate) {
       registeredValidateRef.current.push(validate);
     },
     deregisterValidate(validate) {
-      registeredValidateRef.current = registeredValidateRef.current.filter(other => other !== validate);
+      registeredValidateRef.current = registeredValidateRef.current.filter(
+        other => other !== validate
+      );
     },
     initInfo,
     settings
