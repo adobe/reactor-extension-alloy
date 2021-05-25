@@ -31,7 +31,7 @@ const ExtensionView = ({ render }) => {
 
   useExtensionBridge({
     init({ initInfo: _initInfo }) {
-      setSettings(_initInfo.settings);
+      setSettings(_initInfo.settings || {});
       setInitInfo(_initInfo);
     },
     getSettings() {
@@ -90,7 +90,7 @@ const ExtensionView = ({ render }) => {
 
   return (
     <ExtensionViewContext.Provider value={context}>
-      {render()}
+      {render({ initInfo, settings })}
     </ExtensionViewContext.Provider>
   );
 };

@@ -8,7 +8,7 @@ import TransientFormContext from "./transientFormContext";
 const ExtensionViewForm = ({
   initialValues,
   getSettings,
-  claimedFields,
+  claimedFields = [],
   validate,
   validationSchema,
   render
@@ -96,7 +96,7 @@ ExtensionViewForm.propTypes = {
   getSettings: PropTypes.func.isRequired,
   validate: PropTypes.func,
   validationSchema: PropTypes.object,
-  claimedFields: PropTypes.array.isRequired,
+  claimedFields: PropTypes.array,
   render: PropTypes.func.isRequired
 };
 
