@@ -112,16 +112,6 @@
   },
   "actions": [
     {
-      "displayName": "Subform Test",
-      "name": "subform-test",
-      "schema" : {
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "type": "object"
-      },
-      "libPath": "dist/lib/actions/subformTest/index.js",
-      "viewPath": "actions/subformTest.html"
-    },
-    {
       "displayName": "Reset Event Merge ID",
       "name": "reset-event-merge-id",
       "schema": {

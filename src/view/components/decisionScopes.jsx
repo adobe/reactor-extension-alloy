@@ -14,7 +14,7 @@ import React, { Fragment, useContext } from "react";
 import { Radio, Button } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { FieldArray } from "formik";
-import { string } from "yup";
+import { object, string } from "yup";
 import { RadioGroup, TextField } from "./formikReactSpectrum3";
 import DataElementSelector from "./dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
@@ -24,7 +24,30 @@ import ExtensionViewContext from "./extensionViewContext";
 const CONSTANT = "constant";
 const DATA_ELEMENT = "dataElement";
 
-export const getSettings = ({ values }) => {
+const getInitialValues = ({ initInfo }) => {
+  const { decisionScopes } = initInfo.settings || {};
+  if (Array.isArray(decisionScopes)) {
+    return {
+      decisionsInputMethod: CONSTANT,
+      decisionScopesArray: decisionScopes,
+      decisionScopesDataElement: ""
+    };
+  }
+  if (typeof decisionScopes === "string") {
+    return {
+      decisionsInputMethod: DATA_ELEMENT,
+      decisionScopesDataElement: decisionScopes,
+      decisionScopesArray: [""]
+    };
+  }
+  return {
+    decisionsInputMethod: CONSTANT,
+    decisionScopesDataElement: "",
+    decisionScopesArray: [""]
+  };
+};
+
+const getSettings = ({ values }) => {
   if (
     values.decisionsInputMethod === DATA_ELEMENT &&
     values.decisionScopesDataElement
@@ -46,7 +69,7 @@ export const getSettings = ({ values }) => {
   return undefined;
 };
 
-export const validationSchema = {
+const validationSchema = object().shape({
   decisionScopesDataElement: string().when("decisionsInputMethod", {
     is: DATA_ELEMENT,
     then: string().matches(
@@ -54,33 +77,11 @@ export const validationSchema = {
       "Please specify a data element"
     )
   })
-};
+});
 
 const DecisionScopes = () => {
-  const {
-    settings: { decisionScopes }
-  } = useContext(ExtensionViewContext);
-
-  let initialValues;
-  if (Array.isArray(decisionScopes)) {
-    initialValues = {
-      decisionsInputMethod: CONSTANT,
-      decisionScopesArray: decisionScopes,
-      decisionScopesDataElement: ""
-    };
-  } else if (typeof decisionScopes === "string") {
-    initialValues = {
-      decisionsInputMethod: DATA_ELEMENT,
-      decisionScopesDataElement: decisionScopes,
-      decisionScopesArray: [""]
-    };
-  } else {
-    initialValues = {
-      decisionsInputMethod: CONSTANT,
-      decisionScopesDataElement: "",
-      decisionScopesArray: [""]
-    };
-  }
+  const { initInfo } = useContext(ExtensionViewContext);
+  const initialValues = getInitialValues({ initInfo });
 
   return (
     <ExtensionViewForm
@@ -179,26 +180,3 @@ const DecisionScopes = () => {
 };
 
 export default DecisionScopes;
-
-export const getInitialValues = ({ initInfo }) => {
-  const { decisionScopes } = initInfo.settings || {};
-  if (Array.isArray(decisionScopes)) {
-    return {
-      decisionsInputMethod: CONSTANT,
-      decisionScopesArray: decisionScopes,
-      decisionScopesDataElement: ""
-    };
-  }
-  if (typeof decisionScopes === "string") {
-    return {
-      decisionsInputMethod: DATA_ELEMENT,
-      decisionScopesDataElement: decisionScopes,
-      decisionScopesArray: [""]
-    };
-  }
-  return {
-    decisionsInputMethod: CONSTANT,
-    decisionScopesDataElement: "",
-    decisionScopesArray: [""]
-  };
-};

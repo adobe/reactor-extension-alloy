@@ -27,7 +27,7 @@ import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DecisionScopes from "../components/decisionScopes";
 import ExtensionViewForm from "../components/extensionViewForm";
 
-const getInitialValues = ({ initInfo, settings }) => {
+const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
     renderDecisions = false,
@@ -37,7 +37,7 @@ const getInitialValues = ({ initInfo, settings }) => {
     mergeId = "",
     datasetId = "",
     documentUnloading = false
-  } = settings || {};
+  } = initInfo.settings || {};
 
   return {
     instanceName,
@@ -121,10 +121,10 @@ const knownEventTypeOptions = [
 const SendEvent = () => {
   return (
     <ExtensionView
-      render={({ initInfo, settings }) => {
+      render={({ initInfo }) => {
         return (
           <ExtensionViewForm
-            initialValues={getInitialValues({ initInfo, settings })}
+            initialValues={getInitialValues({ initInfo })}
             getSettings={getSettings}
             validationSchema={validationSchema}
             render={() => (

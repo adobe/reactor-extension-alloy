@@ -3,43 +3,21 @@ import { useFormik, FormikProvider } from "formik";
 import PropTypes from "prop-types";
 import wrapValidateWithErrorLogging from "../utils/wrapValidateWithErrorLogging";
 import ExtensionViewContext from "./extensionViewContext";
-import TransientFormContext from "./transientFormContext";
 
 const ExtensionViewForm = ({
   initialValues,
   getSettings,
-  claimedFields = [],
   validate,
   validationSchema,
   render
 }) => {
-  let formikInitialValues = initialValues;
-  let transientFormContextRef;
-  let firstTime = true;
-
-  const transientFormContext = useContext(TransientFormContext);
-  if (transientFormContext) {
-    // This extensionViewForm is inside of a TransientFormContext
-    transientFormContextRef = useRef();
-    if (!transientFormContextRef.current) {
-      transientFormContextRef.current = transientFormContext();
-    }
-    if (transientFormContextRef.current.value) {
-      // There is some saved state!
-      // Set the initialValues to what was last saved when this form was visible
-      formikInitialValues = transientFormContextRef.current.value;
-      firstTime = false;
-    }
-  }
-
   const formikProps = useFormik({
-    initialValues: formikInitialValues,
+    initialValues,
     enableReinitialize: true,
     onSubmit: () => {},
     validate: wrapValidateWithErrorLogging(validate),
     validationSchema,
-    validateOnChange: false,
-    validateOnMount: !firstTime
+    validateOnChange: false
   });
 
   const {
@@ -48,7 +26,7 @@ const ExtensionViewForm = ({
     registerValidate,
     deregisterValidate,
     initInfo,
-    settings
+    initCalls
   } = useContext(ExtensionViewContext);
 
   const formikPropsRef = useRef();
@@ -58,11 +36,21 @@ const ExtensionViewForm = ({
     formikPropsRef.current.resetForm({ values });
   };
 
+  // Reset the form when the extension bridge calls "init"
+  const firstRenderRef = useRef(true);
+  useEffect(() => {
+    if (firstRenderRef.current) {
+      firstRenderRef.current = false;
+    } else {
+      resetForm(initialValues);
+    }
+  }, [initCalls]);
+
   useEffect(() => {
     const extensionViewFormGetSettings = () => {
       return getSettings({ initInfo, values: formikPropsRef.current.values });
     };
-    registerGetSettings(extensionViewFormGetSettings, claimedFields);
+    registerGetSettings(extensionViewFormGetSettings);
     const extensionViewFormValidate = () => {
       return formikPropsRef.current.submitForm().then(() => {
         formikPropsRef.current.setSubmitting(false);
@@ -72,9 +60,6 @@ const ExtensionViewForm = ({
     registerValidate(extensionViewFormValidate);
 
     return () => {
-      if (transientFormContextRef) {
-        transientFormContextRef.current.value = formikPropsRef.current.values;
-      }
       deregisterGetSettings(extensionViewFormGetSettings);
       deregisterValidate(extensionViewFormValidate);
     };
@@ -83,7 +68,6 @@ const ExtensionViewForm = ({
   const renderParams = {
     formikProps,
     initInfo,
-    settings,
     resetForm
   };
   return (
@@ -96,7 +80,6 @@ ExtensionViewForm.propTypes = {
   getSettings: PropTypes.func.isRequired,
   validate: PropTypes.func,
   validationSchema: PropTypes.object,
-  claimedFields: PropTypes.array,
   render: PropTypes.func.isRequired
 };
 
