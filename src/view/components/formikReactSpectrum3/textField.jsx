@@ -28,7 +28,9 @@ const TextField = ({ name, description, width, ...otherProps }) => {
       <ReactTextField
         {...otherProps}
         value={value}
-        onChange={setValue}
+        onChange={newValue => {
+          setValue(newValue);
+        }}
         onBlur={() => {
           setTouched(true);
         }}
