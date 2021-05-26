@@ -3,6 +3,7 @@ import { useFormik, FormikProvider } from "formik";
 import PropTypes from "prop-types";
 import wrapValidateWithErrorLogging from "../utils/wrapValidateWithErrorLogging";
 import ExtensionViewContext from "./extensionViewContext";
+import useTransientViewState from "../utils/useTransientViewState";
 
 const ExtensionViewForm = ({
   initialValues,
@@ -11,13 +12,16 @@ const ExtensionViewForm = ({
   validationSchema,
   render
 }) => {
+  const [restoredInitialValues, saveInitialValues] = useTransientViewState();
+
   const formikProps = useFormik({
-    initialValues,
+    initialValues: restoredInitialValues || initialValues,
     enableReinitialize: true,
     onSubmit: () => {},
     validate: wrapValidateWithErrorLogging(validate),
     validationSchema,
-    validateOnChange: false
+    validateOnChange: false,
+    validateOnMount: !!restoredInitialValues
   });
 
   const {
@@ -60,6 +64,7 @@ const ExtensionViewForm = ({
     registerValidate(extensionViewFormValidate);
 
     return () => {
+      saveInitialValues(formikPropsRef.current.values);
       deregisterGetSettings(extensionViewFormGetSettings);
       deregisterValidate(extensionViewFormValidate);
     };
