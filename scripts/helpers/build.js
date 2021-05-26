@@ -85,7 +85,7 @@ module.exports = (options = {}) => {
   ]);
 
   if (watch) {
-    run("babel", [
+    const babelWatchSubprocess = run("babel", [
       libInDir,
       "--out-dir",
       libOutDir,
@@ -94,6 +94,8 @@ module.exports = (options = {}) => {
       "--ignore",
       alloyInFile
     ]);
+    // cleanup this process on ctrl-c
+    process.on("exit", () => babelWatchSubprocess.kill());
   }
 
   // The package resolution in launch does not follow dependencies on npm packages, so we need to build our
