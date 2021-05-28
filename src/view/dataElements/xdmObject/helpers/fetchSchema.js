@@ -10,49 +10,34 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import getBaseRequestHeaders from "../../../utils/getBaseRequestHeaders";
-import platform from "./platform";
+import fetchFromPlatform from "../../../utils/fetchFromPlatform";
 
-export default ({ orgId, imsAccess, schemaMeta, sandboxName }) => {
-  if (!schemaMeta || !schemaMeta.$id) {
-    throw new Error("Invalid schema meta");
-  }
-
-  const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
-  const schemaMajorVersion = schemaMeta.version.split(".")[0];
+export default async ({
+  orgId,
+  imsAccess,
+  schemaId,
+  schemaVersion,
+  sandboxName,
+  signal
+}) => {
+  const schemaMajorVersion = schemaVersion.split(".")[0];
+  const path = `/data/foundation/schemaregistry/tenant/schemas/${encodeURIComponent(
+    schemaId
+  )}`;
 
   const headers = {
-    ...baseRequestHeaders,
     // request a summary response with title , $id , meta:altId , and version attributes
-    Accept: "application/vnd.adobe.xdm-v2+json"
+    Accept: `application/vnd.adobe.xed-full+json;version=${schemaMajorVersion}`,
+    "x-sandbox-name": sandboxName
   };
 
-  if (sandboxName) {
-    headers["x-sandbox-name"] = sandboxName;
-  } else {
-    headers["x-sandbox-name"] = platform.getDefaultSandboxName();
-  }
+  const parsedResponse = await fetchFromPlatform({
+    orgId,
+    imsAccess,
+    path,
+    headers,
+    signal
+  });
 
-  return fetch(
-    `${platform.getHost({
-      imsAccess
-    })}/data/foundation/schemaregistry/tenant/schemas/${encodeURIComponent(
-      schemaMeta.$id
-    )}`,
-    {
-      headers: {
-        ...headers,
-        // The first part of this ensures all json-schema refs are resolved within the schema we retrieve.
-        Accept: `application/vnd.adobe.xed-full+json;version=${schemaMajorVersion}`
-      }
-    }
-  )
-    .then(platform.checkAccess)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Cannot fetch schema from schema registry.");
-      }
-      return response.json();
-    })
-    .then(responseBody => responseBody);
+  return parsedResponse.parsedBody;
 };

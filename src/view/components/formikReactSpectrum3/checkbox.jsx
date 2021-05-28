@@ -18,11 +18,13 @@ import FieldDescriptionAndError from "../fieldDescriptionAndError";
 import "./checkbox.styl";
 
 const Checkbox = ({ name, description, width, ...otherProps }) => {
-  const [{ value }, { error }, { setValue, setTouched }] = useField(name);
+  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
+    name
+  );
   return (
     <FieldDescriptionAndError
       description={description}
-      error={error}
+      error={touched && error ? error : undefined}
       width={width}
       className="Checkbox-descriptionAndError"
     >
@@ -33,7 +35,7 @@ const Checkbox = ({ name, description, width, ...otherProps }) => {
         onBlur={() => {
           setTouched(true);
         }}
-        validationState={error ? "invalid" : ""}
+        validationState={touched && error ? "invalid" : undefined}
         width={width}
       />
     </FieldDescriptionAndError>

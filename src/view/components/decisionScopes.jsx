@@ -85,7 +85,7 @@ const DecisionScopes = () => {
     <ExtensionViewForm
       initialValues={initialValues}
       getSettings={getSettings}
-      validationSchema={validationSchema}
+      formikStateValidationSchema={validationSchema}
       render={({ formikProps }) => {
         const {
           decisionsInputMethod,

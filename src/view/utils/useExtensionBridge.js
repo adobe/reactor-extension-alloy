@@ -12,8 +12,8 @@ governing permissions and limitations under the License.
 import { useRef, useEffect } from "react";
 
 export default currentViewMethods => {
-  const viewMethods = useRef();
-  viewMethods.current = currentViewMethods;
+  const viewMethodsRef = useRef();
+  viewMethodsRef.current = currentViewMethods;
 
   useEffect(() => {
     // We use "useRef" so that whenever Launch calls the init, getSettings, or validate
@@ -25,15 +25,15 @@ export default currentViewMethods => {
     // useExtensionBridge, since this effect only runs once.
     window.extensionBridge.register({
       init(initInfo) {
-        return viewMethods.current.init({
+        return viewMethodsRef.current.init({
           initInfo
         });
       },
       getSettings() {
-        return viewMethods.current.getSettings();
+        return viewMethodsRef.current.getSettings();
       },
       validate() {
-        return viewMethods.current.validate();
+        return viewMethodsRef.current.validate();
       }
     });
   }, []);

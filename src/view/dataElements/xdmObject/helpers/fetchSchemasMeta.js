@@ -10,28 +10,22 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import getBaseRequestHeaders from "../../../utils/getBaseRequestHeaders";
-import platform from "./platform";
+import escapeStringRegexp from "escape-string-regexp";
+import fetchFromPlatform from "../../../utils/fetchFromPlatform";
 
-export default ({ orgId, imsAccess, sandboxName, search }) => {
-  const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
+const metaExtends = encodeURIComponent(
+  "https://ns.adobe.com/xdm/context/experienceevent"
+);
 
-  const metaExtends = encodeURIComponent(
-    "https://ns.adobe.com/xdm/context/experienceevent"
-  );
-
-  const headers = {
-    ...baseRequestHeaders,
-    // request a summary response with title , $id , meta:altId , and version attributes
-    Accept: "application/vnd.adobe.xdm-v2+json"
-  };
-
-  if (sandboxName) {
-    headers["x-sandbox-name"] = sandboxName;
-  } else {
-    headers["x-sandbox-name"] = platform.getDefaultSandboxName();
-  }
-
+export default async ({
+  orgId,
+  imsAccess,
+  sandboxName,
+  search,
+  limit,
+  start,
+  signal
+}) => {
   const path = `/data/foundation/schemaregistry/tenant/schemas`;
 
   const params = new URLSearchParams();
@@ -39,27 +33,37 @@ export default ({ orgId, imsAccess, sandboxName, search }) => {
   params.append("property", `meta:extends==${metaExtends}`);
 
   if (search) {
-    params.append("property", `title~${search}`);
+    // We escape regex special characters because ~ in the querystring
+    // searches by regex and we don't want to search by regex.
+    params.append("property", `title~${escapeStringRegexp(search)}`);
   }
 
-  // TODO: paginate this response using on responseBody._page.count or responseBody._links.next
-  return fetch(
-    `${platform.getHost({
-      imsAccess
-    })}${path}?${params.toString()}`,
-    { headers }
-  )
-    .then(platform.checkAccess)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Cannot fetch schemas from schema registry");
-      }
-      return response.json();
-    })
-    .then(responseBody => {
-      return {
-        sandboxName,
-        results: responseBody.results
-      };
-    });
+  if (start) {
+    params.append("start", start);
+  }
+
+  if (limit) {
+    params.append("limit", limit);
+  }
+
+  const headers = {
+    // request a summary response with title , $id , meta:altId , and version attributes
+    Accept: "application/vnd.adobe.xed-id+json",
+    "x-sandbox-name": sandboxName
+  };
+
+  const parsedResponse = await fetchFromPlatform({
+    orgId,
+    imsAccess,
+    path,
+    params,
+    headers,
+    signal
+  });
+
+  return {
+    results: parsedResponse.parsedBody.results,
+    // eslint-disable-next-line no-underscore-dangle
+    nextPage: parsedResponse.parsedBody._page.next
+  };
 };

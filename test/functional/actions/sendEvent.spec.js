@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum3";
-import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
+import testInstanceNameOptions from "../helpers/spectrum3TestInstanceNameOptions";
 
 const extensionViewController = createExtensionViewController(
   "actions/sendEvent.html"
@@ -75,7 +75,7 @@ test("initializes form fields with full settings, when decision scopes is data e
     }
   });
   await instanceNameField.expectText("alloy2");
-  await typeField.expectValue("myType1");
+  await typeField.expectText("myType1");
   await xdmField.expectValue("%myDataLayer%");
   await dataField.expectValue("%myData%");
   await mergeIdField.expectValue("%myMergeId%");
@@ -110,7 +110,7 @@ test("initializes form fields with minimal settings", async () => {
     }
   });
   await instanceNameField.expectText("alloy1");
-  await typeField.expectValue("");
+  await typeField.expectText("");
   await xdmField.expectValue("");
   await dataField.expectValue("");
   await mergeIdField.expectValue("");
@@ -127,7 +127,7 @@ test("initializes form fields with no settings", async () => {
     extensionSettings: mockExtensionSettings
   });
   await instanceNameField.expectText("alloy1");
-  await typeField.expectValue("");
+  await typeField.expectText("");
   await xdmField.expectValue("");
   await dataField.expectValue("");
   await mergeIdField.expectValue("");

@@ -10,43 +10,22 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import getBaseRequestHeaders from "../../../utils/getBaseRequestHeaders";
-import platform from "./platform";
+import fetchFromPlatform from "../../../utils/fetchFromPlatform";
 
-export default ({ orgId, imsAccess }) => {
-  const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
+export default async ({ orgId, imsAccess, signal }) => {
+  // There is no sandbox API for a non-admin user to fetch
+  // a single sandbox. There's also no way for non-admin users
+  // to query sandboxes by name or to query for the default
+  // sandbox. If we ever want to support more than one page of
+  // sandboxes, we'll probably want/need improved sandbox APIs.
+  const parsedResponse = await fetchFromPlatform({
+    orgId,
+    imsAccess,
+    path: `/data/foundation/sandbox-management/`,
+    signal
+  });
 
-  const DEFAULT_SANDBOX_RESPONSE_BODY = {
-    sandboxes: [
-      {
-        name: platform.getDefaultSandboxName(),
-        title: "Prod",
-        type: "production",
-        isDefault: true,
-        region: null,
-        state: "active"
-      }
-    ],
-    disabled: true
+  return {
+    results: parsedResponse.parsedBody.sandboxes
   };
-
-  return fetch(
-    `${platform.getHost({ imsAccess })}/data/foundation/sandbox-management/`,
-    {
-      headers: baseRequestHeaders
-    }
-  )
-    .then(platform.checkAccess)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Cannot fetch active sandboxes list.");
-      }
-      return response.json();
-    })
-    .then(responseBody => {
-      if (responseBody.sandboxes && responseBody.sandboxes.length === 0) {
-        return DEFAULT_SANDBOX_RESPONSE_BODY;
-      }
-      return responseBody;
-    });
 };

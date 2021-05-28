@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Adobe. All rights reserved.
+Copyright 2021 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,7 +9,19 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import { useRef, useEffect } from "react";
 
-.NoSelectedNodeView-icon {
-  margin-top: 3px;
-}
+/**
+ * React hook for referencing the previous value of something.
+ * Call usePrevious on every render with the current value and
+ * the hook will return the prior value.
+ */
+const usePrevious = value => {
+  const valueRef = useRef();
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+  return valueRef.current;
+};
+
+export default usePrevious;

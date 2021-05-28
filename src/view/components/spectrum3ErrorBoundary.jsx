@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import ErrorMessage from "./errorMessage";
+import ErrorMessage from "./spectrum3ErrorMessage";
 
 export default class ErrorBoundary extends Component {
   constructor(props) {
@@ -21,7 +21,6 @@ export default class ErrorBoundary extends Component {
   }
 
   static getDerivedStateFromError(error) {
-    // Update state so the next render will show the fallback UI.
     return { error };
   }
 
@@ -29,8 +28,11 @@ export default class ErrorBoundary extends Component {
     const { error } = this.state;
     const { children } = this.props;
     if (error) {
-      // You can render any custom fallback UI
-      return <ErrorMessage>{error.message}</ErrorMessage>;
+      return (
+        <ErrorMessage dataTestId="errorBoundaryMessage">
+          {error.message}
+        </ErrorMessage>
+      );
     }
 
     return children;
