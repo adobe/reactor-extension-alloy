@@ -41,7 +41,7 @@
     ]
   },
   "dependencies": {
-    "@adobe/alloy": "^2.4.0",
+    "@adobe/alloy": "^2.5.0",
     "@react/react-spectrum": "^2.34.0",
     "antd": "^4.12.3",
     "classnames": "^2.2.6",
