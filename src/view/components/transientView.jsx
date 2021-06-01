@@ -24,7 +24,9 @@ export const TransientViewContext = createContext();
 //   );
 // }
 const TransientView = ({ memento, children }) => {
+
   const nextIndex = useRef(0);
+  console.log("TransientView memento", memento, nextIndex);
   memento.current = memento.current || [];
 
   const context = () => {
