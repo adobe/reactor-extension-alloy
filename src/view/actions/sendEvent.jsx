@@ -26,6 +26,7 @@ import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DecisionScopes from "../components/decisionScopes";
 import ExtensionViewForm from "../components/extensionViewForm";
+import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -84,14 +85,8 @@ const getSettings = ({ values }) => {
 };
 
 const validationSchema = object().shape({
-  xdm: string().matches(
-    singleDataElementRegex,
-    "Please specify a data element"
-  ),
-  data: string().matches(
-    singleDataElementRegex,
-    "Please specify a data element"
-  )
+  xdm: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
+  data: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
 });
 
 const knownEventTypeOptions = [

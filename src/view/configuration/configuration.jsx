@@ -49,6 +49,7 @@ import OptionsWithDataElement, {
   DATA_ELEMENT
 } from "../components/optionsWithDataElement";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
+import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 
 const edgeConfigInputMethods = {
   SELECT: "select",
@@ -306,8 +307,8 @@ const validationSchema = object()
           dataElement: mixed().when("radio", {
             is: DATA_ELEMENT,
             then: string()
-              .required("Please specify a data element")
-              .matches(singleDataElementRegex, "Please specify a data element.")
+              .required(DATA_ELEMENT_REQUIRED)
+              .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
           })
         })
       })

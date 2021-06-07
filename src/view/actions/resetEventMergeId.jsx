@@ -22,6 +22,7 @@ import ExtensionView from "../components/spectrum2ExtensionView";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import InfoTipLayout from "../components/infoTipLayout";
 import "./resetEventMergeId.styl";
+import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 
 const getInitialValues = ({ initInfo }) => {
   const { eventMergeId = "" } = initInfo.settings || {};
@@ -36,10 +37,9 @@ const getSettings = ({ values }) => {
 };
 
 const validationSchema = object().shape({
-  eventMergeId: string().matches(
-    singleDataElementRegex,
-    "Please specify a data element"
-  )
+  eventMergeId: string()
+    .required(DATA_ELEMENT_REQUIRED)
+    .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
 });
 
 const ResetEventMergeId = () => {

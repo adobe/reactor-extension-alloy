@@ -44,6 +44,12 @@ test("returns valid settings", async () => {
   });
 });
 
+test("shows error for empty event merge ID value", async () => {
+  await extensionViewController.init();
+  await extensionViewController.expectIsNotValid();
+  await eventMergeIdField.expectError();
+});
+
 test("shows error for event merge ID value that is not a data element", async () => {
   await extensionViewController.init();
   await eventMergeIdField.typeText("foo");

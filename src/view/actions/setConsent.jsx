@@ -36,6 +36,7 @@ import InfoTipLayout from "../components/infoTipLayout";
 import OptionsWithDataElement, {
   DATA_ELEMENT as DATA_ELEMENT_OPTION
 } from "../components/optionsWithDataElement";
+import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 
 const IN = { value: "in", label: "In" };
 const OUT = { value: "out", label: "Out" };
@@ -290,28 +291,29 @@ const getSettings = ({ values }) => {
   return settings;
 };
 
-const invalidDataMessage = "Please specify a data element.";
 const validationSchema = object().shape({
   instanceName: string().required(),
-  identityMap: string().matches(singleDataElementRegex, invalidDataMessage),
+  identityMap: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
   dataElement: mixed().when("inputMethod", {
     is: DATA_ELEMENT.value,
     then: string()
-      .matches(singleDataElementRegex, invalidDataMessage)
-      .required(invalidDataMessage)
+      .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+      .required(DATA_ELEMENT_REQUIRED)
   }),
   consent: array().when("inputMethod", {
     is: FORM.value,
     then: array().of(
       object().shape({
-        standard: string().required("Plesase specify a standard."),
+        standard: string().required("Please specify a standard."),
         general: mixed().when(["standard", "adobeVersion"], {
           is: (standard, adobeVersion) =>
             standard === ADOBE.value && adobeVersion === "1.0",
           then: object().shape({
             dataElement: mixed().when("radio", {
               is: DATA_ELEMENT_OPTION,
-              then: string().matches(singleDataElementRegex, invalidDataMessage)
+              then: string()
+                .required(DATA_ELEMENT_REQUIRED)
+                .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
             })
           })
         }),
@@ -319,8 +321,8 @@ const validationSchema = object().shape({
           is: (standard, adobeVersion) =>
             standard === ADOBE.value && adobeVersion !== "1.0",
           then: string()
-            .required()
-            .matches(singleDataElementRegex, invalidDataMessage)
+            .required(DATA_ELEMENT_REQUIRED)
+            .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
         }),
         iabVersion: mixed().when(["standard"], {
           is: IAB_TCF.value,
@@ -336,7 +338,9 @@ const validationSchema = object().shape({
             radio: string().required(),
             dataElement: mixed().when("radio", {
               is: DATA_ELEMENT_OPTION,
-              then: string().matches(singleDataElementRegex, invalidDataMessage)
+              then: string()
+                .required(DATA_ELEMENT_REQUIRED)
+                .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
             })
           })
         }),
@@ -346,7 +350,9 @@ const validationSchema = object().shape({
             radio: string().required(),
             dataElement: mixed().when("radio", {
               is: DATA_ELEMENT_OPTION,
-              then: string().matches(singleDataElementRegex, invalidDataMessage)
+              then: string()
+                .required(DATA_ELEMENT_REQUIRED)
+                .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
             })
           })
         })
