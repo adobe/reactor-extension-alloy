@@ -42,7 +42,9 @@ const XdmTreeNodeTitle = props => {
         className="u-gapRight"
         populationAmount={populationAmount}
       />
-      <span data-test-id="xdmTreeNodeTitleDisplayName">{displayName}</span>
+      <span data-test-id="xdmTreeNodeTitleDisplayName" className="u-noWrap">
+        {displayName}
+      </span>
       {infoTip && (
         <div className="u-flex u-alignItemsCenter u-gapLeft" title={infoTip}>
           <AsteriskIcon size="XS" />

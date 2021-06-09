@@ -14,13 +14,12 @@ import { useEffect, useRef } from "react";
 import { useFormikContext } from "formik";
 
 /**
- * A react hook which the callback after a user attempts to
+ * A react hook which calls the callback after a user attempts to
  * submit a formik form (rather than just changes a field value)
  * and validation completes.
  *
  * @param {Function} callback A function to call whenever the user
  * attempts to submit a formik form and validation completes.
- * @param {Object} formikProps Formik props, provided by Formik.
  */
 export default callback => {
   const { isValidating, submitCount } = useFormikContext();

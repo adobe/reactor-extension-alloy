@@ -7,20 +7,18 @@ import ExtensionViewContext from "./extensionViewContext";
 const ExtensionViewForm = ({
   initialValues,
   getSettings,
-  validateFormikState,
+  validateFormikState = () => undefined,
   formikStateValidationSchema,
-  validateNonFormikState,
+  validateNonFormikState = () => true,
   render
 }) => {
   const formikProps = useFormik({
     initialValues,
     enableReinitialize: true,
     onSubmit: () => {},
-    validate: validateFormikState
-      ? wrapValidateWithErrorLogging(values => {
-          return validateFormikState({ values });
-        })
-      : undefined,
+    validate: wrapValidateWithErrorLogging(values => {
+      return validateFormikState({ values });
+    }),
     validationSchema: formikStateValidationSchema
   });
 
@@ -68,7 +66,7 @@ const ExtensionViewForm = ({
           return Object.keys(formikPropsRef.current.errors).length === 0;
         });
       const validateNonFormikStatePromise = Promise.resolve(
-        !validateNonFormikState || validateNonFormikState()
+        validateNonFormikState()
       );
       const results = await Promise.all([
         validateFormikStatePromise,
