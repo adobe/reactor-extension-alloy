@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider, lightTheme } from "@adobe/react-spectrum";
+import ErrorBoundary from "./components/spectrum3ErrorBoundary";
 import "./spectrum3Render.styl";
 
 export default View => {
@@ -22,7 +23,9 @@ export default View => {
       colorScheme="light"
       UNSAFE_className="react-spectrum-provider"
     >
-      <View />
+      <ErrorBoundary>
+        <View />
+      </ErrorBoundary>
     </Provider>,
     document.getElementById("root")
   );

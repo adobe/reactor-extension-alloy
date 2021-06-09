@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import spectrum from "../../../helpers/spectrum2";
+import spectrum from "../../../helpers/spectrum3";
 
 /**
  * Provides methods for managing form fields when editing an array node.
@@ -32,9 +32,9 @@ export default {
     await spectrum.radio("wholePopulationStrategyField").click();
   },
   enterValue: async text => {
-    await spectrum.textfield("valueField").typeText(text);
+    await spectrum.textField("valueField").typeText(text);
   },
   expectValue: async text => {
-    await spectrum.textfield("valueField").expectValue(text);
+    await spectrum.textField("valueField").expectValue(text);
   }
 };

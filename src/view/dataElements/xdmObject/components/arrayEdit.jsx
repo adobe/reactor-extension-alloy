@@ -12,14 +12,14 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import RadioGroup from "@react/react-spectrum/RadioGroup";
-import Radio from "@react/react-spectrum/Radio";
-import Textfield from "@react/react-spectrum/Textfield";
-import { FieldArray } from "formik";
-import Button from "@react/react-spectrum/Button";
-import Delete from "@react/react-spectrum/Icon/Delete";
-import FieldLabel from "@react/react-spectrum/FieldLabel";
-import WrappedField from "../../../components/wrappedField";
+import { FieldArray, useField } from "formik";
+import { Radio, Button } from "@adobe/react-spectrum";
+import Delete from "@spectrum-icons/workflow/Delete";
+import {
+  RadioGroup,
+  TextField
+} from "../../../components/formikReactSpectrum3";
+import DataElementSelector from "../../../components/dataElementSelector";
 import getInitialFormState, {
   formStateNodePropTypes
 } from "../helpers/getInitialFormState";
@@ -31,17 +31,14 @@ import { ARRAY, OBJECT } from "../constants/schemaType";
  * Allows the user to provide a value for the whole array.
  */
 const WholePopulationStrategyForm = ({ fieldName }) => (
-  <React.Fragment>
-    <FieldLabel labelFor="valueField" label="Data element providing array" />
-    <WrappedField
+  <DataElementSelector>
+    <TextField
       data-test-id="valueField"
-      id="valueField"
       name={`${fieldName}.value`}
-      component={Textfield}
-      componentClassName="u-fieldLong"
-      supportDataElement="replace"
+      label="Data element providing array"
+      width="size-5000"
     />
-  </React.Fragment>
+  </DataElementSelector>
 );
 
 WholePopulationStrategyForm.propTypes = {
@@ -71,26 +68,28 @@ const PartsPopulationStrategyForm = ({
               >
                 <Button
                   data-test-id={`item${index}SelectButton`}
-                  quiet
-                  variant="action"
-                  onClick={() => onNodeSelect(itemNode.id)}
+                  isQuiet
+                  variant="secondary"
+                  onPress={() => onNodeSelect(itemNode.id)}
                 >
                   Item {index + 1}
                 </Button>
                 <Button
                   data-test-id={`item${index}RemoveButton`}
-                  variant="tool"
-                  icon={<Delete />}
+                  isQuiet
+                  variant="secondary"
+                  minWidth={0}
                   aria-label="Delete"
-                  className="u-gapLeft"
-                  onClick={() => arrayHelpers.remove(index)}
-                />
+                  onPress={() => arrayHelpers.remove(index)}
+                >
+                  <Delete />
+                </Button>
               </div>
             );
           })}
           <Button
             data-test-id="addItemButton"
-            onClick={() => {
+            onPress={() => {
               const itemSchema = schema.items;
               let defaultValue;
 
@@ -108,9 +107,11 @@ const PartsPopulationStrategyForm = ({
               });
               arrayHelpers.push(itemFormStateNode);
             }}
-            label="Add Item"
-            className="u-gapTop2x"
-          />
+            variant="primary"
+            UNSAFE_className="u-gapTop2x"
+          >
+            Add Item
+          </Button>
         </div>
       );
     }}
@@ -128,7 +129,9 @@ PartsPopulationStrategyForm.propTypes = {
  * The form for editing a node that is an array type.
  */
 const ArrayEdit = props => {
-  const { formStateNode, fieldName, onNodeSelect } = props;
+  const { fieldName, onNodeSelect } = props;
+  const [{ value: formStateNode }] = useField(fieldName);
+
   const {
     isPartsPopulationStrategySupported,
     populationStrategy,
@@ -139,23 +142,18 @@ const ArrayEdit = props => {
   return (
     <div>
       {isPartsPopulationStrategySupported && (
-        <WrappedField
+        <RadioGroup
+          label="Population Strategy"
           name={`${fieldName}.populationStrategy`}
-          component={RadioGroup}
-          className="u-gapBottom"
+          orientation="horizontal"
         >
-          <Radio
-            data-test-id="partsPopulationStrategyField"
-            value={PARTS}
-            label="Provide individual items"
-          />
-          <Radio
-            data-test-id="wholePopulationStrategyField"
-            value={WHOLE}
-            label="Provide entire array"
-            className="u-gapLeft2x"
-          />
-        </WrappedField>
+          <Radio data-test-id="partsPopulationStrategyField" value={PARTS}>
+            Provide individual items
+          </Radio>
+          <Radio data-test-id="wholePopulationStrategyField" value={WHOLE}>
+            Provide entire array
+          </Radio>
+        </RadioGroup>
       )}
       <div>
         {populationStrategy === WHOLE ? (
@@ -174,7 +172,6 @@ const ArrayEdit = props => {
 };
 
 ArrayEdit.propTypes = {
-  formStateNode: formStateNodePropTypes.isRequired,
   fieldName: PropTypes.string.isRequired,
   onNodeSelect: PropTypes.func.isRequired
 };

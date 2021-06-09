@@ -16,7 +16,7 @@ import PropTypes from "prop-types";
 import Alert from "@react/react-spectrum/Alert";
 import Wait from "@react/react-spectrum/Wait";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
-import ErrorBoundary from "./errorBoundary";
+import ErrorBoundary from "./spectrum2ErrorBoundary";
 
 // Without this, if an error is thrown during validation, Formik
 // swallows the error and it's difficult to figure out where the problem is.

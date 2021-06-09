@@ -40,7 +40,13 @@ module.exports = {
     // want to disallow importing extraneous dependencies.
     "import/no-extraneous-dependencies": "off",
     "prefer-destructuring": "off",
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "no-console": [
+      "warn",
+      {
+        allow: ["error"]
+      }
+    ]
   },
   parser: "babel-eslint"
 };

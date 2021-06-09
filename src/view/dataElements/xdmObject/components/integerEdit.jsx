@@ -12,9 +12,8 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import FieldLabel from "@react/react-spectrum/FieldLabel";
-import Textfield from "@react/react-spectrum/Textfield";
-import WrappedField from "../../../components/wrappedField";
+import { TextField } from "../../../components/formikReactSpectrum3";
+import DataElementSelector from "../../../components/dataElementSelector";
 
 /**
  * The form for editing a number or integer field.
@@ -24,15 +23,14 @@ const IntegerEdit = props => {
 
   return (
     <div>
-      <FieldLabel labelFor="valueField" label="Value" />
-      <WrappedField
-        data-test-id="valueField"
-        id="valueField"
-        name={`${fieldName}.value`}
-        component={Textfield}
-        componentClassName="u-fieldLong"
-        supportDataElement="replace"
-      />
+      <DataElementSelector>
+        <TextField
+          data-test-id="valueField"
+          name={`${fieldName}.value`}
+          label="Value"
+          width="size-5000"
+        />
+      </DataElementSelector>
     </div>
   );
 };

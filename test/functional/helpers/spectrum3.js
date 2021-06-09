@@ -17,7 +17,7 @@ import {
   createTestIdSelectorString
 } from "./dataTestIdSelectors";
 
-const popoverSelector = Selector('[role="listbox"]');
+const popoverMenuSelector = Selector('[role="listbox"]');
 const menuItemCssSelector = '[role="option"]';
 const invalidAttribute = "aria-invalid";
 
@@ -26,17 +26,15 @@ const invalidAttribute = "aria-invalid";
 // close a Picker, for example. Calling click directly on
 // the element seems to work better. Other Adobe teams have taken
 // a similar approach when using Cypress or React Testing Library
-const compatibleClick = selector => {
-  return ClientFunction(() => {
+const compatibleClick = async selector => {
+  await switchToIframe();
+  await t.expect(selector.exists).ok();
+  await ClientFunction(() => {
     const element = selector();
     element.click();
   }).with({
     dependencies: { selector }
   })();
-};
-
-const selectMenuItem = async (container, label) => {
-  await t.click(container.find(menuItemCssSelector).withText(label));
 };
 
 const createExpectError = selector => async () => {
@@ -64,7 +62,9 @@ const createExpectValue = selector => async value => {
 
 const createExpectText = selector => async text => {
   await switchToIframe();
-  await t.expect(selector.innerText).eql(text);
+  await t
+    .expect(selector.withExactText(text).exists)
+    .ok(`Text ${text} not found.`);
 };
 
 const createExpectMatch = selector => async value => {
@@ -111,6 +111,69 @@ const createExpectDisabled = selector => async () => {
   await t.expect(selector.hasAttribute("disabled")).ok();
 };
 
+// The menu items are virtualized, meaning that any items that
+// are not visible to the user will not be found in the DOM by TestCafe.
+// You may need to scroll the menu to be able to assert that certain items exist.
+const createExpectMenuOptionLabels = menuSelector => async labels => {
+  await switchToIframe();
+  const menuItems = menuSelector.find(menuItemCssSelector);
+  for (let i = 0; i < labels.length; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    await t
+      .expect(menuItems.nth(i).withExactText(labels[i]).exists)
+      .ok(
+        `Option with label ${
+          labels[i]
+        } does not exist when it is expected to exist. Be sure you've opened the menu first.`
+      );
+  }
+  await t.expect(menuItems.count).eql(labels.length);
+};
+
+// The menu items are virtualized, meaning that any items that
+// are not visible to the user will not be found in the DOM by TestCafe.
+// You may need to scroll the menu to be able to assert that certain items exist.
+const createExpectMenuOptionsLabelsInclude = menuSelector => async labels => {
+  await switchToIframe();
+  const menuItems = menuSelector.find(menuItemCssSelector);
+  for (let i = 0; i < labels.length; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    await t
+      .expect(menuItems.withExactText(labels[i]).exists)
+      .ok(
+        `Option with label ${
+          labels[i]
+        } does not exist when it is expected to exist. Be sure you've opened the menu first.`
+      );
+  }
+};
+
+// The menu items are virtualized, meaning that any items that
+// are not visible to the user will not be found in the DOM by TestCafe.
+// You may need to scroll the menu to be able to assert that certain items don't exist.
+const createExpectMenuOptionLabelsExclude = menuSelector => async labels => {
+  await switchToIframe();
+  const menuItems = menuSelector.find(menuItemCssSelector);
+  for (let i = 0; i < labels.length; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    await t
+      .expect(menuItems.withExactText(labels[i]).exists)
+      .notOk(
+        `Option with label ${
+          labels[i]
+        } exists when it is expected to not exist.`
+      );
+  }
+};
+
+// The menu items are virtualized, meaning that any items that
+// are not visible to the user will not be found in the DOM by TestCafe.
+// You may need to scroll the menu to be able to assert that certain items exist.
+const createSelectMenuOption = menuSelector => async label => {
+  const option = menuSelector.find(menuItemCssSelector).withExactText(label);
+  await t.click(option);
+};
+
 // This provides an abstraction layer on top of react-spectrum
 // in order to keep react-spectrum specifics outside of tests.
 // This abstraction is more valuable for some components (Select, Accordion)
@@ -127,12 +190,26 @@ const createExpectDisabled = selector => async () => {
 const componentWrappers = {
   comboBox(selector) {
     return {
-      expectValue: createExpectValue(selector),
-      async selectOption(label) {
+      // We use createExpectValue because the text is stored on a value attribute of
+      // the element with our data-test-id, even though our true intention is to assert
+      // the text in the textfield.
+      expectText: createExpectValue(selector),
+      async openMenu() {
         await switchToIframe();
         await t.click(selector.parent().find("button"));
-        await selectMenuItem(popoverSelector, label);
       },
+      // If the user needs to manually open the menu before selecting an
+      // item, you'll need to call openMenu first.
+      selectMenuOption: createSelectMenuOption(popoverMenuSelector),
+      // If the user needs to manually open the menu before viewing option
+      // labels, you'll need to call openMenu first.
+      expectMenuOptionLabels: createExpectMenuOptionLabels(popoverMenuSelector),
+      expectMenuOptionLabelsInclude: createExpectMenuOptionsLabelsInclude(
+        popoverMenuSelector
+      ),
+      expectMenuOptionLabelsExclude: createExpectMenuOptionLabelsExclude(
+        popoverMenuSelector
+      ),
       async enterSearch(text) {
         await switchToIframe();
         await t.typeText(selector, text).pressKey("enter");
@@ -140,6 +217,18 @@ const componentWrappers = {
       async clear() {
         await switchToIframe();
         await t.selectText(selector).pressKey("delete");
+      },
+      async scrollToTop() {
+        await switchToIframe();
+        await t.scroll(popoverMenuSelector, 0, 0);
+      },
+      // When the combobox loads pages of data when scrolling this
+      // will keep scrolling until the end of the last page.
+      async scrollToBottom() {
+        await switchToIframe();
+        await t.scrollIntoView(
+          popoverMenuSelector.find(menuItemCssSelector).nth(-1)
+        );
       }
     };
   },
@@ -148,27 +237,25 @@ const componentWrappers = {
       expectError: createExpectError(selector),
       expectNoError: createExpectNoError(selector),
       expectText: createExpectText(selector),
+      async selectOption(label) {
+        await compatibleClick(selector);
+        await createSelectMenuOption(popoverMenuSelector)(label);
+      },
       async expectSelectedOptionLabel(label) {
         await switchToIframe();
         await t.expect(selector.innerText).eql(label);
       },
-      async expectOptionLabels(labels) {
-        await switchToIframe();
+      async expectMenuOptionLabels(labels) {
         await compatibleClick(selector);
-        const menuItems = popoverSelector.find(menuItemCssSelector);
-        for (let i = 0; i < labels.length; i += 1) {
-          // eslint-disable-next-line no-await-in-loop
-          await t.expect(menuItems.nth(i).withText(labels[i]).exists).ok();
-        }
-        await t.expect(menuItems.count).eql(labels.length);
+        await createExpectMenuOptionLabels(popoverMenuSelector)(labels);
       },
-      async selectOption(label) {
-        await switchToIframe();
+      async expectMenuOptionLabelsInclude(labels) {
         await compatibleClick(selector);
-        const option = popoverSelector
-          .find(menuItemCssSelector)
-          .withExactText(label);
-        await t.click(option);
+        await createExpectMenuOptionsLabelsInclude(popoverMenuSelector)(labels);
+      },
+      async expectMenuOptionLabelsExclude(labels) {
+        await compatibleClick(selector);
+        await createExpectMenuOptionLabelsExclude(popoverMenuSelector)(labels);
       },
       expectDisabled: createExpectDisabled(selector.find("button")),
       expectEnabled: createExpectEnabled(selector.find("button"))
@@ -208,6 +295,16 @@ const componentWrappers = {
   button(selector) {
     return {
       click: createClick(selector)
+    };
+  },
+  illustratedMessage(selector) {
+    return {
+      async expectMessage(message) {
+        await switchToIframe();
+        await t
+          .expect(selector.find("section").withText(message).exists)
+          .ok(`Message ${message} not found.`);
+      }
     };
   },
   // You can chain additional component methods after calling this method

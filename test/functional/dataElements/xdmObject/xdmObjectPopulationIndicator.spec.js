@@ -10,21 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import initializeExtensionView from "./xdmObject/helpers/initializeExtensionView";
-import xdmTree from "./xdmObject/helpers/xdmTree";
-import arrayEdit from "./xdmObject/helpers/arrayEdit";
-import booleanEdit from "./xdmObject/helpers/booleanEdit";
-import integerEdit from "./xdmObject/helpers/integerEdit";
-import numberEdit from "./xdmObject/helpers/numberEdit";
-import objectEdit from "./xdmObject/helpers/objectEdit";
-import stringEdit from "./xdmObject/helpers/stringEdit";
-import spectrum from "../helpers/spectrum2";
-
-const schemaTitle = "XDM Object Data Element Tests";
-const schemaSelectField = spectrum.combobox("schemaField");
-const selectSchemaFromSchemasMeta = async () => {
-  await schemaSelectField.selectOption(schemaTitle);
-};
+import initializeExtensionView from "./helpers/initializeExtensionView";
+import xdmTree from "./helpers/xdmTree";
+import arrayEdit from "./helpers/arrayEdit";
+import booleanEdit from "./helpers/booleanEdit";
+import integerEdit from "./helpers/integerEdit";
+import numberEdit from "./helpers/numberEdit";
+import objectEdit from "./helpers/objectEdit";
+import stringEdit from "./helpers/stringEdit";
 
 // disablePageReloads is not a publicized feature, but it sure helps speed up tests.
 // https://github.com/DevExpress/testcafe/issues/1770
@@ -34,30 +27,24 @@ fixture("XDM Object Population Indicator")
 
 test("shows empty population amount for _id", async () => {
   await initializeExtensionView();
-  await selectSchemaFromSchemasMeta();
-  const idPop = await xdmTree.populationIndicator("_id");
-  await idPop.expectEmpty();
+  await xdmTree.node("_id").populationIndicator.expectEmpty();
 });
 
 test("shows empty population amount for context fields", async () => {
   await initializeExtensionView();
-  await selectSchemaFromSchemasMeta();
-  const environmentPop = await xdmTree.populationIndicator("environment");
-  await environmentPop.expectEmpty();
-  await xdmTree.toggleExpansion("environment");
-  const typePop = await xdmTree.populationIndicator("type");
-  await typePop.expectEmpty();
+  await xdmTree.node("environment").populationIndicator.expectEmpty();
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("type").populationIndicator.expectEmpty();
 });
 
 test("shows correct population amount for data element objects", async () => {
   await initializeExtensionView();
-  await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_unifiedjsqeonly");
-  const vendorPop = await xdmTree.populationIndicator("vendor");
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  const vendorPop = xdmTree.node("vendor").populationIndicator;
   await vendorPop.expectEmpty();
-  await xdmTree.toggleExpansion("vendor");
-  await xdmTree.click("vendor");
-  const namePop = await xdmTree.populationIndicator("name");
+  await xdmTree.node("vendor").toggleExpansion();
+  await xdmTree.node("vendor").click();
+  const namePop = xdmTree.node("name").populationIndicator;
   await namePop.expectEmpty();
   await objectEdit.selectWholePopulationStrategy();
   await vendorPop.expectEmpty();
@@ -69,30 +56,27 @@ test("shows correct population amount for data element objects", async () => {
 
 test("shows partial population amount for objects", async () => {
   await initializeExtensionView();
-  await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_unifiedjsqeonly");
-  const vendorPop = await xdmTree.populationIndicator("vendor");
-  await xdmTree.toggleExpansion("vendor");
-  await xdmTree.click("name");
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await xdmTree.node("vendor").toggleExpansion();
+  await xdmTree.node("name").click();
   await stringEdit.enterValue("Adobe");
-  await vendorPop.expectPartial();
+  await xdmTree.node("vendor").populationIndicator.expectPartial();
 });
 
 test("show correct population amount for arrays", async () => {
   await initializeExtensionView();
-  await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_unifiedjsqeonly");
-  await xdmTree.toggleExpansion("vendor");
-  const industriesPop = await xdmTree.populationIndicator("industries");
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await xdmTree.node("vendor").toggleExpansion();
+  const industriesPop = xdmTree.node("industries").populationIndicator;
   await industriesPop.expectEmpty();
-  await xdmTree.click("industries");
+  await xdmTree.node("industries").click();
   await arrayEdit.addItem();
   await industriesPop.expectEmpty();
 
   await arrayEdit.clickItem(0);
   await arrayEdit.enterValue("%industry%");
   await industriesPop.expectFull();
-  await xdmTree.click("industries");
+  await xdmTree.node("industries").click();
   await arrayEdit.addItem();
   await industriesPop.expectPartial();
 });
@@ -139,7 +123,7 @@ test("show correct population amount for arrays", async () => {
     field: "isLicensed",
     async set() {
       await booleanEdit.selectConstantInputMethod();
-      await booleanEdit.selectConstantValue("True");
+      await booleanEdit.selectConstantTrueValueField();
     }
   },
   {
@@ -147,17 +131,16 @@ test("show correct population amount for arrays", async () => {
     field: "isLicensed",
     async set() {
       await booleanEdit.selectConstantInputMethod();
-      await booleanEdit.selectConstantValue("False");
+      await booleanEdit.selectConstantFalseValueField();
     }
   }
 ].forEach(({ title, field, set }) => {
   test(`shows correct population amount for ${title}`, async () => {
     await initializeExtensionView();
-    await selectSchemaFromSchemasMeta();
-    await xdmTree.toggleExpansion("_unifiedjsqeonly");
-    await xdmTree.toggleExpansion("vendor");
-    await xdmTree.click(field);
-    const fieldPop = await xdmTree.populationIndicator(field);
+    await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+    await xdmTree.node("vendor").toggleExpansion();
+    await xdmTree.node(field).click();
+    const fieldPop = xdmTree.node(field).populationIndicator;
     await fieldPop.expectEmpty();
     await set();
     await fieldPop.expectFull();
@@ -166,13 +149,12 @@ test("show correct population amount for arrays", async () => {
 
 test("shows empty population indicator for booleans with No Value selected", async () => {
   await initializeExtensionView();
-  await selectSchemaFromSchemasMeta();
-  await xdmTree.toggleExpansion("_unifiedjsqeonly");
-  await xdmTree.toggleExpansion("vendor");
-  await xdmTree.click("isLicensed");
-  const isLicensedPop = await xdmTree.populationIndicator("isLicensed");
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await xdmTree.node("vendor").toggleExpansion();
+  await xdmTree.node("isLicensed").click();
+  const isLicensedPop = xdmTree.node("isLicensed").populationIndicator;
   await isLicensedPop.expectEmpty();
   await booleanEdit.selectConstantInputMethod();
-  await booleanEdit.selectConstantValue("No Value");
+  await booleanEdit.selectConstantNoValueField();
   await isLicensedPop.expectEmpty();
 });

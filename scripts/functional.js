@@ -60,7 +60,13 @@ const testsDir = src || path.join(__dirname, "../test/functional");
       return true;
     })
     .browsers("chrome")
-    .run();
+    .run({
+      // When using React's ErrorBoundary, even if the boundary catches an error, it doesn't swallow the
+      // error. Because the error isn't swallowed, TestCafe would typically immediately make the test fail,
+      // making it difficult to have a test that passes after asserting that the ErrorBoundary displayed
+      // a proper message.
+      skipJsErrors: true
+    });
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
 })();
