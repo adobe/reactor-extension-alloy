@@ -86,7 +86,12 @@ const validateDuplicateValue = (
   message,
   validateBooleanTrue
 ) => {
-  const values = identities.map(identity => identity[key].toUpperCase());
+  const values = identities.map(identity =>
+    // If the user didn't enter a value for the property
+    // we're checking duplicates for, then the property will have
+    // an undefined value (not an empty string).
+    identity[key] ? identity[key].toUpperCase() : identity[key]
+  );
   const duplicateIndex = values.findIndex(
     (value, index) =>
       values.indexOf(value) < index && (!validateBooleanTrue || value === true)
@@ -135,7 +140,7 @@ const validationSchema = object()
             name: "notECID",
             message: "ECID is not allowed",
             test(value) {
-              return value.toUpperCase() !== "ECID";
+              return !value || value.toUpperCase() !== "ECID";
             }
           }),
         identifiers: array().of(

@@ -20,6 +20,7 @@ import DataElementSelector from "./dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import ExtensionViewForm from "./extensionViewForm";
 import ExtensionViewContext from "./extensionViewContext";
+import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 
 const CONSTANT = "constant";
 const DATA_ELEMENT = "dataElement";
@@ -72,10 +73,7 @@ const getSettings = ({ values }) => {
 const validationSchema = object().shape({
   decisionScopesDataElement: string().when("decisionsInputMethod", {
     is: DATA_ELEMENT,
-    then: string().matches(
-      singleDataElementRegex,
-      "Please specify a data element"
-    )
+    then: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
   })
 });
 
