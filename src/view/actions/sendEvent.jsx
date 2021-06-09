@@ -121,7 +121,7 @@ const SendEvent = () => {
           <ExtensionViewForm
             initialValues={getInitialValues({ initInfo })}
             getSettings={getSettings}
-            validationSchema={validationSchema}
+            formikStateValidationSchema={validationSchema}
             render={() => (
               <Form>
                 <Picker

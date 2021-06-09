@@ -12,14 +12,11 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import IconTip, {
-  ICON_SIZE_S,
-  VARIANT_ERROR
-} from "../../../components/iconTip";
+import AlertIcon from "@spectrum-icons/workflow/Alert";
+import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import "./xdmTreeNodeTitle.styl";
 import { EMPTY, FULL, PARTIAL, BLANK } from "../constants/populationAmount";
-import InfoTipLayout from "../../../components/infoTipLayout";
 
 const XdmTreeNodeTitle = props => {
   const { displayName, type, populationAmount, error, infoTip } = props;
@@ -37,21 +34,22 @@ const XdmTreeNodeTitle = props => {
       )}
     >
       {error && (
-        <IconTip
-          variant={VARIANT_ERROR}
-          iconSize={ICON_SIZE_S}
-          className="u-gapRight"
-        >
-          {error}
-        </IconTip>
+        <div className="u-flex u-alignItemsCenter u-gapRight" title={error}>
+          <AlertIcon color="negative" size="S" />
+        </div>
       )}
       <PopulationAmountIndicator
         className="u-gapRight"
         populationAmount={populationAmount}
       />
-      <InfoTipLayout tip={infoTip} variant="note">
-        <span data-test-id="xdmTreeNodeTitleDisplayName">{displayName}</span>
-      </InfoTipLayout>
+      <span data-test-id="xdmTreeNodeTitleDisplayName" className="u-noWrap">
+        {displayName}
+      </span>
+      {infoTip && (
+        <div className="u-flex u-alignItemsCenter u-gapLeft" title={infoTip}>
+          <AsteriskIcon size="XS" />
+        </div>
+      )}
       <span className="XdmTreeNodeTitle-type u-gapLeft u-gapRight">{type}</span>
     </div>
   );

@@ -33,8 +33,7 @@ const DataElementSelector = ({ children, augmentValue }) => {
 
   const name = inputChild.props.name;
   const adjustForLabel = Boolean(inputChild.props.label);
-  // eslint-disable-next-line no-empty-pattern
-  const [{ value }, {}, { setValue }] = useField(name);
+  const [{ value }, , { setValue }] = useField(name);
   const openDataElementSelector = () => {
     window.extensionBridge.openDataElementSelector().then(dataElement => {
       // Maybe field value is an integer of 0 or something else falsy? That's

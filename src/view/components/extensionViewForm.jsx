@@ -7,17 +7,19 @@ import ExtensionViewContext from "./extensionViewContext";
 const ExtensionViewForm = ({
   initialValues,
   getSettings,
-  validate,
-  validationSchema,
+  validateFormikState = () => undefined,
+  formikStateValidationSchema,
+  validateNonFormikState = () => true,
   render
 }) => {
   const formikProps = useFormik({
     initialValues,
     enableReinitialize: true,
     onSubmit: () => {},
-    validate: wrapValidateWithErrorLogging(validate),
-    validationSchema,
-    validateOnChange: false
+    validate: wrapValidateWithErrorLogging(values => {
+      return validateFormikState({ values });
+    }),
+    validationSchema: formikStateValidationSchema
   });
 
   const {
@@ -51,11 +53,26 @@ const ExtensionViewForm = ({
       return getSettings({ initInfo, values: formikPropsRef.current.values });
     };
     registerGetSettings(extensionViewFormGetSettings);
-    const extensionViewFormValidate = () => {
-      return formikPropsRef.current.submitForm().then(() => {
-        formikPropsRef.current.setSubmitting(false);
-        return Object.keys(formikPropsRef.current.errors).length === 0;
-      });
+    const extensionViewFormValidate = async () => {
+      const validateFormikStatePromise = formikPropsRef.current
+        .submitForm()
+        .then(() => {
+          // The docs say that the promise submitForm returns
+          // will be rejected if there are errors, but that is not the case.
+          // Therefore, after the promise is resolved, we pull formikProps.errors
+          // (which were set during submitForm()) to see if the form is valid.
+          // https://github.com/jaredpalmer/formik/issues/1580
+          formikPropsRef.current.setSubmitting(false);
+          return Object.keys(formikPropsRef.current.errors).length === 0;
+        });
+      const validateNonFormikStatePromise = Promise.resolve(
+        validateNonFormikState()
+      );
+      const results = await Promise.all([
+        validateFormikStatePromise,
+        validateNonFormikStatePromise
+      ]);
+      return results.every(result => result);
     };
     registerValidate(extensionViewFormValidate);
 
@@ -78,8 +95,9 @@ const ExtensionViewForm = ({
 ExtensionViewForm.propTypes = {
   initialValues: PropTypes.object.isRequired,
   getSettings: PropTypes.func.isRequired,
-  validate: PropTypes.func,
-  validationSchema: PropTypes.object,
+  validateFormikState: PropTypes.func,
+  formikStateValidationSchema: PropTypes.object,
+  validateNonFormikState: PropTypes.func,
   render: PropTypes.func.isRequired
 };
 

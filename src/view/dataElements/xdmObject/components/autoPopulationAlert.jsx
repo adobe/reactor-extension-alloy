@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import Alert from "@react/react-spectrum/Alert";
+import Alert from "../../../components/alert";
 import { ALWAYS, COMMAND, CONTEXT } from "../constants/autoPopulationSource";
 import { OBJECT } from "../constants/schemaType";
 import { formStateNodePropTypes } from "../helpers/getInitialFormState";
@@ -23,7 +23,11 @@ const AutoPopulationAlert = ({ formStateNode }) => {
   const { autoPopulationSource, contextKey, schema } = formStateNode;
 
   return (
-    <Alert header="Auto-populated Field">
+    <Alert
+      variant="informative"
+      title="Auto-populated Field"
+      className="u-gapBottom2x"
+    >
       {autoPopulationSource === ALWAYS && (
         <p>
           The value for this field will be auto-populated when this data element

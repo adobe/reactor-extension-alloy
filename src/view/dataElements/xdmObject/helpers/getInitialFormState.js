@@ -74,7 +74,7 @@ const generateNodeId = () => {
  * The path for bar would be "foo.bar".
  * @returns FormStateNode
  */
-const getInitialFormStateNode = ({ sandboxMeta, schema, value, nodePath }) => {
+const getInitialFormStateNode = ({ schema, value, nodePath }) => {
   const formStateNode = {
     autoPopulationSource: autoPopulationSource.NONE,
     contextKey: contextKey.NA,
@@ -85,7 +85,6 @@ const getInitialFormStateNode = ({ sandboxMeta, schema, value, nodePath }) => {
     // from their parent arrays. We want the ID to remain constant
     // for as long as the node exists.
     id: generateNodeId(),
-    sandboxMeta,
     schema
   };
 
@@ -106,8 +105,8 @@ const getInitialFormStateNode = ({ sandboxMeta, schema, value, nodePath }) => {
 
 // Avoid exposing all of getInitialFormStateNode's parameters since
 // they're only used internally for recursion.
-export default ({ sandboxMeta, schema, value }) => {
-  return getInitialFormStateNode({ sandboxMeta, schema, value });
+export default ({ schema, value }) => {
+  return getInitialFormStateNode({ schema, value });
 };
 
 const formStateNodeShape = {

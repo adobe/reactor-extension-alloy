@@ -10,26 +10,21 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import getBaseRequestHeaders from "../../utils/getBaseRequestHeaders";
-import platform from "../xdmObject/helpers/platform";
+import fetchFromPlatform from "../../utils/fetchFromPlatform";
 
-export default ({ orgId, imsAccess }) => {
-  const headers = getBaseRequestHeaders({ orgId, imsAccess });
+export default async ({ orgId, imsAccess }) => {
+  let parsedResponse;
 
-  return fetch(
-    `${platform.getHost({ imsAccess })}/data/core/idnamespace/identities`,
-    {
-      headers
-    }
-  )
-    .then(platform.checkAccess)
-    .then(response => {
-      if (!response.ok) {
-        return [];
-      }
+  try {
+    parsedResponse = await fetchFromPlatform({
+      orgId,
+      imsAccess,
+      path: "/data/core/idnamespace/identities"
+    });
+  } catch (e) {
+    // TODO: Should we be reporting an error instead?
+    return [];
+  }
 
-      return response.json();
-    })
-    .then(responseBody => responseBody)
-    .catch(() => []);
+  return parsedResponse.parsedBody;
 };

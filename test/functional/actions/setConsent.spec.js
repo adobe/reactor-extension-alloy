@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum2";
-import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
+import testInstanceNameOptions from "../helpers/spectrum2TestInstanceNameOptions";
 
 const extensionViewController = createExtensionViewController(
   "actions/setConsent.html"

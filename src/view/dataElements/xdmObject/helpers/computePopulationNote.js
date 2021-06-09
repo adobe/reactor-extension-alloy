@@ -20,7 +20,7 @@ export default ({ formStateNode, isAncestorUsingWholePopulationStrategy }) => {
     return "";
   }
   if (autoPopulationSource === ALWAYS) {
-    return "This field will be auto-populated when provided as the XDM object for a Send Event action";
+    return "This field will be auto-populated when this data element is provided as the XDM object for a Send Event action";
   }
   if (autoPopulationSource === COMMAND) {
     return "This field may be specified as an option to the Send Event action";

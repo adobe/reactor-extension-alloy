@@ -13,21 +13,24 @@ governing permissions and limitations under the License.
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Tree } from "antd";
-import "antd/es/tree/style/css";
-import "./xdmTree.styl";
+import { useFormikContext } from "formik";
 import generateTreeStructure from "../helpers/generateTreeStructure";
 import getNodeIdsToExpandForValidation from "../helpers/getNodeIdsToExpandForValidation";
 import XdmTreeNodeTitle from "./xdmTreeNodeTitle";
 import useNewlyValidatedFormSubmission from "../../../utils/useNewlyValidatedFormSubmission";
+// Importing Ant's tree styles in other ways can bring in global styles
+// that affect all elements which, at the time this is written, negatively affects things
+// like positioning of error icons within react-spectrum textfields when the field
+// is marked invalid. Check https://github.com/ant-design/ant-design/issues/9363
+// before attempting to change this import.
+import "antd/lib/tree/style/index.css";
+import "./xdmTree.styl";
 
 /**
  * Displays the XDM object as a tree.
  */
-const XdmTree = props => {
-  const { formikProps, selectedNodeId, onSelect = () => {} } = props;
-
-  // See getInitialFormState.js for documentation on formState's structure.
-  const { values: formState, errors, touched } = formikProps;
+const XdmTree = ({ selectedNodeId, onSelect = () => {} }) => {
+  const { values: formState, errors, touched } = useFormikContext();
   const [expandedNodeIds, setExpandedNodeIds] = useState([]);
   const treeStructure = generateTreeStructure({
     treeNodeComponent: XdmTreeNodeTitle,
@@ -40,16 +43,13 @@ const XdmTree = props => {
   // the save button in Launch. We purposefully don't expand invalid items when
   // validation occurs as a result of a user changing the value of a field because
   // it's a jarring experience.
-  useNewlyValidatedFormSubmission({
-    formikProps,
-    callback: () => {
-      const nodeIdsContainingError = getNodeIdsToExpandForValidation(
-        treeStructure
-      );
+  useNewlyValidatedFormSubmission(() => {
+    const nodeIdsContainingError = getNodeIdsToExpandForValidation(
+      treeStructure
+    );
 
-      if (nodeIdsContainingError.length) {
-        setExpandedNodeIds(nodeIdsContainingError);
-      }
+    if (nodeIdsContainingError.length) {
+      setExpandedNodeIds(nodeIdsContainingError);
     }
   });
 
@@ -76,7 +76,6 @@ const XdmTree = props => {
 };
 
 XdmTree.propTypes = {
-  formikProps: PropTypes.object.isRequired,
   selectedNodeId: PropTypes.string,
   onSelect: PropTypes.func
 };

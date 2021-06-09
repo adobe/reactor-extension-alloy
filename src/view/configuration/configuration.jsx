@@ -441,19 +441,16 @@ const Configuration = ({
     };
   }, [firstInstance.edgeConfigId, firstInstance.edgeConfigInputMethod]);
 
-  useNewlyValidatedFormSubmission({
-    callback: () => {
-      // If the user just tried to save the configuration and there's
-      // a validation error, make sure the first accordion item containing
-      // an error is shown.
-      if (isSubmitting && !isValidating && errors && errors.instances) {
-        const instanceIndexContainingErrors = errors.instances.findIndex(
-          instance => instance
-        );
-        setSelectedAccordionIndex(instanceIndexContainingErrors);
-      }
-    },
-    formikProps
+  useNewlyValidatedFormSubmission(() => {
+    // If the user just tried to save the configuration and there's
+    // a validation error, make sure the first accordion item containing
+    // an error is shown.
+    if (isSubmitting && !isValidating && errors && errors.instances) {
+      const instanceIndexContainingErrors = errors.instances.findIndex(
+        instance => instance
+      );
+      setSelectedAccordionIndex(instanceIndexContainingErrors);
+    }
   });
 
   return (

@@ -10,35 +10,47 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
+import React, { createRef } from "react";
 import PropTypes from "prop-types";
 import { RadioGroup as ReactSpectrumRadioGroup } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
 const RadioGroup = ({ name, children, description, width, ...otherProps }) => {
-  const [{ value }, { error }, { setValue, setTouched }] = useField(name);
+  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
+    name
+  );
+  const radioGroupRef = createRef();
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for RadioGroup, so we wire up React Hook Form's
   // onBlur to every radio.
   const childrenWithOnBlur = React.Children.map(children, child => {
     return React.cloneElement(child, {
-      onBlur: () => {
-        setTouched(true);
+      onBlur: event => {
+        // If the target that will receive focus is not a child of the
+        // radio group, we know the radio group has lost focus.
+        if (
+          !radioGroupRef.current
+            .UNSAFE_getDOMNode()
+            .contains(event.relatedTarget)
+        ) {
+          setTouched(true);
+        }
       }
     });
   });
   return (
     <FieldDescriptionAndError
       description={description}
-      error={error}
+      error={touched && error ? error : undefined}
       width={width}
     >
       <ReactSpectrumRadioGroup
         {...otherProps}
+        ref={radioGroupRef}
         value={value}
         onChange={setValue}
-        validationState={error ? "invalid" : ""}
+        validationState={touched && error ? "invalid" : undefined}
         width={width}
       >
         {childrenWithOnBlur}
