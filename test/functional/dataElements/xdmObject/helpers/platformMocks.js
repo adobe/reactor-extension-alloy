@@ -380,12 +380,14 @@ export const namespaces = RequestMock()
         updateTime: 1551688425455,
         code: "CORE",
         status: "ACTIVE",
-        description: "Adobe Audience Manger UUID"
+        name: "Audience Manager",
+        description: "Adobe Audience Manager UUID"
       },
       {
         updateTime: 1551688425455,
         code: "AAID",
         status: "ACTIVE",
+        name: "Adobe Analytics",
         description: "Adobe Analytics (Legacy ID)",
         id: 10
       },
@@ -393,6 +395,7 @@ export const namespaces = RequestMock()
         updateTime: 1551688425455,
         code: "ECID",
         status: "ACTIVE",
+        name: "Experience Cloud",
         description: "Adobe Experience Cloud ID",
         id: 4
       },
@@ -400,13 +403,15 @@ export const namespaces = RequestMock()
         updateTime: 1551688425455,
         code: "Email",
         status: "ACTIVE",
-        description: "Email",
+        name: "Email",
+        description: "Email Address",
         id: 6
       },
       {
         updateTime: 1551688425455,
         code: "WAID",
         status: "ACTIVE",
+        name: "Windows AID",
         description: "Windows AID",
         id: 8
       }

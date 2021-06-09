@@ -355,14 +355,7 @@ const Configuration = ({
   environments,
   setEnvironments
 }) => {
-  const {
-    values,
-    errors,
-    isSubmitting,
-    isValidating,
-    setFieldValue,
-    initialValues
-  } = formikProps;
+  const { values, setFieldValue, initialValues } = formikProps;
   // On the initial render, only expand the first accordion item
   // if there's one instance, because users may get disoriented if we
   // automatically expand the first item when there are multiple instances.
@@ -441,11 +434,11 @@ const Configuration = ({
     };
   }, [firstInstance.edgeConfigId, firstInstance.edgeConfigInputMethod]);
 
-  useNewlyValidatedFormSubmission(() => {
+  useNewlyValidatedFormSubmission(errors => {
     // If the user just tried to save the configuration and there's
     // a validation error, make sure the first accordion item containing
     // an error is shown.
-    if (isSubmitting && !isValidating && errors && errors.instances) {
+    if (errors && errors.instances) {
       const instanceIndexContainingErrors = errors.instances.findIndex(
         instance => instance
       );
@@ -1030,40 +1023,35 @@ const Configuration = ({
                           </div>
                         </div>
                       </div>
-                      <div className="u-gapTop2x">
-                        <ModalTrigger>
-                          <Button
-                            data-test-id="deleteInstanceButton"
-                            label="Delete Instance"
-                            icon={<Delete />}
-                            variant="action"
-                            disabled={values.instances.length === 1}
-                          />
-                          {values.instances.length === 1 ? (
-                            <span className="Note u-gapLeft">
-                              You must have at least one instance to use this
-                              extension.
-                            </span>
-                          ) : null}
-                          <Dialog
-                            id="resourceUsageDialog"
-                            onConfirm={() => {
-                              arrayHelpers.remove(index);
-                              setSelectedAccordionIndex(0);
-                            }}
-                            title="Resource Usage"
-                            confirmLabel="Delete"
-                            cancelLabel="Cancel"
-                          >
-                            Any rule components or data elements using this
-                            instance will no longer function as expected when
-                            running on your website. We recommend removing these
-                            resources or switching them to use a different
-                            instance before publishing your next library. Would
-                            you like to proceed?
-                          </Dialog>
-                        </ModalTrigger>
-                      </div>
+                      {values.instances.length > 1 && (
+                        <div className="u-gapTop2x">
+                          <ModalTrigger>
+                            <Button
+                              data-test-id="deleteInstanceButton"
+                              label="Delete Instance"
+                              icon={<Delete />}
+                              variant="action"
+                            />
+                            <Dialog
+                              id="resourceUsageDialog"
+                              onConfirm={() => {
+                                arrayHelpers.remove(index);
+                                setSelectedAccordionIndex(0);
+                              }}
+                              title="Resource Usage"
+                              confirmLabel="Delete"
+                              cancelLabel="Cancel"
+                            >
+                              Any rule components or data elements using this
+                              instance will no longer function as expected when
+                              running on your website. We recommend removing
+                              these resources or switching them to use a
+                              different instance before publishing your next
+                              library. Would you like to proceed?
+                            </Dialog>
+                          </ModalTrigger>
+                        </div>
+                      )}
                     </div>
                   </AccordionItem>
                 ))}

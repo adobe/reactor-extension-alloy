@@ -62,7 +62,7 @@ const useOnSandboxSelectionChange = ({
       });
     }
 
-    resetForm(initialFormState);
+    resetForm({ values: initialFormState });
     dispatch({
       type: ACTION_TYPES.SCHEMA_LOADED,
       schema

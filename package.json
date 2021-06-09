@@ -44,6 +44,7 @@
     "@adobe/alloy": "^2.4.0",
     "@adobe/react-spectrum": "^3.9.0",
     "@react-spectrum/combobox": "^3.0.0-beta.1",
+    "@react-spectrum/tabs": "*",
     "@react-stately/data": "^3.4.0",
     "@react/react-spectrum": "^2.34.0",
     "@spectrum-icons/illustrations": "^3.2.1",

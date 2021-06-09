@@ -19,15 +19,12 @@ import ExtensionViewContext from "./extensionViewContext";
 // ExtensionViewContext. It should be used for each view inside an extension.
 const ExtensionView = ({ render }) => {
   const [initInfo, setInitInfo] = useState();
-  const [initCalls, setInitCalls] = useState(0);
-
   const registeredGetSettingsRef = useRef([]);
   const registeredValidateRef = useRef([]);
 
   useExtensionBridge({
     init({ initInfo: _initInfo }) {
       setInitInfo(_initInfo);
-      setInitCalls(initCalls + 1);
     },
     getSettings() {
       return registeredGetSettingsRef.current.reduce((memo, getSettings) => {
@@ -64,8 +61,7 @@ const ExtensionView = ({ render }) => {
         other => other !== validate
       );
     },
-    initInfo,
-    initCalls
+    initInfo
   };
 
   return (
