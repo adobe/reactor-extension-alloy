@@ -863,10 +863,10 @@ const Configuration = ({
                         Learn more
                       </Link>
                       <div className="u-gapTop">
-                        <InfoTipLayout tip='A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'>
+                        <InfoTipLayout tip='Callback function for modifying data before each event is sent to the server. A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'>
                           <FieldLabel
                             labelFor="onBeforeEventSendField"
-                            label="Callback function for modifying data before each event is sent to the server"
+                            label="onBeforeEventSend"
                           />
                         </InfoTipLayout>
                         <div>
