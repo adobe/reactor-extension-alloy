@@ -11,7 +11,6 @@ const ExtensionViewForm = ({ render }) => {
   const formikPropsRef = useRef();
 
   formikPropsRef.current = useFormik({
-    enableReinitialize: false,
     onSubmit: () => {},
     validate: values => {
       let errors;
