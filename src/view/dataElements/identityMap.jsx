@@ -28,20 +28,19 @@ import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import render from "../spectrum3Render";
 import ExtensionView from "../components/spectrum3ExtensionView";
 import ExtensionViewForm from "../components/extensionViewForm";
-import getDefaultIdentity from "../utils/getDefaultIdentity";
-import fetchNamespaces from "./identityMap/fetchNamespaces";
-import { AMBIGUOUS } from "../utils/authenticatedState";
+import getDefaultIdentity from "./identityMap/utils/getDefaultIdentity";
+import fetchNamespaces from "./identityMap/utils/fetchNamespaces";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 import NamespaceComponent from "../components/namespaceComponent";
-import getDefaultIdentifier from "../utils/getDefaultIdentifier";
+import getDefaultIdentifier from "./identityMap/utils/getDefaultIdentifier";
 import DataElementSelector from "../components/dataElementSelector";
 import {
   Checkbox,
   Picker,
   TextField
 } from "../components/formikReactSpectrum3";
-import authenticatedStateOptions from "../constants/authenticatedStateOptions";
+import * as AUTHENTICATED_STATE from "./identityMap/constants/authenticatedState";
 
 const isNotECID = namespace => {
   return namespace.code !== "ECID";
@@ -163,7 +162,7 @@ const validationSchema = object()
         identifiers: array().of(
           object().shape({
             id: string().required("Please specify an ID."),
-            authenticatedState: string().default(AMBIGUOUS),
+            authenticatedState: string().default(AUTHENTICATED_STATE.AMBIGUOUS),
             primary: boolean().default(false)
           })
         )
@@ -315,9 +314,25 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                                           data-test-id={`identity${index}authenticatedStateField${identifierIndex}`}
                                           label="Authenticated State"
                                           name={`identities.${index}.identifiers.${identifierIndex}.authenticatedState`}
-                                          items={authenticatedStateOptions}
                                           width="size-5000"
                                         >
+                                          <Item
+                                            key={AUTHENTICATED_STATE.AMBIGUOUS}
+                                          >
+                                            Ambiguous
+                                          </Item>
+                                          <Item
+                                            key={
+                                              AUTHENTICATED_STATE.AUTHENTICATED
+                                            }
+                                          >
+                                            Authenticated
+                                          </Item>
+                                          <Item
+                                            key={AUTHENTICATED_STATE.LOGGED_OUT}
+                                          >
+                                            Logged Out
+                                          </Item>
                                           {item => (
                                             <Item key={item.value}>
                                               {item.label}
