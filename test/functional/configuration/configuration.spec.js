@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import { Selector } from "testcafe";
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum2";
+import createFixture from "../helpers/createFixture";
 
 const extensionViewController = createExtensionViewController(
   "configuration/configuration.html"
@@ -99,11 +100,10 @@ for (let i = 0; i < 3; i += 1) {
   });
 }
 
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("Extension Configuration View").disablePageReloads.page(
-  "http://localhost:3000/viewSandbox.html"
-);
+createFixture({
+  title: "Extension Configuration View",
+  viewPath: "configuration/configuration.html"
+});
 
 const defaultEdgeDomain = "edge.adobedc.net";
 const defaultEdgeBasePath = "ee";

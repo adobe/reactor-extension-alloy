@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import createExtensionViewController from "../helpers/createExtensionViewController";
+import createFixture from "../helpers/createFixture";
 
 const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
@@ -18,11 +19,10 @@ const extensionViewController = createExtensionViewController(
   "dataElements/eventMergeId.html"
 );
 
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("Event Merge ID View").disablePageReloads.page(
-  "http://localhost:3000/viewSandbox.html"
-);
+createFixture({
+  title: "Event Merge ID View",
+  viewPath: "dataElements/eventMergeId.html"
+});
 
 test("returns valid settings", async t => {
   await extensionViewController.init();

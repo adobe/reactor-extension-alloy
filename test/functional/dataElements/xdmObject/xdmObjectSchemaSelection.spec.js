@@ -14,12 +14,12 @@ import { Selector, t } from "testcafe";
 import * as platformMocks from "./helpers/platformMocks";
 import initializeExtensionView from "./helpers/initializeExtensionView";
 import spectrum from "../../helpers/spectrum3";
-import switchToIframe from "../../helpers/switchToIframe";
 import {
   schemasMetaPagingMock,
   schemasMetaPagingTitles
 } from "./helpers/platformMocks";
 import editor from "./helpers/editor";
+import createFixture from "../../helpers/createFixture";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(
   "errorBoundaryMessage"
@@ -29,11 +29,11 @@ const testSchemaTitle = "XDM Object Data Element Tests";
 const sandboxField = spectrum.picker("sandboxField");
 const schemaField = spectrum.comboBox("schemaField");
 
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("XDM Object View Schema Selection")
-  .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
-  .meta("requiresAdobeIOIntegration", true);
+createFixture({
+  title: "XDM Object View Schema Selection",
+  viewPath: "dataElements/xdmObject.html",
+  requiresAdobeIOIntegration: true
+});
 
 test.requestHooks(platformMocks.sandboxesUnauthorized)(
   "displays error when access token is invalid",
@@ -293,7 +293,6 @@ test.requestHooks(platformMocks.sandboxesMultipleWithoutDefault)(
   async () => {
     const extensionViewController = await initializeExtensionView();
     await extensionViewController.expectIsNotValid();
-    await switchToIframe();
     await t
       .expect(Selector("div").withText("Please select a sandbox.").exists)
       .ok("Error message doesn't exist.");
@@ -306,7 +305,6 @@ test.requestHooks(
 )("show error when attempting to save with no schema selected", async () => {
   const extensionViewController = await initializeExtensionView();
   await extensionViewController.expectIsNotValid();
-  await switchToIframe();
   await t
     .expect(Selector("div").withText("Please select a schema.").exists)
     .ok("Error message doesn't exist.");
@@ -328,6 +326,7 @@ test.requestHooks(
   const matchingLabels = schemasMetaPagingTitles.filter(name =>
     name.includes("e")
   );
+  const lastMatchingItemLabel = matchingLabels[matchingLabels.length - 1];
   const nonMatchingLabels = schemasMetaPagingTitles.filter(
     name => !name.includes("e")
   );
@@ -337,15 +336,14 @@ test.requestHooks(
   await schemaField.expectMenuOptionLabelsExclude(
     nonMatchingLabels.slice(0, 3)
   );
-  await schemaField.scrollToBottom();
+  await schemaField.scrollDownToItem(lastMatchingItemLabel);
   await schemaField.expectMenuOptionLabelsInclude(matchingLabels.slice(-3));
   await schemaField.expectMenuOptionLabelsExclude(nonMatchingLabels.slice(-3));
 
   // User selects the last item.
 
-  const lastMatchingItem = matchingLabels[matchingLabels.length - 1];
-  await schemaField.selectMenuOption(lastMatchingItem);
-  await schemaField.expectText(lastMatchingItem);
+  await schemaField.selectMenuOption(lastMatchingItemLabel);
+  await schemaField.expectText(lastMatchingItemLabel);
 
   // User enters text that shouldn't have any matches.
 
@@ -357,7 +355,7 @@ test.requestHooks(
   // User blurs off the field
 
   await t.pressKey("tab");
-  await schemaField.expectText(lastMatchingItem);
+  await schemaField.expectText(lastMatchingItemLabel);
 
   // User manually opens the menu and should see all unfiltered items.
 
@@ -365,7 +363,9 @@ test.requestHooks(
   await schemaField.expectMenuOptionLabelsInclude(
     schemasMetaPagingTitles.slice(0, 3)
   );
-  await schemaField.scrollToBottom();
+  await schemaField.scrollDownToItem(
+    schemasMetaPagingTitles[schemasMetaPagingTitles.length - 1]
+  );
   await schemaField.expectMenuOptionLabelsInclude(
     schemasMetaPagingTitles.slice(-3)
   );

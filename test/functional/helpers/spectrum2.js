@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import { Selector, t } from "testcafe";
-import switchToIframe from "./switchToIframe";
 import {
   createTestIdSelector,
   createTestIdSelectorString
@@ -27,26 +26,22 @@ const selectMenuItem = async (container, label) => {
 };
 
 const createExpectError = selector => async () => {
-  await switchToIframe();
   await t
     .expect(selector.hasClass(isInvalidClassName))
     .ok("Expected field to have error when it did not");
 };
 
 const createExpectNoError = selector => async () => {
-  await switchToIframe();
   await t
     .expect(selector.hasClass(isInvalidClassName))
     .notOk("Expected field to have no error when it did");
 };
 
 const createExpectErrorByAttribute = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.getAttribute(invalidAttribute)).eql("true");
 };
 
 const createExpectValue = selector => async value => {
-  await switchToIframe();
   // We need to use the value attribute instead of property
   // because some react-spectrum components, like Select,
   // don't set the value property on the primary DOM element
@@ -55,7 +50,6 @@ const createExpectValue = selector => async value => {
 };
 
 const createExpectMatch = selector => async value => {
-  await switchToIframe();
   // We need to use the value attribute instead of property
   // because some react-spectrum components, like Select,
   // don't set the value property on the primary DOM element
@@ -64,37 +58,30 @@ const createExpectMatch = selector => async value => {
 };
 
 const createClick = selector => async () => {
-  await switchToIframe();
   await t.click(selector);
 };
 
 const createExpectChecked = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.checked).ok();
 };
 
 const createExpectUnchecked = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.checked).notOk();
 };
 
 const createExpectExists = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.exists).ok();
 };
 
 const createExpectNotExists = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.exists).notOk();
 };
 
 const createExpectEnabled = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.hasAttribute("disabled")).notOk();
 };
 
 const createExpectDisabled = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.hasAttribute("disabled")).ok();
 };
 
@@ -102,11 +89,8 @@ const createExpectDisabled = selector => async () => {
 // in order to keep react-spectrum specifics outside of tests.
 // This abstraction is more valuable for some components (Select, Accordion)
 // than for others (Button), but should probably be used for all
-// components for consistency. This also takes care of ensuring that
-// TestCafe is looking within the iframe in our test environment when
-// dealing with components, so that we don't have t.switchToIframe()
-// statements littered through our test code. Feel free to add
-// additional components and methods. We always include the original
+// components for consistency. Feel free to add additional
+// components and methods. We always include the original
 // selector on the returned object, so if we need to do something
 // a bit more custom inside the test, the test can use the selector
 // and TestCafe APIs directly. A test ID string or a Selector can
@@ -115,16 +99,13 @@ const componentWrappers = {
   combobox(selector) {
     return {
       async selectOption(label) {
-        await switchToIframe();
         await t.click(selector.parent().find("button"));
         await selectMenuItem(popoverSelector, label);
       },
       async enterSearch(text) {
-        await switchToIframe();
         await t.typeText(selector, text).pressKey("enter");
       },
       async clear() {
-        await switchToIframe();
         await t.selectText(selector).pressKey("delete");
       },
       expectDisabled: createExpectDisabled(selector.parent().find("button")),
@@ -137,7 +118,6 @@ const componentWrappers = {
       expectNoError: createExpectNoError(selector),
       expectValue: createExpectValue(selector),
       async expectSelectedOptionLabel(label) {
-        await switchToIframe();
         // There's a bug in TestCafe that incorrectly logs a warning
         // if this line is formatted differently.
         // https://github.com/DevExpress/testcafe/issues/5449
@@ -149,7 +129,6 @@ const componentWrappers = {
           .eql(label);
       },
       async expectOptionLabels(labels) {
-        await switchToIframe();
         await t.click(selector.find("button"));
         const optionLabels = popoverSelector.find(".spectrum-Menu-itemLabel");
         for (let i = 0; i < labels.length; i += 1) {
@@ -159,7 +138,6 @@ const componentWrappers = {
         await t.expect(optionLabels.count).eql(labels.length);
       },
       async selectOption(label) {
-        await switchToIframe();
         await t.click(selector.find("button"));
         await selectMenuItem(popoverSelector, label);
       },
@@ -174,11 +152,9 @@ const componentWrappers = {
       expectValue: createExpectValue(selector),
       expectMatch: createExpectMatch(selector),
       async typeText(text, options) {
-        await switchToIframe();
         await t.typeText(selector, text, options);
       },
       async clear() {
-        await switchToIframe();
         await t.selectText(selector).pressKey("delete");
       }
     };
@@ -201,7 +177,6 @@ const componentWrappers = {
   accordion(selector) {
     return {
       async clickHeader(label) {
-        await switchToIframe();
         await t.click(
           selector.find(".spectrum-Accordion-itemHeader").withText(label)
         );
@@ -216,20 +191,17 @@ const componentWrappers = {
   dialog(selector) {
     return {
       async expectTitle(title) {
-        await switchToIframe();
         const dialogHeaderSelector = selector.find(".spectrum-Dialog-header");
         await t
           .expect(dialogHeaderSelector.withText(title).exists)
           .ok(`Did not find dialog with title ${title}`);
       },
       async clickConfirm() {
-        await switchToIframe();
         await t.click(
           selector.find(".spectrum-Dialog-footer .spectrum-Button--cta")
         );
       },
       async clickCancel() {
-        await switchToIframe();
         await t.click(
           selector.find(".spectrum-Dialog-footer .spectrum-Button--secondary")
         );
@@ -239,14 +211,12 @@ const componentWrappers = {
   alert(selector) {
     return {
       async expectTitle(title) {
-        await switchToIframe();
         const headerSelector = selector.find(".spectrum-Alert-header");
         await t
           .expect(headerSelector.withText(title).exists)
           .ok(`Did not find alert with title: ${title}`);
       },
       async expectMessage(message) {
-        await switchToIframe();
         const contentSelector = selector.find(".spectrum-Alert-content");
         await t
           .expect(contentSelector.withText(message).exists)

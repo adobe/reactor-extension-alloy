@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import { Selector, t, ClientFunction } from "testcafe";
-import switchToIframe from "./switchToIframe";
 import {
   createTestIdSelector,
   createTestIdSelectorString
@@ -27,7 +26,6 @@ const invalidAttribute = "aria-invalid";
 // the element seems to work better. Other Adobe teams have taken
 // a similar approach when using Cypress or React Testing Library
 const compatibleClick = async selector => {
-  await switchToIframe();
   await t.expect(selector.exists).ok();
   await ClientFunction(() => {
     const element = selector();
@@ -38,21 +36,18 @@ const compatibleClick = async selector => {
 };
 
 const createExpectError = selector => async () => {
-  await switchToIframe();
   await t
     .expect(selector.getAttribute(invalidAttribute))
     .eql("true", "Expected field to have error when it did not");
 };
 
 const createExpectNoError = selector => async () => {
-  await switchToIframe();
   await t
     .expect(selector.getAttribute(invalidAttribute))
     .notEql("true", "Expected field to not have error when it did");
 };
 
 const createExpectValue = selector => async value => {
-  await switchToIframe();
   // We need to use the value attribute instead of property
   // because some react-spectrum components, like Select,
   // don't set the value property on the primary DOM element
@@ -61,14 +56,12 @@ const createExpectValue = selector => async value => {
 };
 
 const createExpectText = selector => async text => {
-  await switchToIframe();
   await t
     .expect(selector.withExactText(text).exists)
     .ok(`Text ${text} not found.`);
 };
 
 const createExpectMatch = selector => async value => {
-  await switchToIframe();
   // We need to use the value attribute instead of property
   // because some react-spectrum components, like Select,
   // don't set the value property on the primary DOM element
@@ -77,37 +70,30 @@ const createExpectMatch = selector => async value => {
 };
 
 const createClick = selector => async () => {
-  await switchToIframe();
   await t.click(selector);
 };
 
 const createExpectChecked = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.checked).ok();
 };
 
 const createExpectUnchecked = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.checked).notOk();
 };
 
 const createExpectExists = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.exists).ok();
 };
 
 const createExpectNotExists = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.exists).notOk();
 };
 
 const createExpectEnabled = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.hasAttribute("disabled")).notOk();
 };
 
 const createExpectDisabled = selector => async () => {
-  await switchToIframe();
   await t.expect(selector.hasAttribute("disabled")).ok();
 };
 
@@ -115,7 +101,6 @@ const createExpectDisabled = selector => async () => {
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
 const createExpectMenuOptionLabels = menuSelector => async labels => {
-  await switchToIframe();
   const menuItems = menuSelector.find(menuItemCssSelector);
   for (let i = 0; i < labels.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
@@ -134,7 +119,6 @@ const createExpectMenuOptionLabels = menuSelector => async labels => {
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
 const createExpectMenuOptionsLabelsInclude = menuSelector => async labels => {
-  await switchToIframe();
   const menuItems = menuSelector.find(menuItemCssSelector);
   for (let i = 0; i < labels.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
@@ -152,7 +136,6 @@ const createExpectMenuOptionsLabelsInclude = menuSelector => async labels => {
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items don't exist.
 const createExpectMenuOptionLabelsExclude = menuSelector => async labels => {
-  await switchToIframe();
   const menuItems = menuSelector.find(menuItemCssSelector);
   for (let i = 0; i < labels.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
@@ -178,11 +161,8 @@ const createSelectMenuOption = menuSelector => async label => {
 // in order to keep react-spectrum specifics outside of tests.
 // This abstraction is more valuable for some components (Select, Accordion)
 // than for others (Button), but should probably be used for all
-// components for consistency. This also takes care of ensuring that
-// TestCafe is looking within the iframe in our test environment when
-// dealing with components, so that we don't have t.switchToIframe()
-// statements littered through our test code. Feel free to add
-// additional components and methods. We always include the original
+// components for consistency. Feel free to add additional
+// components and methods. We always include the original
 // selector on the returned object, so if we need to do something
 // a bit more custom inside the test, the test can use the selector
 // and TestCafe APIs directly. A test ID string or a Selector can
@@ -195,7 +175,6 @@ const componentWrappers = {
       // the text in the textfield.
       expectText: createExpectValue(selector),
       async openMenu() {
-        await switchToIframe();
         await t.click(selector.parent().find("button"));
       },
       // If the user needs to manually open the menu before selecting an
@@ -211,23 +190,35 @@ const componentWrappers = {
         popoverMenuSelector
       ),
       async enterSearch(text) {
-        await switchToIframe();
         await t.typeText(selector, text).pressKey("enter");
       },
       async clear() {
-        await switchToIframe();
         await t.selectText(selector).pressKey("delete");
       },
       async scrollToTop() {
-        await switchToIframe();
         await t.scroll(popoverMenuSelector, 0, 0);
       },
-      // When the combobox loads pages of data when scrolling this
-      // will keep scrolling until the end of the last page.
-      async scrollToBottom() {
-        await switchToIframe();
-        await t.scrollIntoView(
-          popoverMenuSelector.find(menuItemCssSelector).nth(-1)
+      // When the combobox loads pages of data when scrolling, this
+      // will keep scrolling until the the item is reached.
+      async scrollDownToItem(label) {
+        for (let i = 0; i < 10; i += 1) {
+          if (
+            // eslint-disable-next-line no-await-in-loop
+            await popoverMenuSelector
+              .find(menuItemCssSelector)
+              .withExactText(label).exists
+          ) {
+            return;
+          }
+
+          // eslint-disable-next-line no-await-in-loop
+          await t.scrollIntoView(
+            popoverMenuSelector.find(menuItemCssSelector).nth(-1)
+          );
+        }
+
+        throw new Error(
+          `Option with label ${label} does not exist while scrolling down when it is expected to exist.`
         );
       }
     };
@@ -242,7 +233,6 @@ const componentWrappers = {
         await createSelectMenuOption(popoverMenuSelector)(label);
       },
       async expectSelectedOptionLabel(label) {
-        await switchToIframe();
         await t.expect(selector.innerText).eql(label);
       },
       async expectMenuOptionLabels(labels) {
@@ -268,11 +258,9 @@ const componentWrappers = {
       expectValue: createExpectValue(selector),
       expectMatch: createExpectMatch(selector),
       async typeText(text, options) {
-        await switchToIframe();
         await t.typeText(selector, text, options);
       },
       async clear() {
-        await switchToIframe();
         await t.selectText(selector).pressKey("delete");
       }
     };
@@ -300,7 +288,6 @@ const componentWrappers = {
   illustratedMessage(selector) {
     return {
       async expectMessage(message) {
-        await switchToIframe();
         await t
           .expect(selector.find("section").withText(message).exists)
           .ok(`Message ${message} not found.`);

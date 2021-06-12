@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import { t } from "testcafe";
-import switchToIframe from "../../../helpers/switchToIframe";
 import {
   createTestIdSelector,
   createTestIdSelectorString
@@ -35,45 +34,35 @@ export default {
       .find(".ant-tree-switcher");
     return {
       click: async () => {
-        await switchToIframe();
         await t.click(node);
       },
       toggleExpansion: async () => {
-        await switchToIframe();
         await t.click(expansionToggle);
       },
       populationIndicator: {
         expectFull: async () => {
-          await switchToIframe();
           await t.expect(populationIndicator.hasClass("is-full")).ok();
         },
         expectPartial: async () => {
-          await switchToIframe();
           return t.expect(populationIndicator.hasClass("is-partial")).ok();
         },
         expectEmpty: async () => {
-          await switchToIframe();
           await t.expect(populationIndicator.hasClass("is-empty")).ok();
         },
         expectBlank: async () => {
-          await switchToIframe();
           await t.expect(populationIndicator.exists).notOk();
         }
       },
       expectIsValid: async () => {
-        await switchToIframe();
         await t.expect(node.hasClass("is-invalid")).notOk();
       },
       expectIsNotValid: async () => {
-        await switchToIframe();
         await t.expect(node.hasClass("is-invalid")).ok();
       },
       expectExists: async () => {
-        await switchToIframe();
         await t.expect(node.exists).ok();
       },
       expectNotExists: async () => {
-        await switchToIframe();
         await t.expect(node.exists).notOk();
       }
     };
