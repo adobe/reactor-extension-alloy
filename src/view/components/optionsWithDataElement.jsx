@@ -18,19 +18,126 @@ import Textfield from "@react/react-spectrum/Textfield";
 import FieldLabel from "@react/react-spectrum/FieldLabel";
 import InfoTipLayout from "./infoTipLayout";
 import WrappedField from "./wrappedField";
+import { getValue, setValue } from "../utils/nameUtils";
+import ImperativeForm from "./imperativeForm";
+import createValidateName from "../utils/createValidateName";
+import { object, string } from "yup";
+import singleDataElementRegex from "../constants/singleDataElementRegex";
+import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import { useField } from "formik";
 
 export const DATA_ELEMENT = "dataElement";
 
 const OptionsWithDataElement = ({
   label,
-  infoTip,
+  description,
   options,
+  defaultValue,
   id,
   "data-test-id": dataTestId,
-  name,
-  values
+  name
 }) => {
+
+  const radioName = `${name}.radio`;
+  const dataElementName = `${name}.dataElement`;
+
+  const getInitialValues = ({ initInfo }) => {
+    const value = getValue(initInfo.settings, name);
+
+    let radioValue, dataElementValue;
+
+    if (typeof value === "string" && value.matches(DATA_ELEMENT_REGEX)) {
+      radioValue = DATA_ELEMENT;
+      dataElementValue = value;
+    } else {
+      const selectedItem = options.find(option => option.value === value);
+      if (selectedItem) {
+        radioValue = `${selectedItem.value}`;
+        dataElementValue = "";
+      } else {
+        const defaultItem = options.find(option => option.value === defaultValue);
+        if (defaultItem) {
+          radioValue = `${defaultItem.key}`;
+          dataElementValue = "";
+        }
+        throw new Error("No defaultValue specified matching an option.");
+      }
+    }
+
+    const initialValues = {};
+    setValue(initialValues, radioName, radioValue);
+    setValue(initialValues, dataElementName, dataElementValue);
+    return initialValues;
+  };
+
+  const getSettings = ({ values }) => {
+    const radioValue = getValue(values, radioName);
+    const dataElementValue = getValue(values, dataElementName);
+
+    let value;
+    if (radioValue === DATA_ELEMENT) {
+      value = dataElementValue;
+    } else {
+      value = options.find(option => `${option.value}` === radioValue).value;
+    }
+
+    const settings = {};
+    setValue(settings, name, value);
+    return settings;
+  };
+
+  const validateFormikState = createValidateName(
+    name,
+    object().shape({
+      dataElement: string().when("radio", {
+        is: DATA_ELEMENT,
+        then: string()
+          .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+          .required(DATA_ELEMENT_REQUIRED)
+      })
+    })
+  );
+
+  const [{ value: radioValue }] = useField(radioName);
+
   return (
+    <ImperativeForm
+      getInitialValues={getInitialValues}
+      getSettings={getSettings}
+      validateFormikState={validateFormikState}
+      name={name}
+      render={() => (
+        <>
+          <RadioGroup
+            name={radioName}
+            label={label}
+          >
+            {options.map(({ value, label }) => (
+              <Radio
+                key={`${value}`}
+                value={`${value}`}
+                label={label}
+              />
+            ))}
+          </RadioGroup>
+          { radioValue === DATA_ELEMENT && (
+            <div className="FieldSubset">
+              <DataElementSelector>
+                <TextField
+                  data-test-id={`${dataElementName}Field`}
+                  name={dataElementName}
+                  width="size-5000"
+                  aria-label="Data Element"
+                />
+              </DataElementSelector>
+            </div>
+          )}
+        </>
+      )}
+    />
+  );
+};
+/*
     <div className="u-gapTop">
       <InfoTipLayout tip={infoTip}>
         <FieldLabel labelFor={`${id}RadioGroup`} label={label} />
@@ -77,7 +184,7 @@ const OptionsWithDataElement = ({
     </div>
   );
 };
-
+*/
 OptionsWithDataElement.propTypes = {
   options: PropTypes.arrayOf(PropTypes.object),
   label: PropTypes.string,

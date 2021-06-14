@@ -4,13 +4,16 @@ import { string, object } from "yup";
 import React, { useContext, useRef } from "react";
 import ExtensionViewContext from "./extensionViewContext";
 import DataElementSelector from "./dataElementSelector";
-import TransientView from "./transientView";
+import ImperativeForm from "./imperativeForm";
 import { RadioGroup, TextField } from "./formikReactSpectrum3";
 import { Radio } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
+import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import { useField } from "formik";
+
 
 const CONSTANT = "constant";
-const DATA_ELEMENT = "data_element";
+const DATA_ELEMENT = "dataElement";
 
 const DataElementRadioChoice = ({
   name,
@@ -21,29 +24,29 @@ const DataElementRadioChoice = ({
   children
 }) => {
 
-  // TODO: get name off of Child?
+  const inputMethodName = `${name}InputMethod`;
+  const dataElementName = `${name}DataElement`;
 
-  const { initInfo } = useContext(ExtensionViewContext);
-
-  const getInitialValues = () => {
+  const getInitialValues = ({ initInfo }) => {
+    console.log("getInitialValues of dataElementRadioChoice");
     const { [name]: value } = initInfo.settings || {};
 
     if (typeof value === "string") {
       return {
-        inputMethod: DATA_ELEMENT,
-        dataElement: value
+        [inputMethodName]: DATA_ELEMENT,
+        [dataElementName]: value
       };
     }
 
     return {
-      inputMethod: CONSTANT,
-      dataElement: ""
+      [inputMethodName]: CONSTANT,
+      [dataElementName]: ""
     };
   };
 
   const getSettings = ({ values }) => {
-    if (values.inputMethod === DATA_ELEMENT) {
-      return { [name]: values.dataElement };
+    if (values[inputMethodName] === DATA_ELEMENT) {
+      return { [name]: values[dataElementName] };
     }
     else {
       // Let the children set the settings for this name
@@ -53,64 +56,61 @@ const DataElementRadioChoice = ({
 
   let dataElementSchema = string().matches(
     singleDataElementRegex,
-    "Please specify a data element"
+    DATA_ELEMENT_REQUIRED
   )
   if (isRequired) {
-    dataElementSchema = dataElementSchema.required("Please specify a data element");
+    dataElementSchema = dataElementSchema.required(DATA_ELEMENT_REQUIRED);
   }
   const validationSchema = object().shape({
-    dataElement: string().when("inputMethod", {
+    [dataElementName]: string().when(inputMethodName, {
       is: DATA_ELEMENT,
       then: dataElementSchema
     })
   });
 
-  const memento = useRef();
+  const [{ value: inputMethod }] = useField(inputMethodName);
 
   return (
-    <ExtensionViewForm
-      initialValues={getInitialValues()}
+    <ImperativeForm
+      getInitialValues={getInitialValues}
       getSettings={getSettings}
-      validationSchema={validationSchema}
-      render={({ formikProps }) => {
-        return (
-          <>
-            <div className="u-gapBottom">
-              <RadioGroup
-                name="inputMethod"
-                orientation="horizontal"
-                label={label}
-              >
-                <Radio data-test-id={`${name}ConstantOption`} value={CONSTANT}>
-                  {constantLabel}
-                </Radio>
-                <Radio data-test-id={`${name}DataElementOption`} value={DATA_ELEMENT}>
-                  {dataElementLabel}
-                </Radio>
-              </RadioGroup>
+      formikStateValidationSchema={validationSchema}
+      name="consent"
+      render={() => (
+        <>
+          <div className="u-gapBottom">
+            <RadioGroup
+              name={inputMethodName}
+              orientation="horizontal"
+              label={label}
+            >
+              <Radio data-test-id={`${name}ConstantOption`} value={CONSTANT}>
+                {constantLabel}
+              </Radio>
+              <Radio data-test-id={`${name}DataElementOption`} value={DATA_ELEMENT}>
+                {dataElementLabel}
+              </Radio>
+            </RadioGroup>
+          </div>
+          {inputMethod === DATA_ELEMENT && (
+            <div className="FieldSubset">
+            <DataElementSelector>
+              <TextField
+                data-test-id={`${dataElementName}Field`}
+                name={dataElementName}
+                width="size-5000"
+                aria-label="Data Element"
+              />
+            </DataElementSelector>
+          </div>
+        )}
+          {inputMethod === CONSTANT && (
+            <div className="FieldSubset">
+              {children}
             </div>
-            {formikProps.values.inputMethod === DATA_ELEMENT && (
-              <div className="FieldSubset">
-                <DataElementSelector>
-                  <TextField
-                    data-test-id={`${name}DataElementField`}
-                    name="dataElement"
-                    width="size-5000"
-                    aria-label="Data Element"
-                  />
-                </DataElementSelector>
-              </div>
-            )}
-            {formikProps.values.inputMethod === CONSTANT && (
-              <div className="FieldSubset">
-                <TransientView memento={memento}>
-                  {children}
-                </TransientView>
-              </div>
-            )}
-          </>
-        );
-      }}
+          )}
+        </>
+      )}
     />
   )
 

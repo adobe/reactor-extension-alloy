@@ -24,12 +24,13 @@ import {
 import DataElementSelector from "../components/dataElementSelector";
 import render from "../spectrum3Render";
 
-import ExtensionView from "../components/spectrum3ExtensionView";
+import ExtensionView from "../components/spectrum3ExtensionViewForm";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import ExtensionViewForm from "../components/extensionViewForm";
 import DataElementRadioChoice from "../components/dataElementRadioChoice";
 import ConsentObjects from "../components/consentObjects";
+import ImperativeForm from "../components/imperativeForm";
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -69,49 +70,46 @@ const validationSchema = object().shape({
 const SetConsent = () => {
 
   return (
-    <ExtensionView
-      render={({ initInfo }) => (
-        <ExtensionViewForm
-          initialValues={getInitialValues({ initInfo })}
-          getSettings={getSettings}
-          validationSchema={validationSchema}
-          render={() => {
-            return (
-              <Form>
-                <Picker
-                  data-test-id="instanceNameField"
-                  name="instanceName"
-                  label="Instance"
-                  items={getInstanceOptions(initInfo)}
-                  width="size-5000"
-                  isRequired
-                >
-                  {item => <Item key={item.value}>{item.label}</Item>}
-                </Picker>
-                <DataElementSelector>
-                  <TextField
-                    data-test-id="identityMapField"
-                    name="identityMap"
-                    label="Identity Map"
-                    description="Provide a data element which returns a custom identity map object as part of the setConsent command."
-                    width="size-5000"
-                  />
-                </DataElementSelector>
-                <DataElementRadioChoice
-                  name="consent"
-                  label="Consent Information"
-                  dataElementLabel="Use a data element"
-                  constantLabel="Fill out a form"
-                  isRequired
-                >
-                  <ConsentObjects/>
-                </DataElementRadioChoice>
-              </Form>
-            );
-          }}
-        />
-      )}
-    />
+    <ExtensionView>
+      <ImperativeForm
+        getInitialValues={getInitialValues}
+        getSettings={getSettings}
+        formikStateValidationSchema={validationSchema}
+        name="view1"
+        render={({ initInfo }) => (
+          <>
+            <Picker
+              data-test-id="instanceNameField"
+              name="instanceName"
+              label="Instance"
+              items={getInstanceOptions(initInfo)}
+              width="size-5000"
+              isRequired
+            >
+              {item => <Item key={item.value}>{item.label}</Item>}
+            </Picker>
+            <DataElementSelector>
+              <TextField
+                data-test-id="identityMapField"
+                name="identityMap"
+                label="Identity Map"
+                description="Provide a data element which returns a custom identity map object as part of the setConsent command."
+                width="size-5000"
+              />
+            </DataElementSelector>
+          </>
+        )}
+      />
+      <DataElementRadioChoice
+        name="consent"
+        label="Consent Information"
+        dataElementLabel="Use a data element"
+        constantLabel="Fill out a form"
+        isRequired
+      >
+        <ConsentObjects/>
+      </DataElementRadioChoice>
+    </ExtensionView>
   );
 };
 

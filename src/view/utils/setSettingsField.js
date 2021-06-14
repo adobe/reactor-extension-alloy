@@ -1,4 +1,4 @@
-export default setSettingsField = (obj, name, value) => {
+export default (obj, name, value) => {
   const firstPeriod = name.indexOf(".");
   if (firstPeriod === -1) {
     obj[name] = value;

@@ -47,7 +47,7 @@ import "./configuration.styl";
 import EnvironmentSelector from "../components/environmentSelector";
 import OptionsWithDataElement, {
   DATA_ELEMENT
-} from "../components/optionsWithDataElement";
+} from "../components/optionsWithDataElementSpectrum2";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 

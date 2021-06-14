@@ -14,20 +14,14 @@ governing permissions and limitations under the License.
 // Without this, if an error is thrown during validation, Formik
 // swallows the error and it's difficult to figure out where the problem is.
 // https://github.com/jaredpalmer/formik/issues/1329
-export default validate => {
-  if (!validate) {
-    return undefined;
+export default validate => (...args) => {
+  let result;
+  try {
+    result = validate(...args);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("Error executing validation", error);
+    throw error;
   }
-
-  return (...args) => {
-    let result;
-    try {
-      result = validate(...args);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Error executing validation", error);
-      throw error;
-    }
-    return result;
-  };
+  return result;
 };
