@@ -11,23 +11,17 @@ governing permissions and limitations under the License.
 */
 
 import "regenerator-runtime"; // needed for some of react-spectrum
-import React, { Fragment } from "react";
+import React from "react";
 import { object, string } from "yup";
 
-import { Form, Item, Button } from "@adobe/react-spectrum";
-import Delete from "@spectrum-icons/workflow/Delete";
-import {
-  TextField,
-  Picker
-} from "../components/formikReactSpectrum3";
-//import OptionsWithDataElement from "../components/formikReactSpectrum3/optionsWithDataElement";
+import { Item } from "@adobe/react-spectrum";
+import { TextField, Picker } from "../components/formikReactSpectrum3";
 import DataElementSelector from "../components/dataElementSelector";
 import render from "../spectrum3Render";
 
 import ExtensionView from "../components/spectrum3ExtensionViewForm";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
-import ExtensionViewForm from "../components/extensionViewForm";
 import DataElementRadioChoice from "../components/dataElementRadioChoice";
 import ConsentObjects from "../components/consentObjects";
 import ImperativeForm from "../components/imperativeForm";
@@ -45,10 +39,7 @@ const getInitialValues = ({ initInfo }) => {
 };
 
 const getSettings = ({ values }) => {
-  const {
-    instanceName,
-    identityMap
-  } = values;
+  const { instanceName, identityMap } = values;
 
   const settings = {
     instanceName
@@ -59,7 +50,7 @@ const getSettings = ({ values }) => {
   }
 
   return settings;
-}
+};
 
 const invalidDataMessage = "Please specify a data element.";
 const validationSchema = object().shape({
@@ -68,7 +59,6 @@ const validationSchema = object().shape({
 });
 
 const SetConsent = () => {
-
   return (
     <ExtensionView>
       <ImperativeForm
@@ -107,7 +97,7 @@ const SetConsent = () => {
         constantLabel="Fill out a form"
         isRequired
       >
-        <ConsentObjects/>
+        <ConsentObjects />
       </DataElementRadioChoice>
     </ExtensionView>
   );

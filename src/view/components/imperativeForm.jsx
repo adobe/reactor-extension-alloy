@@ -1,4 +1,4 @@
-import useImperativeForm from "../utils/useImperativeForm"
+import useImperativeForm from "../utils/useImperativeForm";
 
 const ImperativeForm = ({
   getInitialValues,
@@ -9,7 +9,6 @@ const ImperativeForm = ({
   name,
   render
 }) => {
-
   const { initialized, initInfo } = useImperativeForm({
     getInitialValues,
     getSettings,
@@ -20,10 +19,8 @@ const ImperativeForm = ({
   });
 
   if (!initialized) {
-    console.log(`${name} not initialized.`);
     return null;
   }
-  console.log(`${name} initialized.`);
 
   return render({ initInfo });
 };

@@ -10,10 +10,18 @@ export default ({
   validateNonFormikState,
   name
 }) => {
+  const [
+    { value: previouslyInitialized },
+    ,
+    { setValue: setPreviouslyInitialized }
+  ] = useField(`${name}Initialized`);
 
-  const [{ value: previouslyInitialized }, , { setValue: setPreviouslyInitialized }] = useField(`${name}Initialized`);
-
-  const { registerImperativeForm, deregisterImperativeForm, initInfo, initialized } = useContext(ExtensionViewContext);
+  const {
+    registerImperativeForm,
+    deregisterImperativeForm,
+    initInfo,
+    initialized
+  } = useContext(ExtensionViewContext);
 
   useEffect(() => {
     // TODO use the last passed in forms of these functions using a ref
@@ -30,9 +38,8 @@ export default ({
     registerImperativeForm(imperativeForm);
     return () => {
       deregisterImperativeForm(imperativeForm);
-    }
+    };
   }, []);
 
-
   return { initInfo, initialized: initialized && previouslyInitialized };
-}
+};
