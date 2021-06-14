@@ -1,13 +1,13 @@
 import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
-import useExtensionBridge from "../utils/useExtensionBridge";
-import ExtensionViewContext from "./extensionViewContext";
 import { useFormik, FormikProvider } from "formik";
 import { Form, ProgressCircle } from "@adobe/react-spectrum";
-import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 import { useEffect } from "react/cjs/react.development";
 import { object } from "yup";
-
+import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
+import ExtensionViewContext from "./extensionViewContext";
+import useExtensionBridge from "../utils/useExtensionBridge";
+import deepAssign from "../utils/deepAssign";
 
 // This component wires up Launch's extension bridge, and creates the
 // ExtensionViewContext. It should be used for each view inside an extension.
@@ -24,22 +24,28 @@ const ExtensionView = ({ children }) => {
     initialValues: initialValuesRef.current,
     enableReinitialize: true,
     onSubmit: () => {},
-    validate: async (values) => {
+    validate: async values => {
       // TODO: add error logging see "wrapValidationWithErrorLogging"
-      const errorObjects = await Promise.all(registeredImperativeFormsRef.current.map(({ validateFormikState = () => undefined }) => {
-        return Promise.resolve(validateFormikState(values))
-      }));
+      const errorObjects = await Promise.all(
+        registeredImperativeFormsRef.current.map(
+          ({ validateFormikState = () => undefined }) => {
+            return Promise.resolve(validateFormikState(values));
+          }
+        )
+      );
       return errorObjects.reduce((errors, errorObject) => {
-        // TODO: deep merge
-        return Object.assign(errors, errorObject);
+        return deepAssign(errors, errorObject);
       }, {});
     },
     validationSchema: () => {
-      const schema = registeredImperativeFormsRef.current.reduce((schema, { formikStateValidationSchema }) => {
-        return formikStateValidationSchema ? schema.concat(formikStateValidationSchema) : schema;
-      }, object());
-      console.log("Computed ValidationSchema:", schema);
-      return schema;
+      return registeredImperativeFormsRef.current.reduce(
+        (schema, { formikStateValidationSchema }) => {
+          return formikStateValidationSchema
+            ? schema.concat(formikStateValidationSchema)
+            : schema;
+        },
+        object()
+      );
     }
   });
   formikPropsRef.current = formikProps;
@@ -51,10 +57,12 @@ const ExtensionView = ({ children }) => {
       setInitialized(false);
     },
     getSettings() {
-      return registeredImperativeFormsRef.current.reduce((memo, { getSettings }) => {
-        // TODO: do a deep merge
-        return Object.assign(memo, getSettings(formikPropsRef.current));
-      }, {});
+      return registeredImperativeFormsRef.current.reduce(
+        (memo, { getSettings }) => {
+          return deepAssign(memo, getSettings(formikPropsRef.current));
+        },
+        {}
+      );
     },
     async validate() {
       const validateFormikStatePromise = formikPropsRef.current
@@ -68,36 +76,42 @@ const ExtensionView = ({ children }) => {
           formikPropsRef.current.setSubmitting(false);
           return Object.keys(formikPropsRef.current.errors).length === 0;
         });
-      const validateNonFormikStatePromises = registeredImperativeFormsRef.current.map(({ validateNonFormikState = () => true }) => {
-        return Promise.resolve(validateNonFormikState);
-      });
-      const results = await Promise.all([validateFormikStatePromise, ...validateNonFormikStatePromises]);
+      const validateNonFormikStatePromises = registeredImperativeFormsRef.current.map(
+        ({ validateNonFormikState = () => true }) => {
+          return Promise.resolve(validateNonFormikState);
+        }
+      );
+      const results = await Promise.all([
+        validateFormikStatePromise,
+        ...validateNonFormikStatePromises
+      ]);
       return results.every(result => result);
     }
   });
 
   useEffect(async () => {
-    console.log("useEffect", registeredImperativeFormsRef.current.length);
     if (initCalls === 0) {
-      return;
+      return undefined;
     }
     let canceled = false;
     const allInitialValues = await Promise.all(
       registeredImperativeFormsRef.current.map(({ getInitialValues }) => {
-        return Promise.resolve(getInitialValues({ initInfo }))
+        return Promise.resolve(getInitialValues({ initInfo }));
       })
     );
     if (!canceled) {
-      // TODO: deep assign
-      const initialValues = Object.assign({}, ...allInitialValues);
-      console.log("resetting form", initialValues);
+      const initialValues = deepAssign({}, ...allInitialValues);
       formikPropsRef.current.resetForm({ values: initialValues });
-      registeredImperativeFormsRef.current.forEach(({ setPreviouslyInitialized }) => {
-        setPreviouslyInitialized(true, false);
-      });
+      registeredImperativeFormsRef.current.forEach(
+        ({ setPreviouslyInitialized }) => {
+          setPreviouslyInitialized(true, false);
+        }
+      );
       setInitialized(true);
     }
-    return () => { canceled = true; }
+    return () => {
+      canceled = true;
+    };
   }, [initCalls]);
 
   // Don't render anything until extension bridge calls init
@@ -108,15 +122,20 @@ const ExtensionView = ({ children }) => {
   const context = {
     registerImperativeForm(imperativeForm) {
       registeredImperativeFormsRef.current.push(imperativeForm);
-      console.log("registerImperativeForm called");
       if (initialized && !imperativeForm.previouslyInitialized) {
-        Promise.resolve(imperativeForm.getInitialValues({ initInfo })).then(initialValues => {
-          // TODO: deep assign
-          const newInitialValues = Object.assign(formikPropsRef.current.values, initialValues);
-          console.log("resetting sub-form", initialValues, newInitialValues);
-          formikPropsRef.current.resetForm({ values: newInitialValues, touched: formikPropsRef.current.touched });
-          imperativeForm.setPreviouslyInitialized(true);
-        });
+        Promise.resolve(imperativeForm.getInitialValues({ initInfo })).then(
+          initialValues => {
+            const newInitialValues = deepAssign(
+              formikPropsRef.current.values,
+              initialValues
+            );
+            formikPropsRef.current.resetForm({
+              values: newInitialValues,
+              touched: formikPropsRef.current.touched
+            });
+            imperativeForm.setPreviouslyInitialized(true);
+          }
+        );
       }
     },
     deregisterImperativeForm(imperativeForm) {
@@ -132,12 +151,10 @@ const ExtensionView = ({ children }) => {
     <>
       <ExtensionViewContext.Provider value={context}>
         <Form>
-          <FormikProvider value={formikProps}>
-            {children}
-          </FormikProvider>
+          <FormikProvider value={formikProps}>{children}</FormikProvider>
         </Form>
       </ExtensionViewContext.Provider>
-      { !initialized && (
+      {!initialized && (
         <FillParentAndCenterChildren>
           <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
         </FillParentAndCenterChildren>

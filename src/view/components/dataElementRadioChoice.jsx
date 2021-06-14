@@ -1,16 +1,13 @@
-import singleDataElementRegex from "../constants/singleDataElementRegex";
-import ExtensionViewForm from "./extensionViewForm";
 import { string, object } from "yup";
-import React, { useContext, useRef } from "react";
-import ExtensionViewContext from "./extensionViewContext";
+import React from "react";
+import { Radio } from "@adobe/react-spectrum";
+import PropTypes from "prop-types";
+import { useField } from "formik";
+import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DataElementSelector from "./dataElementSelector";
 import ImperativeForm from "./imperativeForm";
 import { RadioGroup, TextField } from "./formikReactSpectrum3";
-import { Radio } from "@adobe/react-spectrum";
-import PropTypes from "prop-types";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
-import { useField } from "formik";
-
 
 const CONSTANT = "constant";
 const DATA_ELEMENT = "dataElement";
@@ -23,12 +20,10 @@ const DataElementRadioChoice = ({
   isRequired = false,
   children
 }) => {
-
   const inputMethodName = `${name}InputMethod`;
   const dataElementName = `${name}DataElement`;
 
   const getInitialValues = ({ initInfo }) => {
-    console.log("getInitialValues of dataElementRadioChoice");
     const { [name]: value } = initInfo.settings || {};
 
     if (typeof value === "string") {
@@ -48,16 +43,14 @@ const DataElementRadioChoice = ({
     if (values[inputMethodName] === DATA_ELEMENT) {
       return { [name]: values[dataElementName] };
     }
-    else {
-      // Let the children set the settings for this name
-      return {};
-    }
+    // Let the children set the settings for this name
+    return {};
   };
 
   let dataElementSchema = string().matches(
     singleDataElementRegex,
     DATA_ELEMENT_REQUIRED
-  )
+  );
   if (isRequired) {
     dataElementSchema = dataElementSchema.required(DATA_ELEMENT_REQUIRED);
   }
@@ -87,13 +80,15 @@ const DataElementRadioChoice = ({
               <Radio data-test-id={`${name}ConstantOption`} value={CONSTANT}>
                 {constantLabel}
               </Radio>
-              <Radio data-test-id={`${name}DataElementOption`} value={DATA_ELEMENT}>
+              <Radio
+                data-test-id={`${name}DataElementOption`}
+                value={DATA_ELEMENT}
+              >
                 {dataElementLabel}
               </Radio>
             </RadioGroup>
           </div>
           {inputMethod === DATA_ELEMENT && (
-            <div className="FieldSubset">
             <DataElementSelector>
               <TextField
                 data-test-id={`${dataElementName}Field`}
@@ -102,18 +97,12 @@ const DataElementRadioChoice = ({
                 aria-label="Data Element"
               />
             </DataElementSelector>
-          </div>
-        )}
-          {inputMethod === CONSTANT && (
-            <div className="FieldSubset">
-              {children}
-            </div>
           )}
+          {inputMethod === CONSTANT && children}
         </>
       )}
     />
-  )
-
+  );
 };
 
 DataElementRadioChoice.propTypes = {

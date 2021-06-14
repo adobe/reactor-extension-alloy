@@ -6,18 +6,17 @@ This is the parsing grammar used:
 
 name -> id nameTail
 nameTail -> "[" number "]" nameTail
-            "." key
+            "." name
             end
 id -> /[^\[\]\.]+/
 number -> /[0-9]+/
 */
 
-import { object } from "yup";
-
 const LEFT_BRACKET = value => value === "[";
 const RIGHT_BRACKET = value => value === "]";
 const DOT = value => value === ".";
-const IDENTIFIER = value => value !== "[" && value !== "]" && value !== "." && value !== null;
+const IDENTIFIER = value =>
+  value !== "[" && value !== "]" && value !== "." && value !== null;
 const NUMBER = value => /^[0-9]+$/.test(value);
 const END = value => value === null;
 
@@ -31,7 +30,7 @@ const next = (tokens, expected = () => true) => {
 };
 
 const lex = name => {
-  return name.match(/\[|\]|\.|[^\[\]\.]+/g).values();
+  return name.match(/\[|\]|\.|[^.[\]]+/g).values();
 };
 
 const toObject = mixed => {
@@ -48,7 +47,7 @@ const toArray = mixed => {
     throw new Error("Expected an array");
   }
   return array;
-}
+};
 
 const setRules = {
   onObjectProperty(obj, id, recursiveReturn) {
@@ -71,19 +70,14 @@ const getRules = {
   onArrayProperty(array, index, recursiveReturn) {
     return recursiveReturn;
   },
-  onFinalValue(oldValue, newValue) {
+  onFinalValue(oldValue) {
     return oldValue;
   }
 };
 
-const validationSchemaRules = {
-  onObjectProperty(obj, id, recursiveReturn) {
-    return object().shape({ [id]: recursiveReturn });
-  },
-  onArrayProperty(array, index, recursiveReturn) {
-    return array().
-  }
-};
+// These are mutually recursive functions, so declare the second one before
+// it is used to get around linting rules.
+let parseNameTail;
 
 const parseName = (mixed, value, tokens, rules) => {
   const obj = toObject(mixed);
@@ -92,7 +86,7 @@ const parseName = (mixed, value, tokens, rules) => {
   return rules.onObjectProperty(obj, id, recursiveReturn);
 };
 
-const parseNameTail = (mixed, value, tokens, rules) => {
+parseNameTail = (mixed, value, tokens, rules) => {
   const firstToken = next(tokens);
   if (LEFT_BRACKET(firstToken)) {
     const index = next(tokens, NUMBER);

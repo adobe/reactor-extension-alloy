@@ -12,19 +12,16 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import RadioGroup from "@react/react-spectrum/RadioGroup";
-import Radio from "@react/react-spectrum/Radio";
-import Textfield from "@react/react-spectrum/Textfield";
-import FieldLabel from "@react/react-spectrum/FieldLabel";
-import InfoTipLayout from "./infoTipLayout";
-import WrappedField from "./wrappedField";
+import { Radio } from "@adobe/react-spectrum";
+import { object, string } from "yup";
+import { useField } from "formik";
+import { RadioGroup, TextField } from "./formikReactSpectrum3";
 import { getValue, setValue } from "../utils/nameUtils";
 import ImperativeForm from "./imperativeForm";
 import createValidateName from "../utils/createValidateName";
-import { object, string } from "yup";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
-import { useField } from "formik";
+import DataElementSelector from "./dataElementSelector";
 
 export const DATA_ELEMENT = "dataElement";
 
@@ -33,20 +30,19 @@ const OptionsWithDataElement = ({
   description,
   options,
   defaultValue,
-  id,
   "data-test-id": dataTestId,
   name
 }) => {
-
   const radioName = `${name}.radio`;
   const dataElementName = `${name}.dataElement`;
 
   const getInitialValues = ({ initInfo }) => {
     const value = getValue(initInfo.settings, name);
 
-    let radioValue, dataElementValue;
+    let radioValue;
+    let dataElementValue;
 
-    if (typeof value === "string" && value.matches(DATA_ELEMENT_REGEX)) {
+    if (typeof value === "string" && singleDataElementRegex.test(value)) {
       radioValue = DATA_ELEMENT;
       dataElementValue = value;
     } else {
@@ -55,12 +51,15 @@ const OptionsWithDataElement = ({
         radioValue = `${selectedItem.value}`;
         dataElementValue = "";
       } else {
-        const defaultItem = options.find(option => option.value === defaultValue);
+        const defaultItem = options.find(
+          option => option.value === defaultValue
+        );
         if (defaultItem) {
-          radioValue = `${defaultItem.key}`;
+          radioValue = `${defaultItem.value}`;
           dataElementValue = "";
+        } else {
+          throw new Error("No defaultValue specified matching an option.");
         }
-        throw new Error("No defaultValue specified matching an option.");
       }
     }
 
@@ -108,19 +107,13 @@ const OptionsWithDataElement = ({
       name={name}
       render={() => (
         <>
-          <RadioGroup
-            name={radioName}
-            label={label}
-          >
-            {options.map(({ value, label }) => (
-              <Radio
-                key={`${value}`}
-                value={`${value}`}
-                label={label}
-              />
+          <RadioGroup name={radioName} label={label} data-test-id={dataTestId}>
+            {options.map(({ value, label: optionLabel }) => (
+              <Radio value={`${value}`}>{optionLabel}</Radio>
             ))}
+            <Radio value={DATA_ELEMENT}>Use a data element</Radio>
           </RadioGroup>
-          { radioValue === DATA_ELEMENT && (
+          {radioValue === DATA_ELEMENT && (
             <div className="FieldSubset">
               <DataElementSelector>
                 <TextField
@@ -128,6 +121,7 @@ const OptionsWithDataElement = ({
                   name={dataElementName}
                   width="size-5000"
                   aria-label="Data Element"
+                  description={description}
                 />
               </DataElementSelector>
             </div>
@@ -137,62 +131,14 @@ const OptionsWithDataElement = ({
     />
   );
 };
-/*
-    <div className="u-gapTop">
-      <InfoTipLayout tip={infoTip}>
-        <FieldLabel labelFor={`${id}RadioGroup`} label={label} />
-      </InfoTipLayout>
-      <WrappedField
-        id={`${id}RadioGroup`}
-        name={`${name}.radio`}
-        component={RadioGroup}
-        componentClassName="u-flexColumn"
-      >
-        {options.map(
-          ({
-            value: optionValue,
-            label: optionLabel,
-            testId: optionTestId
-          }) => (
-            <Radio
-              key={optionValue}
-              data-test-id={`${dataTestId}${optionTestId || optionLabel}Radio`}
-              value={optionValue}
-              label={optionLabel}
-            />
-          )
-        )}
-        <Radio
-          data-test-id={`${dataTestId}DataElementRadio`}
-          value={DATA_ELEMENT}
-          label="Provided by data element"
-        />
-      </WrappedField>
 
-      {values && values.radio === DATA_ELEMENT && (
-        <div>
-          <WrappedField
-            id={`${id}DataElement`}
-            data-test-id={`${dataTestId}DataElementField`}
-            name={`${name}.dataElement`}
-            component={Textfield}
-            componentClassName="u-fieldLong"
-            supportDataElement="replace"
-          />
-        </div>
-      )}
-    </div>
-  );
-};
-*/
 OptionsWithDataElement.propTypes = {
-  options: PropTypes.arrayOf(PropTypes.object),
   label: PropTypes.string,
-  infoTip: PropTypes.string,
-  id: PropTypes.string,
+  description: PropTypes.string,
+  options: PropTypes.arrayOf(PropTypes.object),
+  defaultValue: PropTypes.string,
   "data-test-id": PropTypes.string,
-  name: PropTypes.string,
-  values: PropTypes.object
+  name: PropTypes.string
 };
 
 export default OptionsWithDataElement;
