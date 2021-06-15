@@ -11,8 +11,10 @@ const SCHEMAS_ENDPOINT_REGEX = /\/schemaregistry\/tenant\/schemas(\?|$)/;
 const SCHEMA_ENDPOINT_REGEX = /\/schemaregistry\/tenant\/schemas\/.+/;
 const IDENTITIES_ENDPOINT_REGEX = /\/data\/core\/idnamespace\/identities(\?|$)/;
 
+const HTTP_METHOD_GET = "GET";
+
 export const sandboxesUnauthorized = RequestMock()
-  .onRequestTo(SANDBOXES_ENDPOINT_REGEX)
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     {
       error_code: "401013",
@@ -23,7 +25,7 @@ export const sandboxesUnauthorized = RequestMock()
   );
 
 export const sandboxesUserRegionMissing = RequestMock()
-  .onRequestTo(SANDBOXES_ENDPOINT_REGEX)
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     {
       error_code: "403027",
@@ -38,7 +40,7 @@ export const sandboxesNonJsonBody = RequestMock()
   .respond("non-json body", 200, responseHeaders);
 
 export const sandboxesEmpty = RequestMock()
-  .onRequestTo(SANDBOXES_ENDPOINT_REGEX)
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     {
       sandboxes: []
@@ -48,7 +50,7 @@ export const sandboxesEmpty = RequestMock()
   );
 
 export const sandboxesSingleWithoutDefault = RequestMock()
-  .onRequestTo(SANDBOXES_ENDPOINT_REGEX)
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     {
       sandboxes: [
@@ -67,7 +69,7 @@ export const sandboxesSingleWithoutDefault = RequestMock()
   );
 
 export const sandboxesMultipleWithDefault = RequestMock()
-  .onRequestTo(SANDBOXES_ENDPOINT_REGEX)
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     {
       sandboxes: [
@@ -110,7 +112,7 @@ export const sandboxesMultipleWithDefault = RequestMock()
   );
 
 export const sandboxesMultipleWithoutDefault = RequestMock()
-  .onRequestTo(SANDBOXES_ENDPOINT_REGEX)
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     {
       sandboxes: [
@@ -157,7 +159,8 @@ export const schemasMetaSingle = RequestMock()
     url: SCHEMAS_ENDPOINT_REGEX,
     headers: {
       "x-sandbox-name": "prod"
-    }
+    },
+    method: HTTP_METHOD_GET
   })
   .respond(
     {
@@ -181,7 +184,8 @@ export const schemasMetaMultiple = RequestMock()
     url: SCHEMAS_ENDPOINT_REGEX,
     headers: {
       "x-sandbox-name": "prod"
-    }
+    },
+    method: HTTP_METHOD_GET
   })
   .respond(
     {
@@ -210,7 +214,8 @@ export const schemasMetaEmpty = RequestMock()
     url: SCHEMAS_ENDPOINT_REGEX,
     headers: {
       "x-sandbox-name": "alloy-test"
-    }
+    },
+    method: HTTP_METHOD_GET
   })
   .respond(
     {
@@ -311,7 +316,8 @@ export const schemasMetaPagingMock = RequestMock()
     url: SCHEMAS_ENDPOINT_REGEX,
     headers: {
       "x-sandbox-name": "prod"
-    }
+    },
+    method: HTTP_METHOD_GET
   })
   .respond((req, res) => {
     const PAGE_ITEMS_LIMIT = 30;
@@ -353,7 +359,8 @@ export const schema = RequestMock()
     url: SCHEMA_ENDPOINT_REGEX,
     headers: {
       "x-sandbox-name": "alloy-test"
-    }
+    },
+    method: HTTP_METHOD_GET
   })
   .respond(
     {
@@ -373,7 +380,7 @@ export const schema = RequestMock()
   );
 
 export const namespaces = RequestMock()
-  .onRequestTo(IDENTITIES_ENDPOINT_REGEX)
+  .onRequestTo({ url: IDENTITIES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     [
       {
@@ -421,9 +428,9 @@ export const namespaces = RequestMock()
   );
 
 export const namespacesEmpty = RequestMock()
-  .onRequestTo(IDENTITIES_ENDPOINT_REGEX)
+  .onRequestTo({ url: IDENTITIES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond([], 200, responseHeaders);
 
 export const namespacesError = RequestMock()
-  .onRequestTo(IDENTITIES_ENDPOINT_REGEX)
+  .onRequestTo({ url: IDENTITIES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond({}, 403, responseHeaders);

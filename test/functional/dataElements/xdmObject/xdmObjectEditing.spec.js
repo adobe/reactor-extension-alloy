@@ -18,6 +18,7 @@ import numberEdit from "./helpers/numberEdit";
 import objectEdit from "./helpers/objectEdit";
 import stringEdit from "./helpers/stringEdit";
 import initializeExtensionView from "./helpers/initializeExtensionView";
+import createFixture from "../../helpers/createFixture";
 
 const schema = {
   id:
@@ -25,11 +26,11 @@ const schema = {
   version: "1.2"
 };
 
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("XDM Object Editing")
-  .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
-  .meta("requiresAdobeIOIntegration", true);
+createFixture({
+  title: "XDM Object Editing",
+  viewPath: "dataElements/xdmObject.html",
+  requiresAdobeIOIntegration: true
+});
 
 test("initializes form fields with individual object attribute values", async () => {
   await initializeExtensionView({

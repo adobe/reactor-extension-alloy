@@ -23,6 +23,11 @@ import useNewlyValidatedFormSubmission from "../../../utils/useNewlyValidatedFor
 // like positioning of error icons within react-spectrum textfields when the field
 // is marked invalid. Check https://github.com/ant-design/ant-design/issues/9363
 // before attempting to change this import.
+// By default, Ant's Tree animates while expanding or collapsing a node. This animation
+// requires additional CSS that would bring some of these global styles in.
+// To avoid the issue (and speed up the Tree experience), we disable animation
+// by setting Tree's motion prop to null. This isn't currently a documented prop:
+// https://github.com/ant-design/ant-design/blob/832aa81c821b7b5750673b5aacafa39c9978b09c/components/tree/Tree.tsx#L200-L203
 import "antd/lib/tree/style/index.css";
 import "./xdmTree.styl";
 
@@ -71,6 +76,7 @@ const XdmTree = ({ selectedNodeId, onSelect = () => {} }) => {
       selectedKeys={selectedNodeId ? [selectedNodeId] : []}
       expandedKeys={expandedNodeIds}
       showLine
+      motion={null}
     />
   );
 };

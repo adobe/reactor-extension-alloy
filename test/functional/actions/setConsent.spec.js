@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum2";
 import testInstanceNameOptions from "../helpers/spectrum2TestInstanceNameOptions";
+import createFixture from "../helpers/createFixture";
 
 const extensionViewController = createExtensionViewController(
   "actions/setConsent.html"
@@ -75,11 +76,10 @@ const mockExtensionSettings = {
   ]
 };
 
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("Set Consent View").disablePageReloads.page(
-  "http://localhost:3000/viewSandbox.html"
-);
+createFixture({
+  title: "Set Consent View",
+  viewPath: "actions/setConsent.html"
+});
 
 test("initializes form fields with settings containing a static consent array", async () => {
   await extensionViewController.init({

@@ -13,27 +13,26 @@ governing permissions and limitations under the License.
 */
 
 const path = require("path");
-const sandbox = require("@adobe/reactor-sandbox");
 const argv = require("minimist")(process.argv.slice(2));
 const chalk = require("chalk");
 
-const { watch, testName: testNameFilter, src } = argv;
+const defaultSpecsPath = path.join(
+  __dirname,
+  "../test/functional/**/*.spec.js"
+);
+const { watch, testName: testNameFilter, specsPath = defaultSpecsPath } = argv;
 const createTestCafe = require("testcafe");
 const build = require("./helpers/build");
 const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
 
-const testsDir = src || path.join(__dirname, "../test/functional");
-
 (async () => {
   await build({ watch });
-  await sandbox.run();
-
   const testcafe = await createTestCafe("localhost", 1337, 1338);
   const runner = watch
     ? testcafe.createLiveModeRunner()
     : testcafe.createRunner();
   const failedCount = await runner
-    .src(testsDir)
+    .src(specsPath)
     .filter((testName, fixtureName, fixturePath, testMeta, fixtureMeta) => {
       if (testNameFilter && testNameFilter !== testName) {
         return false;

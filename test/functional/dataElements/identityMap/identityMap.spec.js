@@ -16,6 +16,7 @@ import spectrum from "../../helpers/spectrum3";
 import getAdobeIOAccessToken from "../../helpers/getAdobeIOAccessToken";
 import * as platformMocks from "../xdmObject/helpers/platformMocks";
 import credentials from "../../helpers/adobeIOClientCredentials";
+import createFixture from "../../helpers/createFixture";
 
 const identityMapViewController = createExtensionViewController(
   "dataElements/identityMap.html"
@@ -59,13 +60,12 @@ for (let i = 0; i < 3; i += 1) {
   });
 }
 
-fixture("Identity Map Data Element View")
-  .beforeEach(async () => {
-    await t.addRequestHooks(platformMocks.namespacesEmpty);
-  })
-  .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
-  .meta("requiresAdobeIOIntegration", true)
-  .requestHooks(platformMocks.namespacesEmpty);
+createFixture({
+  title: "Identity Map Data Element View",
+  viewPath: "dataElements/identityMap.html",
+  requiresAdobeIOIntegration: true,
+  requestHooks: [platformMocks.namespacesEmpty]
+});
 
 test("initializes identity map with default settings", async () => {
   await initializeExtensionView();

@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum2";
+import createFixture from "../helpers/createFixture";
 
 const extensionViewController = createExtensionViewController(
   "actions/resetEventMergeId.html"
@@ -19,11 +20,10 @@ const extensionViewController = createExtensionViewController(
 
 const eventMergeIdField = spectrum.textfield("eventMergeIdField");
 
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("Reset Event Merge ID View").disablePageReloads.page(
-  "http://localhost:3000/viewSandbox.html"
-);
+createFixture({
+  title: "Reset Event Merge ID View",
+  viewPath: "actions/resetEventMergeId.html"
+});
 
 test("initializes form fields with settings", async () => {
   await extensionViewController.init({
