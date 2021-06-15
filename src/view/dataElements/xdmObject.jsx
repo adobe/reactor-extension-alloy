@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useRef, useEffect, forwardRef, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import PropTypes from "prop-types";
 import { Form, ProgressCircle, Flex } from "@adobe/react-spectrum";
 import ExtensionView from "../components/spectrum3ExtensionView";
@@ -32,12 +32,13 @@ import loadDefaultSchema from "./xdmObject/helpers/schemaSelection/loadDefaultSc
 import getInitialFormStateUsingAsyncErrorReporting from "./xdmObject/helpers/schemaSelection/getInitialFormStateUsingAsyncErrorReporting";
 import "./xdmObject.styl";
 
-const XdmObject = forwardRef(({ initInfo, resetForm }, ref) => {
+const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
   const {
     settings,
     company: { orgId },
     tokens: { imsAccess }
   } = initInfo;
+  const { resetForm } = formikProps;
   const reportAsyncError = useReportAsyncError();
   const [state, dispatch] = useReducer(reducer, {
     status: STATUS.INITIALIZING,
@@ -83,7 +84,7 @@ const XdmObject = forwardRef(({ initInfo, resetForm }, ref) => {
   // it validates on change) and the parent components calls childRef.current.validateFormikState
   // which throws an error because React has momentarily set childRef.current to undefined.
   useEffect(() => {
-    ref.current = {
+    registerImperativeFormApi({
       getSettings({ values }) {
         const schema = {
           id: selectedSchema.$id,
@@ -116,7 +117,7 @@ const XdmObject = forwardRef(({ initInfo, resetForm }, ref) => {
         });
         return isEditorRenderable;
       }
-    };
+    });
   });
 
   useEffect(async () => {
@@ -149,7 +150,7 @@ const XdmObject = forwardRef(({ initInfo, resetForm }, ref) => {
       });
     }
 
-    resetForm(initialFormState);
+    resetForm({ values: initialFormState });
     dispatch({
       type: ACTION_TYPES.DEFAULT_SANDBOX_AND_SCHEMA_LOADED,
       sandbox,
@@ -226,39 +227,22 @@ const XdmObject = forwardRef(({ initInfo, resetForm }, ref) => {
       {editorAreaContent}
     </div>
   );
-});
+};
 
 XdmObject.propTypes = {
-  initInfo: PropTypes.object.isRequired,
-  resetForm: PropTypes.func.isRequired
+  initInfo: PropTypes.object,
+  formikProps: PropTypes.object,
+  registerImperativeFormApi: PropTypes.func
 };
 
 const XdmExtensionView = () => {
-  const childRef = useRef();
-
   return (
     <ExtensionView
       render={() => {
         return (
           <ExtensionViewForm
-            initialValues={{}}
-            getSettings={({ values }) => {
-              return childRef.current.getSettings({ values });
-            }}
-            validateFormikState={({ values }) => {
-              return childRef.current.validateFormikState({ values });
-            }}
-            validateNonFormikState={() => {
-              return childRef.current.validateNonFormikState();
-            }}
-            render={({ initInfo, resetForm }) => {
-              return (
-                <XdmObject
-                  ref={childRef}
-                  initInfo={initInfo}
-                  resetForm={resetForm}
-                />
-              );
+            render={props => {
+              return <XdmObject {...props} />;
             }}
           />
         );
