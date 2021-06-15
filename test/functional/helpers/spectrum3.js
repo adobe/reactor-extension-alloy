@@ -298,7 +298,6 @@ const componentWrappers = {
   tabs() {
     return {
       async selectTab(label) {
-        await switchToIframe();
         // Normally we would incorporate the selector for the
         // parent Tabs component by doing something like
         // selector.find(tabCssSelector).withExactText(label)
