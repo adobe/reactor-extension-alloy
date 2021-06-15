@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import createExtensionViewController from "../helpers/createExtensionViewController";
 import spectrum from "../helpers/spectrum3";
 import testInstanceNameOptions from "../helpers/spectrum3TestInstanceNameOptions";
+import createFixture from "../helpers/createFixture";
 
 const extensionViewController = createExtensionViewController(
   "actions/sendEvent.html"
@@ -53,11 +54,10 @@ const mockExtensionSettings = {
   ]
 };
 
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("Send Event View").disablePageReloads.page(
-  "http://localhost:3000/viewSandbox.html"
-);
+createFixture({
+  title: "Send Event View",
+  viewPath: "actions/sendEvent.html"
+});
 
 test("initializes form fields with full settings, when decision scopes is data element", async () => {
   await extensionViewController.init({

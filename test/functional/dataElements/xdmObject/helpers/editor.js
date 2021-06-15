@@ -12,19 +12,16 @@ governing permissions and limitations under the License.
 
 import { t } from "testcafe";
 import { createTestIdSelector } from "../../../helpers/dataTestIdSelectors";
-import switchToIframe from "../../../helpers/switchToIframe";
 
 const editor = createTestIdSelector("editor");
 
 export default {
   expectExists: async () => {
-    await switchToIframe();
     await t
       .expect(editor.exists)
       .ok("Editor exists when it is expected to not exist.");
   },
   expectNotExists: async () => {
-    await switchToIframe();
     await t
       .expect(editor.exists)
       .notOk("Editor does not exist when it is expected to exist.");

@@ -18,12 +18,13 @@ import integerEdit from "./helpers/integerEdit";
 import numberEdit from "./helpers/numberEdit";
 import objectEdit from "./helpers/objectEdit";
 import stringEdit from "./helpers/stringEdit";
+import createFixture from "../../helpers/createFixture";
 
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("XDM Object Population Indicator")
-  .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
-  .meta("requiresAdobeIOIntegration", true);
+createFixture({
+  title: "XDM Object Population Indicator",
+  viewPath: "dataElements/xdmObject.html",
+  requiresAdobeIOIntegration: true
+});
 
 test("shows empty population amount for _id", async () => {
   await initializeExtensionView();

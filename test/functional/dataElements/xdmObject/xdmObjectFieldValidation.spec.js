@@ -15,12 +15,13 @@ import xdmTree from "./helpers/xdmTree";
 import arrayEdit from "./helpers/arrayEdit";
 import stringEdit from "./helpers/stringEdit";
 import editor from "./helpers/editor";
+import createFixture from "../../helpers/createFixture";
 
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("XDM Object Validation")
-  .disablePageReloads.page("http://localhost:3000/viewSandbox.html")
-  .meta("requiresAdobeIOIntegration", true);
+createFixture({
+  title: "XDM Object Validation",
+  viewPath: "dataElements/xdmObject.html",
+  requiresAdobeIOIntegration: true
+});
 
 test("arrays with no values are invalid", async () => {
   const extensionViewController = await initializeExtensionView();

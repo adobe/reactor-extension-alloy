@@ -13,47 +13,39 @@ governing permissions and limitations under the License.
 import { t } from "testcafe";
 
 const getSettings = async () => {
-  await t.switchToMainWindow();
   return t.eval(() => {
-    return window.loadExtensionViewPromise.then(extensionView => {
+    return window.initializeExtensionViewPromise.then(extensionView => {
       return extensionView.getSettings();
     });
   });
 };
 
 const validate = async () => {
-  await t.switchToMainWindow();
   return t.eval(() => {
-    return window.loadExtensionViewPromise.then(extensionView => {
+    return window.initializeExtensionViewPromise.then(extensionView => {
       return extensionView.validate();
     });
   });
 };
 
 module.exports = viewPath => {
-  // window.loadExtensionView is provided by the extension sandbox tool.
-  // More details about the tool and this method can be found here:
-  // https://www.npmjs.com/package/@adobe/reactor-sandbox
   return {
-    async init(initInfo = {}, sharedViewMethods = {}) {
-      await t.switchToMainWindow();
+    async init(initInfo = {}, sharedViewMethodMocks = {}) {
       return t.eval(
         () => {
-          window.loadExtensionViewPromise = window.loadExtensionView({
-            viewPath,
-            initInfo,
-            // Can't use spread operator or Object.assign due to
-            // what appears to be weirdness between babel and t.eval()
-            openCodeEditor: sharedViewMethods.openCodeEditor,
-            openRegexTester: sharedViewMethods.openRegexTester,
-            openDataElementSelector: sharedViewMethods.openDataElementSelector
-          });
+          window.initializeExtensionViewPromise = window.initializeExtensionView(
+            {
+              viewPath,
+              initInfo,
+              sharedViewMethodMocks
+            }
+          );
         },
         {
           dependencies: {
             viewPath,
             initInfo,
-            sharedViewMethods
+            sharedViewMethodMocks
           }
         }
       );
