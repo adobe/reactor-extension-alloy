@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import { t } from "testcafe";
 import createExtensionViewController from "../../helpers/createExtensionViewController";
-import spectrum from "../../helpers/spectrum2";
+import spectrum from "../../helpers/spectrum3";
 import getAdobeIOAccessToken from "../../helpers/getAdobeIOAccessToken";
 import * as platformMocks from "../xdmObject/helpers/platformMocks";
 import credentials from "../../helpers/adobeIOClientCredentials";
@@ -35,15 +35,15 @@ const initializeExtensionView = async additionalInitInfo => {
 };
 
 const addIdentityButton = spectrum.button("addIdentityButton");
-const accordion = spectrum.accordion("identitiesAccordion");
+const tabs = spectrum.tabs("identitiesTabs");
 
 const identities = [];
 for (let i = 0; i < 3; i += 1) {
   const identifiers = [];
   for (let j = 0; j < 2; j += 1) {
     identifiers.push({
-      id: spectrum.textfield(`identity${i}idField${j}`),
-      authenticatedState: spectrum.select(
+      id: spectrum.textField(`identity${i}idField${j}`),
+      authenticatedState: spectrum.picker(
         `identity${i}authenticatedStateField${j}`
       ),
       primary: spectrum.checkbox(`identity${i}primaryField${j}`),
@@ -51,11 +51,11 @@ for (let i = 0; i < 3; i += 1) {
     });
   }
   identities.push({
-    namespace: spectrum.textfield(`namespace${i}Field`),
+    namespace: spectrum.textField(`namespace${i}Field`),
     identifiers,
     deleteButton: spectrum.button(`deleteIdentity${i}Button`),
     addIdentifierButton: spectrum.button(`addIdentifier${i}Button`),
-    namespaceSelect: spectrum.select(`namespaceSelect${i}Field`)
+    namespacePicker: spectrum.picker(`namespacePicker${i}Field`)
   });
 }
 
@@ -67,7 +67,7 @@ fixture("Identity Map Data Element View")
   .meta("requiresAdobeIOIntegration", true)
   .requestHooks(platformMocks.namespacesEmpty);
 
-test("initializes Identity map with default settings", async () => {
+test("initializes identity map with default settings", async () => {
   await initializeExtensionView();
 
   await identities[0].namespace.expectValue("");
@@ -76,11 +76,11 @@ test("initializes Identity map with default settings", async () => {
     "Ambiguous"
   );
   await identities[0].identifiers[0].primary.expectUnchecked();
-  await identities[0].identifiers[0].deleteButton.expectDisabled();
-  await identities[0].deleteButton.expectDisabled();
+  await identities[0].identifiers[0].deleteButton.expectNotExists();
+  await identities[0].deleteButton.expectNotExists();
 });
 
-test("initializes Identity map with sorted namespaces", async () => {
+test("initializes identity map with sorted namespaces", async () => {
   await initializeExtensionView({
     settings: {
       S_CUSTOM_IDENTITY: [
@@ -112,17 +112,17 @@ test("initializes Identity map with sorted namespaces", async () => {
     }
   });
 
-  await accordion.clickHeader("B_CUSTOM_IDENTITY2");
+  await tabs.selectTab("B_CUSTOM_IDENTITY2");
   await identities[0].namespace.expectValue("B_CUSTOM_IDENTITY2");
   await identities[0].identifiers[0].id.expectValue("test3");
   await identities[0].identifiers[0].authenticatedState.expectSelectedOptionLabel(
     "Authenticated"
   );
   await identities[0].identifiers[0].primary.expectUnchecked();
-  await identities[0].identifiers[0].deleteButton.expectDisabled();
+  await identities[0].identifiers[0].deleteButton.expectNotExists();
   await identities[0].deleteButton.expectEnabled();
 
-  await accordion.clickHeader("S_CUSTOM_IDENTITY");
+  await tabs.selectTab("S_CUSTOM_IDENTITY");
   await identities[1].namespace.expectValue("S_CUSTOM_IDENTITY");
 
   await identities[1].identifiers[0].id.expectValue("test1");
@@ -130,26 +130,26 @@ test("initializes Identity map with sorted namespaces", async () => {
     "Logged Out"
   );
   await identities[1].identifiers[0].primary.expectUnchecked();
-  await identities[1].identifiers[0].deleteButton.expectEnabled();
+  await identities[1].identifiers[0].deleteButton.expectExists();
 
   await identities[1].identifiers[1].id.expectValue("test2");
   await identities[1].identifiers[1].authenticatedState.expectSelectedOptionLabel(
     "Ambiguous"
   );
   await identities[1].identifiers[1].primary.expectChecked();
-  await identities[1].identifiers[1].deleteButton.expectEnabled();
+  await identities[1].identifiers[1].deleteButton.expectExists();
 
-  await identities[1].deleteButton.expectEnabled();
+  await identities[1].deleteButton.expectExists();
 
-  await accordion.clickHeader("W_CUSTOM_IDENTITY2");
+  await tabs.selectTab("W_CUSTOM_IDENTITY2");
   await identities[2].namespace.expectValue("W_CUSTOM_IDENTITY2");
   await identities[2].identifiers[0].id.expectValue("test3");
   await identities[2].identifiers[0].authenticatedState.expectSelectedOptionLabel(
     "Authenticated"
   );
   await identities[2].identifiers[0].primary.expectUnchecked();
-  await identities[2].identifiers[0].deleteButton.expectDisabled();
-  await identities[2].deleteButton.expectEnabled();
+  await identities[2].identifiers[0].deleteButton.expectNotExists();
+  await identities[2].deleteButton.expectExists();
 
   await identityMapViewController.expectIsValid();
   await identityMapViewController.expectSettings({
@@ -181,7 +181,7 @@ test("initializes Identity map with sorted namespaces", async () => {
     ]
   });
 });
-test("adds a new Identity and new Identifier with minimal settings", async () => {
+test("adds a new identity and new identifier with minimal settings", async () => {
   await initializeExtensionView({
     settings: {
       CUSTOM_IDENTITY: [
@@ -200,7 +200,7 @@ test("adds a new Identity and new Identifier with minimal settings", async () =>
     "Logged Out"
   );
   await identities[0].identifiers[0].primary.expectUnchecked();
-  await identities[0].identifiers[0].deleteButton.expectDisabled();
+  await identities[0].identifiers[0].deleteButton.expectNotExists();
 
   await identities[0].addIdentifierButton.click();
   await identities[0].identifiers[1].id.typeText("test2");
@@ -239,7 +239,7 @@ test("adds a new Identity and new Identifier with minimal settings", async () =>
     ]
   });
 });
-test("removing Identifier returns the correct settings", async () => {
+test("removing identifier returns the correct settings", async () => {
   await initializeExtensionView({
     settings: {
       CUSTOM_IDENTITY: [
@@ -264,7 +264,7 @@ test("removing Identifier returns the correct settings", async () => {
     }
   });
 
-  await accordion.clickHeader("CUSTOM_IDENTITY2");
+  await tabs.selectTab("CUSTOM_IDENTITY2");
   await identities[1].identifiers[1].deleteButton.click();
 
   await identityMapViewController.expectIsValid();
@@ -285,7 +285,7 @@ test("removing Identifier returns the correct settings", async () => {
     ]
   });
 });
-test("invalid Identity trigger validation error", async () => {
+test("shows error for identity without a namespace", async () => {
   await initializeExtensionView();
 
   await identities[0].identifiers[0].id.typeText("test3");
@@ -296,7 +296,7 @@ test("invalid Identity trigger validation error", async () => {
   await identityMapViewController.expectIsNotValid();
   await identities[0].namespace.expectError();
 });
-test("invalid Identifier trigger validation error", async () => {
+test("shows error for identifier without an ID", async () => {
   await initializeExtensionView();
 
   await identities[0].namespace.typeText("CUSTOM_IDENTITY");
@@ -308,12 +308,12 @@ test("invalid Identifier trigger validation error", async () => {
   await identities[0].identifiers[0].id.expectError();
 });
 
-test("double Identity namespace trigger validation error", async () => {
+test("shows error for identity with duplicate namespace", async () => {
   await initializeExtensionView({
     settings: {
       CUSTOM_IDENTITY: [
         {
-          id: "",
+          id: "foo",
           authenticatedState: "",
           primary: false
         }
@@ -327,18 +327,29 @@ test("double Identity namespace trigger validation error", async () => {
     "Authenticated"
   );
 
+  // This should select the first tab. Since the error will show up on
+  // the second tab, this allows us to test that we automatically
+  // select the second tab when the user tries to submit the form
+  // and validation occurs. We want the user to actually see
+  // the invalid field with its red border rather than it being
+  // hidden behind a tab that's not currently selected when the user
+  // submits the form.
+  await tabs.selectTab("CUSTOM_IDENTITY");
+  // Make sure we actually are on the first tab.
+  await identities[0].identifiers[0].id.expectValue("foo");
+
   await identityMapViewController.expectIsNotValid();
   await identities[1].namespace.expectError();
 });
 
-test("initialization of namespaces as dropdown with values", async () => {
+test("initialization of namespaces as picker with namespace names", async () => {
   await t.removeRequestHooks(platformMocks.namespacesEmpty);
 
   await t.addRequestHooks(platformMocks.namespaces);
 
   await initializeExtensionView();
 
-  await identities[0].namespaceSelect.selectOption("AAID");
+  await identities[0].namespacePicker.selectOption("Adobe Analytics");
   await identities[0].identifiers[0].id.typeText("test3");
 
   await identityMapViewController.expectIsValid();
@@ -363,7 +374,7 @@ test("when namespaces call fails instantiate form with textfield", async () => {
   await identities[0].namespace.expectValue("");
 });
 
-test("multiple primary identifiers trigger validation error", async () => {
+test("shows error for multiple primary identifiers", async () => {
   await initializeExtensionView({
     settings: {
       CUSTOM_IDENTITY: [
@@ -382,6 +393,17 @@ test("multiple primary identifiers trigger validation error", async () => {
     "Authenticated"
   );
   await identities[1].identifiers[0].primary.click();
+
+  // This should select the first tab. Since the error will show up on
+  // the second tab, this allows us to test that we automatically
+  // select the second tab when the user tries to submit the form
+  // and validation occurs. We want the user to actually see
+  // the invalid field with its red border rather than it being
+  // hidden behind a tab that's not currently selected when the user
+  // submits the form.
+  await tabs.selectTab("CUSTOM_IDENTITY");
+  // Make sure we actually are on the first tab.
+  await identities[0].identifiers[0].id.expectValue("123");
 
   await identityMapViewController.expectIsNotValid();
   await identities[1].identifiers[0].primary.expectError();

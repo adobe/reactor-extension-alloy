@@ -1,25 +1,39 @@
 import React, { useEffect, useContext, useRef } from "react";
 import { useFormik, FormikProvider } from "formik";
 import PropTypes from "prop-types";
-import wrapValidateWithErrorLogging from "../utils/wrapValidateWithErrorLogging";
+import { object } from "yup";
 import ExtensionViewContext from "./extensionViewContext";
+import useReportAsyncError from "../utils/useReportAsyncError";
 
-const ExtensionViewForm = ({
-  initialValues,
-  getSettings,
-  validateFormikState = () => undefined,
-  formikStateValidationSchema,
-  validateNonFormikState = () => true,
-  render
-}) => {
-  const formikProps = useFormik({
-    initialValues,
-    enableReinitialize: true,
+const ExtensionViewForm = ({ render }) => {
+  const reportAsyncError = useReportAsyncError();
+  const viewRegistrationRef = useRef();
+  const formikPropsRef = useRef();
+
+  formikPropsRef.current = useFormik({
     onSubmit: () => {},
-    validate: wrapValidateWithErrorLogging(values => {
-      return validateFormikState({ values });
-    }),
-    validationSchema: formikStateValidationSchema
+    validate: values => {
+      let errors;
+
+      // Formik swallows errors that occur during validation, but we want
+      // to handle them in a proper manner.
+      try {
+        if (viewRegistrationRef.current?.validateFormikState) {
+          errors = viewRegistrationRef.current.validateFormikState({ values });
+        }
+      } catch (error) {
+        reportAsyncError(
+          new Error("An error occurred while validating the view.")
+        );
+      }
+
+      return errors;
+    },
+    validationSchema: () => {
+      return (
+        viewRegistrationRef.current?.formikStateValidationSchema ?? object()
+      );
+    }
   });
 
   const {
@@ -27,50 +41,56 @@ const ExtensionViewForm = ({
     deregisterGetSettings,
     registerValidate,
     deregisterValidate,
-    initInfo,
-    initCalls
+    initInfo
   } = useContext(ExtensionViewContext);
 
-  const formikPropsRef = useRef();
-  formikPropsRef.current = formikProps;
+  const validateFormikState = async () => {
+    // The view hasn't yet initialized formik with initialValues.
+    if (!formikPropsRef.current.values) {
+      return false;
+    }
 
-  const resetForm = (values = {}) => {
-    formikPropsRef.current.resetForm({ values });
+    await formikPropsRef.current.submitForm();
+
+    // The docs say that the promise submitForm returns
+    // will be rejected if there are errors, but that is not the case.
+    // Therefore, after the promise is resolved, we pull formikProps.errors
+    // (which were set during submitForm()) to see if the form is valid.
+    // https://github.com/jaredpalmer/formik/issues/1580
+    formikPropsRef.current.setSubmitting(false);
+    return Object.keys(formikPropsRef.current.errors).length === 0;
   };
 
-  // Reset the form when the extension bridge calls "init"
-  const firstRenderRef = useRef(true);
-  useEffect(() => {
-    if (firstRenderRef.current) {
-      firstRenderRef.current = false;
-    } else {
-      resetForm(initialValues);
+  const validateNonFormikState = async () => {
+    if (!viewRegistrationRef.current) {
+      // If the view hasn't registered yet, we don't want to consider
+      // it valid.
+      return false;
     }
-  }, [initCalls]);
+
+    if (!viewRegistrationRef.current.validateNonFormikState) {
+      return true;
+    }
+
+    return viewRegistrationRef.current.validateNonFormikState();
+  };
 
   useEffect(() => {
     const extensionViewFormGetSettings = () => {
-      return getSettings({ initInfo, values: formikPropsRef.current.values });
+      if (!viewRegistrationRef.current) {
+        return {};
+      }
+
+      return viewRegistrationRef.current.getSettings({
+        initInfo,
+        values: formikPropsRef.current.values
+      });
     };
     registerGetSettings(extensionViewFormGetSettings);
     const extensionViewFormValidate = async () => {
-      const validateFormikStatePromise = formikPropsRef.current
-        .submitForm()
-        .then(() => {
-          // The docs say that the promise submitForm returns
-          // will be rejected if there are errors, but that is not the case.
-          // Therefore, after the promise is resolved, we pull formikProps.errors
-          // (which were set during submitForm()) to see if the form is valid.
-          // https://github.com/jaredpalmer/formik/issues/1580
-          formikPropsRef.current.setSubmitting(false);
-          return Object.keys(formikPropsRef.current.errors).length === 0;
-        });
-      const validateNonFormikStatePromise = Promise.resolve(
-        validateNonFormikState()
-      );
       const results = await Promise.all([
-        validateFormikStatePromise,
-        validateNonFormikStatePromise
+        validateFormikState(),
+        validateNonFormikState()
       ]);
       return results.every(result => result);
     };
@@ -82,22 +102,30 @@ const ExtensionViewForm = ({
     };
   }, []);
 
-  const renderParams = {
-    formikProps,
-    initInfo,
-    resetForm
+  const registerImperativeFormApi = api => {
+    viewRegistrationRef.current = viewRegistrationRef.current || {};
+    viewRegistrationRef.current.getSettings = api.getSettings;
+    viewRegistrationRef.current.validateFormikState = api.validateFormikState;
+    viewRegistrationRef.current.formikStateValidationSchema =
+      api.formikStateValidationSchema;
+    viewRegistrationRef.current.validateNonFormikState =
+      api.validateNonFormikState;
   };
+
+  const renderParams = {
+    initInfo,
+    formikProps: formikPropsRef.current,
+    registerImperativeFormApi
+  };
+
   return (
-    <FormikProvider value={formikProps}>{render(renderParams)}</FormikProvider>
+    <FormikProvider value={formikPropsRef.current}>
+      {render(renderParams)}
+    </FormikProvider>
   );
 };
 
 ExtensionViewForm.propTypes = {
-  initialValues: PropTypes.object.isRequired,
-  getSettings: PropTypes.func.isRequired,
-  validateFormikState: PropTypes.func,
-  formikStateValidationSchema: PropTypes.object,
-  validateNonFormikState: PropTypes.func,
   render: PropTypes.func.isRequired
 };
 

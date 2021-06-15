@@ -596,9 +596,9 @@ test("deletes an instance", async () => {
   await extensionViewController.init(defaultInitInfo);
   await instances[0].edgeConfigInputMethodTextfieldRadio.click();
   await instances[0].productionEnvironment.manualField.typeText("PR123");
-  await instances[0].deleteButton.expectDisabled();
+  await instances[0].deleteButton.expectNotExists();
   await addInstanceButton.click();
-  await instances[1].deleteButton.expectEnabled();
+  await instances[1].deleteButton.expectExists();
   // Make accordion header label unique
   await instances[1].nameField.typeText("2");
   await instances[1].productionEnvironment.manualField.typeText("PR456");
