@@ -1,8 +1,7 @@
-import React, { useContext } from "react";
+import React from "react";
 import { FieldArray, useField } from "formik";
 import { Button, Item, Form, View, Text } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
-import ExtensionViewContext from "./extensionViewContext";
 import { TextField, Picker } from "./formikReactSpectrum3";
 import ImperativeForm from "./imperativeForm";
 import OptionsWithDataElement from "./optionsWithDataElement";
@@ -18,9 +17,7 @@ const YES = { value: true, label: "Yes" };
 const NO = { value: false, label: "No" };
 
 const ConsentObjects = () => {
-  const { initInfo } = useContext(ExtensionViewContext);
-
-  const getInitialValues = () => {
+  const getInitialValues = ({ initInfo }) => {
     const { consent } = initInfo.settings || {};
 
     if (!Array.isArray(consent)) {

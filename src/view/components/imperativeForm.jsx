@@ -25,4 +25,5 @@ const ImperativeForm = ({
   return render({ initInfo });
 };
 
+// TODO add prop types validation
 export default ImperativeForm;

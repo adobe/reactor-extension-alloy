@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import { object, string } from "yup";
-import { Form, Item } from "@adobe/react-spectrum";
+import { Item } from "@adobe/react-spectrum";
 import {
   ComboBox,
   Picker,
@@ -21,12 +21,12 @@ import {
 } from "../components/formikReactSpectrum3";
 import DataElementSelector from "../components/dataElementSelector";
 import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionView";
+import ExtensionView from "../components/spectrum3ExtensionViewForm";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DecisionScopes from "../components/decisionScopes";
-import ExtensionViewForm from "../components/extensionViewForm";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import ImperativeForm from "../components/imperativeForm";
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -115,98 +115,94 @@ const knownEventTypeOptions = [
 
 const SendEvent = () => {
   return (
-    <ExtensionView
-      render={({ initInfo }) => {
-        return (
-          <ExtensionViewForm
-            initialValues={getInitialValues({ initInfo })}
-            getSettings={getSettings}
-            formikStateValidationSchema={validationSchema}
-            render={() => (
-              <Form>
-                <Picker
-                  data-test-id="instanceNameField"
-                  name="instanceName"
-                  label="Instance"
-                  items={getInstanceOptions(initInfo)}
-                  width="size-5000"
-                  isRequired
-                >
-                  {item => <Item key={item.value}>{item.label}</Item>}
-                </Picker>
-                <DataElementSelector>
-                  <ComboBox
-                    data-test-id="typeField"
-                    name="type"
-                    label="Type"
-                    description="Enter an event type to populate the `eventType` XDM field. Select a predefined value or enter a custom value."
-                    items={knownEventTypeOptions}
-                    allowsCustomValue
-                    width="size-5000"
-                  >
-                    {item => <Item key={item.type}>{item.type}</Item>}
-                  </ComboBox>
-                </DataElementSelector>
-                <DataElementSelector>
-                  <TextField
-                    data-test-id="xdmField"
-                    name="xdm"
-                    label="XDM Data"
-                    description="Provide a data element which returns an object matching your XDM schema."
-                    width="size-5000"
-                  />
-                </DataElementSelector>
-                <DataElementSelector>
-                  <TextField
-                    data-test-id="dataField"
-                    name="data"
-                    label="Data"
-                    description="Provide a data element which returns an object to send as free-form data."
-                    width="size-5000"
-                  />
-                </DataElementSelector>
-                <DataElementSelector>
-                  <TextField
-                    data-test-id="mergeIdField"
-                    name="mergeId"
-                    description="Provide an identifier used to merge multiple events. This will
-                      populate the `eventMergeId` XDM field."
-                    label="Merge ID"
-                    width="size-5000"
-                  />
-                </DataElementSelector>
-                <DataElementSelector>
-                  <TextField
-                    data-test-id="datasetIdField"
-                    name="datasetId"
-                    description="Send data to a different dataset than what's been provided in the Edge configuration."
-                    label="Dataset ID"
-                    width="size-5000"
-                  />
-                </DataElementSelector>
-                <Checkbox
-                  data-test-id="documentUnloadingField"
-                  name="documentUnloading"
-                  description="Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
-                  width="size-5000"
-                >
-                  Document will unload
-                </Checkbox>
-                <Checkbox
-                  data-test-id="renderDecisionsField"
-                  name="renderDecisions"
-                  description="Check this to automatically render personalization and pre-hide the content to prevent flicker."
-                  width="size-5000"
-                >
-                  Render visual personalization decisions
-                </Checkbox>
-                <DecisionScopes />
-              </Form>
-            )}
-          />
-        );
-      }}
-    />
+    <ExtensionView>
+      <ImperativeForm
+        getInitialValues={getInitialValues}
+        getSettings={getSettings}
+        formikStateValidationSchema={validationSchema}
+        render={({ initInfo }) => (
+          <>
+            <Picker
+              data-test-id="instanceNameField"
+              name="instanceName"
+              label="Instance"
+              items={getInstanceOptions(initInfo)}
+              width="size-5000"
+              isRequired
+            >
+              {item => <Item key={item.value}>{item.label}</Item>}
+            </Picker>
+            <DataElementSelector>
+              <ComboBox
+                data-test-id="typeField"
+                name="type"
+                label="Type"
+                description="Enter an event type to populate the `eventType` XDM field. Select a predefined value or enter a custom value."
+                items={knownEventTypeOptions}
+                allowsCustomValue
+                width="size-5000"
+              >
+                {item => <Item key={item.type}>{item.type}</Item>}
+              </ComboBox>
+            </DataElementSelector>
+            <DataElementSelector>
+              <TextField
+                data-test-id="xdmField"
+                name="xdm"
+                label="XDM Data"
+                description="Provide a data element which returns an object matching your XDM schema."
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <DataElementSelector>
+              <TextField
+                data-test-id="dataField"
+                name="data"
+                label="Data"
+                description="Provide a data element which returns an object to send as free-form data."
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <DataElementSelector>
+              <TextField
+                data-test-id="mergeIdField"
+                name="mergeId"
+                description="Provide an identifier used to merge multiple events. This will
+                  populate the `eventMergeId` XDM field."
+                label="Merge ID"
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <DataElementSelector>
+              <TextField
+                data-test-id="datasetIdField"
+                name="datasetId"
+                description="Send data to a different dataset than what's been provided in the Edge configuration."
+                label="Dataset ID"
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <Checkbox
+              data-test-id="documentUnloadingField"
+              name="documentUnloading"
+              description="Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
+              width="size-5000"
+            >
+              Document will unload
+            </Checkbox>
+            <Checkbox
+              data-test-id="renderDecisionsField"
+              name="renderDecisions"
+              description="Check this to automatically render personalization and pre-hide the content to prevent flicker."
+              width="size-5000"
+            >
+              Render visual personalization decisions
+            </Checkbox>
+            <DecisionScopes />
+          </>
+        )}
+      />
+    </ExtensionView>
   );
 };
 

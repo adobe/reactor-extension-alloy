@@ -1,5 +1,5 @@
 import { useField } from "formik";
-import { useEffect, useContext } from "react";
+import { useEffect, useContext, useRef } from "react";
 import ExtensionViewContext from "../components/extensionViewContext";
 
 export default ({
@@ -20,26 +20,29 @@ export default ({
     registerImperativeForm,
     deregisterImperativeForm,
     initInfo,
-    initialized
+    initialized,
+    resetForm
   } = useContext(ExtensionViewContext);
 
-  useEffect(() => {
-    // TODO use the last passed in forms of these functions using a ref
-    const imperativeForm = {
-      getInitialValues,
-      getSettings,
-      validateFormikState,
-      formikStateValidationSchema,
-      validateNonFormikState,
-      previouslyInitialized,
-      setPreviouslyInitialized
-    };
+  const ref = useRef({});
+  ref.current.getInitialValues = getInitialValues;
+  ref.current.getSettings = getSettings;
+  ref.current.validateFormikState = validateFormikState;
+  ref.current.formikStateValidationSchema = formikStateValidationSchema;
+  ref.current.validateNonFormikState = validateNonFormikState;
+  ref.current.previouslyInitialized = previouslyInitialized;
+  ref.current.setPreviouslyInitialized = setPreviouslyInitialized;
 
-    registerImperativeForm(imperativeForm);
+  useEffect(() => {
+    registerImperativeForm(ref.current);
     return () => {
-      deregisterImperativeForm(imperativeForm);
+      deregisterImperativeForm(ref.current);
     };
   }, []);
 
-  return { initInfo, initialized: initialized && previouslyInitialized };
+  return {
+    initInfo,
+    initialized: initialized && previouslyInitialized,
+    resetForm
+  };
 };

@@ -40,8 +40,13 @@ const DataElementRadioChoice = ({
   };
 
   const getSettings = ({ values }) => {
-    if (values[inputMethodName] === DATA_ELEMENT) {
-      return { [name]: values[dataElementName] };
+    // TODO: use nameUtils
+    const {
+      [inputMethodName]: inputMethod,
+      [dataElementName]: dataElement
+    } = values;
+    if (inputMethod === DATA_ELEMENT && dataElement !== "") {
+      return { [name]: dataElement };
     }
     // Let the children set the settings for this name
     return {};
@@ -76,6 +81,7 @@ const DataElementRadioChoice = ({
               name={inputMethodName}
               orientation="horizontal"
               label={label}
+              isRequired
             >
               <Radio data-test-id={`${name}ConstantOption`} value={CONSTANT}>
                 {constantLabel}

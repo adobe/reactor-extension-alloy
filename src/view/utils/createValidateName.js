@@ -1,7 +1,7 @@
 import { validateYupSchema, yupToFormErrors } from "formik";
 import { getValue, setValue } from "./nameUtils";
 
-export default (name, schema) => async values => {
+export default (name, schema) => async ({ values }) => {
   const value = getValue(values, name);
   try {
     await validateYupSchema(value, schema);

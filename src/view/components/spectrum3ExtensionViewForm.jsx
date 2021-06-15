@@ -29,7 +29,7 @@ const ExtensionView = ({ children }) => {
       const errorObjects = await Promise.all(
         registeredImperativeFormsRef.current.map(
           ({ validateFormikState = () => undefined }) => {
-            return Promise.resolve(validateFormikState(values));
+            return Promise.resolve(validateFormikState({ values }));
           }
         )
       );
@@ -144,7 +144,11 @@ const ExtensionView = ({ children }) => {
       );
     },
     initInfo,
-    initialized
+    initialized,
+    // TODO: make a resetField and use that instead
+    resetForm(initialValues) {
+      formikPropsRef.current.resetForm({ initialValues });
+    }
   };
 
   return (
