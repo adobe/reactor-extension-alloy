@@ -22,13 +22,15 @@ governing permissions and limitations under the License.
  * only want the test to fail if there's something wrong with our code.
  */
 window.addEventListener("error", event => {
-  // UserReportableErrors are errors that we've
+  // UserReportableErrors are for error cases we often test for, so they should not
+  // go unhandled because that would automatically fail the test.
   if (event.error && event.error.name === "UserReportableError") {
     console.error(event.error);
     event.preventDefault();
   }
 
-  // This error comes through React-Spectrum but can be safely ignored.
+  // This error comes through React-Spectrum but can be safely ignored and should
+  // not automatically fail the test.
   // https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded#comment86691361_49384120
   if (event.message === "ResizeObserver loop limit exceeded") {
     event.preventDefault();
