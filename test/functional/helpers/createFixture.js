@@ -14,6 +14,11 @@ import path from "path";
 import fs from "fs";
 import { RequestMock } from "testcafe";
 
+const preventSpecificErrorsFromFailingTestsPath = path.join(
+  __dirname,
+  "clientScripts/preventSpecificErrorsFromFailingTests.js"
+);
+
 const extensionBridgeMockContent = fs.readFileSync(
   path.join(__dirname, "../helpers/extensionBridgeMock.js")
 );
@@ -32,7 +37,8 @@ const createFixture = ({
 }) => {
   let fixt = fixture(title)
     .page(path.join(__dirname, "../../../dist/view", viewPath))
-    .requestHooks(extensionBridgeRequestMock, ...requestHooks);
+    .requestHooks(extensionBridgeRequestMock, ...requestHooks)
+    .clientScripts(preventSpecificErrorsFromFailingTestsPath);
 
   if (requiresAdobeIOIntegration) {
     fixt = fixt.meta("requiresAdobeIOIntegration", true);

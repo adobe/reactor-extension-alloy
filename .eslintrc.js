@@ -46,6 +46,19 @@ module.exports = {
       {
         allow: ["error"]
       }
+    ],
+    // This rule typically shows an error if a Link component
+    // doesn't have an href. We use React-Spectrum's Link
+    // component, however, which doesn't have an href prop
+    // (Link expects a anchor element as a child). We have
+    // to provide an empty components array here to get around
+    // eslint complaining about this. eslint still checks
+    // anchor elements though.
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        components: []
+      }
     ]
   },
   parser: "babel-eslint"

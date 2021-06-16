@@ -12,7 +12,9 @@ governing permissions and limitations under the License.
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { Link } from "@adobe/react-spectrum";
 import ErrorMessage from "./spectrum3ErrorMessage";
+import UserReportableError from "../errors/userReportableError";
 
 export default class ErrorBoundary extends Component {
   constructor(props) {
@@ -27,11 +29,36 @@ export default class ErrorBoundary extends Component {
   render() {
     const { error } = this.state;
     const { children } = this.props;
+
+    let content = "An unexpected error occurred. Please try again later.";
+
+    if (error instanceof UserReportableError) {
+      content = (
+        <>
+          {error.message}
+          {error.additionalInfoUrl && (
+            <span>
+              {" "}
+              Click{" "}
+              <Link>
+                <a
+                  href={error.additionalInfoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  here
+                </a>
+              </Link>{" "}
+              for more information.
+            </span>
+          )}
+        </>
+      );
+    }
+
     if (error) {
       return (
-        <ErrorMessage dataTestId="errorBoundaryMessage">
-          {error.message}
-        </ErrorMessage>
+        <ErrorMessage dataTestId="errorBoundaryMessage">{content}</ErrorMessage>
       );
     }
 

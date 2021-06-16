@@ -36,7 +36,7 @@ export const sandboxesUserRegionMissing = RequestMock()
   );
 
 export const sandboxesNonJsonBody = RequestMock()
-  .onRequestTo(SANDBOXES_ENDPOINT_REGEX)
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond("non-json body", 200, responseHeaders);
 
 export const sandboxesEmpty = RequestMock()
@@ -157,9 +157,6 @@ export const sandboxesMultipleWithoutDefault = RequestMock()
 export const schemasMetaSingle = RequestMock()
   .onRequestTo({
     url: SCHEMAS_ENDPOINT_REGEX,
-    headers: {
-      "x-sandbox-name": "prod"
-    },
     method: HTTP_METHOD_GET
   })
   .respond(
@@ -182,9 +179,6 @@ export const schemasMetaSingle = RequestMock()
 export const schemasMetaMultiple = RequestMock()
   .onRequestTo({
     url: SCHEMAS_ENDPOINT_REGEX,
-    headers: {
-      "x-sandbox-name": "prod"
-    },
     method: HTTP_METHOD_GET
   })
   .respond(
@@ -314,9 +308,6 @@ export const schemasMetaPagingTitles = [
 export const schemasMetaPagingMock = RequestMock()
   .onRequestTo({
     url: SCHEMAS_ENDPOINT_REGEX,
-    headers: {
-      "x-sandbox-name": "prod"
-    },
     method: HTTP_METHOD_GET
   })
   .respond((req, res) => {

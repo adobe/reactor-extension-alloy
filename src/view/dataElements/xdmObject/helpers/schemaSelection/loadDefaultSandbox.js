@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import fetchSandboxes from "../fetchSandboxes";
 import DEFAULT_SANDBOX_NAME from "../../constants/defaultSandboxName";
+import UserReportableError from "../../../../errors/userReportableError";
 
 const loadDefaultSandbox = async ({
   orgId,
@@ -27,15 +28,21 @@ const loadDefaultSandbox = async ({
       imsAccess
     }));
   } catch (e) {
-    console.error(e);
-    reportAsyncError(new Error(`Failed to load sandboxes. ${e.message}`));
+    reportAsyncError(
+      new UserReportableError("Failed to load sandboxes.", {
+        originatingError: e
+      })
+    );
     return undefined;
   }
 
   if (!sandboxes.length) {
     reportAsyncError(
-      new Error(
-        "You do not have access to any sandboxes. Please contact your administrator to be assigned appropriate rights."
+      new UserReportableError(
+        "You do not have access to any sandboxes. Please contact your administrator to be assigned appropriate rights.",
+        {
+          additionalInfoUrl: "https://adobe.ly/3gHkqLF"
+        }
       )
     );
     return undefined;
@@ -60,7 +67,7 @@ const loadDefaultSandbox = async ({
 
     if (!defaultSandbox) {
       reportAsyncError(
-        new Error(
+        new UserReportableError(
           "The sandbox used to build the XDM object no longer exists. You will need to re-create this data element using a schema from a different sandbox."
         )
       );

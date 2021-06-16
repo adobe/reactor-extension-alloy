@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import getInitialFormState from "../getInitialFormState";
+import UserReportableError from "../../../../errors/userReportableError";
 
 const getInitialFormStateUsingAsyncErrorReporting = ({
   schema,
@@ -25,8 +26,11 @@ const getInitialFormStateUsingAsyncErrorReporting = ({
       schema
     });
   } catch (e) {
-    console.error(e);
-    reportAsyncError(new Error(`Failed to process schema. ${e.message}`));
+    reportAsyncError(
+      new UserReportableError("Failed to process schema.", {
+        originatingError: e
+      })
+    );
   }
 
   return initialValues;

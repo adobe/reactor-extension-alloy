@@ -18,6 +18,7 @@ import FieldDescriptionAndError from "../../../components/fieldDescriptionAndErr
 import useReportAsyncError from "../../../utils/useReportAsyncError";
 import useIsFirstRender from "../../../utils/useIsFirstRender";
 import ExtensionViewContext from "../../../components/extensionViewContext";
+import UserReportableError from "../../../errors/userReportableError";
 
 const getKey = sandbox => sandbox && sandbox.name;
 const getLabel = sandbox => {
@@ -53,8 +54,11 @@ const SandboxSelector = ({
         }));
       } catch (e) {
         if (e.name !== "AbortError") {
-          console.error(e);
-          reportAsyncError(new Error(`Failed to load sandboxes. ${e.message}`));
+          reportAsyncError(
+            new UserReportableError(`Failed to load sandboxes.`, {
+              originatingError: e
+            })
+          );
           return undefined;
         }
       }

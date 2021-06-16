@@ -46,11 +46,11 @@ test.requestHooks(platformMocks.sandboxesUnauthorized)(
 );
 
 test.requestHooks(platformMocks.sandboxesUserRegionMissing)(
-  "displays error when user is not provisioned for AEP",
+  "displays error when org is not provisioned for AEP",
   async () => {
     await initializeExtensionView();
     await errorBoundaryMessage.expectMessage(
-      /Your user account is not enabled for AEP access\. Please contact your organization administrator\./
+      /Your organization is not provisioned for Adobe Experience Platform\. Please contact your organization administrator\./
     );
   }
 );
@@ -240,7 +240,7 @@ test("attempts to load a schema that has been deleted", async () => {
       data: {}
     }
   });
-  await errorBoundaryMessage.expectMessage(/Resource not found/);
+  await errorBoundaryMessage.expectMessage(/The resource was not found\./);
 });
 
 test.requestHooks(
