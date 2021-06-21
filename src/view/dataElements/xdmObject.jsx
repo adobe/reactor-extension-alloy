@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React, { useEffect, useReducer } from "react";
 import { ProgressCircle, Flex } from "@adobe/react-spectrum";
-import ExtensionView from "../components/spectrum3ExtensionViewForm";
+import ExtensionView from "../components/spectrum3ExtensionView";
 import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import validate from "./xdmObject/helpers/validate";
 import render from "../spectrum3Render";
@@ -127,7 +127,8 @@ const XdmObject = () => {
         showEditorNotReadyValidationError: !isEditorRenderable
       });
       return isEditorRenderable;
-    }
+    },
+    initializedName: "xdmObjectInitialized"
   });
   const {
     settings,

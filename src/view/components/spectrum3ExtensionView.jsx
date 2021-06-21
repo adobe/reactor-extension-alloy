@@ -1,82 +1,193 @@
-/*
-Copyright 2019 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
-
 import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
-import useExtensionBridge from "../utils/useExtensionBridge";
+import { useFormik, FormikProvider } from "formik";
+import { Form, ProgressCircle } from "@adobe/react-spectrum";
+import { useEffect } from "react/cjs/react.development";
+import { object } from "yup";
+import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 import ExtensionViewContext from "./extensionViewContext";
+import useExtensionBridge from "../utils/useExtensionBridge";
+import deepAssign from "../utils/deepAssign";
+import { setValue } from "../utils/nameUtils";
+import useReportAsyncError from "../utils/useReportAsyncError";
 
 // This component wires up Launch's extension bridge, and creates the
 // ExtensionViewContext. It should be used for each view inside an extension.
-const ExtensionView = ({ render }) => {
+const ExtensionView = ({ children }) => {
+  const reportAsyncError = useReportAsyncError();
   const [initInfo, setInitInfo] = useState();
-  const [initCalls, setInitCalls] = useState(0);
+  const [initialized, setInitialized] = useState(false);
+  const initCalledRef = useRef(false);
 
-  const registeredGetSettingsRef = useRef([]);
-  const registeredValidateRef = useRef([]);
+  const registeredPartialFormsRef = useRef([]);
+  const formikPropsRef = useRef();
+
+  const formikProps = useFormik({
+    initialValues: {},
+    onSubmit: () => {},
+    validate: async values => {
+      let errorObjects = [];
+      try {
+        // TODO: add error logging see "wrapValidationWithErrorLogging"
+        errorObjects = await Promise.all(
+          registeredPartialFormsRef.current.map(
+            ({ validateFormikState = () => undefined }) => {
+              return Promise.resolve(validateFormikState({ values }));
+            }
+          )
+        );
+      } catch (error) {
+        reportAsyncError(
+          new Error("An error occurred while validating the view.")
+        );
+      }
+      return errorObjects.reduce((errors, errorObject) => {
+        return deepAssign(errors, errorObject);
+      }, {});
+    },
+    validationSchema: () => {
+      return registeredPartialFormsRef.current.reduce(
+        (schema, { formikStateValidationSchema }) => {
+          return formikStateValidationSchema
+            ? schema.concat(formikStateValidationSchema)
+            : schema;
+        },
+        object()
+      );
+    }
+  });
+  formikPropsRef.current = formikProps;
 
   useExtensionBridge({
     init({ initInfo: _initInfo }) {
+      if (initCalledRef.current) {
+        formikPropsRef.current.resetForm({});
+      }
+      initCalledRef.current = true;
       setInitInfo(_initInfo);
-      setInitCalls(initCalls + 1);
+      setInitialized(false);
     },
     getSettings() {
-      return registeredGetSettingsRef.current.reduce((memo, getSettings) => {
-        return Object.assign(memo, getSettings());
-      }, {});
+      return registeredPartialFormsRef.current.reduce(
+        (memo, { getSettings }) => {
+          return deepAssign(memo, getSettings(formikPropsRef.current));
+        },
+        {}
+      );
     },
-    validate() {
-      // Check if all currently rendered ExtensionViewForms are valid
-      return Promise.all(
-        registeredValidateRef.current.map(validate => validate())
-      ).then(areValid => areValid.every(isValid => isValid));
+    async validate() {
+      if (
+        registeredPartialFormsRef.current.find(
+          ({ initialized: _initialized }) => !_initialized
+        )
+      ) {
+        // If a partialForm hasn't yet completed its getInitialValues, the form isn't valid.
+        // This ensures getSettings isn't run before getInitialValues finishes. So a user
+        // can't quickly save a form before it is initialized.
+        return false;
+      }
+
+      const validateFormikStatePromise = formikPropsRef.current
+        .submitForm()
+        .then(() => {
+          // The docs say that the promise submitForm returns
+          // will be rejected if there are errors, but that is not the case.
+          // Therefore, after the promise is resolved, we pull formikProps.errors
+          // (which were set during submitForm()) to see if the form is valid.
+          // https://github.com/jaredpalmer/formik/issues/1580
+          formikPropsRef.current.setSubmitting(false);
+          return Object.keys(formikPropsRef.current.errors).length === 0;
+        });
+      const validateNonFormikStatePromises = registeredPartialFormsRef.current.flatMap(
+        ({ validateNonFormikState }) => {
+          return validateNonFormikState
+            ? [Promise.resolve(validateNonFormikState)]
+            : [];
+        }
+      );
+      const results = await Promise.all([
+        validateFormikStatePromise,
+        ...validateNonFormikStatePromises
+      ]);
+      return results.every(result => result);
     }
   });
+
+  // If we called getInitialValues as the partial forms are registered it would lead to
+  // a new re-render for every partial form. So after every render of the extension view
+  // we check if there are any uninitialized partial forms and initialized them all
+  // together. Calling formikProps.setValues once only triggers one re-render.
+  useEffect(async () => {
+    if (
+      !initInfo ||
+      registeredPartialFormsRef.current.every(
+        ({ initialized: _initialized }) => _initialized
+      )
+    ) {
+      return;
+    }
+    const allInitialValues = await Promise.all(
+      registeredPartialFormsRef.current
+        .filter(({ initialized: _initialized }) => !_initialized)
+        .map(async ({ getInitialValues, initializedName }) => {
+          const initialValues = await Promise.resolve(
+            getInitialValues({ initInfo })
+          );
+          setValue(initialValues, initializedName, true);
+          return initialValues;
+        })
+    );
+    const newValues = deepAssign(
+      {},
+      formikPropsRef.current.values,
+      ...allInitialValues
+    );
+    // No need to trigger a new validation round here
+    formikPropsRef.current.setValues(newValues, false);
+    if (!initialized) {
+      setInitialized(true);
+    }
+  });
+
+  const { current: context } = useRef({
+    registerPartialForm(partialForm) {
+      registeredPartialFormsRef.current.push(partialForm);
+    },
+    dropPartialForm(partialForm) {
+      registeredPartialFormsRef.current = registeredPartialFormsRef.current.filter(
+        other => other !== partialForm
+      );
+    },
+    // TODO: make a resetField and use that instead
+    resetForm(initialValues) {
+      formikPropsRef.current.resetForm({ initialValues });
+    }
+  });
+  context.initInfo = initInfo;
 
   // Don't render anything until extension bridge calls init
   if (!initInfo) {
     return null;
   }
 
-  const context = {
-    registerGetSettings(getSettings) {
-      registeredGetSettingsRef.current.push(getSettings);
-    },
-    deregisterGetSettings(getSettings) {
-      registeredGetSettingsRef.current = registeredGetSettingsRef.current.filter(
-        other => other !== getSettings
-      );
-    },
-    registerValidate(validate) {
-      registeredValidateRef.current.push(validate);
-    },
-    deregisterValidate(validate) {
-      registeredValidateRef.current = registeredValidateRef.current.filter(
-        other => other !== validate
-      );
-    },
-    initInfo,
-    initCalls
-  };
-
   return (
-    <ExtensionViewContext.Provider value={context}>
-      {render({ initInfo })}
-    </ExtensionViewContext.Provider>
+    <>
+      <ExtensionViewContext.Provider value={context}>
+        <Form>
+          <FormikProvider value={formikProps}>{children}</FormikProvider>
+        </Form>
+      </ExtensionViewContext.Provider>
+      {!initialized && (
+        <FillParentAndCenterChildren>
+          <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
+        </FillParentAndCenterChildren>
+      )}
+    </>
   );
 };
 
 ExtensionView.propTypes = {
-  render: PropTypes.func.isRequired
+  children: PropTypes.node.isRequired
 };
 
 export default ExtensionView;

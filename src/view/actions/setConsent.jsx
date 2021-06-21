@@ -18,7 +18,7 @@ import { TextField, Picker } from "../components/formikReactSpectrum3";
 import DataElementSelector from "../components/dataElementSelector";
 import render from "../spectrum3Render";
 
-import ExtensionView from "../components/spectrum3ExtensionViewForm";
+import ExtensionView from "../components/spectrum3ExtensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DataElementRadioChoice from "../components/dataElementRadioChoice";

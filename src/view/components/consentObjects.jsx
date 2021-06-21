@@ -1,6 +1,6 @@
 import React from "react";
 import { FieldArray, useField } from "formik";
-import { Button, Item, Flex, View, Text } from "@adobe/react-spectrum";
+import { Button, Item, Flex, Well, Text } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { array, mixed, object, string } from "yup";
 import { TextField, Picker } from "./formikReactSpectrum3";
@@ -114,17 +114,22 @@ const ConsentObjects = () => {
             render={arrayHelpers => {
               return (
                 <>
+                  <Flex>
+                    <Button
+                      variant="primary"
+                      data-test-id="addConsentButton"
+                      onPress={() => {
+                        arrayHelpers.push(createDefaultConsentObject());
+                      }}
+                      marginStart="auto"
+                    >
+                      Add Consent Object
+                    </Button>
+                  </Flex>
                   {consent.map((value, index) => {
                     return (
                       <div key={index}>
-                        <View
-                          key={index}
-                          borderWidth="thin"
-                          borderColor="dark"
-                          borderRadius="medium"
-                          padding="size-250"
-                          data-test-id={`consentObject${index}`}
-                        >
+                        <Well data-test-id={`consentObject${index}`}>
                           <Flex direction="column">
                             <Picker
                               data-test-id="standardPicker"
@@ -216,32 +221,25 @@ const ConsentObjects = () => {
                               </>
                             )}
                             {consent.length > 1 && (
-                              <Button
-                                variant="secondary"
-                                onPress={() => {
-                                  arrayHelpers.remove(index);
-                                }}
-                                aria-label="Delete"
-                                data-test-id="deleteConsentButton"
-                              >
-                                <Delete />
-                                <Text>Delete Consent Object</Text>
-                              </Button>
+                              <div className="u-gapTop">
+                                <Button
+                                  variant="secondary"
+                                  onPress={() => {
+                                    arrayHelpers.remove(index);
+                                  }}
+                                  aria-label="Delete"
+                                  data-test-id="deleteConsentButton"
+                                >
+                                  <Delete />
+                                  <Text>Delete Consent Object</Text>
+                                </Button>
+                              </div>
                             )}
                           </Flex>
-                        </View>
+                        </Well>
                       </div>
                     );
                   })}
-                  <Button
-                    variant="primary"
-                    data-test-id="addConsentButton"
-                    onPress={() => {
-                      arrayHelpers.push(createDefaultConsentObject());
-                    }}
-                  >
-                    Add Consent Object
-                  </Button>
                 </>
               );
             }}
