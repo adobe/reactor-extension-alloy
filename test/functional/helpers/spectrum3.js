@@ -17,6 +17,7 @@ import {
 } from "./dataTestIdSelectors";
 
 const popoverMenuSelector = Selector('[role="listbox"]');
+const tabSelector = Selector('[role="tab"]');
 const menuItemCssSelector = '[role="option"]';
 const invalidAttribute = "aria-invalid";
 
@@ -291,6 +292,23 @@ const componentWrappers = {
         await t
           .expect(selector.find("section").withText(message).exists)
           .ok(`Message ${message} not found.`);
+      }
+    };
+  },
+  tabs() {
+    return {
+      async selectTab(label) {
+        // Normally we would incorporate the selector for the
+        // parent Tabs component by doing something like
+        // selector.find(tabCssSelector).withExactText(label)
+        // This would allow us to ensure we're searching for a tab
+        // within a specific Tabs instance when multiple Tabs instances
+        // are on the page. Unfortunately, React-Spectrum has a bug where
+        // data attributes added to the Tabs component are never
+        // added to any underlying DOM elements. So, we'll just search
+        // for any tab on the page that contains the label.
+        // https://github.com/adobe/react-spectrum/issues/2002
+        await t.click(tabSelector.withExactText(label));
       }
     };
   },

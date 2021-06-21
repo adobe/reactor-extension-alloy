@@ -52,7 +52,7 @@ const useOnSchemaMetaSelectionChange = ({
         reportAsyncError
       });
     }
-    resetForm(initialFormState);
+    resetForm({ values: initialFormState });
     dispatch({
       type: ACTION_TYPES.SCHEMA_LOADED,
       schema

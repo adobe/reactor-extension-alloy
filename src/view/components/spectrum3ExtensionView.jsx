@@ -62,10 +62,10 @@ const ExtensionView = ({ children }) => {
     init({ initInfo: _initInfo }) {
       if (initCalledRef.current) {
         formikPropsRef.current.resetForm({});
+        setInitialized(false);
       }
       initCalledRef.current = true;
       setInitInfo(_initInfo);
-      setInitialized(false);
     },
     getSettings() {
       return registeredPartialFormsRef.current.reduce(
