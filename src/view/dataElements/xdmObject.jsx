@@ -28,7 +28,7 @@ import { reducer, ACTION_TYPES } from "./xdmObject/helpers/mainViewState";
 import loadDefaultSchema from "./xdmObject/helpers/schemaSelection/loadDefaultSchema";
 import getInitialFormStateUsingAsyncErrorReporting from "./xdmObject/helpers/schemaSelection/getInitialFormStateUsingAsyncErrorReporting";
 import "./xdmObject.styl";
-import useImperativeForm from "../utils/useImperativeForm";
+import usePartialForm from "../utils/usePartialForm";
 
 const XdmObject = () => {
   const reportAsyncError = useReportAsyncError();
@@ -53,7 +53,7 @@ const XdmObject = () => {
   } = state;
   const isEditorRenderable = status === STATUS.IDLE && Boolean(selectedSchema);
 
-  const { initInfo, initialized, resetForm } = useImperativeForm({
+  const { initInfo, initialized, resetForm } = usePartialForm({
     async getInitialValues({ initInfo: _initInfo }) {
       const {
         settings,

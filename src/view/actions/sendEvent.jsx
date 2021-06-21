@@ -26,7 +26,7 @@ import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DecisionScopes from "../components/decisionScopes";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
-import ImperativeForm from "../components/imperativeForm";
+import PartialForm from "../components/partialForm";
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -116,7 +116,7 @@ const knownEventTypeOptions = [
 const SendEvent = () => {
   return (
     <ExtensionView>
-      <ImperativeForm
+      <PartialForm
         getInitialValues={getInitialValues}
         getSettings={getSettings}
         formikStateValidationSchema={validationSchema}

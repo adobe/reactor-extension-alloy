@@ -28,9 +28,17 @@ const createFixture = ({
   title,
   viewPath,
   requiresAdobeIOIntegration = false,
-  requestHooks = []
+  requestHooks = [],
+  only = false
 }) => {
-  let fixt = fixture(title)
+  let fixt;
+  if (only) {
+    fixt = fixture.only(title);
+  } else {
+    fixt = fixture(title);
+  }
+
+  fixt = fixt
     .page(path.join(__dirname, "../../../dist/view", viewPath))
     .requestHooks(extensionBridgeRequestMock, ...requestHooks);
 
@@ -39,6 +47,13 @@ const createFixture = ({
   }
 
   return fixt;
+};
+
+createFixture.only = args => {
+  return createFixture({
+    only: true,
+    ...args
+  });
 };
 
 export default createFixture;

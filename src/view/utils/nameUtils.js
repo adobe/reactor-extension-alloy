@@ -36,7 +36,8 @@ const lex = name => {
 const toObject = mixed => {
   const obj = mixed || {};
   if (typeof obj !== "object") {
-    throw new Error("Expected an object");
+    // throw new Error("Expected an object");
+    return {};
   }
   return obj;
 };
@@ -44,7 +45,8 @@ const toObject = mixed => {
 const toArray = mixed => {
   const array = mixed || [];
   if (!Array.isArray(array)) {
-    throw new Error("Expected an array");
+    // throw new Error("Expected an array");
+    return [];
   }
   return array;
 };

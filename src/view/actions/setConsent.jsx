@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import { object, string } from "yup";
 
@@ -24,7 +23,7 @@ import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DataElementRadioChoice from "../components/dataElementRadioChoice";
 import ConsentObjects from "../components/consentObjects";
-import ImperativeForm from "../components/imperativeForm";
+import PartialForm from "../components/partialForm";
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -61,7 +60,7 @@ const validationSchema = object().shape({
 const SetConsent = () => {
   return (
     <ExtensionView>
-      <ImperativeForm
+      <PartialForm
         getInitialValues={getInitialValues}
         getSettings={getSettings}
         formikStateValidationSchema={validationSchema}
@@ -69,7 +68,7 @@ const SetConsent = () => {
         render={({ initInfo }) => (
           <>
             <Picker
-              data-test-id="instanceNameField"
+              data-test-id="instanceNamePicker"
               name="instanceName"
               label="Instance"
               items={getInstanceOptions(initInfo)}
@@ -90,8 +89,10 @@ const SetConsent = () => {
           </>
         )}
       />
+
       <DataElementRadioChoice
-        name="consent"
+        name="consentChoice"
+        setting="consent"
         label="Consent Information"
         dataElementLabel="Use a data element"
         constantLabel="Fill out a form"

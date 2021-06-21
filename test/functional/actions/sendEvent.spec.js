@@ -26,18 +26,20 @@ const mergeIdField = spectrum.textField("mergeIdField");
 const datasetIdField = spectrum.textField("datasetIdField");
 const documentUnloadingField = spectrum.checkbox("documentUnloadingField");
 const renderDecisionsField = spectrum.checkbox("renderDecisionsField");
-const scopeDataElementField = spectrum.textField("scopeDataElementField");
+const scopeDataElementField = spectrum.textField(
+  "decisionScopesChoiceDataElementField"
+);
 const scopesRadioGroup = {
-  dataElement: spectrum.radio("dataElementOptionField"),
-  values: spectrum.radio("constantOptionField")
+  dataElement: spectrum.radio("decisionScopesChoiceDataElementRadio"),
+  values: spectrum.radio("decisionScopesChoiceConstantRadio")
 };
 const addDecisionScopeButton = spectrum.button("addDecisionScopeButton");
 const scopeArrayValues = [];
 
 for (let i = 0; i < 3; i += 1) {
   scopeArrayValues.push({
-    value: spectrum.textField(`scope${i}Field`),
-    deleteButton: spectrum.button(`deleteScope${i}Button`)
+    value: spectrum.textField(`decisionScopes${i}Field`),
+    deleteButton: spectrum.button(`decisionScopes${i}DeleteButton`)
   });
 }
 

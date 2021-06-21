@@ -17,7 +17,7 @@ import { object, string } from "yup";
 import { useField } from "formik";
 import { RadioGroup, TextField } from "./formikReactSpectrum3";
 import { getValue, setValue } from "../utils/nameUtils";
-import ImperativeForm from "./imperativeForm";
+import ImperativeForm from "./partialForm";
 import createValidateName from "../utils/createValidateName";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
@@ -30,14 +30,15 @@ const OptionsWithDataElement = ({
   description,
   options,
   defaultValue,
-  "data-test-id": dataTestId,
-  name
+  name,
+  setting = name,
+  dataTestIdPrefix = name
 }) => {
   const radioName = `${name}.radio`;
   const dataElementName = `${name}.dataElement`;
 
   const getInitialValues = ({ initInfo }) => {
-    const value = getValue(initInfo.settings, name);
+    const value = getValue(initInfo.settings, setting);
 
     let radioValue;
     let dataElementValue;
@@ -81,7 +82,7 @@ const OptionsWithDataElement = ({
     }
 
     const settings = {};
-    setValue(settings, name, value);
+    setValue(settings, setting, value);
     return settings;
   };
 
@@ -105,29 +106,42 @@ const OptionsWithDataElement = ({
       getSettings={getSettings}
       validateFormikState={validateFormikState}
       name={name}
-      render={() => (
-        <>
-          <RadioGroup name={radioName} label={label} data-test-id={dataTestId}>
-            {options.map(({ value, label: optionLabel }) => (
-              <Radio value={`${value}`}>{optionLabel}</Radio>
-            ))}
-            <Radio value={DATA_ELEMENT}>Use a data element</Radio>
-          </RadioGroup>
-          {radioValue === DATA_ELEMENT && (
-            <div className="FieldSubset">
-              <DataElementSelector>
-                <TextField
-                  data-test-id={`${dataElementName}Field`}
-                  name={dataElementName}
-                  width="size-5000"
-                  aria-label="Data Element"
-                  description={description}
-                />
-              </DataElementSelector>
-            </div>
-          )}
-        </>
-      )}
+      render={() => {
+        return (
+          <>
+            <RadioGroup name={radioName} label={label} isRequired>
+              {options.map(({ value, label: optionLabel }) => (
+                <Radio
+                  value={`${value}`}
+                  data-test-id={`${dataTestIdPrefix}${optionLabel}Radio`}
+                  key={value}
+                >
+                  {optionLabel}
+                </Radio>
+              ))}
+              <Radio
+                value={DATA_ELEMENT}
+                data-test-id={`${dataTestIdPrefix}DataElementRadio`}
+              >
+                Use a data element
+              </Radio>
+            </RadioGroup>
+            {radioValue === DATA_ELEMENT && (
+              <div className="FieldSubset">
+                <DataElementSelector>
+                  <TextField
+                    data-test-id={`${dataTestIdPrefix}DataElementField`}
+                    name={dataElementName}
+                    width="size-5000"
+                    aria-label="Data Element"
+                    description={description}
+                  />
+                </DataElementSelector>
+              </div>
+            )}
+          </>
+        );
+      }}
     />
   );
 };
@@ -136,9 +150,10 @@ OptionsWithDataElement.propTypes = {
   label: PropTypes.string,
   description: PropTypes.string,
   options: PropTypes.arrayOf(PropTypes.object),
-  defaultValue: PropTypes.string,
-  "data-test-id": PropTypes.string,
-  name: PropTypes.string
+  defaultValue: PropTypes.any,
+  name: PropTypes.string.isRequired,
+  setting: PropTypes.string,
+  dataTestIdPrefix: PropTypes.string
 };
 
 export default OptionsWithDataElement;

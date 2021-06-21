@@ -15,7 +15,7 @@ import { Button } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { FieldArray, useField } from "formik";
 import { TextField } from "./formikReactSpectrum3";
-import ImperativeForm from "./imperativeForm";
+import PartialForm from "./partialForm";
 import DataElementRadioChoice from "./dataElementRadioChoice";
 
 const getInitialValues = ({ initInfo }) => {
@@ -42,12 +42,13 @@ const DecisionScopes = () => {
 
   return (
     <DataElementRadioChoice
-      name="decisionScopes"
+      name="decisionScopesChoice"
+      setting="decisionScopes"
       label="Decision Scopes"
       dataElementLabel="Provide a data element returning an array of scopes"
       constantLabel="Manually enter scopes"
     >
-      <ImperativeForm
+      <PartialForm
         getInitialValues={getInitialValues}
         getSettings={getSettings}
         name="decisionScopes"
@@ -62,13 +63,13 @@ const DecisionScopes = () => {
                       return (
                         <div className="u-gapBottom" key={index}>
                           <TextField
-                            data-test-id={`scope${index}Field`}
+                            data-test-id={`decisionScopes${index}Field`}
                             name={`decisionScopes[${index}]`}
                             width="size-5000"
                             aria-label="Decision scope"
                           />
                           <Button
-                            data-test-id={`deleteScope${index}Button`}
+                            data-test-id={`decisionScopes${index}DeleteButton`}
                             isQuiet
                             isDisabled={decisionScopes.length === 1}
                             variant="secondary"

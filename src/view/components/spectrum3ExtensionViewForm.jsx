@@ -8,26 +8,23 @@ import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 import ExtensionViewContext from "./extensionViewContext";
 import useExtensionBridge from "../utils/useExtensionBridge";
 import deepAssign from "../utils/deepAssign";
+import { setValue } from "../utils/nameUtils";
 
 // This component wires up Launch's extension bridge, and creates the
 // ExtensionViewContext. It should be used for each view inside an extension.
 const ExtensionView = ({ children }) => {
   const [initInfo, setInitInfo] = useState();
-  const [initCalls, setInitCalls] = useState(0);
   const [initialized, setInitialized] = useState(false);
 
-  const registeredImperativeFormsRef = useRef([]);
+  const registeredPartialFormsRef = useRef([]);
   const formikPropsRef = useRef();
-  const initialValuesRef = useRef({});
 
   const formikProps = useFormik({
-    initialValues: initialValuesRef.current,
-    enableReinitialize: true,
     onSubmit: () => {},
     validate: async values => {
       // TODO: add error logging see "wrapValidationWithErrorLogging"
       const errorObjects = await Promise.all(
-        registeredImperativeFormsRef.current.map(
+        registeredPartialFormsRef.current.map(
           ({ validateFormikState = () => undefined }) => {
             return Promise.resolve(validateFormikState({ values }));
           }
@@ -38,7 +35,7 @@ const ExtensionView = ({ children }) => {
       }, {});
     },
     validationSchema: () => {
-      return registeredImperativeFormsRef.current.reduce(
+      return registeredPartialFormsRef.current.reduce(
         (schema, { formikStateValidationSchema }) => {
           return formikStateValidationSchema
             ? schema.concat(formikStateValidationSchema)
@@ -53,11 +50,11 @@ const ExtensionView = ({ children }) => {
   useExtensionBridge({
     init({ initInfo: _initInfo }) {
       setInitInfo(_initInfo);
-      setInitCalls(initCalls + 1);
+      formikPropsRef.current.resetForm({});
       setInitialized(false);
     },
     getSettings() {
-      return registeredImperativeFormsRef.current.reduce(
+      return registeredPartialFormsRef.current.reduce(
         (memo, { getSettings }) => {
           return deepAssign(memo, getSettings(formikPropsRef.current));
         },
@@ -76,9 +73,11 @@ const ExtensionView = ({ children }) => {
           formikPropsRef.current.setSubmitting(false);
           return Object.keys(formikPropsRef.current.errors).length === 0;
         });
-      const validateNonFormikStatePromises = registeredImperativeFormsRef.current.map(
-        ({ validateNonFormikState = () => true }) => {
-          return Promise.resolve(validateNonFormikState);
+      const validateNonFormikStatePromises = registeredPartialFormsRef.current.flatMap(
+        ({ validateNonFormikState }) => {
+          return validateNonFormikState
+            ? [Promise.resolve(validateNonFormikState)]
+            : [];
         }
       );
       const results = await Promise.all([
@@ -89,67 +88,62 @@ const ExtensionView = ({ children }) => {
     }
   });
 
+  // If we called getInitialValues as the partial forms are registered it would lead to
+  // a new re-render for every partial form. So after every render of the extension view
+  // we check if there are any uninitialized partial forms and initialized them all
+  // together. Calling formikProps.setValues once only triggers one re-render.
   useEffect(async () => {
-    if (initCalls === 0) {
-      return undefined;
+    if (
+      !initInfo ||
+      registeredPartialFormsRef.current.every(
+        ({ initialized: _initialized }) => _initialized
+      )
+    ) {
+      return;
     }
-    let canceled = false;
     const allInitialValues = await Promise.all(
-      registeredImperativeFormsRef.current.map(({ getInitialValues }) => {
-        return Promise.resolve(getInitialValues({ initInfo }));
-      })
+      registeredPartialFormsRef.current
+        .filter(({ initialized: _initialized }) => !_initialized)
+        .map(async ({ getInitialValues, initializedName }) => {
+          const initialValues = await Promise.resolve(
+            getInitialValues({ initInfo })
+          );
+          setValue(initialValues, initializedName, true);
+          return initialValues;
+        })
     );
-    if (!canceled) {
-      const initialValues = deepAssign({}, ...allInitialValues);
-      formikPropsRef.current.resetForm({ values: initialValues });
-      registeredImperativeFormsRef.current.forEach(
-        ({ setPreviouslyInitialized }) => {
-          setPreviouslyInitialized(true, false);
-        }
-      );
+    const newValues = deepAssign(
+      {},
+      formikPropsRef.current.values,
+      ...allInitialValues
+    );
+    // No need to trigger a new validation round here
+    formikPropsRef.current.setValues(newValues, false);
+    if (!initialized) {
       setInitialized(true);
     }
-    return () => {
-      canceled = true;
-    };
-  }, [initCalls]);
+  });
+
+  const { current: context } = useRef({
+    registerPartialForm(partialForm) {
+      registeredPartialFormsRef.current.push(partialForm);
+    },
+    dropPartialForm(partialForm) {
+      registeredPartialFormsRef.current = registeredPartialFormsRef.current.filter(
+        other => other !== partialForm
+      );
+    },
+    // TODO: make a resetField and use that instead
+    resetForm(initialValues) {
+      formikPropsRef.current.resetForm({ initialValues });
+    }
+  });
+  context.initInfo = initInfo;
 
   // Don't render anything until extension bridge calls init
   if (!initInfo) {
     return null;
   }
-
-  const context = {
-    registerImperativeForm(imperativeForm) {
-      registeredImperativeFormsRef.current.push(imperativeForm);
-      if (initialized && !imperativeForm.previouslyInitialized) {
-        Promise.resolve(imperativeForm.getInitialValues({ initInfo })).then(
-          initialValues => {
-            const newInitialValues = deepAssign(
-              formikPropsRef.current.values,
-              initialValues
-            );
-            formikPropsRef.current.resetForm({
-              values: newInitialValues,
-              touched: formikPropsRef.current.touched
-            });
-            imperativeForm.setPreviouslyInitialized(true);
-          }
-        );
-      }
-    },
-    deregisterImperativeForm(imperativeForm) {
-      registeredImperativeFormsRef.current = registeredImperativeFormsRef.current.filter(
-        other => other !== imperativeForm
-      );
-    },
-    initInfo,
-    initialized,
-    // TODO: make a resetField and use that instead
-    resetForm(initialValues) {
-      formikPropsRef.current.resetForm({ initialValues });
-    }
-  };
 
   return (
     <>

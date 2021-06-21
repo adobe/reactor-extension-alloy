@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-export default (extensionViewController, instanceNameField) => {
+export default (extensionViewController, instanceNamePicker) => {
   test("shows instance options including option for instance that no longer exists", async () => {
     await extensionViewController.init({
       extensionSettings: {
@@ -29,8 +29,10 @@ export default (extensionViewController, instanceNameField) => {
         instanceName: "alloydeleted"
       }
     });
-    await instanceNameField.expectSelectedOptionLabel("alloydeleted (Deleted)");
-    await instanceNameField.expectMenuOptionLabels([
+    await instanceNamePicker.expectSelectedOptionLabel(
+      "alloydeleted (Deleted)"
+    );
+    await instanceNamePicker.expectMenuOptionLabels([
       "alloydeleted (Deleted)",
       "alloy1",
       "alloy2"

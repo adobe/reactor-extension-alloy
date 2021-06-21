@@ -1,6 +1,6 @@
-import useImperativeForm from "../utils/useImperativeForm";
+import usePartialForm from "../utils/usePartialForm";
 
-const ImperativeForm = ({
+const PartialForm = ({
   getInitialValues,
   getSettings,
   validateFormikState,
@@ -9,21 +9,20 @@ const ImperativeForm = ({
   name,
   render
 }) => {
-  const { initialized, initInfo } = useImperativeForm({
+  const { initialized, initInfo } = usePartialForm({
     getInitialValues,
     getSettings,
     validateFormikState,
     formikStateValidationSchema,
     validateNonFormikState,
-    name
+    initializedName: `${name}Initialized`
   });
 
   if (!initialized) {
     return null;
   }
-
   return render({ initInfo });
 };
 
 // TODO add prop types validation
-export default ImperativeForm;
+export default PartialForm;
