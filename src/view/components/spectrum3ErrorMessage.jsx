@@ -20,7 +20,7 @@ const ErrorMessage = ({ children, dataTestId }) => {
     <FillParentAndCenterChildren>
       <IllustratedMessage data-test-id={dataTestId}>
         <Error />
-        <Heading>An error occurred</Heading>
+        <Heading>An error occurred.</Heading>
         <Content>{children}</Content>
       </IllustratedMessage>
     </FillParentAndCenterChildren>

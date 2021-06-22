@@ -59,13 +59,7 @@ const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClie
       return true;
     })
     .browsers("chrome")
-    .run({
-      // When using React's ErrorBoundary, even if the boundary catches an error, it doesn't swallow the
-      // error. Because the error isn't swallowed, TestCafe would typically immediately make the test fail,
-      // making it difficult to have a test that passes after asserting that the ErrorBoundary displayed
-      // a proper message.
-      skipJsErrors: true
-    });
+    .run();
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
 })();

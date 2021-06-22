@@ -20,6 +20,7 @@ import useReportAsyncError from "../../../utils/useReportAsyncError";
 import useIsFirstRender from "../../../utils/useIsFirstRender";
 import usePrevious from "../../../utils/usePrevious";
 import ExtensionViewContext from "../../../components/extensionViewContext";
+import UserReportableError from "../../../errors/userReportableError";
 
 const SchemaMetaSelector = ({
   defaultSelectedSchemaMeta,
@@ -54,9 +55,10 @@ const SchemaMetaSelector = ({
         }));
       } catch (e) {
         if (e.name !== "AbortError") {
-          console.error(e);
           reportAsyncError(
-            new Error(`Failed to load schema metadata. ${e.message}`)
+            new UserReportableError("Failed to load schema metadata.", {
+              originatingError: e
+            })
           );
         }
         throw e;
