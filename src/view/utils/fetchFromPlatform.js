@@ -23,11 +23,14 @@ const IMS_HOST_PREFIX_STAGING = "ims-na1-stg1";
 const ERROR_CODE_INVALID_ACCESS_TOKEN = "401013";
 const ERROR_CODE_USER_REGION_MISSING = "403027";
 
+// The internet connection may not actually be the problem here. There could
+// be other problems with the SSL handshake, CORS preflight request, etc.
 const ERROR_UNABLE_TO_CONNECT_TO_SERVER =
-  "A connection to the server could not be established.";
+  "A connection to the server could not be established. You may be disconnected from the internet. Please check your connection and try again.";
 const ERROR_UNEXPECTED_SERVER_RESPONSE =
   "An unexpected server response was received.";
-const ERROR_INVALID_ACCESS_TOKEN = "Your access token appears to be invalid.";
+const ERROR_INVALID_ACCESS_TOKEN =
+  "Your access token appears to be invalid. Please try logging in again.";
 const ERROR_NO_AEP_ACCESS =
   "Your organization is not provisioned for Adobe Experience Platform. Please contact your organization administrator.";
 const ERROR_RESOURCE_NOT_FOUND = "The resource was not found.";
