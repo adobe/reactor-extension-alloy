@@ -85,17 +85,23 @@ module.exports = (options = {}) => {
   ]);
 
   if (watch) {
-    const babelWatchSubprocess = run("babel", [
-      libInDir,
-      "--out-dir",
-      libOutDir,
-      "--watch",
-      "--skip-initial-build",
-      "--ignore",
-      alloyInFile
-    ]);
+    const babelWatchSubprocess = spawn(
+      "babel",
+      [
+        libInDir,
+        "--out-dir",
+        libOutDir,
+        "--watch",
+        "--skip-initial-build",
+        "--ignore",
+        alloyInFile
+      ],
+      { stdio: "inherit" }
+    );
     // cleanup this process on ctrl-c
-    process.on("exit", () => babelWatchSubprocess.kill());
+    process.on("exit", () => {
+      babelWatchSubprocess.kill();
+    });
   }
 
   // The package resolution in launch does not follow dependencies on npm packages, so we need to build our
