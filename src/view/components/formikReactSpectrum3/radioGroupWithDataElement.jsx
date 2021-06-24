@@ -75,14 +75,17 @@ const RadioGroupWithDataElement = ({
   });
 
   let radioValue;
+  let dataElementText;
   if (
     (dataElementValue === undefined &&
-      options.find(option => option === value)) ||
-    (dataElementValue && !dataElementValue.isDataElement)
+      options.some(option => option === value)) ||
+    (dataElementValue !== undefined && !dataElementValue.isDataElement)
   ) {
     radioValue = value;
+    dataElementText = "";
   } else {
     radioValue = "dataElement";
+    dataElementText = value;
   }
 
   const setValues = (newRadioValue, newDataElement) => {
@@ -104,7 +107,7 @@ const RadioGroupWithDataElement = ({
         ref={radioGroupRef}
         value={radioValue}
         onChange={newValue => {
-          setValues(newValue, dataElementValue?.dataElement || "");
+          setValues(newValue, dataElementText);
         }}
         width={width}
       >
@@ -131,7 +134,7 @@ const RadioGroupWithDataElement = ({
           >
             <ReactTextField
               aria-label="Data Element"
-              value={dataElementValue?.dataElement || ""}
+              value={dataElementText}
               data-test-id={`${dataTestIdPrefix}DataElementField`}
               onChange={newValue => setValues("dataElement", newValue)}
               onBlur={() => dataElementSetTouched(true)}
