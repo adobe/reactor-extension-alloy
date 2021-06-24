@@ -12,10 +12,8 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import Data from "@spectrum-icons/workflow/Data";
-import { Button } from "@adobe/react-spectrum";
-import "./dataElementSelector.styl";
 import { useField } from "formik";
+import RawDataElementSelector from "./rawDataElementSelector";
 
 const DataElementSelector = ({ children, augmentValue }) => {
   // We have to vertically nudge down the data element selector
@@ -34,33 +32,16 @@ const DataElementSelector = ({ children, augmentValue }) => {
   const name = inputChild.props.name;
   const adjustForLabel = Boolean(inputChild.props.label);
   const [{ value }, , { setValue }] = useField(name);
-  const openDataElementSelector = () => {
-    window.extensionBridge.openDataElementSelector().then(dataElement => {
-      // Maybe field value is an integer of 0 or something else falsy? That's
-      // why we check for undefined instead of a plain falsy check.
-      const previousValue = value === undefined ? "" : value;
-      const newValue = augmentValue
-        ? `${previousValue}${dataElement}`
-        : dataElement;
-      setValue(newValue);
-    });
-  };
+
   return (
-    <div className="u-flex">
-      <div>{children}</div>
-      <Button
-        variant="secondary"
-        isQuiet
-        onPress={openDataElementSelector}
-        aria-label="Select data element"
-        UNSAFE_className={
-          adjustForLabel ? "DataElementSelector-buttonAdjustedForLabel" : ""
-        }
-        minWidth={0}
-      >
-        <Data />
-      </Button>
-    </div>
+    <RawDataElementSelector
+      augmentValue={augmentValue}
+      value={value}
+      onChange={setValue}
+      adjustForLabel={adjustForLabel}
+    >
+      {children}
+    </RawDataElementSelector>
   );
 };
 
