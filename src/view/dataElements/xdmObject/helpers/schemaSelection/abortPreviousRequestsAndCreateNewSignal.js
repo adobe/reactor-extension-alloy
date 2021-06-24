@@ -18,7 +18,7 @@ let abortController;
  * prior async processes will be appropriately canceled in order
  * to avoid race conditions.
  */
-const abortPreviousRequestsAndCreateNewSignal = () => {
+const abortPreviousRequestsAndCreateSignal = () => {
   if (abortController) {
     abortController.abort();
   }
@@ -28,4 +28,4 @@ const abortPreviousRequestsAndCreateNewSignal = () => {
   return abortController.signal;
 };
 
-export default abortPreviousRequestsAndCreateNewSignal;
+export default abortPreviousRequestsAndCreateSignal;

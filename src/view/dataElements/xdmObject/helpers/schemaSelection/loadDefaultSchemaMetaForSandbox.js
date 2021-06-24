@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import fetchSchemasMeta from "../fetchSchemasMeta";
-import UserReportableError from "../../../../errors/userReportableError";
 
 const loadDefaultSchemaMetaForSandbox = async ({
   orgId,
@@ -32,11 +31,7 @@ const loadDefaultSchemaMetaForSandbox = async ({
     }));
   } catch (e) {
     if (e.name !== "AbortError") {
-      reportAsyncError(
-        new UserReportableError(`Failed to load schema metadata.`, {
-          originatingError: e
-        })
-      );
+      reportAsyncError(e);
     }
     return undefined;
   }

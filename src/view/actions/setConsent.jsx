@@ -295,8 +295,7 @@ const ConsentObject = ({ value, index }) => {
           <RadioGroupWithDataElement
             dataTestIdPrefix="gdprApplies"
             name={`consent[${index}].gdprApplies`}
-            label="GDPR Applies"
-            description="Does GDPR apply to this consent value?"
+            label="Does GDPR apply to this consent value?"
             dataElementDescription="This data element should resolve to true or false."
             width="size-5000"
           >
@@ -310,8 +309,7 @@ const ConsentObject = ({ value, index }) => {
           <RadioGroupWithDataElement
             dataTestIdPrefix="gdprContainsPersonalData"
             name={`consent[${index}].gdprContainsPersonalData`}
-            label="GDPR Contains Personal Data"
-            description="Does the event data associated with this user contain personal data?"
+            label="Does the event data associated with this user contain personal data?"
             dataElementDescription="This data element should resolve to true or false."
             width="size-5000"
           >

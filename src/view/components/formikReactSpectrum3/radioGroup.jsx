@@ -43,7 +43,6 @@ const RadioGroup = ({ name, children, description, width, ...otherProps }) => {
     <FieldDescriptionAndError
       description={description}
       error={touched && error ? error : undefined}
-      width={width}
     >
       <ReactSpectrumRadioGroup
         {...otherProps}

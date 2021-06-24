@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Adobe. All rights reserved.
+Copyright 2021 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,14 +10,20 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.EnvironmentSelector {
-  .spectrum-Alert {
-    padding: 10px 10px;
-    margin: 0;
-  }
+import React from "react";
+import { View } from "@adobe/react-spectrum";
+import PropTypes from "prop-types";
 
-  .spectrum-Alert-icon {
-    top: 10px;
-    right: 10px;
-  }
-}
+const FieldSubset = ({ children }) => {
+  return (
+    <View marginStart="size-300" marginTop="size-100">
+      {children}
+    </View>
+  );
+};
+
+FieldSubset.propTypes = {
+  children: PropTypes.node.isRequired
+};
+
+export default FieldSubset;

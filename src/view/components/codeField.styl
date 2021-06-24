@@ -1,0 +1,17 @@
+.CodeField-textArea textarea {
+  font-size: 12px;
+  font-family: monospace;
+  white-space: pre;
+}
+
+.CodeField-openEditorButton {
+  position: absolute !important;
+  // The TextArea component has been given a specific
+  // height, but that height includes the label as well.
+  // we want the button to be centered within the underlying
+  // textarea DOM element that's showing the code.
+  top: 76px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}

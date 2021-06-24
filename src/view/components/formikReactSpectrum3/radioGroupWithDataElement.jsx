@@ -23,6 +23,7 @@ import FieldDescriptionAndError from "../fieldDescriptionAndError";
 import RawDataElementSelector from "../rawDataElementSelector";
 import singleDataElementRegex from "../../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../../constants/validationErrorMessages";
+import FieldSubset from "../fieldSubset";
 
 export const createRadioGroupWithDataElementValidationSchema = name => {
   return string().when([`${name}DataElement`], {
@@ -36,7 +37,6 @@ export const createRadioGroupWithDataElementValidationSchema = name => {
 const RadioGroupWithDataElement = ({
   name,
   children,
-  description,
   dataElementDescription,
   width,
   dataTestIdPrefix = name,
@@ -108,7 +108,7 @@ const RadioGroupWithDataElement = ({
   };
 
   return (
-    <FieldDescriptionAndError description={description} width={width}>
+    <div>
       <ReactSpectrumRadioGroup
         {...otherProps}
         ref={radioGroupRef}
@@ -127,33 +127,35 @@ const RadioGroupWithDataElement = ({
           Use a data element
         </ReactSpectrumRadio>
       </ReactSpectrumRadioGroup>
+
       {radioValue === "dataElement" && (
-        <RawDataElementSelector
-          onChange={newValue => {
-            setValues("dataElement", newValue);
-            dataElementSetTouched(true);
-          }}
-        >
-          <FieldDescriptionAndError
-            description={dataElementDescription}
-            error={dataElementTouched && error ? error : undefined}
-            width={width}
+        <FieldSubset>
+          <RawDataElementSelector
+            onChange={newValue => {
+              setValues("dataElement", newValue);
+              dataElementSetTouched(true);
+            }}
           >
-            <ReactTextField
-              aria-label="Data Element"
-              value={dataElementText}
-              data-test-id={`${dataTestIdPrefix}DataElementField`}
-              onChange={newValue => setValues("dataElement", newValue)}
-              onBlur={() => dataElementSetTouched(true)}
-              validationState={
-                dataElementTouched && error ? "invalid" : undefined
-              }
-              width={width}
-            />
-          </FieldDescriptionAndError>
-        </RawDataElementSelector>
+            <FieldDescriptionAndError
+              description={dataElementDescription}
+              error={dataElementTouched && error ? error : undefined}
+            >
+              <ReactTextField
+                aria-label="Data Element"
+                value={dataElementText}
+                data-test-id={`${dataTestIdPrefix}DataElementField`}
+                onChange={newValue => setValues("dataElement", newValue)}
+                onBlur={() => dataElementSetTouched(true)}
+                validationState={
+                  dataElementTouched && error ? "invalid" : undefined
+                }
+                width={width}
+              />
+            </FieldDescriptionAndError>
+          </RawDataElementSelector>
+        </FieldSubset>
       )}
-    </FieldDescriptionAndError>
+    </div>
   );
 };
 

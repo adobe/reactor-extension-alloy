@@ -58,7 +58,8 @@ const ExtensionViewForm = ({ render }) => {
     // (which were set during submitForm()) to see if the form is valid.
     // https://github.com/jaredpalmer/formik/issues/1580
     formikPropsRef.current.setSubmitting(false);
-    return Object.keys(formikPropsRef.current.errors).length === 0;
+    const errors = formikPropsRef.current.errors;
+    return Object.keys(errors).length === 0;
   };
 
   const validateNonFormikState = async () => {

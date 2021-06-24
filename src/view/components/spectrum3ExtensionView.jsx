@@ -32,6 +32,10 @@ const ExtensionView = ({ render }) => {
       }, {});
     },
     validate() {
+      if (!registeredValidateRef.current.length) {
+        return false;
+      }
+
       // Check if all currently rendered ExtensionViewForms are valid
       return Promise.all(
         registeredValidateRef.current.map(validate => validate())

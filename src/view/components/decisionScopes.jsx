@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React, { Fragment, useEffect } from "react";
-import { Radio, Button } from "@adobe/react-spectrum";
+import { Radio, Button, ActionButton, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { FieldArray } from "formik";
 import { object, string } from "yup";
@@ -21,6 +21,7 @@ import DataElementSelector from "./dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import ExtensionViewForm from "./extensionViewForm";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import FieldSubset from "./fieldSubset";
 
 const CONSTANT = "constant";
 const DATA_ELEMENT = "dataElement";
@@ -115,7 +116,7 @@ const DecisionScopes = ({
         </Radio>
       </RadioGroup>
       {decisionsInputMethod === DATA_ELEMENT && (
-        <div className="FieldSubset">
+        <FieldSubset>
           <DataElementSelector>
             <TextField
               data-test-id="scopeDataElementField"
@@ -123,10 +124,10 @@ const DecisionScopes = ({
               width="size-5000"
             />
           </DataElementSelector>
-        </div>
+        </FieldSubset>
       )}
       {decisionsInputMethod === CONSTANT && (
-        <div className="FieldSubset">
+        <FieldSubset>
           <FieldArray
             name="decisionScopesArray"
             render={arrayHelpers => {
@@ -134,14 +135,15 @@ const DecisionScopes = ({
                 <div>
                   {decisionScopesArray.map((scope, index) => {
                     return (
-                      <div className="u-gapBottom" key={index}>
+                      <Flex key={index} marginBottom="size-100">
                         <TextField
                           data-test-id={`scope${index}Field`}
                           name={`decisionScopesArray.${index}`}
                           width="size-5000"
                           aria-label="Decision scope"
+                          marginTop="size-0"
                         />
-                        <Button
+                        <ActionButton
                           data-test-id={`deleteScope${index}Button`}
                           isQuiet
                           isDisabled={decisionScopesArray.length === 1}
@@ -154,8 +156,8 @@ const DecisionScopes = ({
                           minWidth={0}
                         >
                           <Delete />
-                        </Button>
-                      </div>
+                        </ActionButton>
+                      </Flex>
                     );
                   })}
                   <Button
@@ -171,7 +173,7 @@ const DecisionScopes = ({
               );
             }}
           />
-        </div>
+        </FieldSubset>
       )}
     </Fragment>
   );
