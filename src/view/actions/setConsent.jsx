@@ -10,11 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import "regenerator-runtime"; // needed for some of react-spectrum
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { FieldArray } from "formik";
-import "@react/react-spectrum/Form"; // needed for spectrum form styles
 import { object, string, array, mixed } from "yup";
 import {
   Flex,
@@ -30,7 +28,6 @@ import render from "../spectrum3Render";
 import ExtensionView from "../components/spectrum3ExtensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
-import "./setConsent.styl";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import RadioGroupWithDataElement, {
   createRadioGroupWithDataElementValidationSchema
