@@ -96,7 +96,6 @@ const RadioGroupWithDataElement = ({
   }
 
   const setValues = (newRadioValue, newDataElement) => {
-    console.log("setValues", newRadioValue, newDataElement);
     // set the dataElement value first because the main field validation uses it
     dataElementSetValue(
       {
