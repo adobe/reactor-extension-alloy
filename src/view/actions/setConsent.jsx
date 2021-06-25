@@ -78,7 +78,7 @@ const getInitialValues = ({ initInfo }) => {
   if (typeof consent === "string") {
     initialValues.inputMethod = DATA_ELEMENT.value;
     initialValues.dataElement = consent;
-    initialValues.consentObjects = [createBlankConsentObject()];
+    initialValues.consent = [createBlankConsentObject()];
   } else if (Array.isArray(consent)) {
     initialValues.inputMethod = FORM.value;
     initialValues.dataElement = "";

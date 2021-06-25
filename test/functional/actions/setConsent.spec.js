@@ -547,4 +547,18 @@ test("remembers the initial data element value", async () => {
   await extensionViewController.expectSettings(settings);
 });
 
+test("can show the consent object form when consent is initially a data element", async () => {
+  const settings = {
+    instanceName: "alloy",
+    consent: "%dataElement1%"
+  };
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings,
+    settings
+  });
+
+  await inputMethodFormRadio.click();
+  await consentObjects[0].standardPicker.expectExists();
+});
+
 testInstanceNameOptions(extensionViewController, instanceNamePicker);
