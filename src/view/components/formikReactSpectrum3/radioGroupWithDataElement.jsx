@@ -77,18 +77,26 @@ const RadioGroupWithDataElement = ({
   let radioValue;
   let dataElementText;
   if (
-    (dataElementValue === undefined &&
-      options.some(option => option === value)) ||
-    (dataElementValue !== undefined && !dataElementValue.isDataElement)
+    dataElementValue === undefined &&
+    options.some(option => option === value)
   ) {
+    // We haven't ever called setValue so we don't have a dataElementValue yet,
+    // but the value matches one of the options.
     radioValue = value;
     dataElementText = "";
+  } else if (
+    dataElementValue !== undefined &&
+    !dataElementValue.isDataElement
+  ) {
+    radioValue = value;
+    dataElementText = dataElementValue.dataElement;
   } else {
     radioValue = "dataElement";
     dataElementText = value;
   }
 
   const setValues = (newRadioValue, newDataElement) => {
+    console.log("setValues", newRadioValue, newDataElement);
     // set the dataElement value first because the main field validation uses it
     dataElementSetValue(
       {

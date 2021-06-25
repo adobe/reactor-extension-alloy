@@ -524,4 +524,27 @@ test("shows errors for things that aren't data elements and does not show errors
   await extensionViewController.expectIsValid();
 });
 
+test("remembers the initial data element value", async () => {
+  const settings = {
+    instanceName: "alloy2",
+    consent: [
+      {
+        standard: "Adobe",
+        version: "1.0",
+        value: { general: "%dataelement1%" }
+      }
+    ]
+  };
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings,
+    settings
+  });
+
+  await consentObjects[0].generalInRadio.click();
+  await consentObjects[0].generalDataElementRadio.click();
+  await consentObjects[0].generalDataElementField.expectValue("%dataelement1%");
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings(settings);
+});
+
 testInstanceNameOptions(extensionViewController, instanceNamePicker);
