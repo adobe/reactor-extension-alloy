@@ -14,7 +14,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import Data from "@spectrum-icons/workflow/Data";
 import { Button } from "@adobe/react-spectrum";
-import "./rawDataElementSelector.styl";
 
 const RawDataElementSelector = ({
   children,
@@ -45,9 +44,7 @@ const RawDataElementSelector = ({
         isQuiet
         onPress={openDataElementSelector}
         aria-label="Select data element"
-        UNSAFE_className={
-          adjustForLabel ? "DataElementSelector-buttonAdjustedForLabel" : ""
-        }
+        marginTop={adjustForLabel ? "size-300" : ""}
         minWidth={0}
       >
         <Data />
