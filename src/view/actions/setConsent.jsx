@@ -14,15 +14,7 @@ import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { FieldArray } from "formik";
 import { object, string, array, mixed } from "yup";
-import {
-  Flex,
-  Form,
-  Item,
-  Radio,
-  Button,
-  Well,
-  Text
-} from "@adobe/react-spectrum";
+import { Item, Radio, Button, Well, Text } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import render from "../spectrum3Render";
 import ExtensionView from "../components/spectrum3ExtensionView";
@@ -39,6 +31,7 @@ import {
   RadioGroup
 } from "../components/formikReactSpectrum3";
 import DataElementSelector from "../components/dataElementSelector";
+import FormElementContainer from "../components/formElementContainer";
 
 const FORM = { value: "form", label: "Fill out a form" };
 const DATA_ELEMENT = { value: "dataElement", label: "Use a data element" };
@@ -222,7 +215,7 @@ const validationSchema = object().shape({
 
 const ConsentObject = ({ value, index }) => {
   return (
-    <Flex direction="column">
+    <>
       <Picker
         data-test-id="standardPicker"
         name={`consent[${index}].standard`}
@@ -331,7 +324,7 @@ const ConsentObject = ({ value, index }) => {
           </RadioGroupWithDataElement>
         </>
       )}
-    </Flex>
+    </>
   );
 };
 
@@ -357,7 +350,7 @@ const SetConsent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
   const { values } = formikProps;
 
   return (
-    <Form>
+    <FormElementContainer>
       <Picker
         data-test-id="instanceNamePicker"
         name="instanceName"
@@ -397,38 +390,43 @@ const SetConsent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
           name="consent"
           render={arrayHelpers => (
             <>
-              <Flex>
-                <Button
-                  variant="primary"
-                  data-test-id="addConsentButton"
-                  onPress={() => {
-                    arrayHelpers.push(createBlankConsentObject());
-                  }}
-                  marginStart="auto"
-                >
-                  Add Consent Object
-                </Button>
-              </Flex>
-              {values.consent.map((value, index) => (
-                <Well data-test-id={`consentObject${index}`} key={index}>
-                  <ConsentObject value={value} index={index} />
-                  {values.consent.length > 1 && (
-                    <div className="u-gapTop">
-                      <Button
-                        variant="secondary"
-                        onPress={() => {
-                          arrayHelpers.remove(index);
-                        }}
-                        aria-label="Delete"
-                        data-test-id="deleteConsentButton"
-                      >
-                        <Delete />
-                        <Text>Delete Consent Object</Text>
-                      </Button>
-                    </div>
-                  )}
-                </Well>
-              ))}
+              <Button
+                variant="primary"
+                data-test-id="addConsentButton"
+                onPress={() => {
+                  arrayHelpers.push(createBlankConsentObject());
+                }}
+                marginStart="auto"
+              >
+                Add Consent Object
+              </Button>
+              <div>
+                {values.consent.map((value, index) => (
+                  <Well
+                    data-test-id={`consentObject${index}`}
+                    key={`consentObject${index}`}
+                    marginBottom="size-250"
+                  >
+                    <FormElementContainer>
+                      <ConsentObject value={value} index={index} />
+                      {values.consent.length > 1 && (
+                        <Button
+                          variant="secondary"
+                          onPress={() => {
+                            arrayHelpers.remove(index);
+                          }}
+                          aria-label="Delete"
+                          data-test-id="deleteConsentButton"
+                          alignSelf="flex-start"
+                        >
+                          <Delete />
+                          <Text>Delete Consent Object</Text>
+                        </Button>
+                      )}
+                    </FormElementContainer>
+                  </Well>
+                ))}
+              </div>
             </>
           )}
         />
@@ -443,7 +441,7 @@ const SetConsent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
           />
         </DataElementSelector>
       )}
-    </Form>
+    </FormElementContainer>
   );
 };
 
