@@ -102,20 +102,18 @@ const DecisionScopes = ({
 
   return (
     <Fragment>
-      <div className="u-gapBottom">
-        <RadioGroup
-          name="decisionsInputMethod"
-          orientation="horizontal"
-          label="Decision Scopes"
-        >
-          <Radio data-test-id="constantOptionField" value={CONSTANT}>
-            Manually enter scopes
-          </Radio>
-          <Radio data-test-id="dataElementOptionField" value={DATA_ELEMENT}>
-            Provide data element returning array of scopes
-          </Radio>
-        </RadioGroup>
-      </div>
+      <RadioGroup
+        name="decisionsInputMethod"
+        orientation="horizontal"
+        label="Decision Scopes"
+      >
+        <Radio data-test-id="constantOptionField" value={CONSTANT}>
+          Manually enter scopes
+        </Radio>
+        <Radio data-test-id="dataElementOptionField" value={DATA_ELEMENT}>
+          Provide data element returning array of scopes
+        </Radio>
+      </RadioGroup>
       {decisionsInputMethod === DATA_ELEMENT && (
         <div className="FieldSubset">
           <DataElementSelector>

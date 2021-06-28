@@ -14,10 +14,10 @@ import { useField } from "formik";
 import React, { useEffect, useState } from "react";
 import {
   Radio,
-  RadioGroup as ReactSpectrumRadioGroup,
-  Form
+  RadioGroup as ReactSpectrumRadioGroup
 } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
+import FormElementContainer from "../../../components/formElementContainer";
 import {
   TextField,
   RadioGroup as FormikRadioGroup
@@ -55,7 +55,7 @@ const BooleanEdit = props => {
   }, [fieldName]);
 
   return (
-    <Form>
+    <FormElementContainer>
       <ReactSpectrumRadioGroup
         label="Input Method"
         orientation="horizontal"
@@ -104,7 +104,7 @@ const BooleanEdit = props => {
           />
         </DataElementSelector>
       )}
-    </Form>
+    </FormElementContainer>
   );
 };
 

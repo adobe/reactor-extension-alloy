@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { object, string } from "yup";
-import { Form, Item } from "@adobe/react-spectrum";
+import { Item } from "@adobe/react-spectrum";
 import {
   ComboBox,
   Picker,
@@ -28,6 +28,7 @@ import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DecisionScopes from "../components/decisionScopes";
 import ExtensionViewForm from "../components/extensionViewForm";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import FormElementContainer from "../components/formElementContainer";
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -129,7 +130,7 @@ const SendEvent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
   }
 
   return (
-    <Form>
+    <FormElementContainer>
       <Picker
         data-test-id="instanceNameField"
         name="instanceName"
@@ -207,7 +208,7 @@ const SendEvent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
         Render visual personalization decisions
       </Checkbox>
       <DecisionScopes />
-    </Form>
+    </FormElementContainer>
   );
 };
 

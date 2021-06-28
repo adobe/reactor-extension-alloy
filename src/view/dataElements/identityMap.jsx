@@ -16,7 +16,6 @@ import { FieldArray } from "formik";
 import { array, boolean, object, string } from "yup";
 import {
   Button,
-  Form,
   Heading,
   Item,
   ProgressCircle,
@@ -35,6 +34,7 @@ import FillParentAndCenterChildren from "../components/fillParentAndCenterChildr
 import NamespaceComponent from "../components/namespaceComponent";
 import getDefaultIdentifier from "./identityMap/utils/getDefaultIdentifier";
 import DataElementSelector from "../components/dataElementSelector";
+import FormElementContainer from "../components/formElementContainer";
 import {
   Checkbox,
   Picker,
@@ -300,7 +300,7 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                                       marginTop="size-250"
                                       marginBottom="size-250"
                                     >
-                                      <Form>
+                                      <FormElementContainer>
                                         <DataElementSelector>
                                           <TextField
                                             data-test-id={`identity${index}idField${identifierIndex}`}
@@ -346,7 +346,7 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                                         >
                                           Primary
                                         </Checkbox>
-                                      </Form>
+                                      </FormElementContainer>
                                       {values.identities[index].identifiers
                                         .length > 1 && (
                                         <Button
