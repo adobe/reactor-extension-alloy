@@ -44,7 +44,7 @@ const RawDataElementSelector = ({
         isQuiet
         onPress={openDataElementSelector}
         aria-label="Select data element"
-        UNSAFE_style={adjustForLabel ? { marginTop: "size-300" } : {}}
+        marginTop={adjustForLabel ? "size-300" : ""}
         minWidth={0}
       >
         <Data />
