@@ -1,15 +1,10 @@
 import React from "react";
 import { Flex } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
-import "./formElementContainer.styl";
 
 const FormElementContainer = ({ children, ...otherProps }) => {
   return (
-    <Flex
-      direction="column"
-      UNSAFE_className="FormElementContainer"
-      {...otherProps}
-    >
+    <Flex direction="column" gap="size-100" {...otherProps}>
       {children}
     </Flex>
   );
