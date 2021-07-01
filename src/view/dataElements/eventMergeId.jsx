@@ -10,14 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import "regenerator-runtime"; // needed for some of react-spectrum
-import React from "react";
-import Alert from "@react/react-spectrum/Alert";
-import "@react/react-spectrum/Form"; // needed for spectrum form styles
+import React, { useEffect } from "react";
 import { v4 as uuid } from "uuid";
-import render from "../spectrum2Render";
-import ExtensionView from "../components/spectrum2ExtensionView";
-import "./eventMergeId.styl";
+import PropTypes from "prop-types";
+import Alert from "../components/alert";
+import render from "../spectrum3Render";
+import ExtensionView from "../components/spectrum3ExtensionView";
+import ExtensionViewForm from "../components/extensionViewForm";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 
 const getInitialValues = ({ initInfo }) => {
@@ -32,29 +31,53 @@ const getSettings = ({ values }) => {
   return values;
 };
 
-const EventMergeId = () => {
+const EventMergeId = ({ initInfo, formikProps, registerImperativeFormApi }) => {
+  useEffect(() => {
+    registerImperativeFormApi({ getSettings });
+    formikProps.resetForm({ values: getInitialValues({ initInfo }) });
+  }, []);
+
+  // Formik state won't have values on the first render.
+  if (!formikProps.values) {
+    return null;
+  }
+
+  return (
+    <FillParentAndCenterChildren className="u-flexColumn">
+      <Alert variant="informative" title="Event Merge ID Caching">
+        This data element will provide an event merge ID. Regardless of what you
+        choose for the data element storage duration in Launch, the value of
+        this data element will remain the same until either the visitor to your
+        website leaves the current page or the event merge ID is reset using the
+        Reset Event Merge ID action.
+      </Alert>
+      <div className="EventMergeId-description u-gapTop2x">
+        No configuration necessary.
+      </div>
+    </FillParentAndCenterChildren>
+  );
+};
+
+EventMergeId.propTypes = {
+  initInfo: PropTypes.object,
+  formikProps: PropTypes.object,
+  registerImperativeFormApi: PropTypes.func
+};
+
+const EventMergeIdView = () => {
   return (
     <ExtensionView
-      getInitialValues={getInitialValues}
-      getSettings={getSettings}
       render={() => {
         return (
-          <FillParentAndCenterChildren className="u-flexColumn">
-            <Alert variant="info" header="Event Merge ID Caching">
-              This data element will provide an event merge ID. Regardless of
-              what you choose for the data element storage duration in Launch,
-              the value of this data element will remain the same until either
-              the visitor to your website leaves the current page or the event
-              merge ID is reset using the Reset Event Merge ID action.
-            </Alert>
-            <div className="EventMergeId-description u-gapTop2x">
-              No configuration necessary.
-            </div>
-          </FillParentAndCenterChildren>
+          <ExtensionViewForm
+            render={props => {
+              return <EventMergeId {...props} />;
+            }}
+          />
         );
       }}
     />
   );
 };
 
-render(EventMergeId);
+render(EventMergeIdView);
