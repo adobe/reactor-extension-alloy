@@ -28,6 +28,10 @@ const invalidAttribute = "aria-invalid";
 // a similar approach when using Cypress or React Testing Library
 const compatibleClick = async selector => {
   await t.expect(selector.exists).ok();
+  // Normally TestCafe will automatically scroll the target into view,
+  // but since we are using a client function to perform the click
+  // TestCafe doesn't automatically scroll.
+  await t.scrollIntoView(selector);
   await ClientFunction(() => {
     const element = selector();
     element.click();
