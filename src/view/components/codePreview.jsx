@@ -29,9 +29,8 @@ const CodePreview = ({
   return (
     // To get this element to shrink to its contents, we had to use
     // alignSelf="flex-start" because this is currently a child of
-    // Form which is a flex container (flex items are stretched by default)
-    // and width="auto" because Form applies a 100% width to our element.
-    <View position="relative" alignSelf="flex-start" width="auto">
+    // a flex container (flex items are stretched by default).
+    <View position="relative" alignSelf="flex-start">
       <FieldDescriptionAndError description={description} error={error}>
         <TextArea
           width="size-5000"
