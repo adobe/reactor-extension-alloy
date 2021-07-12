@@ -11,14 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import createExtensionViewController from "../helpers/createExtensionViewController";
-import spectrum from "../helpers/spectrum2";
+import spectrum from "../helpers/spectrum3";
 import createFixture from "../helpers/createFixture";
 
 const extensionViewController = createExtensionViewController(
   "actions/resetEventMergeId.html"
 );
 
-const eventMergeIdField = spectrum.textfield("eventMergeIdField");
+const eventMergeIdField = spectrum.textField("eventMergeIdField");
 
 createFixture({
   title: "Reset Event Merge ID View",
