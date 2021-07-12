@@ -18,6 +18,7 @@ import render from "../spectrum3Render";
 import ExtensionView from "../components/spectrum3ExtensionView";
 import ExtensionViewForm from "../components/extensionViewForm";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
+import "./eventMergeId.styl";
 
 const getInitialValues = ({ initInfo }) => {
   const { cacheId = uuid() } = initInfo.settings || {};
