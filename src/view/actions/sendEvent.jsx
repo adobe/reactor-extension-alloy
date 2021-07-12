@@ -10,8 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
+import React from "react";
 import { object, string } from "yup";
 import { Item } from "@adobe/react-spectrum";
 import {
@@ -22,11 +21,12 @@ import {
 } from "../components/formikReactSpectrum3";
 import DataElementSelector from "../components/dataElementSelector";
 import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionView";
+import ExtensionView from "../components/spectrum3ExtensionViewSimple";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
-import DecisionScopes from "../components/decisionScopes";
-import ExtensionViewForm from "../components/extensionViewForm";
+import DecisionScopes, {
+  bridge as decisionScopesBridge
+} from "../components/decisionScopes";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormElementContainer from "../components/formElementContainer";
 
@@ -50,13 +50,15 @@ const getInitialValues = ({ initInfo }) => {
     type,
     mergeId,
     datasetId,
-    documentUnloading
+    documentUnloading,
+    ...decisionScopesBridge.getInitialValues({ initInfo })
   };
 };
 
 const getSettings = ({ values }) => {
   const settings = {
-    instanceName: values.instanceName
+    instanceName: values.instanceName,
+    ...decisionScopesBridge.getSettings({ values })
   };
 
   if (values.xdm) {
@@ -86,10 +88,12 @@ const getSettings = ({ values }) => {
   return settings;
 };
 
-const validationSchema = object().shape({
-  xdm: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
-  data: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-});
+const validationSchema = object()
+  .shape({
+    xdm: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
+    data: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+  })
+  .concat(decisionScopesBridge.formikStateValidationSchema);
 
 const knownEventTypeOptions = [
   "advertising.completes",
@@ -115,123 +119,95 @@ const knownEventTypeOptions = [
   "commerce.saveForLaters"
 ].map(type => ({ type }));
 
-const SendEvent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
-  useEffect(() => {
-    registerImperativeFormApi({
-      getSettings,
-      formikStateValidationSchema: validationSchema
-    });
-    formikProps.resetForm({ values: getInitialValues({ initInfo }) });
-  }, []);
-
-  // Formik state won't have values on the first render.
-  if (!formikProps.values) {
-    return null;
-  }
-
-  return (
-    <FormElementContainer>
-      <Picker
-        data-test-id="instanceNameField"
-        name="instanceName"
-        label="Instance"
-        items={getInstanceOptions(initInfo)}
-        width="size-5000"
-        isRequired
-      >
-        {item => <Item key={item.value}>{item.label}</Item>}
-      </Picker>
-      <DataElementSelector>
-        <ComboBox
-          data-test-id="typeField"
-          name="type"
-          label="Type"
-          description="Enter an event type to populate the `eventType` XDM field. Select a predefined value or enter a custom value."
-          items={knownEventTypeOptions}
-          allowsCustomValue
-          width="size-5000"
-        >
-          {item => <Item key={item.type}>{item.type}</Item>}
-        </ComboBox>
-      </DataElementSelector>
-      <DataElementSelector>
-        <TextField
-          data-test-id="xdmField"
-          name="xdm"
-          label="XDM Data"
-          description="Provide a data element which returns an object matching your XDM schema."
-          width="size-5000"
-        />
-      </DataElementSelector>
-      <DataElementSelector>
-        <TextField
-          data-test-id="dataField"
-          name="data"
-          label="Data"
-          description="Provide a data element which returns an object to send as free-form data."
-          width="size-5000"
-        />
-      </DataElementSelector>
-      <DataElementSelector>
-        <TextField
-          data-test-id="mergeIdField"
-          name="mergeId"
-          description="Provide an identifier used to merge multiple events. This will
-                      populate the `eventMergeId` XDM field."
-          label="Merge ID"
-          width="size-5000"
-        />
-      </DataElementSelector>
-      <DataElementSelector>
-        <TextField
-          data-test-id="datasetIdField"
-          name="datasetId"
-          description="Send data to a different dataset than what's been provided in the Edge configuration."
-          label="Dataset ID"
-          width="size-5000"
-        />
-      </DataElementSelector>
-      <Checkbox
-        data-test-id="documentUnloadingField"
-        name="documentUnloading"
-        description="Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
-        width="size-5000"
-      >
-        Document will unload
-      </Checkbox>
-      <Checkbox
-        data-test-id="renderDecisionsField"
-        name="renderDecisions"
-        description="Check this to automatically render personalization and pre-hide the content to prevent flicker."
-        width="size-5000"
-      >
-        Render visual personalization decisions
-      </Checkbox>
-      <DecisionScopes />
-    </FormElementContainer>
-  );
-};
-
-SendEvent.propTypes = {
-  initInfo: PropTypes.object,
-  formikProps: PropTypes.object,
-  registerImperativeFormApi: PropTypes.func
-};
-
-const SendEventExtensionView = () => {
+const SendEvent = () => {
   return (
     <ExtensionView
-      render={() => {
-        return (
-          <ExtensionViewForm
-            render={props => {
-              return <SendEvent {...props} />;
-            }}
-          />
-        );
-      }}
+      getInitialValues={getInitialValues}
+      getSettings={getSettings}
+      formikStateValidationSchema={validationSchema}
+      render={({ initInfo }) => (
+        <FormElementContainer>
+          <Picker
+            data-test-id="instanceNameField"
+            name="instanceName"
+            label="Instance"
+            items={getInstanceOptions(initInfo)}
+            width="size-5000"
+            isRequired
+          >
+            {item => <Item key={item.value}>{item.label}</Item>}
+          </Picker>
+          <DataElementSelector>
+            <ComboBox
+              data-test-id="typeField"
+              name="type"
+              label="Type"
+              description="Enter an event type to populate the `eventType` XDM field. Select a predefined value or enter a custom value."
+              items={knownEventTypeOptions}
+              allowsCustomValue
+              width="size-5000"
+            >
+              {item => <Item key={item.type}>{item.type}</Item>}
+            </ComboBox>
+          </DataElementSelector>
+          <DataElementSelector>
+            <TextField
+              data-test-id="xdmField"
+              name="xdm"
+              label="XDM Data"
+              description="Provide a data element which returns an object matching your XDM schema."
+              width="size-5000"
+            />
+          </DataElementSelector>
+          <DataElementSelector>
+            <TextField
+              data-test-id="dataField"
+              name="data"
+              label="Data"
+              description="Provide a data element which returns an object to send as free-form data."
+              width="size-5000"
+            />
+          </DataElementSelector>
+          <DataElementSelector>
+            <TextField
+              data-test-id="mergeIdField"
+              name="mergeId"
+              description="Provide an identifier used to merge multiple events. This will
+                          populate the `eventMergeId` XDM field."
+              label="Merge ID"
+              width="size-5000"
+            />
+          </DataElementSelector>
+          <DataElementSelector>
+            <TextField
+              data-test-id="datasetIdField"
+              name="datasetId"
+              description="Send data to a different dataset than what's been provided in the Edge configuration."
+              label="Dataset ID"
+              width="size-5000"
+            />
+          </DataElementSelector>
+          <Checkbox
+            data-test-id="documentUnloadingField"
+            name="documentUnloading"
+            description="Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
+            width="size-5000"
+          >
+            Document will unload
+          </Checkbox>
+          <Checkbox
+            data-test-id="renderDecisionsField"
+            name="renderDecisions"
+            description="Check this to automatically render personalization and pre-hide the content to prevent flicker."
+            width="size-5000"
+          >
+            Render visual personalization decisions
+          </Checkbox>
+          <DecisionScopes />
+        </FormElementContainer>
+      )}
     />
   );
 };
 
-render(SendEventExtensionView);
+render(SendEvent);

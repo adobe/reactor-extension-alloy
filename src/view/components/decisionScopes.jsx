@@ -10,95 +10,74 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import { Radio, Button } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
-import { FieldArray } from "formik";
+import { FieldArray, useField } from "formik";
 import { object, string } from "yup";
-import PropTypes from "prop-types";
 import { RadioGroup, TextField } from "./formikReactSpectrum3";
 import DataElementSelector from "./dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
-import ExtensionViewForm from "./extensionViewForm";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 
 const CONSTANT = "constant";
 const DATA_ELEMENT = "dataElement";
 
-const getInitialValues = ({ initInfo }) => {
-  const { decisionScopes } = initInfo.settings || {};
-  if (Array.isArray(decisionScopes)) {
+export const bridge = {
+  getInitialValues({ initInfo }) {
+    const { decisionScopes } = initInfo.settings || {};
+    if (Array.isArray(decisionScopes)) {
+      return {
+        decisionsInputMethod: CONSTANT,
+        decisionScopesArray: decisionScopes,
+        decisionScopesDataElement: ""
+      };
+    }
+    if (typeof decisionScopes === "string") {
+      return {
+        decisionsInputMethod: DATA_ELEMENT,
+        decisionScopesDataElement: decisionScopes,
+        decisionScopesArray: [""]
+      };
+    }
     return {
       decisionsInputMethod: CONSTANT,
-      decisionScopesArray: decisionScopes,
-      decisionScopesDataElement: ""
-    };
-  }
-  if (typeof decisionScopes === "string") {
-    return {
-      decisionsInputMethod: DATA_ELEMENT,
-      decisionScopesDataElement: decisionScopes,
+      decisionScopesDataElement: "",
       decisionScopesArray: [""]
     };
-  }
-  return {
-    decisionsInputMethod: CONSTANT,
-    decisionScopesDataElement: "",
-    decisionScopesArray: [""]
-  };
-};
-
-const getSettings = ({ values }) => {
-  if (
-    values.decisionsInputMethod === DATA_ELEMENT &&
-    values.decisionScopesDataElement
-  ) {
-    return { decisionScopes: values.decisionScopesDataElement };
-  }
-
-  if (
-    values.decisionsInputMethod === CONSTANT &&
-    values.decisionScopesArray.length > 0
-  ) {
-    const decisionScopes = values.decisionScopesArray.filter(
-      scope => scope !== ""
-    );
-    if (decisionScopes.length) {
-      return { decisionScopes };
+  },
+  getSettings({ values }) {
+    if (
+      values.decisionsInputMethod === DATA_ELEMENT &&
+      values.decisionScopesDataElement
+    ) {
+      return { decisionScopes: values.decisionScopesDataElement };
     }
-  }
-  return undefined;
+
+    if (
+      values.decisionsInputMethod === CONSTANT &&
+      values.decisionScopesArray.length > 0
+    ) {
+      const decisionScopes = values.decisionScopesArray.filter(
+        scope => scope !== ""
+      );
+      if (decisionScopes.length) {
+        return { decisionScopes };
+      }
+    }
+    return undefined;
+  },
+  formikStateValidationSchema: object().shape({
+    decisionScopesDataElement: string().when("decisionsInputMethod", {
+      is: DATA_ELEMENT,
+      then: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+    })
+  })
 };
 
-const validationSchema = object().shape({
-  decisionScopesDataElement: string().when("decisionsInputMethod", {
-    is: DATA_ELEMENT,
-    then: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-  })
-});
-
-const DecisionScopes = ({
-  initInfo,
-  formikProps,
-  registerImperativeFormApi
-}) => {
-  useEffect(() => {
-    registerImperativeFormApi({
-      getSettings,
-      formikStateValidationSchema: validationSchema
-    });
-
-    formikProps.resetForm({
-      values: getInitialValues({ initInfo })
-    });
-  }, []);
-
-  // Formik state won't have values on the first render.
-  if (!formikProps.values) {
-    return null;
-  }
-
-  const { decisionsInputMethod, decisionScopesArray } = formikProps.values;
+export default () => {
+  const [{ value: decisionsInputMethod }] = useField("decisionsInputMethod");
+  const [{ value: decisionScopesArray }] = useField("decisionScopesArray");
 
   return (
     <Fragment>
@@ -176,21 +155,3 @@ const DecisionScopes = ({
     </Fragment>
   );
 };
-
-DecisionScopes.propTypes = {
-  initInfo: PropTypes.object,
-  formikProps: PropTypes.object,
-  registerImperativeFormApi: PropTypes.func
-};
-
-const DecisionScopesExtensionView = () => {
-  return (
-    <ExtensionViewForm
-      render={props => {
-        return <DecisionScopes {...props} />;
-      }}
-    />
-  );
-};
-
-export default DecisionScopesExtensionView;

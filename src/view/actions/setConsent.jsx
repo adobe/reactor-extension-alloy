@@ -10,21 +10,20 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { FieldArray } from "formik";
 import { object, string, array, mixed } from "yup";
 import { Item, Radio, Button, Well, Text } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionView";
+import ExtensionView from "../components/spectrum3ExtensionViewSimple";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import RadioGroupWithDataElement, {
   createRadioGroupWithDataElementValidationSchema
 } from "../components/formikReactSpectrum3/radioGroupWithDataElement";
-import ExtensionViewForm from "../components/extensionViewForm";
 import {
   Picker,
   TextField,
@@ -333,138 +332,108 @@ ConsentObject.propTypes = {
   index: PropTypes.number.isRequired
 };
 
-const SetConsent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
-  useEffect(() => {
-    registerImperativeFormApi({
-      getSettings,
-      formikStateValidationSchema: validationSchema
-    });
-    formikProps.resetForm({ values: getInitialValues({ initInfo }) });
-  }, []);
-
-  // Formik state won't have values on the first render.
-  if (!formikProps.values) {
-    return null;
-  }
-
-  const { values } = formikProps;
-
-  return (
-    <FormElementContainer>
-      <Picker
-        data-test-id="instanceNamePicker"
-        name="instanceName"
-        label="Instance"
-        items={getInstanceOptions(initInfo)}
-        width="size-5000"
-        isRequired
-      >
-        {item => <Item key={item.value}>{item.label}</Item>}
-      </Picker>
-      <DataElementSelector>
-        <TextField
-          data-test-id="identityMapField"
-          name="identityMap"
-          label="Identity Map"
-          description="Provide a data element which returns a custom identity map object as part of the setConsent command."
-          width="size-5000"
-        />
-      </DataElementSelector>
-      <RadioGroup
-        name="inputMethod"
-        orientation="horizontal"
-        label="Consent Information"
-      >
-        <Radio data-test-id="inputMethodFormRadio" value={FORM.value}>
-          {FORM.label}
-        </Radio>
-        <Radio
-          data-test-id="inputMethodDataElementRadio"
-          value={DATA_ELEMENT.value}
-        >
-          {DATA_ELEMENT.label}
-        </Radio>
-      </RadioGroup>
-      {values.inputMethod === FORM.value && (
-        <FieldArray
-          name="consent"
-          render={arrayHelpers => (
-            <>
-              <Button
-                variant="primary"
-                data-test-id="addConsentButton"
-                onPress={() => {
-                  arrayHelpers.push(createBlankConsentObject());
-                }}
-                marginStart="auto"
-              >
-                Add Consent Object
-              </Button>
-              <div>
-                {values.consent.map((value, index) => (
-                  <Well
-                    data-test-id={`consentObject${index}`}
-                    key={`consentObject${index}`}
-                    marginBottom="size-250"
-                  >
-                    <FormElementContainer>
-                      <ConsentObject value={value} index={index} />
-                      {values.consent.length > 1 && (
-                        <Button
-                          variant="secondary"
-                          onPress={() => {
-                            arrayHelpers.remove(index);
-                          }}
-                          aria-label="Delete"
-                          data-test-id="deleteConsentButton"
-                          alignSelf="flex-start"
-                        >
-                          <Delete />
-                          <Text>Delete Consent Object</Text>
-                        </Button>
-                      )}
-                    </FormElementContainer>
-                  </Well>
-                ))}
-              </div>
-            </>
-          )}
-        />
-      )}
-      {values.inputMethod === DATA_ELEMENT.value && (
-        <DataElementSelector>
-          <TextField
-            data-test-id="dataElementField"
-            name="dataElement"
-            width="size-5000"
-            aria-label="Data Element"
-          />
-        </DataElementSelector>
-      )}
-    </FormElementContainer>
-  );
-};
-
-SetConsent.propTypes = {
-  initInfo: PropTypes.object,
-  formikProps: PropTypes.object,
-  registerImperativeFormApi: PropTypes.func
-};
-
-const SetConsentExtensionView = () => {
+const SetConsent = () => {
   return (
     <ExtensionView
-      render={() => {
-        return (
-          <ExtensionViewForm
-            render={props => {
-              return <SetConsent {...props} />;
-            }}
-          />
-        );
-      }}
+      getInitialValues={getInitialValues}
+      getSettings={getSettings}
+      formikStateValidateSchema={validationSchema}
+      render={({ initInfo, formikProps: { values } }) => (
+        <FormElementContainer>
+          <Picker
+            data-test-id="instanceNamePicker"
+            name="instanceName"
+            label="Instance"
+            items={getInstanceOptions(initInfo)}
+            width="size-5000"
+            isRequired
+          >
+            {item => <Item key={item.value}>{item.label}</Item>}
+          </Picker>
+          <DataElementSelector>
+            <TextField
+              data-test-id="identityMapField"
+              name="identityMap"
+              label="Identity Map"
+              description="Provide a data element which returns a custom identity map object as part of the setConsent command."
+              width="size-5000"
+            />
+          </DataElementSelector>
+          <RadioGroup
+            name="inputMethod"
+            orientation="horizontal"
+            label="Consent Information"
+          >
+            <Radio data-test-id="inputMethodFormRadio" value={FORM.value}>
+              {FORM.label}
+            </Radio>
+            <Radio
+              data-test-id="inputMethodDataElementRadio"
+              value={DATA_ELEMENT.value}
+            >
+              {DATA_ELEMENT.label}
+            </Radio>
+          </RadioGroup>
+          {values.inputMethod === FORM.value && (
+            <FieldArray
+              name="consent"
+              render={arrayHelpers => (
+                <>
+                  <Button
+                    variant="primary"
+                    data-test-id="addConsentButton"
+                    onPress={() => {
+                      arrayHelpers.push(createBlankConsentObject());
+                    }}
+                    marginStart="auto"
+                  >
+                    Add Consent Object
+                  </Button>
+                  <div>
+                    {values.consent.map((value, index) => (
+                      <Well
+                        data-test-id={`consentObject${index}`}
+                        key={`consentObject${index}`}
+                        marginBottom="size-250"
+                      >
+                        <FormElementContainer>
+                          <ConsentObject value={value} index={index} />
+                          {values.consent.length > 1 && (
+                            <Button
+                              variant="secondary"
+                              onPress={() => {
+                                arrayHelpers.remove(index);
+                              }}
+                              aria-label="Delete"
+                              data-test-id="deleteConsentButton"
+                              alignSelf="flex-start"
+                            >
+                              <Delete />
+                              <Text>Delete Consent Object</Text>
+                            </Button>
+                          )}
+                        </FormElementContainer>
+                      </Well>
+                    ))}
+                  </div>
+                </>
+              )}
+            />
+          )}
+          {values.inputMethod === DATA_ELEMENT.value && (
+            <DataElementSelector>
+              <TextField
+                data-test-id="dataElementField"
+                name="dataElement"
+                width="size-5000"
+                aria-label="Data Element"
+              />
+            </DataElementSelector>
+          )}
+        </FormElementContainer>
+      )}
     />
   );
 };
 
-render(SetConsentExtensionView);
+render(SetConsent);
