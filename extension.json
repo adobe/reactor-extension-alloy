@@ -181,16 +181,6 @@
       "viewPath": "actions/sendEvent.html"
     },
     {
-      "displayName": "Test",
-      "name": "test",
-      "schema": {
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "type": "object"
-      },
-      "libPath": "dist/lib/actions/sendEvent/index.js",
-      "viewPath": "actions/test.html"
-    },
-    {
       "displayName": "Set Consent",
       "name": "set-consent",
       "schema": {
