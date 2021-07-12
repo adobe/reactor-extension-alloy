@@ -10,19 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import "regenerator-runtime"; // needed for some of react-spectrum
-import React from "react";
+import React, { useEffect } from "react";
 import { object, string } from "yup";
-import Textfield from "@react/react-spectrum/Textfield";
-import FieldLabel from "@react/react-spectrum/FieldLabel";
-import "@react/react-spectrum/Form"; // needed for spectrum form styles
-import render from "../spectrum2Render";
-import WrappedField from "../components/wrappedField";
-import ExtensionView from "../components/spectrum2ExtensionView";
+import PropTypes from "prop-types";
+import { TextField } from "../components/formikReactSpectrum3";
+import render from "../spectrum3Render";
+import ExtensionView from "../components/spectrum3ExtensionView";
+import ExtensionViewForm from "../components/extensionViewForm";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
-import InfoTipLayout from "../components/infoTipLayout";
-import "./resetEventMergeId.styl";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import FormElementContainer from "../components/formElementContainer";
+import DataElementSelector from "../components/dataElementSelector";
 
 const getInitialValues = ({ initInfo }) => {
   const { eventMergeId = "" } = initInfo.settings || {};
@@ -42,33 +40,60 @@ const validationSchema = object().shape({
     .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
 });
 
-const ResetEventMergeId = () => {
+const ResetEventMergeId = ({
+  initInfo,
+  formikProps,
+  registerImperativeFormApi
+}) => {
+  useEffect(() => {
+    registerImperativeFormApi({
+      getSettings,
+      formikStateValidationSchema: validationSchema
+    });
+    formikProps.resetForm({ values: getInitialValues({ initInfo }) });
+  }, []);
+
+  // Formik state won't have values on the first render.
+  if (!formikProps.values) {
+    return null;
+  }
+
+  return (
+    <FormElementContainer>
+      <DataElementSelector>
+        <TextField
+          data-test-id="eventMergeIdField"
+          name="eventMergeId"
+          label="Event Merge ID"
+          description="Please specify the data element that represents the event merge ID you would like to reset."
+          width="size-5000"
+          isRequired
+        />
+      </DataElementSelector>
+    </FormElementContainer>
+  );
+};
+
+ResetEventMergeId.propTypes = {
+  initInfo: PropTypes.object,
+  formikProps: PropTypes.object,
+  registerImperativeFormApi: PropTypes.func
+};
+
+const ResetEventMergeIdView = () => {
   return (
     <ExtensionView
-      getInitialValues={getInitialValues}
-      getSettings={getSettings}
-      validationSchema={validationSchema}
       render={() => {
         return (
-          <div>
-            <InfoTipLayout tip="Please specify the data element that represents the event merge ID you would like to reset.">
-              <FieldLabel labelFor="eventMergeIdField" label="Event Merge ID" />
-            </InfoTipLayout>
-            <div>
-              <WrappedField
-                data-test-id="eventMergeIdField"
-                id="eventMergeIdField"
-                name="eventMergeId"
-                component={Textfield}
-                componentClassName="u-fieldLong"
-                supportDataElement="replace"
-              />
-            </div>
-          </div>
+          <ExtensionViewForm
+            render={props => {
+              return <ResetEventMergeId {...props} />;
+            }}
+          />
         );
       }}
     />
   );
 };
 
-render(ResetEventMergeId);
+render(ResetEventMergeIdView);
