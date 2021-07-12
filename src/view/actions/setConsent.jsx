@@ -337,7 +337,7 @@ const SetConsent = () => {
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
-      formikStateValidateSchema={validationSchema}
+      formikStateValidationSchema={validationSchema}
       render={({ initInfo, formikProps: { values } }) => (
         <FormElementContainer>
           <Picker

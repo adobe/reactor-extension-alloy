@@ -14,7 +14,7 @@ import React, { useEffect, useReducer } from "react";
 import PropTypes from "prop-types";
 import { ProgressCircle, Flex } from "@adobe/react-spectrum";
 import FormElementContainer from "../components/formElementContainer";
-import ExtensionView from "../components/spectrum3ExtensionView";
+import ExtensionView from "../components/spectrum3ExtensionViewSimple";
 import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import validate from "./xdmObject/helpers/validate";
 import render from "../spectrum3Render";
@@ -27,7 +27,6 @@ import * as STATUS from "./xdmObject/constants/mainViewStatus";
 import loadDefaultSandbox from "./xdmObject/helpers/schemaSelection/loadDefaultSandbox";
 import useOnSandboxSelectionChange from "./xdmObject/helpers/schemaSelection/useOnSandboxSelectionChange";
 import useOnSchemaMetaSelectionChange from "./xdmObject/helpers/schemaSelection/useOnSchemaMetaSelectionChange";
-import ExtensionViewForm from "../components/extensionViewForm";
 import { reducer, ACTION_TYPES } from "./xdmObject/helpers/mainViewState";
 import loadDefaultSchema from "./xdmObject/helpers/schemaSelection/loadDefaultSchema";
 import getInitialFormStateUsingAsyncErrorReporting from "./xdmObject/helpers/schemaSelection/getInitialFormStateUsingAsyncErrorReporting";
@@ -211,6 +210,7 @@ const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
               ? "Please select a sandbox."
               : null
           }
+          initInfo={initInfo}
         />
         {selectedSandbox ? (
           <SchemaMetaSelector
@@ -222,6 +222,7 @@ const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
                 ? "Please select a schema."
                 : null
             }
+            initInfo={initInfo}
           />
         ) : null}
       </FormElementContainer>
@@ -239,14 +240,8 @@ XdmObject.propTypes = {
 const XdmExtensionView = () => {
   return (
     <ExtensionView
-      render={() => {
-        return (
-          <ExtensionViewForm
-            render={props => {
-              return <XdmObject {...props} />;
-            }}
-          />
-        );
+      render={props => {
+        return <XdmObject {...props} />;
       }}
     />
   );

@@ -15,8 +15,10 @@ import PropTypes from "prop-types";
 
 import { useFormik, FormikProvider } from "formik";
 import { object } from "yup";
+import { ProgressCircle } from "@adobe/react-spectrum";
 import useExtensionBridge from "../utils/useExtensionBridge";
 import useReportAsyncError from "../utils/useReportAsyncError";
+import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 
 // This component wires up Launch's extension bridge, and creates the
 // ExtensionViewContext. It should be used for each view inside an extension.
@@ -133,17 +135,21 @@ const ExtensionView = ({
     }, []);
   }
   if (getInitialValues) {
-    useEffect(() => {
+    useEffect(async () => {
       if (initInfo) {
         formikPropsRef.current.resetForm({
-          values: getInitialValues({ initInfo })
+          values: await getInitialValues({ initInfo })
         });
       }
     }, [initInfo]);
 
-    // TODO: show spinner in this case
+    // Show the spinner if getInitialValues is not done
     if (!formikPropsRef.current.values) {
-      return null;
+      return (
+        <FillParentAndCenterChildren>
+          <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
+        </FillParentAndCenterChildren>
+      );
     }
   }
 

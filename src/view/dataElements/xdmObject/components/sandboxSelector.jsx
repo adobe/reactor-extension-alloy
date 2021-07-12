@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useAsyncList } from "@react-stately/data";
 import { Item, Picker } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
@@ -17,7 +17,6 @@ import fetchSandboxes from "../helpers/fetchSandboxes";
 import FieldDescriptionAndError from "../../../components/fieldDescriptionAndError";
 import useReportAsyncError from "../../../utils/useReportAsyncError";
 import useIsFirstRender from "../../../utils/useIsFirstRender";
-import ExtensionViewContext from "../../../components/extensionViewContext";
 import UserReportableError from "../../../errors/userReportableError";
 
 const getKey = sandbox => sandbox && sandbox.name;
@@ -32,14 +31,13 @@ const getLabel = sandbox => {
 const SandboxSelector = ({
   defaultSelectedSandbox,
   onSelectionChange,
-  errorMessage
+  errorMessage,
+  initInfo
 }) => {
   const {
-    initInfo: {
-      company: { orgId },
-      tokens: { imsAccess }
-    }
-  } = useContext(ExtensionViewContext);
+    company: { orgId },
+    tokens: { imsAccess }
+  } = initInfo;
   const reportAsyncError = useReportAsyncError();
   const isFirstRender = useIsFirstRender();
 
@@ -124,7 +122,8 @@ const SandboxSelector = ({
 SandboxSelector.propTypes = {
   defaultSelectedSandbox: PropTypes.object,
   onSelectionChange: PropTypes.func.isRequired,
-  errorMessage: PropTypes.string
+  errorMessage: PropTypes.string,
+  initInfo: PropTypes.object
 };
 
 export default SandboxSelector;
