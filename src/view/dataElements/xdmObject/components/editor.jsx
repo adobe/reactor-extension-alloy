@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
+import { Flex, View } from "@adobe/react-spectrum";
 import XdmTree from "./xdmTree";
 import NodeEdit from "./nodeEdit";
 import NoSelectedNodeView from "./noSelectedNodeView";
@@ -23,26 +24,29 @@ const Editor = ({
   previouslySavedSchemaInfo
 }) => {
   return (
-    <div data-test-id="editor" className="u-flex u-gapTop u-minHeight0">
-      <div className="XdmObject-treeContainer u-flexShrink0 u-overflowXAuto u-overflowYAuto">
+    <Flex
+      data-test-id="editor"
+      marginTop="size-100"
+      minHeight={0}
+      gap="size-200"
+    >
+      <View width="size-3600" flexShrink={0} overflow="auto">
         <XdmTree selectedNodeId={selectedNodeId} onSelect={setSelectedNodeId} />
+      </View>
+      <div>
+        {selectedNodeId ? (
+          <NodeEdit
+            onNodeSelect={setSelectedNodeId}
+            selectedNodeId={selectedNodeId}
+          />
+        ) : (
+          <NoSelectedNodeView
+            schema={schema}
+            previouslySavedSchemaInfo={previouslySavedSchemaInfo}
+          />
+        )}
       </div>
-      <div className="u-gapLeft2x">
-        <div>
-          {selectedNodeId ? (
-            <NodeEdit
-              onNodeSelect={setSelectedNodeId}
-              selectedNodeId={selectedNodeId}
-            />
-          ) : (
-            <NoSelectedNodeView
-              schema={schema}
-              previouslySavedSchemaInfo={previouslySavedSchemaInfo}
-            />
-          )}
-        </div>
-      </div>
-    </div>
+    </Flex>
   );
 };
 

@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { FieldArray, useField } from "formik";
-import { Radio, Button } from "@adobe/react-spectrum";
+import { Radio, Button, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import FormikRadioGroup from "../../../components/formikReactSpectrum3/formikRadioGroup";
 import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
@@ -58,13 +58,15 @@ const PartsPopulationStrategyForm = ({
     name={`${fieldName}.items`}
     render={arrayHelpers => {
       return (
-        <div>
+        <Flex
+          gap="size-200"
+          marginTop="size-200"
+          direction="column"
+          alignItems="start"
+        >
           {items.map((itemNode, index) => {
             return (
-              <div
-                key={`${fieldName}.${index}`}
-                className="u-gapTop u-flex u-alignItemsCenter"
-              >
+              <div key={`${fieldName}.${index}`}>
                 <Button
                   data-test-id={`item${index}SelectButton`}
                   isQuiet
@@ -107,11 +109,10 @@ const PartsPopulationStrategyForm = ({
               arrayHelpers.push(itemFormStateNode);
             }}
             variant="primary"
-            UNSAFE_className="u-gapTop2x"
           >
             Add Item
           </Button>
-        </div>
+        </Flex>
       );
     }}
   />

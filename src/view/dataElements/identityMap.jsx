@@ -24,7 +24,8 @@ import {
   Well,
   TabList,
   TabPanels,
-  Tabs
+  Tabs,
+  View
 } from "@adobe/react-spectrum";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import render from "../render";
@@ -268,21 +269,25 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                   {values.identities.map((identity, index) => {
                     return (
                       <Item key={index}>
-                        <div className="u-gapTop">
-                          <NamespaceComponent
-                            name={`identities.${index}.namespaceCode`}
-                            selectedNamespaceCode={identity.namespaceCode}
-                            namespaces={namespaces}
-                            index={index}
-                          />
-                        </div>
                         <FieldArray
                           id={`identities.${index}.identifiers`}
                           name={`identities.${index}.identifiers`}
                           render={identityArrayHelpers => {
                             return (
                               <React.Fragment>
-                                <div className="u-gapBottom u-alignRight">
+                                <Flex
+                                  marginTop="size-100"
+                                  alignItems="flex-end"
+                                  justifyContent="space-between"
+                                >
+                                  <NamespaceComponent
+                                    name={`identities.${index}.namespaceCode`}
+                                    selectedNamespaceCode={
+                                      identity.namespaceCode
+                                    }
+                                    namespaces={namespaces}
+                                    index={index}
+                                  />
                                   <Button
                                     data-test-id={`addIdentifier${index}Button`}
                                     variant="secondary"
@@ -294,7 +299,7 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                                   >
                                     Add Identifier
                                   </Button>
-                                </div>
+                                </Flex>
                                 {identity.identifiers.map(
                                   (identifier, identifierIndex) => (
                                     <Well
@@ -373,7 +378,7 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                           }}
                         />
                         {values.identities.length > 1 && (
-                          <div className="u-gapTop">
+                          <View marginTop="size-100">
                             <Button
                               data-test-id={`deleteIdentity${index}Button`}
                               variant="secondary"
@@ -385,7 +390,7 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                               <DeleteIcon />
                               Delete Identity
                             </Button>
-                          </div>
+                          </View>
                         )}
                       </Item>
                     );

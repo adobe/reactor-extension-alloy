@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import React, { useEffect } from "react";
 import { v4 as uuid } from "uuid";
 import PropTypes from "prop-types";
+import { View } from "@adobe/react-spectrum";
 import Alert from "../components/alert";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
@@ -56,9 +57,9 @@ const EventMergeId = ({ initInfo, formikProps, registerImperativeFormApi }) => {
         website leaves the current page or the event merge ID is reset using the
         Reset Event Merge ID action.
       </Alert>
-      <div className="EventMergeId-description u-gapTop2x">
+      <View marginTop="size-200" UNSAFE_className="EventMergeId-description">
         No configuration necessary.
-      </div>
+      </View>
     </FillParentAndCenterChildren>
   );
 };

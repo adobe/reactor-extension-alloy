@@ -136,7 +136,7 @@ const DecisionScopes = ({
               name="decisionScopesArray"
               render={arrayHelpers => {
                 return (
-                  <>
+                  <div>
                     {decisionScopesArray.map((scope, index) => {
                       return (
                         <Flex key={index} alignItems="end">
@@ -173,7 +173,7 @@ const DecisionScopes = ({
                     >
                       Add scope
                     </Button>
-                  </>
+                  </div>
                 );
               }}
             />
