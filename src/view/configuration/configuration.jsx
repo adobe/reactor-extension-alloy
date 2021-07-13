@@ -32,8 +32,8 @@ import {
   View
 } from "@adobe/react-spectrum";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
-import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionView";
+import render from "../render";
+import ExtensionView from "../components/extensionView";
 import ExtensionViewForm from "../components/extensionViewForm";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";

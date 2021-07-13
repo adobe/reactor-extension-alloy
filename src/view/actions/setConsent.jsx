@@ -16,8 +16,8 @@ import { FieldArray } from "formik";
 import { object, string, array, mixed } from "yup";
 import { Item, Radio, Button, Well, Text } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
-import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionView";
+import render from "../render";
+import ExtensionView from "../components/extensionView";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import RadioGroupWithDataElement, {

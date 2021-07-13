@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link } from "@adobe/react-spectrum";
-import ErrorMessage from "./spectrum3ErrorMessage";
+import ErrorMessage from "./errorMessage";
 import UserReportableError from "../errors/userReportableError";
 
 export default class ErrorBoundary extends Component {

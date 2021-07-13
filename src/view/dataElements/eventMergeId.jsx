@@ -14,8 +14,8 @@ import React, { useEffect } from "react";
 import { v4 as uuid } from "uuid";
 import PropTypes from "prop-types";
 import Alert from "../components/alert";
-import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionView";
+import render from "../render";
+import ExtensionView from "../components/extensionView";
 import ExtensionViewForm from "../components/extensionViewForm";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 import "./eventMergeId.styl";
@@ -44,8 +44,12 @@ const EventMergeId = ({ initInfo, formikProps, registerImperativeFormApi }) => {
   }
 
   return (
-    <FillParentAndCenterChildren className="u-flexColumn">
-      <Alert variant="informative" title="Event Merge ID Caching">
+    <FillParentAndCenterChildren>
+      <Alert
+        variant="informative"
+        title="Event Merge ID Caching"
+        width="size-6000"
+      >
         This data element will provide an event merge ID. Regardless of what you
         choose for the data element storage duration in Launch, the value of
         this data element will remain the same until either the visitor to your
