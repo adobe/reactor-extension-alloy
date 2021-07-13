@@ -1,7 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Item } from "@adobe/react-spectrum";
-import { Picker, TextField } from "./formikReactSpectrum3";
+import FormikPicker from "./formikReactSpectrum3/formikPicker";
+import FormikTextField from "./formikReactSpectrum3/formikTextField";
 
 const getSelectedNamespace = (namespaces, selectedNamespaceCode) => {
   if (namespaces.length < 1) {
@@ -30,7 +31,7 @@ function NamespaceComponent({
     selectedNamespaceCode
   );
   return selectedNamespace ? (
-    <Picker
+    <FormikPicker
       data-test-id={`namespacePicker${index}Field`}
       label="Namespace"
       name={name}
@@ -39,9 +40,9 @@ function NamespaceComponent({
       isRequired
     >
       {namespace => <Item key={namespace.code}>{namespace.name}</Item>}
-    </Picker>
+    </FormikPicker>
   ) : (
-    <TextField
+    <FormikTextField
       data-test-id={`namespace${index}Field`}
       label="Namespace"
       name={name}

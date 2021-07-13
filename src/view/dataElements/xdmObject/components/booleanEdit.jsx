@@ -12,16 +12,11 @@ governing permissions and limitations under the License.
 
 import { useField } from "formik";
 import React, { useEffect, useState } from "react";
-import {
-  Radio,
-  RadioGroup as ReactSpectrumRadioGroup
-} from "@adobe/react-spectrum";
+import { Radio, RadioGroup } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import FormElementContainer from "../../../components/formElementContainer";
-import {
-  TextField,
-  RadioGroup as FormikRadioGroup
-} from "../../../components/formikReactSpectrum3";
+import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
+import FormikRadioGroup from "../../../components/formikReactSpectrum3/formikRadioGroup";
 import DataElementSelector from "../../../components/dataElementSelector";
 
 const inputMethods = {
@@ -56,7 +51,7 @@ const BooleanEdit = props => {
 
   return (
     <FormElementContainer>
-      <ReactSpectrumRadioGroup
+      <RadioGroup
         label="Input Method"
         orientation="horizontal"
         value={inputMethod}
@@ -77,7 +72,7 @@ const BooleanEdit = props => {
         >
           Select Value
         </Radio>
-      </ReactSpectrumRadioGroup>
+      </RadioGroup>
       {inputMethod === inputMethods.CONSTANT ? (
         <FormikRadioGroup
           label="Value"
@@ -96,7 +91,7 @@ const BooleanEdit = props => {
         </FormikRadioGroup>
       ) : (
         <DataElementSelector>
-          <TextField
+          <FormikTextField
             data-test-id="dataElementValueField"
             label="Value"
             name={valueFieldName}

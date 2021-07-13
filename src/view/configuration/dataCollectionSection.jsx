@@ -13,21 +13,14 @@ governing permissions and limitations under the License.
 import React from "react";
 import { useField, useFormikContext } from "formik";
 import { object, string } from "yup";
-import {
-  ActionButton,
-  Checkbox as ReactSpectrumCheckbox,
-  Flex,
-  Radio
-} from "@adobe/react-spectrum";
+import { ActionButton, Checkbox, Flex, Radio } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import SectionHeader from "../components/sectionHeader";
 import CodeField from "../components/codeField";
-import {
-  Checkbox,
-  CheckboxGroup,
-  RadioGroup,
-  TextField
-} from "../components/formikReactSpectrum3";
+import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
+import FormikCheckboxGroup from "../components/formikReactSpectrum3/formikCheckboxGroup";
+import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FieldSubset from "../components/fieldSubset";
 import RestoreDefaultValueButton from "../components/restoreDefaultValueButton";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
@@ -117,7 +110,7 @@ export const bridge = {
     downloadLinkQualifier: string().when("clickCollectionEnabled", {
       is: true,
       then: string()
-        .required("Please provide a regular expression.")
+        .min(1)
         .test({
           name: "invalidDownloadLinkQualifier",
           message: "Please provide a valid regular expression.",
@@ -146,8 +139,8 @@ const DataCollectionSection = ({ instanceFieldName }) => {
       <FormElementContainer>
         <CodeField
           data-test-id="onBeforeEventSendEditButton"
-          label="On Before Event Send Callback"
-          buttonLabelSuffix="On Before Event Send Callback Code"
+          label="onBeforeEventSend"
+          buttonLabelSuffix="onBeforeEventSend Code"
           name={`${instanceFieldName}.onBeforeEventSend`}
           description='Callback function for modifying data before each event is sent to the server. A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'
           language="javascript"
@@ -156,18 +149,18 @@ const DataCollectionSection = ({ instanceFieldName }) => {
           }
         />
         <div>
-          <Checkbox
+          <FormikCheckbox
             data-test-id="clickCollectionEnabledField"
             name={`${instanceFieldName}.clickCollectionEnabled`}
             description="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected."
             width="size-5000"
           >
             Enable click data collection
-          </Checkbox>
+          </FormikCheckbox>
           {instanceValues.clickCollectionEnabled && (
             <FieldSubset>
               <Flex gap="size-100">
-                <TextField
+                <FormikTextField
                   data-test-id="downloadLinkQualifierField"
                   label="Download Link Qualifier"
                   name={`${instanceFieldName}.downloadLinkQualifier`}
@@ -203,7 +196,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
           )}
         </div>
         <div>
-          <RadioGroup
+          <FormikRadioGroup
             label="When sending event data, automatically include:"
             name={`${instanceFieldName}.contextGranularity`}
           >
@@ -219,27 +212,27 @@ const DataCollectionSection = ({ instanceFieldName }) => {
             >
               Specific context information
             </Radio>
-          </RadioGroup>
+          </FormikRadioGroup>
 
           {instanceValues.contextGranularity ===
             CONTEXT_GRANULARITY.SPECIFIC && (
             <FieldSubset>
-              <CheckboxGroup
+              <FormikCheckboxGroup
                 aria-label="Context Data Categories"
                 name={`${instanceFieldName}.context`}
               >
                 {contextOptions.map(contextOption => {
                   return (
-                    <ReactSpectrumCheckbox
+                    <Checkbox
                       key={contextOption.value}
                       data-test-id={contextOption.testId}
                       value={contextOption.value}
                     >
                       {contextOption.label}
-                    </ReactSpectrumCheckbox>
+                    </Checkbox>
                   );
                 })}
-              </CheckboxGroup>
+              </FormikCheckboxGroup>
             </FieldSubset>
           )}
         </div>

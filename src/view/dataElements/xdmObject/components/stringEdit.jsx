@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { TextField } from "../../../components/formikReactSpectrum3";
+import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
 import DataElementSelector from "../../../components/dataElementSelector";
 
 /**
@@ -24,7 +24,7 @@ const StringEdit = props => {
   return (
     <div>
       <DataElementSelector>
-        <TextField
+        <FormikTextField
           data-test-id="valueField"
           name={`${fieldName}.value`}
           label="Value"

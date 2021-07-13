@@ -10,39 +10,65 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
+import React, { createRef } from "react";
 import PropTypes from "prop-types";
-import { ComboBox as ReactSpectrumComboBox } from "@react-spectrum/combobox";
+import { RadioGroup } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const ComboBox = ({ name, description, width, ...otherProps }) => {
+const FormikRadioGroup = ({
+  name,
+  children,
+  description,
+  width,
+  ...otherProps
+}) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
   );
+  const radioGroupRef = createRef();
+  // Not entirely sure this is the right approach, but there's
+  // no onBlur prop for RadioGroup, so we wire up Formik's
+  // onBlur to every radio.
+  const childrenWithOnBlur = React.Children.map(children, child => {
+    return React.cloneElement(child, {
+      onBlur: event => {
+        // If the target that will receive focus is not a child of the
+        // radio group, we know the radio group has lost focus.
+        if (
+          !radioGroupRef.current
+            .UNSAFE_getDOMNode()
+            .contains(event.relatedTarget)
+        ) {
+          setTouched(true);
+        }
+      }
+    });
+  });
   return (
     <FieldDescriptionAndError
       description={description}
       error={touched && error ? error : undefined}
     >
-      <ReactSpectrumComboBox
+      <RadioGroup
         {...otherProps}
-        inputValue={value}
-        onInputChange={setValue}
-        onBlur={() => {
-          setTouched(true);
-        }}
+        ref={radioGroupRef}
+        value={value}
+        onChange={setValue}
         validationState={touched && error ? "invalid" : undefined}
         width={width}
-      />
+      >
+        {childrenWithOnBlur}
+      </RadioGroup>
     </FieldDescriptionAndError>
   );
 };
 
-ComboBox.propTypes = {
+FormikRadioGroup.propTypes = {
   name: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
   description: PropTypes.string,
   width: PropTypes.string
 };
 
-export default ComboBox;
+export default FormikRadioGroup;

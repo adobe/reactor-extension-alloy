@@ -12,11 +12,7 @@ governing permissions and limitations under the License.
 
 import React, { createRef } from "react";
 import PropTypes from "prop-types";
-import {
-  RadioGroup as ReactSpectrumRadioGroup,
-  Radio as ReactSpectrumRadio,
-  TextField as ReactTextField
-} from "@adobe/react-spectrum";
+import { RadioGroup, Radio, TextField } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import { string } from "yup";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
@@ -65,7 +61,7 @@ const RadioGroupWithDataElement = ({
   };
 
   // Not entirely sure this is the right approach, but there's
-  // no onBlur prop for RadioGroup, so we wire up React Hook Form's
+  // no onBlur prop for RadioGroup, so we wire up Formik's
   // onBlur to every radio.
   const childrenWithOnBlur = React.Children.map(children, child => {
     return React.cloneElement(child, {
@@ -108,7 +104,7 @@ const RadioGroupWithDataElement = ({
 
   return (
     <div>
-      <ReactSpectrumRadioGroup
+      <RadioGroup
         {...otherProps}
         ref={radioGroupRef}
         value={radioValue}
@@ -117,14 +113,14 @@ const RadioGroupWithDataElement = ({
         }}
       >
         {childrenWithOnBlur}
-        <ReactSpectrumRadio
+        <Radio
           data-test-id={`${dataTestIdPrefix}DataElementRadio`}
           value="dataElement"
           onBlur={radioOnBlur}
         >
           Provide a data element
-        </ReactSpectrumRadio>
-      </ReactSpectrumRadioGroup>
+        </Radio>
+      </RadioGroup>
 
       {radioValue === "dataElement" && (
         <FieldSubset>
@@ -139,7 +135,7 @@ const RadioGroupWithDataElement = ({
               description={dataElementDescription}
               error={dataElementTouched && error ? error : undefined}
             >
-              <ReactTextField
+              <TextField
                 label="Data Element"
                 value={dataElementText}
                 data-test-id={`${dataTestIdPrefix}DataElementField`}

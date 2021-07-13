@@ -12,14 +12,14 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { TextField } from "../components/formikReactSpectrum3";
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import DataElementSelector from "../components/dataElementSelector";
 
 const EdgeConfigurationFreeformInputMethod = ({ name }) => {
   return (
     <>
       <DataElementSelector>
-        <TextField
+        <FormikTextField
           data-test-id="productionEnvironmentTextfield"
           label="Production Environment ID"
           name={`${name}.edgeConfigId`}
@@ -29,7 +29,7 @@ const EdgeConfigurationFreeformInputMethod = ({ name }) => {
         />
       </DataElementSelector>
       <DataElementSelector>
-        <TextField
+        <FormikTextField
           data-test-id="stagingEnvironmentTextfield"
           label="Staging Environment ID"
           name={`${name}.stagingEdgeConfigId`}
@@ -38,7 +38,7 @@ const EdgeConfigurationFreeformInputMethod = ({ name }) => {
         />
       </DataElementSelector>
       <DataElementSelector>
-        <TextField
+        <FormikTextField
           data-test-id="developmentEnvironmentTextfield"
           label="Development Environment ID"
           name={`${name}.developmentEdgeConfigId`}

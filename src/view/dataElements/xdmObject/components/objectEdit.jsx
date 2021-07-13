@@ -14,10 +14,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Radio } from "@adobe/react-spectrum";
 import { useField } from "formik";
-import {
-  RadioGroup,
-  TextField
-} from "../../../components/formikReactSpectrum3";
+import FormikRadioGroup from "../../../components/formikReactSpectrum3/formikRadioGroup";
+import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
 import DataElementSelector from "../../../components/dataElementSelector";
 import { PARTS, WHOLE } from "../constants/populationStrategy";
 
@@ -35,7 +33,7 @@ const ObjectEdit = ({ fieldName }) => {
   return (
     <div>
       {isPartsPopulationStrategySupported && (
-        <RadioGroup
+        <FormikRadioGroup
           label="Population Strategy"
           name={`${fieldName}.populationStrategy`}
           orientation="horizontal"
@@ -47,12 +45,12 @@ const ObjectEdit = ({ fieldName }) => {
           <Radio data-test-id="wholePopulationStrategyField" value={WHOLE}>
             Provide entire object
           </Radio>
-        </RadioGroup>
+        </FormikRadioGroup>
       )}
       {populationStrategy === WHOLE && (
         <div className="u-gapTop">
           <DataElementSelector>
-            <TextField
+            <FormikTextField
               data-test-id="valueField"
               name={`${fieldName}.value`}
               label="Data Element"

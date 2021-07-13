@@ -38,11 +38,9 @@ import NamespaceComponent from "../components/namespaceComponent";
 import getDefaultIdentifier from "./identityMap/utils/getDefaultIdentifier";
 import DataElementSelector from "../components/dataElementSelector";
 import FormElementContainer from "../components/formElementContainer";
-import {
-  Checkbox,
-  Picker,
-  TextField
-} from "../components/formikReactSpectrum3";
+import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
+import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import * as AUTHENTICATED_STATE from "./identityMap/constants/authenticatedState";
 
 const isNotECID = namespace => {
@@ -306,7 +304,7 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                                     >
                                       <FormElementContainer>
                                         <DataElementSelector>
-                                          <TextField
+                                          <FormikTextField
                                             data-test-id={`identity${index}idField${identifierIndex}`}
                                             label="ID"
                                             name={`identities.${index}.identifiers.${identifierIndex}.id`}
@@ -314,7 +312,7 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                                             width="size-5000"
                                           />
                                         </DataElementSelector>
-                                        <Picker
+                                        <FormikPicker
                                           data-test-id={`identity${index}authenticatedStateField${identifierIndex}`}
                                           label="Authenticated State"
                                           name={`identities.${index}.identifiers.${identifierIndex}.authenticatedState`}
@@ -342,14 +340,14 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                                               {item.label}
                                             </Item>
                                           )}
-                                        </Picker>
-                                        <Checkbox
+                                        </FormikPicker>
+                                        <FormikCheckbox
                                           data-test-id={`identity${index}primaryField${identifierIndex}`}
                                           name={`identities.${index}.identifiers.${identifierIndex}.primary`}
                                           description="Adobe Experience Platform will use the identity as an identifier to help stitch together more information about that individual. If left unchecked, the identifier within this namespace will still be collected, but the ECID will be used as the primary identifier for stitching."
                                         >
                                           Primary
-                                        </Checkbox>
+                                        </FormikCheckbox>
                                       </FormElementContainer>
                                       {values.identities[index].identifiers
                                         .length > 1 && (
