@@ -257,6 +257,7 @@ const Configuration = ({
                         <BasicSection instanceFieldName={instanceFieldName} />
                         <EdgeConfigurationsSection
                           instanceFieldName={instanceFieldName}
+                          instanceIndex={index}
                         />
                         <PrivacySection instanceFieldName={instanceFieldName} />
                         <IdentitySection

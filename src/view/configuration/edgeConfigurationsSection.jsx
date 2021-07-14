@@ -241,6 +241,11 @@ export const bridge = {
     }
 
     if (!isSuccessfullyPopulatedForSelectInputMethod) {
+      // We only display the edge configuration selection components on the first instance, which
+      // might make this seem unnecessary for subsequent instances. However, it's possible for
+      // the user to delete their first instance, which would make their second instance become
+      // their first instance, which would cause the selection components to be displayable for that
+      // instance. We want the state to be ready for this case.
       instanceValues.edgeConfigSelectInputMethod = await getSelectInputMethodStateForNewInstance(
         {
           orgId,
@@ -347,7 +352,7 @@ export const bridge = {
     })
 };
 
-const EdgeConfigurationsSection = ({ instanceFieldName }) => {
+const EdgeConfigurationsSection = ({ instanceFieldName, instanceIndex }) => {
   const [{ value: inputMethod }] = useField(
     `${instanceFieldName}.edgeConfigInputMethod`
   );
@@ -358,24 +363,33 @@ const EdgeConfigurationsSection = ({ instanceFieldName }) => {
         Datastreams
       </SectionHeader>
       <FormElementContainer>
-        <RadioGroup
-          label="Input Method"
-          name={`${instanceFieldName}.edgeConfigInputMethod`}
-          orientation="horizontal"
-        >
-          <Radio
-            data-test-id="edgeConfigInputMethodSelectRadio"
-            value={INPUT_METHOD.SELECT}
+        {// Each instance must have a unique org ID. Typically, the first instance will have
+        // the org ID that matches the Launch user's active org ID.
+        // The Launch user's active org is that only org we can retrieve edge configurations
+        // for via an API, so presenting edge configurations for the active org on an
+        // instance configured for a different org would most likely confuse the user.
+        // To prevent this confusion, we'll hide the radios on all but the first instance.
+        instanceIndex === 0 && (
+          <RadioGroup
+            label="Input Method"
+            name={`${instanceFieldName}.edgeConfigInputMethod`}
+            orientation="horizontal"
           >
-            Choose from list
-          </Radio>
-          <Radio
-            data-test-id="edgeConfigInputMethodFreeformRadio"
-            value={INPUT_METHOD.FREEFORM}
-          >
-            Enter values
-          </Radio>
-        </RadioGroup>
+            <Radio
+              data-test-id="edgeConfigInputMethodSelectRadio"
+              value={INPUT_METHOD.SELECT}
+            >
+              Choose from list
+            </Radio>
+            <Radio
+              data-test-id="edgeConfigInputMethodFreeformRadio"
+              value={INPUT_METHOD.FREEFORM}
+            >
+              Enter values
+            </Radio>
+          </RadioGroup>
+        )}
+
         {inputMethod === INPUT_METHOD.SELECT ? (
           <EdgeConfigurationSelectInputMethod
             name={`${instanceFieldName}.edgeConfigSelectInputMethod`}
@@ -391,7 +405,8 @@ const EdgeConfigurationsSection = ({ instanceFieldName }) => {
 };
 
 EdgeConfigurationsSection.propTypes = {
-  instanceFieldName: PropTypes.string.isRequired
+  instanceFieldName: PropTypes.string.isRequired,
+  instanceIndex: PropTypes.number.isRequired
 };
 
 export default EdgeConfigurationsSection;

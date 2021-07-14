@@ -100,8 +100,8 @@ test("initializes form fields with full settings", async () => {
   await instancesTabs.selectTab("alloy2");
 
   await instances[1].nameField.expectValue("alloy2");
-  await instances[1].edgeConfig.inputMethodSelectRadio.expectUnchecked();
-  await instances[1].edgeConfig.inputMethodFreeformRadio.expectChecked();
+  await instances[1].edgeConfig.inputMethodSelectRadio.expectNotExists();
+  await instances[1].edgeConfig.inputMethodFreeformRadio.expectNotExists();
   await instances[1].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
     "PR456"
   );
