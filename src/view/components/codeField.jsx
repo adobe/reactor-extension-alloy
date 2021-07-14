@@ -12,14 +12,13 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import { useField } from "formik";
-import "./codeField.styl";
 import PropTypes from "prop-types";
 import CodePreview from "./codePreview";
 
 /**
  * A button that, when clicked, opens the Launch code editor
  * which allows the user to edit code. When the user
- * closes the editor, this call onChange with the updated
+ * closes the editor, this calls onChange with the updated
  * code.
  */
 const CodeField = ({

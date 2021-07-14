@@ -38,13 +38,13 @@ const CodePreview = ({
           label={label}
           value={value}
           isDisabled
-          UNSAFE_className="CodeField-textArea"
+          UNSAFE_className="CodePreview-textArea"
         />
       </FieldDescriptionAndError>
       <ActionButton
         data-test-id={dataTestId}
         onPress={onPress}
-        UNSAFE_className="CodeField-openEditorButton"
+        UNSAFE_className="CodePreview-openEditorButton"
       >
         <CodeIcon />
         <Text>{buttonLabel}</Text>
