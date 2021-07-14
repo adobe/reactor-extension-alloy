@@ -34,7 +34,7 @@ import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
 
 const FORM = { value: "form", label: "Fill out a form" };
-const DATA_ELEMENT = { value: "dataElement", label: "Use a data element" };
+const DATA_ELEMENT = { value: "dataElement", label: "Provide a data element" };
 const ADOBE = { value: "adobe", label: "Adobe" };
 const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
 const VERSION_1_0 = { value: "1.0", label: "1.0" };
