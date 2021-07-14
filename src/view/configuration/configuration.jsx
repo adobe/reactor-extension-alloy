@@ -58,18 +58,36 @@ import AdvancedSection, {
 } from "./advancedSection";
 import useReportAsyncError from "../utils/useReportAsyncError";
 
-const getInstanceDefaults = async ({ initInfo, isFirstInstance }) => ({
-  ...basicSectionBridge.getInstanceDefaults({ initInfo }),
-  ...(await edgeConfigurationsSectionBridge.getInstanceDefaults({
-    initInfo,
-    isFirstInstance
-  })),
-  ...privacySectionBridge.getInstanceDefaults(),
-  ...identitySectionBridge.getInstanceDefaults({ initInfo }),
-  ...personalizationSectionBridge.getInstanceDefaults({ initInfo }),
-  ...dataCollectionSectionBridge.getInstanceDefaults({ initInfo }),
-  ...advancedSectionBridge.getInstanceDefaults({ initInfo })
-});
+const sectionBridges = [
+  basicSectionBridge,
+  edgeConfigurationsSectionBridge,
+  privacySectionBridge,
+  identitySectionBridge,
+  personalizationSectionBridge,
+  dataCollectionSectionBridge,
+  advancedSectionBridge
+];
+
+/**
+ * Produces a function that, when called, calls the method from
+ * all section bridges and merges the result into a single object.
+ */
+const getMergedBridgeMethod = methodName => {
+  return async params => {
+    const bridgeMethodResults = await Promise.all(
+      sectionBridges.map(bridge => {
+        return bridge[methodName] ? bridge[methodName](params) : {};
+      })
+    );
+    return Object.assign(...bridgeMethodResults);
+  };
+};
+
+const getInstanceDefaults = getMergedBridgeMethod("getInstanceDefaults");
+const getInitialInstanceValues = getMergedBridgeMethod(
+  "getInitialInstanceValues"
+);
+const getInstanceSettings = getMergedBridgeMethod("getInstanceSettings");
 
 const getInitialValues = async ({ initInfo }) => {
   const { instances: instancesSettings } = initInfo.settings || {};
@@ -79,33 +97,11 @@ const getInitialValues = async ({ initInfo }) => {
   if (instancesSettings) {
     instancesInitialValues = await Promise.all(
       instancesSettings.map(async (instanceSettings, instanceSettingsIndex) => {
-        const instanceValues = {
-          ...basicSectionBridge.getInitialInstanceValues({
-            initInfo,
-            instanceSettings
-          }),
-          ...(await edgeConfigurationsSectionBridge.getInitialInstanceValues({
-            initInfo,
-            isFirstInstance: instanceSettingsIndex === 0,
-            instanceSettings
-          })),
-          ...privacySectionBridge.getInitialInstanceValues({
-            instanceSettings
-          }),
-          ...identitySectionBridge.getInitialInstanceValues({
-            instanceSettings
-          }),
-          ...personalizationSectionBridge.getInitialInstanceValues({
-            instanceSettings
-          }),
-          ...dataCollectionSectionBridge.getInitialInstanceValues({
-            instanceSettings
-          }),
-          ...advancedSectionBridge.getInitialInstanceValues({
-            instanceSettings
-          })
-        };
-        return instanceValues;
+        return getInitialInstanceValues({
+          initInfo,
+          isFirstInstance: instanceSettingsIndex === 0,
+          instanceSettings
+        });
       })
     );
   } else {
@@ -119,47 +115,26 @@ const getInitialValues = async ({ initInfo }) => {
   };
 };
 
-const getSettings = ({ values, initInfo }) => {
+const getSettings = async ({ values, initInfo }) => {
   return {
-    instances: values.instances.map(instanceValues => {
-      const instanceSettings = {
-        ...basicSectionBridge.getInstanceSettings({
+    instances: await Promise.all(
+      values.instances.map(instanceValues => {
+        return getInstanceSettings({
           initInfo,
           instanceValues
-        }),
-        ...edgeConfigurationsSectionBridge.getInstanceSettings({
-          instanceValues
-        }),
-        ...privacySectionBridge.getInstanceSettings({
-          instanceValues
-        }),
-        ...identitySectionBridge.getInstanceSettings({
-          instanceValues
-        }),
-        ...personalizationSectionBridge.getInstanceSettings({
-          instanceValues
-        }),
-        ...dataCollectionSectionBridge.getInstanceSettings({
-          instanceValues
-        }),
-        ...advancedSectionBridge.getInstanceSettings({
-          instanceValues
-        })
-      };
-
-      return instanceSettings;
-    })
+        });
+      })
+    )
   };
 };
 
 const validationSchema = object().shape({
   instances: array().of(
-    object()
-      .concat(basicSectionBridge.instanceValidationSchema)
-      .concat(privacySectionBridge.instanceValidationSchema)
-      .concat(dataCollectionSectionBridge.instanceValidationSchema)
-      .concat(edgeConfigurationsSectionBridge.instanceValidationSchema)
-      .concat(advancedSectionBridge.instanceValidationSchema)
+    sectionBridges.reduce((instanceSchema, bridge) => {
+      return bridge.instanceValidationSchema
+        ? instanceSchema.concat(bridge.instanceValidationSchema)
+        : instanceSchema;
+    }, object())
   )
 });
 

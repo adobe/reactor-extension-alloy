@@ -26,10 +26,13 @@ const ExtensionView = ({ render }) => {
     init({ initInfo: _initInfo }) {
       setInitInfo(_initInfo);
     },
-    getSettings() {
-      return registeredGetSettingsRef.current.reduce((memo, getSettings) => {
-        return Object.assign(memo, getSettings());
-      }, {});
+    async getSettings() {
+      const allSettings = await Promise.all(
+        registeredGetSettingsRef.current.map(getSettings => {
+          return getSettings();
+        })
+      );
+      return Object.assign(...allSettings);
     },
     validate() {
       if (!registeredValidateRef.current.length) {
