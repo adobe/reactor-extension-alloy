@@ -38,7 +38,6 @@ const RadioGroupWithDataElement = ({
   name,
   children,
   dataElementDescription,
-  width,
   dataTestIdPrefix = name,
   ...otherProps
 }) => {
@@ -116,7 +115,6 @@ const RadioGroupWithDataElement = ({
         onChange={newValue => {
           setValues(newValue, dataElementText);
         }}
-        width={width}
       >
         {childrenWithOnBlur}
         <ReactSpectrumRadio
@@ -124,13 +122,14 @@ const RadioGroupWithDataElement = ({
           value="dataElement"
           onBlur={radioOnBlur}
         >
-          Use a data element
+          Provide a data element
         </ReactSpectrumRadio>
       </ReactSpectrumRadioGroup>
 
       {radioValue === "dataElement" && (
         <FieldSubset>
           <RawDataElementSelector
+            adjustForLabel
             onChange={newValue => {
               setValues("dataElement", newValue);
               dataElementSetTouched(true);
@@ -141,7 +140,7 @@ const RadioGroupWithDataElement = ({
               error={dataElementTouched && error ? error : undefined}
             >
               <ReactTextField
-                aria-label="Data Element"
+                label="Data Element"
                 value={dataElementText}
                 data-test-id={`${dataTestIdPrefix}DataElementField`}
                 onChange={newValue => setValues("dataElement", newValue)}
@@ -149,7 +148,8 @@ const RadioGroupWithDataElement = ({
                 validationState={
                   dataElementTouched && error ? "invalid" : undefined
                 }
-                width={width}
+                width="size-5000"
+                isRequired
               />
             </FieldDescriptionAndError>
           </RawDataElementSelector>

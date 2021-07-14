@@ -34,7 +34,6 @@ const EdgeConfigurationFreeformInputMethod = ({ name }) => {
           label="Staging Environment ID"
           name={`${name}.stagingEdgeConfigId`}
           description="This datastream environment will be used when the Launch library is in a staging environment."
-          isRequired
           width="size-5000"
         />
       </DataElementSelector>
@@ -44,7 +43,6 @@ const EdgeConfigurationFreeformInputMethod = ({ name }) => {
           label="Development Environment ID"
           name={`${name}.developmentEdgeConfigId`}
           description="This datastream environment will be used when the Launch library is in a development environment."
-          isRequired
           width="size-5000"
         />
       </DataElementSelector>

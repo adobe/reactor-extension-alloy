@@ -31,6 +31,7 @@ const EnvironmentsSelector = ({
           type="production"
           edgeConfigId={edgeConfig.id}
           isDisabled={firstPageOfEachEnvironmentType.production.length === 1}
+          isRequired
         />
       ) : (
         <Alert

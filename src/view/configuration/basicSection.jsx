@@ -131,6 +131,7 @@ const BasicSection = ({ instanceFieldName }) => {
           label="Name"
           name={`${instanceFieldName}.name`}
           description="A global method on the window object will be created with this name."
+          isRequired
           width="size-5000"
         />
       </DataElementSelector>
@@ -155,6 +156,7 @@ const BasicSection = ({ instanceFieldName }) => {
             label="IMS Organization ID"
             name={`${instanceFieldName}.orgId`}
             description="Your assigned Experience Cloud organization ID."
+            isRequired
             width="size-5000"
           />
         </DataElementSelector>
@@ -174,6 +176,7 @@ const BasicSection = ({ instanceFieldName }) => {
                         Adobe Services. Update this setting if you have
                         mapped one of your first party domains (using
                         CNAME) to an Adobe provisioned domain."
+            isRequired
             width="size-5000"
           />
         </DataElementSelector>

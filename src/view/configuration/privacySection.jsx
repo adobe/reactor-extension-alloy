@@ -77,22 +77,24 @@ const PrivacySection = ({ instanceFieldName }) => {
           dataElementDescription={
             'This data element should resolve to "in", "out", or "pending".'
           }
-          width="size-5000"
         >
           <Radio data-test-id="defaultConsentInRadio" value={CONSENT_LEVEL.IN}>
-            In
+            In - Collect events that occur before the user provides consent
+            preferences.
           </Radio>
           <Radio
             data-test-id="defaultConsentOutRadio"
             value={CONSENT_LEVEL.OUT}
           >
-            Out
+            Out - Drop events that occur before the user provides consent
+            preferences.
           </Radio>
           <Radio
             data-test-id="defaultConsentPendingRadio"
             value={CONSENT_LEVEL.PENDING}
           >
-            Pending
+            Pending - Queue events that occur before the user provides consent
+            preferences.
           </Radio>
         </RadioGroupWithDataElement>
       </FormElementContainer>

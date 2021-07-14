@@ -10,38 +10,30 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { ActionButton } from "@adobe/react-spectrum";
 import React from "react";
-import { useField } from "formik";
 import PropTypes from "prop-types";
+import { Item } from "@adobe/react-spectrum";
+import getInstanceOptions from "../utils/getInstanceOptions";
+import { Picker } from "./formikReactSpectrum3";
 
-const RestoreDefaultValueButton = ({
-  "data-test-id": dataTestId,
-  name,
-  defaultValue,
-  fieldHasLabel = true,
-  ...otherProps
-}) => {
-  const [, , { setValue }] = useField(name);
+const InstanceNamePicker = ({ "data-test-id": dataTestId, name, initInfo }) => {
   return (
-    <ActionButton
-      {...otherProps}
+    <Picker
       data-test-id={dataTestId}
-      onPress={() => {
-        setValue(defaultValue, true);
-      }}
-      marginTop={fieldHasLabel ? "size-300" : undefined}
+      name={name}
+      label="Instance"
+      items={getInstanceOptions(initInfo)}
+      width="size-5000"
     >
-      Restore default
-    </ActionButton>
+      {item => <Item key={item.value}>{item.label}</Item>}
+    </Picker>
   );
 };
 
-RestoreDefaultValueButton.propTypes = {
+InstanceNamePicker.propTypes = {
   "data-test-id": PropTypes.string,
   name: PropTypes.string.isRequired,
-  defaultValue: PropTypes.string.isRequired,
-  fieldHasLabel: PropTypes.bool
+  initInfo: PropTypes.object.isRequired
 };
 
-export default RestoreDefaultValueButton;
+export default InstanceNamePicker;

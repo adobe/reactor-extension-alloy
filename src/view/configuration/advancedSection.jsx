@@ -69,6 +69,7 @@ const AdvancedSection = ({ instanceFieldName }) => {
               name={`${instanceFieldName}.edgeBasePath`}
               description="Specifies the base path of the endpoint used to interact with Adobe Services. This setting should only be changed if you are not intending to use the default production environment."
               width="size-5000"
+              isRequired
             />
           </DataElementSelector>
           <RestoreDefaultValueButton

@@ -18,7 +18,6 @@ import { Item, Radio, Button, Well, Text } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import render from "../spectrum3Render";
 import ExtensionView from "../components/spectrum3ExtensionView";
-import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import RadioGroupWithDataElement, {
@@ -32,6 +31,7 @@ import {
 } from "../components/formikReactSpectrum3";
 import DataElementSelector from "../components/dataElementSelector";
 import FormElementContainer from "../components/formElementContainer";
+import InstanceNamePicker from "../components/instanceNamePicker";
 
 const FORM = { value: "form", label: "Fill out a form" };
 const DATA_ELEMENT = { value: "dataElement", label: "Use a data element" };
@@ -223,7 +223,6 @@ const ConsentObject = ({ value, index }) => {
         description="The consent standard for this consent object"
         items={[ADOBE, IAB_TCF]}
         width="size-5000"
-        isRequired
       >
         {item => <Item key={item.value}>{item.label}</Item>}
       </Picker>
@@ -235,7 +234,6 @@ const ConsentObject = ({ value, index }) => {
           description="The consent standard version for this consent object"
           items={[VERSION_1_0, VERSION_2_0]}
           width="size-5000"
-          isRequired
         >
           {item => <Item key={item.value}>{item.label}</Item>}
         </Picker>
@@ -249,7 +247,6 @@ const ConsentObject = ({ value, index }) => {
             dataElementDescription={
               'This data element should resolve to "in" or "out".'
             }
-            width="size-5000"
           >
             <Radio data-test-id="generalInRadio" value="in">
               In
@@ -297,7 +294,6 @@ const ConsentObject = ({ value, index }) => {
             name={`consent[${index}].gdprApplies`}
             label="Does GDPR apply to this consent value?"
             dataElementDescription="This data element should resolve to true or false."
-            width="size-5000"
           >
             <Radio data-test-id="gdprAppliesYesRadio" value>
               Yes
@@ -311,7 +307,6 @@ const ConsentObject = ({ value, index }) => {
             name={`consent[${index}].gdprContainsPersonalData`}
             label="Does the event data associated with this user contain personal data?"
             dataElementDescription="This data element should resolve to true or false."
-            width="size-5000"
           >
             <Radio data-test-id="gdprContainsPersonalDataYesRadio" value>
               Yes
@@ -349,16 +344,11 @@ const SetConsent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
 
   return (
     <FormElementContainer>
-      <Picker
+      <InstanceNamePicker
         data-test-id="instanceNamePicker"
         name="instanceName"
-        label="Instance"
-        items={getInstanceOptions(initInfo)}
-        width="size-5000"
-        isRequired
-      >
-        {item => <Item key={item.value}>{item.label}</Item>}
-      </Picker>
+        initInfo={initInfo}
+      />
       <DataElementSelector>
         <TextField
           data-test-id="identityMapField"
@@ -433,9 +423,10 @@ const SetConsent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
         <DataElementSelector>
           <TextField
             data-test-id="dataElementField"
+            label="Data Element"
             name="dataElement"
+            isRequired
             width="size-5000"
-            aria-label="Data Element"
           />
         </DataElementSelector>
       )}

@@ -117,7 +117,7 @@ export const bridge = {
     downloadLinkQualifier: string().when("clickCollectionEnabled", {
       is: true,
       then: string()
-        .min(1)
+        .required("Please provide a regular expression.")
         .test({
           name: "invalidDownloadLinkQualifier",
           message: "Please provide a valid regular expression.",
@@ -146,8 +146,8 @@ const DataCollectionSection = ({ instanceFieldName }) => {
       <FormElementContainer>
         <CodeField
           data-test-id="onBeforeEventSendEditButton"
-          label="onBeforeEventSend"
-          buttonLabelSuffix="onBeforeEventSend Code"
+          label="On Before Event Send Callback"
+          buttonLabelSuffix="On Before Event Send Callback Code"
           name={`${instanceFieldName}.onBeforeEventSend`}
           description='Callback function for modifying data before each event is sent to the server. A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'
           language="javascript"
@@ -155,51 +155,53 @@ const DataCollectionSection = ({ instanceFieldName }) => {
             '// Modify content.xdm or content.data as necessary. There is no need to wrap the\n// code in a function or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";'
           }
         />
-        <Checkbox
-          data-test-id="clickCollectionEnabledField"
-          name={`${instanceFieldName}.clickCollectionEnabled`}
-          description="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected."
-          width="size-5000"
-        >
-          Enable click data collection
-        </Checkbox>
-        {instanceValues.clickCollectionEnabled && (
-          <FieldSubset>
-            <Flex>
-              <TextField
-                data-test-id="downloadLinkQualifierField"
-                label="Download Link Qualifier"
-                name={`${instanceFieldName}.downloadLinkQualifier`}
-                description="Regular expression that qualifies a link URL as a download link."
-                width="size-5000"
-              />
-              <ActionButton
-                data-test-id="downloadLinkQualifierTestButton"
-                isQuiet
-                onPress={async () => {
-                  const currentPattern = instanceValues.downloadLinkQualifier;
-                  const newPattern = await window.extensionBridge.openRegexTester(
-                    {
-                      pattern: currentPattern
-                    }
-                  );
-                  setFieldValue(
-                    `${instanceFieldName}.downloadLinkQualifier`,
-                    newPattern
-                  );
-                }}
-                marginTop="size-300"
-              >
-                Test Regex
-              </ActionButton>
-              <RestoreDefaultValueButton
-                data-test-id="downloadLinkQualifierRestoreButton"
-                name={`${instanceFieldName}.downloadLinkQualifier`}
-                defaultValue={instanceDefaults.downloadLinkQualifier}
-              />
-            </Flex>
-          </FieldSubset>
-        )}
+        <div>
+          <Checkbox
+            data-test-id="clickCollectionEnabledField"
+            name={`${instanceFieldName}.clickCollectionEnabled`}
+            description="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected."
+            width="size-5000"
+          >
+            Enable click data collection
+          </Checkbox>
+          {instanceValues.clickCollectionEnabled && (
+            <FieldSubset>
+              <Flex gap="size-100">
+                <TextField
+                  data-test-id="downloadLinkQualifierField"
+                  label="Download Link Qualifier"
+                  name={`${instanceFieldName}.downloadLinkQualifier`}
+                  description="Regular expression that qualifies a link URL as a download link."
+                  width="size-5000"
+                  isRequired
+                />
+                <ActionButton
+                  data-test-id="downloadLinkQualifierTestButton"
+                  onPress={async () => {
+                    const currentPattern = instanceValues.downloadLinkQualifier;
+                    const newPattern = await window.extensionBridge.openRegexTester(
+                      {
+                        pattern: currentPattern
+                      }
+                    );
+                    setFieldValue(
+                      `${instanceFieldName}.downloadLinkQualifier`,
+                      newPattern
+                    );
+                  }}
+                  marginTop="size-300"
+                >
+                  Test Regex
+                </ActionButton>
+                <RestoreDefaultValueButton
+                  data-test-id="downloadLinkQualifierRestoreButton"
+                  name={`${instanceFieldName}.downloadLinkQualifier`}
+                  defaultValue={instanceDefaults.downloadLinkQualifier}
+                />
+              </Flex>
+            </FieldSubset>
+          )}
+        </div>
         <div>
           <RadioGroup
             label="When sending event data, automatically include:"

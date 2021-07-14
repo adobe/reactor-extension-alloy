@@ -35,7 +35,8 @@ const WholePopulationStrategyForm = ({ fieldName }) => (
     <TextField
       data-test-id="valueField"
       name={`${fieldName}.value`}
-      label="Data element providing array"
+      label="Data Element"
+      description="This data element should resolve to an array."
       width="size-5000"
     />
   </DataElementSelector>

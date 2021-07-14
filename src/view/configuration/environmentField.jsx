@@ -29,7 +29,8 @@ const EnvironmentField = ({
   description,
   type,
   edgeConfigId,
-  isDisabled
+  isDisabled,
+  isRequired
 }) => {
   const reportAsyncError = useReportAsyncError();
   const {
@@ -99,6 +100,7 @@ const EnvironmentField = ({
         onOpenChange={pagedComboBox.onOpenChange}
         onLoadMore={pagedComboBox.onLoadMore}
         isDisabled={isDisabled}
+        isRequired={isRequired}
         width="size-5000"
       >
         {environment => (
@@ -115,7 +117,8 @@ EnvironmentField.propTypes = {
   description: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   edgeConfigId: PropTypes.string.isRequired,
-  isDisabled: PropTypes.bool
+  isDisabled: PropTypes.bool,
+  isRequired: PropTypes.bool
 };
 
 export default EnvironmentField;
