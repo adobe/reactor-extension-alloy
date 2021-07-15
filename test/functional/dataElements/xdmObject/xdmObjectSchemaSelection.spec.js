@@ -11,13 +11,11 @@ governing permissions and limitations under the License.
 */
 
 import { Selector, t } from "testcafe";
-import * as platformMocks from "./helpers/platformMocks";
+import * as sandboxMocks from "../../helpers/endpointMocks/sandboxesMocks";
+import * as schemasMocks from "../../helpers/endpointMocks/schemasMocks";
+import * as schemaMocks from "../../helpers/endpointMocks/schemaMocks";
 import initializeExtensionView from "./helpers/initializeExtensionView";
 import spectrum from "../../helpers/spectrum3";
-import {
-  schemasMetaPagingMock,
-  schemasMetaPagingTitles
-} from "./helpers/platformMocks";
 import editor from "./helpers/editor";
 import createFixture from "../../helpers/createFixture";
 
@@ -35,7 +33,7 @@ createFixture({
   requiresAdobeIOIntegration: true
 });
 
-test.requestHooks(platformMocks.sandboxesUnauthorized)(
+test.requestHooks(sandboxMocks.unauthorized)(
   "displays error when access token is invalid",
   async () => {
     await initializeExtensionView();
@@ -45,7 +43,7 @@ test.requestHooks(platformMocks.sandboxesUnauthorized)(
   }
 );
 
-test.requestHooks(platformMocks.sandboxesUserRegionMissing)(
+test.requestHooks(sandboxMocks.userRegionMissing)(
   "displays error when org is not provisioned for AEP",
   async () => {
     await initializeExtensionView();
@@ -55,7 +53,7 @@ test.requestHooks(platformMocks.sandboxesUserRegionMissing)(
   }
 );
 
-test.requestHooks(platformMocks.sandboxesNonJsonBody)(
+test.requestHooks(sandboxMocks.nonJsonBody)(
   "displays error when response body is invalid JSON",
   async () => {
     await initializeExtensionView();
@@ -63,7 +61,7 @@ test.requestHooks(platformMocks.sandboxesNonJsonBody)(
   }
 );
 
-test.requestHooks(platformMocks.sandboxesEmpty, platformMocks.schemasMetaEmpty)(
+test.requestHooks(sandboxMocks.empty, schemasMocks.empty)(
   "displays error when the user has no access to any sandboxes",
   async () => {
     await initializeExtensionView();
@@ -73,10 +71,7 @@ test.requestHooks(platformMocks.sandboxesEmpty, platformMocks.schemasMetaEmpty)(
   }
 );
 
-test.requestHooks(
-  platformMocks.sandboxesSingleWithoutDefault,
-  platformMocks.schemasMetaEmpty
-)(
+test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.empty)(
   "auto-selects first sandbox if response contains a single sandbox not marked as default in Platform",
   async () => {
     await initializeExtensionView();
@@ -84,18 +79,15 @@ test.requestHooks(
   }
 );
 
-test.requestHooks(
-  platformMocks.sandboxesMultipleWithDefault,
-  platformMocks.schemasMetaEmpty
-)("auto-selects sandbox marked as default in Platform", async () => {
-  await initializeExtensionView();
-  await sandboxField.expectText("PRODUCTION Test Sandbox 2 (VA7)");
-});
+test.requestHooks(sandboxMocks.multipleWithDefault, schemasMocks.empty)(
+  "auto-selects sandbox marked as default in Platform",
+  async () => {
+    await initializeExtensionView();
+    await sandboxField.expectText("PRODUCTION Test Sandbox 2 (VA7)");
+  }
+);
 
-test.requestHooks(
-  platformMocks.sandboxesMultipleWithoutDefault,
-  platformMocks.schemasMetaEmpty
-)(
+test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.empty)(
   "does not auto-select sandbox if response contains multiple sandboxes, none of which are marked as default in Platform",
   async () => {
     await initializeExtensionView();
@@ -104,9 +96,9 @@ test.requestHooks(
 );
 
 test.requestHooks(
-  platformMocks.sandboxesMultipleWithoutDefault,
-  platformMocks.schema,
-  platformMocks.schemasMetaEmpty
+  sandboxMocks.multipleWithoutDefault,
+  schemaMocks.basic,
+  schemasMocks.empty
 )(
   "auto-selects corresponding sandbox when loading saved XDM object containing sandbox name in its settings",
   async () => {
@@ -127,9 +119,9 @@ test.requestHooks(
 );
 
 test.requestHooks(
-  platformMocks.sandboxesMultipleWithoutDefault,
-  platformMocks.schema,
-  platformMocks.schemasMetaMultiple
+  sandboxMocks.multipleWithoutDefault,
+  schemaMocks.basic,
+  schemasMocks.multiple
 )("resets schema selection when a different sandbox is selected", async () => {
   await initializeExtensionView({
     settings: {
@@ -151,9 +143,9 @@ test.requestHooks(
 });
 
 test.requestHooks(
-  platformMocks.sandboxesMultipleWithoutDefault,
-  platformMocks.schema,
-  platformMocks.schemasMetaEmpty
+  sandboxMocks.multipleWithoutDefault,
+  schemaMocks.basic,
+  schemasMocks.empty
 )(
   "displays error when loading saved XDM object containing sandbox name in its settings that doesn't match any returned sandboxes",
   async () => {
@@ -176,9 +168,9 @@ test.requestHooks(
 );
 
 test.requestHooks(
-  platformMocks.sandboxesMultipleWithoutDefault,
-  platformMocks.schema,
-  platformMocks.schemasMetaEmpty
+  sandboxMocks.multipleWithoutDefault,
+  schemaMocks.basic,
+  schemasMocks.empty
 )(
   "auto-selects prod sandbox when loading saved XDM object containing no sandbox name",
   async () => {
@@ -195,7 +187,7 @@ test.requestHooks(
   }
 );
 
-test.requestHooks(platformMocks.schemasMetaEmpty)(
+test.requestHooks(schemasMocks.empty)(
   "show no results in menu if there are no schemas in the sandbox",
   async () => {
     await initializeExtensionView();
@@ -244,18 +236,15 @@ test("attempts to load a schema that has been deleted", async () => {
 });
 
 test.requestHooks(
-  platformMocks.sandboxesSingleWithoutDefault,
-  platformMocks.schemasMetaSingle,
-  platformMocks.schema
+  sandboxMocks.singleWithoutDefault,
+  schemasMocks.single,
+  schemaMocks.basic
 )("auto-selects schema if the sandbox contains a single schema", async () => {
   await initializeExtensionView();
   await schemaField.expectText("Test Schema 1");
 });
 
-test.requestHooks(
-  platformMocks.sandboxesSingleWithoutDefault,
-  platformMocks.schemasMetaMultiple
-)(
+test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
   "does not auto-select schema if the sandbox contains multiple schemas",
   async () => {
     await initializeExtensionView();
@@ -264,9 +253,9 @@ test.requestHooks(
 );
 
 test.requestHooks(
-  platformMocks.sandboxesSingleWithoutDefault,
-  platformMocks.schema,
-  platformMocks.schemasMetaMultiple
+  sandboxMocks.singleWithoutDefault,
+  schemaMocks.basic,
+  schemasMocks.multiple
 )(
   "auto-selects schema when loading saved XDM object even when schema is not in the first page of schema metas loaded from server",
   async () => {
@@ -288,7 +277,7 @@ test.requestHooks(
   }
 );
 
-test.requestHooks(platformMocks.sandboxesMultipleWithoutDefault)(
+test.requestHooks(sandboxMocks.multipleWithoutDefault)(
   "show error when attempting to save with no sandbox selected",
   async () => {
     const extensionViewController = await initializeExtensionView();
@@ -299,21 +288,21 @@ test.requestHooks(platformMocks.sandboxesMultipleWithoutDefault)(
   }
 );
 
-test.requestHooks(
-  platformMocks.sandboxesSingleWithoutDefault,
-  platformMocks.schemasMetaMultiple
-)("show error when attempting to save with no schema selected", async () => {
-  const extensionViewController = await initializeExtensionView();
-  await extensionViewController.expectIsNotValid();
-  await t
-    .expect(Selector("div").withText("Please select a schema.").exists)
-    .ok("Error message doesn't exist.");
-});
+test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
+  "show error when attempting to save with no schema selected",
+  async () => {
+    const extensionViewController = await initializeExtensionView();
+    await extensionViewController.expectIsNotValid();
+    await t
+      .expect(Selector("div").withText("Please select a schema.").exists)
+      .ok("Error message doesn't exist.");
+  }
+);
 
 test.requestHooks(
-  platformMocks.sandboxesSingleWithoutDefault,
-  platformMocks.schema,
-  schemasMetaPagingMock
+  sandboxMocks.singleWithoutDefault,
+  schemaMocks.basic,
+  schemasMocks.paging
 )("provides a proper combobox experience", async () => {
   await initializeExtensionView();
 
@@ -323,11 +312,11 @@ test.requestHooks(
   // no good way of checking whether all the expected items are in the list,
   // because they're not all rendered in the DOM.
   await schemaField.enterSearch("e");
-  const matchingLabels = schemasMetaPagingTitles.filter(name =>
+  const matchingLabels = schemasMocks.pagingTitles.filter(name =>
     name.includes("e")
   );
   const lastMatchingItemLabel = matchingLabels[matchingLabels.length - 1];
-  const nonMatchingLabels = schemasMetaPagingTitles.filter(
+  const nonMatchingLabels = schemasMocks.pagingTitles.filter(
     name => !name.includes("e")
   );
   await schemaField.expectMenuOptionLabelsInclude(matchingLabels.slice(0, 3));
@@ -361,12 +350,12 @@ test.requestHooks(
 
   await schemaField.openMenu();
   await schemaField.expectMenuOptionLabelsInclude(
-    schemasMetaPagingTitles.slice(0, 3)
+    schemasMocks.pagingTitles.slice(0, 3)
   );
   await schemaField.scrollDownToItem(
-    schemasMetaPagingTitles[schemasMetaPagingTitles.length - 1]
+    schemasMocks.pagingTitles[schemasMocks.pagingTitles.length - 1]
   );
   await schemaField.expectMenuOptionLabelsInclude(
-    schemasMetaPagingTitles.slice(-3)
+    schemasMocks.pagingTitles.slice(-3)
   );
 });
