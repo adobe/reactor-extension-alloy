@@ -175,6 +175,7 @@ const createSelectMenuOption = menuSelector => async label => {
 const componentWrappers = {
   comboBox(selector) {
     return {
+      expectError: createExpectError(selector),
       // We use createExpectValue because the text is stored on a value attribute of
       // the element with our data-test-id, even though our true intention is to assert
       // the text in the textfield.
@@ -195,7 +196,10 @@ const componentWrappers = {
         popoverMenuSelector
       ),
       async enterSearch(text) {
-        await t.typeText(selector, text).pressKey("enter");
+        await t.typeText(selector, text);
+      },
+      async pressEnterKey() {
+        await t.pressKey("enter");
       },
       async clear() {
         await t.selectText(selector).pressKey("delete");
@@ -315,6 +319,12 @@ const componentWrappers = {
         await t.click(tabSelector.withExactText(label));
       }
     };
+  },
+  dialog() {
+    return {};
+  },
+  alert() {
+    return {};
   },
   // You can chain additional component methods after calling this method
   container(selector) {

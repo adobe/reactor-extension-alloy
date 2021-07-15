@@ -16,19 +16,18 @@ import { object, string } from "yup";
 import { Item } from "@adobe/react-spectrum";
 import {
   ComboBox,
-  Picker,
   TextField,
   Checkbox
 } from "../components/formikReactSpectrum3";
 import DataElementSelector from "../components/dataElementSelector";
 import render from "../spectrum3Render";
 import ExtensionView from "../components/spectrum3ExtensionView";
-import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DecisionScopes from "../components/decisionScopes";
 import ExtensionViewForm from "../components/extensionViewForm";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormElementContainer from "../components/formElementContainer";
+import InstanceNamePicker from "../components/instanceNamePicker";
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -131,16 +130,11 @@ const SendEvent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
 
   return (
     <FormElementContainer>
-      <Picker
+      <InstanceNamePicker
         data-test-id="instanceNameField"
         name="instanceName"
-        label="Instance"
-        items={getInstanceOptions(initInfo)}
-        width="size-5000"
-        isRequired
-      >
-        {item => <Item key={item.value}>{item.label}</Item>}
-      </Picker>
+        initInfo={initInfo}
+      />
       <DataElementSelector>
         <ComboBox
           data-test-id="typeField"

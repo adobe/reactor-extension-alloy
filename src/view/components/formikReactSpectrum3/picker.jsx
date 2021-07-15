@@ -25,7 +25,6 @@ const Picker = ({ name, description, width, ...otherProps }) => {
     <FieldDescriptionAndError
       description={description}
       error={touched && error ? error : undefined}
-      width={width}
     >
       <ReactSpectrumPicker
         {...otherProps}

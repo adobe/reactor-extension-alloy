@@ -10,22 +10,20 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-let abortController;
+.CodePreview-textArea textarea {
+  font-size: 12px;
+  font-family: monospace;
+  white-space: pre;
+}
 
-/**
- * This is shared amongst schema selection async processes to
- * ensure that if a user selects a new sandbox or schema, that
- * prior async processes will be appropriately canceled in order
- * to avoid race conditions.
- */
-const abortPreviousRequestsAndCreateNewSignal = () => {
-  if (abortController) {
-    abortController.abort();
-  }
-
-  abortController = new AbortController();
-
-  return abortController.signal;
-};
-
-export default abortPreviousRequestsAndCreateNewSignal;
+.CodePreview-openEditorButton {
+  position: absolute;
+  // The TextArea component has been given a specific
+  // height, but that height includes the label as well.
+  // we want the button to be centered within the underlying
+  // textarea DOM element that's showing the code.
+  top: 76px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}

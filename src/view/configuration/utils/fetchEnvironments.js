@@ -10,56 +10,68 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import EDGE_CONFIG_HOST from "../../constants/edgeConfigHost";
-import getBaseRequestHeaders from "../../utils/getBaseRequestHeaders";
+import fetchFromEdge from "../../utils/fetchFromEdge";
+import UserReportableError from "../../errors/userReportableError";
 
-const fetchConfigEnvironmentsFromEdgeConfig = ({
+const fetchEnvironments = async ({
+  orgId,
+  imsAccess,
   edgeConfigId,
-  baseRequestHeaders
+  search,
+  start,
+  limit,
+  type,
+  signal
 }) => {
-  return fetch(
-    `${EDGE_CONFIG_HOST}/configs/user/edge/${edgeConfigId}/environments?size=100`,
-    {
-      headers: baseRequestHeaders
-    }
-  )
-    .then(response => response.json())
-    .then(responseBody => {
-      const result = {
-        edgeConfigId,
-        production: [],
-        staging: [],
-        development: []
-      };
+  const params = new URLSearchParams();
+  params.append("orderby", "title");
 
-      // eslint-disable-next-line no-underscore-dangle
-      if (!responseBody._embedded || !responseBody._embedded.environments) {
-        return result;
-      }
+  if (search) {
+    params.append("property", `title:${search}`);
+  }
 
-      // eslint-disable-next-line no-underscore-dangle
-      return responseBody._embedded.environments.reduce((memo, environment) => {
-        if (memo[environment.type]) {
-          memo[environment.type].push({
-            value: environment.compositeId,
-            label: environment.title
-          });
-        }
-        return memo;
-      }, result);
+  if (start) {
+    params.append("start", start);
+  }
+
+  if (limit) {
+    params.append("limit", limit);
+  }
+
+  if (type) {
+    params.append("type", type);
+  }
+
+  let parsedResponse;
+
+  try {
+    parsedResponse = await fetchFromEdge({
+      orgId,
+      imsAccess,
+      path: `/configs/user/edge/${edgeConfigId}/environments`,
+      params,
+      signal
     });
+  } catch (e) {
+    if (e.name === "AbortError") {
+      throw e;
+    }
+
+    throw new UserReportableError("Failed to load datastream environments.", {
+      originatingError: e
+    });
+  }
+
+  const {
+    parsedBody: { _embedded, page }
+  } = parsedResponse;
+
+  return {
+    // eslint-disable-next-line no-underscore-dangle
+    results: _embedded?.environments ?? [],
+    // parsedBody.page won't exist if there were 0 results
+    nextPage: page && page.totalPages > page.number ? page.number + 1 : null
+  };
 };
 
-/**
- * Retrieves the edge configurations that the user has access to.
- * @param {string} orgId Experience Cloud organization ID
- * @param {string} imsAccess IMS auth token
- * @returns {Promise} Promise to be resolved with an array of config objects
- */
-export default ({ edgeConfigId, orgId, imsAccess }) => {
-  const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
-  return fetchConfigEnvironmentsFromEdgeConfig({
-    edgeConfigId,
-    baseRequestHeaders
-  });
-};
+export default fetchEnvironments;

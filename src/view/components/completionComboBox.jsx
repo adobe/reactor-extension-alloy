@@ -19,7 +19,7 @@ import Textfield from "@react/react-spectrum/Textfield";
 import classNames from "classnames";
 
 // Importing ComboBox brings in the correct styles for this component
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars, unused-imports/no-unused-imports
 import ComboBox from "@react/react-spectrum/ComboBox";
 
 // Mostly copied from react-spectrum/ComboBox, but uses getCompletions instead of options
@@ -96,7 +96,6 @@ class CompletionComboBox extends React.Component {
       required,
       invalid,
       quiet,
-      onChange,
       onSelect,
       renderItem,
       onMenuToggle,

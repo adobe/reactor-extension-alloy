@@ -32,6 +32,7 @@ import { reducer, ACTION_TYPES } from "./xdmObject/helpers/mainViewState";
 import loadDefaultSchema from "./xdmObject/helpers/schemaSelection/loadDefaultSchema";
 import getInitialFormStateUsingAsyncErrorReporting from "./xdmObject/helpers/schemaSelection/getInitialFormStateUsingAsyncErrorReporting";
 import "./xdmObject.styl";
+import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRequestsAndCreateSignal";
 
 const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
   const {
@@ -61,12 +62,14 @@ const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
     showEditorNotReadyValidationError
   } = state;
   const isEditorRenderable = status === STATUS.IDLE && Boolean(selectedSchema);
+  const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
   const onSandboxSelectionChange = useOnSandboxSelectionChange({
     dispatch,
     orgId,
     imsAccess,
     resetForm,
-    reportAsyncError
+    reportAsyncError,
+    abortPreviousRequestsAndCreateSignal
   });
   const onSchemaMetaSelectionChange = useOnSchemaMetaSelectionChange({
     dispatch,
@@ -74,7 +77,8 @@ const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
     imsAccess,
     resetForm,
     selectedSandbox,
-    reportAsyncError
+    reportAsyncError,
+    abortPreviousRequestsAndCreateSignal
   });
 
   // It might seem desirable to take advantage of the useImperativeHandle hook here,

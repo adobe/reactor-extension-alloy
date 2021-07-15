@@ -12,8 +12,8 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import classNames from "classnames";
 import "./fieldDescriptionAndError.styl";
+import { Flex, View } from "@adobe/react-spectrum";
 
 // This is intended as a temporary solution until descriptions and errors
 // supported natively in React-Spectrum.
@@ -22,17 +22,20 @@ const FieldDescriptionAndError = ({
   children,
   description,
   error,
-  width,
-  className
+  messagePaddingTop,
+  messagePaddingStart
 }) => {
-  let messageClassName;
+  const child = React.Children.only(children);
+  const width = child.props.width;
+
+  let className;
   let message;
 
   if (error) {
-    messageClassName = "FieldDescriptionAndError-error";
+    className = "FieldDescriptionAndError-error";
     message = error;
   } else if (description) {
-    messageClassName = "FieldDescriptionAndError-description";
+    className = "FieldDescriptionAndError-description";
     message = description;
   }
 
@@ -44,17 +47,19 @@ const FieldDescriptionAndError = ({
     ? `var(--spectrum-global-dimension-${width}, var(--spectrum-alias-${width}))`
     : `var(--spectrum-field-default-width)`;
   return (
-    <div className="u-inlineFlex u-flexColumn">
+    <Flex direction="column" UNSAFE_style={{ width: widthStyle }}>
       {children}
       {message && (
-        <div
-          className={classNames("u-gapBottom", messageClassName, className)}
-          style={{ width: widthStyle }}
+        <View
+          UNSAFE_className={className}
+          UNSAFE_style={{ width: widthStyle }}
+          paddingTop={messagePaddingTop}
+          paddingStart={messagePaddingStart}
         >
           {message}
-        </div>
+        </View>
       )}
-    </div>
+    </Flex>
   );
 };
 
@@ -62,8 +67,8 @@ FieldDescriptionAndError.propTypes = {
   children: PropTypes.node.isRequired,
   description: PropTypes.string,
   error: PropTypes.string,
-  width: PropTypes.string,
-  className: PropTypes.string
+  messagePaddingTop: PropTypes.string,
+  messagePaddingStart: PropTypes.string
 };
 
 export default FieldDescriptionAndError;

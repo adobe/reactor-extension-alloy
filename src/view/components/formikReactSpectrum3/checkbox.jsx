@@ -15,7 +15,6 @@ import PropTypes from "prop-types";
 import { Checkbox as ReactSpectrumCheckbox } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
-import "./checkbox.styl";
 
 const Checkbox = ({ name, description, width, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
@@ -25,8 +24,8 @@ const Checkbox = ({ name, description, width, ...otherProps }) => {
     <FieldDescriptionAndError
       description={description}
       error={touched && error ? error : undefined}
-      width={width}
-      className="Checkbox-descriptionAndError"
+      messagePaddingTop="size-0"
+      messagePaddingStart="size-300"
     >
       <ReactSpectrumCheckbox
         {...otherProps}

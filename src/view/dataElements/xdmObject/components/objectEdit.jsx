@@ -55,7 +55,8 @@ const ObjectEdit = ({ fieldName }) => {
             <TextField
               data-test-id="valueField"
               name={`${fieldName}.value`}
-              label="Data element providing array"
+              label="Data Element"
+              description="This data element should resolve to an object."
               width="size-5000"
             />
           </DataElementSelector>

@@ -15,6 +15,9 @@ import ReactDOM from "react-dom";
 import { Provider, lightTheme } from "@adobe/react-spectrum";
 import ErrorBoundary from "./components/spectrum3ErrorBoundary";
 import "./spectrum3Render.styl";
+import monitorForOriginatingErrors from "./utils/monitorForOriginatingErrors";
+
+monitorForOriginatingErrors();
 
 export default View => {
   ReactDOM.render(

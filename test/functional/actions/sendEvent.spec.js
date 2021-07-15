@@ -10,14 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewController from "../helpers/createExtensionViewController";
+import extensionViewController from "../helpers/extensionViewController";
 import spectrum from "../helpers/spectrum3";
 import testInstanceNameOptions from "../helpers/spectrum3TestInstanceNameOptions";
 import createFixture from "../helpers/createFixture";
 
-const extensionViewController = createExtensionViewController(
-  "actions/sendEvent.html"
-);
 const instanceNameField = spectrum.picker("instanceNameField");
 const typeField = spectrum.comboBox("typeField");
 const xdmField = spectrum.textField("xdmField");
@@ -156,6 +153,7 @@ test("returns full valid settings with decision scopes as data element", async (
   });
   await instanceNameField.selectOption("alloy2");
   await typeField.enterSearch("mytype1");
+  await typeField.pressEnterKey();
   await xdmField.typeText("%myDataLayer%");
   await dataField.typeText("%myData%");
   await mergeIdField.typeText("%myMergeId%");

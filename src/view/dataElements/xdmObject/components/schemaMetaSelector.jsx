@@ -20,7 +20,6 @@ import useReportAsyncError from "../../../utils/useReportAsyncError";
 import useIsFirstRender from "../../../utils/useIsFirstRender";
 import usePrevious from "../../../utils/usePrevious";
 import ExtensionViewContext from "../../../components/extensionViewContext";
-import UserReportableError from "../../../errors/userReportableError";
 
 const SchemaMetaSelector = ({
   defaultSelectedSchemaMeta,
@@ -37,8 +36,8 @@ const SchemaMetaSelector = ({
   const isFirstRender = useIsFirstRender();
   const previousSelectedSandbox = usePrevious(selectedSandbox);
   const reportAsyncError = useReportAsyncError();
-  const getKey = item => item && item.$id;
-  const getLabel = item => item && item.title;
+  const getKey = item => item?.$id;
+  const getLabel = item => item?.title;
   const pagedComboBox = usePagedComboBox({
     defaultSelectedItem: defaultSelectedSchemaMeta,
     loadItems: async ({ filterText, cursor, signal }) => {
@@ -55,12 +54,10 @@ const SchemaMetaSelector = ({
         }));
       } catch (e) {
         if (e.name !== "AbortError") {
-          reportAsyncError(
-            new UserReportableError("Failed to load schema metadata.", {
-              originatingError: e
-            })
-          );
+          reportAsyncError(e);
         }
+        // usePagedComboBox expects us to throw an error
+        // if we can't produce a valid return object.
         throw e;
       }
       return {
@@ -91,30 +88,27 @@ const SchemaMetaSelector = ({
   }, [selectedSandbox ? selectedSandbox.name : null]);
 
   return (
-    <div>
-      <FieldDescriptionAndError
-        description="Choose a schema for which to build a matching XDM object."
-        error={errorMessage}
+    <FieldDescriptionAndError
+      description="Choose a schema for which to build a matching XDM object."
+      error={errorMessage}
+    >
+      <ComboBox
+        data-test-id="schemaField"
+        label="Schema"
+        placeholder="Select a schema"
+        items={pagedComboBox.items}
+        inputValue={pagedComboBox.inputValue}
+        selectedKey={getKey(pagedComboBox.selectedItem) || null}
+        loadingState={pagedComboBox.loadingState}
+        onInputChange={pagedComboBox.onInputChange}
+        onSelectionChange={pagedComboBox.onSelectionChange}
+        onOpenChange={pagedComboBox.onOpenChange}
+        onLoadMore={pagedComboBox.onLoadMore}
         width="size-5000"
       >
-        <ComboBox
-          data-test-id="schemaField"
-          label="Schema"
-          placeholder="Select a schema"
-          items={pagedComboBox.items}
-          inputValue={pagedComboBox.inputValue}
-          selectedKey={getKey(pagedComboBox.selectedItem)}
-          loadingState={pagedComboBox.loadingState}
-          onInputChange={pagedComboBox.onInputChange}
-          onSelectionChange={pagedComboBox.onSelectionChange}
-          onOpenChange={pagedComboBox.onOpenChange}
-          onLoadMore={pagedComboBox.onLoadMore}
-          width="size-5000"
-        >
-          {item => <Item key={item.$id}>{item.title}</Item>}
-        </ComboBox>
-      </FieldDescriptionAndError>
-    </div>
+        {item => <Item key={item.$id}>{item.title}</Item>}
+      </ComboBox>
+    </FieldDescriptionAndError>
   );
 };
 

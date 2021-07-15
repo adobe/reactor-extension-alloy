@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 export { default as Checkbox } from "./checkbox";
+export { default as CheckboxGroup } from "./checkboxGroup";
 export { default as ComboBox } from "./comboBox";
 export { default as Picker } from "./picker";
 export { default as RadioGroup } from "./radioGroup";

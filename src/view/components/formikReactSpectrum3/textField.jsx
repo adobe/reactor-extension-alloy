@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { TextField as ReactTextField } from "@adobe/react-spectrum";
+import { TextField as ReactSpectrumTextField } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
@@ -25,9 +25,8 @@ const TextField = ({ name, description, width, ...otherProps }) => {
     <FieldDescriptionAndError
       description={description}
       error={touched && error ? error : undefined}
-      width={width}
     >
-      <ReactTextField
+      <ReactSpectrumTextField
         {...otherProps}
         value={value}
         onChange={newValue => {

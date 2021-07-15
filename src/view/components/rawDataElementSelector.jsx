@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import Data from "@spectrum-icons/workflow/Data";
-import { Button } from "@adobe/react-spectrum";
+import { ActionButton, Flex } from "@adobe/react-spectrum";
 
 const RawDataElementSelector = ({
   children,
@@ -37,19 +37,18 @@ const RawDataElementSelector = ({
     });
   };
   return (
-    <div className="u-flex">
-      <div>{children}</div>
-      <Button
-        variant="secondary"
+    <Flex>
+      {children}
+      <ActionButton
         isQuiet
         onPress={openDataElementSelector}
         aria-label="Select data element"
-        marginTop={adjustForLabel ? "size-300" : ""}
+        marginTop={adjustForLabel ? "size-300" : 0}
         minWidth={0}
       >
         <Data />
-      </Button>
-    </div>
+      </ActionButton>
+    </Flex>
   );
 };
 

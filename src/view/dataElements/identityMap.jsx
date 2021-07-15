@@ -16,13 +16,16 @@ import { FieldArray } from "formik";
 import { array, boolean, object, string } from "yup";
 import {
   Button,
+  Flex,
   Heading,
   Item,
   ProgressCircle,
   Text,
-  Well
+  Well,
+  TabList,
+  TabPanels,
+  Tabs
 } from "@adobe/react-spectrum";
-import { TabList, TabPanels, Tabs } from "@react-spectrum/tabs";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import render from "../spectrum3Render";
 import ExtensionView from "../components/spectrum3ExtensionView";
@@ -227,7 +230,8 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
         render={arrayHelpers => {
           return (
             <React.Fragment>
-              <div className="u-alignRight">
+              <Flex alignItems="center">
+                <Heading level={3}>Identities</Heading>
                 <Button
                   data-test-id="addIdentityButton"
                   variant="secondary"
@@ -235,11 +239,11 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                     arrayHelpers.push(getDefaultIdentity());
                     setSelectedTabKey(String(values.identities.length));
                   }}
+                  marginStart="auto"
                 >
                   Add Identity
                 </Button>
-              </div>
-              <Heading level={3}>Identities</Heading>
+              </Flex>
               {/*
                 There is an issue where the heavy line under the selected
                 tab doesn't update in position or width when the label changes,

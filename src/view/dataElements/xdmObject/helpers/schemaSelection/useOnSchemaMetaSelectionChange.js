@@ -13,7 +13,6 @@ governing permissions and limitations under the License.
 import { ACTION_TYPES } from "../mainViewState";
 import fetchSchemaUsingAsyncErrorReporting from "./fetchSchemaUsingAsyncErrorReporting";
 import getInitialFormStateUsingAsyncErrorReporting from "./getInitialFormStateUsingAsyncErrorReporting";
-import abortPreviousRequestsAndCreateNewSignal from "./abortPreviousRequestsAndCreateNewSignal";
 
 const useOnSchemaMetaSelectionChange = ({
   dispatch,
@@ -21,10 +20,11 @@ const useOnSchemaMetaSelectionChange = ({
   imsAccess,
   resetForm,
   selectedSandbox,
-  reportAsyncError
+  reportAsyncError,
+  abortPreviousRequestsAndCreateSignal
 }) => {
   return async schemaMeta => {
-    const signal = abortPreviousRequestsAndCreateNewSignal();
+    const signal = abortPreviousRequestsAndCreateSignal();
 
     dispatch({
       type: ACTION_TYPES.SELECTED_SCHEMA_META_CHANGED

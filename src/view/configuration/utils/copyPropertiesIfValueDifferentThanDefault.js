@@ -12,13 +12,14 @@ governing permissions and limitations under the License.
 /**
  * Copies properties from one object to another, but only if the value
  * doesn't match the default value.
- * @param {Object} toObj Object to which properties should be copied.
- * @param {Object} fromObj Object from which properties should be copied.
- * @param {Object} defaultsObj Default values for each property.
- * @param {Array} keys The keys of the properties that should be attempted
+ * @param {Object} options
+ * @param {Object} options.toObj Object to which properties should be copied.
+ * @param {Object} options.fromObj Object from which properties should be copied.
+ * @param {Object} options.defaultsObj Default values for each property.
+ * @param {Array} options.keys The keys of the properties that should be attempted
  * to be copied.
  */
-export default (toObj, fromObj, defaultsObj, keys) => {
+export default ({ toObj, fromObj, defaultsObj, keys }) => {
   keys.forEach(key => {
     if (fromObj[key] !== defaultsObj[key]) {
       toObj[key] = fromObj[key];
