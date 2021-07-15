@@ -15,11 +15,7 @@ import { View } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 
 const FieldSubset = ({ children }) => {
-  return (
-    <View marginStart="size-300" marginTop="size-100">
-      {children}
-    </View>
-  );
+  return <View marginStart="size-300">{children}</View>;
 };
 
 FieldSubset.propTypes = {

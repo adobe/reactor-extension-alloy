@@ -14,7 +14,7 @@ import React, { useEffect } from "react";
 import PropTypes from "prop-types";
 import { FieldArray } from "formik";
 import { object, string, array, mixed } from "yup";
-import { Item, Radio, Button, Well, Text } from "@adobe/react-spectrum";
+import { Item, Radio, Button, Well, Text, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
@@ -386,12 +386,11 @@ const SetConsent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
               >
                 Add Consent Object
               </Button>
-              <div>
+              <Flex direction="column" gap="size-250">
                 {values.consent.map((value, index) => (
                   <Well
                     data-test-id={`consentObject${index}`}
                     key={`consentObject${index}`}
-                    marginBottom="size-250"
                   >
                     <FormElementContainer>
                       <ConsentObject value={value} index={index} />
@@ -412,7 +411,7 @@ const SetConsent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
                     </FormElementContainer>
                   </Well>
                 ))}
-              </div>
+              </Flex>
             </>
           )}
         />

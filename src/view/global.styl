@@ -16,6 +16,17 @@ html {
   height: 100%
 }
 
+// Typically, body has margin automatically provided by the browser,
+// but because we're using a height of 100% on the html element,
+// the bottom margin of the body extends outside of the HTML element
+// for some reason, so content ends up flush with the bottom of the
+// window (a bad thing). Using box sizing of border-box doesn't fix the
+// issue. Instead, we'll switch margin to padding.
+body {
+  margin: 0;
+  padding: 8px;
+}
+
 html
 body,
 #root,
@@ -24,4 +35,3 @@ body,
   flex-direction: column;
   flex: 1
 }
-

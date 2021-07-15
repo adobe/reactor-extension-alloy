@@ -215,7 +215,7 @@ const Configuration = ({
                 selectedKey={selectedTabKey}
                 onSelectionChange={setSelectedTabKey}
               >
-                <TabList>
+                <TabList marginBottom="size-200">
                   {values.instances.map((instance, index) => {
                     return (
                       <Item key={index}>
