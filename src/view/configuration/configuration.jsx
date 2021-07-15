@@ -96,7 +96,7 @@ const getInitialValues = async ({ initInfo }) => {
 
   if (instancesSettings) {
     instancesInitialValues = await Promise.all(
-      instancesSettings.map(async (instanceSettings, instanceSettingsIndex) => {
+      instancesSettings.map((instanceSettings, instanceSettingsIndex) => {
         return getInitialInstanceValues({
           initInfo,
           isFirstInstance: instanceSettingsIndex === 0,
