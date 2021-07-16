@@ -20,9 +20,9 @@ import render from "../render";
 import ExtensionView from "../components/extensionView";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
-import RadioGroupWithDataElement, {
+import FormikRadioGroupWithDataElement, {
   createRadioGroupWithDataElementValidationSchema
-} from "../components/formikReactSpectrum3/radioGroupWithDataElement";
+} from "../components/formikReactSpectrum3/formikRadioGroupWithDataElement";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
@@ -237,7 +237,7 @@ const ConsentObject = ({ value, index }) => {
       )}
       {value.standard === ADOBE.value &&
         value.adobeVersion === VERSION_1_0.value && (
-          <RadioGroupWithDataElement
+          <FormikRadioGroupWithDataElement
             dataTestIdPrefix="general"
             name={`consent[${index}].general`}
             label="General Consent"
@@ -251,7 +251,7 @@ const ConsentObject = ({ value, index }) => {
             <Radio data-test-id="generalOutRadio" value="out">
               Out
             </Radio>
-          </RadioGroupWithDataElement>
+          </FormikRadioGroupWithDataElement>
         )}
       {value.standard === ADOBE.value &&
         value.adobeVersion !== VERSION_1_0.value && (
@@ -286,7 +286,7 @@ const ConsentObject = ({ value, index }) => {
               isRequired
             />
           </DataElementSelector>
-          <RadioGroupWithDataElement
+          <FormikRadioGroupWithDataElement
             dataTestIdPrefix="gdprApplies"
             name={`consent[${index}].gdprApplies`}
             label="Does GDPR apply to this consent value?"
@@ -298,8 +298,8 @@ const ConsentObject = ({ value, index }) => {
             <Radio data-test-id="gdprAppliesNoRadio" value={false}>
               No
             </Radio>
-          </RadioGroupWithDataElement>
-          <RadioGroupWithDataElement
+          </FormikRadioGroupWithDataElement>
+          <FormikRadioGroupWithDataElement
             dataTestIdPrefix="gdprContainsPersonalData"
             name={`consent[${index}].gdprContainsPersonalData`}
             label="Does the event data associated with this user contain personal data?"
@@ -311,7 +311,7 @@ const ConsentObject = ({ value, index }) => {
             <Radio data-test-id="gdprContainsPersonalDataNoRadio" value={false}>
               No
             </Radio>
-          </RadioGroupWithDataElement>
+          </FormikRadioGroupWithDataElement>
         </>
       )}
     </>
