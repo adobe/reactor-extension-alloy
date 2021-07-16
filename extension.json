@@ -277,8 +277,14 @@
   "events": [
     {
       "name": "decisions-received",
-      "displayName": "Decisions Received",
+      "displayName": "Decisions Received (DEPRECATED)",
       "libPath": "dist/lib/events/decisionsReceived/index.js",
+      "schema": {}
+    },
+    {
+      "name": "send-event-complete",
+      "displayName": "Send Event Complete",
+      "libPath": "dist/lib/events/sendEventComplete/index.js",
       "schema": {}
     }
   ],
