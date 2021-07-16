@@ -14,7 +14,7 @@ import React, { useEffect, useReducer } from "react";
 import PropTypes from "prop-types";
 import { ProgressCircle, Flex } from "@adobe/react-spectrum";
 import FormElementContainer from "../components/formElementContainer";
-import ExtensionView from "../components/spectrum3ExtensionViewSimple";
+import ExtensionView from "../components/spectrum3ExtensionView";
 import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import validate from "./xdmObject/helpers/validate";
 import render from "../spectrum3Render";

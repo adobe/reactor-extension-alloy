@@ -10,69 +10,170 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
-import useExtensionBridge from "../utils/useExtensionBridge";
-import ExtensionViewContext from "./extensionViewContext";
 
-// This component wires up Launch's extension bridge, and creates the
-// ExtensionViewContext. It should be used for each view inside an extension.
-const ExtensionView = ({ render }) => {
+import { useFormik, FormikProvider } from "formik";
+import { object } from "yup";
+import { ProgressCircle } from "@adobe/react-spectrum";
+import useExtensionBridge from "../utils/useExtensionBridge";
+import useReportAsyncError from "../utils/useReportAsyncError";
+import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
+
+const ExtensionView = ({
+  render,
+  getInitialValues,
+  getSettings,
+  validateFormikState,
+  formikStateValidationSchema,
+  validateNonFormikState
+}) => {
+  const reportAsyncError = useReportAsyncError();
   const [initInfo, setInitInfo] = useState();
-  const registeredGetSettingsRef = useRef([]);
-  const registeredValidateRef = useRef([]);
+  const viewRegistrationRef = useRef();
+  const formikPropsRef = useRef();
+  formikPropsRef.current = useFormik({
+    onSubmit: () => {},
+    validate: values => {
+      let errors;
+
+      // Formik swallows errors that occur during validation, but we want
+      // to handle them in a proper manner.
+      try {
+        if (viewRegistrationRef.current?.validateFormikState) {
+          errors = viewRegistrationRef.current.validateFormikState({ values });
+        }
+      } catch (error) {
+        reportAsyncError(
+          new Error("An error occurred while validating the view.")
+        );
+      }
+
+      return errors;
+    },
+    validationSchema: () => {
+      return (
+        viewRegistrationRef.current?.formikStateValidationSchema ?? object()
+      );
+    }
+  });
+
+  const myValidateFormikState = async () => {
+    // The view hasn't yet initialized formik with initialValues.
+    if (!formikPropsRef.current.values) {
+      return false;
+    }
+
+    await formikPropsRef.current.submitForm();
+
+    // The docs say that the promise submitForm returns
+    // will be rejected if there are errors, but that is not the case.
+    // Therefore, after the promise is resolved, we pull formikProps.errors
+    // (which were set during submitForm()) to see if the form is valid.
+    // https://github.com/jaredpalmer/formik/issues/1580
+    formikPropsRef.current.setSubmitting(false);
+    return Object.keys(formikPropsRef.current.errors).length === 0;
+  };
+
+  const myValidateNonFormikState = async () => {
+    if (!viewRegistrationRef.current) {
+      // If the view hasn't registered yet, we don't want to consider
+      // it valid.
+      return false;
+    }
+
+    if (!viewRegistrationRef.current.validateNonFormikState) {
+      return true;
+    }
+
+    return viewRegistrationRef.current.validateNonFormikState();
+  };
 
   useExtensionBridge({
     init({ initInfo: _initInfo }) {
       setInitInfo(_initInfo);
     },
     getSettings() {
-      return registeredGetSettingsRef.current.reduce((memo, getSettings) => {
-        return Object.assign(memo, getSettings());
-      }, {});
+      if (!viewRegistrationRef.current) {
+        return {};
+      }
+
+      return viewRegistrationRef.current.getSettings({
+        initInfo,
+        values: formikPropsRef.current.values
+      });
     },
-    validate() {
-      // Check if all currently rendered ExtensionViewForms are valid
-      return Promise.all(
-        registeredValidateRef.current.map(validate => validate())
-      ).then(areValid => areValid.every(isValid => isValid));
+    async validate() {
+      const results = await Promise.all([
+        myValidateFormikState(),
+        myValidateNonFormikState()
+      ]);
+      return results.every(result => result);
     }
   });
+
+  const registerImperativeFormApi = api => {
+    viewRegistrationRef.current = viewRegistrationRef.current || {};
+    viewRegistrationRef.current.getSettings = api.getSettings;
+    viewRegistrationRef.current.validateFormikState = api.validateFormikState;
+    viewRegistrationRef.current.formikStateValidationSchema =
+      api.formikStateValidationSchema;
+    viewRegistrationRef.current.validateNonFormikState =
+      api.validateNonFormikState;
+  };
+
+  if (getSettings) {
+    useEffect(() => {
+      registerImperativeFormApi({
+        getSettings,
+        validateFormikState,
+        formikStateValidationSchema,
+        validateNonFormikState
+      });
+    }, []);
+  }
+  if (getInitialValues) {
+    useEffect(async () => {
+      if (initInfo) {
+        formikPropsRef.current.resetForm({
+          values: await getInitialValues({ initInfo })
+        });
+      }
+    }, [initInfo]);
+
+    // Show the spinner if getInitialValues is not done
+    if (!formikPropsRef.current.values) {
+      return (
+        <FillParentAndCenterChildren>
+          <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
+        </FillParentAndCenterChildren>
+      );
+    }
+  }
 
   // Don't render anything until extension bridge calls init
   if (!initInfo) {
     return null;
   }
 
-  const context = {
-    registerGetSettings(getSettings) {
-      registeredGetSettingsRef.current.push(getSettings);
-    },
-    deregisterGetSettings(getSettings) {
-      registeredGetSettingsRef.current = registeredGetSettingsRef.current.filter(
-        other => other !== getSettings
-      );
-    },
-    registerValidate(validate) {
-      registeredValidateRef.current.push(validate);
-    },
-    deregisterValidate(validate) {
-      registeredValidateRef.current = registeredValidateRef.current.filter(
-        other => other !== validate
-      );
-    },
-    initInfo
-  };
-
   return (
-    <ExtensionViewContext.Provider value={context}>
-      {render({ initInfo })}
-    </ExtensionViewContext.Provider>
+    <FormikProvider value={formikPropsRef.current}>
+      {render({
+        initInfo,
+        formikProps: formikPropsRef.current,
+        registerImperativeFormApi
+      })}
+    </FormikProvider>
   );
 };
 
 ExtensionView.propTypes = {
-  render: PropTypes.func.isRequired
+  render: PropTypes.func,
+  getInitialValues: PropTypes.func,
+  getSettings: PropTypes.func,
+  validateFormikState: PropTypes.func,
+  formikStateValidationSchema: PropTypes.object,
+  validateNonFormikState: PropTypes.func
 };
 
 export default ExtensionView;

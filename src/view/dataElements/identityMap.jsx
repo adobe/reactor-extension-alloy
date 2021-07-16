@@ -17,7 +17,7 @@ import { Button, Heading, Item, Text, Well } from "@adobe/react-spectrum";
 import { TabList, TabPanels, Tabs } from "@react-spectrum/tabs";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionViewSimple";
+import ExtensionView from "../components/spectrum3ExtensionView";
 import getDefaultIdentity from "./identityMap/utils/getDefaultIdentity";
 import fetchNamespaces from "./identityMap/utils/fetchNamespaces";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";

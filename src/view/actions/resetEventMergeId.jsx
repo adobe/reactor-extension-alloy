@@ -14,7 +14,7 @@ import React from "react";
 import { object, string } from "yup";
 import { TextField } from "../components/formikReactSpectrum3";
 import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionViewSimple";
+import ExtensionView from "../components/spectrum3ExtensionView";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormElementContainer from "../components/formElementContainer";

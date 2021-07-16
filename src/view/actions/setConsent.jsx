@@ -17,7 +17,7 @@ import { object, string, array, mixed } from "yup";
 import { Item, Radio, Button, Well, Text } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionViewSimple";
+import ExtensionView from "../components/spectrum3ExtensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";

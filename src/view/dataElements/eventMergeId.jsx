@@ -14,7 +14,7 @@ import React from "react";
 import { v4 as uuid } from "uuid";
 import Alert from "../components/alert";
 import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionViewSimple";
+import ExtensionView from "../components/spectrum3ExtensionView";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 import "./eventMergeId.styl";
 
