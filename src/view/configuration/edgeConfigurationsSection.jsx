@@ -241,6 +241,11 @@ export const bridge = {
     }
 
     if (!isSuccessfullyPopulatedForSelectInputMethod) {
+      // We only display the edge configuration selection components on the first instance, which
+      // might make this seem unnecessary for subsequent instances. However, it's possible for
+      // the user to delete their first instance, which would make their second instance become
+      // their first instance, which would cause the selection components to be displayable for that
+      // instance. We want the state to be ready for this case.
       instanceValues.edgeConfigSelectInputMethod = await getSelectInputMethodStateForNewInstance(
         {
           orgId,
