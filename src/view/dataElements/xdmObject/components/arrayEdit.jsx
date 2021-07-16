@@ -23,6 +23,7 @@ import getInitialFormState, {
 } from "../helpers/getInitialFormState";
 import { PARTS, WHOLE } from "../constants/populationStrategy";
 import { ARRAY, OBJECT } from "../constants/schemaType";
+import FormElementContainer from "../../../components/formElementContainer";
 
 /**
  * Displayed when the WHOLE population strategy is selected.
@@ -140,7 +141,7 @@ const ArrayEdit = props => {
   } = formStateNode;
 
   return (
-    <div>
+    <FormElementContainer>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
           label="Population Strategy"
@@ -167,7 +168,7 @@ const ArrayEdit = props => {
           />
         )}
       </div>
-    </div>
+    </FormElementContainer>
   );
 };
 
