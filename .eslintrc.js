@@ -10,8 +10,10 @@ module.exports = {
     node: true,
     jasmine: true
   },
-  plugins: ["ban", "prettier", "testcafe"],
+  plugins: ["unused-imports", "ban", "prettier", "testcafe"],
   rules: {
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": "error",
     "ban/ban": [
       "error",
       { name: ["describe", "only"], message: "don't focus tests" },

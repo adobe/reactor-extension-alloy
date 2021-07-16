@@ -1,4 +1,5 @@
 .Alert {
+  box-sizing: border-box;
   border: 2px solid;
   border-radius: 4px;
   padding: 24px;
@@ -20,9 +21,19 @@
 }
 
 .Alert-title {
-  margin-bottom: 0;
+  margin: 0
 }
 
 .Alert-description {
   color: var(--spectrum-alias-label-text-color, var(--spectrum-global-color-gray-700));
+
+  // Paragraph elements (and possibly other elements?) will add block margin
+  // on the top and bottom, which provides too much spacing.
+  > :first-child {
+    margin-block-start: 0;
+  }
+
+  > :last-child {
+    margin-block-end: 0;
+  }
 }

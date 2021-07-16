@@ -10,15 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { Fragment } from "react";
-import { Radio, Button } from "@adobe/react-spectrum";
+import React from "react";
+import { Radio, Button, ActionButton, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { FieldArray, useField } from "formik";
 import { object, string } from "yup";
-import { RadioGroup, TextField } from "./formikReactSpectrum3";
+import FormikRadioGroup from "./formikReactSpectrum3/formikRadioGroup";
+import FormikTextField from "./formikReactSpectrum3/formikTextField";
 import DataElementSelector from "./dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import FieldSubset from "./fieldSubset";
 
 const CONSTANT = "constant";
 const DATA_ELEMENT = "dataElement";
@@ -80,8 +82,8 @@ export default () => {
   const [{ value: decisionScopesArray }] = useField("decisionScopesArray");
 
   return (
-    <Fragment>
-      <RadioGroup
+    <div>
+      <FormikRadioGroup
         name="decisionsInputMethod"
         orientation="horizontal"
         label="Decision Scopes"
@@ -90,68 +92,73 @@ export default () => {
           Manually enter scopes
         </Radio>
         <Radio data-test-id="dataElementOptionField" value={DATA_ELEMENT}>
-          Provide data element returning array of scopes
+          Provide a data element
         </Radio>
-      </RadioGroup>
+      </FormikRadioGroup>
       {decisionsInputMethod === DATA_ELEMENT && (
-        <div className="FieldSubset">
+        <FieldSubset>
           <DataElementSelector>
-            <TextField
+            <FormikTextField
               data-test-id="scopeDataElementField"
+              label="Data Element"
               name="decisionScopesDataElement"
+              description="This data element should resolve to an array of scopes."
               width="size-5000"
             />
           </DataElementSelector>
-        </div>
+        </FieldSubset>
       )}
       {decisionsInputMethod === CONSTANT && (
-        <div className="FieldSubset">
-          <FieldArray
-            name="decisionScopesArray"
-            render={arrayHelpers => {
-              return (
-                <div>
-                  {decisionScopesArray.map((scope, index) => {
-                    return (
-                      <div className="u-gapBottom" key={index}>
-                        <TextField
-                          data-test-id={`scope${index}Field`}
-                          name={`decisionScopesArray.${index}`}
-                          width="size-5000"
-                          aria-label="Decision scope"
-                        />
-                        <Button
-                          data-test-id={`deleteScope${index}Button`}
-                          isQuiet
-                          isDisabled={decisionScopesArray.length === 1}
-                          variant="secondary"
-                          onPress={() => {
-                            arrayHelpers.remove(index);
-                          }}
-                          aria-label="Remove decision scope"
-                          UNSAFE_className="u-verticalCenterBottom"
-                          minWidth={0}
-                        >
-                          <Delete />
-                        </Button>
-                      </div>
-                    );
-                  })}
-                  <Button
-                    variant="secondary"
-                    data-test-id="addDecisionScopeButton"
-                    onPress={() => {
-                      arrayHelpers.push("");
-                    }}
-                  >
-                    Add scope
-                  </Button>
-                </div>
-              );
-            }}
-          />
-        </div>
+        <FieldSubset>
+          <Flex direction="column" gap="size-100" alignItems="start">
+            <FieldArray
+              name="decisionScopesArray"
+              render={arrayHelpers => {
+                return (
+                  <div>
+                    {decisionScopesArray.map((scope, index) => {
+                      return (
+                        <Flex key={index} alignItems="end">
+                          <FormikTextField
+                            data-test-id={`scope${index}Field`}
+                            label="Scope"
+                            name={`decisionScopesArray.${index}`}
+                            width="size-5000"
+                            aria-label="Decision scope"
+                            marginTop="size-0"
+                          />
+                          <ActionButton
+                            data-test-id={`deleteScope${index}Button`}
+                            isQuiet
+                            isDisabled={decisionScopesArray.length === 1}
+                            variant="secondary"
+                            onPress={() => {
+                              arrayHelpers.remove(index);
+                            }}
+                            aria-label="Remove decision scope"
+                          >
+                            <Delete />
+                          </ActionButton>
+                        </Flex>
+                      );
+                    })}
+                    <Button
+                      variant="secondary"
+                      data-test-id="addDecisionScopeButton"
+                      marginTop="size-100"
+                      onPress={() => {
+                        arrayHelpers.push("");
+                      }}
+                    >
+                      Add scope
+                    </Button>
+                  </div>
+                );
+              }}
+            />
+          </Flex>
+        </FieldSubset>
       )}
-    </Fragment>
+    </div>
   );
 };

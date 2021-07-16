@@ -11,32 +11,13 @@ governing permissions and limitations under the License.
 */
 
 import { t } from "testcafe";
-import createExtensionViewController from "../../helpers/createExtensionViewController";
+import extensionViewController from "../../helpers/extensionViewController";
 import spectrum from "../../helpers/spectrum3";
-import getAdobeIOAccessToken from "../../helpers/getAdobeIOAccessToken";
 import * as platformMocks from "../xdmObject/helpers/platformMocks";
-import credentials from "../../helpers/adobeIOClientCredentials";
 import createFixture from "../../helpers/createFixture";
 
-const identityMapViewController = createExtensionViewController(
-  "dataElements/identityMap.html"
-);
-
-const initializeExtensionView = async additionalInitInfo => {
-  const accessToken = await getAdobeIOAccessToken();
-  const initInfo = {
-    extensionSettings: {},
-    company: {
-      orgId: credentials.orgId
-    },
-    tokens: { imsAccess: accessToken },
-    ...additionalInitInfo
-  };
-  await identityMapViewController.init(initInfo);
-};
-
 const addIdentityButton = spectrum.button("addIdentityButton");
-const tabs = spectrum.tabs("identitiesTabs");
+const tabs = spectrum.tabs();
 
 const identities = [];
 for (let i = 0; i < 3; i += 1) {
@@ -68,7 +49,7 @@ createFixture({
 });
 
 test("initializes identity map with default settings", async () => {
-  await initializeExtensionView();
+  await extensionViewController.init();
 
   await identities[0].namespace.expectValue("");
   await identities[0].identifiers[0].id.expectValue("");
@@ -81,7 +62,7 @@ test("initializes identity map with default settings", async () => {
 });
 
 test("initializes identity map with sorted namespaces", async () => {
-  await initializeExtensionView({
+  await extensionViewController.init({
     settings: {
       S_CUSTOM_IDENTITY: [
         {
@@ -151,8 +132,8 @@ test("initializes identity map with sorted namespaces", async () => {
   await identities[2].identifiers[0].deleteButton.expectNotExists();
   await identities[2].deleteButton.expectExists();
 
-  await identityMapViewController.expectIsValid();
-  await identityMapViewController.expectSettings({
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
     B_CUSTOM_IDENTITY2: [
       {
         id: "test3",
@@ -182,7 +163,7 @@ test("initializes identity map with sorted namespaces", async () => {
   });
 });
 test("adds a new identity and new identifier with minimal settings", async () => {
-  await initializeExtensionView({
+  await extensionViewController.init({
     settings: {
       CUSTOM_IDENTITY: [
         {
@@ -216,8 +197,8 @@ test("adds a new identity and new identifier with minimal settings", async () =>
     "Authenticated"
   );
 
-  await identityMapViewController.expectIsValid();
-  await identityMapViewController.expectSettings({
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
     CUSTOM_IDENTITY: [
       {
         id: "test1",
@@ -240,7 +221,7 @@ test("adds a new identity and new identifier with minimal settings", async () =>
   });
 });
 test("removing identifier returns the correct settings", async () => {
-  await initializeExtensionView({
+  await extensionViewController.init({
     settings: {
       CUSTOM_IDENTITY: [
         {
@@ -267,8 +248,8 @@ test("removing identifier returns the correct settings", async () => {
   await tabs.selectTab("CUSTOM_IDENTITY2");
   await identities[1].identifiers[1].deleteButton.click();
 
-  await identityMapViewController.expectIsValid();
-  await identityMapViewController.expectSettings({
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
     CUSTOM_IDENTITY: [
       {
         id: "test1",
@@ -286,30 +267,30 @@ test("removing identifier returns the correct settings", async () => {
   });
 });
 test("shows error for identity without a namespace", async () => {
-  await initializeExtensionView();
+  await extensionViewController.init();
 
   await identities[0].identifiers[0].id.typeText("test3");
   await identities[0].identifiers[0].authenticatedState.selectOption(
     "Authenticated"
   );
 
-  await identityMapViewController.expectIsNotValid();
+  await extensionViewController.expectIsNotValid();
   await identities[0].namespace.expectError();
 });
 test("shows error for identifier without an ID", async () => {
-  await initializeExtensionView();
+  await extensionViewController.init();
 
   await identities[0].namespace.typeText("CUSTOM_IDENTITY");
   await identities[0].identifiers[0].authenticatedState.selectOption(
     "Authenticated"
   );
 
-  await identityMapViewController.expectIsNotValid();
+  await extensionViewController.expectIsNotValid();
   await identities[0].identifiers[0].id.expectError();
 });
 
 test("shows error for identity with duplicate namespace", async () => {
-  await initializeExtensionView({
+  await extensionViewController.init({
     settings: {
       CUSTOM_IDENTITY: [
         {
@@ -338,7 +319,7 @@ test("shows error for identity with duplicate namespace", async () => {
   // Make sure we actually are on the first tab.
   await identities[0].identifiers[0].id.expectValue("foo");
 
-  await identityMapViewController.expectIsNotValid();
+  await extensionViewController.expectIsNotValid();
   await identities[1].namespace.expectError();
 });
 
@@ -347,13 +328,13 @@ test("initialization of namespaces as picker with namespace names", async () => 
 
   await t.addRequestHooks(platformMocks.namespaces);
 
-  await initializeExtensionView();
+  await extensionViewController.init();
 
   await identities[0].namespacePicker.selectOption("Adobe Analytics");
   await identities[0].identifiers[0].id.typeText("test3");
 
-  await identityMapViewController.expectIsValid();
-  await identityMapViewController.expectSettings({
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
     AAID: [
       {
         id: "test3",
@@ -369,13 +350,13 @@ test("when namespaces call fails instantiate form with textfield", async () => {
 
   await t.addRequestHooks(platformMocks.namespacesError);
 
-  await initializeExtensionView();
+  await extensionViewController.init();
 
   await identities[0].namespace.expectValue("");
 });
 
 test("shows error for multiple primary identifiers", async () => {
-  await initializeExtensionView({
+  await extensionViewController.init({
     settings: {
       CUSTOM_IDENTITY: [
         {
@@ -405,6 +386,6 @@ test("shows error for multiple primary identifiers", async () => {
   // Make sure we actually are on the first tab.
   await identities[0].identifiers[0].id.expectValue("123");
 
-  await identityMapViewController.expectIsNotValid();
+  await extensionViewController.expectIsNotValid();
   await identities[1].identifiers[0].primary.expectError();
 });

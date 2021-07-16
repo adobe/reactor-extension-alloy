@@ -12,17 +12,14 @@ governing permissions and limitations under the License.
 
 import React, { createRef } from "react";
 import PropTypes from "prop-types";
-import {
-  RadioGroup as ReactSpectrumRadioGroup,
-  Radio as ReactSpectrumRadio,
-  TextField as ReactTextField
-} from "@adobe/react-spectrum";
+import { RadioGroup, Radio, TextField } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import { string } from "yup";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 import RawDataElementSelector from "../rawDataElementSelector";
 import singleDataElementRegex from "../../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../../constants/validationErrorMessages";
+import FieldSubset from "../fieldSubset";
 
 export const createRadioGroupWithDataElementValidationSchema = name => {
   return string().when([`${name}DataElement`], {
@@ -36,9 +33,7 @@ export const createRadioGroupWithDataElementValidationSchema = name => {
 const RadioGroupWithDataElement = ({
   name,
   children,
-  description,
   dataElementDescription,
-  width,
   dataTestIdPrefix = name,
   ...otherProps
 }) => {
@@ -66,7 +61,7 @@ const RadioGroupWithDataElement = ({
   };
 
   // Not entirely sure this is the right approach, but there's
-  // no onBlur prop for RadioGroup, so we wire up React Hook Form's
+  // no onBlur prop for RadioGroup, so we wire up Formik's
   // onBlur to every radio.
   const childrenWithOnBlur = React.Children.map(children, child => {
     return React.cloneElement(child, {
@@ -108,52 +103,55 @@ const RadioGroupWithDataElement = ({
   };
 
   return (
-    <FieldDescriptionAndError description={description} width={width}>
-      <ReactSpectrumRadioGroup
+    <div>
+      <RadioGroup
         {...otherProps}
         ref={radioGroupRef}
         value={radioValue}
         onChange={newValue => {
           setValues(newValue, dataElementText);
         }}
-        width={width}
       >
         {childrenWithOnBlur}
-        <ReactSpectrumRadio
+        <Radio
           data-test-id={`${dataTestIdPrefix}DataElementRadio`}
           value="dataElement"
           onBlur={radioOnBlur}
         >
-          Use a data element
-        </ReactSpectrumRadio>
-      </ReactSpectrumRadioGroup>
+          Provide a data element
+        </Radio>
+      </RadioGroup>
+
       {radioValue === "dataElement" && (
-        <RawDataElementSelector
-          onChange={newValue => {
-            setValues("dataElement", newValue);
-            dataElementSetTouched(true);
-          }}
-        >
-          <FieldDescriptionAndError
-            description={dataElementDescription}
-            error={dataElementTouched && error ? error : undefined}
-            width={width}
+        <FieldSubset>
+          <RawDataElementSelector
+            adjustForLabel
+            onChange={newValue => {
+              setValues("dataElement", newValue);
+              dataElementSetTouched(true);
+            }}
           >
-            <ReactTextField
-              aria-label="Data Element"
-              value={dataElementText}
-              data-test-id={`${dataTestIdPrefix}DataElementField`}
-              onChange={newValue => setValues("dataElement", newValue)}
-              onBlur={() => dataElementSetTouched(true)}
-              validationState={
-                dataElementTouched && error ? "invalid" : undefined
-              }
-              width={width}
-            />
-          </FieldDescriptionAndError>
-        </RawDataElementSelector>
+            <FieldDescriptionAndError
+              description={dataElementDescription}
+              error={dataElementTouched && error ? error : undefined}
+            >
+              <TextField
+                label="Data Element"
+                value={dataElementText}
+                data-test-id={`${dataTestIdPrefix}DataElementField`}
+                onChange={newValue => setValues("dataElement", newValue)}
+                onBlur={() => dataElementSetTouched(true)}
+                validationState={
+                  dataElementTouched && error ? "invalid" : undefined
+                }
+                width="size-5000"
+                isRequired
+              />
+            </FieldDescriptionAndError>
+          </RawDataElementSelector>
+        </FieldSubset>
       )}
-    </FieldDescriptionAndError>
+    </div>
   );
 };
 

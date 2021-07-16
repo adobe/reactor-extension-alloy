@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
+import { Flex } from "@adobe/react-spectrum";
 import AlertIcon from "@spectrum-icons/workflow/Alert";
 import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
 import PopulationAmountIndicator from "./populationAmountIndicator";
@@ -22,36 +23,37 @@ const XdmTreeNodeTitle = props => {
   const { displayName, type, populationAmount, error, infoTip } = props;
 
   return (
-    <div
+    <Flex
       data-test-id="xdmTreeNodeTitle"
-      className={classNames(
-        "XdmTreeNodeTitle",
-        "u-flex",
-        "u-alignItemsCenter",
-        {
-          "is-invalid": error
-        }
-      )}
+      alignItems="center"
+      gap="size-100"
+      UNSAFE_className={classNames("XdmTreeNodeTitle", {
+        "is-invalid": error
+      })}
     >
       {error && (
-        <div className="u-flex u-alignItemsCenter u-gapRight" title={error}>
-          <AlertIcon color="negative" size="S" />
+        <div title={error}>
+          <Flex alignItems="center">
+            <AlertIcon color="negative" size="S" />
+          </Flex>
         </div>
       )}
-      <PopulationAmountIndicator
-        className="u-gapRight"
-        populationAmount={populationAmount}
-      />
-      <span data-test-id="xdmTreeNodeTitleDisplayName" className="u-noWrap">
+      <PopulationAmountIndicator populationAmount={populationAmount} />
+      <span
+        data-test-id="xdmTreeNodeTitleDisplayName"
+        className="XdmTreeNodeTitle-displayName"
+      >
         {displayName}
       </span>
       {infoTip && (
-        <div className="u-flex u-alignItemsCenter u-gapLeft" title={infoTip}>
-          <AsteriskIcon size="XS" />
+        <div title={infoTip}>
+          <Flex alignItems="center">
+            <AsteriskIcon size="XS" />
+          </Flex>
         </div>
       )}
-      <span className="XdmTreeNodeTitle-type u-gapLeft u-gapRight">{type}</span>
-    </div>
+      <span className="XdmTreeNodeTitle-type">{type}</span>
+    </Flex>
   );
 };
 

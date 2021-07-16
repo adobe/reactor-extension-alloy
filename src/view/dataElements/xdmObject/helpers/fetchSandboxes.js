@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import fetchFromPlatform from "../../../utils/fetchFromPlatform";
+import UserReportableError from "../../../errors/userReportableError";
 
 export default async ({ orgId, imsAccess, signal }) => {
   // There is no sandbox API for a non-admin user to fetch
@@ -18,12 +19,23 @@ export default async ({ orgId, imsAccess, signal }) => {
   // to query sandboxes by name or to query for the default
   // sandbox. If we ever want to support more than one page of
   // sandboxes, we'll probably want/need improved sandbox APIs.
-  const parsedResponse = await fetchFromPlatform({
-    orgId,
-    imsAccess,
-    path: `/data/foundation/sandbox-management/`,
-    signal
-  });
+  let parsedResponse;
+  try {
+    parsedResponse = await fetchFromPlatform({
+      orgId,
+      imsAccess,
+      path: `/data/foundation/sandbox-management/`,
+      signal
+    });
+  } catch (e) {
+    if (e.name === "AbortError") {
+      throw e;
+    }
+
+    throw new UserReportableError(`Failed to load sandboxes.`, {
+      originatingError: e
+    });
+  }
 
   return {
     results: parsedResponse.parsedBody.sandboxes

@@ -13,11 +13,21 @@ governing permissions and limitations under the License.
 import React, { useState } from "react";
 import { FieldArray, useField } from "formik";
 import { array, boolean, object, string } from "yup";
-import { Button, Heading, Item, Text, Well } from "@adobe/react-spectrum";
-import { TabList, TabPanels, Tabs } from "@react-spectrum/tabs";
+import {
+  Button,
+  Flex,
+  Heading,
+  Item,
+  Text,
+  Well,
+  TabList,
+  TabPanels,
+  Tabs,
+  View
+} from "@adobe/react-spectrum";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
-import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionView";
+import render from "../render";
+import ExtensionView from "../components/extensionView";
 import getDefaultIdentity from "./identityMap/utils/getDefaultIdentity";
 import fetchNamespaces from "./identityMap/utils/fetchNamespaces";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
@@ -25,11 +35,9 @@ import NamespaceComponent from "../components/namespaceComponent";
 import getDefaultIdentifier from "./identityMap/utils/getDefaultIdentifier";
 import DataElementSelector from "../components/dataElementSelector";
 import FormElementContainer from "../components/formElementContainer";
-import {
-  Checkbox,
-  Picker,
-  TextField
-} from "../components/formikReactSpectrum3";
+import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
+import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import * as AUTHENTICATED_STATE from "./identityMap/constants/authenticatedState";
 
 const isNotECID = namespace => {
@@ -197,7 +205,8 @@ const IdentityMap = () => {
         render={arrayHelpers => {
           return (
             <React.Fragment>
-              <div className="u-alignRight">
+              <Flex alignItems="center">
+                <Heading level={3}>Identities</Heading>
                 <Button
                   data-test-id="addIdentityButton"
                   variant="secondary"
@@ -205,11 +214,11 @@ const IdentityMap = () => {
                     arrayHelpers.push(getDefaultIdentity());
                     setSelectedTabKey(String(identities.length));
                   }}
+                  marginStart="auto"
                 >
                   Add Identity
                 </Button>
-              </div>
-              <Heading level={3}>Identities</Heading>
+              </Flex>
               {/*
                 There is an issue where the heavy line under the selected
                 tab doesn't update in position or width when the label changes,
@@ -236,125 +245,135 @@ const IdentityMap = () => {
                   {identities.map((identity, index) => {
                     return (
                       <Item key={index}>
-                        <div className="u-gapTop">
-                          <NamespaceComponent
-                            name={`identities.${index}.namespaceCode`}
-                            selectedNamespaceCode={identity.namespaceCode}
-                            namespaces={namespaces}
-                            index={index}
-                          />
-                        </div>
-                        <FieldArray
-                          id={`identities.${index}.identifiers`}
-                          name={`identities.${index}.identifiers`}
-                          render={identityArrayHelpers => {
-                            return (
-                              <React.Fragment>
-                                <div className="u-gapBottom u-alignRight">
-                                  <Button
-                                    data-test-id={`addIdentifier${index}Button`}
-                                    variant="secondary"
-                                    onPress={() => {
-                                      identityArrayHelpers.push(
-                                        getDefaultIdentifier()
-                                      );
-                                    }}
+                        <FormElementContainer>
+                          <FieldArray
+                            id={`identities.${index}.identifiers`}
+                            name={`identities.${index}.identifiers`}
+                            render={identityArrayHelpers => {
+                              return (
+                                <React.Fragment>
+                                  <Flex
+                                    marginTop="size-100"
+                                    alignItems="flex-end"
+                                    justifyContent="space-between"
                                   >
-                                    Add Identifier
-                                  </Button>
-                                </div>
-                                {identity.identifiers.map(
-                                  (identifier, identifierIndex) => (
-                                    <Well
-                                      key={`identity${index}identifier${identifierIndex}`}
-                                      marginTop="size-250"
-                                      marginBottom="size-250"
+                                    <NamespaceComponent
+                                      name={`identities.${index}.namespaceCode`}
+                                      selectedNamespaceCode={
+                                        identity.namespaceCode
+                                      }
+                                      namespaces={namespaces}
+                                      index={index}
+                                    />
+                                    <Button
+                                      data-test-id={`addIdentifier${index}Button`}
+                                      variant="secondary"
+                                      onPress={() => {
+                                        identityArrayHelpers.push(
+                                          getDefaultIdentifier()
+                                        );
+                                      }}
                                     >
-                                      <FormElementContainer>
-                                        <DataElementSelector>
-                                          <TextField
-                                            data-test-id={`identity${index}idField${identifierIndex}`}
-                                            label="ID"
-                                            name={`identities.${index}.identifiers.${identifierIndex}.id`}
-                                            isRequired
-                                            width="size-5000"
-                                          />
-                                        </DataElementSelector>
-                                        <Picker
-                                          data-test-id={`identity${index}authenticatedStateField${identifierIndex}`}
-                                          label="Authenticated State"
-                                          name={`identities.${index}.identifiers.${identifierIndex}.authenticatedState`}
-                                          width="size-5000"
+                                      Add Identifier
+                                    </Button>
+                                  </Flex>
+                                  <Flex direction="column" gap="size-250">
+                                    {identity.identifiers.map(
+                                      (identifier, identifierIndex) => (
+                                        <Well
+                                          key={`identity${index}identifier${identifierIndex}`}
                                         >
-                                          <Item
-                                            key={AUTHENTICATED_STATE.AMBIGUOUS}
-                                          >
-                                            Ambiguous
-                                          </Item>
-                                          <Item
-                                            key={
-                                              AUTHENTICATED_STATE.AUTHENTICATED
-                                            }
-                                          >
-                                            Authenticated
-                                          </Item>
-                                          <Item
-                                            key={AUTHENTICATED_STATE.LOGGED_OUT}
-                                          >
-                                            Logged Out
-                                          </Item>
-                                          {item => (
-                                            <Item key={item.value}>
-                                              {item.label}
-                                            </Item>
+                                          <FormElementContainer>
+                                            <DataElementSelector>
+                                              <FormikTextField
+                                                data-test-id={`identity${index}idField${identifierIndex}`}
+                                                label="ID"
+                                                name={`identities.${index}.identifiers.${identifierIndex}.id`}
+                                                isRequired
+                                                width="size-5000"
+                                              />
+                                            </DataElementSelector>
+                                            <FormikPicker
+                                              data-test-id={`identity${index}authenticatedStateField${identifierIndex}`}
+                                              label="Authenticated State"
+                                              name={`identities.${index}.identifiers.${identifierIndex}.authenticatedState`}
+                                              width="size-5000"
+                                            >
+                                              <Item
+                                                key={
+                                                  AUTHENTICATED_STATE.AMBIGUOUS
+                                                }
+                                              >
+                                                Ambiguous
+                                              </Item>
+                                              <Item
+                                                key={
+                                                  AUTHENTICATED_STATE.AUTHENTICATED
+                                                }
+                                              >
+                                                Authenticated
+                                              </Item>
+                                              <Item
+                                                key={
+                                                  AUTHENTICATED_STATE.LOGGED_OUT
+                                                }
+                                              >
+                                                Logged Out
+                                              </Item>
+                                              {item => (
+                                                <Item key={item.value}>
+                                                  {item.label}
+                                                </Item>
+                                              )}
+                                            </FormikPicker>
+                                            <FormikCheckbox
+                                              data-test-id={`identity${index}primaryField${identifierIndex}`}
+                                              name={`identities.${index}.identifiers.${identifierIndex}.primary`}
+                                              description="Adobe Experience Platform will use the identity as an identifier to help stitch together more information about that individual. If left unchecked, the identifier within this namespace will still be collected, but the ECID will be used as the primary identifier for stitching."
+                                            >
+                                              Primary
+                                            </FormikCheckbox>
+                                          </FormElementContainer>
+                                          {values.identities[index].identifiers
+                                            .length > 1 && (
+                                            <Button
+                                              data-test-id={`deleteIdentifier${index}Button${identifierIndex}`}
+                                              variant="secondary"
+                                              onPress={() => {
+                                                identityArrayHelpers.remove(
+                                                  identifierIndex
+                                                );
+                                              }}
+                                              marginTop="size-150"
+                                            >
+                                              <DeleteIcon />
+                                              <Text>Delete Identifier</Text>
+                                            </Button>
                                           )}
-                                        </Picker>
-                                        <Checkbox
-                                          data-test-id={`identity${index}primaryField${identifierIndex}`}
-                                          name={`identities.${index}.identifiers.${identifierIndex}.primary`}
-                                          description="Adobe Experience Platform will use the identity as an identifier to help stitch together more information about that individual. If left unchecked, the identifier within this namespace will still be collected, but the ECID will be used as the primary identifier for stitching."
-                                        >
-                                          Primary
-                                        </Checkbox>
-                                      </FormElementContainer>
-                                      {identities[index].identifiers.length >
-                                        1 && (
-                                        <Button
-                                          data-test-id={`deleteIdentifier${index}Button${identifierIndex}`}
-                                          variant="secondary"
-                                          onPress={() => {
-                                            identityArrayHelpers.remove(
-                                              identifierIndex
-                                            );
-                                          }}
-                                          marginTop="size-150"
-                                        >
-                                          <DeleteIcon />
-                                          <Text>Delete Identifier</Text>
-                                        </Button>
-                                      )}
-                                    </Well>
-                                  )
-                                )}
-                              </React.Fragment>
-                            );
-                          }}
-                        />
-                        {identities.length > 1 && (
-                          <div className="u-gapTop">
-                            <Button
-                              data-test-id={`deleteIdentity${index}Button`}
-                              variant="secondary"
-                              onClick={() => {
-                                arrayHelpers.remove(index);
-                                setSelectedTabKey("0");
-                              }}
-                            >
-                              <DeleteIcon />
-                              Delete Identity
-                            </Button>
-                          </div>
-                        )}
+                                        </Well>
+                                      )
+                                    )}
+                                  </Flex>
+                                </React.Fragment>
+                              );
+                            }}
+                          />
+                          {values.identities.length > 1 && (
+                            <View marginTop="size-100">
+                              <Button
+                                data-test-id={`deleteIdentity${index}Button`}
+                                variant="secondary"
+                                onClick={() => {
+                                  arrayHelpers.remove(index);
+                                  setSelectedTabKey("0");
+                                }}
+                              >
+                                <DeleteIcon />
+                                Delete Identity
+                              </Button>
+                            </View>
+                          )}
+                        </FormElementContainer>
                       </Item>
                     );
                   })}

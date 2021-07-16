@@ -13,15 +13,13 @@ governing permissions and limitations under the License.
 import React from "react";
 import { object, string } from "yup";
 import { Item } from "@adobe/react-spectrum";
-import {
-  ComboBox,
-  Picker,
-  TextField,
-  Checkbox
-} from "../components/formikReactSpectrum3";
+import FormikComboBox from "../components/formikReactSpectrum3/formikComboBox";
+import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
+import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import DataElementSelector from "../components/dataElementSelector";
-import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionView";
+import render from "../render";
+import ExtensionView from "../components/extensionView";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DecisionScopes, {
@@ -29,6 +27,7 @@ import DecisionScopes, {
 } from "../components/decisionScopes";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormElementContainer from "../components/formElementContainer";
+import InstanceNamePicker from "../components/instanceNamePicker";
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -127,18 +126,13 @@ const SendEvent = () => {
       formikStateValidationSchema={validationSchema}
       render={({ initInfo }) => (
         <FormElementContainer>
-          <Picker
+          <InstanceNamePicker
             data-test-id="instanceNameField"
             name="instanceName"
-            label="Instance"
-            items={getInstanceOptions(initInfo)}
-            width="size-5000"
-            isRequired
-          >
-            {item => <Item key={item.value}>{item.label}</Item>}
-          </Picker>
+            initInfo={initInfo}
+          />
           <DataElementSelector>
-            <ComboBox
+            <FormikComboBox
               data-test-id="typeField"
               name="type"
               label="Type"
@@ -148,10 +142,10 @@ const SendEvent = () => {
               width="size-5000"
             >
               {item => <Item key={item.type}>{item.type}</Item>}
-            </ComboBox>
+            </FormikComboBox>
           </DataElementSelector>
           <DataElementSelector>
-            <TextField
+            <FormikTextField
               data-test-id="xdmField"
               name="xdm"
               label="XDM Data"
@@ -160,7 +154,7 @@ const SendEvent = () => {
             />
           </DataElementSelector>
           <DataElementSelector>
-            <TextField
+            <FormikTextField
               data-test-id="dataField"
               name="data"
               label="Data"
@@ -169,7 +163,7 @@ const SendEvent = () => {
             />
           </DataElementSelector>
           <DataElementSelector>
-            <TextField
+            <FormikTextField
               data-test-id="mergeIdField"
               name="mergeId"
               description="Provide an identifier used to merge multiple events. This will
@@ -179,7 +173,7 @@ const SendEvent = () => {
             />
           </DataElementSelector>
           <DataElementSelector>
-            <TextField
+            <FormikTextField
               data-test-id="datasetIdField"
               name="datasetId"
               description="Send data to a different dataset than what's been provided in the Edge configuration."
@@ -187,22 +181,22 @@ const SendEvent = () => {
               width="size-5000"
             />
           </DataElementSelector>
-          <Checkbox
+          <FormikCheckbox
             data-test-id="documentUnloadingField"
             name="documentUnloading"
             description="Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
             width="size-5000"
           >
             Document will unload
-          </Checkbox>
-          <Checkbox
+          </FormikCheckbox>
+          <FormikCheckbox
             data-test-id="renderDecisionsField"
             name="renderDecisions"
             description="Check this to automatically render personalization and pre-hide the content to prevent flicker."
             width="size-5000"
           >
             Render visual personalization decisions
-          </Checkbox>
+          </FormikCheckbox>
           <DecisionScopes />
         </FormElementContainer>
       )}

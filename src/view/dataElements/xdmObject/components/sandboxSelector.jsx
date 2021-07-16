@@ -17,7 +17,6 @@ import fetchSandboxes from "../helpers/fetchSandboxes";
 import FieldDescriptionAndError from "../../../components/fieldDescriptionAndError";
 import useReportAsyncError from "../../../utils/useReportAsyncError";
 import useIsFirstRender from "../../../utils/useIsFirstRender";
-import UserReportableError from "../../../errors/userReportableError";
 
 const getKey = sandbox => sandbox && sandbox.name;
 const getLabel = sandbox => {
@@ -52,13 +51,11 @@ const SandboxSelector = ({
         }));
       } catch (e) {
         if (e.name !== "AbortError") {
-          reportAsyncError(
-            new UserReportableError(`Failed to load sandboxes.`, {
-              originatingError: e
-            })
-          );
-          return undefined;
+          reportAsyncError(e);
         }
+        // useAsyncList expects us to throw an error
+        // if we can't produce a valid return object.
+        throw e;
       }
 
       return {
@@ -96,7 +93,6 @@ const SandboxSelector = ({
     <FieldDescriptionAndError
       description="Choose a sandbox containing the schema you wish to use."
       error={errorMessage}
-      width="size-5000"
     >
       <Picker
         data-test-id="sandboxField"

@@ -10,35 +10,62 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import EDGE_CONFIG_HOST from "../../constants/edgeConfigHost";
-import getBaseRequestHeaders from "../../utils/getBaseRequestHeaders";
+import fetchFromEdge from "../../utils/fetchFromEdge";
+import UserReportableError from "../../errors/userReportableError";
 
-const fetchConfigsFromEdgeConfig = ({ baseRequestHeaders }) => {
-  return fetch(`${EDGE_CONFIG_HOST}/configs/user/edge?size=100`, {
-    headers: baseRequestHeaders
-  })
-    .then(response => response.json())
-    .then(responseBody => {
-      // eslint-disable-next-line no-underscore-dangle
-      if (!responseBody._embedded || !responseBody._embedded.configs) {
-        return [];
-      }
+const fetchConfigs = async ({
+  orgId,
+  imsAccess,
+  search,
+  start,
+  limit,
+  signal
+}) => {
+  const params = new URLSearchParams();
+  params.append("orderby", "title");
 
-      // eslint-disable-next-line no-underscore-dangle
-      return responseBody._embedded.configs.map(config => ({
-        label: config.title,
-        value: config.id
-      }));
+  if (search) {
+    params.append("property", `title:${search}`);
+  }
+
+  if (start) {
+    params.append("start", start);
+  }
+
+  if (limit) {
+    params.append("limit", limit);
+  }
+
+  let parsedResponse;
+
+  try {
+    parsedResponse = await fetchFromEdge({
+      orgId,
+      imsAccess,
+      path: "/configs/user/edge",
+      params,
+      signal
     });
+  } catch (e) {
+    if (e.name === "AbortError") {
+      throw e;
+    }
+
+    throw new UserReportableError("Failed to load datastreams.", {
+      originatingError: e
+    });
+  }
+
+  const {
+    parsedBody: { _embedded, page }
+  } = parsedResponse;
+
+  return {
+    // eslint-disable-next-line no-underscore-dangle
+    results: _embedded?.configs ?? [],
+    // parsedBody.page won't exist if there were 0 results
+    nextPage: page && page.totalPages > page.number ? page.number + 1 : null
+  };
 };
 
-/**
- * Retrieves the edge configurations that the user has access to.
- * @param {string} orgId Experience Cloud organization ID
- * @param {string} imsAccess IMS auth token
- * @returns {Promise} Promise to be resolved with an array of config objects
- */
-export default ({ orgId, imsAccess }) => {
-  const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
-  return fetchConfigsFromEdgeConfig({ baseRequestHeaders });
-};
+export default fetchConfigs;

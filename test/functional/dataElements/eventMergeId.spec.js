@@ -10,14 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewController from "../helpers/createExtensionViewController";
+import extensionViewController from "../helpers/extensionViewController";
 import createFixture from "../helpers/createFixture";
 
 const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-
-const extensionViewController = createExtensionViewController(
-  "dataElements/eventMergeId.html"
-);
 
 createFixture({
   title: "Event Merge ID View",

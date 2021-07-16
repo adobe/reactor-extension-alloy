@@ -18,12 +18,6 @@ governing permissions and limitations under the License.
  */
 class UserReportableError extends Error {
   constructor(message, { originatingError, additionalInfoUrl } = {}) {
-    if (originatingError) {
-      // Log the originating error so that
-      // we can still see its stack trace.
-      console.error(originatingError);
-    }
-
     if (originatingError instanceof UserReportableError) {
       message = `${message} ${originatingError.message}`;
       additionalInfoUrl =
@@ -31,6 +25,7 @@ class UserReportableError extends Error {
     }
 
     super(message);
+    this.originatingError = originatingError;
     this.name = "UserReportableError";
     this.message = message;
     this.additionalInfoUrl = additionalInfoUrl;

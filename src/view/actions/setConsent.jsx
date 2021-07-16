@@ -14,26 +14,24 @@ import React from "react";
 import PropTypes from "prop-types";
 import { FieldArray } from "formik";
 import { object, string, array, mixed } from "yup";
-import { Item, Radio, Button, Well, Text } from "@adobe/react-spectrum";
+import { Item, Radio, Button, Well, Text, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
-import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionView";
-import getInstanceOptions from "../utils/getInstanceOptions";
+import render from "../render";
+import ExtensionView from "../components/extensionView";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import RadioGroupWithDataElement, {
   createRadioGroupWithDataElementValidationSchema
 } from "../components/formikReactSpectrum3/radioGroupWithDataElement";
-import {
-  Picker,
-  TextField,
-  RadioGroup
-} from "../components/formikReactSpectrum3";
+import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
+import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import DataElementSelector from "../components/dataElementSelector";
 import FormElementContainer from "../components/formElementContainer";
+import InstanceNamePicker from "../components/instanceNamePicker";
 
 const FORM = { value: "form", label: "Fill out a form" };
-const DATA_ELEMENT = { value: "dataElement", label: "Use a data element" };
+const DATA_ELEMENT = { value: "dataElement", label: "Provide a data element" };
 const ADOBE = { value: "adobe", label: "Adobe" };
 const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
 const VERSION_1_0 = { value: "1.0", label: "1.0" };
@@ -215,29 +213,27 @@ const validationSchema = object().shape({
 const ConsentObject = ({ value, index }) => {
   return (
     <>
-      <Picker
+      <FormikPicker
         data-test-id="standardPicker"
         name={`consent[${index}].standard`}
         label="Standard"
         description="The consent standard for this consent object"
         items={[ADOBE, IAB_TCF]}
         width="size-5000"
-        isRequired
       >
         {item => <Item key={item.value}>{item.label}</Item>}
-      </Picker>
+      </FormikPicker>
       {value.standard === ADOBE.value && (
-        <Picker
+        <FormikPicker
           data-test-id="adobeVersionPicker"
           name={`consent[${index}].adobeVersion`}
           label="Version"
           description="The consent standard version for this consent object"
           items={[VERSION_1_0, VERSION_2_0]}
           width="size-5000"
-          isRequired
         >
           {item => <Item key={item.value}>{item.label}</Item>}
-        </Picker>
+        </FormikPicker>
       )}
       {value.standard === ADOBE.value &&
         value.adobeVersion === VERSION_1_0.value && (
@@ -248,7 +244,6 @@ const ConsentObject = ({ value, index }) => {
             dataElementDescription={
               'This data element should resolve to "in" or "out".'
             }
-            width="size-5000"
           >
             <Radio data-test-id="generalInRadio" value="in">
               In
@@ -261,7 +256,7 @@ const ConsentObject = ({ value, index }) => {
       {value.standard === ADOBE.value &&
         value.adobeVersion !== VERSION_1_0.value && (
           <DataElementSelector>
-            <TextField
+            <FormikTextField
               data-test-id="valueField"
               name={`consent[${index}].value`}
               label="Value"
@@ -273,7 +268,7 @@ const ConsentObject = ({ value, index }) => {
         )}
       {value.standard === IAB_TCF.value && (
         <>
-          <TextField
+          <FormikTextField
             data-test-id="iabVersionField"
             name={`consent[${index}].iabVersion`}
             label="Version"
@@ -282,7 +277,7 @@ const ConsentObject = ({ value, index }) => {
             isRequired
           />
           <DataElementSelector>
-            <TextField
+            <FormikTextField
               data-test-id="iabValueField"
               name={`consent[${index}].iabValue`}
               label="Value"
@@ -294,10 +289,8 @@ const ConsentObject = ({ value, index }) => {
           <RadioGroupWithDataElement
             dataTestIdPrefix="gdprApplies"
             name={`consent[${index}].gdprApplies`}
-            label="GDPR Applies"
-            description="Does GDPR apply to this consent value?"
+            label="Does GDPR apply to this consent value?"
             dataElementDescription="This data element should resolve to true or false."
-            width="size-5000"
           >
             <Radio data-test-id="gdprAppliesYesRadio" value>
               Yes
@@ -309,10 +302,8 @@ const ConsentObject = ({ value, index }) => {
           <RadioGroupWithDataElement
             dataTestIdPrefix="gdprContainsPersonalData"
             name={`consent[${index}].gdprContainsPersonalData`}
-            label="GDPR Contains Personal Data"
-            description="Does the event data associated with this user contain personal data?"
+            label="Does the event data associated with this user contain personal data?"
             dataElementDescription="This data element should resolve to true or false."
-            width="size-5000"
           >
             <Radio data-test-id="gdprContainsPersonalDataYesRadio" value>
               Yes
@@ -340,18 +331,13 @@ const SetConsent = () => {
       formikStateValidationSchema={validationSchema}
       render={({ initInfo, formikProps: { values } }) => (
         <FormElementContainer>
-          <Picker
+          <InstanceNamePicker
             data-test-id="instanceNamePicker"
             name="instanceName"
-            label="Instance"
-            items={getInstanceOptions(initInfo)}
-            width="size-5000"
-            isRequired
-          >
-            {item => <Item key={item.value}>{item.label}</Item>}
-          </Picker>
+            initInfo={initInfo}
+          />
           <DataElementSelector>
-            <TextField
+            <FormikTextField
               data-test-id="identityMapField"
               name="identityMap"
               label="Identity Map"
@@ -359,7 +345,7 @@ const SetConsent = () => {
               width="size-5000"
             />
           </DataElementSelector>
-          <RadioGroup
+          <FormikRadioGroup
             name="inputMethod"
             orientation="horizontal"
             label="Consent Information"
@@ -373,7 +359,7 @@ const SetConsent = () => {
             >
               {DATA_ELEMENT.label}
             </Radio>
-          </RadioGroup>
+          </FormikRadioGroup>
           {values.inputMethod === FORM.value && (
             <FieldArray
               name="consent"
@@ -389,12 +375,11 @@ const SetConsent = () => {
                   >
                     Add Consent Object
                   </Button>
-                  <div>
+                  <Flex direction="column" gap="size-250">
                     {values.consent.map((value, index) => (
                       <Well
                         data-test-id={`consentObject${index}`}
                         key={`consentObject${index}`}
-                        marginBottom="size-250"
                       >
                         <FormElementContainer>
                           <ConsentObject value={value} index={index} />
@@ -415,18 +400,19 @@ const SetConsent = () => {
                         </FormElementContainer>
                       </Well>
                     ))}
-                  </div>
+                  </Flex>
                 </>
               )}
             />
           )}
           {values.inputMethod === DATA_ELEMENT.value && (
             <DataElementSelector>
-              <TextField
+              <FormikTextField
                 data-test-id="dataElementField"
+                label="Data Element"
                 name="dataElement"
+                isRequired
                 width="size-5000"
-                aria-label="Data Element"
               />
             </DataElementSelector>
           )}

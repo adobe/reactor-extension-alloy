@@ -28,11 +28,7 @@ const loadDefaultSandbox = async ({
       imsAccess
     }));
   } catch (e) {
-    reportAsyncError(
-      new UserReportableError("Failed to load sandboxes.", {
-        originatingError: e
-      })
-    );
+    reportAsyncError(e);
     return undefined;
   }
 

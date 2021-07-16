@@ -50,7 +50,7 @@ export const reducer = (state, action) => {
       };
     // Note that schemaLoaded is not dispatched as part of
     // loading the default sandbox and schema; it's only
-    // loaded when the selected schema is changing.
+    // dispatched when the selected schema is changing.
     // If anything else is added that dispatches this action, be
     // sure to call Formik's resetForm with the new Formik
     // initial values. It might seem reasonable to call

@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import fetchSchema from "../fetchSchema";
-import UserReportableError from "../../../../errors/userReportableError";
 
 const fetchSchemaUsingAsyncErrorReporting = async ({
   orgId,
@@ -35,11 +34,7 @@ const fetchSchemaUsingAsyncErrorReporting = async ({
     });
   } catch (e) {
     if (e.name !== "AbortError") {
-      reportAsyncError(
-        new UserReportableError("Failed to load schema.", {
-          originatingError: e
-        })
-      );
+      reportAsyncError(e);
     }
   }
 

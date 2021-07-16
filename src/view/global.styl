@@ -10,12 +10,21 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-@import "./utils";
-
 // Simplifies centering things vertically in the middle of the view (like loading errors) or
 // creating columns that are the full height of the view and separately scrollable.
 html {
   height: 100%
+}
+
+// Typically, body has margin automatically provided by the browser,
+// but because we're using a height of 100% on the html element,
+// the bottom margin of the body extends outside of the HTML element
+// for some reason, so content ends up flush with the bottom of the
+// window (a bad thing). Using box sizing of border-box doesn't fix the
+// issue. Instead, we'll switch margin to padding.
+body {
+  margin: 0;
+  padding: 8px;
 }
 
 html
@@ -26,46 +35,3 @@ body,
   flex-direction: column;
   flex: 1
 }
-
-// This is padding that goes around all the content. We put the padding on the Provider container
-// instead of the body because of https://jira.corp.adobe.com/browse/RSP-276
-.react-spectrum-provider {
-  padding: 12px;
-}
-
-// There's extra space to the right of Checkbox and Radio,
-// which is not according to design, which makes it hard
-// to place tooltips correctly.
-// https://github.com/adobe/spectrum-css/issues/124
-.spectrum-Checkbox,
-.spectrum-Radio {
-  margin-right: 0 !important;
-}
-
-.spectrum-Alert {
-  max-width: 700px;
-}
-
-.Label {
-  display: inline-block;
-  line-height: 2.25rem!important;
-}
-
-.FieldSubset {
-  margin-left: 24px;
-}
-
-.ConstrainedAlert {
-  width: 600px;
-}
-
-.Rule {
-  margin-bottom: 0;
-  margin-top: 45px;
-}
-
-.AdvancedSettings {
-  margin-top: 0;
-}
-
-

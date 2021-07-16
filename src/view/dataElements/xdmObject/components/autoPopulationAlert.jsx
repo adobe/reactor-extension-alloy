@@ -23,11 +23,7 @@ const AutoPopulationAlert = ({ formStateNode }) => {
   const { autoPopulationSource, contextKey, schema } = formStateNode;
 
   return (
-    <Alert
-      variant="informative"
-      title="Auto-populated Field"
-      className="u-gapBottom2x"
-    >
+    <Alert variant="informative" title="Auto-populated Field">
       {autoPopulationSource === ALWAYS && (
         <p>
           The value for this field will be auto-populated when this data element

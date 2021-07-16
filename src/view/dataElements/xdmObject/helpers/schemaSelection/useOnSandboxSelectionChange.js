@@ -14,17 +14,17 @@ import loadDefaultSchemaMetaForSandbox from "./loadDefaultSchemaMetaForSandbox";
 import { ACTION_TYPES } from "../mainViewState";
 import fetchSchemaUsingAsyncErrorReporting from "./fetchSchemaUsingAsyncErrorReporting";
 import getInitialFormStateUsingAsyncErrorReporting from "./getInitialFormStateUsingAsyncErrorReporting";
-import abortPreviousRequestsAndCreateNewSignal from "./abortPreviousRequestsAndCreateNewSignal";
 
 const useOnSandboxSelectionChange = ({
   dispatch,
   orgId,
   imsAccess,
   resetForm,
-  reportAsyncError
+  reportAsyncError,
+  abortPreviousRequestsAndCreateSignal
 }) => {
   return async sandbox => {
-    const signal = abortPreviousRequestsAndCreateNewSignal();
+    const signal = abortPreviousRequestsAndCreateSignal();
 
     dispatch({
       type: ACTION_TYPES.SELECTED_SANDBOX_CHANGED,

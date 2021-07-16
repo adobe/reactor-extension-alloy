@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import fetchFromPlatform from "../../../utils/fetchFromPlatform";
+import UserReportableError from "../../../errors/userReportableError";
 
 export default async ({
   orgId,
@@ -31,13 +32,24 @@ export default async ({
     "x-sandbox-name": sandboxName
   };
 
-  const parsedResponse = await fetchFromPlatform({
-    orgId,
-    imsAccess,
-    path,
-    headers,
-    signal
-  });
+  let parsedResponse;
+  try {
+    parsedResponse = await fetchFromPlatform({
+      orgId,
+      imsAccess,
+      path,
+      headers,
+      signal
+    });
+  } catch (e) {
+    if (e.name === "AbortError") {
+      throw e;
+    }
+
+    throw new UserReportableError("Failed to load schema.", {
+      originatingError: e
+    });
+  }
 
   return parsedResponse.parsedBody;
 };

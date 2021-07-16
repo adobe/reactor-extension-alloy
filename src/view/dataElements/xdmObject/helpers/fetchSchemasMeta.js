@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import escapeStringRegexp from "escape-string-regexp";
 import fetchFromPlatform from "../../../utils/fetchFromPlatform";
+import UserReportableError from "../../../errors/userReportableError";
 
 const metaExtends = encodeURIComponent(
   "https://ns.adobe.com/xdm/context/experienceevent"
@@ -52,14 +53,25 @@ export default async ({
     "x-sandbox-name": sandboxName
   };
 
-  const parsedResponse = await fetchFromPlatform({
-    orgId,
-    imsAccess,
-    path,
-    params,
-    headers,
-    signal
-  });
+  let parsedResponse;
+  try {
+    parsedResponse = await fetchFromPlatform({
+      orgId,
+      imsAccess,
+      path,
+      params,
+      headers,
+      signal
+    });
+  } catch (e) {
+    if (e.name === "AbortError") {
+      throw e;
+    }
+
+    throw new UserReportableError("Failed to load schema metadata.", {
+      originatingError: e
+    });
+  }
 
   return {
     results: parsedResponse.parsedBody.results,
