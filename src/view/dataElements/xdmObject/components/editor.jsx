@@ -33,7 +33,13 @@ const Editor = ({
       <View width="size-3600" flexShrink={0} overflow="auto">
         <XdmTree selectedNodeId={selectedNodeId} onSelect={setSelectedNodeId} />
       </View>
-      <div>
+      {
+        // By default, this flex child will stretch to the height of the
+        // flex container. In our case, we want the flex child to shrink
+        // to its content so that it can float within the parent using
+        // position="sticky". This is why we have alignSelf="flex-start".
+      }
+      <View alignSelf="flex-start" position="sticky" top={0}>
         {selectedNodeId ? (
           <NodeEdit
             onNodeSelect={setSelectedNodeId}
@@ -45,7 +51,7 @@ const Editor = ({
             previouslySavedSchemaInfo={previouslySavedSchemaInfo}
           />
         )}
-      </div>
+      </View>
     </Flex>
   );
 };
