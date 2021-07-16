@@ -30,7 +30,7 @@ export const createRadioGroupWithDataElementValidationSchema = name => {
   });
 };
 
-const RadioGroupWithDataElement = ({
+const FormikRadioGroupWithDataElement = ({
   name,
   children,
   dataElementDescription,
@@ -155,7 +155,7 @@ const RadioGroupWithDataElement = ({
   );
 };
 
-RadioGroupWithDataElement.propTypes = {
+FormikRadioGroupWithDataElement.propTypes = {
   name: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   description: PropTypes.string,
@@ -164,4 +164,4 @@ RadioGroupWithDataElement.propTypes = {
   dataTestIdPrefix: PropTypes.string
 };
 
-export default RadioGroupWithDataElement;
+export default FormikRadioGroupWithDataElement;
