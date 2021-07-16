@@ -18,7 +18,8 @@ import Alert from "../components/alert";
 const EnvironmentsSelector = ({
   name,
   edgeConfig,
-  firstPageOfEachEnvironmentType
+  firstPageOfEachEnvironmentType,
+  initInfo
 }) => {
   return (
     <>
@@ -32,6 +33,7 @@ const EnvironmentsSelector = ({
           edgeConfigId={edgeConfig.id}
           isDisabled={firstPageOfEachEnvironmentType.production.length === 1}
           isRequired
+          initInfo={initInfo}
         />
       ) : (
         <Alert
@@ -52,6 +54,7 @@ const EnvironmentsSelector = ({
           type="staging"
           edgeConfigId={edgeConfig.id}
           isDisabled={firstPageOfEachEnvironmentType.staging.length === 1}
+          initInfo={initInfo}
         />
       ) : (
         <Alert
@@ -72,6 +75,7 @@ const EnvironmentsSelector = ({
           type="development"
           edgeConfigId={edgeConfig.id}
           isDisabled={firstPageOfEachEnvironmentType.development.length === 1}
+          initInfo={initInfo}
         />
       ) : (
         <Alert
@@ -90,7 +94,8 @@ const EnvironmentsSelector = ({
 EnvironmentsSelector.propTypes = {
   name: PropTypes.string.isRequired,
   edgeConfig: PropTypes.object.isRequired,
-  firstPageOfEachEnvironmentType: PropTypes.object.isRequired
+  firstPageOfEachEnvironmentType: PropTypes.object.isRequired,
+  initInfo: PropTypes.object.isRequired
 };
 
 export default EnvironmentsSelector;

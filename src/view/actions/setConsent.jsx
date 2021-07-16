@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { FieldArray } from "formik";
 import { object, string, array, mixed } from "yup";
@@ -23,7 +23,6 @@ import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormikRadioGroupWithDataElement, {
   createRadioGroupWithDataElementValidationSchema
 } from "../components/formikReactSpectrum3/formikRadioGroupWithDataElement";
-import ExtensionViewForm from "../components/extensionViewForm";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
@@ -324,133 +323,103 @@ ConsentObject.propTypes = {
   index: PropTypes.number.isRequired
 };
 
-const SetConsent = ({ initInfo, formikProps, registerImperativeFormApi }) => {
-  useEffect(() => {
-    registerImperativeFormApi({
-      getSettings,
-      formikStateValidationSchema: validationSchema
-    });
-    formikProps.resetForm({ values: getInitialValues({ initInfo }) });
-  }, []);
-
-  // Formik state won't have values on the first render.
-  if (!formikProps.values) {
-    return null;
-  }
-
-  const { values } = formikProps;
-
-  return (
-    <FormElementContainer>
-      <InstanceNamePicker
-        data-test-id="instanceNamePicker"
-        name="instanceName"
-        initInfo={initInfo}
-      />
-      <DataElementSelector>
-        <FormikTextField
-          data-test-id="identityMapField"
-          name="identityMap"
-          label="Identity Map"
-          description="Provide a data element which returns a custom identity map object as part of the setConsent command."
-          width="size-5000"
-        />
-      </DataElementSelector>
-      <FormikRadioGroup
-        name="inputMethod"
-        orientation="horizontal"
-        label="Consent Information"
-      >
-        <Radio data-test-id="inputMethodFormRadio" value={FORM.value}>
-          {FORM.label}
-        </Radio>
-        <Radio
-          data-test-id="inputMethodDataElementRadio"
-          value={DATA_ELEMENT.value}
-        >
-          {DATA_ELEMENT.label}
-        </Radio>
-      </FormikRadioGroup>
-      {values.inputMethod === FORM.value && (
-        <FieldArray
-          name="consent"
-          render={arrayHelpers => (
-            <>
-              <Button
-                variant="primary"
-                data-test-id="addConsentButton"
-                onPress={() => {
-                  arrayHelpers.push(createBlankConsentObject());
-                }}
-                marginStart="auto"
-              >
-                Add Consent Object
-              </Button>
-              <Flex direction="column" gap="size-250">
-                {values.consent.map((value, index) => (
-                  <Well
-                    data-test-id={`consentObject${index}`}
-                    key={`consentObject${index}`}
-                  >
-                    <FormElementContainer>
-                      <ConsentObject value={value} index={index} />
-                      {values.consent.length > 1 && (
-                        <Button
-                          variant="secondary"
-                          onPress={() => {
-                            arrayHelpers.remove(index);
-                          }}
-                          aria-label="Delete"
-                          data-test-id="deleteConsentButton"
-                          alignSelf="flex-start"
-                        >
-                          <Delete />
-                          <Text>Delete Consent Object</Text>
-                        </Button>
-                      )}
-                    </FormElementContainer>
-                  </Well>
-                ))}
-              </Flex>
-            </>
-          )}
-        />
-      )}
-      {values.inputMethod === DATA_ELEMENT.value && (
-        <DataElementSelector>
-          <FormikTextField
-            data-test-id="dataElementField"
-            label="Data Element"
-            name="dataElement"
-            isRequired
-            width="size-5000"
-          />
-        </DataElementSelector>
-      )}
-    </FormElementContainer>
-  );
-};
-
-SetConsent.propTypes = {
-  initInfo: PropTypes.object,
-  formikProps: PropTypes.object,
-  registerImperativeFormApi: PropTypes.func
-};
-
-const SetConsentExtensionView = () => {
+const SetConsent = () => {
   return (
     <ExtensionView
-      render={() => {
-        return (
-          <ExtensionViewForm
-            render={props => {
-              return <SetConsent {...props} />;
-            }}
+      getInitialValues={getInitialValues}
+      getSettings={getSettings}
+      formikStateValidationSchema={validationSchema}
+      render={({ initInfo, formikProps: { values } }) => (
+        <FormElementContainer>
+          <InstanceNamePicker
+            data-test-id="instanceNamePicker"
+            name="instanceName"
+            initInfo={initInfo}
           />
-        );
-      }}
+          <DataElementSelector>
+            <FormikTextField
+              data-test-id="identityMapField"
+              name="identityMap"
+              label="Identity Map"
+              description="Provide a data element which returns a custom identity map object as part of the setConsent command."
+              width="size-5000"
+            />
+          </DataElementSelector>
+          <FormikRadioGroup
+            name="inputMethod"
+            orientation="horizontal"
+            label="Consent Information"
+          >
+            <Radio data-test-id="inputMethodFormRadio" value={FORM.value}>
+              {FORM.label}
+            </Radio>
+            <Radio
+              data-test-id="inputMethodDataElementRadio"
+              value={DATA_ELEMENT.value}
+            >
+              {DATA_ELEMENT.label}
+            </Radio>
+          </FormikRadioGroup>
+          {values.inputMethod === FORM.value && (
+            <FieldArray
+              name="consent"
+              render={arrayHelpers => (
+                <>
+                  <Button
+                    variant="primary"
+                    data-test-id="addConsentButton"
+                    onPress={() => {
+                      arrayHelpers.push(createBlankConsentObject());
+                    }}
+                    marginStart="auto"
+                  >
+                    Add Consent Object
+                  </Button>
+                  <Flex direction="column" gap="size-250">
+                    {values.consent.map((value, index) => (
+                      <Well
+                        data-test-id={`consentObject${index}`}
+                        key={`consentObject${index}`}
+                      >
+                        <FormElementContainer>
+                          <ConsentObject value={value} index={index} />
+                          {values.consent.length > 1 && (
+                            <Button
+                              variant="secondary"
+                              onPress={() => {
+                                arrayHelpers.remove(index);
+                              }}
+                              aria-label="Delete"
+                              data-test-id="deleteConsentButton"
+                              alignSelf="flex-start"
+                            >
+                              <Delete />
+                              <Text>Delete Consent Object</Text>
+                            </Button>
+                          )}
+                        </FormElementContainer>
+                      </Well>
+                    ))}
+                  </Flex>
+                </>
+              )}
+            />
+          )}
+          {values.inputMethod === DATA_ELEMENT.value && (
+            <DataElementSelector>
+              <FormikTextField
+                data-test-id="dataElementField"
+                label="Data Element"
+                name="dataElement"
+                isRequired
+                width="size-5000"
+              />
+            </DataElementSelector>
+          )}
+        </FormElementContainer>
+      )}
     />
   );
 };
 
-render(SetConsentExtensionView);
+render(SetConsent);

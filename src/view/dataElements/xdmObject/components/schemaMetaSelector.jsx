@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { ComboBox } from "@react-spectrum/combobox";
 import { Item } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
@@ -19,20 +19,18 @@ import usePagedComboBox from "../../../utils/usePagedComboBox";
 import useReportAsyncError from "../../../utils/useReportAsyncError";
 import useIsFirstRender from "../../../utils/useIsFirstRender";
 import usePrevious from "../../../utils/usePrevious";
-import ExtensionViewContext from "../../../components/extensionViewContext";
 
 const SchemaMetaSelector = ({
   defaultSelectedSchemaMeta,
   selectedSandbox,
   onSelectionChange,
-  errorMessage
+  errorMessage,
+  initInfo
 }) => {
   const {
-    initInfo: {
-      company: { orgId },
-      tokens: { imsAccess }
-    }
-  } = useContext(ExtensionViewContext);
+    company: { orgId },
+    tokens: { imsAccess }
+  } = initInfo;
   const isFirstRender = useIsFirstRender();
   const previousSelectedSandbox = usePrevious(selectedSandbox);
   const reportAsyncError = useReportAsyncError();
@@ -116,7 +114,8 @@ SchemaMetaSelector.propTypes = {
   defaultSelectedSchemaMeta: PropTypes.object,
   selectedSandbox: PropTypes.object,
   onSelectionChange: PropTypes.func.isRequired,
-  errorMessage: PropTypes.string
+  errorMessage: PropTypes.string,
+  initInfo: PropTypes.object
 };
 
 export default SchemaMetaSelector;
