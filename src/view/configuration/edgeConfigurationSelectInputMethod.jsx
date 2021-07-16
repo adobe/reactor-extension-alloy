@@ -10,12 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useField } from "formik";
 import { Flex, ProgressCircle } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import EdgeConfigurationSelector from "./edgeConfigurationSelector";
-import ExtensionViewContext from "../components/extensionViewContext";
 import EnvironmentsSelector from "./environmentsSelector";
 import fetchFirstPageOfEachEnvironmentType from "./utils/fetchFirstPageOfEachEnvironmentType";
 import UserReportableError from "../errors/userReportableError";
@@ -123,14 +122,12 @@ const useOnEdgeConfigurationSelectionChange = ({
   };
 };
 
-const EdgeConfigurationSelectInputMethod = ({ name }) => {
+const EdgeConfigurationSelectInputMethod = ({ name, initInfo }) => {
   const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
   const {
-    initInfo: {
-      company: { orgId },
-      tokens: { imsAccess }
-    }
-  } = useContext(ExtensionViewContext);
+    company: { orgId },
+    tokens: { imsAccess }
+  } = initInfo;
   const [
     firstPageOfEachEnvironmentType,
     setFirstPageOfEachEnvironmentType
@@ -176,6 +173,7 @@ const EdgeConfigurationSelectInputMethod = ({ name }) => {
         name={name}
         edgeConfig={edgeConfig}
         firstPageOfEachEnvironmentType={firstPageOfEachEnvironmentType}
+        initInfo={initInfo}
       />
     );
   }
@@ -188,6 +186,7 @@ const EdgeConfigurationSelectInputMethod = ({ name }) => {
         error={edgeConfigError}
         setTouched={setEdgeConfigTouched}
         onSelectionChange={onEdgeConfigSelectionChange}
+        initInfo={initInfo}
       />
       {environmentSelectorContent}
     </>
@@ -195,7 +194,8 @@ const EdgeConfigurationSelectInputMethod = ({ name }) => {
 };
 
 EdgeConfigurationSelectInputMethod.propTypes = {
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
+  initInfo: PropTypes.object.isRequired
 };
 
 export default EdgeConfigurationSelectInputMethod;

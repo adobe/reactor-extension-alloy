@@ -334,7 +334,7 @@ const IdentityMap = () => {
                                               Primary
                                             </FormikCheckbox>
                                           </FormElementContainer>
-                                          {values.identities[index].identifiers
+                                          {identities[index].identifiers
                                             .length > 1 && (
                                             <Button
                                               data-test-id={`deleteIdentifier${index}Button${identifierIndex}`}
@@ -358,7 +358,7 @@ const IdentityMap = () => {
                               );
                             }}
                           />
-                          {values.identities.length > 1 && (
+                          {identities.length > 1 && (
                             <View marginTop="size-100">
                               <Button
                                 data-test-id={`deleteIdentity${index}Button`}
