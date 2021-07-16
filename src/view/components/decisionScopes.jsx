@@ -16,7 +16,8 @@ import Delete from "@spectrum-icons/workflow/Delete";
 import { FieldArray } from "formik";
 import { object, string } from "yup";
 import PropTypes from "prop-types";
-import { RadioGroup, TextField } from "./formikReactSpectrum3";
+import FormikRadioGroup from "./formikReactSpectrum3/formikRadioGroup";
+import FormikTextField from "./formikReactSpectrum3/formikTextField";
 import DataElementSelector from "./dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import ExtensionViewForm from "./extensionViewForm";
@@ -103,7 +104,7 @@ const DecisionScopes = ({
 
   return (
     <div>
-      <RadioGroup
+      <FormikRadioGroup
         name="decisionsInputMethod"
         orientation="horizontal"
         label="Decision Scopes"
@@ -114,11 +115,11 @@ const DecisionScopes = ({
         <Radio data-test-id="dataElementOptionField" value={DATA_ELEMENT}>
           Provide a data element
         </Radio>
-      </RadioGroup>
+      </FormikRadioGroup>
       {decisionsInputMethod === DATA_ELEMENT && (
         <FieldSubset>
           <DataElementSelector>
-            <TextField
+            <FormikTextField
               data-test-id="scopeDataElementField"
               label="Data Element"
               name="decisionScopesDataElement"
@@ -130,16 +131,16 @@ const DecisionScopes = ({
       )}
       {decisionsInputMethod === CONSTANT && (
         <FieldSubset>
-          <Flex direction="column" gap="size-200" alignItems="start">
+          <Flex direction="column" gap="size-100" alignItems="start">
             <FieldArray
               name="decisionScopesArray"
               render={arrayHelpers => {
                 return (
-                  <>
+                  <div>
                     {decisionScopesArray.map((scope, index) => {
                       return (
                         <Flex key={index} alignItems="end">
-                          <TextField
+                          <FormikTextField
                             data-test-id={`scope${index}Field`}
                             label="Scope"
                             name={`decisionScopesArray.${index}`}
@@ -156,7 +157,6 @@ const DecisionScopes = ({
                               arrayHelpers.remove(index);
                             }}
                             aria-label="Remove decision scope"
-                            minWidth={0}
                           >
                             <Delete />
                           </ActionButton>
@@ -166,13 +166,14 @@ const DecisionScopes = ({
                     <Button
                       variant="secondary"
                       data-test-id="addDecisionScopeButton"
+                      marginTop="size-100"
                       onPress={() => {
                         arrayHelpers.push("");
                       }}
                     >
                       Add scope
                     </Button>
-                  </>
+                  </div>
                 );
               }}
             />

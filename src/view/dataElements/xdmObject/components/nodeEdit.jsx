@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { useFormikContext } from "formik";
-import { Breadcrumbs, Item } from "@adobe/react-spectrum";
+import { Breadcrumbs, Flex, Item, View } from "@adobe/react-spectrum";
 import getNodeEditData from "../helpers/getNodeEditData";
 import AutoPopulationAlert from "./autoPopulationAlert";
 import {
@@ -65,27 +65,29 @@ const NodeEdit = props => {
   const TypeSpecificNodeEdit = getViewBySchemaType(formStateNode.schema.type);
 
   return (
-    <div>
-      <Breadcrumbs
-        onAction={nodeId => onNodeSelect(nodeId)}
-        UNSAFE_className="NodeEdit-breadcrumbs u-gapBottom2x"
-      >
-        {breadcrumb.map(item => (
-          <Item key={item.nodeId}>{item.label}</Item>
-        ))}
-      </Breadcrumbs>
-      <div>
-        {formStateNode.autoPopulationSource !== NONE && (
-          <AutoPopulationAlert formStateNode={formStateNode} />
-        )}
-        {formStateNode.autoPopulationSource !== ALWAYS && (
-          <TypeSpecificNodeEdit
-            fieldName={fieldName}
-            onNodeSelect={onNodeSelect}
-          />
-        )}
-      </div>
-    </div>
+    <Flex gap="size-200" marginBottom="size-200" direction="column">
+      <View UNSAFE_className="NodeEdit-breadcrumbs">
+        {
+          // There's currently a known error that occurs when Breadcrumbs
+          // is unmounted, but it doesn't seem to affect the UX.
+          // https://github.com/adobe/react-spectrum/issues/1979
+        }
+        <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
+          {breadcrumb.map(item => (
+            <Item key={item.nodeId}>{item.label}</Item>
+          ))}
+        </Breadcrumbs>
+      </View>
+      {formStateNode.autoPopulationSource !== NONE && (
+        <AutoPopulationAlert formStateNode={formStateNode} />
+      )}
+      {formStateNode.autoPopulationSource !== ALWAYS && (
+        <TypeSpecificNodeEdit
+          fieldName={fieldName}
+          onNodeSelect={onNodeSelect}
+        />
+      )}
+    </Flex>
   );
 };
 

@@ -12,26 +12,23 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { TextField as ReactSpectrumTextField } from "@adobe/react-spectrum";
+import { ComboBox } from "@react-spectrum/combobox";
 import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const TextField = ({ name, description, width, ...otherProps }) => {
+const FormikComboBox = ({ name, description, width, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
   );
-
   return (
     <FieldDescriptionAndError
       description={description}
       error={touched && error ? error : undefined}
     >
-      <ReactSpectrumTextField
+      <ComboBox
         {...otherProps}
-        value={value}
-        onChange={newValue => {
-          setValue(newValue);
-        }}
+        inputValue={value}
+        onInputChange={setValue}
         onBlur={() => {
           setTouched(true);
         }}
@@ -42,10 +39,10 @@ const TextField = ({ name, description, width, ...otherProps }) => {
   );
 };
 
-TextField.propTypes = {
+FormikComboBox.propTypes = {
   name: PropTypes.string.isRequired,
   description: PropTypes.string,
   width: PropTypes.string
 };
 
-export default TextField;
+export default FormikComboBox;

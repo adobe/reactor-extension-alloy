@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Flex } from "@adobe/react-spectrum";
+import { Flex, View } from "@adobe/react-spectrum";
 import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
 import Alert from "../../../components/alert";
 import PopulationAmountIndicator from "./populationAmountIndicator";
@@ -35,11 +35,13 @@ const NoSelectedNodeView = ({ schema, previouslySavedSchemaInfo }) => {
   return (
     <div>
       {isSchemaMismatched && (
-        <Alert variant="notice" title="Schema Changed" className="u-gapBottom">
-          The XDM schema has changed since the XDM object was last saved. After
-          the next save, any fields that no longer exist on the XDM schema will
-          also no longer be included on the XDM object.
-        </Alert>
+        <View marginBottom="size-100">
+          <Alert variant="notice" title="Schema Changed">
+            The XDM schema has changed since the XDM object was last saved.
+            After the next save, any fields that no longer exist on the XDM
+            schema will also no longer be included on the XDM object.
+          </Alert>
+        </View>
       )}
       <div>
         <p>

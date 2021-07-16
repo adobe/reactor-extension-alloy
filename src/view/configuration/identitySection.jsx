@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import SectionHeader from "../components/sectionHeader";
-import { Checkbox } from "../components/formikReactSpectrum3";
+import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import FormElementContainer from "../components/formElementContainer";
@@ -56,22 +56,22 @@ const IdentitySection = ({ instanceFieldName }) => {
         Identity
       </SectionHeader>
       <FormElementContainer>
-        <Checkbox
+        <FormikCheckbox
           data-test-id="idMigrationEnabledField"
           name={`${instanceFieldName}.idMigrationEnabled`}
           description="Enables the web SDK to preserve existing ECIDs by reading and writing the AMCV cookie. If your website was or is still using VisitorAPI, enable this option until users are fully migrated to the web SDK's identity cookie. This will prevent visitor cliffing."
           width="size-5000"
         >
           Migrate ECID from VisitorAPI to the web SDK
-        </Checkbox>
-        <Checkbox
+        </FormikCheckbox>
+        <FormikCheckbox
           data-test-id="thirdPartyCookiesEnabledField"
           name={`${instanceFieldName}.thirdPartyCookiesEnabled`}
           description="Enables the setting of Adobe third-party cookies. The SDK has the ability to persist the visitor ID in a third-party context to enable the same visitor ID to be used across site. This is useful if you have multiple sites or you want to share data with partners; however, sometimes this is not desired for privacy reasons."
           width="size-5000"
         >
           Use third-party cookies
-        </Checkbox>
+        </FormikCheckbox>
       </FormElementContainer>
     </>
   );

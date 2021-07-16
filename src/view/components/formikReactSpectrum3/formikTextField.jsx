@@ -12,11 +12,11 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Picker as ReactSpectrumPicker } from "@adobe/react-spectrum";
+import { TextField } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const Picker = ({ name, description, width, ...otherProps }) => {
+const FormikTextField = ({ name, description, width, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
   );
@@ -26,10 +26,12 @@ const Picker = ({ name, description, width, ...otherProps }) => {
       description={description}
       error={touched && error ? error : undefined}
     >
-      <ReactSpectrumPicker
+      <TextField
         {...otherProps}
-        selectedKey={value}
-        onSelectionChange={setValue}
+        value={value}
+        onChange={newValue => {
+          setValue(newValue);
+        }}
         onBlur={() => {
           setTouched(true);
         }}
@@ -40,10 +42,10 @@ const Picker = ({ name, description, width, ...otherProps }) => {
   );
 };
 
-Picker.propTypes = {
+FormikTextField.propTypes = {
   name: PropTypes.string.isRequired,
   description: PropTypes.string,
   width: PropTypes.string
 };
 
-export default Picker;
+export default FormikTextField;

@@ -14,11 +14,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Item } from "@adobe/react-spectrum";
 import getInstanceOptions from "../utils/getInstanceOptions";
-import { Picker } from "./formikReactSpectrum3";
+import FormikPicker from "./formikReactSpectrum3/formikPicker";
 
 const InstanceNamePicker = ({ "data-test-id": dataTestId, name, initInfo }) => {
   return (
-    <Picker
+    <FormikPicker
       data-test-id={dataTestId}
       name={name}
       label="Instance"
@@ -26,7 +26,7 @@ const InstanceNamePicker = ({ "data-test-id": dataTestId, name, initInfo }) => {
       width="size-5000"
     >
       {item => <Item key={item.value}>{item.label}</Item>}
-    </Picker>
+    </FormikPicker>
   );
 };
 

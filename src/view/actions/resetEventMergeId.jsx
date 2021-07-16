@@ -13,9 +13,9 @@ governing permissions and limitations under the License.
 import React, { useEffect } from "react";
 import { object, string } from "yup";
 import PropTypes from "prop-types";
-import { TextField } from "../components/formikReactSpectrum3";
-import render from "../spectrum3Render";
-import ExtensionView from "../components/spectrum3ExtensionView";
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
+import render from "../render";
+import ExtensionView from "../components/extensionView";
 import ExtensionViewForm from "../components/extensionViewForm";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
@@ -61,7 +61,7 @@ const ResetEventMergeId = ({
   return (
     <FormElementContainer>
       <DataElementSelector>
-        <TextField
+        <FormikTextField
           data-test-id="eventMergeIdField"
           name="eventMergeId"
           label="Event Merge ID"

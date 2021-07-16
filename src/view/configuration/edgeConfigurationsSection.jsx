@@ -18,7 +18,7 @@ import { useField } from "formik";
 import fetchConfig from "./utils/fetchConfig";
 import SectionHeader from "../components/sectionHeader";
 import fetchEnvironments from "./utils/fetchEnvironments";
-import { RadioGroup } from "../components/formikReactSpectrum3";
+import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import EdgeConfigurationSelectInputMethod from "./edgeConfigurationSelectInputMethod";
 import EdgeConfigurationFreeformInputMethod from "./edgeConfigurationFreeformInputMethod";
 import fetchEnvironment from "./utils/fetchEnvironment";
@@ -195,6 +195,11 @@ export const bridge = {
       edgeConfigInputMethod: isFirstInstance
         ? INPUT_METHOD.SELECT
         : INPUT_METHOD.FREEFORM,
+      // We only display the edge configuration selection components on the first instance, which
+      // might make this seem unnecessary for subsequent instances. However, it's possible for
+      // the user to delete their first instance, which would make their second instance become
+      // their first instance, which would cause the selection components to be displayable for that
+      // instance. We want the state to be ready for this case.
       edgeConfigSelectInputMethod: await getSelectInputMethodStateForNewInstance(
         {
           orgId,
@@ -370,7 +375,7 @@ const EdgeConfigurationsSection = ({ instanceFieldName, instanceIndex }) => {
         // instance configured for a different org would most likely confuse the user.
         // To prevent this confusion, we'll hide the radios on all but the first instance.
         instanceIndex === 0 && (
-          <RadioGroup
+          <FormikRadioGroup
             label="Input Method"
             name={`${instanceFieldName}.edgeConfigInputMethod`}
             orientation="horizontal"
@@ -387,7 +392,7 @@ const EdgeConfigurationsSection = ({ instanceFieldName, instanceIndex }) => {
             >
               Enter values
             </Radio>
-          </RadioGroup>
+          </FormikRadioGroup>
         )}
 
         {inputMethod === INPUT_METHOD.SELECT ? (

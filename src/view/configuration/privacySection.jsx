@@ -15,9 +15,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import { object } from "yup";
 import SectionHeader from "../components/sectionHeader";
-import RadioGroupWithDataElement, {
+import FormikRadioGroupWithDataElement, {
   createRadioGroupWithDataElementValidationSchema
-} from "../components/formikReactSpectrum3/radioGroupWithDataElement";
+} from "../components/formikReactSpectrum3/formikRadioGroupWithDataElement";
 import FormElementContainer from "../components/formElementContainer";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
@@ -70,7 +70,7 @@ const PrivacySection = ({ instanceFieldName }) => {
         Privacy
       </SectionHeader>
       <FormElementContainer>
-        <RadioGroupWithDataElement
+        <FormikRadioGroupWithDataElement
           dataTestIdPrefix="defaultConsent"
           name={`${instanceFieldName}.defaultConsent`}
           label="Default Consent (not persisted to user's profile)"
@@ -96,7 +96,7 @@ const PrivacySection = ({ instanceFieldName }) => {
             Pending - Queue events that occur before the user provides consent
             preferences.
           </Radio>
-        </RadioGroupWithDataElement>
+        </FormikRadioGroupWithDataElement>
       </FormElementContainer>
     </>
   );

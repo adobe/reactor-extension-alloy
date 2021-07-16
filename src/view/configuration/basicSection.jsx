@@ -16,7 +16,7 @@ import { object, string } from "yup";
 import { Flex } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import DataElementSelector from "../components/dataElementSelector";
-import { TextField } from "../components/formikReactSpectrum3";
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import Alert from "../components/alert";
 import RestoreDefaultValueButton from "../components/restoreDefaultValueButton";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
@@ -126,7 +126,7 @@ const BasicSection = ({ instanceFieldName }) => {
   return (
     <FormElementContainer>
       <DataElementSelector>
-        <TextField
+        <FormikTextField
           data-test-id="nameField"
           label="Name"
           name={`${instanceFieldName}.name`}
@@ -151,7 +151,7 @@ const BasicSection = ({ instanceFieldName }) => {
       ) : null}
       <Flex>
         <DataElementSelector>
-          <TextField
+          <FormikTextField
             data-test-id="orgIdField"
             label="IMS Organization ID"
             name={`${instanceFieldName}.orgId`}
@@ -168,7 +168,7 @@ const BasicSection = ({ instanceFieldName }) => {
       </Flex>
       <Flex>
         <DataElementSelector>
-          <TextField
+          <FormikTextField
             data-test-id="edgeDomainField"
             label="Edge Domain"
             name={`${instanceFieldName}.edgeDomain`}
