@@ -103,8 +103,10 @@ const ExtensionView = ({
           values: formikPropsRef.current.values
         });
       } catch (e) {
+        // This will update the UI to show that an error has occurred.
         reportAsyncError(e);
-        return {};
+        // Throwing the error will let Launch know not to save the settings.
+        throw e;
       }
     },
     async validate() {
