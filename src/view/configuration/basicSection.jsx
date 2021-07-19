@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useContext } from "react";
+import React from "react";
 import { useField } from "formik";
 import { object, string } from "yup";
 import { Flex } from "@adobe/react-spectrum";
@@ -22,7 +22,6 @@ import RestoreDefaultValueButton from "../components/restoreDefaultValueButton";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import validateDuplicateValue from "./utils/validateDuplicateValue";
-import ExtensionViewContext from "../components/extensionViewContext";
 import FormElementContainer from "../components/formElementContainer";
 
 export const bridge = {
@@ -118,8 +117,7 @@ export const bridge = {
     })
 };
 
-const BasicSection = ({ instanceFieldName }) => {
-  const { initInfo } = useContext(ExtensionViewContext);
+const BasicSection = ({ instanceFieldName, initInfo }) => {
   const [{ value: instanceValues }] = useField(instanceFieldName);
   const instanceDefaults = bridge.getInstanceDefaults({ initInfo });
 
@@ -191,7 +189,8 @@ const BasicSection = ({ instanceFieldName }) => {
 };
 
 BasicSection.propTypes = {
-  instanceFieldName: PropTypes.string.isRequired
+  instanceFieldName: PropTypes.string.isRequired,
+  initInfo: PropTypes.object.isRequired
 };
 
 export default BasicSection;

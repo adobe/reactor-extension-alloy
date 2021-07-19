@@ -10,10 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
+import React, { useState } from "react";
 import { object, array } from "yup";
-import { FieldArray } from "formik";
+import { FieldArray, useField } from "formik";
 import {
   Button,
   ButtonGroup,
@@ -23,7 +22,6 @@ import {
   Flex,
   Heading,
   Item,
-  ProgressCircle,
   Divider,
   Text,
   TabList,
@@ -32,11 +30,10 @@ import {
   View
 } from "@adobe/react-spectrum";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
+import PropTypes from "prop-types";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
-import ExtensionViewForm from "../components/extensionViewForm";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
-import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 import BasicSection, { bridge as basicSectionBridge } from "./basicSection";
 import EdgeConfigurationsSection, {
   bridge as edgeConfigurationsSectionBridge
@@ -56,7 +53,6 @@ import DataCollectionSection, {
 import AdvancedSection, {
   bridge as advancedSectionBridge
 } from "./advancedSection";
-import useReportAsyncError from "../utils/useReportAsyncError";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -138,31 +134,9 @@ const validationSchema = object().shape({
   )
 });
 
-const Configuration = ({
-  initInfo,
-  formikProps,
-  registerImperativeFormApi
-}) => {
-  const { values } = formikProps;
-  const reportAsyncError = useReportAsyncError();
+const Configuration = ({ initInfo }) => {
+  const [{ value: instances }] = useField("instances");
   const [selectedTabKey, setSelectedTabKey] = useState(0);
-
-  useEffect(async () => {
-    registerImperativeFormApi({
-      getSettings,
-      formikStateValidationSchema: validationSchema
-    });
-    let initialValues;
-    try {
-      initialValues = await getInitialValues({
-        initInfo
-      });
-    } catch (e) {
-      reportAsyncError(e);
-      return;
-    }
-    formikProps.resetForm({ values: initialValues });
-  }, []);
 
   useNewlyValidatedFormSubmission(errors => {
     // If the user just tried to save the configuration and there's
@@ -175,14 +149,6 @@ const Configuration = ({
       setSelectedTabKey(String(instanceIndexContainingErrors));
     }
   });
-
-  if (!values) {
-    return (
-      <FillParentAndCenterChildren>
-        <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
-      </FillParentAndCenterChildren>
-    );
-  }
 
   return (
     <div>
@@ -202,7 +168,7 @@ const Configuration = ({
                       isFirstInstance: false
                     });
                     arrayHelpers.push(newInstance);
-                    setSelectedTabKey(String(values.instances.length));
+                    setSelectedTabKey(String(instances.length));
                   }}
                   marginStart="auto"
                 >
@@ -211,12 +177,12 @@ const Configuration = ({
               </Flex>
               <Tabs
                 aria-label="SDK Instances"
-                items={values.instances}
+                items={instances}
                 selectedKey={selectedTabKey}
                 onSelectionChange={setSelectedTabKey}
               >
                 <TabList marginBottom="size-200">
-                  {values.instances.map((instance, index) => {
+                  {instances.map((instance, index) => {
                     return (
                       <Item key={index}>
                         {instance.name || "Unnamed Instance"}
@@ -225,14 +191,18 @@ const Configuration = ({
                   })}
                 </TabList>
                 <TabPanels>
-                  {values.instances.map((instance, index) => {
+                  {instances.map((instance, index) => {
                     const instanceFieldName = `instances.${index}`;
                     return (
                       <Item key={index}>
-                        <BasicSection instanceFieldName={instanceFieldName} />
+                        <BasicSection
+                          instanceFieldName={instanceFieldName}
+                          initInfo={initInfo}
+                        />
                         <EdgeConfigurationsSection
                           instanceFieldName={instanceFieldName}
                           instanceIndex={index}
+                          initInfo={initInfo}
                         />
                         <PrivacySection instanceFieldName={instanceFieldName} />
                         <IdentitySection
@@ -247,14 +217,14 @@ const Configuration = ({
                         <AdvancedSection
                           instanceFieldName={instanceFieldName}
                         />
-                        {values.instances.length > 1 && (
+                        {instances.length > 1 && (
                           <View marginTop="size-300">
                             <DialogTrigger>
                               <Button
                                 data-test-id="deleteInstanceButton"
                                 icon={<DeleteIcon />}
                                 variant="secondary"
-                                disabled={values.instances.length === 1}
+                                disabled={instances.length === 1}
                               >
                                 Delete Instance
                               </Button>
@@ -312,22 +282,17 @@ const Configuration = ({
 };
 
 Configuration.propTypes = {
-  initInfo: PropTypes.object,
-  formikProps: PropTypes.object,
-  registerImperativeFormApi: PropTypes.func
+  initInfo: PropTypes.object.isRequired
 };
 
 const ConfigurationExtensionView = () => {
   return (
     <ExtensionView
-      render={() => {
-        return (
-          <ExtensionViewForm
-            render={props => {
-              return <Configuration {...props} />;
-            }}
-          />
-        );
+      getInitialValues={getInitialValues}
+      getSettings={getSettings}
+      formikStateValidationSchema={validationSchema}
+      render={({ initInfo }) => {
+        return <Configuration initInfo={initInfo} />;
       }}
     />
   );

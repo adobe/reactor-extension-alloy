@@ -357,7 +357,11 @@ export const bridge = {
     })
 };
 
-const EdgeConfigurationsSection = ({ instanceFieldName, instanceIndex }) => {
+const EdgeConfigurationsSection = ({
+  instanceFieldName,
+  instanceIndex,
+  initInfo
+}) => {
   const [{ value: inputMethod }] = useField(
     `${instanceFieldName}.edgeConfigInputMethod`
   );
@@ -398,6 +402,7 @@ const EdgeConfigurationsSection = ({ instanceFieldName, instanceIndex }) => {
         {inputMethod === INPUT_METHOD.SELECT ? (
           <EdgeConfigurationSelectInputMethod
             name={`${instanceFieldName}.edgeConfigSelectInputMethod`}
+            initInfo={initInfo}
           />
         ) : (
           <EdgeConfigurationFreeformInputMethod
@@ -411,7 +416,8 @@ const EdgeConfigurationsSection = ({ instanceFieldName, instanceIndex }) => {
 
 EdgeConfigurationsSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired,
-  instanceIndex: PropTypes.number.isRequired
+  instanceIndex: PropTypes.number.isRequired,
+  initInfo: PropTypes.object.isRequired
 };
 
 export default EdgeConfigurationsSection;

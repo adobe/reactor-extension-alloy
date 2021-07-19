@@ -10,16 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import { FieldArray } from "formik";
+import React, { useState } from "react";
+import { FieldArray, useField } from "formik";
 import { array, boolean, object, string } from "yup";
 import {
   Button,
   Flex,
   Heading,
   Item,
-  ProgressCircle,
   Text,
   Well,
   TabList,
@@ -30,11 +28,9 @@ import {
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
-import ExtensionViewForm from "../components/extensionViewForm";
 import getDefaultIdentity from "./identityMap/utils/getDefaultIdentity";
 import fetchNamespaces from "./identityMap/utils/fetchNamespaces";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
-import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 import NamespaceComponent from "../components/namespaceComponent";
 import getDefaultIdentifier from "./identityMap/utils/getDefaultIdentifier";
 import DataElementSelector from "../components/dataElementSelector";
@@ -187,19 +183,10 @@ const validationSchema = object()
     );
   });
 
-function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
-  const { values } = formikProps;
-  const [selectedTabKey, setSelectedTabKey] = useState();
-
-  useEffect(async () => {
-    registerImperativeFormApi({
-      getSettings,
-      formikStateValidationSchema: validationSchema
-    });
-    const initialValues = await getInitialValues({ initInfo });
-    formikProps.resetForm({ values: initialValues });
-  }, []);
-
+const IdentityMap = () => {
+  const [{ value: namespaces }] = useField("namespaces");
+  const [{ value: identities }] = useField("identities");
+  const [selectedTabKey, setSelectedTabKey] = useState("0");
   useNewlyValidatedFormSubmission(errors => {
     // If the user just tried to save the configuration and there's
     // a validation error, make sure the first accordion item containing
@@ -211,19 +198,8 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
       setSelectedTabKey(String(identityIndexContainingErrors));
     }
   });
-
-  if (!values) {
-    return (
-      <FillParentAndCenterChildren>
-        <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
-      </FillParentAndCenterChildren>
-    );
-  }
-
-  const { namespaces } = values;
-
   return (
-    <React.Fragment>
+    <>
       <FieldArray
         name="identities"
         render={arrayHelpers => {
@@ -236,7 +212,7 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                   variant="secondary"
                   onPress={() => {
                     arrayHelpers.push(getDefaultIdentity());
-                    setSelectedTabKey(String(values.identities.length));
+                    setSelectedTabKey(String(identities.length));
                   }}
                   marginStart="auto"
                 >
@@ -252,12 +228,12 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                 */}
               <Tabs
                 aria-label="Identities"
-                items={values.identities}
+                items={identities}
                 selectedKey={selectedTabKey}
                 onSelectionChange={setSelectedTabKey}
               >
                 <TabList>
-                  {values.identities.map((identity, index) => {
+                  {identities.map((identity, index) => {
                     return (
                       <Item key={index}>
                         {identity.namespaceCode || "Unnamed Identity"}
@@ -266,7 +242,7 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                   })}
                 </TabList>
                 <TabPanels>
-                  {values.identities.map((identity, index) => {
+                  {identities.map((identity, index) => {
                     return (
                       <Item key={index}>
                         <FormElementContainer>
@@ -358,7 +334,7 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                                               Primary
                                             </FormikCheckbox>
                                           </FormElementContainer>
-                                          {values.identities[index].identifiers
+                                          {identities[index].identifiers
                                             .length > 1 && (
                                             <Button
                                               data-test-id={`deleteIdentifier${index}Button${identifierIndex}`}
@@ -382,7 +358,7 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
                               );
                             }}
                           />
-                          {values.identities.length > 1 && (
+                          {identities.length > 1 && (
                             <View marginTop="size-100">
                               <Button
                                 data-test-id={`deleteIdentity${index}Button`}
@@ -407,30 +383,19 @@ function IdentityMap({ initInfo, formikProps, registerImperativeFormApi }) {
           );
         }}
       />
-    </React.Fragment>
-  );
-}
-
-IdentityMap.propTypes = {
-  initInfo: PropTypes.object,
-  formikProps: PropTypes.object,
-  registerImperativeFormApi: PropTypes.func
-};
-
-const IdentityMapExtensionView = () => {
-  return (
-    <ExtensionView
-      render={() => {
-        return (
-          <ExtensionViewForm
-            render={props => {
-              return <IdentityMap {...props} />;
-            }}
-          />
-        );
-      }}
-    />
+    </>
   );
 };
+
+const IdentityMapExtensionView = () => (
+  <ExtensionView
+    getInitialValues={getInitialValues}
+    getSettings={getSettings}
+    formikStateValidationSchema={validationSchema}
+    render={() => {
+      return <IdentityMap />;
+    }}
+  />
+);
 
 render(IdentityMapExtensionView);

@@ -10,11 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useContext } from "react";
+import React, { useEffect } from "react";
 import { ComboBox } from "@react-spectrum/combobox";
 import { Item } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
-import ExtensionViewContext from "../components/extensionViewContext";
 import usePagedComboBox from "../utils/usePagedComboBox";
 import fetchConfigs from "./utils/fetchConfigs";
 import UserReportableError from "../errors/userReportableError";
@@ -27,15 +26,14 @@ const EdgeConfigurationField = ({
   touched,
   error,
   setTouched,
-  onSelectionChange
+  onSelectionChange,
+  initInfo
 }) => {
   const reportAsyncError = useReportAsyncError();
   const {
-    initInfo: {
-      company: { orgId },
-      tokens: { imsAccess }
-    }
-  } = useContext(ExtensionViewContext);
+    company: { orgId },
+    tokens: { imsAccess }
+  } = initInfo;
   const isFirstRender = useIsFirstRender();
   const getKey = item => item?.id;
   const getLabel = item => item?.title;
@@ -115,7 +113,8 @@ EdgeConfigurationField.propTypes = {
   touched: PropTypes.bool,
   error: PropTypes.string,
   setTouched: PropTypes.func.isRequired,
-  onSelectionChange: PropTypes.func.isRequired
+  onSelectionChange: PropTypes.func.isRequired,
+  initInfo: PropTypes.object.isRequired
 };
 
 export default EdgeConfigurationField;
