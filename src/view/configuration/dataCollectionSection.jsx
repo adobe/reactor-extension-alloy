@@ -110,7 +110,7 @@ export const bridge = {
     downloadLinkQualifier: string().when("clickCollectionEnabled", {
       is: true,
       then: string()
-        .min(1)
+        .required("Please provide a regular expression.")
         .test({
           name: "invalidDownloadLinkQualifier",
           message: "Please provide a valid regular expression.",
@@ -139,8 +139,8 @@ const DataCollectionSection = ({ instanceFieldName }) => {
       <FormElementContainer>
         <CodeField
           data-test-id="onBeforeEventSendEditButton"
-          label="onBeforeEventSend"
-          buttonLabelSuffix="onBeforeEventSend Code"
+          label="On Before Event Send Callback"
+          buttonLabelSuffix="On Before Event Send Callback Code"
           name={`${instanceFieldName}.onBeforeEventSend`}
           description='Callback function for modifying data before each event is sent to the server. A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'
           language="javascript"
