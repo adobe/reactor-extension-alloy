@@ -16,9 +16,9 @@ module.exports = {
   add(trigger) {
     sendEventCompleteTriggers.push(trigger);
   },
-  triggerEvent(resultingObject) {
+  triggerEvent(result) {
     sendEventCompleteTriggers.forEach(trigger => {
-      trigger(resultingObject);
+      trigger(result);
     });
   }
 };

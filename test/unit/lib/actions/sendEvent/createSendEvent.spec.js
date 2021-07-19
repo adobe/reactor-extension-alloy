@@ -25,9 +25,14 @@ describe("Send Event", () => {
       "decisionsCallbackStorage",
       ["triggerEvent"]
     );
+    const sendEventCallbackStorage = jasmine.createSpyObj(
+      "sendEventCallbackStorage",
+      ["triggerEvent"]
+    );
     const action = createSendEvent({
       instanceManager,
-      decisionsCallbackStorage
+      decisionsCallbackStorage,
+      sendEventCallbackStorage
     });
     const dataLayer = {
       fruits: [
@@ -72,6 +77,9 @@ describe("Send Event", () => {
       expect(decisionsCallbackStorage.triggerEvent).toHaveBeenCalledWith({
         decisions
       });
+      expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalledWith({
+        decisions
+      });
     });
   });
   it("executes event command and doesn't trigger decisions received event when decisions are missing", () => {
@@ -83,9 +91,14 @@ describe("Send Event", () => {
       "decisionsCallbackStorage",
       ["triggerEvent"]
     );
+    const sendEventCallbackStorage = jasmine.createSpyObj(
+      "sendEventCallbackStorage",
+      ["triggerEvent"]
+    );
     const action = createSendEvent({
       instanceManager,
-      decisionsCallbackStorage
+      decisionsCallbackStorage,
+      sendEventCallbackStorage
     });
     const promiseReturnedFromAction = action({
       instanceName: "myinstance",
@@ -104,6 +117,7 @@ describe("Send Event", () => {
     });
 
     return promiseReturnedFromAction.then(() => {
+      expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalled();
       expect(decisionsCallbackStorage.triggerEvent).not.toHaveBeenCalled();
     });
   });
