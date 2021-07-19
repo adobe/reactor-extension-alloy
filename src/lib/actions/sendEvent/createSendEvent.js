@@ -14,7 +14,8 @@ const clone = require("../../utils/clone");
 
 module.exports = ({
   instanceManager,
-  decisionsCallbackStorage
+  decisionsCallbackStorage,
+  sendEventCallbackStorage
 }) => settings => {
   const { instanceName, ...otherSettings } = settings;
   const instance = instanceManager.getInstance(instanceName);
@@ -37,6 +38,7 @@ module.exports = ({
   }
 
   return instance("sendEvent", otherSettings).then(result => {
+    sendEventCallbackStorage.triggerEvent(result);
     if (result.decisions) {
       decisionsCallbackStorage.triggerEvent({ decisions: result.decisions });
     }

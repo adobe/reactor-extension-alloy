@@ -2,8 +2,9 @@
   "displayName": "AEP Web SDK",
   "name": "adobe-alloy",
   "iconPath": "resources/images/icon.svg",
+  "exchangeUrl": "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
   "platform": "web",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
   "author": {
     "name": "Adobe"
@@ -276,8 +277,14 @@
   "events": [
     {
       "name": "decisions-received",
-      "displayName": "Decisions Received",
+      "displayName": "Decisions Received (DEPRECATED)",
       "libPath": "dist/lib/events/decisionsReceived/index.js",
+      "schema": {}
+    },
+    {
+      "name": "send-event-complete",
+      "displayName": "Send Event Complete",
+      "libPath": "dist/lib/events/sendEventComplete/index.js",
       "schema": {}
     }
   ],
