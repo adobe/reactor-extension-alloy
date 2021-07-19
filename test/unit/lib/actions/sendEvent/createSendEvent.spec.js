@@ -17,7 +17,7 @@ describe("Send Event", () => {
     const decisions = [];
     const instance = jasmine
       .createSpy()
-      .and.returnValue(Promise.resolve({ decisions }));
+      .and.returnValue(Promise.resolve({ decisions, propositions: [] }));
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: instance
     });
@@ -78,7 +78,8 @@ describe("Send Event", () => {
         decisions
       });
       expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalledWith({
-        decisions
+        decisions,
+        propositions: []
       });
     });
   });
@@ -117,7 +118,7 @@ describe("Send Event", () => {
     });
 
     return promiseReturnedFromAction.then(() => {
-      expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalled();
+      expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalledWith({});
       expect(decisionsCallbackStorage.triggerEvent).not.toHaveBeenCalled();
     });
   });
