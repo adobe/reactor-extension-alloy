@@ -77,7 +77,7 @@ export const bridge = {
   })
 };
 
-export default () => {
+const DecisionScopes = () => {
   const [{ value: decisionsInputMethod }] = useField("decisionsInputMethod");
   const [{ value: decisionScopesArray }] = useField("decisionScopesArray");
 
@@ -162,3 +162,5 @@ export default () => {
     </div>
   );
 };
+
+export default DecisionScopes;

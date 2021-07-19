@@ -135,9 +135,13 @@ const ExtensionView = ({
   if (getInitialValues) {
     useEffect(async () => {
       if (initInfo) {
-        formikPropsRef.current.resetForm({
-          values: await getInitialValues({ initInfo })
-        });
+        try {
+          formikPropsRef.current.resetForm({
+            values: await getInitialValues({ initInfo })
+          });
+        } catch (e) {
+          reportAsyncError(e);
+        }
       }
     }, [initInfo]);
 
