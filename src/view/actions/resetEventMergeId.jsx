@@ -45,17 +45,17 @@ const ResetEventMergeId = () => {
       formikStateValidationSchema={validationSchema}
       render={() => (
         <FormElementContainer>
-        <DataElementSelector>
-          <FormikTextField
-            data-test-id="eventMergeIdField"
-            name="eventMergeId"
-            label="Event Merge ID"
-            description="Please specify the data element that represents the event merge ID you would like to reset."
-            width="size-5000"
-            isRequired
-          />
-        </DataElementSelector>
-      </FormElementContainer>
+          <DataElementSelector>
+            <FormikTextField
+              data-test-id="eventMergeIdField"
+              name="eventMergeId"
+              label="Event Merge ID"
+              description="Please specify the data element that represents the event merge ID you would like to reset."
+              width="size-5000"
+              isRequired
+            />
+          </DataElementSelector>
+        </FormElementContainer>
       )}
     />
   );

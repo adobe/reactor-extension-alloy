@@ -14,13 +14,11 @@ import React from "react";
 import { object, string } from "yup";
 import { Item } from "@adobe/react-spectrum";
 import FormikComboBox from "../components/formikReactSpectrum3/formikComboBox";
-import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import DataElementSelector from "../components/dataElementSelector";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
-import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DecisionScopes, {
   bridge as decisionScopesBridge
