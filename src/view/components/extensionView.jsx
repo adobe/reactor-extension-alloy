@@ -93,15 +93,19 @@ const ExtensionView = ({
     init({ initInfo: _initInfo }) {
       setInitInfo(_initInfo);
     },
-    getSettings() {
+    async getSettings() {
       if (!viewRegistrationRef.current) {
         return {};
       }
-
-      return viewRegistrationRef.current.getSettings({
-        initInfo,
-        values: formikPropsRef.current.values
-      });
+      try {
+        return await viewRegistrationRef.current.getSettings({
+          initInfo,
+          values: formikPropsRef.current.values
+        });
+      } catch (e) {
+        reportAsyncError(e);
+        return {};
+      }
     },
     async validate() {
       const results = await Promise.all([
