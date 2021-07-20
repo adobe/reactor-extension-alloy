@@ -12,12 +12,13 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Radio, Flex } from "@adobe/react-spectrum";
+import { Radio } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FormikRadioGroup from "../../../components/formikReactSpectrum3/formikRadioGroup";
 import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
 import DataElementSelector from "../../../components/dataElementSelector";
 import { PARTS, WHOLE } from "../constants/populationStrategy";
+import FormElementContainer from "../../../components/formElementContainer";
 
 /**
  * The form for editing a node that is an object type.
@@ -31,7 +32,7 @@ const ObjectEdit = ({ fieldName }) => {
   } = formStateNode;
 
   return (
-    <Flex gap="size-100">
+    <FormElementContainer>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
           label="Population Strategy"
@@ -57,7 +58,7 @@ const ObjectEdit = ({ fieldName }) => {
           />
         </DataElementSelector>
       )}
-    </Flex>
+    </FormElementContainer>
   );
 };
 
