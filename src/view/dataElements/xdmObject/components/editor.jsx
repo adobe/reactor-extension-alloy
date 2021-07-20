@@ -30,7 +30,16 @@ const Editor = ({
       minHeight={0}
       gap="size-200"
     >
-      <View width="size-3600" flexShrink={0} overflow="auto">
+      {
+        // Minimum of 300px wide, but can expand. This is for when the user
+        // has nodes with really long text or they expand several nodes, making
+        // the tree very wide. Another option is to limit the width, but show a
+        // horizontal scrollbar. Be aware that limiting the width has an interesting
+        // side effect in Safari, because Safari doesn't allow you to scroll the page by
+        // scrolling the scroll wheel or swiping when the cursor is over an element
+        // that has a scrollbar (vertical or horizontal).
+      }
+      <View flex="1 0 300px">
         <XdmTree selectedNodeId={selectedNodeId} onSelect={setSelectedNodeId} />
       </View>
       {
@@ -38,8 +47,11 @@ const Editor = ({
         // flex container. In our case, we want the flex child to shrink
         // to its content so that it can float within the parent using
         // position="sticky". This is why we have alignSelf="flex-start".
+        // We have 450px as min width because the tree can stretch in width
+        // and we don't want to shrink too much. If there isn't enough
+        // space on the page, the page will receive a horizontal scrollbar.
       }
-      <View alignSelf="flex-start" position="sticky" top={0}>
+      <View flex="1 0 450px" alignSelf="flex-start" position="sticky" top={0}>
         {selectedNodeId ? (
           <NodeEdit
             onNodeSelect={setSelectedNodeId}
