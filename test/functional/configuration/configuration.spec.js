@@ -474,6 +474,13 @@ test("shows error for empty default consent data element", async () => {
   await instances[0].defaultConsent.dataElementField.expectError();
 });
 
+test("shows error for empty download link qualifier", async () => {
+  await extensionViewController.init();
+  await instances[0].downloadLinkQualifierField.clear();
+  await extensionViewController.expectIsNotValid();
+  await instances[0].downloadLinkQualifierField.expectError();
+});
+
 test("shows error for invalid download link qualifier", async () => {
   await extensionViewController.init();
   await instances[0].downloadLinkQualifierField.clear();
