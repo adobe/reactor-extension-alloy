@@ -21,7 +21,7 @@ const EdgeConfigurationFreeformInputMethod = ({ name }) => {
       <DataElementSelector>
         <FormikTextField
           data-test-id="productionEnvironmentTextfield"
-          label="Production Environment ID"
+          label="Production environment ID"
           name={`${name}.edgeConfigId`}
           description="This datastream environment will be used when the Launch library is in a production environment."
           isRequired
@@ -31,7 +31,7 @@ const EdgeConfigurationFreeformInputMethod = ({ name }) => {
       <DataElementSelector>
         <FormikTextField
           data-test-id="stagingEnvironmentTextfield"
-          label="Staging Environment ID"
+          label="Staging environment ID"
           name={`${name}.stagingEdgeConfigId`}
           description="This datastream environment will be used when the Launch library is in a staging environment."
           width="size-5000"
@@ -40,7 +40,7 @@ const EdgeConfigurationFreeformInputMethod = ({ name }) => {
       <DataElementSelector>
         <FormikTextField
           data-test-id="developmentEnvironmentTextfield"
-          label="Development Environment ID"
+          label="Development environment ID"
           name={`${name}.developmentEdgeConfigId`}
           description="This datastream environment will be used when the Launch library is in a development environment."
           width="size-5000"

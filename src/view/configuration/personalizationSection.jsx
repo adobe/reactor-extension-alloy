@@ -60,7 +60,8 @@ const PersonalizationSection = ({ instanceFieldName }) => {
       <FormElementContainer>
         <CodeField
           data-test-id="prehidingStyleEditButton"
-          label="Prehiding Style"
+          label="Prehiding style"
+          buttonLabelSuffix="prehiding style"
           name={`${instanceFieldName}.prehidingStyle`}
           description="A CSS style definition that will be used to hide content areas of your web page while personalized content is being loaded from the server."
           language="css"
@@ -71,8 +72,8 @@ const PersonalizationSection = ({ instanceFieldName }) => {
         <CodePreview
           data-test-id="copyToClipboardPrehidingSnippetButton"
           value={prehidingSnippet}
-          label="Prehiding Snippet"
-          buttonLabel="Copy Prehiding Snippet To Clipboard"
+          label="Prehiding snippet"
+          buttonLabel="Copy prehiding snippet to clipboard"
           description="To avoid flicker from occurring while the Launch library is being loaded, place this prehiding snippet within the <head> tag of your HTML page."
           onPress={() => {
             copyToClipboard(prehidingSnippet);

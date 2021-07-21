@@ -146,7 +146,7 @@ const SendEvent = () => {
             <FormikTextField
               data-test-id="xdmField"
               name="xdm"
-              label="XDM Data"
+              label="XDM data"
               description="Provide a data element which returns an object matching your XDM schema."
               width="size-5000"
             />
@@ -174,7 +174,7 @@ const SendEvent = () => {
             <FormikTextField
               data-test-id="datasetIdField"
               name="datasetId"
-              description="Send data to a different dataset than what's been provided in the Edge configuration."
+              description="Send data to a different dataset than what's been provided in the datastream."
               label="Dataset ID"
               width="size-5000"
             />

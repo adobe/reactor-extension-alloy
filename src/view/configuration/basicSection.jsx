@@ -137,7 +137,7 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
       instanceValues.name !== instanceValues.persistedName ? (
         <Alert
           data-test-id="nameChangeAlert"
-          title="Potential Problems Due to Name Change"
+          title="Potential problems due to name change"
           variant="notice"
           width="size-5000"
         >
@@ -151,7 +151,7 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
         <DataElementSelector>
           <FormikTextField
             data-test-id="orgIdField"
-            label="IMS Organization ID"
+            label="IMS organization ID"
             name={`${instanceFieldName}.orgId`}
             description="Your assigned Experience Cloud organization ID."
             isRequired
@@ -168,12 +168,12 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
         <DataElementSelector>
           <FormikTextField
             data-test-id="edgeDomainField"
-            label="Edge Domain"
+            label="Edge domain"
             name={`${instanceFieldName}.edgeDomain`}
             description="The domain that will be used to interact with
-                        Adobe Services. Update this setting if you have
-                        mapped one of your first party domains (using
-                        CNAME) to an Adobe provisioned domain."
+                        Adobe services. Update this setting if you have
+                        mapped one of your first-party domains (using
+                        CNAME) to an Adobe-provisioned domain."
             isRequired
             width="size-5000"
           />

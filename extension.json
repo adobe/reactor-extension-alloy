@@ -1,5 +1,5 @@
 {
-  "displayName": "AEP Web SDK",
+  "displayName": "Adobe Experience Platform Web SDK",
   "name": "adobe-alloy",
   "iconPath": "resources/images/icon.svg",
   "exchangeUrl": "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
@@ -113,7 +113,7 @@
   },
   "actions": [
     {
-      "displayName": "Reset Event Merge ID",
+      "displayName": "Reset event merge ID",
       "name": "reset-event-merge-id",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
@@ -131,7 +131,7 @@
       "viewPath": "actions/resetEventMergeId.html"
     },
     {
-      "displayName": "Send Event",
+      "displayName": "Send event",
       "name": "send-event",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
@@ -182,7 +182,7 @@
       "viewPath": "actions/sendEvent.html"
     },
     {
-      "displayName": "Set Consent",
+      "displayName": "Set consent",
       "name": "set-consent",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
@@ -277,20 +277,20 @@
   "events": [
     {
       "name": "decisions-received",
-      "displayName": "Decisions Received (DEPRECATED)",
+      "displayName": "Decisions received (DEPRECATED)",
       "libPath": "dist/lib/events/decisionsReceived/index.js",
       "schema": {}
     },
     {
       "name": "send-event-complete",
-      "displayName": "Send Event Complete",
+      "displayName": "Send event complete",
       "libPath": "dist/lib/events/sendEventComplete/index.js",
       "schema": {}
     }
   ],
   "dataElements": [
     {
-      "displayName": "Event Merge ID",
+      "displayName": "Event merge ID",
       "name": "event-merge-id",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
@@ -308,7 +308,7 @@
       "viewPath": "dataElements/eventMergeId.html"
     },
     {
-      "displayName": "Identity Map",
+      "displayName": "Identity map",
       "name": "identity-map",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
@@ -337,7 +337,7 @@
       "viewPath": "dataElements/identityMap.html"
     },
     {
-      "displayName": "XDM Object",
+      "displayName": "XDM object",
       "name": "xdm-object",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",

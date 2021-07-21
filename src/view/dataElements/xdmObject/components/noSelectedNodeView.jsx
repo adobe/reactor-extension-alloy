@@ -36,7 +36,7 @@ const NoSelectedNodeView = ({ schema, previouslySavedSchemaInfo }) => {
     <div>
       {isSchemaMismatched && (
         <View marginBottom="size-100">
-          <Alert variant="notice" title="Schema Changed">
+          <Alert variant="notice" title="Schema changed">
             The XDM schema has changed since the XDM object was last saved.
             After the next save, any fields that no longer exist on the XDM
             schema will also no longer be included on the XDM object.
@@ -67,9 +67,9 @@ const NoSelectedNodeView = ({ schema, previouslySavedSchemaInfo }) => {
           </IndicatorDescription>
           <IndicatorDescription indicator={<AsteriskIcon size="XS" />}>
             Fields that may be auto-populated when this data element is passed
-            to the XDM option of the &quot;Send Event&quot; action have this
-            icon. Hovering over the icon shows a popup explaining when the field
-            will be auto-populated.
+            to the XDM option of the <b>Send event</b> action have this icon.
+            Hovering over the icon shows a popup explaining when the field will
+            be auto-populated.
           </IndicatorDescription>
         </Flex>
       </div>

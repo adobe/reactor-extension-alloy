@@ -49,7 +49,7 @@ const ResetEventMergeId = () => {
             <FormikTextField
               data-test-id="eventMergeIdField"
               name="eventMergeId"
-              label="Event Merge ID"
+              label="Event merge ID"
               description="Please specify the data element that represents the event merge ID you would like to reset."
               width="size-5000"
               isRequired

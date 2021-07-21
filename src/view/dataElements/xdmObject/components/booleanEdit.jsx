@@ -52,7 +52,7 @@ const BooleanEdit = props => {
   return (
     <FormElementContainer>
       <RadioGroup
-        label="Input Method"
+        label="Input method"
         orientation="horizontal"
         value={inputMethod}
         onChange={newInputMethod => {
@@ -64,13 +64,13 @@ const BooleanEdit = props => {
           data-test-id="dataElementInputMethodField"
           value={inputMethods.DATA_ELEMENT}
         >
-          Provide Data Element
+          Provide data element
         </Radio>
         <Radio
           data-test-id="valueInputMethodField"
           value={inputMethods.CONSTANT}
         >
-          Select Value
+          Select value
         </Radio>
       </RadioGroup>
       {inputMethod === inputMethods.CONSTANT ? (
@@ -80,7 +80,7 @@ const BooleanEdit = props => {
           orientation="horizontal"
         >
           <Radio data-test-id="constantNoValueField" value="">
-            No Value
+            No value
           </Radio>
           <Radio data-test-id="constantTrueField" value>
             True

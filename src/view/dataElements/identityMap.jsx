@@ -216,7 +216,7 @@ const IdentityMap = () => {
                   }}
                   marginStart="auto"
                 >
-                  Add Identity
+                  Add identity
                 </Button>
               </Flex>
               {/*
@@ -236,7 +236,7 @@ const IdentityMap = () => {
                   {identities.map((identity, index) => {
                     return (
                       <Item key={index}>
-                        {identity.namespaceCode || "Unnamed Identity"}
+                        {identity.namespaceCode || "Unnamed identity"}
                       </Item>
                     );
                   })}
@@ -274,7 +274,7 @@ const IdentityMap = () => {
                                         );
                                       }}
                                     >
-                                      Add Identifier
+                                      Add identifier
                                     </Button>
                                   </Flex>
                                   <Flex direction="column" gap="size-250">
@@ -295,7 +295,7 @@ const IdentityMap = () => {
                                             </DataElementSelector>
                                             <FormikPicker
                                               data-test-id={`identity${index}authenticatedStateField${identifierIndex}`}
-                                              label="Authenticated State"
+                                              label="Authenticated state"
                                               name={`identities.${index}.identifiers.${identifierIndex}.authenticatedState`}
                                               width="size-5000"
                                             >
@@ -347,7 +347,7 @@ const IdentityMap = () => {
                                               marginTop="size-150"
                                             >
                                               <DeleteIcon />
-                                              <Text>Delete Identifier</Text>
+                                              <Text>Delete identifier</Text>
                                             </Button>
                                           )}
                                         </Well>
@@ -369,7 +369,7 @@ const IdentityMap = () => {
                                 }}
                               >
                                 <DeleteIcon />
-                                Delete Identity
+                                Delete identity
                               </Button>
                             </View>
                           )}

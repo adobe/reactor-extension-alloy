@@ -380,7 +380,7 @@ const EdgeConfigurationsSection = ({
         // To prevent this confusion, we'll hide the radios on all but the first instance.
         instanceIndex === 0 && (
           <FormikRadioGroup
-            label="Input Method"
+            label="Input method"
             name={`${instanceFieldName}.edgeConfigInputMethod`}
             orientation="horizontal"
           >

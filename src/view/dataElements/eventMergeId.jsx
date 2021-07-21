@@ -40,14 +40,14 @@ const EventMergeId = () => {
         <FillParentAndCenterChildren>
           <Alert
             variant="informative"
-            title="Event Merge ID Caching"
+            title="Event merge ID caching"
             width="size-6000"
           >
             This data element will provide an event merge ID. Regardless of what
             you choose for the data element storage duration in Launch, the
             value of this data element will remain the same until either the
             visitor to your website leaves the current page or the event merge
-            ID is reset using the Reset Event Merge ID action.
+            ID is reset using the <b>Reset event merge ID</b> action.
           </Alert>
           <View
             marginTop="size-200"
