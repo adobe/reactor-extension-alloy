@@ -24,7 +24,7 @@ import CodePreview from "./codePreview";
 const CodeField = ({
   "data-test-id": dataTestId,
   label,
-  buttonLabelSuffix = label,
+  buttonLabelSuffix,
   name,
   description,
   language,

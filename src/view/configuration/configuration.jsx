@@ -158,7 +158,7 @@ const Configuration = ({ initInfo }) => {
           return (
             <div>
               <Flex alignItems="center">
-                <Heading level={3}>SDK Instances</Heading>
+                <Heading level={3}>SDK instances</Heading>
                 <Button
                   data-test-id="addInstanceButton"
                   variant="secondary"
@@ -172,11 +172,11 @@ const Configuration = ({ initInfo }) => {
                   }}
                   marginStart="auto"
                 >
-                  Add Instance
+                  Add instance
                 </Button>
               </Flex>
               <Tabs
-                aria-label="SDK Instances"
+                aria-label="SDK instances"
                 items={instances}
                 selectedKey={selectedTabKey}
                 onSelectionChange={setSelectedTabKey}
@@ -185,7 +185,7 @@ const Configuration = ({ initInfo }) => {
                   {instances.map((instance, index) => {
                     return (
                       <Item key={index}>
-                        {instance.name || "Unnamed Instance"}
+                        {instance.name || "Unnamed instance"}
                       </Item>
                     );
                   })}
@@ -226,7 +226,7 @@ const Configuration = ({ initInfo }) => {
                                 variant="secondary"
                                 disabled={instances.length === 1}
                               >
-                                Delete Instance
+                                Delete instance
                               </Button>
                               {close => (
                                 <Dialog data-test-id="resourceUsageDialog">

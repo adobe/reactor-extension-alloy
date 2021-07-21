@@ -34,7 +34,7 @@ const WholePopulationStrategyForm = ({ fieldName }) => (
     <FormikTextField
       data-test-id="valueField"
       name={`${fieldName}.value`}
-      label="Data Element"
+      label="Data element"
       description="This data element should resolve to an array."
       width="size-5000"
     />
@@ -111,7 +111,7 @@ const PartsPopulationStrategyForm = ({
             }}
             variant="primary"
           >
-            Add Item
+            Add item
           </Button>
         </Flex>
       );
@@ -144,7 +144,7 @@ const ArrayEdit = props => {
     <FormElementContainer>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
-          label="Population Strategy"
+          label="Population strategy"
           name={`${fieldName}.populationStrategy`}
           orientation="horizontal"
         >

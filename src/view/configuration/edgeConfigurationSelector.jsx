@@ -62,7 +62,7 @@ const EdgeConfigurationSelector = ({
   }
 
   return (
-    <Alert variant="negative" title="No Datastreams" width="size-5000">
+    <Alert variant="negative" title="No datastreams" width="size-5000">
       No datastreams exist for your organization. See{" "}
       <Link>
         <a
@@ -70,7 +70,7 @@ const EdgeConfigurationSelector = ({
           target="_blank"
           rel="noopener noreferrer"
         >
-          Configuring a Datastream
+          Configuring a datastream
         </a>
       </Link>{" "}
       for more information.

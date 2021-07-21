@@ -26,7 +26,7 @@ const EnvironmentsSelector = ({
       {firstPageOfEachEnvironmentType.production.length > 0 ? (
         <EnvironmentField
           data-test-id="productionEnvironmentComboBox"
-          label="Production Environment"
+          label="Production environment"
           name={`${name}.productionEnvironment`}
           description="This datastream environment will be used when the Launch library is in a production environment."
           type="production"
@@ -48,7 +48,7 @@ const EnvironmentsSelector = ({
       {firstPageOfEachEnvironmentType.staging.length > 0 ? (
         <EnvironmentField
           data-test-id="stagingEnvironmentComboBox"
-          label="Staging Environment"
+          label="Staging environment"
           name={`${name}.stagingEnvironment`}
           description="This datastream environment will be used when the Launch library is in a staging environment."
           type="staging"
@@ -69,7 +69,7 @@ const EnvironmentsSelector = ({
       {firstPageOfEachEnvironmentType.development.length > 0 ? (
         <EnvironmentField
           data-test-id="developmentEnvironmentComboBox"
-          label="Development Environment"
+          label="Development environment"
           name={`${name}.developmentEnvironment`}
           description="This datastream environment will be used when the Launch library is in a development environment."
           type="development"

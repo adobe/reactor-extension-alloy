@@ -240,7 +240,7 @@ const ConsentObject = ({ value, index }) => {
           <FormikRadioGroupWithDataElement
             dataTestIdPrefix="general"
             name={`consent[${index}].general`}
-            label="General Consent"
+            label="General consent"
             dataElementDescription={
               'This data element should resolve to "in" or "out".'
             }
@@ -340,7 +340,7 @@ const SetConsent = () => {
             <FormikTextField
               data-test-id="identityMapField"
               name="identityMap"
-              label="Identity Map"
+              label="Identity map"
               description="Provide a data element which returns a custom identity map object as part of the setConsent command."
               width="size-5000"
             />
@@ -348,7 +348,7 @@ const SetConsent = () => {
           <FormikRadioGroup
             name="inputMethod"
             orientation="horizontal"
-            label="Consent Information"
+            label="Consent information"
           >
             <Radio data-test-id="inputMethodFormRadio" value={FORM.value}>
               {FORM.label}
@@ -373,7 +373,7 @@ const SetConsent = () => {
                     }}
                     marginStart="auto"
                   >
-                    Add Consent Object
+                    Add consent object
                   </Button>
                   <Flex direction="column" gap="size-250">
                     {values.consent.map((value, index) => (
@@ -394,7 +394,7 @@ const SetConsent = () => {
                               alignSelf="flex-start"
                             >
                               <Delete />
-                              <Text>Delete Consent Object</Text>
+                              <Text>Delete consent object</Text>
                             </Button>
                           )}
                         </FormElementContainer>
@@ -409,7 +409,7 @@ const SetConsent = () => {
             <DataElementSelector>
               <FormikTextField
                 data-test-id="dataElementField"
-                label="Data Element"
+                label="Data element"
                 name="dataElement"
                 isRequired
                 width="size-5000"

@@ -35,7 +35,7 @@ const ObjectEdit = ({ fieldName }) => {
     <FormElementContainer>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
-          label="Population Strategy"
+          label="Population strategy"
           name={`${fieldName}.populationStrategy`}
           orientation="horizontal"
         >
@@ -52,7 +52,7 @@ const ObjectEdit = ({ fieldName }) => {
           <FormikTextField
             data-test-id="valueField"
             name={`${fieldName}.value`}
-            label="Data Element"
+            label="Data element"
             description="This data element should resolve to an object."
             width="size-5000"
           />

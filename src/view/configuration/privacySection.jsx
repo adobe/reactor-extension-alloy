@@ -73,7 +73,7 @@ const PrivacySection = ({ instanceFieldName }) => {
         <FormikRadioGroupWithDataElement
           dataTestIdPrefix="defaultConsent"
           name={`${instanceFieldName}.defaultConsent`}
-          label="Default Consent (not persisted to user's profile)"
+          label="Default consent (not persisted to user's profile)"
           dataElementDescription={
             'This data element should resolve to "in", "out", or "pending".'
           }

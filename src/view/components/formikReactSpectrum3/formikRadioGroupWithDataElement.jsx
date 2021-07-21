@@ -136,7 +136,7 @@ const FormikRadioGroupWithDataElement = ({
               error={dataElementTouched && error ? error : undefined}
             >
               <TextField
-                label="Data Element"
+                label="Data element"
                 value={dataElementText}
                 data-test-id={`${dataTestIdPrefix}DataElementField`}
                 onChange={newValue => setValues("dataElement", newValue)}

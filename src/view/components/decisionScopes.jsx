@@ -86,7 +86,7 @@ const DecisionScopes = () => {
       <FormikRadioGroup
         name="decisionsInputMethod"
         orientation="horizontal"
-        label="Decision Scopes"
+        label="Decision scopes"
       >
         <Radio data-test-id="constantOptionField" value={CONSTANT}>
           Manually enter scopes
@@ -100,7 +100,7 @@ const DecisionScopes = () => {
           <DataElementSelector>
             <FormikTextField
               data-test-id="scopeDataElementField"
-              label="Data Element"
+              label="Data element"
               name="decisionScopesDataElement"
               description="This data element should resolve to an array of scopes."
               width="size-5000"

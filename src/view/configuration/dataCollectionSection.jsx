@@ -49,7 +49,7 @@ const contextOptions = [
     testId: "contextEnvironmentField"
   },
   {
-    label: "Place Context (information about the user's location)",
+    label: "Place context (information about the user's location)",
     value: "placeContext",
     testId: "contextPlaceContextField"
   }
@@ -139,8 +139,8 @@ const DataCollectionSection = ({ instanceFieldName }) => {
       <FormElementContainer>
         <CodeField
           data-test-id="onBeforeEventSendEditButton"
-          label="On Before Event Send Callback"
-          buttonLabelSuffix="On Before Event Send Callback Code"
+          label="On before event send callback"
+          buttonLabelSuffix="on before event send callback code"
           name={`${instanceFieldName}.onBeforeEventSend`}
           description='Callback function for modifying data before each event is sent to the server. A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'
           language="javascript"
@@ -162,7 +162,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
               <Flex gap="size-100">
                 <FormikTextField
                   data-test-id="downloadLinkQualifierField"
-                  label="Download Link Qualifier"
+                  label="Download link qualifier"
                   name={`${instanceFieldName}.downloadLinkQualifier`}
                   description="Regular expression that qualifies a link URL as a download link."
                   width="size-5000"
@@ -184,7 +184,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                   }}
                   marginTop="size-300"
                 >
-                  Test Regex
+                  Test regex
                 </ActionButton>
                 <RestoreDefaultValueButton
                   data-test-id="downloadLinkQualifierRestoreButton"
@@ -218,7 +218,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
             CONTEXT_GRANULARITY.SPECIFIC && (
             <FieldSubset>
               <FormikCheckboxGroup
-                aria-label="Context Data Categories"
+                aria-label="Context data categories"
                 name={`${instanceFieldName}.context`}
               >
                 {contextOptions.map(contextOption => {
