@@ -1,61 +1,62 @@
-import Select from "@react/react-spectrum/Select";
 import React from "react";
-import Textfield from "@react/react-spectrum/Textfield";
 import PropTypes from "prop-types";
-import WrappedField from "./wrappedField";
+import { Item } from "@adobe/react-spectrum";
+import FormikPicker from "./formikReactSpectrum3/formikPicker";
+import FormikTextField from "./formikReactSpectrum3/formikTextField";
 
-const getSelectedNamespace = (options, namespace) => {
-  if (options.length < 1) {
+const getSelectedNamespace = (namespaces, selectedNamespaceCode) => {
+  if (namespaces.length < 1) {
     return undefined;
   }
 
-  if (namespace === "") {
+  if (selectedNamespaceCode === "") {
     return "Select an option";
   }
 
-  const found = options.find(
-    ({ value }) => value.toUpperCase() === namespace.toUpperCase()
+  const found = namespaces.find(
+    ({ code }) => code.toUpperCase() === selectedNamespaceCode.toUpperCase()
   );
 
-  return found ? found.value : undefined;
+  return found ? found.code : undefined;
 };
 
-function NamespaceComponent({ options, name, index, namespace }) {
-  const selectedNamespace = getSelectedNamespace(options, namespace);
-  return (
-    <div>
-      {selectedNamespace ? (
-        <div>
-          <WrappedField
-            data-test-id={`namespaceSelect${index}Field`}
-            id={`namespace${index}Field`}
-            name={name}
-            component={Select}
-            componentClassName="u-fieldLong"
-            options={options}
-            value={selectedNamespace}
-          />
-        </div>
-      ) : (
-        <div>
-          <WrappedField
-            name={name}
-            data-test-id={`namespace${index}Field`}
-            id={`namespace${index}Field`}
-            component={Textfield}
-            componentClassName="u-fieldLong"
-          />
-        </div>
-      )}
-    </div>
+function NamespaceComponent({
+  name,
+  index,
+  namespaces,
+  selectedNamespaceCode
+}) {
+  const selectedNamespace = getSelectedNamespace(
+    namespaces,
+    selectedNamespaceCode
+  );
+  return selectedNamespace ? (
+    <FormikPicker
+      data-test-id={`namespacePicker${index}Field`}
+      label="Namespace"
+      name={name}
+      items={namespaces}
+      width="size-5000"
+      isRequired
+    >
+      {namespace => <Item key={namespace.code}>{namespace.name}</Item>}
+    </FormikPicker>
+  ) : (
+    <FormikTextField
+      data-test-id={`namespace${index}Field`}
+      label="Namespace"
+      name={name}
+      width="size-5000"
+      isRequired
+    />
   );
 }
 
 NamespaceComponent.propTypes = {
-  options: PropTypes.array,
-  namespace: PropTypes.string,
-  index: PropTypes.number,
-  name: PropTypes.string
+  name: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  namespaces: PropTypes.array,
+  selectedNamespaceCode: PropTypes.string
 };
 
 export default NamespaceComponent;

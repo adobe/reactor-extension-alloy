@@ -12,48 +12,48 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import IconTip, {
-  ICON_SIZE_S,
-  VARIANT_ERROR
-} from "../../../components/iconTip";
+import { Flex } from "@adobe/react-spectrum";
+import AlertIcon from "@spectrum-icons/workflow/Alert";
+import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import "./xdmTreeNodeTitle.styl";
 import { EMPTY, FULL, PARTIAL, BLANK } from "../constants/populationAmount";
-import InfoTipLayout from "../../../components/infoTipLayout";
 
 const XdmTreeNodeTitle = props => {
   const { displayName, type, populationAmount, error, infoTip } = props;
 
   return (
-    <div
+    <Flex
       data-test-id="xdmTreeNodeTitle"
-      className={classNames(
-        "XdmTreeNodeTitle",
-        "u-flex",
-        "u-alignItemsCenter",
-        {
-          "is-invalid": error
-        }
-      )}
+      alignItems="center"
+      gap="size-100"
+      UNSAFE_className={classNames("XdmTreeNodeTitle", {
+        "is-invalid": error
+      })}
     >
       {error && (
-        <IconTip
-          variant={VARIANT_ERROR}
-          iconSize={ICON_SIZE_S}
-          className="u-gapRight"
-        >
-          {error}
-        </IconTip>
+        <div title={error}>
+          <Flex alignItems="center">
+            <AlertIcon color="negative" size="S" />
+          </Flex>
+        </div>
       )}
-      <PopulationAmountIndicator
-        className="u-gapRight"
-        populationAmount={populationAmount}
-      />
-      <InfoTipLayout tip={infoTip} variant="note">
-        <span data-test-id="xdmTreeNodeTitleDisplayName">{displayName}</span>
-      </InfoTipLayout>
-      <span className="XdmTreeNodeTitle-type u-gapLeft u-gapRight">{type}</span>
-    </div>
+      <PopulationAmountIndicator populationAmount={populationAmount} />
+      <span
+        data-test-id="xdmTreeNodeTitleDisplayName"
+        className="XdmTreeNodeTitle-displayName"
+      >
+        {displayName}
+      </span>
+      {infoTip && (
+        <div title={infoTip}>
+          <Flex alignItems="center">
+            <AsteriskIcon size="XS" />
+          </Flex>
+        </div>
+      )}
+      <span className="XdmTreeNodeTitle-type">{type}</span>
+    </Flex>
   );
 };
 

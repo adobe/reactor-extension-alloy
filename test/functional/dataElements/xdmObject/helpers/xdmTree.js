@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import { t } from "testcafe";
-import switchToIframe from "../../../helpers/switchToIframe";
 import {
   createTestIdSelector,
   createTestIdSelectorString
@@ -19,63 +18,53 @@ import {
 
 const xdmTree = createTestIdSelector("xdmTree");
 
-const getNode = async title => {
-  await switchToIframe();
-  return xdmTree
-    .find(createTestIdSelectorString("xdmTreeNodeTitleDisplayName"))
-    .withText(title)
-    .parent(createTestIdSelectorString("xdmTreeNodeTitle"))
-    .nth(0);
-};
-
 export default {
-  click: async title => {
-    const node = await getNode(title);
-    await t.click(node);
-  },
-  toggleExpansion: async title => {
-    const node = await getNode(title);
-    await t.click(
-      node
-        .parent(".ant-tree-treenode")
-        .nth(0)
-        .find(".ant-tree-switcher")
-    );
-  },
-  populationIndicator: async title => {
-    const node = await getNode(title);
+  node: title => {
+    const node = xdmTree
+      .find(createTestIdSelectorString("xdmTreeNodeTitleDisplayName"))
+      .withText(title)
+      .parent(createTestIdSelectorString("xdmTreeNodeTitle"))
+      .nth(0);
     const populationIndicator = node.find(
       createTestIdSelectorString("populationAmountIndicator")
     );
+    const expansionToggle = node
+      .parent(".ant-tree-treenode")
+      .nth(0)
+      .find(".ant-tree-switcher");
     return {
-      expectFull() {
-        return t.expect(populationIndicator.hasClass("is-full")).ok();
+      click: async () => {
+        await t.click(node);
       },
-      expectPartial() {
-        return t.expect(populationIndicator.hasClass("is-partial")).ok();
+      toggleExpansion: async () => {
+        await t.click(expansionToggle);
       },
-      expectEmpty() {
-        return t.expect(populationIndicator.hasClass("is-empty")).ok();
+      populationIndicator: {
+        expectFull: async () => {
+          await t.expect(populationIndicator.hasClass("is-full")).ok();
+        },
+        expectPartial: async () => {
+          return t.expect(populationIndicator.hasClass("is-partial")).ok();
+        },
+        expectEmpty: async () => {
+          await t.expect(populationIndicator.hasClass("is-empty")).ok();
+        },
+        expectBlank: async () => {
+          await t.expect(populationIndicator.exists).notOk();
+        }
       },
-      expectBlank() {
-        return t.expect(populationIndicator.exists).notOk();
+      expectIsValid: async () => {
+        await t.expect(node.hasClass("is-invalid")).notOk();
+      },
+      expectIsNotValid: async () => {
+        await t.expect(node.hasClass("is-invalid")).ok();
+      },
+      expectExists: async () => {
+        await t.expect(node.exists).ok();
+      },
+      expectNotExists: async () => {
+        await t.expect(node.exists).notOk();
       }
     };
-  },
-  expectIsValid: async title => {
-    const node = await getNode(title);
-    await t.expect(node.hasClass("is-invalid")).notOk();
-  },
-  expectIsNotValid: async title => {
-    const node = await getNode(title);
-    await t.expect(node.hasClass("is-invalid")).ok();
-  },
-  expectExists: async title => {
-    const node = await getNode(title);
-    await t.expect(node.exists).ok();
-  },
-  expectNotExists: async title => {
-    const node = await getNode(title);
-    await t.expect(node.exists).notOk();
   }
 };

@@ -10,8 +10,10 @@ module.exports = {
     node: true,
     jasmine: true
   },
-  plugins: ["ban", "prettier", "testcafe"],
+  plugins: ["unused-imports", "ban", "prettier", "testcafe"],
   rules: {
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": "error",
     "ban/ban": [
       "error",
       { name: ["describe", "only"], message: "don't focus tests" },
@@ -38,7 +40,28 @@ module.exports = {
     // Turning this off allows us to import devDependencies in our build tools.
     // We enable the rule in src/.eslintrc.js since that's the only place we
     // want to disallow importing extraneous dependencies.
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "prefer-destructuring": "off",
+    "import/prefer-default-export": "off",
+    "no-console": [
+      "warn",
+      {
+        allow: ["error"]
+      }
+    ],
+    // This rule typically shows an error if a Link component
+    // doesn't have an href. We use React-Spectrum's Link
+    // component, however, which doesn't have an href prop
+    // (Link expects a anchor element as a child). We have
+    // to provide an empty components array here to get around
+    // eslint complaining about this. eslint still checks
+    // anchor elements though.
+    "jsx-a11y/anchor-is-valid": [
+      "error",
+      {
+        components: []
+      }
+    ]
   },
   parser: "babel-eslint"
 };

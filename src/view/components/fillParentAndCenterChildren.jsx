@@ -12,24 +12,23 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import classNames from "classnames";
+import { Flex } from "@adobe/react-spectrum";
 
-const FillParentAndCenterChildren = ({ children, className }) => {
+const FillParentAndCenterChildren = ({ children }) => {
   return (
-    <div
-      className={classNames(
-        "u-flex u-fullHeight u-alignItemsCenter u-justifyContentCenter",
-        className
-      )}
+    <Flex
+      height="100%"
+      alignItems="center"
+      justifyContent="center"
+      direction="column"
     >
       {children}
-    </div>
+    </Flex>
   );
 };
 
 FillParentAndCenterChildren.propTypes = {
-  children: PropTypes.node.isRequired,
-  className: PropTypes.string
+  children: PropTypes.node.isRequired
 };
 
 export default FillParentAndCenterChildren;

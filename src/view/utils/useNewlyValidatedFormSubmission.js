@@ -11,26 +11,37 @@ governing permissions and limitations under the License.
 */
 
 import { useEffect, useRef } from "react";
+import { useFormikContext } from "formik";
 
 /**
- * A react hook which the callback after a user attempts to
+ * A react hook which calls the callback after a user attempts to
  * submit a formik form (rather than just changes a field value)
  * and validation completes.
  *
  * @param {Function} callback A function to call whenever the user
  * attempts to submit a formik form and validation completes.
- * @param {Object} formikProps Formik props, provided by Formik.
  */
-export default ({ callback, formikProps }) => {
-  const { isValidating, submitCount } = formikProps;
+export default callback => {
+  const { submitCount, isSubmitting, errors } = useFormikContext();
   const previousProcessedSubmitCountRef = useRef(0);
   useEffect(() => {
+    // Let's consider our state before form submission:
+    // submitCount=0, isSubmitting=false, isValidating=false
+    // When form submission occurs, formik props change multiple
+    // times during the submission process as follows:
+    // 1. submitCount=1, isSubmitting=true, isValidating=false
+    // 2. submitCount=1, isSubmitting=true, isValidating=true
+    // 3. submitCount=1, isSubmitting=true, isValidating=false
+    // 4. submitCount=1, isSubmitting=false, isValidating=false
+    // We want to call the callback on every form submission soon
+    // after validation is finished, so the simplest way is to wait
+    // until step 4, which we can do without actually tracking isValidating.
     if (
       submitCount !== previousProcessedSubmitCountRef.current &&
-      !isValidating
+      !isSubmitting
     ) {
       previousProcessedSubmitCountRef.current = submitCount;
-      callback();
+      callback(errors);
     }
-  }, [isValidating, submitCount]);
+  }, [submitCount, isSubmitting]);
 };

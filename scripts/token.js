@@ -17,9 +17,9 @@ const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClie
 (async () => {
   if (adobeIOClientCredentials) {
     // eslint-disable-next-line no-console
-    console.log(adobeIOClientCredentials.orgId);
+    console.log("Org ID:", adobeIOClientCredentials.orgId);
     const result = await auth(adobeIOClientCredentials);
     // eslint-disable-next-line no-console
-    console.log(result.access_token);
+    console.log("IMS Access Token:", result.access_token);
   }
 })();

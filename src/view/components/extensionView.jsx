@@ -10,157 +10,180 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState, useEffect } from "react";
-import { Formik } from "formik";
+import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
-import Alert from "@react/react-spectrum/Alert";
-import Wait from "@react/react-spectrum/Wait";
+
+import { useFormik, FormikProvider } from "formik";
+import { object } from "yup";
+import { ProgressCircle } from "@adobe/react-spectrum";
+import useExtensionBridge from "../utils/useExtensionBridge";
+import useReportAsyncError from "../utils/useReportAsyncError";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
-import ErrorBoundary from "./errorBoundary";
 
-// Without this, if an error is thrown during validation, Formik
-// swallows the error and it's difficult to figure out where the problem is.
-// https://github.com/jaredpalmer/formik/issues/1329
-const wrapValidateWithErrorLogging = validate => {
-  if (!validate) {
-    return undefined;
-  }
-
-  return (...args) => {
-    let result;
-    try {
-      result = validate(...args);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error("Error executing validation", error);
-      throw error;
-    }
-    return result;
-  };
-};
-
-const bridgeState = {
-  getInitialValues: null,
-  getSettings: null,
-  setInitialValues: null,
-  setInitializationError: null,
-  initInfo: null,
-  formikProps: null
-};
-
-const registerWithExtensionBridge = () => {
-  window.extensionBridge.register({
-    init: initInfo => {
-      bridgeState.initInfo = initInfo;
-      const initialValuesPromise = new Promise((resolve, reject) => {
-        // This is inside of a promise "executor" because we want to catch
-        // any errors that may occur inside getInitialValues.
-        // getInitialValues may return the initial values or a promise
-        // that gets resolved with the initial values, which is why
-        // we do the Promise.resolve here.
-        Promise.resolve(bridgeState.getInitialValues({ initInfo })).then(
-          resolve,
-          reject
-        );
-      });
-      initialValuesPromise
-        .then(_initialValues => {
-          bridgeState.setInitialValues(_initialValues);
-        })
-        .catch(error => {
-          // eslint-disable-next-line no-console
-          console.error(error);
-          bridgeState.setInitializationError(error);
-        });
-    },
-    getSettings: () => {
-      return bridgeState.getSettings({
-        values: bridgeState.formikProps.values,
-        initInfo: bridgeState.initInfo
-      });
-    },
-    validate: () => {
-      // The docs say that the promise submitForm returns
-      // will be rejected if there are errors, but that is not the case.
-      // Therefore, after the promise is resolved, we pull formikProps.errors
-      // (which were set during submitForm()) to see if the form is valid.
-      // https://github.com/jaredpalmer/formik/issues/1580
-      return bridgeState.formikProps.submitForm().then(() => {
-        bridgeState.formikProps.setSubmitting(false);
-        return Object.keys(bridgeState.formikProps.errors).length === 0;
-      });
-    }
-  });
-};
-
-// This component sets up Formik and wires it up to Launch's extension bridge.
-// It should be used for each view inside an extension.
 const ExtensionView = ({
+  render,
   getInitialValues,
   getSettings,
-  validate,
-  validationSchema,
-  render
+  validateFormikState,
+  formikStateValidationSchema,
+  validateNonFormikState
 }) => {
-  const [initialValues, setInitialValues] = useState();
-  const [initializationError, setInitializationError] = useState();
+  const reportAsyncError = useReportAsyncError();
+  const [initInfo, setInitInfo] = useState();
+  const viewRegistrationRef = useRef();
+  const formikPropsRef = useRef();
+  formikPropsRef.current = useFormik({
+    onSubmit: () => {},
+    validate: values => {
+      let errors;
 
-  bridgeState.getInitialValues = getInitialValues;
-  bridgeState.getSettings = getSettings;
-  bridgeState.setInitialValues = setInitialValues;
-  bridgeState.setInitializationError = setInitializationError;
+      // Formik swallows errors that occur during validation, but we want
+      // to handle them in a proper manner.
+      try {
+        if (viewRegistrationRef.current?.validateFormikState) {
+          errors = viewRegistrationRef.current.validateFormikState({ values });
+        }
+      } catch (error) {
+        reportAsyncError(
+          new Error("An error occurred while validating the view.")
+        );
+      }
 
-  useEffect(registerWithExtensionBridge, []);
+      return errors;
+    },
+    validationSchema: () => {
+      return (
+        viewRegistrationRef.current?.formikStateValidationSchema ?? object()
+      );
+    }
+  });
 
-  if (initializationError) {
-    return (
-      <FillParentAndCenterChildren>
-        <Alert
-          data-test-id="initializationErrorAlert"
-          header="Initialization Error"
-          variant="error"
-        >
-          An error occurred during initialization: {initializationError.message}
-        </Alert>
-      </FillParentAndCenterChildren>
-    );
+  const myValidateFormikState = async () => {
+    // The view hasn't yet initialized formik with initialValues.
+    if (!formikPropsRef.current.values) {
+      return false;
+    }
+
+    await formikPropsRef.current.submitForm();
+
+    // The docs say that the promise submitForm returns
+    // will be rejected if there are errors, but that is not the case.
+    // Therefore, after the promise is resolved, we pull formikProps.errors
+    // (which were set during submitForm()) to see if the form is valid.
+    // https://github.com/jaredpalmer/formik/issues/1580
+    formikPropsRef.current.setSubmitting(false);
+    return Object.keys(formikPropsRef.current.errors).length === 0;
+  };
+
+  const myValidateNonFormikState = async () => {
+    if (!viewRegistrationRef.current) {
+      // If the view hasn't registered yet, we don't want to consider
+      // it valid.
+      return false;
+    }
+
+    if (!viewRegistrationRef.current.validateNonFormikState) {
+      return true;
+    }
+
+    return viewRegistrationRef.current.validateNonFormikState();
+  };
+
+  useExtensionBridge({
+    init({ initInfo: _initInfo }) {
+      setInitInfo(_initInfo);
+    },
+    async getSettings() {
+      if (!viewRegistrationRef.current) {
+        return {};
+      }
+      try {
+        return await viewRegistrationRef.current.getSettings({
+          initInfo,
+          values: formikPropsRef.current.values
+        });
+      } catch (e) {
+        // This will update the UI to show that an error has occurred.
+        reportAsyncError(e);
+        // Throwing the error will let Launch know not to save the settings.
+        throw e;
+      }
+    },
+    async validate() {
+      const results = await Promise.all([
+        myValidateFormikState(),
+        myValidateNonFormikState()
+      ]);
+      return results.every(result => result);
+    }
+  });
+
+  const registerImperativeFormApi = api => {
+    viewRegistrationRef.current = viewRegistrationRef.current || {};
+    viewRegistrationRef.current.getSettings = api.getSettings;
+    viewRegistrationRef.current.validateFormikState = api.validateFormikState;
+    viewRegistrationRef.current.formikStateValidationSchema =
+      api.formikStateValidationSchema;
+    viewRegistrationRef.current.validateNonFormikState =
+      api.validateNonFormikState;
+  };
+
+  if (getSettings) {
+    useEffect(() => {
+      registerImperativeFormApi({
+        getSettings,
+        validateFormikState,
+        formikStateValidationSchema,
+        validateNonFormikState
+      });
+    }, []);
+  }
+  if (getInitialValues) {
+    useEffect(async () => {
+      if (initInfo) {
+        try {
+          formikPropsRef.current.resetForm({
+            values: await getInitialValues({ initInfo })
+          });
+        } catch (e) {
+          reportAsyncError(e);
+        }
+      }
+    }, [initInfo]);
+
+    // Show the spinner if getInitialValues is not done
+    if (!formikPropsRef.current.values) {
+      return (
+        <FillParentAndCenterChildren>
+          <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
+        </FillParentAndCenterChildren>
+      );
+    }
   }
 
-  if (initialValues) {
-    return (
-      <ErrorBoundary>
-        <Formik
-          enableReinitialize
-          onSubmit={() => {}}
-          initialValues={initialValues}
-          validate={wrapValidateWithErrorLogging(validate)}
-          validationSchema={validationSchema}
-          render={formikProps => {
-            bridgeState.formikProps = formikProps;
-            return render({
-              formikProps,
-              initInfo: bridgeState.initInfo,
-              resetForm: setInitialValues
-            });
-          }}
-        />
-      </ErrorBoundary>
-    );
+  // Don't render anything until extension bridge calls init
+  if (!initInfo) {
+    return null;
   }
 
   return (
-    <FillParentAndCenterChildren>
-      <Wait size="L" />
-    </FillParentAndCenterChildren>
+    <FormikProvider value={formikPropsRef.current}>
+      {render({
+        initInfo,
+        formikProps: formikPropsRef.current,
+        registerImperativeFormApi
+      })}
+    </FormikProvider>
   );
 };
 
 ExtensionView.propTypes = {
-  getInitialValues: PropTypes.func.isRequired,
-  getSettings: PropTypes.func.isRequired,
-  validate: PropTypes.func,
-  validationSchema: PropTypes.object,
-  render: PropTypes.func.isRequired
+  render: PropTypes.func,
+  getInitialValues: PropTypes.func,
+  getSettings: PropTypes.func,
+  validateFormikState: PropTypes.func,
+  formikStateValidationSchema: PropTypes.object,
+  validateNonFormikState: PropTypes.func
 };
 
 export default ExtensionView;

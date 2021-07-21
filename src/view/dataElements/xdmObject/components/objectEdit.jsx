@@ -12,67 +12,57 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import RadioGroup from "@react/react-spectrum/RadioGroup";
-import Radio from "@react/react-spectrum/Radio";
-import Textfield from "@react/react-spectrum/Textfield";
-import FieldLabel from "@react/react-spectrum/FieldLabel";
-import WrappedField from "../../../components/wrappedField";
+import { Radio } from "@adobe/react-spectrum";
+import { useField } from "formik";
+import FormikRadioGroup from "../../../components/formikReactSpectrum3/formikRadioGroup";
+import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
+import DataElementSelector from "../../../components/dataElementSelector";
 import { PARTS, WHOLE } from "../constants/populationStrategy";
-import { formStateNodePropTypes } from "../helpers/getInitialFormState";
+import FormElementContainer from "../../../components/formElementContainer";
 
 /**
  * The form for editing a node that is an object type.
  */
-const ObjectEdit = props => {
-  const { formStateNode, fieldName } = props;
+const ObjectEdit = ({ fieldName }) => {
+  const [{ value: formStateNode }] = useField(fieldName);
+
   const {
     isPartsPopulationStrategySupported,
     populationStrategy
   } = formStateNode;
 
   return (
-    <div>
+    <FormElementContainer>
       {isPartsPopulationStrategySupported && (
-        <WrappedField
+        <FormikRadioGroup
+          label="Population strategy"
           name={`${fieldName}.populationStrategy`}
-          component={RadioGroup}
-          className="u-gapBottom"
+          orientation="horizontal"
         >
-          <Radio
-            data-test-id="partsPopulationStrategyField"
-            value={PARTS}
-            label="Provide individual attributes"
-          />
-          <Radio
-            data-test-id="wholePopulationStrategyField"
-            value={WHOLE}
-            label="Provide entire object"
-            className="u-gapLeft2x"
-          />
-        </WrappedField>
+          <Radio data-test-id="partsPopulationStrategyField" value={PARTS}>
+            Provide individual attributes
+          </Radio>
+          <Radio data-test-id="wholePopulationStrategyField" value={WHOLE}>
+            Provide entire object
+          </Radio>
+        </FormikRadioGroup>
       )}
       {populationStrategy === WHOLE && (
-        <div className="u-gapTop">
-          <FieldLabel
-            labelFor="valueField"
-            label="Data element providing object"
-          />
-          <WrappedField
+        <DataElementSelector>
+          <FormikTextField
             data-test-id="valueField"
-            id="valueField"
             name={`${fieldName}.value`}
-            component={Textfield}
-            componentClassName="u-fieldLong"
-            supportDataElement="replace"
+            label="Data element"
+            description="This data element should resolve to an object."
+            width="size-5000"
           />
-        </div>
+        </DataElementSelector>
       )}
-    </div>
+    </FormElementContainer>
   );
 };
 
 ObjectEdit.propTypes = {
-  formStateNode: formStateNodePropTypes.isRequired,
   fieldName: PropTypes.string.isRequired
 };
 

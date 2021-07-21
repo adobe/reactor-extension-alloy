@@ -12,36 +12,33 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import RadioGroup from "@react/react-spectrum/RadioGroup";
-import Radio from "@react/react-spectrum/Radio";
-import Textfield from "@react/react-spectrum/Textfield";
-import { FieldArray } from "formik";
-import Button from "@react/react-spectrum/Button";
-import Delete from "@react/react-spectrum/Icon/Delete";
-import FieldLabel from "@react/react-spectrum/FieldLabel";
-import WrappedField from "../../../components/wrappedField";
+import { FieldArray, useField } from "formik";
+import { Radio, Button, Flex } from "@adobe/react-spectrum";
+import Delete from "@spectrum-icons/workflow/Delete";
+import FormikRadioGroup from "../../../components/formikReactSpectrum3/formikRadioGroup";
+import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
+import DataElementSelector from "../../../components/dataElementSelector";
 import getInitialFormState, {
   formStateNodePropTypes
 } from "../helpers/getInitialFormState";
 import { PARTS, WHOLE } from "../constants/populationStrategy";
 import { ARRAY, OBJECT } from "../constants/schemaType";
+import FormElementContainer from "../../../components/formElementContainer";
 
 /**
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
  */
 const WholePopulationStrategyForm = ({ fieldName }) => (
-  <React.Fragment>
-    <FieldLabel labelFor="valueField" label="Data element providing array" />
-    <WrappedField
+  <DataElementSelector>
+    <FormikTextField
       data-test-id="valueField"
-      id="valueField"
       name={`${fieldName}.value`}
-      component={Textfield}
-      componentClassName="u-fieldLong"
-      supportDataElement="replace"
+      label="Data element"
+      description="This data element should resolve to an array."
+      width="size-5000"
     />
-  </React.Fragment>
+  </DataElementSelector>
 );
 
 WholePopulationStrategyForm.propTypes = {
@@ -62,35 +59,39 @@ const PartsPopulationStrategyForm = ({
     name={`${fieldName}.items`}
     render={arrayHelpers => {
       return (
-        <div>
+        <Flex
+          gap="size-200"
+          marginTop="size-200"
+          direction="column"
+          alignItems="start"
+        >
           {items.map((itemNode, index) => {
             return (
-              <div
-                key={`${fieldName}.${index}`}
-                className="u-gapTop u-flex u-alignItemsCenter"
-              >
+              <div key={`${fieldName}.${index}`}>
                 <Button
                   data-test-id={`item${index}SelectButton`}
-                  quiet
-                  variant="action"
-                  onClick={() => onNodeSelect(itemNode.id)}
+                  isQuiet
+                  variant="secondary"
+                  onPress={() => onNodeSelect(itemNode.id)}
                 >
                   Item {index + 1}
                 </Button>
                 <Button
                   data-test-id={`item${index}RemoveButton`}
-                  variant="tool"
-                  icon={<Delete />}
+                  isQuiet
+                  variant="secondary"
+                  minWidth={0}
                   aria-label="Delete"
-                  className="u-gapLeft"
-                  onClick={() => arrayHelpers.remove(index)}
-                />
+                  onPress={() => arrayHelpers.remove(index)}
+                >
+                  <Delete />
+                </Button>
               </div>
             );
           })}
           <Button
             data-test-id="addItemButton"
-            onClick={() => {
+            onPress={() => {
               const itemSchema = schema.items;
               let defaultValue;
 
@@ -108,10 +109,11 @@ const PartsPopulationStrategyForm = ({
               });
               arrayHelpers.push(itemFormStateNode);
             }}
-            label="Add Item"
-            className="u-gapTop2x"
-          />
-        </div>
+            variant="primary"
+          >
+            Add item
+          </Button>
+        </Flex>
       );
     }}
   />
@@ -128,7 +130,9 @@ PartsPopulationStrategyForm.propTypes = {
  * The form for editing a node that is an array type.
  */
 const ArrayEdit = props => {
-  const { formStateNode, fieldName, onNodeSelect } = props;
+  const { fieldName, onNodeSelect } = props;
+  const [{ value: formStateNode }] = useField(fieldName);
+
   const {
     isPartsPopulationStrategySupported,
     populationStrategy,
@@ -137,25 +141,20 @@ const ArrayEdit = props => {
   } = formStateNode;
 
   return (
-    <div>
+    <FormElementContainer>
       {isPartsPopulationStrategySupported && (
-        <WrappedField
+        <FormikRadioGroup
+          label="Population strategy"
           name={`${fieldName}.populationStrategy`}
-          component={RadioGroup}
-          className="u-gapBottom"
+          orientation="horizontal"
         >
-          <Radio
-            data-test-id="partsPopulationStrategyField"
-            value={PARTS}
-            label="Provide individual items"
-          />
-          <Radio
-            data-test-id="wholePopulationStrategyField"
-            value={WHOLE}
-            label="Provide entire array"
-            className="u-gapLeft2x"
-          />
-        </WrappedField>
+          <Radio data-test-id="partsPopulationStrategyField" value={PARTS}>
+            Provide individual items
+          </Radio>
+          <Radio data-test-id="wholePopulationStrategyField" value={WHOLE}>
+            Provide entire array
+          </Radio>
+        </FormikRadioGroup>
       )}
       <div>
         {populationStrategy === WHOLE ? (
@@ -169,12 +168,11 @@ const ArrayEdit = props => {
           />
         )}
       </div>
-    </div>
+    </FormElementContainer>
   );
 };
 
 ArrayEdit.propTypes = {
-  formStateNode: formStateNodePropTypes.isRequired,
   fieldName: PropTypes.string.isRequired,
   onNodeSelect: PropTypes.func.isRequired
 };

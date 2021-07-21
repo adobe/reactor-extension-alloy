@@ -1,5 +1,5 @@
 /*
-Copyright 2019 Adobe. All rights reserved.
+Copyright 2021 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -12,12 +12,23 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import ReactDOM from "react-dom";
-import Provider from "@react/react-spectrum/Provider";
+import { Provider, lightTheme } from "@adobe/react-spectrum";
+import ErrorBoundary from "./components/errorBoundary";
+import "./global.styl";
+import monitorForOriginatingErrors from "./utils/monitorForOriginatingErrors";
+
+monitorForOriginatingErrors();
 
 export default View => {
   ReactDOM.render(
-    <Provider theme="lightest">
-      <View />
+    <Provider
+      theme={lightTheme}
+      colorScheme="light"
+      UNSAFE_className="react-spectrum-provider"
+    >
+      <ErrorBoundary>
+        <View />
+      </ErrorBoundary>
     </Provider>,
     document.getElementById("root")
   );

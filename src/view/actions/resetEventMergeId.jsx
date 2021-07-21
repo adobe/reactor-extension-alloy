@@ -10,22 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import { object, string } from "yup";
-import Textfield from "@react/react-spectrum/Textfield";
-import FieldLabel from "@react/react-spectrum/FieldLabel";
-import "@react/react-spectrum/Form"; // needed for spectrum form styles
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import render from "../render";
-import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
-import InfoTipLayout from "../components/infoTipLayout";
-import "./resetEventMergeId.styl";
+import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import FormElementContainer from "../components/formElementContainer";
+import DataElementSelector from "../components/dataElementSelector";
 
 const getInitialValues = ({ initInfo }) => {
   const { eventMergeId = "" } = initInfo.settings || {};
-
   return {
     eventMergeId
   };
@@ -36,10 +32,9 @@ const getSettings = ({ values }) => {
 };
 
 const validationSchema = object().shape({
-  eventMergeId: string().matches(
-    singleDataElementRegex,
-    "Please specify a data element"
-  )
+  eventMergeId: string()
+    .required(DATA_ELEMENT_REQUIRED)
+    .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
 });
 
 const ResetEventMergeId = () => {
@@ -47,26 +42,21 @@ const ResetEventMergeId = () => {
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
-      validationSchema={validationSchema}
-      render={() => {
-        return (
-          <div>
-            <InfoTipLayout tip="Please specify the data element that represents the event merge ID you would like to reset.">
-              <FieldLabel labelFor="eventMergeIdField" label="Event Merge ID" />
-            </InfoTipLayout>
-            <div>
-              <WrappedField
-                data-test-id="eventMergeIdField"
-                id="eventMergeIdField"
-                name="eventMergeId"
-                component={Textfield}
-                componentClassName="u-fieldLong"
-                supportDataElement="replace"
-              />
-            </div>
-          </div>
-        );
-      }}
+      formikStateValidationSchema={validationSchema}
+      render={() => (
+        <FormElementContainer>
+          <DataElementSelector>
+            <FormikTextField
+              data-test-id="eventMergeIdField"
+              name="eventMergeId"
+              label="Event merge ID"
+              description="Please specify the data element that represents the event merge ID you would like to reset."
+              width="size-5000"
+              isRequired
+            />
+          </DataElementSelector>
+        </FormElementContainer>
+      )}
     />
   );
 };

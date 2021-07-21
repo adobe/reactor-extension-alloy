@@ -14,6 +14,6 @@ governing permissions and limitations under the License.
 export const WEB = "Web";
 export const DEVICE = "Device";
 export const ENVIRONMENT = "Environment";
-export const PLACE_CONTEXT = "Place Context";
+export const PLACE_CONTEXT = "Place context";
 // Not Applicable - Meaning this field is not autopopulated by a context configuration
 export const NA = "NA";

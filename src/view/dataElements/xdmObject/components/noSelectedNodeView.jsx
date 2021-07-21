@@ -12,85 +12,73 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import Alert from "@react/react-spectrum/Alert";
-import AsteriskIcon from "@react/react-spectrum/Icon/Asterisk";
+import { Flex, View } from "@adobe/react-spectrum";
+import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
+import Alert from "../../../components/alert";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import { EMPTY, PARTIAL, FULL } from "../constants/populationAmount";
-
-import "../../../components/iconTip.styl";
-import "./noSelectedNodeView.styl";
+import IndicatorDescription from "./indicatorDescription";
 
 /**
  * Shown when no node is selected within the XDM tree.
  */
-const NoSelectedNodeView = props => {
-  const { schemaMeta, previouslySavedSchemaInfo } = props;
-
+const NoSelectedNodeView = ({ schema, previouslySavedSchemaInfo }) => {
   // The schema used when the data element was last saved is different
   // from the latest configured schema. Either the customer has since
   // changed which dataset is configured in the edge configuration
   // or they have made changes to the schema itself.
   const isSchemaMismatched =
     previouslySavedSchemaInfo &&
-    (previouslySavedSchemaInfo.id !== schemaMeta.$id ||
-      previouslySavedSchemaInfo.version !== schemaMeta.version);
+    (previouslySavedSchemaInfo.id !== schema.$id ||
+      previouslySavedSchemaInfo.version !== schema.version);
 
   return (
     <div>
       {isSchemaMismatched && (
-        <Alert variant="warning" header="Schema Changed">
-          The XDM schema has changed since the XDM object was last saved. After
-          the next save, any fields that no longer exist on the XDM schema will
-          also no longer be included on the XDM object.
-        </Alert>
+        <View marginBottom="size-100">
+          <Alert variant="notice" title="Schema changed">
+            The XDM schema has changed since the XDM object was last saved.
+            After the next save, any fields that no longer exist on the XDM
+            schema will also no longer be included on the XDM object.
+          </Alert>
+        </View>
       )}
       <div>
         <p>
           Build an object that complies with your configured schema by selecting
-          attributes on the left and providing their values here.
+          attributes on the left and providing their values.
         </p>
-        <p className="u-flex">
-          <PopulationAmountIndicator
-            populationAmount={EMPTY}
-            className="u-gapRight NoSelectedNodeView-icon"
-          />
-          An empty circle like this indicates no attributes have been filled in.
-        </p>
-        <p className="u-flex">
-          <PopulationAmountIndicator
-            populationAmount={PARTIAL}
-            className="u-gapRight NoSelectedNodeView-icon"
-          />
-          A partially filled in circle like this indicates some of the
-          attributes have been filled in.
-        </p>
-        <p className="u-flex">
-          <PopulationAmountIndicator
-            populationAmount={FULL}
-            className="u-gapRight NoSelectedNodeView-icon"
-          />
-          A full circle like this indicates all of the attributes have been
-          filled in.
-        </p>
-        <p className="u-flex">
-          <span className="u-flex">
-            <AsteriskIcon
-              className="IconTip-icon u-gapRight NoSelectedNodeView-icon"
-              size="XS"
-            />
-          </span>
-          Fields that may be auto-populated when this data element is passed to
-          the XDM option of the &quot;Send Event&quot; action have this icon.
-          Hovering over the icon shows a popup explaining when the field will be
-          auto-populated.
-        </p>
+        <Flex direction="column" gap="size-100">
+          <IndicatorDescription
+            indicator={<PopulationAmountIndicator populationAmount={EMPTY} />}
+          >
+            An empty circle indicates no attributes have been populated.
+          </IndicatorDescription>
+          <IndicatorDescription
+            indicator={<PopulationAmountIndicator populationAmount={PARTIAL} />}
+          >
+            A partially filled in circle indicates some of the attributes have
+            been populated.
+          </IndicatorDescription>
+          <IndicatorDescription
+            indicator={<PopulationAmountIndicator populationAmount={FULL} />}
+          >
+            A full circle indicates all of the attributes have been populated.
+          </IndicatorDescription>
+          <IndicatorDescription indicator={<AsteriskIcon size="XS" />}>
+            Fields that may be auto-populated when this data element is passed
+            to the XDM option of the <b>Send event</b> action have this icon.
+            Hovering over the icon shows a popup explaining when the field will
+            be auto-populated.
+          </IndicatorDescription>
+        </Flex>
       </div>
     </div>
   );
 };
 
 NoSelectedNodeView.propTypes = {
-  schemaMeta: PropTypes.object.isRequired,
+  schema: PropTypes.object.isRequired,
   previouslySavedSchemaInfo: PropTypes.shape({
     id: PropTypes.string.isRequired,
     version: PropTypes.string.isRequired

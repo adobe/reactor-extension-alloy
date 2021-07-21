@@ -1,13 +1,20 @@
 import { RequestMock } from "testcafe";
 
-const responseHeaders = { "Access-Control-Allow-Origin": "*" };
+const responseHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, content-type, content-range, pragma, if-match, if-modified-since, range, x-gw-ims-org-id, x-api-key, x-model-name, x-admin,ticketId, origin, accept, emailToNotify, x-products, x-auditor-ims-org-id,x-sandbox-name,x-sandbox-id,x-ups-search-version"
+};
 
-/**
- * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
- * @type {RequestMock}
- */
-export const unauthorized = RequestMock()
-  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
+const SANDBOXES_ENDPOINT_REGEX = /sandbox-management/;
+const SCHEMAS_ENDPOINT_REGEX = /\/schemaregistry\/tenant\/schemas(\?|$)/;
+const SCHEMA_ENDPOINT_REGEX = /\/schemaregistry\/tenant\/schemas\/.+/;
+const IDENTITIES_ENDPOINT_REGEX = /\/data\/core\/idnamespace\/identities(\?|$)/;
+
+const HTTP_METHOD_GET = "GET";
+
+export const sandboxesUnauthorized = RequestMock()
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     {
       error_code: "401013",
@@ -17,12 +24,8 @@ export const unauthorized = RequestMock()
     responseHeaders
   );
 
-/**
- * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
- * @type {RequestMock}
- */
-export const userRegionMissing = RequestMock()
-  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
+export const sandboxesUserRegionMissing = RequestMock()
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     {
       error_code: "403027",
@@ -32,20 +35,12 @@ export const userRegionMissing = RequestMock()
     responseHeaders
   );
 
-/**
- * Mocks a sandboxes management user region missing response (e.g. not an AEP customer)
- * @type {RequestMock}
- */
-export const nonJsonBody = RequestMock()
-  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
-  .respond("non-json body", 401, responseHeaders);
+export const sandboxesNonJsonBody = RequestMock()
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
+  .respond("non-json body", 200, responseHeaders);
 
-/**
- * Mocks an empty response from the platform sandboxes endpoint
- * @type {RequestMock}
- */
 export const sandboxesEmpty = RequestMock()
-  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     {
       sandboxes: []
@@ -54,18 +49,14 @@ export const sandboxesEmpty = RequestMock()
     responseHeaders
   );
 
-/**
- * Mocks a response from the platform sandboxes endpoint
- * @type {RequestMock}
- */
-export const sandboxesWithoutDefault = RequestMock()
-  .onRequestTo("https://platform.adobe.io/data/foundation/sandbox-management/")
+export const sandboxesSingleWithoutDefault = RequestMock()
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     {
       sandboxes: [
         {
-          name: "prod",
-          title: "Prod",
+          name: "testsandbox1",
+          title: "Test Sandbox 1",
           type: "production",
           isDefault: false,
           region: "VA7",
@@ -77,30 +68,42 @@ export const sandboxesWithoutDefault = RequestMock()
     responseHeaders
   );
 
-/**
- * Mocks a response from the platform schema meta endpoint
- * @type {RequestMock}
- */
-export const schemasMeta = RequestMock()
-  .onRequestTo({
-    url:
-      "https://platform.adobe.io/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta%3Aextends%3D%3Dhttps%253A%252F%252Fns.adobe.com%252Fxdm%252Fcontext%252Fexperienceevent",
-    headers: {
-      "x-sandbox-name": "prod"
-    }
-  })
+export const sandboxesMultipleWithDefault = RequestMock()
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     {
-      results: [
+      sandboxes: [
         {
-          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/foo",
-          version: "1.0",
-          title: "Foo1"
+          name: "testsandbox1",
+          title: "Test Sandbox 1",
+          type: "production",
+          isDefault: false,
+          region: "VA7",
+          state: "active"
         },
         {
-          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/foo2",
-          version: "1.0",
-          title: "Foo2"
+          name: "testsandbox2",
+          title: "Test Sandbox 2",
+          type: "production",
+          isDefault: true,
+          region: "VA7",
+          state: "active"
+        },
+        {
+          name: "testsandbox3",
+          title: "Test Sandbox 3",
+          type: "production",
+          isDefault: false,
+          region: "VA7",
+          state: "active"
+        },
+        {
+          name: "prod",
+          title: "Test Sandbox Prod",
+          type: "production",
+          isDefault: false,
+          region: "VA7",
+          state: "active"
         }
       ]
     },
@@ -108,40 +111,281 @@ export const schemasMeta = RequestMock()
     responseHeaders
   );
 
-/**
- * Mocks a response from the platform schema meta endpoint
- * @type {RequestMock}
- */
-export const schemasMetaEmpty = RequestMock()
+export const sandboxesMultipleWithoutDefault = RequestMock()
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
+  .respond(
+    {
+      sandboxes: [
+        {
+          name: "testsandbox1",
+          title: "Test Sandbox 1",
+          type: "production",
+          isDefault: false,
+          region: "VA7",
+          state: "active"
+        },
+        {
+          name: "testsandbox2",
+          title: "Test Sandbox 2",
+          type: "production",
+          isDefault: false,
+          region: "VA7",
+          state: "active"
+        },
+        {
+          name: "testsandbox3",
+          title: "Test Sandbox 3",
+          type: "production",
+          isDefault: false,
+          region: "VA7",
+          state: "active"
+        },
+        {
+          name: "prod",
+          title: "Test Sandbox Prod",
+          type: "production",
+          isDefault: false,
+          region: "VA7",
+          state: "active"
+        }
+      ]
+    },
+    200,
+    responseHeaders
+  );
+
+export const schemasMetaSingle = RequestMock()
   .onRequestTo({
-    url:
-      "https://platform.adobe.io/data/foundation/schemaregistry/tenant/schemas?orderby=title&property=meta%3Aextends%3D%3Dhttps%253A%252F%252Fns.adobe.com%252Fxdm%252Fcontext%252Fexperienceevent",
-    headers: {
-      "x-sandbox-name": "alloy-test"
-    }
+    url: SCHEMAS_ENDPOINT_REGEX,
+    method: HTTP_METHOD_GET
   })
   .respond(
     {
-      results: []
+      results: [
+        {
+          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch123",
+          version: "1.0",
+          title: "Test Schema 1"
+        }
+      ],
+      _page: {
+        next: null
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const schemasMetaMultiple = RequestMock()
+  .onRequestTo({
+    url: SCHEMAS_ENDPOINT_REGEX,
+    method: HTTP_METHOD_GET
+  })
+  .respond(
+    {
+      results: [
+        {
+          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch123",
+          version: "1.0",
+          title: "Test Schema 1"
+        },
+        {
+          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch124",
+          version: "1.0",
+          title: "Test Schema 2"
+        }
+      ],
+      _page: {
+        next: null
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const schemasMetaEmpty = RequestMock()
+  .onRequestTo({
+    url: SCHEMAS_ENDPOINT_REGEX,
+    headers: {
+      "x-sandbox-name": "alloy-test"
+    },
+    method: HTTP_METHOD_GET
+  })
+  .respond(
+    {
+      results: [],
+      _page: {
+        next: null
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const schemasMetaPagingTitles = [
+  "Ada",
+  "Agnus",
+  "Agnese",
+  "Alyssa",
+  "Amalie",
+  "Ardys",
+  "Aryn",
+  "Arynio",
+  "Bettine",
+  "Cacilie",
+  "Camile",
+  "Caritta",
+  "Cassondra",
+  "Cherrita",
+  "Christal",
+  "Clarice",
+  "Claudina",
+  "Clo",
+  "Concettina",
+  "Corene",
+  "Courtnay",
+  "Danny",
+  "Delilah",
+  "Dorice",
+  "Drucie",
+  "Emma",
+  "Emylee",
+  "Ethel",
+  "Feliza",
+  "Fidelia",
+  "Flo",
+  "Florence",
+  "Fredericka",
+  "Gertrud",
+  "Ginnie",
+  "Glynnis",
+  "Grier",
+  "Gwenneth",
+  "Halette",
+  "Hallie",
+  "Hollie",
+  "Janeczka",
+  "Jany",
+  "Jasmina",
+  "Jillayne",
+  "Jobi",
+  "Joleen",
+  "Jordan",
+  "Judy",
+  "Justina",
+  "Justinn",
+  "Karina",
+  "Karlee",
+  "Kathi",
+  "Katleen",
+  "Kenna",
+  "Kial",
+  "Kirbee",
+  "Lanae",
+  "Laticia",
+  "Lisette",
+  "Lita",
+  "Luci",
+  "Madalyn",
+  "Mady",
+  "Mamie",
+  "Marcelline",
+  "Marguerite",
+  "Mariann",
+  "Marti",
+  "Mary",
+  "Miquela",
+  "Nanete",
+  "Natka",
+  "Nikki",
+  "Noelle",
+  "Olpen",
+  "Olwen",
+  "Pamella",
+  "Paola"
+];
+
+export const schemasMetaPagingMock = RequestMock()
+  .onRequestTo({
+    url: SCHEMAS_ENDPOINT_REGEX,
+    method: HTTP_METHOD_GET
+  })
+  .respond((req, res) => {
+    const PAGE_ITEMS_LIMIT = 30;
+    const url = new URL(req.url);
+    const start = url.searchParams.get("start");
+    // There are multiple "property" query string params. We need the one
+    // used for matching the "title" property
+    const titleQuery = url.searchParams
+      .getAll("property")
+      .find(query => query.startsWith("title"));
+    const title = titleQuery ? titleQuery.split("~")[1] : null;
+    const filteredTitles = schemasMetaPagingTitles.filter(
+      name => !title || new RegExp(title).test(name)
+    );
+    const startIndex = start ? filteredTitles.indexOf(start) : 0;
+    const endIndex = Math.min(
+      startIndex + PAGE_ITEMS_LIMIT,
+      filteredTitles.length
+    );
+
+    res.setBody({
+      results: filteredTitles.slice(startIndex, endIndex).map(name => {
+        return {
+          $id: `https://ns.adobe.com/unifiedjsqeonly/schemas/${name}`,
+          version: "1.0",
+          title: name
+        };
+      }),
+      _page: {
+        next: endIndex < filteredTitles.length ? filteredTitles[endIndex] : null
+      }
+    });
+    res.statusCode = 200;
+    res.headers = responseHeaders;
+  });
+
+export const schema = RequestMock()
+  .onRequestTo({
+    url: SCHEMA_ENDPOINT_REGEX,
+    headers: {
+      "x-sandbox-name": "alloy-test"
+    },
+    method: HTTP_METHOD_GET
+  })
+  .respond(
+    {
+      $id: "sch123",
+      title: "Test Schema 1",
+      version: "1.0",
+      type: "object",
+      properties: {
+        testField: {
+          title: "Test Field",
+          type: "string"
+        }
+      }
     },
     200,
     responseHeaders
   );
 
 export const namespaces = RequestMock()
-  .onRequestTo("https://platform.adobe.io/data/core/idnamespace/identities")
+  .onRequestTo({ url: IDENTITIES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond(
     [
       {
         updateTime: 1551688425455,
         code: "CORE",
         status: "ACTIVE",
-        description: "Adobe Audience Manger UUID"
+        name: "Audience Manager",
+        description: "Adobe Audience Manager UUID"
       },
       {
         updateTime: 1551688425455,
         code: "AAID",
         status: "ACTIVE",
+        name: "Adobe Analytics",
         description: "Adobe Analytics (Legacy ID)",
         id: 10
       },
@@ -149,6 +393,7 @@ export const namespaces = RequestMock()
         updateTime: 1551688425455,
         code: "ECID",
         status: "ACTIVE",
+        name: "Experience Cloud",
         description: "Adobe Experience Cloud ID",
         id: 4
       },
@@ -156,13 +401,15 @@ export const namespaces = RequestMock()
         updateTime: 1551688425455,
         code: "Email",
         status: "ACTIVE",
-        description: "Email",
+        name: "Email",
+        description: "Email Address",
         id: 6
       },
       {
         updateTime: 1551688425455,
         code: "WAID",
         status: "ACTIVE",
+        name: "Windows AID",
         description: "Windows AID",
         id: 8
       }
@@ -172,9 +419,9 @@ export const namespaces = RequestMock()
   );
 
 export const namespacesEmpty = RequestMock()
-  .onRequestTo("https://platform.adobe.io/data/core/idnamespace/identities")
+  .onRequestTo({ url: IDENTITIES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond([], 200, responseHeaders);
 
 export const namespacesError = RequestMock()
-  .onRequestTo("https://platform.adobe.io/data/core/idnamespace/identities")
+  .onRequestTo({ url: IDENTITIES_ENDPOINT_REGEX, method: HTTP_METHOD_GET })
   .respond({}, 403, responseHeaders);

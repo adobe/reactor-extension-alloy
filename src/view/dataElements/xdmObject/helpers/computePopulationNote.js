@@ -20,16 +20,16 @@ export default ({ formStateNode, isAncestorUsingWholePopulationStrategy }) => {
     return "";
   }
   if (autoPopulationSource === ALWAYS) {
-    return "This field will be auto-populated when provided as the XDM object for a Send Event action";
+    return 'This field will be auto-populated when this data element is provided as the XDM object for a "Send event" action';
   }
   if (autoPopulationSource === COMMAND) {
-    return "This field may be specified as an option to the Send Event action";
+    return 'This field may be specified as an option to the "Send event" action';
   }
   if (autoPopulationSource === CONTEXT && schema.type !== OBJECT) {
-    return "This field may be auto-populated when provided as the XDM object for a Send Event action";
+    return 'This field may be auto-populated when provided as the XDM object for a "Send event" action';
   }
   if (autoPopulationSource === CONTEXT && schema.type === OBJECT) {
-    return "Some of the attributes of this field may be auto-populated when provided as the XDM object for a Send Event action";
+    return 'Some of the attributes of this field may be auto-populated when provided as the XDM object for a "Send event" action';
   }
   return "";
 };

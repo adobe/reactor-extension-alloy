@@ -1,5 +1,5 @@
 /*
-Copyright 2019 Adobe. All rights reserved.
+Copyright 2021 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,21 +9,27 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
 import React from "react";
+import { Content, Heading, IllustratedMessage } from "@adobe/react-spectrum";
+import Error from "@spectrum-icons/illustrations/Error";
 import PropTypes from "prop-types";
-import Alert from "@react/react-spectrum/Alert";
+import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 
-const ErrorMessage = ({ children }) => (
-  <div className="u-flex u-fullHeight u-alignItemsCenter u-justifyContentCenter">
-    <Alert header="Error" variant="error">
-      {children}
-    </Alert>
-  </div>
-);
+const ErrorMessage = ({ children, dataTestId }) => {
+  return (
+    <FillParentAndCenterChildren>
+      <IllustratedMessage data-test-id={dataTestId}>
+        <Error />
+        <Heading>An error occurred.</Heading>
+        <Content>{children}</Content>
+      </IllustratedMessage>
+    </FillParentAndCenterChildren>
+  );
+};
 
 ErrorMessage.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
+  dataTestId: PropTypes.string
 };
 
 export default ErrorMessage;

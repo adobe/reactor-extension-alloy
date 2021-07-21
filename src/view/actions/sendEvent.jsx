@@ -10,79 +10,27 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import "regenerator-runtime"; // needed for some of react-spectrum
 import React from "react";
 import { object, string } from "yup";
-import Textfield from "@react/react-spectrum/Textfield";
-import Checkbox from "@react/react-spectrum/Checkbox";
-import ComboBox from "@react/react-spectrum/ComboBox";
-import Select from "@react/react-spectrum/Select";
-import FieldLabel from "@react/react-spectrum/FieldLabel";
-import "@react/react-spectrum/Form"; // needed for spectrum form styles
+import { Item } from "@adobe/react-spectrum";
+import FormikComboBox from "../components/formikReactSpectrum3/formikComboBox";
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
+import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
+import DataElementSelector from "../components/dataElementSelector";
 import render from "../render";
-import WrappedField from "../components/wrappedField";
 import ExtensionView from "../components/extensionView";
-import getInstanceOptions from "../utils/getInstanceOptions";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
-import "./sendEvent.styl";
-import InfoTipLayout from "../components/infoTipLayout";
-import DecisionScopesComponent from "../components/decisionScopesComponent";
+import DecisionScopes, {
+  bridge as decisionScopesBridge
+} from "../components/decisionScopes";
+import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import FormElementContainer from "../components/formElementContainer";
+import InstanceNamePicker from "../components/instanceNamePicker";
 
-const decisionScopesOptions = {
-  CONSTANT: "constant",
-  DATA_ELEMENT: "dataElement"
-};
-
-const filterDecisionScopes = scopes => {
-  return scopes.filter(s => s !== "");
-};
-
-const getDecisionScopesFromFormState = values => {
-  if (
-    values.decisionsInputMethod === decisionScopesOptions.DATA_ELEMENT &&
-    values.decisionScopesDataElement
-  ) {
-    return values.decisionScopesDataElement;
-  }
-
-  if (
-    values.decisionsInputMethod === decisionScopesOptions.CONSTANT &&
-    values.decisionScopesArray.length > 0
-  ) {
-    const scopes = filterDecisionScopes(values.decisionScopesArray);
-    if (scopes.length > 0) {
-      return scopes;
-    }
-  }
-  return undefined;
-};
-
-const getInitialDecisionScopesData = decisionScopes => {
-  if (Array.isArray(decisionScopes)) {
-    return {
-      decisionsInputMethod: decisionScopesOptions.CONSTANT,
-      decisionScopesArray: decisionScopes,
-      decisionScopesDataElement: ""
-    };
-  }
-  if (typeof decisionScopes === "string") {
-    return {
-      decisionsInputMethod: decisionScopesOptions.DATA_ELEMENT,
-      decisionScopesDataElement: decisionScopes,
-      decisionScopesArray: [""]
-    };
-  }
-  return {
-    decisionsInputMethod: decisionScopesOptions.CONSTANT,
-    decisionScopesDataElement: "",
-    decisionScopesArray: [""]
-  };
-};
 const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
     renderDecisions = false,
-    decisionScopes = null,
     xdm = "",
     data = "",
     type = "",
@@ -90,9 +38,6 @@ const getInitialValues = ({ initInfo }) => {
     datasetId = "",
     documentUnloading = false
   } = initInfo.settings || {};
-  const initialPersonalizationData = getInitialDecisionScopesData(
-    decisionScopes
-  );
 
   return {
     instanceName,
@@ -103,13 +48,14 @@ const getInitialValues = ({ initInfo }) => {
     mergeId,
     datasetId,
     documentUnloading,
-    ...initialPersonalizationData
+    ...decisionScopesBridge.getInitialValues({ initInfo })
   };
 };
 
 const getSettings = ({ values }) => {
   const settings = {
-    instanceName: values.instanceName
+    instanceName: values.instanceName,
+    ...decisionScopesBridge.getSettings({ values })
   };
 
   if (values.xdm) {
@@ -135,33 +81,18 @@ const getSettings = ({ values }) => {
   if (values.renderDecisions) {
     settings.renderDecisions = true;
   }
-  const scopes = getDecisionScopesFromFormState(values);
-  if (scopes) {
-    settings.decisionScopes = scopes;
-  }
 
   return settings;
 };
 
-const validationSchema = object().shape({
-  xdm: string().matches(
-    singleDataElementRegex,
-    "Please specify a data element"
-  ),
-  data: string().matches(
-    singleDataElementRegex,
-    "Please specify a data element"
-  ),
-  decisionScopesDataElement: string().when("decisionsInputMethod", {
-    is: decisionScopesOptions.DATA_ELEMENT,
-    then: string().matches(
-      singleDataElementRegex,
-      "Please specify a data element"
-    )
+const validationSchema = object()
+  .shape({
+    xdm: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
+    data: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
   })
-});
+  .concat(decisionScopesBridge.formikStateValidationSchema);
 
-const knownEventTypes = [
+const knownEventTypeOptions = [
   "advertising.completes",
   "advertising.timePlayed",
   "advertising.federated",
@@ -183,158 +114,90 @@ const knownEventTypes = [
   "commerce.productViews",
   "commerce.purchases",
   "commerce.saveForLaters"
-];
+].map(type => ({ type }));
 
 const SendEvent = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
-      validationSchema={validationSchema}
-      render={({ formikProps, initInfo }) => {
-        const { values } = formikProps;
-
-        return (
-          <div>
-            <div>
-              <FieldLabel labelFor="instanceNameField" label="Instance" />
-              <div>
-                <WrappedField
-                  data-test-id="instanceNameField"
-                  id="instanceNameField"
-                  name="instanceName"
-                  component={Select}
-                  componentClassName="u-fieldLong"
-                  options={getInstanceOptions(initInfo)}
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="The type of the experience event. Choose a predefined type or create
-                  your own. This will be added to the XDM object as the field `eventType`."
-              >
-                <FieldLabel labelFor="typeField" label="Type (optional)" />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  data-test-id="typeField"
-                  id="typeField"
-                  name="type"
-                  component={ComboBox}
-                  componentClassName="u-fieldLong"
-                  supportDataElement="replace"
-                  allowCreate
-                  options={knownEventTypes}
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="Please specify a data element that will return a JavaScript
-                  object in XDM format. This object will be sent to the Adobe
-                  Experience Platform."
-              >
-                <FieldLabel labelFor="xdmField" label="XDM Data" />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  data-test-id="xdmField"
-                  id="xdmField"
-                  name="xdm"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement="replace"
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="Optionally specify a data element that will return a JavaScript
-                  object to send as free-form data."
-              >
-                <FieldLabel labelFor="dataField" label="Data" />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  data-test-id="dataField"
-                  id="dataField"
-                  name="data"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement="replace"
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="The merge ID of the experience event. This will be added to
-                  the XDM object as the field `eventMergeId`."
-              >
-                <FieldLabel
-                  labelFor="mergeIdField"
-                  label="Merge ID (optional)"
-                />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  data-test-id="mergeIdField"
-                  id="mergeIdField"
-                  name="mergeId"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement="replace"
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout
-                tip="A platform experience event dataset ID that is different from the
-                dataset provided in the Edge configuration."
-              >
-                <FieldLabel
-                  labelFor="datasetIdField"
-                  label="Dataset ID (optional)"
-                />
-              </InfoTipLayout>
-              <div>
-                <WrappedField
-                  data-test-id="datasetIdField"
-                  id="datasetIdField"
-                  name="datasetId"
-                  component={Textfield}
-                  componentClassName="u-fieldLong"
-                  supportDataElement="replace"
-                />
-              </div>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout tip="Ensures the event will reach the server even if the user is navigating away from the current document (page), but any response from the server will be ignored.">
-                <WrappedField
-                  data-test-id="documentUnloadingField"
-                  name="documentUnloading"
-                  component={Checkbox}
-                  label="Document will unload"
-                />
-              </InfoTipLayout>
-            </div>
-            <div className="u-gapTop">
-              <InfoTipLayout tip="Influences whether the SDK should automatically render personalization and pre-hide the content to prevent flicker.">
-                <WrappedField
-                  data-test-id="renderDecisionsField"
-                  name="renderDecisions"
-                  component={Checkbox}
-                  label="Render visual personalization decisions"
-                />
-              </InfoTipLayout>
-            </div>
-            <DecisionScopesComponent
-              values={values}
-              options={decisionScopesOptions}
+      formikStateValidationSchema={validationSchema}
+      render={({ initInfo }) => (
+        <FormElementContainer>
+          <InstanceNamePicker
+            data-test-id="instanceNameField"
+            name="instanceName"
+            initInfo={initInfo}
+          />
+          <DataElementSelector>
+            <FormikComboBox
+              data-test-id="typeField"
+              name="type"
+              label="Type"
+              description="Enter an event type to populate the `eventType` XDM field. Select a predefined value or enter a custom value."
+              items={knownEventTypeOptions}
+              allowsCustomValue
+              width="size-5000"
+            >
+              {item => <Item key={item.type}>{item.type}</Item>}
+            </FormikComboBox>
+          </DataElementSelector>
+          <DataElementSelector>
+            <FormikTextField
+              data-test-id="xdmField"
+              name="xdm"
+              label="XDM data"
+              description="Provide a data element which returns an object matching your XDM schema."
+              width="size-5000"
             />
-          </div>
-        );
-      }}
+          </DataElementSelector>
+          <DataElementSelector>
+            <FormikTextField
+              data-test-id="dataField"
+              name="data"
+              label="Data"
+              description="Provide a data element which returns an object to send as free-form data."
+              width="size-5000"
+            />
+          </DataElementSelector>
+          <DataElementSelector>
+            <FormikTextField
+              data-test-id="mergeIdField"
+              name="mergeId"
+              description="Provide an identifier used to merge multiple events. This will
+                          populate the `eventMergeId` XDM field."
+              label="Merge ID"
+              width="size-5000"
+            />
+          </DataElementSelector>
+          <DataElementSelector>
+            <FormikTextField
+              data-test-id="datasetIdField"
+              name="datasetId"
+              description="Send data to a different dataset than what's been provided in the datastream."
+              label="Dataset ID"
+              width="size-5000"
+            />
+          </DataElementSelector>
+          <FormikCheckbox
+            data-test-id="documentUnloadingField"
+            name="documentUnloading"
+            description="Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
+            width="size-5000"
+          >
+            Document will unload
+          </FormikCheckbox>
+          <FormikCheckbox
+            data-test-id="renderDecisionsField"
+            name="renderDecisions"
+            description="Check this to automatically render personalization and pre-hide the content to prevent flicker."
+            width="size-5000"
+          >
+            Render visual personalization decisions
+          </FormikCheckbox>
+          <DecisionScopes />
+        </FormElementContainer>
+      )}
     />
   );
 };

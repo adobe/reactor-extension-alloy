@@ -12,8 +12,8 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import Breadcrumbs from "@react/react-spectrum/Breadcrumbs";
-import { formStateNodePropTypes } from "../helpers/getInitialFormState";
+import { useFormikContext } from "formik";
+import { Breadcrumbs, Flex, Item, View } from "@adobe/react-spectrum";
 import getNodeEditData from "../helpers/getNodeEditData";
 import AutoPopulationAlert from "./autoPopulationAlert";
 import {
@@ -23,28 +23,29 @@ import {
   NUMBER,
   OBJECT
 } from "../constants/schemaType";
-import arrayEdit from "./arrayEdit";
-import booleanEdit from "./booleanEdit";
-import integerEdit from "./integerEdit";
-import numberEdit from "./numberEdit";
-import objectEdit from "./objectEdit";
-import stringEdit from "./stringEdit";
+import ArrayEdit from "./arrayEdit";
+import BooleanEdit from "./booleanEdit";
+import IntegerEdit from "./integerEdit";
+import NumberEdit from "./numberEdit";
+import ObjectEdit from "./objectEdit";
+import StringEdit from "./stringEdit";
 import { ALWAYS, NONE } from "../constants/autoPopulationSource";
+import "./nodeEdit.styl";
 
 const getViewBySchemaType = schemaType => {
   switch (schemaType) {
     case ARRAY:
-      return arrayEdit;
+      return ArrayEdit;
     case BOOLEAN:
-      return booleanEdit;
+      return BooleanEdit;
     case INTEGER:
-      return integerEdit;
+      return IntegerEdit;
     case NUMBER:
-      return numberEdit;
+      return NumberEdit;
     case OBJECT:
-      return objectEdit;
+      return ObjectEdit;
     default:
-      return stringEdit;
+      return StringEdit;
   }
 };
 
@@ -53,7 +54,8 @@ const getViewBySchemaType = schemaType => {
  * that are shown depend on the node's type.
  */
 const NodeEdit = props => {
-  const { formState, onNodeSelect, selectedNodeId } = props;
+  const { values: formState } = useFormikContext();
+  const { onNodeSelect, selectedNodeId } = props;
 
   const { formStateNode, fieldName, breadcrumb } = getNodeEditData({
     formState,
@@ -63,30 +65,33 @@ const NodeEdit = props => {
   const TypeSpecificNodeEdit = getViewBySchemaType(formStateNode.schema.type);
 
   return (
-    <div>
-      <Breadcrumbs
-        className="u-gapLeftNegative u-gapBottom2x"
-        items={breadcrumb}
-        onBreadcrumbClick={item => onNodeSelect(item.nodeId)}
-      />
-      <div>
-        {formStateNode.autoPopulationSource !== NONE && (
-          <AutoPopulationAlert formStateNode={formStateNode} />
-        )}
-        {formStateNode.autoPopulationSource !== ALWAYS && (
-          <TypeSpecificNodeEdit
-            formStateNode={formStateNode}
-            fieldName={fieldName}
-            onNodeSelect={onNodeSelect}
-          />
-        )}
-      </div>
-    </div>
+    <Flex gap="size-200" marginBottom="size-200" direction="column">
+      <View UNSAFE_className="NodeEdit-breadcrumbs">
+        {
+          // There's currently a known error that occurs when Breadcrumbs
+          // is unmounted, but it doesn't seem to affect the UX.
+          // https://github.com/adobe/react-spectrum/issues/1979
+        }
+        <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
+          {breadcrumb.map(item => (
+            <Item key={item.nodeId}>{item.label}</Item>
+          ))}
+        </Breadcrumbs>
+      </View>
+      {formStateNode.autoPopulationSource !== NONE && (
+        <AutoPopulationAlert formStateNode={formStateNode} />
+      )}
+      {formStateNode.autoPopulationSource !== ALWAYS && (
+        <TypeSpecificNodeEdit
+          fieldName={fieldName}
+          onNodeSelect={onNodeSelect}
+        />
+      )}
+    </Flex>
   );
 };
 
 NodeEdit.propTypes = {
-  formState: formStateNodePropTypes.isRequired,
   onNodeSelect: PropTypes.func.isRequired,
   selectedNodeId: PropTypes.string.isRequired
 };

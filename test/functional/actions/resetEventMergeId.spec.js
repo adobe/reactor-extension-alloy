@@ -10,20 +10,16 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewController from "../helpers/createExtensionViewController";
-import spectrum from "../helpers/spectrum";
+import extensionViewController from "../helpers/extensionViewController";
+import spectrum from "../helpers/spectrum3";
+import createFixture from "../helpers/createFixture";
 
-const extensionViewController = createExtensionViewController(
-  "actions/resetEventMergeId.html"
-);
+const eventMergeIdField = spectrum.textField("eventMergeIdField");
 
-const eventMergeIdField = spectrum.textfield("eventMergeIdField");
-
-// disablePageReloads is not a publicized feature, but it sure helps speed up tests.
-// https://github.com/DevExpress/testcafe/issues/1770
-fixture("Reset Event Merge ID View").disablePageReloads.page(
-  "http://localhost:3000/viewSandbox.html"
-);
+createFixture({
+  title: "Reset Event Merge ID View",
+  viewPath: "actions/resetEventMergeId.html"
+});
 
 test("initializes form fields with settings", async () => {
   await extensionViewController.init({
@@ -42,6 +38,12 @@ test("returns valid settings", async () => {
   await extensionViewController.expectSettings({
     eventMergeId: "%foo%"
   });
+});
+
+test("shows error for empty event merge ID value", async () => {
+  await extensionViewController.init();
+  await extensionViewController.expectIsNotValid();
+  await eventMergeIdField.expectError();
 });
 
 test("shows error for event merge ID value that is not a data element", async () => {

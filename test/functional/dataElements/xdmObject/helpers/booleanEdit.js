@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import spectrum from "../../../helpers/spectrum";
+import spectrum from "../../../helpers/spectrum3";
 
 /**
  * Provides methods for managing form fields when editing a boolean node.
@@ -22,18 +22,28 @@ export default {
   selectConstantInputMethod: async () => {
     await spectrum.radio("valueInputMethodField").click();
   },
-  selectConstantValue: async label => {
-    await spectrum.select("constantValueField").selectOption(label);
+  selectConstantNoValueField: async () => {
+    await spectrum.radio("constantNoValueField").click();
   },
-  expectConstantValue: async label => {
-    await spectrum
-      .select("constantValueField")
-      .expectSelectedOptionLabel(label);
+  selectConstantTrueValueField: async () => {
+    await spectrum.radio("constantTrueField").click();
+  },
+  selectConstantFalseValueField: async () => {
+    await spectrum.radio("constantFalseField").click();
+  },
+  expectConstantNoValue: async () => {
+    await spectrum.radio("constantNoValueField").expectChecked();
+  },
+  expectConstantTrueValue: async () => {
+    await spectrum.radio("constantTrueField").expectChecked();
+  },
+  expectConstantFalseValue: async () => {
+    await spectrum.radio("constantFalseField").expectChecked();
   },
   enterDataElementValue: async text => {
-    await spectrum.textfield("dataElementValueField").typeText(text);
+    await spectrum.textField("dataElementValueField").typeText(text);
   },
   expectDataElementValue: async label => {
-    await spectrum.textfield("dataElementValueField").expectValue(label);
+    await spectrum.textField("dataElementValueField").expectValue(label);
   }
 };
