@@ -59,6 +59,7 @@ test("initializes identity map with default settings", async () => {
   await identities[0].identifiers[0].primary.expectUnchecked();
   await identities[0].identifiers[0].deleteButton.expectNotExists();
   await identities[0].deleteButton.expectNotExists();
+  await tabs.expectTabLabels(["Unnamed identity"]);
 });
 
 test("initializes identity map with sorted namespaces", async () => {
@@ -332,6 +333,7 @@ test("initialization of namespaces as picker with namespace names", async () => 
 
   await identities[0].namespacePicker.selectOption("Adobe Analytics");
   await identities[0].identifiers[0].id.typeText("test3");
+  await tabs.expectTabLabels(["Adobe Analytics"]);
 
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
@@ -353,6 +355,21 @@ test("when namespaces call fails instantiate form with textfield", async () => {
   await extensionViewController.init();
 
   await identities[0].namespace.expectValue("");
+
+  await identities[0].namespace.typeText("CUSTOM_IDENTITY");
+  await identities[0].identifiers[0].id.typeText("test3");
+  await tabs.expectTabLabels(["CUSTOM_IDENTITY"]);
+
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
+    CUSTOM_IDENTITY: [
+      {
+        id: "test3",
+        authenticatedState: "ambiguous",
+        primary: false
+      }
+    ]
+  });
 });
 
 test("shows error for multiple primary identifiers", async () => {

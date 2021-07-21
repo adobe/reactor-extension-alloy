@@ -198,6 +198,11 @@ const IdentityMap = () => {
       setSelectedTabKey(String(identityIndexContainingErrors));
     }
   });
+
+  const getNamespaceByCode = code => {
+    return namespaces.find(namespace => namespace.code === code);
+  };
+
   return (
     <>
       <FieldArray
@@ -234,11 +239,11 @@ const IdentityMap = () => {
               >
                 <TabList>
                   {identities.map((identity, index) => {
-                    return (
-                      <Item key={index}>
-                        {identity.namespaceCode || "Unnamed identity"}
-                      </Item>
-                    );
+                    const label =
+                      getNamespaceByCode(identity.namespaceCode)?.name ||
+                      identity.namespaceCode ||
+                      "Unnamed identity";
+                    return <Item key={index}>{label}</Item>;
                   })}
                 </TabList>
                 <TabPanels>
