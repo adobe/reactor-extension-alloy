@@ -5,7 +5,11 @@
   "presets": [["@babel/preset-env"]],
   "env": {
     "production": {
-      "plugins": ["babel-plugin-jsx-remove-data-test-id"]
+      "plugins": [
+        "babel-plugin-jsx-remove-data-test-id",
+        "@babel/proposal-nullish-coalescing-operator",
+        "@babel/proposal-optional-chaining"
+      ]
     }
   }
 }
