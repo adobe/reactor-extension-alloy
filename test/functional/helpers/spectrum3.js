@@ -304,18 +304,31 @@ const componentWrappers = {
     };
   },
   tabs() {
+    // Normally we would incorporate the selector for the
+    // parent Tabs component by doing something like
+    // selector.find(tabCssSelector).withExactText(label)
+    // This would allow us to ensure we're searching for a tab
+    // within a specific Tabs instance when multiple Tabs instances
+    // are on the page. Unfortunately, React-Spectrum has a bug where
+    // data attributes added to the Tabs component are never
+    // added to any underlying DOM elements. So, we'll just search
+    // for any tab on the page that contains the label.
+    // https://github.com/adobe/react-spectrum/issues/2002
     return {
+      async expectTabLabels(labels) {
+        for (let i = 0; i < labels.length; i += 1) {
+          // eslint-disable-next-line no-await-in-loop
+          await t
+            .expect(tabSelector.nth(i).withExactText(labels[i]).exists)
+            .ok(
+              `Tab with label ${
+                labels[i]
+              } does not exist when it is expected to exist.`
+            );
+        }
+        await t.expect(tabSelector.count).eql(labels.length);
+      },
       async selectTab(label) {
-        // Normally we would incorporate the selector for the
-        // parent Tabs component by doing something like
-        // selector.find(tabCssSelector).withExactText(label)
-        // This would allow us to ensure we're searching for a tab
-        // within a specific Tabs instance when multiple Tabs instances
-        // are on the page. Unfortunately, React-Spectrum has a bug where
-        // data attributes added to the Tabs component are never
-        // added to any underlying DOM elements. So, we'll just search
-        // for any tab on the page that contains the label.
-        // https://github.com/adobe/react-spectrum/issues/2002
         await t.click(tabSelector.withExactText(label));
       }
     };
