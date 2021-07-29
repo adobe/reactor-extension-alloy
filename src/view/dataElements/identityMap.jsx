@@ -16,7 +16,6 @@ import { array, boolean, object, string } from "yup";
 import {
   Button,
   Flex,
-  Heading,
   Item,
   Text,
   Well,
@@ -39,6 +38,7 @@ import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import * as AUTHENTICATED_STATE from "./identityMap/constants/authenticatedState";
+import Heading from "../components/typography/heading";
 
 const isNotECID = namespace => {
   return namespace.code !== "ECID";
@@ -211,7 +211,7 @@ const IdentityMap = () => {
           return (
             <React.Fragment>
               <Flex alignItems="center">
-                <Heading level={3}>Identities</Heading>
+                <Heading size="M">Identities</Heading>
                 <Button
                   data-test-id="addIdentityButton"
                   variant="secondary"

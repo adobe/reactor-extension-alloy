@@ -12,12 +12,11 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import { v4 as uuid } from "uuid";
-import { View } from "@adobe/react-spectrum";
 import Alert from "../components/alert";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
-import "./eventMergeId.styl";
+import Body from "../components/typography/body";
 
 const getInitialValues = ({ initInfo }) => {
   const { cacheId = uuid() } = initInfo.settings || {};
@@ -49,12 +48,9 @@ const EventMergeId = () => {
             visitor to your website leaves the current page or the event merge
             ID is reset using the <b>Reset event merge ID</b> action.
           </Alert>
-          <View
-            marginTop="size-200"
-            UNSAFE_className="EventMergeId-description"
-          >
+          <Body size="L" marginTop="size-200">
             No configuration necessary.
-          </View>
+          </Body>
         </FillParentAndCenterChildren>
       )}
     />

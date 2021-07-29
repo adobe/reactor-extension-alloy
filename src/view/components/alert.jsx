@@ -12,12 +12,13 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import classNames from "classnames";
-import { Heading, Flex } from "@adobe/react-spectrum";
+import { Flex } from "@adobe/react-spectrum";
 import AlertIcon from "@spectrum-icons/workflow/Alert";
 import InfoIcon from "@spectrum-icons/workflow/Info";
 import CheckmarkCircle from "@spectrum-icons/workflow/CheckmarkCircle";
 import "./alert.styl";
 import PropTypes from "prop-types";
+import Heading from "./typography/heading";
 
 const iconByVariant = {
   neutral: () => {
@@ -45,9 +46,7 @@ const Alert = ({
       {...otherProps}
     >
       <Flex alignItems="center">
-        <Heading level={4} UNSAFE_className="Alert-title">
-          {title}
-        </Heading>
+        <Heading size="XXS">{title}</Heading>
         <Icon size="S" color={variant} marginStart="auto" />
       </Flex>
       <div className="Alert-description">{children}</div>

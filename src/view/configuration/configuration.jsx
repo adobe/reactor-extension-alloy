@@ -20,7 +20,7 @@ import {
   DialogTrigger,
   Dialog,
   Flex,
-  Heading,
+  Heading as HeadingSlot,
   Item,
   Divider,
   Text,
@@ -34,6 +34,7 @@ import PropTypes from "prop-types";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
+import Heading from "../components/typography/heading";
 import BasicSection, { bridge as basicSectionBridge } from "./basicSection";
 import EdgeConfigurationsSection, {
   bridge as edgeConfigurationsSectionBridge
@@ -158,7 +159,7 @@ const Configuration = ({ initInfo }) => {
           return (
             <div>
               <Flex alignItems="center">
-                <Heading level={3}>SDK instances</Heading>
+                <Heading size="M">SDK instances</Heading>
                 <Button
                   data-test-id="addInstanceButton"
                   variant="secondary"
@@ -230,7 +231,7 @@ const Configuration = ({ initInfo }) => {
                               </Button>
                               {close => (
                                 <Dialog data-test-id="resourceUsageDialog">
-                                  <Heading>Resource Usage</Heading>
+                                  <HeadingSlot>Resource Usage</HeadingSlot>
                                   <Divider />
                                   <Content>
                                     <Text>

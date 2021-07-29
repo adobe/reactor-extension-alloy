@@ -45,6 +45,7 @@
     "@adobe/react-spectrum": "^3.11.0",
     "@react-spectrum/combobox": "^3.0.0-rc.0",
     "@react-stately/data": "^3.4.0",
+    "@spectrum-css/typography": "^3.0.2",
     "@spectrum-icons/illustrations": "^3.2.1",
     "@spectrum-icons/workflow": "^3.2.0",
     "antd": "^4.16.1",
