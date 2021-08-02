@@ -13,4 +13,4 @@ governing permissions and limitations under the License.
 const createSetConsent = require("./createSetConsent");
 const instanceManager = require("../../instanceManager/index");
 
-module.exports = createSetConsent({ instanceManager, turbine });
+module.exports = createSetConsent({ instanceManager });
