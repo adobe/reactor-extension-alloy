@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import { t } from "testcafe";
 import extensionViewController from "../../helpers/extensionViewController";
 import spectrum from "../../helpers/spectrum3";
-import * as platformMocks from "../xdmObject/helpers/platformMocks";
+import * as identityNamespaceMocks from "../../helpers/endpointMocks/identityNamespacesMocks";
 import createFixture from "../../helpers/createFixture";
 
 const addIdentityButton = spectrum.button("addIdentityButton");
@@ -45,7 +45,7 @@ createFixture({
   title: "Identity Map Data Element View",
   viewPath: "dataElements/identityMap.html",
   requiresAdobeIOIntegration: true,
-  requestHooks: [platformMocks.namespacesEmpty]
+  requestHooks: [identityNamespaceMocks.empty]
 });
 
 test("initializes identity map with default settings", async () => {
@@ -325,9 +325,9 @@ test("shows error for identity with duplicate namespace", async () => {
 });
 
 test("initialization of namespaces as picker with namespace names", async () => {
-  await t.removeRequestHooks(platformMocks.namespacesEmpty);
+  await t.removeRequestHooks(identityNamespaceMocks.empty);
 
-  await t.addRequestHooks(platformMocks.namespaces);
+  await t.addRequestHooks(identityNamespaceMocks.multiple);
 
   await extensionViewController.init();
 
@@ -348,9 +348,9 @@ test("initialization of namespaces as picker with namespace names", async () => 
 });
 
 test("when namespaces call fails instantiate form with textfield", async () => {
-  await t.removeRequestHooks(platformMocks.namespacesEmpty);
+  await t.removeRequestHooks(identityNamespaceMocks.empty);
 
-  await t.addRequestHooks(platformMocks.namespacesError);
+  await t.addRequestHooks(identityNamespaceMocks.error);
 
   await extensionViewController.init();
 
