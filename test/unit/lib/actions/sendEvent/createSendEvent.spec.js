@@ -13,25 +13,19 @@ governing permissions and limitations under the License.
 import createSendEvent from "../../../../../src/lib/actions/sendEvent/createSendEvent";
 
 describe("Send Event", () => {
-  it("executes event command and triggers decisions received event", () => {
-    const decisions = [];
+  it("executes event command and notifies sendEventCallbackStorage", () => {
     const instance = jasmine
       .createSpy()
-      .and.returnValue(Promise.resolve({ decisions, propositions: [] }));
+      .and.returnValue(Promise.resolve({ foo: "bar" }));
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: instance
     });
-    const decisionsCallbackStorage = jasmine.createSpyObj(
-      "decisionsCallbackStorage",
-      ["triggerEvent"]
-    );
     const sendEventCallbackStorage = jasmine.createSpyObj(
       "sendEventCallbackStorage",
       ["triggerEvent"]
     );
     const action = createSendEvent({
       instanceManager,
-      decisionsCallbackStorage,
       sendEventCallbackStorage
     });
     const dataLayer = {
@@ -74,52 +68,9 @@ describe("Send Event", () => {
     expect(xdmOption.fruits[0]).not.toBe(dataLayer.fruits[0]);
 
     return promiseReturnedFromAction.then(() => {
-      expect(decisionsCallbackStorage.triggerEvent).toHaveBeenCalledWith({
-        decisions
-      });
       expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalledWith({
-        decisions,
-        propositions: []
+        foo: "bar"
       });
-    });
-  });
-  it("executes event command and doesn't trigger decisions received event when decisions are missing", () => {
-    const instance = jasmine.createSpy().and.returnValue(Promise.resolve({}));
-    const instanceManager = jasmine.createSpyObj("instanceManager", {
-      getInstance: instance
-    });
-    const decisionsCallbackStorage = jasmine.createSpyObj(
-      "decisionsCallbackStorage",
-      ["triggerEvent"]
-    );
-    const sendEventCallbackStorage = jasmine.createSpyObj(
-      "sendEventCallbackStorage",
-      ["triggerEvent"]
-    );
-    const action = createSendEvent({
-      instanceManager,
-      decisionsCallbackStorage,
-      sendEventCallbackStorage
-    });
-    const promiseReturnedFromAction = action({
-      instanceName: "myinstance",
-      renderDecisions: true,
-      xdm: {
-        foo: "bar"
-      }
-    });
-
-    expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
-    expect(instance).toHaveBeenCalledWith("sendEvent", {
-      renderDecisions: true,
-      xdm: {
-        foo: "bar"
-      }
-    });
-
-    return promiseReturnedFromAction.then(() => {
-      expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalledWith({});
-      expect(decisionsCallbackStorage.triggerEvent).not.toHaveBeenCalled();
     });
   });
   it("throws an error when no matching instance found", () => {

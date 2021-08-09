@@ -12,12 +12,9 @@ governing permissions and limitations under the License.
 
 const createSendEvent = require("./createSendEvent");
 const instanceManager = require("../../instanceManager/index");
-const decisionsCallbackStorage = require("../../decisionsCallbackStorage");
 const sendEventCallbackStorage = require("../../sendEventCallbackStorage");
 
 module.exports = createSendEvent({
   instanceManager,
-  turbine,
-  decisionsCallbackStorage,
   sendEventCallbackStorage
 });
