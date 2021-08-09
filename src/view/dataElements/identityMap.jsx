@@ -294,6 +294,7 @@ const IdentityMap = () => {
                                                 data-test-id={`identity${index}idField${identifierIndex}`}
                                                 label="ID"
                                                 name={`identities.${index}.identifiers.${identifierIndex}.id`}
+                                                description="If the ID value is not a populated string, this identifier will automatically be removed from the identity map."
                                                 isRequired
                                                 width="size-5000"
                                               />
