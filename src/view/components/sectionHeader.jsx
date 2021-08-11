@@ -11,13 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { Divider, Heading, Link, View } from "@adobe/react-spectrum";
+import { Divider, Link, View } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
+import Heading from "./typography/heading";
 
 const SectionHeader = ({ children, learnMoreUrl }) => {
   return (
     <View marginBottom="size-200">
-      <Heading level={2} marginTop="size-600" marginBottom="size-75">
+      <Heading marginTop="size-600" marginBottom="size-75">
         {children}
       </Heading>
       <Divider margin={0} size="M" />

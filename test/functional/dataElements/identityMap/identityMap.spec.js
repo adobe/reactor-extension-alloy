@@ -15,6 +15,7 @@ import extensionViewController from "../../helpers/extensionViewController";
 import spectrum from "../../helpers/spectrum3";
 import * as identityNamespaceMocks from "../../helpers/endpointMocks/identityNamespacesMocks";
 import createFixture from "../../helpers/createFixture";
+import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 
 const addIdentityButton = spectrum.button("addIdentityButton");
 const tabs = spectrum.tabs();
@@ -47,6 +48,8 @@ createFixture({
   requiresAdobeIOIntegration: true,
   requestHooks: [identityNamespaceMocks.empty]
 });
+
+runCommonExtensionViewTests();
 
 test("initializes identity map with default settings", async () => {
   await extensionViewController.init();

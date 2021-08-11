@@ -14,6 +14,7 @@ import extensionViewController from "../helpers/extensionViewController";
 import spectrum from "../helpers/spectrum3";
 import testInstanceNameOptions from "../helpers/spectrum3TestInstanceNameOptions";
 import createFixture from "../helpers/createFixture";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 
 const generateOptionsWithDataElement = (container, prefix, options) =>
   [...options, "DataElement"].reduce(
@@ -75,6 +76,10 @@ const mockExtensionSettings = {
 createFixture({
   title: "Set Consent View",
   viewPath: "actions/setConsent.html"
+});
+
+runCommonExtensionViewTests({
+  extensionSettings: mockExtensionSettings
 });
 
 test("initializes form fields with settings containing a static consent array", async () => {

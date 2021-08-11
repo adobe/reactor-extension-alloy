@@ -18,12 +18,15 @@ import {
   resourceUsageDialog,
   instances
 } from "./helpers/viewSelectors";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 
 createFixture({
   title: "Extension Configuration View",
   viewPath: "configuration/configuration.html",
   requiresAdobeIOIntegration: true
 });
+
+runCommonExtensionViewTests();
 
 const defaultEdgeDomain = "edge.adobedc.net";
 const defaultEdgeBasePath = "ee";
