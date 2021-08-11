@@ -19,6 +19,7 @@ import objectEdit from "./helpers/objectEdit";
 import stringEdit from "./helpers/stringEdit";
 import initializeExtensionView from "./helpers/initializeExtensionView";
 import createFixture from "../../helpers/createFixture";
+import runCommonViewTests from "../../runCommonViewTests";
 
 const schema = {
   id:
@@ -31,6 +32,8 @@ createFixture({
   viewPath: "dataElements/xdmObject.html",
   requiresAdobeIOIntegration: true
 });
+
+runCommonViewTests();
 
 test("initializes form fields with individual object attribute values", async () => {
   await initializeExtensionView({

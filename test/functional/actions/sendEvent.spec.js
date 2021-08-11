@@ -14,6 +14,7 @@ import extensionViewController from "../helpers/extensionViewController";
 import spectrum from "../helpers/spectrum3";
 import testInstanceNameOptions from "../helpers/spectrum3TestInstanceNameOptions";
 import createFixture from "../helpers/createFixture";
+import runCommonViewTests from "../runCommonViewTests";
 
 const instanceNameField = spectrum.picker("instanceNameField");
 const typeField = spectrum.comboBox("typeField");
@@ -54,6 +55,10 @@ const mockExtensionSettings = {
 createFixture({
   title: "Send Event View",
   viewPath: "actions/sendEvent.html"
+});
+
+runCommonViewTests({
+  extensionSettings: mockExtensionSettings
 });
 
 test("initializes form fields with full settings, when decision scopes is data element", async () => {

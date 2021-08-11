@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import extensionViewController from "../helpers/extensionViewController";
 import createFixture from "../helpers/createFixture";
+import runCommonViewTests from "../runCommonViewTests";
 
 const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
@@ -19,6 +20,8 @@ createFixture({
   title: "Event Merge ID View",
   viewPath: "dataElements/eventMergeId.html"
 });
+
+runCommonViewTests();
 
 test("returns valid settings", async t => {
   await extensionViewController.init();
