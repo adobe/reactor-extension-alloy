@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import extensionViewController from "../helpers/extensionViewController";
 import spectrum from "../helpers/spectrum3";
 import testInstanceNameOptions from "../helpers/spectrum3TestInstanceNameOptions";
-import createFixture from "../helpers/createFixture";
+import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 
 const generateOptionsWithDataElement = (container, prefix, options) =>
@@ -73,7 +73,7 @@ const mockExtensionSettings = {
   ]
 };
 
-createFixture({
+createExtensionViewFixture({
   title: "Set Consent View",
   viewPath: "actions/setConsent.html"
 });

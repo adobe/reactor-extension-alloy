@@ -14,7 +14,7 @@ import { t } from "testcafe";
 import extensionViewController from "../../helpers/extensionViewController";
 import spectrum from "../../helpers/spectrum3";
 import * as platformMocks from "../xdmObject/helpers/platformMocks";
-import createFixture from "../../helpers/createFixture";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 
 const addIdentityButton = spectrum.button("addIdentityButton");
@@ -42,7 +42,7 @@ for (let i = 0; i < 3; i += 1) {
   });
 }
 
-createFixture({
+createExtensionViewFixture({
   title: "Identity Map Data Element View",
   viewPath: "dataElements/identityMap.html",
   requiresAdobeIOIntegration: true,

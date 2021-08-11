@@ -14,6 +14,7 @@ import React from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import getDimensionStyle from "../../utils/getDimensionStyle";
+import "./body.styl";
 
 /**
  * Provides typography styling for a block of text (a paragraph).
@@ -25,7 +26,14 @@ import getDimensionStyle from "../../utils/getDimensionStyle";
  * for more info. Once React-Spectrum provides a Body component
  * that handles typography, we can get rid of this.
  */
-const Body = ({ children, size = "S", isSerif, marginTop, marginBottom }) => {
+const Body = ({
+  "data-test-id": dataTestId,
+  children,
+  size = "S",
+  isSerif,
+  marginTop,
+  marginBottom
+}) => {
   const style = {};
 
   if (marginTop !== undefined) {
@@ -38,6 +46,7 @@ const Body = ({ children, size = "S", isSerif, marginTop, marginBottom }) => {
 
   return (
     <p
+      data-test-id={dataTestId}
       className={classNames("spectrum-Body", `spectrum-Body--size${size}`, {
         "spectrum-Body--serif": isSerif
       })}
@@ -51,6 +60,7 @@ const Body = ({ children, size = "S", isSerif, marginTop, marginBottom }) => {
 export default Body;
 
 Body.propTypes = {
+  "data-test-id": PropTypes.string,
   children: PropTypes.node.isRequired,
   size: PropTypes.oneOf(["XXXL", "XXL", "XL", "L", "M", "S", "XS", "XXS"]),
   isSerif: PropTypes.bool,
