@@ -15,7 +15,7 @@ import * as sandboxMocks from "../../helpers/endpointMocks/sandboxesMocks";
 import * as schemasMocks from "../../helpers/endpointMocks/schemasMocks";
 import * as schemaMocks from "../../helpers/endpointMocks/schemaMocks";
 import initializeExtensionView from "./helpers/initializeExtensionView";
-import spectrum from "../../helpers/spectrum3";
+import spectrum from "../../helpers/spectrum";
 import editor from "./helpers/editor";
 import createFixture from "../../helpers/createFixture";
 

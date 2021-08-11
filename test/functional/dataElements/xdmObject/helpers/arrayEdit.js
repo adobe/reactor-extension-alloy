@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import spectrum from "../../../helpers/spectrum3";
+import spectrum from "../../../helpers/spectrum";
 
 /**
  * Provides methods for managing form fields when editing an array node.

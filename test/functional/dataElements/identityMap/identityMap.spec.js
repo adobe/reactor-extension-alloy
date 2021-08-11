@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import { t } from "testcafe";
 import extensionViewController from "../../helpers/extensionViewController";
-import spectrum from "../../helpers/spectrum3";
+import spectrum from "../../helpers/spectrum";
 import * as identityNamespaceMocks from "../../helpers/endpointMocks/identityNamespacesMocks";
 import createFixture from "../../helpers/createFixture";
 

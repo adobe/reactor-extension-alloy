@@ -11,8 +11,8 @@ governing permissions and limitations under the License.
 */
 
 import extensionViewController from "../helpers/extensionViewController";
-import spectrum from "../helpers/spectrum3";
-import testInstanceNameOptions from "../helpers/spectrum3TestInstanceNameOptions";
+import spectrum from "../helpers/spectrum";
+import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
 import createFixture from "../helpers/createFixture";
 
 const generateOptionsWithDataElement = (container, prefix, options) =>
