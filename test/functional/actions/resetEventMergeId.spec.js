@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import extensionViewController from "../helpers/extensionViewController";
 import spectrum from "../helpers/spectrum3";
 import createFixture from "../helpers/createFixture";
-import runCommonViewTests from "../runCommonViewTests";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 
 const eventMergeIdField = spectrum.textField("eventMergeIdField");
 
@@ -22,7 +22,7 @@ createFixture({
   viewPath: "actions/resetEventMergeId.html"
 });
 
-runCommonViewTests();
+runCommonExtensionViewTests();
 
 test("initializes form fields with settings", async () => {
   await extensionViewController.init({

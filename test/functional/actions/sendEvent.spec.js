@@ -14,7 +14,7 @@ import extensionViewController from "../helpers/extensionViewController";
 import spectrum from "../helpers/spectrum3";
 import testInstanceNameOptions from "../helpers/spectrum3TestInstanceNameOptions";
 import createFixture from "../helpers/createFixture";
-import runCommonViewTests from "../runCommonViewTests";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 
 const instanceNameField = spectrum.picker("instanceNameField");
 const typeField = spectrum.comboBox("typeField");
@@ -57,7 +57,7 @@ createFixture({
   viewPath: "actions/sendEvent.html"
 });
 
-runCommonViewTests({
+runCommonExtensionViewTests({
   extensionSettings: mockExtensionSettings
 });
 

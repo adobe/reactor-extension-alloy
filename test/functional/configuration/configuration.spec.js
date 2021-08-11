@@ -18,7 +18,7 @@ import {
   resourceUsageDialog,
   instances
 } from "./helpers/viewSelectors";
-import runCommonViewTests from "../runCommonViewTests";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 
 createFixture({
   title: "Extension Configuration View",
@@ -26,7 +26,7 @@ createFixture({
   requiresAdobeIOIntegration: true
 });
 
-runCommonViewTests();
+runCommonExtensionViewTests();
 
 const defaultEdgeDomain = "edge.adobedc.net";
 const defaultEdgeBasePath = "ee";

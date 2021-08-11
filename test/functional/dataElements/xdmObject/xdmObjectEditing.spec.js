@@ -19,7 +19,7 @@ import objectEdit from "./helpers/objectEdit";
 import stringEdit from "./helpers/stringEdit";
 import initializeExtensionView from "./helpers/initializeExtensionView";
 import createFixture from "../../helpers/createFixture";
-import runCommonViewTests from "../../runCommonViewTests";
+import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 
 const schema = {
   id:
@@ -33,7 +33,7 @@ createFixture({
   requiresAdobeIOIntegration: true
 });
 
-runCommonViewTests();
+runCommonExtensionViewTests();
 
 test("initializes form fields with individual object attribute values", async () => {
   await initializeExtensionView({

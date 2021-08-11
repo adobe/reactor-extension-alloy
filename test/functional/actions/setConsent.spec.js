@@ -14,7 +14,7 @@ import extensionViewController from "../helpers/extensionViewController";
 import spectrum from "../helpers/spectrum3";
 import testInstanceNameOptions from "../helpers/spectrum3TestInstanceNameOptions";
 import createFixture from "../helpers/createFixture";
-import runCommonViewTests from "../runCommonViewTests";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 
 const generateOptionsWithDataElement = (container, prefix, options) =>
   [...options, "DataElement"].reduce(
@@ -78,7 +78,7 @@ createFixture({
   viewPath: "actions/setConsent.html"
 });
 
-runCommonViewTests({
+runCommonExtensionViewTests({
   extensionSettings: mockExtensionSettings
 });
 
