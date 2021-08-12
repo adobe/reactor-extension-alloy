@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import extensionViewController from "../helpers/extensionViewController";
-import spectrum from "../helpers/spectrum3";
+import spectrum from "../helpers/spectrum";
 import createFixture from "../helpers/createFixture";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 
