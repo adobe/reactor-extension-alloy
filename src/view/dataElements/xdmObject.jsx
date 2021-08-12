@@ -89,6 +89,12 @@ const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
   useEffect(() => {
     registerImperativeFormApi({
       getSettings({ values }) {
+        if (!isEditorRenderable) {
+          // We're in an invalid state where we can't
+          // build a proper settings object.
+          return {};
+        }
+
         const schema = {
           id: selectedSchema.$id,
           version: selectedSchema.version
