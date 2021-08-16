@@ -49,7 +49,6 @@ export default {
 
   eventType: COMMAND,
   eventMergeId: COMMAND,
-  identityMap: COMMAND,
 
   device: CONTEXT_DEVICE,
   "device.screenHeight": CONTEXT_DEVICE,
