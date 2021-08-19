@@ -43,6 +43,7 @@ const addToBreadcrumb = (breadcrumb, displayName, nodeId) => {
 const getNodeEditData = ({
   candidateFormStateNode,
   candidateFieldName,
+  candidatePropertyName,
   candidateDisplayName,
   nodeIdToFind
 }) => {
@@ -50,13 +51,14 @@ const getNodeEditData = ({
     const breadcrumb = [];
     addToBreadcrumb(
       breadcrumb,
-      candidateDisplayName,
+      candidatePropertyName,
       candidateFormStateNode.id
     );
     return {
       formStateNode: candidateFormStateNode,
       fieldName: candidateFieldName,
-      breadcrumb
+      breadcrumb,
+      displayName: candidateDisplayName
     };
   }
 
@@ -75,14 +77,14 @@ const getNodeEditData = ({
         candidateFieldName: candidateFieldName
           ? `${candidateFieldName}.properties.${propertyName}`
           : `properties.${propertyName}`,
-        candidateDisplayName:
-          propertySchema.candidateDisplayName || propertyName
+        candidatePropertyName: propertyName,
+        candidateDisplayName: propertySchema.title || propertyName
       });
 
       if (foundNodeHierarchyAndFieldName) {
         addToBreadcrumb(
           foundNodeHierarchyAndFieldName.breadcrumb,
-          candidateDisplayName,
+          candidatePropertyName,
           candidateFormStateNode.id
         );
         return foundNodeHierarchyAndFieldName;
@@ -100,13 +102,14 @@ const getNodeEditData = ({
         candidateFieldName: candidateFieldName
           ? `${candidateFieldName}.items.${i}`
           : `items.${i}`,
+        candidatePropertyName: `Item ${i + 1}`,
         candidateDisplayName: `Item ${i + 1}`
       });
 
       if (foundNodeHierarchyAndFieldName) {
         addToBreadcrumb(
           foundNodeHierarchyAndFieldName.breadcrumb,
-          candidateDisplayName,
+          candidatePropertyName,
           candidateFormStateNode.id
         );
         return foundNodeHierarchyAndFieldName;

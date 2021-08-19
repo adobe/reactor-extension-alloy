@@ -47,7 +47,7 @@ const ObjectEdit = ({ fieldName }) => {
           </Radio>
         </FormikRadioGroup>
       )}
-      {populationStrategy === WHOLE && (
+      {populationStrategy === WHOLE ? (
         <DataElementSelector>
           <FormikTextField
             data-test-id="valueField"
@@ -57,6 +57,11 @@ const ObjectEdit = ({ fieldName }) => {
             width="size-5000"
           />
         </DataElementSelector>
+      ) : (
+        <div>
+          Please use the tree to the left to provide values for individual
+          attributes.
+        </div>
       )}
     </FormElementContainer>
   );

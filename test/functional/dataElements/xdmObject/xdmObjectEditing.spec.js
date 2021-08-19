@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { t } from "testcafe";
 import xdmTree from "./helpers/xdmTree";
 import arrayEdit from "./helpers/arrayEdit";
 import booleanEdit from "./helpers/booleanEdit";
@@ -20,11 +21,20 @@ import stringEdit from "./helpers/stringEdit";
 import initializeExtensionView from "./helpers/initializeExtensionView";
 import createFixture from "../../helpers/createFixture";
 import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
+import nodeEdit from "./helpers/nodeEdit";
 
 const schema = {
   id:
     "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
   version: "1.2"
+};
+
+const moveUnifiedjsqeonlyTreeNodeOutOfViewport = async () => {
+  await xdmTree.node("device").toggleExpansion();
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("implementationDetails").toggleExpansion();
+  await xdmTree.node("placeContext").toggleExpansion();
+  await t.scroll(0, 9999999999);
 };
 
 createFixture({
@@ -111,7 +121,15 @@ test("allows user to provide individual array items", async () => {
   await arrayEdit.addItem();
   await arrayEdit.removeItem(0);
 
+  await moveUnifiedjsqeonlyTreeNodeOutOfViewport();
   await arrayEdit.clickItem(0);
+  // When the array item is selected in the form area, the array
+  // item node in the tree gets scrolled into view. In some browsers,
+  // this scroll is a smooth transition. We need to wait for the
+  // transition to end before checking to see if the tree node is in
+  // the viewport.
+  await t.wait(1000);
+  await xdmTree.node("Item 1").expectInViewport();
   await arrayEdit.enterValue("%industry%");
 
   await extensionViewController.expectIsValid();
@@ -188,7 +206,6 @@ test("arrays using whole population strategy do not have children", async () => 
   await xdmTree.node("industries").click();
   await arrayEdit.selectPartsPopulationStrategy();
   await arrayEdit.addItem();
-  await xdmTree.node("industries").toggleExpansion();
   await xdmTree.node("Item 1").expectExists();
   await arrayEdit.selectWholePopulationStrategy();
   await xdmTree.node("Item 1").expectNotExists();
@@ -201,7 +218,6 @@ test("arrays with a whole population strategy ancestor do not have children", as
   await xdmTree.node("industries").click();
   await arrayEdit.selectPartsPopulationStrategy();
   await arrayEdit.addItem();
-  await xdmTree.node("industries").toggleExpansion();
   await xdmTree.node("Item 1").expectExists();
   await xdmTree.node("vendor").click();
   await objectEdit.selectWholePopulationStrategy();
@@ -455,4 +471,32 @@ test("allows you to edit context fields", async () => {
   await xdmTree.node("environment").toggleExpansion();
   await xdmTree.node("type").click();
   await stringEdit.expectExists();
+});
+
+test("clicking a breadcrumb item selects the item", async () => {
+  await initializeExtensionView();
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await xdmTree.node("vendor").toggleExpansion();
+  await xdmTree.node("industries").click();
+  await xdmTree.node("vendor").toggleExpansion();
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await moveUnifiedjsqeonlyTreeNodeOutOfViewport();
+  await nodeEdit.breadcrumb.item("vendor").click();
+  // When the vendor breadcrumb item is clicked in the form area, the
+  // vendor node in the tree gets scrolled into view. In some browsers,
+  // this scroll is a smooth transition. We need to wait for the
+  // transition to end before checking to see if the tree node is in
+  // the viewport.
+  await t.wait(1000);
+  await xdmTree.node("vendor").expectInViewport();
+  // It should be expanded, too.
+  await xdmTree.node("industries").expectExists();
+  await nodeEdit.heading.expectText("Vendor");
+});
+
+test("clicking a tree node should select and expand the node", async () => {
+  await initializeExtensionView();
+  await xdmTree.node("_unifiedjsqeonly").click();
+  await nodeEdit.heading.expectText("_unifiedjsqeonly");
+  await xdmTree.node("vendor").expectExists();
 });

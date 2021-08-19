@@ -10,12 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { useFormikContext } from "formik";
 import { Flex, View } from "@adobe/react-spectrum";
-import XdmTree from "./xdmTree";
+import XdmTree, { scrollNodeIntoView } from "./xdmTree";
 import NodeEdit from "./nodeEdit";
 import NoSelectedNodeView from "./noSelectedNodeView";
+import getNodeEditData from "../helpers/getNodeEditData";
 
 const Editor = ({
   selectedNodeId,
@@ -23,6 +25,38 @@ const Editor = ({
   schema,
   previouslySavedSchemaInfo
 }) => {
+  const { values: formState } = useFormikContext();
+  const [expandedNodeIdsInTree, setExpandedNodeIdsInTree] = useState([]);
+  const [
+    nodeIdToScrollIntoViewInTree,
+    setNodeIdToScrollIntoViewInTree
+  ] = useState();
+
+  const expandNodeAndAncestorsInTree = nodeId => {
+    if (!nodeId) {
+      return;
+    }
+    const { breadcrumb } = getNodeEditData({
+      formState,
+      nodeId
+    });
+    const newExpandedNodeIds = breadcrumb.reduce((memo, breadcrumbItem) => {
+      const { nodeId: breadcrumbItemNodeId } = breadcrumbItem;
+      if (!memo.includes(breadcrumbItemNodeId)) {
+        memo.push(breadcrumbItemNodeId);
+      }
+      return memo;
+    }, expandedNodeIdsInTree.slice());
+    setExpandedNodeIdsInTree(newExpandedNodeIds);
+  };
+
+  useEffect(() => {
+    if (nodeIdToScrollIntoViewInTree) {
+      scrollNodeIntoView(nodeIdToScrollIntoViewInTree);
+      setNodeIdToScrollIntoViewInTree(undefined);
+    }
+  }, [nodeIdToScrollIntoViewInTree]);
+
   return (
     <Flex
       data-test-id="editor"
@@ -40,7 +74,15 @@ const Editor = ({
         // that has a scrollbar (vertical or horizontal).
       }
       <View flex="1 0 300px">
-        <XdmTree selectedNodeId={selectedNodeId} onSelect={setSelectedNodeId} />
+        <XdmTree
+          selectedNodeId={selectedNodeId}
+          expandedNodeIds={expandedNodeIdsInTree}
+          setExpandedNodeIds={setExpandedNodeIdsInTree}
+          onSelect={nodeId => {
+            setSelectedNodeId(nodeId);
+            expandNodeAndAncestorsInTree(nodeId);
+          }}
+        />
       </View>
       {
         // By default, this flex child will stretch to the height of the
@@ -54,7 +96,11 @@ const Editor = ({
       <View flex="1 0 450px" alignSelf="flex-start" position="sticky" top={0}>
         {selectedNodeId ? (
           <NodeEdit
-            onNodeSelect={setSelectedNodeId}
+            onNodeSelect={nodeId => {
+              setSelectedNodeId(nodeId);
+              expandNodeAndAncestorsInTree(nodeId);
+              setNodeIdToScrollIntoViewInTree(nodeId);
+            }}
             selectedNodeId={selectedNodeId}
           />
         ) : (

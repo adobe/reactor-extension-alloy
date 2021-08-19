@@ -37,6 +37,7 @@ const tagBySize = {
  * that handles typography, we can get rid of this.
  */
 const Heading = ({
+  "data-test-id": dataTestId,
   children,
   size = "S",
   variant,
@@ -57,6 +58,7 @@ const Heading = ({
   const HeadingElement = tagBySize[size];
   return (
     <HeadingElement
+      data-test-id={dataTestId}
       className={classNames(
         "spectrum-Heading",
         `spectrum-Heading--size${size}`,
@@ -76,6 +78,7 @@ const Heading = ({
 export default Heading;
 
 Heading.propTypes = {
+  "data-test-id": PropTypes.string,
   children: PropTypes.node.isRequired,
   size: PropTypes.oneOf(Object.keys(tagBySize)),
   variant: PropTypes.oneOf(["heavy", "light"]),

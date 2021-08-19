@@ -10,13 +10,37 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { t } from "testcafe";
+import { t, ClientFunction } from "testcafe";
 import {
   createTestIdSelector,
   createTestIdSelectorString
 } from "../../../helpers/dataTestIdSelectors";
 
 const xdmTree = createTestIdSelector("xdmTree");
+
+const getIsElementInViewport = selector => {
+  return ClientFunction(
+    () => {
+      return new Promise(resolve => {
+        const observer = new IntersectionObserver(
+          entries => {
+            resolve(entries[0].isIntersecting);
+          },
+          {
+            threshold: 1.0
+          }
+        );
+        // eslint-disable-next-line no-undef
+        observer.observe(selector());
+      });
+    },
+    {
+      dependencies: {
+        selector
+      }
+    }
+  )();
+};
 
 export default {
   node: title => {
@@ -38,6 +62,10 @@ export default {
       },
       toggleExpansion: async () => {
         await t.click(expansionToggle);
+      },
+      expectInViewport: async () => {
+        const isElementInViewport = await getIsElementInViewport(node);
+        return t.expect(isElementInViewport).ok();
       },
       populationIndicator: {
         expectFull: async () => {

@@ -20,11 +20,11 @@ import "./xdmTreeNodeTitle.styl";
 import { EMPTY, FULL, PARTIAL, BLANK } from "../constants/populationAmount";
 
 const XdmTreeNodeTitle = props => {
-  const { displayName, type, populationAmount, error, infoTip } = props;
-
+  const { id, displayName, type, populationAmount, error, infoTip } = props;
   return (
     <Flex
       data-test-id="xdmTreeNodeTitle"
+      data-node-id={id}
       alignItems="center"
       gap="size-100"
       UNSAFE_className={classNames("XdmTreeNodeTitle", {
@@ -58,6 +58,7 @@ const XdmTreeNodeTitle = props => {
 };
 
 XdmTreeNodeTitle.propTypes = {
+  id: PropTypes.string.isRequired,
   displayName: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY, BLANK]),
