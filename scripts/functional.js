@@ -26,9 +26,9 @@ const createTestCafe = require("testcafe");
 const build = require("./helpers/build");
 const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
 
-const componentFixtureHtmlEntries = path.join(
+const componentFixturePath = path.join(
   __dirname,
-  "../test/functional/components/**/*.html"
+  "../test/functional/components/helpers/fixture.html"
 );
 const componentFixtureOutputDir = path.join(
   __dirname,
@@ -37,7 +37,7 @@ const componentFixtureOutputDir = path.join(
 
 const buildComponentFixtures = async () => {
   return new Promise(resolve => {
-    const bundler = new Bundler(componentFixtureHtmlEntries, {
+    const bundler = new Bundler(componentFixturePath, {
       publicUrl: "./",
       outDir: componentFixtureOutputDir,
       watch,

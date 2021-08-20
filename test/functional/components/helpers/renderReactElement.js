@@ -10,12 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import path from "path";
+import { ClientFunction } from "testcafe";
 
-const createComponentFixture = ({ title }) => {
-  return fixture(title).page(
-    path.join(__dirname, `../../../../componentFixtureDist/fixture.html`)
-  );
-};
+const renderReactElement = ClientFunction(reactElement => {
+  window.renderSerializedReactElement(reactElement);
+});
 
-export default createComponentFixture;
+export default renderReactElement;

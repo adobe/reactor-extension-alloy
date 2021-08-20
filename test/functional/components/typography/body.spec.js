@@ -10,9 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { t } from "testcafe";
+import React from "react";
+import { t, Selector } from "testcafe";
 import createComponentFixture from "../helpers/createComponentFixture";
-import { createTestIdSelector } from "../../helpers/dataTestIdSelectors";
+import renderReactElement from "../helpers/renderReactElement";
 
 createComponentFixture({
   title: "Body component",
@@ -21,65 +22,107 @@ createComponentFixture({
 
 const scenarios = [
   {
-    testId: "sizeXxxl",
-    classNames: ["spectrum-Body--sizeXXXL"]
+    props: {
+      size: "XXXL"
+    },
+    assertions: {
+      classNames: ["spectrum-Body--sizeXXXL"]
+    }
   },
   {
-    testId: "sizeXxl",
-    classNames: ["spectrum-Body--sizeXXL"]
+    props: {
+      size: "XXL"
+    },
+    assertions: {
+      classNames: ["spectrum-Body--sizeXXL"]
+    }
   },
   {
-    testId: "sizeXl",
-    classNames: ["spectrum-Body--sizeXL"]
+    props: {
+      size: "XL"
+    },
+    assertions: {
+      classNames: ["spectrum-Body--sizeXL"]
+    }
   },
   {
-    testId: "sizeL",
-    classNames: ["spectrum-Body--sizeL"]
+    props: {
+      size: "L"
+    },
+    assertions: {
+      classNames: ["spectrum-Body--sizeL"]
+    }
   },
   {
-    testId: "sizeM",
-    classNames: ["spectrum-Body--sizeM"]
+    props: {
+      size: "M"
+    },
+    assertions: {
+      classNames: ["spectrum-Body--sizeM"]
+    }
   },
   {
-    testId: "sizeS",
-    classNames: ["spectrum-Body--sizeS"]
+    props: {
+      size: "S"
+    },
+    assertions: {
+      classNames: ["spectrum-Body--sizeS"]
+    }
   },
   {
-    testId: "sizeXs",
-    classNames: ["spectrum-Body--sizeXS"]
+    props: {
+      size: "XS"
+    },
+    assertions: {
+      classNames: ["spectrum-Body--sizeXS"]
+    }
   },
   {
-    testId: "sizeXxs",
-    classNames: ["spectrum-Body--sizeXXS"]
+    props: {
+      size: "XXS"
+    },
+    assertions: {
+      classNames: ["spectrum-Body--sizeXXS"]
+    }
   },
   {
-    testId: "marginTop",
-    classNames: ["spectrum-Body--sizeS"],
-    style:
-      "margin-top: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);"
+    props: {
+      marginTop: "size-300"
+    },
+    assertions: {
+      classNames: ["spectrum-Body--sizeS"],
+      style:
+        "margin-top: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);"
+    }
   },
   {
-    testId: "marginBottom",
-    classNames: ["spectrum-Body--sizeS"],
-    style:
-      "margin-bottom: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);"
+    props: {
+      marginBottom: "size-300"
+    },
+    assertions: {
+      classNames: ["spectrum-Body--sizeS"],
+      style:
+        "margin-bottom: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);"
+    }
   },
   {
-    testId: "noProps",
-    classNames: ["spectrum-Body--sizeS"]
+    props: {},
+    assertions: {
+      classNames: ["spectrum-Body--sizeS"]
+    }
   }
 ];
 
-scenarios.forEach(({ testId, classNames = [], style }) => {
-  test(`renders ${testId} scenario`, async () => {
-    const selector = createTestIdSelector(testId);
-    await t.expect(selector.tagName).eql("p");
+scenarios.forEach(({ props, assertions }) => {
+  test(`renders with props: ${JSON.stringify(props)}`, async () => {
+    await renderReactElement(React.createElement("Body", props, "Test Body"));
+    const selector = Selector("p");
     await t.expect(selector.textContent).eql("Test Body");
     await t
       .expect(selector.classNames)
-      .eql(["spectrum-Body"].concat(classNames));
-    if (style) {
-      await t.expect(selector.getAttribute("style")).eql(style);
+      .eql(["spectrum-Body"].concat(assertions.classNames));
+    if (assertions.style) {
+      await t.expect(selector.getAttribute("style")).eql(assertions.style);
     } else {
       await t
         .expect(selector.getAttribute("style"))
