@@ -12,8 +12,8 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import ReactDOM from "react-dom";
-import { deserialize } from "react-serialize";
 import { lightTheme, Provider } from "@adobe/react-spectrum";
+import deserializeReactElement from "./deserializeReactElement";
 import Heading from "../../../../src/view/components/typography/heading";
 import Body from "../../../../src/view/components/typography/body";
 
@@ -23,27 +23,9 @@ const components = {
   Body
 };
 
-const isCustomElement = type => {
-  return /[A-Z]/.test(type.charAt(0));
-};
-
-const assertElementSupported = serializedReactElement => {
-  const { type } = serializedReactElement;
-  if (isCustomElement(type) && !components[type]) {
-    throw new Error(
-      `You must add the ${type} component to fixture.jsx in order to render it in a test.`
-    );
-  }
-};
-
-window.renderSerializedReactElement = serializedReactElement => {
-  // This only checks the top-level element to see if its component
-  // has been imported and listed in the components object above. It
-  // won't work for descendent elements unless we modify the deserialize
-  // function.
-  assertElementSupported(serializedReactElement);
-
-  const deserializedReactElement = deserialize(serializedReactElement, {
+window.renderSerializedReactElement = element => {
+  const deserializedReactElement = deserializeReactElement({
+    element,
     components
   });
 
