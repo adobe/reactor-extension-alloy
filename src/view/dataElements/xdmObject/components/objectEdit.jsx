@@ -59,8 +59,8 @@ const ObjectEdit = ({ fieldName }) => {
         </DataElementSelector>
       ) : (
         <div>
-          Please use the tree to the left to provide values for individual
-          attributes.
+          To provide values for individual attributes, please select the
+          attributes in the tree on the left.
         </div>
       )}
     </FormElementContainer>

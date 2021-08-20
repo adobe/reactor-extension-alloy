@@ -80,11 +80,13 @@ const NodeEdit = props => {
           // is unmounted, but it doesn't seem to affect the UX.
           // https://github.com/adobe/react-spectrum/issues/1979
         }
-        <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
-          {breadcrumb.map(item => (
-            <Item key={item.nodeId}>{item.label}</Item>
-          ))}
-        </Breadcrumbs>
+        {breadcrumb.length > 1 && (
+          <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
+            {breadcrumb.map(item => (
+              <Item key={item.nodeId}>{item.label}</Item>
+            ))}
+          </Breadcrumbs>
+        )}
       </View>
       <Heading data-test-id="heading" size="M">
         {displayName}
