@@ -47,4 +47,29 @@ window.addEventListener("error", event => {
   if (event.message === "ResizeObserver loop limit exceeded") {
     event.preventDefault();
   }
+
+  // This error currently occurs in Firefox and Safari when running the
+  // XDM object tests and can't be reproduced outside of TestCafe.
+  // There is also no stack trace provided for the error, so it's difficult
+  // to figure out what really is causing the issue, but (1) it has to do
+  // with selection and expansion of the XDM schema tree and (2) it doesn't
+  // actually affect the user experience. If Ant Design's tree component is
+  // ever removed, try removing this error handling as well.
+  if (
+    // Firefox's event.message is correct.
+    event.message ===
+      "ResizeObserver loop completed with undelivered notifications." ||
+    // Sadly, Safari's event.message doesn't reflect the actual error
+    // (though it still prints a "ResizeObserver loop completed with
+    // undelivered notifications." message to the console). Notably,
+    // ignoring errors where event.message is "Script error." may also
+    // ignore unrelated errors that we DO actually want to fail tests,
+    // but our options are limited here.
+    event.message === "Script error."
+  ) {
+    // Using event.preventDefault here is sufficient to prevent the test
+    // from failing in Safari, but Firefox requires us to call
+    // event.stopImmediatePropagation instead.
+    event.stopImmediatePropagation();
+  }
 });

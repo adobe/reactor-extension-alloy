@@ -29,6 +29,7 @@ import IntegerEdit from "./integerEdit";
 import NumberEdit from "./numberEdit";
 import ObjectEdit from "./objectEdit";
 import StringEdit from "./stringEdit";
+import Heading from "../../../components/typography/heading";
 import { ALWAYS, NONE } from "../constants/autoPopulationSource";
 import "./nodeEdit.styl";
 
@@ -57,27 +58,39 @@ const NodeEdit = props => {
   const { values: formState } = useFormikContext();
   const { onNodeSelect, selectedNodeId } = props;
 
-  const { formStateNode, fieldName, breadcrumb } = getNodeEditData({
-    formState,
-    nodeId: selectedNodeId
-  });
+  const { formStateNode, fieldName, breadcrumb, displayName } = getNodeEditData(
+    {
+      formState,
+      nodeId: selectedNodeId
+    }
+  );
 
   const TypeSpecificNodeEdit = getViewBySchemaType(formStateNode.schema.type);
 
   return (
-    <Flex gap="size-200" marginBottom="size-200" direction="column">
-      <View UNSAFE_className="NodeEdit-breadcrumbs">
+    <Flex
+      data-test-id="nodeEdit"
+      gap="size-200"
+      marginBottom="size-200"
+      direction="column"
+    >
+      <View data-test-id="breadcrumb" UNSAFE_className="NodeEdit-breadcrumbs">
         {
           // There's currently a known error that occurs when Breadcrumbs
           // is unmounted, but it doesn't seem to affect the UX.
           // https://github.com/adobe/react-spectrum/issues/1979
         }
-        <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
-          {breadcrumb.map(item => (
-            <Item key={item.nodeId}>{item.label}</Item>
-          ))}
-        </Breadcrumbs>
+        {breadcrumb.length > 1 && (
+          <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
+            {breadcrumb.map(item => (
+              <Item key={item.nodeId}>{item.label}</Item>
+            ))}
+          </Breadcrumbs>
+        )}
       </View>
+      <Heading data-test-id="heading" size="M">
+        {displayName}
+      </Heading>
       {formStateNode.autoPopulationSource !== NONE && (
         <AutoPopulationAlert formStateNode={formStateNode} />
       )}

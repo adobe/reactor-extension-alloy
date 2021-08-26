@@ -63,6 +63,7 @@ const getTreeNode = ({
 
   const treeNode = {
     key: id,
+    id,
     displayName,
     type: schema.type,
     disabled: isAlwaysDisabled || isAncestorUsingWholePopulationStrategy,
