@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import { Tree } from "antd";
 import { useFormikContext } from "formik";
@@ -31,12 +31,31 @@ import useNewlyValidatedFormSubmission from "../../../utils/useNewlyValidatedFor
 import "antd/lib/tree/style/index.css";
 import "./xdmTree.styl";
 
+export const scrollNodeIntoView = nodeId => {
+  if (nodeId) {
+    const elementToScrollIntoView = document.querySelector(
+      `.XdmTree [data-node-id="${nodeId}"]`
+    );
+
+    if (elementToScrollIntoView) {
+      elementToScrollIntoView.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+  }
+};
+
 /**
  * Displays the XDM object as a tree.
  */
-const XdmTree = ({ selectedNodeId, onSelect = () => {} }) => {
+const XdmTree = ({
+  selectedNodeId,
+  expandedNodeIds,
+  setExpandedNodeIds,
+  onSelect = () => {}
+}) => {
   const { values: formState, errors, touched } = useFormikContext();
-  const [expandedNodeIds, setExpandedNodeIds] = useState([]);
   const treeStructure = generateTreeStructure({
     treeNodeComponent: XdmTreeNodeTitle,
     formState,
@@ -83,6 +102,8 @@ const XdmTree = ({ selectedNodeId, onSelect = () => {} }) => {
 
 XdmTree.propTypes = {
   selectedNodeId: PropTypes.string,
+  expandedNodeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
+  setExpandedNodeIds: PropTypes.func.isRequired,
   onSelect: PropTypes.func
 };
 
