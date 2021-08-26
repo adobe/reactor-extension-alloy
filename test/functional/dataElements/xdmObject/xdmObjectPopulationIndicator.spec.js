@@ -18,9 +18,9 @@ import integerEdit from "./helpers/integerEdit";
 import numberEdit from "./helpers/numberEdit";
 import objectEdit from "./helpers/objectEdit";
 import stringEdit from "./helpers/stringEdit";
-import createFixture from "../../helpers/createFixture";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 
-createFixture({
+createExtensionViewFixture({
   title: "XDM Object Population Indicator",
   viewPath: "dataElements/xdmObject.html",
   requiresAdobeIOIntegration: true

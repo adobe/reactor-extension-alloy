@@ -15,9 +15,9 @@ import xdmTree from "./helpers/xdmTree";
 import arrayEdit from "./helpers/arrayEdit";
 import stringEdit from "./helpers/stringEdit";
 import editor from "./helpers/editor";
-import createFixture from "../../helpers/createFixture";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 
-createFixture({
+createExtensionViewFixture({
   title: "XDM Object Validation",
   viewPath: "dataElements/xdmObject.html",
   requiresAdobeIOIntegration: true

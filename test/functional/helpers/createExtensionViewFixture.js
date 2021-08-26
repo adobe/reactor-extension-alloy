@@ -29,7 +29,7 @@ const extensionBridgeRequestMock = RequestMock()
   )
   .respond(extensionBridgeMockContent);
 
-const createFixture = ({
+const createExtensionViewFixture = ({
   title,
   viewPath,
   requiresAdobeIOIntegration = false,
@@ -47,4 +47,4 @@ const createFixture = ({
   return fixt;
 };
 
-export default createFixture;
+export default createExtensionViewFixture;

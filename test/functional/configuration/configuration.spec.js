@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import extensionViewController from "../helpers/extensionViewController";
-import createFixture from "../helpers/createFixture";
+import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
 import {
   addInstanceButton,
   instancesTabs,
@@ -20,7 +20,7 @@ import {
 } from "./helpers/viewSelectors";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 
-createFixture({
+createExtensionViewFixture({
   title: "Extension Configuration View",
   viewPath: "configuration/configuration.html",
   requiresAdobeIOIntegration: true

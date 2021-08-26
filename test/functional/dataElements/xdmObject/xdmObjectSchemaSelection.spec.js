@@ -17,7 +17,7 @@ import * as schemaMocks from "../../helpers/endpointMocks/schemaMocks";
 import initializeExtensionView from "./helpers/initializeExtensionView";
 import spectrum from "../../helpers/spectrum";
 import editor from "./helpers/editor";
-import createFixture from "../../helpers/createFixture";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(
   "errorBoundaryMessage"
@@ -27,7 +27,7 @@ const testSchemaTitle = "XDM Object Data Element Tests";
 const sandboxField = spectrum.picker("sandboxField");
 const schemaField = spectrum.comboBox("schemaField");
 
-createFixture({
+createExtensionViewFixture({
   title: "XDM Object View Schema Selection",
   viewPath: "dataElements/xdmObject.html",
   requiresAdobeIOIntegration: true

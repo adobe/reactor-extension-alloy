@@ -11,12 +11,12 @@ governing permissions and limitations under the License.
 */
 
 import extensionViewController from "../helpers/extensionViewController";
-import createFixture from "../helpers/createFixture";
+import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 
 const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
-createFixture({
+createExtensionViewFixture({
   title: "Event Merge ID View",
   viewPath: "dataElements/eventMergeId.html"
 });

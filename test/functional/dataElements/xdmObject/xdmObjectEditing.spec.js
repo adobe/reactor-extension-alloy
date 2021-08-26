@@ -19,7 +19,7 @@ import numberEdit from "./helpers/numberEdit";
 import objectEdit from "./helpers/objectEdit";
 import stringEdit from "./helpers/stringEdit";
 import initializeExtensionView from "./helpers/initializeExtensionView";
-import createFixture from "../../helpers/createFixture";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 import nodeEdit from "./helpers/nodeEdit";
 
@@ -37,7 +37,7 @@ const moveUnifiedjsqeonlyTreeNodeOutOfViewport = async () => {
   await t.scroll(0, 9999999999);
 };
 
-createFixture({
+createExtensionViewFixture({
   title: "XDM Object Editing",
   viewPath: "dataElements/xdmObject.html",
   requiresAdobeIOIntegration: true

@@ -15,6 +15,7 @@ governing permissions and limitations under the License.
 const path = require("path");
 const argv = require("minimist")(process.argv.slice(2));
 const chalk = require("chalk");
+const Bundler = require("parcel-bundler");
 
 const defaultSpecsPath = path.join(
   __dirname,
@@ -25,8 +26,37 @@ const createTestCafe = require("testcafe");
 const build = require("./helpers/build");
 const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
 
+const componentFixturePath = path.join(
+  __dirname,
+  "../test/functional/components/helpers/fixture.html"
+);
+const componentFixtureOutputDir = path.join(
+  __dirname,
+  "../componentFixtureDist"
+);
+
+const buildComponentFixtures = async () => {
+  return new Promise(resolve => {
+    const bundler = new Bundler(componentFixturePath, {
+      publicUrl: "./",
+      outDir: componentFixtureOutputDir,
+      watch,
+      // HMR seems to be broken: https://github.com/parcel-bundler/parcel/issues/2894
+      hmr: false,
+      sourceMaps: false
+    });
+
+    bundler.on("bundled", () => {
+      resolve();
+    });
+
+    bundler.bundle();
+  });
+};
+
 (async () => {
   await build({ watch });
+  await buildComponentFixtures();
   const testcafe = await createTestCafe("localhost", 1337, 1338);
   const runner = watch
     ? testcafe.createLiveModeRunner()
