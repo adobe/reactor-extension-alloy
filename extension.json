@@ -4,7 +4,7 @@
   "iconPath": "resources/images/icon.svg",
   "exchangeUrl": "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
   "platform": "web",
-  "version": "2.6.1",
+  "version": "2.7.0",
   "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
   "author": {
     "name": "Adobe"
@@ -147,8 +147,13 @@
           },
           "decisionScopes": {
             "anyOf": [
-              { "type": "array" },
-              { "type": "string", "pattern": "^%[^%]+%$" }
+              {
+                "type": "array"
+              },
+              {
+                "type": "string",
+                "pattern": "^%[^%]+%$"
+              }
             ]
           },
           "xdm": {
@@ -206,8 +211,13 @@
                     {
                       "type": "object",
                       "properties": {
-                        "standard": { "type": "string", "enum": ["Adobe"] },
-                        "version": { "type": "string" },
+                        "standard": {
+                          "type": "string",
+                          "enum": ["Adobe"]
+                        },
+                        "version": {
+                          "type": "string"
+                        },
                         "value": {
                           "type": "object",
                           "properties": {
@@ -218,7 +228,7 @@
                                   "enum": ["in", "out"]
                                 },
                                 {
-                                 "type": "string",
+                                  "type": "string",
                                   "pattern": "^%[^%]+%$"
                                 }
                               ]
@@ -231,27 +241,52 @@
                     {
                       "type": "object",
                       "properties": {
-                        "standard": { "type": "string", "enum": ["Adobe"] },
-                        "version": { "type": "string" },
-                        "value": { "type": "string", "pattern": "^%[^%]+%$" }
+                        "standard": {
+                          "type": "string",
+                          "enum": ["Adobe"]
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string",
+                          "pattern": "^%[^%]+%$"
+                        }
                       }
                     },
                     {
                       "type": "object",
                       "properties": {
-                        "standard": { "type": "string", "enum": ["IAB TCF"] },
-                        "version": { "type": "string" },
-                        "value": { "type": "string" },
+                        "standard": {
+                          "type": "string",
+                          "enum": ["IAB TCF"]
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "value": {
+                          "type": "string"
+                        },
                         "gdprApplies": {
                           "anyOf": [
-                            { "type": "boolean" },
-                            { "type": "string", "pattern": "^%[^%]+%$" }
+                            {
+                              "type": "boolean"
+                            },
+                            {
+                              "type": "string",
+                              "pattern": "^%[^%]+%$"
+                            }
                           ]
                         },
                         "gdprContainsPersonalData": {
                           "anyOf": [
-                            { "type": "boolean" },
-                            { "type": "string", "pattern": "^%[^%]+%$" }
+                            {
+                              "type": "boolean"
+                            },
+                            {
+                              "type": "string",
+                              "pattern": "^%[^%]+%$"
+                            }
                           ]
                         }
                       },

@@ -1,5 +1,5 @@
 /*
-Copyright 2019 Adobe. All rights reserved.
+Copyright 2021 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.XdmObject-treeContainer {
-  width: 300px;
-}
+export default {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, content-type, content-range, pragma, if-match, if-modified-since, range, x-gw-ims-org-id, x-api-key, x-model-name, x-admin,ticketId, origin, accept, emailToNotify, x-products, x-auditor-ims-org-id,x-sandbox-name,x-sandbox-id,x-ups-search-version"
+};

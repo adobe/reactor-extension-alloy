@@ -25,7 +25,30 @@ const getSettings = async () => {
 const validate = async () => {
   return t.eval(() => {
     return window.initializeExtensionViewPromise.then(extensionView => {
-      return extensionView.validate();
+      // Reactor calls getSettings in a couple scenarios that may not be
+      // obvious:
+      //
+      // 1. The user attempts to navigate away from editing the
+      // resource without saving. In this case, Reactor retrieves the
+      // settings to compare them with the previously persisted settings
+      // in order to determine if the view is dirty or not. If the settings
+      // are different, Reactor will ask the user if they want to discard
+      // their changes before navigating. In this case, validate is not
+      // called--only getSettings.
+      // 2. The user attempts to save the resource. In this case, validate
+      // is called and then getSettings is called, regardless of what
+      // is returned from validate. This is actually a bug in Reactor,
+      // since calling getSettings is unnecessary if validate returns
+      // false. https://jira.corp.adobe.com/browse/DTM-16223
+      //
+      // By calling getSettings every time we call validate, we can
+      // be more certain getSettings is properly handling scenarios
+      // where the view is in an invalid state.
+      return extensionView.validate().then(isValid => {
+        return extensionView.getSettings().then(() => {
+          return isValid;
+        });
+      });
     });
   });
 };
