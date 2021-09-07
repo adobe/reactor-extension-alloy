@@ -1,16 +1,17 @@
 #! /usr/bin/env bash
 
+# die on any error
+set -e
+
 VERSION=$1
 
 npm ci
-
-npm run test:unit
 
 git config user.name $GITHUB_ACTOR
 git config user.email gh-actions-${GITHUB_ACTOR}@github.com
 git remote add gh-origin git@github.com:${GITHUB_REPOSITORY}.git
 
-npm version $VERSION -m "[skip ci] $VERSION"
+npm version $VERSION --no-commit-hooks -m "[skip ci] $VERSION"
 
 git push gh-origin HEAD:main --follow-tags
 
