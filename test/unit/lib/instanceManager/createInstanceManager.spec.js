@@ -51,7 +51,7 @@ describe("Instance Manager", () => {
         ]
       },
       onDebugChanged: undefined,
-      buildInfo: { environment: "production" }
+      environment: { stage: "production" }
     });
     turbine.debugEnabled = false;
     mockWindow = {};
@@ -136,14 +136,14 @@ describe("Instance Manager", () => {
   });
 
   it("handles a staging environment", () => {
-    turbine.buildInfo.environment = "staging";
+    turbine.environment.stage = "staging";
     build();
     expect(alloy1.calls.argsFor(0)[1].edgeConfigId).toEqual("PR123:stage");
     expect(alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
   });
 
   it("handles a development environment", () => {
-    turbine.buildInfo.environment = "development";
+    turbine.environment.stage = "development";
     build();
     expect(alloy1.calls.argsFor(0)[1].edgeConfigId).toEqual("PR123:dev");
     expect(alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
