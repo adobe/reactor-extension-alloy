@@ -1,8 +1,7 @@
 {
-  "displayName": "Adobe Experience Platform Web SDK",
-  "name": "adobe-alloy",
+  "displayName": "Adobe Experience Platform Web SDK (Edge Destinations Beta)",
+  "name": "adobe-alloy-edb",
   "iconPath": "resources/images/icon.svg",
-  "exchangeUrl": "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
   "platform": "web",
   "version": "2.7.3",
   "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
