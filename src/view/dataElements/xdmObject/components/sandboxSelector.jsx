@@ -14,7 +14,6 @@ import { useAsyncList } from "@react-stately/data";
 import { Item, Picker } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import fetchSandboxes from "../helpers/fetchSandboxes";
-import FieldDescriptionAndError from "../../../components/fieldDescriptionAndError";
 import useReportAsyncError from "../../../utils/useReportAsyncError";
 import useIsFirstRender from "../../../utils/useIsFirstRender";
 
@@ -90,28 +89,26 @@ const SandboxSelector = ({
   }, [selectedKey]);
 
   return (
-    <FieldDescriptionAndError
+    <Picker
+      data-test-id="sandboxField"
+      label="Sandbox"
       description="Choose a sandbox containing the schema you wish to use."
-      error={errorMessage}
+      placeholder="Select a sandbox"
+      items={sandboxList.items}
+      isLoading={sandboxList.isLoading}
+      selectedKey={selectedKey}
+      isDisabled={!sandboxList.isLoading && !sandboxList.items.length}
+      validationState={errorMessage ? "invalid" : undefined}
+      errorMessage={errorMessage}
+      onSelectionChange={sandboxName => {
+        sandboxList.setSelectedKeys(new Set([sandboxName]));
+      }}
+      width="size-5000"
     >
-      <Picker
-        data-test-id="sandboxField"
-        label="Sandbox"
-        placeholder="Select a sandbox"
-        items={sandboxList.items}
-        isLoading={sandboxList.isLoading}
-        selectedKey={selectedKey}
-        isDisabled={!sandboxList.isLoading && !sandboxList.items.length}
-        onSelectionChange={sandboxName => {
-          sandboxList.setSelectedKeys(new Set([sandboxName]));
-        }}
-        width="size-5000"
-      >
-        {item => {
-          return <Item key={item.name}>{getLabel(item)}</Item>;
-        }}
-      </Picker>
-    </FieldDescriptionAndError>
+      {item => {
+        return <Item key={item.name}>{getLabel(item)}</Item>;
+      }}
+    </Picker>
   );
 };
 

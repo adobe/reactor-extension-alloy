@@ -14,37 +14,31 @@ import React from "react";
 import PropTypes from "prop-types";
 import { TextField } from "@adobe/react-spectrum";
 import { useField } from "formik";
-import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const FormikTextField = ({ name, description, width, ...otherProps }) => {
+const FormikTextField = ({ name, width, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
   );
 
   return (
-    <FieldDescriptionAndError
-      description={description}
-      error={touched && error ? error : undefined}
-    >
-      <TextField
-        {...otherProps}
-        value={value}
-        onChange={newValue => {
-          setValue(newValue);
-        }}
-        onBlur={() => {
-          setTouched(true);
-        }}
-        validationState={touched && error ? "invalid" : undefined}
-        width={width}
-      />
-    </FieldDescriptionAndError>
+    <TextField
+      {...otherProps}
+      value={value}
+      onChange={newValue => {
+        setValue(newValue);
+      }}
+      onBlur={() => {
+        setTouched(true);
+      }}
+      validationState={touched && error ? "invalid" : undefined}
+      errorMessage={error}
+      width={width}
+    />
   );
 };
 
 FormikTextField.propTypes = {
   name: PropTypes.string.isRequired,
-  description: PropTypes.string,
   width: PropTypes.string
 };
 

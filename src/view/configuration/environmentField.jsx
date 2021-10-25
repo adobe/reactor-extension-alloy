@@ -17,7 +17,6 @@ import { useField } from "formik";
 import PropTypes from "prop-types";
 import useIsFirstRender from "../utils/useIsFirstRender";
 import usePagedComboBox from "../utils/usePagedComboBox";
-import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 import fetchEnvironments from "./utils/fetchEnvironments";
 import useReportAsyncError from "../utils/useReportAsyncError";
 import UserReportableError from "../errors/userReportableError";
@@ -85,27 +84,26 @@ const EnvironmentField = ({
   }, [getKey(pagedComboBox.selectedItem)]);
 
   return (
-    <FieldDescriptionAndError description={description}>
-      <ComboBox
-        label={label}
-        placeholder="Select an environment"
-        items={pagedComboBox.items}
-        inputValue={pagedComboBox.inputValue}
-        selectedKey={getKey(pagedComboBox.selectedItem) || null}
-        loadingState={pagedComboBox.loadingState}
-        onInputChange={pagedComboBox.onInputChange}
-        onSelectionChange={pagedComboBox.onSelectionChange}
-        onOpenChange={pagedComboBox.onOpenChange}
-        onLoadMore={pagedComboBox.onLoadMore}
-        isDisabled={isDisabled}
-        isRequired={isRequired}
-        width="size-5000"
-      >
-        {environment => (
-          <Item key={environment.compositeId}>{environment.title}</Item>
-        )}
-      </ComboBox>
-    </FieldDescriptionAndError>
+    <ComboBox
+      label={label}
+      description={description}
+      placeholder="Select an environment"
+      items={pagedComboBox.items}
+      inputValue={pagedComboBox.inputValue}
+      selectedKey={getKey(pagedComboBox.selectedItem) || null}
+      loadingState={pagedComboBox.loadingState}
+      onInputChange={pagedComboBox.onInputChange}
+      onSelectionChange={pagedComboBox.onSelectionChange}
+      onOpenChange={pagedComboBox.onOpenChange}
+      onLoadMore={pagedComboBox.onLoadMore}
+      isDisabled={isDisabled}
+      isRequired={isRequired}
+      width="size-5000"
+    >
+      {environment => (
+        <Item key={environment.compositeId}>{environment.title}</Item>
+      )}
+    </ComboBox>
   );
 };
 

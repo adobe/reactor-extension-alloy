@@ -18,7 +18,6 @@ import usePagedComboBox from "../utils/usePagedComboBox";
 import fetchConfigs from "./utils/fetchConfigs";
 import UserReportableError from "../errors/userReportableError";
 import useIsFirstRender from "../utils/useIsFirstRender";
-import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 import useReportAsyncError from "../utils/useReportAsyncError";
 
 const EdgeConfigurationField = ({
@@ -79,32 +78,29 @@ const EdgeConfigurationField = ({
   }, [getKey(pagedComboBox.selectedItem)]);
 
   return (
-    <FieldDescriptionAndError
+    <ComboBox
+      data-test-id="edgeConfigComboBox"
+      label="Datastream"
+      placeholder="Select a datastream"
+      items={pagedComboBox.items}
+      inputValue={pagedComboBox.inputValue}
+      selectedKey={getKey(pagedComboBox.selectedItem) || null}
+      loadingState={pagedComboBox.loadingState}
+      isRequired
+      validationState={touched && error ? "invalid" : undefined}
       description="Data being sent by the SDK will be routed to Adobe solutions according to how the selected datastream has been configured."
-      error={touched && error ? error : undefined}
+      errorMessage={error}
+      onBlur={() => {
+        setTouched(true);
+      }}
+      onInputChange={pagedComboBox.onInputChange}
+      onSelectionChange={pagedComboBox.onSelectionChange}
+      onOpenChange={pagedComboBox.onOpenChange}
+      onLoadMore={pagedComboBox.onLoadMore}
+      width="size-5000"
     >
-      <ComboBox
-        data-test-id="edgeConfigComboBox"
-        label="Datastream"
-        placeholder="Select a datastream"
-        items={pagedComboBox.items}
-        inputValue={pagedComboBox.inputValue}
-        selectedKey={getKey(pagedComboBox.selectedItem) || null}
-        loadingState={pagedComboBox.loadingState}
-        isRequired
-        validationState={touched && error ? "invalid" : undefined}
-        onBlur={() => {
-          setTouched(true);
-        }}
-        onInputChange={pagedComboBox.onInputChange}
-        onSelectionChange={pagedComboBox.onSelectionChange}
-        onOpenChange={pagedComboBox.onOpenChange}
-        onLoadMore={pagedComboBox.onLoadMore}
-        width="size-5000"
-      >
-        {item => <Item key={item.id}>{item.title}</Item>}
-      </ComboBox>
-    </FieldDescriptionAndError>
+      {item => <Item key={item.id}>{item.title}</Item>}
+    </ComboBox>
   );
 };
 

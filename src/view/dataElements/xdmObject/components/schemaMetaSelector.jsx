@@ -13,7 +13,6 @@ import React, { useEffect } from "react";
 import { ComboBox } from "@react-spectrum/combobox";
 import { Item } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
-import FieldDescriptionAndError from "../../../components/fieldDescriptionAndError";
 import fetchSchemasMeta from "../helpers/fetchSchemasMeta";
 import usePagedComboBox from "../../../utils/usePagedComboBox";
 import useReportAsyncError from "../../../utils/useReportAsyncError";
@@ -86,27 +85,25 @@ const SchemaMetaSelector = ({
   }, [selectedSandbox ? selectedSandbox.name : null]);
 
   return (
-    <FieldDescriptionAndError
+    <ComboBox
+      data-test-id="schemaField"
+      label="Schema"
       description="Choose a schema for which to build a matching XDM object."
-      error={errorMessage}
+      placeholder="Select a schema"
+      items={pagedComboBox.items}
+      inputValue={pagedComboBox.inputValue}
+      selectedKey={getKey(pagedComboBox.selectedItem) || null}
+      loadingState={pagedComboBox.loadingState}
+      validationState={errorMessage ? "invalid" : undefined}
+      errorMessage={errorMessage}
+      onInputChange={pagedComboBox.onInputChange}
+      onSelectionChange={pagedComboBox.onSelectionChange}
+      onOpenChange={pagedComboBox.onOpenChange}
+      onLoadMore={pagedComboBox.onLoadMore}
+      width="size-5000"
     >
-      <ComboBox
-        data-test-id="schemaField"
-        label="Schema"
-        placeholder="Select a schema"
-        items={pagedComboBox.items}
-        inputValue={pagedComboBox.inputValue}
-        selectedKey={getKey(pagedComboBox.selectedItem) || null}
-        loadingState={pagedComboBox.loadingState}
-        onInputChange={pagedComboBox.onInputChange}
-        onSelectionChange={pagedComboBox.onSelectionChange}
-        onOpenChange={pagedComboBox.onOpenChange}
-        onLoadMore={pagedComboBox.onLoadMore}
-        width="size-5000"
-      >
-        {item => <Item key={item.$id}>{item.title}</Item>}
-      </ComboBox>
-    </FieldDescriptionAndError>
+      {item => <Item key={item.$id}>{item.title}</Item>}
+    </ComboBox>
   );
 };
 

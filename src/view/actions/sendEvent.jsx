@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import { object, string } from "yup";
-import { Item } from "@adobe/react-spectrum";
+import { Item, Link } from "@adobe/react-spectrum";
 import FormikComboBox from "../components/formikReactSpectrum3/formikComboBox";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
@@ -135,7 +135,7 @@ const SendEvent = () => {
               name="type"
               label="Type"
               description="Enter an event type to populate the `eventType` XDM field. Select a predefined value or enter a custom value."
-              items={knownEventTypeOptions}
+              defaultItems={knownEventTypeOptions}
               allowsCustomValue
               width="size-5000"
             >
@@ -147,7 +147,33 @@ const SendEvent = () => {
               data-test-id="xdmField"
               name="xdm"
               label="XDM data"
-              description="Provide a data element which returns an object matching your XDM schema."
+              description={
+                <>
+                  Provide a data element which returns an object matching your
+                  XDM schema. You may want to use the{" "}
+                  <Link>
+                    <a
+                      href="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/data-element-types.html?lang=en#xdm-object"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      XDM Object
+                    </a>
+                  </Link>{" "}
+                  data element type to build this object. You can also combine
+                  objects using the{" "}
+                  <Link>
+                    <a
+                      href="https://experienceleague.adobe.com/docs/experience-platform/tags/extensions/adobe/core/overview.html?lang=en#merged-objects"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Merged Objects
+                    </a>
+                  </Link>{" "}
+                  data element type from the Core extension.
+                </>
+              }
               width="size-5000"
             />
           </DataElementSelector>

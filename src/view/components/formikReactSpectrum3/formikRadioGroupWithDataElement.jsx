@@ -15,7 +15,6 @@ import PropTypes from "prop-types";
 import { RadioGroup, Radio, TextField } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import { string } from "yup";
-import FieldDescriptionAndError from "../fieldDescriptionAndError";
 import RawDataElementSelector from "../rawDataElementSelector";
 import singleDataElementRegex from "../../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../../constants/validationErrorMessages";
@@ -131,23 +130,20 @@ const FormikRadioGroupWithDataElement = ({
               dataElementSetTouched(true);
             }}
           >
-            <FieldDescriptionAndError
+            <TextField
+              label="Data element"
+              value={dataElementText}
+              data-test-id={`${dataTestIdPrefix}DataElementField`}
+              onChange={newValue => setValues("dataElement", newValue)}
+              onBlur={() => dataElementSetTouched(true)}
               description={dataElementDescription}
-              error={dataElementTouched && error ? error : undefined}
-            >
-              <TextField
-                label="Data element"
-                value={dataElementText}
-                data-test-id={`${dataTestIdPrefix}DataElementField`}
-                onChange={newValue => setValues("dataElement", newValue)}
-                onBlur={() => dataElementSetTouched(true)}
-                validationState={
-                  dataElementTouched && error ? "invalid" : undefined
-                }
-                width="size-5000"
-                isRequired
-              />
-            </FieldDescriptionAndError>
+              validationState={
+                dataElementTouched && error ? "invalid" : undefined
+              }
+              errorMessage={error}
+              width="size-5000"
+              isRequired
+            />
           </RawDataElementSelector>
         </FieldSubset>
       )}

@@ -14,35 +14,29 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Picker } from "@adobe/react-spectrum";
 import { useField } from "formik";
-import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const FormikPicker = ({ name, description, width, ...otherProps }) => {
+const FormikPicker = ({ name, width, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
   );
 
   return (
-    <FieldDescriptionAndError
-      description={description}
-      error={touched && error ? error : undefined}
-    >
-      <Picker
-        {...otherProps}
-        selectedKey={value}
-        onSelectionChange={setValue}
-        onBlur={() => {
-          setTouched(true);
-        }}
-        validationState={touched && error ? "invalid" : undefined}
-        width={width}
-      />
-    </FieldDescriptionAndError>
+    <Picker
+      {...otherProps}
+      selectedKey={value}
+      onSelectionChange={setValue}
+      onBlur={() => {
+        setTouched(true);
+      }}
+      validationState={touched && error ? "invalid" : undefined}
+      errorMessage={error}
+      width={width}
+    />
   );
 };
 
 FormikPicker.propTypes = {
   name: PropTypes.string.isRequired,
-  description: PropTypes.string,
   width: PropTypes.string
 };
 
