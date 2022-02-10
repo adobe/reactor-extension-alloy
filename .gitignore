@@ -5,3 +5,4 @@ componentFixtureDist
 coverage
 .sandbox
 .eslintcache
+.env

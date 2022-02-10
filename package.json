@@ -17,6 +17,7 @@
     "lint": "eslint \"*.{js,jsx}\" \"{src,test,scripts}/**/*.{js,jsx}\" --cache --fix",
     "format": "prettier --write \"*.{js,jsx,html}\" \"{src,test,scripts}/**/*.{js,jsx,html}\"",
     "test:unit": "karma start --single-run",
+    "test:unit:saucelabs:local": "karma start karma.saucelabs.conf.js --single-run",
     "test:unit:coverage": "karma start --single-run --reporters spec,coverage",
     "test:unit:watch": "karma start",
     "test:unit:watch:chrome": "karma start --browsers Chrome",
@@ -96,6 +97,7 @@
     "karma-jasmine-html-reporter": "^1.5.4",
     "karma-jasmine-matchers": "^4.0.2",
     "karma-rollup-preprocessor": "^7.0.5",
+    "karma-sauce-launcher": "^4.3.6",
     "karma-spec-reporter": "0.0.32",
     "lint-staged": "^10.5.4",
     "minimist": "^1.2.5",
@@ -111,6 +113,7 @@
     "rollup-plugin-istanbul": "^3.0.0",
     "rollup-plugin-node-resolve": "^4.2.3",
     "stylus": "^0.54.8",
-    "testcafe": "^1.14.2"
+    "testcafe": "^1.14.2",
+    "testcafe-browser-provider-saucelabs": "^1.9.0"
   }
 }
