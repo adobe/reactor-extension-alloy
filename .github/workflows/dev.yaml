@@ -7,8 +7,8 @@ env:
   SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
   SAUCE_JOB: "Alloy Dev Workflow"
   SAUCE_CAPABILITIES_OVERRIDES_PATH: 'sauceLabsCapabilities.json'
-  # EDGE_E2E_PRIVATE_KEY_FILE
-  # EDGE_E2E_CLIENT_SECRET
+  EDGE_E2E_PRIVATE_KEY_FILE: ${{ secrets.EDGE_E2E_PRIVATE_KEY_FILE }}
+  EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
 
 jobs:
   unit-test:
@@ -29,21 +29,20 @@ jobs:
     - name: Run Unit Test
       run: npx karma start karma.saucelabs.conf.js --single-run
 
-  # EDGE_E2E_PRIVATE_KEY_FILE, and EDGE_E2E_CLIENT_SECRET required
-  # functional-test:
-  #   name: "Functional Test"
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: actions/cache@v2
-  #     id: npm-cache
-  #     with:
-  #       path: '**/node_modules'
-  #       key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}-${{ secrets.NPM_CACHE_VERSION }} # increment NPM_CACHE_VERSION secret to force cache reset
-  #   - name: Install dependencies
-  #     if: steps.npm-cache.outputs.cache-hit != 'true'
-  #     run: npm ci
-  #   - name: Build
-  #     run: npm run build
-  #   - name: Run Functional Test
-  #     run: npx testcafe -q -c 5 'saucelabs:Chrome@latest:macOS 11.00','saucelabs:Firefox@latest:Windows 10','saucelabs:Safari@latest:macOS 11.00'
+  functional-test:
+    name: "Functional Test"
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/cache@v2
+      id: npm-cache
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}-${{ secrets.NPM_CACHE_VERSION }} # increment NPM_CACHE_VERSION secret to force cache reset
+    - name: Install dependencies
+      if: steps.npm-cache.outputs.cache-hit != 'true'
+      run: npm ci
+    - name: Build
+      run: npm run build
+    - name: Run Functional Test
+      run: npx testcafe -q -c 5 'saucelabs:Chrome@latest:macOS 11.00','saucelabs:Firefox@latest:Windows 10','saucelabs:Safari@latest:macOS 11.00'
