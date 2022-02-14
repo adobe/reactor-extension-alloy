@@ -88,7 +88,9 @@ const buildComponentFixtures = async () => {
 
       return true;
     })
-    .browsers("chrome")
+    .browsers(
+      "'saucelabs:Chrome@latest:macOS 11.00','saucelabs:Firefox@latest:Windows 10','saucelabs:Safari@latest:macOS 11.00'"
+    )
     .run();
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
