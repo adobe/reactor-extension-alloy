@@ -46,6 +46,8 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run build
-    - uses: Meemaw/testcafe-action@master
-      with:
-        args: "./scripts/functional.js --saucelabs"
+    - name: Run Functional Test
+      run: npm run test:functional:saucelabs
+      env:
+        EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
+        EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
