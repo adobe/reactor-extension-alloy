@@ -50,6 +50,3 @@ jobs:
     - uses: Meemaw/testcafe-action@master
       with:
         args: "./scripts/functional.js --saucelabs"
-      env:
-        EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
-        EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
