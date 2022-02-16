@@ -46,6 +46,11 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run build
+    - uses: saucelabs/saucectl-run-action@v1
+      with:
+        sauce-username: ${{ secrets.SAUCE_USERNAME }}
+        sauce-access-key: ${{ secrets.SAUCE_ACCESS_KEY }}
+        saucectl-version: v0.25.1
     - name: Run Functional Test
       run: npm run test:functional:saucelabs
       env:
