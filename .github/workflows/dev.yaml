@@ -46,10 +46,15 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run build
-    - name: Run tests
-      uses: DevExpress/testcafe-action@latest
+    - uses: saucelabs/sauce-connect-action@v2
       with:
-          args: "./scripts/functional.js --saucelabs"
+          username: ${{ secrets.SAUCE_USERNAME }}
+          accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
+          tunnelIdentifier: github-action-tunnel
+          configFile: ${{ github.workspace }}/sc-configuration/config.yaml
+          scVersion: 4.7.1
+    - name: Run Functional Test
+      run: npm run test:functional:saucelabs
       env:
         EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
