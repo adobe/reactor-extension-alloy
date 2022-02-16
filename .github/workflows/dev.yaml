@@ -15,7 +15,7 @@ env:
 jobs:
   unit-test:
     name: "Unit Test"
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
@@ -33,7 +33,7 @@ jobs:
 
   functional-test:
     name: "Functional Test"
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
@@ -46,13 +46,10 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run build
-    - uses: saucelabs/saucectl-run-action@v1
+    - name: Run tests
+      uses: DevExpress/testcafe-action@latest
       with:
-        sauce-username: ${{ secrets.SAUCE_USERNAME }}
-        sauce-access-key: ${{ secrets.SAUCE_ACCESS_KEY }}
-        saucectl-version: v0.82.0
-    - name: Run Functional Test
-      run: npm run test:functional:saucelabs
+          args: "./scripts/functional.js --saucelabs"
       env:
         EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
