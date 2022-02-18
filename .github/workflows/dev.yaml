@@ -33,12 +33,9 @@ jobs:
 
   functional-test:
     name: "Functional Test"
-    runs-on: windows-latest
+    runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '16'
     - uses: actions/cache@v2
       id: npm-cache
       with:
@@ -49,7 +46,13 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run build
-    - uses: browser-actions/setup-chrome@latest
+    - uses: nanasess/setup-chromedriver@v1
+      with:
+        chromedriver-version: '88.0.4324.96'
+    - run: |
+        export DISPLAY=:99
+        chromedriver --url-base=/wd/hub &
+        sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
     - name: Functional Test
       run: npm run test:functional
       env:
