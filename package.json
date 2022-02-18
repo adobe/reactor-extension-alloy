@@ -22,7 +22,7 @@
     "test:unit:watch": "karma start",
     "test:unit:watch:chrome": "karma start --browsers Chrome",
     "test:functional": "./scripts/functional.js",
-    "test:functional:saucelabs": "./scripts/functional.js --saucelabs",
+    "test:functional:saucelabs": "node ./scripts/functional.js --saucelabs",
     "test:functional:watch": "./scripts/functional.js --watch",
     "test:functional:watch:debug": "echo \"open chrome://inspect in Chrome and click 'inspect'\" && node --inspect-brk ./scripts/functional.js --watch",
     "test": "npm-run-all --parallel test:unit test:functional",
