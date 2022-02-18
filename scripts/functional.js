@@ -21,7 +21,12 @@ const defaultSpecsPath = path.join(
   __dirname,
   "../test/functional/**/*.spec.js"
 );
-const { watch, saucelabs, testName: testNameFilter, specsPath = defaultSpecsPath } = argv;
+const {
+  watch,
+  saucelabs,
+  testName: testNameFilter,
+  specsPath = defaultSpecsPath
+} = argv;
 const createTestCafe = require("testcafe");
 const build = require("./helpers/build");
 const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");

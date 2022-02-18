@@ -54,7 +54,7 @@ jobs:
         EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
       run: |
-        npm run build --if-present
-        ./scripts/functional.js --saucelabs
+        npm run build
+        npm run test:functional:saucelabs
 
 
