@@ -46,10 +46,10 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run build
-    - name: Run test
-      uses: tj-actions/puppeteer@v3.2
-      with:
-        args: npm run test:functional
+    - name: Install Saucelabs
+      run: npm i -g saucectl
+    - name: Functional Test
+      run: npm run test:functional:saucelabs
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
