@@ -47,14 +47,14 @@ jobs:
     - name: Install dependencies
       if: steps.npm-cache.outputs.cache-hit != 'true'
       run: npm ci
-    - name: Build and Test
+    - name: Build
+      run: npm run build
+    - name: Functional Test
+      run: npm run test:functional:saucelabs
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
         EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
-      run: |
-        npm run build
-        npm run test:functional:saucelabs
 
 
