@@ -47,7 +47,7 @@ jobs:
     - name: Build
       run: npm run build
     - name: Install Saucelabs
-      run: npm i -g saucectl
+      run: npm install testcafe-browser-provider-saucelabs
     - name: Functional Test
       run: npm run test:functional:saucelabs
       env:
