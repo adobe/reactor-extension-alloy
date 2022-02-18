@@ -50,7 +50,6 @@ jobs:
     - name: Build
       run: npm run build
     - uses: browser-actions/setup-chrome@latest
-    - run: chrome --version
     - name: Functional Test
       run: npm run test:functional
       env:
