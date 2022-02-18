@@ -54,7 +54,6 @@ jobs:
         sauce-username: ${{ secrets.SAUCE_USERNAME }}
         sauce-access-key: ${{ secrets.SAUCE_ACCESS_KEY }}
         saucectl-version: v0.82.1
-        testing-environment: sauce
     - name: Functional Test
       run: npm run test:functional:saucelabs
       env:
