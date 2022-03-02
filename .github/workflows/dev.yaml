@@ -56,7 +56,7 @@ jobs:
     - name: Install browser provider
       run: npm install -g saucelabs testcafe-browser-provider-saucelabs
     - name: Run custom runner
-      run: npx run test:functional:saucelabs
+      run: npm run test:functional:saucelabs
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
