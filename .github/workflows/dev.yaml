@@ -49,12 +49,10 @@ jobs:
     - name: Build
       run: npm run build
     - uses: actions/checkout@v1
-    - uses: abhi1693/setup-browser@main
+    - uses: browser-actions/setup-chrome@latest
+    - run: npm run test:functional
       with:
-        browser: chrome
-        version: latest
-    - name: Run custom runner
-      run: npm run test:functional
+        chrome-version: beta
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
