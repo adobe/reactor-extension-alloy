@@ -52,7 +52,7 @@ jobs:
       run: npm run build
     - uses: actions/checkout@v1
     - name: Run custom runner
-      run: npm run test:functional
+      run: node ./scripts/functional.js
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
