@@ -49,7 +49,7 @@ jobs:
     - name: Build
       run: npm run build
     - uses: actions/checkout@v1
-    - uses: abhi1693/setup-browser@latest
+    - uses: abhi1693/setup-browser@v0.3.1
       with:
         browser: chrome
         version: latest
