@@ -51,12 +51,10 @@ jobs:
       uses: DevExpress/testcafe-action@latest
       with:
         args: '-v'
-    - uses: saucelabs/sauce-connect-action@v2
+    - uses: saucelabs/saucectl-run-action@v1
       with:
-          username: ${{ secrets.SAUCE_USERNAME }}
-          accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
-          tunnelIdentifier: github-action-tunnel
-          configFile: ${{ github.workspace }}/sc-configuration/config.yaml
+        sauce-username: ${{ secrets.SAUCE_USERNAME }}
+        sauce-access-key: ${{ secrets.SAUCE_ACCESS_KEY }}
     - name: Run custom runner
       run: npm run test:functional:saucelabs
       env:
