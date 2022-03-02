@@ -52,8 +52,7 @@ jobs:
       with:
         args: '-v'
     - name: Run custom runner
-      run: node functional.js
-      working-directory: scripts
+      run: npm run test:functional
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
