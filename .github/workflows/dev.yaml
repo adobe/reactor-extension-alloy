@@ -33,7 +33,7 @@ jobs:
 
   functional-test:
     name: "Functional Test"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-node@v1
     - uses: actions/checkout@v2
@@ -52,7 +52,7 @@ jobs:
       with:
         args: '-v'
     - name: Run custom runner
-      run: npm run test:functional
+      run: npm run test:functional:saucelabs
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
