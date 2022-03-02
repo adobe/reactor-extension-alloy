@@ -33,7 +33,7 @@ jobs:
 
   functional-test:
     name: "Functional Test"
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
@@ -46,14 +46,14 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run build
-    - name: Install Saucelabs
-      run: npm install testcafe-browser-provider-saucelabs
-    - name: Functional Test
-      run: npm run test:functional:saucelabs
+    - uses: actions/checkout@v1
+    - name: Install TestCafe from 'npm' and Run Tests
+      uses: DevExpress/testcafe-action@latest
+      with:
+        args: "chrome ./scripts/functional.js"
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
         EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
-
 
