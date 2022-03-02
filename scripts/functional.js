@@ -21,7 +21,12 @@ const defaultSpecsPath = path.join(
   __dirname,
   "../test/functional/**/*.spec.js"
 );
-const { watch, testName: testNameFilter, specsPath = defaultSpecsPath } = argv;
+const {
+  watch,
+  saucelabs,
+  testName: testNameFilter,
+  specsPath = defaultSpecsPath
+} = argv;
 const createTestCafe = require("testcafe");
 const build = require("./helpers/build");
 const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
@@ -57,10 +62,26 @@ const buildComponentFixtures = async () => {
 (async () => {
   await build({ watch });
   await buildComponentFixtures();
-  const testcafe = await createTestCafe("localhost", 1337, 1338);
+
+  const testcafe = await createTestCafe();
+
   const runner = watch
     ? testcafe.createLiveModeRunner()
     : testcafe.createRunner();
+
+  let browsers;
+
+  if (saucelabs) {
+    browsers = [
+      "saucelabs:Chrome@latest:macOS 11.00",
+      "saucelabs:MicrosoftEdge@latest:Windows 10",
+      "saucelabs:Firefox@latest:Windows 10",
+      "saucelabs:Safari@latest:macOS 11.00"
+    ];
+  } else {
+    browsers = "chrome";
+  }
+
   const failedCount = await runner
     .src(specsPath)
     .filter((testName, fixtureName, fixturePath, testMeta, fixtureMeta) => {
@@ -88,7 +109,7 @@ const buildComponentFixtures = async () => {
 
       return true;
     })
-    .browsers("chrome")
+    .browsers(browsers)
     .run();
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
