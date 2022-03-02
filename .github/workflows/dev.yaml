@@ -35,6 +35,7 @@ jobs:
     name: "Functional Test"
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/setup-node@v1
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
       id: npm-cache
@@ -47,10 +48,12 @@ jobs:
     - name: Build
       run: npm run build
     - uses: actions/checkout@v1
-    - name: Install TestCafe from 'npm' and Run Tests
+    - name: Install TestCafe
       uses: DevExpress/testcafe-action@latest
       with:
-        args: "chrome ./scripts/functional.js"
+        args: '-v'
+    - name: Run custom runner
+      run: node ./scripts/functional.js
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
