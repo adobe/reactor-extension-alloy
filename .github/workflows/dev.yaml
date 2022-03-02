@@ -50,7 +50,7 @@ jobs:
     - name: Build
       run: npm run build
     - name: Run custom runner
-      run: node ./scripts/functional.js
+      run: npm run test:functional
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
