@@ -55,13 +55,8 @@ jobs:
         args: '-v'
     - name: Install browser provider
       run: npm install -g saucelabs
-    - name: Start Tunnel
-      run: sl sc --region us-west --tunnel-name "alloy-gh"
-      env:
-        SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-        SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
     - name: Run custom runner
-      run: npm run test:functional:saucelabs
+      run: sl sc --region us-west --tunnel-name "alloy-gh" && npm run test:functional:saucelabs
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
