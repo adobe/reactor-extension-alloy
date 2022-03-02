@@ -51,10 +51,8 @@ jobs:
       uses: DevExpress/testcafe-action@latest
       with:
         args: '-v'
-    - uses: saucelabs/saucectl-run-action@v1
-      with:
-        sauce-username: ${{ secrets.SAUCE_USERNAME }}
-        sauce-access-key: ${{ secrets.SAUCE_ACCESS_KEY }}
+    - name: Install browser provider
+      run: npm install -g testcafe-browser-provider-saucelabs
     - name: Run custom runner
       run: npm run test:functional:saucelabs
       env:
