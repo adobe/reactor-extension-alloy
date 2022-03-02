@@ -54,12 +54,11 @@ jobs:
       with:
         args: '-v'
     - name: Setup Sauce Connect
-      uses: saucelabs/sauce-connect-action@v2.1.1
+      uses: saucelabs/saucectl-run-action@v1
       with:
-        username: ${{ secrets.SAUCE_USERNAME }}
-        accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
-        noSSLBumpDomains: all
-        tunnelIdentifier: "Alloy SDK"
+        sauce-username: ${{ secrets.SAUCE_USERNAME }}
+        sauce-access-key: ${{ secrets.SAUCE_ACCESS_KEY }}
+        testing-environment: sauce
     - name: Run custom runner
       run: npm run test:functional:saucelabs
       env:
