@@ -76,7 +76,7 @@ const buildComponentFixtures = async () => {
       "saucelabs:Safari@latest:macOS 11.00"
     ];
   } else {
-    browsers = "chrome:headless";
+    browsers = "chrome";
   }
 
   const failedCount = await runner
