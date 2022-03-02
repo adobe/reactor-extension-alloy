@@ -50,15 +50,9 @@ jobs:
       run: npm run build
     - uses: actions/checkout@v1
     - name: Install TestCafe
-      uses: DevExpress/testcafe-action@latest
+      uses: Meemaw/testcafe-action@master
       with:
-        args: '-v'
-    - name: Setup Sauce Connect
-      uses: saucelabs/saucectl-run-action@v1
-      with:
-        sauce-username: ${{ secrets.SAUCE_USERNAME }}
-        sauce-access-key: ${{ secrets.SAUCE_ACCESS_KEY }}
-        working-directory: .
+        args: "./scripts/functional.js"
     - name: Run custom runner
       run: npm run test:functional:saucelabs
       env:
