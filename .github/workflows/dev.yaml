@@ -53,8 +53,13 @@ jobs:
       uses: DevExpress/testcafe-action@latest
       with:
         args: '-v'
-    - name: Install browser provider
-      run: npm install -g saucelabs testcafe-browser-provider-saucelabs
+    - name: Setup Sauce Connect
+      uses: saucelabs/sauce-connect-action@master
+      with:
+        username: ${{ secrets.SAUCE_USERNAME }}
+        accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
+        noSSLBumpDomains: all
+        tunnelIdentifier: "Alloy SDK"
     - name: Run custom runner
       run: npm run test:functional:saucelabs
       env:
