@@ -62,16 +62,19 @@ const buildComponentFixtures = async () => {
 (async () => {
   await build({ watch });
   await buildComponentFixtures();
-  const testcafe = await createTestCafe("localhost", 1337, 1338);
+
+  const testcafe = await createTestCafe();
+
   const runner = watch
     ? testcafe.createLiveModeRunner()
     : testcafe.createRunner();
 
   let browsers;
+
   if (saucelabs) {
     browsers = [
       "saucelabs:Chrome@latest:macOS 11.00",
-      "saucelabs:Edge@latest:Windows 10",
+      "saucelabs:MicrosoftEdge@latest:Windows 10",
       "saucelabs:Firefox@latest:Windows 10",
       "saucelabs:Safari@latest:macOS 11.00"
     ];
