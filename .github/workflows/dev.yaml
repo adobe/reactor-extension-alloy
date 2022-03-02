@@ -51,6 +51,12 @@ jobs:
       uses: DevExpress/testcafe-action@latest
       with:
         args: '-v'
+    - uses: saucelabs/sauce-connect-action@v2
+      with:
+          username: ${{ secrets.SAUCE_USERNAME }}
+          accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
+          tunnelIdentifier: github-action-tunnel
+          configFile: ${{ github.workspace }}/sc-configuration/config.yaml
     - name: Run custom runner
       run: npm run test:functional:saucelabs
       env:
@@ -58,4 +64,3 @@ jobs:
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
         EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
-
