@@ -75,6 +75,7 @@ const createExpectMatch = selector => async value => {
 };
 
 const createClick = selector => async () => {
+  await t.expect(selector.exists).ok();
   await t.click(selector);
 };
 

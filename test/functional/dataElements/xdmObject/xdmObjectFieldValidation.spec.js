@@ -51,6 +51,7 @@ test("a populated required field is valid", async () => {
 
 test("an empty required field is valid if parent object is not populated", async () => {
   const extensionViewController = await initializeExtensionView();
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await editor.expectExists();
   await extensionViewController.expectIsValid();
 });
