@@ -243,7 +243,8 @@ const componentWrappers = {
         await createSelectMenuOption(popoverMenuSelector)(label);
       },
       async expectSelectedOptionLabel(label) {
-        await t.expect(selector.innerText).eql(label);
+        // Safari includes a newline at the end of the selected option label innerText
+        await t.expect(selector.innerText).contains(label);
       },
       async expectMenuOptionLabels(labels) {
         await compatibleClick(selector);
