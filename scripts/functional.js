@@ -72,12 +72,7 @@ const buildComponentFixtures = async () => {
   let browsers;
 
   if (saucelabs) {
-    browsers = [
-      "saucelabs:Chrome@latest:macOS 11.00",
-      "saucelabs:MicrosoftEdge@latest:Windows 10",
-      "saucelabs:Firefox@latest:Windows 10",
-      "saucelabs:Safari@latest:macOS 11.00"
-    ];
+    browsers = ["saucelabs:Chrome@latest:macOS 11.00"];
   } else {
     browsers = "chrome";
   }
