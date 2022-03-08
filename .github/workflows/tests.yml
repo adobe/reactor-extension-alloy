@@ -1,4 +1,4 @@
-name: Alloy Reactor Extension Dev
+name: Alloy Reactor Extension
 on:
   push:
   workflow_dispatch:

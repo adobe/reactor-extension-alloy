@@ -69,11 +69,19 @@ const buildComponentFixtures = async () => {
     ? testcafe.createLiveModeRunner()
     : testcafe.createRunner();
 
+  let concurrency;
   let browsers;
 
   if (saucelabs) {
-    browsers = ["saucelabs:Chrome@latest:macOS 11.00"];
+    browsers = [
+      "saucelabs:Chrome@latest:macOS 11.00",
+      "saucelabs:MicrosoftEdge@latest:Windows 10",
+      "saucelabs:Firefox@latest:Windows 10",
+      "saucelabs:Safari@latest:macOS 11.00"
+    ];
+    concurrency = 5;
   } else {
+    concurrency = 1;
     browsers = "chrome";
   }
 
@@ -105,6 +113,7 @@ const buildComponentFixtures = async () => {
       return true;
     })
     .browsers(browsers)
+    .concurrency(concurrency)
     .run();
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
