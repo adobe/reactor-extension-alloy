@@ -49,7 +49,7 @@ jobs:
     - name: Build
       run: npm run build
     - name: Run Functional Tests
-      run: node ./scripts/functional.js --saucelabs
+      run: npx run test:functional:saucelabs
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
