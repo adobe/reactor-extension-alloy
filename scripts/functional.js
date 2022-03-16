@@ -79,7 +79,7 @@ const buildComponentFixtures = async () => {
       "saucelabs:Firefox@latest:Windows 10",
       "saucelabs:Safari@latest:macOS 11.00"
     ];
-    concurrency = 10;
+    concurrency = 2;
   } else {
     concurrency = 1;
     browsers = "chrome";
