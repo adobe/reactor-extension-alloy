@@ -79,7 +79,7 @@ const buildComponentFixtures = async () => {
       "saucelabs:Firefox@latest:Windows 10",
       "saucelabs:Safari@latest:macOS 11.00"
     ];
-    concurrency = 10;
+    concurrency = 5;
   } else {
     concurrency = 1;
     browsers = "chrome";
@@ -114,7 +114,15 @@ const buildComponentFixtures = async () => {
     })
     .browsers(browsers)
     .concurrency(concurrency)
-    .run();
+    .run({
+      skipJsErrors: true,
+      quarantineMode: true,
+      selectorTimeout: 50000,
+      assertionTimeout: 7000,
+      pageLoadTimeout: 8000,
+      speed: 1,
+      stopOnFirstFail: true
+    });
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
 })();

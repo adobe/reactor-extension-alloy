@@ -1,11 +1,13 @@
 name: Alloy Reactor Extension
 on:
   push:
+  schedule:
+    - cron: "0 */24 * * *"
   workflow_dispatch:
 env:
   SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
   SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-  SAUCE_JOB: "Alloy Reactor Extension Dev"
+  SAUCE_JOB: "Alloy Reactor Extension"
   SAUCE_CAPABILITIES_OVERRIDES_PATH: 'sauceLabsCapabilities.json'
   EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
   EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
@@ -49,7 +51,7 @@ jobs:
     - name: Build
       run: npm run build
     - name: Run Functional Tests
-      run: npx run test:functional:saucelabs
+      run: npm run test:functional:saucelabs
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
