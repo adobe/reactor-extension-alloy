@@ -15,7 +15,7 @@ env:
 jobs:
   unit-test:
     name: "Unit Test"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
@@ -32,7 +32,7 @@ jobs:
       run: npx karma start karma.saucelabs.conf.js --single-run
   functional-chrome:
     name: "Functional Chrome"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-node@v1
       with:
@@ -48,7 +48,7 @@ jobs:
     - name: Build
       run: npm run build
     - name: Run Functional Tests
-      run: npm run test:saucelabs:functional:chrome
+      run: npm run test:functional:saucelabs:chrome
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
@@ -56,7 +56,7 @@ jobs:
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
   functional-firefox:
     name: "Functional Firefox"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-node@v1
       with:
@@ -80,7 +80,7 @@ jobs:
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
   functional-edge:
     name: "Functional Edge"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-node@v1
       with:
@@ -104,7 +104,7 @@ jobs:
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
   functional-safari:
     name: "Functional Safari"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-node@v1
       with:
