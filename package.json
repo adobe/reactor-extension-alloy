@@ -116,6 +116,6 @@
     "stylus": "^0.54.8",
     "testcafe": "^1.18.4",
     "testcafe-browser-provider-saucelabs": "^1.9.0",
-    "testcafe-reporter-saucelabs": "^0.2.1"
+    "testcafe-reporter-minimal": "^2.1.0"
   }
 }

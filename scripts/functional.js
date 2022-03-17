@@ -83,7 +83,7 @@ const buildComponentFixtures = async () => {
       "saucelabs:Safari@latest:macOS 11.00"
     ];
     concurrency = 2;
-    reporter = "saucelabs";
+    reporter = "minimal";
   } else {
     concurrency = 1;
     browsers = "chrome";
