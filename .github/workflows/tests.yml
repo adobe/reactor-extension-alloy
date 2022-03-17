@@ -31,7 +31,7 @@ jobs:
     - name: Run Unit Test
       run: npx karma start karma.saucelabs.conf.js --single-run
   functional-chrome:
-    name: "Functional Chrome"
+    name: "Chrome Functional Test"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-node@v1
@@ -55,7 +55,7 @@ jobs:
         EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
   functional-firefox:
-    name: "Functional Firefox"
+    name: "Firefox Functional Test"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-node@v1
@@ -79,7 +79,7 @@ jobs:
         EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
   functional-edge:
-    name: "Functional Edge"
+    name: "Edge Functional Test"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-node@v1
@@ -103,7 +103,7 @@ jobs:
         EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
         EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
   functional-safari:
-    name: "Functional Safari"
+    name: "Safari Functional Test"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-node@v1
