@@ -48,7 +48,7 @@ jobs:
     - name: Build
       run: npm run build
     - name: Run Functional Tests
-      run: npm run test:functional:chrome
+      run: npm run test:saucelabs:functional:chrome
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
@@ -72,7 +72,7 @@ jobs:
     - name: Build
       run: npm run build
     - name: Run Functional Tests
-      run: npm run test:functional:firefox
+      run: npm run test:functional:saucelabs:firefox
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
@@ -96,7 +96,7 @@ jobs:
     - name: Build
       run: npm run build
     - name: Run Functional Tests
-      run: npm run test:functional:edge
+      run: npm run test:functional:saucelabs:edge
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
@@ -120,7 +120,7 @@ jobs:
     - name: Build
       run: npm run build
     - name: Run Functional Tests
-      run: npm run test:functional:safari
+      run: npm run test:functional:saucelabs:safari
       env:
         SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
         SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
