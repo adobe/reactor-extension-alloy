@@ -79,16 +79,16 @@ const buildComponentFixtures = async () => {
   let browsers;
 
   if (chrome) {
-    browsers = ["saucelabs:Chrome@latest:macOS 11.00"];
+    browsers = "saucelabs:Chrome@latest:macOS 11.00";
     concurrency = 2;
   } else if (firefox) {
-    browsers = ["saucelabs:Firefox@latest:macOS 11.00"];
+    browsers = "saucelabs:Firefox@latest:macOS 11.00";
     concurrency = 2;
   } else if (safari) {
-    browsers = ["saucelabs:Safari@latest:macOS 11.00"];
+    browsers = "saucelabs:Safari@latest:macOS 11.00";
     concurrency = 2;
   } else if (edge) {
-    browsers = ["saucelabs:Edge@latest:Windows 10"];
+    browsers = "saucelabs:Edge@latest:Windows 10";
     concurrency = 2;
   } else {
     concurrency = 1;
