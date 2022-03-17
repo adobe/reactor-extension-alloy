@@ -118,9 +118,6 @@ const buildComponentFixtures = async () => {
     .run({
       skipJsErrors: true,
       quarantineMode: true,
-      selectorTimeout: 50000,
-      assertionTimeout: 7000,
-      pageLoadTimeout: 8000,
       speed: 1,
       stopOnFirstFail: true
     });
