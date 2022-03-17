@@ -26,6 +26,10 @@ const defaultSpecsPath = path.join(
 const {
   watch,
   saucelabs,
+  firefox,
+  chrome,
+  safari,
+  edge,
   testName: testNameFilter,
   specsPath = defaultSpecsPath
 } = argv;
@@ -73,17 +77,19 @@ const buildComponentFixtures = async () => {
 
   let concurrency;
   let browsers;
-  let reporter;
 
-  if (saucelabs) {
-    browsers = [
-      "saucelabs:Chrome@latest:macOS 11.00",
-      "saucelabs:MicrosoftEdge@latest:Windows 10",
-      "saucelabs:Firefox@latest:macOS 11.00",
-      "saucelabs:Safari@latest:macOS 11.00"
-    ];
+  if (chrome) {
+    browsers = ["saucelabs:Chrome@latest:macOS 11.00"];
     concurrency = 2;
-    reporter = "minimal";
+  } else if (firefox) {
+    browsers = ["saucelabs:Firefox@latest:macOS 11.00"];
+    concurrency = 2;
+  } else if (safari) {
+    browsers = ["saucelabs:Safari@latest:macOS 11.00"];
+    concurrency = 2;
+  } else if (edge) {
+    browsers = ["saucelabs:Edge@latest:Windows 10"];
+    concurrency = 2;
   } else {
     concurrency = 1;
     browsers = "chrome";
@@ -117,7 +123,6 @@ const buildComponentFixtures = async () => {
       return true;
     })
     .browsers(browsers)
-    .reporter(reporter)
     .concurrency(concurrency)
     .run({
       skipJsErrors: true,
