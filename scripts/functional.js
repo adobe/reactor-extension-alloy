@@ -17,6 +17,8 @@ const argv = require("minimist")(process.argv.slice(2));
 const chalk = require("chalk");
 const Bundler = require("parcel-bundler");
 
+require("events").EventEmitter.defaultMaxListeners = 256;
+
 const defaultSpecsPath = path.join(
   __dirname,
   "../test/functional/**/*.spec.js"
@@ -79,7 +81,7 @@ const buildComponentFixtures = async () => {
       "saucelabs:Firefox@latest:Windows 10",
       "saucelabs:Safari@latest:macOS 11.00"
     ];
-    concurrency = 5;
+    concurrency = 20;
   } else {
     concurrency = 1;
     browsers = "chrome";
