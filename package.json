@@ -1,6 +1,6 @@
 {
   "name": "reactor-extension-alloy",
-  "version": "2.9.0",
+  "version": "2.10.0",
   "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
   "author": "Adobe",
   "license": "Apache-2.0",
@@ -47,7 +47,7 @@
     ]
   },
   "dependencies": {
-    "@adobe/alloy": "^2.8.0",
+    "@adobe/alloy": "^2.9.0",
     "@adobe/react-spectrum": "^3.11.0",
     "@react-spectrum/combobox": "^3.0.0-rc.0",
     "@react-stately/data": "^3.4.0",
@@ -94,7 +94,7 @@
     "husky": "^6.0.0",
     "jasmine-core": "^3.6.0",
     "json": "^11.0.0",
-    "karma": "^6.1.1",
+    "karma": "^6.3.16",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^2.0.3",
     "karma-jasmine": "^4.0.1",
