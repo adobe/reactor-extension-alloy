@@ -17,16 +17,18 @@ const chalk = require("chalk");
 
 const CLIENT_SECRET_ENV_VAR_NAME = "EDGE_E2E_CLIENT_SECRET";
 const PRIVATE_KEY_FILE_ENV_VAR_NAME = "EDGE_E2E_PRIVATE_KEY_FILE";
+const PRIVATE_KEY_CONTENTS_ENV_VAR_NAME = "EDGE_E2E_PRIVATE_KEY_CONTENTS";
 
 const clientSecret = process.env[CLIENT_SECRET_ENV_VAR_NAME];
 const privateKeyPath = process.env[PRIVATE_KEY_FILE_ENV_VAR_NAME];
+const privateKeyContents = process.env[PRIVATE_KEY_CONTENTS_ENV_VAR_NAME];
 
 let credentials;
 
-if (clientSecret && privateKeyPath) {
+if (clientSecret && (privateKeyPath || privateKeyContents)) {
   let privateKey;
   try {
-    privateKey = fs.readFileSync(privateKeyPath);
+    privateKey = privateKeyContents || fs.readFileSync(privateKeyPath);
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(
