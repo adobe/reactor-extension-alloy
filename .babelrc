@@ -2,7 +2,6 @@
   "plugins": [
     "version"
   ],
-  "presets": [["@babel/preset-env"]],
   "env": {
     "production": {
       "plugins": [
