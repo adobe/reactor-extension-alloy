@@ -19,13 +19,17 @@ const fetchConfigs = async ({
   search,
   start,
   limit,
-  signal
+  signal,
+  sandbox
 }) => {
   const params = new URLSearchParams();
   params.append("orderby", "title");
 
   if (search) {
     params.append("property", `title:${search}`);
+  }
+  if (limit) {
+    params.append("limit", limit);
   }
 
   if (start) {
@@ -37,13 +41,17 @@ const fetchConfigs = async ({
   }
 
   let parsedResponse;
+  const headers = {
+    "x-sandbox-name": sandbox
+  };
 
   try {
     parsedResponse = await fetchFromEdge({
       orgId,
       imsAccess,
-      path: "/configs/user/edge",
+      path: "/metadata/namespaces/edge/datasets/datastreams/records/",
       params,
+      headers,
       signal
     });
   } catch (e) {
@@ -57,14 +65,14 @@ const fetchConfigs = async ({
   }
 
   const {
-    parsedBody: { _embedded, page }
+    parsedBody: { _embedded, _links }
   } = parsedResponse;
 
   return {
     // eslint-disable-next-line no-underscore-dangle
-    results: _embedded?.configs ?? [],
+    results: _embedded?.records ?? [],
     // parsedBody.page won't exist if there were 0 results
-    nextPage: page && page.totalPages > page.number ? page.number + 1 : null
+    nextPage: _links ? _links.next.href : null
   };
 };
 
