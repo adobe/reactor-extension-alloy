@@ -38,6 +38,8 @@ const EdgeConfigEnvironment = ({
           name={`${name}.datastreamId`}
           selectedSandbox={selectedSandbox}
           initInfo={initInfo}
+          environmentType={environmentType}
+          label=" "
         />
       )}
     </div>

@@ -13,13 +13,13 @@ import React, { useEffect } from "react";
 import { useAsyncList } from "@react-stately/data";
 import { Item, Link } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
+import { useField } from "formik";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import useReportAsyncError from "../utils/useReportAsyncError";
 import fetchConfigs from "./utils/fetchConfigs";
 import usePrevious from "../utils/usePrevious";
 import Alert from "../components/alert";
 import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
-import "./style.styl";
 
 const getKey = datastream => datastream && datastream.data.title;
 const getLabel = datastream => {
@@ -40,8 +40,10 @@ const DatastreamSelector = ({
   items,
   label,
   description,
-  isRequired
+  isRequired,
+  environmentType
 }) => {
+  const [{ value }, , { setValue }] = useField(name);
   const reportAsyncError = useReportAsyncError();
   const previousSelectedSandbox = usePrevious(selectedSandbox);
 
@@ -90,6 +92,9 @@ const DatastreamSelector = ({
 
     if (previousSelectedSandbox && selectedSandbox) {
       datastreamList.selectedKeys = null;
+      if (value) {
+        setValue(undefined);
+      }
       datastreamList.reload();
     }
   }, [selectedSandbox ? selectedSandbox.name : null]);
@@ -115,14 +120,13 @@ const DatastreamSelector = ({
     <FieldDescriptionAndError description="">
       <FormikPicker
         name={name}
-        data-test-id="datastream_field"
+        data-test-id={`${environmentType}DatastreamField`}
         label={label}
         placeholder="Select a datastream"
         items={datastreamList.items}
         isLoading={datastreamList.isLoading}
         isDisabled={!datastreamList.isLoading && !datastreamList.items.length}
         width="size-5000"
-        UNSAFE_className="Datastream"
         description={description}
         isRequired={isRequired}
       >
@@ -143,7 +147,8 @@ DatastreamSelector.propTypes = {
   selectedSandbox: PropTypes.object,
   description: PropTypes.string,
   items: PropTypes.array,
-  isRequired: PropTypes.bool
+  isRequired: PropTypes.bool,
+  environmentType: PropTypes.string
 };
 
 export default DatastreamSelector;

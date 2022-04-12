@@ -34,7 +34,8 @@ const SandboxSelector = ({
   label,
   isDisabled,
   isHidden,
-  isRequired
+  isRequired,
+  environmentType
 }) => {
   const isFirstRender = useIsFirstRender();
 
@@ -72,7 +73,7 @@ const SandboxSelector = ({
   return (
     <FormikPicker
       name={name}
-      data-test-id="sandboxField"
+      data-test-id={`${environmentType}SandboxField`}
       placeholder="Select a sandbox"
       items={sandboxList.items}
       isLoading={sandboxList.isLoading}
@@ -101,7 +102,8 @@ SandboxSelector.propTypes = {
   name: PropTypes.string,
   isDisabled: PropTypes.bool,
   isHidden: PropTypes.bool,
-  isRequired: PropTypes.bool
+  isRequired: PropTypes.bool,
+  environmentType: PropTypes.string
 };
 
 export default SandboxSelector;

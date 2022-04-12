@@ -15,6 +15,7 @@ import PropTypes from "prop-types";
 import EdgeConfigEnvironment from "./edgeConfigEnvironment";
 import EdgeConfigurationSelectInputMethodOneSandbox from "./edgeConfigurationSelectInputMethodOneSandbox";
 import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
+import { DEVELOPMENT, PRODUCTION, STAGING } from "./constants/environmentType";
 
 const prepareSandboxMap = sandboxes => {
   return sandboxes.reduce((acc, sandbox) => {
@@ -48,7 +49,7 @@ const EdgeConfigurationSelectInputMethod = ({
           initInfo={initInfo}
           sandboxes={sandboxes}
           sandboxMap={sandboxMap}
-          environmentType="Production"
+          environmentType={PRODUCTION}
           description=""
           isRequired
         />
@@ -59,7 +60,7 @@ const EdgeConfigurationSelectInputMethod = ({
           initInfo={initInfo}
           sandboxes={sandboxes}
           sandboxMap={sandboxMap}
-          environmentType="Staging"
+          environmentType={STAGING}
         />
       </FieldDescriptionAndError>
       <FieldDescriptionAndError description="Choose the sandbox and datastream for this environment.">
@@ -68,7 +69,7 @@ const EdgeConfigurationSelectInputMethod = ({
           initInfo={initInfo}
           sandboxes={sandboxes}
           sandboxMap={sandboxMap}
-          environmentType="Development"
+          environmentType={DEVELOPMENT}
         />
       </FieldDescriptionAndError>
     </>
