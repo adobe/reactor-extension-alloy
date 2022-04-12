@@ -196,9 +196,18 @@ test("initializes form fields with no settings", async () => {
   await instances[0].nameField.expectValue("alloy");
   await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
   await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
-  await instances[0].edgeConfig.inputMethodSelect.edgeConfigField.expectText(
-    ""
+  await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectText(
+    "Select a sandbox"
   );
+  await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectText(
+    "Select a sandbox"
+  );
+  await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectText(
+    "Select a sandbox"
+  );
+  await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectNotExists();
+  await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectNotExists();
+  await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectNotExists();
   await instances[0].orgIdField.expectValue(
     "5BFE274A5F6980A50A495C08@AdobeOrg"
   );
