@@ -60,6 +60,7 @@ const DatastreamSelector = ({
             orgId,
             imsAccess,
             signal,
+            limit: 1000,
             sandbox: selectedSandbox.name
           }));
         } catch (e) {
