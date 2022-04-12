@@ -65,7 +65,11 @@ const createFindTheEdgeConfig = (orgId, imsAccess) => {
   };
 };
 
-async function getFormData(configId, datastreamsMap, decompositeId) {
+const getEnvironmentEdgeConfigs = async (
+  configId,
+  datastreamsMap,
+  decompositeId
+) => {
   return new Promise((resolve, reject) => {
     if (datastreamsMap[configId]) {
       resolve({
@@ -84,7 +88,7 @@ async function getFormData(configId, datastreamsMap, decompositeId) {
 
     reject(new Error("no datastream found"));
   });
-}
+};
 
 const getSelectInputMethodStateForExistingInstance = async ({
   orgId,
@@ -198,21 +202,21 @@ const getSelectInputMethodStateForExistingInstance = async ({
     datastreamsMap = prepareDatastreamsMap(edgeConfigs);
 
     if (instanceSettings.edgeConfigId) {
-      selectInputMethodState.productionEnvironment = await getFormData(
+      selectInputMethodState.productionEnvironment = await getEnvironmentEdgeConfigs(
         instanceSettings.edgeConfigId,
         datastreamsMap,
         decompositeIds.productionEnvironment
       );
     }
     if (instanceSettings.stagingEdgeConfigId) {
-      selectInputMethodState.stagingEnvironment = await getFormData(
+      selectInputMethodState.stagingEnvironment = await getEnvironmentEdgeConfigs(
         instanceSettings.stagingEdgeConfigId,
         datastreamsMap,
         decompositeIds.stagingEnvironment
       );
     }
     if (instanceSettings.developmentEdgeConfigId) {
-      selectInputMethodState.developmentEnvironment = await getFormData(
+      selectInputMethodState.developmentEnvironment = await getEnvironmentEdgeConfigs(
         instanceSettings.developmentEdgeConfigId,
         datastreamsMap,
         decompositeIds.developmentEnvironment
