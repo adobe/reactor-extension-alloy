@@ -33,16 +33,18 @@ for (let i = 0; i < 3; i += 1) {
         "edgeConfigInputMethodFreeformRadio"
       ),
       inputMethodSelect: {
-        edgeConfigField: spectrum.comboBox("edgeConfigComboBox"),
-        productionEnvironmentField: spectrum.comboBox(
-          "productionEnvironmentComboBox"
-        ),
-        stagingEnvironmentField: spectrum.comboBox(
-          "stagingEnvironmentComboBox"
-        ),
-        developmentEnvironmentField: spectrum.comboBox(
-          "developmentEnvironmentComboBox"
-        )
+        production: {
+          datastreamField: spectrum.picker("ProductionDatastreamField"),
+          sandboxField: spectrum.picker("ProductionSandboxField")
+        },
+        staging: {
+          datastreamField: spectrum.picker("StagingDatastreamField"),
+          sandboxField: spectrum.picker("StagingSandboxField")
+        },
+        development: {
+          datastreamField: spectrum.picker("DevelopmentDatastreamField"),
+          sandboxField: spectrum.picker("DevelopmentSandboxField")
+        }
       },
       inputMethodFreeform: {
         productionEnvironmentField: spectrum.textField(
