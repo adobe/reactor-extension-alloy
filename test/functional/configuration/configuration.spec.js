@@ -196,18 +196,18 @@ test("initializes form fields with no settings", async () => {
   await instances[0].nameField.expectValue("alloy");
   await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
   await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
-  await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectText(
-    "Select a sandbox"
+  await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
+    "PRODUCTION Prod (VA7)"
   );
-  await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectText(
-    "Select a sandbox"
+  await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
+    "Select a datastream"
   );
-  await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectText(
-    "Select a sandbox"
+  await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
+    "Select a datastream"
   );
-  await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectNotExists();
-  await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectNotExists();
-  await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectNotExists();
+  await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
+    "Select a datastream"
+  );
   await instances[0].orgIdField.expectValue(
     "5BFE274A5F6980A50A495C08@AdobeOrg"
   );
@@ -355,7 +355,7 @@ test("shows error for empty required values", async () => {
   await instances[0].edgeBasePathField.clear();
   await extensionViewController.expectIsNotValid();
   await instances[0].nameField.expectError();
-  await instances[0].edgeConfig.inputMethodSelect.edgeConfigField.expectError();
+  await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectError();
   await instances[0].orgIdField.expectError();
   await instances[0].edgeDomainField.expectError();
   await instances[0].edgeBasePathField.expectError();
@@ -469,7 +469,8 @@ test("shows error for bad default consent data element", async () => {
   // This seems more like a bug in TestCafe, but we're working around it by waiting
   // for the combo box to be present before trying to click the data element
   // radio button.
-  await instances[0].edgeConfig.inputMethodSelect.edgeConfigField.expectExists();
+  await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectExists();
+  await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectExists();
 
   await instances[0].defaultConsent.dataElementRadio.click();
   await instances[0].defaultConsent.dataElementField.typeText(
