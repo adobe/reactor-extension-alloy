@@ -16,8 +16,8 @@ governing permissions and limitations under the License.
   white-space: pre;
 }
 
-button.CodePreview-openEditorButton {
-  position: absolute;
+.CodePreview-openEditorButton {
+  position: absolute !important;
   // The TextArea component has been given a specific
   // height, but that height includes the label as well.
   // we want the button to be centered within the underlying
@@ -27,3 +27,12 @@ button.CodePreview-openEditorButton {
   transform: translate(-50%, -50%);
   white-space: nowrap;
 }
+
+// This is a workaround for a react-spectrum bug
+// https://github.com/adobe/react-spectrum/issues/2475
+.CodePreview-textArea {
+  > div, .spectrum-Field-field--multiline {
+    flex: 1 1 auto !important;
+  }
+}
+

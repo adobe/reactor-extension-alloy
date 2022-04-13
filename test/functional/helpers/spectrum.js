@@ -40,6 +40,19 @@ const compatibleClick = async selector => {
   })();
 };
 
+const compatibleSelectAll = async selector => {
+  await t.expect(selector.exists).ok();
+  await t.scrollIntoView(selector);
+  await ClientFunction(() => {
+    const element = selector();
+    element.selectionStart = 0;
+    element.selectionEnd = element.value.length - 1;
+    console.log(element);
+  }).with({
+    dependencies: { selector }
+  })();
+};
+
 const createExpectError = selector => async () => {
   await t
     .expect(selector.getAttribute(invalidAttribute))
@@ -269,10 +282,13 @@ const componentWrappers = {
       expectValue: createExpectValue(selector),
       expectMatch: createExpectMatch(selector),
       async typeText(text, options) {
-        await t.typeText(selector, text, options);
+        await t.scrollIntoView(selector).typeText(selector, text, options);
       },
       async clear() {
-        await t.selectText(selector).pressKey("delete");
+        // Textfields with long values show an ellipsis at the end of the input.
+        // We need to click on the field first to turn it into a normal input.
+        //await compatibleClick(selector);
+        await t.scrollIntoView(selector).click(selector).selectText(selector).pressKey("delete");
       }
     };
   },
