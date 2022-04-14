@@ -413,7 +413,8 @@ export const bridge = {
       instanceValues.edgeConfigSelectInputMethod = await getSelectInputMethodStateForNewInstance(
         {
           orgId,
-          imsAccess
+          imsAccess,
+          context
         }
       );
       instanceValues.edgeConfigFreeformInputMethod = getFreeformInputMethodStateForExistingInstance(
