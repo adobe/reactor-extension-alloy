@@ -5,6 +5,7 @@ import SandboxSelector from "./sandboxSelector";
 import DatastreamSelector from "./datastreamSelector";
 import { PRODUCTION } from "./constants/environmentType";
 import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
+import "./style.styl";
 
 const prepareSandboxMap = sandboxes => {
   return sandboxes.reduce((acc, sandbox) => {
@@ -28,58 +29,48 @@ const EdgeConfigEnvironment = ({
 
   const sandboxMap = prepareSandboxMap(sandboxes);
 
-  const oneSandboxOrganization = () => {
-    return sandboxes.length === 1;
+  const defaultSandboxOnly = sandboxes.length === 1;
+
+  const selectedSandbox = sandboxMap[sandboxName];
+
+  const isSandboxHidden = defaultSandboxOnly && environmentType !== PRODUCTION;
+
+  const isSandboxDisabled =
+    defaultSandboxOnly && environmentType === PRODUCTION;
+
+  const datastreamLabel = defaultSandboxOnly
+    ? `${environmentType} datastream`
+    : " ";
+
+  const sandboxLabel = defaultSandboxOnly
+    ? "Adobe Experience Platform sandbox"
+    : `${environmentType} environment`;
+
+  const descriptionAndErrorMessage = `Choose the ${
+    defaultSandboxOnly ? "" : "sandbox and"
+  } datastream for the ${environmentType} environment.`;
+
+  const sandboxProps = {
+    isHidden: isSandboxHidden,
+    isDisabled: isSandboxDisabled,
+    isRequired,
+    label: sandboxLabel,
+    "data-test-id": `${environmentType}SandboxField`,
+    UNSAFE_className: "CapitalizedLabel"
   };
+  const datastreamProps = {
+    isRequired: defaultSandboxOnly ? isRequired : false,
+    label: datastreamLabel,
+    "data-test-id": `${environmentType}DatastreamField`,
+    UNSAFE_className: "CapitalizedLabel"
+  };
+
   const onSandboxSelectionChange = sandbox => {
     setSandboxName(sandbox.name);
   };
 
-  const selectedSandbox = sandboxMap[sandboxName];
-
-  const isSandboxHidden = () => {
-    return oneSandboxOrganization() && environmentType !== PRODUCTION;
-  };
-
-  const isSandboxDisabled = () => {
-    return oneSandboxOrganization() && environmentType === PRODUCTION;
-  };
-
-  const getDatastreamLabel = () => {
-    if (oneSandboxOrganization()) {
-      return `${environmentType} datastream`;
-    }
-    return " ";
-  };
-
-  const getSandboxLabel = () => {
-    if (oneSandboxOrganization()) {
-      return "Adobe Experience Platform sandbox";
-    }
-    return `${environmentType} environment`;
-  };
-
-  const getDescriptionAndErrorMessage = () => {
-    return `Choose the ${
-      oneSandboxOrganization() ? "" : "sandbox and"
-    } datastream for the ${environmentType} environment.`;
-  };
-
-  const sandboxProps = {
-    isHidden: isSandboxHidden(),
-    isDisabled: isSandboxDisabled(),
-    isRequired,
-    label: getSandboxLabel(),
-    "data-test-id": `${environmentType}SandboxField`
-  };
-  const datastreamProps = {
-    isRequired: oneSandboxOrganization() ? isRequired : false,
-    label: getDatastreamLabel(),
-    "data-test-id": `${environmentType}DatastreamField`
-  };
-
   return (
-    <FieldDescriptionAndError description={getDescriptionAndErrorMessage()}>
+    <FieldDescriptionAndError description={descriptionAndErrorMessage}>
       <>
         <SandboxSelector
           name={`${name}.sandbox`}
