@@ -3,56 +3,111 @@ import PropTypes from "prop-types";
 import { useField } from "formik";
 import SandboxSelector from "./sandboxSelector";
 import DatastreamSelector from "./datastreamSelector";
+import { PRODUCTION } from "./constants/environmentType";
+import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
+
+const prepareSandboxMap = sandboxes => {
+  return sandboxes.reduce((acc, sandbox) => {
+    acc[sandbox.name] = sandbox;
+    return acc;
+  }, {});
+};
 
 const EdgeConfigEnvironment = ({
   name,
   initInfo,
-  sandboxMap,
-  sandboxes,
   environmentType,
+  context,
   isRequired
 }) => {
   const [{ value: sandboxName }, , { setValue: setSandboxName }] = useField(
     `${name}.sandbox`
   );
+  const { current } = context;
+  const { sandboxes, datastreams } = current;
 
+  const sandboxMap = prepareSandboxMap(sandboxes);
+
+  const oneSandboxOrganization = () => {
+    return sandboxes.length === 1;
+  };
   const onSandboxSelectionChange = sandbox => {
     setSandboxName(sandbox.name);
   };
 
   const selectedSandbox = sandboxMap[sandboxName];
 
+  const isSandboxHidden = () => {
+    return oneSandboxOrganization() && environmentType !== PRODUCTION;
+  };
+
+  const isSandboxDisabled = () => {
+    return oneSandboxOrganization() && environmentType === PRODUCTION;
+  };
+
+  const getDatastreamLabel = () => {
+    if (oneSandboxOrganization()) {
+      return `${environmentType} datastream`;
+    }
+    return " ";
+  };
+
+  const getSandboxLabel = () => {
+    if (oneSandboxOrganization()) {
+      return "Adobe Experience Platform sandbox";
+    }
+    return `${environmentType} environment`;
+  };
+
+  const getDescriptionAndErrorMessage = () => {
+    return `Choose the ${
+      oneSandboxOrganization() ? "" : "sandbox and"
+    } datastream for the ${environmentType} environment.`;
+  };
+
+  const sandboxProps = {
+    isHidden: isSandboxHidden(),
+    isDisabled: isSandboxDisabled(),
+    isRequired,
+    label: getSandboxLabel(),
+    "data-test-id": `${environmentType}SandboxField`
+  };
+  const datastreamProps = {
+    isRequired: oneSandboxOrganization() ? isRequired : false,
+    label: getDatastreamLabel(),
+    "data-test-id": `${environmentType}DatastreamField`
+  };
+
   return (
-    <div>
-      <SandboxSelector
-        name={`${name}.sandbox`}
-        defaultSelectedSandbox={selectedSandbox}
-        onSelectionChange={onSandboxSelectionChange}
-        label={`${environmentType} Environment`}
-        items={sandboxes}
-        environmentType={environmentType}
-        isRequired={isRequired}
-      />
-      {selectedSandbox && (
-        <DatastreamSelector
-          name={`${name}.datastreamId`}
-          selectedSandbox={selectedSandbox}
-          initInfo={initInfo}
-          environmentType={environmentType}
-          label=" "
+    <FieldDescriptionAndError description={getDescriptionAndErrorMessage()}>
+      <>
+        <SandboxSelector
+          name={`${name}.sandbox`}
+          defaultSelectedSandbox={selectedSandbox}
+          onSelectionChange={onSandboxSelectionChange}
+          items={sandboxes}
+          otherProps={sandboxProps}
         />
-      )}
-    </div>
+        {selectedSandbox && (
+          <DatastreamSelector
+            name={`${name}.datastreamId`}
+            selectedSandbox={selectedSandbox}
+            initInfo={initInfo}
+            otherProps={datastreamProps}
+            items={datastreams}
+          />
+        )}
+      </>
+    </FieldDescriptionAndError>
   );
 };
 
 EdgeConfigEnvironment.propTypes = {
   name: PropTypes.string.isRequired,
   initInfo: PropTypes.object.isRequired,
-  sandboxes: PropTypes.array.isRequired,
-  sandboxMap: PropTypes.object.isRequired,
   environmentType: PropTypes.string,
-  isRequired: PropTypes.bool
+  isRequired: PropTypes.bool,
+  context: PropTypes.object.isRequired
 };
 
 export default EdgeConfigEnvironment;

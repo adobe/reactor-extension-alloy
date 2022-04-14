@@ -28,9 +28,6 @@ const fetchConfigs = async ({
   if (search) {
     params.append("property", `title:${search}`);
   }
-  if (limit) {
-    params.append("limit", limit);
-  }
 
   if (start) {
     params.append("start", start);

@@ -21,7 +21,8 @@ import usePrevious from "../utils/usePrevious";
 import Alert from "../components/alert";
 import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 
-const getKey = datastream => datastream && datastream.data.title;
+// eslint-disable-next-line no-underscore-dangle
+const getKey = datastream => datastream && datastream._system.id;
 const getLabel = datastream => {
   if (!datastream) {
     return undefined;
@@ -38,10 +39,7 @@ const DatastreamSelector = ({
   initInfo,
   selectedSandbox,
   items,
-  label,
-  description,
-  isRequired,
-  environmentType
+  otherProps
 }) => {
   const [{ value }, , { setValue }] = useField(name);
   const reportAsyncError = useReportAsyncError();
@@ -89,7 +87,9 @@ const DatastreamSelector = ({
 
   useEffect(() => {
     // Reset the datastreams options if the user selects a different sandbox.
-
+    // if the selected sandbox was changed we want to reload the datastreams dropdown and
+    // reset the formik value, otherwise in case there the user haven't selected another datastream
+    // formik will keep the old datastream value( when the extension was previously set up)
     if (previousSelectedSandbox && selectedSandbox) {
       datastreamList.selectedKeys = null;
       if (value) {
@@ -120,19 +120,15 @@ const DatastreamSelector = ({
     <FieldDescriptionAndError description="">
       <FormikPicker
         name={name}
-        data-test-id={`${environmentType}DatastreamField`}
-        label={label}
         placeholder="Select a datastream"
         items={datastreamList.items}
         isLoading={datastreamList.isLoading}
         isDisabled={!datastreamList.isLoading && !datastreamList.items.length}
         width="size-5000"
-        description={description}
-        isRequired={isRequired}
+        {...otherProps}
       >
         {item => {
-          // eslint-disable-next-line no-underscore-dangle
-          return <Item key={item._system.id}>{getLabel(item)}</Item>;
+          return <Item key={getKey(item)}>{getLabel(item)}</Item>;
         }}
       </FormikPicker>
     </FieldDescriptionAndError>
@@ -141,14 +137,11 @@ const DatastreamSelector = ({
 
 DatastreamSelector.propTypes = {
   defaultSelectedDatastream: PropTypes.object,
-  label: PropTypes.string,
   initInfo: PropTypes.object,
   name: PropTypes.string,
   selectedSandbox: PropTypes.object,
-  description: PropTypes.string,
   items: PropTypes.array,
-  isRequired: PropTypes.bool,
-  environmentType: PropTypes.string
+  otherProps: PropTypes.object
 };
 
 export default DatastreamSelector;

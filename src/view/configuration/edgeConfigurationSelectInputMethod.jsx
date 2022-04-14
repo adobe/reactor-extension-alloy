@@ -13,65 +13,30 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import EdgeConfigEnvironment from "./edgeConfigEnvironment";
-import EdgeConfigurationSelectInputMethodOneSandbox from "./edgeConfigurationSelectInputMethodOneSandbox";
-import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 import { DEVELOPMENT, PRODUCTION, STAGING } from "./constants/environmentType";
 
-const prepareSandboxMap = sandboxes => {
-  return sandboxes.reduce((acc, sandbox) => {
-    acc[sandbox.name] = sandbox;
-    return acc;
-  }, {});
-};
-
-const EdgeConfigurationSelectInputMethod = ({
-  name,
-  initInfo,
-  initialConfigs
-}) => {
-  const { sandboxes } = initialConfigs;
-  const sandboxMap = prepareSandboxMap(sandboxes);
-
-  if (sandboxes.length === 1) {
-    return (
-      <EdgeConfigurationSelectInputMethodOneSandbox
-        initialConfigs={initialConfigs}
-        name={name}
-      />
-    );
-  }
-
+const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
   return (
     <>
-      <FieldDescriptionAndError description="Choose the sandbox and datastream for this environment.">
-        <EdgeConfigEnvironment
-          name={`${name}.productionEnvironment`}
-          initInfo={initInfo}
-          sandboxes={sandboxes}
-          sandboxMap={sandboxMap}
-          environmentType={PRODUCTION}
-          description=""
-          isRequired
-        />
-      </FieldDescriptionAndError>
-      <FieldDescriptionAndError description="Choose the sandbox and datastream for this environment.">
-        <EdgeConfigEnvironment
-          name={`${name}.stagingEnvironment`}
-          initInfo={initInfo}
-          sandboxes={sandboxes}
-          sandboxMap={sandboxMap}
-          environmentType={STAGING}
-        />
-      </FieldDescriptionAndError>
-      <FieldDescriptionAndError description="Choose the sandbox and datastream for this environment.">
-        <EdgeConfigEnvironment
-          name={`${name}.developmentEnvironment`}
-          initInfo={initInfo}
-          sandboxes={sandboxes}
-          sandboxMap={sandboxMap}
-          environmentType={DEVELOPMENT}
-        />
-      </FieldDescriptionAndError>
+      <EdgeConfigEnvironment
+        name={`${name}.productionEnvironment`}
+        initInfo={initInfo}
+        context={context}
+        environmentType={PRODUCTION}
+        isRequired
+      />
+      <EdgeConfigEnvironment
+        name={`${name}.stagingEnvironment`}
+        initInfo={initInfo}
+        context={context}
+        environmentType={STAGING}
+      />
+      <EdgeConfigEnvironment
+        name={`${name}.developmentEnvironment`}
+        initInfo={initInfo}
+        context={context}
+        environmentType={DEVELOPMENT}
+      />
     </>
   );
 };
@@ -79,7 +44,7 @@ const EdgeConfigurationSelectInputMethod = ({
 EdgeConfigurationSelectInputMethod.propTypes = {
   name: PropTypes.string.isRequired,
   initInfo: PropTypes.object.isRequired,
-  initialConfigs: PropTypes.object.isRequired
+  context: PropTypes.object
 };
 
 export default EdgeConfigurationSelectInputMethod;

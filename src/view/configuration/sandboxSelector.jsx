@@ -31,11 +31,7 @@ const SandboxSelector = ({
   defaultSelectedSandbox,
   onSelectionChange,
   items,
-  label,
-  isDisabled,
-  isHidden,
-  isRequired,
-  environmentType
+  otherProps
 }) => {
   const isFirstRender = useIsFirstRender();
 
@@ -69,23 +65,18 @@ const SandboxSelector = ({
       onSelectionChange(selectedSandbox);
     }
   }, [selectedKey]);
-
   return (
     <FormikPicker
       name={name}
-      data-test-id={`${environmentType}SandboxField`}
       placeholder="Select a sandbox"
       items={sandboxList.items}
       isLoading={sandboxList.isLoading}
-      label={label}
       selectedKey={selectedKey}
-      isDisabled={isDisabled}
       onSelectionChange={sandboxName => {
         sandboxList.setSelectedKeys(new Set([sandboxName]));
       }}
       width="size-5000"
-      isHidden={isHidden}
-      isRequired={isRequired}
+      {...otherProps}
     >
       {item => {
         return <Item key={item.name}>{getLabel(item)}</Item>;
@@ -97,13 +88,9 @@ const SandboxSelector = ({
 SandboxSelector.propTypes = {
   defaultSelectedSandbox: PropTypes.object,
   onSelectionChange: PropTypes.func,
-  label: PropTypes.string,
   items: PropTypes.array,
   name: PropTypes.string,
-  isDisabled: PropTypes.bool,
-  isHidden: PropTypes.bool,
-  isRequired: PropTypes.bool,
-  environmentType: PropTypes.string
+  otherProps: PropTypes.object
 };
 
 export default SandboxSelector;
