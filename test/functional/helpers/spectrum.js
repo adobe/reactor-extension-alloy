@@ -20,8 +20,7 @@ const popoverMenuSelector = Selector('[role="listbox"]');
 const tabSelector = Selector('[role="tab"]');
 const menuItemCssSelector = '[role="option"]';
 const invalidAttribute = "aria-invalid";
-const invalidPickerButtonClassName = "._spectrum-FieldButton--invalid_7a745";
-
+const invalidCssSelector = '[class*="--invalid"]';
 // Sometimes TestCafe's click simulation doesn't match what
 // React-Spectrum is expecting. A single click might open then
 // close a Picker, for example. Calling click directly on
@@ -47,9 +46,7 @@ const createExpectError = selector => async () => {
     .eql("true", "Expected field to have error when it did not");
 };
 const createExpectInvalidCssClass = selector => async () => {
-  await t
-    .expect(selector.parent().find(invalidPickerButtonClassName).exists)
-    .ok();
+  await t.expect(selector.parent().find(invalidCssSelector).exists).ok();
 };
 
 const createExpectNoError = selector => async () => {
