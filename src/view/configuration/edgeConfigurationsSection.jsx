@@ -83,7 +83,7 @@ const createFindTheEdgeConfig = (orgId, imsAccess) => {
   };
 };
 
-const getEnvironmentEdgeConfigs = async (
+const getEnvironmentEdgeConfigs = (
   configId,
   datastreamsMap,
   parsedConfigId
