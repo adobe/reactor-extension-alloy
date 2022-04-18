@@ -20,6 +20,7 @@ import fetchConfigs from "./utils/fetchConfigs";
 import usePrevious from "../utils/usePrevious";
 import Alert from "../components/alert";
 import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
+import UserReportableError from "../errors/userReportableError";
 
 // eslint-disable-next-line no-underscore-dangle
 const getKey = datastream => datastream && datastream._system.id;
@@ -47,29 +48,31 @@ const DatastreamSelector = ({
 
   const datastreamList = useAsyncList({
     async load({ signal }) {
-      let datastreams;
       if (items) {
-        datastreams = items;
-      } else {
-        const {
-          company: { orgId },
-          tokens: { imsAccess }
-        } = initInfo;
-        try {
-          ({ results: datastreams } = await fetchConfigs({
-            orgId,
-            imsAccess,
-            signal,
-            limit: 1000,
-            sandbox: selectedSandbox.name
-          }));
-        } catch (e) {
-          if (e.name !== "AbortError") {
-            reportAsyncError(e);
-          }
-          // useAsyncList expects us to throw an error
-          // if we can't produce a valid return object.
-          throw e;
+        return { items };
+      }
+
+      const {
+        company: { orgId },
+        tokens: { imsAccess }
+      } = initInfo;
+
+      let datastreams;
+      try {
+        ({ results: datastreams } = await fetchConfigs({
+          orgId,
+          imsAccess,
+          signal,
+          limit: 1000,
+          sandbox: selectedSandbox.name
+        }));
+      } catch (e) {
+        if (e.name !== "AbortError") {
+          reportAsyncError(
+            new UserReportableError(`Failed to load datastreams.`, {
+              originatingError: e
+            })
+          );
         }
       }
       return {
