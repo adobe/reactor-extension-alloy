@@ -15,152 +15,306 @@ import PropTypes from "prop-types";
 import { Radio } from "@adobe/react-spectrum";
 import { object, string } from "yup";
 import { useField } from "formik";
-import fetchConfig from "./utils/fetchConfig";
 import SectionHeader from "../components/sectionHeader";
-import fetchEnvironments from "./utils/fetchEnvironments";
 import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import EdgeConfigurationSelectInputMethod from "./edgeConfigurationSelectInputMethod";
-import EdgeConfigurationFreeformInputMethod from "./edgeConfigurationFreeformInputMethod";
-import fetchEnvironment from "./utils/fetchEnvironment";
-import getPartsFromEnvironmentCompositeId from "./utils/getPartsFromEnvironmentCompositeId";
-import fetchFirstPageOfEachEnvironmentType from "./utils/fetchFirstPageOfEachEnvironmentType";
-import { PRODUCTION } from "./constants/environmentType";
-import fetchConfigs from "./utils/fetchConfigs";
 import FormElementContainer from "../components/formElementContainer";
+import fetchSandboxes from "../dataElements/xdmObject/helpers/fetchSandboxes";
+import EdgeConfigurationFreeformInputMethod from "./edgeConfigurationFreeformInputMethod";
+import fetchConfig from "./utils/fetchConfig";
+import fetchConfigs from "./utils/fetchConfigs";
+import getPartsFromEnvironmentCompositeId from "./utils/getPartsFromEnvironmentCompositeId";
 
 const INPUT_METHOD = {
   SELECT: "select",
   FREEFORM: "freeform"
 };
+const NOT_FOUND_STATUS = "not_found";
 
-const getSelectInputMethodStateForExistingInstance = async ({
-  orgId,
-  imsAccess,
-  instanceSettings
-}) => {
-  const selectInputMethodState = {
-    edgeConfig: undefined,
-    productionEnvironment: undefined,
-    stagingEnvironment: undefined,
-    developmentEnvironment: undefined
-  };
-  const promises = [];
-
-  // Nothing is preventing a customer from saving the extension
-  // with an environment composite ID for edgeConfigId. Consider that the
-  // customer may have selected the "enter values" input method,
-  // pasted in the production environment composite ID,
-  // saved the extension, then re-loaded the extension view.
-  // For this reason, we want to make sure we're really dealing with
-  // an edge configuration ID rather than an environment's
-  // composite ID.
-  const { edgeConfigId } = getPartsFromEnvironmentCompositeId(
-    instanceSettings.edgeConfigId
+const sandboxSettingsExist = instanceSettings => {
+  return !!(
+    instanceSettings.sandbox ||
+    instanceSettings.stagingSandbox ||
+    instanceSettings.developmentSandbox
   );
+};
 
-  const edgeConfigPromise = fetchConfig({
-    orgId,
-    imsAccess,
-    edgeConfigId
-  }).then(edgeConfig => {
-    selectInputMethodState.edgeConfig = edgeConfig;
-  });
-  promises.push(edgeConfigPromise);
-
-  const productionEnvironmentPromise = fetchEnvironments({
-    orgId,
-    imsAccess,
-    edgeConfigId,
-    type: PRODUCTION
-  }).then(({ results: productionEnvironments }) => {
-    if (productionEnvironments.length === 1) {
-      selectInputMethodState.productionEnvironment = productionEnvironments[0];
+const getSelectInputMethodStateNewInstance = () => {
+  return {
+    productionEnvironment: {
+      datastreamId: "",
+      sandbox: ""
+    },
+    stagingEnvironment: {
+      datastreamId: "",
+      sandbox: ""
+    },
+    developmentEnvironment: {
+      datastreamId: "",
+      sandbox: ""
     }
-  });
-  promises.push(productionEnvironmentPromise);
+  };
+};
 
-  if (instanceSettings.stagingEdgeConfigId) {
-    const { environmentName } = getPartsFromEnvironmentCompositeId(
-      instanceSettings.stagingEdgeConfigId
-    );
-    const stagingEnvironmentPromise = fetchEnvironment({
+const prepareDatastreamsMap = datastreams => {
+  return datastreams.reduce((acc, datastream) => {
+    // eslint-disable-next-line no-underscore-dangle
+    const datastreamId = datastream._system.id;
+    acc[datastreamId] = {
+      sandbox: datastream.sandboxName,
+      configId: datastreamId
+    };
+    return acc;
+  }, {});
+};
+
+const createFindTheEdgeConfig = (orgId, imsAccess) => {
+  return (sandbox, edgeConfigId) => {
+    return fetchConfig({
       orgId,
       imsAccess,
-      name: environmentName,
-      edgeConfigId
-    }).then(environment => {
-      selectInputMethodState.stagingEnvironment = environment;
+      edgeConfigId,
+      sandbox
+    }).catch(() => {
+      return {
+        status: NOT_FOUND_STATUS
+      };
     });
-    promises.push(stagingEnvironmentPromise);
+  };
+};
+
+const getEnvironmentEdgeConfigs = (
+  configId,
+  datastreamsMap,
+  parsedConfigId
+) => {
+  return new Promise((resolve, reject) => {
+    if (datastreamsMap[configId]) {
+      resolve({
+        datastreamId: configId,
+        sandbox: datastreamsMap[configId].sandbox
+      });
+      return;
+    }
+    if (datastreamsMap[parsedConfigId]) {
+      resolve({
+        datastreamId: configId,
+        sandbox: datastreamsMap[parsedConfigId].sandbox
+      });
+      return;
+    }
+
+    reject(new Error("no datastream was found"));
+  });
+};
+
+const getSelectInputMethodStateFromExistingExtensionSettings = instanceSettings => {
+  const selectInputMethodState = getSelectInputMethodStateNewInstance();
+
+  if (instanceSettings.edgeConfigId) {
+    selectInputMethodState.productionEnvironment.datastreamId =
+      instanceSettings.edgeConfigId;
+    selectInputMethodState.productionEnvironment.sandbox =
+      instanceSettings.sandbox;
+  }
+
+  if (instanceSettings.stagingEdgeConfigId) {
+    selectInputMethodState.stagingEnvironment.datastreamId =
+      instanceSettings.stagingEdgeConfigId;
+    selectInputMethodState.stagingEnvironment.sandbox =
+      instanceSettings.stagingSandbox;
   }
 
   if (instanceSettings.developmentEdgeConfigId) {
-    const { environmentName } = getPartsFromEnvironmentCompositeId(
-      instanceSettings.developmentEdgeConfigId
-    );
-    const developmentEnvironmentPromise = fetchEnvironment({
-      orgId,
-      imsAccess,
-      name: environmentName,
-      edgeConfigId
-    }).then(environment => {
-      selectInputMethodState.developmentEnvironment = environment;
-    });
-    promises.push(developmentEnvironmentPromise);
+    selectInputMethodState.developmentEnvironment.datastreamId =
+      instanceSettings.developmentEdgeConfigId;
+    selectInputMethodState.developmentEnvironment.sandbox =
+      instanceSettings.developmentSandbox;
   }
-
-  await Promise.all(promises);
 
   return selectInputMethodState;
 };
 
-let firstPageOfEdgeConfigs;
-const getSelectInputMethodStateForNewInstance = async ({
+const getSelectInputMethodStateForNotFullyPopulatedFormOneSandbox = (
+  datastreams,
+  instanceSettings
+) => {
+  const datastreamsMap = prepareDatastreamsMap(datastreams);
+  const selectInputMethodState = getSelectInputMethodStateNewInstance();
+
+  if (instanceSettings.edgeConfigId) {
+    selectInputMethodState.productionEnvironment.datastreamId =
+      instanceSettings.edgeConfigId;
+    selectInputMethodState.productionEnvironment.sandbox =
+      datastreamsMap[instanceSettings.edgeConfigId].sandbox;
+  }
+
+  if (instanceSettings.stagingEdgeConfigId) {
+    selectInputMethodState.stagingEnvironment.datastreamId =
+      instanceSettings.stagingEdgeConfigId;
+    selectInputMethodState.stagingEnvironment.sandbox =
+      datastreamsMap[instanceSettings.stagingEdgeConfigId].sandbox;
+  }
+
+  if (instanceSettings.developmentEdgeConfigId) {
+    selectInputMethodState.developmentEnvironment.datastreamId =
+      instanceSettings.developmentEdgeConfigId;
+    selectInputMethodState.developmentEnvironment.sandbox =
+      datastreamsMap[instanceSettings.developmentEdgeConfigId].sandbox;
+  }
+
+  return selectInputMethodState;
+};
+
+const getSelectInputMethodStateForExistingInstance = async ({
   orgId,
-  imsAccess
+  imsAccess,
+  instanceSettings,
+  context
 }) => {
-  const selectInputMethodState = {
-    edgeConfig: undefined,
+  // if there are sandbox settings in the previously configured extension we just populate with values
+  if (sandboxSettingsExist(instanceSettings)) {
+    return getSelectInputMethodStateFromExistingExtensionSettings(
+      instanceSettings
+    );
+  }
+  const { current } = context;
+  const { sandboxes, datastreams } = current;
+  // this section is to fetch the edge configs and get the sandbox name for each environment
+  // the old version of extension was fetching the datastreams and save
+  // a composite datastream ID for each environment
+  // we are trying to get the edge config and fetch the edge config details,
+  // then we initialize the form with sandbox names and edge config IDs
+  // when only one sandbox per org we fetch all datastreams in get Instance defaults
+  //  we re-use it here to create a map and prepopulate the form with sandbox names
+  if (datastreams) {
+    return getSelectInputMethodStateForNotFullyPopulatedFormOneSandbox(
+      datastreams,
+      instanceSettings
+    );
+  }
+  const selectInputMethodState = getSelectInputMethodStateNewInstance();
+  const parsedConfigIds = {
     productionEnvironment: undefined,
     stagingEnvironment: undefined,
     developmentEnvironment: undefined
   };
+  const findTheEdgeConfig = createFindTheEdgeConfig(orgId, imsAccess);
+  // try to find the sandbox for each edge config to pre - populate the select dropdowns
+  const promises = [];
+
+  const { edgeConfigId } = getPartsFromEnvironmentCompositeId(
+    instanceSettings.edgeConfigId
+  );
+  parsedConfigIds.productionEnvironment = edgeConfigId;
+
+  const findProdEdgeConfigPromises = sandboxes.map(sandbox => {
+    return findTheEdgeConfig(sandbox.name, edgeConfigId);
+  });
+
+  promises.push(...findProdEdgeConfigPromises);
+
+  if (instanceSettings.stagingEdgeConfigId) {
+    const stagingEdgeConfigId = getPartsFromEnvironmentCompositeId(
+      instanceSettings.stagingEdgeConfigId
+    ).edgeConfigId;
+    if (stagingEdgeConfigId === edgeConfigId) {
+      parsedConfigIds.stagingEnvironment = stagingEdgeConfigId;
+    } else {
+      const findStageEdgeConfigPromises = sandboxes.map(sandbox => {
+        return findTheEdgeConfig(
+          sandbox.name,
+          instanceSettings.stagingEdgeConfigId
+        );
+      });
+      promises.push(...findStageEdgeConfigPromises);
+    }
+  }
+  if (instanceSettings.developmentEdgeConfigId) {
+    const developmentEdgeConfigId = getPartsFromEnvironmentCompositeId(
+      instanceSettings.developmentEdgeConfigId
+    ).edgeConfigId;
+    if (developmentEdgeConfigId === edgeConfigId) {
+      parsedConfigIds.developmentEnvironment = developmentEdgeConfigId;
+    } else {
+      const findDevEdgeConfigPromises = sandboxes.map(sandbox => {
+        return findTheEdgeConfig(
+          sandbox.name,
+          instanceSettings.developmentEdgeConfigId
+        );
+      });
+      promises.push(...findDevEdgeConfigPromises);
+    }
+  }
+
+  const edgeConfigs = (await Promise.all(promises)).filter(
+    result => result.status !== NOT_FOUND_STATUS
+  );
+
+  const datastreamsMap = prepareDatastreamsMap(edgeConfigs);
+
+  if (instanceSettings.edgeConfigId) {
+    selectInputMethodState.productionEnvironment = await getEnvironmentEdgeConfigs(
+      instanceSettings.edgeConfigId,
+      datastreamsMap,
+      parsedConfigIds.productionEnvironment
+    );
+  }
+  if (instanceSettings.stagingEdgeConfigId) {
+    selectInputMethodState.stagingEnvironment = await getEnvironmentEdgeConfigs(
+      instanceSettings.stagingEdgeConfigId,
+      datastreamsMap,
+      parsedConfigIds.stagingEnvironment
+    );
+  }
+  if (instanceSettings.developmentEdgeConfigId) {
+    selectInputMethodState.developmentEnvironment = await getEnvironmentEdgeConfigs(
+      instanceSettings.developmentEdgeConfigId,
+      datastreamsMap,
+      parsedConfigIds.developmentEnvironment
+    );
+  }
+  return selectInputMethodState;
+};
+
+let firstPageOfSandboxes;
+let firstPageOfDatastreams;
+const getSelectInputMethodStateForNewInstance = async ({
+  orgId,
+  imsAccess,
+  context
+}) => {
+  const selectInputMethodState = getSelectInputMethodStateNewInstance();
 
   // We cache the first page of edge configs for optimization,
   // particularly so when a user clicks the Add Instance button,
   // they don't have to wait while the instance is created.
-  if (!firstPageOfEdgeConfigs) {
-    ({ results: firstPageOfEdgeConfigs } = await fetchConfigs({
+  if (!firstPageOfSandboxes) {
+    ({ results: firstPageOfSandboxes } = await fetchSandboxes({
       orgId,
       imsAccess
     }));
   }
 
-  if (firstPageOfEdgeConfigs.length === 1) {
-    const edgeConfig = firstPageOfEdgeConfigs[0];
-    selectInputMethodState.edgeConfig = edgeConfig;
+  context.current.sandboxes = firstPageOfSandboxes;
 
-    const {
-      production,
-      staging,
-      development
-    } = await fetchFirstPageOfEachEnvironmentType({
+  // checking if this is a organization with one sandbox ( default sandbox )
+  if (firstPageOfSandboxes.length === 1) {
+    // eslint-disable-next-line prefer-const
+    ({ results: firstPageOfDatastreams } = await fetchConfigs({
       orgId,
       imsAccess,
-      edgeConfigId: edgeConfig.id
-    });
+      limit: 1000,
+      sandbox: firstPageOfSandboxes[0].name
+    }));
+    context.current.datastreams = firstPageOfDatastreams;
 
-    if (production.length === 1) {
-      selectInputMethodState.productionEnvironment = production[0];
-    }
-
-    if (staging.length === 1) {
-      selectInputMethodState.stagingEnvironment = staging[0];
-    }
-
-    if (development.length === 1) {
-      selectInputMethodState.developmentEnvironment = development[0];
-    }
+    selectInputMethodState.productionEnvironment.sandbox =
+      firstPageOfSandboxes[0].name;
+    selectInputMethodState.stagingEnvironment.sandbox =
+      firstPageOfSandboxes[0].name;
+    selectInputMethodState.developmentEnvironment.sandbox =
+      firstPageOfSandboxes[0].name;
   }
 
   return selectInputMethodState;
@@ -185,12 +339,13 @@ const getFreeformInputStateForNewInstance = () => {
 };
 
 export const bridge = {
-  getInstanceDefaults: async ({ initInfo, isFirstInstance }) => {
+  getInstanceDefaults: async ({ initInfo, isFirstInstance, context }) => {
     const {
       company: { orgId },
       tokens: { imsAccess }
     } = initInfo;
 
+    context.current = {};
     const instanceDefaults = {
       edgeConfigInputMethod: isFirstInstance
         ? INPUT_METHOD.SELECT
@@ -203,7 +358,8 @@ export const bridge = {
       edgeConfigSelectInputMethod: await getSelectInputMethodStateForNewInstance(
         {
           orgId,
-          imsAccess
+          imsAccess,
+          context
         }
       ),
       edgeConfigFreeformInputMethod: getFreeformInputStateForNewInstance()
@@ -214,7 +370,8 @@ export const bridge = {
   getInitialInstanceValues: async ({
     initInfo,
     isFirstInstance,
-    instanceSettings
+    instanceSettings,
+    context
   }) => {
     const {
       company: { orgId },
@@ -223,9 +380,9 @@ export const bridge = {
 
     const instanceValues = await bridge.getInstanceDefaults({
       initInfo,
-      isFirstInstance
+      isFirstInstance,
+      context
     });
-
     let isSuccessfullyPopulatedForSelectInputMethod = false;
 
     if (isFirstInstance) {
@@ -234,9 +391,11 @@ export const bridge = {
           {
             orgId,
             imsAccess,
-            instanceSettings
+            instanceSettings,
+            context
           }
         );
+
         instanceValues.edgeConfigFreeformInputMethod = getFreeformInputStateForNewInstance();
         instanceValues.edgeConfigInputMethod = INPUT_METHOD.SELECT;
         isSuccessfullyPopulatedForSelectInputMethod = true;
@@ -254,7 +413,8 @@ export const bridge = {
       instanceValues.edgeConfigSelectInputMethod = await getSelectInputMethodStateForNewInstance(
         {
           orgId,
-          imsAccess
+          imsAccess,
+          context
         }
       );
       instanceValues.edgeConfigFreeformInputMethod = getFreeformInputMethodStateForExistingInstance(
@@ -268,19 +428,34 @@ export const bridge = {
   getInstanceSettings: ({ instanceValues }) => {
     const instanceSettings = {};
     if (instanceValues.edgeConfigInputMethod === INPUT_METHOD.SELECT) {
-      if (instanceValues.edgeConfigSelectInputMethod.edgeConfig) {
+      if (
+        instanceValues?.edgeConfigSelectInputMethod?.productionEnvironment
+          ?.datastreamId
+      ) {
         instanceSettings.edgeConfigId =
-          instanceValues.edgeConfigSelectInputMethod.edgeConfig.id;
+          instanceValues.edgeConfigSelectInputMethod.productionEnvironment.datastreamId;
+        instanceSettings.sandbox =
+          instanceValues.edgeConfigSelectInputMethod.productionEnvironment.sandbox;
       }
 
-      if (instanceValues.edgeConfigSelectInputMethod.stagingEnvironment) {
+      if (
+        instanceValues?.edgeConfigSelectInputMethod?.stagingEnvironment
+          ?.datastreamId
+      ) {
         instanceSettings.stagingEdgeConfigId =
-          instanceValues.edgeConfigSelectInputMethod.stagingEnvironment.compositeId;
+          instanceValues.edgeConfigSelectInputMethod.stagingEnvironment.datastreamId;
+        instanceSettings.stagingSandbox =
+          instanceValues.edgeConfigSelectInputMethod.stagingEnvironment.sandbox;
       }
 
-      if (instanceValues.edgeConfigSelectInputMethod.developmentEnvironment) {
+      if (
+        instanceValues?.edgeConfigSelectInputMethod?.developmentEnvironment
+          ?.datastreamId
+      ) {
         instanceSettings.developmentEdgeConfigId =
-          instanceValues.edgeConfigSelectInputMethod.developmentEnvironment.compositeId;
+          instanceValues.edgeConfigSelectInputMethod.developmentEnvironment.datastreamId;
+        instanceSettings.developmentSandbox =
+          instanceValues.edgeConfigSelectInputMethod.developmentEnvironment.sandbox;
       }
     } else {
       if (instanceValues.edgeConfigFreeformInputMethod.edgeConfigId) {
@@ -307,7 +482,10 @@ export const bridge = {
       edgeConfigSelectInputMethod: object().when("edgeConfigInputMethod", {
         is: INPUT_METHOD.SELECT,
         then: object().shape({
-          edgeConfig: object().required("Please specify a datastream.")
+          productionEnvironment: object().shape({
+            datastreamId: string().required("Please specify a datastream."),
+            sandbox: string().required("Please specify a sandbox.")
+          })
         })
       }),
       edgeConfigFreeformInputMethod: object().when("edgeConfigInputMethod", {
@@ -325,7 +503,7 @@ export const bridge = {
 
       const getEdgeConfigIdFromInstance = inst => {
         return inst.edgeConfigInputMethod === INPUT_METHOD.SELECT
-          ? inst.edgeConfigSelectInputMethod.edgeConfig?.id
+          ? inst.edgeConfigSelectInputMethod.productionEnvironment.datastreamId
           : inst.edgeConfigFreeformInputMethod.edgeConfigId;
       };
 
@@ -343,7 +521,7 @@ export const bridge = {
 
       const edgeConfigIdFieldName =
         instance.edgeConfigInputMethod === INPUT_METHOD.SELECT
-          ? `edgeConfigSelectInputMethod.edgeConfig.id`
+          ? `edgeConfigSelectInputMethod.productionEnvironment.datastreamId`
           : `edgeConfigFreeformInputMethod.edgeConfigId`;
 
       return (
@@ -360,7 +538,8 @@ export const bridge = {
 const EdgeConfigurationsSection = ({
   instanceFieldName,
   instanceIndex,
-  initInfo
+  initInfo,
+  context
 }) => {
   const [{ value: inputMethod }] = useField(
     `${instanceFieldName}.edgeConfigInputMethod`
@@ -398,11 +577,11 @@ const EdgeConfigurationsSection = ({
             </Radio>
           </FormikRadioGroup>
         )}
-
         {inputMethod === INPUT_METHOD.SELECT ? (
           <EdgeConfigurationSelectInputMethod
             name={`${instanceFieldName}.edgeConfigSelectInputMethod`}
             initInfo={initInfo}
+            context={context}
           />
         ) : (
           <EdgeConfigurationFreeformInputMethod
@@ -417,7 +596,8 @@ const EdgeConfigurationsSection = ({
 EdgeConfigurationsSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired,
   instanceIndex: PropTypes.number.isRequired,
-  initInfo: PropTypes.object.isRequired
+  initInfo: PropTypes.object.isRequired,
+  context: PropTypes.object.isRequired
 };
 
 export default EdgeConfigurationsSection;

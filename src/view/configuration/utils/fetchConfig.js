@@ -13,14 +13,24 @@ governing permissions and limitations under the License.
 import fetchFromEdge from "../../utils/fetchFromEdge";
 import UserReportableError from "../../errors/userReportableError";
 
-const fetchConfig = async ({ orgId, imsAccess, edgeConfigId, signal }) => {
+const fetchConfig = async ({
+  orgId,
+  imsAccess,
+  edgeConfigId,
+  signal,
+  sandbox
+}) => {
   let parsedResponse;
+  const headers = {
+    "x-sandbox-name": sandbox
+  };
 
   try {
     parsedResponse = await fetchFromEdge({
       orgId,
       imsAccess,
-      path: `/configs/user/edge/${edgeConfigId}`,
+      path: `/metadata/namespaces/edge/datasets/datastreams/records/${edgeConfigId}`,
+      headers,
       signal
     });
   } catch (e) {
