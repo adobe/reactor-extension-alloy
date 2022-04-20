@@ -78,8 +78,12 @@ module.exports = (options = {}) => {
   let parcelPromise;
   if (watch) {
     parcelPromise = new Promise(resolve => {
-      bundler.watch(() => {
+      const subscription = bundler.watch(() => {
         resolve();
+      });
+      process.on("exit", () => {
+        // stop watching when the main process exits
+        subscription.unsubscribe();
       });
     });
   } else {
