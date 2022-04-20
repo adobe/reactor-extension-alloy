@@ -1,4 +1,7 @@
-<!--- Provide a general summary of your changes in the Title above -->
+<!--- The title above will be used as a bullet point in the release notes. -->
+<!--- In general, start the title with a past tense verb (i.e. added, optimized, removed.) -->
+<!--- For bug fixes, start with "fixed" (i.e. fixed an issue, fixed broken.) -->
+<!--- For PRs that should not be included in the release notes, attach the label "ignore-for-release" -->
 
 ## Description
 
@@ -23,6 +26,7 @@
 
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
+- [ ] Improvement (non-breaking change which does not add functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to change)
 
 ## Checklist:
@@ -30,7 +34,6 @@
 <!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 
-- [ ] My change requires a change to the documentation.
-- [ ] I have updated the documentation accordingly.
-- [ ] All tests pass and I've made any necessary test changes.
-- [ ] I've updated the schema in extension.json or no changes are necessary.
+- [ ] I have signed the [Adobe Open Source CLA](https://opensource.adobe.com/cla.html) or I'm an Adobe employee.
+- [ ] I have made any necessary test changes and all tests pass.
+- [ ] I have run the Sandbox successfully.
