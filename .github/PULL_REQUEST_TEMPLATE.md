@@ -37,3 +37,5 @@
 - [ ] I have signed the [Adobe Open Source CLA](https://opensource.adobe.com/cla.html) or I'm an Adobe employee.
 - [ ] I have made any necessary test changes and all tests pass.
 - [ ] I have run the Sandbox successfully.
+- [ ] I've updated the schema in extension.json or no changes are necessary.
+- [ ] My change requires a change to the documentation.
