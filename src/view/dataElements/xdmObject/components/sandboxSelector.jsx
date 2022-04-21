@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import React, { useEffect } from "react";
-import { useListData } from "@react-stately/data";
+import { useAsyncList } from "@react-stately/data";
 import { Item, Picker } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import fetchSandboxes from "../helpers/fetchSandboxes";
@@ -40,7 +40,7 @@ const SandboxSelector = ({
   const reportAsyncError = useReportAsyncError();
   const isFirstRender = useIsFirstRender();
 
-  const sandboxList = useListData({
+  const sandboxList = useAsyncList({
     async load({ signal }) {
       let sandboxes;
       try {
