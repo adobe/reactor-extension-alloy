@@ -276,6 +276,11 @@ const componentWrappers = {
       },
       async clear() {
         await t.selectText(selector).pressKey("delete");
+      },
+      // Fields with long values may need to be clicked before they
+      // are cleared to get rid of the "..." at the end.
+      async click() {
+        await t.click(selector);
       }
     };
   },

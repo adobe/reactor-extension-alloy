@@ -1,3 +1,0 @@
-The patches in this directory are applied by the [patch-package](https://www.npmjs.com/package/patch-package) npm package on post-install. This is used to patch node packages that have not yet published relevant bugs fixes or features that we need.
-
-- **parcel-bundler+1.12.4.patch:** This patch fixes https://github.com/parcel-bundler/parcel/issues/2786. The fix was proposed and merged in https://github.com/parcel-bundler/parcel/pull/2794, but appears to have never been released.

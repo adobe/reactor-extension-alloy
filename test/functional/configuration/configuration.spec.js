@@ -295,6 +295,8 @@ test("returns full valid settings", async () => {
   await instances[1].idMigrationEnabled.click();
   await instances[1].thirdPartyCookiesEnabled.click();
   await instances[1].onBeforeEventSendEditButton.click();
+  // Click on the field before clearing to get rid of the "..."
+  await instances[1].downloadLinkQualifierField.click();
   await instances[1].downloadLinkQualifierField.clear();
   await instances[1].downloadLinkQualifierField.typeText("[]");
   await instances[1].contextGranularity.specificField.click();
@@ -489,6 +491,8 @@ test("shows error for empty default consent data element", async () => {
 
 test("shows error for empty download link qualifier", async () => {
   await extensionViewController.init();
+  // Click on the field before clearing to get rid of the "..."
+  await instances[0].downloadLinkQualifierField.click();
   await instances[0].downloadLinkQualifierField.clear();
   await extensionViewController.expectIsNotValid();
   await instances[0].downloadLinkQualifierField.expectError();
@@ -496,6 +500,8 @@ test("shows error for empty download link qualifier", async () => {
 
 test("shows error for invalid download link qualifier", async () => {
   await extensionViewController.init();
+  // Click on the field before clearing to get rid of the "..."
+  await instances[0].downloadLinkQualifierField.click();
   await instances[0].downloadLinkQualifierField.clear();
   await instances[0].downloadLinkQualifierField.typeText("[");
   await extensionViewController.expectIsNotValid();
@@ -527,6 +533,8 @@ test("restores default edge base path value when restore button is clicked", asy
 
 test("restores default download link qualifier when restore button is clicked", async () => {
   await extensionViewController.init();
+  // Click on the field before clearing to get rid of the "..."
+  await instances[0].downloadLinkQualifierField.click();
   await instances[0].downloadLinkQualifierField.typeText(".");
   await instances[0].downloadLinkQualifierRestoreButton.click();
   await instances[0].downloadLinkQualifierField.expectValue(
