@@ -49,6 +49,10 @@ const createExpectInvalidCssClass = selector => async () => {
   await t.expect(selector.parent().find(invalidCssSelector).exists).ok();
 };
 
+const createExpectHidden = selector => async () => {
+  await t.expect(selector.hasAttribute("hidden")).ok();
+};
+
 const createExpectNoError = selector => async () => {
   await t
     .expect(selector.getAttribute(invalidAttribute))
@@ -261,8 +265,9 @@ const componentWrappers = {
         await compatibleClick(selector);
         await createExpectMenuOptionLabelsExclude(popoverMenuSelector)(labels);
       },
-      expectDisabled: createExpectDisabled(selector.find("button")),
-      expectEnabled: createExpectEnabled(selector.find("button"))
+      expectDisabled: createExpectDisabled(selector),
+      expectEnabled: createExpectEnabled(selector.find("button")),
+      expectHidden: createExpectHidden(selector.parent().parent())
     };
   },
   textField(selector) {
