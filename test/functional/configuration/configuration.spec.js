@@ -744,21 +744,15 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
       "Select a sandbox"
     );
-    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
-    );
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectNotExists();
     await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectSelectedOptionLabel(
       "Select a sandbox"
     );
-    await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
-    );
+    await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectNotExists();
     await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectSelectedOptionLabel(
       "Select a sandbox"
     );
-    await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
-    );
+    await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectNotExists();
     await instances[0].orgIdField.expectValue(
       "5BFE274A5F6980A50A495C08@AdobeOrg"
     );
