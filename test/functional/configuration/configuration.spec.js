@@ -682,54 +682,7 @@ test.requestHooks(
     await instances[0].contextGranularity.allField.expectChecked();
   }
 );
-test.requestHooks(
-  sandboxesMocks.multipleWithDefault,
-  datastreamsMocks.multiple
-)(
-  "initializes form fields: when multiple sandboxes we show dropdowns for every env",
-  async () => {
-    await extensionViewController.init();
 
-    await instances[0].nameField.expectValue("alloy");
-    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
-    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
-    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
-      "Select a sandbox"
-    );
-    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
-    );
-    await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectSelectedOptionLabel(
-      "Select a sandbox"
-    );
-    await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
-    );
-    await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectSelectedOptionLabel(
-      "Select a sandbox"
-    );
-    await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
-    );
-    await instances[0].orgIdField.expectValue(
-      "5BFE274A5F6980A50A495C08@AdobeOrg"
-    );
-    await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
-    await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
-    await instances[0].defaultConsent.inRadio.expectChecked();
-    await instances[0].defaultConsent.outRadio.expectUnchecked();
-    await instances[0].defaultConsent.pendingRadio.expectUnchecked();
-    await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
-    await instances[0].defaultConsent.dataElementField.expectNotExists();
-    await instances[0].idMigrationEnabled.expectChecked();
-    await instances[0].thirdPartyCookiesEnabled.expectChecked();
-    await instances[0].clickCollectionEnabledField.expectChecked();
-    await instances[0].downloadLinkQualifierField.expectValue(
-      defaultDownloadLinkQualifier
-    );
-    await instances[0].contextGranularity.allField.expectChecked();
-  }
-);
 test.requestHooks(
   sandboxesMocks.multipleWithDefault,
   datastreamsMocks.multiple
