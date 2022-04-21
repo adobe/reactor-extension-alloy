@@ -15,7 +15,7 @@ governing permissions and limitations under the License.
 const path = require("path");
 const argv = require("minimist")(process.argv.slice(2));
 const chalk = require("chalk");
-const Bundler = require("parcel-bundler");
+const { Parcel } = require("@parcel/core");
 
 require("events").EventEmitter.defaultMaxListeners = 30;
 
@@ -25,7 +25,6 @@ const defaultSpecsPath = path.join(
 );
 const {
   watch,
-  saucelabs,
   firefox,
   chrome,
   safari,
@@ -47,22 +46,18 @@ const componentFixtureOutputDir = path.join(
 );
 
 const buildComponentFixtures = async () => {
-  return new Promise(resolve => {
-    const bundler = new Bundler(componentFixturePath, {
+  const bundler = new Parcel({
+    entries: componentFixturePath,
+    defaultConfig: "@parcel/config-default",
+    // Development mode is required to keep the data-test-id props
+    mode: "development",
+    defaultTargetOptions: {
       publicUrl: "./",
-      outDir: componentFixtureOutputDir,
-      watch,
-      // HMR seems to be broken: https://github.com/parcel-bundler/parcel/issues/2894
-      hmr: false,
-      sourceMaps: false
-    });
-
-    bundler.on("bundled", () => {
-      resolve();
-    });
-
-    bundler.bundle();
+      distDir: componentFixtureOutputDir
+    },
+    sourceMaps: true
   });
+  return bundler.run();
 };
 
 (async () => {

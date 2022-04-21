@@ -15,7 +15,7 @@ process.env.THEME_LIGHTEST = true;
 
 const { spawn } = require("child_process");
 const rimraf = require("rimraf");
-const Bundler = require("parcel-bundler");
+const { Parcel } = require("@parcel/core");
 const path = require("path");
 const fsPromises = require("fs").promises;
 
@@ -30,6 +30,7 @@ const alloyInFile = path.join(libInDir, "alloy.js");
 const alloyTempFile = path.join(tempDir, "alloy.js");
 const browserslistrcFile = path.join(libInDir, ".browserslistrc");
 const browserslistrcTempFile = path.join(tempDir, ".browserslistrc");
+const isProd = process.env.NODE_ENV === "production";
 
 const toPromise = func => {
   return new Promise((resolve, reject) => {
@@ -54,26 +55,40 @@ rimraf.sync(outputDir);
 
 module.exports = (options = {}) => {
   const { watch } = options;
-  const parcelPromise = new Promise(resolve => {
-    const bundler = new Bundler(viewEntries, {
-      // By default, Parcel updates script tags on HTML files to reference post-processed JavaScript files
-      // by using an absolute directory. We can't use absolute directories, because our extension's view files
-      // are deployed by Launch to Akamai under a deep subdirectory. We use publicUrl to ensure we use a relative
-      // path for loading JavaScript files.
+  const bundler = new Parcel({
+    entries: viewEntries,
+    defaultConfig: "@parcel/config-default",
+    mode: isProd ? "production" : "development",
+    // By default, Parcel updates script tags on HTML files to reference post-processed JavaScript files
+    // by using an absolute directory. We can't use absolute directories, because our extension's view files
+    // are deployed by Launch to Akamai under a deep subdirectory. We use publicUrl to ensure we use a relative
+    // path for loading JavaScript files.
+    defaultTargetOptions: {
       publicUrl: "../",
-      outDir: viewOutDir,
-      watch,
-      // HMR seems to be broken: https://github.com/parcel-bundler/parcel/issues/2894
-      hmr: false,
-      sourceMaps: false
-    });
-
-    bundler.on("bundled", () => {
-      resolve();
-    });
-
-    bundler.bundle();
+      distDir: viewOutDir,
+      sourceMaps: !isProd
+    },
+    additionalReporters: [
+      {
+        packageName: "@parcel/reporter-cli",
+        resolveFrom: viewOutDir
+      }
+    ]
   });
+  let parcelPromise;
+  if (watch) {
+    parcelPromise = new Promise(resolve => {
+      const subscription = bundler.watch(() => {
+        resolve();
+      });
+      process.on("exit", () => {
+        // stop watching when the main process exits
+        subscription.unsubscribe();
+      });
+    });
+  } else {
+    parcelPromise = bundler.run();
+  }
 
   // ignore alloy.js because it will be built separately below.
   const babelPromise = run("babel", [
@@ -81,7 +96,8 @@ module.exports = (options = {}) => {
     "--out-dir",
     libOutDir,
     "--ignore",
-    alloyInFile
+    alloyInFile,
+    "--presets=@babel/preset-env"
   ]);
 
   if (watch) {
@@ -94,7 +110,8 @@ module.exports = (options = {}) => {
         "--watch",
         "--skip-initial-build",
         "--ignore",
-        alloyInFile
+        alloyInFile,
+        "--presets=@babel/preset-env"
       ],
       { stdio: "inherit" }
     );
@@ -112,7 +129,14 @@ module.exports = (options = {}) => {
     .catch(() => undefined)
     .then(() => fsPromises.copyFile(browserslistrcFile, browserslistrcTempFile))
     .then(() => run("rollup", ["-c"]))
-    .then(() => run("babel", [alloyTempFile, "--out-dir", libOutDir]))
+    .then(() =>
+      run("babel", [
+        alloyTempFile,
+        "--out-dir",
+        libOutDir,
+        "--presets=@babel/preset-env"
+      ])
+    )
     .finally(() => toPromise(callback => rimraf(tempDir, callback)));
 
   return Promise.all([babelPromise, parcelPromise, alloyPromise]);
