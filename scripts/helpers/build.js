@@ -30,7 +30,7 @@ const alloyInFile = path.join(libInDir, "alloy.js");
 const alloyTempFile = path.join(tempDir, "alloy.js");
 const browserslistrcFile = path.join(libInDir, ".browserslistrc");
 const browserslistrcTempFile = path.join(tempDir, ".browserslistrc");
-const isProd = process.env.NODE_ENV === "production";
+const isProdEnv = process.env.NODE_ENV === "production";
 
 const toPromise = func => {
   return new Promise((resolve, reject) => {
@@ -54,7 +54,8 @@ const run = (command, options) => {
 rimraf.sync(outputDir);
 
 module.exports = (options = {}) => {
-  const { watch } = options;
+  const { watch, isProd = isProdEnv } = options;
+  console.log("Running build, isProd", isProd);
   const bundler = new Parcel({
     entries: viewEntries,
     defaultConfig: "@parcel/config-default",
@@ -66,8 +67,17 @@ module.exports = (options = {}) => {
     defaultTargetOptions: {
       publicUrl: "../",
       distDir: viewOutDir,
-      sourceMaps: !isProd
+      sourceMaps: !isProd,
+      // shouldOptimize: false,
+      shouldScopeHoist: false
+      /* engines: [
+        "last 2 Chrome versions",
+        "last 2 Firefox versions",
+        "last 2 Safari versions",
+        "last 2 Edge versions"
+      ] */
     },
+    shouldDisableCache: true,
     additionalReporters: [
       {
         packageName: "@parcel/reporter-cli",
