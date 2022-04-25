@@ -277,7 +277,7 @@ const componentWrappers = {
       expectValue: createExpectValue(selector),
       expectMatch: createExpectMatch(selector),
       async typeText(text, options) {
-        await t.scrollIntoView(selector).typeText(selector, text, options);
+        await t.typeText(selector, text, options);
       },
       async clear() {
         await t.selectText(selector).pressKey("delete");
