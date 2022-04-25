@@ -19,6 +19,9 @@ import {
   instances
 } from "./helpers/viewSelectors";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
+import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
+import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
+import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";
 
 createExtensionViewFixture({
   title: "Extension Configuration View",
@@ -196,8 +199,17 @@ test("initializes form fields with no settings", async () => {
   await instances[0].nameField.expectValue("alloy");
   await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
   await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
-  await instances[0].edgeConfig.inputMethodSelect.edgeConfigField.expectText(
-    ""
+  await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
+    "PRODUCTION Prod (VA7)"
+  );
+  await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
+    "Select a datastream"
+  );
+  await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
+    "Select a datastream"
+  );
+  await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
+    "Select a datastream"
   );
   await instances[0].orgIdField.expectValue(
     "5BFE274A5F6980A50A495C08@AdobeOrg"
@@ -286,6 +298,8 @@ test.skip("returns full valid settings", async () => {
   await instances[1].idMigrationEnabled.click();
   await instances[1].thirdPartyCookiesEnabled.click();
   await instances[1].onBeforeEventSendEditButton.click();
+  // Click on the field before clearing to get rid of the "..."
+  await instances[1].downloadLinkQualifierField.click();
   await instances[1].downloadLinkQualifierField.clear();
   await instances[1].downloadLinkQualifierField.typeText("[]");
   await instances[1].contextGranularity.specificField.click();
@@ -346,7 +360,7 @@ test("shows error for empty required values", async () => {
   await instances[0].edgeBasePathField.clear();
   await extensionViewController.expectIsNotValid();
   await instances[0].nameField.expectError();
-  await instances[0].edgeConfig.inputMethodSelect.edgeConfigField.expectError();
+  await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectError();
   await instances[0].orgIdField.expectError();
   await instances[0].edgeDomainField.expectError();
   await instances[0].edgeBasePathField.expectError();
@@ -460,7 +474,8 @@ test("shows error for bad default consent data element", async () => {
   // This seems more like a bug in TestCafe, but we're working around it by waiting
   // for the combo box to be present before trying to click the data element
   // radio button.
-  await instances[0].edgeConfig.inputMethodSelect.edgeConfigField.expectExists();
+  await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectExists();
+  await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectExists();
 
   await instances[0].defaultConsent.dataElementRadio.click();
   await instances[0].defaultConsent.dataElementField.typeText(
@@ -479,6 +494,8 @@ test("shows error for empty default consent data element", async () => {
 
 test("shows error for empty download link qualifier", async () => {
   await extensionViewController.init();
+  // Click on the field before clearing to get rid of the "..."
+  await instances[0].downloadLinkQualifierField.click();
   await instances[0].downloadLinkQualifierField.clear();
   await extensionViewController.expectIsNotValid();
   await instances[0].downloadLinkQualifierField.expectError();
@@ -486,6 +503,8 @@ test("shows error for empty download link qualifier", async () => {
 
 test("shows error for invalid download link qualifier", async () => {
   await extensionViewController.init();
+  // Click on the field before clearing to get rid of the "..."
+  await instances[0].downloadLinkQualifierField.click();
   await instances[0].downloadLinkQualifierField.clear();
   await instances[0].downloadLinkQualifierField.typeText("[");
   await extensionViewController.expectIsNotValid();
@@ -517,6 +536,8 @@ test("restores default edge base path value when restore button is clicked", asy
 
 test("restores default download link qualifier when restore button is clicked", async () => {
   await extensionViewController.init();
+  // Click on the field before clearing to get rid of the "..."
+  await instances[0].downloadLinkQualifierField.click();
   await instances[0].downloadLinkQualifierField.typeText(".");
   await instances[0].downloadLinkQualifierRestoreButton.click();
   await instances[0].downloadLinkQualifierField.expectValue(
@@ -615,3 +636,296 @@ test("does not save onBeforeEventSend code if it matches placeholder", async () 
     ]
   });
 });
+
+test.requestHooks(
+  sandboxesMocks.singleWithoutDefault,
+  datastreamsMocks.multiple
+)(
+  "initializes form: when default sandbox only we show only one disabled sandbox dropdown",
+  async () => {
+    await extensionViewController.init();
+
+    await instances[0].nameField.expectValue("alloy");
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
+      "Test Sandbox 1"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
+      "Select a datastream"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectHidden();
+    await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
+      "Select a datastream"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectHidden();
+    await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
+      "Select a datastream"
+    );
+    await instances[0].orgIdField.expectValue(
+      "5BFE274A5F6980A50A495C08@AdobeOrg"
+    );
+    await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
+    await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
+    await instances[0].defaultConsent.inRadio.expectChecked();
+    await instances[0].defaultConsent.outRadio.expectUnchecked();
+    await instances[0].defaultConsent.pendingRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementField.expectNotExists();
+    await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].clickCollectionEnabledField.expectChecked();
+    await instances[0].downloadLinkQualifierField.expectValue(
+      defaultDownloadLinkQualifier
+    );
+    await instances[0].contextGranularity.allField.expectChecked();
+  }
+);
+
+test.requestHooks(
+  sandboxesMocks.multipleWithDefault,
+  datastreamsMocks.multiple
+)(
+  "initializes form fields: when multiple sandboxes we show dropdowns for every env",
+  async () => {
+    await extensionViewController.init();
+
+    await instances[0].nameField.expectValue("alloy");
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
+      "Select a sandbox"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectNotExists();
+    await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectSelectedOptionLabel(
+      "Select a sandbox"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectNotExists();
+    await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectSelectedOptionLabel(
+      "Select a sandbox"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectNotExists();
+    await instances[0].orgIdField.expectValue(
+      "5BFE274A5F6980A50A495C08@AdobeOrg"
+    );
+    await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
+    await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
+    await instances[0].defaultConsent.inRadio.expectChecked();
+    await instances[0].defaultConsent.outRadio.expectUnchecked();
+    await instances[0].defaultConsent.pendingRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementField.expectNotExists();
+    await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].clickCollectionEnabledField.expectChecked();
+    await instances[0].downloadLinkQualifierField.expectValue(
+      defaultDownloadLinkQualifier
+    );
+    await instances[0].contextGranularity.allField.expectChecked();
+  }
+);
+
+test.requestHooks(
+  sandboxesMocks.multipleWithDefault,
+  datastreamMocks.basic,
+  datastreamMocks.notExist,
+  datastreamsMocks.multiple
+)(
+  "initializes form fields with full settings but no sandbox configs",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "64c31a3b-d031-4a2f-8834-e96fc15d3030",
+            stagingEdgeConfigId: "64c31a3b-d031-4a2f-8834-e96fc15d3030:stage",
+            developmentEdgeConfigId: "64c31a3b-d031-4a2f-8834-e96fc15d3030:dev",
+            orgId: "ORG456@OtherCompanyOrg",
+            edgeDomain: "testedge.com",
+            edgeBasePath: "ee-beta",
+            defaultConsent: "pending",
+            idMigrationEnabled: true,
+            thirdPartyCookiesEnabled: true,
+            prehidingStyle: "#container { display: none }",
+            context: ["device", "placeContext"],
+            clickCollectionEnabled: false
+          }
+        ]
+      }
+    });
+
+    await instances[0].nameField.expectValue("alloy1");
+
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
+      "Test Sandbox 1"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
+      "test datastream"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectSelectedOptionLabel(
+      "Test Sandbox 1"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
+      "test datastream: stage"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectSelectedOptionLabel(
+      "Test Sandbox 1"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
+      "test datastream: development"
+    );
+
+    await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
+    await instances[0].edgeDomainField.expectValue("testedge.com");
+    await instances[0].edgeBasePathField.expectValue("ee-beta");
+    await instances[0].defaultConsent.inRadio.expectUnchecked();
+    await instances[0].defaultConsent.outRadio.expectUnchecked();
+    await instances[0].defaultConsent.pendingRadio.expectChecked();
+    await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementField.expectNotExists();
+    await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].clickCollectionEnabledField.expectUnchecked();
+    await instances[0].contextGranularity.specificField.expectChecked();
+    await instances[0].specificContext.webField.expectUnchecked();
+    await instances[0].specificContext.deviceField.expectChecked();
+    await instances[0].specificContext.environmentField.expectUnchecked();
+    await instances[0].specificContext.placeContextField.expectChecked();
+  }
+);
+
+test.requestHooks(
+  sandboxesMocks.singleWithoutDefault,
+  datastreamMocks.basic,
+  datastreamMocks.notExist,
+  datastreamsMocks.multiple
+)(
+  "initializes form fields with prod edge configs, no sandbox configs, default sandbox use case",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "64c31a3b-d031-4a2f-8834-e96fc15d3030",
+            orgId: "ORG456@OtherCompanyOrg",
+            edgeDomain: "testedge.com",
+            edgeBasePath: "ee-beta",
+            defaultConsent: "pending",
+            idMigrationEnabled: true,
+            thirdPartyCookiesEnabled: true,
+            prehidingStyle: "#container { display: none }",
+            context: ["device", "placeContext"],
+            clickCollectionEnabled: false
+          }
+        ]
+      }
+    });
+
+    await instances[0].nameField.expectValue("alloy1");
+
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
+      "Test Sandbox 1"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
+      "test datastream"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectHidden();
+    await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
+      "Select a datastream"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectHidden();
+    await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
+      "Select a datastream"
+    );
+
+    await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
+    await instances[0].edgeDomainField.expectValue("testedge.com");
+    await instances[0].edgeBasePathField.expectValue("ee-beta");
+    await instances[0].defaultConsent.inRadio.expectUnchecked();
+    await instances[0].defaultConsent.outRadio.expectUnchecked();
+    await instances[0].defaultConsent.pendingRadio.expectChecked();
+    await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementField.expectNotExists();
+    await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].clickCollectionEnabledField.expectUnchecked();
+    await instances[0].contextGranularity.specificField.expectChecked();
+    await instances[0].specificContext.webField.expectUnchecked();
+    await instances[0].specificContext.deviceField.expectChecked();
+    await instances[0].specificContext.environmentField.expectUnchecked();
+    await instances[0].specificContext.placeContextField.expectChecked();
+  }
+);
+
+test.requestHooks(
+  sandboxesMocks.multipleWithDefault,
+  datastreamMocks.basic,
+  datastreamMocks.notExist,
+  datastreamsMocks.multiple
+)(
+  "initializes form fields with prod edge configs settings but no sandbox configs, multiple sandboxes",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "64c31a3b-d031-4a2f-8834-e96fc15d3030",
+            orgId: "ORG456@OtherCompanyOrg",
+            edgeDomain: "testedge.com",
+            edgeBasePath: "ee-beta",
+            defaultConsent: "pending",
+            idMigrationEnabled: true,
+            thirdPartyCookiesEnabled: true,
+            prehidingStyle: "#container { display: none }",
+            context: ["device", "placeContext"],
+            clickCollectionEnabled: false
+          }
+        ]
+      }
+    });
+
+    await instances[0].nameField.expectValue("alloy1");
+
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
+      "Test Sandbox 1"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
+      "test datastream"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectSelectedOptionLabel(
+      "Select a sandbox"
+    );
+
+    await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectSelectedOptionLabel(
+      "Select a sandbox"
+    );
+
+    await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
+    await instances[0].edgeDomainField.expectValue("testedge.com");
+    await instances[0].edgeBasePathField.expectValue("ee-beta");
+    await instances[0].defaultConsent.inRadio.expectUnchecked();
+    await instances[0].defaultConsent.outRadio.expectUnchecked();
+    await instances[0].defaultConsent.pendingRadio.expectChecked();
+    await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementField.expectNotExists();
+    await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].clickCollectionEnabledField.expectUnchecked();
+    await instances[0].contextGranularity.specificField.expectChecked();
+    await instances[0].specificContext.webField.expectUnchecked();
+    await instances[0].specificContext.deviceField.expectChecked();
+    await instances[0].specificContext.environmentField.expectUnchecked();
+    await instances[0].specificContext.placeContextField.expectChecked();
+  }
+);

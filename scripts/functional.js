@@ -25,7 +25,6 @@ const defaultSpecsPath = path.join(
 );
 const {
   watch,
-  saucelabs,
   firefox,
   chrome,
   safari,

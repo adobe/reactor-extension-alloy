@@ -349,6 +349,7 @@ test.requestHooks(
   // User manually opens the menu and should see all unfiltered items.
 
   await schemaField.openMenu();
+  await schemaField.scrollToTop();
   await schemaField.expectMenuOptionLabelsInclude(
     schemasMocks.pagingTitles.slice(0, 3)
   );

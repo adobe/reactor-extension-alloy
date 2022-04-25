@@ -20,7 +20,7 @@ const popoverMenuSelector = Selector('[role="listbox"]');
 const tabSelector = Selector('[role="tab"]');
 const menuItemCssSelector = '[role="option"]';
 const invalidAttribute = "aria-invalid";
-
+const invalidCssSelector = '[class*="--invalid"]';
 // Sometimes TestCafe's click simulation doesn't match what
 // React-Spectrum is expecting. A single click might open then
 // close a Picker, for example. Calling click directly on
@@ -40,23 +40,17 @@ const compatibleClick = async selector => {
   })();
 };
 
-const compatibleSelectAll = async selector => {
-  await t.expect(selector.exists).ok();
-  await t.scrollIntoView(selector);
-  await ClientFunction(() => {
-    const element = selector();
-    element.selectionStart = 0;
-    element.selectionEnd = element.value.length - 1;
-    console.log(element);
-  }).with({
-    dependencies: { selector }
-  })();
-};
-
 const createExpectError = selector => async () => {
   await t
     .expect(selector.getAttribute(invalidAttribute))
     .eql("true", "Expected field to have error when it did not");
+};
+const createExpectInvalidCssClass = selector => async () => {
+  await t.expect(selector.parent().find(invalidCssSelector).exists).ok();
+};
+
+const createExpectHidden = selector => async () => {
+  await t.expect(selector.hasAttribute("hidden")).ok();
 };
 
 const createExpectNoError = selector => async () => {
@@ -248,7 +242,7 @@ const componentWrappers = {
   },
   picker(selector) {
     return {
-      expectError: createExpectError(selector),
+      expectError: createExpectInvalidCssClass(selector),
       expectNoError: createExpectNoError(selector),
       expectText: createExpectText(selector),
       async selectOption(label) {
@@ -271,8 +265,9 @@ const componentWrappers = {
         await compatibleClick(selector);
         await createExpectMenuOptionLabelsExclude(popoverMenuSelector)(labels);
       },
-      expectDisabled: createExpectDisabled(selector.find("button")),
-      expectEnabled: createExpectEnabled(selector.find("button"))
+      expectDisabled: createExpectDisabled(selector),
+      expectEnabled: createExpectEnabled(selector.find("button")),
+      expectHidden: createExpectHidden(selector.parent().parent())
     };
   },
   textField(selector) {
@@ -285,10 +280,12 @@ const componentWrappers = {
         await t.scrollIntoView(selector).typeText(selector, text, options);
       },
       async clear() {
-        // Textfields with long values show an ellipsis at the end of the input.
-        // We need to click on the field first to turn it into a normal input.
-        //await compatibleClick(selector);
-        await t.scrollIntoView(selector).click(selector).selectText(selector).pressKey("delete");
+        await t.selectText(selector).pressKey("delete");
+      },
+      // Fields with long values may need to be clicked before they
+      // are cleared to get rid of the "..." at the end.
+      async click() {
+        await t.click(selector);
       }
     };
   },
