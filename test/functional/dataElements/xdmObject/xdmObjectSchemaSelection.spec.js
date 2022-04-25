@@ -48,7 +48,7 @@ test.requestHooks(sandboxMocks.userRegionMissing)(
   async () => {
     await initializeExtensionView();
     await errorBoundaryMessage.expectMessage(
-      /Your organization is not provisioned for Adobe Experience Platform\. Please contact your organization administrator\./
+      /Your organization is not currently provisioned for Adobe Data Collection/
     );
   }
 );

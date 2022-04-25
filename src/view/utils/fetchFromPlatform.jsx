@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
+import React from "react";
 import getBaseRequestHeaders from "./getBaseRequestHeaders";
 import * as HTTP_STATUS from "../constants/httpStatus";
 import * as NETWORK_ERROR_MESSAGE from "../constants/networkErrorMessage";
@@ -22,8 +22,13 @@ const PLATFORM_HOST_STAGING = "https://platform-stage.adobe.io";
 const ERROR_CODE_INVALID_ACCESS_TOKEN = "401013";
 const ERROR_CODE_USER_REGION_MISSING = "403027";
 
-const ERROR_NO_AEP_ACCESS =
-  "Your organization is not provisioned for Adobe Experience Platform. Please contact your organization administrator.";
+const ERROR_NO_AEP_ACCESS = (
+  <>
+    Your organization is not currently provisioned for Adobe Data Collection. To
+    request the necessary access free of charge follow the instructions{" "}
+    <a href="https://adobe.ly/websdkaccess">here.</a>
+  </>
+);
 
 export default async ({ orgId, imsAccess, path, params, headers, signal }) => {
   const host = getHost({
