@@ -24,8 +24,10 @@ const ERROR_CODE_USER_REGION_MISSING = "403027";
 
 const ERROR_NO_AEP_ACCESS = (
   <>
-    Your organization is not currently provisioned for Adobe Data Collection. To
-    request the necessary access free of charge follow the instructions{" "}
+    You or your organization is not currently provisioned for Adobe Data
+    Collection. To request personal access contact your organization
+    administrator, or to request the necessary access for your organization
+    follow the instructions{" "}
     <a
       href="https://adobe.ly/websdkaccess"
       target="_blank"
