@@ -29,7 +29,7 @@ jobs:
     - name: Build
       run: npm run build
     - name: Run Unit Test
-      run: npx karma start karma.saucelabs.conf.js --single-run
+      run: npm run test:unit:saucelabs
   functional-chrome:
     name: "Chrome Functional Test"
     runs-on: ubuntu-latest
