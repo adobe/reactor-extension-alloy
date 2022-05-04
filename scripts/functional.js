@@ -16,6 +16,7 @@ const path = require("path");
 const argv = require("minimist")(process.argv.slice(2));
 const chalk = require("chalk");
 const { Parcel } = require("@parcel/core");
+const sandbox = require("@adobe/reactor-sandbox");
 
 require("events").EventEmitter.defaultMaxListeners = 30;
 
@@ -40,6 +41,10 @@ const componentFixturePath = path.join(
   __dirname,
   "../test/functional/components/helpers/fixture.html"
 );
+const runtimeFixturePath = path.join(
+  __dirname,
+  "../test/functional/runtime/helpers/fixture.html"
+);
 const componentFixtureOutputDir = path.join(
   __dirname,
   "../componentFixtureDist"
@@ -47,7 +52,7 @@ const componentFixtureOutputDir = path.join(
 
 const buildComponentFixtures = async () => {
   const bundler = new Parcel({
-    entries: componentFixturePath,
+    entries: [componentFixturePath, runtimeFixturePath],
     defaultConfig: "@parcel/config-default",
     // Development mode is required to keep the data-test-id props
     mode: "development",
@@ -63,6 +68,12 @@ const buildComponentFixtures = async () => {
 (async () => {
   await build({ watch });
   await buildComponentFixtures();
+
+  // const cwd = process.cwd();
+  // process.chdir(path.join(__dirname, "../dist"));
+  await sandbox.init();
+  await sandbox.run();
+  // process.chdir(cwd);
 
   const testcafe = await createTestCafe();
 

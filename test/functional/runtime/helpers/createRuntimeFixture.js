@@ -11,14 +11,26 @@ governing permissions and limitations under the License.
 */
 
 import path from "path";
+import fs from "fs";
 
-const createComponentFixture = ({ title }) => {
-  return fixture(title).page(
-    path.join(
-      __dirname,
-      `../../../../componentFixtureDist/components/helpers/fixture.html`
-    )
+const createRuntimeFixture = ({ title, container, requestHooks = [] }) => {
+  const containerPath = path.join(
+    __dirname,
+    "../../../../.sandbox/container.js"
   );
+  fs.writeFileSync(
+    containerPath,
+    `module.exports = ${JSON.stringify(container, null, 2)};`
+  );
+
+  return fixture(title)
+    .page(
+      path.join(
+        __dirname,
+        "../../../../componentFixtureDist/runtime/helpers/fixture.html"
+      )
+    )
+    .requestHooks(...requestHooks);
 };
 
-export default createComponentFixture;
+export default createRuntimeFixture;
