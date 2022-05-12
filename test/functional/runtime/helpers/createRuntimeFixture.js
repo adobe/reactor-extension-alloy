@@ -12,8 +12,13 @@ governing permissions and limitations under the License.
 
 import path from "path";
 import fs from "fs";
+import getContainer from "@adobe/reactor-sandbox/src/tasks/helpers/getContainer";
 
 const createRuntimeFixture = ({ title, container, requestHooks = [] }) => {
+  console.log("Getting my container");
+  const mycontainer = getContainer(container);
+  console.log(mycontainer);
+
   const containerPath = path.join(
     __dirname,
     "../../../../.sandbox/container.js"
