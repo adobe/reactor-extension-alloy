@@ -331,6 +331,24 @@
       },
       "libPath": "dist/lib/actions/setConsent/index.js",
       "viewPath": "actions/setConsent.html"
+    },
+    {
+      "displayName": "Append identity to URL",
+      "name": "append-identity-to-url",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "instanceName": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["instanceName"],
+        "additionalProperties": false
+      },
+      "libPath": "dist/lib/actions/appendIdentityToUrl/index.js",
+      "viewPath": "actions/appendIdentityToUrl.html"
     }
   ],
   "events": [
