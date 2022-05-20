@@ -179,6 +179,7 @@ const DatastreamSelector = ({
           <TooltipTrigger>
             <ActionButton
               isQuiet
+              isDisabled={!value}
               onPress={() => {
                 copyToClipboard(value);
               }}
@@ -193,6 +194,7 @@ const DatastreamSelector = ({
               onPress={() => {
                 setValue("");
               }}
+              isDisabled={!value}
             >
               <Delete />
             </ActionButton>
