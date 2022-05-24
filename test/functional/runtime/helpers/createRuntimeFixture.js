@@ -15,10 +15,7 @@ import fs from "fs";
 import getContainer from "@adobe/reactor-sandbox/src/tasks/helpers/getContainer";
 
 const createRuntimeFixture = ({ title, container, requestHooks = [] }) => {
-  console.log("Getting my container");
-  const mycontainer = getContainer(container);
-  console.log(mycontainer);
-
+  // Write the container.js file here because getContainer requires the file
   const containerPath = path.join(
     __dirname,
     "../../../../.sandbox/container.js"
@@ -28,6 +25,13 @@ const createRuntimeFixture = ({ title, container, requestHooks = [] }) => {
     `module.exports = ${JSON.stringify(container, null, 2)};`
   );
 
+  // see @adobe/reactor-sandbox/src/tasks/run.js Line 94
+  const containerJS = getContainer();
+  const turbine = fs.readFileSync(
+    require.resolve(`@adobe/reactor-turbine/dist/engine.js`)
+  );
+  const launchLibContents = containerJS + turbine;
+
   return fixture(title)
     .page(
       path.join(
@@ -35,6 +39,7 @@ const createRuntimeFixture = ({ title, container, requestHooks = [] }) => {
         "../../../../componentFixtureDist/runtime/helpers/fixture.html"
       )
     )
+    .clientScripts({ content: launchLibContents })
     .requestHooks(...requestHooks);
 };
 
