@@ -18,8 +18,7 @@ const EdgeConfigEnvironment = ({
   name,
   initInfo,
   environmentType,
-  context,
-  isRequired
+  context
 }) => {
   const [{ value: sandboxName }, , { setValue: setSandboxName }] = useField(
     `${name}.sandbox`
@@ -38,10 +37,6 @@ const EdgeConfigEnvironment = ({
   const isSandboxDisabled =
     defaultSandboxOnly && environmentType === PRODUCTION;
 
-  const datastreamLabel = defaultSandboxOnly
-    ? `${environmentType} datastream`
-    : " ";
-
   const sandboxLabel = defaultSandboxOnly
     ? "Adobe Experience Platform sandbox"
     : `${environmentType} environment`;
@@ -53,15 +48,9 @@ const EdgeConfigEnvironment = ({
   const sandboxProps = {
     isHidden: isSandboxHidden,
     isDisabled: isSandboxDisabled,
-    isRequired,
+    isRequired: environmentType === PRODUCTION,
     label: sandboxLabel,
     "data-test-id": `${environmentType}SandboxField`,
-    UNSAFE_className: "CapitalizedLabel"
-  };
-  const datastreamProps = {
-    isRequired: defaultSandboxOnly ? isRequired : false,
-    label: datastreamLabel,
-    "data-test-id": `${environmentType}DatastreamField`,
     UNSAFE_className: "CapitalizedLabel"
   };
 
@@ -84,8 +73,9 @@ const EdgeConfigEnvironment = ({
             name={`${name}.datastreamId`}
             selectedSandbox={selectedSandbox}
             initInfo={initInfo}
-            otherProps={datastreamProps}
             items={datastreams}
+            environmentType={environmentType}
+            defaultSandboxOnly={defaultSandboxOnly}
           />
         )}
       </>
@@ -97,7 +87,6 @@ EdgeConfigEnvironment.propTypes = {
   name: PropTypes.string.isRequired,
   initInfo: PropTypes.object.isRequired,
   environmentType: PropTypes.string,
-  isRequired: PropTypes.bool,
   context: PropTypes.object.isRequired
 };
 
