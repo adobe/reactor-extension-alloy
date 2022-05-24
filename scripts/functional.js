@@ -16,6 +16,7 @@ const path = require("path");
 const argv = require("minimist")(process.argv.slice(2));
 const chalk = require("chalk");
 const { Parcel } = require("@parcel/core");
+const sandbox = require("@adobe/reactor-sandbox");
 
 require("events").EventEmitter.defaultMaxListeners = 30;
 
@@ -71,6 +72,7 @@ const buildComponentFixtures = async () => {
   // Running the runtime tests requires us to re-write this file.
   // This will save the file and restore it after the tests are complete.
   saveAndRestoreFile({ file: path.resolve(".sandbox", "container.js") });
+  await sandbox.init();
 
   const testcafe = await createTestCafe();
 
