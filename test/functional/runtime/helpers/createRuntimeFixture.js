@@ -33,12 +33,7 @@ const createRuntimeFixture = ({ title, container, requestHooks = [] }) => {
   const launchLibContents = containerJS + turbine;
 
   return fixture(title)
-    .page(
-      path.join(
-        __dirname,
-        "../../../../componentFixtureDist/runtime/helpers/fixture.html"
-      )
-    )
+    .page(path.join(__dirname, "../../../../runtimeFixtureDist/fixture.html"))
     .clientScripts({ content: launchLibContents })
     .requestHooks(...requestHooks);
 };

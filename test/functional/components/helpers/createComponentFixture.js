@@ -14,10 +14,7 @@ import path from "path";
 
 const createComponentFixture = ({ title }) => {
   return fixture(title).page(
-    path.join(
-      __dirname,
-      `../../../../componentFixtureDist/components/helpers/fixture.html`
-    )
+    path.join(__dirname, `../../../../componentFixtureDist/fixture.html`)
   );
 };
 

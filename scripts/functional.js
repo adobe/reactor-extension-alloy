@@ -42,18 +42,19 @@ const componentFixturePath = path.join(
   __dirname,
   "../test/functional/components/helpers/fixture.html"
 );
-const runtimeFixturePath = path.join(
-  __dirname,
-  "../test/functional/runtime/helpers/fixture.html"
-);
 const componentFixtureOutputDir = path.join(
   __dirname,
   "../componentFixtureDist"
 );
+const runtimeFixturePath = path.join(
+  __dirname,
+  "../test/functional/runtime/helpers/fixture.html"
+);
+const runtimeFixtureOutputDir = path.join(__dirname, "../runtimeFixtureDist");
 
 const buildComponentFixtures = async () => {
   const bundler = new Parcel({
-    entries: [componentFixturePath, runtimeFixturePath],
+    entries: componentFixturePath,
     defaultConfig: "@parcel/config-default",
     // Development mode is required to keep the data-test-id props
     mode: "development",
@@ -66,9 +67,25 @@ const buildComponentFixtures = async () => {
   return bundler.run();
 };
 
+const buildRuntimeFixtures = async () => {
+  const bundler = new Parcel({
+    entries: runtimeFixturePath,
+    defaultConfig: "@parcel/config-default",
+    // Development mode is required to keep the data-test-id props
+    mode: "development",
+    defaultTargetOptions: {
+      publicUrl: "./",
+      distDir: runtimeFixtureOutputDir
+    },
+    sourceMaps: true
+  });
+  return bundler.run();
+};
+
 (async () => {
   await build({ watch });
   await buildComponentFixtures();
+  await buildRuntimeFixtures();
   // Running the runtime tests requires us to re-write this file.
   // This will save the file and restore it after the tests are complete.
   saveAndRestoreFile({ file: path.resolve(".sandbox", "container.js") });
