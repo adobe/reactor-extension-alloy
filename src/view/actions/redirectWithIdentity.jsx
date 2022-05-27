@@ -32,7 +32,7 @@ const getSettings = ({ values }) => {
   return settings;
 };
 
-const AppendIdentityToUrl = () => {
+const RedirectWithIdentity = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -50,4 +50,4 @@ const AppendIdentityToUrl = () => {
   );
 };
 
-render(AppendIdentityToUrl);
+render(RedirectWithIdentity);

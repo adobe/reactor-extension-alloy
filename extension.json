@@ -333,8 +333,8 @@
       "viewPath": "actions/setConsent.html"
     },
     {
-      "displayName": "Append identity to URL",
-      "name": "append-identity-to-url",
+      "displayName": "Redirect with identity",
+      "name": "redirect-with-identity",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
@@ -347,8 +347,8 @@
         "required": ["instanceName"],
         "additionalProperties": false
       },
-      "libPath": "dist/lib/actions/appendIdentityToUrl/index.js",
-      "viewPath": "actions/appendIdentityToUrl.html"
+      "libPath": "dist/lib/actions/redirectWithIdentity/index.js",
+      "viewPath": "actions/redirectWithIdentity.html"
     }
   ],
   "events": [
