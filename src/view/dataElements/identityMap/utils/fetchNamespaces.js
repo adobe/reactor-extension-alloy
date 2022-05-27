@@ -12,14 +12,18 @@ governing permissions and limitations under the License.
 
 import fetchFromPlatform from "../../../utils/fetchFromPlatform";
 
-export default async ({ orgId, imsAccess }) => {
+export default async ({ orgId, imsAccess, sandbox }) => {
   let parsedResponse;
+  const headers = {
+    "x-sandbox-name": sandbox
+  };
 
   try {
     parsedResponse = await fetchFromPlatform({
       orgId,
       imsAccess,
-      path: "/data/core/idnamespace/identities"
+      path: "/data/core/idnamespace/identities",
+      headers
     });
   } catch (e) {
     // TODO: Should we be reporting an error instead?

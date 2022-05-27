@@ -10,39 +10,16 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState } from "react";
-import { FieldArray, useField } from "formik";
+import React, { useRef } from "react";
 import { array, boolean, object, string } from "yup";
-import {
-  Button,
-  Flex,
-  Item,
-  Text,
-  Well,
-  TabList,
-  TabPanels,
-  Tabs,
-  View
-} from "@adobe/react-spectrum";
-import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import getDefaultIdentity from "./identityMap/utils/getDefaultIdentity";
-import fetchNamespaces from "./identityMap/utils/fetchNamespaces";
-import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
-import NamespaceComponent from "../components/namespaceComponent";
-import getDefaultIdentifier from "./identityMap/utils/getDefaultIdentifier";
-import DataElementSelector from "../components/dataElementSelector";
-import FormElementContainer from "../components/formElementContainer";
-import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
-import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
-import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import * as AUTHENTICATED_STATE from "./identityMap/constants/authenticatedState";
-import Heading from "../components/typography/heading";
+import Identity from "./identityMap/components/Identity";
+import fetchSandboxes from "./xdmObject/helpers/fetchSandboxes";
+import { getNamespaces } from "./identityMap/utils/namespacesUtils";
 
-const isNotECID = namespace => {
-  return namespace.code !== "ECID";
-};
 const identitiesMapToArray = identityMap => {
   return Object.keys(identityMap)
     .sort((firstNamespaceCode, secondNamespaceCode) =>
@@ -56,6 +33,10 @@ const identitiesMapToArray = identityMap => {
     });
 };
 
+const getDefaultSandbox = sandboxes => {
+  return sandboxes.find(sandbox => sandbox.isDefault);
+};
+
 const identitiesArrayToMap = identitiesArray => {
   return identitiesArray.reduce((identityMap, identity) => {
     const { namespaceCode, identifiers } = identity;
@@ -64,33 +45,56 @@ const identitiesArrayToMap = identitiesArray => {
   }, {});
 };
 
-const getInitialValues = async ({ initInfo }) => {
-  const identities = initInfo.settings
-    ? identitiesMapToArray(initInfo.settings)
-    : [getDefaultIdentity()];
+const getIdentityMapSettings = settings => {
+  if (
+    settings &&
+    settings.items &&
+    Array.isArray(Object.values(settings.items)[0])
+  ) {
+    return identitiesMapToArray(settings.items);
+  }
+  if (settings && Array.isArray(Object.values(settings)[0])) {
+    return identitiesMapToArray(settings);
+  }
+  return [getDefaultIdentity()];
+};
 
-  const namespaces = await fetchNamespaces({
+const getSandboxFromSettings = settings => {
+  if (settings && settings.sandbox && typeof settings.sandbox === "string") {
+    return settings.sandbox;
+  }
+  return undefined;
+};
+
+const getInitialValues = async ({ initInfo, context }) => {
+  const identities = getIdentityMapSettings(initInfo.settings);
+
+  const { results: sandboxes } = await fetchSandboxes({
     orgId: initInfo.company.orgId,
     imsAccess: initInfo.tokens.imsAccess
   });
 
-  if (namespaces.length > 0) {
-    return {
-      identities,
-      namespaces: namespaces
-        .filter(isNotECID)
-        .sort((first, second) => first.name.localeCompare(second.name))
-    };
-  }
+  context.current = {};
+  context.current.sandboxes = sandboxes;
+  const settingsSandbox = getSandboxFromSettings(initInfo.settings);
+
+  const sandbox = settingsSandbox || getDefaultSandbox(sandboxes).name;
+
+  context.current.namespaces = await getNamespaces(initInfo, sandbox);
 
   return {
-    identities,
-    namespaces: []
+    sandbox,
+    identities
   };
 };
 
 const getSettings = ({ values }) => {
-  return identitiesArrayToMap(values.identities);
+  const items = identitiesArrayToMap(values.identities);
+  const sandbox = values.sandbox;
+  return {
+    sandbox,
+    items
+  };
 };
 
 const validateDuplicateValue = (
@@ -183,225 +187,20 @@ const validationSchema = object()
     );
   });
 
-const IdentityMap = () => {
-  const [{ value: namespaces }] = useField("namespaces");
-  const [{ value: identities }] = useField("identities");
-  const [selectedTabKey, setSelectedTabKey] = useState("0");
-  useNewlyValidatedFormSubmission(errors => {
-    // If the user just tried to save the configuration and there's
-    // a validation error, make sure the first accordion item containing
-    // an error is shown.
-    if (errors && errors.identities) {
-      const identityIndexContainingErrors = errors.identities.findIndex(
-        identity => identity
-      );
-      setSelectedTabKey(String(identityIndexContainingErrors));
-    }
-  });
-
-  const getNamespaceByCode = code => {
-    return namespaces.find(namespace => namespace.code === code);
-  };
-
+const IdentityMapExtensionView = () => {
+  const context = useRef();
   return (
-    <>
-      <FieldArray
-        name="identities"
-        render={arrayHelpers => {
-          return (
-            <React.Fragment>
-              <Flex alignItems="center">
-                <Heading size="M">Identities</Heading>
-                <Button
-                  data-test-id="addIdentityButton"
-                  variant="secondary"
-                  onPress={() => {
-                    arrayHelpers.push(getDefaultIdentity());
-                    setSelectedTabKey(String(identities.length));
-                  }}
-                  marginStart="auto"
-                >
-                  Add identity
-                </Button>
-              </Flex>
-              {/*
-                There is an issue where the heavy line under the selected
-                tab doesn't update in position or width when the label changes,
-                which can occur when the user is changing an identity's namespace.
-                This is a reported bug in React-Spectrum.
-                https://github.com/adobe/react-spectrum/issues/2004
-                */}
-              <Tabs
-                aria-label="Identities"
-                items={identities}
-                selectedKey={selectedTabKey}
-                onSelectionChange={setSelectedTabKey}
-              >
-                <TabList>
-                  {identities.map((identity, index) => {
-                    const label =
-                      getNamespaceByCode(identity.namespaceCode)?.name ||
-                      identity.namespaceCode ||
-                      "Unnamed identity";
-                    return <Item key={index}>{label}</Item>;
-                  })}
-                </TabList>
-                <TabPanels>
-                  {identities.map((identity, index) => {
-                    return (
-                      <Item key={index}>
-                        <FormElementContainer>
-                          <FieldArray
-                            id={`identities.${index}.identifiers`}
-                            name={`identities.${index}.identifiers`}
-                            render={identityArrayHelpers => {
-                              return (
-                                <React.Fragment>
-                                  <Flex
-                                    marginTop="size-100"
-                                    alignItems="flex-end"
-                                    justifyContent="space-between"
-                                  >
-                                    <NamespaceComponent
-                                      name={`identities.${index}.namespaceCode`}
-                                      selectedNamespaceCode={
-                                        identity.namespaceCode
-                                      }
-                                      namespaces={namespaces}
-                                      index={index}
-                                    />
-                                    <Button
-                                      data-test-id={`addIdentifier${index}Button`}
-                                      variant="secondary"
-                                      onPress={() => {
-                                        identityArrayHelpers.push(
-                                          getDefaultIdentifier()
-                                        );
-                                      }}
-                                    >
-                                      Add identifier
-                                    </Button>
-                                  </Flex>
-                                  <Flex direction="column" gap="size-250">
-                                    {identity.identifiers.map(
-                                      (identifier, identifierIndex) => (
-                                        <Well
-                                          key={`identity${index}identifier${identifierIndex}`}
-                                        >
-                                          <FormElementContainer>
-                                            <DataElementSelector>
-                                              <FormikTextField
-                                                data-test-id={`identity${index}idField${identifierIndex}`}
-                                                label="ID"
-                                                name={`identities.${index}.identifiers.${identifierIndex}.id`}
-                                                description="If the ID value is not a populated string, this identifier will automatically be removed from the identity map."
-                                                isRequired
-                                                width="size-5000"
-                                              />
-                                            </DataElementSelector>
-                                            <FormikPicker
-                                              data-test-id={`identity${index}authenticatedStateField${identifierIndex}`}
-                                              label="Authenticated state"
-                                              name={`identities.${index}.identifiers.${identifierIndex}.authenticatedState`}
-                                              width="size-5000"
-                                            >
-                                              <Item
-                                                key={
-                                                  AUTHENTICATED_STATE.AMBIGUOUS
-                                                }
-                                              >
-                                                Ambiguous
-                                              </Item>
-                                              <Item
-                                                key={
-                                                  AUTHENTICATED_STATE.AUTHENTICATED
-                                                }
-                                              >
-                                                Authenticated
-                                              </Item>
-                                              <Item
-                                                key={
-                                                  AUTHENTICATED_STATE.LOGGED_OUT
-                                                }
-                                              >
-                                                Logged Out
-                                              </Item>
-                                              {item => (
-                                                <Item key={item.value}>
-                                                  {item.label}
-                                                </Item>
-                                              )}
-                                            </FormikPicker>
-                                            <FormikCheckbox
-                                              data-test-id={`identity${index}primaryField${identifierIndex}`}
-                                              name={`identities.${index}.identifiers.${identifierIndex}.primary`}
-                                              description="Adobe Experience Platform will use the identity as an identifier to help stitch together more information about that individual. If left unchecked, the identifier within this namespace will still be collected, but the ECID will be used as the primary identifier for stitching."
-                                            >
-                                              Primary
-                                            </FormikCheckbox>
-                                          </FormElementContainer>
-                                          {identities[index].identifiers
-                                            .length > 1 && (
-                                            <Button
-                                              data-test-id={`deleteIdentifier${index}Button${identifierIndex}`}
-                                              variant="secondary"
-                                              onPress={() => {
-                                                identityArrayHelpers.remove(
-                                                  identifierIndex
-                                                );
-                                              }}
-                                              marginTop="size-150"
-                                            >
-                                              <DeleteIcon />
-                                              <Text>Delete identifier</Text>
-                                            </Button>
-                                          )}
-                                        </Well>
-                                      )
-                                    )}
-                                  </Flex>
-                                </React.Fragment>
-                              );
-                            }}
-                          />
-                          {identities.length > 1 && (
-                            <View marginTop="size-100">
-                              <Button
-                                data-test-id={`deleteIdentity${index}Button`}
-                                variant="secondary"
-                                onClick={() => {
-                                  arrayHelpers.remove(index);
-                                  setSelectedTabKey("0");
-                                }}
-                              >
-                                <DeleteIcon />
-                                Delete identity
-                              </Button>
-                            </View>
-                          )}
-                        </FormElementContainer>
-                      </Item>
-                    );
-                  })}
-                </TabPanels>
-              </Tabs>
-            </React.Fragment>
-          );
-        }}
-      />
-    </>
+    <ExtensionView
+      getInitialValues={({ initInfo }) =>
+        getInitialValues({ initInfo, context })
+      }
+      getSettings={getSettings}
+      formikStateValidationSchema={validationSchema}
+      render={({ initInfo }) => {
+        return <Identity initInfo={initInfo} context={context} />;
+      }}
+    />
   );
 };
-
-const IdentityMapExtensionView = () => (
-  <ExtensionView
-    getInitialValues={getInitialValues}
-    getSettings={getSettings}
-    formikStateValidationSchema={validationSchema}
-    render={() => {
-      return <IdentityMap />;
-    }}
-  />
-);
 
 render(IdentityMapExtensionView);
