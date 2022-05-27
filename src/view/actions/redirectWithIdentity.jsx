@@ -40,7 +40,7 @@ const RedirectWithIdentity = () => {
       render={({ initInfo }) => (
         <FormElementContainer>
           <InstanceNamePicker
-            data-test-id="instanceNameField"
+            data-test-id="instanceNamePicker"
             name="instanceName"
             initInfo={initInfo}
           />

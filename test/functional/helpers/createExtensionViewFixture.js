@@ -33,9 +33,10 @@ const createExtensionViewFixture = ({
   title,
   viewPath,
   requiresAdobeIOIntegration = false,
-  requestHooks = []
+  requestHooks = [],
+  only = false
 }) => {
-  let fixt = fixture(title)
+  let fixt = (only ? fixture.only : fixture)(title)
     .page(path.join(__dirname, "../../../dist/view", viewPath))
     .requestHooks(extensionBridgeRequestMock, ...requestHooks)
     .clientScripts(preventSpecificErrorsFromFailingTestsPath);

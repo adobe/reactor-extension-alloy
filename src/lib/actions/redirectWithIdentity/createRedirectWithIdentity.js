@@ -10,16 +10,35 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager, document }) => (settings, event) => {
+module.exports = ({ instanceManager, document, logger }) => (
+  settings,
+  event
+) => {
   const { instanceName } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
-    // TODO: log error;
+    logger.warn(
+      `Instance "${instanceName}" not found when running "Redirect with identity."`
+    );
     return Promise.resolve();
   }
 
-  if (event && event.nativeEvent && event.nativeEvent.preventDefault) {
+  if (!event || !event.nativeEvent) {
+    logger.warn(
+      `Native event not found when running "Redirect with identity." This action is meant to be used with a Core click event.`
+    );
+    return Promise.resolve();
+  }
+
+  if (!event.nativeEvent.target || !event.nativeEvent.target.href) {
+    logger.warn(
+      `Invalid event target when running "Redirect with identity." This action is meant to be used with a Core click event using an "a[href]" selector.`
+    );
+    return Promise.resolve();
+  }
+
+  if (event.nativeEvent.preventDefault) {
     event.nativeEvent.preventDefault();
   }
 
