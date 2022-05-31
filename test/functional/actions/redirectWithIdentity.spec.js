@@ -19,8 +19,7 @@ const instanceNamePicker = spectrum.picker("instanceNamePicker");
 
 createExtensionViewFixture({
   title: "Redirect with identity",
-  viewPath: "actions/redirectWithIdentity.html",
-  only: true
+  viewPath: "actions/redirectWithIdentity.html"
 });
 
 runCommonExtensionViewTests();

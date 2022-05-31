@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import path from "path";
 import fs from "fs";
 import getContainer from "@adobe/reactor-sandbox/src/tasks/helpers/getContainer";
+import { TEST_PAGE } from "./constants/url";
 
 const createRuntimeFixture = ({ title, container, requestHooks = [] }) => {
   // Write the container.js file here because getContainer requires the file
@@ -33,7 +34,7 @@ const createRuntimeFixture = ({ title, container, requestHooks = [] }) => {
   const launchLibContents = containerJS + turbine;
 
   return fixture(title)
-    .page(path.join(__dirname, "../../../../runtimeFixtureDist/fixture.html"))
+    .page(TEST_PAGE)
     .clientScripts({ content: launchLibContents })
     .requestHooks(...requestHooks);
 };
