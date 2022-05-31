@@ -11,24 +11,20 @@ governing permissions and limitations under the License.
 */
 
 import React, { useEffect } from "react";
-import { Item } from "@adobe/react-spectrum";
+import { Flex, Item, View } from "@adobe/react-spectrum";
 import { useAsyncList } from "@react-stately/data";
 import PropTypes from "prop-types";
 import { useField } from "formik";
-import FormikPicker from "../../../components/formikReactSpectrum3/formikPicker";
-import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
+import AlertIcon from "@spectrum-icons/workflow/Alert";
 import usePrevious from "../../../utils/usePrevious";
 import { findNamespace, getNamespaces } from "../utils/namespacesUtils";
+import FormikComboBox from "../../../components/formikReactSpectrum3/formikComboBox";
+import DataElementSelector from "../../../components/dataElementSelector";
 
 const getSelectedNamespace = (namespaces, selectedNamespaceCode) => {
-  if (namespaces.length < 1) {
+  if (namespaces.length < 1 || selectedNamespaceCode === "") {
     return undefined;
   }
-
-  if (selectedNamespaceCode === "") {
-    return "Select an option";
-  }
-
   const found = findNamespace(namespaces, selectedNamespaceCode);
 
   return found ? found.code : undefined;
@@ -77,25 +73,34 @@ const NamespacesComponent = ({
     }
   }, [selectedSandbox || null]);
 
-  return selectedNamespace ? (
-    <FormikPicker
-      data-test-id={`namespacePicker${index}Field`}
-      label="Namespace"
-      name={name}
-      items={namespacesList.items}
-      width="size-5000"
-      isRequired
-    >
-      {namespace => <Item key={namespace.code}>{namespace.name}</Item>}
-    </FormikPicker>
-  ) : (
-    <FormikTextField
-      data-test-id={`namespace${index}Field`}
-      label="Namespace"
-      name={name}
-      width="size-5000"
-      isRequired
-    />
+  return (
+    <Flex direction="row" alignItems="center">
+      <View>
+        <DataElementSelector>
+          <FormikComboBox
+            data-test-id={`namespaceCombobox${index}Field`}
+            name={name}
+            items={namespacesList.items}
+            width="size-5000"
+            description={
+              !selectedNamespace
+                ? "We recommend using namespaces from the same sandbox across an identityMap."
+                : ""
+            }
+            label="Namespace"
+            allowsCustomValue
+          >
+            {namespace => <Item key={namespace.code}>{namespace.code}</Item>}
+          </FormikComboBox>
+        </DataElementSelector>
+      </View>
+
+      {!selectedNamespace && (
+        <View>
+          <AlertIcon color="warning" size="S" marginBottom="size-100" />
+        </View>
+      )}
+    </Flex>
   );
 };
 

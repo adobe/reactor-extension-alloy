@@ -70,10 +70,15 @@ const Identity = ({ initInfo, context }) => {
   const onSandboxSelectionChange = sandbox => {
     setSandboxName(sandbox.name);
   };
-
+  const sandboxProps = {
+    label: "Sandbox",
+    marginBottom: "size-50",
+    description: "Select the sandbox to update the namespaces options."
+  };
   return (
     <>
       <SandboxSelector
+        otherProps={sandboxProps}
         name="sandbox"
         onSelectionChange={onSandboxSelectionChange}
         defaultSelectedSandbox={findSandbox(selectedSandboxName)}
