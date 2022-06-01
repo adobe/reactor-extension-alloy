@@ -11,16 +11,28 @@ governing permissions and limitations under the License.
 */
 import React, { useEffect } from "react";
 import { useAsyncList } from "@react-stately/data";
-import { Item, Link } from "@adobe/react-spectrum";
+import {
+  Flex,
+  Item,
+  Link,
+  View,
+  Picker,
+  ActionButton,
+  TooltipTrigger,
+  Tooltip
+} from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import { useField } from "formik";
-import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
+import Copy from "@spectrum-icons/workflow/Copy";
+import Delete from "@spectrum-icons/workflow/Delete";
+import copyToClipboard from "clipboard-copy";
 import useReportAsyncError from "../utils/useReportAsyncError";
 import fetchConfigs from "./utils/fetchConfigs";
 import usePrevious from "../utils/usePrevious";
 import Alert from "../components/alert";
-import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 import UserReportableError from "../errors/userReportableError";
+import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
+import { PRODUCTION } from "./constants/environmentType";
 
 // eslint-disable-next-line no-underscore-dangle
 const getKey = datastream => datastream && datastream._system.id;
@@ -40,9 +52,13 @@ const DatastreamSelector = ({
   initInfo,
   selectedSandbox,
   items,
-  otherProps
+  defaultSandboxOnly,
+  environmentType
 }) => {
-  const [{ value }, , { setValue }] = useField(name);
+  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
+    name
+  );
+
   const reportAsyncError = useReportAsyncError();
   const previousSelectedSandbox = usePrevious(selectedSandbox);
 
@@ -102,9 +118,21 @@ const DatastreamSelector = ({
     }
   }, [selectedSandbox ? selectedSandbox.name : null]);
 
+  const datastreamProps = {
+    isRequired: defaultSandboxOnly && environmentType === PRODUCTION,
+    label: defaultSandboxOnly ? `${environmentType} datastream` : " ",
+    "data-test-id": `${environmentType}DatastreamField`,
+    UNSAFE_className: "CapitalizedLabel"
+  };
+
   if (!datastreamList.isLoading && !datastreamList.items.length) {
     return (
-      <Alert variant="negative" title="No datastreams" width="size-5000">
+      <Alert
+        variant={environmentType === PRODUCTION ? "negative" : "informative"}
+        title="No datastreams"
+        width="size-5000"
+        marginTop="size-100"
+      >
         No datastreams exist for the selected sandbox. See{" "}
         <Link>
           <a
@@ -120,20 +148,60 @@ const DatastreamSelector = ({
     );
   }
   return (
-    <FieldDescriptionAndError description="">
-      <FormikPicker
-        name={name}
-        placeholder="Select a datastream"
-        items={datastreamList.items}
-        isLoading={datastreamList.isLoading}
-        isDisabled={!datastreamList.isLoading && !datastreamList.items.length}
-        width="size-5000"
-        {...otherProps}
-      >
-        {item => {
-          return <Item key={getKey(item)}>{getLabel(item)}</Item>;
-        }}
-      </FormikPicker>
+    <FieldDescriptionAndError error={touched && error ? error : undefined}>
+      <Flex direction="row" gap="size-100">
+        <View>
+          <Picker
+            {...datastreamProps}
+            selectedKey={value}
+            onSelectionChange={setValue}
+            onBlur={() => {
+              setTouched(true);
+            }}
+            validationState={touched && error ? "invalid" : undefined}
+            width="size-5000"
+            placeholder="Select a datastream"
+            isLoading={datastreamList.isLoading}
+            isDisabled={
+              !datastreamList.isLoading && !datastreamList.items.length
+            }
+            items={datastreamList.items}
+          >
+            {item => {
+              return <Item key={getKey(item)}>{getLabel(item)}</Item>;
+            }}
+          </Picker>
+        </View>
+        <Flex
+          direction="row"
+          marginTop={defaultSandboxOnly ? "size-250" : "size-150"}
+        >
+          <TooltipTrigger>
+            <ActionButton
+              isQuiet
+              isDisabled={!value}
+              onPress={() => {
+                copyToClipboard(value);
+              }}
+            >
+              <Copy />
+            </ActionButton>
+            <Tooltip> Copy datastream ID to clipboard </Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger>
+            <ActionButton
+              isQuiet
+              onPress={() => {
+                setValue("");
+              }}
+              isDisabled={!value}
+            >
+              <Delete />
+            </ActionButton>
+            <Tooltip> Reset Datastream ID </Tooltip>
+          </TooltipTrigger>
+        </Flex>
+      </Flex>
     </FieldDescriptionAndError>
   );
 };
@@ -143,8 +211,9 @@ DatastreamSelector.propTypes = {
   initInfo: PropTypes.object,
   name: PropTypes.string,
   selectedSandbox: PropTypes.object,
-  items: PropTypes.array,
-  otherProps: PropTypes.object
+  defaultSandboxOnly: PropTypes.bool,
+  environmentType: PropTypes.string,
+  items: PropTypes.array
 };
 
 export default DatastreamSelector;

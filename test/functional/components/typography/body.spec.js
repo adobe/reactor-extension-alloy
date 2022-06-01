@@ -16,8 +16,7 @@ import createComponentFixture from "../helpers/createComponentFixture";
 import renderReactElement from "../helpers/renderReactElement";
 
 createComponentFixture({
-  title: "Body component",
-  htmlFileName: "body.fixture.html"
+  title: "Body component"
 });
 
 const scenarios = [
