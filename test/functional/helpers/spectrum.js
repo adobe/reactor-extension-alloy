@@ -213,7 +213,8 @@ const componentWrappers = {
         await t.selectText(selector).pressKey("delete");
       },
       async scrollToTop() {
-        await t.scroll(popoverMenuSelector, 0, 0);
+        // sometimes when over-scrolling the popup will close, so we scroll to 1 pixel
+        await t.scroll(popoverMenuSelector, 0, 1);
       },
       // When the combobox loads pages of data when scrolling, this
       // will keep scrolling until the the item is reached.
