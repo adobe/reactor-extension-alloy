@@ -40,22 +40,10 @@ const identitiesArrayToMap = identitiesArray => {
   }, {});
 };
 
-const getIdentityMapSettings = settings => {
-  if (
-    settings &&
-    settings.items &&
-    Array.isArray(Object.values(settings.items)[0])
-  ) {
-    return identitiesMapToArray(settings.items);
-  }
-  if (settings && Array.isArray(Object.values(settings)[0])) {
-    return identitiesMapToArray(settings);
-  }
-  return [getDefaultIdentity()];
-};
-
 const getInitialValues = async ({ initInfo, context }) => {
-  const identities = getIdentityMapSettings(initInfo.settings);
+  const identities = initInfo.settings
+    ? identitiesMapToArray(initInfo.settings)
+    : [getDefaultIdentity()];
 
   context.current = {};
   context.current.namespaces = await getNamespacesOptions(initInfo);

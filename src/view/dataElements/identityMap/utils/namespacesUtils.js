@@ -68,16 +68,20 @@ const dedupeBy = (arr, keyFunc) => {
 const getExtensionSandboxes = initInfo => {
   const extensionSandboxes = new Set();
 
-  const firstInstanceSettings = initInfo?.extensionSettings?.instances[0];
+  const sandbox = initInfo?.extensionSettings?.instances[0]?.sandbox;
+  const stagingSandbox =
+    initInfo?.extensionSettings?.instances[0]?.stagingSandbox;
+  const developmentSandbox =
+    initInfo?.extensionSettings?.instances[0]?.developmentSandbox;
 
-  if (firstInstanceSettings.sandbox) {
-    extensionSandboxes.add(firstInstanceSettings.sandbox);
+  if (sandbox) {
+    extensionSandboxes.add(sandbox);
   }
-  if (firstInstanceSettings.stagingSandbox) {
-    extensionSandboxes.add(firstInstanceSettings.stagingSandbox);
+  if (stagingSandbox) {
+    extensionSandboxes.add(stagingSandbox);
   }
-  if (firstInstanceSettings.developmentSandbox) {
-    extensionSandboxes.add(firstInstanceSettings.developmentSandbox);
+  if (developmentSandbox) {
+    extensionSandboxes.add(developmentSandbox);
   }
 
   return extensionSandboxes;

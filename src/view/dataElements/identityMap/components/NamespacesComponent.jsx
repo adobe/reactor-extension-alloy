@@ -43,7 +43,7 @@ const NamespacesComponent = ({ name, index, namespaces }) => {
         <DataElementSelector>
           {namespaces.length > 0 ? (
             <FormikComboBox
-              data-test-id={`namespaceCombobox${index}Combobox`}
+              data-test-id={`namespace${index}Combobox`}
               name={name}
               items={namespaces}
               width="size-5000"
