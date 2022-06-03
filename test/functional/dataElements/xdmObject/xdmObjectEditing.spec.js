@@ -22,12 +22,15 @@ import initializeExtensionView from "./helpers/initializeExtensionView";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 import nodeEdit from "./helpers/nodeEdit";
+import spectrum from "../../helpers/spectrum";
 
 const schema = {
   id:
     "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
   version: "1.2"
 };
+
+const schemaField = spectrum.comboBox("schemaField");
 
 const moveUnifiedjsqeonlyTreeNodeOutOfViewport = async () => {
   await xdmTree.node("device").toggleExpansion();
@@ -66,6 +69,8 @@ test("initializes form fields with individual object attribute values", async ()
 
 test("allows user to provide individual object attribute values", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("name").click();
@@ -82,6 +87,8 @@ test("allows user to provide individual object attribute values", async () => {
 
 test("allows user to provide whole object value", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").click();
   await objectEdit.selectWholePopulationStrategy();
@@ -112,6 +119,8 @@ test("initializes form fields with whole object value", async () => {
 
 test("allows user to provide individual array items", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
@@ -164,6 +173,8 @@ test("initializes form fields with individual array items", async () => {
 
 test("allows user to provide whole array value", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
@@ -201,6 +212,8 @@ test("initializes form fields with whole array value", async () => {
 
 test("arrays using whole population strategy do not have children", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
@@ -213,6 +226,8 @@ test("arrays using whole population strategy do not have children", async () => 
 
 test("arrays with a whole population strategy ancestor do not have children", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
@@ -226,6 +241,8 @@ test("arrays with a whole population strategy ancestor do not have children", as
 
 test("allows user to provide value for property with string type", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("name").click();
@@ -262,6 +279,8 @@ test("initializes form fields with string value", async () => {
 
 test("allows user to provide value for property with integer type", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("numEmployees").click();
@@ -298,6 +317,8 @@ test("initializes form fields with integer value", async () => {
 
 test("allows user to provide value for property with number type", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("revenue").click();
@@ -334,6 +355,8 @@ test("initializes form fields with number value", async () => {
 
 test("allows user to enter data element value for property with boolean type", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("isLicensed").click();
@@ -370,6 +393,8 @@ test("initializes form fields with boolean data element value", async () => {
 
 test("allows user to select true constant value for property with boolean type", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("isLicensed").click();
@@ -407,6 +432,8 @@ test("initializes form fields with boolean constant value of true", async () => 
 
 test("allows user to select false constant value for property with boolean type", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("isLicensed").click();
@@ -444,6 +471,8 @@ test("initializes form fields with boolean constant value of false", async () =>
 
 test("allows user to select no constant value for property with boolean type", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("isLicensed").click();
@@ -456,18 +485,24 @@ test("allows user to select no constant value for property with boolean type", a
 
 test("disables auto-populated fields", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_id").click();
   await stringEdit.expectNotExists();
 });
 
 test("doesn't allow you to edit _id", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_id").click();
   await stringEdit.expectNotExists();
 });
 
 test("allows you to edit context fields", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("environment").toggleExpansion();
   await xdmTree.node("type").click();
   await stringEdit.expectExists();
@@ -475,6 +510,8 @@ test("allows you to edit context fields", async () => {
 
 test("clicking a breadcrumb item selects the item", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
@@ -496,6 +533,8 @@ test("clicking a breadcrumb item selects the item", async () => {
 
 test("clicking a tree node should select and expand the node", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").click();
   await nodeEdit.heading.expectText("_unifiedjsqeonly");
   await xdmTree.node("vendor").expectExists();
