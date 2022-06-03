@@ -15,15 +15,27 @@ governing permissions and limitations under the License.
 const path = require("path");
 const argv = require("minimist")(process.argv.slice(2));
 const chalk = require("chalk");
-const Bundler = require("parcel-bundler");
+const { Parcel } = require("@parcel/core");
+const sandbox = require("@adobe/reactor-sandbox");
+
+require("events").EventEmitter.defaultMaxListeners = 30;
 
 const defaultSpecsPath = path.join(
   __dirname,
   "../test/functional/**/*.spec.js"
 );
-const { watch, testName: testNameFilter, specsPath = defaultSpecsPath } = argv;
+const {
+  watch,
+  firefox,
+  chrome,
+  safari,
+  edge,
+  testName: testNameFilter,
+  specsPath = defaultSpecsPath
+} = argv;
 const createTestCafe = require("testcafe");
 const build = require("./helpers/build");
+const saveAndRestoreFile = require("./helpers/saveAndRestoreFile");
 const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
 
 const componentFixturePath = path.join(
@@ -34,33 +46,77 @@ const componentFixtureOutputDir = path.join(
   __dirname,
   "../componentFixtureDist"
 );
+const runtimeFixturePath = path.join(
+  __dirname,
+  "../test/functional/runtime/helpers/fixture.html"
+);
+const runtimeFixtureOutputDir = path.join(__dirname, "../runtimeFixtureDist");
 
 const buildComponentFixtures = async () => {
-  return new Promise(resolve => {
-    const bundler = new Bundler(componentFixturePath, {
+  const bundler = new Parcel({
+    entries: componentFixturePath,
+    defaultConfig: "@parcel/config-default",
+    // Development mode is required to keep the data-test-id props
+    mode: "development",
+    defaultTargetOptions: {
       publicUrl: "./",
-      outDir: componentFixtureOutputDir,
-      watch,
-      // HMR seems to be broken: https://github.com/parcel-bundler/parcel/issues/2894
-      hmr: false,
-      sourceMaps: false
-    });
-
-    bundler.on("bundled", () => {
-      resolve();
-    });
-
-    bundler.bundle();
+      distDir: componentFixtureOutputDir
+    },
+    sourceMaps: true
   });
+  return bundler.run();
+};
+
+const buildRuntimeFixtures = async () => {
+  const bundler = new Parcel({
+    entries: runtimeFixturePath,
+    defaultConfig: "@parcel/config-default",
+    // Development mode is required to keep the data-test-id props
+    mode: "development",
+    defaultTargetOptions: {
+      publicUrl: "./",
+      distDir: runtimeFixtureOutputDir
+    },
+    sourceMaps: true
+  });
+  return bundler.run();
 };
 
 (async () => {
   await build({ watch });
   await buildComponentFixtures();
-  const testcafe = await createTestCafe("localhost", 1337, 1338);
+  await buildRuntimeFixtures();
+  // Running the runtime tests requires us to re-write this file.
+  // This will save the file and restore it after the tests are complete.
+  saveAndRestoreFile({ file: path.resolve(".sandbox", "container.js") });
+  await sandbox.init();
+
+  const testcafe = await createTestCafe();
+
   const runner = watch
     ? testcafe.createLiveModeRunner()
     : testcafe.createRunner();
+
+  let concurrency;
+  let browsers;
+
+  if (chrome) {
+    browsers = "saucelabs:Chrome@latest:macOS 11.00";
+    concurrency = 6;
+  } else if (firefox) {
+    browsers = "saucelabs:Firefox@latest:macOS 11.00";
+    concurrency = 2;
+  } else if (safari) {
+    browsers = "saucelabs:Safari@latest:macOS 11.00";
+    concurrency = 6;
+  } else if (edge) {
+    browsers = "saucelabs:MicrosoftEdge@latest:Windows 10";
+    concurrency = 6;
+  } else {
+    concurrency = 1;
+    browsers = "chrome";
+  }
+
   const failedCount = await runner
     .src(specsPath)
     .filter((testName, fixtureName, fixturePath, testMeta, fixtureMeta) => {
@@ -88,8 +144,17 @@ const buildComponentFixtures = async () => {
 
       return true;
     })
-    .browsers("chrome")
-    .run();
+    .browsers(browsers)
+    .concurrency(concurrency)
+    .run({
+      skipJsErrors: true,
+      quarantineMode: true,
+      selectorTimeout: 50000,
+      assertionTimeout: 7000,
+      pageLoadTimeout: 8000,
+      speed: 1,
+      stopOnFirstFail: true
+    });
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
 })();

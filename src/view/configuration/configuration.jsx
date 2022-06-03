@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { object, array } from "yup";
 import { FieldArray, useField } from "formik";
 import {
@@ -86,7 +86,7 @@ const getInitialInstanceValues = getMergedBridgeMethod(
 );
 const getInstanceSettings = getMergedBridgeMethod("getInstanceSettings");
 
-const getInitialValues = async ({ initInfo }) => {
+const getInitialValues = async ({ initInfo, context }) => {
   const { instances: instancesSettings } = initInfo.settings || {};
 
   let instancesInitialValues;
@@ -97,13 +97,14 @@ const getInitialValues = async ({ initInfo }) => {
         return getInitialInstanceValues({
           initInfo,
           isFirstInstance: instanceSettingsIndex === 0,
-          instanceSettings
+          instanceSettings,
+          context
         });
       })
     );
   } else {
     instancesInitialValues = [
-      await getInstanceDefaults({ initInfo, isFirstInstance: true })
+      await getInstanceDefaults({ initInfo, isFirstInstance: true, context })
     ];
   }
 
@@ -135,7 +136,7 @@ const validationSchema = object().shape({
   )
 });
 
-const Configuration = ({ initInfo }) => {
+const Configuration = ({ initInfo, context }) => {
   const [{ value: instances }] = useField("instances");
   const [selectedTabKey, setSelectedTabKey] = useState(0);
 
@@ -166,7 +167,8 @@ const Configuration = ({ initInfo }) => {
                   onPress={async () => {
                     const newInstance = await getInstanceDefaults({
                       initInfo,
-                      isFirstInstance: false
+                      isFirstInstance: false,
+                      context
                     });
                     arrayHelpers.push(newInstance);
                     setSelectedTabKey(String(instances.length));
@@ -204,6 +206,7 @@ const Configuration = ({ initInfo }) => {
                           instanceFieldName={instanceFieldName}
                           instanceIndex={index}
                           initInfo={initInfo}
+                          context={context}
                         />
                         <PrivacySection instanceFieldName={instanceFieldName} />
                         <IdentitySection
@@ -283,17 +286,21 @@ const Configuration = ({ initInfo }) => {
 };
 
 Configuration.propTypes = {
-  initInfo: PropTypes.object.isRequired
+  initInfo: PropTypes.object.isRequired,
+  context: PropTypes.object.isRequired
 };
 
 const ConfigurationExtensionView = () => {
+  const context = useRef();
   return (
     <ExtensionView
-      getInitialValues={getInitialValues}
+      getInitialValues={({ initInfo }) =>
+        getInitialValues({ initInfo, context })
+      }
       getSettings={getSettings}
       formikStateValidationSchema={validationSchema}
       render={({ initInfo }) => {
-        return <Configuration initInfo={initInfo} />;
+        return <Configuration initInfo={initInfo} context={context} />;
       }}
     />
   );

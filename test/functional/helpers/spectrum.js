@@ -20,7 +20,7 @@ const popoverMenuSelector = Selector('[role="listbox"]');
 const tabSelector = Selector('[role="tab"]');
 const menuItemCssSelector = '[role="option"]';
 const invalidAttribute = "aria-invalid";
-
+const invalidCssSelector = '[class*="--invalid"]';
 // Sometimes TestCafe's click simulation doesn't match what
 // React-Spectrum is expecting. A single click might open then
 // close a Picker, for example. Calling click directly on
@@ -44,6 +44,13 @@ const createExpectError = selector => async () => {
   await t
     .expect(selector.getAttribute(invalidAttribute))
     .eql("true", "Expected field to have error when it did not");
+};
+const createExpectInvalidCssClass = selector => async () => {
+  await t.expect(selector.parent().find(invalidCssSelector).exists).ok();
+};
+
+const createExpectHidden = selector => async () => {
+  await t.expect(selector.hasAttribute("hidden")).ok();
 };
 
 const createExpectNoError = selector => async () => {
@@ -75,6 +82,7 @@ const createExpectMatch = selector => async value => {
 };
 
 const createClick = selector => async () => {
+  await t.expect(selector.exists).ok();
   await t.click(selector);
 };
 
@@ -205,7 +213,8 @@ const componentWrappers = {
         await t.selectText(selector).pressKey("delete");
       },
       async scrollToTop() {
-        await t.scroll(popoverMenuSelector, 0, 0);
+        // sometimes when over-scrolling the popup will close, so we scroll to 1 pixel
+        await t.scroll(popoverMenuSelector, 0, 1);
       },
       // When the combobox loads pages of data when scrolling, this
       // will keep scrolling until the the item is reached.
@@ -234,7 +243,7 @@ const componentWrappers = {
   },
   picker(selector) {
     return {
-      expectError: createExpectError(selector),
+      expectError: createExpectInvalidCssClass(selector),
       expectNoError: createExpectNoError(selector),
       expectText: createExpectText(selector),
       async selectOption(label) {
@@ -242,7 +251,8 @@ const componentWrappers = {
         await createSelectMenuOption(popoverMenuSelector)(label);
       },
       async expectSelectedOptionLabel(label) {
-        await t.expect(selector.innerText).eql(label);
+        // Safari includes a newline at the end of the selected option label innerText
+        await t.expect(selector.innerText).contains(label);
       },
       async expectMenuOptionLabels(labels) {
         await compatibleClick(selector);
@@ -256,8 +266,9 @@ const componentWrappers = {
         await compatibleClick(selector);
         await createExpectMenuOptionLabelsExclude(popoverMenuSelector)(labels);
       },
-      expectDisabled: createExpectDisabled(selector.find("button")),
-      expectEnabled: createExpectEnabled(selector.find("button"))
+      expectDisabled: createExpectDisabled(selector),
+      expectEnabled: createExpectEnabled(selector.find("button")),
+      expectHidden: createExpectHidden(selector.parent().parent())
     };
   },
   textField(selector) {
@@ -271,6 +282,11 @@ const componentWrappers = {
       },
       async clear() {
         await t.selectText(selector).pressKey("delete");
+      },
+      // Fields with long values may need to be clicked before they
+      // are cleared to get rid of the "..." at the end.
+      async click() {
+        await t.click(selector);
       }
     };
   },

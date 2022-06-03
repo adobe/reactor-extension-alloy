@@ -16,6 +16,7 @@ import arrayEdit from "./helpers/arrayEdit";
 import stringEdit from "./helpers/stringEdit";
 import editor from "./helpers/editor";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
+import spectrum from "../../helpers/spectrum";
 
 createExtensionViewFixture({
   title: "XDM Object Validation",
@@ -23,8 +24,12 @@ createExtensionViewFixture({
   requiresAdobeIOIntegration: true
 });
 
+const schemaField = spectrum.comboBox("schemaField");
+
 test("arrays with no values are invalid", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
@@ -42,6 +47,8 @@ test("arrays with no values are invalid", async () => {
 
 test("a populated required field is valid", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("customer").toggleExpansion();
   await xdmTree.node("emailAddress").click();
@@ -51,12 +58,17 @@ test("a populated required field is valid", async () => {
 
 test("an empty required field is valid if parent object is not populated", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await editor.expectExists();
   await extensionViewController.expectIsValid();
 });
 
 test("an empty required field is invalid if another field on parent object is populated", async () => {
   const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("customer").toggleExpansion();
   // mailingAddress and emailAddress are siblings.

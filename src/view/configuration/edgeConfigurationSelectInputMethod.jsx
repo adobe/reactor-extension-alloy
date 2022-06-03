@@ -10,192 +10,40 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState, useEffect } from "react";
-import { useField } from "formik";
-import { Flex, ProgressCircle } from "@adobe/react-spectrum";
+import React from "react";
 import PropTypes from "prop-types";
-import EdgeConfigurationSelector from "./edgeConfigurationSelector";
-import EnvironmentsSelector from "./environmentsSelector";
-import fetchFirstPageOfEachEnvironmentType from "./utils/fetchFirstPageOfEachEnvironmentType";
-import UserReportableError from "../errors/userReportableError";
-import useReportAsyncError from "../utils/useReportAsyncError";
-import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRequestsAndCreateSignal";
+import EdgeConfigEnvironment from "./edgeConfigEnvironment";
+import { DEVELOPMENT, PRODUCTION, STAGING } from "./constants/environmentType";
 
-const useLoadInitialFirstPageOfEnvironmentsByType = ({
-  orgId,
-  imsAccess,
-  edgeConfig,
-  setIsEnvironmentDataLoading,
-  setFirstPageOfEachEnvironmentType,
-  abortPreviousRequestsAndCreateSignal
-}) => {
-  const reportAsyncError = useReportAsyncError();
-  useEffect(async () => {
-    if (edgeConfig) {
-      setIsEnvironmentDataLoading(true);
-      let newFirstPageOfEachEnvironmentType;
-
-      try {
-        newFirstPageOfEachEnvironmentType = await fetchFirstPageOfEachEnvironmentType(
-          {
-            orgId,
-            imsAccess,
-            edgeConfigId: edgeConfig.id,
-            signal: abortPreviousRequestsAndCreateSignal()
-          }
-        );
-      } catch (e) {
-        if (e.name !== "AbortError") {
-          reportAsyncError(
-            new UserReportableError(`Failed to load datastream environments.`, {
-              originatingError: e
-            })
-          );
-        }
-        return;
-      }
-
-      setFirstPageOfEachEnvironmentType(newFirstPageOfEachEnvironmentType);
-    }
-    setIsEnvironmentDataLoading(false);
-  }, []);
-};
-
-const useOnEdgeConfigurationSelectionChange = ({
-  orgId,
-  imsAccess,
-  name,
-  setIsEnvironmentDataLoading,
-  setFirstPageOfEachEnvironmentType,
-  abortPreviousRequestsAndCreateSignal
-}) => {
-  const reportAsyncError = useReportAsyncError();
-  const [, , { setValue: setEdgeConfig }] = useField(`${name}.edgeConfig`);
-  const [, , { setValue: setProductionEnvironment }] = useField(
-    `${name}.productionEnvironment`
-  );
-  const [, , { setValue: setStagingEnvironment }] = useField(
-    `${name}.stagingEnvironment`
-  );
-  const [, , { setValue: setDevelopmentEnvironment }] = useField(
-    `${name}.developmentEnvironment`
-  );
-
-  return async edgeConfig => {
-    setIsEnvironmentDataLoading(true);
-    setEdgeConfig(edgeConfig);
-    setProductionEnvironment(null);
-    setStagingEnvironment(null);
-    setDevelopmentEnvironment(null);
-    let newFirstPageOfEachEnvironmentType;
-
-    try {
-      newFirstPageOfEachEnvironmentType = await fetchFirstPageOfEachEnvironmentType(
-        {
-          orgId,
-          imsAccess,
-          edgeConfigId: edgeConfig.id,
-          signal: abortPreviousRequestsAndCreateSignal()
-        }
-      );
-    } catch (e) {
-      if (e.name !== "AbortError") {
-        reportAsyncError(
-          new UserReportableError(`Failed to load datastream environments.`, {
-            originatingError: e
-          })
-        );
-      }
-      return;
-    }
-
-    setFirstPageOfEachEnvironmentType(newFirstPageOfEachEnvironmentType);
-    const {
-      production,
-      staging,
-      development
-    } = newFirstPageOfEachEnvironmentType;
-    setProductionEnvironment(production.length === 1 ? production[0] : null);
-    setStagingEnvironment(staging.length === 1 ? staging[0] : null);
-    setDevelopmentEnvironment(development.length === 1 ? development[0] : null);
-    setIsEnvironmentDataLoading(false);
-  };
-};
-
-const EdgeConfigurationSelectInputMethod = ({ name, initInfo }) => {
-  const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
-  const {
-    company: { orgId },
-    tokens: { imsAccess }
-  } = initInfo;
-  const [
-    firstPageOfEachEnvironmentType,
-    setFirstPageOfEachEnvironmentType
-  ] = useState();
-  const [isEnvironmentDataLoading, setIsEnvironmentDataLoading] = useState(
-    true
-  );
-  const [
-    { value: edgeConfig },
-    { touched: edgeConfigTouched, error: edgeConfigError },
-    { setTouched: setEdgeConfigTouched }
-  ] = useField(`${name}.edgeConfig`);
-
-  useLoadInitialFirstPageOfEnvironmentsByType({
-    orgId,
-    imsAccess,
-    edgeConfig,
-    setIsEnvironmentDataLoading,
-    setFirstPageOfEachEnvironmentType,
-    abortPreviousRequestsAndCreateSignal
-  });
-
-  const onEdgeConfigSelectionChange = useOnEdgeConfigurationSelectionChange({
-    orgId,
-    imsAccess,
-    name,
-    setIsEnvironmentDataLoading,
-    setFirstPageOfEachEnvironmentType,
-    abortPreviousRequestsAndCreateSignal
-  });
-
-  let environmentSelectorContent = null;
-
-  if (isEnvironmentDataLoading) {
-    environmentSelectorContent = (
-      <Flex justifyContent="center" width="size-5000">
-        <ProgressCircle size="M" aria-label="Loading..." isIndeterminate />
-      </Flex>
-    );
-  } else if (edgeConfig) {
-    environmentSelectorContent = (
-      <EnvironmentsSelector
-        name={name}
-        edgeConfig={edgeConfig}
-        firstPageOfEachEnvironmentType={firstPageOfEachEnvironmentType}
-        initInfo={initInfo}
-      />
-    );
-  }
-
+const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
   return (
     <>
-      <EdgeConfigurationSelector
-        defaultSelectedEdgeConfig={edgeConfig}
-        touched={edgeConfigTouched}
-        error={edgeConfigError}
-        setTouched={setEdgeConfigTouched}
-        onSelectionChange={onEdgeConfigSelectionChange}
+      <EdgeConfigEnvironment
+        name={`${name}.productionEnvironment`}
         initInfo={initInfo}
+        context={context}
+        environmentType={PRODUCTION}
       />
-      {environmentSelectorContent}
+      <EdgeConfigEnvironment
+        name={`${name}.stagingEnvironment`}
+        initInfo={initInfo}
+        context={context}
+        environmentType={STAGING}
+      />
+      <EdgeConfigEnvironment
+        name={`${name}.developmentEnvironment`}
+        initInfo={initInfo}
+        context={context}
+        environmentType={DEVELOPMENT}
+      />
     </>
   );
 };
 
 EdgeConfigurationSelectInputMethod.propTypes = {
   name: PropTypes.string.isRequired,
-  initInfo: PropTypes.object.isRequired
+  initInfo: PropTypes.object.isRequired,
+  context: PropTypes.object
 };
 
 export default EdgeConfigurationSelectInputMethod;

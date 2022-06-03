@@ -19,6 +19,7 @@ import numberEdit from "./helpers/numberEdit";
 import objectEdit from "./helpers/objectEdit";
 import stringEdit from "./helpers/stringEdit";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
+import spectrum from "../../helpers/spectrum";
 
 createExtensionViewFixture({
   title: "XDM Object Population Indicator",
@@ -26,13 +27,19 @@ createExtensionViewFixture({
   requiresAdobeIOIntegration: true
 });
 
+const schemaField = spectrum.comboBox("schemaField");
+
 test("shows empty population amount for _id", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_id").populationIndicator.expectEmpty();
 });
 
 test("shows empty population amount for context fields", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("environment").populationIndicator.expectEmpty();
   await xdmTree.node("environment").toggleExpansion();
   await xdmTree.node("type").populationIndicator.expectEmpty();
@@ -40,6 +47,8 @@ test("shows empty population amount for context fields", async () => {
 
 test("shows correct population amount for data element objects", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   const vendorPop = xdmTree.node("vendor").populationIndicator;
   await vendorPop.expectEmpty();
@@ -57,6 +66,8 @@ test("shows correct population amount for data element objects", async () => {
 
 test("shows partial population amount for objects", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("name").click();
@@ -66,6 +77,8 @@ test("shows partial population amount for objects", async () => {
 
 test("show correct population amount for arrays", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   const industriesPop = xdmTree.node("industries").populationIndicator;
@@ -138,6 +151,8 @@ test("show correct population amount for arrays", async () => {
 ].forEach(({ title, field, set }) => {
   test(`shows correct population amount for ${title}`, async () => {
     await initializeExtensionView();
+    await schemaField.openMenu();
+    await schemaField.selectMenuOption("XDM Object Data Element Tests");
     await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
     await xdmTree.node("vendor").toggleExpansion();
     await xdmTree.node(field).click();
@@ -150,6 +165,8 @@ test("show correct population amount for arrays", async () => {
 
 test("shows empty population indicator for booleans with No Value selected", async () => {
   await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("isLicensed").click();
