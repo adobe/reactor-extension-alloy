@@ -10,25 +10,100 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import fetchSandboxes from "../../xdmObject/helpers/fetchSandboxes";
 import fetchNamespaces from "./fetchNamespaces";
 
 const isNotECID = namespace => {
   return namespace.code !== "ECID";
 };
 
-export const getNamespaces = async (initInfo, sandbox) => {
+const getNamespaces = async (initInfo, sandbox) => {
   const namespaces = await fetchNamespaces({
     orgId: initInfo.company.orgId,
     imsAccess: initInfo.tokens.imsAccess,
     sandbox
   });
 
-  if (namespaces.length > 0) {
-    return namespaces
-      .filter(isNotECID)
-      .sort((first, second) => first.name.localeCompare(second.name));
+  return namespaces || [];
+};
+
+const getDefaultSandbox = sandboxes => {
+  return sandboxes.find(sandbox => sandbox.isDefault);
+};
+
+const getNamespacesForSandboxesPromises = async (initInfo, sandboxes) => {
+  if (sandboxes.size > 0) {
+    const promises = [];
+    sandboxes.forEach(sandbox => {
+      promises.push(getNamespaces(initInfo, sandbox));
+    });
+    return promises;
   }
-  return [];
+
+  return fetchSandboxes({
+    orgId: initInfo.company.orgId,
+    imsAccess: initInfo.tokens.imsAccess
+  })
+    .then(result => {
+      return getDefaultSandbox(result.results);
+    })
+    .then(sandbox => getNamespaces(initInfo, sandbox.name));
+};
+
+const dedupeBy = (arr, keyFunc) => {
+  const set = new Set();
+
+  return arr.filter(e => {
+    const key = keyFunc(e);
+
+    if (set.has(key)) {
+      return false;
+    }
+
+    set.add(key);
+
+    return true;
+  });
+};
+const getExtensionSandboxes = initInfo => {
+  const extensionSandboxes = new Set();
+
+  const firstInstanceSettings = initInfo?.extensionSettings?.instances[0];
+
+  if (firstInstanceSettings.sandbox) {
+    extensionSandboxes.add(firstInstanceSettings.sandbox);
+  }
+  if (firstInstanceSettings.stagingSandbox) {
+    extensionSandboxes.add(firstInstanceSettings.stagingSandbox);
+  }
+  if (firstInstanceSettings.developmentSandbox) {
+    extensionSandboxes.add(firstInstanceSettings.developmentSandbox);
+  }
+
+  return extensionSandboxes;
+};
+
+export const getNamespacesOptions = async initInfo => {
+  const extensionSandboxes = getExtensionSandboxes(initInfo);
+
+  try {
+    const namespaces = await Promise.all(
+      await getNamespacesForSandboxesPromises(initInfo, extensionSandboxes)
+    ).then(result => {
+      const allNamespaces = result.flatMap(arr => arr);
+
+      return dedupeBy(allNamespaces, e => e.code);
+    });
+
+    if (namespaces.length > 0) {
+      return namespaces
+        .filter(isNotECID)
+        .sort((first, second) => first.name.localeCompare(second.name));
+    }
+    return [];
+  } catch (e) {
+    return [];
+  }
 };
 
 export const findNamespace = (namespaces, namespaceCode) => {

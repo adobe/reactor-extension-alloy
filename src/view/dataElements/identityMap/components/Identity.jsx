@@ -35,19 +35,13 @@ import FormikTextField from "../../../components/formikReactSpectrum3/formikText
 import FormikPicker from "../../../components/formikReactSpectrum3/formikPicker";
 import * as AUTHENTICATED_STATE from "../constants/authenticatedState";
 import FormikCheckbox from "../../../components/formikReactSpectrum3/formikCheckbox";
-import SandboxSelector from "../../../configuration/sandboxSelector";
 import NamespacesComponent from "./NamespacesComponent";
 import { findNamespace } from "../utils/namespacesUtils";
 
-const Identity = ({ initInfo, context }) => {
+const Identity = ({ context }) => {
   const { current } = context;
-  const { sandboxes, namespaces } = current;
+  const { namespaces } = current;
   const [{ value: identities }] = useField("identities");
-  const [
-    { value: selectedSandboxName },
-    ,
-    { setValue: setSandboxName }
-  ] = useField("sandbox");
 
   const [selectedTabKey, setSelectedTabKey] = useState("0");
 
@@ -63,28 +57,8 @@ const Identity = ({ initInfo, context }) => {
     }
   });
 
-  const findSandbox = sandboxName => {
-    return sandboxes.find(sandbox => sandbox.name === sandboxName);
-  };
-
-  const onSandboxSelectionChange = sandbox => {
-    setSandboxName(sandbox.name);
-  };
-  const sandboxProps = {
-    label: "Sandbox",
-    marginBottom: "size-50",
-    description: "Select the sandbox to update the namespaces options."
-  };
   return (
     <>
-      <SandboxSelector
-        otherProps={sandboxProps}
-        name="sandbox"
-        onSelectionChange={onSandboxSelectionChange}
-        defaultSelectedSandbox={findSandbox(selectedSandboxName)}
-        items={sandboxes}
-        isDisabled={sandboxes.size < 1}
-      />
       <FieldArray
         name="identities"
         render={arrayHelpers => {
@@ -147,9 +121,8 @@ const Identity = ({ initInfo, context }) => {
                                       selectedNamespaceCode={
                                         identity.namespaceCode
                                       }
+                                      namespaces={namespaces}
                                       index={index}
-                                      selectedSandbox={selectedSandboxName}
-                                      initInfo={initInfo}
                                     />
                                     <Button
                                       data-test-id={`addIdentifier${index}Button`}
@@ -275,7 +248,6 @@ const Identity = ({ initInfo, context }) => {
 };
 
 Identity.propTypes = {
-  initInfo: PropTypes.object,
   context: PropTypes.object
 };
 

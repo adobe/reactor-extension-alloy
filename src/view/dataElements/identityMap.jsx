@@ -17,8 +17,7 @@ import ExtensionView from "../components/extensionView";
 import getDefaultIdentity from "./identityMap/utils/getDefaultIdentity";
 import * as AUTHENTICATED_STATE from "./identityMap/constants/authenticatedState";
 import Identity from "./identityMap/components/Identity";
-import fetchSandboxes from "./xdmObject/helpers/fetchSandboxes";
-import { getNamespaces } from "./identityMap/utils/namespacesUtils";
+import { getNamespacesOptions } from "./identityMap/utils/namespacesUtils";
 
 const identitiesMapToArray = identityMap => {
   return Object.keys(identityMap)
@@ -31,10 +30,6 @@ const identitiesMapToArray = identityMap => {
         identifiers: identityMap[namespaceCode]
       };
     });
-};
-
-const getDefaultSandbox = sandboxes => {
-  return sandboxes.find(sandbox => sandbox.isDefault);
 };
 
 const identitiesArrayToMap = identitiesArray => {
@@ -59,42 +54,19 @@ const getIdentityMapSettings = settings => {
   return [getDefaultIdentity()];
 };
 
-const getSandboxFromSettings = settings => {
-  if (settings && settings.sandbox && typeof settings.sandbox === "string") {
-    return settings.sandbox;
-  }
-  return undefined;
-};
-
 const getInitialValues = async ({ initInfo, context }) => {
   const identities = getIdentityMapSettings(initInfo.settings);
 
-  const { results: sandboxes } = await fetchSandboxes({
-    orgId: initInfo.company.orgId,
-    imsAccess: initInfo.tokens.imsAccess
-  });
-
   context.current = {};
-  context.current.sandboxes = sandboxes;
-  const settingsSandbox = getSandboxFromSettings(initInfo.settings);
-
-  const sandbox = settingsSandbox || getDefaultSandbox(sandboxes).name;
-
-  context.current.namespaces = await getNamespaces(initInfo, sandbox);
+  context.current.namespaces = await getNamespacesOptions(initInfo);
 
   return {
-    sandbox,
     identities
   };
 };
 
 const getSettings = ({ values }) => {
-  const items = identitiesArrayToMap(values.identities);
-  const sandbox = values.sandbox;
-  return {
-    sandbox,
-    items
-  };
+  return identitiesArrayToMap(values.identities);
 };
 
 const validateDuplicateValue = (
@@ -196,8 +168,8 @@ const IdentityMapExtensionView = () => {
       }
       getSettings={getSettings}
       formikStateValidationSchema={validationSchema}
-      render={({ initInfo }) => {
-        return <Identity initInfo={initInfo} context={context} />;
+      render={() => {
+        return <Identity context={context} />;
       }}
     />
   );

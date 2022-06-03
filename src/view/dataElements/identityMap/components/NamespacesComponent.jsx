@@ -10,16 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Flex, Item, View } from "@adobe/react-spectrum";
-import { useAsyncList } from "@react-stately/data";
 import PropTypes from "prop-types";
 import { useField } from "formik";
 import AlertIcon from "@spectrum-icons/workflow/Alert";
-import usePrevious from "../../../utils/usePrevious";
-import { findNamespace, getNamespaces } from "../utils/namespacesUtils";
+import { findNamespace } from "../utils/namespacesUtils";
 import FormikComboBox from "../../../components/formikReactSpectrum3/formikComboBox";
 import DataElementSelector from "../../../components/dataElementSelector";
+import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
 
 const getSelectedNamespace = (namespaces, selectedNamespaceCode) => {
   if (namespaces.length < 1 || selectedNamespaceCode === "") {
@@ -30,76 +29,53 @@ const getSelectedNamespace = (namespaces, selectedNamespaceCode) => {
   return found ? found.code : undefined;
 };
 
-const getKey = namespace => namespace && namespace.code;
-
-const NamespacesComponent = ({
-  name,
-  index,
-  namespaces,
-  selectedSandbox,
-  initInfo
-}) => {
+const NamespacesComponent = ({ name, index, namespaces }) => {
   const [{ value: selectedNamespaceCode }] = useField(name);
 
-  const previousSelectedSandbox = usePrevious(selectedSandbox);
-
-  const namespacesList = useAsyncList({
-    async load() {
-      if (namespaces) {
-        return {
-          items: namespaces
-        };
-      }
-      try {
-        const result = await getNamespaces(initInfo, selectedSandbox);
-
-        return { items: result };
-      } catch (e) {
-        return [];
-      }
-    },
-    getKey
-  });
-
-  const selectedNamespace = getSelectedNamespace(
-    namespacesList.items,
+  const isNamespacePartOfSandboxNamespaces = getSelectedNamespace(
+    namespaces,
     selectedNamespaceCode
   );
-
-  useEffect(() => {
-    if (previousSelectedSandbox && selectedSandbox) {
-      namespacesList.selectedKeys = null;
-      namespacesList.reload();
-    }
-  }, [selectedSandbox || null]);
 
   return (
     <Flex direction="row" alignItems="center">
       <View>
         <DataElementSelector>
-          <FormikComboBox
-            data-test-id={`namespaceCombobox${index}Field`}
-            name={name}
-            items={namespacesList.items}
-            width="size-5000"
-            description={
-              !selectedNamespace
-                ? "We recommend using namespaces from the same sandbox across an identityMap."
-                : ""
-            }
-            label="Namespace"
-            allowsCustomValue
-          >
-            {namespace => <Item key={namespace.code}>{namespace.code}</Item>}
-          </FormikComboBox>
+          {namespaces.length > 0 ? (
+            <FormikComboBox
+              data-test-id={`namespaceCombobox${index}Combobox`}
+              name={name}
+              items={namespaces}
+              width="size-5000"
+              description={
+                !isNamespacePartOfSandboxNamespaces && selectedNamespaceCode
+                  ? "We recommend using namespaces from the configured extension sandboxes."
+                  : ""
+              }
+              label="Namespace"
+              allowsCustomValue
+            >
+              {namespace => <Item key={namespace.code}>{namespace.code}</Item>}
+            </FormikComboBox>
+          ) : (
+            <FormikTextField
+              data-test-id={`namespace${index}Field`}
+              label="Namespace"
+              name={name}
+              width="size-5000"
+              isRequired
+            />
+          )}
         </DataElementSelector>
       </View>
 
-      {!selectedNamespace && (
-        <View>
-          <AlertIcon color="warning" size="S" marginBottom="size-100" />
-        </View>
-      )}
+      {namespaces.length > 0 &&
+        !isNamespacePartOfSandboxNamespaces &&
+        selectedNamespaceCode && (
+          <View padding="size-10">
+            <AlertIcon color="warning" size="S" />
+          </View>
+        )}
     </Flex>
   );
 };
@@ -107,9 +83,7 @@ const NamespacesComponent = ({
 NamespacesComponent.propTypes = {
   name: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
-  namespaces: PropTypes.array,
-  selectedSandbox: PropTypes.string,
-  initInfo: PropTypes.object.isRequired
+  namespaces: PropTypes.array
 };
 
 export default NamespacesComponent;
