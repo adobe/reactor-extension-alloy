@@ -108,8 +108,17 @@ const getEnvironmentEdgeConfigs = (
   });
 };
 
-const getSelectInputMethodStateFromExistingExtensionSettings = instanceSettings => {
+const getSelectInputMethodStateFromExistingExtensionSettings = (
+  instanceSettings,
+  sandboxes
+) => {
   const selectInputMethodState = getSelectInputMethodStateNewInstance();
+  // if default sandbox only we pre-populate the environments sandboxes to have the form render correctly
+  if (sandboxes.length === 1) {
+    selectInputMethodState.productionEnvironment.sandbox = sandboxes[0].name;
+    selectInputMethodState.stagingEnvironment.sandbox = sandboxes[0].name;
+    selectInputMethodState.developmentEnvironment.sandbox = sandboxes[0].name;
+  }
 
   if (instanceSettings.edgeConfigId) {
     selectInputMethodState.productionEnvironment.datastreamId =
@@ -135,34 +144,33 @@ const getSelectInputMethodStateFromExistingExtensionSettings = instanceSettings 
   return selectInputMethodState;
 };
 
-const getSelectInputMethodStateForNotFullyPopulatedFormOneSandbox = (
-  datastreams,
+const getSelectInputMethodStateForNotFullyPopulatedForDefaultSandbox = (
+  context,
   instanceSettings
 ) => {
+  const { sandboxes, datastreams } = context;
   const datastreamsMap = prepareDatastreamsMap(datastreams);
   const selectInputMethodState = getSelectInputMethodStateNewInstance();
+  const defaultSandbox = sandboxes[0];
 
   if (instanceSettings.edgeConfigId) {
     selectInputMethodState.productionEnvironment.datastreamId =
-      instanceSettings.edgeConfigId;
-    selectInputMethodState.productionEnvironment.sandbox =
-      datastreamsMap[instanceSettings.edgeConfigId].sandbox;
+      datastreamsMap[instanceSettings.edgeConfigId].configId;
   }
 
   if (instanceSettings.stagingEdgeConfigId) {
     selectInputMethodState.stagingEnvironment.datastreamId =
-      instanceSettings.stagingEdgeConfigId;
-    selectInputMethodState.stagingEnvironment.sandbox =
-      datastreamsMap[instanceSettings.stagingEdgeConfigId].sandbox;
+      datastreamsMap[instanceSettings.stagingEdgeConfigId].configId;
   }
 
   if (instanceSettings.developmentEdgeConfigId) {
     selectInputMethodState.developmentEnvironment.datastreamId =
-      instanceSettings.developmentEdgeConfigId;
-    selectInputMethodState.developmentEnvironment.sandbox =
-      datastreamsMap[instanceSettings.developmentEdgeConfigId].sandbox;
+      datastreamsMap[instanceSettings.developmentEdgeConfigId].configId;
   }
 
+  selectInputMethodState.productionEnvironment.sandbox = defaultSandbox.name;
+  selectInputMethodState.stagingEnvironment.sandbox = defaultSandbox.name;
+  selectInputMethodState.developmentEnvironment.sandbox = defaultSandbox.name;
   return selectInputMethodState;
 };
 
@@ -173,13 +181,16 @@ const getSelectInputMethodStateForExistingInstance = async ({
   context
 }) => {
   // if there are sandbox settings in the previously configured extension we just populate with values
+  const { current } = context;
+  const { sandboxes } = current;
+
   if (sandboxSettingsExist(instanceSettings)) {
     return getSelectInputMethodStateFromExistingExtensionSettings(
-      instanceSettings
+      instanceSettings,
+      sandboxes
     );
   }
-  const { current } = context;
-  const { sandboxes, datastreams } = current;
+
   // this section is to fetch the edge configs and get the sandbox name for each environment
   // the old version of extension was fetching the datastreams and save
   // a composite datastream ID for each environment
@@ -187,9 +198,9 @@ const getSelectInputMethodStateForExistingInstance = async ({
   // then we initialize the form with sandbox names and edge config IDs
   // when only one sandbox per org we fetch all datastreams in get Instance defaults
   //  we re-use it here to create a map and prepopulate the form with sandbox names
-  if (datastreams) {
-    return getSelectInputMethodStateForNotFullyPopulatedFormOneSandbox(
-      datastreams,
+  if (sandboxes.length === 1) {
+    return getSelectInputMethodStateForNotFullyPopulatedForDefaultSandbox(
+      current,
       instanceSettings
     );
   }

@@ -19,7 +19,8 @@ npm run package
 
 echo "$REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS" > private.key
 
-npx @adobe/reactor-uploader package-adobe-alloy-${VERSION}.zip \
+# reactor-uploader 5.0.5 has a bug where an error occurs during upload
+npx @adobe/reactor-uploader@5.0.4 package-adobe-alloy-${VERSION}.zip \
   --org-id=97D1F3F459CE0AD80A495CBE@AdobeOrg \
   --tech-account-id=CC7A4BD95E695DBA0A495EB7@techacct.adobe.com \
   --api-key=f401a5fe22184c91a85fd441a8aa2976 \

@@ -49,6 +49,10 @@ const createExpectInvalidCssClass = selector => async () => {
   await t.expect(selector.parent().find(invalidCssSelector).exists).ok();
 };
 
+const createExpectHidden = selector => async () => {
+  await t.expect(selector.hasAttribute("hidden")).ok();
+};
+
 const createExpectNoError = selector => async () => {
   await t
     .expect(selector.getAttribute(invalidAttribute))
@@ -209,7 +213,8 @@ const componentWrappers = {
         await t.selectText(selector).pressKey("delete");
       },
       async scrollToTop() {
-        await t.scroll(popoverMenuSelector, 0, 0);
+        // sometimes when over-scrolling the popup will close, so we scroll to 1 pixel
+        await t.scroll(popoverMenuSelector, 0, 1);
       },
       // When the combobox loads pages of data when scrolling, this
       // will keep scrolling until the the item is reached.
@@ -261,8 +266,9 @@ const componentWrappers = {
         await compatibleClick(selector);
         await createExpectMenuOptionLabelsExclude(popoverMenuSelector)(labels);
       },
-      expectDisabled: createExpectDisabled(selector.find("button")),
-      expectEnabled: createExpectEnabled(selector.find("button"))
+      expectDisabled: createExpectDisabled(selector),
+      expectEnabled: createExpectEnabled(selector.find("button")),
+      expectHidden: createExpectHidden(selector.parent().parent())
     };
   },
   textField(selector) {

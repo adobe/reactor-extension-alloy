@@ -23,7 +23,6 @@ const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
         initInfo={initInfo}
         context={context}
         environmentType={PRODUCTION}
-        isRequired
       />
       <EdgeConfigEnvironment
         name={`${name}.stagingEnvironment`}

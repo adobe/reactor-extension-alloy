@@ -1,6 +1,6 @@
 {
   "name": "reactor-extension-alloy",
-  "version": "2.11.0-beta.0",
+  "version": "2.12.0-beta.5",
   "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
   "author": "Adobe",
   "license": "Apache-2.0",
@@ -47,8 +47,8 @@
     ]
   },
   "dependencies": {
-    "@adobe/alloy": "^2.9.0",
-    "@adobe/react-spectrum": "^3.11.0",
+    "@adobe/alloy": "^2.10.1",
+    "@adobe/react-spectrum": "~3.16.0",
     "@react-spectrum/combobox": "^3.0.0-rc.0",
     "@react-stately/data": "^3.4.0",
     "@spectrum-css/typography": "^3.0.2",
@@ -68,7 +68,8 @@
   },
   "devDependencies": {
     "@adobe/jwt-auth": "^0.3.3",
-    "@adobe/reactor-sandbox": "^10.9.0",
+    "@adobe/reactor-sandbox": "^12.4.0",
+    "@adobe/reactor-turbine": "^27.2.1",
     "@babel/cli": "^7.12.16",
     "@babel/core": "^7.12.16",
     "@babel/plugin-proposal-class-properties": "^7.12.13",
@@ -118,7 +119,7 @@
     "rollup-plugin-istanbul": "^3.0.0",
     "rollup-plugin-node-resolve": "^4.2.3",
     "stylus": "^0.54.8",
-    "testcafe": "^1.18.4",
+    "testcafe": "^1.18.6",
     "testcafe-browser-provider-saucelabs": "^1.9.0"
   }
 }

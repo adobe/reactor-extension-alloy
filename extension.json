@@ -4,7 +4,7 @@
   "iconPath": "resources/images/icon.svg",
   "exchangeUrl": "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
   "platform": "web",
-  "version": "2.11.0-beta.0",
+  "version": "2.12.0-beta.5",
   "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
   "author": {
     "name": "Adobe"
@@ -120,6 +120,18 @@
       {
         "type": "remove",
         "propertyPath": "instances[].edgeConfigInputMethod"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].sandbox"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].stagingSandbox"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].developmentSandbox"
       }
     ]
   },

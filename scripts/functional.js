@@ -16,6 +16,7 @@ const path = require("path");
 const argv = require("minimist")(process.argv.slice(2));
 const chalk = require("chalk");
 const { Parcel } = require("@parcel/core");
+const sandbox = require("@adobe/reactor-sandbox");
 
 require("events").EventEmitter.defaultMaxListeners = 30;
 
@@ -25,7 +26,6 @@ const defaultSpecsPath = path.join(
 );
 const {
   watch,
-  saucelabs,
   firefox,
   chrome,
   safari,
@@ -35,6 +35,7 @@ const {
 } = argv;
 const createTestCafe = require("testcafe");
 const build = require("./helpers/build");
+const saveAndRestoreFile = require("./helpers/saveAndRestoreFile");
 const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
 
 const componentFixturePath = path.join(
@@ -45,6 +46,11 @@ const componentFixtureOutputDir = path.join(
   __dirname,
   "../componentFixtureDist"
 );
+const runtimeFixturePath = path.join(
+  __dirname,
+  "../test/functional/runtime/helpers/fixture.html"
+);
+const runtimeFixtureOutputDir = path.join(__dirname, "../runtimeFixtureDist");
 
 const buildComponentFixtures = async () => {
   const bundler = new Parcel({
@@ -61,9 +67,29 @@ const buildComponentFixtures = async () => {
   return bundler.run();
 };
 
+const buildRuntimeFixtures = async () => {
+  const bundler = new Parcel({
+    entries: runtimeFixturePath,
+    defaultConfig: "@parcel/config-default",
+    // Development mode is required to keep the data-test-id props
+    mode: "development",
+    defaultTargetOptions: {
+      publicUrl: "./",
+      distDir: runtimeFixtureOutputDir
+    },
+    sourceMaps: true
+  });
+  return bundler.run();
+};
+
 (async () => {
   await build({ watch });
   await buildComponentFixtures();
+  await buildRuntimeFixtures();
+  // Running the runtime tests requires us to re-write this file.
+  // This will save the file and restore it after the tests are complete.
+  saveAndRestoreFile({ file: path.resolve(".sandbox", "container.js") });
+  await sandbox.init();
 
   const testcafe = await createTestCafe();
 
