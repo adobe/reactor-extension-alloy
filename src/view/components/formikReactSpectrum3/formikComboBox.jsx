@@ -14,28 +14,24 @@ import React from "react";
 import PropTypes from "prop-types";
 import { ComboBox } from "@react-spectrum/combobox";
 import { useField } from "formik";
-import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
 const FormikComboBox = ({ name, description, width, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
   );
   return (
-    <FieldDescriptionAndError
+    <ComboBox
+      {...otherProps}
+      inputValue={value}
+      onInputChange={setValue}
+      onBlur={() => {
+        setTouched(true);
+      }}
+      validationState={touched && error ? "invalid" : undefined}
+      width={width}
       description={description}
-      error={touched && error ? error : undefined}
-    >
-      <ComboBox
-        {...otherProps}
-        inputValue={value}
-        onInputChange={setValue}
-        onBlur={() => {
-          setTouched(true);
-        }}
-        validationState={touched && error ? "invalid" : undefined}
-        width={width}
-      />
-    </FieldDescriptionAndError>
+      errorMessage={error}
+    />
   );
 };
 
