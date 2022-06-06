@@ -114,6 +114,8 @@ const createExpectDisabled = selector => async () => {
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
 const createExpectMenuOptionLabels = menuSelector => async labels => {
+  // wait for the menu to appear
+  await menuSelector();
   const menuItems = menuSelector.find(menuItemCssSelector);
   for (let i = 0; i < labels.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
@@ -132,6 +134,8 @@ const createExpectMenuOptionLabels = menuSelector => async labels => {
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
 const createExpectMenuOptionsLabelsInclude = menuSelector => async labels => {
+  // wait for the menu to appear
+  await menuSelector();
   const menuItems = menuSelector.find(menuItemCssSelector);
   for (let i = 0; i < labels.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
@@ -149,6 +153,8 @@ const createExpectMenuOptionsLabelsInclude = menuSelector => async labels => {
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items don't exist.
 const createExpectMenuOptionLabelsExclude = menuSelector => async labels => {
+  // wait for the menu to appear
+  await menuSelector();
   const menuItems = menuSelector.find(menuItemCssSelector);
   for (let i = 0; i < labels.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
@@ -166,6 +172,8 @@ const createExpectMenuOptionLabelsExclude = menuSelector => async labels => {
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
 const createSelectMenuOption = menuSelector => async label => {
+  // wait for the menu to appear
+  await menuSelector();
   const option = menuSelector.find(menuItemCssSelector).withExactText(label);
   await t.click(option);
 };
