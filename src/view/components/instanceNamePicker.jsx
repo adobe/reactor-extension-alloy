@@ -16,14 +16,26 @@ import { Item } from "@adobe/react-spectrum";
 import getInstanceOptions from "../utils/getInstanceOptions";
 import FormikPicker from "./formikReactSpectrum3/formikPicker";
 
-const InstanceNamePicker = ({ "data-test-id": dataTestId, name, initInfo }) => {
+const InstanceNamePicker = ({
+  "data-test-id": dataTestId,
+  name,
+  initInfo,
+  description,
+  disabledDescription
+}) => {
+  const items = getInstanceOptions(initInfo);
+  const isDisabled = items.length <= 1;
   return (
     <FormikPicker
       data-test-id={dataTestId}
       name={name}
       label="Instance"
-      items={getInstanceOptions(initInfo)}
+      items={items}
       width="size-5000"
+      isDisabled={isDisabled}
+      description={
+        isDisabled && disabledDescription ? disabledDescription : description
+      }
     >
       {item => <Item key={item.value}>{item.label}</Item>}
     </FormikPicker>
@@ -33,7 +45,9 @@ const InstanceNamePicker = ({ "data-test-id": dataTestId, name, initInfo }) => {
 InstanceNamePicker.propTypes = {
   "data-test-id": PropTypes.string,
   name: PropTypes.string.isRequired,
-  initInfo: PropTypes.object.isRequired
+  initInfo: PropTypes.object.isRequired,
+  description: PropTypes.string,
+  disabledDescription: PropTypes.string
 };
 
 export default InstanceNamePicker;
