@@ -48,7 +48,7 @@ test.requestHooks(sandboxMocks.userRegionMissing)(
   async () => {
     await initializeExtensionView();
     await errorBoundaryMessage.expectMessage(
-      /Your organization is not provisioned for Adobe Experience Platform\. Please contact your organization administrator\./
+      /You or your organization is not currently provisioned for Adobe Data Collection/
     );
   }
 );
@@ -299,64 +299,69 @@ test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
   }
 );
 
-test.requestHooks(
-  sandboxMocks.singleWithoutDefault,
-  schemaMocks.basic,
-  schemasMocks.paging
-)("provides a proper combobox experience", async () => {
-  await initializeExtensionView();
+// see https://jira.corp.adobe.com/browse/PDCL-8307
+test
+  .requestHooks(
+    sandboxMocks.singleWithoutDefault,
+    schemaMocks.basic,
+    schemasMocks.paging
+  )
+  .skip("provides a proper combobox experience", async () => {
+    await initializeExtensionView();
 
-  // User types a query in the field and should only see filtered items.
+    // User types a query in the field and should only see filtered items.
 
-  // Because the ComboBox uses virtualization when rendering items, there's
-  // no good way of checking whether all the expected items are in the list,
-  // because they're not all rendered in the DOM.
-  await schemaField.enterSearch("e");
-  const matchingLabels = schemasMocks.pagingTitles.filter(name =>
-    name.includes("e")
-  );
-  const lastMatchingItemLabel = matchingLabels[matchingLabels.length - 1];
-  const nonMatchingLabels = schemasMocks.pagingTitles.filter(
-    name => !name.includes("e")
-  );
-  await schemaField.expectMenuOptionLabelsInclude(matchingLabels.slice(0, 3));
-  // While we could check that none of the non-matching items are in the menu, it takes
-  // too much time, so we'll just make sure the first few don't exist.
-  await schemaField.expectMenuOptionLabelsExclude(
-    nonMatchingLabels.slice(0, 3)
-  );
-  await schemaField.scrollDownToItem(lastMatchingItemLabel);
-  await schemaField.expectMenuOptionLabelsInclude(matchingLabels.slice(-3));
-  await schemaField.expectMenuOptionLabelsExclude(nonMatchingLabels.slice(-3));
+    // Because the ComboBox uses virtualization when rendering items, there's
+    // no good way of checking whether all the expected items are in the list,
+    // because they're not all rendered in the DOM.
+    await schemaField.enterSearch("e");
+    const matchingLabels = schemasMocks.pagingTitles.filter(name =>
+      name.includes("e")
+    );
+    const lastMatchingItemLabel = matchingLabels[matchingLabels.length - 1];
+    const nonMatchingLabels = schemasMocks.pagingTitles.filter(
+      name => !name.includes("e")
+    );
+    await schemaField.expectMenuOptionLabelsInclude(matchingLabels.slice(0, 3));
+    // While we could check that none of the non-matching items are in the menu, it takes
+    // too much time, so we'll just make sure the first few don't exist.
+    await schemaField.expectMenuOptionLabelsExclude(
+      nonMatchingLabels.slice(0, 3)
+    );
+    await schemaField.scrollDownToItem(lastMatchingItemLabel);
+    await schemaField.expectMenuOptionLabelsInclude(matchingLabels.slice(-3));
+    await schemaField.expectMenuOptionLabelsExclude(
+      nonMatchingLabels.slice(-3)
+    );
 
-  // User selects the last item.
+    // User selects the last item.
 
-  await schemaField.selectMenuOption(lastMatchingItemLabel);
-  await schemaField.expectText(lastMatchingItemLabel);
+    await schemaField.selectMenuOption(lastMatchingItemLabel);
+    await schemaField.expectText(lastMatchingItemLabel);
 
-  // User enters text that shouldn't have any matches.
+    // User enters text that shouldn't have any matches.
 
-  await schemaField.clear();
-  await schemaField.enterSearch("bogus");
-  await schemaField.expectText("bogus");
-  await schemaField.expectMenuOptionLabels(["No results"]);
+    await schemaField.clear();
+    await schemaField.enterSearch("bogus");
+    await schemaField.expectText("bogus");
+    await schemaField.expectMenuOptionLabels(["No results"]);
 
-  // User blurs off the field
+    // User blurs off the field
 
-  await t.pressKey("tab");
-  await schemaField.expectText(lastMatchingItemLabel);
+    await t.pressKey("tab");
+    await schemaField.expectText(lastMatchingItemLabel);
 
-  // User manually opens the menu and should see all unfiltered items.
+    // User manually opens the menu and should see all unfiltered items.
 
-  await schemaField.openMenu();
-  await schemaField.scrollToTop();
-  await schemaField.expectMenuOptionLabelsInclude(
-    schemasMocks.pagingTitles.slice(0, 3)
-  );
-  await schemaField.scrollDownToItem(
-    schemasMocks.pagingTitles[schemasMocks.pagingTitles.length - 1]
-  );
-  await schemaField.expectMenuOptionLabelsInclude(
-    schemasMocks.pagingTitles.slice(-3)
-  );
-});
+    await schemaField.openMenu();
+    await schemaField.scrollToTop();
+    await schemaField.expectMenuOptionLabelsInclude(
+      schemasMocks.pagingTitles.slice(0, 3)
+    );
+    await schemaField.scrollDownToItem(
+      schemasMocks.pagingTitles[schemasMocks.pagingTitles.length - 1]
+    );
+    await schemaField.expectMenuOptionLabelsInclude(
+      schemasMocks.pagingTitles.slice(-3)
+    );
+  });
