@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import React from "react";
+
 /**
  * This error class should be used to report a specific error
  * message to the user at the nearest ErrorBoundary. If an error
@@ -19,7 +21,11 @@ governing permissions and limitations under the License.
 class UserReportableError extends Error {
   constructor(message, { originatingError, additionalInfoUrl } = {}) {
     if (originatingError instanceof UserReportableError) {
-      message = `${message} ${originatingError.message}`;
+      message = (
+        <>
+          {message} {originatingError.message}
+        </>
+      );
       additionalInfoUrl =
         additionalInfoUrl ?? originatingError.additionalInfoUrl;
     }
