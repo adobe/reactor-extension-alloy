@@ -17,17 +17,8 @@ governing permissions and limitations under the License.
  */
 module.exports = ({ logger }) => {
   return settings => {
-    let identityMap;
-
-    if (settings.items && typeof settings.items === "object") {
-      // in the newer versions of extension we changed the schema
-      identityMap = settings.items;
-    } else {
-      // settings _are_ the identity map in the older versions of extensions
-      identityMap = settings;
-    }
-
-    return Object.keys(identityMap).reduce((newIdentityMap, namespace) => {
+    // settings _are_ the identity map
+    return Object.keys(settings).reduce((newIdentityMap, namespace) => {
       const filteredIdentifiers = settings[namespace].filter(({ id }, i) => {
         const isValidId = typeof id === "string" && id.length;
         if (!isValidId) {

@@ -187,6 +187,7 @@ const Identity = ({ context }) => {
                                               )}
                                             </FormikPicker>
                                             <FormikCheckbox
+                                              width="size-5000"
                                               data-test-id={`identity${index}primaryField${identifierIndex}`}
                                               name={`identities.${index}.identifiers.${identifierIndex}.primary`}
                                               description="Adobe Experience Platform will use the identity as an identifier to help stitch together more information about that individual. If left unchecked, the identifier within this namespace will still be collected, but the ECID will be used as the primary identifier for stitching."
