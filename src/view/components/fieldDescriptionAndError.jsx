@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import "./fieldDescriptionAndError.styl";
-import { Flex, View } from "@adobe/react-spectrum";
+import { Flex, Link, View } from "@adobe/react-spectrum";
 
 // This is intended as a temporary solution until descriptions and errors
 // supported natively in React-Spectrum.
@@ -23,7 +23,8 @@ const FieldDescriptionAndError = ({
   description,
   error,
   messagePaddingTop,
-  messagePaddingStart
+  messagePaddingStart,
+  learnMoreLink
 }) => {
   const child = React.Children.only(children);
   const width = child.props.width;
@@ -57,6 +58,13 @@ const FieldDescriptionAndError = ({
           paddingStart={messagePaddingStart}
         >
           {message}
+          {learnMoreLink && (
+            <Link>
+              <a href={learnMoreLink} target="_blank" rel="noopener noreferrer">
+                Learn more
+              </a>
+            </Link>
+          )}
         </View>
       )}
     </Flex>
@@ -68,7 +76,8 @@ FieldDescriptionAndError.propTypes = {
   description: PropTypes.string,
   error: PropTypes.string,
   messagePaddingTop: PropTypes.string,
-  messagePaddingStart: PropTypes.string
+  messagePaddingStart: PropTypes.string,
+  learnMoreLink: PropTypes.object
 };
 
 export default FieldDescriptionAndError;

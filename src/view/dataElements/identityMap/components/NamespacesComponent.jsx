@@ -36,6 +36,10 @@ const NamespacesComponent = ({ name, index, namespaces }) => {
     namespaces,
     selectedNamespaceCode
   );
+  const namespacesLearnMoreLink =
+    "https://experienceleague.adobe.com/docs/experience-platform/identity/namespaces.html?lang=en";
+  const description =
+    "The namespace you have selected is missing from one or more of your sandboxes. Make sure to create this namespace by following the guide: ";
 
   return (
     <Flex direction="row" alignItems="center">
@@ -49,20 +53,23 @@ const NamespacesComponent = ({ name, index, namespaces }) => {
               width="size-5000"
               description={
                 !isNamespacePartOfSandboxNamespaces && selectedNamespaceCode
-                  ? "We recommend using namespaces from the configured extension sandboxes."
-                  : ""
+                  ? description
+                  : "More details on how to create a namespace can be found here: "
               }
               label="Namespace"
+              learnMoreDescriptionLink={namespacesLearnMoreLink}
               allowsCustomValue
             >
               {namespace => <Item key={namespace.code}>{namespace.code}</Item>}
             </FormikComboBox>
           ) : (
             <FormikTextField
+              description="We recommend using namespaces that are part of the configured extension sandboxes. Make sure to create this namespace by following the guide: "
               data-test-id={`namespace${index}Field`}
               label="Namespace"
               name={name}
               width="size-5000"
+              learnMoreDescriptionLink={namespacesLearnMoreLink}
               isRequired
             />
           )}

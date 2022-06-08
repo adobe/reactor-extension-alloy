@@ -15,7 +15,13 @@ import PropTypes from "prop-types";
 import { ComboBox } from "@react-spectrum/combobox";
 import { useField } from "formik";
 
-const FormikComboBox = ({ name, description, width, ...otherProps }) => {
+const FormikComboBox = ({
+  name,
+  description,
+  learnMoreDescriptionLink,
+  width,
+  ...otherProps
+}) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
   );
@@ -38,7 +44,8 @@ const FormikComboBox = ({ name, description, width, ...otherProps }) => {
 FormikComboBox.propTypes = {
   name: PropTypes.string.isRequired,
   description: PropTypes.string,
-  width: PropTypes.string
+  width: PropTypes.string,
+  learnMoreDescriptionLink: PropTypes.string
 };
 
 export default FormikComboBox;
