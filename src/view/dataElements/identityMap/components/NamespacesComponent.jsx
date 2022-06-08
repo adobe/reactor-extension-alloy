@@ -68,7 +68,7 @@ const NamespacesComponent = ({ name, index, namespaces }) => {
             label="Namespace"
             allowsCustomValue
           >
-            {namespace => <Item key={namespace.code}>{namespace.name}</Item>}
+            {namespace => <Item key={namespace.code}>{namespace.code}</Item>}
           </FormikComboBox>
         ) : (
           <FormikTextField

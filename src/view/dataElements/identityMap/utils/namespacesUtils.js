@@ -79,32 +79,35 @@ const getExtensionSandboxes = initInfo => {
   return [...extensionSandboxes];
 };
 
+const filterAndSortNamespaces = namespaces => {
+  return namespaces
+    .filter(isNotECID)
+    .sort((first, second) => first.code.localeCompare(second.code));
+};
+
 export const getNamespacesOptions = initInfo => {
   const extensionSandboxes = getExtensionSandboxes(initInfo);
 
   if (extensionSandboxes.length > 0) {
     return Promise.all(
       extensionSandboxes.map(sandbox => getNamespaces(initInfo, sandbox))
-    ).then(results => {
-      const allNamespaces = results.flatMap(arr => arr);
+    )
+      .then(results => {
+        const allNamespaces = results.flatMap(arr => arr);
 
-      return allNamespaces
-        .filter(isNotECID)
-        .sort((first, second) => first.name.localeCompare(second.name));
-    });
+        return dedupeBy(allNamespaces, e => e.code);
+      })
+      .then(namespaces => {
+        return filterAndSortNamespaces(namespaces);
+      })
+      .catch(() => []);
   }
 
   return getNamespacesForDefaultSandbox(initInfo, extensionSandboxes)
-    .then(results => {
-      // const allNamespaces = results.flatMap(arr => arr);
-
-      return dedupeBy(results, e => e.code);
-    })
     .then(namespaces => {
-      return namespaces
-        .filter(isNotECID)
-        .sort((first, second) => first.name.localeCompare(second.name));
-    });
+      return filterAndSortNamespaces(namespaces);
+    })
+    .catch(() => []);
 };
 
 export const findNamespace = (namespaces, namespaceCode) => {
