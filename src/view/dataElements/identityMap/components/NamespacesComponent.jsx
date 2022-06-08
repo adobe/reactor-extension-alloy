@@ -11,10 +11,9 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { Flex, Item, View } from "@adobe/react-spectrum";
+import { Item, Link } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import { useField } from "formik";
-import AlertIcon from "@spectrum-icons/workflow/Alert";
 import { findNamespace } from "../utils/namespacesUtils";
 import FormikComboBox from "../../../components/formikReactSpectrum3/formikComboBox";
 import DataElementSelector from "../../../components/dataElementSelector";
@@ -28,6 +27,19 @@ const getSelectedNamespace = (namespaces, selectedNamespaceCode) => {
 
   return found ? found.code : undefined;
 };
+const getNamespacesMissingDescription = link => {
+  return (
+    <>
+      The namespace you have entered is missing from one or more of your
+      sandboxes. Make sure to create this namespace by following{" "}
+      <Link>
+        <a href={link} target="_blank" rel="noopener noreferrer">
+          the guide.
+        </a>
+      </Link>
+    </>
+  );
+};
 
 const NamespacesComponent = ({ name, index, namespaces }) => {
   const [{ value: selectedNamespaceCode }] = useField(name);
@@ -38,52 +50,40 @@ const NamespacesComponent = ({ name, index, namespaces }) => {
   );
   const namespacesLearnMoreLink =
     "https://experienceleague.adobe.com/docs/experience-platform/identity/namespaces.html?lang=en";
-  const description =
-    "The namespace you have selected is missing from one or more of your sandboxes. Make sure to create this namespace by following the guide: ";
 
   return (
-    <Flex direction="row" alignItems="center">
-      <View>
-        <DataElementSelector>
-          {namespaces.length > 0 ? (
-            <FormikComboBox
-              data-test-id={`namespace${index}Combobox`}
-              name={name}
-              items={namespaces}
-              width="size-5000"
-              description={
-                !isNamespacePartOfSandboxNamespaces && selectedNamespaceCode
-                  ? description
-                  : "More details on how to create a namespace can be found here: "
-              }
-              label="Namespace"
-              learnMoreDescriptionLink={namespacesLearnMoreLink}
-              allowsCustomValue
-            >
-              {namespace => <Item key={namespace.code}>{namespace.code}</Item>}
-            </FormikComboBox>
-          ) : (
-            <FormikTextField
-              description="We recommend using namespaces that are part of the configured extension sandboxes. Make sure to create this namespace by following the guide: "
-              data-test-id={`namespace${index}Field`}
-              label="Namespace"
-              name={name}
-              width="size-5000"
-              learnMoreDescriptionLink={namespacesLearnMoreLink}
-              isRequired
-            />
-          )}
-        </DataElementSelector>
-      </View>
-
-      {namespaces.length > 0 &&
-        !isNamespacePartOfSandboxNamespaces &&
-        selectedNamespaceCode && (
-          <View padding="size-10">
-            <AlertIcon color="warning" size="S" />
-          </View>
+    <>
+      <DataElementSelector>
+        {namespaces.length > 0 ? (
+          <FormikComboBox
+            data-test-id={`namespace${index}Combobox`}
+            name={name}
+            items={namespaces}
+            width="size-5000"
+            description={
+              !isNamespacePartOfSandboxNamespaces && selectedNamespaceCode
+                ? getNamespacesMissingDescription(namespacesLearnMoreLink)
+                : "Select from the options or type in the namespace identity."
+            }
+            label="Namespace"
+            allowsCustomValue
+          >
+            {namespace => <Item key={namespace.code}>{namespace.name}</Item>}
+          </FormikComboBox>
+        ) : (
+          <FormikTextField
+            data-test-id={`namespace${index}Field`}
+            label="Namespace"
+            name={name}
+            width="size-5000"
+            description=" You do not have enough permissions to fetch the identity namespaces
+      options, but you can enter the identity namespace code. Please ask your
+      administrator to grant you more permissions."
+            isRequired
+          />
         )}
-    </Flex>
+      </DataElementSelector>
+    </>
   );
 };
 

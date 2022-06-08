@@ -31,15 +31,7 @@ const getDefaultSandbox = sandboxes => {
   return sandboxes.find(sandbox => sandbox.isDefault);
 };
 
-const getNamespacesForSandboxesPromises = async (initInfo, sandboxes) => {
-  if (sandboxes.size > 0) {
-    const promises = [];
-    sandboxes.forEach(sandbox => {
-      promises.push(getNamespaces(initInfo, sandbox));
-    });
-    return promises;
-  }
-
+const getNamespacesForDefaultSandbox = initInfo => {
   return fetchSandboxes({
     orgId: initInfo.company.orgId,
     imsAccess: initInfo.tokens.imsAccess
@@ -84,30 +76,35 @@ const getExtensionSandboxes = initInfo => {
     extensionSandboxes.add(developmentSandbox);
   }
 
-  return extensionSandboxes;
+  return [...extensionSandboxes];
 };
 
-export const getNamespacesOptions = async initInfo => {
+export const getNamespacesOptions = initInfo => {
   const extensionSandboxes = getExtensionSandboxes(initInfo);
 
-  try {
-    const namespaces = await Promise.all(
-      await getNamespacesForSandboxesPromises(initInfo, extensionSandboxes)
-    ).then(result => {
-      const allNamespaces = result.flatMap(arr => arr);
+  if (extensionSandboxes.length > 0) {
+    return Promise.all(
+      extensionSandboxes.map(sandbox => getNamespaces(initInfo, sandbox))
+    ).then(results => {
+      const allNamespaces = results.flatMap(arr => arr);
 
-      return dedupeBy(allNamespaces, e => e.code);
+      return allNamespaces
+        .filter(isNotECID)
+        .sort((first, second) => first.name.localeCompare(second.name));
     });
+  }
 
-    if (namespaces.length > 0) {
+  return getNamespacesForDefaultSandbox(initInfo, extensionSandboxes)
+    .then(results => {
+      // const allNamespaces = results.flatMap(arr => arr);
+
+      return dedupeBy(results, e => e.code);
+    })
+    .then(namespaces => {
       return namespaces
         .filter(isNotECID)
         .sort((first, second) => first.name.localeCompare(second.name));
-    }
-    return [];
-  } catch (e) {
-    return [];
-  }
+    });
 };
 
 export const findNamespace = (namespaces, namespaceCode) => {
