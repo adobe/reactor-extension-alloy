@@ -14,6 +14,7 @@ import { t } from "testcafe";
 import extensionViewController from "../../helpers/extensionViewController";
 import spectrum from "../../helpers/spectrum";
 import * as identityNamespaceMocks from "../../helpers/endpointMocks/identityNamespacesMocks";
+import * as sandboxMocks from "../../helpers/endpointMocks/sandboxesMocks";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 
@@ -38,7 +39,7 @@ for (let i = 0; i < 3; i += 1) {
     identifiers,
     deleteButton: spectrum.button(`deleteIdentity${i}Button`),
     addIdentifierButton: spectrum.button(`addIdentifier${i}Button`),
-    namespacePicker: spectrum.picker(`namespacePicker${i}Field`)
+    namespacePicker: spectrum.comboBox(`namespace${i}Combobox`)
   });
 }
 
@@ -46,14 +47,22 @@ createExtensionViewFixture({
   title: "Identity Map Data Element View",
   viewPath: "dataElements/identityMap.html",
   requiresAdobeIOIntegration: true,
-  requestHooks: [identityNamespaceMocks.empty]
+  requestHooks: [identityNamespaceMocks.empty, sandboxMocks.multipleWithDefault]
 });
 
 runCommonExtensionViewTests();
 
 test("initializes identity map with default settings", async () => {
-  await extensionViewController.init();
-
+  await extensionViewController.init({
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123"
+        }
+      ]
+    }
+  });
   await identities[0].namespace.expectValue("");
   await identities[0].identifiers[0].id.expectValue("");
   await identities[0].identifiers[0].authenticatedState.expectSelectedOptionLabel(
@@ -92,6 +101,14 @@ test("initializes identity map with sorted namespaces", async () => {
           id: "test3",
           authenticatedState: "authenticated",
           primary: false
+        }
+      ]
+    },
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123"
         }
       ]
     }
@@ -168,6 +185,14 @@ test("initializes identity map with sorted namespaces", async () => {
 });
 test("adds a new identity and new identifier with minimal settings", async () => {
   await extensionViewController.init({
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123"
+        }
+      ]
+    },
     settings: {
       CUSTOM_IDENTITY: [
         {
@@ -246,6 +271,14 @@ test("removing identifier returns the correct settings", async () => {
           primary: true
         }
       ]
+    },
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123"
+        }
+      ]
     }
   });
 
@@ -271,7 +304,16 @@ test("removing identifier returns the correct settings", async () => {
   });
 });
 test("shows error for identity without a namespace", async () => {
-  await extensionViewController.init();
+  await extensionViewController.init({
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123"
+        }
+      ]
+    }
+  });
 
   await identities[0].identifiers[0].id.typeText("test3");
   await identities[0].identifiers[0].authenticatedState.selectOption(
@@ -282,7 +324,16 @@ test("shows error for identity without a namespace", async () => {
   await identities[0].namespace.expectError();
 });
 test("shows error for identifier without an ID", async () => {
-  await extensionViewController.init();
+  await extensionViewController.init({
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123"
+        }
+      ]
+    }
+  });
 
   await identities[0].namespace.typeText("CUSTOM_IDENTITY");
   await identities[0].identifiers[0].authenticatedState.selectOption(
@@ -301,6 +352,14 @@ test("shows error for identity with duplicate namespace", async () => {
           id: "foo",
           authenticatedState: "",
           primary: false
+        }
+      ]
+    },
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123"
         }
       ]
     }
@@ -332,9 +391,18 @@ test("initialization of namespaces as picker with namespace names", async () => 
 
   await t.addRequestHooks(identityNamespaceMocks.multiple);
 
-  await extensionViewController.init();
-
-  await identities[0].namespacePicker.selectOption("Adobe Analytics");
+  await extensionViewController.init({
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123"
+        }
+      ]
+    }
+  });
+  await identities[0].namespacePicker.enterSearch("AAID");
+  await identities[0].namespacePicker.pressEnterKey();
   await identities[0].identifiers[0].id.typeText("test3");
   await tabs.expectTabLabels(["Adobe Analytics"]);
 
@@ -355,7 +423,16 @@ test("when namespaces call fails instantiate form with textfield", async () => {
 
   await t.addRequestHooks(identityNamespaceMocks.error);
 
-  await extensionViewController.init();
+  await extensionViewController.init({
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123"
+        }
+      ]
+    }
+  });
 
   await identities[0].namespace.expectValue("");
 
@@ -383,6 +460,14 @@ test("shows error for multiple primary identifiers", async () => {
           id: "123",
           authenticatedState: "authenticated",
           primary: true
+        }
+      ]
+    },
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123"
         }
       ]
     }
