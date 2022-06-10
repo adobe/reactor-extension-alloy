@@ -53,7 +53,8 @@ const DatastreamSelector = ({
   selectedSandbox,
   items,
   defaultSandboxOnly,
-  environmentType
+  environmentType,
+  description
 }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
@@ -166,6 +167,7 @@ const DatastreamSelector = ({
               !datastreamList.isLoading && !datastreamList.items.length
             }
             items={datastreamList.items}
+            description={touched && error ? "" : description}
           >
             {item => {
               return <Item key={getKey(item)}>{getLabel(item)}</Item>;
@@ -213,7 +215,8 @@ DatastreamSelector.propTypes = {
   selectedSandbox: PropTypes.object,
   defaultSandboxOnly: PropTypes.bool,
   environmentType: PropTypes.string,
-  items: PropTypes.array
+  items: PropTypes.array,
+  description: PropTypes.string
 };
 
 export default DatastreamSelector;

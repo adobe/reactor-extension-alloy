@@ -1,10 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useField } from "formik";
-import SandboxSelector from "./sandboxSelector";
+import SandboxSelector from "../components/sandboxSelector";
 import DatastreamSelector from "./datastreamSelector";
 import { PRODUCTION } from "./constants/environmentType";
-import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 import "./style.styl";
 
 const prepareSandboxMap = sandboxes => {
@@ -20,9 +19,11 @@ const EdgeConfigEnvironment = ({
   environmentType,
   context
 }) => {
-  const [{ value: sandboxName }, , { setValue: setSandboxName }] = useField(
-    `${name}.sandbox`
-  );
+  const [
+    { value: sandboxName },
+    { touched, error },
+    { setValue: setSandboxName, setTouched }
+  ] = useField(`${name}.sandbox`);
   const { current } = context;
   const { sandboxes, datastreams } = current;
 
@@ -41,7 +42,7 @@ const EdgeConfigEnvironment = ({
     ? "Adobe Experience Platform sandbox"
     : `${environmentType} environment`;
 
-  const descriptionAndErrorMessage = `Choose the ${
+  const description = `Choose the ${
     defaultSandboxOnly ? "" : "sandbox and"
   } datastream for the ${environmentType} environment.`;
 
@@ -51,7 +52,13 @@ const EdgeConfigEnvironment = ({
     isRequired: environmentType === PRODUCTION,
     label: sandboxLabel,
     "data-test-id": `${environmentType}SandboxField`,
-    UNSAFE_className: "CapitalizedLabel"
+    UNSAFE_className: "CapitalizedLabel",
+    description: selectedSandbox ? "" : description,
+    validationState: touched && error ? "invalid" : undefined,
+    errorMessage: error,
+    onBlur: () => {
+      setTouched(true);
+    }
   };
 
   const onSandboxSelectionChange = sandbox => {
@@ -59,27 +66,26 @@ const EdgeConfigEnvironment = ({
   };
 
   return (
-    <FieldDescriptionAndError description={descriptionAndErrorMessage}>
-      <>
-        <SandboxSelector
-          name={`${name}.sandbox`}
-          defaultSelectedSandbox={selectedSandbox}
-          onSelectionChange={onSandboxSelectionChange}
-          items={sandboxes}
-          otherProps={sandboxProps}
+    <>
+      <SandboxSelector
+        name={`${name}.sandbox`}
+        defaultSelectedSandbox={selectedSandbox}
+        onSelectionChange={onSandboxSelectionChange}
+        items={sandboxes}
+        otherProps={sandboxProps}
+      />
+      {selectedSandbox && (
+        <DatastreamSelector
+          name={`${name}.datastreamId`}
+          selectedSandbox={selectedSandbox}
+          initInfo={initInfo}
+          items={datastreams}
+          environmentType={environmentType}
+          defaultSandboxOnly={defaultSandboxOnly}
+          description={description}
         />
-        {selectedSandbox && (
-          <DatastreamSelector
-            name={`${name}.datastreamId`}
-            selectedSandbox={selectedSandbox}
-            initInfo={initInfo}
-            items={datastreams}
-            environmentType={environmentType}
-            defaultSandboxOnly={defaultSandboxOnly}
-          />
-        )}
-      </>
-    </FieldDescriptionAndError>
+      )}
+    </>
   );
 };
 

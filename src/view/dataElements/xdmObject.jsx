@@ -19,7 +19,7 @@ import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import validate from "./xdmObject/helpers/validate";
 import render from "../render";
 import Editor from "./xdmObject/components/editor";
-import SandboxSelector from "./xdmObject/components/sandboxSelector";
+import SandboxSelector from "../components/sandboxSelector";
 import SchemaMetaSelector from "./xdmObject/components/schemaMetaSelector";
 import useReportAsyncError from "../utils/useReportAsyncError";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
