@@ -138,7 +138,7 @@ const validationSchema = object().shape({
 
 const Configuration = ({ initInfo, context }) => {
   const [{ value: instances }] = useField("instances");
-  const [selectedTabKey, setSelectedTabKey] = useState(0);
+  const [selectedTabKey, setSelectedTabKey] = useState("0");
 
   useNewlyValidatedFormSubmission(errors => {
     // If the user just tried to save the configuration and there's
