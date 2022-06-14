@@ -31,7 +31,8 @@ const SandboxSelector = ({
   onSelectionChange,
   initInfo,
   sandboxes,
-  sandboxProps
+  sandboxProps,
+  isSandboxDisabled
 }) => {
   const reportAsyncError = useReportAsyncError();
   const isFirstRender = useIsFirstRender();
@@ -99,7 +100,10 @@ const SandboxSelector = ({
       items={sandboxList.items}
       isLoading={sandboxList.isLoading}
       selectedKey={selectedKey}
-      isDisabled={!sandboxList.isLoading && !sandboxList.items.length}
+      isDisabled={
+        (!sandboxList.isLoading && !sandboxList.items.length) ||
+        isSandboxDisabled
+      }
       onSelectionChange={sandboxName => {
         sandboxList.setSelectedKeys(new Set([sandboxName]));
       }}
@@ -117,7 +121,8 @@ SandboxSelector.propTypes = {
   onSelectionChange: PropTypes.func.isRequired,
   initInfo: PropTypes.object,
   sandboxes: PropTypes.array,
-  sandboxProps: PropTypes.object
+  sandboxProps: PropTypes.object,
+  isSandboxDisabled: PropTypes.bool
 };
 
 export default SandboxSelector;

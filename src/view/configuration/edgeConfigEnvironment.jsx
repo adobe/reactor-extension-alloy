@@ -48,7 +48,6 @@ const EdgeConfigEnvironment = ({
 
   const sandboxProps = {
     isHidden: isSandboxHidden,
-    isDisabled: isSandboxDisabled,
     isRequired: environmentType === PRODUCTION,
     label: sandboxLabel,
     "data-test-id": `${environmentType}SandboxField`,
@@ -72,6 +71,7 @@ const EdgeConfigEnvironment = ({
         onSelectionChange={onSandboxSelectionChange}
         sandboxes={sandboxes}
         sandboxProps={sandboxProps}
+        isSandboxDisabled={isSandboxDisabled}
       />
       {selectedSandbox && (
         <DatastreamSelector
