@@ -68,11 +68,10 @@ const EdgeConfigEnvironment = ({
   return (
     <>
       <SandboxSelector
-        name={`${name}.sandbox`}
         defaultSelectedSandbox={selectedSandbox}
         onSelectionChange={onSandboxSelectionChange}
-        items={sandboxes}
-        otherProps={sandboxProps}
+        sandboxes={sandboxes}
+        sandboxProps={sandboxProps}
       />
       {selectedSandbox && (
         <DatastreamSelector

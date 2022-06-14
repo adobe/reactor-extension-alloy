@@ -30,28 +30,32 @@ const SandboxSelector = ({
   defaultSelectedSandbox,
   onSelectionChange,
   initInfo,
-  items,
-  otherProps
+  sandboxes,
+  sandboxProps
 }) => {
   const reportAsyncError = useReportAsyncError();
   const isFirstRender = useIsFirstRender();
 
   const sandboxList = useAsyncList({
     async load({ signal }) {
-      if (items) {
-        return { items };
+      if (sandboxes) {
+        return { items: sandboxes };
       }
       const {
         company: { orgId },
         tokens: { imsAccess }
       } = initInfo;
-      let sandboxes;
+
       try {
-        ({ results: sandboxes } = await fetchSandboxes({
+        const fetchedSandboxes = await fetchSandboxes({
           orgId,
           imsAccess,
           signal
-        }));
+        });
+
+        return {
+          items: fetchedSandboxes.results
+        };
       } catch (e) {
         if (e.name !== "AbortError") {
           reportAsyncError(e);
@@ -60,10 +64,6 @@ const SandboxSelector = ({
         // if we can't produce a valid return object.
         throw e;
       }
-
-      return {
-        items: sandboxes
-      };
     },
     getKey,
     initialSelectedKeys: defaultSelectedSandbox
@@ -93,27 +93,23 @@ const SandboxSelector = ({
   }, [selectedKey]);
 
   return (
-    <>
-      <Picker
-        {...otherProps}
-        data-test-id="sandboxField"
-        /* label="Sandbox"
-      description="Choose a sandbox containing the schema you wish to use." */
-        placeholder="Select a sandbox"
-        items={sandboxList.items}
-        isLoading={sandboxList.isLoading}
-        selectedKey={selectedKey}
-        isDisabled={!sandboxList.isLoading && !sandboxList.items.length}
-        onSelectionChange={sandboxName => {
-          sandboxList.setSelectedKeys(new Set([sandboxName]));
-        }}
-        width="size-5000"
-      >
-        {item => {
-          return <Item key={item.name}>{getLabel(item)}</Item>;
-        }}
-      </Picker>
-    </>
+    <Picker
+      {...sandboxProps}
+      data-test-id="sandboxField"
+      placeholder="Select a sandbox"
+      items={sandboxList.items}
+      isLoading={sandboxList.isLoading}
+      selectedKey={selectedKey}
+      isDisabled={!sandboxList.isLoading && !sandboxList.items.length}
+      onSelectionChange={sandboxName => {
+        sandboxList.setSelectedKeys(new Set([sandboxName]));
+      }}
+      width="size-5000"
+    >
+      {item => {
+        return <Item key={item.name}>{getLabel(item)}</Item>;
+      }}
+    </Picker>
   );
 };
 
@@ -121,8 +117,8 @@ SandboxSelector.propTypes = {
   defaultSelectedSandbox: PropTypes.object,
   onSelectionChange: PropTypes.func.isRequired,
   initInfo: PropTypes.object,
-  items: PropTypes.array,
-  otherProps: PropTypes.object
+  sandboxes: PropTypes.array,
+  sandboxProps: PropTypes.object
 };
 
 export default SandboxSelector;

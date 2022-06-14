@@ -31,7 +31,6 @@ import fetchConfigs from "./utils/fetchConfigs";
 import usePrevious from "../utils/usePrevious";
 import Alert from "../components/alert";
 import UserReportableError from "../errors/userReportableError";
-import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 import { PRODUCTION } from "./constants/environmentType";
 
 // eslint-disable-next-line no-underscore-dangle
@@ -149,62 +148,59 @@ const DatastreamSelector = ({
     );
   }
   return (
-    <FieldDescriptionAndError error={touched && error ? error : undefined}>
-      <Flex direction="row" gap="size-100">
-        <View>
-          <Picker
-            {...datastreamProps}
-            selectedKey={value}
-            onSelectionChange={setValue}
-            onBlur={() => {
-              setTouched(true);
-            }}
-            validationState={touched && error ? "invalid" : undefined}
-            width="size-5000"
-            placeholder="Select a datastream"
-            isLoading={datastreamList.isLoading}
-            isDisabled={
-              !datastreamList.isLoading && !datastreamList.items.length
-            }
-            items={datastreamList.items}
-            description={touched && error ? "" : description}
-          >
-            {item => {
-              return <Item key={getKey(item)}>{getLabel(item)}</Item>;
-            }}
-          </Picker>
-        </View>
-        <Flex
-          direction="row"
-          marginTop={defaultSandboxOnly ? "size-250" : "size-150"}
+    <Flex direction="row" gap="size-100">
+      <View>
+        <Picker
+          {...datastreamProps}
+          selectedKey={value}
+          onSelectionChange={setValue}
+          onBlur={() => {
+            setTouched(true);
+          }}
+          validationState={touched && error ? "invalid" : undefined}
+          width="size-5000"
+          placeholder="Select a datastream"
+          isLoading={datastreamList.isLoading}
+          isDisabled={!datastreamList.isLoading && !datastreamList.items.length}
+          items={datastreamList.items}
+          description={touched && error ? "" : description}
+          errorMessage={touched && error ? error : undefined}
         >
-          <TooltipTrigger>
-            <ActionButton
-              isQuiet
-              isDisabled={!value}
-              onPress={() => {
-                copyToClipboard(value);
-              }}
-            >
-              <Copy />
-            </ActionButton>
-            <Tooltip> Copy datastream ID to clipboard </Tooltip>
-          </TooltipTrigger>
-          <TooltipTrigger>
-            <ActionButton
-              isQuiet
-              onPress={() => {
-                setValue("");
-              }}
-              isDisabled={!value}
-            >
-              <Delete />
-            </ActionButton>
-            <Tooltip> Reset Datastream ID </Tooltip>
-          </TooltipTrigger>
-        </Flex>
+          {item => {
+            return <Item key={getKey(item)}>{getLabel(item)}</Item>;
+          }}
+        </Picker>
+      </View>
+      <Flex
+        direction="row"
+        marginTop={defaultSandboxOnly ? "size-250" : "size-150"}
+      >
+        <TooltipTrigger>
+          <ActionButton
+            isQuiet
+            isDisabled={!value}
+            onPress={() => {
+              copyToClipboard(value);
+            }}
+          >
+            <Copy />
+          </ActionButton>
+          <Tooltip> Copy datastream ID to clipboard </Tooltip>
+        </TooltipTrigger>
+        <TooltipTrigger>
+          <ActionButton
+            isQuiet
+            onPress={() => {
+              setValue("");
+            }}
+            isDisabled={!value}
+          >
+            <Delete />
+          </ActionButton>
+          <Tooltip> Reset Datastream ID </Tooltip>
+        </TooltipTrigger>
       </Flex>
-    </FieldDescriptionAndError>
+    </Flex>
   );
 };
 

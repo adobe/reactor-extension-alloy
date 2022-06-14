@@ -208,17 +208,26 @@ const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
     );
   }
 
+  const sandboxProps = {
+    label: "Sandbox",
+    description: "Choose a sandbox containing the schema you wish to use.",
+    errorMessage:
+      showEditorNotReadyValidationError && !selectedSandbox
+        ? "Please select a sandbox."
+        : null,
+    validationState:
+      showEditorNotReadyValidationError && !selectedSandbox
+        ? "invalid"
+        : undefined
+  };
+
   return (
     <div>
       <FormElementContainer>
         <SandboxSelector
+          sandboxProps={sandboxProps}
           defaultSelectedSandbox={defaultSelectedSandbox}
           onSelectionChange={onSandboxSelectionChange}
-          errorMessage={
-            showEditorNotReadyValidationError && !selectedSandbox
-              ? "Please select a sandbox."
-              : null
-          }
           initInfo={initInfo}
         />
         {selectedSandbox ? (
