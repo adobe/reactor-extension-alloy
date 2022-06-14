@@ -95,7 +95,6 @@ const SandboxSelector = ({
   return (
     <Picker
       {...sandboxProps}
-      data-test-id="sandboxField"
       placeholder="Select a sandbox"
       items={sandboxList.items}
       isLoading={sandboxList.isLoading}

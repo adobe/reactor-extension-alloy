@@ -218,7 +218,8 @@ const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
     validationState:
       showEditorNotReadyValidationError && !selectedSandbox
         ? "invalid"
-        : undefined
+        : undefined,
+    "data-test-id": "sandboxField"
   };
 
   return (
