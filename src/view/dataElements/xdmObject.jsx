@@ -19,7 +19,7 @@ import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import validate from "./xdmObject/helpers/validate";
 import render from "../render";
 import Editor from "./xdmObject/components/editor";
-import SandboxSelector from "./xdmObject/components/sandboxSelector";
+import SandboxSelector from "../components/sandboxSelector";
 import SchemaMetaSelector from "./xdmObject/components/schemaMetaSelector";
 import useReportAsyncError from "../utils/useReportAsyncError";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
@@ -208,17 +208,27 @@ const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
     );
   }
 
+  const sandboxProps = {
+    label: "Sandbox",
+    description: "Choose a sandbox containing the schema you wish to use.",
+    errorMessage:
+      showEditorNotReadyValidationError && !selectedSandbox
+        ? "Please select a sandbox."
+        : null,
+    validationState:
+      showEditorNotReadyValidationError && !selectedSandbox
+        ? "invalid"
+        : undefined,
+    "data-test-id": "sandboxField"
+  };
+
   return (
     <div>
       <FormElementContainer>
         <SandboxSelector
+          sandboxProps={sandboxProps}
           defaultSelectedSandbox={defaultSelectedSandbox}
           onSelectionChange={onSandboxSelectionChange}
-          errorMessage={
-            showEditorNotReadyValidationError && !selectedSandbox
-              ? "Please select a sandbox."
-              : null
-          }
           initInfo={initInfo}
         />
         {selectedSandbox ? (

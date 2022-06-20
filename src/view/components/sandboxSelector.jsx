@@ -14,8 +14,8 @@ import { useAsyncList } from "@react-stately/data";
 import { Item, Picker } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import fetchSandboxes from "../helpers/fetchSandboxes";
-import useReportAsyncError from "../../../utils/useReportAsyncError";
-import useIsFirstRender from "../../../utils/useIsFirstRender";
+import useReportAsyncError from "../utils/useReportAsyncError";
+import useIsFirstRender from "../utils/useIsFirstRender";
 
 const getKey = sandbox => sandbox && sandbox.name;
 const getLabel = sandbox => {
@@ -29,25 +29,34 @@ const getLabel = sandbox => {
 const SandboxSelector = ({
   defaultSelectedSandbox,
   onSelectionChange,
-  errorMessage,
-  initInfo
+  initInfo,
+  sandboxes,
+  sandboxProps,
+  isSandboxDisabled
 }) => {
-  const {
-    company: { orgId },
-    tokens: { imsAccess }
-  } = initInfo;
   const reportAsyncError = useReportAsyncError();
   const isFirstRender = useIsFirstRender();
 
   const sandboxList = useAsyncList({
     async load({ signal }) {
-      let sandboxes;
+      if (sandboxes) {
+        return { items: sandboxes };
+      }
+      const {
+        company: { orgId },
+        tokens: { imsAccess }
+      } = initInfo;
+
       try {
-        ({ results: sandboxes } = await fetchSandboxes({
+        const fetchedSandboxes = await fetchSandboxes({
           orgId,
           imsAccess,
           signal
-        }));
+        });
+
+        return {
+          items: fetchedSandboxes.results
+        };
       } catch (e) {
         if (e.name !== "AbortError") {
           reportAsyncError(e);
@@ -56,10 +65,6 @@ const SandboxSelector = ({
         // if we can't produce a valid return object.
         throw e;
       }
-
-      return {
-        items: sandboxes
-      };
     },
     getKey,
     initialSelectedKeys: defaultSelectedSandbox
@@ -90,16 +95,15 @@ const SandboxSelector = ({
 
   return (
     <Picker
-      data-test-id="sandboxField"
-      label="Sandbox"
-      description="Choose a sandbox containing the schema you wish to use."
+      {...sandboxProps}
       placeholder="Select a sandbox"
       items={sandboxList.items}
       isLoading={sandboxList.isLoading}
       selectedKey={selectedKey}
-      isDisabled={!sandboxList.isLoading && !sandboxList.items.length}
-      validationState={errorMessage ? "invalid" : undefined}
-      errorMessage={errorMessage}
+      isDisabled={
+        (!sandboxList.isLoading && !sandboxList.items.length) ||
+        isSandboxDisabled
+      }
       onSelectionChange={sandboxName => {
         sandboxList.setSelectedKeys(new Set([sandboxName]));
       }}
@@ -115,8 +119,10 @@ const SandboxSelector = ({
 SandboxSelector.propTypes = {
   defaultSelectedSandbox: PropTypes.object,
   onSelectionChange: PropTypes.func.isRequired,
-  errorMessage: PropTypes.string,
-  initInfo: PropTypes.object
+  initInfo: PropTypes.object,
+  sandboxes: PropTypes.array,
+  sandboxProps: PropTypes.object,
+  isSandboxDisabled: PropTypes.bool
 };
 
 export default SandboxSelector;
