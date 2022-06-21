@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import numberAwareCompareFunction from "../../../../utils/numberAwareCompareFunction";
 import { WHOLE } from "../../constants/populationStrategy";
 import computePopulationAmount from "../computePopulationAmount";
 import computePopulationNote from "../computePopulationNote";
@@ -29,27 +30,29 @@ export default ({
   if (properties) {
     const propertyNames = Object.keys(properties);
     if (propertyNames.length) {
-      treeNode.children = propertyNames.sort().map(propertyName => {
-        const propertyFormStateNode = properties[propertyName];
-        const childNode = getTreeNode({
-          formStateNode: propertyFormStateNode,
-          treeNodeComponent,
-          displayName: propertyName,
-          isAncestorUsingWholePopulationStrategy:
-            isAncestorUsingWholePopulationStrategy ||
-            populationStrategy === WHOLE,
-          notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
-          errors:
-            errors && errors.properties
-              ? errors.properties[propertyName]
-              : undefined,
-          touched:
-            touched && touched.properties
-              ? touched.properties[propertyName]
-              : undefined
+      treeNode.children = propertyNames
+        .sort(numberAwareCompareFunction)
+        .map(propertyName => {
+          const propertyFormStateNode = properties[propertyName];
+          const childNode = getTreeNode({
+            formStateNode: propertyFormStateNode,
+            treeNodeComponent,
+            displayName: propertyName,
+            isAncestorUsingWholePopulationStrategy:
+              isAncestorUsingWholePopulationStrategy ||
+              populationStrategy === WHOLE,
+            notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
+            errors:
+              errors && errors.properties
+                ? errors.properties[propertyName]
+                : undefined,
+            touched:
+              touched && touched.properties
+                ? touched.properties[propertyName]
+                : undefined
+          });
+          return childNode;
         });
-        return childNode;
-      });
     }
   }
 
