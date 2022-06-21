@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 // This function compares strings that may have numbers in them.
 // It splits the string into numbers and non-numbers, then compares
 // each piece one at a time.
-const regex = new RegExp("([^0-9]*)([0-9\\.]*)", "g");
+const regex = new RegExp("([^0-9]*)([0-9]*)", "g");
 const compare = new Intl.Collator().compare;
 
 export default (a, b) => {
@@ -31,9 +31,11 @@ export default (a, b) => {
   let bNumber;
   let comparison;
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     ({ value: aMatch } = aIter.next());
     ({ value: bMatch } = bIter.next());
+    // the last match from the regex is empty string
     if (aMatch[0] === "" || bMatch[0] === "") {
       return compare(aMatch[0], bMatch[0]);
     }
@@ -43,10 +45,11 @@ export default (a, b) => {
     if (comparison !== 0) {
       return comparison;
     }
-    aNumber = Number.parseFloat(aMatch[2]);
-    bNumber = Number.parseFloat(bMatch[2]);
-    if (aNumber !== bNumber) {
-      return aNumber - bNumber;
+    aNumber = Number.parseInt(aMatch[2], 10);
+    bNumber = Number.parseInt(bMatch[2], 10);
+    comparison = aNumber - bNumber;
+    if (comparison !== 0) {
+      return comparison;
     }
   }
 };

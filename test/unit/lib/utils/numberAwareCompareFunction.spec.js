@@ -28,11 +28,11 @@ describe("numberAwareCompareFunction", () => {
   });
 
   it("compares decimals", () => {
-    expect(["1.1", "1.02", "1.003"].sort(numberAwareCompareFunction)).toEqual([
-      "1.003",
-      "1.02",
-      "1.1"
-    ]);
+    expect(
+      ["1.1", "1.02", "1.003", "1.1.2", "1.1.1"].sort(
+        numberAwareCompareFunction
+      )
+    ).toEqual(["1.1", "1.1.1", "1.1.2", "1.02", "1.003"]);
   });
 
   it("compares with periods", () => {
