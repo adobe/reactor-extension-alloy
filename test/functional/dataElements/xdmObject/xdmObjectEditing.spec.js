@@ -539,3 +539,18 @@ test("clicking a tree node should select and expand the node", async () => {
   await nodeEdit.heading.expectText("_unifiedjsqeonly");
   await xdmTree.node("vendor").expectExists();
 });
+
+test("eVars are ordered numerically", async () => {
+  await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("Analytics Migration");
+  await xdmTree.node("_experience").toggleExpansion();
+  await xdmTree.node("analytics").toggleExpansion();
+  await xdmTree.node("customDimensions").toggleExpansion();
+  await xdmTree.node("eVars").toggleExpansion();
+  // before fixing the sorting function, eVar10 followed eVar1
+  await xdmTree
+    .node("eVar1")
+    .next()
+    .expectTitleEquals("eVar2");
+});
