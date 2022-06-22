@@ -185,7 +185,7 @@ const DatastreamSelector = ({
           >
             <Copy />
           </ActionButton>
-          <Tooltip> Copy datastream-ID to clipboard </Tooltip>
+          <Tooltip> Copy datastream ID to clipboard. </Tooltip>
         </TooltipTrigger>
         <TooltipTrigger>
           <ActionButton
@@ -197,7 +197,7 @@ const DatastreamSelector = ({
           >
             <Delete />
           </ActionButton>
-          <Tooltip> Reset datastream-ID </Tooltip>
+          <Tooltip> Reset datastream ID. </Tooltip>
         </TooltipTrigger>
       </Flex>
     </Flex>
