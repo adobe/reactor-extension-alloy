@@ -15,10 +15,11 @@ import PropTypes from "prop-types";
 import { TextField } from "@adobe/react-spectrum";
 import { useField } from "formik";
 
-const FormikTextField = ({ name, width, ...otherProps }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+const FormikTextField = ({ name, width, validate, ...otherProps }) => {
+  const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
+    name,
+    validate
+  });
 
   return (
     <TextField
@@ -39,7 +40,8 @@ const FormikTextField = ({ name, width, ...otherProps }) => {
 
 FormikTextField.propTypes = {
   name: PropTypes.string.isRequired,
-  width: PropTypes.string
+  width: PropTypes.string,
+  validate: PropTypes.func
 };
 
 export default FormikTextField;

@@ -23,6 +23,7 @@ import singleDataElementRegex from "../constants/singleDataElementRegex";
 import DecisionScopes, {
   bridge as decisionScopesBridge
 } from "../components/decisionScopes";
+import Surfaces, { bridge as surfacesBridge } from "../components/surfaces";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
@@ -48,15 +49,24 @@ const getInitialValues = ({ initInfo }) => {
     mergeId,
     datasetId,
     documentUnloading,
-    ...decisionScopesBridge.getInitialValues({ initInfo })
+    ...decisionScopesBridge.getInitialValues({ initInfo }),
+    ...surfacesBridge.getInitialValues({ initInfo })
   };
 };
 
 const getSettings = ({ values }) => {
   const settings = {
-    instanceName: values.instanceName,
-    ...decisionScopesBridge.getSettings({ values })
+    instanceName: values.instanceName
   };
+
+  const personalization = {
+    ...decisionScopesBridge.getSettings({ values }),
+    ...surfacesBridge.getSettings({ values })
+  };
+
+  if (Object.getOwnPropertyNames(personalization).length) {
+    settings.personalization = personalization;
+  }
 
   if (values.xdm) {
     settings.xdm = values.xdm;
@@ -90,7 +100,8 @@ const validationSchema = object()
     xdm: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
     data: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
   })
-  .concat(decisionScopesBridge.formikStateValidationSchema);
+  .concat(decisionScopesBridge.formikStateValidationSchema)
+  .concat(surfacesBridge.formikStateValidationSchema);
 
 const knownEventTypeOptions = [
   "advertising.completes",
@@ -222,6 +233,7 @@ const SendEvent = () => {
             Render visual personalization decisions
           </FormikCheckbox>
           <DecisionScopes />
+          <Surfaces />
         </FormElementContainer>
       )}
     />
