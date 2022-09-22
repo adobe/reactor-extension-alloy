@@ -15,7 +15,13 @@ import fs from "fs";
 import getContainer from "@adobe/reactor-sandbox/src/tasks/helpers/getContainer";
 import { TEST_PAGE } from "./constants/url";
 
-const createRuntimeFixture = ({ title, container, requestHooks = [] }) => {
+const createRuntimeFixture = ({
+  title,
+  container,
+  requestHooks = [],
+  additionalClientScripts = [],
+  only = false
+}) => {
   // Write the container.js file here because getContainer requires the file
   const containerPath = path.join(
     __dirname,
@@ -33,9 +39,9 @@ const createRuntimeFixture = ({ title, container, requestHooks = [] }) => {
   );
   const launchLibContents = containerJS + turbine;
 
-  return fixture(title)
+  return (only ? fixture.only : fixture)(title)
     .page(TEST_PAGE)
-    .clientScripts({ content: launchLibContents })
+    .clientScripts([...additionalClientScripts, { content: launchLibContents }])
     .requestHooks(...requestHooks);
 };
 

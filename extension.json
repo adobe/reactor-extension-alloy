@@ -349,6 +349,36 @@
       },
       "libPath": "dist/lib/actions/redirectWithIdentity/index.js",
       "viewPath": "actions/redirectWithIdentity.html"
+    },
+    {
+      "displayName": "Apply response",
+      "name": "apply-response",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "instanceName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "renderDecisions": {
+            "type": "boolean",
+            "minLength": 1
+          },
+          "responseHeaders": {
+            "type": "string",
+            "pattern": "^%[^%]+%$"
+          },
+          "responseBody": {
+            "type": "string",
+            "pattern": "^%[^%]+%$"
+          }
+        },
+        "required": ["instanceName", "responseBody"],
+        "additionalProperties": false
+      },
+      "libPath": "dist/lib/actions/applyResponse/index.js",
+      "viewPath": "actions/applyResponse.html"
     }
   ],
   "events": [
