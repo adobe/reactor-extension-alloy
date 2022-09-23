@@ -16,6 +16,15 @@ import EdgeConfigEnvironment from "./edgeConfigEnvironment";
 import { DEVELOPMENT, PRODUCTION, STAGING } from "./constants/environmentType";
 
 const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
+  const { current } = context;
+  const { sandboxes, datastreams } = current;
+  if (!sandboxes || !datastreams) {
+    return (
+      <>
+        <h2>There was an issue while fetching configurations</h2>
+      </>
+    );
+  }
   return (
     <>
       <EdgeConfigEnvironment

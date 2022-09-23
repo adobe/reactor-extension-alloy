@@ -366,15 +366,19 @@ export const bridge = {
       // the user to delete their first instance, which would make their second instance become
       // their first instance, which would cause the selection components to be displayable for that
       // instance. We want the state to be ready for this case.
-      edgeConfigSelectInputMethod: await getSelectInputMethodStateForNewInstance(
+      edgeConfigFreeformInputMethod: getFreeformInputStateForNewInstance()
+    };
+    try {
+      instanceDefaults.edgeConfigSelectInputMethod = await getSelectInputMethodStateForNewInstance(
         {
           orgId,
           imsAccess,
           context
         }
-      ),
-      edgeConfigFreeformInputMethod: getFreeformInputStateForNewInstance()
-    };
+      );
+    } catch (error) {
+      instanceDefaults.edgeConfigInputMethod = INPUT_METHOD.FREEFORM;
+    }
 
     return instanceDefaults;
   },
@@ -421,13 +425,17 @@ export const bridge = {
       // the user to delete their first instance, which would make their second instance become
       // their first instance, which would cause the selection components to be displayable for that
       // instance. We want the state to be ready for this case.
-      instanceValues.edgeConfigSelectInputMethod = await getSelectInputMethodStateForNewInstance(
-        {
-          orgId,
-          imsAccess,
-          context
-        }
-      );
+      try {
+        instanceValues.edgeConfigSelectInputMethod = await getSelectInputMethodStateForNewInstance(
+          {
+            orgId,
+            imsAccess,
+            context
+          }
+        );
+      } catch (error) {
+        // do nothing we will fall back to free form
+      }
       instanceValues.edgeConfigFreeformInputMethod = getFreeformInputMethodStateForExistingInstance(
         { instanceSettings }
       );
