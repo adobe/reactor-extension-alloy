@@ -37,6 +37,11 @@ const CONTEXT_WEB = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
   contextKey: contextKey.WEB
 };
+// fields that are auto-populated as part of the "web" context
+const CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS = {
+  autoPopulationSource: autoPopulationSource.CONTEXT,
+  contextKey: contextKey.HIGH_ENTROPY_USER_AGENT_HINTS
+};
 
 // These properties are applied to the form state in "getInitialFormState.js"
 export default {
@@ -66,5 +71,11 @@ export default {
   "web.webPageDetails": CONTEXT_WEB,
   "web.webPageDetails.URL": CONTEXT_WEB,
   "web.webReferrer": CONTEXT_WEB,
-  "web.webReferrer.URL": CONTEXT_WEB
+  "web.webReferrer.URL": CONTEXT_WEB,
+  highEntropyUserAgentHints: CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
+  "environment.browserDetails.userAgentClientHints.architecture": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
+  "environment.browserDetails.userAgentClientHints.bitness": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
+  "environment.browserDetails.userAgentClientHints.model": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
+  "environment.browserDetails.userAgentClientHints.platformVersion": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
+  "environment.browserDetails.userAgentClientHints.wow64": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS
 };
