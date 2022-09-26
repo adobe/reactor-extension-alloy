@@ -122,7 +122,10 @@ for (let i = 0; i < 3; i += 1) {
       webField: spectrum.checkbox("contextWebField"),
       deviceField: spectrum.checkbox("contextDeviceField"),
       environmentField: spectrum.checkbox("contextEnvironmentField"),
-      placeContextField: spectrum.checkbox("contextPlaceContextField")
+      placeContextField: spectrum.checkbox("contextPlaceContextField"),
+      highEntropyUserAgentHintsContextField: spectrum.checkbox(
+        "contextHighEntropyUserAgentHintsField"
+      )
     },
     deleteButton: spectrum.button("deleteInstanceButton")
   });

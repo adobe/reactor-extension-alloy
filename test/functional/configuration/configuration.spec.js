@@ -102,6 +102,7 @@ test("initializes form fields with full settings", async () => {
   await instances[0].specificContext.deviceField.expectChecked();
   await instances[0].specificContext.environmentField.expectUnchecked();
   await instances[0].specificContext.placeContextField.expectChecked();
+  await instances[0].specificContext.highEntropyUserAgentHintsContextField.expectUnchecked();
 
   await instancesTabs.selectTab("alloy2");
 
@@ -140,6 +141,7 @@ test("initializes form fields with full settings", async () => {
   await instances[1].specificContext.deviceField.expectUnchecked();
   await instances[1].specificContext.environmentField.expectUnchecked();
   await instances[1].specificContext.placeContextField.expectUnchecked();
+  await instances[1].specificContext.highEntropyUserAgentHintsContextField.expectUnchecked();
 
   await instancesTabs.selectTab("alloy3");
 
