@@ -19,24 +19,24 @@ import Alert from "../components/alert";
 
 const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
   const { current } = context;
-  const { sandboxes, datastreams } = current;
-  if (!sandboxes || !datastreams) {
+  const { fetchSandboxError, fetchConfigsError } = current;
+  if (fetchSandboxError || fetchConfigsError) {
     return (
       <Alert
         variant="informative"
-        title="Error loading configurations for this organisation."
+        title="Error loading configurations for this organization."
         width="size-5000"
         marginTop="size-100"
       >
-        You do not have enough permissions to fetch the organisation
-        configurations. See{" "}
+        You do not have enough permissions to fetch the organization
+        configurations. See the documentation for{" "}
         <Link>
           <a
             href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Permission management for data collection in Experience Platform
+            data collection permission management
           </a>
         </Link>{" "}
         for more information.

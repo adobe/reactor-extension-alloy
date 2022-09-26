@@ -301,23 +301,31 @@ const getSelectInputMethodStateForNewInstance = async ({
   // particularly so when a user clicks the Add Instance button,
   // they don't have to wait while the instance is created.
   if (!firstPageOfSandboxes) {
-    ({ results: firstPageOfSandboxes } = await fetchSandboxes({
-      orgId,
-      imsAccess
-    }));
+    try {
+      ({ results: firstPageOfSandboxes } = await fetchSandboxes({
+        orgId,
+        imsAccess
+      }));
+    } catch (error) {
+      context.current.fetchSandboxError = true;
+    }
   }
 
   context.current.sandboxes = firstPageOfSandboxes;
 
   // checking if this is a organization with one sandbox ( default sandbox )
   if (firstPageOfSandboxes.length === 1) {
+    try {
+      ({ results: firstPageOfDatastreams } = await fetchConfigs({
+        orgId,
+        imsAccess,
+        limit: 1000,
+        sandbox: firstPageOfSandboxes[0].name
+      }));
+    } catch (error) {
+      context.current.fetchConfigsError = true;
+    }
     // eslint-disable-next-line prefer-const
-    ({ results: firstPageOfDatastreams } = await fetchConfigs({
-      orgId,
-      imsAccess,
-      limit: 1000,
-      sandbox: firstPageOfSandboxes[0].name
-    }));
     context.current.datastreams = firstPageOfDatastreams;
 
     selectInputMethodState.productionEnvironment.sandbox =
