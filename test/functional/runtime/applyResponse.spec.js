@@ -11,9 +11,10 @@ governing permissions and limitations under the License.
 */
 
 import { t, Selector } from "testcafe";
-import createRuntimeFixture from "./helpers/createRuntimeFixture";
 import createNetworkLogger from "./helpers/createNetworkLogger";
 import addHtmlToBody from "./helpers/addHtmlToBody";
+import { TEST_PAGE } from "./helpers/constants/url";
+import appendLaunchLibrary from "./helpers/appendLaunchLibrary";
 
 const networkLogger = createNetworkLogger();
 
@@ -270,20 +271,20 @@ const setupResponseBody = `
 };
 `;
 
-createRuntimeFixture({
-  title: "Apply response",
-  container,
-  requestHooks: [networkLogger.edgeEndpointLogs],
-  additionalClientScripts: [{ content: setupResponseBody }]
-});
+fixture("Apply response")
+  .page(`${TEST_PAGE}?alloy_debug=true`)
+  .requestHooks([networkLogger.edgeEndpointLogs])
+  .clientScripts({ content: setupResponseBody });
 
 test("Applies server response", async () => {
+  await appendLaunchLibrary(container);
   await addHtmlToBody(
     `<div id="personalization-container">Default Content</div>`
   );
   // We trigger the applyResponse with a click because if we used pageTop the
   // personalization-container would not be in the DOM.
   await t.click(Selector("#personalization-container"));
+
   await t
     .expect(Selector("#personalization-container").innerText)
     .eql("This is personalized content.");

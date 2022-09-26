@@ -11,11 +11,11 @@ governing permissions and limitations under the License.
 */
 
 import { t, ClientFunction, Selector } from "testcafe";
-import createRuntimeFixture from "./helpers/createRuntimeFixture";
 import createNetworkLogger from "./helpers/createNetworkLogger";
 import addHtmlToBody from "./helpers/addHtmlToBody";
-import { SECONDARY_TEST_PAGE } from "./helpers/constants/url";
+import { SECONDARY_TEST_PAGE, TEST_PAGE } from "./helpers/constants/url";
 import getReturnedEcid from "./helpers/getReturnedEcid";
+import appendLaunchLibrary from "./helpers/appendLaunchLibrary";
 
 const networkLogger = createNetworkLogger();
 
@@ -96,15 +96,15 @@ const container = {
   }
 };
 
-createRuntimeFixture({
-  title: "Redirect with identity",
-  container,
-  requestHooks: [networkLogger.edgeEndpointLogs]
-});
+fixture("Redirect with identity")
+  .page(TEST_PAGE)
+  .requestHooks([networkLogger.edgeEndpointLogs]);
 
 const getLocation = ClientFunction(() => document.location.href);
 
 test("Redirects with an identity", async () => {
+  await appendLaunchLibrary(container);
+
   await addHtmlToBody(
     `<a id="mylink" href="${SECONDARY_TEST_PAGE}">My link</a>`
   );
@@ -114,6 +114,7 @@ test("Redirects with an identity", async () => {
   await t.expect(networkLogger.edgeEndpointLogs.count(() => true)).eql(1);
   await t.click(Selector("#mylink"));
   await t.expect(getLocation()).contains(SECONDARY_TEST_PAGE);
+  await appendLaunchLibrary(container);
 
   // Events are: page load, link click, page load.
   await t.expect(networkLogger.edgeEndpointLogs.count(() => true)).eql(3);
