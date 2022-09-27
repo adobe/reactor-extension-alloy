@@ -53,7 +53,8 @@ test("initializes form fields with full settings", async () => {
           thirdPartyCookiesEnabled: true,
           prehidingStyle: "#container { display: none }",
           context: ["device", "placeContext"],
-          clickCollectionEnabled: false
+          clickCollectionEnabled: false,
+          targetMigrationEnabled: true
         },
         {
           name: "alloy2",
@@ -103,6 +104,7 @@ test("initializes form fields with full settings", async () => {
   await instances[0].specificContext.environmentField.expectUnchecked();
   await instances[0].specificContext.placeContextField.expectChecked();
   await instances[0].specificContext.highEntropyUserAgentHintsContextField.expectUnchecked();
+  await instances[0].targetMigrationEnabled.expectChecked();
 
   await instancesTabs.selectTab("alloy2");
 
@@ -142,6 +144,7 @@ test("initializes form fields with full settings", async () => {
   await instances[1].specificContext.environmentField.expectUnchecked();
   await instances[1].specificContext.placeContextField.expectUnchecked();
   await instances[1].specificContext.highEntropyUserAgentHintsContextField.expectUnchecked();
+  await instances[0].targetMigrationEnabled.expectUnchecked();
 
   await instancesTabs.selectTab("alloy3");
 
@@ -150,6 +153,7 @@ test("initializes form fields with full settings", async () => {
   await instances[2].defaultConsent.pendingRadio.expectUnchecked();
   await instances[2].defaultConsent.dataElementRadio.expectUnchecked();
   await instances[2].defaultConsent.dataElementField.expectNotExists();
+  await instances[0].targetMigrationEnabled.expectUnchecked();
 });
 
 test("initializes form fields with minimal settings", async () => {
@@ -193,6 +197,7 @@ test("initializes form fields with minimal settings", async () => {
     defaultDownloadLinkQualifier
   );
   await instances[0].contextGranularity.allField.expectChecked();
+  await instances[0].targetMigrationEnabled.expectUnchecked();
 });
 
 test("initializes form fields with no settings", async () => {
@@ -230,6 +235,7 @@ test("initializes form fields with no settings", async () => {
     defaultDownloadLinkQualifier
   );
   await instances[0].contextGranularity.allField.expectChecked();
+  await instances[0].targetMigrationEnabled.expectUnchecked();
 });
 
 test("returns minimal valid settings", async () => {
@@ -280,6 +286,7 @@ test("returns full valid settings", async () => {
   await instances[0].idMigrationEnabled.click();
   await instances[0].thirdPartyCookiesEnabled.click();
   await instances[0].prehidingStyleEditButton.click();
+  await instances[0].targetMigrationEnabled.click();
   await addInstanceButton.click();
 
   await instances[1].nameField.typeText("2");
@@ -328,7 +335,8 @@ test("returns full valid settings", async () => {
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
         prehidingStyle:
-          "language=css;code=/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/"
+          "language=css;code=/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/",
+        targetMigrationEnabled: true
       },
       {
         name: "alloy2",
@@ -676,6 +684,7 @@ test.requestHooks(
     await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].targetMigrationEnabled.expectUnchecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
     await instances[0].clickCollectionEnabledField.expectChecked();
     await instances[0].downloadLinkQualifierField.expectValue(
@@ -719,6 +728,7 @@ test.requestHooks(
     await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].targetMigrationEnabled.expectUnchecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
     await instances[0].clickCollectionEnabledField.expectChecked();
     await instances[0].downloadLinkQualifierField.expectValue(
@@ -753,6 +763,7 @@ test.requestHooks(
             prehidingStyle: "#container { display: none }",
             context: ["device", "placeContext", "highEntropyUserAgentHints"],
             clickCollectionEnabled: false
+            targetMigrationEnabled: false
           }
         ]
       }
@@ -790,6 +801,7 @@ test.requestHooks(
     await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].targetMigrationEnabled.expectUnchecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
     await instances[0].clickCollectionEnabledField.expectUnchecked();
     await instances[0].contextGranularity.specificField.expectChecked();
@@ -823,7 +835,8 @@ test.requestHooks(
             thirdPartyCookiesEnabled: true,
             prehidingStyle: "#container { display: none }",
             context: ["device", "placeContext"],
-            clickCollectionEnabled: false
+            clickCollectionEnabled: false,
+            targetMigrationEnabled: true
           }
         ]
       }
@@ -858,6 +871,7 @@ test.requestHooks(
     await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].targetMigrationEnabled.expectChecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
     await instances[0].clickCollectionEnabledField.expectUnchecked();
     await instances[0].contextGranularity.specificField.expectChecked();
@@ -923,6 +937,7 @@ test.requestHooks(
     await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].targetMigrationEnabled.expectUnchecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
     await instances[0].clickCollectionEnabledField.expectUnchecked();
     await instances[0].contextGranularity.specificField.expectChecked();
