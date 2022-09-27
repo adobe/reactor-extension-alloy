@@ -72,12 +72,9 @@ export const bridge = {
     downloadLinkQualifier:
       "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$",
     contextGranularity: CONTEXT_GRANULARITY.ALL,
-    context: contextOptions.reduce((result, option) => {
-      if (option.default === true) {
-        result.push(option.value);
-      }
-      return result;
-    }, [])
+    context: contextOptions
+      .filter(option => option.default)
+      .map(option => option.value)
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};

@@ -43,6 +43,13 @@ const CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS = {
   contextKey: contextKey.HIGH_ENTROPY_USER_AGENT_HINTS
 };
 
+const CONTEXT_ENVIRONMENT_AND_HIGH_ENTROPY_USER_AGENT_HINTS = {
+  autoPopulationSource: autoPopulationSource.CONTEXT,
+  contextKey: `${contextKey.ENVIRONMENT} and ${
+    contextKey.HIGH_ENTROPY_USER_AGENT_HINTS
+  }`
+};
+
 // These properties are applied to the form state in "getInitialFormState.js"
 export default {
   _id: ALWAYS,
@@ -59,9 +66,9 @@ export default {
   "device.screenHeight": CONTEXT_DEVICE,
   "device.screenWidth": CONTEXT_DEVICE,
   "device.screenOrientation": CONTEXT_DEVICE,
-  environment: CONTEXT_ENVIRONMENT,
+  environment: CONTEXT_ENVIRONMENT_AND_HIGH_ENTROPY_USER_AGENT_HINTS,
   "environment.type": CONTEXT_ENVIRONMENT,
-  "environment.browserDetails": CONTEXT_ENVIRONMENT,
+  "environment.browserDetails": CONTEXT_ENVIRONMENT_AND_HIGH_ENTROPY_USER_AGENT_HINTS,
   "environment.browserDetails.viewportWidth": CONTEXT_ENVIRONMENT,
   "environment.browserDetails.viewportHeight": CONTEXT_ENVIRONMENT,
   placeContext: CONTEXT_PLACE_CONTEXT,
@@ -72,7 +79,7 @@ export default {
   "web.webPageDetails.URL": CONTEXT_WEB,
   "web.webReferrer": CONTEXT_WEB,
   "web.webReferrer.URL": CONTEXT_WEB,
-  highEntropyUserAgentHints: CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
+  "environment.browserDetails.userAgentClientHints": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
   "environment.browserDetails.userAgentClientHints.architecture": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
   "environment.browserDetails.userAgentClientHints.bitness": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
   "environment.browserDetails.userAgentClientHints.model": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,

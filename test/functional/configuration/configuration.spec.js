@@ -751,7 +751,7 @@ test.requestHooks(
             idMigrationEnabled: true,
             thirdPartyCookiesEnabled: true,
             prehidingStyle: "#container { display: none }",
-            context: ["device", "placeContext"],
+            context: ["device", "placeContext", "highEntropyUserAgentHints"],
             clickCollectionEnabled: false
           }
         ]
@@ -797,6 +797,7 @@ test.requestHooks(
     await instances[0].specificContext.deviceField.expectChecked();
     await instances[0].specificContext.environmentField.expectUnchecked();
     await instances[0].specificContext.placeContextField.expectChecked();
+    await instances[0].specificContext.highEntropyUserAgentHintsContextField.expectChecked();
   }
 );
 
