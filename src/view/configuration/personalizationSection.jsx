@@ -67,7 +67,7 @@ const PersonalizationSection = ({ instanceFieldName }) => {
           mbox and mboxEdgeCluster cookies that are used by at.js 1.x or 2.x libraries. This helps you keep the visitor profile while moving from a page that uses the Web SDK to a page that uses the at.js 1.x or 2.x libraries and vice-versa."
           width="size-5000"
         >
-          Migrate Target from at.js to the WEB SDK
+          Migrate Target from at.js to the Web SDK
         </FormikCheckbox>
         <CodeField
           data-test-id="prehidingStyleEditButton"
