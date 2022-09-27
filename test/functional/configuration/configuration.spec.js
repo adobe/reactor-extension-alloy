@@ -103,6 +103,7 @@ test("initializes form fields with full settings", async () => {
   await instances[0].specificContext.deviceField.expectChecked();
   await instances[0].specificContext.environmentField.expectUnchecked();
   await instances[0].specificContext.placeContextField.expectChecked();
+  await instances[0].specificContext.highEntropyUserAgentHintsContextField.expectUnchecked();
   await instances[0].targetMigrationEnabled.expectChecked();
 
   await instancesTabs.selectTab("alloy2");
@@ -142,6 +143,7 @@ test("initializes form fields with full settings", async () => {
   await instances[1].specificContext.deviceField.expectUnchecked();
   await instances[1].specificContext.environmentField.expectUnchecked();
   await instances[1].specificContext.placeContextField.expectUnchecked();
+  await instances[1].specificContext.highEntropyUserAgentHintsContextField.expectUnchecked();
   await instances[0].targetMigrationEnabled.expectUnchecked();
 
   await instancesTabs.selectTab("alloy3");
@@ -759,7 +761,7 @@ test.requestHooks(
             idMigrationEnabled: true,
             thirdPartyCookiesEnabled: true,
             prehidingStyle: "#container { display: none }",
-            context: ["device", "placeContext"],
+            context: ["device", "placeContext", "highEntropyUserAgentHints"],
             clickCollectionEnabled: false,
             targetMigrationEnabled: false
           }
@@ -807,6 +809,7 @@ test.requestHooks(
     await instances[0].specificContext.deviceField.expectChecked();
     await instances[0].specificContext.environmentField.expectUnchecked();
     await instances[0].specificContext.placeContextField.expectChecked();
+    await instances[0].specificContext.highEntropyUserAgentHintsContextField.expectChecked();
   }
 );
 

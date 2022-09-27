@@ -15,5 +15,6 @@ export const WEB = "Web";
 export const DEVICE = "Device";
 export const ENVIRONMENT = "Environment";
 export const PLACE_CONTEXT = "Place context";
+export const HIGH_ENTROPY_USER_AGENT_HINTS = "High entropy user-agent hints";
 // Not Applicable - Meaning this field is not autopopulated by a context configuration
 export const NA = "NA";

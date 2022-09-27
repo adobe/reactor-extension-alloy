@@ -36,22 +36,32 @@ const contextOptions = [
   {
     label: "Web (information about the current page)",
     value: "web",
-    testId: "contextWebField"
+    testId: "contextWebField",
+    default: true
   },
   {
     label: "Device (information about the user's device)",
     value: "device",
-    testId: "contextDeviceField"
+    testId: "contextDeviceField",
+    default: true
   },
   {
     label: "Environment (information about the user's browser)",
     value: "environment",
-    testId: "contextEnvironmentField"
+    testId: "contextEnvironmentField",
+    default: true
   },
   {
     label: "Place context (information about the user's location)",
     value: "placeContext",
-    testId: "contextPlaceContextField"
+    testId: "contextPlaceContextField",
+    default: true
+  },
+  {
+    label: "High entropy user-agent hints (browser and platform information)",
+    value: "highEntropyUserAgentHints",
+    testId: "contextHighEntropyUserAgentHintsField",
+    default: false
   }
 ];
 
@@ -62,7 +72,9 @@ export const bridge = {
     downloadLinkQualifier:
       "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$",
     contextGranularity: CONTEXT_GRANULARITY.ALL,
-    context: contextOptions.map(option => option.value)
+    context: contextOptions
+      .filter(option => option.default)
+      .map(option => option.value)
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
@@ -204,7 +216,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
               data-test-id="contextGranularityAllField"
               value={CONTEXT_GRANULARITY.ALL}
             >
-              All context information
+              All default context information
             </Radio>
             <Radio
               data-test-id="contextGranularitySpecificField"
