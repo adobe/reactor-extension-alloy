@@ -762,7 +762,7 @@ test.requestHooks(
             thirdPartyCookiesEnabled: true,
             prehidingStyle: "#container { display: none }",
             context: ["device", "placeContext", "highEntropyUserAgentHints"],
-            clickCollectionEnabled: false
+            clickCollectionEnabled: false,
             targetMigrationEnabled: false
           }
         ]
