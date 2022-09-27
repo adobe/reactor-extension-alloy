@@ -927,5 +927,100 @@ test.requestHooks(
     await instances[0].specificContext.deviceField.expectChecked();
     await instances[0].specificContext.environmentField.expectUnchecked();
     await instances[0].specificContext.placeContextField.expectChecked();
+    await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectNotExists();
+  }
+);
+test.requestHooks(
+  sandboxesMocks.userRegionMissing,
+  datastreamMocks.basic,
+  datastreamMocks.notExist,
+  datastreamsMocks.multiple
+)(
+  "initializes form fields with prod edge configs settings but no sandbox configs, multiple sandboxes",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "64c31a3b-d031-4a2f-8834-e96fc15d3030",
+            orgId: "ORG456@OtherCompanyOrg",
+            edgeDomain: "testedge.com",
+            edgeBasePath: "ee-beta",
+            defaultConsent: "pending",
+            idMigrationEnabled: true,
+            thirdPartyCookiesEnabled: true,
+            prehidingStyle: "#container { display: none }",
+            context: ["device", "placeContext"],
+            clickCollectionEnabled: false
+          }
+        ]
+      }
+    });
+
+    await instances[0].nameField.expectValue("alloy1");
+
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
+      "64c31a3b-d031-4a2f-8834-e96fc15d3030"
+    );
+    await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
+    await instances[0].edgeDomainField.expectValue("testedge.com");
+    await instances[0].edgeBasePathField.expectValue("ee-beta");
+    await instances[0].defaultConsent.inRadio.expectUnchecked();
+    await instances[0].defaultConsent.outRadio.expectUnchecked();
+    await instances[0].defaultConsent.pendingRadio.expectChecked();
+    await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementField.expectNotExists();
+    await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].clickCollectionEnabledField.expectUnchecked();
+    await instances[0].contextGranularity.specificField.expectChecked();
+    await instances[0].specificContext.webField.expectUnchecked();
+    await instances[0].specificContext.deviceField.expectChecked();
+    await instances[0].specificContext.environmentField.expectUnchecked();
+    await instances[0].specificContext.placeContextField.expectChecked();
+
+    await instances[0].edgeConfig.inputMethodSelectRadio.click();
+    await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectExists();
+  }
+);
+test.requestHooks(sandboxesMocks.userRegionMissing, datastreamMocks.notExist)(
+  "initializes clean form with free form because failed to fetch configs",
+  async () => {
+    await extensionViewController.init();
+
+    await instances[0].nameField.expectValue("alloy");
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
+      ""
+    );
+    await instances[0].edgeConfig.inputMethodFreeform.stagingEnvironmentField.expectValue(
+      ""
+    );
+    await instances[0].edgeConfig.inputMethodFreeform.developmentEnvironmentField.expectValue(
+      ""
+    );
+    await instances[0].orgIdField.expectValue(
+      "5BFE274A5F6980A50A495C08@AdobeOrg"
+    );
+    await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
+    await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
+    await instances[0].defaultConsent.inRadio.expectChecked();
+    await instances[0].defaultConsent.outRadio.expectUnchecked();
+    await instances[0].defaultConsent.pendingRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementField.expectNotExists();
+    await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].clickCollectionEnabledField.expectChecked();
+    await instances[0].downloadLinkQualifierField.expectValue(
+      defaultDownloadLinkQualifier
+    );
+    await instances[0].contextGranularity.allField.expectChecked();
+    await instances[0].edgeConfig.inputMethodSelectRadio.click();
+    await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectExists();
   }
 );

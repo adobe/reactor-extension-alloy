@@ -23,6 +23,7 @@ const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
   if (fetchSandboxError || fetchConfigsError) {
     return (
       <Alert
+        data-test-id="alertErrorFetchingConfigs"
         variant="informative"
         title="Error loading configurations for this organization."
         width="size-5000"
