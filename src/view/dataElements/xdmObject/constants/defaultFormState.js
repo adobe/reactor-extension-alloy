@@ -45,7 +45,7 @@ const CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS = {
 
 const CONTEXT_ENVIRONMENT_AND_HIGH_ENTROPY_USER_AGENT_HINTS = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
-  contextKey: `${contextKey.ENVIRONMENT} and ${
+  contextKey: `${contextKey.ENVIRONMENT} or ${
     contextKey.HIGH_ENTROPY_USER_AGENT_HINTS
   }`
 };

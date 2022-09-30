@@ -26,6 +26,7 @@ import RestoreDefaultValueButton from "../components/restoreDefaultValueButton";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import FormElementContainer from "../components/formElementContainer";
+import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 
 const CONTEXT_GRANULARITY = {
   ALL: "all",
@@ -58,9 +59,11 @@ const contextOptions = [
     default: true
   },
   {
-    label: "High entropy user-agent hints (browser and platform information)",
+    label: "High entropy user-agent hints",
     value: "highEntropyUserAgentHints",
     testId: "contextHighEntropyUserAgentHintsField",
+    description:
+      "Provides more detailed information about the client device, such as platform version, architecture, model, bitness (64 bit or 32 bit platforms), or full operating system version",
     default: false
   }
 ];
@@ -235,13 +238,21 @@ const DataCollectionSection = ({ instanceFieldName }) => {
               >
                 {contextOptions.map(contextOption => {
                   return (
-                    <Checkbox
+                    <FieldDescriptionAndError
+                      description={contextOption.description}
+                      messagePaddingTop="size-0"
+                      messagePaddingStart="size-300"
                       key={contextOption.value}
-                      data-test-id={contextOption.testId}
-                      value={contextOption.value}
                     >
-                      {contextOption.label}
-                    </Checkbox>
+                      <Checkbox
+                        key={contextOption.value}
+                        data-test-id={contextOption.testId}
+                        value={contextOption.value}
+                        width="size-5000"
+                      >
+                        {contextOption.label}
+                      </Checkbox>
+                    </FieldDescriptionAndError>
                   );
                 })}
               </FormikCheckboxGroup>
