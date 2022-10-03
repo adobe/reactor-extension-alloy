@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import { t } from "testcafe";
 import createNetworkLogger from "./helpers/createNetworkLogger";
 import appendLaunchLibrary from "./helpers/appendLaunchLibrary";
+import getReturnedEcid from "./helpers/getReturnedEcid";
 import { TEST_PAGE } from "./helpers/constants/url";
 
 const networkLogger = createNetworkLogger();
@@ -84,12 +85,11 @@ fixture("Visitor migration")
 
 test("waits for Visitor to be initialized before running", async () => {
   await appendLaunchLibrary(container);
-  /* await t.eval(() => {
-    window._satellite.setDebug(true);
-  }); */
   // The requestLogger.count method uses TestCafe's smart query
   // assertion mechanism, so it will wait for the request to be
   // made or a timeout is reached.
   await t.expect(networkLogger.edgeEndpointLogs.count(() => true)).eql(1);
-  // await t.debug();
+  const ecid = getReturnedEcid(networkLogger.edgeEndpointLogs.requests[0]);
+  // This is the ID returned from the mock visitor extension.
+  await t.expect(ecid).eql("00781847927133700121980094732316198575");
 });

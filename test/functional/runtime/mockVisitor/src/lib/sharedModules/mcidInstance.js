@@ -1,21 +1,12 @@
-const ecid = "123456789abcdef0";
-const initialize = () => {
-  const instance = {
+const ecid = "00781847927133700121980094732316198575";
+
+window.Visitor = () => undefined;
+window.Visitor.getInstance = () => {
+  return {
     getMarketingCloudVisitorID(callback) {
       callback(ecid);
     }
   };
-  window.Visitor = () => undefined;
-  window.Visitor.getInstance = () => {
-    return instance;
-  };
 };
 
-module.exports = new Promise(resolve => {
-  // console.log("Initializing visitor");
-  setTimeout(() => {
-    initialize();
-    resolve();
-    // console.log("Done initializing visitor");
-  }, 1000);
-});
+module.exports = window.Visitor;
