@@ -1,0 +1,11 @@
+{
+  "name": "mockvisitor",
+  "version": "0.0.1",
+  "description": "Mock Experience Cloud ID Service for use with testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "Apache-2.0"
+}
