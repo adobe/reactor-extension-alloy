@@ -26,6 +26,7 @@ import RestoreDefaultValueButton from "../components/restoreDefaultValueButton";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import FormElementContainer from "../components/formElementContainer";
+import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 
 const CONTEXT_GRANULARITY = {
   ALL: "all",
@@ -36,22 +37,34 @@ const contextOptions = [
   {
     label: "Web (information about the current page)",
     value: "web",
-    testId: "contextWebField"
+    testId: "contextWebField",
+    default: true
   },
   {
     label: "Device (information about the user's device)",
     value: "device",
-    testId: "contextDeviceField"
+    testId: "contextDeviceField",
+    default: true
   },
   {
     label: "Environment (information about the user's browser)",
     value: "environment",
-    testId: "contextEnvironmentField"
+    testId: "contextEnvironmentField",
+    default: true
   },
   {
     label: "Place context (information about the user's location)",
     value: "placeContext",
-    testId: "contextPlaceContextField"
+    testId: "contextPlaceContextField",
+    default: true
+  },
+  {
+    label: "High entropy user-agent hints",
+    value: "highEntropyUserAgentHints",
+    testId: "contextHighEntropyUserAgentHintsField",
+    description:
+      "Provides more detailed information about the client device, such as platform version, architecture, model, bitness (64 bit or 32 bit platforms), or full operating system version",
+    default: false
   }
 ];
 
@@ -62,7 +75,9 @@ export const bridge = {
     downloadLinkQualifier:
       "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$",
     contextGranularity: CONTEXT_GRANULARITY.ALL,
-    context: contextOptions.map(option => option.value)
+    context: contextOptions
+      .filter(option => option.default)
+      .map(option => option.value)
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
@@ -204,7 +219,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
               data-test-id="contextGranularityAllField"
               value={CONTEXT_GRANULARITY.ALL}
             >
-              All context information
+              All default context information
             </Radio>
             <Radio
               data-test-id="contextGranularitySpecificField"
@@ -223,13 +238,21 @@ const DataCollectionSection = ({ instanceFieldName }) => {
               >
                 {contextOptions.map(contextOption => {
                   return (
-                    <Checkbox
+                    <FieldDescriptionAndError
+                      description={contextOption.description}
+                      messagePaddingTop="size-0"
+                      messagePaddingStart="size-300"
                       key={contextOption.value}
-                      data-test-id={contextOption.testId}
-                      value={contextOption.value}
                     >
-                      {contextOption.label}
-                    </Checkbox>
+                      <Checkbox
+                        key={contextOption.value}
+                        data-test-id={contextOption.testId}
+                        value={contextOption.value}
+                        width="size-5000"
+                      >
+                        {contextOption.label}
+                      </Checkbox>
+                    </FieldDescriptionAndError>
                   );
                 })}
               </FormikCheckboxGroup>
