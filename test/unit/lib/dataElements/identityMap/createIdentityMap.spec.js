@@ -70,12 +70,14 @@ describe("createIdentityMap", () => {
     const result = identityMap(input);
 
     expect(result).toEqual({
-      EMAIL: [
-        {
-          id: "example@example.com"
-        }
-      ],
-      CORE: [{ id: "ABC123", authenticatedState: "ambiguous" }]
+      identityMap: {
+        EMAIL: [
+          {
+            id: "example@example.com"
+          }
+        ],
+        CORE: [{ id: "ABC123", authenticatedState: "ambiguous" }]
+      }
     });
 
     const expectedLogArgsByCallIndex = [];

@@ -18,26 +18,33 @@ governing permissions and limitations under the License.
 module.exports = ({ logger }) => {
   return settings => {
     // settings _are_ the identity map
-    return Object.keys(settings).reduce((newIdentityMap, namespace) => {
-      const filteredIdentifiers = settings[namespace].filter(({ id }, i) => {
-        const isValidId = typeof id === "string" && id.length;
-        if (!isValidId) {
+    const identityMap = Object.keys(settings).reduce(
+      (newIdentityMap, namespace) => {
+        const filteredIdentifiers = settings[namespace].filter(({ id }, i) => {
+          const isValidId = typeof id === "string" && id.length;
+          if (!isValidId) {
+            logger.log(
+              `The identifier at ${namespace}[${i}] was removed from the identity map because its ID is not a populated string. Its ID value is:`,
+              id
+            );
+          }
+          return isValidId;
+        });
+
+        if (filteredIdentifiers.length) {
+          newIdentityMap[namespace] = filteredIdentifiers;
+        } else {
           logger.log(
-            `The identifier at ${namespace}[${i}] was removed from the identity map because its ID is not a populated string. Its ID value is:`,
-            id
+            `The ${namespace} namespace was removed from the identity map because it contains no identifiers.`
           );
         }
-        return isValidId;
-      });
+        return newIdentityMap;
+      },
+      {}
+    );
 
-      if (filteredIdentifiers.length) {
-        newIdentityMap[namespace] = filteredIdentifiers;
-      } else {
-        logger.log(
-          `The ${namespace} namespace was removed from the identity map because it contains no identifiers.`
-        );
-      }
-      return newIdentityMap;
-    }, {});
+    return {
+      identityMap
+    };
   };
 };
