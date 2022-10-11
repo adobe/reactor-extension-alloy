@@ -21,5 +21,6 @@
       "type": "object",
       "properties": {}
     }
-  }
+  },
+  "main": "src/lib/sharedModules/mcidInstance.js"
 }
