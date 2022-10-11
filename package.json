@@ -51,7 +51,7 @@
     ]
   },
   "dependencies": {
-    "@adobe/alloy": "^2.13.0",
+    "@adobe/alloy": "^2.13.1-beta.1",
     "@adobe/react-spectrum": "~3.16.0",
     "@react-spectrum/combobox": "^3.0.0-rc.0",
     "@react-stately/data": "^3.4.0",
@@ -111,6 +111,7 @@
     "karma-spec-reporter": "0.0.32",
     "lint-staged": "^10.5.4",
     "minimist": "^1.2.6",
+    "mockvisitor": "file:test/functional/runtime/mockVisitor",
     "npm-run-all": "^4.1.5",
     "parcel": "^2.4.1",
     "prettier": "^1.17.0",
