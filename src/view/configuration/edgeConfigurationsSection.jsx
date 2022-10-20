@@ -314,7 +314,7 @@ const getSelectInputMethodStateForNewInstance = async ({
   context.current.sandboxes = firstPageOfSandboxes;
 
   // checking if this is a organization with one sandbox ( default sandbox )
-  if (firstPageOfSandboxes.length === 1) {
+  if (firstPageOfSandboxes && firstPageOfSandboxes.length === 1) {
     try {
       ({ results: firstPageOfDatastreams } = await fetchConfigs({
         orgId,
@@ -374,17 +374,19 @@ export const bridge = {
       // the user to delete their first instance, which would make their second instance become
       // their first instance, which would cause the selection components to be displayable for that
       // instance. We want the state to be ready for this case.
-      edgeConfigFreeformInputMethod: getFreeformInputStateForNewInstance()
-    };
-    try {
-      instanceDefaults.edgeConfigSelectInputMethod = await getSelectInputMethodStateForNewInstance(
+      edgeConfigFreeformInputMethod: getFreeformInputStateForNewInstance(),
+      edgeConfigSelectInputMethod: await getSelectInputMethodStateForNewInstance(
         {
           orgId,
           imsAccess,
           context
         }
-      );
-    } catch (error) {
+      )
+    };
+    if (
+      context.current.fetchSandboxError ||
+      context.current.fetchConfigsError
+    ) {
       instanceDefaults.edgeConfigInputMethod = INPUT_METHOD.FREEFORM;
     }
 
@@ -420,10 +422,18 @@ export const bridge = {
         );
 
         instanceValues.edgeConfigFreeformInputMethod = getFreeformInputStateForNewInstance();
-        instanceValues.edgeConfigInputMethod = INPUT_METHOD.SELECT;
-        isSuccessfullyPopulatedForSelectInputMethod = true;
+        if (
+          context.current.fetchSandboxError ||
+          context.current.fetchConfigsError
+        ) {
+          instanceValues.edgeConfigInputMethod = INPUT_METHOD.FREEFORM;
+          isSuccessfullyPopulatedForSelectInputMethod = false;
+        } else {
+          instanceValues.edgeConfigInputMethod = INPUT_METHOD.SELECT;
+          isSuccessfullyPopulatedForSelectInputMethod = true;
+        }
       } catch (e) {
-        // No nothing. We'll fall back to the freeform input method.
+        instanceValues.edgeConfigInputMethod = INPUT_METHOD.FREEFORM;
       }
     }
 

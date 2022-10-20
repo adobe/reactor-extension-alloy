@@ -21,7 +21,8 @@ const EDGE_HOST_STAGING = "https://edge-stage.adobe.io";
 
 const ERROR_TYPE_INVALID_ACCESS_TOKEN =
   "https://ns.adobe.com/aep/errors/EXEG-3032-401";
-
+const ERROR_TYPE_FORBIDDEN_ACCESS =
+  "https://ns.adobe.com/aep/errors/EXEG-3050-403";
 export default async ({ orgId, imsAccess, path, params, headers, signal }) => {
   const host = getHost({
     imsAccess,
@@ -73,6 +74,13 @@ export default async ({ orgId, imsAccess, path, params, headers, signal }) => {
     parsedBody.type === ERROR_TYPE_INVALID_ACCESS_TOKEN
   ) {
     throw new UserReportableError(NETWORK_ERROR_MESSAGE.INVALID_ACCESS_TOKEN);
+  }
+
+  if (
+    response.status === HTTP_STATUS.FORBIDDEN &&
+    parsedBody.type === ERROR_TYPE_FORBIDDEN_ACCESS
+  ) {
+    throw new UserReportableError(NETWORK_ERROR_MESSAGE.FORBIDDEN_ACCESS);
   }
 
   if (!response.ok) {

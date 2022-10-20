@@ -19,3 +19,5 @@ export const UNEXPECTED_SERVER_RESPONSE =
 export const INVALID_ACCESS_TOKEN =
   "Your access token appears to be invalid. Please try logging in again.";
 export const RESOURCE_NOT_FOUND = "The resource was not found.";
+export const FORBIDDEN_ACCESS =
+  "You don't have enough permissions to access this resource.";
