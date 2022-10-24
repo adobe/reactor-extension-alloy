@@ -59,3 +59,28 @@ export const unauthorized = RequestMock()
     401,
     responseHeaders
   );
+
+export const forbidden = RequestMock()
+  .onRequestTo({
+    url: specificDatastream,
+    headers: {
+      "x-sandbox-name": "testsandbox2"
+    },
+    method: "GET"
+  })
+  .respond(
+    {
+      type: "https://ns.adobe.com/aep/errors/EXEG-3050-403",
+      status: 403,
+      title: "Forbidden",
+      detail: "Access is denied",
+      report: {
+        timestamp: "2022-10-20T12:31:11Z",
+        version: "1.3.13",
+        requestId: "1yMgl3lAhfaBzteXQiBPqymbbEhSNFQ5",
+        orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg"
+      }
+    },
+    403,
+    responseHeaders
+  );

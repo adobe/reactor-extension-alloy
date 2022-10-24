@@ -930,6 +930,7 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectNotExists();
   }
 );
+
 test.requestHooks(
   sandboxesMocks.userRegionMissing,
   datastreamMocks.basic,
@@ -983,6 +984,7 @@ test.requestHooks(
   await instances[0].edgeConfig.inputMethodSelectRadio.click();
   await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectExists();
 });
+
 test.requestHooks(sandboxesMocks.userRegionMissing, datastreamMocks.notExist)(
   "initializes clean form with free form inputs for configs because failed to fetch configs",
   async () => {
@@ -1019,5 +1021,147 @@ test.requestHooks(sandboxesMocks.userRegionMissing, datastreamMocks.notExist)(
     await instances[0].contextGranularity.allField.expectChecked();
     await instances[0].edgeConfig.inputMethodSelectRadio.click();
     await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectExists();
+  }
+);
+
+test.requestHooks(
+  sandboxesMocks.multipleWithDefault,
+  datastreamsMocks.forbidden,
+  datastreamMocks.forbidden
+)(
+  "initializes form fields with free form input when, forbidden access for sandbox and no sandbox setting provided",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "64c31a3b-d031-4a2f-8834-e96fc15d3030",
+            stagingEdgeConfigId: "",
+            orgId: "ORG456@OtherCompanyOrg",
+            edgeDomain: "testedge.com",
+            edgeBasePath: "ee-beta",
+            defaultConsent: "pending",
+            idMigrationEnabled: true,
+            thirdPartyCookiesEnabled: true,
+            prehidingStyle: "#container { display: none }",
+            context: ["device", "placeContext"],
+            clickCollectionEnabled: false
+          }
+        ]
+      }
+    });
+
+    await instances[0].nameField.expectValue("alloy1");
+
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
+      "64c31a3b-d031-4a2f-8834-e96fc15d3030"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectNotExists();
+    await extensionViewController.expectIsValid();
+  }
+);
+test.requestHooks(
+  sandboxesMocks.multipleWithDefault,
+  datastreamsMocks.forbidden,
+  datastreamMocks.forbidden
+)(
+  "initializes form fields with prod edge config disabled field, forbidden access for sandbox",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "64c31a3b-d031-4a2f-8834-e96fc15d3030",
+            sandbox: "prod",
+            orgId: "ORG456@OtherCompanyOrg",
+            edgeDomain: "testedge.com",
+            edgeBasePath: "ee-beta",
+            defaultConsent: "pending",
+            idMigrationEnabled: true,
+            thirdPartyCookiesEnabled: true,
+            prehidingStyle: "#container { display: none }",
+            context: ["device", "placeContext"],
+            clickCollectionEnabled: false
+          }
+        ]
+      }
+    });
+
+    await instances[0].nameField.expectValue("alloy1");
+
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
+      "PRODUCTION Test Sandbox Prod (VA7)"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamDisabledField.expectValue(
+      "64c31a3b-d031-4a2f-8834-e96fc15d3030"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamDisabledField.expectDisabled();
+    await extensionViewController.expectIsValid();
+
+    await extensionViewController.expectSettings({
+      instances: [
+        {
+          clickCollectionEnabled: false,
+          context: ["device", "placeContext"],
+          defaultConsent: "pending",
+          edgeBasePath: "ee-beta",
+          edgeConfigId: "64c31a3b-d031-4a2f-8834-e96fc15d3030",
+          edgeDomain: "testedge.com",
+          name: "alloy1",
+          orgId: "ORG456@OtherCompanyOrg",
+          prehidingStyle: "#container { display: none }",
+          sandbox: "prod"
+        }
+      ]
+    });
+  }
+);
+
+test.requestHooks(
+  sandboxesMocks.multipleWithDefault,
+  datastreamsMocks.forbidden,
+  datastreamsMocks.multiple
+)(
+  "initializes clean form with select input and choose thru different sandboxes",
+  async () => {
+    await extensionViewController.init();
+
+    await instances[0].nameField.expectValue("alloy");
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.selectOption(
+      "PRODUCTION Test Sandbox 1 (VA7)"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamErrorFetchingAlert.expectExists();
+    await extensionViewController.expectIsNotValid();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.selectOption(
+      "PRODUCTION Test Sandbox Prod (VA7)"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.selectOption(
+      "test datastream"
+    );
+    await extensionViewController.expectIsValid();
+  }
+);
+test.only.requestHooks(
+  sandboxesMocks.singleWithoutDefault,
+  datastreamsMocks.forbidden
+)(
+  "initializes clean form free form option selected by default, alert showed on the select form",
+  async () => {
+    await extensionViewController.init();
+
+    await instances[0].nameField.expectValue("alloy");
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodSelectRadio.click();
+    await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectExists();
+    await extensionViewController.expectIsNotValid();
   }
 );

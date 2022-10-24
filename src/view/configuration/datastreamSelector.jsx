@@ -119,7 +119,7 @@ const DatastreamSelector = ({
     <>
       {`You do not have enough permissions to fetch the ${
         selectedSandbox.title
-      } sandbox configurations. See the documentation for`}
+      } sandbox configurations. See the documentation for `}
       <Link>
         <a
           href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
@@ -141,7 +141,7 @@ const DatastreamSelector = ({
         <Flex direction="row" gap="size-100">
           <View>
             <FormikTextField
-              data-test-id={`datastreamField${environmentType}`}
+              data-test-id={`datastreamDisabledField${environmentType}`}
               label="Datastream ID"
               name={name}
               description={errorLoadingDatastreamsDescription}
@@ -168,6 +168,7 @@ const DatastreamSelector = ({
     }
     return (
       <Alert
+        data-test-id={`${environmentType}ErrorFetchingDatastreamsAlert`}
         variant={environmentType === PRODUCTION ? "negative" : "informative"}
         title={`Error fetching datastreams for ${selectedSandbox.name} sandbox`}
         width="size-5000"

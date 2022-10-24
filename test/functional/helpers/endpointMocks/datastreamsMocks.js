@@ -16,12 +16,12 @@ import responseHeaders from "./responseHeaders";
 const DATASTREAMS_ENDPOINT_REGEX = /\/datasets\/datastreams\/records\/(\?|$)/;
 
 export const multiple = RequestMock()
-  .onRequestTo({
-    url: DATASTREAMS_ENDPOINT_REGEX,
-    headers: {
-      "x-sandbox-name": "testsandbox1"
-    },
-    method: "GET"
+  .onRequestTo(async request => {
+    return (
+      DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
+      request.headers["x-sandbox-name"] === "prod" &&
+      request.method === "get"
+    );
   })
   .respond(
     {
@@ -114,12 +114,12 @@ export const multiple = RequestMock()
   );
 
 export const empty = RequestMock()
-  .onRequestTo({
-    url: DATASTREAMS_ENDPOINT_REGEX,
-    headers: {
-      "x-sandbox-name": "prod"
-    },
-    method: "GET"
+  .onRequestTo(async request => {
+    return (
+      DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
+      request.headers["x-sandbox-name"] === "prod" &&
+      request.method === "get"
+    );
   })
   .respond(
     {
@@ -135,5 +135,29 @@ export const empty = RequestMock()
       }
     },
     200,
+    responseHeaders
+  );
+export const forbidden = RequestMock()
+  .onRequestTo(async request => {
+    return (
+      DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
+      request.headers["x-sandbox-name"] === "testsandbox1" &&
+      request.method === "get"
+    );
+  })
+  .respond(
+    {
+      type: "https://ns.adobe.com/aep/errors/EXEG-3050-403",
+      status: 403,
+      title: "Forbidden",
+      detail: "Access is denied",
+      report: {
+        timestamp: "2022-10-20T12:31:11Z",
+        version: "1.3.13",
+        requestId: "1yMgl3lAhfaBzteXQiBPqymbbEhSNFQ5",
+        orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg"
+      }
+    },
+    403,
     responseHeaders
   );

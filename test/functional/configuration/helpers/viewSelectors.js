@@ -36,7 +36,13 @@ for (let i = 0; i < 3; i += 1) {
         fetchConfigsAlert: spectrum.alert("alertErrorFetchingConfigs"),
         production: {
           datastreamField: spectrum.picker("productionDatastreamField"),
-          sandboxField: spectrum.picker("productionSandboxField")
+          sandboxField: spectrum.picker("productionSandboxField"),
+          datastreamDisabledField: spectrum.textField(
+            "datastreamDisabledFieldproduction"
+          ),
+          datastreamErrorFetchingAlert: spectrum.alert(
+            "productionErrorFetchingDatastreamsAlert"
+          )
         },
         staging: {
           datastreamField: spectrum.picker("stagingDatastreamField"),
