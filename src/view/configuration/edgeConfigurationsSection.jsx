@@ -313,6 +313,13 @@ const getSelectInputMethodStateForNewInstance = async ({
 
   context.current.sandboxes = firstPageOfSandboxes;
 
+  // when not enough permissions we might get empty array of sandboxes
+  if (
+    !firstPageOfSandboxes ||
+    (firstPageOfSandboxes && firstPageOfSandboxes.length === 0)
+  ) {
+    context.current.fetchSandboxError = true;
+  }
   // checking if this is a organization with one sandbox ( default sandbox )
   if (firstPageOfSandboxes && firstPageOfSandboxes.length === 1) {
     try {
