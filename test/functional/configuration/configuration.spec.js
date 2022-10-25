@@ -1149,7 +1149,7 @@ test.requestHooks(
     await extensionViewController.expectIsValid();
   }
 );
-test.only.requestHooks(
+test.requestHooks(
   sandboxesMocks.singleWithoutDefault,
   datastreamsMocks.forbidden
 )(
