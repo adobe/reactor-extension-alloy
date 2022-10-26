@@ -193,42 +193,45 @@ test("initializes form fields with minimal settings", async () => {
   await instances[0].contextGranularity.allField.expectChecked();
 });
 
-test("initializes form fields with no settings", async () => {
-  await extensionViewController.init();
+test.requestHooks(sandboxesMocks.singleDefault, datastreamsMocks.multiple)(
+  "initializes form fields with no settings for orgs with one default sandbox",
+  async () => {
+    await extensionViewController.init();
 
-  await instances[0].nameField.expectValue("alloy");
-  await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
-  await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
-  await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
-    "PRODUCTION Prod (VA7)"
-  );
-  await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
-    "Select a datastream"
-  );
-  await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
-    "Select a datastream"
-  );
-  await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
-    "Select a datastream"
-  );
-  await instances[0].orgIdField.expectValue(
-    "5BFE274A5F6980A50A495C08@AdobeOrg"
-  );
-  await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
-  await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
-  await instances[0].defaultConsent.inRadio.expectChecked();
-  await instances[0].defaultConsent.outRadio.expectUnchecked();
-  await instances[0].defaultConsent.pendingRadio.expectUnchecked();
-  await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
-  await instances[0].defaultConsent.dataElementField.expectNotExists();
-  await instances[0].idMigrationEnabled.expectChecked();
-  await instances[0].thirdPartyCookiesEnabled.expectChecked();
-  await instances[0].clickCollectionEnabledField.expectChecked();
-  await instances[0].downloadLinkQualifierField.expectValue(
-    defaultDownloadLinkQualifier
-  );
-  await instances[0].contextGranularity.allField.expectChecked();
-});
+    await instances[0].nameField.expectValue("alloy");
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
+      "PRODUCTION Prod (VA7)"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
+      "Select a datastream"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
+      "Select a datastream"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
+      "Select a datastream"
+    );
+    await instances[0].orgIdField.expectValue(
+      "5BFE274A5F6980A50A495C08@AdobeOrg"
+    );
+    await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
+    await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
+    await instances[0].defaultConsent.inRadio.expectChecked();
+    await instances[0].defaultConsent.outRadio.expectUnchecked();
+    await instances[0].defaultConsent.pendingRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
+    await instances[0].defaultConsent.dataElementField.expectNotExists();
+    await instances[0].idMigrationEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].clickCollectionEnabledField.expectChecked();
+    await instances[0].downloadLinkQualifierField.expectValue(
+      defaultDownloadLinkQualifier
+    );
+    await instances[0].contextGranularity.allField.expectChecked();
+  }
+);
 
 test("returns minimal valid settings", async () => {
   await extensionViewController.init();
