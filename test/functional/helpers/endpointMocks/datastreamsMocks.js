@@ -19,7 +19,7 @@ export const multiple = RequestMock()
   .onRequestTo(async request => {
     return (
       DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
-      request.headers["x-sandbox-name"] === "prod" &&
+      request.headers["x-sandbox-name"] === "testsandbox1" &&
       request.method === "get"
     );
   })
@@ -141,7 +141,7 @@ export const forbidden = RequestMock()
   .onRequestTo(async request => {
     return (
       DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
-      request.headers["x-sandbox-name"] === "testsandbox1" &&
+      request.headers["x-sandbox-name"] === "testsandbox2" &&
       request.method === "get"
     );
   })

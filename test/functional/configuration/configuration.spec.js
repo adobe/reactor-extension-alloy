@@ -355,19 +355,22 @@ test("returns full valid settings", async () => {
   });
 });
 
-test("shows error for empty required values", async () => {
-  await extensionViewController.init();
-  await instances[0].nameField.clear();
-  await instances[0].orgIdField.clear();
-  await instances[0].edgeDomainField.clear();
-  await instances[0].edgeBasePathField.clear();
-  await extensionViewController.expectIsNotValid();
-  await instances[0].nameField.expectError();
-  await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectError();
-  await instances[0].orgIdField.expectError();
-  await instances[0].edgeDomainField.expectError();
-  await instances[0].edgeBasePathField.expectError();
-});
+test.requestHooks(sandboxesMocks.empty)(
+  "shows error for empty required values",
+  async () => {
+    await extensionViewController.init();
+    await instances[0].nameField.clear();
+    await instances[0].orgIdField.clear();
+    await instances[0].edgeDomainField.clear();
+    await instances[0].edgeBasePathField.clear();
+    await extensionViewController.expectIsNotValid();
+    await instances[0].nameField.expectError();
+    await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectError();
+    await instances[0].orgIdField.expectError();
+    await instances[0].edgeDomainField.expectError();
+    await instances[0].edgeBasePathField.expectError();
+  }
+);
 
 test("shows error on manual edgeConfigId entry", async () => {
   await extensionViewController.init();
@@ -804,7 +807,6 @@ test.requestHooks(
 test.requestHooks(
   sandboxesMocks.singleWithoutDefault,
   datastreamMocks.basic,
-  datastreamMocks.notExist,
   datastreamsMocks.multiple
 )(
   "initializes form fields with prod edge configs, no sandbox configs, default sandbox use case",
@@ -1079,7 +1081,7 @@ test.requestHooks(
           {
             name: "alloy1",
             edgeConfigId: "64c31a3b-d031-4a2f-8834-e96fc15d3030",
-            sandbox: "prod",
+            sandbox: "testsandbox2",
             orgId: "ORG456@OtherCompanyOrg",
             edgeDomain: "testedge.com",
             edgeBasePath: "ee-beta",
@@ -1099,7 +1101,7 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
-      "PRODUCTION Test Sandbox Prod (VA7)"
+      "PRODUCTION Test Sandbox 2 (VA7)"
     );
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamDisabledField.expectValue(
       "64c31a3b-d031-4a2f-8834-e96fc15d3030"
@@ -1119,7 +1121,7 @@ test.requestHooks(
           name: "alloy1",
           orgId: "ORG456@OtherCompanyOrg",
           prehidingStyle: "#container { display: none }",
-          sandbox: "prod"
+          sandbox: "testsandbox2"
         }
       ]
     });
@@ -1139,12 +1141,12 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.selectOption(
-      "PRODUCTION Test Sandbox 1 (VA7)"
+      "PRODUCTION Test Sandbox 2 (VA7)"
     );
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamErrorFetchingAlert.expectExists();
     await extensionViewController.expectIsNotValid();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.selectOption(
-      "PRODUCTION Test Sandbox Prod (VA7)"
+      "PRODUCTION Test Sandbox 1 (VA7)"
     );
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.selectOption(
       "test datastream"
