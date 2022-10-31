@@ -388,6 +388,25 @@
       },
       "libPath": "dist/lib/actions/applyResponse/index.js",
       "viewPath": "actions/applyResponse.html"
+    },
+    {
+      "displayName": "Update variable",
+      "name": "update-variable",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "dataElement": {
+            "type": "string",
+            "minLength": 1
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      },
+      "libPath": "dist/lib/actions/updateVariable/index.js",
+      "viewPath": "actions/updateVariable.html"
     }
   ],
   "events": [
@@ -500,6 +519,58 @@
       ],
       "libPath": "dist/lib/dataElements/xdmObject/index.js",
       "viewPath": "dataElements/xdmObject.html"
+    },
+    {
+      "displayName": "Variable",
+      "name": "variable",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "cacheId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "enum": ["xdm", "object"]
+          },
+          "sandbox": {
+            "type": "string",
+            "minLength": 1
+          },
+          "schemaId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "schemaVersion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "transforms": [
+            {
+              "type": "remove",
+              "propertyPath": "type"
+            },
+            {
+              "type": "remove",
+              "propertyPath": "sandbox"
+            },
+            {
+              "type": "remove",
+              "propertyPath": "schemaId"
+            },
+            {
+              "type": "remove",
+              "propertyPath": "schemaVersion"
+            }
+          ],
+          "required": ["cacheId"],
+          "additionalProperties": false
+        }
+      },
+      "libPath": "dist/lib/dataElements/variable/index.js",
+      "viewPath": "dataElements/variable.html"
     }
   ],
   "main": "dist/lib/instanceManager/index.js"

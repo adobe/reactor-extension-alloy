@@ -18,10 +18,20 @@ const chalk = require("chalk");
 const CLIENT_SECRET_ENV_VAR_NAME = "EDGE_E2E_CLIENT_SECRET";
 const PRIVATE_KEY_FILE_ENV_VAR_NAME = "EDGE_E2E_PRIVATE_KEY_FILE";
 const PRIVATE_KEY_CONTENTS_ENV_VAR_NAME = "EDGE_E2E_PRIVATE_KEY_CONTENTS";
+const ORG_ID_ENV_VAR_NAME = "EDGE_E2E_ORG_ID";
+const TECHNICAL_ACCOUNT_ID_ENV_VAR_NAME = "EDGE_E2E_TECHNICAL_ACCOUNT_ID";
+const CLIENT_ID_ENV_VAR_NAME = "EDGE_E2E_CLIENT_ID";
 
 const clientSecret = process.env[CLIENT_SECRET_ENV_VAR_NAME];
 const privateKeyPath = process.env[PRIVATE_KEY_FILE_ENV_VAR_NAME];
 const privateKeyContents = process.env[PRIVATE_KEY_CONTENTS_ENV_VAR_NAME];
+const orgId =
+  process.env[ORG_ID_ENV_VAR_NAME] || "5BFE274A5F6980A50A495C08@AdobeOrg";
+const technicalAccountId =
+  process.env[TECHNICAL_ACCOUNT_ID_ENV_VAR_NAME] ||
+  "52202EB9602F004D0A495F8C@techacct.adobe.com";
+const clientId =
+  process.env[CLIENT_ID_ENV_VAR_NAME] || "0c1c7478c4994c69866b64c8341578ed";
 
 let credentials;
 
@@ -40,9 +50,9 @@ if (clientSecret && (privateKeyPath || privateKeyContents)) {
 
   if (privateKey) {
     credentials = {
-      clientId: "0c1c7478c4994c69866b64c8341578ed",
-      technicalAccountId: "52202EB9602F004D0A495F8C@techacct.adobe.com",
-      orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
+      clientId,
+      technicalAccountId,
+      orgId,
       clientSecret,
       privateKey,
       metaScopes: ["https://ims-na1.adobelogin.com/s/ent_dataservices_sdk"],

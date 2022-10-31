@@ -35,9 +35,12 @@ module.exports = ({
       instanceByName[name] = instance;
 
       const computedEdgeConfigId =
-        (turbine.environment.stage === "development" &&
+        (turbine.environment &&
+          turbine.environment.stage === "development" &&
           developmentEdgeConfigId) ||
-        (turbine.environment.stage === "staging" && stagingEdgeConfigId) ||
+        (turbine.environment &&
+          turbine.environment.stage === "staging" &&
+          stagingEdgeConfigId) ||
         edgeConfigId;
 
       instance("configure", {
