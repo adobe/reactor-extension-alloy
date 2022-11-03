@@ -10,61 +10,61 @@ governing permissions and limitations under the License.
 */
 
 import fetchFromReactor from "./fetchFromReactor";
+import UserReportableError from "../errors/userReportableError";
 
 // delegateDescriptorId would be something like this: "adobe-alloy::dataElements::object-variable"
 const fetchDataElements = async ({
   orgId,
   imsAccess,
   propertyId,
+  search = "",
+  page = 1,
   signal,
-  delegateDescriptorIds
+  delegateDescriptorId
 }) => {
-  let parsedResponse;
-
-  const matchingDataElements = [];
-  let page = 1;
-
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      parsedResponse = await fetchFromReactor({
-        orgId,
-        imsAccess,
-        path: `/properties/${propertyId}/data_elements`,
-        params: `page[size]=100&page[number]=${page}`,
-        signal
-      });
-    } catch (e) {
-      if (e.name === "AbortError") {
-        throw e;
-      }
-
-      /*
-      throw new UserReportableError("Failed to load data elements.", {
-        originatingError: e
-      });
-      */
-    }
-
-    parsedResponse.parsedBody.data
-      .filter(({ attributes: { delegate_descriptor_id: other } }) =>
-        delegateDescriptorIds.includes(other)
-      )
-      .map(({ attributes: { name, settings } }) => ({
-        name,
-        settings: JSON.parse(settings)
-      }))
-      .forEach(dataElement => matchingDataElements.push(dataElement));
-
-    if (parsedResponse.parsedBody.meta.pagination.total_pages <= page) {
-      break;
-    }
-    page += 1;
+  const params = {
+    "page[size]": "100",
+    "page[number]": `${page}`
+  };
+  if (search !== "") {
+    params["filter[name]"] = `CONTAINS ${search}`;
   }
 
-  matchingDataElements.push(
+  let parsedResponse;
+  try {
+    parsedResponse = await fetchFromReactor({
+      orgId,
+      imsAccess,
+      path: `/properties/${propertyId}/data_elements`,
+      params: new URLSearchParams(params),
+      signal
+    });
+  } catch (e) {
+    if (e.name === "AbortError") {
+      throw e;
+    }
+
+    throw new UserReportableError("Failed to load data elements.", {
+      originatingError: e
+    });
+  }
+
+  const results = parsedResponse.parsedBody.data
+    .filter(
+      ({ attributes: { delegate_descriptor_id: other } }) =>
+        delegateDescriptorId === other
+    )
+    .map(({ id, attributes: { name, settings } }) => ({
+      id,
+      name,
+      settings: JSON.parse(settings)
+    }));
+
+  const nextPage = parsedResponse.parsedBody.meta.pagination.next_page;
+
+  results.push(
     {
+      id: "id1",
       name: "XDM Variable 1",
       settings: {
         schemaType: "xdm",
@@ -76,6 +76,7 @@ const fetchDataElements = async ({
       }
     },
     {
+      id: "id2",
       name: "XDM Variable 2",
       settings: {
         schemaType: "xdm",
@@ -87,6 +88,7 @@ const fetchDataElements = async ({
       }
     },
     {
+      id: "id3",
       name: "Data variable 1",
       settings: {
         schemaType: "object",
@@ -94,6 +96,7 @@ const fetchDataElements = async ({
       }
     },
     {
+      id: "id4",
       name: "Data variable 2",
       settings: {
         schemaType: "object",
@@ -101,12 +104,7 @@ const fetchDataElements = async ({
       }
     }
   );
-
-  matchingDataElements.sort((a, b) =>
-    a.name.localeCompare(b.name, "en", { sensitivity: "base" })
-  );
-
-  return matchingDataElements;
+  return { results, nextPage };
 };
 
 export default fetchDataElements;

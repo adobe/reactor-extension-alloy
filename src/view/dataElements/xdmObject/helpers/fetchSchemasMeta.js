@@ -68,10 +68,16 @@ export default async ({
     }
 
     const base = (start && parseInt(start, 10)) || 0;
+    if ((start / 10) % 2 === 1) {
+      return {
+        results: [],
+        nextPage: `${base + 10}`
+      };
+    }
     return {
       results: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => ({
-        $id: `${sandboxName}-${base + i}`,
-        title: `${sandboxName} Schema ${base + i}`,
+        $id: `${sandboxName}-${base + i}-${search}`,
+        title: `${sandboxName} Schema ${base + i} (${search})`,
         version: `1.${i}`
       })),
       nextPage: `${base + 10}`

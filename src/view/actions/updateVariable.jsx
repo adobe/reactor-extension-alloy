@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useRef, useEffect, useState } from "react";
-import { object, string } from "yup";
+import React, { useRef, useState } from "react";
+import { object } from "yup";
 import { Item } from "@react-spectrum/combobox";
 import { useField } from "formik";
 import PropTypes from "prop-types";
@@ -19,11 +19,14 @@ import render from "../render";
 import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
 import getValueFromFormState from "../dataElements/xdmObject/helpers/getValueFromFormState";
-import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import fetchDataElements from "../utils/fetchDataElements";
 import fetchSchema from "../dataElements/xdmObject/helpers/fetchSchema";
 import Editor from "../dataElements/xdmObject/components/editor";
 import getInitialFormState from "../dataElements/xdmObject/helpers/getInitialFormState";
+import FormikPagedComboBox from "../components/formikReactSpectrum3/formikPagedComboBox";
+import useReportAsyncError from "../utils/useReportAsyncError";
+import fetchDataElement from "../utils/fetchDataElement";
+import useChanged from "../utils/useChanged";
 
 const getInitialValues = context => async ({ initInfo }) => {
   const {
@@ -31,84 +34,156 @@ const getInitialValues = context => async ({ initInfo }) => {
     company: { orgId },
     tokens: { imsAccess }
   } = initInfo;
-  const { dataElement = "", data = {} } = initInfo.settings || {};
+  const { dataElementId, data = {} } = initInfo.settings || {};
 
-  context.dataElements = await fetchDataElements({
+  const initialValues = {
+    data
+  };
+
+  const {
+    results: dataElementsFirstPage,
+    nextPage: dataElementsFirstPageCursor
+  } = await fetchDataElements({
     orgId,
     imsAccess,
     propertyId,
-    delegateDescriptorIds: ["adobe-alloy::dataElements::variable"]
+    delegateDescriptorId: "adobe-alloy::dataElements::variable"
   });
 
-  return {
-    dataElement,
-    data
-  };
+  context.dataElementsFirstPage = dataElementsFirstPage;
+  context.dataElementsFirstPageCursor = dataElementsFirstPageCursor;
+
+  if (dataElementId) {
+    const dataElement = await fetchDataElement({
+      orgId,
+      imsAccess,
+      dataElementId
+    });
+    initialValues.dataElement = dataElement;
+    if (
+      dataElement &&
+      dataElement.settings.schemaId &&
+      dataElement.settings.schemaVersion
+    ) {
+      const schema = await fetchSchema({
+        orgId,
+        imsAccess,
+        schemaId: dataElement.settings.schemaId,
+        schemaVersion: dataElement.settings.schemaVersion,
+        sandboxName: dataElement.settings.sandbox
+      });
+      if (schema) {
+        context.schema = schema;
+        const initialFormState = getInitialFormState({
+          schema,
+          value: data
+        });
+        return { ...initialValues, ...initialFormState };
+      }
+    }
+  }
+
+  return initialValues;
 };
 
 const getSettings = ({ values }) => {
   const { dataElement } = values;
+  const { id: dataElementId, settings } = dataElement || {};
+  const { cacheId: dataElementCacheId } = settings || {};
 
   return {
-    dataElement,
+    dataElementId,
+    dataElementCacheId,
     data: getValueFromFormState({ formStateNode: values }) || {}
   };
 };
 
 const validationSchema = object().shape({
-  dataElement: string().required("Please specify a data element.")
+  dataElement: object().required("Please specify a data element.")
 });
 
 const UpdateVariable = ({ initInfo, formikProps: { resetForm }, context }) => {
+  const {
+    schema,
+    dataElementsFirstPage,
+    dataElementsFirstPageCursor
+  } = context;
+
   const [{ value: dataElement }] = useField("dataElement");
-  const [hasSchema, setHasSchema] = useState(false);
+  const [hasSchema, setHasSchema] = useState(schema != null);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
 
   const {
+    propertySettings: { id: propertyId } = {},
     company: { orgId },
     tokens: { imsAccess }
   } = initInfo;
-  const { dataElements } = context;
-  let { schema } = context;
 
-  useEffect(async () => {
+  useChanged(async () => {
     setHasSchema(false);
     setSelectedNodeId(null);
-    const dataElementObject = dataElements.find(
-      de => de.settings.cacheId === dataElement
-    );
-    if (dataElementObject && dataElementObject.settings.schemaId) {
-      schema = await fetchSchema({
+
+    if (dataElement && dataElement.settings.schemaId) {
+      const newSchema = await fetchSchema({
         orgId,
         imsAccess,
-        schemaId: dataElementObject.settings.schemaId,
-        schemaVersion: dataElementObject.settings.schemaVersion,
-        sandboxName: dataElementObject.settings.sandbox
+        schemaId: dataElement.settings.schemaId,
+        schemaVersion: dataElement.settings.schemaVersion,
+        sandboxName: dataElement.settings.sandbox
       });
-      if (schema) {
+      if (newSchema) {
+        context.schema = newSchema;
         const initialFormState = getInitialFormState({
-          schema: context.schema
+          schema: newSchema
         });
         resetForm({ values: { ...initialFormState, dataElement } });
+        setHasSchema(true);
       }
-      context.schema = schema;
-      setHasSchema(true);
     }
-  }, [dataElement]);
+  }, [dataElement?.settings?.schemaId]);
+
+  const loadItems = async ({ filterText, cursor, signal }) => {
+    let results;
+    let nextPage;
+    try {
+      ({ results, nextPage } = await fetchDataElements({
+        orgId,
+        imsAccess,
+        propertyId,
+        search: filterText,
+        page: cursor || 1,
+        signal,
+        delegateDescriptorId: "adobe-alloy::dataElements::variable"
+      }));
+    } catch (e) {
+      if (e.name !== "AbortError") {
+        useReportAsyncError(e);
+      }
+      throw e;
+    }
+    return {
+      items: results,
+      cursor: nextPage
+    };
+  };
 
   return (
     <FormElementContainer>
-      <FormikPicker
-        data-test-id="dataElementPicker"
+      <FormikPagedComboBox
+        data-test-id="dataElementField"
         name="dataElement"
         label="Data element"
         description="Please specify the data element you would like to update. Only `variable` type data elements are available."
         width="size-5000"
-        items={dataElements}
         isRequired
+        loadItems={loadItems}
+        getKey={item => item?.settings?.cacheId}
+        getLabel={item => item?.name}
+        firstPage={dataElementsFirstPage}
+        firstPageCursor={dataElementsFirstPageCursor}
       >
         {item => <Item key={item.settings.cacheId}>{item.name}</Item>}
-      </FormikPicker>
+      </FormikPagedComboBox>
       {hasSchema && (
         <Editor
           selectedNodeId={selectedNodeId}

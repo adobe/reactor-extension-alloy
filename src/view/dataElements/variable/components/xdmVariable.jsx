@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { object, string } from "yup";
+import { object } from "yup";
 import { Item } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
@@ -24,72 +24,102 @@ import FormikPicker from "../../../components/formikReactSpectrum3/formikPicker"
 import FormikPagedComboBox from "../../../components/formikReactSpectrum3/formikPagedComboBox";
 import useReportAsyncError from "../../../utils/useReportAsyncError";
 
+const initializeSandboxes = async ({
+  context,
+  settings: { sandbox },
+  orgId,
+  imsAccess
+}) => {
+  const { results: sandboxes } = await fetchSandboxes({ orgId, imsAccess });
+
+  if (!(sandboxes && sandboxes.length)) {
+    throw new UserReportableError("You do not have access to any sandboxes.");
+  }
+
+  if (sandbox && !sandboxes.find(s => s.name === sandbox)) {
+    context.warning = `Could not find the sandbox selected previously. Either you don't have access or the sandbox was deleted. Push cancel to leave this data element unchanged.`;
+  }
+  context.sandboxes = sandboxes;
+};
+
+const initializeSelectedSchema = async ({
+  initialValues,
+  settings: { sandbox, schemaId, schemaVersion },
+  orgId,
+  imsAccess
+}) => {
+  if (schemaId && schemaVersion && sandbox) {
+    const { $id, title, version } = await fetchSchema({
+      orgId,
+      imsAccess,
+      schemaId,
+      schemaVersion,
+      sandboxName: sandbox
+    });
+    initialValues.schema = { $id, title, version };
+  } else {
+    initialValues.schema = null;
+  }
+};
+
+const initializeSchemas = async ({
+  initialValues: { sandbox },
+  context,
+  orgId,
+  imsAccess
+}) => {
+  const {
+    results: schemasFirstPage,
+    nextPage: schemasFirstPageCursor
+  } = await fetchSchemasMeta({
+    orgId,
+    imsAccess,
+    sandboxName: sandbox
+  });
+
+  context.schemasFirstPage = schemasFirstPage;
+  context.schemasFirstPageCursor = schemasFirstPageCursor;
+};
+
 export const bridge = {
   async getInitialValues({ initInfo, context }) {
-    const { sandbox = null, schemaId = null, schemaVersion = null } =
-      initInfo.settings || {};
-
     const {
       company: { orgId },
       tokens: { imsAccess }
     } = initInfo;
+    const settings = initInfo.settings || {};
 
-    const sandboxesResponse = await fetchSandboxes({ orgId, imsAccess });
-    context.sandboxes = sandboxesResponse.results;
-
-    const { sandboxes } = context;
-    if (!(sandboxes && sandboxes.length)) {
-      throw new UserReportableError("You do not have access to any sandboxes.");
-    }
-
-    if (sandbox && !sandboxes.find(s => s.name === sandbox)) {
-      throw new UserReportableError(
-        "Could not find sandbox selected previously"
-      );
-    }
-    const selectedSandbox = sandbox || DEFAULT_SANDBOX_NAME;
-
-    if (!schemaId || !schemaVersion || !sandbox) {
-      const schemasResponse = await fetchSchemasMeta({
-        orgId,
-        imsAccess,
-        sandboxName: selectedSandbox
-      });
-      context.schemasFirstPage = schemasResponse.results;
-      context.schemasFirstPageCursor = schemasResponse.nextPage;
-    } else {
-      context.schema = await fetchSchema({
-        orgId,
-        imsAccess,
-        schemaId,
-        schemaVersion,
-        selectedSandbox
-      });
-      context.schemasDefaultSelectedItem = {
-        $id: context.schema.$id,
-        title: context.schema.title,
-        version: context.schema.version
-      };
-    }
-
-    return {
-      sandbox: selectedSandbox,
-      schema: schemaId ? `${schemaId}_${schemaVersion}` : ""
+    const initialValues = {
+      sandbox: settings.sandbox || DEFAULT_SANDBOX_NAME
     };
+
+    const args = {
+      initialValues,
+      context,
+      settings,
+      orgId,
+      imsAccess
+    };
+
+    await Promise.all([
+      initializeSandboxes(args),
+      initializeSelectedSchema(args),
+      initializeSchemas(args)
+    ]);
+
+    return initialValues;
   },
   getSettings({ values }) {
-    const { sandbox, schema: schemaAndVersion } = values;
-
-    const [schemaId, schemaVersion] = schemaAndVersion.split("_");
+    const { sandbox, schema } = values;
 
     return {
       sandbox,
-      schemaId,
-      schemaVersion
+      schemaId: schema?.$id,
+      schemaVersion: schema?.version
     };
   },
   formikStateValidationSchema: object().shape({
-    schema: string().required("Please select a schema")
+    schema: object().required("Please select a schema")
   })
 };
 
@@ -97,7 +127,7 @@ const getKey = item => item && `${item.$id}_${item.version}`;
 const getLabel = item => item?.title;
 
 const XdmVariable = ({
-  context: { sandboxes, schemasDefaultSelectedItem },
+  context: { sandboxes, schemasFirstPage, schemasFirstPageCursor, warning },
   initInfo
 }) => {
   const {
@@ -106,7 +136,7 @@ const XdmVariable = ({
   } = initInfo;
   const reportAsyncError = useReportAsyncError();
 
-  const [{ value: sandbox }] = useField("sandbox");
+  const [{ value: sandbox }, { touched: sandboxTouched }] = useField("sandbox");
 
   const loadItems = async ({ filterText, cursor, signal }) => {
     let results;
@@ -136,6 +166,7 @@ const XdmVariable = ({
 
   return (
     <>
+      {!sandboxTouched && warning && <h1>Warning: {warning}</h1>}
       <FormikPicker
         data-test-id="sandboxField"
         name="sandbox"
@@ -160,7 +191,8 @@ const XdmVariable = ({
         getKey={getKey}
         getLabel={getLabel}
         dependencies={[sandbox]}
-        defaultSelectedItem={schemasDefaultSelectedItem}
+        firstPage={schemasFirstPage}
+        firstPageCursor={schemasFirstPageCursor}
       />
     </>
   );

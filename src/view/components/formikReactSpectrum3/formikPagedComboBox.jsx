@@ -21,32 +21,37 @@ import useIsFirstRender from "../../utils/useIsFirstRender";
 const FormikPagedComboBox = ({
   name,
   width,
-  defaultSelectedItem,
   loadItems,
   getKey,
   getLabel,
   dependencies = [],
+  firstPage,
+  firstPageCursor,
   ...otherProps
 }) => {
   const isFirstRender = useIsFirstRender();
+  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
+    name
+  );
+
   const pagedComboBox = usePagedComboBox({
-    defaultSelectedItem,
+    defaultSelectedItem: value,
     loadItems,
     getKey,
-    getLabel
+    getLabel,
+    firstPage,
+    firstPageCursor
   });
-  const [, { touched, error }, { setValue, setTouched }] = useField(name);
 
   useEffect(() => {
     if (!isFirstRender) {
-      setValue(getKey(pagedComboBox.selectedItem));
+      setValue(pagedComboBox.selectedItem);
     }
   }, [getKey(pagedComboBox.selectedItem)]);
 
   useEffect(() => {
     if (!isFirstRender) {
-      pagedComboBox.setSelectedItem("");
-      pagedComboBox.reload();
+      pagedComboBox.clear();
     }
   }, dependencies);
 
@@ -76,11 +81,12 @@ const FormikPagedComboBox = ({
 FormikPagedComboBox.propTypes = {
   name: PropTypes.string.isRequired,
   width: PropTypes.string,
-  defaultSelectedItem: PropTypes.object,
   loadItems: PropTypes.func.isRequired,
   getKey: PropTypes.func.isRequired,
   getLabel: PropTypes.func.isRequired,
-  dependencies: PropTypes.array
+  dependencies: PropTypes.array,
+  firstPage: PropTypes.array,
+  firstPageCursor: PropTypes.string
 };
 
 export default FormikPagedComboBox;
