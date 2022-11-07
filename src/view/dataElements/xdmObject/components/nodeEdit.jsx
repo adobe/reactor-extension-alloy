@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { useFormikContext } from "formik";
-import { Breadcrumbs, Flex, Item, View } from "@adobe/react-spectrum";
+import { Breadcrumbs, Checkbox, Flex, Item, View } from "@adobe/react-spectrum";
 import getNodeEditData from "../helpers/getNodeEditData";
 import AutoPopulationAlert from "./autoPopulationAlert";
 import {
@@ -32,6 +32,8 @@ import StringEdit from "./stringEdit";
 import Heading from "../../../components/typography/heading";
 import { ALWAYS, NONE } from "../constants/autoPopulationSource";
 import "./nodeEdit.styl";
+import FormikCheckbox from "../../../components/formikReactSpectrum3/formikCheckbox";
+import FieldDescriptionAndError from "../../../components/fieldDescriptionAndError";
 
 const getViewBySchemaType = schemaType => {
   switch (schemaType) {
@@ -58,12 +60,16 @@ const NodeEdit = props => {
   const { values: formState } = useFormikContext();
   const { onNodeSelect, selectedNodeId } = props;
 
-  const { formStateNode, fieldName, breadcrumb, displayName } = getNodeEditData(
-    {
-      formState,
-      nodeId: selectedNodeId
-    }
-  );
+  const {
+    formStateNode,
+    fieldName,
+    breadcrumb,
+    displayName,
+    hasClearedAncestor
+  } = getNodeEditData({
+    formState,
+    nodeId: selectedNodeId
+  });
 
   const TypeSpecificNodeEdit = getViewBySchemaType(formStateNode.schema.type);
 
@@ -95,10 +101,34 @@ const NodeEdit = props => {
         <AutoPopulationAlert formStateNode={formStateNode} />
       )}
       {formStateNode.autoPopulationSource !== ALWAYS && (
-        <TypeSpecificNodeEdit
-          fieldName={fieldName}
-          onNodeSelect={onNodeSelect}
-        />
+        <>
+          <TypeSpecificNodeEdit
+            fieldName={fieldName}
+            onNodeSelect={onNodeSelect}
+          />
+          {formStateNode.updateMode && hasClearedAncestor && (
+            <FieldDescriptionAndError
+              description="Checking this box will cause this field to be deleted before setting any values. A field further up in the object is already cleared."
+              messagePaddingTop="size-0"
+              messagePaddingStart="size-300"
+            >
+              <Checkbox isSelected isDisabled width="size-5000">
+                Clear existing value
+              </Checkbox>
+            </FieldDescriptionAndError>
+          )}
+          {formStateNode.updateMode && !hasClearedAncestor && (
+            <FormikCheckbox
+              data-test-id="clearField"
+              name={`${fieldName}.transform.clear`}
+              description="Checking this box will cause this field to be deleted before setting any values."
+              width="size-5000"
+              isDisabled={hasClearedAncestor}
+            >
+              Clear existing value
+            </FormikCheckbox>
+          )}
+        </>
       )}
     </Flex>
   );

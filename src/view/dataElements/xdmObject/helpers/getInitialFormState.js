@@ -30,8 +30,6 @@ const generateNodeId = () => {
  * @property {Object} schema The XDM schema for the node.
  * @property {string} autoPopulationSource The source of auto population for this node
  * @property {string} contextKey The context that could auto populate this field
- * @property {Object} properties If the schema type is an object,
- * this will represent properties of the object.
  * @property {Object} properties If the schema type is "object"",
  * this will represent properties of the object as defined by the
  * schema. The keys are the property names and the values are their
@@ -53,6 +51,8 @@ const generateNodeId = () => {
  * user switches populationStrategy to PARTS, because the user might
  * switch back to WHOLE and we'd like to be able to show the value
  * they had previously entered.
+ * @property {boolean} updateMode Whether the UI is in update mode.
+ * This controls the clear existing value checkboxes.
  */
 
 /**
@@ -74,7 +74,13 @@ const generateNodeId = () => {
  * The path for bar would be "foo.bar".
  * @returns FormStateNode
  */
-const getInitialFormStateNode = ({ schema, value, nodePath }) => {
+const getInitialFormStateNode = ({
+  schema,
+  value,
+  nodePath,
+  updateMode,
+  transforms
+}) => {
   const formStateNode = {
     autoPopulationSource: autoPopulationSource.NONE,
     contextKey: contextKey.NA,
@@ -85,7 +91,10 @@ const getInitialFormStateNode = ({ schema, value, nodePath }) => {
     // from their parent arrays. We want the ID to remain constant
     // for as long as the node exists.
     id: generateNodeId(),
-    schema
+    schema,
+    updateMode,
+    transform: transforms[nodePath] || { clear: false },
+    nodePath
   };
 
   // Type specific helpers should set:
@@ -97,7 +106,9 @@ const getInitialFormStateNode = ({ schema, value, nodePath }) => {
     formStateNode,
     value,
     nodePath,
-    getInitialFormStateNode
+    getInitialFormStateNode: ({ ...args }) => {
+      return getInitialFormStateNode({ ...args, transforms, updateMode });
+    }
   });
 
   return formStateNode;
@@ -105,8 +116,14 @@ const getInitialFormStateNode = ({ schema, value, nodePath }) => {
 
 // Avoid exposing all of getInitialFormStateNode's parameters since
 // they're only used internally for recursion.
-export default ({ schema, value }) => {
-  return getInitialFormStateNode({ schema, value });
+export default ({ schema, value, updateMode = false, transforms = {} }) => {
+  return getInitialFormStateNode({
+    schema,
+    value,
+    nodePath: "",
+    updateMode,
+    transforms
+  });
 };
 
 const formStateNodeShape = {
@@ -116,7 +133,11 @@ const formStateNodeShape = {
   contextKey: PropTypes.string.isRequired,
   isPartsPopulationStrategySupported: PropTypes.bool.isRequired,
   value: PropTypes.any.isRequired,
-  populationStrategy: PropTypes.oneOf([WHOLE, PARTS]).isRequired
+  populationStrategy: PropTypes.oneOf([WHOLE, PARTS]).isRequired,
+  updateMode: PropTypes.bool.isRequired,
+  transform: PropTypes.shape({
+    clear: PropTypes.bool.isRequired
+  }).isRequired
 };
 
 export const formStateNodePropTypes = PropTypes.shape(formStateNodeShape);

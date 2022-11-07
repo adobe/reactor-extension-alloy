@@ -21,11 +21,28 @@ import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
  * @param {FormStateNode} formStateNode
  * @returns {*}
  */
-const getValueFromFormState = ({ formStateNode }) => {
-  const { schema } = formStateNode;
+const getValueFromFormState = ({
+  formStateNode,
+  transforms,
+  isAncestorCleared = false
+}) => {
+  const {
+    schema,
+    nodePath,
+    transform: { clear }
+  } = formStateNode;
+  if (clear && !isAncestorCleared) {
+    transforms[nodePath] = { clear: true };
+  }
   return getTypeSpecificHelpers(schema.type).getValueFromFormState({
     formStateNode,
-    getValueFromFormState
+    getValueFromFormState: ({ formStateNode: subFormStateNode }) => {
+      return getValueFromFormState({
+        formStateNode: subFormStateNode,
+        transforms,
+        isAncestorCleared: clear || isAncestorCleared
+      });
+    }
   });
 };
 

@@ -26,6 +26,7 @@ import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
  * this will be the error message.
  * @property {Array} children Children tree nodes, if any.
  * @property {string} infoTip The InfoTip to show on the node (if any)
+ * @property {boolean} clear Whether the clear checkbox was ticked
  */
 
 /**
@@ -57,7 +58,8 @@ const getTreeNode = ({
   isAncestorUsingWholePopulationStrategy = false,
   notifyParentOfTouched = () => {},
   errors,
-  touched
+  touched,
+  isAncestorCleared = false
 }) => {
   const { id, schema, isAlwaysDisabled } = formStateNode;
 
@@ -69,7 +71,8 @@ const getTreeNode = ({
     disabled: isAlwaysDisabled || isAncestorUsingWholePopulationStrategy,
     // The Tree component, when rendering a tree node, will pass the treeNode
     // object into the component that renders the tree node, which is provided here.
-    title: treeNodeComponent
+    title: treeNodeComponent,
+    clear: formStateNode.transform.clear && !isAncestorCleared
   };
 
   let isTouchedAtCurrentOrDescendantNode = false;
@@ -93,7 +96,12 @@ const getTreeNode = ({
     confirmTouchedAtCurrentOrDescendantNode,
     errors,
     touched,
-    getTreeNode
+    getTreeNode: ({ ...args }) => {
+      return getTreeNode({
+        ...args,
+        isAncestorCleared: formStateNode.transform.clear || isAncestorCleared
+      });
+    }
   });
 
   // To illustrate why we check for isTouchedAtCurrentOrDescendantNode,

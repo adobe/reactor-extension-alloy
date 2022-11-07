@@ -34,7 +34,7 @@ const getInitialValues = context => async ({ initInfo }) => {
     company: { orgId },
     tokens: { imsAccess }
   } = initInfo;
-  const { dataElementId, data = {} } = initInfo.settings || {};
+  const { dataElementId, data = {}, transforms = {} } = initInfo.settings || {};
 
   const initialValues = {
     data
@@ -76,7 +76,9 @@ const getInitialValues = context => async ({ initInfo }) => {
         context.schema = schema;
         const initialFormState = getInitialFormState({
           schema,
-          value: data
+          value: data,
+          updateMode: true,
+          transforms
         });
         return { ...initialValues, ...initialFormState };
       }
@@ -91,10 +93,13 @@ const getSettings = ({ values }) => {
   const { id: dataElementId, settings } = dataElement || {};
   const { cacheId: dataElementCacheId } = settings || {};
 
+  const transforms = {};
+
   return {
     dataElementId,
     dataElementCacheId,
-    data: getValueFromFormState({ formStateNode: values }) || {}
+    data: getValueFromFormState({ formStateNode: values, transforms }) || {},
+    transforms
   };
 };
 
@@ -134,7 +139,8 @@ const UpdateVariable = ({ initInfo, formikProps: { resetForm }, context }) => {
       if (newSchema) {
         context.schema = newSchema;
         const initialFormState = getInitialFormState({
-          schema: newSchema
+          schema: newSchema,
+          updateMode: true
         });
         resetForm({ values: { ...initialFormState, dataElement } });
         setHasSchema(true);

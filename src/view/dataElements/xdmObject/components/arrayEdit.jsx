@@ -53,7 +53,8 @@ const PartsPopulationStrategyForm = ({
   fieldName,
   schema,
   items,
-  onNodeSelect
+  onNodeSelect,
+  updateMode
 }) => (
   <FieldArray
     name={`${fieldName}.items`}
@@ -105,7 +106,8 @@ const PartsPopulationStrategyForm = ({
 
               const itemFormStateNode = getInitialFormState({
                 schema: itemSchema,
-                value: defaultValue
+                value: defaultValue,
+                updateMode
               });
               arrayHelpers.push(itemFormStateNode);
             }}
@@ -123,7 +125,8 @@ PartsPopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired,
   schema: PropTypes.object.isRequired,
   items: PropTypes.arrayOf(formStateNodePropTypes).isRequired,
-  onNodeSelect: PropTypes.func.isRequired
+  onNodeSelect: PropTypes.func.isRequired,
+  updateMode: PropTypes.bool.isRequired
 };
 
 /**
@@ -137,7 +140,8 @@ const ArrayEdit = props => {
     isPartsPopulationStrategySupported,
     populationStrategy,
     schema,
-    items
+    items,
+    updateMode
   } = formStateNode;
 
   return (
@@ -165,6 +169,7 @@ const ArrayEdit = props => {
             schema={schema}
             items={items}
             onNodeSelect={onNodeSelect}
+            updateMode={updateMode}
           />
         )}
       </div>

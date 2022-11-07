@@ -32,7 +32,7 @@ export default ({
         const itemFormStateNode = getInitialFormStateNode({
           schema: itemSchema,
           value: itemValue,
-          nodePath: nodePath ? `${nodePath}.${index}` : index
+          nodePath: nodePath !== "" ? `${nodePath}.${index}` : index
         });
         return itemFormStateNode;
       });

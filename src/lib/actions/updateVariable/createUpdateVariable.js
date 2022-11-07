@@ -11,11 +11,20 @@ governing permissions and limitations under the License.
 */
 
 const { deepAssign } = require("../../alloy");
+const { deletePath } = require("../../utils/pathUtils");
 
 module.exports = ({ variableStore }) => settings => {
+  const existingValue = variableStore[settings.dataElementCacheId] || {};
+  Object.keys(settings.transforms || {}).forEach(path => {
+    const { clear } = settings.transforms[path];
+    if (clear) {
+      deletePath(existingValue, path);
+    }
+  });
   variableStore[settings.dataElement] = deepAssign(
-    variableStore[settings.dataElement] || {},
+    existingValue,
     settings.data
   );
+
   return Promise.resolve();
 };

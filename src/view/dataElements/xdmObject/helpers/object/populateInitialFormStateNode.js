@@ -40,7 +40,7 @@ export default ({
       const propertyFormStateNode = getInitialFormStateNode({
         schema: propertySchema,
         value: propertyValue,
-        nodePath: nodePath ? `${nodePath}.${propertyName}` : propertyName
+        nodePath: nodePath !== "" ? `${nodePath}.${propertyName}` : propertyName
       });
       memo[propertyName] = propertyFormStateNode;
       return memo;

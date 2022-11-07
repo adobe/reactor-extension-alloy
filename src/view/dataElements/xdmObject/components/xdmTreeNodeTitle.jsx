@@ -15,12 +15,21 @@ import classNames from "classnames";
 import { Flex } from "@adobe/react-spectrum";
 import AlertIcon from "@spectrum-icons/workflow/Alert";
 import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
+import RemoveCircleIcon from "@spectrum-icons/workflow/RemoveCircle";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import "./xdmTreeNodeTitle.styl";
 import { EMPTY, FULL, PARTIAL, BLANK } from "../constants/populationAmount";
 
 const XdmTreeNodeTitle = props => {
-  const { id, displayName, type, populationAmount, error, infoTip } = props;
+  const {
+    id,
+    displayName,
+    type,
+    populationAmount,
+    error,
+    infoTip,
+    clear
+  } = props;
   return (
     <Flex
       data-test-id="xdmTreeNodeTitle"
@@ -45,6 +54,11 @@ const XdmTreeNodeTitle = props => {
       >
         {displayName}
       </span>
+      {clear && (
+        <Flex alignItems="center">
+          <RemoveCircleIcon size="XS" />
+        </Flex>
+      )}
       {infoTip && (
         <div title={infoTip}>
           <Flex alignItems="center">
@@ -63,7 +77,8 @@ XdmTreeNodeTitle.propTypes = {
   type: PropTypes.string.isRequired,
   populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY, BLANK]),
   error: PropTypes.string,
-  infoTip: PropTypes.string
+  infoTip: PropTypes.string,
+  clear: PropTypes.bool.isRequired
 };
 
 export default XdmTreeNodeTitle;

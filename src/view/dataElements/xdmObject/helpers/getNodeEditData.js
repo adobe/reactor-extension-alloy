@@ -58,7 +58,8 @@ const getNodeEditData = ({
       formStateNode: candidateFormStateNode,
       fieldName: candidateFieldName,
       breadcrumb,
-      displayName: candidateDisplayName
+      displayName: candidateDisplayName,
+      hasClearedAncestor: false
     };
   }
 
@@ -87,6 +88,9 @@ const getNodeEditData = ({
           candidatePropertyName,
           candidateFormStateNode.id
         );
+        if (candidateFormStateNode.transform.clear) {
+          foundNodeHierarchyAndFieldName.hasClearedAncestor = true;
+        }
         return foundNodeHierarchyAndFieldName;
       }
     }
@@ -112,6 +116,9 @@ const getNodeEditData = ({
           candidatePropertyName,
           candidateFormStateNode.id
         );
+        if (candidateFormStateNode.transform.clear) {
+          foundNodeHierarchyAndFieldName.hasClearedAncestor = true;
+        }
         return foundNodeHierarchyAndFieldName;
       }
     }
