@@ -75,12 +75,11 @@ const SchemaMetaSelector = ({
   useEffect(() => {
     // Reset the selected schema meta if the user selects a different sandbox.
     if (previousSelectedSandbox && selectedSandbox) {
-      pagedComboBox.setSelectedItem(null);
+      pagedComboBox.clear();
       // Our combobox has a menu of schemas ready to go for when
       // the user next manually opens the menu. We need to reload
       // that list so the user doesn't see schemas related to
       // the previously selected sandbox.
-      pagedComboBox.reload();
     }
   }, [selectedSandbox ? selectedSandbox.name : null]);
 

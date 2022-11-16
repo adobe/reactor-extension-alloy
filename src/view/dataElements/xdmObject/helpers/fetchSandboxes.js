@@ -38,6 +38,20 @@ export default async ({ orgId, imsAccess, signal }) => {
   }
 
   return {
-    results: parsedResponse.parsedBody.sandboxes
+    results: [
+      ...parsedResponse.parsedBody.sandboxes,
+      {
+        name: "sandbox1",
+        title: "Sandbox 1",
+        region: "REG01",
+        type: "development"
+      },
+      {
+        name: "sandbox2",
+        title: "Sandbox 2",
+        region: "REG02",
+        type: "development"
+      }
+    ]
   };
 };

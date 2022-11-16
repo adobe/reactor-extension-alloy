@@ -10,240 +10,299 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useEffect, useReducer } from "react";
+import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { ProgressCircle, Flex } from "@adobe/react-spectrum";
+import { ProgressCircle, Flex, Item } from "@adobe/react-spectrum";
+import { useField } from "formik";
 import FormElementContainer from "../components/formElementContainer";
 import ExtensionView from "../components/extensionView";
-import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import validate from "./xdmObject/helpers/validate";
 import render from "../render";
 import Editor from "./xdmObject/components/editor";
-import SandboxSelector from "../components/sandboxSelector";
-import SchemaMetaSelector from "./xdmObject/components/schemaMetaSelector";
 import useReportAsyncError from "../utils/useReportAsyncError";
-import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
-import * as STATUS from "./xdmObject/constants/mainViewStatus";
-import loadDefaultSandbox from "./xdmObject/helpers/schemaSelection/loadDefaultSandbox";
-import useOnSandboxSelectionChange from "./xdmObject/helpers/schemaSelection/useOnSandboxSelectionChange";
-import useOnSchemaMetaSelectionChange from "./xdmObject/helpers/schemaSelection/useOnSchemaMetaSelectionChange";
-import { reducer, ACTION_TYPES } from "./xdmObject/helpers/mainViewState";
-import loadDefaultSchema from "./xdmObject/helpers/schemaSelection/loadDefaultSchema";
-import getInitialFormStateUsingAsyncErrorReporting from "./xdmObject/helpers/schemaSelection/getInitialFormStateUsingAsyncErrorReporting";
-import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRequestsAndCreateSignal";
+import useChanged from "../utils/useChanged";
+import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
+import FormikPagedComboBox from "../components/formikReactSpectrum3/formikPagedComboBox";
+import DEFAULT_SANDBOX_NAME from "./xdmObject/constants/defaultSandboxName";
+import fetchSandboxes from "./xdmObject/helpers/fetchSandboxes";
+import fetchSchemasMeta from "./xdmObject/helpers/fetchSchemasMeta";
+import fetchSchema from "./xdmObject/helpers/fetchSchema";
 
-const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
+import getInitialFormState from "./xdmObject/helpers/getInitialFormState";
+import UserReportableError from "../errors/userReportableError";
+
+const initializeSandboxes = async ({
+  context,
+  sandboxName,
+  orgId,
+  imsAccess
+}) => {
+  const { results: sandboxes } = await fetchSandboxes({ orgId, imsAccess });
+
+  if (!(sandboxes && sandboxes.length)) {
+    throw new UserReportableError("You do not have access to any sandboxes.");
+  }
+
+  if (sandboxName && !sandboxes.find(s => s.name === sandboxName)) {
+    context.sandboxWarning = `Could not find the sandbox selected previously. Either you don't have access or the sandbox was deleted. Push cancel to leave this data element unchanged.`;
+  }
+  context.sandboxes = sandboxes;
+};
+
+const initializeSelectedSchema = async ({
+  initialValues,
+  sandboxName,
+  schemaId,
+  schemaVersion,
+  context,
+  orgId,
+  imsAccess
+}) => {
+  try {
+    if (schemaId && schemaVersion && sandboxName) {
+      const schema = await fetchSchema({
+        orgId,
+        imsAccess,
+        schemaId,
+        schemaVersion,
+        sandboxName
+      });
+      const { $id, title, version } = schema;
+      initialValues.schema = { $id, title, version };
+      context.schema = schema;
+      return;
+    }
+  } catch (e) {
+    context.schemaWarning = `Could not find the schema selected previously. Either you don't have access or the schema was deleted. Push cancel to leave this data element unchanged. `;
+  }
+  initialValues.schema = null;
+};
+
+const initializeSchemas = async ({
+  initialValues: { sandboxName },
+  context,
+  orgId,
+  imsAccess
+}) => {
   const {
-    settings,
+    results: schemasFirstPage,
+    nextPage: schemasFirstPageCursor
+  } = await fetchSchemasMeta({
+    orgId,
+    imsAccess,
+    sandboxName
+  });
+
+  context.schemasFirstPage = schemasFirstPage;
+  context.schemasFirstPageCursor = schemasFirstPageCursor;
+};
+
+const getInitialValues = context => async ({ initInfo }) => {
+  const {
     company: { orgId },
     tokens: { imsAccess }
   } = initInfo;
+  const {
+    sandbox: { name: sandboxName } = {},
+    schema: { id: schemaId, version: schemaVersion } = {}
+  } = initInfo.settings || {};
+
+  const initialValues = {
+    sandboxName: sandboxName || DEFAULT_SANDBOX_NAME
+  };
+
+  const args = {
+    initialValues,
+    context,
+    sandboxName,
+    schemaId,
+    schemaVersion,
+    orgId,
+    imsAccess
+  };
+
+  await Promise.all([
+    initializeSandboxes(args),
+    initializeSelectedSchema(args),
+    initializeSchemas(args)
+  ]);
+
+  return initialValues;
+};
+
+const getSettings = ({ values }) => {
+  const { sandboxName, schema2 } = values;
+
+  return {
+    sandbox: {
+      name: sandboxName
+    },
+    schema: {
+      id: schema2?.$id,
+      version: schema2?.version
+    }
+  };
+};
+
+/* const formikStateValidationSchema = object().shape({
+  schema: object().required("Please select a schema")
+}); */
+
+const validateFormikState = context => ({ values }) => {
+  // We can't and don't need to do validation on the formik values
+  // if the editor isn't even renderable. validateNonFormikState
+  // will ensure that the view is properly marked invalid in this
+  // case.
+  const { schema } = context;
+  if (!schema) {
+    return {};
+  }
+
+  return validate(values);
+};
+
+const validateNonFormikState = context => () => {
+  const { schema } = context;
+  if (!schema) {
+    context.showEditorNotReadyValidationError = true;
+    return false;
+  }
+  return true;
+};
+
+const getSchemaKey = item => item && `${item.$id}_${item.version}`;
+const getSchemaLabel = item => item?.title;
+
+const XdmObject = ({ initInfo, context, formikProps }) => {
+  const {
+    company: { orgId },
+    tokens: { imsAccess }
+  } = initInfo;
+  const settings = initInfo.settings || {};
   const { resetForm } = formikProps;
   const reportAsyncError = useReportAsyncError();
-  const [state, dispatch] = useReducer(reducer, {
-    status: STATUS.INITIALIZING,
-    selectedNodeId: null,
-    defaultSelectedSandbox: null,
-    selectedSandbox: null,
-    defaultSelectedSchemaMeta: null,
-    selectedSchema: null,
-    showEditorNotReadyValidationError: false
-  });
 
   const {
-    selectedNodeId,
-    status,
-    defaultSelectedSandbox,
-    selectedSandbox,
-    defaultSelectedSchemaMeta,
-    selectedSchema,
-    showEditorNotReadyValidationError
-  } = state;
-  const isEditorRenderable = status === STATUS.IDLE && Boolean(selectedSchema);
-  const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
-  const onSandboxSelectionChange = useOnSandboxSelectionChange({
-    dispatch,
-    orgId,
-    imsAccess,
-    resetForm,
-    reportAsyncError,
-    abortPreviousRequestsAndCreateSignal
-  });
-  const onSchemaMetaSelectionChange = useOnSchemaMetaSelectionChange({
-    dispatch,
-    orgId,
-    imsAccess,
-    resetForm,
-    selectedSandbox,
-    reportAsyncError,
-    abortPreviousRequestsAndCreateSignal
-  });
+    sandboxes,
+    // sandboxWarning,
+    schema,
+    // schemaWarning,
+    schemasFirstPage,
+    schemasFirstPageCursor
+    // showEditorNotReadyValidationError
+  } = context;
 
-  // It might seem desirable to take advantage of the useImperativeHandle hook here,
-  // which does something very similar. Unfortunately, when using the useImperative
-  // handle, and the user adds an item to an array field (or possibly other things),
-  // React sets ref.current to undefined until this component finishes its next render.
-  // During that same period of time, Formik attempts to validate the form (because
-  // it validates on change) and the parent components calls childRef.current.validateFormikState
-  // which throws an error because React has momentarily set childRef.current to undefined.
-  useEffect(() => {
-    registerImperativeFormApi({
-      getSettings({ values }) {
-        if (!isEditorRenderable) {
-          // We're in an invalid state where we can't
-          // build a proper settings object.
-          return {};
-        }
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [hasSchema, setHasSchema] = useState(schema != null);
 
-        const schema = {
-          id: selectedSchema.$id,
-          version: selectedSchema.version
-        };
+  // const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
 
-        return {
-          sandbox: {
-            name: selectedSandbox.name
-          },
-          schema,
-          data: getValueFromFormState({ formStateNode: values }) || {}
-        };
-      },
-      validateFormikState({ values }) {
-        // We can't and don't need to do validation on the formik values
-        // if the editor isn't even renderable. validateNonFormikState
-        // will ensure that the view is properly marked invalid in this
-        // case.
-        if (!isEditorRenderable) {
-          return {};
-        }
+  const [{ value: selectedSchema }] = useField("schema2");
+  const [{ value: selectedSandboxName }] = useField("sandboxName");
 
-        return validate(values);
-      },
-      validateNonFormikState() {
-        dispatch({
-          type: ACTION_TYPES.UPDATE_SHOW_EDITOR_NOT_READY_VALIDATION_ERROR,
-          showEditorNotReadyValidationError: !isEditorRenderable
-        });
-        return isEditorRenderable;
-      }
-    });
-  });
+  useChanged(async () => {
+    setHasSchema(false);
+    context.schema = null;
+    setSelectedNodeId(null);
 
-  useEffect(async () => {
-    const sandbox = await loadDefaultSandbox({
+    const newSchema = await fetchSchema({
       orgId,
       imsAccess,
-      settings,
-      reportAsyncError
+      schemaId: selectedSchema.$id,
+      schemaVersion: selectedSchema.version,
+      sandboxName: selectedSandboxName
     });
+    if (newSchema) {
+      context.schema = newSchema;
+      const initialFormState = getInitialFormState({
+        schema: newSchema
+      });
+      resetForm({
+        values: {
+          ...initialFormState,
+          schema2: selectedSchema,
+          sandboxName: selectedSandboxName
+        }
+      });
+      setHasSchema(true);
+    }
+  }, [selectedSchema?.$id]);
 
-    let schema;
-
-    if (sandbox) {
-      schema = await loadDefaultSchema({
+  const loadSchemas = async ({ filterText, cursor, signal }) => {
+    let results;
+    let nextPage;
+    try {
+      ({ results, nextPage } = await fetchSchemasMeta({
         orgId,
         imsAccess,
-        settings,
-        sandbox,
-        reportAsyncError
-      });
+        sandboxName: selectedSandboxName,
+        search: filterText,
+        start: cursor,
+        signal
+      }));
+    } catch (e) {
+      if (e.name !== "AbortError") {
+        reportAsyncError(e);
+      }
+      // usePagedComboBox expects us to throw an error
+      // if we can't produce a valid return object.
+      throw e;
     }
-
-    let initialFormState;
-
-    if (schema) {
-      initialFormState = getInitialFormStateUsingAsyncErrorReporting({
-        schema,
-        values: settings && settings.data,
-        reportAsyncError
-      });
-    }
-
-    resetForm({ values: initialFormState });
-    dispatch({
-      type: ACTION_TYPES.DEFAULT_SANDBOX_AND_SCHEMA_LOADED,
-      sandbox,
-      schema
-    });
-  }, []);
-
-  useEffect(() => {
-    if (isEditorRenderable) {
-      dispatch({
-        type: ACTION_TYPES.UPDATE_SHOW_EDITOR_NOT_READY_VALIDATION_ERROR,
-        showEditorNotReadyValidationError: false
-      });
-    }
-  }, [isEditorRenderable]);
-
-  if (status === STATUS.INITIALIZING) {
-    return (
-      <FillParentAndCenterChildren>
-        <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
-      </FillParentAndCenterChildren>
-    );
-  }
+    return {
+      items: results,
+      cursor: nextPage
+    };
+  };
 
   let editorAreaContent = null;
 
-  if (status === STATUS.LOADING_NEW_SCHEMA) {
+  if (selectedSchema && !hasSchema) {
     editorAreaContent = (
       <Flex alignItems="center" justifyContent="center" height="size-2000">
         <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
       </Flex>
     );
-  } else if (isEditorRenderable) {
+  } else if (hasSchema) {
     editorAreaContent = (
       <Editor
         selectedNodeId={selectedNodeId}
-        setSelectedNodeId={nodeId => {
-          dispatch({
-            type: ACTION_TYPES.SELECTED_NODE_ID_CHANGED,
-            nodeId
-          });
-        }}
-        schema={selectedSchema}
+        setSelectedNodeId={setSelectedNodeId}
+        schema={schema}
         previouslySavedSchemaInfo={settings && settings.schema}
       />
     );
   }
 
-  const sandboxProps = {
-    label: "Sandbox",
-    description: "Choose a sandbox containing the schema you wish to use.",
-    errorMessage:
-      showEditorNotReadyValidationError && !selectedSandbox
-        ? "Please select a sandbox."
-        : null,
-    validationState:
-      showEditorNotReadyValidationError && !selectedSandbox
-        ? "invalid"
-        : undefined,
-    "data-test-id": "sandboxField"
-  };
-
   return (
     <div>
       <FormElementContainer>
-        <SandboxSelector
-          sandboxProps={sandboxProps}
-          defaultSelectedSandbox={defaultSelectedSandbox}
-          onSelectionChange={onSandboxSelectionChange}
-          initInfo={initInfo}
+        <FormikPicker
+          label="Sandbox"
+          name="sandboxName"
+          data-test-id="sandboxField"
+          description="Choose a sandbox containing the schema you wish to use."
+          items={sandboxes}
+          width="size-5000"
+        >
+          {item => {
+            const region = item.region ? ` (${item.region.toUpperCase()})` : "";
+            const label = `${item.type.toUpperCase()} ${item.title}${region}`;
+            return <Item key={item.name}>{label}</Item>;
+          }}
+        </FormikPicker>
+
+        <FormikPagedComboBox
+          data-test-id="schemaField"
+          name="schema2"
+          label="Schema"
+          width="size-5000"
+          loadItems={loadSchemas}
+          getKey={getSchemaKey}
+          getLabel={getSchemaLabel}
+          dependencies={[selectedSandboxName]}
+          firstPage={schemasFirstPage}
+          firstPageCursor={schemasFirstPageCursor}
         />
-        {selectedSandbox ? (
-          <SchemaMetaSelector
-            defaultSelectedSchemaMeta={defaultSelectedSchemaMeta}
-            selectedSandbox={selectedSandbox}
-            onSelectionChange={onSchemaMetaSelectionChange}
-            errorMessage={
-              showEditorNotReadyValidationError
-                ? "Please select a schema."
-                : null
-            }
-            initInfo={initInfo}
-          />
-        ) : null}
       </FormElementContainer>
       {editorAreaContent}
     </div>
@@ -253,14 +312,26 @@ const XdmObject = ({ initInfo, formikProps, registerImperativeFormApi }) => {
 XdmObject.propTypes = {
   initInfo: PropTypes.object,
   formikProps: PropTypes.object,
-  registerImperativeFormApi: PropTypes.func
+  context: PropTypes.object
 };
 
 const XdmExtensionView = () => {
+  const { current: context } = useRef({});
+
   return (
     <ExtensionView
-      render={props => {
-        return <XdmObject {...props} />;
+      getInitialValues={getInitialValues(context)}
+      getSettings={getSettings}
+      validateFormikState={validateFormikState(context)}
+      validateNonFormikState={validateNonFormikState(context)}
+      render={({ initInfo, formikProps }) => {
+        return (
+          <XdmObject
+            initInfo={initInfo}
+            formikProps={formikProps}
+            context={context}
+          />
+        );
       }}
     />
   );
