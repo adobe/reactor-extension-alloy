@@ -30,7 +30,8 @@ const schemaField = spectrum.comboBox("schemaField");
 createExtensionViewFixture({
   title: "XDM Object View Schema Selection",
   viewPath: "dataElements/xdmObject.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
+  only: true
 });
 
 test.requestHooks(sandboxMocks.unauthorized)(

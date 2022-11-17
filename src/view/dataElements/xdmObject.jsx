@@ -33,6 +33,7 @@ import UserReportableError from "../errors/userReportableError";
 
 const initializeSandboxes = async ({
   context,
+  initialValues,
   sandboxName,
   orgId,
   imsAccess
@@ -40,18 +41,42 @@ const initializeSandboxes = async ({
   const { results: sandboxes } = await fetchSandboxes({ orgId, imsAccess });
 
   if (!(sandboxes && sandboxes.length)) {
-    throw new UserReportableError("You do not have access to any sandboxes.");
+    throw new UserReportableError(
+      "You do not have access to any sandboxes. Please contact your administrator to be assigned appropriate rights.",
+      {
+        additionalInfoUrl: "https://adobe.ly/3gHkqLF"
+      }
+    );
   }
 
   if (sandboxName && !sandboxes.find(s => s.name === sandboxName)) {
-    context.sandboxWarning = `Could not find the sandbox selected previously. Either you don't have access or the sandbox was deleted. Push cancel to leave this data element unchanged.`;
+    throw new UserReportableError(
+      "The sandbox used to build the XDM object no longer exists. You will need to re-create this data element using a schema from a different sandbox."
+    );
   }
+
+  // settings.sandbox may not exist because sandboxes were introduced sometime
+  // after the XDM Object data element type was released to production. For
+  // this reason, we have to check to see if settings.sandbox exists. When
+  // Platform added support for sandboxes, they moved all existing schemas
+  // to a default "prod" sandbox, which is why we can fall back to
+  // DEFAULT_SANDBOX_NAME here.
+  if (!sandboxName) {
+    let defaultSandbox;
+    defaultSandbox = sandboxes.find(sandbox => sandbox.isDefault);
+    if (!defaultSandbox && sandboxes.length === 1) {
+      defaultSandbox = sandboxes[0];
+    }
+    if (defaultSandbox) {
+      initialValues.sandboxName = defaultSandbox.name;
+    }
+  }
+
   context.sandboxes = sandboxes;
 };
 
 const initializeSelectedSchema = async ({
   initialValues,
-  sandboxName,
   schemaId,
   schemaVersion,
   context,
@@ -59,6 +84,7 @@ const initializeSelectedSchema = async ({
   imsAccess
 }) => {
   try {
+    const { sandboxName } = initialValues;
     if (schemaId && schemaVersion && sandboxName) {
       const schema = await fetchSchema({
         orgId,
@@ -68,22 +94,23 @@ const initializeSelectedSchema = async ({
         sandboxName
       });
       const { $id, title, version } = schema;
-      initialValues.schema = { $id, title, version };
+      initialValues.schema2 = { $id, title, version };
       context.schema = schema;
       return;
     }
   } catch (e) {
     context.schemaWarning = `Could not find the schema selected previously. Either you don't have access or the schema was deleted. Push cancel to leave this data element unchanged. `;
   }
-  initialValues.schema = null;
+  initialValues.schema2 = null;
 };
 
 const initializeSchemas = async ({
-  initialValues: { sandboxName },
+  initialValues,
   context,
   orgId,
   imsAccess
 }) => {
+  const { sandboxName } = initialValues;
   const {
     results: schemasFirstPage,
     nextPage: schemasFirstPageCursor
@@ -92,6 +119,11 @@ const initializeSchemas = async ({
     imsAccess,
     sandboxName
   });
+
+  if (schemasFirstPage.length === 1 && !schemasFirstPageCursor) {
+    const { $id, title, version } = schemasFirstPage[0];
+    initialValues.schema2 = { $id, title, version };
+  }
 
   context.schemasFirstPage = schemasFirstPage;
   context.schemasFirstPageCursor = schemasFirstPageCursor;
@@ -121,12 +153,16 @@ const getInitialValues = context => async ({ initInfo }) => {
     imsAccess
   };
 
-  await Promise.all([
-    initializeSandboxes(args),
-    initializeSelectedSchema(args),
-    initializeSchemas(args)
-  ]);
+  await initializeSandboxes(args);
+  await Promise.all([initializeSelectedSchema(args), initializeSchemas(args)]);
 
+  if (context.schema) {
+    const initialFormState = getInitialFormState({
+      schema: context.schema
+    });
+    Object.assign(initialValues, initialFormState);
+  }
+  // console.log("InitialValues", initialValues);
   return initialValues;
 };
 
@@ -197,8 +233,19 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
 
   // const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
 
-  const [{ value: selectedSchema }] = useField("schema2");
   const [{ value: selectedSandboxName }] = useField("sandboxName");
+  const [
+    { value: selectedSchema },
+    ,
+    { setValue: setSelectedSchema }
+  ] = useField("schema2");
+
+  useChanged(() => {
+    setHasSchema(false);
+    context.schema = null;
+    setSelectedNodeId(null);
+    setSelectedSchema(null);
+  }, [selectedSandboxName]);
 
   useChanged(async () => {
     setHasSchema(false);
@@ -283,6 +330,7 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
           description="Choose a sandbox containing the schema you wish to use."
           items={sandboxes}
           width="size-5000"
+          placeholder="Select a sandbox"
         >
           {item => {
             const region = item.region ? ` (${item.region.toUpperCase()})` : "";
