@@ -99,7 +99,6 @@ const usePagedComboBox = ({
   };
 
   const load = async loadingState => {
-    console.log("Loading: ", dataRef.current.inputValue);
     setData({
       loadingState
     });
@@ -126,7 +125,6 @@ const usePagedComboBox = ({
       ({ items: newItems, cursor: newCursor } = await loadItems(loadItemsArgs));
     } catch (e) {
       if (e.name !== "AbortError") {
-        console.log(e);
         // We do not throw the error because we expect that loadItems
         // catches the error and has handled it however it sees fit.
         // console.error("Error loading items", e);
@@ -149,7 +147,6 @@ const usePagedComboBox = ({
       newData.firstPage = newData.items;
       newData.firstPageCursor = newData.cursor;
     }
-    console.log("Done loading:", newData);
     setData(newData);
   };
 
