@@ -30,8 +30,7 @@ const schemaField = spectrum.comboBox("schemaField");
 createExtensionViewFixture({
   title: "XDM Object View Schema Selection",
   viewPath: "dataElements/xdmObject.html",
-  requiresAdobeIOIntegration: true,
-  only: true
+  requiresAdobeIOIntegration: true
 });
 
 test.requestHooks(sandboxMocks.unauthorized)(
@@ -233,7 +232,9 @@ test("attempts to load a schema that has been deleted", async () => {
       data: {}
     }
   });
-  await errorBoundaryMessage.expectMessage(/The resource was not found\./);
+  await errorBoundaryMessage.expectMessage(
+    /Could not find the schema selected previously\./
+  );
 });
 
 test.requestHooks(

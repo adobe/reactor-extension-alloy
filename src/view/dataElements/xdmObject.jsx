@@ -14,6 +14,7 @@ import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { ProgressCircle, Flex, Item } from "@adobe/react-spectrum";
 import { useField } from "formik";
+import { object, string } from "yup";
 import FormElementContainer from "../components/formElementContainer";
 import ExtensionView from "../components/extensionView";
 import validate from "./xdmObject/helpers/validate";
@@ -29,6 +30,7 @@ import fetchSchemasMeta from "./xdmObject/helpers/fetchSchemasMeta";
 import fetchSchema from "./xdmObject/helpers/fetchSchema";
 
 import getInitialFormState from "./xdmObject/helpers/getInitialFormState";
+import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import UserReportableError from "../errors/userReportableError";
 
 const initializeSandboxes = async ({
@@ -55,12 +57,6 @@ const initializeSandboxes = async ({
     );
   }
 
-  // settings.sandbox may not exist because sandboxes were introduced sometime
-  // after the XDM Object data element type was released to production. For
-  // this reason, we have to check to see if settings.sandbox exists. When
-  // Platform added support for sandboxes, they moved all existing schemas
-  // to a default "prod" sandbox, which is why we can fall back to
-  // DEFAULT_SANDBOX_NAME here.
   if (!sandboxName) {
     let defaultSandbox;
     defaultSandbox = sandboxes.find(sandbox => sandbox.isDefault);
@@ -99,7 +95,9 @@ const initializeSelectedSchema = async ({
       return;
     }
   } catch (e) {
-    context.schemaWarning = `Could not find the schema selected previously. Either you don't have access or the schema was deleted. Push cancel to leave this data element unchanged. `;
+    throw new UserReportableError(
+      "Could not find the schema selected previously. You will need to re-create this data element using a different schema."
+    );
   }
   initialValues.schema2 = null;
 };
@@ -136,12 +134,23 @@ const getInitialValues = context => async ({ initInfo }) => {
   } = initInfo;
   const {
     sandbox: { name: sandboxName } = {},
-    schema: { id: schemaId, version: schemaVersion } = {}
+    schema: { id: schemaId, version: schemaVersion } = {},
+    data = {}
   } = initInfo.settings || {};
 
   const initialValues = {
-    sandboxName: sandboxName || DEFAULT_SANDBOX_NAME
+    sandboxName: sandboxName || ""
   };
+
+  // settings.sandbox may not exist because sandboxes were introduced sometime
+  // after the XDM Object data element type was released to production. For
+  // this reason, we have to check to see if settings.sandbox exists. When
+  // Platform added support for sandboxes, they moved all existing schemas
+  // to a default "prod" sandbox, which is why we can fall back to
+  // DEFAULT_SANDBOX_NAME here.
+  if (schemaId && schemaVersion && !sandboxName) {
+    initialValues.sandboxName = DEFAULT_SANDBOX_NAME;
+  }
 
   const args = {
     initialValues,
@@ -158,16 +167,16 @@ const getInitialValues = context => async ({ initInfo }) => {
 
   if (context.schema) {
     const initialFormState = getInitialFormState({
-      schema: context.schema
+      schema: context.schema,
+      value: data
     });
     Object.assign(initialValues, initialFormState);
   }
-  // console.log("InitialValues", initialValues);
   return initialValues;
 };
 
-const getSettings = ({ values }) => {
-  const { sandboxName, schema2 } = values;
+const getSettings = context => ({ values }) => {
+  const { sandboxName, schema2 } = values || {};
 
   return {
     sandbox: {
@@ -176,13 +185,21 @@ const getSettings = ({ values }) => {
     schema: {
       id: schema2?.$id,
       version: schema2?.version
-    }
+    },
+    data: context.schema
+      ? getValueFromFormState({
+          formStateNode: { ...values, schema: context.schema }
+        }) || {}
+      : {}
   };
 };
 
-/* const formikStateValidationSchema = object().shape({
-  schema: object().required("Please select a schema")
-}); */
+const formikStateValidationSchema = object().shape({
+  sandboxName: string().required("Please select a sandbox."),
+  schema2: object()
+    .nullable()
+    .required("Please select a schema.")
+});
 
 const validateFormikState = context => ({ values }) => {
   // We can't and don't need to do validation on the formik values
@@ -369,7 +386,8 @@ const XdmExtensionView = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues(context)}
-      getSettings={getSettings}
+      getSettings={getSettings(context)}
+      formikStateValidationSchema={formikStateValidationSchema}
       validateFormikState={validateFormikState(context)}
       validateNonFormikState={validateNonFormikState(context)}
       render={({ initInfo, formikProps }) => {
