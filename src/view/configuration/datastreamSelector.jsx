@@ -121,6 +121,7 @@ const DatastreamSelector = ({
   const datastreamProps = {
     isRequired: defaultSandboxOnly && environmentType === PRODUCTION,
     label: defaultSandboxOnly ? `${environmentType} datastream` : " ",
+    "aria-label": `${environmentType} datastream`,
     "data-test-id": `${environmentType}DatastreamField`,
     UNSAFE_className: "CapitalizedLabel"
   };
@@ -171,6 +172,7 @@ const DatastreamSelector = ({
           }}
         </Picker>
       </View>
+
       <Flex
         direction="row"
         marginTop={defaultSandboxOnly ? "size-250" : "size-150"}
@@ -182,6 +184,7 @@ const DatastreamSelector = ({
             onPress={() => {
               copyToClipboard(value);
             }}
+            aria-label="Copy datastream ID to clipboard"
           >
             <Copy />
           </ActionButton>
@@ -194,6 +197,7 @@ const DatastreamSelector = ({
               setValue("");
             }}
             isDisabled={!value}
+            aria-label="Reset datastream ID"
           >
             <Delete />
           </ActionButton>
