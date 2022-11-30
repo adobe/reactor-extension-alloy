@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import fetchFromPlatform from "../../../utils/fetchFromPlatform";
-import UserReportableError from "../../../errors/userReportableError";
+import fetchFromPlatform from "./fetchFromPlatform";
+import UserReportableError from "../errors/userReportableError";
 
 export default async ({ orgId, imsAccess, signal }) => {
   // There is no sandbox API for a non-admin user to fetch
@@ -39,19 +39,5 @@ export default async ({ orgId, imsAccess, signal }) => {
 
   return {
     results: parsedResponse.parsedBody.sandboxes
-  }; /* .map(sandbox => ({ ...sandbox, isDefault: false })),
-      {
-        name: "sandbox1",
-        title: "Sandbox 1",
-        region: "REG01",
-        type: "development"
-      },
-      {
-        name: "sandbox2",
-        title: "Sandbox 2",
-        region: "REG02",
-        type: "development"
-      }
-    ]
-  }; */
+  };
 };

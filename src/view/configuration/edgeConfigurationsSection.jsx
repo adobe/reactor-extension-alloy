@@ -19,7 +19,7 @@ import SectionHeader from "../components/sectionHeader";
 import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import EdgeConfigurationSelectInputMethod from "./edgeConfigurationSelectInputMethod";
 import FormElementContainer from "../components/formElementContainer";
-import fetchSandboxes from "../dataElements/xdmObject/helpers/fetchSandboxes";
+import fetchSandboxes from "../utils/fetchSandboxes";
 import EdgeConfigurationFreeformInputMethod from "./edgeConfigurationFreeformInputMethod";
 import fetchConfig from "./utils/fetchConfig";
 import fetchConfigs from "./utils/fetchConfigs";
