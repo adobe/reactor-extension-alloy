@@ -1,12 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useField } from "formik";
-import { Item } from "@adobe/react-spectrum";
 
 import DatastreamSelector from "./datastreamSelector";
 import { PRODUCTION } from "./constants/environmentType";
 import "./style.styl";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
+import sandboxItems from "../components/sandboxItems";
 
 const EdgeConfigEnvironment = ({
   name,
@@ -28,6 +28,7 @@ const EdgeConfigEnvironment = ({
     defaultSandboxOnly ? "" : "sandbox and"
   } datastream for the ${environmentType} environment.`;
 
+  console.log(sandboxes);
   return (
     <>
       <FormikPicker
@@ -47,11 +48,7 @@ const EdgeConfigEnvironment = ({
         width="size-5000"
         placeholder="Select a sandbox"
       >
-        {item => {
-          const region = item.region ? ` (${item.region.toUpperCase()})` : "";
-          const label = `${item.type.toUpperCase()} ${item.title}${region}`;
-          return <Item key={item.name}>{label}</Item>;
-        }}
+        {sandboxItems}
       </FormikPicker>
 
       {selectedSandbox && (

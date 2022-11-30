@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { ProgressCircle, Flex, Item } from "@adobe/react-spectrum";
+import { ProgressCircle, Flex } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import { object, string } from "yup";
 import FormElementContainer from "../components/formElementContainer";
@@ -32,6 +32,7 @@ import fetchSchema from "./xdmObject/helpers/fetchSchema";
 import getInitialFormState from "./xdmObject/helpers/getInitialFormState";
 import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
 import UserReportableError from "../errors/userReportableError";
+import sandboxItems from "../components/sandboxItems";
 
 const initializeSandboxes = async ({
   context,
@@ -349,11 +350,7 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
           width="size-5000"
           placeholder="Select a sandbox"
         >
-          {item => {
-            const region = item.region ? ` (${item.region.toUpperCase()})` : "";
-            const label = `${item.type.toUpperCase()} ${item.title}${region}`;
-            return <Item key={item.name}>{label}</Item>;
-          }}
+          {sandboxItems}
         </FormikPicker>
 
         <FormikPagedComboBox
