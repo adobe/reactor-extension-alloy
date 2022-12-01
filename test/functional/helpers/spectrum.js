@@ -276,12 +276,7 @@ const componentWrappers = {
       },
       expectDisabled: createExpectDisabled(selector),
       expectEnabled: createExpectEnabled(selector.find("button")),
-      expectHidden: createExpectHidden(
-        selector
-          .parent()
-          .parent()
-          .parent()
-      )
+      expectHidden: createExpectHidden(selector.parent().parent())
     };
   },
   textField(selector) {
