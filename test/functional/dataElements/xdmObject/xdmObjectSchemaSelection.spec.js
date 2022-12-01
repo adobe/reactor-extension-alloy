@@ -232,7 +232,9 @@ test("attempts to load a schema that has been deleted", async () => {
       data: {}
     }
   });
-  await errorBoundaryMessage.expectMessage(/The resource was not found\./);
+  await errorBoundaryMessage.expectMessage(
+    /Could not find the schema selected previously\./
+  );
 });
 
 test.requestHooks(

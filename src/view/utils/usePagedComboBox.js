@@ -169,6 +169,7 @@ const usePagedComboBox = ({
     },
     onInputChange: inputText => {
       setData({
+        items: [],
         inputValue: inputText,
         showAll: false,
         cursor: null
