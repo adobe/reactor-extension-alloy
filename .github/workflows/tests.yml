@@ -28,8 +28,18 @@ jobs:
       run: npm ci
     - name: Build
       run: npm run build
+    - uses: saucelabs/sauce-connect-action@v2.2.1
+      with:
+        username: ${{ secrets.SAUCE_USERNAME }}
+        accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
+        tunnelName: $GITHUB_JOB
     - name: Run Unit Test
-      run: npm run test:unit:saucelabs
+      run: npx karma start karma.saucelabs.conf.js --single-run
+      env:
+        BUILD_NUMBER: $GITHUB_RUN_NUMBER
+        BUILD_ID: $GITHUB_RUN_ID
+        JOB_NUMBER: $GITHUB_JOB
+
   functional-chrome:
     name: "Chrome Functional Test"
     runs-on: ubuntu-latest
