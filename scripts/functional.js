@@ -80,16 +80,16 @@ const buildComponentFixtures = async () => {
 
   if (chrome) {
     browsers = "saucelabs:Chrome@latest:macOS 11.00";
-    concurrency = 10;
+    concurrency = 4;
   } else if (firefox) {
     browsers = "saucelabs:Firefox@latest:macOS 11.00";
-    concurrency = 10;
+    concurrency = 4;
   } else if (safari) {
     browsers = "saucelabs:Safari@latest:macOS 11.00";
-    concurrency = 10;
+    concurrency = 4;
   } else if (edge) {
     browsers = "saucelabs:MicrosoftEdge@latest:Windows 10";
-    concurrency = 10;
+    concurrency = 4;
   } else {
     concurrency = 1;
     browsers = "chrome";
@@ -126,7 +126,7 @@ const buildComponentFixtures = async () => {
     .concurrency(concurrency)
     .run({
       skipJsErrors: true,
-      quarantineMode: false,
+      quarantineMode: true,
       selectorTimeout: 50000,
       assertionTimeout: 7000,
       pageLoadTimeout: 8000,
