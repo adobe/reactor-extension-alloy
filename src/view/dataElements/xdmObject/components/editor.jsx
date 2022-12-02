@@ -18,15 +18,49 @@ import XdmTree, { scrollNodeIntoView } from "./xdmTree";
 import NodeEdit from "./nodeEdit";
 import NoSelectedNodeView from "./noSelectedNodeView";
 import getNodeEditData from "../helpers/getNodeEditData";
+import { ARRAY, OBJECT } from "../constants/schemaType";
+
+const fetchNodeIdsForDepth = (formStateNode, depth) => {
+  if (depth === 0) {
+    return [];
+  }
+  const {
+    schema: { type },
+    properties,
+    items,
+    id
+  } = formStateNode;
+  if (type === OBJECT && properties) {
+    return Object.keys(properties).reduce(
+      (nodeIds, key) => {
+        return nodeIds.concat(fetchNodeIdsForDepth(properties[key], depth - 1));
+      },
+      [id]
+    );
+  }
+  if (type === ARRAY && items) {
+    return Array.keys(items).reduce(
+      (nodeIds, i) => {
+        return nodeIds.concat(fetchNodeIdsForDepth(items[i], depth - 1));
+      },
+      [id]
+    );
+  }
+  return [];
+};
 
 const Editor = ({
   selectedNodeId,
   setSelectedNodeId,
   schema,
-  previouslySavedSchemaInfo
+  previouslySavedSchemaInfo,
+  initialExpandedDepth = 0
 }) => {
   const { values: formState } = useFormikContext();
-  const [expandedNodeIdsInTree, setExpandedNodeIdsInTree] = useState([]);
+  const [expandedNodeIdsInTree, setExpandedNodeIdsInTree] = useState(() => {
+    // There is a root node with the id node-1. We don't want that.
+    return fetchNodeIdsForDepth(formState, initialExpandedDepth + 1).slice(1);
+  });
   const [
     nodeIdToScrollIntoViewInTree,
     setNodeIdToScrollIntoViewInTree
@@ -36,10 +70,19 @@ const Editor = ({
     if (!nodeId) {
       return;
     }
-    const { breadcrumb } = getNodeEditData({
+    const {
+      breadcrumb,
+      formStateNode: {
+        schema: { type }
+      }
+    } = getNodeEditData({
       formState,
       nodeId
     });
+    if (type !== OBJECT && type !== ARRAY) {
+      // don't add the nodeId of the last item in the breadcrumbs if it is a leaf node
+      breadcrumb.pop();
+    }
     const newExpandedNodeIds = breadcrumb.reduce((memo, breadcrumbItem) => {
       const { nodeId: breadcrumbItemNodeId } = breadcrumbItem;
       if (!memo.includes(breadcrumbItemNodeId)) {
@@ -121,7 +164,8 @@ Editor.propTypes = {
   previouslySavedSchemaInfo: PropTypes.shape({
     id: PropTypes.string.isRequired,
     version: PropTypes.string.isRequired
-  })
+  }),
+  initialExpandedDepth: PropTypes.number
 };
 
 export default Editor;

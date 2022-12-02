@@ -13,18 +13,13 @@ governing permissions and limitations under the License.
 const { deepAssign } = require("../../alloy");
 const { deletePath } = require("../../utils/pathUtils");
 
-module.exports = ({ variableStore }) => settings => {
-  const existingValue = variableStore[settings.dataElementCacheId] || {};
-  Object.keys(settings.transforms || {}).forEach(path => {
-    const { clear } = settings.transforms[path];
-    if (clear) {
-      deletePath(existingValue, path);
-    }
-  });
-  variableStore[settings.dataElement] = deepAssign(
-    existingValue,
-    settings.data
-  );
+module.exports = ({ variableStore }) => ({ data, dataElement, transforms }) => {
+  const existingValue = Object.keys(transforms || {}).reduce((memo, path) => {
+    const { clear } = transforms[path];
+    return clear ? deletePath(memo, path) : memo;
+  }, variableStore[dataElement]);
+
+  variableStore[dataElement] = deepAssign({}, existingValue, data);
 
   return Promise.resolve();
 };

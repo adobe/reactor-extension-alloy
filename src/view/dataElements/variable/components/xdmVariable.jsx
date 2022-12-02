@@ -17,7 +17,7 @@ import { useField } from "formik";
 import PropTypes from "prop-types";
 import UserReportableError from "../../../errors/userReportableError";
 import DEFAULT_SANDBOX_NAME from "../../xdmObject/constants/defaultSandboxName";
-import fetchSandboxes from "../../xdmObject/helpers/fetchSandboxes";
+import fetchSandboxes from "../../../utils/fetchSandboxes";
 import fetchSchema from "../../xdmObject/helpers/fetchSchema";
 import fetchSchemasMeta from "../../xdmObject/helpers/fetchSchemasMeta";
 import FormikPicker from "../../../components/formikReactSpectrum3/formikPicker";

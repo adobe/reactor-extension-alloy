@@ -28,6 +28,43 @@ import useReportAsyncError from "../utils/useReportAsyncError";
 import fetchDataElement from "../utils/fetchDataElement";
 import useChanged from "../utils/useChanged";
 
+const getInitialFormStateFromDataElement = async ({
+  dataElement,
+  context,
+  orgId,
+  imsAccess,
+  transforms = {},
+  data = {}
+}) => {
+  if (
+    dataElement.settings &&
+    dataElement.settings.schemaId &&
+    dataElement.settings.schemaVersion
+  ) {
+    const schema = await fetchSchema({
+      orgId,
+      imsAccess,
+      schemaId: dataElement.settings.schemaId,
+      schemaVersion: dataElement.settings.schemaVersion,
+      sandboxName: dataElement.settings.sandbox
+    });
+    const newSchema = {
+      type: "object",
+      properties: {
+        xdm: schema
+      }
+    };
+    context.schema = newSchema;
+    return getInitialFormState({
+      schema: newSchema,
+      value: data,
+      updateMode: true,
+      transforms
+    });
+  }
+  return {};
+};
+
 const getInitialValues = context => async ({ initInfo }) => {
   const {
     propertySettings: { id: propertyId } = {},
@@ -60,28 +97,20 @@ const getInitialValues = context => async ({ initInfo }) => {
       dataElementId
     });
     initialValues.dataElement = dataElement;
-    if (
-      dataElement &&
-      dataElement.settings.schemaId &&
-      dataElement.settings.schemaVersion
-    ) {
-      const schema = await fetchSchema({
+    const prefixedTransforms = Object.keys(transforms).reduce((memo, key) => {
+      memo[`xdm.${key}`] = transforms[key];
+      return memo;
+    }, {});
+    if (dataElement) {
+      const initialFormState = await getInitialFormStateFromDataElement({
+        dataElement,
+        context,
         orgId,
         imsAccess,
-        schemaId: dataElement.settings.schemaId,
-        schemaVersion: dataElement.settings.schemaVersion,
-        sandboxName: dataElement.settings.sandbox
+        data: { xdm: data },
+        transforms: prefixedTransforms
       });
-      if (schema) {
-        context.schema = schema;
-        const initialFormState = getInitialFormState({
-          schema,
-          value: data,
-          updateMode: true,
-          transforms
-        });
-        return { ...initialValues, ...initialFormState };
-      }
+      return { ...initialValues, ...initialFormState };
     }
   }
 
@@ -95,11 +124,18 @@ const getSettings = ({ values }) => {
 
   const transforms = {};
 
+  // everything is prefixed with "xdm", lets change that to data.
+  const { xdm } = getValueFromFormState({ formStateNode: values, transforms });
+  const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
+    memo[key.substring(4)] = transforms[key];
+    return memo;
+  }, {});
+
   return {
     dataElementId,
     dataElementCacheId,
-    data: getValueFromFormState({ formStateNode: values, transforms }) || {},
-    transforms
+    data: xdm,
+    transforms: dataTransforms
   };
 };
 
@@ -124,35 +160,30 @@ const UpdateVariable = ({ initInfo, formikProps: { resetForm }, context }) => {
     tokens: { imsAccess }
   } = initInfo;
 
-  useChanged(async () => {
-    setHasSchema(false);
-    setSelectedNodeId(null);
+  useChanged(
+    useReportAsyncError(async () => {
+      setHasSchema(false);
+      setSelectedNodeId(null);
 
-    if (dataElement && dataElement.settings.schemaId) {
-      const newSchema = await fetchSchema({
-        orgId,
-        imsAccess,
-        schemaId: dataElement.settings.schemaId,
-        schemaVersion: dataElement.settings.schemaVersion,
-        sandboxName: dataElement.settings.sandbox
-      });
-      if (newSchema) {
-        context.schema = newSchema;
-        const initialFormState = getInitialFormState({
-          schema: newSchema,
-          updateMode: true
+      if (dataElement) {
+        const initialFormState = await getInitialFormStateFromDataElement({
+          dataElement,
+          context,
+          orgId,
+          imsAccess
         });
         resetForm({ values: { ...initialFormState, dataElement } });
-        setHasSchema(true);
+        if (context.schema) {
+          setHasSchema(true);
+        }
       }
-    }
-  }, [dataElement?.settings?.schemaId]);
+    }),
+    [dataElement?.settings?.schemaId]
+  );
 
-  const loadItems = async ({ filterText, cursor, signal }) => {
-    let results;
-    let nextPage;
-    try {
-      ({ results, nextPage } = await fetchDataElements({
+  const loadItems = useReportAsyncError(
+    async ({ filterText, cursor, signal }) => {
+      const { results, nextPage } = await fetchDataElements({
         orgId,
         imsAccess,
         propertyId,
@@ -160,18 +191,14 @@ const UpdateVariable = ({ initInfo, formikProps: { resetForm }, context }) => {
         page: cursor || 1,
         signal,
         delegateDescriptorId: "adobe-alloy::dataElements::variable"
-      }));
-    } catch (e) {
-      if (e.name !== "AbortError") {
-        useReportAsyncError(e);
-      }
-      throw e;
+      });
+
+      return {
+        items: results,
+        cursor: nextPage
+      };
     }
-    return {
-      items: results,
-      cursor: nextPage
-    };
-  };
+  );
 
   return (
     <FormElementContainer>
@@ -196,6 +223,7 @@ const UpdateVariable = ({ initInfo, formikProps: { resetForm }, context }) => {
           setSelectedNodeId={setSelectedNodeId}
           schema={schema}
           previouslySavedSchemaInfo={null}
+          initialExpandedDepth={1}
         />
       )}
     </FormElementContainer>

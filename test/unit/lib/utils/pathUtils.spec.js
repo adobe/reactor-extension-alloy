@@ -9,54 +9,44 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import {
-  setValue,
-  deletePath,
-  pushUndefined
-} from "../../../../src/lib/utils/pathUtils";
+import { setValue, deletePath } from "../../../../src/lib/utils/pathUtils";
 
 describe("pathUtils", () => {
   describe("setValue", () => {
     it("sets an object property", () => {
-      const obj = {};
-      setValue(obj, "foo", "bar");
-      expect(obj).toEqual({ foo: "bar" });
+      expect(setValue({}, "foo", "bar")).toEqual({ foo: "bar" });
     });
 
     it("overwrites an object property", () => {
-      const obj = { a: 1, b: 2 };
-      setValue(obj, "a", 3);
-      expect(obj).toEqual({ a: 3, b: 2 });
+      expect(setValue({ a: 1, b: 2 }, "a", 3)).toEqual({ a: 3, b: 2 });
     });
 
     it("sets a nested property on an empty object", () => {
-      const obj = {};
-      setValue(obj, "a.b", true);
-      expect(obj).toEqual({ a: { b: true } });
+      expect(setValue({}, "a.b", true)).toEqual({ a: { b: true } });
     });
 
     it("overwrites a nested object property", () => {
       const obj = { a: { b: 2, c: 3 }, d: 4 };
-      setValue(obj, "a.c", 5);
-      expect(obj).toEqual({ a: { b: 2, c: 5 }, d: 4 });
+      const newObj = setValue(obj, "a.c", 5);
+      expect(newObj).toEqual({ a: { b: 2, c: 5 }, d: 4 });
     });
 
     it("sets an array value", () => {
-      const obj = {};
-      setValue(obj, "a.0", 42);
-      expect(obj).toEqual({ a: [42] });
+      expect(setValue({}, "a.0", 42)).toEqual({ a: [42] });
     });
 
     it("sets a property on an array value", () => {
-      const obj = {};
-      setValue(obj, "a.0.b", 1);
-      expect(obj).toEqual({ a: [{ b: 1 }] });
+      expect(setValue({}, "a.0.b", 1)).toEqual({ a: [{ b: 1 }] });
     });
 
     it("sets nested arrays", () => {
-      const obj = {};
-      setValue(obj, "a.1.0", "crazy!");
-      expect(obj).toEqual({ a: [undefined, ["crazy!"]] });
+      expect(setValue({}, "a.1.0", "crazy!")).toEqual({
+        a: [undefined, ["crazy!"]]
+      });
+    });
+
+    it("sets the whole thing", () => {
+      expect(setValue({ a: 1 }, "", { b: 2 })).toEqual({ b: 2 });
     });
   });
 
@@ -66,34 +56,19 @@ describe("pathUtils", () => {
     });
     it("deletes an element in an object", () => {
       const obj = { a: "b", c: "d" };
-      deletePath(obj, "a");
-      expect(Object.keys(obj)).toEqual(["c"]);
+      const newObj = deletePath(obj, "a");
+      expect(Object.keys(newObj)).toEqual(["c"]);
     });
     it("deletes an element in an array", () => {
-      const arr = [1, 2, 3];
-      deletePath(arr, "1");
-      expect(arr).toEqual([1, 3]);
+      expect(deletePath([1, 2, 3], "1")).toEqual([1, 3]);
     });
     it("deletes an element in a nested array", () => {
-      const obj = {};
-      setValue(obj, "a.b.c", "hello");
-      deletePath(obj, "a.b.c");
-      expect(obj).toEqual({ a: { b: {} } });
+      const val1 = setValue({}, "a.b.c", "hello");
+      const val2 = deletePath(val1, "a.b.c");
+      expect(val2).toEqual({ a: { b: {} } });
     });
     it("deletes an element that isn't there", () => {
-      const obj = {};
-      deletePath(obj, "a.b.0");
-      expect(obj).toEqual({ a: { b: [] } });
-    });
-  });
-
-  describe("push", () => {
-    it("adds an element", () => {
-      const obj = {};
-      pushUndefined(obj, "a.b");
-      pushUndefined(obj, "a.b");
-      setValue(obj, "a.b.-1", "value2");
-      expect(obj).toEqual({ a: { b: [undefined, "value2"] } });
+      expect(deletePath({}, "a.b.0")).toEqual({ a: { b: [] } });
     });
   });
 });

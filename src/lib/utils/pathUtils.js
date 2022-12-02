@@ -1,5 +1,3 @@
-const clone = require("./clone");
-
 const IS_NUMBER_REGEX = /^-?[0-9]+$/;
 
 const resolvePath = path => {
@@ -30,9 +28,32 @@ const toArray = mixed => {
   return array;
 };
 
-const followPath = (parent, key, path, i) => {
+const setValue = (parent, key, value) => {
+  if (typeof key === "number") {
+    const newArray = parent.slice();
+    newArray[key] = value;
+    return newArray;
+  }
+  return {
+    ...parent,
+    [key]: value
+  };
+};
+
+const deletePath = (parent, key) => {
+  if (typeof key === "number") {
+    return [...parent.slice(0, key), ...parent.slice(key + 1)];
+  }
+  const returnObject = {
+    ...parent
+  };
+  delete returnObject[key];
+  return returnObject;
+};
+
+const run = (parent, key, path, i, onLeafNode) => {
   if (i === path.length) {
-    return [parent, key];
+    return onLeafNode(parent, key);
   }
 
   let value;
@@ -45,35 +66,24 @@ const followPath = (parent, key, path, i) => {
   } else {
     value = toObject(parent[key]);
   }
-  parent[key] = value;
-  return followPath(value, pathElement, path, i + 1);
+  return setValue(
+    parent,
+    key,
+    run(value, pathElement, path, i + 1, onLeafNode)
+  );
 };
 
 const createOperation = onLeafNode => (mixed, pathString, value) => {
-  const container = { value: mixed };
-  const [parent, key] = followPath(
-    container,
+  return run(
+    { value: mixed },
     "value",
     resolvePath(pathString),
-    0
-  );
-  onLeafNode(parent, key, value);
-  return container.value;
+    0,
+    (parent, key) => {
+      return onLeafNode(parent, key, value);
+    }
+  ).value;
 };
 
-exports.setValue = createOperation((parent, key, value) => {
-  parent[key] = clone(value);
-});
-
-exports.deletePath = createOperation((parent, key) => {
-  if (Array.isArray(parent)) {
-    parent.splice(key, 1);
-  } else {
-    delete parent[key];
-  }
-});
-
-exports.pushUndefined = createOperation((parent, key) => {
-  parent[key] = toArray(parent[key]);
-  parent[key].push(undefined);
-});
+exports.setValue = createOperation(setValue);
+exports.deletePath = createOperation(deletePath);

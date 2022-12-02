@@ -19,8 +19,26 @@ import { useState } from "react";
 // This modules is a hook that allows us to report any async errors that we
 // catch that we want to bubble up to the top-level error boundary for display.
 // https://github.com/facebook/react/issues/14981#issuecomment-468460187
-const useReportAsyncError = () => {
+// If you pass a function then this hook will return the function wrapped with
+// a try catch that reports the async error. Otherwise this will return a function
+// that you can call with the error to display.
+const useReportAsyncError = func => {
   const [, setState] = useState();
+
+  if (func) {
+    return async (...args) => {
+      try {
+        await func(...args);
+      } catch (e) {
+        if (e.name !== "AbortError") {
+          setState(() => {
+            throw e;
+          });
+        }
+        throw e;
+      }
+    };
+  }
 
   return error => {
     setState(() => {
