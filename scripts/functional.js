@@ -130,7 +130,7 @@ const buildComponentFixtures = async () => {
       selectorTimeout: 50000,
       assertionTimeout: 7000,
       pageLoadTimeout: 8000,
-      speed: 1,
+      speed: 0.01,
       stopOnFirstFail: true
     });
   testcafe.close();

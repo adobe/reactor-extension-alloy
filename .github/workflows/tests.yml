@@ -69,6 +69,7 @@ jobs:
       - name: Build
         run: npm run build
       - name: Run Functional Test
+        timeout-minutes: 60
         run: npm run ${{ matrix.browsers }}
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
