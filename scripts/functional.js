@@ -126,7 +126,7 @@ const buildComponentFixtures = async () => {
     .concurrency(concurrency)
     .run({
       skipJsErrors: true,
-      quarantineMode: true,
+      quarantineMode: false,
       selectorTimeout: 50000,
       assertionTimeout: 7000,
       pageLoadTimeout: 8000,
