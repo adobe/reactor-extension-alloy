@@ -11,12 +11,11 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { object } from "yup";
+import { object, string } from "yup";
 import { Item } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 import UserReportableError from "../../../errors/userReportableError";
-import DEFAULT_SANDBOX_NAME from "../../xdmObject/constants/defaultSandboxName";
 import fetchSandboxes from "../../../utils/fetchSandboxes";
 import fetchSchema from "../../xdmObject/helpers/fetchSchema";
 import fetchSchemasMeta from "../../xdmObject/helpers/fetchSchemasMeta";
@@ -25,8 +24,9 @@ import FormikPagedComboBox from "../../../components/formikReactSpectrum3/formik
 import useReportAsyncError from "../../../utils/useReportAsyncError";
 
 const initializeSandboxes = async ({
+  initialValues,
   context,
-  settings: { sandbox },
+  settings: { sandbox: { name: sandbox } = {} },
   orgId,
   imsAccess
 }) => {
@@ -37,14 +37,28 @@ const initializeSandboxes = async ({
   }
 
   if (sandbox && !sandboxes.find(s => s.name === sandbox)) {
-    context.warning = `Could not find the sandbox selected previously. Either you don't have access or the sandbox was deleted. Push cancel to leave this data element unchanged.`;
+    throw new UserReportableError(
+      "Could not find the sandbox selected previously. Either you don't have access or the sandbox was deleted."
+    );
   }
   context.sandboxes = sandboxes;
+  // Auto select a sandbox in some cases
+  if (!sandbox) {
+    const defaultSandbox =
+      (sandboxes.length === 1 && sandboxes[0]) ||
+      sandboxes.find(({ isDefault }) => isDefault);
+    if (defaultSandbox) {
+      initialValues.sandbox = defaultSandbox.name;
+    }
+  }
 };
 
 const initializeSelectedSchema = async ({
   initialValues,
-  settings: { sandbox, schemaId, schemaVersion },
+  settings: {
+    sandbox: { name: sandbox } = {},
+    schema: { id: schemaId, version: schemaVersion } = {}
+  },
   orgId,
   imsAccess
 }) => {
@@ -63,7 +77,8 @@ const initializeSelectedSchema = async ({
 };
 
 const initializeSchemas = async ({
-  initialValues: { sandbox },
+  initialValues,
+  settings: { schema: { id: schemaId } = {} },
   context,
   orgId,
   imsAccess
@@ -74,11 +89,14 @@ const initializeSchemas = async ({
   } = await fetchSchemasMeta({
     orgId,
     imsAccess,
-    sandboxName: sandbox
+    sandboxName: initialValues.sandbox
   });
 
   context.schemasFirstPage = schemasFirstPage;
   context.schemasFirstPageCursor = schemasFirstPageCursor;
+  if (!schemaId && schemasFirstPage.length === 1) {
+    initialValues.schema = schemasFirstPage[0];
+  }
 };
 
 export const bridge = {
@@ -90,7 +108,7 @@ export const bridge = {
     const settings = initInfo.settings || {};
 
     const initialValues = {
-      sandbox: settings.sandbox || DEFAULT_SANDBOX_NAME
+      sandbox: settings.sandbox?.name
     };
 
     const args = {
@@ -101,8 +119,8 @@ export const bridge = {
       imsAccess
     };
 
+    await initializeSandboxes(args);
     await Promise.all([
-      initializeSandboxes(args),
       initializeSelectedSchema(args),
       initializeSchemas(args)
     ]);
@@ -113,13 +131,18 @@ export const bridge = {
     const { sandbox, schema } = values;
 
     return {
-      sandbox,
-      schemaId: schema?.$id,
-      schemaVersion: schema?.version
+      sandbox: { name: sandbox },
+      schema: {
+        id: schema?.$id,
+        version: schema?.version
+      }
     };
   },
   formikStateValidationSchema: object().shape({
-    schema: object().required("Please select a schema")
+    sandbox: string().required("Please select a sandbox."),
+    schema: object()
+      .nullable()
+      .required("Please select a schema.")
   })
 };
 
@@ -174,6 +197,7 @@ const XdmVariable = ({
         items={sandboxes}
         width="size-5000"
         description="Choose a sandbox containing the schema you wish to use."
+        placeholder="Select a sandbox"
       >
         {item => {
           const region = item.region ? ` (${item.region.toUpperCase()})` : "";
@@ -193,6 +217,7 @@ const XdmVariable = ({
         dependencies={[sandbox]}
         firstPage={schemasFirstPage}
         firstPageCursor={schemasFirstPageCursor}
+        placeholder="Select a schema"
       />
     </>
   );
