@@ -113,6 +113,26 @@ export const multipleWithDefault = RequestMock()
     responseHeaders
   );
 
+export const longLasting = RequestMock()
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: "GET" })
+  .respond(async (req, res) => {
+    await new Promise(r => setTimeout(r, 10000));
+
+    res.setBody({
+      sandboxes: [
+        {
+          name: "testsandbox1",
+          title: "Test Sandbox 1",
+          type: "production",
+          isDefault: false,
+          region: "VA7",
+          state: "active"
+        }
+      ]
+    });
+  });
+
+
 export const multipleWithoutDefault = RequestMock()
   .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: "GET" })
   .respond(

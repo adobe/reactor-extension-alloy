@@ -18,6 +18,7 @@ import { useRef, useEffect } from "react";
  * the callback is not executed.
  */
 const useChanged = (effect, dependencies) => {
+  console.log("useChanged", dependencies);
   const isFirstRenderRef = useRef(true);
   useEffect(() => {
     if (isFirstRenderRef.current) {

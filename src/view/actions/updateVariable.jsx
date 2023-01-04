@@ -38,15 +38,18 @@ const getInitialFormStateFromDataElement = async ({
 }) => {
   if (
     dataElement.settings &&
-    dataElement.settings.schemaId &&
-    dataElement.settings.schemaVersion
+    dataElement.settings.schema &&
+    dataElement.settings.schema.id &&
+    dataElement.settings.schema.version &&
+    dataElement.settings.sandbox &&
+    dataElement.settings.sandbox.name
   ) {
     const schema = await fetchSchema({
       orgId,
       imsAccess,
-      schemaId: dataElement.settings.schemaId,
-      schemaVersion: dataElement.settings.schemaVersion,
-      sandboxName: dataElement.settings.sandbox
+      schemaId: dataElement.settings.schema.id,
+      schemaVersion: dataElement.settings.schema.version,
+      sandboxName: dataElement.settings.sandbox.name
     });
     const newSchema = {
       type: "object",
@@ -90,34 +93,39 @@ const getInitialValues = context => async ({ initInfo }) => {
   context.dataElementsFirstPage = dataElementsFirstPage;
   context.dataElementsFirstPageCursor = dataElementsFirstPageCursor;
 
+  let dataElement;
   if (dataElementId) {
-    const dataElement = await fetchDataElement({
+    dataElement = await fetchDataElement({
       orgId,
       imsAccess,
       dataElementId
     });
-    initialValues.dataElement = dataElement;
+  } else if (dataElementsFirstPage.length === 1 && dataElementsFirstPageCursor === null) {
+    dataElement = dataElementsFirstPage[0];
+  }
+  initialValues.dataElement = dataElement;
+
+  if (dataElement) {
     const prefixedTransforms = Object.keys(transforms).reduce((memo, key) => {
       memo[`xdm.${key}`] = transforms[key];
       return memo;
     }, {});
-    if (dataElement) {
-      const initialFormState = await getInitialFormStateFromDataElement({
-        dataElement,
-        context,
-        orgId,
-        imsAccess,
-        data: { xdm: data },
-        transforms: prefixedTransforms
-      });
-      return { ...initialValues, ...initialFormState };
-    }
+    const initialFormState = await getInitialFormStateFromDataElement({
+      dataElement,
+      context,
+      orgId,
+      imsAccess,
+      data: { xdm: data },
+      transforms: prefixedTransforms
+    });
+    return { ...initialValues, ...initialFormState };
   }
 
   return initialValues;
 };
 
 const getSettings = ({ values }) => {
+  console.log(values);
   const { dataElement } = values;
   const { id: dataElementId, settings } = dataElement || {};
   const { cacheId: dataElementCacheId } = settings || {};
@@ -125,7 +133,7 @@ const getSettings = ({ values }) => {
   const transforms = {};
 
   // everything is prefixed with "xdm", lets change that to data.
-  const { xdm } = getValueFromFormState({ formStateNode: values, transforms });
+  const { xdm = {} } = getValueFromFormState({ formStateNode: values, transforms }) || {};
   const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
     memo[key.substring(4)] = transforms[key];
     return memo;
@@ -178,7 +186,7 @@ const UpdateVariable = ({ initInfo, formikProps: { resetForm }, context }) => {
         }
       }
     }),
-    [dataElement?.settings?.schemaId]
+    [dataElement?.settings?.schema?.id]
   );
 
   const loadItems = useReportAsyncError(

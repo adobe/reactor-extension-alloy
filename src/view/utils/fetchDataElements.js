@@ -22,46 +22,51 @@ const fetchDataElements = async ({
   signal,
   delegateDescriptorId
 }) => {
-  const params = {
-    "page[size]": "100",
-    "page[number]": `${page}`
-  };
-  if (search !== "") {
-    params["filter[name]"] = `CONTAINS ${search}`;
-  }
-
-  let parsedResponse;
-  try {
-    parsedResponse = await fetchFromReactor({
-      orgId,
-      imsAccess,
-      path: `/properties/${propertyId}/data_elements`,
-      params: new URLSearchParams(params),
-      signal
-    });
-  } catch (e) {
-    if (e.name === "AbortError") {
-      throw e;
+  let allResults = [];
+  let nextPage = page;
+  while (allResults.length < 2 && nextPage) {
+    const params = {
+      "page[size]": "100",
+      "page[number]": `${nextPage}`
+    };
+    if (search !== "") {
+      params["filter[name]"] = `CONTAINS ${search}`;
     }
 
-    throw new UserReportableError("Failed to load data elements.", {
-      originatingError: e
-    });
+    let parsedResponse;
+    try {
+      parsedResponse = await fetchFromReactor({
+        orgId,
+        imsAccess,
+        path: `/properties/${propertyId}/data_elements`,
+        params: new URLSearchParams(params),
+        signal
+      });
+    } catch (e) {
+      if (e.name === "AbortError") {
+        throw e;
+      }
+
+      throw new UserReportableError("Failed to load data elements.", {
+        originatingError: e
+      });
+    }
+
+    parsedResponse.parsedBody.data
+      .filter(
+        ({ attributes: { delegate_descriptor_id: other } }) =>
+          delegateDescriptorId === other
+      )
+      .map(({ id, attributes: { name, settings } }) => ({
+        id,
+        name,
+        settings: JSON.parse(settings)
+      }))
+      .forEach(result => allResults.push(result));
+
+    nextPage = parsedResponse.parsedBody.meta.pagination.next_page;
   }
-
-  const results = parsedResponse.parsedBody.data
-    .filter(
-      ({ attributes: { delegate_descriptor_id: other } }) =>
-        delegateDescriptorId === other
-    )
-    .map(({ id, attributes: { name, settings } }) => ({
-      id,
-      name,
-      settings: JSON.parse(settings)
-    }));
-
-  const nextPage = parsedResponse.parsedBody.meta.pagination.next_page;
-
+  /*
   results.push(
     {
       id: "id1",
@@ -104,7 +109,10 @@ const fetchDataElements = async ({
       }
     }
   );
-  return { results, nextPage };
+  */
+
+  console.log("Fetch Data elements", allResults, nextPage);
+  return { results: allResults, nextPage };
 };
 
 export default fetchDataElements;

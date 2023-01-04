@@ -29,8 +29,7 @@ const schemaField = spectrum.comboBox("schemaField");
 createExtensionViewFixture({
   title: "Variable Data Element View",
   viewPath: "dataElements/variable.html",
-  requiresAdobeIOIntegration: true,
-  only: true
+  requiresAdobeIOIntegration: true
 });
 
 runCommonExtensionViewTests();

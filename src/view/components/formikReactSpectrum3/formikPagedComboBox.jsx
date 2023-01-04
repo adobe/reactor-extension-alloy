@@ -86,7 +86,7 @@ FormikPagedComboBox.propTypes = {
   getLabel: PropTypes.func.isRequired,
   dependencies: PropTypes.array,
   firstPage: PropTypes.array,
-  firstPageCursor: PropTypes.string
+  firstPageCursor: PropTypes.any
 };
 
 export default FormikPagedComboBox;
