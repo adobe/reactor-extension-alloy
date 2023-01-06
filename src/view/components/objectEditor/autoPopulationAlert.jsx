@@ -11,10 +11,10 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import Alert from "../../../components/alert";
-import { ALWAYS, COMMAND, CONTEXT } from "../constants/autoPopulationSource";
-import { OBJECT } from "../constants/schemaType";
-import { formStateNodePropTypes } from "../helpers/getInitialFormState";
+import Alert from "../alert";
+import { ALWAYS, COMMAND, CONTEXT } from "./constants/autoPopulationSource";
+import { OBJECT } from "./constants/schemaType";
+import { formStateNodePropTypes } from "./helpers/getInitialFormState";
 /**
  * Shown on the edit form for any fields that get populated
  * automatically by Alloy.

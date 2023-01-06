@@ -18,7 +18,7 @@ import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
 import RemoveCircleIcon from "@spectrum-icons/workflow/RemoveCircle";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import "./xdmTreeNodeTitle.styl";
-import { EMPTY, FULL, PARTIAL, BLANK } from "../constants/populationAmount";
+import { EMPTY, FULL, PARTIAL, BLANK } from "./constants/populationAmount";
 
 const XdmTreeNodeTitle = props => {
   const {

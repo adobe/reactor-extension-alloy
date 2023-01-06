@@ -14,7 +14,7 @@ import { t, ClientFunction } from "testcafe";
 import {
   createTestIdSelector,
   createTestIdSelectorString
-} from "../../../helpers/dataTestIdSelectors";
+} from "../dataTestIdSelectors";
 
 const xdmTree = createTestIdSelector("xdmTree");
 

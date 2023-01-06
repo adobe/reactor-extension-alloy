@@ -17,8 +17,8 @@ import * as dataElementMocks from "../helpers/endpointMocks/dataElementMocks";
 import extensionViewController from "../helpers/extensionViewController";
 import spectrum from "../helpers/spectrum";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
-import xdmTree from "../dataElements/xdmObject/helpers/xdmTree";
-import stringEdit from "../dataElements/xdmObject/helpers/stringEdit";
+import xdmTree from "../helpers/objectEditor/xdmTree";
+import stringEdit from "../helpers/objectEditor/stringEdit";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(
   "errorBoundaryMessage"
@@ -212,9 +212,9 @@ test.requestHooks(dataElementsMocks.multiple, dataElementMocks.element2)(
   }
 );
 
-test
-  .requestHooks(dataElementsMocks.multiple)
-  .only("Allows the user to clear the root level", async () => {
+test.requestHooks(dataElementsMocks.multiple)(
+  "Allows the user to clear the root level",
+  async () => {
     await extensionViewController.init({
       propertySettings: {
         id: "PRabcd"
@@ -236,4 +236,5 @@ test
         }
       }
     });
-  });
+  }
+);

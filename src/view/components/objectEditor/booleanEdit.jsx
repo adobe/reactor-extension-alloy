@@ -14,10 +14,10 @@ import { useField } from "formik";
 import React, { useEffect, useState } from "react";
 import { Radio, RadioGroup } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
-import FormElementContainer from "../../../components/formElementContainer";
-import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
-import FormikRadioGroup from "../../../components/formikReactSpectrum3/formikRadioGroup";
-import DataElementSelector from "../../../components/dataElementSelector";
+import FormElementContainer from "../formElementContainer";
+import FormikTextField from "../formikReactSpectrum3/formikTextField";
+import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
+import DataElementSelector from "../dataElementSelector";
 
 const inputMethods = {
   CONSTANT: "constant",

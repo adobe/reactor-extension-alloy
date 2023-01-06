@@ -17,20 +17,20 @@ import { useField } from "formik";
 import { object, string } from "yup";
 import FormElementContainer from "../components/formElementContainer";
 import ExtensionView from "../components/extensionView";
-import validate from "./xdmObject/helpers/validate";
+import validate from "../components/objectEditor/helpers/validate";
 import render from "../render";
-import Editor from "./xdmObject/components/editor";
+import Editor from "../components/objectEditor/editor";
 import useReportAsyncError from "../utils/useReportAsyncError";
 import useChanged from "../utils/useChanged";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import FormikPagedComboBox from "../components/formikReactSpectrum3/formikPagedComboBox";
-import DEFAULT_SANDBOX_NAME from "./xdmObject/constants/defaultSandboxName";
+import DEFAULT_SANDBOX_NAME from "../components/objectEditor/constants/defaultSandboxName";
 import fetchSandboxes from "../utils/fetchSandboxes";
-import fetchSchemasMeta from "./xdmObject/helpers/fetchSchemasMeta";
-import fetchSchema from "./xdmObject/helpers/fetchSchema";
+import fetchSchemasMeta from "../components/objectEditor/helpers/fetchSchemasMeta";
+import fetchSchema from "../components/objectEditor/helpers/fetchSchema";
 
-import getInitialFormState from "./xdmObject/helpers/getInitialFormState";
-import getValueFromFormState from "./xdmObject/helpers/getValueFromFormState";
+import getInitialFormState from "../components/objectEditor/helpers/getInitialFormState";
+import getValueFromFormState from "../components/objectEditor/helpers/getValueFromFormState";
 import UserReportableError from "../errors/userReportableError";
 import sandboxItems from "../components/sandboxItems";
 

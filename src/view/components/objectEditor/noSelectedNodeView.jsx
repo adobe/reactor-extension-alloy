@@ -14,9 +14,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Flex, View } from "@adobe/react-spectrum";
 import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
-import Alert from "../../../components/alert";
+import Alert from "../alert";
 import PopulationAmountIndicator from "./populationAmountIndicator";
-import { EMPTY, PARTIAL, FULL } from "../constants/populationAmount";
+import { EMPTY, PARTIAL, FULL } from "./constants/populationAmount";
 import IndicatorDescription from "./indicatorDescription";
 
 /**

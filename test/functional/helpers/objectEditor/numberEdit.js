@@ -9,10 +9,10 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import spectrum from "../../../helpers/spectrum";
+import spectrum from "../spectrum";
 
 /**
- * Provides methods for managing form fields when editing a string node.
+ * Provides methods for managing form fields when editing a number node.
  */
 export default {
   enterValue: async text => {
@@ -20,11 +20,5 @@ export default {
   },
   expectValue: async text => {
     await spectrum.textField("valueField").expectValue(text);
-  },
-  expectExists: async () => {
-    await spectrum.textField("valueField").expectExists();
-  },
-  expectNotExists: async () => {
-    await spectrum.textField("valueField").expectNotExists();
   }
 };

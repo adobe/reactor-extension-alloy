@@ -12,13 +12,13 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
-import DataElementSelector from "../../../components/dataElementSelector";
+import FormikTextField from "../formikReactSpectrum3/formikTextField";
+import DataElementSelector from "../dataElementSelector";
 
 /**
- * The form for editing a number or integer field.
+ * The form for editing a string field.
  */
-const IntegerEdit = props => {
+const StringEdit = props => {
   const { fieldName } = props;
 
   return (
@@ -35,8 +35,8 @@ const IntegerEdit = props => {
   );
 };
 
-IntegerEdit.propTypes = {
+StringEdit.propTypes = {
   fieldName: PropTypes.string.isRequired
 };
 
-export default IntegerEdit;
+export default StringEdit;

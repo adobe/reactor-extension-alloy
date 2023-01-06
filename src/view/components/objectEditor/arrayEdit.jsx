@@ -15,15 +15,15 @@ import PropTypes from "prop-types";
 import { FieldArray, useField } from "formik";
 import { Radio, Button, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
-import FormikRadioGroup from "../../../components/formikReactSpectrum3/formikRadioGroup";
-import FormikTextField from "../../../components/formikReactSpectrum3/formikTextField";
-import DataElementSelector from "../../../components/dataElementSelector";
+import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
+import FormikTextField from "../formikReactSpectrum3/formikTextField";
+import DataElementSelector from "../dataElementSelector";
 import getInitialFormState, {
   formStateNodePropTypes
-} from "../helpers/getInitialFormState";
-import { PARTS, WHOLE } from "../constants/populationStrategy";
-import { ARRAY, OBJECT } from "../constants/schemaType";
-import FormElementContainer from "../../../components/formElementContainer";
+} from "./helpers/getInitialFormState";
+import { PARTS, WHOLE } from "./constants/populationStrategy";
+import { ARRAY, OBJECT } from "./constants/schemaType";
+import FormElementContainer from "../formElementContainer";
 
 /**
  * Displayed when the WHOLE population strategy is selected.

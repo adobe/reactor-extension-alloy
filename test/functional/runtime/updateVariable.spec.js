@@ -34,12 +34,15 @@ const container = {
   dataElements: {
     "XDM Object 1": {
       settings: {
-        schemaType: "xdm",
         cacheId: "47ec6bcf-a41a-4dde-8883-88c18a867d70",
-        sandbox: "prod",
-        schemaId:
-          "https://ns.adobe.com/unifiedjsqeonly/schemas/75bc29dc603dbb5c8ba7c9f5be97b852a48772ccc69d0921",
-        schemaVersion: "1.1"
+        sandbox: {
+          name: "prod"
+        },
+        schema: {
+          id:
+            "https://ns.adobe.com/unifiedjsqeonly/schemas/75bc29dc603dbb5c8ba7c9f5be97b852a48772ccc69d0921",
+          version: "1.1"
+        }
       },
       cleanText: false,
       forceLowerCase: false,
@@ -61,7 +64,7 @@ const container = {
         {
           modulePath: "adobe-alloy/dist/lib/actions/updateVariable/index.js",
           settings: {
-            dataElement: "47ec6bcf-a41a-4dde-8883-88c18a867d70",
+            dataElementCacheId: "47ec6bcf-a41a-4dde-8883-88c18a867d70",
             data: {
               device: {
                 colorDepth: 42

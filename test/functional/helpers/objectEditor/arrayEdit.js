@@ -10,12 +10,21 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import spectrum from "../../../helpers/spectrum";
+import spectrum from "../spectrum";
 
 /**
- * Provides methods for managing form fields when editing an object node.
+ * Provides methods for managing form fields when editing an array node.
  */
 export default {
+  addItem: async () => {
+    await spectrum.button("addItemButton").click();
+  },
+  removeItem: async index => {
+    await spectrum.button(`item${index}RemoveButton`).click();
+  },
+  clickItem: async index => {
+    await spectrum.button(`item${index}SelectButton`).click();
+  },
   selectPartsPopulationStrategy: async () => {
     await spectrum.radio("partsPopulationStrategyField").click();
   },

@@ -14,7 +14,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useFormikContext } from "formik";
 import { Breadcrumbs, Checkbox, Flex, Item, View } from "@adobe/react-spectrum";
-import getNodeEditData from "../helpers/getNodeEditData";
+import getNodeEditData from "./helpers/getNodeEditData";
 import AutoPopulationAlert from "./autoPopulationAlert";
 import {
   ARRAY,
@@ -22,18 +22,18 @@ import {
   INTEGER,
   NUMBER,
   OBJECT
-} from "../constants/schemaType";
+} from "./constants/schemaType";
 import ArrayEdit from "./arrayEdit";
 import BooleanEdit from "./booleanEdit";
 import IntegerEdit from "./integerEdit";
 import NumberEdit from "./numberEdit";
 import ObjectEdit from "./objectEdit";
 import StringEdit from "./stringEdit";
-import Heading from "../../../components/typography/heading";
-import { ALWAYS, NONE } from "../constants/autoPopulationSource";
+import Heading from "../typography/heading";
+import { ALWAYS, NONE } from "./constants/autoPopulationSource";
 import "./nodeEdit.styl";
-import FormikCheckbox from "../../../components/formikReactSpectrum3/formikCheckbox";
-import FieldDescriptionAndError from "../../../components/fieldDescriptionAndError";
+import FormikCheckbox from "../formikReactSpectrum3/formikCheckbox";
+import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
 const getViewBySchemaType = schemaType => {
   switch (schemaType) {

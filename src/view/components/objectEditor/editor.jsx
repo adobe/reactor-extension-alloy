@@ -17,8 +17,8 @@ import { Flex, View } from "@adobe/react-spectrum";
 import XdmTree, { scrollNodeIntoView } from "./xdmTree";
 import NodeEdit from "./nodeEdit";
 import NoSelectedNodeView from "./noSelectedNodeView";
-import getNodeEditData from "../helpers/getNodeEditData";
-import { ARRAY, OBJECT } from "../constants/schemaType";
+import getNodeEditData from "./helpers/getNodeEditData";
+import { ARRAY, OBJECT } from "./constants/schemaType";
 
 const fetchNodeIdsForDepth = (formStateNode, depth) => {
   if (depth === 0) {

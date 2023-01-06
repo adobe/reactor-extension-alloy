@@ -14,7 +14,7 @@ import { t } from "testcafe";
 import {
   createTestIdSelector,
   createTestIdSelectorString
-} from "../../../helpers/dataTestIdSelectors";
+} from "../dataTestIdSelectors";
 
 const nodeEdit = createTestIdSelector("nodeEdit");
 const heading = createTestIdSelector("heading");

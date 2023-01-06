@@ -14,10 +14,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Tree } from "antd";
 import { useFormikContext } from "formik";
-import generateTreeStructure from "../helpers/generateTreeStructure";
-import getNodeIdsToExpandForValidation from "../helpers/getNodeIdsToExpandForValidation";
+import generateTreeStructure from "./helpers/generateTreeStructure";
+import getNodeIdsToExpandForValidation from "./helpers/getNodeIdsToExpandForValidation";
 import XdmTreeNodeTitle from "./xdmTreeNodeTitle";
-import useNewlyValidatedFormSubmission from "../../../utils/useNewlyValidatedFormSubmission";
+import useNewlyValidatedFormSubmission from "../../utils/useNewlyValidatedFormSubmission";
 // Importing Ant's tree styles in other ways can bring in global styles
 // that affect all elements which, at the time this is written, negatively affects things
 // like positioning of error icons within react-spectrum textfields when the field

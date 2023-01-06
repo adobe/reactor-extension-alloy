@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { FULL, PARTIAL, EMPTY, BLANK } from "../constants/populationAmount";
+import { FULL, PARTIAL, EMPTY, BLANK } from "./constants/populationAmount";
 import "./populationAmountIndictor.styl";
 
 const PopulationAmountIndicator = ({ className, populationAmount }) => {
