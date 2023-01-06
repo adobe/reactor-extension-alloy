@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import escapeStringRegexp from "escape-string-regexp";
-import fetchFromPlatform from "../../../utils/fetchFromPlatform";
+import fetchFromPlatform from "./fetchFromPlatform";
 
 const metaClass = encodeURIComponent(
   "https://ns.adobe.com/xdm/context/experienceevent"

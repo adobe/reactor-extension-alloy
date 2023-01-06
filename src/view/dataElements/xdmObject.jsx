@@ -26,8 +26,8 @@ import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import FormikPagedComboBox from "../components/formikReactSpectrum3/formikPagedComboBox";
 import DEFAULT_SANDBOX_NAME from "../components/objectEditor/constants/defaultSandboxName";
 import fetchSandboxes from "../utils/fetchSandboxes";
-import fetchSchemasMeta from "../components/objectEditor/helpers/fetchSchemasMeta";
-import fetchSchema from "../components/objectEditor/helpers/fetchSchema";
+import fetchSchemasMeta from "../utils/fetchSchemasMeta";
+import fetchSchema from "../utils/fetchSchema";
 
 import getInitialFormState from "../components/objectEditor/helpers/getInitialFormState";
 import getValueFromFormState from "../components/objectEditor/helpers/getValueFromFormState";

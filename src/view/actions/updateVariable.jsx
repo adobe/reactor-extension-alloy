@@ -20,7 +20,7 @@ import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
 import getValueFromFormState from "../components/objectEditor/helpers/getValueFromFormState";
 import fetchDataElements from "../utils/fetchDataElements";
-import fetchSchema from "../components/objectEditor/helpers/fetchSchema";
+import fetchSchema from "../utils/fetchSchema";
 import Editor from "../components/objectEditor/editor";
 import getInitialFormState from "../components/objectEditor/helpers/getInitialFormState";
 import FormikPagedComboBox from "../components/formikReactSpectrum3/formikPagedComboBox";
