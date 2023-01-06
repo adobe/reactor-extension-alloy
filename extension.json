@@ -396,15 +396,29 @@
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
         "properties": {
-          "dataElement": {
+          "dataElementCacheId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "dataElementId": {
             "type": "string",
             "minLength": 1
           },
           "data": {
             "type": "object"
+          },
+          "transforms": {
+            "type": "object"
           }
-        }
+        },
+        "required": ["dataElementCacheId", "dataElementId"]
       },
+      "transforms": [
+        {
+          "type": "remove",
+          "propertyPath": "dataElementId"
+        }
+      ],
       "libPath": "dist/lib/actions/updateVariable/index.js",
       "viewPath": "actions/updateVariable.html"
     }
@@ -531,44 +545,42 @@
             "type": "string",
             "minLength": 1
           },
-          "type": {
-            "type": "string",
-            "enum": ["xdm", "object"]
-          },
           "sandbox": {
-            "type": "string",
-            "minLength": 1
-          },
-          "schemaId": {
-            "type": "string",
-            "minLength": 1
-          },
-          "schemaVersion": {
-            "type": "string",
-            "minLength": 1
-          },
-          "transforms": [
-            {
-              "type": "remove",
-              "propertyPath": "type"
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              }
             },
-            {
-              "type": "remove",
-              "propertyPath": "sandbox"
+            "required": ["name"],
+            "additionalProperties": false
+          },
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              }
             },
-            {
-              "type": "remove",
-              "propertyPath": "schemaId"
-            },
-            {
-              "type": "remove",
-              "propertyPath": "schemaVersion"
-            }
-          ],
-          "required": ["cacheId"],
+            "required": ["id", "version"],
+            "additionalProperties": false
+          },
+          "required": ["cacheId", "sandbox", "schema"],
           "additionalProperties": false
         }
       },
+      "transforms": [
+        {
+          "type": "remove",
+          "propertyPath": "schema"
+        }
+      ],
       "libPath": "dist/lib/dataElements/variable/index.js",
       "viewPath": "dataElements/variable.html"
     }

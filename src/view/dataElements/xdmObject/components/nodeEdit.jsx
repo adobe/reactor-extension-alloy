@@ -112,7 +112,12 @@ const NodeEdit = props => {
               messagePaddingTop="size-0"
               messagePaddingStart="size-300"
             >
-              <Checkbox isSelected isDisabled width="size-5000">
+              <Checkbox
+                data-test-id="clearField"
+                isSelected
+                isDisabled
+                width="size-5000"
+              >
                 Clear existing value
               </Checkbox>
             </FieldDescriptionAndError>

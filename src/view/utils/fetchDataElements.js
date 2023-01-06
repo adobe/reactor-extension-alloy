@@ -12,17 +12,18 @@ governing permissions and limitations under the License.
 import fetchFromReactor from "./fetchFromReactor";
 import UserReportableError from "../errors/userReportableError";
 
-// delegateDescriptorId would be something like this: "adobe-alloy::dataElements::object-variable"
+// EXTENSION_NAME will be replace with this extension's name
+const DELEGATE_DESCRIPTOR_ID = "__EXTENSION_NAME__::dataElements::variable";
+
 const fetchDataElements = async ({
   orgId,
   imsAccess,
   propertyId,
   search = "",
   page = 1,
-  signal,
-  delegateDescriptorId
+  signal
 }) => {
-  let allResults = [];
+  const allResults = [];
   let nextPage = page;
   while (allResults.length < 2 && nextPage) {
     const params = {
@@ -35,6 +36,7 @@ const fetchDataElements = async ({
 
     let parsedResponse;
     try {
+      // eslint-disable-next-line no-await-in-loop
       parsedResponse = await fetchFromReactor({
         orgId,
         imsAccess,
@@ -55,7 +57,7 @@ const fetchDataElements = async ({
     parsedResponse.parsedBody.data
       .filter(
         ({ attributes: { delegate_descriptor_id: other } }) =>
-          delegateDescriptorId === other
+          DELEGATE_DESCRIPTOR_ID === other
       )
       .map(({ id, attributes: { name, settings } }) => ({
         id,
@@ -66,52 +68,7 @@ const fetchDataElements = async ({
 
     nextPage = parsedResponse.parsedBody.meta.pagination.next_page;
   }
-  /*
-  results.push(
-    {
-      id: "id1",
-      name: "XDM Variable 1",
-      settings: {
-        schemaType: "xdm",
-        sandbox: "prod",
-        schemaId:
-          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        schemaVersion: "1.4",
-        cacheId: "3b74bab6-8563-459d-b7e3-c75bea8f5c4d"
-      }
-    },
-    {
-      id: "id2",
-      name: "XDM Variable 2",
-      settings: {
-        schemaType: "xdm",
-        sandbox: "prod",
-        schemaId:
-          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        schemaVersion: "1.4",
-        cacheId: "777c1327-dfe4-4a03-a4d3-6a35cb724d4f"
-      }
-    },
-    {
-      id: "id3",
-      name: "Data variable 1",
-      settings: {
-        schemaType: "object",
-        cacheId: "a1bc4d62-80c0-4a50-9c3f-8c7fcd176c33"
-      }
-    },
-    {
-      id: "id4",
-      name: "Data variable 2",
-      settings: {
-        schemaType: "object",
-        cacheId: "5b1fc1fc-ba06-469a-b631-97392d03183b"
-      }
-    }
-  );
-  */
 
-  console.log("Fetch Data elements", allResults, nextPage);
   return { results: allResults, nextPage };
 };
 

@@ -86,8 +86,7 @@ const getInitialValues = context => async ({ initInfo }) => {
   } = await fetchDataElements({
     orgId,
     imsAccess,
-    propertyId,
-    delegateDescriptorId: "adobe-alloy::dataElements::variable"
+    propertyId
   });
 
   context.dataElementsFirstPage = dataElementsFirstPage;
@@ -100,7 +99,10 @@ const getInitialValues = context => async ({ initInfo }) => {
       imsAccess,
       dataElementId
     });
-  } else if (dataElementsFirstPage.length === 1 && dataElementsFirstPageCursor === null) {
+  } else if (
+    dataElementsFirstPage.length === 1 &&
+    dataElementsFirstPageCursor === null
+  ) {
     dataElement = dataElementsFirstPage[0];
   }
   initialValues.dataElement = dataElement;
@@ -125,7 +127,6 @@ const getInitialValues = context => async ({ initInfo }) => {
 };
 
 const getSettings = ({ values }) => {
-  console.log(values);
   const { dataElement } = values;
   const { id: dataElementId, settings } = dataElement || {};
   const { cacheId: dataElementCacheId } = settings || {};
@@ -133,7 +134,8 @@ const getSettings = ({ values }) => {
   const transforms = {};
 
   // everything is prefixed with "xdm", lets change that to data.
-  const { xdm = {} } = getValueFromFormState({ formStateNode: values, transforms }) || {};
+  const { xdm = {} } =
+    getValueFromFormState({ formStateNode: values, transforms }) || {};
   const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
     memo[key.substring(4)] = transforms[key];
     return memo;
@@ -197,8 +199,7 @@ const UpdateVariable = ({ initInfo, formikProps: { resetForm }, context }) => {
         propertyId,
         search: filterText,
         page: cursor || 1,
-        signal,
-        delegateDescriptorId: "adobe-alloy::dataElements::variable"
+        signal
       });
 
       return {

@@ -114,6 +114,7 @@
     "mockvisitor": "file:test/functional/runtime/mockVisitor",
     "npm-run-all": "^4.1.5",
     "parcel": "^2.4.1",
+    "parcel-transformer-extension-name": "file:scripts/helpers/parcel-transformer-extension-name",
     "prettier": "^1.17.0",
     "process": "^0.11.10",
     "puppeteer": "^7.1.0",
