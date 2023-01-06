@@ -80,16 +80,16 @@ const buildComponentFixtures = async () => {
 
   if (chrome) {
     browsers = "saucelabs:Chrome@latest:macOS 11.00";
-    concurrency = 6;
+    concurrency = 4;
   } else if (firefox) {
     browsers = "saucelabs:Firefox@latest:macOS 11.00";
-    concurrency = 2;
+    concurrency = 4;
   } else if (safari) {
     browsers = "saucelabs:Safari@latest:macOS 11.00";
-    concurrency = 6;
+    concurrency = 4;
   } else if (edge) {
     browsers = "saucelabs:MicrosoftEdge@latest:Windows 10";
-    concurrency = 6;
+    concurrency = 4;
   } else {
     concurrency = 1;
     browsers = "chrome";
@@ -130,7 +130,7 @@ const buildComponentFixtures = async () => {
       selectorTimeout: 50000,
       assertionTimeout: 7000,
       pageLoadTimeout: 8000,
-      speed: 1,
+      speed: 0.01,
       stopOnFirstFail: true
     });
   testcafe.close();
