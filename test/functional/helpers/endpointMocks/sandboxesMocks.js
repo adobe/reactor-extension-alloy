@@ -132,7 +132,6 @@ export const longLasting = RequestMock()
     });
   });
 
-
 export const multipleWithoutDefault = RequestMock()
   .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: "GET" })
   .respond(
