@@ -211,3 +211,29 @@ test.requestHooks(dataElementsMocks.multiple, dataElementMocks.element2)(
     await clearField.expectDisabled();
   }
 );
+
+test
+  .requestHooks(dataElementsMocks.multiple)
+  .only("Allows the user to clear the root level", async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd"
+      }
+    });
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 2");
+    await xdmTree.node("xdm").click();
+    await clearField.click();
+
+    const settings = await extensionViewController.getSettings();
+    await t.expect(settings).eql({
+      data: {},
+      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1954",
+      dataElementId: "DE2",
+      transforms: {
+        "": {
+          clear: true
+        }
+      }
+    });
+  });
