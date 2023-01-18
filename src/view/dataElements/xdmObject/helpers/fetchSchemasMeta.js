@@ -14,7 +14,7 @@ import escapeStringRegexp from "escape-string-regexp";
 import fetchFromPlatform from "../../../utils/fetchFromPlatform";
 import UserReportableError from "../../../errors/userReportableError";
 
-const metaExtends = encodeURIComponent(
+const metaClass = encodeURIComponent(
   "https://ns.adobe.com/xdm/context/experienceevent"
 );
 
@@ -30,8 +30,9 @@ export default async ({
   const path = `/data/foundation/schemaregistry/tenant/schemas`;
 
   const params = new URLSearchParams();
-  params.append("orderby", "title");
-  params.append("property", `meta:extends==${metaExtends}`);
+  // Ordering makes this run super slow!
+  // params.append("orderby", "title");
+  params.append("property", `meta:class==${metaClass}`);
 
   if (search) {
     // We escape regex special characters because ~ in the querystring

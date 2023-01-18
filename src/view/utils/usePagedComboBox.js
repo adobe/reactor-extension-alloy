@@ -34,7 +34,9 @@ const usePagedComboBox = ({
   defaultSelectedItem,
   loadItems,
   getKey,
-  getLabel
+  getLabel,
+  firstPage,
+  firstPageCursor
 }) => {
   // This state management has been attempted using useState and
   // useReducer, but it ended up complicating the implementation because
@@ -47,13 +49,15 @@ const usePagedComboBox = ({
   // is that we have/get to control when re-renders occur.
   const forceRender = useForceRender();
   const dataRef = useRef({
-    items: [],
+    items: firstPage || [],
     selectedItem: defaultSelectedItem || null,
     inputValue: defaultSelectedItem ? getLabel(defaultSelectedItem) : "",
     loadingState: LOADING_STATE.IDLE,
     showAll: true,
-    cursor: null,
-    abortController: null
+    cursor: firstPageCursor,
+    abortController: null,
+    firstPage: firstPage || [],
+    firstPageCursor
   });
 
   const setData = changes => {
@@ -123,7 +127,6 @@ const usePagedComboBox = ({
       if (e.name !== "AbortError") {
         // We do not throw the error because we expect that loadItems
         // catches the error and has handled it however it sees fit.
-        console.error("Error loading items", e);
         return;
       }
     }
@@ -132,31 +135,40 @@ const usePagedComboBox = ({
       return;
     }
 
-    setData({
+    const newData = {
       items: dataRef.current.cursor
         ? dataRef.current.items.concat(newItems)
         : newItems,
       cursor: newCursor,
       loadingState: LOADING_STATE.IDLE
-    });
+    };
+    if (loadItemsArgs.filterText === "") {
+      newData.firstPage = newData.items;
+      newData.firstPageCursor = newData.cursor;
+    }
+    setData(newData);
   };
 
   // Prep the first page of unfiltered results so it will be ready
   // if the user opens the menu manually.
   useEffect(() => {
-    load(LOADING_STATE.LOADING);
+    if (dataRef.current.items.length === 0) {
+      load(LOADING_STATE.LOADING);
+    }
   }, []);
 
   let result = {
-    setSelectedItem: item => {
+    clear: () => {
       setData({
-        selectedItem: item,
-        inputValue: item ? getLabel(item) : "",
+        items: [],
+        inputValue: "",
         cursor: null
       });
+      load(LOADING_STATE.LOADING);
     },
     onInputChange: inputText => {
       setData({
+        items: [],
         inputValue: inputText,
         showAll: false,
         cursor: null
@@ -172,13 +184,15 @@ const usePagedComboBox = ({
     },
     onOpenChange: isOpen => {
       if (!isOpen) {
-        // Prep the first page of unfiltered results so it will be ready
-        // if the user opens the menu manually.
         setData({
-          showAll: true,
-          cursor: null
+          items: dataRef.current.firstPage,
+          cursor: dataRef.current.firstPageCursor,
+          loadingState: LOADING_STATE.IDLE,
+          showAll: true
         });
-        load(LOADING_STATE.LOADING);
+        if (dataRef.current.firstPage.length === 0) {
+          load(LOADING_STATE.LOADING);
+        }
       }
     },
     onLoadMore: () => {
@@ -188,9 +202,6 @@ const usePagedComboBox = ({
       ) {
         load(LOADING_STATE.LOADING_MORE);
       }
-    },
-    reload: () => {
-      load(LOADING_STATE.LOADING);
     }
   };
 

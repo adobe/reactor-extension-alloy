@@ -10,35 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import fetchSchema from "../fetchSchema";
+import { Item } from "@adobe/react-spectrum";
+import React from "react";
 
-const fetchSchemaUsingAsyncErrorReporting = async ({
-  orgId,
-  imsAccess,
-  sandbox,
-  schemaId,
-  schemaVersion,
-  signal,
-  reportAsyncError
-}) => {
-  let schema;
+// I would create a SandboxItem component, but react-spectrum doesn't let
+// you wrap Items. See https://github.com/adobe/react-spectrum/issues/2746
+// Instead, this is a function you can use as the inside of a Picker.
+const sandboxItems = item => {
+  const region = item.region ? ` (${item.region.toUpperCase()})` : "";
+  const label = `${item.type.toUpperCase()} ${item.title}${region}`;
 
-  try {
-    schema = await fetchSchema({
-      orgId,
-      imsAccess,
-      schemaId,
-      schemaVersion,
-      sandboxName: sandbox.name,
-      signal
-    });
-  } catch (e) {
-    if (e.name !== "AbortError") {
-      reportAsyncError(e);
-    }
-  }
-
-  return schema;
+  return <Item key={item.name}>{label}</Item>;
 };
 
-export default fetchSchemaUsingAsyncErrorReporting;
+export default sandboxItems;

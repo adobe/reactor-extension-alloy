@@ -32,6 +32,7 @@ const ExtensionView = ({
   const [initInfo, setInitInfo] = useState();
   const viewRegistrationRef = useRef();
   const formikPropsRef = useRef();
+  const getInitialValuesPromiseRef = useRef();
   formikPropsRef.current = useFormik({
     onSubmit: () => {},
     validate: values => {
@@ -110,6 +111,9 @@ const ExtensionView = ({
       }
     },
     async validate() {
+      if (getInitialValuesPromiseRef.current) {
+        await getInitialValuesPromiseRef.current;
+      }
       const results = await Promise.all([
         myValidateFormikState(),
         myValidateNonFormikState()
@@ -142,8 +146,10 @@ const ExtensionView = ({
     useEffect(async () => {
       if (initInfo) {
         try {
+          const getInitialValuesPromise = getInitialValues({ initInfo });
+          getInitialValuesPromiseRef.current = getInitialValuesPromise;
           formikPropsRef.current.resetForm({
-            values: await getInitialValues({ initInfo })
+            values: await getInitialValuesPromise
           });
         } catch (e) {
           reportAsyncError(e);
