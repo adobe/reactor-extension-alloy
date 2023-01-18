@@ -405,7 +405,15 @@
             "minLength": 1
           },
           "data": {
-            "type": "object"
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "string",
+                "minLength": 1
+              }
+            ]
           },
           "transforms": {
             "type": "object"
