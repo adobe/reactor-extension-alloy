@@ -11,8 +11,9 @@ governing permissions and limitations under the License.
 */
 
 import { t } from "testcafe";
-import createRuntimeFixture from "./helpers/createRuntimeFixture";
 import createNetworkLogger from "./helpers/createNetworkLogger";
+import appendLaunchLibrary from "./helpers/appendLaunchLibrary";
+import { TEST_PAGE } from "./helpers/constants/url";
 
 const networkLogger = createNetworkLogger();
 
@@ -91,13 +92,12 @@ const container = {
   }
 };
 
-createRuntimeFixture({
-  title: "Send event",
-  container,
-  requestHooks: [networkLogger.edgeEndpointLogs]
-});
+fixture("Send event")
+  .page(TEST_PAGE)
+  .requestHooks([networkLogger.edgeEndpointLogs]);
 
 test("Sends an event", async () => {
+  await appendLaunchLibrary(container);
   // The requestLogger.count method uses TestCafe's smart query
   // assertion mechanism, so it will wait for the request to be
   // made or a timeout is reached.

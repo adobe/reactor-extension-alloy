@@ -20,10 +20,12 @@ import prehidingSnippet from "./constants/prehidingSnippet";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import FormElementContainer from "../components/formElementContainer";
+import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 
 export const bridge = {
   getInstanceDefaults: () => ({
-    prehidingStyle: ""
+    prehidingStyle: "",
+    targetMigrationEnabled: false
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
@@ -32,7 +34,7 @@ export const bridge = {
       toObj: instanceValues,
       fromObj: instanceSettings,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["prehidingStyle"]
+      keys: ["prehidingStyle", "targetMigrationEnabled"]
     });
 
     return instanceValues;
@@ -44,7 +46,7 @@ export const bridge = {
       toObj: instanceSettings,
       fromObj: instanceValues,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["prehidingStyle"]
+      keys: ["prehidingStyle", "targetMigrationEnabled"]
     });
 
     return instanceSettings;
@@ -58,6 +60,15 @@ const PersonalizationSection = ({ instanceFieldName }) => {
         Personalization
       </SectionHeader>
       <FormElementContainer>
+        <FormikCheckbox
+          data-test-id="targetMigrationEnabledField"
+          name={`${instanceFieldName}.targetMigrationEnabled`}
+          description="Use this option to enable the Web SDK to read and write the legacy
+          mbox and mboxEdgeCluster cookies that are used by at.js 1.x or 2.x libraries. This helps you keep the visitor profile while moving from a page that uses the Web SDK to a page that uses the at.js 1.x or 2.x libraries and vice-versa."
+          width="size-5000"
+        >
+          Migrate Target from at.js to the Web SDK
+        </FormikCheckbox>
         <CodeField
           data-test-id="prehidingStyleEditButton"
           label="Prehiding style"

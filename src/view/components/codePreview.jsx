@@ -12,7 +12,13 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { ActionButton, Text, TextArea, View } from "@adobe/react-spectrum";
+import {
+  ActionButton,
+  LabeledValue,
+  Text,
+  TextArea,
+  View
+} from "@adobe/react-spectrum";
 import CodeIcon from "@spectrum-icons/workflow/Code";
 import FieldDescriptionAndError from "./fieldDescriptionAndError";
 import "./codePreview.styl";
@@ -30,12 +36,15 @@ const CodePreview = ({
     // To get this element to shrink to its contents, we had to use
     // alignSelf="flex-start" because this is currently a child of
     // a flex container (flex items are stretched by default).
+    // Also, we use a labeledValue element instead of putting the
+    // label on the textarea because there is a bug in react-spectrum
+    // textarea sizing when there is a label on it.
     <View position="relative" alignSelf="flex-start">
+      <LabeledValue label={label} />
       <FieldDescriptionAndError description={description} error={error}>
         <TextArea
           width="size-5000"
           height="size-1600"
-          label={label}
           value={value}
           isDisabled
           UNSAFE_className="CodePreview-textArea"

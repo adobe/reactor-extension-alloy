@@ -37,6 +37,18 @@ const CONTEXT_WEB = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
   contextKey: contextKey.WEB
 };
+// fields that are auto-populated as part of the "web" context
+const CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS = {
+  autoPopulationSource: autoPopulationSource.CONTEXT,
+  contextKey: contextKey.HIGH_ENTROPY_USER_AGENT_HINTS
+};
+
+const CONTEXT_ENVIRONMENT_AND_HIGH_ENTROPY_USER_AGENT_HINTS = {
+  autoPopulationSource: autoPopulationSource.CONTEXT,
+  contextKey: `${contextKey.ENVIRONMENT} or ${
+    contextKey.HIGH_ENTROPY_USER_AGENT_HINTS
+  }`
+};
 
 // These properties are applied to the form state in "getInitialFormState.js"
 export default {
@@ -54,9 +66,9 @@ export default {
   "device.screenHeight": CONTEXT_DEVICE,
   "device.screenWidth": CONTEXT_DEVICE,
   "device.screenOrientation": CONTEXT_DEVICE,
-  environment: CONTEXT_ENVIRONMENT,
+  environment: CONTEXT_ENVIRONMENT_AND_HIGH_ENTROPY_USER_AGENT_HINTS,
   "environment.type": CONTEXT_ENVIRONMENT,
-  "environment.browserDetails": CONTEXT_ENVIRONMENT,
+  "environment.browserDetails": CONTEXT_ENVIRONMENT_AND_HIGH_ENTROPY_USER_AGENT_HINTS,
   "environment.browserDetails.viewportWidth": CONTEXT_ENVIRONMENT,
   "environment.browserDetails.viewportHeight": CONTEXT_ENVIRONMENT,
   placeContext: CONTEXT_PLACE_CONTEXT,
@@ -66,5 +78,11 @@ export default {
   "web.webPageDetails": CONTEXT_WEB,
   "web.webPageDetails.URL": CONTEXT_WEB,
   "web.webReferrer": CONTEXT_WEB,
-  "web.webReferrer.URL": CONTEXT_WEB
+  "web.webReferrer.URL": CONTEXT_WEB,
+  "environment.browserDetails.userAgentClientHints": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
+  "environment.browserDetails.userAgentClientHints.architecture": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
+  "environment.browserDetails.userAgentClientHints.bitness": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
+  "environment.browserDetails.userAgentClientHints.model": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
+  "environment.browserDetails.userAgentClientHints.platformVersion": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
+  "environment.browserDetails.userAgentClientHints.wow64": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS
 };

@@ -108,6 +108,8 @@ for (let i = 0; i < 3; i += 1) {
     // Due to limitations of the sandbox where tests are run,
     // testing prehiding style viewing/editing is limited.
     prehidingStyleEditButton: spectrum.button("prehidingStyleEditButton"),
+    targetMigrationEnabled: spectrum.checkbox("targetMigrationEnabledField"),
+
     clickCollectionEnabledField: spectrum.checkbox(
       "clickCollectionEnabledField"
     ),
@@ -129,7 +131,10 @@ for (let i = 0; i < 3; i += 1) {
       webField: spectrum.checkbox("contextWebField"),
       deviceField: spectrum.checkbox("contextDeviceField"),
       environmentField: spectrum.checkbox("contextEnvironmentField"),
-      placeContextField: spectrum.checkbox("contextPlaceContextField")
+      placeContextField: spectrum.checkbox("contextPlaceContextField"),
+      highEntropyUserAgentHintsContextField: spectrum.checkbox(
+        "contextHighEntropyUserAgentHintsField"
+      )
     },
     deleteButton: spectrum.button("deleteInstanceButton")
   });
