@@ -12,10 +12,38 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
+import { Link } from "@adobe/react-spectrum";
 import EdgeConfigEnvironment from "./edgeConfigEnvironment";
 import { DEVELOPMENT, PRODUCTION, STAGING } from "./constants/environmentType";
+import Alert from "../components/alert";
 
 const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
+  const { current } = context;
+  const { fetchSandboxError, fetchConfigsError } = current;
+  if (fetchSandboxError || fetchConfigsError) {
+    return (
+      <Alert
+        data-test-id="alertErrorFetchingConfigs"
+        variant="informative"
+        title="Error loading configurations for this organization."
+        width="size-5000"
+        marginTop="size-100"
+      >
+        You do not have enough permissions to fetch the organization
+        configurations. See the documentation for{" "}
+        <Link>
+          <a
+            href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            data collection permission management
+          </a>
+        </Link>{" "}
+        for more information.
+      </Alert>
+    );
+  }
   return (
     <>
       <EdgeConfigEnvironment
