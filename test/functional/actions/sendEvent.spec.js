@@ -25,17 +25,31 @@ const datasetIdField = spectrum.textField("datasetIdField");
 const documentUnloadingField = spectrum.checkbox("documentUnloadingField");
 const renderDecisionsField = spectrum.checkbox("renderDecisionsField");
 const scopeDataElementField = spectrum.textField("scopeDataElementField");
+const surfaceDataElementField = spectrum.textField("surfaceDataElementField");
 const scopesRadioGroup = {
-  dataElement: spectrum.radio("dataElementOptionField"),
-  values: spectrum.radio("constantOptionField")
+  dataElement: spectrum.radio("scopeDataElementOptionField"),
+  values: spectrum.radio("scopeConstantOptionField")
+};
+const surfacesRadioGroup = {
+  dataElement: spectrum.radio("surfaceDataElementOptionField"),
+  values: spectrum.radio("surfaceConstantOptionField")
 };
 const addDecisionScopeButton = spectrum.button("addDecisionScopeButton");
+const addSurfaceButton = spectrum.button("addSurfaceButton");
 const scopeArrayValues = [];
+const surfaceArrayValues = [];
 
 for (let i = 0; i < 3; i += 1) {
   scopeArrayValues.push({
     value: spectrum.textField(`scope${i}Field`),
     deleteButton: spectrum.button(`deleteScope${i}Button`)
+  });
+}
+
+for (let i = 0; i < 3; i += 1) {
+  surfaceArrayValues.push({
+    value: spectrum.textField(`surface${i}Field`),
+    deleteButton: spectrum.button(`deleteSurface${i}Button`)
   });
 }
 
@@ -70,7 +84,10 @@ test("initializes form fields with full settings, when decision scopes is data e
       xdm: "%myDataLayer%",
       data: "%myData%",
       mergeId: "%myMergeId%",
-      decisionScopes: "%myDecisionScope%",
+      personalization: {
+        decisionScopes: "%myDecisionScope%",
+        surfaces: "%mySurface%"
+      },
       datasetId: "%myDatasetId%",
       documentUnloading: true,
       renderDecisions: true
@@ -87,14 +104,20 @@ test("initializes form fields with full settings, when decision scopes is data e
   await scopesRadioGroup.dataElement.expectChecked();
   await scopesRadioGroup.values.expectUnchecked();
   await scopeDataElementField.expectValue("%myDecisionScope%");
+  await surfacesRadioGroup.dataElement.expectChecked();
+  await surfacesRadioGroup.values.expectUnchecked();
+  await surfaceDataElementField.expectValue("%mySurface%");
 });
 
-test("initializes decision scopes form fields, when decision scopes is an array of scopes", async () => {
+test("initializes legacy decision scopes form fields, when decision scopes is an array of scopes", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy1",
-      decisionScopes: ["foo1", "foo2", "foo3"]
+      decisionScopes: ["foo1", "foo2", "foo3"],
+      personalization: {
+        surfaces: ["web://bar1", "web://bar2", "web://bar3"]
+      }
     }
   });
   await scopesRadioGroup.values.expectChecked();
@@ -102,6 +125,34 @@ test("initializes decision scopes form fields, when decision scopes is an array 
   await scopeArrayValues[0].value.expectValue("foo1");
   await scopeArrayValues[1].value.expectValue("foo2");
   await scopeArrayValues[2].value.expectValue("foo3");
+  await surfacesRadioGroup.values.expectChecked();
+  await surfaceDataElementField.expectError;
+  await surfaceArrayValues[0].value.expectValue("web://bar1");
+  await surfaceArrayValues[1].value.expectValue("web://bar2");
+  await surfaceArrayValues[2].value.expectValue("web://bar3");
+});
+
+test("initializes decision scopes and surfaces form fields, when these are arrays", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings,
+    settings: {
+      instanceName: "alloy1",
+      personalization: {
+        decisionScopes: ["foo1", "foo2", "foo3"],
+        surfaces: ["web://bar1", "web://bar2", "web://bar3"]
+      }
+    }
+  });
+  await scopesRadioGroup.values.expectChecked();
+  await scopeDataElementField.expectError;
+  await scopeArrayValues[0].value.expectValue("foo1");
+  await scopeArrayValues[1].value.expectValue("foo2");
+  await scopeArrayValues[2].value.expectValue("foo3");
+  await surfacesRadioGroup.values.expectChecked();
+  await surfaceDataElementField.expectError;
+  await surfaceArrayValues[0].value.expectValue("web://bar1");
+  await surfaceArrayValues[1].value.expectValue("web://bar2");
+  await surfaceArrayValues[2].value.expectValue("web://bar3");
 });
 
 test("initializes form fields with minimal settings", async () => {
@@ -122,6 +173,8 @@ test("initializes form fields with minimal settings", async () => {
   await renderDecisionsField.expectUnchecked();
   await scopesRadioGroup.dataElement.expectUnchecked();
   await scopeArrayValues[0].value.expectValue("");
+  await surfacesRadioGroup.dataElement.expectUnchecked();
+  await surfaceArrayValues[0].value.expectValue("");
 });
 
 test("initializes form fields with no settings", async () => {
@@ -139,6 +192,9 @@ test("initializes form fields with no settings", async () => {
   await scopesRadioGroup.values.expectChecked();
   await scopesRadioGroup.dataElement.expectUnchecked();
   await scopeArrayValues[0].value.expectValue("");
+  await surfacesRadioGroup.values.expectChecked();
+  await surfacesRadioGroup.dataElement.expectUnchecked();
+  await surfaceArrayValues[0].value.expectValue("");
 });
 
 test("returns minimal valid settings", async () => {
@@ -167,6 +223,8 @@ test("returns full valid settings with decision scopes as data element", async (
   await renderDecisionsField.click();
   await scopesRadioGroup.dataElement.click();
   await scopeDataElementField.typeText("%myScope%");
+  await surfacesRadioGroup.dataElement.click();
+  await surfaceDataElementField.typeText("%mySurface%");
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy2",
@@ -177,7 +235,10 @@ test("returns full valid settings with decision scopes as data element", async (
     datasetId: "%myDatasetId%",
     documentUnloading: true,
     renderDecisions: true,
-    decisionScopes: "%myScope%"
+    personalization: {
+      decisionScopes: "%myScope%",
+      surfaces: "%mySurface%"
+    }
   });
 });
 
@@ -204,7 +265,29 @@ test("returns decision scopes settings as an array", async () => {
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
-    decisionScopes: ["foo", "foo2"]
+    personalization: {
+      decisionScopes: ["foo", "foo2"]
+    }
+  });
+});
+
+test("returns surfaces settings as an array", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await surfacesRadioGroup.values.click();
+  await surfaceArrayValues[0].value.typeText("web://foo");
+  await addSurfaceButton.click();
+  await surfaceArrayValues[1].value.typeText("web://foo1");
+  await addSurfaceButton.click();
+  await surfaceArrayValues[2].value.typeText("web://foo2");
+  await surfaceArrayValues[1].deleteButton.click();
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
+    instanceName: "alloy1",
+    personalization: {
+      surfaces: ["web://foo", "web://foo2"]
+    }
   });
 });
 
@@ -215,6 +298,19 @@ test("does not return decision scopes settings when provided with array of empty
   await scopesRadioGroup.values.click();
   await addDecisionScopeButton.click();
   await addDecisionScopeButton.click();
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
+    instanceName: "alloy1"
+  });
+});
+
+test("does not return surface settings when provided with array of empty strings", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await surfacesRadioGroup.values.click();
+  await addSurfaceButton.click();
+  await addSurfaceButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1"
@@ -247,6 +343,16 @@ test("shows error for decision scope value that is not a data element", async ()
   await scopeDataElementField.typeText("fooScope");
   await extensionViewController.expectIsNotValid();
   await scopeDataElementField.expectError();
+});
+
+test("shows error for surface value that is not a data element", async () => {
+  await extensionViewController.init({
+    extensionSettings: mockExtensionSettings
+  });
+  await surfacesRadioGroup.dataElement.click();
+  await surfaceDataElementField.typeText("fooSurface");
+  await extensionViewController.expectIsNotValid();
+  await surfaceDataElementField.expectError();
 });
 
 test("shows error for data value that is more than one data element", async () => {

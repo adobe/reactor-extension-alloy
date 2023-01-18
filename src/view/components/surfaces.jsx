@@ -1,5 +1,5 @@
 /*
-Copyright 2019 Adobe. All rights reserved.
+Copyright 2022 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -21,126 +21,126 @@ import DataElementSelector from "./dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FieldSubset from "./fieldSubset";
+import { validateSurface } from "../utils/surfaceUtils";
 
 const CONSTANT = "constant";
 const DATA_ELEMENT = "dataElement";
 
 export const bridge = {
   getInitialValues({ initInfo }) {
-    const { decisionScopes: legacyScopes, personalization = {} } =
-      initInfo.settings || {};
-    const { decisionScopes } = personalization;
-    const scopes =
-      legacyScopes && legacyScopes.length ? legacyScopes : decisionScopes;
+    const { personalization = {} } = initInfo.settings || {};
+    const { surfaces } = personalization;
 
-    if (Array.isArray(scopes)) {
+    if (Array.isArray(surfaces)) {
       return {
-        decisionsInputMethod: CONSTANT,
-        decisionScopesDataElement: "",
-        decisionScopesArray: scopes
+        surfacesInputMethod: CONSTANT,
+        surfacesDataElement: "",
+        surfacesArray: surfaces
       };
     }
-    if (typeof scopes === "string") {
+    if (typeof surfaces === "string") {
       return {
-        decisionsInputMethod: DATA_ELEMENT,
-        decisionScopesDataElement: scopes,
-        decisionScopesArray: [""]
+        surfacesInputMethod: DATA_ELEMENT,
+        surfacesDataElement: surfaces,
+        surfacesArray: [""]
       };
     }
     return {
-      decisionsInputMethod: CONSTANT,
-      decisionScopesDataElement: "",
-      decisionScopesArray: [""]
+      surfacesInputMethod: CONSTANT,
+      surfacesDataElement: "",
+      surfacesArray: [""]
     };
   },
   getSettings({ values }) {
     if (
-      values.decisionsInputMethod === DATA_ELEMENT &&
-      values.decisionScopesDataElement
+      values.surfacesInputMethod === DATA_ELEMENT &&
+      values.surfacesDataElement
     ) {
-      return { decisionScopes: values.decisionScopesDataElement };
+      return { surfaces: values.surfacesDataElement };
     }
 
     if (
-      values.decisionsInputMethod === CONSTANT &&
-      values.decisionScopesArray.length > 0
+      values.surfacesInputMethod === CONSTANT &&
+      values.surfacesArray.length > 0
     ) {
-      const decisionScopes = values.decisionScopesArray.filter(
-        scope => scope !== ""
-      );
-      if (decisionScopes.length) {
-        return { decisionScopes };
+      const surfaces = values.surfacesArray.filter(surface => surface !== "");
+      if (surfaces.length) {
+        return { surfaces };
       }
     }
     return undefined;
   },
   formikStateValidationSchema: object().shape({
-    decisionScopesDataElement: string().when("decisionsInputMethod", {
+    surfacesDataElement: string().when("surfacesInputMethod", {
       is: DATA_ELEMENT,
       then: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
     })
   })
 };
 
-const DecisionScopes = () => {
-  const [{ value: decisionsInputMethod }] = useField("decisionsInputMethod");
-  const [{ value: decisionScopesArray }] = useField("decisionScopesArray");
+const Surfaces = () => {
+  const [{ value: surfacesInputMethod }] = useField("surfacesInputMethod");
+  const [{ value: surfacesArray }] = useField("surfacesArray");
 
   return (
     <div>
       <FormikRadioGroup
-        name="decisionsInputMethod"
+        name="surfacesInputMethod"
         orientation="horizontal"
-        label="Decision scopes"
+        label="Surfaces"
       >
-        <Radio data-test-id="scopeConstantOptionField" value={CONSTANT}>
-          Manually enter scopes
+        <Radio data-test-id="surfaceConstantOptionField" value={CONSTANT}>
+          Manually enter surfaces
         </Radio>
-        <Radio data-test-id="scopeDataElementOptionField" value={DATA_ELEMENT}>
+        <Radio
+          data-test-id="surfaceDataElementOptionField"
+          value={DATA_ELEMENT}
+        >
           Provide a data element
         </Radio>
       </FormikRadioGroup>
-      {decisionsInputMethod === DATA_ELEMENT && (
+      {surfacesInputMethod === DATA_ELEMENT && (
         <FieldSubset>
           <DataElementSelector>
             <FormikTextField
-              data-test-id="scopeDataElementField"
+              data-test-id="surfaceDataElementField"
               label="Data element"
-              name="decisionScopesDataElement"
-              description="This data element should resolve to an array of scopes."
+              name="surfacesDataElement"
+              description="This data element should resolve to an array of surfaces."
               width="size-5000"
             />
           </DataElementSelector>
         </FieldSubset>
       )}
-      {decisionsInputMethod === CONSTANT && (
+      {surfacesInputMethod === CONSTANT && (
         <FieldSubset>
           <Flex direction="column" gap="size-100" alignItems="start">
             <FieldArray
-              name="decisionScopesArray"
+              name="surfacesArray"
               render={arrayHelpers => {
                 return (
                   <div>
-                    {decisionScopesArray.map((scope, index) => {
+                    {surfacesArray.map((surface, index) => {
                       return (
                         <Flex key={index} alignItems="end">
                           <FormikTextField
-                            data-test-id={`scope${index}Field`}
-                            label="Scope"
-                            name={`decisionScopesArray.${index}`}
+                            data-test-id={`surface${index}Field`}
+                            label="Surface"
+                            name={`surfacesArray.${index}`}
                             width="size-5000"
-                            aria-label="Decision scope"
+                            aria-label="Surface"
                             marginTop="size-0"
+                            validate={validateSurface}
                           />
                           <ActionButton
-                            data-test-id={`deleteScope${index}Button`}
+                            data-test-id={`deleteSurface${index}Button`}
                             isQuiet
-                            isDisabled={decisionScopesArray.length === 1}
+                            isDisabled={surfacesArray.length === 1}
                             variant="secondary"
                             onPress={() => {
                               arrayHelpers.remove(index);
                             }}
-                            aria-label="Remove decision scope"
+                            aria-label="Remove surface"
                           >
                             <Delete />
                           </ActionButton>
@@ -149,13 +149,13 @@ const DecisionScopes = () => {
                     })}
                     <Button
                       variant="secondary"
-                      data-test-id="addDecisionScopeButton"
+                      data-test-id="addSurfaceButton"
                       marginTop="size-100"
                       onPress={() => {
                         arrayHelpers.push("");
                       }}
                     >
-                      Add scope
+                      Add surface
                     </Button>
                   </div>
                 );
@@ -168,4 +168,4 @@ const DecisionScopes = () => {
   );
 };
 
-export default DecisionScopes;
+export default Surfaces;

@@ -189,6 +189,34 @@
               }
             ]
           },
+          "personalization": {
+            "type": "object",
+            "properties": {
+              "decisionScopes": {
+                "anyOf": [
+                  {
+                    "type": "array"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^%[^%]+%$"
+                  }
+                ]
+              },
+              "surfaces": {
+                "anyOf": [
+                  {
+                    "type": "array"
+                  },
+                  {
+                    "type": "string",
+                    "pattern": "^%[^%]+%$"
+                  }
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
           "xdm": {
             "type": "string",
             "pattern": "^%[^%]+%$"
