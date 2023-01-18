@@ -127,7 +127,6 @@ const usePagedComboBox = ({
       if (e.name !== "AbortError") {
         // We do not throw the error because we expect that loadItems
         // catches the error and has handled it however it sees fit.
-        // console.error("Error loading items", e);
         return;
       }
     }

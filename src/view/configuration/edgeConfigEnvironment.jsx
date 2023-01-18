@@ -28,7 +28,6 @@ const EdgeConfigEnvironment = ({
     defaultSandboxOnly ? "" : "sandbox and"
   } datastream for the ${environmentType} environment.`;
 
-  console.log(sandboxes);
   return (
     <>
       <FormikPicker
