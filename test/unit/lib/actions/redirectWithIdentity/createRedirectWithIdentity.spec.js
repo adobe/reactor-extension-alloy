@@ -28,10 +28,10 @@ describe("createRedirectWithIdentity", () => {
     document = { location: "originalLocation" };
     event = {
       nativeEvent: {
-        preventDefault: jasmine.createSpy("preventDefault"),
-        target: {
-          href: "originalHref"
-        }
+        preventDefault: jasmine.createSpy("preventDefault")
+      },
+      element: {
+        href: "originalHref"
       }
     };
     logger = jasmine.createSpyObj("logger", ["warn"]);
@@ -79,10 +79,9 @@ describe("createRedirectWithIdentity", () => {
       redirectWithIdentity(
         { instanceName: "myinstance" },
         {
-          nativeEvent: {
-            target: {
-              href: "originalHref"
-            }
+          nativeEvent: {},
+          element: {
+            href: "originalHref"
           }
         }
       )
