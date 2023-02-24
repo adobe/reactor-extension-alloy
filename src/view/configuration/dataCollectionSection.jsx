@@ -71,6 +71,7 @@ const contextOptions = [
 export const bridge = {
   getInstanceDefaults: () => ({
     onBeforeEventSend: "",
+    onBeforeLinkClickSend: "",
     clickCollectionEnabled: true,
     downloadLinkQualifier:
       "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$",
@@ -88,6 +89,7 @@ export const bridge = {
       defaultsObj: bridge.getInstanceDefaults(),
       keys: [
         "onBeforeEventSend",
+        "onBeforeLinkClickSend",
         "clickCollectionEnabled",
         "downloadLinkQualifier",
         "context"
@@ -102,7 +104,11 @@ export const bridge = {
   },
   getInstanceSettings: ({ instanceValues }) => {
     const instanceSettings = {};
-    const propertyKeysToCopy = ["onBeforeEventSend", "clickCollectionEnabled"];
+    const propertyKeysToCopy = [
+      "onBeforeEventSend",
+      "onBeforeLinkClickSend",
+      "clickCollectionEnabled"
+    ];
 
     if (instanceValues.clickCollectionEnabled) {
       propertyKeysToCopy.push("downloadLinkQualifier");
@@ -205,6 +211,19 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                   data-test-id="downloadLinkQualifierRestoreButton"
                   name={`${instanceFieldName}.downloadLinkQualifier`}
                   defaultValue={instanceDefaults.downloadLinkQualifier}
+                />
+              </Flex>
+              <Flex gap="size-100">
+                <CodeField
+                  data-test-id="onBeforeLinkClickSendEditButton"
+                  label="On before link click send callback"
+                  buttonLabelSuffix="on before link click event send callback code"
+                  name={`${instanceFieldName}.onBeforeLinkClickSend`}
+                  description='Callback function for modifying data before each link click event is sent to the server. A variable named "content" will be available for use within your custom code. Filter by "content.clickedElement" or modify "content.xdm" or "content.data" as needed to transform data before it is sent to the server. Return "false" if you want to cancel the link tracking for this element.'
+                  language="javascript"
+                  placeholder={
+                    '// Filter by "content.clickedElement".\n// Modify content.xdm or content.data as necessary. There is no need to wrap the\n// code in a function or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";'
+                  }
                 />
               </Flex>
             </FieldSubset>
