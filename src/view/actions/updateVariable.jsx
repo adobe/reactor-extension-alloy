@@ -27,6 +27,7 @@ import FormikPagedComboBox from "../components/formikReactSpectrum3/formikPagedC
 import useReportAsyncError from "../utils/useReportAsyncError";
 import fetchDataElement from "../utils/fetchDataElement";
 import useChanged from "../utils/useChanged";
+import Alert from "../components/alert";
 
 const getInitialFormStateFromDataElement = async ({
   dataElement,
@@ -211,21 +212,29 @@ const UpdateVariable = ({ initInfo, formikProps: { resetForm }, context }) => {
 
   return (
     <FormElementContainer>
-      <FormikPagedComboBox
-        data-test-id="dataElementField"
-        name="dataElement"
-        label="Data element"
-        description="Please specify the data element you would like to update. Only `variable` type data elements are available."
-        width="size-5000"
-        isRequired
-        loadItems={loadItems}
-        getKey={item => item?.settings?.cacheId}
-        getLabel={item => item?.name}
-        firstPage={dataElementsFirstPage}
-        firstPageCursor={dataElementsFirstPageCursor}
-      >
-        {item => <Item key={item.settings.cacheId}>{item.name}</Item>}
-      </FormikPagedComboBox>
+      {dataElementsFirstPage.length === 0 && (
+        <Alert variant="negative" title="Error" data-test-id="noDataElements">
+          No `variable` type data elements are available. Create a variable type
+          data element first.
+        </Alert>
+      )}
+      {dataElementsFirstPage.length > 0 && (
+        <FormikPagedComboBox
+          data-test-id="dataElementField"
+          name="dataElement"
+          label="Data element"
+          description="Please specify the data element you would like to update. Only `variable` type data elements are available."
+          width="size-5000"
+          isRequired
+          loadItems={loadItems}
+          getKey={item => item?.settings?.cacheId}
+          getLabel={item => item?.name}
+          firstPage={dataElementsFirstPage}
+          firstPageCursor={dataElementsFirstPageCursor}
+        >
+          {item => <Item key={item.settings.cacheId}>{item.name}</Item>}
+        </FormikPagedComboBox>
+      )}
       {hasSchema && (
         <Editor
           selectedNodeId={selectedNodeId}

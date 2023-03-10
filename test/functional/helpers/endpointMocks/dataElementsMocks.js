@@ -85,6 +85,25 @@ export const single = RequestMock()
     responseHeaders
   );
 
+export const none = RequestMock()
+  .onRequestTo({ url: DATA_ELEMENTS_FIRST_PAGE_REGEX, method: "GET" })
+  .respond(
+    {
+      data: [otherDataElement1],
+      meta: {
+        pagination: {
+          current_page: 1,
+          next_page: null,
+          prev_page: null,
+          total_pages: 1,
+          total_count: 1
+        }
+      }
+    },
+    200,
+    responseHeaders
+  );
+
 export const noneWithNextPage = RequestMock()
   .onRequestTo({ url: DATA_ELEMENTS_FIRST_PAGE_REGEX, method: "GET" })
   .respond(

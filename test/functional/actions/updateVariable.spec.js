@@ -25,6 +25,7 @@ const errorBoundaryMessage = spectrum.illustratedMessage(
 );
 const dataElementField = spectrum.comboBox("dataElementField");
 const clearField = spectrum.checkbox("clearField");
+const noDataElementsAlert = spectrum.alert("noDataElements");
 
 createExtensionViewFixture({
   title: "Update variable action view",
@@ -55,6 +56,7 @@ test.requestHooks(dataElementsMocks.single)(
       }
     });
     await dataElementField.expectText("Test data variable 1");
+    await noDataElementsAlert.expectNotExists();
     await xdmTree.node("xdm").expectExists();
   }
 );
@@ -238,3 +240,14 @@ test.requestHooks(dataElementsMocks.multiple)(
     });
   }
 );
+
+test
+  .requestHooks(dataElementsMocks.none)
+  .only("Handle no variable data elements", async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd"
+      }
+    });
+    await noDataElementsAlert.expectExists();
+  });
