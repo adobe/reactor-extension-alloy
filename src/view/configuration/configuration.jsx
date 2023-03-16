@@ -51,6 +51,9 @@ import PersonalizationSection, {
 import DataCollectionSection, {
   bridge as dataCollectionSectionBridge
 } from "./dataCollectionSection";
+import OverridesSection, {
+  bridge as overridesBridge
+} from "./overridesSection";
 import AdvancedSection, {
   bridge as advancedSectionBridge
 } from "./advancedSection";
@@ -62,6 +65,7 @@ const sectionBridges = [
   identitySectionBridge,
   personalizationSectionBridge,
   dataCollectionSectionBridge,
+  overridesBridge,
   advancedSectionBridge
 ];
 
@@ -216,6 +220,9 @@ const Configuration = ({ initInfo, context }) => {
                           instanceFieldName={instanceFieldName}
                         />
                         <DataCollectionSection
+                          instanceFieldName={instanceFieldName}
+                        />
+                        <OverridesSection
                           instanceFieldName={instanceFieldName}
                         />
                         <AdvancedSection
