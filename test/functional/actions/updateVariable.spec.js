@@ -241,13 +241,14 @@ test.requestHooks(dataElementsMocks.multiple)(
   }
 );
 
-test
-  .requestHooks(dataElementsMocks.none)
-  .only("Handle no variable data elements", async () => {
+test.requestHooks(dataElementsMocks.none)(
+  "Handle no variable data elements",
+  async () => {
     await extensionViewController.init({
       propertySettings: {
         id: "PRabcd"
       }
     });
     await noDataElementsAlert.expectExists();
-  });
+  }
+);

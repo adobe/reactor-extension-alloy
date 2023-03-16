@@ -25,6 +25,7 @@ const errorBoundaryMessage = spectrum.illustratedMessage(
 const testSchemaTitle = "XDM Object Data Element Tests";
 const sandboxField = spectrum.picker("sandboxField");
 const schemaField = spectrum.comboBox("schemaField");
+const noSchemasAlert = spectrum.alert("schemaFieldAlert");
 
 createExtensionViewFixture({
   title: "Variable Data Element View",
@@ -37,7 +38,7 @@ runCommonExtensionViewTests();
 test.requestHooks(
   sandboxMocks.multipleWithoutDefault,
   schemaMocks.basic,
-  schemasMocks.empty
+  schemasMocks.multiple
 )("initializes form fields with full settings", async () => {
   await extensionViewController.init({
     settings: {
@@ -57,7 +58,7 @@ test.requestHooks(
 test.requestHooks(
   sandboxMocks.multipleWithoutDefault,
   schemaMocks.basic,
-  schemasMocks.empty
+  schemasMocks.multiple
 )("uses the same cacheId", async () => {
   await extensionViewController.init({
     settings: {
@@ -215,13 +216,16 @@ test.requestHooks(schemasMocks.empty)(
   }
 );
 
-test("allows user to enter a schema search query that renders results and selects one of them", async () => {
-  await extensionViewController.init({});
-  await schemaField.clear();
-  await schemaField.enterSearch(testSchemaTitle.substring(2, 6));
-  await schemaField.expectMenuOptionLabels([testSchemaTitle]);
-  await schemaField.selectMenuOption(testSchemaTitle);
-});
+test.requestHooks(schemasMocks.search, schemasMocks.multiple)(
+  "allows user to enter a schema search query that renders results and selects one of them",
+  async () => {
+    await extensionViewController.init({});
+    await schemaField.clear();
+    await schemaField.enterSearch(testSchemaTitle.substring(2, 6));
+    await schemaField.expectMenuOptionLabels([testSchemaTitle]);
+    await schemaField.selectMenuOption(testSchemaTitle);
+  }
+);
 
 test("allows user to enter schema search query that renders no results", async () => {
   await extensionViewController.init({});
@@ -259,6 +263,27 @@ test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
   async () => {
     await extensionViewController.init({});
     await schemaField.expectText("");
+  }
+);
+
+test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.empty)(
+  "shows an error when there are no schemas",
+  async () => {
+    await extensionViewController.init({});
+    await noSchemasAlert.expectExists();
+    await extensionViewController.expectIsNotValid();
+  }
+);
+
+test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.empty)(
+  "shows an error when there are no schemas and a different sandbox",
+  async () => {
+    await extensionViewController.init({});
+    await sandboxField.expectExists();
+    await schemaField.expectNotExists();
+    await noSchemasAlert.expectNotExists();
+    await sandboxField.selectOption("PRODUCTION Test Sandbox 3 (VA7)");
+    await noSchemasAlert.expectExists();
   }
 );
 

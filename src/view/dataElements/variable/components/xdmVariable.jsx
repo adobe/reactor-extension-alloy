@@ -83,19 +83,21 @@ const initializeSchemas = async ({
   orgId,
   imsAccess
 }) => {
-  const {
-    results: schemasFirstPage,
-    nextPage: schemasFirstPageCursor
-  } = await fetchSchemasMeta({
-    orgId,
-    imsAccess,
-    sandboxName: initialValues.sandbox
-  });
+  if (initialValues.sandbox) {
+    const {
+      results: schemasFirstPage,
+      nextPage: schemasFirstPageCursor
+    } = await fetchSchemasMeta({
+      orgId,
+      imsAccess,
+      sandboxName: initialValues.sandbox
+    });
 
-  context.schemasFirstPage = schemasFirstPage;
-  context.schemasFirstPageCursor = schemasFirstPageCursor;
-  if (!schemaId && schemasFirstPage.length === 1) {
-    initialValues.schema = schemasFirstPage[0];
+    context.schemasFirstPage = schemasFirstPage;
+    context.schemasFirstPageCursor = schemasFirstPageCursor;
+    if (!schemaId && schemasFirstPage.length === 1) {
+      initialValues.schema = schemasFirstPage[0];
+    }
   }
 };
 
@@ -217,7 +219,8 @@ const XdmVariable = ({
         dependencies={[sandbox]}
         firstPage={schemasFirstPage}
         firstPageCursor={schemasFirstPageCursor}
-        placeholder="Select a schema"
+        alertTitle="No schemas found"
+        alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
       />
     </>
   );

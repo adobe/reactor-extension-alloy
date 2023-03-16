@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { ComboBox } from "@react-spectrum/combobox";
+import { ComboBox } from "@adobe/react-spectrum";
 import { useField } from "formik";
 
 const FormikComboBox = ({ name, width, ...otherProps }) => {

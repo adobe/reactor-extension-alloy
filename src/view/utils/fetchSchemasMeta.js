@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import escapeStringRegexp from "escape-string-regexp";
 import fetchFromPlatform from "./fetchFromPlatform";
+import UserReportableError from "../errors/userReportableError";
 
 const metaClass = encodeURIComponent(
   "https://ns.adobe.com/xdm/context/experienceevent"
@@ -67,25 +68,9 @@ export default async ({
     if (e.name === "AbortError") {
       throw e;
     }
-
-    const base = (start && parseInt(start, 10)) || 0;
-    if ((start / 10) % 2 === 1) {
-      return {
-        results: [],
-        nextPage: `${base + 10}`
-      };
-    }
-    return {
-      results: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => ({
-        $id: `${sandboxName}-${base + i}-${search}`,
-        title: `${sandboxName} Schema ${base + i} (${search})`,
-        version: `1.${i}`
-      })),
-      nextPage: `${base + 10}`
-    };
-    // throw new UserReportableError("Failed to load schema metadata.", {
-    //  originatingError: e
-    // });
+    throw new UserReportableError("Failed to load schema metadata.", {
+      originatingError: e
+    });
   }
 
   return {

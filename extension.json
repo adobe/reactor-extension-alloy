@@ -578,10 +578,10 @@
             },
             "required": ["id", "version"],
             "additionalProperties": false
-          },
-          "required": ["cacheId", "sandbox", "schema"],
-          "additionalProperties": false
-        }
+          }
+        },
+        "required": ["cacheId", "sandbox", "schema"],
+        "additionalProperties": false
       },
       "transforms": [
         {
