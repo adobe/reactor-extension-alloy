@@ -72,7 +72,9 @@ export const bridge = {
 
 const ReportSuitesOverride = ({ instanceFieldName, rsids }) => {
   return (
-    <FieldArray name={`${instanceFieldName}.reportSuitesOverride`}>
+    <FieldArray
+      name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_analytics.reportSuites`}
+    >
       {({ remove, push }) => (
         <>
           {rsids.map((rsid, index) => (
@@ -87,7 +89,7 @@ const ReportSuitesOverride = ({ instanceFieldName, rsids }) => {
                 <ActionButton
                   isQuiet
                   data-test-id={`removeReportSuite.${index}`}
-                  aria-label="Icon only"
+                  aria-label={`Remove Report Suite #${index + 1}`}
                   onPress={() => remove(index)}
                 >
                   <RemoveCircle aria-label="Remove report suite" />
