@@ -4,7 +4,6 @@ import RemoveCircle from "@spectrum-icons/workflow/RemoveCircle";
 import { FieldArray, useField } from "formik";
 import PropTypes from "prop-types";
 import SectionHeader from "../components/sectionHeader";
-import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import FormElementContainer from "../components/formElementContainer";
@@ -14,7 +13,6 @@ import FormikTextField from "../components/formikReactSpectrum3/formikTextField"
 export const bridge = {
   // return formik state
   getInstanceDefaults: () => ({
-    globalOverridesEnabled: true,
     edgeConfigOverrides: {
       com_adobe_experience_platform: {
         datasets: {
@@ -45,7 +43,7 @@ export const bridge = {
       toObj: instanceValues,
       fromObj: instanceSettings,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["globalOverridesEnabled", "edgeConfigOverrides"]
+      keys: ["edgeConfigOverrides"]
     });
 
     return instanceValues;
@@ -53,11 +51,7 @@ export const bridge = {
   // convert formik state to launch settings
   getInstanceSettings: ({ instanceValues }) => {
     const instanceSettings = {};
-    const propertyKeysToCopy = ["globalOverridesEnabled"];
-
-    if (instanceValues.globalOverridesEnabled) {
-      propertyKeysToCopy.push("edgeConfigOverrides");
-    }
+    const propertyKeysToCopy = ["edgeConfigOverrides"];
 
     copyPropertiesIfValueDifferentThanDefault({
       toObj: instanceSettings,
@@ -121,52 +115,43 @@ const Overrides = ({ instanceFieldName }) => {
     <>
       <SectionHeader>Datastream configuration overrides</SectionHeader>
       <FormElementContainer>
-        <FormikCheckbox
-          data-test-id="globalOverridesEnabled"
-          name={`${instanceFieldName}.globalOverridesEnabled`}
-          width="size-5000"
-        >
-          Enable global datastream configuration overrides
-        </FormikCheckbox>
-        {instanceValues.globalOverridesEnabled && (
-          <FieldSubset>
-            <FormikTextField
-              data-test-id="eventDatasetOverride"
-              label="Event Dataset ID"
-              name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_experience_platform.datasets.event.datasetId`}
-              description=""
-              width="size-5000"
-            />
-            <FormikTextField
-              data-test-id="profileDatasetOverride"
-              label="Profile Dataset ID"
-              name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_experience_platform.datasets.profile.datasetId`}
-              description=""
-              width="size-5000"
-            />
-            <FormikTextField
-              data-test-id="idSyncContainerOverride"
-              label="Identity Sync Container ID"
-              name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_identity.idSyncContainerId`}
-              description=""
-              width="size-5000"
-            />
-            <FormikTextField
-              data-test-id="targetPropertyTokenOverride"
-              label="Target Property Token"
-              name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_target.propertyToken`}
-              description=""
-              width="size-5000"
-            />
-            <ReportSuitesOverride
-              instanceFieldName={instanceFieldName}
-              rsids={
-                instanceValues.edgeConfigOverrides.com_adobe_analytics
-                  .reportSuites
-              }
-            />
-          </FieldSubset>
-        )}
+        <FieldSubset>
+          <FormikTextField
+            data-test-id="eventDatasetOverride"
+            label="Event Dataset ID"
+            name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_experience_platform.datasets.event.datasetId`}
+            description=""
+            width="size-5000"
+          />
+          <FormikTextField
+            data-test-id="profileDatasetOverride"
+            label="Profile Dataset ID"
+            name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_experience_platform.datasets.profile.datasetId`}
+            description=""
+            width="size-5000"
+          />
+          <FormikTextField
+            data-test-id="idSyncContainerOverride"
+            label="Identity Sync Container ID"
+            name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_identity.idSyncContainerId`}
+            description=""
+            width="size-5000"
+          />
+          <FormikTextField
+            data-test-id="targetPropertyTokenOverride"
+            label="Target Property Token"
+            name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_target.propertyToken`}
+            description=""
+            width="size-5000"
+          />
+          <ReportSuitesOverride
+            instanceFieldName={instanceFieldName}
+            rsids={
+              instanceValues.edgeConfigOverrides.com_adobe_analytics
+                .reportSuites
+            }
+          />
+        </FieldSubset>
       </FormElementContainer>
     </>
   );
