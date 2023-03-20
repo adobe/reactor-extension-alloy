@@ -131,6 +131,11 @@
         "parameters": ["content"]
       },
       {
+        "type": "function",
+        "propertyPath": "instances[].onBeforeLinkClickSend",
+        "parameters": ["content"]
+      },
+      {
         "type": "remove",
         "propertyPath": "instances[].edgeConfigInputMethod"
       },
