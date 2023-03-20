@@ -68,26 +68,35 @@ const ReportSuitesOverride = ({ instanceFieldName, rsids }) => {
     >
       {({ remove, push }) => (
         <>
-          {rsids.map((rsid, index) => (
-            <Flex key={index} direction="row" alignItems="end">
-              <FormikTextField
-                data-test-id={`reportSuitesOverride.${index}`}
-                label={`Report suite #${index + 1}`}
-                name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_analytics.reportSuites.${index}`}
-                width="size-5000"
-              />
-              {index > 0 && (
-                <ActionButton
-                  isQuiet
-                  data-test-id={`removeReportSuite.${index}`}
-                  aria-label={`Remove eport Suite #${index + 1}`}
-                  onPress={() => remove(index)}
-                >
-                  <RemoveCircle aria-label="Remove report suite" />
-                </ActionButton>
-              )}
-            </Flex>
-          ))}
+          <Flex direction="column" gap="size-100">
+            {rsids.map((rsid, index) =>
+              index === 0 ? (
+                <FormikTextField
+                  data-test-id={`reportSuitesOverride.${index}`}
+                  label="Report suites"
+                  name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_analytics.reportSuites.${index}`}
+                  width="size-5000"
+                  key={index}
+                />
+              ) : (
+                <Flex key={index} direction="row" alignItems="end">
+                  <FormikTextField
+                    data-test-id={`reportSuitesOverride.${index}`}
+                    name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_analytics.reportSuites.${index}`}
+                    width="size-5000"
+                  />
+                  <ActionButton
+                    isQuiet
+                    data-test-id={`removeReportSuite.${index}`}
+                    aria-label={`Remove Report Suite #${index + 1}`}
+                    onPress={() => remove(index)}
+                  >
+                    <RemoveCircle aria-label="Remove report suite" />
+                  </ActionButton>
+                </Flex>
+              )
+            )}
+          </Flex>
           <ActionButton
             data-test-id="addReportSuite"
             marginTop="size-100"
@@ -115,21 +124,21 @@ const Overrides = ({ instanceFieldName }) => {
         <FieldSubset>
           <FormikTextField
             data-test-id="eventDatasetOverride"
-            label="Event Dataset ID"
+            label="Event dataset"
             name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_experience_platform.datasets.event.datasetId`}
             description=""
             width="size-5000"
           />
           <FormikTextField
             data-test-id="idSyncContainerOverride"
-            label="Identity Sync Container ID"
+            label="Third-party ID sync container"
             name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_identity.idSyncContainerId`}
             description=""
             width="size-5000"
           />
           <FormikTextField
             data-test-id="targetPropertyTokenOverride"
-            label="Target Property Token"
+            label="Target property token"
             name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_target.propertyToken`}
             description=""
             width="size-5000"
