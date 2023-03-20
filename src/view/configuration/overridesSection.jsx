@@ -18,9 +18,6 @@ export const bridge = {
         datasets: {
           event: {
             datasetId: ""
-          },
-          profile: {
-            datasetId: ""
           }
         }
       },
@@ -75,7 +72,7 @@ const ReportSuitesOverride = ({ instanceFieldName, rsids }) => {
             <Flex key={index} direction="row" alignItems="end">
               <FormikTextField
                 data-test-id={`reportSuitesOverride.${index}`}
-                label={`Report Suite #${index + 1}`}
+                label={`Report suite #${index + 1}`}
                 name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_analytics.reportSuites.${index}`}
                 width="size-5000"
               />
@@ -83,7 +80,7 @@ const ReportSuitesOverride = ({ instanceFieldName, rsids }) => {
                 <ActionButton
                   isQuiet
                   data-test-id={`removeReportSuite.${index}`}
-                  aria-label={`Remove Report Suite #${index + 1}`}
+                  aria-label={`Remove eport Suite #${index + 1}`}
                   onPress={() => remove(index)}
                 >
                   <RemoveCircle aria-label="Remove report suite" />
@@ -120,13 +117,6 @@ const Overrides = ({ instanceFieldName }) => {
             data-test-id="eventDatasetOverride"
             label="Event Dataset ID"
             name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_experience_platform.datasets.event.datasetId`}
-            description=""
-            width="size-5000"
-          />
-          <FormikTextField
-            data-test-id="profileDatasetOverride"
-            label="Profile Dataset ID"
-            name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_experience_platform.datasets.profile.datasetId`}
             description=""
             width="size-5000"
           />
