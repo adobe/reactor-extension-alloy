@@ -310,6 +310,7 @@ test("returns full valid settings", async () => {
   await instances[1].idMigrationEnabled.click();
   await instances[1].thirdPartyCookiesEnabled.click();
   await instances[1].onBeforeEventSendEditButton.click();
+  await instances[1].onBeforeLinkClickSendEditButton.click();
   // Click on the field before clearing to get rid of the "..."
   await instances[1].downloadLinkQualifierField.click();
   await instances[1].downloadLinkQualifierField.clear();
@@ -625,7 +626,7 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
   });
 });
 
-test("does not save onBeforeEventSend code if it matches placeholder", async () => {
+test("does not save onBeforeEventSend and onBeforeLinkClickSend code if it matches placeholder", async () => {
   await extensionViewController.init(
     {},
     {
@@ -642,6 +643,7 @@ test("does not save onBeforeEventSend code if it matches placeholder", async () 
     "PR123"
   );
   await instances[0].onBeforeEventSendEditButton.click();
+  await instances[0].onBeforeLinkClickSendEditButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instances: [
