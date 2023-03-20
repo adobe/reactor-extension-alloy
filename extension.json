@@ -404,6 +404,21 @@
             "type": "string",
             "minLength": 1
           },
+          "schema": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": ["id", "version"],
+            "additionalProperties": false
+          },
           "data": {
             "anyOf": [
               {
@@ -425,6 +440,10 @@
         {
           "type": "remove",
           "propertyPath": "dataElementId"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "schema"
         }
       ],
       "libPath": "dist/lib/actions/updateVariable/index.js",
@@ -580,7 +599,7 @@
             "additionalProperties": false
           }
         },
-        "required": ["cacheId", "sandbox", "schema"],
+        "required": ["cacheId"],
         "additionalProperties": false
       },
       "transforms": [

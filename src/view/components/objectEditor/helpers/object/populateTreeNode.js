@@ -25,10 +25,10 @@ export default ({
   touched,
   getTreeNode
 }) => {
-  const { properties, populationStrategy } = formStateNode;
+  const { properties, populationStrategy, schema } = formStateNode;
 
-  if (properties) {
-    const propertyNames = Object.keys(properties);
+  if (properties && schema.properties) {
+    const propertyNames = Object.keys(schema.properties);
     if (propertyNames.length) {
       treeNode.children = propertyNames
         .sort(numberAwareCompareFunction)

@@ -334,6 +334,7 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
         setSelectedNodeId={setSelectedNodeId}
         schema={schema}
         previouslySavedSchemaInfo={settings && settings.schema}
+        componentName="XDM object data element"
       />
     );
   }

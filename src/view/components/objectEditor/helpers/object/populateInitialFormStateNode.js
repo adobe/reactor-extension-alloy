@@ -24,30 +24,28 @@ export default ({
   // ExperienceEvent schema is one example of this.
   const { properties = {} } = schema;
   const propertyNames = Object.keys(properties);
-  let propertyFormStateNodes;
   formStateNode.isPartsPopulationStrategySupported = false;
 
   if (propertyNames.length) {
     formStateNode.isPartsPopulationStrategySupported = true;
-    propertyFormStateNodes = propertyNames.reduce((memo, propertyName) => {
-      const propertySchema = properties[propertyName];
-      let propertyValue;
-
-      if (typeof value === "object") {
-        propertyValue = value[propertyName];
-      }
-
-      const propertyFormStateNode = getInitialFormStateNode({
-        schema: propertySchema,
-        value: propertyValue,
-        nodePath: nodePath !== "" ? `${nodePath}.${propertyName}` : propertyName
-      });
-      memo[propertyName] = propertyFormStateNode;
-      return memo;
-    }, {});
   }
+  formStateNode.properties = propertyNames.reduce((memo, propertyName) => {
+    const propertySchema = properties[propertyName];
+    let propertyValue;
 
-  formStateNode.properties = propertyFormStateNodes || {};
+    if (typeof value === "object") {
+      propertyValue = value[propertyName];
+    }
+
+    const propertyFormStateNode = getInitialFormStateNode({
+      schema: propertySchema,
+      value: propertyValue,
+      nodePath: nodePath !== "" ? `${nodePath}.${propertyName}` : propertyName,
+      existingFormStateNode: formStateNode.properties?.[propertyName]
+    });
+    memo[propertyName] = propertyFormStateNode;
+    return memo;
+  }, formStateNode.properties || {});
 
   // If value is a string, we know that a data element token (e.g., "%foo%")
   // has been provided and the user is intending to use the WHOLE population strategy.

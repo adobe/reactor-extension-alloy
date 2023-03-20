@@ -53,6 +53,9 @@ const generateNodeId = () => {
  * they had previously entered.
  * @property {boolean} updateMode Whether the UI is in update mode.
  * This controls the clear existing value checkboxes.
+ * @property {Object} transform Set of transforms to apply to this node. Currently
+ * only clear: boolean is supported.
+ * @property {string} nodePath The node path in dot notation.
  */
 
 /**
@@ -79,7 +82,8 @@ const getInitialFormStateNode = ({
   value,
   nodePath,
   updateMode,
-  transforms
+  transforms,
+  existingFormStateNode
 }) => {
   const formStateNode = {
     autoPopulationSource: autoPopulationSource.NONE,
@@ -97,6 +101,11 @@ const getInitialFormStateNode = ({
     nodePath
   };
 
+  if (existingFormStateNode) {
+    formStateNode.properties = existingFormStateNode.properties;
+    formStateNode.items = existingFormStateNode.items;
+  }
+
   // Type specific helpers should set:
   //  - isPartsPopulationStrategySupported
   //  - populationStrategy
@@ -108,21 +117,34 @@ const getInitialFormStateNode = ({
     nodePath,
     getInitialFormStateNode: ({ ...args }) => {
       return getInitialFormStateNode({ ...args, transforms, updateMode });
-    }
+    },
+    existingFormStateNode
   });
+
+  if (existingFormStateNode) {
+    formStateNode.populationStrategy = existingFormStateNode.populationStrategy;
+    formStateNode.value = existingFormStateNode.value;
+  }
 
   return formStateNode;
 };
 
 // Avoid exposing all of getInitialFormStateNode's parameters since
 // they're only used internally for recursion.
-export default ({ schema, value, updateMode = false, transforms = {} }) => {
+export default ({
+  schema,
+  value,
+  updateMode = false,
+  transforms = {},
+  existingFormStateNode
+}) => {
   return getInitialFormStateNode({
     schema,
     value,
     nodePath: "",
     updateMode,
-    transforms
+    transforms,
+    existingFormStateNode
   });
 };
 
@@ -137,7 +159,8 @@ const formStateNodeShape = {
   updateMode: PropTypes.bool.isRequired,
   transform: PropTypes.shape({
     clear: PropTypes.bool.isRequired
-  }).isRequired
+  }).isRequired,
+  nodePath: PropTypes.string.isRequired
 };
 
 export const formStateNodePropTypes = PropTypes.shape(formStateNodeShape);

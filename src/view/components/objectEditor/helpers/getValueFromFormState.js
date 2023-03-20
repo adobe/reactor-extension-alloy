@@ -26,13 +26,13 @@ const getValueFromFormState = ({
   transforms,
   isAncestorCleared = false
 }) => {
-  const {
-    schema,
-    nodePath,
-    transform: { clear }
-  } = formStateNode;
+  const { schema, nodePath, transform } = formStateNode;
+  const { clear } = transform || {};
   if (clear && !isAncestorCleared) {
     transforms[nodePath] = { clear: true };
+  }
+  if (!schema) {
+    return {};
   }
   return getTypeSpecificHelpers(schema.type).getValueFromFormState({
     formStateNode,

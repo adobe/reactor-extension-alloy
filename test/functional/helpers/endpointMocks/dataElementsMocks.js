@@ -48,7 +48,7 @@ const testDataVariable2 = {
       schema: {
         id:
           "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.2"
+        version: "1.1"
       }
     })
   }
@@ -61,7 +61,74 @@ const otherDataElement1 = {
     settings: '{"value":"aaaa"}'
   }
 };
-
+const testDataVariable3 = {
+  id: "DE3",
+  attributes: {
+    name: "Test data variable 3",
+    delegate_descriptor_id: "adobe-alloy::dataElements::variable",
+    settings: JSON.stringify({
+      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1955",
+      sandbox: {
+        name: "prod"
+      },
+      schema: {
+        id: "sch123",
+        version: "1.0"
+      }
+    })
+  }
+};
+const testDataVariable4 = {
+  id: "DE4",
+  attributes: {
+    name: "Test data variable 4",
+    delegate_descriptor_id: "adobe-alloy::dataElements::variable",
+    settings: JSON.stringify({
+      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1956",
+      sandbox: {
+        name: "prod"
+      },
+      schema: {
+        id: "sch456",
+        version: "1.0"
+      }
+    })
+  }
+};
+const testDataVariable5 = {
+  id: "DE4",
+  attributes: {
+    name: "Test data variable 5",
+    delegate_descriptor_id: "adobe-alloy::dataElements::variable",
+    settings: JSON.stringify({
+      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1957",
+      sandbox: {
+        name: "prod"
+      },
+      schema: {
+        id: "sch789",
+        version: "1.0"
+      }
+    })
+  }
+};
+const testDataVariable6 = {
+  id: "DE4",
+  attributes: {
+    name: "Test data variable 6",
+    delegate_descriptor_id: "adobe-alloy::dataElements::variable",
+    settings: JSON.stringify({
+      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1958",
+      sandbox: {
+        name: "prod"
+      },
+      schema: {
+        id: "sch10",
+        version: "1.0"
+      }
+    })
+  }
+};
 export const notFound = RequestMock()
   .onRequestTo({ url: DATA_ELEMENTS_REGEX, method: "GET" })
   .respond({}, 404, responseHeaders);
@@ -140,7 +207,14 @@ export const multiple = RequestMock()
   .onRequestTo({ url: DATA_ELEMENTS_REGEX, method: "GET" })
   .respond(
     {
-      data: [testDataVariable1, testDataVariable2],
+      data: [
+        testDataVariable1,
+        testDataVariable2,
+        testDataVariable3,
+        testDataVariable4,
+        testDataVariable5,
+        testDataVariable6
+      ],
       meta: {
         pagination: {
           current_page: 1,

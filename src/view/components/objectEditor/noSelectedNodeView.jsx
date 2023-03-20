@@ -22,7 +22,12 @@ import IndicatorDescription from "./indicatorDescription";
 /**
  * Shown when no node is selected within the XDM tree.
  */
-const NoSelectedNodeView = ({ schema, previouslySavedSchemaInfo }) => {
+const NoSelectedNodeView = ({
+  schema,
+  previouslySavedSchemaInfo,
+  componentName,
+  updateMode
+}) => {
   // The schema used when the data element was last saved is different
   // from the latest configured schema. Either the customer has since
   // changed which dataset is configured in the edge configuration
@@ -36,10 +41,14 @@ const NoSelectedNodeView = ({ schema, previouslySavedSchemaInfo }) => {
     <div>
       {isSchemaMismatched && (
         <View marginBottom="size-100">
-          <Alert variant="notice" title="Schema changed">
-            The XDM schema has changed since the XDM object was last saved.
-            After the next save, any fields that no longer exist on the XDM
-            schema will also no longer be included on the XDM object.
+          <Alert
+            variant="notice"
+            title="Schema changed"
+            data-test-id="schemaChangedNotice"
+          >
+            The XDM schema has changed since this {componentName} was last
+            saved. After the next save, any fields that no longer exist on the
+            XDM schema will also no longer be included on this {componentName}.
           </Alert>
         </View>
       )}
@@ -65,12 +74,14 @@ const NoSelectedNodeView = ({ schema, previouslySavedSchemaInfo }) => {
           >
             A full circle indicates all of the attributes have been populated.
           </IndicatorDescription>
-          <IndicatorDescription indicator={<AsteriskIcon size="XS" />}>
-            Fields that may be auto-populated when this data element is passed
-            to the XDM option of the <b>Send event</b> action have this icon.
-            Hovering over the icon shows a popup explaining when the field will
-            be auto-populated.
-          </IndicatorDescription>
+          {!updateMode && (
+            <IndicatorDescription indicator={<AsteriskIcon size="XS" />}>
+              Fields that may be auto-populated when this data element is passed
+              to the XDM option of the <b>Send event</b> action have this icon.
+              Hovering over the icon shows a popup explaining when the field
+              will be auto-populated.
+            </IndicatorDescription>
+          )}
         </Flex>
       </div>
     </div>
@@ -82,7 +93,9 @@ NoSelectedNodeView.propTypes = {
   previouslySavedSchemaInfo: PropTypes.shape({
     id: PropTypes.string.isRequired,
     version: PropTypes.string.isRequired
-  })
+  }),
+  componentName: PropTypes.string.isRequired,
+  updateMode: PropTypes.bool.isRequired
 };
 
 export default NoSelectedNodeView;

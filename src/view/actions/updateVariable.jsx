@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React, { useRef, useState } from "react";
 import { object } from "yup";
-import { Item } from "@react-spectrum/combobox";
+import { Item } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 import render from "../render";
@@ -35,7 +35,8 @@ const getInitialFormStateFromDataElement = async ({
   orgId,
   imsAccess,
   transforms = {},
-  data = {}
+  data = {},
+  existingFormStateNode
 }) => {
   if (
     dataElement.settings &&
@@ -56,14 +57,17 @@ const getInitialFormStateFromDataElement = async ({
       type: "object",
       properties: {
         xdm: schema
-      }
+      },
+      $id: schema.$id,
+      version: schema.version
     };
     context.schema = newSchema;
     return getInitialFormState({
       schema: newSchema,
       value: data,
       updateMode: true,
-      transforms
+      transforms,
+      existingFormStateNode
     });
   }
   return {};
@@ -75,7 +79,12 @@ const getInitialValues = context => async ({ initInfo }) => {
     company: { orgId },
     tokens: { imsAccess }
   } = initInfo;
-  const { dataElementId, data = {}, transforms = {} } = initInfo.settings || {};
+  const {
+    dataElementId,
+    data = {},
+    transforms = {},
+    schema: previouslySavedSchemaInfo
+  } = initInfo.settings || {};
 
   const initialValues = {
     data
@@ -100,6 +109,7 @@ const getInitialValues = context => async ({ initInfo }) => {
       imsAccess,
       dataElementId
     });
+    context.previouslySavedSchemaInfo = previouslySavedSchemaInfo;
   } else if (
     dataElementsFirstPage.length === 1 &&
     dataElementsFirstPageCursor === null
@@ -127,7 +137,7 @@ const getInitialValues = context => async ({ initInfo }) => {
   return initialValues;
 };
 
-const getSettings = ({ values }) => {
+const getSettings = context => ({ values }) => {
   const { dataElement } = values;
   const { id: dataElementId, settings } = dataElement || {};
   const { cacheId: dataElementCacheId } = settings || {};
@@ -145,6 +155,10 @@ const getSettings = ({ values }) => {
   return {
     dataElementId,
     dataElementCacheId,
+    schema: {
+      id: context.schema?.$id,
+      version: context.schema?.version
+    },
     data: xdm,
     transforms: dataTransforms
   };
@@ -154,11 +168,16 @@ const validationSchema = object().shape({
   dataElement: object().required("Please specify a data element.")
 });
 
-const UpdateVariable = ({ initInfo, formikProps: { resetForm }, context }) => {
+const UpdateVariable = ({
+  initInfo,
+  formikProps: { resetForm, values },
+  context
+}) => {
   const {
     schema,
     dataElementsFirstPage,
-    dataElementsFirstPageCursor
+    dataElementsFirstPageCursor,
+    previouslySavedSchemaInfo
   } = context;
 
   const [{ value: dataElement }] = useField("dataElement");
@@ -177,11 +196,15 @@ const UpdateVariable = ({ initInfo, formikProps: { resetForm }, context }) => {
       setSelectedNodeId(null);
 
       if (dataElement) {
+        const transforms = {};
+
         const initialFormState = await getInitialFormStateFromDataElement({
           dataElement,
           context,
           orgId,
-          imsAccess
+          imsAccess,
+          transforms,
+          existingFormStateNode: values
         });
         resetForm({ values: { ...initialFormState, dataElement } });
         if (context.schema) {
@@ -240,8 +263,9 @@ const UpdateVariable = ({ initInfo, formikProps: { resetForm }, context }) => {
           selectedNodeId={selectedNodeId}
           setSelectedNodeId={setSelectedNodeId}
           schema={schema}
-          previouslySavedSchemaInfo={null}
+          previouslySavedSchemaInfo={previouslySavedSchemaInfo}
           initialExpandedDepth={1}
+          componentName="update variable action"
         />
       )}
     </FormElementContainer>
@@ -260,7 +284,7 @@ const UpdateVariableExtensionView = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues(context)}
-      getSettings={getSettings}
+      getSettings={getSettings(context)}
       formikStateValidationSchema={validationSchema}
       render={props => {
         return <UpdateVariable context={context} {...props} />;

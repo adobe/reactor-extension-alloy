@@ -39,9 +39,9 @@ const fetchNodeIdsForDepth = (formStateNode, depth) => {
     );
   }
   if (type === ARRAY && items) {
-    return Array.keys(items).reduce(
-      (nodeIds, i) => {
-        return nodeIds.concat(fetchNodeIdsForDepth(items[i], depth - 1));
+    return items.reduce(
+      (nodeIds, item) => {
+        return nodeIds.concat(fetchNodeIdsForDepth(item, depth - 1));
       },
       [id]
     );
@@ -54,9 +54,11 @@ const Editor = ({
   setSelectedNodeId,
   schema,
   previouslySavedSchemaInfo,
-  initialExpandedDepth = 0
+  initialExpandedDepth = 0,
+  componentName
 }) => {
   const { values: formState } = useFormikContext();
+  const { updateMode } = formState;
   const [expandedNodeIdsInTree, setExpandedNodeIdsInTree] = useState(() => {
     // There is a root node with the id node-1. We don't want that.
     return fetchNodeIdsForDepth(formState, initialExpandedDepth + 1).slice(1);
@@ -150,6 +152,8 @@ const Editor = ({
           <NoSelectedNodeView
             schema={schema}
             previouslySavedSchemaInfo={previouslySavedSchemaInfo}
+            componentName={componentName}
+            updateMode={updateMode}
           />
         )}
       </View>
@@ -165,7 +169,8 @@ Editor.propTypes = {
     id: PropTypes.string.isRequired,
     version: PropTypes.string.isRequired
   }),
-  initialExpandedDepth: PropTypes.number
+  initialExpandedDepth: PropTypes.number,
+  componentName: PropTypes.string.isRequired
 };
 
 export default Editor;

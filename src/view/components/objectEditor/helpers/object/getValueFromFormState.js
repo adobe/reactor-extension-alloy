@@ -14,7 +14,7 @@ import { WHOLE } from "../../constants/populationStrategy";
 import isFormStateValuePopulated from "../isFormStateValuePopulated";
 
 export default ({ formStateNode, getValueFromFormState }) => {
-  const { populationStrategy, value, properties } = formStateNode;
+  const { populationStrategy, value, properties, schema } = formStateNode;
 
   if (populationStrategy === WHOLE) {
     return isFormStateValuePopulated(value) ? value : undefined;
@@ -24,16 +24,19 @@ export default ({ formStateNode, getValueFromFormState }) => {
     return undefined;
   }
 
-  const computedValue = Object.keys(properties).reduce((memo, propertyName) => {
-    const propertyFormStateNode = properties[propertyName];
-    const propertyValue = getValueFromFormState({
-      formStateNode: propertyFormStateNode
-    });
-    if (propertyValue !== undefined) {
-      memo[propertyName] = propertyValue;
-    }
-    return memo;
-  }, {});
+  const computedValue = Object.keys(schema.properties).reduce(
+    (memo, propertyName) => {
+      const propertyFormStateNode = properties[propertyName];
+      const propertyValue = getValueFromFormState({
+        formStateNode: propertyFormStateNode
+      });
+      if (propertyValue !== undefined) {
+        memo[propertyName] = propertyValue;
+      }
+      return memo;
+    },
+    {}
+  );
 
   return Object.keys(computedValue).length ? computedValue : undefined;
 };

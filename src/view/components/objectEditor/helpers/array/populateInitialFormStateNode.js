@@ -26,20 +26,28 @@ export default ({
   // may not exist), we don't supported the PARTS population strategy.
   if (schema.items) {
     formStateNode.isPartsPopulationStrategySupported = true;
-    if (Array.isArray(value) && value.length) {
+
+    const itemSchema = schema.items;
+    if (formStateNode.items && formStateNode.items.length) {
+      itemFormStateNodes = formStateNode.items.map((itemValue, index) => {
+        return getInitialFormStateNode({
+          schema: itemSchema,
+          nodePath: nodePath !== "" ? `${nodePath}.${index}` : `${index}`,
+          existingFormStateNode: itemValue
+        });
+      });
+    } else if (Array.isArray(value) && value.length) {
       itemFormStateNodes = value.map((itemValue, index) => {
-        const itemSchema = schema.items;
-        const itemFormStateNode = getInitialFormStateNode({
+        return getInitialFormStateNode({
           schema: itemSchema,
           value: itemValue,
-          nodePath: nodePath !== "" ? `${nodePath}.${index}` : index
+          nodePath: nodePath !== "" ? `${nodePath}.${index}` : `${index}`
         });
-        return itemFormStateNode;
       });
     }
   }
 
-  formStateNode.items = itemFormStateNodes || [];
+  formStateNode.items = itemFormStateNodes;
 
   // If value is a string, we know that a data element token (e.g., "%foo%")
   // has been provided and the user is intending to use the WHOLE population strategy.

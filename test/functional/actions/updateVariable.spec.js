@@ -10,15 +10,16 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { t } from "testcafe";
 import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
 import * as dataElementsMocks from "../helpers/endpointMocks/dataElementsMocks";
 import * as dataElementMocks from "../helpers/endpointMocks/dataElementMocks";
+import * as schemaMocks from "../helpers/endpointMocks/schemaMocks";
 import extensionViewController from "../helpers/extensionViewController";
 import spectrum from "../helpers/spectrum";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 import xdmTree from "../helpers/objectEditor/xdmTree";
 import stringEdit from "../helpers/objectEditor/stringEdit";
+import arrayEdit from "../helpers/objectEditor/arrayEdit";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(
   "errorBoundaryMessage"
@@ -26,6 +27,7 @@ const errorBoundaryMessage = spectrum.illustratedMessage(
 const dataElementField = spectrum.comboBox("dataElementField");
 const clearField = spectrum.checkbox("clearField");
 const noDataElementsAlert = spectrum.alert("noDataElements");
+const schemaChangedNotice = spectrum.alert("schemaChangedNotice");
 
 createExtensionViewFixture({
   title: "Update variable action view",
@@ -36,7 +38,7 @@ createExtensionViewFixture({
 runCommonExtensionViewTests();
 
 test.requestHooks(dataElementsMocks.notFound)(
-  "displays an error when the access token for sandboxes is invalid",
+  "displays an error when the access token for data elements is invalid",
   async () => {
     await extensionViewController.init({
       propertySettings: {
@@ -88,11 +90,15 @@ test.requestHooks(dataElementsMocks.multiple)(
     await dataElementField.openMenu();
     await dataElementField.selectMenuOption("Test data variable 2");
     await xdmTree.node("xdm").expectExists();
-    const settings = await extensionViewController.getSettings();
-    await t.expect(settings).eql({
+    await extensionViewController.expectSettings({
       data: {},
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
+      schema: {
+        id:
+          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+        version: "1.4"
+      },
       transforms: {}
     });
   }
@@ -115,8 +121,7 @@ test.requestHooks(dataElementsMocks.multiple)(
     await stringEdit.expectExists();
     await stringEdit.enterValue("name1");
 
-    const settings = await extensionViewController.getSettings();
-    await t.expect(settings).eql({
+    await extensionViewController.expectSettings({
       data: {
         _unifiedjsqeonly: {
           vendor: {
@@ -126,6 +131,11 @@ test.requestHooks(dataElementsMocks.multiple)(
       },
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
+      schema: {
+        id:
+          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+        version: "1.4"
+      },
       transforms: {}
     });
   }
@@ -146,11 +156,15 @@ test.requestHooks(dataElementsMocks.multiple)(
     await xdmTree.node("vendor").click();
     await clearField.click();
 
-    const settings = await extensionViewController.getSettings();
-    await t.expect(settings).eql({
+    await extensionViewController.expectSettings({
       data: {},
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
+      schema: {
+        id:
+          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+        version: "1.4"
+      },
       transforms: {
         "_unifiedjsqeonly.vendor": {
           clear: true
@@ -227,11 +241,15 @@ test.requestHooks(dataElementsMocks.multiple)(
     await xdmTree.node("xdm").click();
     await clearField.click();
 
-    const settings = await extensionViewController.getSettings();
-    await t.expect(settings).eql({
+    await extensionViewController.expectSettings({
       data: {},
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
+      schema: {
+        id:
+          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+        version: "1.4"
+      },
       transforms: {
         "": {
           clear: true
@@ -250,5 +268,151 @@ test.requestHooks(dataElementsMocks.none)(
       }
     });
     await noDataElementsAlert.expectExists();
+  }
+);
+
+test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
+  "Shows warning when the schema version changed",
+  async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd"
+      },
+      settings: {
+        dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
+        dataElementId: "DE1",
+        schema: {
+          id:
+            "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+          version: "1.1"
+        },
+        data: {},
+        transforms: {}
+      }
+    });
+    await schemaChangedNotice.expectExists();
+  }
+);
+
+test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
+  "doesn't show warning when the schema version is the same",
+  async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd"
+      },
+      settings: {
+        dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
+        dataElementId: "DE1",
+        schema: {
+          id:
+            "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+          version: "1.2"
+        },
+        data: {},
+        transforms: {}
+      }
+    });
+    await schemaChangedNotice.expectNotExists();
+  }
+);
+
+test.requestHooks(
+  schemaMocks.basic,
+  schemaMocks.other,
+  dataElementsMocks.multiple
+)(
+  "keeps data around when changing data elements and schema objects",
+  async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd"
+      }
+    });
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 4");
+    await xdmTree.node("testField").click();
+    await stringEdit.enterValue("myvalue1");
+    await xdmTree.node("otherField").click();
+    await stringEdit.enterValue("myvalue2");
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 3");
+    await xdmTree.node("testField").click();
+    await stringEdit.expectValue("myvalue1");
+    await xdmTree.node("otherField").expectNotExists();
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 4");
+    await xdmTree.node("testField").click();
+    await stringEdit.expectValue("myvalue1");
+    await xdmTree.node("otherField").click();
+    await stringEdit.expectValue("myvalue2");
+  }
+);
+
+test.requestHooks(
+  schemaMocks.basicArray,
+  schemaMocks.otherArray,
+  dataElementsMocks.multiple
+)(
+  "keeps data around when changing data elements and schema arrays",
+  async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd"
+      }
+    });
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 6");
+    await xdmTree.node("xdm").click();
+    await arrayEdit.addItem();
+    await arrayEdit.addItem();
+    await xdmTree.node("Item 1").toggleExpansion();
+    await xdmTree.node("testField").click();
+    await stringEdit.enterValue("myvalue1");
+    await xdmTree.node("otherField").click();
+    await stringEdit.enterValue("myvalue2");
+    await xdmTree.node("Item 1").toggleExpansion();
+    await xdmTree.node("Item 2").toggleExpansion();
+    await xdmTree.node("testField").click();
+    await stringEdit.enterValue("myvalue3");
+    await xdmTree.node("otherField").click();
+    await stringEdit.enterValue("myvalue4");
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 5");
+    await extensionViewController.expectSettings({
+      data: [
+        {
+          testField: "myvalue1"
+        },
+        {
+          testField: "myvalue3"
+        }
+      ],
+      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1957",
+      dataElementId: "DE4",
+      schema: {
+        id: "sch789",
+        version: "1.0"
+      },
+      transforms: {}
+    });
+    await xdmTree.node("Item 1").toggleExpansion();
+    await xdmTree.node("testField").click();
+    await stringEdit.expectValue("myvalue1");
+    await xdmTree.node("otherField").expectNotExists();
+    await xdmTree.node("Item 1").toggleExpansion();
+    await xdmTree.node("Item 2").toggleExpansion();
+    await xdmTree.node("testField").click();
+    await stringEdit.expectValue("myvalue3");
+    await xdmTree.node("otherField").expectNotExists();
+    await xdmTree.node("xdm").click();
+    await arrayEdit.removeItem(0);
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 6");
+    await xdmTree.node("Item 1").toggleExpansion();
+    await xdmTree.node("testField").click();
+    await stringEdit.expectValue("myvalue3");
+    await xdmTree.node("otherField").click();
+    await stringEdit.expectValue("myvalue4");
   }
 );
