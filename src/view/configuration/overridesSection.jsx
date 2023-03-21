@@ -69,33 +69,31 @@ const ReportSuitesOverride = ({ instanceFieldName, rsids }) => {
       {({ remove, push }) => (
         <>
           <Flex direction="column" gap="size-100">
-            {rsids.map((rsid, index) =>
-              index === 0 ? (
+            {rsids.map((rsid, index) => (
+              <Flex key={index} direction="row">
                 <FormikTextField
                   data-test-id={`reportSuitesOverride.${index}`}
-                  label="Report suites"
+                  label={index === 0 && "Report suites"}
                   name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_analytics.reportSuites.${index}`}
+                  description={
+                    index === rsids.length - 1 &&
+                    "The IDs for the destination report suites in Adobe Analytics. The report suites set here override all those set in your datastream configuration."
+                  }
                   width="size-5000"
                   key={index}
                 />
-              ) : (
-                <Flex key={index} direction="row" alignItems="end">
-                  <FormikTextField
-                    data-test-id={`reportSuitesOverride.${index}`}
-                    name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_analytics.reportSuites.${index}`}
-                    width="size-5000"
-                  />
+                {index !== 0 && (
                   <ActionButton
                     isQuiet
                     data-test-id={`removeReportSuite.${index}`}
-                    aria-label={`Remove Report Suite #${index + 1}`}
+                    aria-label={`Remove report suite #${index + 1}`}
                     onPress={() => remove(index)}
                   >
                     <RemoveCircle aria-label="Remove report suite" />
                   </ActionButton>
-                </Flex>
-              )
-            )}
+                )}
+              </Flex>
+            ))}
           </Flex>
           <ActionButton
             data-test-id="addReportSuite"
@@ -126,21 +124,21 @@ const Overrides = ({ instanceFieldName }) => {
             data-test-id="eventDatasetOverride"
             label="Event dataset"
             name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_experience_platform.datasets.event.datasetId`}
-            description=""
+            description="The ID for the destination event dataset in the Adobe Experience Platform. The dataset set here overrides the one set in your datastream configuration."
             width="size-5000"
           />
           <FormikTextField
             data-test-id="idSyncContainerOverride"
             label="Third-party ID sync container"
             name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_identity.idSyncContainerId`}
-            description=""
+            description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The container set here overrides the one set in your datastream configuration."
             width="size-5000"
           />
           <FormikTextField
             data-test-id="targetPropertyTokenOverride"
             label="Target property token"
             name={`${instanceFieldName}.edgeConfigOverrides.com_adobe_target.propertyToken`}
-            description=""
+            description="The token for the destination property in Adobe Target. The token set here overrides the one set in your datastream configuration."
             width="size-5000"
           />
           <ReportSuitesOverride
