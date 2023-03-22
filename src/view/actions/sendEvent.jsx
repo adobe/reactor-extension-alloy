@@ -113,7 +113,6 @@ const validationSchema = object()
   .concat(decisionScopesBridge.formikStateValidationSchema)
   .concat(surfacesBridge.formikStateValidationSchema)
   .concat(overridesBridge.formikStateValidationSchema);
-// TODO: add formik validation schema for overrides
 
 const knownEventTypeOptions = [
   "advertising.completes",

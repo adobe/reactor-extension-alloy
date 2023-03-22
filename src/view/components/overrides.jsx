@@ -8,7 +8,6 @@ import copyPropertiesIfValueDifferentThanDefault from "../configuration/utils/co
 import copyPropertiesWithDefaultFallback from "../configuration/utils/copyPropertiesWithDefaultFallback";
 import FieldSubset from "./fieldSubset";
 import FormElementContainer from "./formElementContainer";
-import FormikNumberField from "./formikReactSpectrum3/formikNumberField";
 import FormikTextField from "./formikReactSpectrum3/formikTextField";
 import SectionHeader from "./sectionHeader";
 
@@ -27,7 +26,7 @@ export const bridge = {
         reportSuites: [""]
       },
       com_adobe_identity: {
-        idSyncContainerId: 0
+        idSyncContainerId: ""
       },
       com_adobe_target: {
         propertyToken: ""
@@ -58,6 +57,18 @@ export const bridge = {
       defaultsObj: bridge.getInstanceDefaults(),
       keys: propertyKeysToCopy
     });
+
+    if (
+      instanceSettings.edgeConfigOverrides?.com_adobe_identity
+        ?.idSyncContainerId
+    ) {
+      // Alloy, Konductor, and Blackbird expect this to be a number
+      instanceSettings.edgeConfigOverrides.com_adobe_identity.idSyncContainerId = parseInt(
+        instanceSettings.edgeConfigOverrides.com_adobe_identity
+          .idSyncContainerId,
+        10
+      );
+    }
 
     return instanceSettings;
   },
@@ -159,17 +170,12 @@ const Overrides = ({ instanceFieldName, showHeader = false }) => {
             description="The ID for the destination event dataset in the Adobe Experience Platform. The dataset set here overrides the one set in your datastream configuration."
             width="size-5000"
           />
-          <FormikNumberField
+          <FormikTextField
             data-test-id="idSyncContainerOverride"
             label="Third-party ID sync container"
             name={`${prefix}.com_adobe_identity.idSyncContainerId`}
-            formatOptions={{
-              maximumFractionDigits: 0
-            }}
-            minValue={0}
-            step={1}
-            defaultValue={null}
-            hideStepper
+            inputMode="numeric"
+            pattern={/\d+/}
             description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The container set here overrides the one set in your datastream configuration."
             width="size-5000"
           />
