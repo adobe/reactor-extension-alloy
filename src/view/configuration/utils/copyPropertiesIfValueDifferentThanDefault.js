@@ -46,6 +46,8 @@ export default function copyPropertiesIfValueDifferentThanDefault({
         toObj[key] = fromValue;
       }
     } else if (
+      fromValue != null &&
+      defaultValue != null &&
       typeof fromValue === "object" &&
       typeof defaultValue === "object"
     ) {

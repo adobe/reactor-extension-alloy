@@ -65,7 +65,7 @@ describe("copyPropertiesIfValueDifferentThanDefault", () => {
       c: {
         d: {
           e: "baz",
-          f: ""
+          f: null
         }
       }
     };
@@ -75,7 +75,7 @@ describe("copyPropertiesIfValueDifferentThanDefault", () => {
       c: {
         d: {
           e: "",
-          f: ""
+          f: null
         }
       }
     };
