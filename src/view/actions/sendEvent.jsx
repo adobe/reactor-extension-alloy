@@ -70,7 +70,7 @@ const getSettings = ({ values }) => {
     settings.personalization = personalization;
   }
 
-  const edgeConfigOverrides = overridesBridge.getInstanceSettings({
+  const { edgeConfigOverrides } = overridesBridge.getInstanceSettings({
     instanceValues: values
   });
 
