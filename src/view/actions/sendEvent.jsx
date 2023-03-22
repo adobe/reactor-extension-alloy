@@ -24,6 +24,7 @@ import DecisionScopes, {
   bridge as decisionScopesBridge
 } from "../components/decisionScopes";
 import Surfaces, { bridge as surfacesBridge } from "../components/surfaces";
+import Overrides, { bridge as overridesBridge } from "../components/overrides";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
@@ -50,7 +51,8 @@ const getInitialValues = ({ initInfo }) => {
     datasetId,
     documentUnloading,
     ...decisionScopesBridge.getInitialValues({ initInfo }),
-    ...surfacesBridge.getInitialValues({ initInfo })
+    ...surfacesBridge.getInitialValues({ initInfo }),
+    ...overridesBridge.getInitialInstanceValues({ instanceSettings: initInfo })
   };
 };
 
@@ -66,6 +68,14 @@ const getSettings = ({ values }) => {
 
   if (Object.getOwnPropertyNames(personalization).length) {
     settings.personalization = personalization;
+  }
+
+  const edgeConfigOverrides = overridesBridge.getInstanceSettings({
+    instanceValues: values
+  });
+
+  if (Object.keys(edgeConfigOverrides).length > 0) {
+    settings.edgeConfigOverrides = edgeConfigOverrides;
   }
 
   if (values.xdm) {
@@ -102,6 +112,7 @@ const validationSchema = object()
   })
   .concat(decisionScopesBridge.formikStateValidationSchema)
   .concat(surfacesBridge.formikStateValidationSchema);
+// TODO: add formik validation schema for overrides
 
 const knownEventTypeOptions = [
   "advertising.completes",
@@ -234,6 +245,7 @@ const SendEvent = () => {
           </FormikCheckbox>
           <DecisionScopes />
           <Surfaces />
+          <Overrides headerSize="small" />
         </FormElementContainer>
       )}
     />

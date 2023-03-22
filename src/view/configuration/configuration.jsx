@@ -53,7 +53,7 @@ import DataCollectionSection, {
 } from "./dataCollectionSection";
 import OverridesSection, {
   bridge as overridesBridge
-} from "./overridesSection";
+} from "../components/overrides";
 import AdvancedSection, {
   bridge as advancedSectionBridge
 } from "./advancedSection";
@@ -224,6 +224,7 @@ const Configuration = ({ initInfo, context }) => {
                         />
                         <OverridesSection
                           instanceFieldName={instanceFieldName}
+                          showHeader
                         />
                         <AdvancedSection
                           instanceFieldName={instanceFieldName}
