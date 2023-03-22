@@ -19,6 +19,7 @@ import XdmVariable, {
   bridge as xdmVariableBridge
 } from "./variable/components/xdmVariable";
 import render from "../render";
+import BetaNotice from "../components/betaNotice";
 
 const getInitialValues = ({ xdmVariableContext }) => async ({ initInfo }) => {
   const { cacheId = uuid() } = initInfo.settings || {};
@@ -49,6 +50,7 @@ const validationSchema = object().concat(
 const Schema = ({ xdmVariableContext, initInfo }) => {
   return (
     <>
+      <BetaNotice componentName="variable data element" />
       <XdmVariable context={xdmVariableContext} initInfo={initInfo} />
     </>
   );
