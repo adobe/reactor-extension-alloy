@@ -51,7 +51,7 @@ const CONTEXT_ENVIRONMENT_AND_HIGH_ENTROPY_USER_AGENT_HINTS = {
 };
 
 // These properties are applied to the form state in "getInitialFormState.js"
-export default {
+const defaultFormState = {
   _id: ALWAYS,
   timestamp: ALWAYS,
   implementationDetails: ALWAYS,
@@ -86,3 +86,9 @@ export default {
   "environment.browserDetails.userAgentClientHints.platformVersion": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
   "environment.browserDetails.userAgentClientHints.wow64": CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS
 };
+
+// update variable action includes a top-level xdm key, so include those here
+export default Object.keys(defaultFormState).reduce((memo, key) => {
+  memo[`xdm.${key}`] = defaultFormState[key];
+  return memo;
+}, defaultFormState);

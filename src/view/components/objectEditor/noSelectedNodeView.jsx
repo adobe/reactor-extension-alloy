@@ -25,8 +25,7 @@ import IndicatorDescription from "./indicatorDescription";
 const NoSelectedNodeView = ({
   schema,
   previouslySavedSchemaInfo,
-  componentName,
-  updateMode
+  componentName
 }) => {
   // The schema used when the data element was last saved is different
   // from the latest configured schema. Either the customer has since
@@ -74,14 +73,12 @@ const NoSelectedNodeView = ({
           >
             A full circle indicates all of the attributes have been populated.
           </IndicatorDescription>
-          {!updateMode && (
-            <IndicatorDescription indicator={<AsteriskIcon size="XS" />}>
-              Fields that may be auto-populated when this data element is passed
-              to the XDM option of the <b>Send event</b> action have this icon.
-              Hovering over the icon shows a popup explaining when the field
-              will be auto-populated.
-            </IndicatorDescription>
-          )}
+          <IndicatorDescription indicator={<AsteriskIcon size="XS" />}>
+            Fields that may be auto-populated when this data element is passed
+            to the XDM option of the <b>Send event</b> action have this icon.
+            Hovering over the icon shows a popup explaining when the field will
+            be auto-populated.
+          </IndicatorDescription>
         </Flex>
       </div>
     </div>
@@ -94,8 +91,7 @@ NoSelectedNodeView.propTypes = {
     id: PropTypes.string.isRequired,
     version: PropTypes.string.isRequired
   }),
-  componentName: PropTypes.string.isRequired,
-  updateMode: PropTypes.bool.isRequired
+  componentName: PropTypes.string.isRequired
 };
 
 export default NoSelectedNodeView;

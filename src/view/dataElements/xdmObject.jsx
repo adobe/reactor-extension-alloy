@@ -33,6 +33,7 @@ import getInitialFormState from "../components/objectEditor/helpers/getInitialFo
 import getValueFromFormState from "../components/objectEditor/helpers/getValueFromFormState";
 import UserReportableError from "../errors/userReportableError";
 import sandboxItems from "../components/sandboxItems";
+import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRequestsAndCreateSignal";
 
 const initializeSandboxes = async ({
   context,
@@ -91,7 +92,7 @@ const initializeSelectedSchema = async ({
         sandboxName
       });
       const { $id, title, version } = schema;
-      initialValues.schema2 = { $id, title, version };
+      initialValues.selectedSchema = { $id, title, version };
       context.schema = schema;
       return;
     }
@@ -100,7 +101,7 @@ const initializeSelectedSchema = async ({
       "Could not find the schema selected previously. You will need to re-create this data element using a different schema."
     );
   }
-  initialValues.schema2 = null;
+  initialValues.selectedSchema = null;
 };
 
 const initializeSchemas = async ({
@@ -121,7 +122,7 @@ const initializeSchemas = async ({
 
   if (schemasFirstPage.length === 1 && !schemasFirstPageCursor) {
     const { $id, title, version } = schemasFirstPage[0];
-    initialValues.schema2 = { $id, title, version };
+    initialValues.selectedSchema = { $id, title, version };
   }
 
   context.schemasFirstPage = schemasFirstPage;
@@ -177,15 +178,15 @@ const getInitialValues = context => async ({ initInfo }) => {
 };
 
 const getSettings = context => ({ values }) => {
-  const { sandboxName, schema2 } = values || {};
+  const { sandboxName, selectedSchema } = values || {};
 
   return {
     sandbox: {
       name: sandboxName
     },
     schema: {
-      id: schema2?.$id,
-      version: schema2?.version
+      id: selectedSchema?.$id,
+      version: selectedSchema?.version
     },
     data: context.schema
       ? getValueFromFormState({
@@ -197,7 +198,7 @@ const getSettings = context => ({ values }) => {
 
 const formikStateValidationSchema = object().shape({
   sandboxName: string().required("Please select a sandbox."),
-  schema2: object()
+  selectedSchema: object()
     .nullable()
     .required("Please select a schema.")
 });
@@ -233,7 +234,7 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
     tokens: { imsAccess }
   } = initInfo;
   const settings = initInfo.settings || {};
-  const { resetForm } = formikProps;
+  const { resetForm, values } = formikProps;
   const reportAsyncError = useReportAsyncError();
 
   const {
@@ -249,14 +250,14 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [hasSchema, setHasSchema] = useState(schema != null);
 
-  // const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
+  const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
 
   const [{ value: selectedSandboxName }] = useField("sandboxName");
   const [
     { value: selectedSchema },
     ,
     { setValue: setSelectedSchema }
-  ] = useField("schema2");
+  ] = useField("selectedSchema");
 
   useChanged(() => {
     setHasSchema(false);
@@ -270,22 +271,25 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
     context.schema = null;
     setSelectedNodeId(null);
 
+    const signal = abortPreviousRequestsAndCreateSignal();
     const newSchema = await fetchSchema({
       orgId,
       imsAccess,
       schemaId: selectedSchema.$id,
       schemaVersion: selectedSchema.version,
-      sandboxName: selectedSandboxName
+      sandboxName: selectedSandboxName,
+      signal
     });
     if (newSchema) {
       context.schema = newSchema;
       const initialFormState = getInitialFormState({
-        schema: newSchema
+        schema: newSchema,
+        existingFormStateNode: values
       });
       resetForm({
         values: {
           ...initialFormState,
-          schema2: selectedSchema,
+          selectedSchema,
           sandboxName: selectedSandboxName
         }
       });
@@ -356,7 +360,7 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
 
         <FormikPagedComboBox
           data-test-id="schemaField"
-          name="schema2"
+          name="selectedSchema"
           label="Schema"
           width="size-5000"
           loadItems={loadSchemas}

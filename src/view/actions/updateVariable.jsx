@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React, { useRef, useState } from "react";
 import { object } from "yup";
-import { Item } from "@adobe/react-spectrum";
+import { Item, Flex, ProgressCircle } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 import render from "../render";
@@ -28,6 +28,7 @@ import useReportAsyncError from "../utils/useReportAsyncError";
 import fetchDataElement from "../utils/fetchDataElement";
 import useChanged from "../utils/useChanged";
 import Alert from "../components/alert";
+import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRequestsAndCreateSignal";
 
 const getInitialFormStateFromDataElement = async ({
   dataElement,
@@ -36,7 +37,8 @@ const getInitialFormStateFromDataElement = async ({
   imsAccess,
   transforms = {},
   data = {},
-  existingFormStateNode
+  existingFormStateNode,
+  signal
 }) => {
   if (
     dataElement.settings &&
@@ -51,7 +53,8 @@ const getInitialFormStateFromDataElement = async ({
       imsAccess,
       schemaId: dataElement.settings.schema.id,
       schemaVersion: dataElement.settings.schema.version,
-      sandboxName: dataElement.settings.sandbox.name
+      sandboxName: dataElement.settings.sandbox.name,
+      signal
     });
     const newSchema = {
       type: "object",
@@ -183,6 +186,7 @@ const UpdateVariable = ({
   const [{ value: dataElement }] = useField("dataElement");
   const [hasSchema, setHasSchema] = useState(schema != null);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
 
   const {
     propertySettings: { id: propertyId } = {},
@@ -197,14 +201,15 @@ const UpdateVariable = ({
 
       if (dataElement) {
         const transforms = {};
-
+        const signal = abortPreviousRequestsAndCreateSignal();
         const initialFormState = await getInitialFormStateFromDataElement({
           dataElement,
           context,
           orgId,
           imsAccess,
           transforms,
-          existingFormStateNode: values
+          existingFormStateNode: values,
+          signal
         });
         resetForm({ values: { ...initialFormState, dataElement } });
         if (context.schema) {
@@ -267,6 +272,11 @@ const UpdateVariable = ({
           initialExpandedDepth={1}
           componentName="update variable action"
         />
+      )}
+      {!hasSchema && dataElement && (
+        <Flex alignItems="center" justifyContent="center" height="size-2000">
+          <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
+        </Flex>
       )}
     </FormElementContainer>
   );

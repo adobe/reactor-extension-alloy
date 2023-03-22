@@ -58,7 +58,6 @@ const Editor = ({
   componentName
 }) => {
   const { values: formState } = useFormikContext();
-  const { updateMode } = formState;
   const [expandedNodeIdsInTree, setExpandedNodeIdsInTree] = useState(() => {
     // There is a root node with the id node-1. We don't want that.
     return fetchNodeIdsForDepth(formState, initialExpandedDepth + 1).slice(1);
@@ -153,7 +152,6 @@ const Editor = ({
             schema={schema}
             previouslySavedSchemaInfo={previouslySavedSchemaInfo}
             componentName={componentName}
-            updateMode={updateMode}
           />
         )}
       </View>

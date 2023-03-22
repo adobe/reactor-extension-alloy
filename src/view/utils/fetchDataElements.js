@@ -10,8 +10,7 @@ governing permissions and limitations under the License.
 */
 
 import fetchFromReactor from "./fetchFromReactor";
-import UserReportableError from "../errors/userReportableError";
-/*
+
 const testDataVariable1 = {
   id: "DE1",
   attributes: {
@@ -56,7 +55,7 @@ const otherDataElement1 = {
     settings: '{"value":"aaaa"}'
   }
 };
-*/
+
 // EXTENSION_NAME will be replace with this extension's name
 const DELEGATE_DESCRIPTOR_ID = "__EXTENSION_NAME__::dataElements::variable";
 
@@ -93,12 +92,12 @@ const fetchDataElements = async ({
       if (e.name === "AbortError") {
         throw e;
       }
-
+      /*
       throw new UserReportableError("Failed to load data elements.", {
         originatingError: e
       });
-      /*
-      //return { results: [], nextPage: null };
+      */
+      // return { results: [], nextPage: null };
       parsedResponse = {
         parsedBody: {
           data: [testDataVariable1, testDataVariable2, otherDataElement1],
@@ -113,7 +112,6 @@ const fetchDataElements = async ({
           }
         }
       };
-      */
     }
 
     parsedResponse.parsedBody.data
