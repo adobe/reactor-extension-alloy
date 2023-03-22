@@ -1,13 +1,15 @@
-import React from "react";
 import { ActionButton, Button, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { FieldArray, useField } from "formik";
 import PropTypes from "prop-types";
-import FormElementContainer from "./formElementContainer";
-import FieldSubset from "./fieldSubset";
-import FormikTextField from "./formikReactSpectrum3/formikTextField";
-import copyPropertiesWithDefaultFallback from "../configuration/utils/copyPropertiesWithDefaultFallback";
+import React from "react";
+import { array, number, object, string } from "yup";
 import copyPropertiesIfValueDifferentThanDefault from "../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
+import copyPropertiesWithDefaultFallback from "../configuration/utils/copyPropertiesWithDefaultFallback";
+import FieldSubset from "./fieldSubset";
+import FormElementContainer from "./formElementContainer";
+import FormikNumberField from "./formikReactSpectrum3/formikNumberField";
+import FormikTextField from "./formikReactSpectrum3/formikTextField";
 import SectionHeader from "./sectionHeader";
 
 export const bridge = {
@@ -25,7 +27,7 @@ export const bridge = {
         reportSuites: [""]
       },
       com_adobe_identity: {
-        idSyncContainerId: ""
+        idSyncContainerId: 0
       },
       com_adobe_target: {
         propertyToken: ""
@@ -58,8 +60,32 @@ export const bridge = {
     });
 
     return instanceSettings;
-  }
-  // TODO: add formik validation schema
+  },
+  formikStateValidationSchema: object({
+    edgeConfigOverrides: object({
+      com_adobe_experience_platform: object({
+        datasets: object({
+          event: object({
+            datasetId: string()
+          }),
+          profile: object({
+            datasetId: string()
+          })
+        })
+      }),
+      com_adobe_analytics: object({
+        reportSuites: array(string())
+      }),
+      com_adobe_identity: object({
+        idSyncContainerId: number()
+          .positive()
+          .integer()
+      }),
+      com_adobe_target: object({
+        propertyToken: string()
+      })
+    })
+  })
 };
 
 const ReportSuitesOverride = ({ prefix, rsids }) => {
@@ -133,10 +159,17 @@ const Overrides = ({ instanceFieldName, showHeader = false }) => {
             description="The ID for the destination event dataset in the Adobe Experience Platform. The dataset set here overrides the one set in your datastream configuration."
             width="size-5000"
           />
-          <FormikTextField
+          <FormikNumberField
             data-test-id="idSyncContainerOverride"
             label="Third-party ID sync container"
             name={`${prefix}.com_adobe_identity.idSyncContainerId`}
+            formatOptions={{
+              maximumFractionDigits: 0
+            }}
+            minValue={0}
+            step={1}
+            defaultValue={null}
+            hideStepper
             description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The container set here overrides the one set in your datastream configuration."
             width="size-5000"
           />

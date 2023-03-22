@@ -74,7 +74,7 @@ const getSettings = ({ values }) => {
     instanceValues: values
   });
 
-  if (Object.keys(edgeConfigOverrides).length > 0) {
+  if (edgeConfigOverrides && Object.keys(edgeConfigOverrides).length > 0) {
     settings.edgeConfigOverrides = edgeConfigOverrides;
   }
 
@@ -111,7 +111,8 @@ const validationSchema = object()
     data: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
   })
   .concat(decisionScopesBridge.formikStateValidationSchema)
-  .concat(surfacesBridge.formikStateValidationSchema);
+  .concat(surfacesBridge.formikStateValidationSchema)
+  .concat(overridesBridge.formikStateValidationSchema);
 // TODO: add formik validation schema for overrides
 
 const knownEventTypeOptions = [
