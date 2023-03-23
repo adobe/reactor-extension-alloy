@@ -122,6 +122,15 @@ const initializeSchemas = async ({
   if (schemasFirstPage.length === 1 && !schemasFirstPageCursor) {
     const { $id, title, version } = schemasFirstPage[0];
     initialValues.schema2 = { $id, title, version };
+
+    const schema = await fetchSchema({
+      orgId,
+      imsAccess,
+      schemaId: $id,
+      schemaVersion: version,
+      sandboxName
+    });
+    context.schema = schema;
   }
 
   context.schemasFirstPage = schemasFirstPage;

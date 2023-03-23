@@ -15,6 +15,7 @@ import * as sandboxMocks from "../../helpers/endpointMocks/sandboxesMocks";
 import * as schemasMocks from "../../helpers/endpointMocks/schemasMocks";
 import * as schemaMocks from "../../helpers/endpointMocks/schemaMocks";
 import initializeExtensionView from "./helpers/initializeExtensionView";
+import xdmTree from "./helpers/xdmTree";
 import spectrum from "../../helpers/spectrum";
 import editor from "./helpers/editor";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
@@ -244,6 +245,7 @@ test.requestHooks(
 )("auto-selects schema if the sandbox contains a single schema", async () => {
   await initializeExtensionView();
   await schemaField.expectText("Test Schema 1");
+  await xdmTree.node("testField").expectExists();
 });
 
 test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
