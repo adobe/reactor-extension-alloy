@@ -15,4 +15,8 @@ const instanceManager = require("../../instanceManager/index");
 
 const document = window.document;
 
-module.exports = createRedirectWithIdentity({ instanceManager, document });
+module.exports = createRedirectWithIdentity({
+  instanceManager,
+  document,
+  logger: turbine.logger
+});

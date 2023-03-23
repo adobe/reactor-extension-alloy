@@ -24,14 +24,14 @@ module.exports = ({ instanceManager, document, logger }) => (
     return Promise.resolve();
   }
 
-  if (!event || !event.nativeEvent) {
+  if (!event || !event.element) {
     logger.warn(
-      `Native event not found when running "Redirect with identity." This action is meant to be used with a Core click event.`
+      `Clicked element not found when running "Redirect with identity." This action is meant to be used with a Core click event.`
     );
     return Promise.resolve();
   }
 
-  if (!event.nativeEvent.target || !event.nativeEvent.target.href) {
+  if (!event.element.href) {
     logger.warn(
       `Invalid event target when running "Redirect with identity." This action is meant to be used with a Core click event using an "a[href]" selector.`
     );
@@ -42,7 +42,7 @@ module.exports = ({ instanceManager, document, logger }) => (
     event.nativeEvent.preventDefault();
   }
 
-  const url = event.nativeEvent.target.href;
+  const url = event.element.href;
   return instance("appendIdentityToUrl", { url }).then(
     ({ url: newLocation }) => {
       document.location = newLocation;
