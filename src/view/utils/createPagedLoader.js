@@ -43,11 +43,13 @@ export default ({
         signal: abortController.signal
       }));
     } catch (e) {
-      // Most of the times this is an AbortError, but for everything else the loadItems function should handle the error itself.
-      return;
+      // Most of the times this is an AbortError, but for everything
+      // else the loadItems function should handle the error itself.
+      if (e.name !== "AbortError") {
+        return;
+      }
     }
 
-    // One extra check to see if this has been aborted.
     if (abortController.signal.aborted) {
       return;
     }

@@ -174,3 +174,21 @@ export const multipleWithoutDefault = RequestMock()
     200,
     responseHeaders
   );
+export const singleDefault = RequestMock()
+  .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: "GET" })
+  .respond(
+    {
+      sandboxes: [
+        {
+          name: "prod",
+          title: "Prod",
+          type: "production",
+          isDefault: true,
+          region: "VA7",
+          state: "active"
+        }
+      ]
+    },
+    200,
+    responseHeaders
+  );

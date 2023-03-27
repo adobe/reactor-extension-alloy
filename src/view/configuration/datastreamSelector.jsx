@@ -26,12 +26,11 @@ import { useField } from "formik";
 import Copy from "@spectrum-icons/workflow/Copy";
 import Delete from "@spectrum-icons/workflow/Delete";
 import copyToClipboard from "clipboard-copy";
-import useReportAsyncError from "../utils/useReportAsyncError";
 import fetchConfigs from "./utils/fetchConfigs";
 import usePrevious from "../utils/usePrevious";
 import Alert from "../components/alert";
-import UserReportableError from "../errors/userReportableError";
 import { PRODUCTION } from "./constants/environmentType";
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 
 // eslint-disable-next-line no-underscore-dangle
 const getKey = datastream => datastream && datastream._system.id;
@@ -58,8 +57,6 @@ const DatastreamSelector = ({
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
   );
-
-  const reportAsyncError = useReportAsyncError();
   const previousSelectedSandbox = usePrevious(selectedSandbox);
 
   const datastreamList = useAsyncList({
@@ -83,13 +80,7 @@ const DatastreamSelector = ({
           sandbox: selectedSandbox.name
         }));
       } catch (e) {
-        if (e.name !== "AbortError") {
-          reportAsyncError(
-            new UserReportableError(`Failed to load datastreams.`, {
-              originatingError: e
-            })
-          );
-        }
+        throw e;
       }
       return {
         items: datastreams
@@ -125,6 +116,69 @@ const DatastreamSelector = ({
     "data-test-id": `${environmentType}DatastreamField`,
     UNSAFE_className: "CapitalizedLabel"
   };
+  const errorLoadingDatastreamsDescription = (
+    <>
+      {`You do not have enough permissions to fetch the ${
+        selectedSandbox.title
+      } sandbox configurations. See the documentation for `}
+      <Link>
+        <a
+          href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          data collection permission management
+        </a>
+      </Link>{" "}
+      for more information.
+    </>
+  );
+
+  if (datastreamList.loadingState === "error" && !datastreamList.items.length) {
+    const errorMessage = datastreamList?.error?.originatingError?.message;
+
+    if (value) {
+      return (
+        <Flex direction="row" gap="size-100">
+          <View>
+            <FormikTextField
+              data-test-id={`datastreamDisabledField${environmentType}`}
+              label="Datastream ID"
+              name={name}
+              description={errorLoadingDatastreamsDescription}
+              width="size-5000"
+              isDisabled="true"
+            />
+          </View>
+          <Flex direction="row" gap="size-100" marginTop="size-250">
+            <TooltipTrigger>
+              <ActionButton
+                isQuiet
+                isDisabled={!value}
+                onPress={() => {
+                  copyToClipboard(value);
+                }}
+              >
+                <Copy />
+              </ActionButton>
+              <Tooltip> Copy datastream ID to clipboard. </Tooltip>
+            </TooltipTrigger>
+          </Flex>
+        </Flex>
+      );
+    }
+    return (
+      <Alert
+        data-test-id={`${environmentType}ErrorFetchingDatastreamsAlert`}
+        variant={environmentType === PRODUCTION ? "negative" : "informative"}
+        title={`Error fetching datastreams for ${selectedSandbox.name} sandbox`}
+        width="size-5000"
+        marginTop="size-100"
+      >
+        {errorMessage}
+      </Alert>
+    );
+  }
 
   if (!datastreamList.isLoading && !datastreamList.items.length) {
     return (

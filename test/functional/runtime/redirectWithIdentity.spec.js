@@ -106,7 +106,7 @@ test("Redirects with an identity", async () => {
   await appendLaunchLibrary(container);
 
   await addHtmlToBody(
-    `<a id="mylink" href="${SECONDARY_TEST_PAGE}">My link</a>`
+    `<a href="${SECONDARY_TEST_PAGE}"><div id="mylink">My link</div></a>`
   );
   // The requestLogger.count method uses TestCafe's smart query
   // assertion mechanism, so it will wait for the request to be

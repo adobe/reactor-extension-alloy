@@ -301,23 +301,38 @@ const getSelectInputMethodStateForNewInstance = async ({
   // particularly so when a user clicks the Add Instance button,
   // they don't have to wait while the instance is created.
   if (!firstPageOfSandboxes) {
-    ({ results: firstPageOfSandboxes } = await fetchSandboxes({
-      orgId,
-      imsAccess
-    }));
+    try {
+      ({ results: firstPageOfSandboxes } = await fetchSandboxes({
+        orgId,
+        imsAccess
+      }));
+    } catch (error) {
+      context.current.fetchSandboxError = true;
+    }
   }
 
   context.current.sandboxes = firstPageOfSandboxes;
 
+  // when not enough permissions we might get empty array of sandboxes
+  if (
+    !firstPageOfSandboxes ||
+    (firstPageOfSandboxes && firstPageOfSandboxes.length === 0)
+  ) {
+    context.current.fetchSandboxError = true;
+  }
   // checking if this is a organization with one sandbox ( default sandbox )
-  if (firstPageOfSandboxes.length === 1) {
+  if (firstPageOfSandboxes && firstPageOfSandboxes.length === 1) {
+    try {
+      ({ results: firstPageOfDatastreams } = await fetchConfigs({
+        orgId,
+        imsAccess,
+        limit: 1000,
+        sandbox: firstPageOfSandboxes[0].name
+      }));
+    } catch (error) {
+      context.current.fetchConfigsError = true;
+    }
     // eslint-disable-next-line prefer-const
-    ({ results: firstPageOfDatastreams } = await fetchConfigs({
-      orgId,
-      imsAccess,
-      limit: 1000,
-      sandbox: firstPageOfSandboxes[0].name
-    }));
     context.current.datastreams = firstPageOfDatastreams;
 
     selectInputMethodState.productionEnvironment.sandbox =
@@ -366,15 +381,21 @@ export const bridge = {
       // the user to delete their first instance, which would make their second instance become
       // their first instance, which would cause the selection components to be displayable for that
       // instance. We want the state to be ready for this case.
+      edgeConfigFreeformInputMethod: getFreeformInputStateForNewInstance(),
       edgeConfigSelectInputMethod: await getSelectInputMethodStateForNewInstance(
         {
           orgId,
           imsAccess,
           context
         }
-      ),
-      edgeConfigFreeformInputMethod: getFreeformInputStateForNewInstance()
+      )
     };
+    if (
+      context.current.fetchSandboxError ||
+      context.current.fetchConfigsError
+    ) {
+      instanceDefaults.edgeConfigInputMethod = INPUT_METHOD.FREEFORM;
+    }
 
     return instanceDefaults;
   },
@@ -408,10 +429,18 @@ export const bridge = {
         );
 
         instanceValues.edgeConfigFreeformInputMethod = getFreeformInputStateForNewInstance();
-        instanceValues.edgeConfigInputMethod = INPUT_METHOD.SELECT;
-        isSuccessfullyPopulatedForSelectInputMethod = true;
+        if (
+          context.current.fetchSandboxError ||
+          context.current.fetchConfigsError
+        ) {
+          instanceValues.edgeConfigInputMethod = INPUT_METHOD.FREEFORM;
+          isSuccessfullyPopulatedForSelectInputMethod = false;
+        } else {
+          instanceValues.edgeConfigInputMethod = INPUT_METHOD.SELECT;
+          isSuccessfullyPopulatedForSelectInputMethod = true;
+        }
       } catch (e) {
-        // No nothing. We'll fall back to the freeform input method.
+        instanceValues.edgeConfigInputMethod = INPUT_METHOD.FREEFORM;
       }
     }
 
@@ -421,13 +450,17 @@ export const bridge = {
       // the user to delete their first instance, which would make their second instance become
       // their first instance, which would cause the selection components to be displayable for that
       // instance. We want the state to be ready for this case.
-      instanceValues.edgeConfigSelectInputMethod = await getSelectInputMethodStateForNewInstance(
-        {
-          orgId,
-          imsAccess,
-          context
-        }
-      );
+      try {
+        instanceValues.edgeConfigSelectInputMethod = await getSelectInputMethodStateForNewInstance(
+          {
+            orgId,
+            imsAccess,
+            context
+          }
+        );
+      } catch (error) {
+        // do nothing we will fall back to free form
+      }
       instanceValues.edgeConfigFreeformInputMethod = getFreeformInputMethodStateForExistingInstance(
         { instanceSettings }
       );

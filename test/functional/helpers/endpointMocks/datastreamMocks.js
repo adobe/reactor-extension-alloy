@@ -17,12 +17,12 @@ const DATASTREAM_ENDPOINT_REGEX = /\/edge\/datasets\/datastreams\/records\/.+/;
 const specificDatastream = /\/edge\/datasets\/datastreams\/records\/64c31a3b-d031-4a2f-8834-e96fc15d3030/;
 
 export const basic = RequestMock()
-  .onRequestTo({
-    url: specificDatastream,
-    headers: {
-      "x-sandbox-name": "testsandbox1"
-    },
-    method: "GET"
+  .onRequestTo(async request => {
+    return (
+      specificDatastream.test(request.url) &&
+      request.headers["x-sandbox-name"] === "testsandbox1" &&
+      request.method === "get"
+    );
   })
   .respond(
     {
@@ -40,12 +40,12 @@ export const basic = RequestMock()
   );
 
 export const notExist = RequestMock()
-  .onRequestTo({
-    url: specificDatastream,
-    headers: {
-      "x-sandbox-name": "testsandbox2"
-    },
-    method: "GET"
+  .onRequestTo(async request => {
+    return (
+      specificDatastream.test(request.url) &&
+      request.headers["x-sandbox-name"] === "testsandbox2" &&
+      request.method === "get"
+    );
   })
   .respond({}, 404, responseHeaders);
 
@@ -57,5 +57,30 @@ export const unauthorized = RequestMock()
       message: "Oauth token is not valid"
     },
     401,
+    responseHeaders
+  );
+
+export const forbidden = RequestMock()
+  .onRequestTo(async request => {
+    return (
+      specificDatastream.test(request.url) &&
+      request.headers["x-sandbox-name"] === "testsandbox2" &&
+      request.method === "get"
+    );
+  })
+  .respond(
+    {
+      type: "https://ns.adobe.com/aep/errors/EXEG-3050-403",
+      status: 403,
+      title: "Forbidden",
+      detail: "Access is denied",
+      report: {
+        timestamp: "2022-10-20T12:31:11Z",
+        version: "1.3.13",
+        requestId: "1yMgl3lAhfaBzteXQiBPqymbbEhSNFQ5",
+        orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg"
+      }
+    },
+    403,
     responseHeaders
   );
