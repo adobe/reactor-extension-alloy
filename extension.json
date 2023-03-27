@@ -110,6 +110,10 @@
               "onBeforeEventSend": {
                 "type": "string",
                 "minLength": 1
+              },
+              "onBeforeLinkClickSend": {
+                "type": "string",
+                "minLength": 1
               }
             },
             "required": ["edgeConfigId", "name"],
@@ -124,6 +128,11 @@
       {
         "type": "function",
         "propertyPath": "instances[].onBeforeEventSend",
+        "parameters": ["content"]
+      },
+      {
+        "type": "function",
+        "propertyPath": "instances[].onBeforeLinkClickSend",
         "parameters": ["content"]
       },
       {

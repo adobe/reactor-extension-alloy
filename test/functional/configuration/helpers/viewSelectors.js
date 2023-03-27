@@ -123,6 +123,9 @@ for (let i = 0; i < 3; i += 1) {
       "downloadLinkQualifierTestButton"
     ),
     onBeforeEventSendEditButton: spectrum.button("onBeforeEventSendEditButton"),
+    onBeforeLinkClickSendEditButton: spectrum.button(
+      "onBeforeLinkClickSendEditButton"
+    ),
     contextGranularity: {
       allField: spectrum.radio("contextGranularityAllField"),
       specificField: spectrum.radio("contextGranularitySpecificField")
