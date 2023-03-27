@@ -14,7 +14,7 @@ module.exports = ({ instanceManager, document, logger }) => (
   settings,
   event
 ) => {
-  const { instanceName } = settings;
+  const { instanceName, edgeConfigOverrides } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -43,7 +43,7 @@ module.exports = ({ instanceManager, document, logger }) => (
   }
 
   const url = event.element.href;
-  return instance("appendIdentityToUrl", { url }).then(
+  return instance("appendIdentityToUrl", { url, edgeConfigOverrides }).then(
     ({ url: newLocation }) => {
       document.location = newLocation;
     }
