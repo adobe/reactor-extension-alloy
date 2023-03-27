@@ -492,6 +492,62 @@
                 "pattern": "^%[^%]+%$"
               }
             ]
+          },
+          "edgeConfigOverrides": {
+            "type": "object",
+            "properties": {
+              "com_adobe_experience_platform": {
+                "type": "object",
+                "properties": {
+                  "datasets": {
+                    "type": "object",
+                    "properties": {
+                      "event": {
+                        "type": "object",
+                        "properties": {
+                          "datasetId": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["datasetId"]
+                      }
+                    },
+                    "required": ["event"]
+                  }
+                },
+                "required": ["datasets"]
+              },
+              "com_adobe_analytics": {
+                "type": "object",
+                "properties": {
+                  "reportSuites": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": ["reportSuites"]
+              },
+              "com_adobe_identity": {
+                "type": "object",
+                "properties": {
+                  "idSyncContainerId": {
+                    "type": "integer"
+                  }
+                },
+                "required": ["idSyncContainerId"]
+              },
+              "com_adobe_target": {
+                "type": "object",
+                "properties": {
+                  "propertyToken": {
+                    "type": "string"
+                  }
+                },
+                "required": ["propertyToken"]
+              }
+            }
           }
         },
         "required": ["instanceName", "consent"],

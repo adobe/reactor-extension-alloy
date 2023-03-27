@@ -32,7 +32,8 @@ describe("Set Consent", () => {
             version: "1.0",
             value: { general: generalConsent }
           }
-        ]
+        ],
+        edgeConfigOverrides: undefined
       });
 
       expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
@@ -47,7 +48,8 @@ describe("Set Consent", () => {
               general: generalConsent
             }
           }
-        ]
+        ],
+        edgeConfigOverrides: undefined
       });
     });
   });
@@ -65,7 +67,8 @@ describe("Set Consent", () => {
         consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }]
       });
       expect(instance).toHaveBeenCalledWith("setConsent", {
-        consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }]
+        consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
+        edgeConfigOverrides: undefined
       });
     });
   });
@@ -86,5 +89,57 @@ describe("Set Consent", () => {
         'Failed to set consent for instance "myinstance". No matching instance was configured with this name.'
       )
     );
+  });
+
+  // a test that checks the inclusion for the edgeConfigOverrides
+  it("passes edgeConfigOverrides when it is defined", () => {
+    const instance = jasmine.createSpy();
+    const instanceManager = { getInstance: () => instance };
+    const action = createSetConsent({ instanceManager });
+    action({
+      instanceName: "myinstance",
+      identityMap: "%dataelement123%",
+      consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
+      edgeConfigOverrides: {
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6335faf30f5a161c0b4b1444"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 30793
+        },
+        com_adobe_target: {
+          propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
+        }
+      }
+    });
+    expect(instance).toHaveBeenCalledWith("setConsent", {
+      identityMap: "%dataelement123%",
+      consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
+      edgeConfigOverrides: {
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6335faf30f5a161c0b4b1444"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 30793
+        },
+        com_adobe_target: {
+          propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
+        }
+      }
+    });
   });
 });
