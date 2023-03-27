@@ -245,7 +245,7 @@ const SendEvent = () => {
           </FormikCheckbox>
           <DecisionScopes />
           <Surfaces />
-          <Overrides headerSize="small" />
+          <Overrides />
         </FormElementContainer>
       )}
     />
