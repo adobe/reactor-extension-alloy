@@ -99,6 +99,17 @@ export const bridge = {
   })
 };
 
+/**
+ * The names of the different fields that can appear in the form. Used to pass
+ * to the `showFields` prop of the `Overrides` component.
+ */
+export const FIELD_NAMES = {
+  eventDatasetOverride: "eventDatasetOverride",
+  idSyncContainerOverride: "idSyncContainerOverride",
+  targetPropertyTokenOverride: "targetPropertyTokenOverride",
+  reportSuitesOverride: "reportSuitesOverride"
+};
+
 const ReportSuitesOverride = ({ prefix, rsids }) => {
   return (
     <FieldArray name={`${prefix}.com_adobe_analytics.reportSuites`}>
@@ -108,7 +119,7 @@ const ReportSuitesOverride = ({ prefix, rsids }) => {
             {rsids.map((rsid, index) => (
               <Flex key={index} direction="row">
                 <FormikTextField
-                  data-test-id={`reportSuitesOverride.${index}`}
+                  data-test-id={`${FIELD_NAMES.reportSuitesOverride}.${index}`}
                   label={index === 0 && "Report suites"}
                   name={`${prefix}.com_adobe_analytics.reportSuites.${index}`}
                   description={
@@ -150,12 +161,29 @@ ReportSuitesOverride.propTypes = {
   rsids: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
-const Overrides = ({ instanceFieldName, showHeader = false }) => {
+/**
+ * A section of a form that allows the user to override datastream configuration
+ *
+ * @typedef {Object} OverridesProps
+ * @property {string} options.instanceFieldName
+ * The name of the Formik parent form. State will be stored as a nested object under the "edgeConfigOverrides" key.
+ * @property {boolean} options.showHeader Whether to show the header
+ * @property {Array<"eventDatasetOverride" | "idSyncContainerOverride" | "targetPropertyTokenOverride" | "targetPropertyTokenOverride" | "reportSuitesOverride">} options.showFields
+ * Which fields to show. Defaults to showing all fields
+ * @param {OverridesProps} options
+ * @returns {React.Element}
+ */
+const Overrides = ({
+  instanceFieldName,
+  showHeader = false,
+  showFields = [...Object.values(FIELD_NAMES)]
+}) => {
   const prefix = instanceFieldName
     ? `${instanceFieldName}.edgeConfigOverrdides`
     : "edgeConfigOverrides";
   const [{ value }] = useField(instanceFieldName ?? "edgeConfigOverrides");
   const edgeConfigOverrides = value.edgeConfigOverrides ?? value;
+  const showFieldsSet = new Set(showFields);
   return (
     <>
       {showHeader && (
@@ -163,33 +191,41 @@ const Overrides = ({ instanceFieldName, showHeader = false }) => {
       )}
       <FormElementContainer>
         <FieldSubset>
-          <FormikTextField
-            data-test-id="eventDatasetOverride"
-            label="Event dataset"
-            name={`${prefix}.com_adobe_experience_platform.datasets.event.datasetId`}
-            description="The ID for the destination event dataset in the Adobe Experience Platform. The dataset set here overrides the one set in your datastream configuration."
-            width="size-5000"
-          />
-          <FormikTextField
-            data-test-id="idSyncContainerOverride"
-            label="Third-party ID sync container"
-            name={`${prefix}.com_adobe_identity.idSyncContainerId`}
-            inputMode="numeric"
-            pattern={/\d+/}
-            description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The container set here overrides the one set in your datastream configuration."
-            width="size-5000"
-          />
-          <FormikTextField
-            data-test-id="targetPropertyTokenOverride"
-            label="Target property token"
-            name={`${prefix}.com_adobe_target.propertyToken`}
-            description="The token for the destination property in Adobe Target. The token set here overrides the one set in your datastream configuration."
-            width="size-5000"
-          />
-          <ReportSuitesOverride
-            prefix={prefix}
-            rsids={edgeConfigOverrides.com_adobe_analytics.reportSuites}
-          />
+          {showFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
+            <FormikTextField
+              data-test-id={FIELD_NAMES.eventDatasetOverride}
+              label="Event dataset"
+              name={`${prefix}.com_adobe_experience_platform.datasets.event.datasetId`}
+              description="The ID for the destination event dataset in the Adobe Experience Platform. The dataset set here overrides the one set in your datastream configuration."
+              width="size-5000"
+            />
+          )}
+          {showFieldsSet.has(FIELD_NAMES.idSyncContainerOverride) && (
+            <FormikTextField
+              data-test-id={FIELD_NAMES.idSyncContainerOverride}
+              label="Third-party ID sync container"
+              name={`${prefix}.com_adobe_identity.idSyncContainerId`}
+              inputMode="numeric"
+              pattern={/\d+/}
+              description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The container set here overrides the one set in your datastream configuration."
+              width="size-5000"
+            />
+          )}
+          {showFieldsSet.has(FIELD_NAMES.targetPropertyTokenOverride) && (
+            <FormikTextField
+              data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
+              label="Target property token"
+              name={`${prefix}.com_adobe_target.propertyToken`}
+              description="The token for the destination property in Adobe Target. The token set here overrides the one set in your datastream configuration."
+              width="size-5000"
+            />
+          )}
+          {showFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
+            <ReportSuitesOverride
+              prefix={prefix}
+              rsids={edgeConfigOverrides.com_adobe_analytics.reportSuites}
+            />
+          )}
         </FieldSubset>
       </FormElementContainer>
     </>
@@ -198,7 +234,8 @@ const Overrides = ({ instanceFieldName, showHeader = false }) => {
 
 Overrides.propTypes = {
   instanceFieldName: PropTypes.string,
-  showHeader: PropTypes.bool
+  showHeader: PropTypes.bool,
+  showFields: PropTypes.arrayOf(PropTypes.oneOf(Object.values(FIELD_NAMES)))
 };
 
 export default Overrides;
