@@ -152,7 +152,7 @@ const getKey = item => item && `${item.$id}_${item.version}`;
 const getLabel = item => item?.title;
 
 const XdmVariable = ({
-  context: { sandboxes, schemasFirstPage, schemasFirstPageCursor, warning },
+  context: { sandboxes, schemasFirstPage, schemasFirstPageCursor },
   initInfo
 }) => {
   const {
@@ -161,7 +161,7 @@ const XdmVariable = ({
   } = initInfo;
   const reportAsyncError = useReportAsyncError();
 
-  const [{ value: sandbox }, { touched: sandboxTouched }] = useField("sandbox");
+  const [{ value: sandbox }] = useField("sandbox");
 
   const loadItems = async ({ filterText, cursor, signal }) => {
     let results;
@@ -191,7 +191,6 @@ const XdmVariable = ({
 
   return (
     <>
-      {!sandboxTouched && warning && <h1>Warning: {warning}</h1>}
       <FormikPicker
         data-test-id="sandboxField"
         name="sandbox"

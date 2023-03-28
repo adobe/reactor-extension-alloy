@@ -13,6 +13,7 @@ import React, { useRef } from "react";
 import { object } from "yup";
 import { v4 as uuid } from "uuid";
 import PropTypes from "prop-types";
+import { Content } from "@adobe/react-spectrum";
 import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
 import XdmVariable, {
@@ -51,6 +52,14 @@ const Schema = ({ xdmVariableContext, initInfo }) => {
   return (
     <>
       <BetaNotice componentName="variable data element" />
+      <Content width="size-5000">
+        Variable data elements are used to build up an XDM object using actions.
+        Variable data elements start out empty, but you can update XDM
+        properties using Web SDK update variable actions. You can reference the
+        variable data element just like any other data element. For example,
+        inside of a send event action you can specify this data element as the
+        value for XDM.
+      </Content>
       <XdmVariable context={xdmVariableContext} initInfo={initInfo} />
     </>
   );
