@@ -352,7 +352,14 @@ test("returns full valid settings", async () => {
         idMigrationEnabled: false,
         thirdPartyCookiesEnabled: false,
         onBeforeEventSend:
-          'language=javascript;code=// Modify content.xdm or content.data as necessary. There is no need to wrap the\n// code in a function or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";',
+          "language=javascript;code=// Modify content.xdm or content.data as necessary. There is no need to wrap the\n" +
+          "// code in a function or return a value. For example:\n" +
+          '// content.xdm.web.webPageDetails.name = "Checkout";',
+        onBeforeLinkClickSend:
+          'language=javascript;code=// Filter by "content.clickedElement".\n' +
+          "// Modify content.xdm or content.data as necessary. There is no need to wrap the\n" +
+          "// code in a function or return a value. For example:\n" +
+          '// content.xdm.web.webPageDetails.name = "Checkout";',
         context: ["web", "device", "environment", "placeContext"],
         downloadLinkQualifier: "[]"
       },
@@ -602,10 +609,8 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
   await extensionViewController.init(
     {},
     {
-      openCodeEditor() {
-        return Promise.resolve(
-          "/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/"
-        );
+      openCodeEditor(options) {
+        return Promise.resolve(options.code);
       }
     }
   );
@@ -630,10 +635,8 @@ test("does not save onBeforeEventSend and onBeforeLinkClickSend code if it match
   await extensionViewController.init(
     {},
     {
-      openCodeEditor() {
-        return Promise.resolve(
-          '// Modify content.xdm or content.data as necessary. There is no need to wrap the\n// code in a function or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";'
-        );
+      openCodeEditor(options) {
+        return Promise.resolve(options.code);
       }
     }
   );

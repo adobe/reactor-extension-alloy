@@ -378,6 +378,8 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
           dependencies={[selectedSandboxName]}
           firstPage={schemasFirstPage}
           firstPageCursor={schemasFirstPageCursor}
+          alertTitle="No schemas found"
+          alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
         />
       </FormElementContainer>
       {editorAreaContent}

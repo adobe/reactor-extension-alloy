@@ -13,10 +13,10 @@ governing permissions and limitations under the License.
 import { RequestMock } from "testcafe";
 import responseHeaders from "./responseHeaders";
 
-const SCHEMA_ENDPOINT_REGEX1 = /\/schemaregistry\/tenant\/schemas\/sch123$/;
-const SCHEMA_ENDPOINT_REGEX2 = /\/schemaregistry\/tenant\/schemas\/sch456$/;
-const SCHEMA_ENDPOINT_REGEX3 = /\/schemaregistry\/tenant\/schemas\/sch789$/;
-const SCHEMA_ENDPOINT_REGEX4 = /\/schemaregistry\/tenant\/schemas\/sch10$/;
+const SCHEMA_ENDPOINT_REGEX1 = /\/schemaregistry\/tenant\/schemas\/.*sch123$/;
+const SCHEMA_ENDPOINT_REGEX2 = /\/schemaregistry\/tenant\/schemas\/.*sch456$/;
+const SCHEMA_ENDPOINT_REGEX3 = /\/schemaregistry\/tenant\/schemas\/.*sch789$/;
+const SCHEMA_ENDPOINT_REGEX4 = /\/schemaregistry\/tenant\/schemas\/.*sch10$/;
 
 export const basic = RequestMock()
   .onRequestTo({

@@ -49,30 +49,39 @@ const getInitialFormStateFromDataElement = async ({
     dataElement.settings.sandbox &&
     dataElement.settings.sandbox.name
   ) {
-    const schema = await fetchSchema({
-      orgId,
-      imsAccess,
-      schemaId: dataElement.settings.schema.id,
-      schemaVersion: dataElement.settings.schema.version,
-      sandboxName: dataElement.settings.sandbox.name,
-      signal
-    });
-    const newSchema = {
-      type: "object",
-      properties: {
-        xdm: schema
-      },
-      $id: schema.$id,
-      version: schema.version
-    };
-    context.schema = newSchema;
-    return getInitialFormState({
-      schema: newSchema,
-      value: data,
-      updateMode: true,
-      transforms,
-      existingFormStateNode
-    });
+    let schema;
+    try {
+      schema = await fetchSchema({
+        orgId,
+        imsAccess,
+        schemaId: dataElement.settings.schema.id,
+        schemaVersion: dataElement.settings.schema.version,
+        sandboxName: dataElement.settings.sandbox.name,
+        signal
+      });
+    } catch (e) {
+      if (e.name !== "AbortError") {
+        throw e;
+      }
+    }
+    if (!signal || !signal.aborted) {
+      const newSchema = {
+        type: "object",
+        properties: {
+          xdm: schema
+        },
+        $id: schema.$id,
+        version: schema.version
+      };
+      context.schema = newSchema;
+      return getInitialFormState({
+        schema: newSchema,
+        value: data,
+        updateMode: true,
+        transforms,
+        existingFormStateNode
+      });
+    }
   }
   return {};
 };
@@ -212,9 +221,11 @@ const UpdateVariable = ({
           existingFormStateNode: values,
           signal
         });
-        resetForm({ values: { ...initialFormState, dataElement } });
-        if (context.schema) {
-          setHasSchema(true);
+        if (!signal.aborted) {
+          resetForm({ values: { ...initialFormState, dataElement } });
+          if (context.schema) {
+            setHasSchema(true);
+          }
         }
       }
     }),

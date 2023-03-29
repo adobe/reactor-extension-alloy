@@ -33,14 +33,16 @@ export default ({
     if (abortController) {
       abortController.abort();
     }
+
     abortController = new AbortController();
+    const currentAbortController = abortController;
     let newItems;
     let newCursor;
     try {
       ({ items: newItems, cursor: newCursor } = await loadItems({
         filterText,
         cursor,
-        signal: abortController.signal
+        signal: currentAbortController.signal
       }));
     } catch (e) {
       // Most of the times this is an AbortError, but for everything
@@ -50,7 +52,7 @@ export default ({
       }
     }
 
-    if (abortController.signal.aborted) {
+    if (currentAbortController.signal.aborted) {
       return;
     }
 
