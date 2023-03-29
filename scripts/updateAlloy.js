@@ -26,12 +26,14 @@ const npmView = JSON.parse(
   execSync(`npm view @adobe/alloy@~${currentVersion} version --json`).toString()
 );
 // npmView is either a single string or an array of strings
+// eslint-disable-next-line no-console
 console.log(npmView);
 const newestVersion = Array.isArray(npmView)
   ? npmView[npmView.length - 1]
   : npmView;
 
 if (currentVersion !== newestVersion) {
+  // eslint-disable-next-line no-console
   console.log(`Updating @adobe/alloy dependency to ${newestVersion}.`);
   execSync(`npm install @adobe/alloy@${newestVersion}`);
 }

@@ -14,10 +14,10 @@ import { Selector, t } from "testcafe";
 import * as sandboxMocks from "../../helpers/endpointMocks/sandboxesMocks";
 import * as schemasMocks from "../../helpers/endpointMocks/schemasMocks";
 import * as schemaMocks from "../../helpers/endpointMocks/schemaMocks";
-import initializeExtensionView from "./helpers/initializeExtensionView";
-import xdmTree from "./helpers/xdmTree";
+import initializeExtensionView from "../../helpers/objectEditor/initializeExtensionView";
+import xdmTree from "../../helpers/objectEditor/xdmTree";
 import spectrum from "../../helpers/spectrum";
-import editor from "./helpers/editor";
+import editor from "../../helpers/objectEditor/editor";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(

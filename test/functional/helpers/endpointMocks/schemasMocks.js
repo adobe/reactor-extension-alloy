@@ -64,6 +64,28 @@ export const multiple = RequestMock()
     responseHeaders
   );
 
+export const search = RequestMock()
+  .onRequestTo({
+    url: /\/schemaregistry\/tenant\/schemas\?.*property=title/,
+    method: "GET"
+  })
+  .respond(
+    {
+      results: [
+        {
+          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch125",
+          version: "1.0",
+          title: "XDM Object Data Element Tests"
+        }
+      ],
+      _page: {
+        next: null
+      }
+    },
+    200,
+    responseHeaders
+  );
+
 export const empty = RequestMock()
   .onRequestTo({
     url: SCHEMAS_ENDPOINT_REGEX,

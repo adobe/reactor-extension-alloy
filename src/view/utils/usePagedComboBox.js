@@ -10,25 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
+import createPagedLoader, { IDLE } from "./createPagedLoader";
 import useForceRender from "./useForceRender";
-
-const LOADING_STATE = {
-  IDLE: "idle",
-  LOADING: "loading",
-  LOADING_MORE: "loadingMore",
-  FILTERING: "filtering"
-};
-
-/**
- * Keys of the state that we expose to the host component using this hook.
- */
-const EXTERNAL_DATA_KEYS = [
-  "items",
-  "selectedItem",
-  "inputValue",
-  "loadingState"
-];
 
 const usePagedComboBox = ({
   defaultSelectedItem,
@@ -48,35 +32,49 @@ const usePagedComboBox = ({
   // state is updated, so one caveat to using useRef for managing state instead
   // is that we have/get to control when re-renders occur.
   const forceRender = useForceRender();
-  const dataRef = useRef({
-    items: firstPage || [],
-    selectedItem: defaultSelectedItem || null,
-    inputValue: defaultSelectedItem ? getLabel(defaultSelectedItem) : "",
-    loadingState: LOADING_STATE.IDLE,
-    showAll: true,
-    cursor: firstPageCursor,
-    abortController: null,
-    firstPage: firstPage || [],
-    firstPageCursor
-  });
 
-  const setData = changes => {
-    let needsRender = false;
-    Object.keys(changes).forEach(key => {
-      if (dataRef.current[key] !== changes[key]) {
-        // If any of the changes are for data we expose to the
-        // host component, we need to re-render the component
-        // so it receives the new data.
-        if (EXTERNAL_DATA_KEYS.includes(key)) {
-          needsRender = true;
-        }
-        dataRef.current[key] = changes[key];
+  const itemsRef = useRef(firstPage || []);
+  const selectedItemRef = useRef(defaultSelectedItem || null);
+  const inputValueRef = useRef(
+    defaultSelectedItem ? getLabel(defaultSelectedItem) : ""
+  );
+  const loadingStateRef = useRef(IDLE);
+  const filteredRef = useRef(false);
+
+  const unfilteredLoaderRef = useRef(null);
+  if (unfilteredLoaderRef.current === null) {
+    const unfilteredSetData = ({ items, state }) => {
+      if (!filteredRef.current) {
+        itemsRef.current = items;
+        loadingStateRef.current = state;
+        forceRender();
       }
+    };
+    unfilteredLoaderRef.current = createPagedLoader({
+      firstPage,
+      firstPageCursor,
+      loadItems,
+      setData: unfilteredSetData
     });
-    if (needsRender) {
-      forceRender();
+    // if firstPage wasn't already loaded, go ahead and load it.
+    if (!firstPage) {
+      unfilteredLoaderRef.current.reload();
     }
-  };
+  }
+  const filteredLoaderRef = useRef(null);
+  if (filteredLoaderRef.current === null) {
+    const filteredSetData = ({ items, state }) => {
+      if (filteredRef.current) {
+        itemsRef.current = items;
+        loadingStateRef.current = state;
+        forceRender();
+      }
+    };
+    filteredLoaderRef.current = createPagedLoader({
+      loadItems,
+      setData: filteredSetData
+    });
+  }
 
   const getItem = key => {
     // Sometimes getItem is called with a key that doesn't match an item in
@@ -89,128 +87,59 @@ const usePagedComboBox = ({
     // X in its label, then the user blurred off the ComboBox. In this case,
     // our list of items would only contain items that have an X in their label.
     // For this reason, we _also_ need to check our currently selected item.
-    if (
-      dataRef.current.selectedItem &&
-      getKey(dataRef.current.selectedItem) === key
-    ) {
-      return dataRef.current.selectedItem;
+    if (selectedItemRef.current && getKey(selectedItemRef.current) === key) {
+      return selectedItemRef.current;
     }
-    return dataRef.current.items.find(item => key === getKey(item));
+    return itemsRef.current.find(item => key === getKey(item));
   };
 
-  const load = async loadingState => {
-    setData({
-      loadingState
-    });
-
-    if (dataRef.current.abortController) {
-      dataRef.current.abortController.abort();
-    }
-
-    const currentLoadAbortController = new AbortController();
-    setData({
-      abortController: currentLoadAbortController
-    });
-
-    const loadItemsArgs = {
-      filterText: dataRef.current.showAll ? "" : dataRef.current.inputValue,
-      cursor: dataRef.current.cursor,
-      signal: dataRef.current.abortController.signal
-    };
-
-    let newItems;
-    let newCursor;
-
-    try {
-      ({ items: newItems, cursor: newCursor } = await loadItems(loadItemsArgs));
-    } catch (e) {
-      if (e.name !== "AbortError") {
-        // We do not throw the error because we expect that loadItems
-        // catches the error and has handled it however it sees fit.
-        return;
-      }
-    }
-
-    if (currentLoadAbortController.signal.aborted) {
-      return;
-    }
-
-    const newData = {
-      items: dataRef.current.cursor
-        ? dataRef.current.items.concat(newItems)
-        : newItems,
-      cursor: newCursor,
-      loadingState: LOADING_STATE.IDLE
-    };
-    if (loadItemsArgs.filterText === "") {
-      newData.firstPage = newData.items;
-      newData.firstPageCursor = newData.cursor;
-    }
-    setData(newData);
-  };
-
-  // Prep the first page of unfiltered results so it will be ready
-  // if the user opens the menu manually.
-  useEffect(() => {
-    if (dataRef.current.items.length === 0) {
-      load(LOADING_STATE.LOADING);
-    }
-  }, []);
-
-  let result = {
+  return {
     clear: () => {
-      setData({
-        items: [],
-        inputValue: "",
-        cursor: null
-      });
-      load(LOADING_STATE.LOADING);
+      selectedItemRef.current = null;
+      inputValueRef.current = "";
+      filteredRef.current = false;
+      unfilteredLoaderRef.current.reload();
     },
     onInputChange: inputText => {
-      setData({
-        items: [],
-        inputValue: inputText,
-        showAll: false,
-        cursor: null
-      });
-      load(LOADING_STATE.FILTERING);
+      inputValueRef.current = inputText;
+      if (inputText === "") {
+        // if the whole input text is blanked out, show the saved unfiltered results.
+        filteredRef.current = false;
+        unfilteredLoaderRef.current.activate();
+      } else {
+        filteredRef.current = true;
+        filteredLoaderRef.current.filter(inputText, itemsRef.current);
+      }
     },
     onSelectionChange: key => {
       const newlySelectedItem = getItem(key);
-      setData({
-        selectedItem: newlySelectedItem,
-        inputValue: newlySelectedItem ? getLabel(newlySelectedItem) : ""
-      });
+      selectedItemRef.current = newlySelectedItem;
+      inputValueRef.current = getLabel(newlySelectedItem);
+      filteredRef.current = false;
+      unfilteredLoaderRef.current.activate();
     },
     onOpenChange: isOpen => {
-      if (!isOpen) {
-        setData({
-          items: dataRef.current.firstPage,
-          cursor: dataRef.current.firstPageCursor,
-          loadingState: LOADING_STATE.IDLE,
-          showAll: true
-        });
-        if (dataRef.current.firstPage.length === 0) {
-          load(LOADING_STATE.LOADING);
-        }
+      // When the menu opens there is nothing to change because we already have the
+      // unfiltered items as the current state. However, when the menu closes and
+      // we were in filtered mode, we need to reset back to unfiltered mode.
+      if (!isOpen && filteredRef.current) {
+        inputValueRef.current = getLabel(selectedItemRef.current);
+        filteredRef.current = false;
+        unfilteredLoaderRef.current.activate();
       }
     },
     onLoadMore: () => {
-      if (
-        dataRef.current.loadingState === LOADING_STATE.IDLE &&
-        dataRef.current.cursor
-      ) {
-        load(LOADING_STATE.LOADING_MORE);
+      if (filteredRef.current) {
+        filteredLoaderRef.current.loadMore();
+      } else {
+        unfilteredLoaderRef.current.loadMore();
       }
-    }
+    },
+    items: itemsRef.current,
+    selectedItem: selectedItemRef.current,
+    inputValue: inputValueRef.current,
+    loadingState: loadingStateRef.current
   };
-
-  result = EXTERNAL_DATA_KEYS.reduce((memo, key) => {
-    memo[key] = dataRef.current[key];
-    return memo;
-  }, result);
-
-  return result;
 };
 
 export default usePagedComboBox;

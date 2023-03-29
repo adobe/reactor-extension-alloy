@@ -10,11 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import initializeExtensionView from "./helpers/initializeExtensionView";
-import xdmTree from "./helpers/xdmTree";
-import arrayEdit from "./helpers/arrayEdit";
-import stringEdit from "./helpers/stringEdit";
-import editor from "./helpers/editor";
+import initializeExtensionView from "../../helpers/objectEditor/initializeExtensionView";
+import xdmTree from "../../helpers/objectEditor/xdmTree";
+import arrayEdit from "../../helpers/objectEditor/arrayEdit";
+import stringEdit from "../../helpers/objectEditor/stringEdit";
+import editor from "../../helpers/objectEditor/editor";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 import spectrum from "../../helpers/spectrum";
 

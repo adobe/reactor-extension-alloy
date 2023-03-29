@@ -13,11 +13,14 @@ governing permissions and limitations under the License.
 import { RequestMock } from "testcafe";
 import responseHeaders from "./responseHeaders";
 
-const SCHEMA_ENDPOINT_REGEX = /\/schemaregistry\/tenant\/schemas\/.+/;
+const SCHEMA_ENDPOINT_REGEX1 = /\/schemaregistry\/tenant\/schemas\/sch123$/;
+const SCHEMA_ENDPOINT_REGEX2 = /\/schemaregistry\/tenant\/schemas\/sch456$/;
+const SCHEMA_ENDPOINT_REGEX3 = /\/schemaregistry\/tenant\/schemas\/sch789$/;
+const SCHEMA_ENDPOINT_REGEX4 = /\/schemaregistry\/tenant\/schemas\/sch10$/;
 
 export const basic = RequestMock()
   .onRequestTo({
-    url: SCHEMA_ENDPOINT_REGEX,
+    url: SCHEMA_ENDPOINT_REGEX1,
     headers: {
       "x-sandbox-name": "alloy-test"
     },
@@ -33,6 +36,97 @@ export const basic = RequestMock()
         testField: {
           title: "Test Field",
           type: "string"
+        }
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const other = RequestMock()
+  .onRequestTo({
+    url: SCHEMA_ENDPOINT_REGEX2,
+    headers: {
+      "x-sandbox-name": "alloy-test"
+    },
+    method: "GET"
+  })
+  .respond(
+    {
+      $id: "sch456",
+      title: "Test Schema 2",
+      version: "1.0",
+      type: "object",
+      properties: {
+        testField: {
+          title: "Test Field",
+          type: "string"
+        },
+        otherField: {
+          title: "Other Field",
+          type: "string"
+        }
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const basicArray = RequestMock()
+  .onRequestTo({
+    url: SCHEMA_ENDPOINT_REGEX3,
+    headers: {
+      "x-sandbox-name": "alloy-test"
+    },
+    method: "GET"
+  })
+  .respond(
+    {
+      $id: "sch789",
+      title: "Test Schema 3",
+      version: "1.0",
+      type: "array",
+      items: {
+        title: "My Array",
+        type: "object",
+        properties: {
+          testField: {
+            title: "Test Field",
+            type: "string"
+          }
+        }
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const otherArray = RequestMock()
+  .onRequestTo({
+    url: SCHEMA_ENDPOINT_REGEX4,
+    headers: {
+      "x-sandbox-name": "alloy-test"
+    },
+    method: "GET"
+  })
+  .respond(
+    {
+      $id: "sch10",
+      title: "Test Schema 4",
+      version: "1.0",
+      type: "array",
+      items: {
+        title: "My Array",
+        type: "object",
+        properties: {
+          testField: {
+            title: "Test Field",
+            type: "string"
+          },
+          otherField: {
+            title: "Other Field",
+            type: "string"
+          }
         }
       }
     },

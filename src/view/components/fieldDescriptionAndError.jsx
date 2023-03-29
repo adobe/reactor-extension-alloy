@@ -28,6 +28,7 @@ const FieldDescriptionAndError = ({
 }) => {
   const child = React.Children.only(children);
   const width = child.props.width;
+  const isDisabled = child.props.isDisabled;
 
   let className;
   let message;
@@ -47,13 +48,16 @@ const FieldDescriptionAndError = ({
   const widthStyle = width
     ? `var(--spectrum-global-dimension-${width}, var(--spectrum-alias-${width}))`
     : `var(--spectrum-field-default-width)`;
+  const colorStyle = isDisabled
+    ? "var(--spectrum-alias-text-color-disabled)"
+    : "";
   return (
     <Flex direction="column" UNSAFE_style={{ width: widthStyle }}>
       {children}
       {message && (
         <View
           UNSAFE_className={className}
-          UNSAFE_style={{ width: widthStyle }}
+          UNSAFE_style={{ width: widthStyle, color: colorStyle }}
           paddingTop={messagePaddingTop}
           paddingStart={messagePaddingStart}
         >

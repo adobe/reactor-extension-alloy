@@ -53,7 +53,6 @@
   "dependencies": {
     "@adobe/alloy": "^2.15.0-alpha.1",
     "@adobe/react-spectrum": "~3.22.0",
-    "@react-spectrum/combobox": "^3.0.0-rc.0",
     "@react-stately/data": "^3.4.0",
     "@spectrum-css/typography": "^3.0.2",
     "@spectrum-icons/illustrations": "^3.2.1",
@@ -114,6 +113,7 @@
     "mockvisitor": "file:test/functional/runtime/mockVisitor",
     "npm-run-all": "^4.1.5",
     "parcel": "^2.4.1",
+    "parcel-transformer-extension-name": "file:scripts/helpers/parcel-transformer-extension-name",
     "prettier": "^1.17.0",
     "process": "^0.11.10",
     "puppeteer": "^19.7.3",

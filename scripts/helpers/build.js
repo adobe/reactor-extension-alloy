@@ -55,7 +55,6 @@ rimraf.sync(outputDir);
 
 module.exports = (options = {}) => {
   const { watch, isProd = isProdEnv } = options;
-  console.log("Running build, isProd", isProd);
   const bundler = new Parcel({
     entries: viewEntries,
     defaultConfig: "@parcel/config-default",
