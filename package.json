@@ -71,7 +71,7 @@
   },
   "devDependencies": {
     "@adobe/jwt-auth": "^2.0.0",
-    "@adobe/reactor-sandbox": "^12.4.0",
+    "@adobe/reactor-sandbox": "../reactor-sandbox",
     "@adobe/reactor-turbine": "^27.2.1",
     "@babel/cli": "^7.12.16",
     "@babel/core": "^7.12.16",

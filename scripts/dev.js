@@ -14,8 +14,9 @@ governing permissions and limitations under the License.
 
 const sandbox = require("@adobe/reactor-sandbox");
 const build = require("./helpers/build");
+const getDefaultInitInfo = require("./helpers/getDefaultInitInfo");
 
 (async () => {
   await build({ watch: true });
-  await sandbox.run();
+  await sandbox.run({ getDefaultInitInfo });
 })();
