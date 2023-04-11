@@ -26,7 +26,11 @@ const container = {
           {
             name: "alloy",
             edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:AditiTest",
-            stagingEdgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:stage"
+            stagingEdgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:stage",
+            sandbox: "myprodsandbox",
+            stagingSandbox: "mystagingsandbox",
+            developmentSandbox: "mydevsandbox",
+            onBeforeEventSend: "console.log('onBeforeEventSend');"
           }
         ]
       }
@@ -83,12 +87,6 @@ const container = {
   environment: {
     id: "EN00000000000000000000000000000000",
     stage: "development"
-  },
-  buildInfo: {
-    turbineVersion: "27.2.1",
-    turbineBuildDate: "2022-04-29T16:01:37.616Z",
-    buildDate: "2022-04-29T16:01:37.616Z",
-    environment: "development"
   }
 };
 
