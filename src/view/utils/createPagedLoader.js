@@ -26,6 +26,7 @@ export default ({
   let state = IDLE;
   let filterText = "";
   let abortController;
+  let currentLoadItems = loadItems;
 
   const load = async loadingState => {
     state = loadingState;
@@ -39,7 +40,7 @@ export default ({
     let newItems;
     let newCursor;
     try {
-      ({ items: newItems, cursor: newCursor } = await loadItems({
+      ({ items: newItems, cursor: newCursor } = await currentLoadItems({
         filterText,
         cursor,
         signal: currentAbortController.signal
@@ -84,6 +85,9 @@ export default ({
       cursor = null;
       filterText = text;
       load(FILTERING);
+    },
+    setLoadItems(newLoadItems) {
+      currentLoadItems = newLoadItems;
     }
   };
 };

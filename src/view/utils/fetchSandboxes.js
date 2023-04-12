@@ -38,6 +38,21 @@ export default async ({ orgId, imsAccess, signal }) => {
   }
 
   return {
-    results: parsedResponse.parsedBody.sandboxes
+    results: [
+      ...parsedResponse.parsedBody.sandboxes,
+      {
+        name: "my-second-sandbox",
+        title: "My Second Sandbox",
+        state: "active",
+        type: "production",
+        region: "VA7",
+        isDefault: true,
+        eTag: -270737284,
+        createdDate: "2020-09-22 04:46:03",
+        lastModifiedDate: "2020-09-22 04:46:03",
+        createdBy: "system",
+        lastModifiedBy: "system"
+      }
+    ]
   };
 };
