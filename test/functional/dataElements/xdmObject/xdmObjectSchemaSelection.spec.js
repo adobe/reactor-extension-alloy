@@ -369,3 +369,27 @@ test
       schemasMocks.pagingTitles.slice(-3)
     );
   });
+
+test.requestHooks(
+  sandboxMocks.multipleWithDefault,
+  schemasMocks.sandbox2,
+  schemasMocks.sandbox3,
+  schemaMocks.schema3b
+)("Allows you to select a schema from the non-default sandbox", async () => {
+  const extensionViewController = await initializeExtensionView({});
+  await sandboxField.expectText("PRODUCTION Test Sandbox 2 (VA7)");
+  await sandboxField.selectOption("PRODUCTION Test Sandbox 3 (VA7)");
+
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("Test Schema 3B");
+  await extensionViewController.expectSettings({
+    data: {},
+    sandbox: {
+      name: "testsandbox3"
+    },
+    schema: {
+      id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema3b",
+      version: "1.0"
+    }
+  });
+});
