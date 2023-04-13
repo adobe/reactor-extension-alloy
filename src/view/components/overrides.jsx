@@ -10,6 +10,7 @@ import FieldSubset from "./fieldSubset";
 import FormElementContainer from "./formElementContainer";
 import FormikTextField from "./formikReactSpectrum3/formikTextField";
 import SectionHeader from "./sectionHeader";
+import DataElementSelector from "./dataElementSelector";
 
 export const bridge = {
   // return formik state
@@ -111,6 +112,7 @@ export const FIELD_NAMES = {
 };
 
 const ReportSuitesOverride = ({ prefix, rsids }) => {
+  // TODO: Add the <DataElementSelector> component to the report suite field.
   return (
     <FieldArray name={`${prefix}.com_adobe_analytics.reportSuites`}>
       {({ remove, push }) => (
@@ -216,33 +218,39 @@ const Overrides = ({
         <FieldSubset>
           <Flex direction="column">
             {showFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
-              <FormikTextField
-                data-test-id={FIELD_NAMES.eventDatasetOverride}
-                label="Event dataset"
-                name={`${prefix}.com_adobe_experience_platform.datasets.event.datasetId`}
-                description="The ID for the destination event dataset in the Adobe Experience Platform. The dataset set here overrides the one set in your datastream configuration."
-                width="size-5000"
-              />
+              <DataElementSelector>
+                <FormikTextField
+                  data-test-id={FIELD_NAMES.eventDatasetOverride}
+                  label="Event dataset"
+                  name={`${prefix}.com_adobe_experience_platform.datasets.event.datasetId`}
+                  description="The ID for the destination event dataset in the Adobe Experience Platform. The dataset set here overrides the one set in your datastream configuration."
+                  width="size-5000"
+                />
+              </DataElementSelector>
             )}
             {showFieldsSet.has(FIELD_NAMES.idSyncContainerOverride) && (
-              <FormikTextField
-                data-test-id={FIELD_NAMES.idSyncContainerOverride}
-                label="Third-party ID sync container"
-                name={`${prefix}.com_adobe_identity.idSyncContainerId`}
-                inputMode="numeric"
-                pattern={/\d+/}
-                description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The container set here overrides the one set in your datastream configuration."
-                width="size-5000"
-              />
+              <DataElementSelector>
+                <FormikTextField
+                  data-test-id={FIELD_NAMES.idSyncContainerOverride}
+                  label="Third-party ID sync container"
+                  name={`${prefix}.com_adobe_identity.idSyncContainerId`}
+                  inputMode="numeric"
+                  pattern={/\d+/}
+                  description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The container set here overrides the one set in your datastream configuration."
+                  width="size-5000"
+                />
+              </DataElementSelector>
             )}
             {showFieldsSet.has(FIELD_NAMES.targetPropertyTokenOverride) && (
-              <FormikTextField
-                data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
-                label="Target property token"
-                name={`${prefix}.com_adobe_target.propertyToken`}
-                description="The token for the destination property in Adobe Target. The token set here overrides the one set in your datastream configuration."
-                width="size-5000"
-              />
+              <DataElementSelector>
+                <FormikTextField
+                  data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
+                  label="Target property token"
+                  name={`${prefix}.com_adobe_target.propertyToken`}
+                  description="The token for the destination property in Adobe Target. The token set here overrides the one set in your datastream configuration."
+                  width="size-5000"
+                />
+              </DataElementSelector>
             )}
             {showFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
               <ReportSuitesOverride
