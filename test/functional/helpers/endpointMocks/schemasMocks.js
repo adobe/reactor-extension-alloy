@@ -64,6 +64,65 @@ export const multiple = RequestMock()
     responseHeaders
   );
 
+export const sandbox2 = RequestMock()
+  .onRequestTo(async request => {
+    return (
+      request.url.match(SCHEMAS_ENDPOINT_REGEX) &&
+      request.headers["x-sandbox-name"] === "testsandbox2" &&
+      request.method === "get"
+    );
+  })
+  .respond(
+    {
+      results: [
+        {
+          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema2a",
+          version: "1.0",
+          title: "Test Schema 2A"
+        },
+        {
+          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema2b",
+          version: "1.0",
+          title: "Test Schema 2B"
+        }
+      ],
+      _page: {
+        next: null
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const sandbox3 = RequestMock()
+  .onRequestTo(async request => {
+    return (
+      request.url.match(SCHEMAS_ENDPOINT_REGEX) &&
+      request.headers["x-sandbox-name"] === "testsandbox3" &&
+      request.method === "get"
+    );
+  })
+  .respond(
+    {
+      results: [
+        {
+          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema3a",
+          version: "1.0",
+          title: "Test Schema 3A"
+        },
+        {
+          $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema3b",
+          version: "1.0",
+          title: "Test Schema 3B"
+        }
+      ],
+      _page: {
+        next: null
+      }
+    },
+    200,
+    responseHeaders
+  );
 export const search = RequestMock()
   .onRequestTo({
     url: /\/schemaregistry\/tenant\/schemas\?.*property=title/,
