@@ -112,7 +112,6 @@ export const FIELD_NAMES = {
 };
 
 const ReportSuitesOverride = ({ prefix }) => {
-  // TODO: Add the <DataElementSelector> component to the report suite field.
   const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
   const [{ value: rsids }] = useField(fieldName);
   return (
@@ -122,17 +121,21 @@ const ReportSuitesOverride = ({ prefix }) => {
           <Flex direction="column" gap="size-100">
             {rsids.map((rsid, index) => (
               <Flex key={index} direction="row">
-                <FormikTextField
-                  data-test-id={`${FIELD_NAMES.reportSuitesOverride}.${index}`}
-                  label={index === 0 && "Report suites"}
-                  name={`${fieldName}.${index}`}
-                  description={
-                    index === rsids.length - 1 &&
-                    "The IDs for the destination report suites in Adobe Analytics. The report suites set here override all those set in your datastream configuration."
-                  }
-                  width="size-5000"
-                  key={index}
-                />
+                <DataElementSelector>
+                  <FormikTextField
+                    data-test-id={`${
+                      FIELD_NAMES.reportSuitesOverride
+                    }.${index}`}
+                    label={index === 0 && "Report suites"}
+                    name={`${fieldName}.${index}`}
+                    description={
+                      index === rsids.length - 1 &&
+                      "The IDs for the destination report suites in Adobe Analytics. The report suites set here override all those set in your datastream configuration."
+                    }
+                    width="size-5000"
+                    key={index}
+                  />
+                </DataElementSelector>
                 <ActionButton
                   isQuiet
                   isDisabled={rsids.length < 2}
