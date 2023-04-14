@@ -111,10 +111,12 @@ export const FIELD_NAMES = {
   reportSuitesOverride: "reportSuitesOverride"
 };
 
-const ReportSuitesOverride = ({ prefix, rsids }) => {
+const ReportSuitesOverride = ({ prefix }) => {
   // TODO: Add the <DataElementSelector> component to the report suite field.
+  const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
+  const [{ value: rsids }] = useField(fieldName);
   return (
-    <FieldArray name={`${prefix}.com_adobe_analytics.reportSuites`}>
+    <FieldArray name={fieldName}>
       {({ remove, push }) => (
         <>
           <Flex direction="column" gap="size-100">
@@ -123,7 +125,7 @@ const ReportSuitesOverride = ({ prefix, rsids }) => {
                 <FormikTextField
                   data-test-id={`${FIELD_NAMES.reportSuitesOverride}.${index}`}
                   label={index === 0 && "Report suites"}
-                  name={`${prefix}.com_adobe_analytics.reportSuites.${index}`}
+                  name={`${fieldName}.${index}`}
                   description={
                     index === rsids.length - 1 &&
                     "The IDs for the destination report suites in Adobe Analytics. The report suites set here override all those set in your datastream configuration."
@@ -160,8 +162,7 @@ const ReportSuitesOverride = ({ prefix, rsids }) => {
 };
 
 ReportSuitesOverride.propTypes = {
-  prefix: PropTypes.string.isRequired,
-  rsids: PropTypes.arrayOf(PropTypes.string).isRequired
+  prefix: PropTypes.string.isRequired
 };
 
 const HeaderContainer = ({ largeHeader, children, ...props }) => {
@@ -203,10 +204,8 @@ const Overrides = ({
   showFields = [...Object.values(FIELD_NAMES)]
 }) => {
   const prefix = instanceFieldName
-    ? `${instanceFieldName}.edgeConfigOverrdides`
+    ? `${instanceFieldName}.edgeConfigOverrides`
     : "edgeConfigOverrides";
-  const [{ value }] = useField(instanceFieldName ?? "edgeConfigOverrides");
-  const edgeConfigOverrides = value.edgeConfigOverrides ?? value;
   const showFieldsSet = new Set(showFields);
 
   return (
@@ -253,10 +252,7 @@ const Overrides = ({
               </DataElementSelector>
             )}
             {showFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
-              <ReportSuitesOverride
-                prefix={prefix}
-                rsids={edgeConfigOverrides.com_adobe_analytics.reportSuites}
-              />
+              <ReportSuitesOverride prefix={prefix} />
             )}
           </Flex>
         </FieldSubset>
