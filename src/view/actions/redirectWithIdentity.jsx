@@ -45,11 +45,14 @@ const getSettings = ({ values }) => {
   return settings;
 };
 
+const validationSchema = overridesBridge.formikStateValidationSchema;
+
 const RedirectWithIdentity = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
+      formikStateValidationSchema={validationSchema}
       render={({ initInfo }) => (
         <>
           <Alert
