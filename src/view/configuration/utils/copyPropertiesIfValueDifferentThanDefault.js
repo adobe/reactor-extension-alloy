@@ -36,8 +36,9 @@ export default function copyPropertiesIfValueDifferentThanDefault({
         return;
       }
       // does not support arrays of objects
-      const sortedFromValue = fromValue.sort();
-      const sortedDefaultValue = defaultValue.sort();
+      // do no mutate the original array
+      const sortedFromValue = fromValue.slice().sort();
+      const sortedDefaultValue = defaultValue.slice().sort();
       if (
         sortedFromValue.some(
           (value, index) => value !== sortedDefaultValue[index]
