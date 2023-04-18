@@ -239,6 +239,7 @@ const Overrides = ({
                 label="Third-party ID sync container"
                 name={`${prefix}.com_adobe_identity.idSyncContainerId`}
                 inputMode="numeric"
+                width="size-5000"
                 pattern={/\d+/}
                 description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The value must be a preconfigured secondary container from your datastream configuration and overrides the primary container."
               />
