@@ -129,7 +129,7 @@ const ReportSuitesOverride = ({ prefix }) => {
                     name={`${fieldName}.${index}`}
                     description={
                       index === rsids.length - 1 &&
-                      "The IDs for the destination report suites in Adobe Analytics. The report suites set here override all those set in your datastream configuration."
+                      "The IDs for the destination report suites in Adobe Analytics. The value must be a preconfigured override report suite from your datastream configuration and overrides the primary report suites."
                     }
                     width="size-5000"
                     key={index}
@@ -176,7 +176,11 @@ const HeaderContainer = ({ largeHeader, children, ...props }) => {
       {...props}
       level={5}
       margin="0"
-      UNSAFE_style={{ fontWeight: "normal" }}
+      UNSAFE_style={{
+        fontWeight: "normal",
+        color:
+          "var(--spectrum-fieldlabel-text-color, var(--spectrum-alias-label-text-color) )"
+      }}
     >
       {children}
     </Heading>
@@ -223,7 +227,7 @@ const Overrides = ({
                 data-test-id={FIELD_NAMES.eventDatasetOverride}
                 label="Event dataset"
                 name={`${prefix}.com_adobe_experience_platform.datasets.event.datasetId`}
-                description="The ID for the destination event dataset in the Adobe Experience Platform. The dataset set here overrides the one set in your datastream configuration."
+                description="The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration and overrides the primary dataset."
                 width="size-5000"
               />
             </DataElementSelector>
@@ -236,8 +240,7 @@ const Overrides = ({
                 name={`${prefix}.com_adobe_identity.idSyncContainerId`}
                 inputMode="numeric"
                 pattern={/\d+/}
-                description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The container set here overrides the one set in your datastream configuration."
-                width="size-5000"
+                description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The value must be a preconfigured secondary container from your datastream configuration and overrides the primary container."
               />
             </DataElementSelector>
           )}
@@ -247,7 +250,7 @@ const Overrides = ({
                 data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
                 label="Target property token"
                 name={`${prefix}.com_adobe_target.propertyToken`}
-                description="The token for the destination property in Adobe Target. The token set here overrides the one set in your datastream configuration."
+                description="The token for the destination property in Adobe Target. The value must be a preconfigured property override from your datastream configuration and overrides the primary property."
                 width="size-5000"
               />
             </DataElementSelector>
