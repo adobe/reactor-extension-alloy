@@ -20,13 +20,16 @@ import Alert from "../components/alert";
 import Overrides, { bridge as overridesBridge } from "../components/overrides";
 
 const getInitialValues = ({ initInfo }) => {
-  const { instanceName = initInfo.extensionSettings.instances[0].name } =
-    initInfo.settings || {};
+  const {
+    instanceName = initInfo.extensionSettings.instances[0].name,
+    edgeConfigOverrides = overridesBridge.getInstanceDefaults()
+      .edgeConfigOverrides
+  } = initInfo.settings ?? {};
 
   return {
     instanceName,
     ...overridesBridge.getInitialInstanceValues({
-      instanceSettings: initInfo.settings
+      instanceSettings: { edgeConfigOverrides }
     })
   };
 };
