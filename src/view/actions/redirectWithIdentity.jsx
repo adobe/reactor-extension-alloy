@@ -25,7 +25,9 @@ const getInitialValues = ({ initInfo }) => {
 
   return {
     instanceName,
-    ...overridesBridge.getInitialInstanceValues({ instanceSettings: initInfo })
+    ...overridesBridge.getInitialInstanceValues({
+      instanceSettings: initInfo.settings
+    })
   };
 };
 
