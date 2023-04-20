@@ -44,4 +44,45 @@ describe("copyPropertiesWithDefaultFallback", () => {
     });
     expect(toObj).toEqual({ a: "", b: "bar" });
   });
+
+  it("should support copying nested objects", () => {
+    const toObj = {};
+    const fromObj = {
+      a: "foo",
+      c: {
+        d: {
+          e: "baz"
+        }
+      }
+    };
+    const defaultsObj = {
+      a: "",
+      b: "",
+      c: {
+        d: {
+          e: "",
+          f: ""
+        },
+        g: ""
+      }
+    };
+    const keys = ["a", "b", "c"];
+    copyPropertiesWithDefaultFallback({
+      toObj,
+      fromObj,
+      defaultsObj,
+      keys
+    });
+    expect(toObj).toEqual({
+      a: "foo",
+      b: "",
+      c: {
+        d: {
+          e: "baz",
+          f: ""
+        },
+        g: ""
+      }
+    });
+  });
 });
