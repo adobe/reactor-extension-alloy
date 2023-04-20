@@ -28,7 +28,7 @@ describe("overridesBridge", () => {
   });
 
   describe("getInitialInstanceValues", () => {
-    it("it should copy over changed values with default fallbacks", () => {
+    it("should copy over changed values with default fallbacks", () => {
       const instanceSettings = {
         name: "alloy",
         context: [
@@ -82,7 +82,58 @@ describe("overridesBridge", () => {
     });
   });
 
-  describe("getInstanceSettings", () => {});
+  describe("getInstanceSettings", () => {
+    it("should copy over changed values", () => {
+      const instanceValues = {
+        edgeConfigOverrides: {
+          com_adobe_target: {
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          }
+        }
+      };
 
-  describe("formikStateValidationSchema", () => {});
+      const instanceSettings = bridge.getInstanceSettings({
+        instanceValues
+      });
+      expect(instanceSettings).toEqual({
+        edgeConfigOverrides: {
+          com_adobe_target: {
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          }
+        }
+      });
+    });
+  });
+
+  describe("formikStateValidationSchema", () => {
+    it("should return a yup schema", () => {
+      const schema = bridge.formikStateValidationSchema;
+      expect(schema).toBeDefined();
+    });
+
+    it("should validate the edge config overrides", () => {
+      expect(() => {
+        bridge.formikStateValidationSchema.validateSync({
+          edgeConfigOverrides: {
+            com_adobe_experience_platform: {
+              datasets: {
+                event: {
+                  datasetId: "6335faf30f5a161c0b4b1444"
+                }
+              }
+            },
+            com_adobe_analytics: {
+              reportSuites: ["unifiedjsqeonly2"]
+            },
+            com_adobe_identity: {
+              idSyncContainerId: 30793
+            },
+            com_adobe_target: {
+              propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
+            }
+          }
+        });
+      }).not.toThrow();
+    });
+  });
 });
