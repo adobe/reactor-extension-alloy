@@ -29,6 +29,7 @@ import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGrou
 import DataElementSelector from "../components/dataElementSelector";
 import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
+import Overrides, { bridge as overridesBridge } from "../components/overrides";
 
 const FORM = { value: "form", label: "Fill out a form" };
 const DATA_ELEMENT = { value: "dataElement", label: "Provide a data element" };
@@ -59,7 +60,10 @@ const getInitialValues = ({ initInfo }) => {
 
   const initialValues = {
     instanceName,
-    identityMap
+    identityMap,
+    ...overridesBridge.getInitialInstanceValues({
+      instanceSettings: initInfo
+    })
   };
 
   if (typeof consent === "string") {
@@ -125,6 +129,14 @@ const getSettings = ({ values }) => {
     settings.identityMap = identityMap;
   }
 
+  const { edgeConfigOverrides } = overridesBridge.getInstanceSettings({
+    instanceValues: values
+  });
+
+  if (edgeConfigOverrides && Object.keys(edgeConfigOverrides).length > 0) {
+    settings.edgeConfigOverrides = edgeConfigOverrides;
+  }
+
   if (inputMethod === DATA_ELEMENT.value) {
     settings.consent = dataElement;
   } else {
@@ -161,54 +173,59 @@ const getSettings = ({ values }) => {
   return settings;
 };
 
-const validationSchema = object().shape({
-  instanceName: string().required(),
-  identityMap: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
-  dataElement: mixed().when("inputMethod", {
-    is: DATA_ELEMENT.value,
-    then: string()
-      .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-      .required(DATA_ELEMENT_REQUIRED)
-  }),
-  consent: array().when("inputMethod", {
-    is: FORM.value,
-    then: array().of(
-      object().shape({
-        standard: string().required("Please specify a standard."),
-        general: mixed().when(["standard", "adobeVersion"], {
-          is: (standard, adobeVersion) =>
-            standard === ADOBE.value && adobeVersion === "1.0",
-          then: createRadioGroupWithDataElementValidationSchema("general")
-        }),
-        value: mixed().when(["standard", "adobeVersion"], {
-          is: (standard, adobeVersion) =>
-            standard === ADOBE.value && adobeVersion !== "1.0",
-          then: string()
-            .required(DATA_ELEMENT_REQUIRED)
-            .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-        }),
-        iabVersion: mixed().when(["standard"], {
-          is: IAB_TCF.value,
-          then: string().required("Please specify a version.")
-        }),
-        iabValue: mixed().when("standard", {
-          is: IAB_TCF.value,
-          then: string().required("Please specify a value.")
-        }),
-        gdprApplies: mixed().when("standard", {
-          is: IAB_TCF.value,
-          then: createRadioGroupWithDataElementValidationSchema("gdprApplies")
-        }),
-        gdprContainsPersonalData: mixed().when("standard", {
-          is: IAB_TCF.value,
-          then: createRadioGroupWithDataElementValidationSchema(
-            "gdprContainsPersonalData"
-          )
+const validationSchema = object()
+  .shape({
+    instanceName: string().required(),
+    identityMap: string().matches(
+      singleDataElementRegex,
+      DATA_ELEMENT_REQUIRED
+    ),
+    dataElement: mixed().when("inputMethod", {
+      is: DATA_ELEMENT.value,
+      then: string()
+        .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+        .required(DATA_ELEMENT_REQUIRED)
+    }),
+    consent: array().when("inputMethod", {
+      is: FORM.value,
+      then: array().of(
+        object().shape({
+          standard: string().required("Please specify a standard."),
+          general: mixed().when(["standard", "adobeVersion"], {
+            is: (standard, adobeVersion) =>
+              standard === ADOBE.value && adobeVersion === "1.0",
+            then: createRadioGroupWithDataElementValidationSchema("general")
+          }),
+          value: mixed().when(["standard", "adobeVersion"], {
+            is: (standard, adobeVersion) =>
+              standard === ADOBE.value && adobeVersion !== "1.0",
+            then: string()
+              .required(DATA_ELEMENT_REQUIRED)
+              .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+          }),
+          iabVersion: mixed().when(["standard"], {
+            is: IAB_TCF.value,
+            then: string().required("Please specify a version.")
+          }),
+          iabValue: mixed().when("standard", {
+            is: IAB_TCF.value,
+            then: string().required("Please specify a value.")
+          }),
+          gdprApplies: mixed().when("standard", {
+            is: IAB_TCF.value,
+            then: createRadioGroupWithDataElementValidationSchema("gdprApplies")
+          }),
+          gdprContainsPersonalData: mixed().when("standard", {
+            is: IAB_TCF.value,
+            then: createRadioGroupWithDataElementValidationSchema(
+              "gdprContainsPersonalData"
+            )
+          })
         })
-      })
-    )
+      )
+    })
   })
-});
+  .concat(overridesBridge.validationSchema);
 
 const ConsentObject = ({ value, index }) => {
   return (
@@ -345,6 +362,7 @@ const SetConsent = () => {
               width="size-5000"
             />
           </DataElementSelector>
+          <Overrides />
           <FormikRadioGroup
             name="inputMethod"
             orientation="horizontal"

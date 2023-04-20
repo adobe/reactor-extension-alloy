@@ -17,13 +17,15 @@ import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
 import Alert from "../components/alert";
+import Overrides, { bridge as overridesBridge } from "../components/overrides";
 
 const getInitialValues = ({ initInfo }) => {
   const { instanceName = initInfo.extensionSettings.instances[0].name } =
     initInfo.settings || {};
 
   return {
-    instanceName
+    instanceName,
+    ...overridesBridge.getInitialInstanceValues({ instanceSettings: initInfo })
   };
 };
 
@@ -31,14 +33,26 @@ const getSettings = ({ values }) => {
   const settings = {
     instanceName: values.instanceName
   };
+
+  const { edgeConfigOverrides } = overridesBridge.getInstanceSettings({
+    instanceValues: values
+  });
+
+  if (edgeConfigOverrides && Object.keys(edgeConfigOverrides).length > 0) {
+    settings.edgeConfigOverrides = edgeConfigOverrides;
+  }
+
   return settings;
 };
+
+const validationSchema = overridesBridge.formikStateValidationSchema;
 
 const RedirectWithIdentity = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
+      formikStateValidationSchema={validationSchema}
       render={({ initInfo }) => (
         <>
           <Alert
@@ -71,6 +85,7 @@ const RedirectWithIdentity = () => {
               disabledDescription="Only one instance was configured for this extension so no configuration is required for this action."
             />
           </FormElementContainer>
+          <Overrides />
         </>
       )}
     />
