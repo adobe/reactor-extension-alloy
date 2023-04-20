@@ -38,7 +38,9 @@ const getInitialValues = ({ initInfo }) => {
     type = "",
     mergeId = "",
     datasetId = "",
-    documentUnloading = false
+    documentUnloading = false,
+    edgeConfigOverrides = overridesBridge.getInstanceDefaults()
+      .edgeConfigOverrides
   } = initInfo.settings || {};
 
   return {
@@ -53,7 +55,7 @@ const getInitialValues = ({ initInfo }) => {
     ...decisionScopesBridge.getInitialValues({ initInfo }),
     ...surfacesBridge.getInitialValues({ initInfo }),
     ...overridesBridge.getInitialInstanceValues({
-      instanceSettings: initInfo.settings
+      instanceSettings: { edgeConfigOverrides }
     })
   };
 };
