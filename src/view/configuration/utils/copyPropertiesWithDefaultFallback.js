@@ -16,10 +16,29 @@ governing permissions and limitations under the License.
  * @param {Object} options.toObj Object to which properties should be copied.
  * @param {Object} options.fromObj Object from which properties should be copied.
  * @param {Object} options.defaultsObj Default values for each property.
- * @param {Array} options.keys The keys of the properties that should be copied.
+ * @param {string[]} options.keys The top level keys of the properties that should be copied.
  */
-export default ({ toObj, fromObj, defaultsObj, keys }) => {
+export default function copyPropertiesWithDefaultFallback({
+  toObj,
+  fromObj,
+  defaultsObj,
+  keys
+}) {
   keys.forEach(key => {
+    if (
+      typeof fromObj[key] === "object" &&
+      fromObj[key] !== null &&
+      !Array.isArray(fromObj[key])
+    ) {
+      toObj[key] = toObj[key] ?? {};
+      copyPropertiesWithDefaultFallback({
+        toObj: toObj[key],
+        fromObj: fromObj[key],
+        defaultsObj: defaultsObj[key],
+        keys: Object.keys(defaultsObj[key])
+      });
+      return;
+    }
     toObj[key] = fromObj[key] ?? defaultsObj[key];
   });
-};
+}
