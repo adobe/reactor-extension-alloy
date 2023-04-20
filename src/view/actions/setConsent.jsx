@@ -62,7 +62,7 @@ const getInitialValues = ({ initInfo }) => {
     instanceName,
     identityMap,
     ...overridesBridge.getInitialInstanceValues({
-      instanceSettings: initInfo
+      instanceSettings: initInfo.settings
     })
   };
 

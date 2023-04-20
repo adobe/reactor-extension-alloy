@@ -52,7 +52,9 @@ const getInitialValues = ({ initInfo }) => {
     documentUnloading,
     ...decisionScopesBridge.getInitialValues({ initInfo }),
     ...surfacesBridge.getInitialValues({ initInfo }),
-    ...overridesBridge.getInitialInstanceValues({ instanceSettings: initInfo })
+    ...overridesBridge.getInitialInstanceValues({
+      instanceSettings: initInfo.settings
+    })
   };
 };
 
