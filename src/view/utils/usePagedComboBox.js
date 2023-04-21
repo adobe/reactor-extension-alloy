@@ -60,6 +60,10 @@ const usePagedComboBox = ({
     if (!firstPage) {
       unfilteredLoaderRef.current.reload();
     }
+  } else {
+    // We need to update the loadItems function because there may be
+    // changed dependencies.
+    unfilteredLoaderRef.current.setLoadItems(loadItems);
   }
   const filteredLoaderRef = useRef(null);
   if (filteredLoaderRef.current === null) {
@@ -74,6 +78,10 @@ const usePagedComboBox = ({
       loadItems,
       setData: filteredSetData
     });
+  } else {
+    // We need to update the loadItems function because there may be
+    // changed dependencies.
+    filteredLoaderRef.current.setLoadItems(loadItems);
   }
 
   const getItem = key => {

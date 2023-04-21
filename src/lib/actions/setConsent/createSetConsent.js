@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 module.exports = ({ instanceManager }) => settings => {
-  const { instanceName, identityMap, consent } = settings;
+  const { instanceName, identityMap, consent, edgeConfigOverrides } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -20,7 +20,11 @@ module.exports = ({ instanceManager }) => settings => {
     );
   }
   if (identityMap) {
-    return instance("setConsent", { identityMap, consent });
+    return instance("setConsent", {
+      identityMap,
+      consent,
+      edgeConfigOverrides
+    });
   }
-  return instance("setConsent", { consent });
+  return instance("setConsent", { consent, edgeConfigOverrides });
 };

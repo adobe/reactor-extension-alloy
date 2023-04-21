@@ -133,3 +133,28 @@ export const otherArray = RequestMock()
     200,
     responseHeaders
   );
+
+export const schema3b = RequestMock()
+  .onRequestTo({
+    url: /\/schemaregistry\/tenant\/schemas\/.*schema3b$/,
+    headers: {
+      "x-sandbox-name": "testsandbox3"
+    },
+    method: "GET"
+  })
+  .respond(
+    {
+      $id: "sch123",
+      title: "Test Schema 1",
+      version: "1.0",
+      type: "object",
+      properties: {
+        testField: {
+          title: "Test Field",
+          type: "string"
+        }
+      }
+    },
+    200,
+    responseHeaders
+  );

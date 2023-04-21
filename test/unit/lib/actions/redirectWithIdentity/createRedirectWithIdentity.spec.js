@@ -96,8 +96,59 @@ describe("createRedirectWithIdentity", () => {
     );
     expect(event.nativeEvent.preventDefault).toHaveBeenCalledOnceWith();
     expect(instance).toHaveBeenCalledOnceWith("appendIdentityToUrl", {
-      url: "originalHref"
+      url: "originalHref",
+      edgeConfigOverrides: undefined
     });
     expect(document.location).toEqual("newurl");
+  });
+
+  it("redirects with edge config overrides", async () => {
+    await expectAsync(
+      redirectWithIdentity(
+        {
+          instanceName: "myinstance",
+          edgeConfigOverrides: {
+            com_adobe_experience_platform: {
+              datasets: {
+                event: {
+                  datasetId: "6335faf30f5a161c0b4b1444"
+                }
+              }
+            },
+            com_adobe_analytics: {
+              reportSuites: ["unifiedjsqeonly2"]
+            },
+            com_adobe_identity: {
+              idSyncContainerId: 30793
+            },
+            com_adobe_target: {
+              propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
+            }
+          }
+        },
+        event
+      )
+    );
+    expect(instance).toHaveBeenCalledOnceWith("appendIdentityToUrl", {
+      url: "originalHref",
+      edgeConfigOverrides: {
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6335faf30f5a161c0b4b1444"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 30793
+        },
+        com_adobe_target: {
+          propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
+        }
+      }
+    });
   });
 });
