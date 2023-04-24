@@ -28,6 +28,7 @@ import Overrides, { bridge as overridesBridge } from "../components/overrides";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
+import { deepAssign } from "../utils/deepAssign";
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -42,6 +43,16 @@ const getInitialValues = ({ initInfo }) => {
     edgeConfigOverrides = overridesBridge.getInstanceDefaults()
       .edgeConfigOverrides
   } = initInfo.settings || {};
+  const initialOverrides = overridesBridge.getInitialInstanceValues({
+    instanceSettings: { edgeConfigOverrides }
+  });
+  if (datasetId) {
+    deepAssign(
+      initialOverrides,
+      "edgeConfigOverrides.com_adobe_experience_platform.datasets.event.datasetId",
+      datasetId
+    );
+  }
 
   return {
     instanceName,
@@ -50,13 +61,10 @@ const getInitialValues = ({ initInfo }) => {
     data,
     type,
     mergeId,
-    datasetId,
     documentUnloading,
     ...decisionScopesBridge.getInitialValues({ initInfo }),
     ...surfacesBridge.getInitialValues({ initInfo }),
-    ...overridesBridge.getInitialInstanceValues({
-      instanceSettings: { edgeConfigOverrides }
-    })
+    ...initialOverrides
   };
 };
 
@@ -94,8 +102,14 @@ const getSettings = ({ values }) => {
   if (values.mergeId) {
     settings.mergeId = values.mergeId;
   }
+  // datasetId is deprecated in favor of edgeConfigOverrides
   if (values.datasetId) {
-    settings.datasetId = values.datasetId;
+    // deep assign to settings.edgeConfigOverrides.com_adobe_experience_platform.datasets.event.datasetId
+    deepAssign(
+      settings,
+      "edgeConfigOverrides.com_adobe_experience_platform.datasets.event.datasetId",
+      values.datasetId
+    );
   }
   // Only add if the value is different than the default (false).
   if (values.documentUnloading) {
