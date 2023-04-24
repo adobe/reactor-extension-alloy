@@ -239,9 +239,9 @@ const SendEvent = () => {
           <DataElementSelector>
             <FormikTextField
               data-test-id="datasetIdField"
-              name="datasetId"
-              description="Send data to a different dataset than what's been provided in the datastream."
-              label="Dataset ID"
+              name="edgeConfigOverrides.com_adobe_experience_platform.datasets.event.datasetId"
+              description={`Send data to a different dataset than what's been provided in the datastream. Note: this option is deprecated. Use "Event dataset" in the "Datastream Configuration Overrides" options instead.`}
+              label="Dataset ID (deprecated)"
               width="size-5000"
             />
           </DataElementSelector>
