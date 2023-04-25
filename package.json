@@ -108,7 +108,7 @@
     "karma-rollup-preprocessor": "^7.0.5",
     "karma-sauce-launcher": "^4.3.6",
     "karma-spec-reporter": "0.0.32",
-    "lint-staged": "^10.5.4",
+    "lint-staged": "^13.2.1",
     "minimist": "^1.2.6",
     "mockvisitor": "file:test/functional/runtime/mockVisitor",
     "npm-run-all": "^4.1.5",
