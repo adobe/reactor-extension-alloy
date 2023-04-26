@@ -90,7 +90,7 @@ const RedirectWithIdentity = () => {
               disabledDescription="Only one instance was configured for this extension so no configuration is required for this action."
             />
           </FormElementContainer>
-          <Overrides />
+          <Overrides initInfo={initInfo} />
         </>
       )}
     />

@@ -117,6 +117,7 @@ HeaderContainer.propTypes = {
  * A section of a form that allows the user to override datastream configuration
  *
  * @typedef {Object} OverridesProps
+ * @property {Object} initInfo
  * @property {string} options.instanceFieldName
  * The name of the Formik parent form. State will be stored as a nested object under the "edgeConfigOverrides" key.
  * @property {boolean} options.largeHeader Whether to use the large header. Defaults to false.
@@ -126,6 +127,7 @@ HeaderContainer.propTypes = {
  * @returns {React.Element}
  */
 const Overrides = ({
+  initInfo,
   instanceFieldName,
   largeHeader = false,
   showFields = [...Object.values(FIELD_NAMES)]
@@ -134,6 +136,8 @@ const Overrides = ({
     ? `${instanceFieldName}.edgeConfigOverrides`
     : "edgeConfigOverrides";
   const showFieldsSet = new Set(showFields);
+
+  console.log("TODO: remove this console.log", { initInfo });
 
   return (
     <>
@@ -187,6 +191,7 @@ const Overrides = ({
 };
 
 Overrides.propTypes = {
+  initInfo: PropTypes.object.isRequired,
   instanceFieldName: PropTypes.string,
   largeHeader: PropTypes.bool,
   showFields: PropTypes.arrayOf(PropTypes.oneOf(Object.values(FIELD_NAMES)))

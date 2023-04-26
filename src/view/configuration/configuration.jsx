@@ -223,6 +223,7 @@ const Configuration = ({ initInfo, context }) => {
                           instanceFieldName={instanceFieldName}
                         />
                         <OverridesSection
+                          initInfo={initInfo}
                           instanceFieldName={instanceFieldName}
                           largeHeader
                         />

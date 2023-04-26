@@ -364,7 +364,7 @@ const SetConsent = () => {
               width="size-5000"
             />
           </DataElementSelector>
-          <Overrides />
+          <Overrides initInfo={initInfo} />
           <FormikRadioGroup
             name="inputMethod"
             orientation="horizontal"

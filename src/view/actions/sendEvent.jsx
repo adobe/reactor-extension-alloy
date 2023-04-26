@@ -249,7 +249,7 @@ const SendEvent = () => {
           </FormikCheckbox>
           <DecisionScopes />
           <Surfaces />
-          <Overrides />
+          <Overrides initInfo={initInfo} />
         </FormElementContainer>
       )}
     />
