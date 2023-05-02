@@ -14,9 +14,17 @@ const clone = require("../../utils/clone");
 
 module.exports = ({
   instanceManager,
-  sendEventCallbackStorage
+  sendEventCallbackStorage,
+  turbine = {}
 }) => settings => {
-  const { instanceName, ...otherSettings } = settings;
+  const {
+    instanceName,
+    edgeConfigOverrides = {},
+    ...sendEventSettings
+  } = settings;
+  sendEventSettings.edgeConfigOverrides =
+    edgeConfigOverrides[(turbine.environment?.stage)];
+
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -29,14 +37,14 @@ module.exports = ({
   // we want to make sure those modifications are not reflected in the data sent to the server. By cloning the
   // objects here, we ensure we use a snapshot that will remain unchanged during the time period between when
   // sendEvent is called and the network request is made.
-  if (otherSettings.xdm) {
-    otherSettings.xdm = clone(otherSettings.xdm);
+  if (sendEventSettings.xdm) {
+    sendEventSettings.xdm = clone(sendEventSettings.xdm);
   }
-  if (otherSettings.data) {
-    otherSettings.data = clone(otherSettings.data);
+  if (sendEventSettings.data) {
+    sendEventSettings.data = clone(sendEventSettings.data);
   }
 
-  return instance("sendEvent", otherSettings).then(result => {
+  return instance("sendEvent", sendEventSettings).then(result => {
     sendEventCallbackStorage.triggerEvent(result);
   });
 };

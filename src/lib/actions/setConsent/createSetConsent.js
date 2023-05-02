@@ -10,8 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager }) => settings => {
-  const { instanceName, identityMap, consent, edgeConfigOverrides } = settings;
+module.exports = ({ instanceManager, turbine = {} }) => settings => {
+  const {
+    instanceName,
+    identityMap,
+    consent,
+    edgeConfigOverrides = {}
+  } = settings;
+  const computedConfigOverrides =
+    edgeConfigOverrides[(turbine.environment?.stage)];
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -23,8 +30,11 @@ module.exports = ({ instanceManager }) => settings => {
     return instance("setConsent", {
       identityMap,
       consent,
-      edgeConfigOverrides
+      edgeConfigOverrides: computedConfigOverrides
     });
   }
-  return instance("setConsent", { consent, edgeConfigOverrides });
+  return instance("setConsent", {
+    consent,
+    edgeConfigOverrides: computedConfigOverrides
+  });
 };

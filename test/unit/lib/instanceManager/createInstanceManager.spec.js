@@ -83,13 +83,15 @@ describe("Instance Manager", () => {
       edgeConfigId: "PR123",
       debugEnabled: false,
       orgId: "ABC@AdobeOrg",
-      onBeforeEventSend: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function),
+      edgeConfigOverrides: undefined
     });
     expect(alloy2).toHaveBeenCalledWith("configure", {
       edgeConfigId: "PR456",
       debugEnabled: false,
       orgId: "DIFFERENTORG@AdobeOrg",
-      onBeforeEventSend: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function),
+      edgeConfigOverrides: undefined
     });
   });
 
@@ -100,7 +102,8 @@ describe("Instance Manager", () => {
       edgeConfigId: "PR123",
       debugEnabled: true,
       orgId: "ABC@AdobeOrg",
-      onBeforeEventSend: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function),
+      edgeConfigOverrides: undefined
     });
   });
 

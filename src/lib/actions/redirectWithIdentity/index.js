@@ -18,5 +18,6 @@ const document = window.document;
 module.exports = createRedirectWithIdentity({
   instanceManager,
   document,
-  logger: turbine.logger
+  logger: turbine.logger,
+  turbine
 });

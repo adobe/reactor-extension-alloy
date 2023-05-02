@@ -19,6 +19,7 @@ describe("createRedirectWithIdentity", () => {
   let redirectWithIdentity;
   let event;
   let logger;
+  let turbine;
 
   beforeEach(() => {
     instanceManager = jasmine.createSpyObj("instanceManager", ["getInstance"]);
@@ -35,10 +36,13 @@ describe("createRedirectWithIdentity", () => {
       }
     };
     logger = jasmine.createSpyObj("logger", ["warn"]);
+    turbine = { environment: { stage: "development" } };
+
     redirectWithIdentity = createRedirectWithIdentity({
       instanceManager,
       document,
-      logger
+      logger,
+      turbine
     });
   });
 
@@ -108,21 +112,23 @@ describe("createRedirectWithIdentity", () => {
         {
           instanceName: "myinstance",
           edgeConfigOverrides: {
-            com_adobe_experience_platform: {
-              datasets: {
-                event: {
-                  datasetId: "6335faf30f5a161c0b4b1444"
+            development: {
+              com_adobe_experience_platform: {
+                datasets: {
+                  event: {
+                    datasetId: "6335faf30f5a161c0b4b1444"
+                  }
                 }
+              },
+              com_adobe_analytics: {
+                reportSuites: ["unifiedjsqeonly2"]
+              },
+              com_adobe_identity: {
+                idSyncContainerId: 30793
+              },
+              com_adobe_target: {
+                propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
               }
-            },
-            com_adobe_analytics: {
-              reportSuites: ["unifiedjsqeonly2"]
-            },
-            com_adobe_identity: {
-              idSyncContainerId: 30793
-            },
-            com_adobe_target: {
-              propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
             }
           }
         },

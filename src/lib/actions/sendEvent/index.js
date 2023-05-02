@@ -16,5 +16,6 @@ const sendEventCallbackStorage = require("../../sendEventCallbackStorage");
 
 module.exports = createSendEvent({
   instanceManager,
-  sendEventCallbackStorage
+  sendEventCallbackStorage,
+  turbine
 });

@@ -28,6 +28,7 @@ module.exports = ({
       stagingEdgeConfigId,
       developmentEdgeConfigId,
       onBeforeEventSend,
+      edgeConfigOverrides = {},
       ...options
     }) => {
       const instance = createInstance({ name });
@@ -38,13 +39,15 @@ module.exports = ({
         (environment === "development" && developmentEdgeConfigId) ||
         (environment === "staging" && stagingEdgeConfigId) ||
         edgeConfigId;
+      const computedConfigOverrides = edgeConfigOverrides[environment];
 
       instance("configure", {
         ...options,
         edgeConfigId: computedEdgeConfigId,
         debugEnabled: turbine.debugEnabled,
         orgId: options.orgId || orgId,
-        onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend)
+        onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend),
+        edgeConfigOverrides: computedConfigOverrides
       });
       turbine.onDebugChanged(enabled => {
         instance("setDebug", { enabled });

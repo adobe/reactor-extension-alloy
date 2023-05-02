@@ -17,6 +17,11 @@ describe("Send Event", () => {
     const instance = jasmine
       .createSpy()
       .and.returnValue(Promise.resolve({ foo: "bar" }));
+    const turbine = jasmine.createSpyObj("turbine", {
+      environment: jasmine.createSpyObj("environment", {
+        stage: "development"
+      })
+    });
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: instance
     });
@@ -26,7 +31,8 @@ describe("Send Event", () => {
     );
     const action = createSendEvent({
       instanceManager,
-      sendEventCallbackStorage
+      sendEventCallbackStorage,
+      turbine
     });
     const dataLayer = {
       fruits: [
@@ -49,6 +55,7 @@ describe("Send Event", () => {
     expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
     expect(instance).toHaveBeenCalledWith("sendEvent", {
       renderDecisions: true,
+      edgeConfigOverrides: undefined,
       xdm: {
         fruits: [
           {
@@ -77,7 +84,13 @@ describe("Send Event", () => {
     const instanceManager = jasmine.createSpyObj("instanceManager", [
       "getInstance"
     ]);
-    const action = createSendEvent({ instanceManager });
+
+    const turbine = jasmine.createSpyObj("turbine", {
+      environment: jasmine.createSpyObj("environment", {
+        stage: "development"
+      })
+    });
+    const action = createSendEvent({ instanceManager, turbine });
 
     expect(() => {
       action({

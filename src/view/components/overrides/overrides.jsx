@@ -9,7 +9,16 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { ActionButton, Button, Flex, Heading } from "@adobe/react-spectrum";
+import {
+  ActionButton,
+  Button,
+  Flex,
+  Heading,
+  Tabs,
+  TabList,
+  TabPanels,
+  Item
+} from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { FieldArray, useField } from "formik";
 import PropTypes from "prop-types";
@@ -19,6 +28,7 @@ import FormElementContainer from "../formElementContainer";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
 import SectionHeader from "../sectionHeader";
 import DataElementSelector from "../dataElementSelector";
+import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/constants/environmentType";
 
 /**
  * The names of the different fields that can appear in the form. Used to pass
@@ -113,6 +123,8 @@ HeaderContainer.propTypes = {
   children: PropTypes.node.isRequired
 };
 
+const capitialize = str => str.charAt(0).toUpperCase() + str.slice(1);
+
 /**
  * A section of a form that allows the user to override datastream configuration
  *
@@ -137,7 +149,8 @@ const Overrides = ({
     : "edgeConfigOverrides";
   const showFieldsSet = new Set(showFields);
 
-  console.log("TODO: remove this console.log", { initInfo });
+  // TODO: Remove this console.log()
+  console.log("initInfo", initInfo);
 
   return (
     <>
@@ -145,46 +158,64 @@ const Overrides = ({
         Datastream Configuration Overrides
       </HeaderContainer>
       <FormElementContainer>
-        <Flex direction="column" marginX={largeHeader ? "" : "size-300"}>
-          {showFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
-            <DataElementSelector>
-              <FormikTextField
-                data-test-id={FIELD_NAMES.eventDatasetOverride}
-                label="Event dataset"
-                name={`${prefix}.com_adobe_experience_platform.datasets.event.datasetId`}
-                description="The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration and overrides the primary dataset."
-                width="size-5000"
-              />
-            </DataElementSelector>
-          )}
-          {showFieldsSet.has(FIELD_NAMES.idSyncContainerOverride) && (
-            <DataElementSelector>
-              <FormikTextField
-                data-test-id={FIELD_NAMES.idSyncContainerOverride}
-                label="Third-party ID sync container"
-                name={`${prefix}.com_adobe_identity.idSyncContainerId`}
-                inputMode="numeric"
-                width="size-5000"
-                pattern={/\d+/}
-                description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The value must be a preconfigured secondary container from your datastream configuration and overrides the primary container."
-              />
-            </DataElementSelector>
-          )}
-          {showFieldsSet.has(FIELD_NAMES.targetPropertyTokenOverride) && (
-            <DataElementSelector>
-              <FormikTextField
-                data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
-                label="Target property token"
-                name={`${prefix}.com_adobe_target.propertyToken`}
-                description="The token for the destination property in Adobe Target. The value must be a preconfigured property override from your datastream configuration and overrides the primary property."
-                width="size-5000"
-              />
-            </DataElementSelector>
-          )}
-          {showFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
-            <ReportSuitesOverride prefix={prefix} />
-          )}
-        </Flex>
+        <Tabs aria-label="Datastream Configuration Overrides">
+          <TabList>
+            {OVERRIDE_ENVIRONMENTS.map(env => (
+              <Item key={env}>{capitialize(env)}</Item>
+            ))}
+          </TabList>
+          <TabPanels>
+            {OVERRIDE_ENVIRONMENTS.map(env => (
+              <Item key={env}>
+                <Flex
+                  direction="column"
+                  marginX={largeHeader ? "" : "size-300"}
+                >
+                  {showFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
+                    <DataElementSelector>
+                      <FormikTextField
+                        data-test-id={FIELD_NAMES.eventDatasetOverride}
+                        label="Event dataset"
+                        name={`${prefix}.${env}.com_adobe_experience_platform.datasets.event.datasetId`}
+                        description="The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration and overrides the primary dataset."
+                        width="size-5000"
+                      />
+                    </DataElementSelector>
+                  )}
+                  {showFieldsSet.has(FIELD_NAMES.idSyncContainerOverride) && (
+                    <DataElementSelector>
+                      <FormikTextField
+                        data-test-id={FIELD_NAMES.idSyncContainerOverride}
+                        label="Third-party ID sync container"
+                        name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
+                        inputMode="numeric"
+                        width="size-5000"
+                        pattern={/\d+/}
+                        description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The value must be a preconfigured secondary container from your datastream configuration and overrides the primary container."
+                      />
+                    </DataElementSelector>
+                  )}
+                  {showFieldsSet.has(
+                    FIELD_NAMES.targetPropertyTokenOverride
+                  ) && (
+                    <DataElementSelector>
+                      <FormikTextField
+                        data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
+                        label="Target property token"
+                        name={`${prefix}.${env}.com_adobe_target.propertyToken`}
+                        description="The token for the destination property in Adobe Target. The value must be a preconfigured property override from your datastream configuration and overrides the primary property."
+                        width="size-5000"
+                      />
+                    </DataElementSelector>
+                  )}
+                  {showFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
+                    <ReportSuitesOverride prefix={`${prefix}.${env}`} />
+                  )}
+                </Flex>
+              </Item>
+            ))}
+          </TabPanels>
+        </Tabs>
       </FormElementContainer>
     </>
   );

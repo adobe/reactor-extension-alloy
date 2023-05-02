@@ -15,8 +15,9 @@ import { bridge } from "../../../../src/view/components/overrides/overridesBridg
 describe("overridesBridge", () => {
   describe("getInstanceDefaults", () => {
     it("should return default values", () => {
-      expect(bridge.getInstanceDefaults()).toEqual({
-        edgeConfigOverrides: {
+      const edgeConfigOverrides = {};
+      ["production", "staging", "development"].forEach(env => {
+        edgeConfigOverrides[env] = {
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -28,12 +29,15 @@ describe("overridesBridge", () => {
             reportSuites: [""]
           },
           com_adobe_identity: {
-            idSyncContainerId: ""
+            idSyncContainerId: undefined
           },
           com_adobe_target: {
             propertyToken: ""
           }
-        }
+        };
+      });
+      expect(bridge.getInstanceDefaults()).toEqual({
+        edgeConfigOverrides
       });
     });
   });
@@ -57,8 +61,10 @@ describe("overridesBridge", () => {
           '// Pass the ECID from the adobe_mc param if it exists.\n\nconsole.log("IN ON BEFORE EVENT SEND");\n\nvar adobeMcEcid = _satellite.getVar("adobeMcEcid");\n\nif (adobeMcEcid) {\n  // TODO: Expire existing kndctr_ORG ID_AdobeOrg_identity\n  \n  if (!content.xdm.identityMap) {\n    content.xdm.identityMap = {\n      ECID: []\n    }\n  }\n  \n  content.xdm.identityMap.ECID = [{\n    "id": adobeMcEcid,\n    "authenticatedState": "ambiguous"\n  }];\n  \n  console.log("ECID WAS ADDED TO EVENT -> XDM -> IDENTITYMAP");\n}',
         developmentSandbox: "prod",
         edgeConfigOverrides: {
-          com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          development: {
+            com_adobe_target: {
+              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+            }
           }
         },
         stagingEdgeConfigId: "140a1d7d-90ac-44d4-921e-6bb819da36b7:stage",
@@ -70,25 +76,32 @@ describe("overridesBridge", () => {
       const instanceValues = bridge.getInitialInstanceValues({
         instanceSettings
       });
-      expect(instanceValues).toEqual({
-        edgeConfigOverrides: {
-          com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-          },
-          com_adobe_analytics: {
-            reportSuites: [""]
-          },
-          com_adobe_identity: {
-            idSyncContainerId: ""
-          },
+      const edgeConfigOverrides = {};
+      ["production", "staging", "development"].forEach(env => {
+        edgeConfigOverrides[env] = {
           com_adobe_experience_platform: {
             datasets: {
               event: {
                 datasetId: ""
               }
             }
+          },
+          com_adobe_analytics: {
+            reportSuites: [""]
+          },
+          com_adobe_identity: {
+            idSyncContainerId: undefined
+          },
+          com_adobe_target: {
+            propertyToken:
+              env === "development"
+                ? "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+                : ""
           }
-        }
+        };
+      });
+      expect(instanceValues).toEqual({
+        edgeConfigOverrides
       });
     });
   });
@@ -97,8 +110,10 @@ describe("overridesBridge", () => {
     it("should copy over changed values", () => {
       const instanceValues = {
         edgeConfigOverrides: {
-          com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          development: {
+            com_adobe_target: {
+              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+            }
           }
         }
       };
@@ -108,8 +123,10 @@ describe("overridesBridge", () => {
       });
       expect(instanceSettings).toEqual({
         edgeConfigOverrides: {
-          com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          development: {
+            com_adobe_target: {
+              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+            }
           }
         }
       });
@@ -125,22 +142,27 @@ describe("overridesBridge", () => {
     it("should validate the edge config overrides", () => {
       expect(() => {
         bridge.formikStateValidationSchema.validateSync({
+          ...bridge.getInstanceDefaults()
+        });
+        bridge.formikStateValidationSchema.validateSync({
           edgeConfigOverrides: {
-            com_adobe_experience_platform: {
-              datasets: {
-                event: {
-                  datasetId: "6335faf30f5a161c0b4b1444"
+            development: {
+              com_adobe_experience_platform: {
+                datasets: {
+                  event: {
+                    datasetId: "6335faf30f5a161c0b4b1444"
+                  }
                 }
+              },
+              com_adobe_analytics: {
+                reportSuites: ["unifiedjsqeonly2"]
+              },
+              com_adobe_identity: {
+                idSyncContainerId: 30793
+              },
+              com_adobe_target: {
+                propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
               }
-            },
-            com_adobe_analytics: {
-              reportSuites: ["unifiedjsqeonly2"]
-            },
-            com_adobe_identity: {
-              idSyncContainerId: 30793
-            },
-            com_adobe_target: {
-              propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
             }
           }
         });
@@ -151,26 +173,16 @@ describe("overridesBridge", () => {
       expect(() => {
         const value = bridge.formikStateValidationSchema.validateSync({
           edgeConfigOverrides: {
-            com_adobe_experience_platform: {
-              datasets: {
-                event: {
-                  datasetId: "6335faf30f5a161c0b4b1444"
-                }
+            development: {
+              com_adobe_identity: {
+                idSyncContainerId: "30793"
               }
-            },
-            com_adobe_analytics: {
-              reportSuites: ["unifiedjsqeonly2"]
-            },
-            com_adobe_identity: {
-              idSyncContainerId: "30793"
-            },
-            com_adobe_target: {
-              propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
             }
           }
         });
         expect(
-          value.edgeConfigOverrides.com_adobe_identity.idSyncContainerId
+          value.edgeConfigOverrides.development.com_adobe_identity
+            .idSyncContainerId
         ).toBe(30793);
       }).not.toThrow();
     });

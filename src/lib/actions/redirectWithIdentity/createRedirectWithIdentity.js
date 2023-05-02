@@ -10,11 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager, document, logger }) => (
+module.exports = ({ instanceManager, document, logger, turbine = {} }) => (
   settings,
   event
 ) => {
-  const { instanceName, edgeConfigOverrides } = settings;
+  const { instanceName, edgeConfigOverrides = {} } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -43,9 +43,12 @@ module.exports = ({ instanceManager, document, logger }) => (
   }
 
   const url = event.element.href;
-  return instance("appendIdentityToUrl", { url, edgeConfigOverrides }).then(
-    ({ url: newLocation }) => {
-      document.location = newLocation;
-    }
-  );
+  const computedConfigOverrides =
+    edgeConfigOverrides[(turbine.environment?.stage)];
+  return instance("appendIdentityToUrl", {
+    url,
+    edgeConfigOverrides: computedConfigOverrides
+  }).then(({ url: newLocation }) => {
+    document.location = newLocation;
+  });
 };
