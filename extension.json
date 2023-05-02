@@ -117,57 +117,166 @@
               },
               "edgeConfigOverrides": {
                 "type": "object",
+                "additionalProperties": false,
                 "properties": {
-                  "com_adobe_experience_platform": {
-                    "type": "object",
-                    "properties": {
-                      "datasets": {
-                        "type": "object",
-                        "properties": {
-                          "event": {
-                            "type": "object",
-                            "properties": {
-                              "datasetId": {
-                                "type": "string"
-                              }
-                            },
-                            "required": ["datasetId"]
-                          }
-                        },
-                        "required": ["event"]
-                      }
+                  "development": {
+                    "com_adobe_experience_platform": {
+                      "type": "object",
+                      "properties": {
+                        "datasets": {
+                          "type": "object",
+                          "properties": {
+                            "event": {
+                              "type": "object",
+                              "properties": {
+                                "datasetId": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["datasetId"]
+                            }
+                          },
+                          "required": ["event"]
+                        }
+                      },
+                      "required": ["datasets"]
                     },
-                    "required": ["datasets"]
-                  },
-                  "com_adobe_analytics": {
-                    "type": "object",
-                    "properties": {
-                      "reportSuites": {
-                        "type": "array",
-                        "items": {
+                    "com_adobe_analytics": {
+                      "type": "object",
+                      "properties": {
+                        "reportSuites": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": ["reportSuites"]
+                    },
+                    "com_adobe_identity": {
+                      "type": "object",
+                      "properties": {
+                        "idSyncContainerId": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": ["idSyncContainerId"]
+                    },
+                    "com_adobe_target": {
+                      "type": "object",
+                      "properties": {
+                        "propertyToken": {
                           "type": "string"
                         }
-                      }
-                    },
-                    "required": ["reportSuites"]
+                      },
+                      "required": ["propertyToken"]
+                    }
                   },
-                  "com_adobe_identity": {
-                    "type": "object",
-                    "properties": {
-                      "idSyncContainerId": {
-                        "type": "integer"
-                      }
+                  "staging": {
+                    "com_adobe_experience_platform": {
+                      "type": "object",
+                      "properties": {
+                        "datasets": {
+                          "type": "object",
+                          "properties": {
+                            "event": {
+                              "type": "object",
+                              "properties": {
+                                "datasetId": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["datasetId"]
+                            }
+                          },
+                          "required": ["event"]
+                        }
+                      },
+                      "required": ["datasets"]
                     },
-                    "required": ["idSyncContainerId"]
+                    "com_adobe_analytics": {
+                      "type": "object",
+                      "properties": {
+                        "reportSuites": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": ["reportSuites"]
+                    },
+                    "com_adobe_identity": {
+                      "type": "object",
+                      "properties": {
+                        "idSyncContainerId": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": ["idSyncContainerId"]
+                    },
+                    "com_adobe_target": {
+                      "type": "object",
+                      "properties": {
+                        "propertyToken": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["propertyToken"]
+                    }
                   },
-                  "com_adobe_target": {
-                    "type": "object",
-                    "properties": {
-                      "propertyToken": {
-                        "type": "string"
-                      }
+                  "production": {
+                    "com_adobe_experience_platform": {
+                      "type": "object",
+                      "properties": {
+                        "datasets": {
+                          "type": "object",
+                          "properties": {
+                            "event": {
+                              "type": "object",
+                              "properties": {
+                                "datasetId": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": ["datasetId"]
+                            }
+                          },
+                          "required": ["event"]
+                        }
+                      },
+                      "required": ["datasets"]
                     },
-                    "required": ["propertyToken"]
+                    "com_adobe_analytics": {
+                      "type": "object",
+                      "properties": {
+                        "reportSuites": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": ["reportSuites"]
+                    },
+                    "com_adobe_identity": {
+                      "type": "object",
+                      "properties": {
+                        "idSyncContainerId": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": ["idSyncContainerId"]
+                    },
+                    "com_adobe_target": {
+                      "type": "object",
+                      "properties": {
+                        "propertyToken": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["propertyToken"]
+                    }
                   }
                 }
               }
@@ -317,57 +426,166 @@
           },
           "edgeConfigOverrides": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
-              "com_adobe_experience_platform": {
-                "type": "object",
-                "properties": {
-                  "datasets": {
-                    "type": "object",
-                    "properties": {
-                      "event": {
-                        "type": "object",
-                        "properties": {
-                          "datasetId": {
-                            "type": "string"
-                          }
-                        },
-                        "required": ["datasetId"]
-                      }
-                    },
-                    "required": ["event"]
-                  }
+              "development": {
+                "com_adobe_experience_platform": {
+                  "type": "object",
+                  "properties": {
+                    "datasets": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "datasetId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["datasetId"]
+                        }
+                      },
+                      "required": ["event"]
+                    }
+                  },
+                  "required": ["datasets"]
                 },
-                "required": ["datasets"]
-              },
-              "com_adobe_analytics": {
-                "type": "object",
-                "properties": {
-                  "reportSuites": {
-                    "type": "array",
-                    "items": {
+                "com_adobe_analytics": {
+                  "type": "object",
+                  "properties": {
+                    "reportSuites": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["reportSuites"]
+                },
+                "com_adobe_identity": {
+                  "type": "object",
+                  "properties": {
+                    "idSyncContainerId": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["idSyncContainerId"]
+                },
+                "com_adobe_target": {
+                  "type": "object",
+                  "properties": {
+                    "propertyToken": {
                       "type": "string"
                     }
-                  }
-                },
-                "required": ["reportSuites"]
+                  },
+                  "required": ["propertyToken"]
+                }
               },
-              "com_adobe_identity": {
-                "type": "object",
-                "properties": {
-                  "idSyncContainerId": {
-                    "type": "integer"
-                  }
+              "staging": {
+                "com_adobe_experience_platform": {
+                  "type": "object",
+                  "properties": {
+                    "datasets": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "datasetId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["datasetId"]
+                        }
+                      },
+                      "required": ["event"]
+                    }
+                  },
+                  "required": ["datasets"]
                 },
-                "required": ["idSyncContainerId"]
+                "com_adobe_analytics": {
+                  "type": "object",
+                  "properties": {
+                    "reportSuites": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["reportSuites"]
+                },
+                "com_adobe_identity": {
+                  "type": "object",
+                  "properties": {
+                    "idSyncContainerId": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["idSyncContainerId"]
+                },
+                "com_adobe_target": {
+                  "type": "object",
+                  "properties": {
+                    "propertyToken": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["propertyToken"]
+                }
               },
-              "com_adobe_target": {
-                "type": "object",
-                "properties": {
-                  "propertyToken": {
-                    "type": "string"
-                  }
+              "production": {
+                "com_adobe_experience_platform": {
+                  "type": "object",
+                  "properties": {
+                    "datasets": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "datasetId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["datasetId"]
+                        }
+                      },
+                      "required": ["event"]
+                    }
+                  },
+                  "required": ["datasets"]
                 },
-                "required": ["propertyToken"]
+                "com_adobe_analytics": {
+                  "type": "object",
+                  "properties": {
+                    "reportSuites": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["reportSuites"]
+                },
+                "com_adobe_identity": {
+                  "type": "object",
+                  "properties": {
+                    "idSyncContainerId": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["idSyncContainerId"]
+                },
+                "com_adobe_target": {
+                  "type": "object",
+                  "properties": {
+                    "propertyToken": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["propertyToken"]
+                }
               }
             }
           }
@@ -495,57 +713,166 @@
           },
           "edgeConfigOverrides": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
-              "com_adobe_experience_platform": {
-                "type": "object",
-                "properties": {
-                  "datasets": {
-                    "type": "object",
-                    "properties": {
-                      "event": {
-                        "type": "object",
-                        "properties": {
-                          "datasetId": {
-                            "type": "string"
-                          }
-                        },
-                        "required": ["datasetId"]
-                      }
-                    },
-                    "required": ["event"]
-                  }
+              "development": {
+                "com_adobe_experience_platform": {
+                  "type": "object",
+                  "properties": {
+                    "datasets": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "datasetId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["datasetId"]
+                        }
+                      },
+                      "required": ["event"]
+                    }
+                  },
+                  "required": ["datasets"]
                 },
-                "required": ["datasets"]
-              },
-              "com_adobe_analytics": {
-                "type": "object",
-                "properties": {
-                  "reportSuites": {
-                    "type": "array",
-                    "items": {
+                "com_adobe_analytics": {
+                  "type": "object",
+                  "properties": {
+                    "reportSuites": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["reportSuites"]
+                },
+                "com_adobe_identity": {
+                  "type": "object",
+                  "properties": {
+                    "idSyncContainerId": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["idSyncContainerId"]
+                },
+                "com_adobe_target": {
+                  "type": "object",
+                  "properties": {
+                    "propertyToken": {
                       "type": "string"
                     }
-                  }
-                },
-                "required": ["reportSuites"]
+                  },
+                  "required": ["propertyToken"]
+                }
               },
-              "com_adobe_identity": {
-                "type": "object",
-                "properties": {
-                  "idSyncContainerId": {
-                    "type": "integer"
-                  }
+              "staging": {
+                "com_adobe_experience_platform": {
+                  "type": "object",
+                  "properties": {
+                    "datasets": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "datasetId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["datasetId"]
+                        }
+                      },
+                      "required": ["event"]
+                    }
+                  },
+                  "required": ["datasets"]
                 },
-                "required": ["idSyncContainerId"]
+                "com_adobe_analytics": {
+                  "type": "object",
+                  "properties": {
+                    "reportSuites": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["reportSuites"]
+                },
+                "com_adobe_identity": {
+                  "type": "object",
+                  "properties": {
+                    "idSyncContainerId": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["idSyncContainerId"]
+                },
+                "com_adobe_target": {
+                  "type": "object",
+                  "properties": {
+                    "propertyToken": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["propertyToken"]
+                }
               },
-              "com_adobe_target": {
-                "type": "object",
-                "properties": {
-                  "propertyToken": {
-                    "type": "string"
-                  }
+              "production": {
+                "com_adobe_experience_platform": {
+                  "type": "object",
+                  "properties": {
+                    "datasets": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "datasetId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["datasetId"]
+                        }
+                      },
+                      "required": ["event"]
+                    }
+                  },
+                  "required": ["datasets"]
                 },
-                "required": ["propertyToken"]
+                "com_adobe_analytics": {
+                  "type": "object",
+                  "properties": {
+                    "reportSuites": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["reportSuites"]
+                },
+                "com_adobe_identity": {
+                  "type": "object",
+                  "properties": {
+                    "idSyncContainerId": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["idSyncContainerId"]
+                },
+                "com_adobe_target": {
+                  "type": "object",
+                  "properties": {
+                    "propertyToken": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["propertyToken"]
+                }
               }
             }
           }
@@ -569,57 +896,166 @@
           },
           "edgeConfigOverrides": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
-              "com_adobe_experience_platform": {
-                "type": "object",
-                "properties": {
-                  "datasets": {
-                    "type": "object",
-                    "properties": {
-                      "event": {
-                        "type": "object",
-                        "properties": {
-                          "datasetId": {
-                            "type": "string"
-                          }
-                        },
-                        "required": ["datasetId"]
-                      }
-                    },
-                    "required": ["event"]
-                  }
+              "development": {
+                "com_adobe_experience_platform": {
+                  "type": "object",
+                  "properties": {
+                    "datasets": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "datasetId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["datasetId"]
+                        }
+                      },
+                      "required": ["event"]
+                    }
+                  },
+                  "required": ["datasets"]
                 },
-                "required": ["datasets"]
-              },
-              "com_adobe_analytics": {
-                "type": "object",
-                "properties": {
-                  "reportSuites": {
-                    "type": "array",
-                    "items": {
+                "com_adobe_analytics": {
+                  "type": "object",
+                  "properties": {
+                    "reportSuites": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["reportSuites"]
+                },
+                "com_adobe_identity": {
+                  "type": "object",
+                  "properties": {
+                    "idSyncContainerId": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["idSyncContainerId"]
+                },
+                "com_adobe_target": {
+                  "type": "object",
+                  "properties": {
+                    "propertyToken": {
                       "type": "string"
                     }
-                  }
-                },
-                "required": ["reportSuites"]
+                  },
+                  "required": ["propertyToken"]
+                }
               },
-              "com_adobe_identity": {
-                "type": "object",
-                "properties": {
-                  "idSyncContainerId": {
-                    "type": "integer"
-                  }
+              "staging": {
+                "com_adobe_experience_platform": {
+                  "type": "object",
+                  "properties": {
+                    "datasets": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "datasetId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["datasetId"]
+                        }
+                      },
+                      "required": ["event"]
+                    }
+                  },
+                  "required": ["datasets"]
                 },
-                "required": ["idSyncContainerId"]
+                "com_adobe_analytics": {
+                  "type": "object",
+                  "properties": {
+                    "reportSuites": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["reportSuites"]
+                },
+                "com_adobe_identity": {
+                  "type": "object",
+                  "properties": {
+                    "idSyncContainerId": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["idSyncContainerId"]
+                },
+                "com_adobe_target": {
+                  "type": "object",
+                  "properties": {
+                    "propertyToken": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["propertyToken"]
+                }
               },
-              "com_adobe_target": {
-                "type": "object",
-                "properties": {
-                  "propertyToken": {
-                    "type": "string"
-                  }
+              "production": {
+                "com_adobe_experience_platform": {
+                  "type": "object",
+                  "properties": {
+                    "datasets": {
+                      "type": "object",
+                      "properties": {
+                        "event": {
+                          "type": "object",
+                          "properties": {
+                            "datasetId": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["datasetId"]
+                        }
+                      },
+                      "required": ["event"]
+                    }
+                  },
+                  "required": ["datasets"]
                 },
-                "required": ["propertyToken"]
+                "com_adobe_analytics": {
+                  "type": "object",
+                  "properties": {
+                    "reportSuites": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["reportSuites"]
+                },
+                "com_adobe_identity": {
+                  "type": "object",
+                  "properties": {
+                    "idSyncContainerId": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": ["idSyncContainerId"]
+                },
+                "com_adobe_target": {
+                  "type": "object",
+                  "properties": {
+                    "propertyToken": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["propertyToken"]
+                }
               }
             }
           }

@@ -137,7 +137,8 @@ HeaderContainer.propTypes = {
  *
  * @param {Object} props
  * @param {string} props.currentEnv The current environment.
- * @param {(source: string, destinations: string[]) => void} props.onPress The function to call when the user clicks the "Copy" button.
+ * @param {(source: string, destinations: string[]) => void} props.onPress The
+ * function to call when the user clicks the "Copy" button.
  *
  * @returns {React.Element}
  */
