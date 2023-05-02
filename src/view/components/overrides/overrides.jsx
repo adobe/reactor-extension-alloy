@@ -17,7 +17,9 @@ import {
   Tabs,
   TabList,
   TabPanels,
-  Item
+  Item,
+  View,
+  Checkbox
 } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { FieldArray, useField } from "formik";
@@ -40,10 +42,16 @@ export const FIELD_NAMES = {
   targetPropertyTokenOverride: "targetPropertyTokenOverride",
   reportSuitesOverride: "reportSuitesOverride"
 };
+/**
+ * Takes a string and returns the a new string with the first letter capitalized.
+ * @param {string} str
+ * @returns {string}
+ */
+const capitialize = str => str.charAt(0).toUpperCase() + str.slice(1);
 
 const ReportSuitesOverride = ({ prefix }) => {
   const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
-  const [{ value: rsids }] = useField(fieldName);
+  const [, { value: rsids }] = useField(fieldName);
   return (
     <FieldArray name={fieldName}>
       {({ remove, push }) => (
@@ -82,7 +90,6 @@ const ReportSuitesOverride = ({ prefix }) => {
           <Button
             data-test-id="addReportSuite"
             variant="secondary"
-            marginTop="size-100"
             onPress={() => push("")}
             UNSAFE_style={{ maxWidth: "fit-content" }}
           >
@@ -98,7 +105,7 @@ ReportSuitesOverride.propTypes = {
   prefix: PropTypes.string.isRequired
 };
 
-const HeaderContainer = ({ largeHeader, children, ...props }) => {
+const HeaderContainer = ({ largeHeader = false, children, ...props }) => {
   if (largeHeader) {
     return <SectionHeader {...props}>{children}</SectionHeader>;
   }
@@ -119,11 +126,73 @@ const HeaderContainer = ({ largeHeader, children, ...props }) => {
 };
 
 HeaderContainer.propTypes = {
-  largeHeader: PropTypes.bool.isRequired,
+  largeHeader: PropTypes.bool,
   children: PropTypes.node.isRequired
 };
 
-const capitialize = str => str.charAt(0).toUpperCase() + str.slice(1);
+/**
+ * A section of the form that allows the user to copy all the overrides from the
+ * current environment to the other two environments. Users select the destination
+ * environments with checkboxes, then click the "Copy" button.
+ *
+ * @param {Object} props
+ * @param {string} props.currentEnv The current environment.
+ * @param {(source: string, destinations: string[]) => void} props.onPress The function to call when the user clicks the "Copy" button.
+ *
+ * @returns {React.Element}
+ */
+const SettingsCopySection = ({ currentEnv, onPress }) => {
+  const [destinations, setDestinations] = React.useState([]);
+  const availableDestinations = OVERRIDE_ENVIRONMENTS.filter(
+    env => env !== currentEnv
+  );
+
+  const onCopy = () => {
+    onPress(currentEnv, destinations);
+    setDestinations([]);
+  };
+
+  return (
+    <View>
+      <HeaderContainer>Copy overrides to…</HeaderContainer>
+      <FormElementContainer>
+        <Flex direction="row">
+          {availableDestinations.map(env => (
+            <Checkbox
+              key={env}
+              data-test-id={`copyOverrides.${env}`}
+              isSelected={destinations.includes(env)}
+              onChange={isSelected => {
+                if (isSelected) {
+                  setDestinations([...destinations, env]);
+                } else {
+                  setDestinations(destinations.filter(d => d !== env));
+                }
+              }}
+            >
+              {capitialize(env)}
+            </Checkbox>
+          ))}
+        </Flex>
+      </FormElementContainer>
+      <Button
+        data-test-id="copyOverrides"
+        variant="secondary"
+        isDisabled={destinations.length === 0}
+        marginTop="size-100"
+        onPress={onCopy}
+        UNSAFE_style={{ maxWidth: "fit-content" }}
+      >
+        Copy
+      </Button>
+    </View>
+  );
+};
+
+SettingsCopySection.propTypes = {
+  currentEnv: PropTypes.oneOf(OVERRIDE_ENVIRONMENTS).isRequired,
+  onPress: PropTypes.func.isRequired
+};
 
 /**
  * A section of a form that allows the user to override datastream configuration
@@ -152,6 +221,19 @@ const Overrides = ({
   // TODO: Remove this console.log()
   console.log("initInfo", initInfo);
 
+  const [
+    ,
+    { value: edgeConfigOverrides },
+    { setValue: setEdgeConfigOverrides }
+  ] = useField(prefix);
+  const onCopy = (source, destinations) => {
+    const newOverrides = destinations.reduce(
+      (result, env) => ({ ...result, [env]: edgeConfigOverrides[source] }),
+      edgeConfigOverrides
+    );
+    setEdgeConfigOverrides(newOverrides);
+  };
+
   return (
     <>
       <HeaderContainer largeHeader={largeHeader}>
@@ -170,6 +252,7 @@ const Overrides = ({
                 <Flex
                   direction="column"
                   marginX={largeHeader ? "" : "size-300"}
+                  gap="size-100"
                 >
                   {showFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
                     <DataElementSelector>
@@ -211,6 +294,7 @@ const Overrides = ({
                   {showFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
                     <ReportSuitesOverride prefix={`${prefix}.${env}`} />
                   )}
+                  <SettingsCopySection currentEnv={env} onPress={onCopy} />
                 </Flex>
               </Item>
             ))}
