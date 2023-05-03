@@ -303,18 +303,6 @@
       {
         "type": "remove",
         "propertyPath": "instances[].edgeConfigInputMethod"
-      },
-      {
-        "type": "remove",
-        "propertyPath": "instances[].sandbox"
-      },
-      {
-        "type": "remove",
-        "propertyPath": "instances[].stagingSandbox"
-      },
-      {
-        "type": "remove",
-        "propertyPath": "instances[].developmentSandbox"
       }
     ]
   },
