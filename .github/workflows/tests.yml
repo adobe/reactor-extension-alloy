@@ -31,20 +31,20 @@ jobs:
         with:
           username: ${{ secrets.SAUCE_USERNAME }}
           accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
-          tunnelName: $GITHUB_JOB
+          tunnelName: ${{ github.job }}
       - name: Run Unit Test
         run: npx karma start karma.saucelabs.conf.js --single-run
         env:
-          BUILD_NUMBER: $GITHUB_RUN_NUMBER
-          BUILD_ID: $GITHUB_RUN_ID
-          JOB_NUMBER: $GITHUB_JOB
+          BUILD_NUMBER: ${{ github.run_number }}
+          BUILD_ID: ${{ github.run_id }}
+          JOB_NUMBER: ${{ github.job }}
 
 
   functional-test:
     name: "Functional Test"
     needs: unit-test
     strategy:
-      max-parallel: 1
+      max-parallel: 4
       matrix:
         browsers:
           [
@@ -75,3 +75,4 @@ jobs:
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
           EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
           EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
+
