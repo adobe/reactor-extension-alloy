@@ -139,7 +139,10 @@ const knownEventTypeOptions = [
   "commerce.productListViews",
   "commerce.productViews",
   "commerce.purchases",
-  "commerce.saveForLaters"
+  "commerce.saveForLaters",
+  "decisioning.propositionDisplay",
+  "decisioning.propositionFetch",
+  "decisioning.propositionInteract"
 ].map(type => ({ type }));
 
 const SendEvent = () => {
