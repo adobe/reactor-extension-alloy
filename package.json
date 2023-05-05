@@ -71,13 +71,14 @@
   },
   "devDependencies": {
     "@adobe/jwt-auth": "^2.0.0",
-    "@adobe/reactor-sandbox": "^12.4.0",
+    "@adobe/reactor-sandbox": "^12.5.0",
     "@adobe/reactor-turbine": "^27.2.1",
     "@babel/cli": "^7.12.16",
     "@babel/core": "^7.12.16",
     "@babel/plugin-proposal-class-properties": "^7.12.13",
     "@babel/plugin-transform-runtime": "^7.12.15",
     "@babel/preset-env": "^7.12.16",
+    "@parcel/core": "^2.8.3",
     "@parcel/transformer-stylus": "^2.4.1",
     "babel-eslint": "^10.0.1",
     "babel-plugin-jsx-remove-data-test-id": "^3.0.0",
@@ -124,7 +125,7 @@
     "rollup-plugin-istanbul": "^3.0.0",
     "rollup-plugin-node-resolve": "^4.2.3",
     "stylus": "^0.54.8",
-    "testcafe": "^2.3.1",
+    "testcafe": "^2.5.1-rc.1",
     "testcafe-browser-provider-saucelabs": "^1.9.0"
   }
 }
