@@ -27,10 +27,10 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import FormElementContainer from "../formElementContainer";
-import FormikTextField from "../formikReactSpectrum3/formikTextField";
 import SectionHeader from "../sectionHeader";
 import DataElementSelector from "../dataElementSelector";
 import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/constants/environmentType";
+import FormikComboBox from "../formikReactSpectrum3/formikComboBox";
 
 /**
  * The names of the different fields that can appear in the form. Used to pass
@@ -60,11 +60,13 @@ const ReportSuitesOverride = ({ prefix }) => {
             {rsids.map((rsid, index) => (
               <Flex key={index} direction="row">
                 <DataElementSelector>
-                  <FormikTextField
+                  <FormikComboBox
                     data-test-id={`${
                       FIELD_NAMES.reportSuitesOverride
                     }.${index}`}
                     label={index === 0 && "Report suites"}
+                    allowsCustomValue
+                    defaultItems={[]}
                     name={`${fieldName}.${index}`}
                     description={
                       index === rsids.length - 1 &&
@@ -257,9 +259,11 @@ const Overrides = ({
                 >
                   {showFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
                     <DataElementSelector>
-                      <FormikTextField
+                      <FormikComboBox
                         data-test-id={FIELD_NAMES.eventDatasetOverride}
                         label="Event dataset"
+                        allowsCustomValue
+                        defaultItems={[]}
                         name={`${prefix}.${env}.com_adobe_experience_platform.datasets.event.datasetId`}
                         description="The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration and overrides the primary dataset."
                         width="size-5000"
@@ -268,9 +272,11 @@ const Overrides = ({
                   )}
                   {showFieldsSet.has(FIELD_NAMES.idSyncContainerOverride) && (
                     <DataElementSelector>
-                      <FormikTextField
+                      <FormikComboBox
                         data-test-id={FIELD_NAMES.idSyncContainerOverride}
                         label="Third-party ID sync container"
+                        allowsCustomValue
+                        defaultItems={[]}
                         name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
                         inputMode="numeric"
                         width="size-5000"
@@ -283,9 +289,11 @@ const Overrides = ({
                     FIELD_NAMES.targetPropertyTokenOverride
                   ) && (
                     <DataElementSelector>
-                      <FormikTextField
+                      <FormikComboBox
                         data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
                         label="Target property token"
+                        allowsCustomValue
+                        defaultItems={[]}
                         name={`${prefix}.${env}.com_adobe_target.propertyToken`}
                         description="The token for the destination property in Adobe Target. The value must be a preconfigured property override from your datastream configuration and overrides the primary property."
                         width="size-5000"
