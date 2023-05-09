@@ -148,7 +148,7 @@ const SendEvent = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       formikStateValidationSchema={validationSchema}
-      render={({ initInfo }) => (
+      render={({ initInfo, formikProps: { values } }) => (
         <FormElementContainer>
           <InstanceNamePicker
             data-test-id="instanceNameField"
@@ -249,7 +249,7 @@ const SendEvent = () => {
           </FormikCheckbox>
           <DecisionScopes />
           <Surfaces />
-          <Overrides initInfo={initInfo} />
+          <Overrides initInfo={initInfo} instanceName={values.instanceName} />
         </FormElementContainer>
       )}
     />

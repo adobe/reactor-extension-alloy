@@ -225,6 +225,7 @@ const Configuration = ({ initInfo, context }) => {
                         <OverridesSection
                           initInfo={initInfo}
                           instanceFieldName={instanceFieldName}
+                          instanceName={instance.name}
                           largeHeader
                         />
                         <AdvancedSection

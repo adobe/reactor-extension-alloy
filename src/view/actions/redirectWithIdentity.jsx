@@ -58,7 +58,7 @@ const RedirectWithIdentity = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       formikStateValidationSchema={validationSchema}
-      render={({ initInfo }) => (
+      render={({ initInfo, formikProps: { values } }) => (
         <>
           <Alert
             variant="informative"
@@ -90,7 +90,7 @@ const RedirectWithIdentity = () => {
               disabledDescription="Only one instance was configured for this extension so no configuration is required for this action."
             />
           </FormElementContainer>
-          <Overrides initInfo={initInfo} />
+          <Overrides initInfo={initInfo} instanceName={values.instanceName} />
         </>
       )}
     />
