@@ -55,8 +55,19 @@ export const FIELD_NAMES = {
  * @returns {string}
  */
 const capitialize = str => str.charAt(0).toUpperCase() + str.slice(1);
-
-const ReportSuitesOverride = ({ prefix }) => {
+/**
+ * The section of the page that allows the user to input a variable number of
+ * report suite overrides.
+ *
+ * @param {Object} props
+ * @param {string} props.prefix The common prefix for all the data input
+ * fields in the Formik state object.
+ * @param {string[]} props.items The list of items to display in the dropdown
+ * @param {boolean} props.useManualEntry If true, the input is a text field. If
+ * false, the input is a combo box.
+ * @returns
+ */
+const ReportSuitesOverride = ({ prefix, items, useManualEntry }) => {
   const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
   const [, { value: rsids }] = useField(fieldName);
   return (
@@ -66,23 +77,22 @@ const ReportSuitesOverride = ({ prefix }) => {
           <Flex direction="column" gap="size-100">
             {rsids.map((rsid, index) => (
               <Flex key={index} direction="row">
-                <DataElementSelector>
-                  <FormikComboBox
-                    data-test-id={`${
-                      FIELD_NAMES.reportSuitesOverride
-                    }.${index}`}
-                    label={index === 0 && "Report suites"}
-                    allowsCustomValue
-                    defaultItems={[]}
-                    name={`${fieldName}.${index}`}
-                    description={
-                      index === rsids.length - 1 &&
-                      "The IDs for the destination report suites in Adobe Analytics. The value must be a preconfigured override report suite from your datastream configuration and overrides the primary report suites."
-                    }
-                    width="size-5000"
-                    key={index}
-                  />
-                </DataElementSelector>
+                <OverrideInput
+                  useManualEntry={useManualEntry || items.length === 0}
+                  data-test-id={`${FIELD_NAMES.reportSuitesOverride}.${index}`}
+                  label={index === 0 && "Report suites"}
+                  allowsCustomValue
+                  items={items}
+                  name={`${fieldName}.${index}`}
+                  description={
+                    index === rsids.length - 1 &&
+                    "The IDs for the destination report suites in Adobe Analytics. The value must be a preconfigured override report suite from your datastream configuration and overrides the primary report suites."
+                  }
+                  width="size-5000"
+                  key={index}
+                >
+                  {({ value, label }) => <Item key={value}>{label}</Item>}
+                </OverrideInput>
                 <ActionButton
                   isQuiet
                   isDisabled={rsids.length < 2}
@@ -111,7 +121,14 @@ const ReportSuitesOverride = ({ prefix }) => {
 };
 
 ReportSuitesOverride.propTypes = {
-  prefix: PropTypes.string.isRequired
+  prefix: PropTypes.string.isRequired,
+  items: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.string.isRequired,
+      label: PropTypes.string.isRequired
+    })
+  ).isRequired,
+  useManualEntry: PropTypes.bool.isRequired
 };
 
 const HeaderContainer = ({ largeHeader = false, children, ...props }) => {
@@ -272,6 +289,35 @@ const useFetchConfig = ({
 };
 
 /**
+ *
+ * @param {Object} options
+ * @param {boolean} options.useManualEntry If true, the component will be a text
+ * field. If false, the component will be a combo box.
+ * @param {Function} options.children A function that returns a React element
+ * representing each option in the combo box.
+ * @returns {React.Element}
+ */
+const OverrideInput = ({ useManualEntry, children, ...otherProps }) => {
+  if (useManualEntry) {
+    return (
+      <DataElementSelector>
+        <FormikTextField {...otherProps} />
+      </DataElementSelector>
+    );
+  }
+  return (
+    <DataElementSelector>
+      <FormikComboBox {...otherProps}>{children}</FormikComboBox>
+    </DataElementSelector>
+  );
+};
+
+OverrideInput.propTypes = {
+  useManualEntry: PropTypes.bool.isRequired,
+  children: PropTypes.func.isRequired
+};
+
+/**
  * A section of a form that allows the user to override datastream configuration
  *
  * @typedef {Object} OverridesProps
@@ -359,10 +405,23 @@ const Overrides = ({
           <TabPanels>
             {OVERRIDE_ENVIRONMENTS.map(env => {
               const { result, isLoading, error } = edgeConfigs[env];
-              const useManualEntry = !result || error;
-              const eventDatasets = (
-                result?.com_adobe_experience_platform?.datasets?.event ?? []
-              ).filter(({ primary }) => !primary);
+              const useManualEntry = !result || Boolean(error);
+              const eventDatasetOptions =
+                result?.com_adobe_experience_platform?.datasets?.event?.filter(
+                  ({ primary }) => !primary
+                ) ?? [];
+              const idSyncContainers =
+                result?.com_adobe_identity.idSyncContainerId__additional?.map(
+                  value => ({ value, label: `${value}` })
+                ) ?? [];
+              const propertyTokenOptions =
+                result?.com_adobe_target.propertyToken__additional?.map(
+                  value => ({ value, label: value })
+                ) ?? [];
+              const reportSuiteOptions =
+                result?.com_adobe_analytics.reportSuites__additional?.map(
+                  value => ({ value, label: value })
+                ) ?? [];
               return (
                 <Item key={env}>
                   <Flex
@@ -371,65 +430,66 @@ const Overrides = ({
                     gap="size-100"
                   >
                     {showFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
-                      <DataElementSelector>
-                        {useManualEntry || eventDatasets.length === 0 ? (
-                          <FormikTextField
-                            data-test-id={FIELD_NAMES.eventDatasetOverride}
-                            label="Event dataset"
-                            name={`${prefix}.com_adobe_experience_platform.datasets.event.datasetId`}
-                            description="The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration and overrides the primary dataset."
-                            width="size-5000"
-                          />
-                        ) : (
-                          <FormikComboBox
-                            data-test-id={FIELD_NAMES.eventDatasetOverride}
-                            label="Event dataset"
-                            allowsCustomValue
-                            items={eventDatasets}
-                            loadingState={isLoading}
-                            name={`${prefix}.${env}.com_adobe_experience_platform.datasets.event.datasetId`}
-                            description="The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration and overrides the primary dataset."
-                            width="size-5000"
-                          >
-                            {({ datasetId }) => (
-                              <Item key={datasetId}>{datasetId}</Item>
-                            )}
-                          </FormikComboBox>
+                      <OverrideInput
+                        useManualEntry={
+                          useManualEntry || eventDatasetOptions.length === 0
+                        }
+                        items={eventDatasetOptions}
+                        data-test-id={FIELD_NAMES.eventDatasetOverride}
+                        label="Event dataset"
+                        description="The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration and overrides the primary dataset."
+                        width="size-5000"
+                        allowsCustomValue
+                        loadingState={isLoading}
+                        name={`${prefix}.${env}.com_adobe_experience_platform.datasets.event.datasetId`}
+                      >
+                        {({ datasetId }) => (
+                          <Item key={datasetId}>{datasetId}</Item>
                         )}
-                      </DataElementSelector>
+                      </OverrideInput>
                     )}
                     {showFieldsSet.has(FIELD_NAMES.idSyncContainerOverride) && (
-                      <DataElementSelector>
-                        <FormikComboBox
-                          data-test-id={FIELD_NAMES.idSyncContainerOverride}
-                          label="Third-party ID sync container"
-                          allowsCustomValue
-                          defaultItems={[]}
-                          name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
-                          inputMode="numeric"
-                          width="size-5000"
-                          pattern={/\d+/}
-                          description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The value must be a preconfigured secondary container from your datastream configuration and overrides the primary container."
-                        />
-                      </DataElementSelector>
+                      <OverrideInput
+                        data-test-id={FIELD_NAMES.idSyncContainerOverride}
+                        label="Third-party ID sync container"
+                        useManualEntry={
+                          useManualEntry || idSyncContainers.length === 0
+                        }
+                        allowsCustomValue
+                        items={idSyncContainers}
+                        name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
+                        inputMode="numeric"
+                        width="size-5000"
+                        pattern={/\d+/}
+                        description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The value must be a preconfigured secondary container from your datastream configuration and overrides the primary container."
+                      >
+                        {({ value, label }) => <Item key={value}>{label}</Item>}
+                      </OverrideInput>
                     )}
                     {showFieldsSet.has(
                       FIELD_NAMES.targetPropertyTokenOverride
                     ) && (
-                      <DataElementSelector>
-                        <FormikComboBox
-                          data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
-                          label="Target property token"
-                          allowsCustomValue
-                          defaultItems={[]}
-                          name={`${prefix}.${env}.com_adobe_target.propertyToken`}
-                          description="The token for the destination property in Adobe Target. The value must be a preconfigured property override from your datastream configuration and overrides the primary property."
-                          width="size-5000"
-                        />
-                      </DataElementSelector>
+                      <OverrideInput
+                        data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
+                        label="Target property token"
+                        allowsCustomValue
+                        items={propertyTokenOptions}
+                        useManualEntry={
+                          useManualEntry || propertyTokenOptions.length === 0
+                        }
+                        name={`${prefix}.${env}.com_adobe_target.propertyToken`}
+                        description="The token for the destination property in Adobe Target. The value must be a preconfigured property override from your datastream configuration and overrides the primary property."
+                        width="size-5000"
+                      >
+                        {({ value, label }) => <Item key={value}>{label}</Item>}
+                      </OverrideInput>
                     )}
                     {showFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
-                      <ReportSuitesOverride prefix={`${prefix}.${env}`} />
+                      <ReportSuitesOverride
+                        useManualEntry={useManualEntry}
+                        items={reportSuiteOptions}
+                        prefix={`${prefix}.${env}`}
+                      />
                     )}
                     <SettingsCopySection currentEnv={env} onPress={onCopy} />
                   </Flex>
