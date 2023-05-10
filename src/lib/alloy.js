@@ -8,7 +8,8 @@ Unless required by applicable law or agreed to in writing, software distributed 
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
-*/ // eslint-disable-next-line import/no-named-export
+*/
+// eslint-disable-next-line import/no-named-export
 export { createInstance } from "@adobe/alloy";
 
 // eslint-disable-next-line import/no-named-export

@@ -8,8 +8,8 @@ Unless required by applicable law or agreed to in writing, software distributed 
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
-*/ const ecid =
-  "00781847927133700121980094732316198575";
+*/
+const ecid = "00781847927133700121980094732316198575";
 
 window.Visitor = () => undefined;
 window.Visitor.getInstance = () => {
