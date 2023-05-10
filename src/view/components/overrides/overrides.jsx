@@ -12,34 +12,34 @@ governing permissions and limitations under the License.
 import {
   ActionButton,
   Button,
+  Checkbox,
+  Content,
+  ContextualHelp,
   Flex,
   Heading,
-  Tabs,
+  Item,
   TabList,
   TabPanels,
-  Item,
-  View,
-  Checkbox,
-  ContextualHelp,
-  Content,
-  Text
+  Tabs,
+  Text,
+  View
 } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { FieldArray, useField } from "formik";
 import PropTypes from "prop-types";
 import React, { useRef } from "react";
 
-import FormElementContainer from "../formElementContainer";
-import SectionHeader from "../sectionHeader";
-import DataElementSelector from "../dataElementSelector";
 import {
   DEVELOPMENT,
+  ENVIRONMENTS as OVERRIDE_ENVIRONMENTS,
   PRODUCTION,
-  STAGING,
-  ENVIRONMENTS as OVERRIDE_ENVIRONMENTS
+  STAGING
 } from "../../configuration/constants/environmentType";
+import DataElementSelector from "../dataElementSelector";
+import FormElementContainer from "../formElementContainer";
 import FormikComboBox from "../formikReactSpectrum3/formikComboBox";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
+import SectionHeader from "../sectionHeader";
 import {
   FIELD_NAMES,
   capitialize,
