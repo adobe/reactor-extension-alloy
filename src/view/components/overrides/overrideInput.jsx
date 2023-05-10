@@ -15,8 +15,50 @@ import React from "react";
 import DataElementSelector from "../dataElementSelector";
 import FormikComboBox from "../formikReactSpectrum3/formikComboBox";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
+import { capitialize } from "./utils";
 
 /**
+ *
+ * @param {Object} params
+ * @param {string} params.overrideType The type of value that is being overridden.
+ * @param {string | string[]} params.primaryItem The value or values that are
+ * being overridden by this field.
+ * @returns {React.Element}
+ */
+const PrimaryValuePopup = ({ overrideType, primaryItem }) => {
+  return (
+    <ContextualHelp variant="info">
+      <Heading>{capitialize(overrideType)} being overridden:</Heading>
+      <Content>
+        <Text>
+          {Array.isArray(primaryItem) ? (
+            <ul>
+              {primaryItem.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+          ) : (
+            primaryItem
+          )}
+        </Text>
+      </Content>
+    </ContextualHelp>
+  );
+};
+
+PrimaryValuePopup.propTypes = {
+  overrideType: PropTypes.string.isRequired,
+  primaryItem: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string)
+  ]).isRequired
+};
+
+/**
+ * The OverrideInput component is a wrapper around either a FormikComboBox or
+ * FormikTextField. It is used to allow the user to override a value that is
+ * being set in the rule. The component will display a popup that shows the
+ * value that is being overridden.
  *
  * @param {Object} options
  * @param {boolean} options.useManualEntry If true, the component will be a text
@@ -35,23 +77,16 @@ const OverrideInput = ({
   children,
   ...otherProps
 }) => {
-  const primaryText = Array.isArray(primaryItem)
-    ? primaryItem.join(", ")
-    : primaryItem;
   if (useManualEntry) {
     return (
       <DataElementSelector>
         <FormikTextField
           {...otherProps}
           contextualHelp={
-            primaryText !== "" && (
-              <ContextualHelp variant="info">
-                <Heading>Overrides {overrideType}</Heading>
-                <Content>
-                  <Text>{primaryText}</Text>
-                </Content>
-              </ContextualHelp>
-            )
+            <PrimaryValuePopup
+              primaryItem={primaryItem}
+              overrideType={overrideType}
+            />
           }
         />
       </DataElementSelector>
@@ -62,14 +97,10 @@ const OverrideInput = ({
       <FormikComboBox
         {...otherProps}
         contextualHelp={
-          primaryText !== "" && (
-            <ContextualHelp variant="info">
-              <Heading>Overrides {overrideType}</Heading>
-              <Content>
-                <Text>{primaryText}</Text>
-              </Content>
-            </ContextualHelp>
-          )
+          <PrimaryValuePopup
+            primaryItem={primaryItem}
+            overrideType={overrideType}
+          />
         }
       >
         {children}
@@ -80,12 +111,8 @@ const OverrideInput = ({
 
 OverrideInput.propTypes = {
   useManualEntry: PropTypes.bool.isRequired,
-  primaryItem: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.arrayOf(PropTypes.string)
-  ]).isRequired,
-  overrideType: PropTypes.string.isRequired,
-  children: PropTypes.func.isRequired
+  children: PropTypes.func.isRequired,
+  ...PrimaryValuePopup.propTypes
 };
 
 export default OverrideInput;
