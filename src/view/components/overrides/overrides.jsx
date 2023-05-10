@@ -19,7 +19,10 @@ import {
   TabPanels,
   Item,
   View,
-  Checkbox
+  Checkbox,
+  ContextualHelp,
+  Content,
+  Text
 } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { FieldArray, useField } from "formik";
@@ -62,12 +65,20 @@ const capitialize = str => str.charAt(0).toUpperCase() + str.slice(1);
  * @param {Object} props
  * @param {string} props.prefix The common prefix for all the data input
  * fields in the Formik state object.
- * @param {string[]} props.items The list of items to display in the dropdown
+ * @param {{ value: string, label: string }} props.items The list of items to
+ * display in the dropdown.
+ * @param {string[]} props.primaryItem The list of report suites that are being
+ * overridden.
  * @param {boolean} props.useManualEntry If true, the input is a text field. If
  * false, the input is a combo box.
  * @returns
  */
-const ReportSuitesOverride = ({ prefix, items, useManualEntry }) => {
+const ReportSuitesOverride = ({
+  prefix,
+  items,
+  primaryItem,
+  useManualEntry
+}) => {
   const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
   const [, { value: rsids }] = useField(fieldName);
   return (
@@ -82,6 +93,8 @@ const ReportSuitesOverride = ({ prefix, items, useManualEntry }) => {
                   data-test-id={`${FIELD_NAMES.reportSuitesOverride}.${index}`}
                   label={index === 0 && "Report suites"}
                   allowsCustomValue
+                  overrideType="report suites"
+                  primaryItem={primaryItem}
                   items={items}
                   name={`${fieldName}.${index}`}
                   description={
@@ -128,6 +141,7 @@ ReportSuitesOverride.propTypes = {
       label: PropTypes.string.isRequired
     })
   ).isRequired,
+  primaryItem: PropTypes.arrayOf(PropTypes.string).isRequired,
   useManualEntry: PropTypes.bool.isRequired
 };
 
@@ -301,27 +315,70 @@ const useFetchConfig = ({
  * @param {Object} options
  * @param {boolean} options.useManualEntry If true, the component will be a text
  * field. If false, the component will be a combo box.
+ * @param {string | string[]} options.primaryItems The value or values that are
+ * being overridden by this field
+ * @param {string} options.overrideType The type of value that is being overridden
  * @param {Function} options.children A function that returns a React element
  * representing each option in the combo box.
  * @returns {React.Element}
  */
-const OverrideInput = ({ useManualEntry, children, ...otherProps }) => {
+const OverrideInput = ({
+  useManualEntry,
+  primaryItem,
+  overrideType,
+  children,
+  ...otherProps
+}) => {
+  const primaryText = Array.isArray(primaryItem)
+    ? primaryItem.join(", ")
+    : primaryItem;
   if (useManualEntry) {
     return (
       <DataElementSelector>
-        <FormikTextField {...otherProps} />
+        <FormikTextField
+          {...otherProps}
+          contextualHelp={
+            primaryText !== "" && (
+              <ContextualHelp variant="info">
+                <Heading>Overrides {overrideType}</Heading>
+                <Content>
+                  <Text>{primaryText}</Text>
+                </Content>
+              </ContextualHelp>
+            )
+          }
+        />
       </DataElementSelector>
     );
   }
   return (
     <DataElementSelector>
-      <FormikComboBox {...otherProps}>{children}</FormikComboBox>
+      <FormikComboBox
+        {...otherProps}
+        contextualHelp={
+          primaryText !== "" && (
+            <ContextualHelp variant="info">
+              <Heading>Overrides {overrideType}</Heading>
+              <Content>
+                <Text>{primaryText}</Text>
+              </Content>
+            </ContextualHelp>
+          )
+        }
+      >
+        {children}
+      </FormikComboBox>
     </DataElementSelector>
   );
 };
 
 OverrideInput.propTypes = {
   useManualEntry: PropTypes.bool.isRequired,
+  primaryItem: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string)
+  ]).isRequired,
+  overrideType: PropTypes.string.isRequired,
   children: PropTypes.func.isRequired
 };
 
@@ -417,22 +474,37 @@ const Overrides = ({
             {OVERRIDE_ENVIRONMENTS.map(env => {
               const { result, isLoading, error } = edgeConfigs[env];
               const useManualEntry = !result || Boolean(error);
+
+              const primaryEventDataset =
+                result?.com_adobe_experience_platform?.datasets?.event?.find(
+                  ({ primary }) => primary
+                )?.datasetId ?? "";
               const eventDatasetOptions =
                 result?.com_adobe_experience_platform?.datasets?.event?.filter(
                   ({ primary }) => !primary
                 ) ?? [];
+
+              const primaryIdSyncContainer =
+                `${result?.com_adobe_identity?.idSyncContainerId}` ?? "";
               const idSyncContainers =
                 result?.com_adobe_identity.idSyncContainerId__additional?.map(
                   value => ({ value, label: `${value}` })
                 ) ?? [];
+
+              const primaryPropertyToken =
+                result?.com_adobe_target.propertyToken ?? "";
               const propertyTokenOptions =
                 result?.com_adobe_target.propertyToken__additional?.map(
                   value => ({ value, label: value })
                 ) ?? [];
+
+              const primaryReportSuites =
+                result?.com_adobe_analytics?.reportSuites ?? [];
               const reportSuiteOptions =
                 result?.com_adobe_analytics.reportSuites__additional?.map(
                   value => ({ value, label: value })
                 ) ?? [];
+
               return (
                 <Item key={env}>
                   <Flex
@@ -445,7 +517,9 @@ const Overrides = ({
                         useManualEntry={
                           useManualEntry || eventDatasetOptions.length === 0
                         }
+                        primaryItem={primaryEventDataset}
                         items={eventDatasetOptions}
+                        overrideType="event dataset"
                         data-test-id={FIELD_NAMES.eventDatasetOverride}
                         label="Event dataset"
                         description="The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration and overrides the primary dataset."
@@ -467,6 +541,8 @@ const Overrides = ({
                           useManualEntry || idSyncContainers.length === 0
                         }
                         allowsCustomValue
+                        overrideType="third-party ID sync container"
+                        primaryItem={primaryIdSyncContainer}
                         items={idSyncContainers}
                         name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
                         inputMode="numeric"
@@ -484,6 +560,8 @@ const Overrides = ({
                         data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
                         label="Target property token"
                         allowsCustomValue
+                        overrideType="property token"
+                        primaryItem={primaryPropertyToken}
                         items={propertyTokenOptions}
                         useManualEntry={
                           useManualEntry || propertyTokenOptions.length === 0
@@ -498,6 +576,7 @@ const Overrides = ({
                     {showFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
                       <ReportSuitesOverride
                         useManualEntry={useManualEntry}
+                        primaryItem={primaryReportSuites}
                         items={reportSuiteOptions}
                         prefix={`${prefix}.${env}`}
                       />
