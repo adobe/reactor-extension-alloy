@@ -14,11 +14,17 @@ const fs = require("fs");
 const path = require("path");
 const stagedGitFiles = require("staged-git-files");
 
+const fsPromises = fs.promises;
 const PROJECT_ROOT = path.resolve(__dirname, "../");
 
 const GIT_DELETED = "Deleted";
 const SOURCE_FILE_EXTENSIONS = ["js", "jsx", "ts", "tsx", "cjs", "mjs"];
-const IGNORE_PATTERNS = [];
+const IGNORE_PATTERNS = [
+  /\/scripts\//gi,
+  /\/\.parcel-cache\//gi,
+  /\/\.sandbox\//gi,
+  /\/componentFixtureDist\//gi
+];
 
 const createLicenseText = year => `/*
 Copyright ${year} Adobe. All rights reserved.
@@ -33,13 +39,13 @@ governing permissions and limitations under the License.
 */`;
 
 const walk = async (dir, matchesFilter) => {
-  let files = fs.readdirSync(dir);
+  let files = await fsPromises.readdir(dir);
   files = await Promise.all(
     files
       .filter(file => matchesFilter(file, dir))
       .map(async file => {
         const filePath = path.join(dir, file);
-        const stats = fs.statSync(filePath);
+        const stats = await fsPromises.stat(filePath);
         if (stats.isDirectory()) {
           return walk(filePath, matchesFilter);
         }
@@ -57,41 +63,38 @@ const getStagedGitFiles = async () => {
       return (
         detail.status !== GIT_DELETED &&
         parts.length > 1 &&
-        SOURCE_FILE_EXTENSIONS.indexOf(parts[1]) > -1
+        SOURCE_FILE_EXTENSIONS.includes(parts[1])
       );
     })
     .map(detail => path.join(PROJECT_ROOT, detail.filename));
 };
 
-const getAllSourceFiles = async () => {
+const getAllSourceFiles = () => {
   const IGNORED = ["node_modules", ".git", "dist"];
   return walk(PROJECT_ROOT, (file, dir) => {
     const filePath = path.join(dir, file);
     const stats = fs.statSync(filePath);
 
-    for (let i = 0; i < IGNORED.length; i += 1) {
-      if (filePath.includes(IGNORED[i])) {
-        return false;
-      }
+    if (IGNORED.some(ignoredFile => filePath.includes(ignoredFile))) {
+      return false;
     }
 
     if (stats.isDirectory()) {
       return true;
     }
 
-    if (stats.isFile()) {
-      for (let i = 0; i < SOURCE_FILE_EXTENSIONS.length; i += 1) {
-        if (file.endsWith(SOURCE_FILE_EXTENSIONS[i])) {
-          return true;
-        }
-      }
+    if (
+      stats.isFile() &&
+      SOURCE_FILE_EXTENSIONS.some(ext => file.endsWith(ext))
+    ) {
+      return true;
     }
-
     return false;
   });
 };
 
 const run = async () => {
+  const startTime = Date.now();
   const stagedOnly = typeof process.env.STAGED_ONLY !== "undefined";
 
   const templateText = createLicenseText(new Date().getFullYear());
@@ -100,14 +103,22 @@ const run = async () => {
     ? await getStagedGitFiles()
     : await getAllSourceFiles();
 
-  sourceFiles
-    .filter(file => IGNORE_PATTERNS.every(pattern => !file.match(pattern)))
-    .forEach(file => {
-      const contents = fs.readFileSync(path.resolve(file), "utf-8");
-      if (templateText.slice(0, 2) !== contents.slice(0, 2)) {
-        fs.writeFileSync(path.resolve(file), `${templateText}${contents}`);
-      }
-    });
+  const alteredFileCount = (await Promise.all(
+    sourceFiles
+      .filter(file => IGNORE_PATTERNS.every(pattern => !file.match(pattern)))
+      .map(async file => {
+        const contents = await fsPromises.readFile(path.resolve(file), "utf-8");
+        if (templateText.slice(0, 2) !== contents.slice(0, 2)) {
+          await fsPromises.writeFile(
+            path.resolve(file),
+            `${templateText}${contents}`
+          );
+        }
+      })
+  )).length;
+
+  const runTime = Date.now() - startTime;
+  console.log(`✨ Added license to ${alteredFileCount} files in ${runTime}ms.`);
 };
 
 run();
