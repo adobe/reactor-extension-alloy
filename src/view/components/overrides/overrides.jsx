@@ -86,11 +86,6 @@ const Overrides = ({
       requestCache
     })
   };
-  console.log("CARTER - all hooks", {
-    edgeConfigs,
-    initInfo,
-    instanceSettings
-  });
 
   const [
     ,
