@@ -107,7 +107,7 @@ const run = async () => {
     ? await getStagedGitFiles()
     : await getAllSourceFiles();
 
-  const alteredFileCount = (await Promise.all(
+  const filesInspected = await Promise.all(
     sourceFiles
       .filter(file => IGNORE_PATTERNS.every(pattern => !file.match(pattern)))
       .map(async file => {
@@ -124,10 +124,15 @@ const run = async () => {
         }
         return false;
       })
-  )).filter(addedLicense => addedLicense).length;
+  );
+  const alteredFileCount = filesInspected.filter(Boolean).length;
 
   const runTime = performance.now() - startTime;
-  console.log(`✨ Added license to ${alteredFileCount} files in ${runTime}ms.`);
+  console.log(
+    `✨ Added license to ${alteredFileCount} of ${filesInspected.length} ${
+      stagedOnly ? "staged" : ""
+    }files in ${runTime}ms.`
+  );
 };
 
 run();
