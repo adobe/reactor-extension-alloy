@@ -10,12 +10,15 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const fs = require("fs");
-const path = require("path");
+const fs = require("node:fs");
+const path = require("node:path");
+const { performance } = require("node:perf_hooks");
 const stagedGitFiles = require("staged-git-files");
 
 const fsPromises = fs.promises;
 const PROJECT_ROOT = path.resolve(__dirname, "../");
+const COMPARISON_LENGTH = `/*
+Copyright`.length;
 
 const GIT_DELETED = "Deleted";
 const SOURCE_FILE_EXTENSIONS = ["js", "jsx", "ts", "tsx", "cjs", "mjs"];
@@ -94,7 +97,7 @@ const getAllSourceFiles = () => {
 };
 
 const run = async () => {
-  const startTime = Date.now();
+  const startTime = performance.now();
   const stagedOnly = typeof process.env.STAGED_ONLY !== "undefined";
 
   const templateText = createLicenseText(new Date().getFullYear());
@@ -108,16 +111,21 @@ const run = async () => {
       .filter(file => IGNORE_PATTERNS.every(pattern => !file.match(pattern)))
       .map(async file => {
         const contents = await fsPromises.readFile(path.resolve(file), "utf-8");
-        if (templateText.slice(0, 2) !== contents.slice(0, 2)) {
+        if (
+          templateText.slice(0, COMPARISON_LENGTH) !==
+          contents.slice(0, COMPARISON_LENGTH)
+        ) {
           await fsPromises.writeFile(
             path.resolve(file),
             `${templateText}${contents}`
           );
+          return true;
         }
+        return false;
       })
-  )).length;
+  )).filter(addedLicense => addedLicense).length;
 
-  const runTime = Date.now() - startTime;
+  const runTime = performance.now() - startTime;
   console.log(`✨ Added license to ${alteredFileCount} files in ${runTime}ms.`);
 };
 
