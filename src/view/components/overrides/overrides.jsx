@@ -27,7 +27,7 @@ import {
 import Delete from "@spectrum-icons/workflow/Delete";
 import { FieldArray, useField } from "formik";
 import PropTypes from "prop-types";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useRef } from "react";
 
 import FormElementContainer from "../formElementContainer";
 import SectionHeader from "../sectionHeader";
@@ -40,24 +40,13 @@ import {
 } from "../../configuration/constants/environmentType";
 import FormikComboBox from "../formikReactSpectrum3/formikComboBox";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
-import fetchConfig from "../../configuration/utils/fetchConfig";
+import {
+  FIELD_NAMES,
+  capitialize,
+  getCurrentInstanceSettings,
+  useFetchConfig
+} from "./utils";
 
-/**
- * The names of the different fields that can appear in the form. Used to pass
- * to the `showFields` prop of the `Overrides` component.
- */
-export const FIELD_NAMES = {
-  eventDatasetOverride: "eventDatasetOverride",
-  idSyncContainerOverride: "idSyncContainerOverride",
-  targetPropertyTokenOverride: "targetPropertyTokenOverride",
-  reportSuitesOverride: "reportSuitesOverride"
-};
-/**
- * Takes a string and returns the a new string with the first letter capitalized.
- * @param {string} str
- * @returns {string}
- */
-const capitialize = str => str.charAt(0).toUpperCase() + str.slice(1);
 /**
  * The section of the page that allows the user to input a variable number of
  * report suite overrides.
@@ -241,73 +230,6 @@ const SettingsCopySection = ({ currentEnv, onPress }) => {
 SettingsCopySection.propTypes = {
   currentEnv: PropTypes.oneOf(OVERRIDE_ENVIRONMENTS).isRequired,
   onPress: PropTypes.func.isRequired
-};
-
-const getCurrentInstanceSettings = ({ initInfo, instanceName }) => {
-  try {
-    if (!instanceName) {
-      instanceName = initInfo.settings.instanceName;
-    }
-    const instances =
-      initInfo.extensionSettings?.instances ?? initInfo.settings?.instances;
-    const instanceSettings = instances.find(
-      instance => instance.name === instanceName
-    );
-    return instanceSettings;
-  } catch (err) {
-    console.error(err);
-    return {};
-  }
-};
-
-/**
- * A custom React hook that calls the `fetchConfig` function to get the Blackbird
- * configuration for the specified org, sandbox, and edge config ID. Returns the
- * result as well as the loading state and any errors that arise.
- * @param {Object} options
- * @param {string} options.orgId
- * @param {string} options.imsAccess
- * @param {string} options.edgeConfigId
- * @param {string} options.sandbox
- * @param {string?} options.signal
- * @param {{ current: { [key: string]: any } }} options.requestCache
- * @returns {{ result: any, isLoading: boolean, error: any }}
- */
-const useFetchConfig = ({
-  orgId,
-  imsAccess,
-  edgeConfigId,
-  sandbox,
-  signal,
-  requestCache
-}) => {
-  const cacheKey = `${orgId}-${sandbox}-${edgeConfigId}`;
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (requestCache.current[cacheKey]) {
-      setResult(requestCache.current[cacheKey]);
-      setError(null);
-      return;
-    }
-    setIsLoading(true);
-    fetchConfig({ orgId, imsAccess, edgeConfigId, sandbox, signal })
-      .then(response => {
-        const { data: { settings = {} } = {} } = response;
-        requestCache.current[cacheKey] = settings;
-        setResult(settings);
-        setError(null);
-      })
-      .catch(err => {
-        setError(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [orgId, imsAccess, edgeConfigId, sandbox]);
-  return { result, isLoading, error };
 };
 
 /**
