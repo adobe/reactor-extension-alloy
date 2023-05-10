@@ -131,6 +131,14 @@ ReportSuitesOverride.propTypes = {
   useManualEntry: PropTypes.bool.isRequired
 };
 
+/**
+ * The header for the Overrides Section. Can be standalone, with a bottom border
+ * (aka largeHeader), or inline with the other overrides (aka smallHeader).
+ * @param {Object} options
+ * @param {boolean} [options.largeHeader=false] Use a large or small header. Defaults to false.
+ * @param {string | React.Element | React.Element[]} options.children
+ * @returns {React.Element}
+ */
 const HeaderContainer = ({ largeHeader = false, children, ...props }) => {
   if (largeHeader) {
     return <SectionHeader {...props}>{children}</SectionHeader>;
@@ -392,7 +400,10 @@ const Overrides = ({
 
   return (
     <>
-      <HeaderContainer largeHeader={largeHeader}>
+      <HeaderContainer
+        largeHeader={largeHeader}
+        learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/datastreams/overrides.html"
+      >
         Datastream Configuration Overrides
       </HeaderContainer>
       <FormElementContainer>
