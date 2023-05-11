@@ -54,6 +54,21 @@ export const bridge = {
       keys: ["edgeConfigOverrides"]
     });
 
+    OVERRIDE_ENVIRONMENTS.forEach(env => {
+      if (
+        instanceValues.edgeConfigOverrides?.[env]?.com_adobe_identity
+          ?.idSyncContainerId
+      ) {
+        // Launch UI components expect this to be a string
+        instanceValues.edgeConfigOverrides[
+          env
+        ].com_adobe_identity.idSyncContainerId = `${
+          instanceValues.edgeConfigOverrides[env].com_adobe_identity
+            .idSyncContainerId
+        }`;
+      }
+    });
+
     return instanceValues;
   },
   // convert formik state to launch settings
