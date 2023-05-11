@@ -54,11 +54,11 @@ const ReportSuitesOverride = ({
                   allowsCustomValue
                   overrideType="report suites"
                   primaryItem={primaryItem}
-                  items={items}
+                  defaultItems={items}
                   name={`${fieldName}.${index}`}
                   description={
                     index === rsids.length - 1 &&
-                    "The IDs for the destination report suites in Adobe Analytics. The value must be a preconfigured override report suite from your datastream configuration and overrides the primary report suites."
+                    "The IDs for the destination report suites in Adobe Analytics. The value must be a preconfigured override report suite (or a comma-separated list of report suites) from your datastream configuration and overrides the primary report suites."
                   }
                   width="size-5000"
                   key={index}

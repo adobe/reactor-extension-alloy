@@ -163,7 +163,7 @@ const Overrides = ({
                           useManualEntry || eventDatasetOptions.length === 0
                         }
                         primaryItem={primaryEventDataset}
-                        items={eventDatasetOptions}
+                        defaultItems={eventDatasetOptions}
                         overrideType="event dataset"
                         data-test-id={FIELD_NAMES.eventDatasetOverride}
                         label="Event dataset"
@@ -188,7 +188,7 @@ const Overrides = ({
                         allowsCustomValue
                         overrideType="third-party ID sync container"
                         primaryItem={primaryIdSyncContainer}
-                        items={idSyncContainers}
+                        defaultItems={idSyncContainers}
                         name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
                         inputMode="numeric"
                         width="size-5000"
@@ -207,7 +207,7 @@ const Overrides = ({
                         allowsCustomValue
                         overrideType="property token"
                         primaryItem={primaryPropertyToken}
-                        items={propertyTokenOptions}
+                        defaultItems={propertyTokenOptions}
                         useManualEntry={
                           useManualEntry || propertyTokenOptions.length === 0
                         }
