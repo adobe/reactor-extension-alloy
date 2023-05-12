@@ -21,6 +21,7 @@ describe("Instance Manager", () => {
   let onBeforeEventSend;
   let alloy1;
   let alloy2;
+  let extensionSettings;
 
   const build = () => {
     instanceManager = createInstanceManager({
@@ -34,22 +35,30 @@ describe("Instance Manager", () => {
   };
 
   beforeEach(() => {
-    turbine = jasmine.createSpyObj({
-      getExtensionSettings: {
-        instances: [
-          {
-            name: "alloy1",
-            edgeConfigId: "PR123",
-            stagingEdgeConfigId: "PR123:stage",
-            developmentEdgeConfigId: "PR123:dev"
-          },
-          {
-            name: "alloy2",
-            edgeConfigId: "PR456",
-            orgId: "DIFFERENTORG@AdobeOrg"
+    extensionSettings = {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+          stagingEdgeConfigId: "PR123:stage",
+          developmentEdgeConfigId: "PR123:dev",
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_target: {
+                propertyToken: "development-property-token"
+              }
+            }
           }
-        ]
-      },
+        },
+        {
+          name: "alloy2",
+          edgeConfigId: "PR456",
+          orgId: "DIFFERENTORG@AdobeOrg"
+        }
+      ]
+    };
+    turbine = jasmine.createSpyObj({
+      getExtensionSettings: extensionSettings,
       onDebugChanged: undefined,
       environment: { stage: "production" }
     });
@@ -158,5 +167,14 @@ describe("Instance Manager", () => {
       onBeforeEventSend: configuredOnBeforeEventSend
     } = alloy1.calls.argsFor(0)[1];
     expect(configuredOnBeforeEventSend).toBe(onBeforeEventSend);
+  });
+
+  it("handles config overrides", () => {
+    turbine.environment.stage = "development";
+    build();
+    const { edgeConfigOverrides } = alloy1.calls.argsFor(0)[1];
+    expect(edgeConfigOverrides).toEqual({
+      com_adobe_target: { propertyToken: "development-property-token" }
+    });
   });
 });

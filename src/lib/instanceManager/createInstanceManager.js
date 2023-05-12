@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const createConfigOverrides = require("../utils/createConfigOverrides");
+
 module.exports = ({
   turbine,
   window,
@@ -28,26 +30,26 @@ module.exports = ({
       stagingEdgeConfigId,
       developmentEdgeConfigId,
       onBeforeEventSend,
-      edgeConfigOverrides = {},
       ...options
     }) => {
       const instance = createInstance({ name });
       window[name] = instance;
       instanceByName[name] = instance;
       const environment = turbine.environment && turbine.environment.stage;
+
       const computedEdgeConfigId =
         (environment === "development" && developmentEdgeConfigId) ||
         (environment === "staging" && stagingEdgeConfigId) ||
         edgeConfigId;
-      const computedConfigOverrides = edgeConfigOverrides[environment];
+
+      options.edgeConfigOverrides = createConfigOverrides(options, environment);
 
       instance("configure", {
         ...options,
         edgeConfigId: computedEdgeConfigId,
         debugEnabled: turbine.debugEnabled,
         orgId: options.orgId || orgId,
-        onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend),
-        edgeConfigOverrides: computedConfigOverrides
+        onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend)
       });
       turbine.onDebugChanged(enabled => {
         instance("setDebug", { enabled });

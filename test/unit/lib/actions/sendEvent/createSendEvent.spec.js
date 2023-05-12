@@ -106,4 +106,45 @@ describe("Send Event", () => {
       )
     );
   });
+
+  it("calls sendEvent with edgeConfigOverrides", () => {
+    const instance = jasmine
+      .createSpy()
+      .and.returnValue(Promise.resolve({ foo: "bar" }));
+    const turbine = {
+      environment: {
+        stage: "development"
+      }
+    };
+    const instanceManager = jasmine.createSpyObj("instanceManager", {
+      getInstance: instance
+    });
+    const sendEventCallbackStorage = jasmine.createSpyObj(
+      "sendEventCallbackStorage",
+      ["triggerEvent"]
+    );
+    const action = createSendEvent({
+      instanceManager,
+      sendEventCallbackStorage,
+      turbine
+    });
+    const promiseReturnedFromAction = action({
+      instanceName: "myinstance",
+      renderDecisions: true,
+      edgeConfigOverrides: {
+        development: {
+          test: "test"
+        }
+      }
+    });
+
+    expect(instance).toHaveBeenCalledWith("sendEvent", {
+      renderDecisions: true,
+      edgeConfigOverrides: {
+        test: "test"
+      }
+    });
+
+    return promiseReturnedFromAction;
+  });
 });

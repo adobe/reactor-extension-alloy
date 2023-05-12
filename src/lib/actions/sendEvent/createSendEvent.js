@@ -11,19 +11,18 @@ governing permissions and limitations under the License.
 */
 
 const clone = require("../../utils/clone");
+const createConfigOverrides = require("../../utils/createConfigOverrides");
 
 module.exports = ({
   instanceManager,
   sendEventCallbackStorage,
   turbine = {}
 }) => settings => {
-  const {
-    instanceName,
-    edgeConfigOverrides = {},
-    ...sendEventSettings
-  } = settings;
-  sendEventSettings.edgeConfigOverrides =
-    edgeConfigOverrides[(turbine.environment?.stage)];
+  const { instanceName, ...sendEventSettings } = settings;
+  sendEventSettings.edgeConfigOverrides = createConfigOverrides(
+    sendEventSettings,
+    turbine.environment?.stage
+  );
 
   const instance = instanceManager.getInstance(instanceName);
 
