@@ -235,6 +235,10 @@
         "$schema": "http://json-schema.org/draft-04/schema#",
         "type": "object",
         "properties": {
+          "eventStyle": {
+            "type": "string",
+            "enum": ["standard", "top", "bottom"]
+          },
           "instanceName": {
             "type": "string",
             "minLength": 1
@@ -314,6 +318,30 @@
           },
           "documentUnloading": {
             "type": "boolean"
+          },
+          "propositions": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^%[^%]+%$"
+              },
+              {
+                "type": "string",
+                "enum": ["active"]
+              }
+            ]
+          },
+          "propositionsEventType": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^%[^%]+%$"
+              },
+              {
+                "type": "string",
+                "enum": ["interact", "display"]
+              }
+            ]
           },
           "edgeConfigOverrides": {
             "type": "object",
