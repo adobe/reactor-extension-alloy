@@ -13,6 +13,7 @@ import { array, number, object, string } from "yup";
 import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/constants/environmentType";
 import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
+import trimValue from "../../utils/trimValues";
 
 export const bridge = {
   // return formik state
@@ -99,7 +100,7 @@ export const bridge = {
       }
     });
 
-    return instanceSettings;
+    return trimValue(instanceSettings);
   },
   formikStateValidationSchema: object({
     edgeConfigOverrides: object(

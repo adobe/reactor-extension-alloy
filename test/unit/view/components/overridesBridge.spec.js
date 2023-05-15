@@ -131,6 +131,60 @@ describe("overridesBridge", () => {
         }
       });
     });
+
+    it("should trim all values of whitespace", () => {
+      const instanceValues = {
+        edgeConfigOverrides: {
+          development: {
+            com_adobe_target: {
+              propertyToken: "         01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+            },
+            com_adobe_experience_platform: {
+              datasets: {
+                event: {
+                  datasetId: "ase3aoiuoioasdklfjlk        "
+                }
+              }
+            },
+            com_adobe_analytics: {
+              reportSuites: [
+                "   unifiedjsqeonly2   ",
+                "     unifiedjsqeonly3      "
+              ]
+            },
+            com_adobe_identity: {
+              idSyncContainerId: 30793
+            }
+          }
+        }
+      };
+
+      const instanceSettings = bridge.getInstanceSettings({
+        instanceValues
+      });
+      expect(instanceSettings).toEqual({
+        edgeConfigOverrides: {
+          development: {
+            com_adobe_target: {
+              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+            },
+            com_adobe_experience_platform: {
+              datasets: {
+                event: {
+                  datasetId: "ase3aoiuoioasdklfjlk"
+                }
+              }
+            },
+            com_adobe_analytics: {
+              reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+            },
+            com_adobe_identity: {
+              idSyncContainerId: 30793
+            }
+          }
+        }
+      });
+    });
   });
 
   describe("formikStateValidationSchema", () => {
