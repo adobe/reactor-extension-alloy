@@ -26,6 +26,12 @@ import { capitialize } from "./utils";
  * @returns {React.Element}
  */
 const PrimaryValuePopup = ({ overrideType, primaryItem }) => {
+  if (
+    !primaryItem ||
+    (Array.isArray(primaryItem) && primaryItem.length === 0)
+  ) {
+    return null;
+  }
   return (
     <ContextualHelp variant="info">
       <Heading>{capitialize(overrideType)} being overridden:</Heading>

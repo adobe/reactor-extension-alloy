@@ -136,8 +136,8 @@ const Overrides = ({
                   ({ primary }) => !primary
                 ) ?? [];
 
-              const primaryIdSyncContainer =
-                `${result?.com_adobe_identity?.idSyncContainerId}` ?? "";
+              const primaryIdSyncContainer = `${result?.com_adobe_identity
+                ?.idSyncContainerId ?? ""}`;
               const idSyncContainers =
                 result?.com_adobe_identity.idSyncContainerId__additional?.map(
                   value => ({ value, label: `${value}` })
