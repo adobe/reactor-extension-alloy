@@ -137,23 +137,23 @@ const Overrides = ({
                 ) ?? [];
 
               const primaryIdSyncContainer = `${result?.com_adobe_identity
-                ?.idSyncContainerId ?? ""}`;
+                .idSyncContainerId ?? ""}`;
               const idSyncContainers =
-                result?.com_adobe_identity.idSyncContainerId__additional?.map(
+                result?.com_adobe_identity?.idSyncContainerId__additional?.map(
                   value => ({ value, label: `${value}` })
                 ) ?? [];
 
               const primaryPropertyToken =
-                result?.com_adobe_target.propertyToken ?? "";
+                result?.com_adobe_target?.propertyToken ?? "";
               const propertyTokenOptions =
-                result?.com_adobe_target.propertyToken__additional?.map(
+                result?.com_adobe_target?.propertyToken__additional?.map(
                   value => ({ value, label: value })
                 ) ?? [];
 
               const primaryReportSuites =
                 result?.com_adobe_analytics?.reportSuites ?? [];
               const reportSuiteOptions =
-                result?.com_adobe_analytics.reportSuites__additional?.map(
+                result?.com_adobe_analytics?.reportSuites__additional?.map(
                   value => ({ value, label: value })
                 ) ?? [];
 

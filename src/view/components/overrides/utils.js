@@ -84,19 +84,23 @@ export const useFetchConfig = ({
     if (authOrgId !== configOrgId) {
       return;
     }
-    if (requestCache.current[cacheKey]) {
-      setResult(requestCache.current[cacheKey]);
-      setError(null);
-      return;
-    }
     setIsLoading(true);
-    fetchConfig({
-      orgId: authOrgId,
-      imsAccess,
-      edgeConfigId,
-      sandbox,
-      signal: null
-    })
+    let request;
+    if (requestCache.current[cacheKey]) {
+      console.log(`CARTER cache hit on ${cacheKey}`);
+      request = requestCache.current[cacheKey];
+    } else {
+      console.log(`CARTER cache miss on ${cacheKey}`);
+      request = fetchConfig({
+        orgId: authOrgId,
+        imsAccess,
+        edgeConfigId,
+        sandbox,
+        signal: null
+      });
+      requestCache.current[cacheKey] = request;
+    }
+    request
       .then(response => {
         const { data: { settings = {} } = {} } = response;
         requestCache.current[cacheKey] = settings;
