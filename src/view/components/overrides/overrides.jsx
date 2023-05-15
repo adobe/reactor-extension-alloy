@@ -150,12 +150,13 @@ const Overrides = ({
                   value => ({ value, label: value })
                 ) ?? [];
 
+              /** @type {string[]} */
               const primaryReportSuites =
                 result?.com_adobe_analytics?.reportSuites ?? [];
               const reportSuiteOptions =
-                result?.com_adobe_analytics?.reportSuites__additional?.map(
-                  value => ({ value, label: value })
-                ) ?? [];
+                primaryReportSuites
+                  .concat(result?.com_adobe_analytics?.reportSuites__additional)
+                  .map(value => ({ value, label: value })) ?? [];
 
               return (
                 <Item key={env}>
