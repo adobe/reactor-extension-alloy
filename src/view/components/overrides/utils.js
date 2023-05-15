@@ -59,35 +59,44 @@ export const getCurrentInstanceSettings = ({ initInfo, instanceName }) => {
  * configuration for the specified org, sandbox, and edge config ID. Returns the
  * result as well as the loading state and any errors that arise.
  * @param {Object} options
- * @param {string} options.orgId
- * @param {string} options.imsAccess
- * @param {string} options.edgeConfigId
- * @param {string} options.sandbox
- * @param {string?} options.signal
+ * @param {string} options.authOrgId The org ID tied to the authenticated user
+ * @param {string} options.configOrgId The org ID tied to the datastream configuration.
+ * @param {string} options.imsAccess The IMS access token.
+ * @param {string} options.edgeConfigId The ID of the datastream.
+ * @param {string} options.sandbox The sandbox containing the datastream.
  * @param {{ current: { [key: string]: any } }} options.requestCache
  * @returns {{ result: any, isLoading: boolean, error: any }}
  */
 export const useFetchConfig = ({
-  orgId,
+  authOrgId,
+  configOrgId,
   imsAccess,
   edgeConfigId,
   sandbox,
-  signal,
   requestCache
 }) => {
-  const cacheKey = `${orgId}-${sandbox}-${edgeConfigId}`;
+  const cacheKey = `${authOrgId}-${sandbox}-${edgeConfigId}`;
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    if (authOrgId !== configOrgId) {
+      return;
+    }
     if (requestCache.current[cacheKey]) {
       setResult(requestCache.current[cacheKey]);
       setError(null);
       return;
     }
     setIsLoading(true);
-    fetchConfig({ orgId, imsAccess, edgeConfigId, sandbox, signal })
+    fetchConfig({
+      orgId: authOrgId,
+      imsAccess,
+      edgeConfigId,
+      sandbox,
+      signal: null
+    })
       .then(response => {
         const { data: { settings = {} } = {} } = response;
         requestCache.current[cacheKey] = settings;
@@ -100,6 +109,6 @@ export const useFetchConfig = ({
       .finally(() => {
         setIsLoading(false);
       });
-  }, [orgId, imsAccess, edgeConfigId, sandbox]);
+  }, [authOrgId, imsAccess, edgeConfigId, sandbox]);
   return { result, isLoading, error };
 };

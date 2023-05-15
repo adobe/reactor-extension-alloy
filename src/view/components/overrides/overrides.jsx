@@ -63,23 +63,30 @@ const Overrides = ({
     instanceName
   });
   const requestCache = useRef({});
+  const authOrgId = initInfo.company.orgId;
+  // A "null" instanceSetting.orgId means that the default value has been
+  // specified aka the authencated orgId.
+  const configOrgId = instanceSettings.orgId ?? authOrgId;
   const edgeConfigs = {
     [DEVELOPMENT]: useFetchConfig({
-      orgId: initInfo.company.orgId,
+      authOrgId,
+      configOrgId,
       imsAccess: initInfo.tokens.imsAccess,
       edgeConfigId: instanceSettings.developmentEdgeConfigId,
       sandbox: instanceSettings.developmentSandbox,
       requestCache
     }),
     [STAGING]: useFetchConfig({
-      orgId: initInfo.company.orgId,
+      authOrgId,
+      configOrgId,
       imsAccess: initInfo.tokens.imsAccess,
       edgeConfigId: instanceSettings.stagingEdgeConfigId,
       sandbox: instanceSettings.stagingSandbox,
       requestCache
     }),
     [PRODUCTION]: useFetchConfig({
-      orgId: initInfo.company.orgId,
+      authOrgId,
+      configOrgId,
       imsAccess: initInfo.tokens.imsAccess,
       edgeConfigId: instanceSettings.edgeConfigId,
       sandbox: instanceSettings.sandbox,
