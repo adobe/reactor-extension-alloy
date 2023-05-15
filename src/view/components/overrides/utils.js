@@ -87,10 +87,8 @@ export const useFetchConfig = ({
     setIsLoading(true);
     let request;
     if (requestCache.current[cacheKey]) {
-      console.log(`CARTER cache hit on ${cacheKey}`);
       request = requestCache.current[cacheKey];
     } else {
-      console.log(`CARTER cache miss on ${cacheKey}`);
       request = fetchConfig({
         orgId: authOrgId,
         imsAccess,
