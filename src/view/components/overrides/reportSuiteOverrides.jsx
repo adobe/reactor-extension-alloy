@@ -11,9 +11,10 @@ governing permissions and limitations under the License.
 */
 import { ActionButton, Button, Flex, Item } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
-import { FieldArray, useField } from "formik";
+import { FieldArray } from "formik";
 import PropTypes from "prop-types";
 import React from "react";
+import { useFieldValue } from "../../utils/useFieldValue";
 import OverrideInput from "./overrideInput";
 import { FIELD_NAMES } from "./utils";
 
@@ -39,7 +40,7 @@ const ReportSuitesOverride = ({
   useManualEntry
 }) => {
   const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
-  const [, { value: rsids }] = useField(fieldName);
+  const rsids = useFieldValue(fieldName);
   return (
     <FieldArray name={fieldName}>
       {({ remove, push }) => (
