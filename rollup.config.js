@@ -30,7 +30,6 @@ export default [
       commonjs()
     ],
     external: [
-      "@adobe/reactor-cookie",
       "@adobe/reactor-load-script",
       "@adobe/reactor-object-assign",
       "@adobe/reactor-query-string"
