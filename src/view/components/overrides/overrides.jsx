@@ -111,7 +111,7 @@ const Overrides = ({
     <>
       <HeaderContainer
         largeHeader={largeHeader}
-        learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/datastreams/overrides.html"
+        learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides"
       >
         Datastream Configuration Overrides
       </HeaderContainer>
