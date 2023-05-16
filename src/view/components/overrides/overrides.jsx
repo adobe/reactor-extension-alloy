@@ -156,6 +156,7 @@ const Overrides = ({
               const reportSuiteOptions =
                 primaryReportSuites
                   .concat(result?.com_adobe_analytics?.reportSuites__additional)
+                  .filter(Boolean)
                   .map(value => ({ value, label: value })) ?? [];
 
               return (
