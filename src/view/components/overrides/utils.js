@@ -81,7 +81,7 @@ export const useFetchConfig = ({
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (authOrgId !== configOrgId) {
+    if (authOrgId !== configOrgId || !edgeConfigId || !sandbox || !imsAccess) {
       return;
     }
     setIsLoading(true);
