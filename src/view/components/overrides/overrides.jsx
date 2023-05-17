@@ -25,12 +25,7 @@ import HeaderContainer from "./headerContainer";
 import OverrideInput from "./overrideInput";
 import ReportSuitesOverride from "./reportSuiteOverrides";
 import SettingsCopySection from "./settingsCopySection";
-import {
-  FIELD_NAMES,
-  capitialize,
-  getCurrentInstanceSettings,
-  useFetchConfig
-} from "./utils";
+import { FIELD_NAMES, capitialize, useFetchConfig } from "./utils";
 
 /**
  * A section of a form that allows the user to override datastream configuration
@@ -39,17 +34,31 @@ import {
  * @property {Object} initInfo
  * @property {string?} options.instanceFieldName
  * The name of the Formik parent form. State will be stored as a nested object under the "edgeConfigOverrides" key.
- * @property {string} options.instanceName The name of the instance.
  * @property {boolean} options.largeHeader Whether to use the large header. Defaults to false.
  * @property {Array<"eventDatasetOverride" | "idSyncContainerOverride" | "targetPropertyTokenOverride" | "targetPropertyTokenOverride" | "reportSuitesOverride">} options.showFields
  * Which fields to show. Defaults to showing all fields
+ * @property {string} options.configOrgId The org id to use for fetching datastream configurations.
+ * @property {{
+ *  developmentEnvironment: {
+ *   datastreamId: string,
+ *   sandbox?: string
+ * },
+ * stagingEnvironment: {
+ *   datastreamId: string,
+ *   sandbox?: string
+ * },
+ * productionEnvironment: {
+ *   datastreamId: string,
+ *   sandbox?: string
+ * }}} options.edgeConfigIds The edge config ids for each environment
  * @param {OverridesProps} options
  * @returns {React.Element}
  */
 const Overrides = ({
   initInfo,
   instanceFieldName,
-  instanceName,
+  edgeConfigIds,
+  configOrgId,
   largeHeader = false,
   showFields = [...Object.values(FIELD_NAMES)]
 }) => {
@@ -58,38 +67,31 @@ const Overrides = ({
     : "edgeConfigOverrides";
   const showFieldsSet = new Set(showFields);
 
-  const instanceSettings = getCurrentInstanceSettings({
-    initInfo,
-    instanceName
-  });
   const requestCache = useRef({});
   const authOrgId = initInfo.company.orgId;
-  // A "null" instanceSetting.orgId means that the default value has been
-  // specified aka the authencated orgId.
-  const configOrgId = instanceSettings.orgId ?? authOrgId;
   const edgeConfigs = {
     [DEVELOPMENT]: useFetchConfig({
       authOrgId,
       configOrgId,
       imsAccess: initInfo.tokens.imsAccess,
-      edgeConfigId: instanceSettings.developmentEdgeConfigId,
-      sandbox: instanceSettings.developmentSandbox,
+      edgeConfigId: edgeConfigIds.developmentEnvironment.datastreamId,
+      sandbox: edgeConfigIds.developmentEnvironment.sandbox,
       requestCache
     }),
     [STAGING]: useFetchConfig({
       authOrgId,
       configOrgId,
       imsAccess: initInfo.tokens.imsAccess,
-      edgeConfigId: instanceSettings.stagingEdgeConfigId,
-      sandbox: instanceSettings.stagingSandbox,
+      edgeConfigId: edgeConfigIds.stagingEnvironment.datastreamId,
+      sandbox: edgeConfigIds.stagingEnvironment.sandbox,
       requestCache
     }),
     [PRODUCTION]: useFetchConfig({
       authOrgId,
       configOrgId,
       imsAccess: initInfo.tokens.imsAccess,
-      edgeConfigId: instanceSettings.edgeConfigId,
-      sandbox: instanceSettings.sandbox,
+      edgeConfigId: edgeConfigIds.productionEnvironment.datastreamId,
+      sandbox: edgeConfigIds.productionEnvironment.sandbox,
       requestCache
     })
   };
@@ -137,7 +139,7 @@ const Overrides = ({
                 ) ?? [];
 
               const primaryIdSyncContainer = `${result?.com_adobe_identity
-                .idSyncContainerId ?? ""}`;
+                ?.idSyncContainerId ?? ""}`;
               const idSyncContainers =
                 result?.com_adobe_identity?.idSyncContainerId__additional?.map(
                   value => ({ value, label: `${value}` })
@@ -250,7 +252,21 @@ const Overrides = ({
 Overrides.propTypes = {
   initInfo: PropTypes.object.isRequired,
   instanceFieldName: PropTypes.string,
-  instanceName: PropTypes.string.isRequired,
+  edgeConfigIds: PropTypes.shape({
+    developmentEnvironment: PropTypes.shape({
+      datastreamId: PropTypes.string.isRequired,
+      sandbox: PropTypes.string
+    }),
+    stagingEnvironment: PropTypes.shape({
+      datastreamId: PropTypes.string.isRequired,
+      sandbox: PropTypes.string
+    }),
+    productionEnvironment: PropTypes.shape({
+      datastreamId: PropTypes.string.isRequired,
+      sandbox: PropTypes.string
+    })
+  }).isRequired,
+  configOrgId: PropTypes.string.isRequired,
   largeHeader: PropTypes.bool,
   showFields: PropTypes.arrayOf(PropTypes.oneOf(Object.values(FIELD_NAMES)))
 };

@@ -79,9 +79,9 @@ export const useFetchConfig = ({
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
   useEffect(() => {
     if (authOrgId !== configOrgId || !edgeConfigId || !sandbox || !imsAccess) {
+      setResult(null);
       return;
     }
     setIsLoading(true);
@@ -101,7 +101,6 @@ export const useFetchConfig = ({
     request
       .then(response => {
         const { data: { settings = {} } = {} } = response;
-        requestCache.current[cacheKey] = settings;
         setResult(settings);
         setError(null);
       })
@@ -111,6 +110,6 @@ export const useFetchConfig = ({
       .finally(() => {
         setIsLoading(false);
       });
-  }, [authOrgId, imsAccess, edgeConfigId, sandbox]);
+  }, [authOrgId, configOrgId, imsAccess, edgeConfigId, sandbox]);
   return { result, isLoading, error };
 };
