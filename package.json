@@ -52,7 +52,7 @@
     ]
   },
   "dependencies": {
-    "@adobe/alloy": "^2.16.0",
+    "@adobe/alloy": "^2.17.0",
     "@adobe/react-spectrum": "^3.26.0",
     "@react-stately/data": "^3.4.0",
     "@spectrum-css/typography": "^3.0.2",
