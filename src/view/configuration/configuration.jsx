@@ -57,7 +57,7 @@ import OverridesSection, {
 import AdvancedSection, {
   bridge as advancedSectionBridge
 } from "./advancedSection";
-import { getEdgeConfigIds } from "../utils/getEdgeConfigIds";
+import getEdgeConfigIds from "../utils/getEdgeConfigIds";
 
 const sectionBridges = [
   basicSectionBridge,

@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 /**
+ * Extract the edge config ids from the object, which could be either the
+ * instance settings as stored by Launch or the form state as stored by Formik.
  *
  * @param {Object} instanceSettings
  * @returns {{
@@ -26,7 +28,7 @@ governing permissions and limitations under the License.
  *   sandbox?: string
  * }}}
  */
-export const getEdgeConfigIds = instanceSettings => {
+const getEdgeConfigIds = instanceSettings => {
   if (instanceSettings.edgeConfigInputMethod === "freeform") {
     return {
       developmentEnvironment: {
@@ -43,5 +45,22 @@ export const getEdgeConfigIds = instanceSettings => {
       }
     };
   }
-  return instanceSettings.edgeConfigSelectInputMethod;
+  if (instanceSettings.edgeConfigInputMethod === "select") {
+    return instanceSettings.edgeConfigSelectInputMethod;
+  }
+  return {
+    developmentEnvironment: {
+      datastreamId: instanceSettings.developmentEdgeConfigId,
+      sandbox: instanceSettings.developmentSandbox
+    },
+    stagingEnvironment: {
+      datastreamId: instanceSettings.stagingEdgeConfigId,
+      sandbox: instanceSettings.stagingSandbox
+    },
+    productionEnvironment: {
+      datastreamId: instanceSettings.edgeConfigId,
+      sandbox: instanceSettings.sandbox
+    }
+  };
 };
+export default getEdgeConfigIds;
