@@ -201,7 +201,9 @@ const componentWrappers = {
       // the text in the textfield.
       expectText: createExpectValue(selector),
       async openMenu() {
-        await t.click(selector.parent().find("button"));
+        await t.click(
+          selector.parent().find("button[aria-haspopup='listbox']")
+        );
       },
       // If the user needs to manually open the menu before selecting an
       // item, you'll need to call openMenu first.
