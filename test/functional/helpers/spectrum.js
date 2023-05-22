@@ -168,6 +168,10 @@ const createExpectMenuOptionLabelsExclude = menuSelector => async labels => {
   }
 };
 
+const createExpectTabSelected = selector => async () => {
+  await t.expect(selector.getAttribute("aria-selected")).eql("true");
+};
+
 // The menu items are virtualized, meaning that any items that
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
@@ -325,6 +329,12 @@ const componentWrappers = {
           .expect(selector.find("section").withText(message).exists)
           .ok(`Message ${message} not found.`);
       }
+    };
+  },
+  tab(selector) {
+    return {
+      click: createClick(selector),
+      expectSelected: createExpectTabSelected(selector)
     };
   },
   tabs() {

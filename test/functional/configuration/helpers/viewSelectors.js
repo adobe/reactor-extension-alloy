@@ -139,7 +139,44 @@ for (let i = 0; i < 3; i += 1) {
         "contextHighEntropyUserAgentHintsField"
       )
     },
-    deleteButton: spectrum.button("deleteInstanceButton")
+    deleteButton: spectrum.button("deleteInstanceButton"),
+    overrides: {
+      envTabs: {
+        production: spectrum.tab("productionOverridesTab"),
+        staging: spectrum.tab("stagingOverridesTab"),
+        development: spectrum.tab("developmentOverridesTab")
+      },
+      textFields: {
+        eventDatasetOverride: spectrum.textField("eventDatasetOverride"),
+        idSyncContainerOverride: spectrum.textField("idSyncContainerOverride"),
+        targetPropertyTokenOverride: spectrum.textField(
+          "targetPropertyTokenOverride"
+        ),
+        reportSuiteOverrides: [0, 1, 2].map(index =>
+          spectrum.textField(`reportSuitesOverride.${index}`)
+        )
+      },
+      comboBoxes: {
+        eventDatasetOverride: spectrum.comboBox("eventDatasetOverride"),
+        idSyncContainerOverride: spectrum.comboBox("idSyncContainerOverride"),
+        targetPropertyTokenOverride: spectrum.comboBox(
+          "targetPropertyTokenOverride"
+        ),
+        reportSuiteOverrides: [0, 1, 2].map(index =>
+          spectrum.comboBox(`reportSuitesOverride.${index}`)
+        )
+      },
+      addReportSuiteButton: spectrum.button("addReportSuite"),
+      removeReportSuitesButtons: [0, 1, 2].map(index =>
+        spectrum.textField(`removeReportSuite.${index}`)
+      ),
+      copyDestinationCheckboxes: {
+        production: spectrum.textField("copyOverrides.production"),
+        staging: spectrum.textField("copyOverrides.staging"),
+        development: spectrum.textField("copyOverrides.development")
+      },
+      copyButton: spectrum.button("copyOverrides")
+    }
   });
 }
 

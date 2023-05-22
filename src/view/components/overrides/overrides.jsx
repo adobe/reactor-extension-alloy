@@ -121,7 +121,9 @@ const Overrides = ({
         <Tabs aria-label="Datastream Configuration Overrides">
           <TabList>
             {OVERRIDE_ENVIRONMENTS.map(env => (
-              <Item key={env}>{capitialize(env)}</Item>
+              <Item key={env} data-test-id={`${env}OverridesTab`}>
+                {capitialize(env)}
+              </Item>
             ))}
           </TabList>
           <TabPanels>
