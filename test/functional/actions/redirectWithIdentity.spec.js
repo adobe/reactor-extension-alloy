@@ -14,6 +14,10 @@ import extensionViewController from "../helpers/extensionViewController";
 import spectrum from "../helpers/spectrum";
 import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
+import overrideViewSelectors from "../helpers/overrideViewSelectors";
+import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
+import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
+import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";
 
 const instanceNamePicker = spectrum.picker("instanceNamePicker");
 
@@ -31,20 +35,236 @@ const extensionSettings = {
 test("initializes form fields with settings", async () => {
   await extensionViewController.init({
     settings: {
-      instanceName: "alloy2"
+      instanceName: "alloy2",
+      edgeConfigOverrides: {
+        production: {
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: "6336ff95ba16ca1c07b4c0db"
+              }
+            }
+          },
+          com_adobe_analytics: {
+            reportSuites: ["unifiedjsqeonly2"]
+          },
+          com_adobe_identity: {
+            idSyncContainerId: 23512312
+          },
+          com_adobe_target: {
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          }
+        },
+        staging: {
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: "6336ff95ba16ca1c07b4c0db"
+              }
+            }
+          },
+          com_adobe_analytics: {
+            reportSuites: ["unifiedjsqeonly2"]
+          },
+          com_adobe_identity: {
+            idSyncContainerId: 23512312
+          },
+          com_adobe_target: {
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          }
+        },
+        development: {
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: "6336ff95ba16ca1c07b4c0db"
+              }
+            }
+          },
+          com_adobe_analytics: {
+            reportSuites: ["unifiedjsqeonly2"]
+          },
+          com_adobe_identity: {
+            idSyncContainerId: 23512312
+          },
+          com_adobe_target: {
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          }
+        }
+      }
     },
     extensionSettings
   });
   await instanceNamePicker.expectSelectedOptionLabel("alloy2");
+
+  await overrideViewSelectors.envTabs.production.click();
+  await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2"
+  );
+
+  await overrideViewSelectors.envTabs.staging.click();
+  await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2"
+  );
+
+  await overrideViewSelectors.envTabs.development.click();
+  await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2"
+  );
 });
 
 test("returns valid settings", async () => {
   await extensionViewController.init({ extensionSettings });
 
   await instanceNamePicker.selectOption("alloy2");
+
+  await overrideViewSelectors.envTabs.production.expectExists();
+  await overrideViewSelectors.envTabs.production.click();
+  await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
+    "unifiedjsqeonly2"
+  );
+  await overrideViewSelectors.addReportSuiteButton.click();
+  await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
+    "unifiedjsqeonly3"
+  );
+  await overrideViewSelectors.envTabs.staging.expectExists();
+  await overrideViewSelectors.envTabs.staging.click();
+  await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
+    "unifiedjsqeonly2"
+  );
+  await overrideViewSelectors.addReportSuiteButton.click();
+  await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
+    "unifiedjsqeonly3"
+  );
+  await overrideViewSelectors.envTabs.development.expectExists();
+  await overrideViewSelectors.envTabs.development.click();
+  await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
+    "unifiedjsqeonly2"
+  );
+  await overrideViewSelectors.addReportSuiteButton.click();
+  await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
+    "unifiedjsqeonly3"
+  );
+
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    instanceName: "alloy2"
+    instanceName: "alloy2",
+    edgeConfigOverrides: {
+      production: {
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6336ff95ba16ca1c07b4c0db"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 23512312
+        },
+        com_adobe_target: {
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+        }
+      },
+      staging: {
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6336ff95ba16ca1c07b4c0db"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 23512312
+        },
+        com_adobe_target: {
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+        }
+      },
+      development: {
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6336ff95ba16ca1c07b4c0db"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 23512312
+        },
+        com_adobe_target: {
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+        }
+      }
+    }
   });
 });
 
@@ -55,4 +275,64 @@ test("defaults to the first instance name", async () => {
   await extensionViewController.expectSettings({
     instanceName: "alloy1"
   });
+});
+
+test.requestHooks(
+  sandboxesMocks.singleDefault,
+  datastreamsMocks.single,
+  datastreamMocks.withConfigOverrides
+)("populates overrides dropdowns with Blackbird config data", async () => {
+  await extensionViewController.init({
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy",
+          edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+          sandbox: "prod"
+        }
+      ]
+    }
+  });
+
+  await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectExists();
+  await overrideViewSelectors.comboBoxes.eventDatasetOverride.openMenu();
+  await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectMenuOptionLabels(
+    ["6335faf30f5a161c0b4b1444"]
+  );
+  await overrideViewSelectors.comboBoxes.eventDatasetOverride.selectMenuOption(
+    "6335faf30f5a161c0b4b1444"
+  );
+
+  await overrideViewSelectors.comboBoxes.idSyncContainerOverride.expectExists();
+  await overrideViewSelectors.comboBoxes.idSyncContainerOverride.openMenu();
+  await overrideViewSelectors.comboBoxes.idSyncContainerOverride.expectMenuOptionLabels(
+    ["107756", "107757"]
+  );
+  await overrideViewSelectors.comboBoxes.idSyncContainerOverride.selectMenuOption(
+    "107756"
+  );
+
+  await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.expectExists();
+  await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.openMenu();
+  await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.expectMenuOptionLabels(
+    [
+      "aba5431a-9f59-f816-7d73-8e40c8f4c4fd",
+      "65d186ff-be14-dfa0-75fa-546d93bebf91"
+    ]
+  );
+  await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.selectMenuOption(
+    "aba5431a-9f59-f816-7d73-8e40c8f4c4fd"
+  );
+
+  await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].expectExists();
+  await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].openMenu();
+  await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].expectMenuOptionLabels(
+    ["unifiedjsqeonly2", "unifiedjsqeonlylatest", "unifiedjsqeonlymobileweb"]
+  );
+  await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].selectMenuOption(
+    "unifiedjsqeonlylatest"
+  );
+
+  await extensionViewController.expectIsValid();
 });

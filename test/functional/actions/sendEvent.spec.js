@@ -16,7 +16,6 @@ import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
 import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 import overrideViewSelectors from "../helpers/overrideViewSelectors";
-
 import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
 import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
 import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";

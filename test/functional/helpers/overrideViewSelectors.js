@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 import spectrumWrappers from "./spectrum";
 
-const overrides = {
+const overrideViewSelectors = {
   envTabs: {
     production: spectrumWrappers.tab("productionOverridesTab"),
     staging: spectrumWrappers.tab("stagingOverridesTab"),
@@ -53,4 +53,4 @@ const overrides = {
   copyButton: spectrumWrappers.button("copyOverrides")
 };
 
-export default overrides;
+export default overrideViewSelectors;
