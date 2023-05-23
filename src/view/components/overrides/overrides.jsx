@@ -66,12 +66,12 @@ const Overrides = ({
   edgeConfigIds,
   configOrgId,
   largeHeader = false,
-  showFields = [...Object.values(FIELD_NAMES)]
+  hideFields = []
 }) => {
   const prefix = instanceFieldName
     ? `${instanceFieldName}.edgeConfigOverrides`
     : "edgeConfigOverrides";
-  const showFieldsSet = new Set(showFields);
+  const hideFieldsSet = new Set(hideFields);
 
   const requestCache = useRef({});
   const authOrgId = initInfo.company.orgId;
@@ -230,7 +230,7 @@ const Overrides = ({
                     gap="size-100"
                   >
                     <SettingsCopySection currentEnv={env} onPress={onCopy} />
-                    {showFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
+                    {!hideFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
                       <OverrideInput
                         useManualEntry={
                           useManualEntry || eventDatasetOptions.length === 0
@@ -250,7 +250,9 @@ const Overrides = ({
                         )}
                       </OverrideInput>
                     )}
-                    {showFieldsSet.has(FIELD_NAMES.idSyncContainerOverride) && (
+                    {!hideFieldsSet.has(
+                      FIELD_NAMES.idSyncContainerOverride
+                    ) && (
                       <OverrideInput
                         data-test-id={FIELD_NAMES.idSyncContainerOverride}
                         label="Third-party ID sync container"
@@ -271,7 +273,7 @@ const Overrides = ({
                         {({ value, label }) => <Item key={value}>{label}</Item>}
                       </OverrideInput>
                     )}
-                    {showFieldsSet.has(
+                    {!hideFieldsSet.has(
                       FIELD_NAMES.targetPropertyTokenOverride
                     ) && (
                       <OverrideInput
@@ -292,7 +294,7 @@ const Overrides = ({
                         {({ value, label }) => <Item key={value}>{label}</Item>}
                       </OverrideInput>
                     )}
-                    {showFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
+                    {!hideFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
                       <ReportSuitesOverride
                         useManualEntry={useManualEntry}
                         isValid={isValidReportSuiteOption}
@@ -331,7 +333,7 @@ Overrides.propTypes = {
   }).isRequired,
   configOrgId: PropTypes.string.isRequired,
   largeHeader: PropTypes.bool,
-  showFields: PropTypes.arrayOf(PropTypes.oneOf(Object.values(FIELD_NAMES)))
+  hideFields: PropTypes.arrayOf(PropTypes.oneOf(Object.values(FIELD_NAMES)))
 };
 
 export default Overrides;
