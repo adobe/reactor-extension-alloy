@@ -73,7 +73,8 @@ export const bridge = {
   formikStateValidationSchema: object().shape({
     surfacesDataElement: string().when("surfacesInputMethod", {
       is: DATA_ELEMENT,
-      then: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+      then: schema =>
+        schema.matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
     })
   })
 };

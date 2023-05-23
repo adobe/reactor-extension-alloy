@@ -159,6 +159,10 @@ const getSettings = ({ values }) => {
   }
   if (values.eventStyle === TOP) {
     settings.type = "decisioning.propositionsFetch";
+    settings.decisionScopes ||= [];
+    if (!settings.decisionScopes.includes("__view__")) {
+      settings.decisionScopes.push("__view__");
+    }
   }
 
   return settings;
@@ -170,23 +174,25 @@ const validationSchema = object()
     data: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
     propositionsDataElement: string().when("propositionsStyle", {
       is: DATA_ELEMENT,
-      then: string()
-        .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-        .required(DATA_ELEMENT_REQUIRED)
+      then: schema =>
+        schema
+          .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+          .required(DATA_ELEMENT_REQUIRED)
     }),
     propositionsEventType: string().when("propositionsStyle", {
       is: DATA_ELEMENT,
-      then: string().test(
-        "propositionsEventType",
-        "Please select a value or specify a single data element.",
-        value => {
-          return (
-            value === DISPLAY ||
-            value === INTERACT ||
-            value.match(singleDataElementRegex)
-          );
-        }
-      )
+      then: schema =>
+        schema.test(
+          "propositionsEventType",
+          "Please select a value or specify a single data element.",
+          value => {
+            return (
+              value === DISPLAY ||
+              value === INTERACT ||
+              value.match(singleDataElementRegex)
+            );
+          }
+        )
     })
   })
   .concat(decisionScopesBridge.formikStateValidationSchema)

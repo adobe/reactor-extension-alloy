@@ -184,47 +184,53 @@ const validationSchema = object()
     ),
     dataElement: mixed().when("inputMethod", {
       is: DATA_ELEMENT.value,
-      then: string()
-        .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-        .required(DATA_ELEMENT_REQUIRED)
+      then: () =>
+        string()
+          .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+          .required(DATA_ELEMENT_REQUIRED)
     }),
     consent: array().when("inputMethod", {
       is: FORM.value,
-      then: array().of(
-        object().shape({
-          standard: string().required("Please specify a standard."),
-          general: mixed().when(["standard", "adobeVersion"], {
-            is: (standard, adobeVersion) =>
-              standard === ADOBE.value && adobeVersion === "1.0",
-            then: createRadioGroupWithDataElementValidationSchema("general")
-          }),
-          value: mixed().when(["standard", "adobeVersion"], {
-            is: (standard, adobeVersion) =>
-              standard === ADOBE.value && adobeVersion !== "1.0",
-            then: string()
-              .required(DATA_ELEMENT_REQUIRED)
-              .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-          }),
-          iabVersion: mixed().when(["standard"], {
-            is: IAB_TCF.value,
-            then: string().required("Please specify a version.")
-          }),
-          iabValue: mixed().when("standard", {
-            is: IAB_TCF.value,
-            then: string().required("Please specify a value.")
-          }),
-          gdprApplies: mixed().when("standard", {
-            is: IAB_TCF.value,
-            then: createRadioGroupWithDataElementValidationSchema("gdprApplies")
-          }),
-          gdprContainsPersonalData: mixed().when("standard", {
-            is: IAB_TCF.value,
-            then: createRadioGroupWithDataElementValidationSchema(
-              "gdprContainsPersonalData"
-            )
+      then: schema =>
+        schema.of(
+          object().shape({
+            standard: string().required("Please specify a standard."),
+            general: mixed().when(["standard", "adobeVersion"], {
+              is: (standard, adobeVersion) =>
+                standard === ADOBE.value && adobeVersion === "1.0",
+              then: () =>
+                createRadioGroupWithDataElementValidationSchema("general")
+            }),
+            value: mixed().when(["standard", "adobeVersion"], {
+              is: (standard, adobeVersion) =>
+                standard === ADOBE.value && adobeVersion !== "1.0",
+              then: () =>
+                string()
+                  .required(DATA_ELEMENT_REQUIRED)
+                  .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+            }),
+            iabVersion: mixed().when("standard", {
+              is: IAB_TCF.value,
+              then: () => string().required("Please specify a version.")
+            }),
+            iabValue: mixed().when("standard", {
+              is: IAB_TCF.value,
+              then: () => string().required("Please specify a value.")
+            }),
+            gdprApplies: mixed().when("standard", {
+              is: IAB_TCF.value,
+              then: () =>
+                createRadioGroupWithDataElementValidationSchema("gdprApplies")
+            }),
+            gdprContainsPersonalData: mixed().when("standard", {
+              is: IAB_TCF.value,
+              then: () =>
+                createRadioGroupWithDataElementValidationSchema(
+                  "gdprContainsPersonalData"
+                )
+            })
           })
-        })
-      )
+        )
     })
   })
   .concat(overridesBridge.validationSchema);

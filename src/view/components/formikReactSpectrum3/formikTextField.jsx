@@ -16,10 +16,19 @@ import { TextField } from "@adobe/react-spectrum";
 import { useField } from "formik";
 
 const FormikTextField = ({ name, width, validate, ...otherProps }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
+  const [
+    { value },
+    { touched: fieldTouched, error: fieldError },
+    { setValue, setTouched }
+  ] = useField({
     name,
     validate
   });
+
+  const touched = otherProps.touched || fieldTouched;
+  const error = otherProps.error === "" ? "" : otherProps.error || fieldError;
+  const validationState =
+    otherProps.invalid || (touched && error) ? "invalid" : undefined;
 
   return (
     <TextField
@@ -31,7 +40,7 @@ const FormikTextField = ({ name, width, validate, ...otherProps }) => {
       onBlur={() => {
         setTouched(true);
       }}
-      validationState={touched && error ? "invalid" : undefined}
+      validationState={validationState}
       errorMessage={error}
       width={width}
     />

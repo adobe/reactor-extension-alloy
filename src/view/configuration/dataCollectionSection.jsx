@@ -130,9 +130,8 @@ export const bridge = {
   instanceValidationSchema: object().shape({
     downloadLinkQualifier: string().when("clickCollectionEnabled", {
       is: true,
-      then: string()
-        .required("Please provide a regular expression.")
-        .test({
+      then: schema =>
+        schema.required("Please provide a regular expression.").test({
           name: "invalidDownloadLinkQualifier",
           message: "Please provide a valid regular expression.",
           test(value) {

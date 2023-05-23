@@ -689,6 +689,66 @@
       "viewPath": "actions/applyResponse.html"
     },
     {
+      "displayName": "Apply propositions",
+      "name": "apply-propositions",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "instanceName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "propositions": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^%[^%]+%$"
+              },
+              {
+                "type": "string",
+                "enum": ["all","scoped"]
+              }
+            ]
+          },
+          "metadata": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^%[^%]+%$"
+              },
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "selector": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "actionType": {
+                      "type": "string",
+                      "enum": ["setHtml", "replaceHtml", "appendHtml"]
+                    }
+                  },
+                  "required": ["selector", "actionType"]
+                }
+              }
+            ]
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "libPath": "dist/lib/actions/applyPropositions/index.js",
+      "viewPath": "actions/applyPropositions.html"
+    },
+    {
       "displayName": "Update variable (beta)",
       "name": "update-variable",
       "schema": {
@@ -747,6 +807,27 @@
       ],
       "libPath": "dist/lib/actions/updateVariable/index.js",
       "viewPath": "actions/updateVariable.html"
+    },
+    {
+      "displayName": "Test",
+      "name": "test",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "minLength": 1
+          },
+          "last": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["first", "last"]
+      },
+      "libPath": "dist/lib/actions/test.js",
+      "viewPath": "actions/test.html"
     }
   ],
   "events": [
