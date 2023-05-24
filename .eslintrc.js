@@ -61,7 +61,8 @@ module.exports = {
       {
         components: []
       }
-    ]
+    ],
+    "no-underscore-dangle": ["Error", { allow: ["_experience"] }]
   },
   parser: "babel-eslint"
 };
