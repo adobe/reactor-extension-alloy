@@ -14,9 +14,15 @@ const clone = require("../../utils/clone");
 
 module.exports = ({
   instanceManager,
-  sendEventCallbackStorage
+  sendEventCallbackStorage,
+  activePropositions
 }) => settings => {
-  const { instanceName, ...otherSettings } = settings;
+  const {
+    instanceName,
+    propositions,
+    propositionsEventType,
+    ...otherSettings
+  } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -34,6 +40,18 @@ module.exports = ({
   }
   if (otherSettings.data) {
     otherSettings.data = clone(otherSettings.data);
+  }
+
+  if (propositions === "active") {
+    otherSettings.propositions = activePropositions.get();
+  } else if (propositions) {
+    otherSettings.propositions = propositions;
+  }
+  if (propositionsEventType === "interact") {
+    otherSettings.xdm._experience ||= {};
+    otherSettings.xdm._experience.decisioning ||= {};
+    otherSettings.xdm._experience.decisioning.propositionEventType ||= {};
+    otherSettings.xdm._experience.decisioning.propositionEventType.interact = 1;
   }
 
   return instance("sendEvent", otherSettings).then(result => {

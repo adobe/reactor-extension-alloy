@@ -10,23 +10,25 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const eventMergeIdByCacheId = {};
+module.exports = () => {
+  const eventMergeIdByCacheId = {};
 
-/**
- * Caches event merge IDs by a cache ID.
- */
-module.exports = {
-  set(cacheId, eventMergeId) {
-    eventMergeIdByCacheId[cacheId] = eventMergeId;
-  },
-  getByCacheId(cacheId) {
-    return eventMergeIdByCacheId[cacheId];
-  },
-  clearByEventMergeId(eventMergeId) {
-    Object.keys(eventMergeIdByCacheId).forEach(cacheId => {
-      if (eventMergeIdByCacheId[cacheId] === eventMergeId) {
-        delete eventMergeIdByCacheId[cacheId];
-      }
-    });
-  }
+  /**
+   * Caches event merge IDs by a cache ID.
+   */
+  return {
+    set(cacheId, eventMergeId) {
+      eventMergeIdByCacheId[cacheId] = eventMergeId;
+    },
+    getByCacheId(cacheId) {
+      return eventMergeIdByCacheId[cacheId];
+    },
+    clearByEventMergeId(eventMergeId) {
+      Object.keys(eventMergeIdByCacheId).forEach(cacheId => {
+        if (eventMergeIdByCacheId[cacheId] === eventMergeId) {
+          delete eventMergeIdByCacheId[cacheId];
+        }
+      });
+    }
+  };
 };

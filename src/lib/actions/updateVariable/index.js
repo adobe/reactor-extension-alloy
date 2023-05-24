@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 const { deepAssign } = require("../../alloy");
-const variableStore = require("../../variableStore");
+const { variableStore } = require("../../index");
 const createUpdateVariable = require("./createUpdateVariable");
 
 module.exports = createUpdateVariable({ variableStore, deepAssign });

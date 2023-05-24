@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const eventMergeIdCache = require("../../eventMergeIdCache");
+const { eventMergeIdCache } = require("../../index");
 const createResetEventMergeId = require("./createResetEventMergeId");
 
 module.exports = createResetEventMergeId(eventMergeIdCache);
