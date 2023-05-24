@@ -9,13 +9,12 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
-const createConfigOverrides = require("../../utils/createConfigOverrides");
-
-module.exports = ({ instanceManager, document, logger, turbine = {} }) => (
-  settings,
-  event
-) => {
+module.exports = ({
+  instanceManager,
+  document,
+  logger,
+  getConfigOverrides
+}) => (settings, event) => {
   const { instanceName } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
@@ -45,10 +44,7 @@ module.exports = ({ instanceManager, document, logger, turbine = {} }) => (
   }
 
   const url = event.element.href;
-  const edgeConfigOverrides = createConfigOverrides(
-    settings,
-    turbine.environment?.stage
-  );
+  const edgeConfigOverrides = getConfigOverrides(settings);
 
   return instance("appendIdentityToUrl", {
     url,

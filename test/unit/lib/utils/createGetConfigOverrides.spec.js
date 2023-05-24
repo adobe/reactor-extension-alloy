@@ -9,10 +9,11 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import createConfigOverrides from "../../../../src/lib/utils/createConfigOverrides";
+import createGetConfigOverrides from "../../../../src/lib/utils/createGetConfigOverrides";
 
-describe("createConfigOverrides", () => {
+describe("createGetConfigOverrides", () => {
   ["development", "staging", "production"].forEach(stage => {
+    const createConfigOverrides = createGetConfigOverrides(stage);
     describe(`stage ${stage}`, () => {
       it("should return undefined when edgeConfigOverrides is undefined", () => {
         const result = createConfigOverrides({}, stage);

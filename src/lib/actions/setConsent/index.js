@@ -12,5 +12,9 @@ governing permissions and limitations under the License.
 
 const createSetConsent = require("./createSetConsent");
 const instanceManager = require("../../instanceManager/index");
+const createGetConfigOverrides = require("../../utils/createGetConfigOverrides");
 
-module.exports = createSetConsent({ instanceManager, turbine });
+module.exports = createSetConsent({
+  instanceManager,
+  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage)
+});

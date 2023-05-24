@@ -13,15 +13,14 @@ governing permissions and limitations under the License.
 import createSendEvent from "../../../../../src/lib/actions/sendEvent/createSendEvent";
 
 describe("Send Event", () => {
+  let getConfigOverrides;
+  beforeEach(() => {
+    getConfigOverrides = jasmine.createSpy("getConfigOverrides");
+  });
   it("executes event command and notifies sendEventCallbackStorage", () => {
     const instance = jasmine
       .createSpy()
       .and.returnValue(Promise.resolve({ foo: "bar" }));
-    const turbine = jasmine.createSpyObj("turbine", {
-      environment: jasmine.createSpyObj("environment", {
-        stage: "development"
-      })
-    });
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: instance
     });
@@ -32,7 +31,7 @@ describe("Send Event", () => {
     const action = createSendEvent({
       instanceManager,
       sendEventCallbackStorage,
-      turbine
+      getConfigOverrides
     });
     const dataLayer = {
       fruits: [
@@ -84,13 +83,7 @@ describe("Send Event", () => {
     const instanceManager = jasmine.createSpyObj("instanceManager", [
       "getInstance"
     ]);
-
-    const turbine = jasmine.createSpyObj("turbine", {
-      environment: jasmine.createSpyObj("environment", {
-        stage: "development"
-      })
-    });
-    const action = createSendEvent({ instanceManager, turbine });
+    const action = createSendEvent({ instanceManager, getConfigOverrides });
 
     expect(() => {
       action({
@@ -111,11 +104,9 @@ describe("Send Event", () => {
     const instance = jasmine
       .createSpy()
       .and.returnValue(Promise.resolve({ foo: "bar" }));
-    const turbine = {
-      environment: {
-        stage: "development"
-      }
-    };
+    getConfigOverrides.and.returnValue({
+      test: "test"
+    });
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: instance
     });
@@ -126,7 +117,7 @@ describe("Send Event", () => {
     const action = createSendEvent({
       instanceManager,
       sendEventCallbackStorage,
-      turbine
+      getConfigOverrides
     });
     const promiseReturnedFromAction = action({
       instanceName: "myinstance",

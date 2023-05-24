@@ -19,7 +19,7 @@ describe("createRedirectWithIdentity", () => {
   let redirectWithIdentity;
   let event;
   let logger;
-  let turbine;
+  let getConfigOverrides;
 
   beforeEach(() => {
     instanceManager = jasmine.createSpyObj("instanceManager", ["getInstance"]);
@@ -27,6 +27,7 @@ describe("createRedirectWithIdentity", () => {
     instanceManager.getInstance.and.returnValue(instance);
     instance.and.returnValue(Promise.resolve({ url: "newurl" }));
     document = { location: "originalLocation" };
+    getConfigOverrides = jasmine.createSpy("getConfigOverrides");
     event = {
       nativeEvent: {
         preventDefault: jasmine.createSpy("preventDefault")
@@ -36,13 +37,12 @@ describe("createRedirectWithIdentity", () => {
       }
     };
     logger = jasmine.createSpyObj("logger", ["warn"]);
-    turbine = { environment: { stage: "development" } };
 
     redirectWithIdentity = createRedirectWithIdentity({
       instanceManager,
       document,
       logger,
-      turbine
+      getConfigOverrides
     });
   });
 
@@ -107,54 +107,37 @@ describe("createRedirectWithIdentity", () => {
   });
 
   it("redirects with edge config overrides", async () => {
+    const developmentEdgeConfigOverrides = {
+      com_adobe_experience_platform: {
+        datasets: {
+          event: {
+            datasetId: "6335faf30f5a161c0b4b1444"
+          }
+        }
+      },
+      com_adobe_analytics: {
+        reportSuites: ["unifiedjsqeonly2"]
+      },
+      com_adobe_identity: {
+        idSyncContainerId: 30793
+      },
+      com_adobe_target: {
+        propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
+      }
+    };
+    getConfigOverrides.and.returnValue(developmentEdgeConfigOverrides);
     await expectAsync(
       redirectWithIdentity(
         {
           instanceName: "myinstance",
-          edgeConfigOverrides: {
-            development: {
-              com_adobe_experience_platform: {
-                datasets: {
-                  event: {
-                    datasetId: "6335faf30f5a161c0b4b1444"
-                  }
-                }
-              },
-              com_adobe_analytics: {
-                reportSuites: ["unifiedjsqeonly2"]
-              },
-              com_adobe_identity: {
-                idSyncContainerId: 30793
-              },
-              com_adobe_target: {
-                propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
-              }
-            }
-          }
+          edgeConfigOverrides: developmentEdgeConfigOverrides
         },
         event
       )
     );
     expect(instance).toHaveBeenCalledOnceWith("appendIdentityToUrl", {
       url: "originalHref",
-      edgeConfigOverrides: {
-        com_adobe_experience_platform: {
-          datasets: {
-            event: {
-              datasetId: "6335faf30f5a161c0b4b1444"
-            }
-          }
-        },
-        com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2"]
-        },
-        com_adobe_identity: {
-          idSyncContainerId: 30793
-        },
-        com_adobe_target: {
-          propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
-        }
-      }
+      edgeConfigOverrides: developmentEdgeConfigOverrides
     });
   });
 });

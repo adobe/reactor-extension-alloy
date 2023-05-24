@@ -13,9 +13,10 @@ governing permissions and limitations under the License.
 const createSendEvent = require("./createSendEvent");
 const instanceManager = require("../../instanceManager/index");
 const sendEventCallbackStorage = require("../../sendEventCallbackStorage");
+const createGetConfigOverrides = require("../../utils/createGetConfigOverrides");
 
 module.exports = createSendEvent({
   instanceManager,
   sendEventCallbackStorage,
-  turbine
+  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage)
 });

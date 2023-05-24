@@ -9,16 +9,10 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
-const createConfigOverrides = require("../../utils/createConfigOverrides");
-
-module.exports = ({ instanceManager, turbine = {} }) => settings => {
+module.exports = ({ instanceManager, getConfigOverrides }) => settings => {
   const { instanceName, identityMap, consent } = settings;
 
-  const edgeConfigOverrides = createConfigOverrides(
-    settings,
-    turbine.environment?.stage
-  );
+  const edgeConfigOverrides = getConfigOverrides(settings);
 
   const instance = instanceManager.getInstance(instanceName);
 

@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 const createRedirectWithIdentity = require("./createRedirectWithIdentity");
 const instanceManager = require("../../instanceManager/index");
+const createGetConfigOverrides = require("../../utils/createGetConfigOverrides");
 
 const document = window.document;
 
@@ -19,5 +20,5 @@ module.exports = createRedirectWithIdentity({
   instanceManager,
   document,
   logger: turbine.logger,
-  turbine
+  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage)
 });

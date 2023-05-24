@@ -19,7 +19,7 @@ governing permissions and limitations under the License.
  * @param {"development" | "staging" | "production"} environmentName
  * @returns {EdgeConfigOverrides?}
  */
-const createConfigOverrides = (settings, environmentName) => {
+const createGetConfigOverrides = environmentName => settings => {
   const { edgeConfigOverrides } = settings;
   if (!edgeConfigOverrides || !edgeConfigOverrides[environmentName]) {
     return undefined;
@@ -36,4 +36,4 @@ const createConfigOverrides = (settings, environmentName) => {
   return computedConfigOverrides;
 };
 
-module.exports = createConfigOverrides;
+module.exports = createGetConfigOverrides;

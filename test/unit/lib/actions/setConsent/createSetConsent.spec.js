@@ -22,12 +22,8 @@ describe("Set Consent", () => {
       const instanceManager = jasmine.createSpyObj("instanceManager", {
         getInstance: instance
       });
-      const turbine = jasmine.createSpyObj("turbine", {
-        environment: jasmine.createSpyObj("environment", {
-          stage: "development"
-        })
-      });
-      const action = createSetConsent({ instanceManager, turbine });
+      const getConfigOverrides = jasmine.createSpy("getConfigOverrides");
+      const action = createSetConsent({ instanceManager, getConfigOverrides });
       const promiseReturnedFromAction = action({
         instanceName: "myinstance",
         identityMap: "%dataelement123%",
@@ -65,12 +61,8 @@ describe("Set Consent", () => {
     )}`, () => {
       const instance = jasmine.createSpy();
       const instanceManager = { getInstance: () => instance };
-      const turbine = jasmine.createSpyObj("turbine", {
-        environment: jasmine.createSpyObj("environment", {
-          stage: "development"
-        })
-      });
-      const action = createSetConsent({ instanceManager, turbine });
+      const getConfigOverrides = jasmine.createSpy("getConfigOverrides");
+      const action = createSetConsent({ instanceManager, getConfigOverrides });
       action({
         instanceName: "myinstance",
         identityMap,
@@ -84,15 +76,11 @@ describe("Set Consent", () => {
   });
 
   it("throws an error when no matching instance found", () => {
-    const turbine = jasmine.createSpyObj("turbine", {
-      environment: jasmine.createSpyObj("environment", {
-        stage: "development"
-      })
-    });
+    const getConfigOverrides = jasmine.createSpy("getConfigOverrides");
     const instanceManager = jasmine.createSpyObj("instanceManager", {
       getInstance: undefined
     });
-    const action = createSetConsent({ instanceManager, turbine });
+    const action = createSetConsent({ instanceManager, getConfigOverrides });
 
     expect(() => {
       action({
@@ -109,36 +97,33 @@ describe("Set Consent", () => {
   // a test that checks the inclusion for the edgeConfigOverrides
   it("passes edgeConfigOverrides when it is defined", () => {
     const instance = jasmine.createSpy();
-    const turbine = {
-      environment: {
-        stage: "development"
+    const edgeConfigOverrides = {
+      com_adobe_experience_platform: {
+        datasets: {
+          event: {
+            datasetId: "6335faf30f5a161c0b4b1444"
+          }
+        }
+      },
+      com_adobe_analytics: {
+        reportSuites: ["unifiedjsqeonly2"]
+      },
+      com_adobe_identity: {
+        idSyncContainerId: 30793
+      },
+      com_adobe_target: {
+        propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
       }
     };
+    const getConfigOverrides = jasmine
+      .createSpy("getConfigOverrides")
+      .and.returnValue(edgeConfigOverrides);
     const instanceManager = { getInstance: () => instance };
-    const action = createSetConsent({ instanceManager, turbine });
+    const action = createSetConsent({ instanceManager, getConfigOverrides });
     action({
       instanceName: "myinstance",
       consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
-      edgeConfigOverrides: {
-        development: {
-          com_adobe_experience_platform: {
-            datasets: {
-              event: {
-                datasetId: "6335faf30f5a161c0b4b1444"
-              }
-            }
-          },
-          com_adobe_analytics: {
-            reportSuites: ["unifiedjsqeonly2"]
-          },
-          com_adobe_identity: {
-            idSyncContainerId: 30793
-          },
-          com_adobe_target: {
-            propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
-          }
-        }
-      }
+      edgeConfigOverrides
     });
     expect(instance).toHaveBeenCalledWith("setConsent", {
       consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
