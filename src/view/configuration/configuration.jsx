@@ -58,6 +58,7 @@ import AdvancedSection, {
   bridge as advancedSectionBridge
 } from "./advancedSection";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
+import { FIELD_NAMES } from "../components/overrides/utils";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -229,6 +230,7 @@ const Configuration = ({ initInfo, context }) => {
                           instanceFieldName={instanceFieldName}
                           edgeConfigIds={edgeConfigIds}
                           configOrgId={instance.orgId}
+                          hideFields={[FIELD_NAMES.edgeConfigId]}
                           largeHeader
                         />
                         <AdvancedSection
