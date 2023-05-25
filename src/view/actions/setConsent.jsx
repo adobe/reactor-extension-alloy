@@ -372,11 +372,6 @@ const SetConsent = () => {
                 width="size-5000"
               />
             </DataElementSelector>
-            <Overrides
-              initInfo={initInfo}
-              edgeConfigIds={edgeConfigIds}
-              configOrgId={orgId}
-            />
             <FormikRadioGroup
               name="inputMethod"
               orientation="horizontal"
@@ -448,6 +443,11 @@ const SetConsent = () => {
                 />
               </DataElementSelector>
             )}
+            <Overrides
+              initInfo={initInfo}
+              edgeConfigIds={edgeConfigIds}
+              configOrgId={orgId}
+            />
           </FormElementContainer>
         );
       }}
