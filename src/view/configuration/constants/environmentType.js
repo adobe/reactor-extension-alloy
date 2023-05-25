@@ -13,4 +13,4 @@ governing permissions and limitations under the License.
 export const PRODUCTION = "production";
 export const STAGING = "staging";
 export const DEVELOPMENT = "development";
-export const ENVIRONMENTS = Object.freeze([PRODUCTION, STAGING, DEVELOPMENT]);
+export const ENVIRONMENTS = Object.freeze([DEVELOPMENT, STAGING, PRODUCTION]);
