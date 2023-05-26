@@ -162,7 +162,7 @@ test("initializes form fields with full settings", async () => {
   await instances[0].specificContext.highEntropyUserAgentHintsContextField.expectUnchecked();
   await instances[0].targetMigrationEnabled.expectChecked();
 
-  await instances[0].overrides.envTabs.production.expectSelected();
+  await instances[0].overrides.envTabs.development.expectSelected();
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -189,8 +189,8 @@ test("initializes form fields with full settings", async () => {
   await instances[0].overrides.textFields.reportSuiteOverrides[0].expectValue(
     "unifiedjsqeonly2"
   );
-  await instances[0].overrides.envTabs.development.click();
-  await instances[0].overrides.envTabs.development.expectSelected();
+  await instances[0].overrides.envTabs.production.click();
+  await instances[0].overrides.envTabs.production.expectSelected();
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -390,9 +390,9 @@ test("returns full valid settings", async () => {
   await instances[0].targetMigrationEnabled.click();
 
   await instances[0].overrides.envTabs.production.expectExists();
-  await instances[0].overrides.envTabs.production.expectSelected();
   await instances[0].overrides.envTabs.staging.expectExists();
   await instances[0].overrides.envTabs.development.expectExists();
+  await instances[0].overrides.envTabs.development.expectSelected();
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -462,7 +462,7 @@ test("returns full valid settings", async () => {
           "language=css;code=/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/",
         targetMigrationEnabled: true,
         edgeConfigOverrides: {
-          production: {
+          development: {
             com_adobe_experience_platform: {
               datasets: {
                 event: {
@@ -1337,7 +1337,7 @@ test.requestHooks(
 test("is able to add and remove report suites from overrides", async () => {
   await extensionViewController.init();
 
-  await instances[0].overrides.envTabs.production.expectSelected();
+  await instances[0].overrides.envTabs.development.expectSelected();
 
   await instances[0].overrides.textFields.reportSuiteOverrides[0].expectExists();
   await instances[0].overrides.textFields.reportSuiteOverrides[0].typeText(
@@ -1363,7 +1363,7 @@ test("is able to add and remove report suites from overrides", async () => {
       {
         name: "alloy",
         edgeConfigOverrides: {
-          production: {
+          development: {
             com_adobe_analytics: {
               reportSuites: ["test1", "test3"]
             }
@@ -1377,8 +1377,11 @@ test("is able to add and remove report suites from overrides", async () => {
 test("copies overrides from one environment to another", async () => {
   await extensionViewController.init();
 
-  await instances[0].overrides.envTabs.production.expectExists();
-  await instances[0].overrides.envTabs.production.expectSelected();
+  await instances[0].overrides.envTabs.development.expectExists();
+  await instances[0].overrides.envTabs.development.expectSelected();
+  await instances[0].overrides.copyButtons.development.expectNotExists();
+  await instances[0].overrides.copyButtons.staging.expectExists();
+  await instances[0].overrides.copyButtons.production.expectExists();
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -1396,36 +1399,13 @@ test("copies overrides from one environment to another", async () => {
     "unifiedjsqeonly3"
   );
 
-  await instances[0].overrides.copyDestinationCheckboxes.production.expectNotExists();
-  await instances[0].overrides.copyDestinationCheckboxes.staging.expectExists();
-  await instances[0].overrides.copyDestinationCheckboxes.staging.click();
-  await instances[0].overrides.copyDestinationCheckboxes.development.expectExists();
-  await instances[0].overrides.copyDestinationCheckboxes.development.click();
-  await instances[0].overrides.copyButton.click();
-
   await instances[0].overrides.envTabs.staging.click();
   await instances[0].overrides.envTabs.staging.expectSelected();
-  await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
-  );
-  await instances[0].overrides.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
-  );
-  await instances[0].overrides.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-  );
-  await instances[0].overrides.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
-  );
-  await instances[0].overrides.textFields.reportSuiteOverrides[1].expectValue(
-    "unifiedjsqeonly3"
-  );
-  await instances[0].overrides.copyDestinationCheckboxes.production.expectExists();
-  await instances[0].overrides.copyDestinationCheckboxes.staging.expectNotExists();
-  await instances[0].overrides.copyDestinationCheckboxes.development.expectExists();
+  await instances[0].overrides.copyButtons.production.expectExists();
+  await instances[0].overrides.copyButtons.staging.expectNotExists();
+  await instances[0].overrides.copyButtons.development.expectExists();
+  await instances[0].overrides.copyButtons.development.click();
 
-  await instances[0].overrides.envTabs.development.click();
-  await instances[0].overrides.envTabs.development.expectSelected();
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -1441,9 +1421,28 @@ test("copies overrides from one environment to another", async () => {
   await instances[0].overrides.textFields.reportSuiteOverrides[1].expectValue(
     "unifiedjsqeonly3"
   );
-  await instances[0].overrides.copyDestinationCheckboxes.production.expectExists();
-  await instances[0].overrides.copyDestinationCheckboxes.staging.expectExists();
-  await instances[0].overrides.copyDestinationCheckboxes.development.expectNotExists();
+
+  await instances[0].overrides.envTabs.production.click();
+  await instances[0].overrides.envTabs.production.expectSelected();
+  await instances[0].overrides.copyButtons.development.expectExists();
+  await instances[0].overrides.copyButtons.staging.expectExists();
+  await instances[0].overrides.copyButtons.production.expectNotExists();
+  await instances[0].overrides.copyButtons.staging.click();
+  await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await instances[0].overrides.textFields.idSyncContainerOverride.expectValue(
+    "23512312"
+  );
+  await instances[0].overrides.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await instances[0].overrides.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2"
+  );
+  await instances[0].overrides.textFields.reportSuiteOverrides[1].expectValue(
+    "unifiedjsqeonly3"
+  );
 });
 
 test.requestHooks(

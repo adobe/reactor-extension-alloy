@@ -101,12 +101,15 @@ const Overrides = ({
     { value: edgeConfigOverrides },
     { setValue: setEdgeConfigOverrides }
   ] = useField(prefix);
-  const onCopy = (source, destinations) => {
-    const newOverrides = destinations.reduce(
-      (result, env) => ({ ...result, [env]: edgeConfigOverrides[source] }),
-      edgeConfigOverrides
-    );
-    setEdgeConfigOverrides(newOverrides);
+  /**
+   * Import the settings from the destination to the source
+   *
+   * @param {"production" | "staging" | "development"} source
+   * @param {"production" | "staging" | "development"} destination
+   */
+  const onCopy = (source, destination) => {
+    edgeConfigOverrides[destination] = edgeConfigOverrides[source];
+    setEdgeConfigOverrides(edgeConfigOverrides);
   };
 
   return (
@@ -170,6 +173,7 @@ const Overrides = ({
                     marginX={largeHeader ? "" : "size-300"}
                     gap="size-100"
                   >
+                    <SettingsCopySection currentEnv={env} onPress={onCopy} />
                     {showFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
                       <OverrideInput
                         useManualEntry={
@@ -239,7 +243,6 @@ const Overrides = ({
                         prefix={`${prefix}.${env}`}
                       />
                     )}
-                    <SettingsCopySection currentEnv={env} onPress={onCopy} />
                   </Flex>
                 </Item>
               );

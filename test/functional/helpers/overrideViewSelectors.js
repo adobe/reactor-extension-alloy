@@ -45,12 +45,11 @@ const overrideViewSelectors = {
   removeReportSuitesButtons: [0, 1, 2].map(index =>
     spectrumWrappers.textField(`removeReportSuite.${index}`)
   ),
-  copyDestinationCheckboxes: {
-    production: spectrumWrappers.textField("copyOverrides.production"),
-    staging: spectrumWrappers.textField("copyOverrides.staging"),
-    development: spectrumWrappers.textField("copyOverrides.development")
-  },
-  copyButton: spectrumWrappers.button("copyOverrides")
+  copyButtons: {
+    production: spectrumWrappers.button("copyFromProductionButton"),
+    staging: spectrumWrappers.button("copyFromStagingButton"),
+    development: spectrumWrappers.button("copyFromDevelopmentButton")
+  }
 };
 
 export default overrideViewSelectors;
