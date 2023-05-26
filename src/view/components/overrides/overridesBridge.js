@@ -85,11 +85,12 @@ export const bridge = {
     });
 
     OVERRIDE_ENVIRONMENTS.forEach(env => {
+      // Alloy, Konductor, and Blackbird expect the idSyncContainerID to be a
+      // number
       if (
         instanceSettings.edgeConfigOverrides?.[env]?.com_adobe_identity
           ?.idSyncContainerId
       ) {
-        // Alloy, Konductor, and Blackbird expect this to be a number
         instanceSettings.edgeConfigOverrides[
           env
         ].com_adobe_identity.idSyncContainerId = parseInt(
@@ -97,6 +98,18 @@ export const bridge = {
             .idSyncContainerId,
           10
         );
+      }
+
+      // filter out the blank report suites
+      if (
+        instanceSettings.edgeConfigOverrides?.[env]?.com_adobe_analytics
+          ?.reportSuites
+      ) {
+        instanceSettings.edgeConfigOverrides[
+          env
+        ].com_adobe_analytics.reportSuites = instanceSettings.edgeConfigOverrides[
+          env
+        ].com_adobe_analytics.reportSuites.filter(rs => rs !== "");
       }
     });
 

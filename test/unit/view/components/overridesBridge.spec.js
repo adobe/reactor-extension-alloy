@@ -185,6 +185,31 @@ describe("overridesBridge", () => {
         }
       });
     });
+
+    it("should remove empty report suites", () => {
+      const instanceValues = {
+        edgeConfigOverrides: {
+          development: {
+            com_adobe_analytics: {
+              reportSuites: ["", "unifiedjsqeonly2", "", "unifiedjsqeonly3", ""]
+            }
+          }
+        }
+      };
+
+      const instanceSettings = bridge.getInstanceSettings({
+        instanceValues
+      });
+      expect(instanceSettings).toEqual({
+        edgeConfigOverrides: {
+          development: {
+            com_adobe_analytics: {
+              reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+            }
+          }
+        }
+      });
+    });
   });
 
   describe("formikStateValidationSchema", () => {
