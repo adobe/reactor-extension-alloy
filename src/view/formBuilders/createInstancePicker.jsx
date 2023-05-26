@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import InstanceNamePicker from "../components/instanceNamePicker";
+import { simpleGetSettings } from "./utils";
 
 /**
  * This creates a form field for an instance name picker.
@@ -9,6 +10,7 @@ import InstanceNamePicker from "../components/instanceNamePicker";
  * @returns {FormPart}
  */
 export default ({ key }) => {
+  const getSettings = simpleGetSettings({ key });
   const Component = ({ initInfo }) => {
     return (
       <InstanceNamePicker
@@ -28,14 +30,7 @@ export default ({ key }) => {
         initInfo.settings || {};
       return { [key]: value };
     },
-    getSettings({ values }) {
-      const settings = {};
-      if (values[key]) {
-        settings[key] = values[key];
-      }
-      return settings;
-    },
-    validationSchema: {},
+    getSettings,
     Component
   };
 };

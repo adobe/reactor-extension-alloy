@@ -8,7 +8,12 @@ import FormikTextField from "../components/formikReactSpectrum3/formikTextField"
 import DataElementSelector from "../components/dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
-import FormElementContainer from "../components/formElementContainer";
+import {
+  combineComponents,
+  combineGetInitialValues,
+  combineGetSettings,
+  combineValidationSchemas
+} from "./utils";
 
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
@@ -51,27 +56,13 @@ export default (
   },
   ...parts
 ) => {
+  const getItemInitialValues = combineGetInitialValues(parts);
+  const getItemSettings = combineGetSettings(parts);
   const buildDefaultItem = () =>
-    parts.reduce(
-      (itemInitialValues, part) => ({
-        ...itemInitialValues,
-        ...part.getInitialValues({ initInfo: { settings: null } })
-      }),
-      {}
-    );
+    getItemInitialValues({ initInfo: { settings: null } });
 
-  const getItemSettings = item =>
-    parts.reduce(
-      (itemSettings, part) => ({
-        ...itemSettings,
-        ...part.getSettings({ values: item })
-      }),
-      {}
-    );
+  let itemSchema = object().shape(combineValidationSchemas(parts));
 
-  let itemSchema = object().shape(
-    parts.reduce((acc, part) => ({ ...acc, ...part.validationSchema }), {})
-  );
   if (objectKey) {
     itemSchema = itemSchema.test(
       "unique",
@@ -99,13 +90,14 @@ export default (
   }
 
   const validationSchema = {};
-  validationSchema[key] = array().when(`${key}InputMethod`, {
-    is: FORM,
-    then: schema =>
-      schema
-        .compact(item => Object.keys(getItemSettings(item)).length === 0)
-        .of(itemSchema)
-  });
+  validationSchema[key] = array()
+    .compact(
+      item => Object.keys(getItemSettings({ values: item })).length === 0
+    )
+    .when(`${key}InputMethod`, {
+      is: FORM,
+      then: schema => schema.of(itemSchema)
+    });
 
   validationSchema[`${key}DataElement`] = string().when(`${key}InputMethod`, {
     is: DATA_ELEMENT,
@@ -114,6 +106,8 @@ export default (
         .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
         .required(DATA_ELEMENT_REQUIRED)
   });
+
+  const CombinedComponent = combineComponents(parts);
 
   const formPart = {
     getInitialValues({ initInfo }) {
@@ -128,13 +122,7 @@ export default (
       }
       if (transformedValue && Array.isArray(transformedValue)) {
         transformedValue = transformedValue.map(item =>
-          parts.reduce(
-            (itemInitialValues, part) => ({
-              ...itemInitialValues,
-              ...part.getInitialValues({ initInfo: { settings: item } })
-            }),
-            {}
-          )
+          getItemInitialValues({ initInfo: { settings: item } })
         );
       } else {
         transformedValue = [buildDefaultItem()];
@@ -212,15 +200,10 @@ export default (
                           direction="column"
                           gap="size-100"
                         >
-                          <FormElementContainer>
-                            {parts.map((part, innerIndex) => (
-                              <part.Component
-                                key={innerIndex}
-                                keyPrefix={`${key}.${index}.`}
-                                initInfo={initInfo}
-                              />
-                            ))}
-                          </FormElementContainer>
+                          <CombinedComponent
+                            initInfo={initInfo}
+                            keyPrefix={`${key}.${index}.`}
+                          />
                           <Flex direction="row">
                             <Button
                               variant="secondary"

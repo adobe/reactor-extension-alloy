@@ -1,7 +1,12 @@
 import React from "react";
 import { mixed } from "yup";
 import { useField } from "formik";
-import PropTypes from "prop-types";
+import {
+  combineGetSettings,
+  combineGetInitialValues,
+  combineValidationSchemas,
+  combineComponents
+} from "./utils";
 
 /**
  * This function is used to create a form builder that conditionally renders
@@ -17,13 +22,9 @@ import PropTypes from "prop-types";
  * @returns {FormPart}
  */
 export default (args, conditional, ...parts) => {
-  const schemaParts = parts.reduce((shape, part) => {
-    if (part.validationSchema) {
-      Object.assign(shape, part.validationSchema);
-    }
-    return shape;
-  }, {});
-
+  const getInitialValues = combineGetInitialValues(parts);
+  const getSettings = combineGetSettings(parts);
+  const schemaParts = combineValidationSchemas(parts);
   const validationSchema = Object.keys(schemaParts).reduce((memo, key) => {
     memo[key] = mixed().when(args, {
       is: conditional,
@@ -32,39 +33,12 @@ export default (args, conditional, ...parts) => {
     return memo;
   }, {});
 
-  const Component = ({ initInfo }) => {
-    const conditionalArgValues = (Array.isArray(args) ? args : [args]).map(
-      arg => {
-        const [{ value }] = useField(arg);
-        return value;
-      }
-    );
-    if (!conditional(...conditionalArgValues)) {
-      return null;
-    }
-    return (
-      <>
-        {parts.map((part, index) => (
-          <part.Component initInfo={initInfo} key={index} />
-        ))}
-      </>
-    );
-  };
-  Component.propTypes = {
-    initInfo: PropTypes.object.isRequired
-  };
+  const Component = combineComponents(parts);
 
   return {
-    getInitialValues({ initInfo }) {
-      // getInitialValues should run regardless of the condition so that the
-      // default formik state can be set up.
-      return parts.reduce((initialValues, part) => {
-        if (part.getInitialValues) {
-          Object.assign(initialValues, part.getInitialValues({ initInfo }));
-        }
-        return initialValues;
-      }, {});
-    },
+    // getInitialValues should run regardless of the condition so that the
+    // default formik state can be set up.
+    getInitialValues,
     getSettings({ values }) {
       const conditionalArgValues = (Array.isArray(args) ? args : [args]).map(
         arg => values[arg]
@@ -72,14 +46,20 @@ export default (args, conditional, ...parts) => {
       if (!conditional(...conditionalArgValues)) {
         return {};
       }
-      return parts.reduce((settings, part) => {
-        if (part.getSettings) {
-          Object.assign(settings, part.getSettings({ values }));
-        }
-        return settings;
-      }, {});
+      return getSettings({ values });
     },
     validationSchema,
-    Component
+    Component: props => {
+      const conditionalArgValues = (Array.isArray(args) ? args : [args]).map(
+        arg => {
+          const [{ value }] = useField(arg);
+          return value;
+        }
+      );
+      if (!conditional(...conditionalArgValues)) {
+        return null;
+      }
+      return <Component {...props} />;
+    }
   };
 };

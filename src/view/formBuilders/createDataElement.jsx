@@ -4,6 +4,7 @@ import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import { simpleGetInitialValues, simpleGetSettings } from "./utils";
 
 /**
  * This creates a form field that is required to be a single data element.
@@ -15,30 +16,24 @@ import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
  * @returns {FormPart}
  */
 export default ({ key, isRequired = false, label, description }) => {
-  let validationSchema = string().matches(
+  const getInitialValues = simpleGetInitialValues({ key });
+  const getSettings = simpleGetSettings({ key });
+
+  let fieldSchema = string().matches(
     singleDataElementRegex,
     DATA_ELEMENT_REQUIRED
   );
   if (isRequired) {
-    validationSchema = validationSchema.required(
+    fieldSchema = fieldSchema.required(
       `Please provide a ${label.toLowerCase()}.`
     );
   }
 
   return {
-    getInitialValues({ initInfo }) {
-      const { [key]: value = "" } = initInfo.settings || {};
-      return { [key]: value };
-    },
-    getSettings({ values }) {
-      const settings = {};
-      if (values[key]) {
-        settings[key] = values[key];
-      }
-      return settings;
-    },
+    getInitialValues,
+    getSettings,
     validationSchema: {
-      [key]: validationSchema
+      [key]: fieldSchema
     },
     Component: () => {
       return (

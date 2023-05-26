@@ -3,6 +3,7 @@ import { string } from "yup";
 import PropTypes from "prop-types";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
+import { simpleGetInitialValues, simpleGetSettings } from "./utils";
 
 /**
  * This creates a form field for a text field and supports data elements.
@@ -23,6 +24,9 @@ export default ({
   label,
   description
 }) => {
+  const getInitialValues = simpleGetInitialValues({ key });
+  const getSettings = simpleGetSettings({ key });
+
   let validationSchema = string();
   if (isRequired) {
     validationSchema = validationSchema.required(
@@ -66,17 +70,8 @@ export default ({
   }
 
   return {
-    getInitialValues({ initInfo }) {
-      const { [key]: value = "" } = initInfo.settings || {};
-      return { [key]: value };
-    },
-    getSettings({ values }) {
-      const settings = {};
-      if (values[key]) {
-        settings[key] = values[key];
-      }
-      return settings;
-    },
+    getInitialValues,
+    getSettings,
     validationSchema: {
       [key]: validationSchema
     },
