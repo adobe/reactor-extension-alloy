@@ -142,6 +142,11 @@ const Overrides = ({
                 result?.com_adobe_experience_platform?.datasets?.event?.filter(
                   ({ primary }) => !primary
                 ) ?? [];
+              let eventDatasetDescription =
+                "The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration.";
+              if (primaryEventDataset) {
+                eventDatasetDescription = `Overrides default dataset of "${primaryEventDataset}". ${eventDatasetDescription}`;
+              }
 
               const primaryIdSyncContainer = `${result?.com_adobe_identity
                 ?.idSyncContainerId ?? ""}`;
@@ -149,6 +154,11 @@ const Overrides = ({
                 result?.com_adobe_identity?.idSyncContainerId__additional?.map(
                   value => ({ value, label: `${value}` })
                 ) ?? [];
+              let idSyncContainerDescription =
+                "The ID for the destination third-party ID sync container in Adobe Audience Manager. The value must be a preconfigured secondary container from your datastream configuration and overrides the primary container.";
+              if (primaryIdSyncContainer) {
+                idSyncContainerDescription = `Overrides default container of "${primaryIdSyncContainer}". ${idSyncContainerDescription}`;
+              }
 
               const primaryPropertyToken =
                 result?.com_adobe_target?.propertyToken ?? "";
@@ -156,6 +166,11 @@ const Overrides = ({
                 result?.com_adobe_target?.propertyToken__additional?.map(
                   value => ({ value, label: value })
                 ) ?? [];
+              let propertyTokenDescription =
+                "The token for the destination property in Adobe Target. The value must be a preconfigured property override from your datastream configuration and overrides the primary property.";
+              if (primaryPropertyToken) {
+                propertyTokenDescription = `Overrides default property of "${primaryPropertyToken}". ${propertyTokenDescription}`;
+              }
 
               /** @type {string[]} */
               const primaryReportSuites =
@@ -179,12 +194,10 @@ const Overrides = ({
                         useManualEntry={
                           useManualEntry || eventDatasetOptions.length === 0
                         }
-                        primaryItem={primaryEventDataset}
                         defaultItems={eventDatasetOptions}
-                        overrideType="event dataset"
                         data-test-id={FIELD_NAMES.eventDatasetOverride}
                         label="Event dataset"
-                        description="The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration and overrides the primary dataset."
+                        description={eventDatasetDescription}
                         width="size-5000"
                         allowsCustomValue
                         loadingState={isLoading}
@@ -210,7 +223,7 @@ const Overrides = ({
                         inputMode="numeric"
                         width="size-5000"
                         pattern={/\d+/}
-                        description="The ID for the destination third-party ID sync container in Adobe Audience Manager. The value must be a preconfigured secondary container from your datastream configuration and overrides the primary container."
+                        description={idSyncContainerDescription}
                       >
                         {({ value, label }) => <Item key={value}>{label}</Item>}
                       </OverrideInput>
@@ -229,7 +242,7 @@ const Overrides = ({
                           useManualEntry || propertyTokenOptions.length === 0
                         }
                         name={`${prefix}.${env}.com_adobe_target.propertyToken`}
-                        description="The token for the destination property in Adobe Target. The value must be a preconfigured property override from your datastream configuration and overrides the primary property."
+                        description={propertyTokenDescription}
                         width="size-5000"
                       >
                         {({ value, label }) => <Item key={value}>{label}</Item>}

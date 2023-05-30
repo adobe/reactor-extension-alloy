@@ -41,6 +41,13 @@ const ReportSuitesOverride = ({
 }) => {
   const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
   const rsids = useFieldValue(fieldName);
+  let reportSuiteDescription =
+    "The IDs for the destination report suites in Adobe Analytics. The value must be a preconfigured override report suite (or a comma-separated list of report suites) from your datastream configuration and overrides the primary report suites.";
+  if (primaryItem && primaryItem.length > 0) {
+    reportSuiteDescription = `Overrides repor suites: ${primaryItem
+      .map(v => `"${v}"`)
+      .join(", ")}. ${reportSuiteDescription}`;
+  }
   return (
     <FieldArray name={fieldName}>
       {({ remove, push }) => (
@@ -58,8 +65,7 @@ const ReportSuitesOverride = ({
                   defaultItems={items}
                   name={`${fieldName}.${index}`}
                   description={
-                    index === rsids.length - 1 &&
-                    "The IDs for the destination report suites in Adobe Analytics. The value must be a preconfigured override report suite (or a comma-separated list of report suites) from your datastream configuration and overrides the primary report suites."
+                    index === rsids.length - 1 && reportSuiteDescription
                   }
                   width="size-5000"
                   key={index}
