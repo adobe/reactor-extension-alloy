@@ -37,6 +37,7 @@ const SettingsCopySection = ({ currentEnv, onPress }) => {
         source => (
           <ActionButton
             data-test-id={`copyFrom${capitialize(source)}Button`}
+            key={source}
             marginTop="size-100"
             onPress={() => onPress(source, currentEnv)}
           >
