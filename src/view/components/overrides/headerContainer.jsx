@@ -9,7 +9,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { Heading } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import React from "react";
 import SectionHeader from "../sectionHeader";
@@ -23,22 +22,12 @@ import SectionHeader from "../sectionHeader";
  * @returns {React.Element}
  */
 const HeaderContainer = ({ largeHeader = false, children, ...props }) => {
-  if (largeHeader) {
-    return <SectionHeader {...props}>{children}</SectionHeader>;
-  }
+  const marginTop = largeHeader ? null : "size-200";
+  const marginBottom = largeHeader ? null : "size-0";
   return (
-    <Heading
-      {...props}
-      level={5}
-      margin="0"
-      UNSAFE_style={{
-        fontWeight: "normal",
-        color:
-          "var(--spectrum-fieldlabel-text-color, var(--spectrum-alias-label-text-color) )"
-      }}
-    >
+    <SectionHeader marginTop={marginTop} marginBottom={marginBottom} {...props}>
       {children}
-    </Heading>
+    </SectionHeader>
   );
 };
 

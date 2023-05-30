@@ -15,10 +15,15 @@ import { Divider, Link, View } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import Heading from "./typography/heading";
 
-const SectionHeader = ({ children, learnMoreUrl }) => {
+const SectionHeader = ({
+  children,
+  learnMoreUrl,
+  marginTop = "size-600",
+  marginBottom = "size-200"
+}) => {
   return (
-    <View marginBottom="size-200">
-      <Heading marginTop="size-600" marginBottom="size-75">
+    <View marginBottom={marginBottom}>
+      <Heading marginTop={marginTop} marginBottom="size-75">
         {children}
       </Heading>
       <Divider margin={0} size="M" />
@@ -35,6 +40,8 @@ const SectionHeader = ({ children, learnMoreUrl }) => {
 
 SectionHeader.propTypes = {
   children: PropTypes.node.isRequired,
+  marginTop: PropTypes.string,
+  marginBottom: PropTypes.string,
   learnMoreUrl: PropTypes.string
 };
 
