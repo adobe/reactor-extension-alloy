@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
+import { t } from "testcafe";
 import extensionViewController from "../helpers/extensionViewController";
 import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
 import {
@@ -35,6 +35,72 @@ const defaultEdgeDomain = "edge.adobedc.net";
 const defaultEdgeBasePath = "ee";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
+
+test.requestHooks(
+  sandboxesMocks.singleDefault,
+  datastreamsMocks.single,
+  datastreamMocks.withConfigOverrides
+)(
+  "shows an error for custom overrides that are not in the dropdown",
+  async () => {
+    await extensionViewController.init();
+
+    await instances[0].nameField.expectValue("alloy");
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.selectOption(
+      "Test Config Overrides"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.selectOption(
+      "Test Config Overrides"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.selectOption(
+      "Test Config Overrides"
+    );
+
+    await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
+    await instances[0].overrides.comboBoxes.eventDatasetOverride.enterSearch(
+      "foo"
+    );
+    // unblur/deselect the input to trigger validation
+    await t.pressKey("tab");
+    await instances[0].overrides.comboBoxes.eventDatasetOverride.expectError();
+    await instances[0].overrides.comboBoxes.eventDatasetOverride.clear();
+    await t.pressKey("tab");
+    await instances[0].overrides.comboBoxes.eventDatasetOverride.expectNoError();
+
+    await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectExists();
+    await instances[0].overrides.comboBoxes.idSyncContainerOverride.enterSearch(
+      "adobe"
+    );
+    await t.pressKey("tab");
+    await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectError();
+    await instances[0].overrides.comboBoxes.idSyncContainerOverride.clear();
+    await t.pressKey("tab");
+    await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectNoError();
+
+    await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectExists();
+    await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.enterSearch(
+      "alloy"
+    );
+    await t.pressKey("tab");
+    await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectError();
+    await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.clear();
+    await t.pressKey("tab");
+    await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectNoError();
+
+    await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectExists();
+    await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].enterSearch(
+      "functional test"
+    );
+    await t.pressKey("tab");
+    await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectError();
+    await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].clear();
+    await t.pressKey("tab");
+    await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectNoError();
+  }
+);
 
 test("initializes form fields with full settings", async () => {
   await extensionViewController.init({

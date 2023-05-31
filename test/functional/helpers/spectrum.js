@@ -196,6 +196,7 @@ const componentWrappers = {
   comboBox(selector) {
     return {
       expectError: createExpectError(selector),
+      expectNoError: createExpectNoError(selector),
       // We use createExpectValue because the text is stored on a value attribute of
       // the element with our data-test-id, even though our true intention is to assert
       // the text in the textfield.

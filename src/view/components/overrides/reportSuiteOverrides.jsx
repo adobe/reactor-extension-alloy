@@ -16,7 +16,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { useFieldValue } from "../../utils/useFieldValue";
 import OverrideInput from "./overrideInput";
-import { FIELD_NAMES, createIsItemInArray } from "./utils";
+import { FIELD_NAMES } from "./utils";
 
 /**
  * The section of the page that allows the user to input a variable number of
@@ -29,6 +29,8 @@ import { FIELD_NAMES, createIsItemInArray } from "./utils";
  * display in the dropdown.
  * @param {string[]} props.primaryItem The list of report suites that are being
  * overridden.
+ * @param {(value: string) => boolean} props.isValid A function that returns
+ * true if the given value is valid. This is used to validate the input.
  * @param {boolean} props.useManualEntry If true, the input is a text field. If
  * false, the input is a combo box.
  * @returns
@@ -37,6 +39,7 @@ const ReportSuitesOverride = ({
   prefix,
   items,
   primaryItem,
+  isValid,
   useManualEntry
 }) => {
   const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
@@ -48,7 +51,6 @@ const ReportSuitesOverride = ({
       .map(v => `"${v}"`)
       .join(", ")}. ${reportSuiteDescription}`;
   }
-  const isValidReportSuite = createIsItemInArray(primaryItem);
   return (
     <FieldArray name={fieldName}>
       {({ remove, push }) => (
@@ -63,7 +65,7 @@ const ReportSuitesOverride = ({
                   allowsCustomValue
                   overrideType="report suites"
                   primaryItem={primaryItem}
-                  isValid={isValidReportSuite}
+                  isValid={isValid}
                   defaultItems={items}
                   name={`${fieldName}.${index}`}
                   description={
@@ -110,6 +112,7 @@ ReportSuitesOverride.propTypes = {
     })
   ).isRequired,
   primaryItem: PropTypes.arrayOf(PropTypes.string).isRequired,
+  isValid: PropTypes.func.isRequired,
   useManualEntry: PropTypes.bool.isRequired
 };
 
