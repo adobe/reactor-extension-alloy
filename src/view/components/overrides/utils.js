@@ -141,3 +141,10 @@ export const createIsItemInArray = (
     return items.has(item);
   };
 };
+
+/**
+ * Returns whether or not the value is a data element expression
+ * @param {string} value
+ * @returns {boolean}
+ */
+export const isDataElement = value => /^%.+%$/.test(value);

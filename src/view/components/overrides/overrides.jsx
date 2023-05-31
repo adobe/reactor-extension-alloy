@@ -29,6 +29,7 @@ import {
   FIELD_NAMES,
   capitialize,
   createIsItemInArray,
+  isDataElement,
   useFetchConfig
 } from "./utils";
 
@@ -152,10 +153,12 @@ const Overrides = ({
               if (primaryEventDataset) {
                 eventDatasetDescription = `Overrides default dataset of "${primaryEventDataset}". ${eventDatasetDescription}`;
               }
-              const isValidDatasetOption = createIsItemInArray(
+              const itemIsInDatasetOptions = createIsItemInArray(
                 eventDatasetOptions.map(({ datasetId }) => datasetId),
                 { errorOnEmptyArray: false, errorOnEmptyItem: false }
               );
+              const isValidDatasetOption = value =>
+                isDataElement(value) || itemIsInDatasetOptions(value);
 
               const primaryIdSyncContainer = `${result?.com_adobe_identity
                 ?.idSyncContainerId ?? ""}`;
@@ -168,10 +171,12 @@ const Overrides = ({
               if (primaryIdSyncContainer) {
                 idSyncContainerDescription = `Overrides default container of "${primaryIdSyncContainer}". ${idSyncContainerDescription}`;
               }
-              const isValidIdSyncContainerOption = createIsItemInArray(
+              const itemIsInIdSyncContainerOptions = createIsItemInArray(
                 idSyncContainers.map(({ label }) => label),
                 { errorOnEmptyArray: false, errorOnEmptyItem: false }
               );
+              const isValidIdSyncContainerOption = value =>
+                isDataElement(value) || itemIsInIdSyncContainerOptions(value);
 
               const primaryPropertyToken =
                 result?.com_adobe_target?.propertyToken ?? "";
@@ -184,10 +189,12 @@ const Overrides = ({
               if (primaryPropertyToken) {
                 propertyTokenDescription = `Overrides default property of "${primaryPropertyToken}". ${propertyTokenDescription}`;
               }
-              const isValidPropertyTokenOption = createIsItemInArray(
+              const itemIsInPropertyTokenOptions = createIsItemInArray(
                 propertyTokenOptions.map(({ value }) => value),
                 { errorOnEmptyArray: false, errorOnEmptyItem: false }
               );
+              const isValidPropertyTokenOption = value =>
+                isDataElement(value) || itemIsInPropertyTokenOptions(value);
 
               /** @type {string[]} */
               const primaryReportSuites =
@@ -206,9 +213,13 @@ const Overrides = ({
                   return value
                     .split(",")
                     .map(v => v.trim())
-                    .every(itemIsInReportSuiteOptions);
+                    .every(
+                      v => isDataElement(v) || itemIsInReportSuiteOptions(v)
+                    );
                 }
-                return itemIsInReportSuiteOptions(value);
+                return (
+                  isDataElement(value) || itemIsInReportSuiteOptions(value)
+                );
               };
 
               return (
