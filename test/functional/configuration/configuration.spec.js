@@ -99,6 +99,12 @@ test.requestHooks(
     await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].clear();
     await t.pressKey("tab");
     await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectNoError();
+    // make sure that comma-separated lists are validated correctly.
+    await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].enterSearch(
+      "unifiedjsqeonly2,unifiedjsqeonlylatest"
+    );
+    await t.pressKey("tab");
+    await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectNoError();
   }
 );
 

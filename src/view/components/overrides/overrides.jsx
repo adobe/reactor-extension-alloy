@@ -197,10 +197,19 @@ const Overrides = ({
                   .concat(result?.com_adobe_analytics?.reportSuites__additional)
                   .filter(Boolean)
                   .map(value => ({ value, label: value })) ?? [];
-              const isValidReportSuiteOption = createIsItemInArray(
+              const itemIsInReportSuiteOptions = createIsItemInArray(
                 reportSuiteOptions.map(({ value }) => value),
                 { errorOnEmptyArray: false, errorOnEmptyItem: false }
               );
+              const isValidReportSuiteOption = value => {
+                if (value?.includes(",")) {
+                  return value
+                    .split(",")
+                    .map(v => v.trim())
+                    .every(itemIsInReportSuiteOptions);
+                }
+                return itemIsInReportSuiteOptions(value);
+              };
 
               return (
                 <Item key={env}>
