@@ -16,7 +16,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { useFieldValue } from "../../utils/useFieldValue";
 import OverrideInput from "./overrideInput";
-import { FIELD_NAMES } from "./utils";
+import { FIELD_NAMES, createIsItemInArray } from "./utils";
 
 /**
  * The section of the page that allows the user to input a variable number of
@@ -44,10 +44,11 @@ const ReportSuitesOverride = ({
   let reportSuiteDescription =
     "The IDs for the destination report suites in Adobe Analytics. The value must be a preconfigured override report suite (or a comma-separated list of report suites) from your datastream configuration and overrides the primary report suites.";
   if (primaryItem && primaryItem.length > 0) {
-    reportSuiteDescription = `Overrides repor suites: ${primaryItem
+    reportSuiteDescription = `Overrides report suites: ${primaryItem
       .map(v => `"${v}"`)
       .join(", ")}. ${reportSuiteDescription}`;
   }
+  const isValidReportSuite = createIsItemInArray(primaryItem);
   return (
     <FieldArray name={fieldName}>
       {({ remove, push }) => (
@@ -62,6 +63,7 @@ const ReportSuitesOverride = ({
                   allowsCustomValue
                   overrideType="report suites"
                   primaryItem={primaryItem}
+                  isValid={isValidReportSuite}
                   defaultItems={items}
                   name={`${fieldName}.${index}`}
                   description={

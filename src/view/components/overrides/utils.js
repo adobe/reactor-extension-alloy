@@ -113,3 +113,31 @@ export const useFetchConfig = ({
   }, [authOrgId, configOrgId, imsAccess, edgeConfigId, sandbox]);
   return { result, isLoading, error };
 };
+
+/**
+ * Partial function application (curried) version of Array.prototype.includes().
+ * Returns a function that takes an item and returns whether the item is in the
+ * array. Items must be primatives, no objects.
+ * Uses a Set internally for quick lookups.
+ * @param {Array<T>} array
+ * @param {Object} options
+ * @param {boolean} options.errorOnEmptyArray errorOnEmptyArray Whether or not to return false if searching
+ * for an item in an empty array.
+ * @param {boolean} options.errorOnEmptyItem Whether or not to return false if searching for an empty item.
+ * @returns {(item: T) => boolean}
+ */
+export const createIsItemInArray = (
+  array,
+  { errorOnEmptyArray = true, errorOnEmptyItem = true } = {}
+) => {
+  const items = new Set(array);
+  return item => {
+    if (items.size === 0 && !errorOnEmptyArray) {
+      return true;
+    }
+    if (!item && !errorOnEmptyItem) {
+      return true;
+    }
+    return items.has(item);
+  };
+};

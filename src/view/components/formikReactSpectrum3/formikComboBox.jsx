@@ -15,7 +15,21 @@ import PropTypes from "prop-types";
 import { ComboBox } from "@adobe/react-spectrum";
 import { useField } from "formik";
 
-const FormikComboBox = ({ name, width, ...otherProps }) => {
+/**
+ * @param {Object} params
+ * @param {string} params.name
+ * @param {string?} params.width
+ * @param {((val: string) => boolean)?} params.isValid A function that is called with
+ * the value of the input and expects boolean to be returned representing the
+ * validity of the input.
+ * @returns {React.Element}
+ */
+const FormikComboBox = ({
+  name,
+  width,
+  isValid = () => true,
+  ...otherProps
+}) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
   );
@@ -27,7 +41,9 @@ const FormikComboBox = ({ name, width, ...otherProps }) => {
       onBlur={() => {
         setTouched(true);
       }}
-      validationState={touched && error ? "invalid" : undefined}
+      validationState={
+        touched && (error || !isValid(value)) ? "invalid" : undefined
+      }
       width={width}
       errorMessage={error}
     />
@@ -36,6 +52,7 @@ const FormikComboBox = ({ name, width, ...otherProps }) => {
 
 FormikComboBox.propTypes = {
   name: PropTypes.string.isRequired,
+  isValid: PropTypes.func,
   width: PropTypes.string
 };
 

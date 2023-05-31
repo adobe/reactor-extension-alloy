@@ -25,7 +25,12 @@ import HeaderContainer from "./headerContainer";
 import OverrideInput from "./overrideInput";
 import ReportSuitesOverride from "./reportSuiteOverrides";
 import SettingsCopySection from "./settingsCopySection";
-import { FIELD_NAMES, capitialize, useFetchConfig } from "./utils";
+import {
+  FIELD_NAMES,
+  capitialize,
+  createIsItemInArray,
+  useFetchConfig
+} from "./utils";
 
 /**
  * A section of a form that allows the user to override datastream configuration
@@ -147,6 +152,10 @@ const Overrides = ({
               if (primaryEventDataset) {
                 eventDatasetDescription = `Overrides default dataset of "${primaryEventDataset}". ${eventDatasetDescription}`;
               }
+              const isValidDatasetOption = createIsItemInArray(
+                eventDatasetOptions.map(({ datasetId }) => datasetId),
+                { errorOnEmptyArray: false, errorOnEmptyItem: false }
+              );
 
               const primaryIdSyncContainer = `${result?.com_adobe_identity
                 ?.idSyncContainerId ?? ""}`;
@@ -159,6 +168,10 @@ const Overrides = ({
               if (primaryIdSyncContainer) {
                 idSyncContainerDescription = `Overrides default container of "${primaryIdSyncContainer}". ${idSyncContainerDescription}`;
               }
+              const isValidIdSyncContainerOption = createIsItemInArray(
+                idSyncContainers.map(({ label }) => label),
+                { errorOnEmptyArray: false, errorOnEmptyItem: false }
+              );
 
               const primaryPropertyToken =
                 result?.com_adobe_target?.propertyToken ?? "";
@@ -171,6 +184,10 @@ const Overrides = ({
               if (primaryPropertyToken) {
                 propertyTokenDescription = `Overrides default property of "${primaryPropertyToken}". ${propertyTokenDescription}`;
               }
+              const isValidPropertyTokenOption = createIsItemInArray(
+                propertyTokenOptions.map(({ value }) => value),
+                { errorOnEmptyArray: false, errorOnEmptyItem: false }
+              );
 
               /** @type {string[]} */
               const primaryReportSuites =
@@ -180,6 +197,10 @@ const Overrides = ({
                   .concat(result?.com_adobe_analytics?.reportSuites__additional)
                   .filter(Boolean)
                   .map(value => ({ value, label: value })) ?? [];
+              const isValidReportSuiteOption = createIsItemInArray(
+                reportSuiteOptions.map(({ value }) => value),
+                { errorOnEmptyArray: false, errorOnEmptyItem: false }
+              );
 
               return (
                 <Item key={env}>
@@ -200,6 +221,7 @@ const Overrides = ({
                         description={eventDatasetDescription}
                         width="size-5000"
                         allowsCustomValue
+                        isValid={isValidDatasetOption}
                         loadingState={isLoading}
                         name={`${prefix}.${env}.com_adobe_experience_platform.datasets.event.datasetId`}
                       >
@@ -219,6 +241,7 @@ const Overrides = ({
                         overrideType="third-party ID sync container"
                         primaryItem={primaryIdSyncContainer}
                         defaultItems={idSyncContainers}
+                        isValid={isValidIdSyncContainerOption}
                         name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
                         inputMode="numeric"
                         width="size-5000"
@@ -237,6 +260,7 @@ const Overrides = ({
                         allowsCustomValue
                         overrideType="property token"
                         primaryItem={primaryPropertyToken}
+                        isValid={isValidPropertyTokenOption}
                         defaultItems={propertyTokenOptions}
                         useManualEntry={
                           useManualEntry || propertyTokenOptions.length === 0
@@ -251,6 +275,7 @@ const Overrides = ({
                     {showFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
                       <ReportSuitesOverride
                         useManualEntry={useManualEntry}
+                        isValid={isValidReportSuiteOption}
                         primaryItem={primaryReportSuites}
                         items={reportSuiteOptions}
                         prefix={`${prefix}.${env}`}
