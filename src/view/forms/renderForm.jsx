@@ -33,10 +33,10 @@ const FormExtensionView = ({
   />
 );
 FormExtensionView.propTypes = {
-  getInitialValues: PropTypes.function,
-  getSettings: PropTypes.function,
+  getInitialValues: PropTypes.func,
+  getSettings: PropTypes.func,
   validationSchema: PropTypes.object,
-  Component: PropTypes.function
+  Component: PropTypes.func
 };
 
 export default element => {
