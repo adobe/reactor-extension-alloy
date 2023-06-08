@@ -9,11 +9,13 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { array, number, object, string } from "yup";
+import { array, lazy, number, object, string } from "yup";
 import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/constants/environmentType";
 import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
 import trimValue from "../../utils/trimValues";
+
+const dataElementValidator = string().matches(/^%.+%$/gi);
 
 export const bridge = {
   // return formik state
@@ -86,10 +88,14 @@ export const bridge = {
 
     OVERRIDE_ENVIRONMENTS.forEach(env => {
       // Alloy, Konductor, and Blackbird expect the idSyncContainerID to be a
-      // number
+      // number, unless it is a data element (/^%.+%$/gi)
       if (
         instanceSettings.edgeConfigOverrides?.[env]?.com_adobe_identity
-          ?.idSyncContainerId
+          ?.idSyncContainerId &&
+        !/^%.+%$/gi.test(
+          instanceSettings.edgeConfigOverrides[env].com_adobe_identity
+            .idSyncContainerId
+        )
       ) {
         instanceSettings.edgeConfigOverrides[
           env
@@ -124,23 +130,27 @@ export const bridge = {
             com_adobe_experience_platform: object({
               datasets: object({
                 event: object({
-                  datasetId: string()
+                  datasetId: string().trim()
                 }),
                 profile: object({
-                  datasetId: string()
+                  datasetId: string().trim()
                 })
               })
             }),
             com_adobe_analytics: object({
-              reportSuites: array(string())
+              reportSuites: array(string().trim()).compact()
             }),
             com_adobe_identity: object({
-              idSyncContainerId: number()
-                .positive()
-                .integer()
+              idSyncContainerId: lazy(value =>
+                typeof value === "string" && value.includes("%")
+                  ? dataElementValidator
+                  : number()
+                      .positive()
+                      .integer()
+              )
             }),
             com_adobe_target: object({
-              propertyToken: string()
+              propertyToken: string().trim()
             })
           })
         }),
