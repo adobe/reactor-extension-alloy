@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const defer = require("@adobe/alloy/libEs6/utils/defer");
 const clone = require("../../utils/clone");
 
 module.exports = ({
@@ -21,6 +22,8 @@ module.exports = ({
     instanceName,
     propositions,
     propositionsEventType,
+    applyPropositions,
+    applyPropositionsMetadata,
     ...otherSettings
   } = settings;
   const instance = instanceManager.getInstance(instanceName);
@@ -42,8 +45,12 @@ module.exports = ({
     otherSettings.data = clone(otherSettings.data);
   }
 
-  if (propositions === "active") {
-    otherSettings.propositions = activePropositions.get();
+  if (propositions === "all") {
+    otherSettings.propositions = activePropositions.getAllPropositions();
+  } else if (propositions === "scoped") {
+    otherSettings.propositions = activePropositions.getScopedPropositions(
+      propositionScopes
+    );
   } else if (propositions) {
     otherSettings.propositions = propositions;
   }
@@ -54,7 +61,25 @@ module.exports = ({
     otherSettings.xdm._experience.decisioning.propositionEventType.interact = 1;
   }
 
-  return instance("sendEvent", otherSettings).then(result => {
-    sendEventCallbackStorage.triggerEvent(result);
-  });
+  const deferred = defer();
+  const { propositions: { scopes, surfaces } = {} } = otherSettings;
+  activePropositions.updateScopes([...scopes, ...surfaces], deferred.promise);
+
+  return instance("sendEvent", otherSettings)
+    .then(result => {
+      sendEventCallbackStorage.triggerEvent(result);
+      if (applyPropositions) {
+        return instance("applyPropositions", {
+          metadata: applyPropositionsMetadata,
+          propositions: result.propositions
+        });
+      }
+      return result;
+    })
+    .then(({ propositions }) => {
+      deferred.resolve(propositions);
+    })
+    .catch(error => {
+      deferred.reject(error);
+    });
 };

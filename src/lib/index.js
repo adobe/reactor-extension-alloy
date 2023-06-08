@@ -9,10 +9,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createActivePropositions from "./createActivePropositions";
-import createEventMergeIdCache from "./createEventMergeIdCache";
-import createSendEventCallbackStorage from "./createSendEventCallbackStorage";
-import createVariableStore from "./createVariableStore";
+const createActivePropositions = require("./createActivePropositions");
+const createEventMergeIdCache = require("./createEventMergeIdCache");
+const createSendEventCallbackStorage = require("./createSendEventCallbackStorage");
+const createVariableStore = require("./createVariableStore");
 
 exports.activePropositions = createActivePropositions();
 exports.eventMergeIdCache = createEventMergeIdCache();

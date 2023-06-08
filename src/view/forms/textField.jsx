@@ -3,30 +3,26 @@ import { string } from "yup";
 import PropTypes from "prop-types";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
-import { simpleGetInitialValues, simpleGetSettings } from "./utils";
 
 /**
  * This creates a form field for a text field and supports data elements.
- * @param {object} options
- * @param {string} options.key - The formik key to use for this field.
- * @param {boolean} [options.isRequired=false] - Whether or not the field is
+ * @param {object} props
+ * @param {string} props.key - The formik key to use for this field.
+ * @param {boolean} [props.isRequired=false] - Whether or not the field is
  * required.
- * @param {boolean} [options.dataElementSupported=true] - Whether or not a data
+ * @param {boolean} [props.dataElementSupported=true] - Whether or not a data
  * element button should be included.
- * @param {string} options.label - The label to use for the field.
- * @param {string} options.description - The description to use for the field.
+ * @param {string} props.label - The label to use for the field.
+ * @param {string} props.description - The description to use for the field.
  * @returns {FormPart}
  */
 export default ({
-  key,
+  name,
   isRequired = false,
   dataElementSupported = true,
   label,
   description
 }) => {
-  const getInitialValues = simpleGetInitialValues({ key });
-  const getSettings = simpleGetSettings({ key });
-
   let validationSchema = string();
   if (isRequired) {
     validationSchema = validationSchema.required(
@@ -36,11 +32,11 @@ export default ({
 
   let Component;
   if (dataElementSupported) {
-    const ComponentWithDataElement = ({ keyPrefix = "" }) => (
+    const ComponentWithDataElement = ({ namePrefix = "" }) => (
       <DataElementSelector>
         <FormikTextField
-          data-test-id={`${keyPrefix}${key}TextField`}
-          name={`${keyPrefix}${key}`}
+          data-test-id={`${namePrefix}${name}TextField`}
+          name={`${namePrefix}${name}`}
           label={label}
           isRequired={isRequired}
           description={description}
@@ -49,14 +45,14 @@ export default ({
       </DataElementSelector>
     );
     ComponentWithDataElement.propTypes = {
-      keyPrefix: PropTypes.string
+      namePrefix: PropTypes.string
     };
     Component = ComponentWithDataElement;
   } else {
-    const ComponentWithoutDataElement = ({ keyPrefix = "" }) => (
+    const ComponentWithoutDataElement = ({ namePrefix = "" }) => (
       <FormikTextField
-        data-test-id={`${keyPrefix}${key}TextField`}
-        name={`${keyPrefix}${key}`}
+        data-test-id={`${namePrefix}${name}TextField`}
+        name={`${namePrefix}${name}`}
         label={label}
         isRequired={isRequired}
         description={description}
@@ -64,16 +60,26 @@ export default ({
       />
     );
     ComponentWithoutDataElement.propTypes = {
-      keyPrefix: PropTypes.string
+      namePrefix: PropTypes.string
     };
     Component = ComponentWithoutDataElement;
   }
 
   return {
-    getInitialValues,
-    getSettings,
-    validationSchema: {
-      [key]: validationSchema
+    getInitialValues({ initInfo }) {
+      const { [name]: value = "" } = initInfo.settings || {};
+      return { [name]: value };
+    },
+    getSettings({ values }) {
+      const { [name]: value } = values;
+      const settings = {};
+      if (value) {
+        settings[name] = value;
+      }
+      return settings;
+    },
+    validationShape: {
+      [name]: validationSchema
     },
     Component
   };

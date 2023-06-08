@@ -807,27 +807,6 @@
       ],
       "libPath": "dist/lib/actions/updateVariable/index.js",
       "viewPath": "actions/updateVariable.html"
-    },
-    {
-      "displayName": "Test",
-      "name": "test",
-      "schema": {
-        "$schema": "http://json-schema.org/draft-04/schema#",
-        "type": "object",
-        "properties": {
-          "first": {
-            "type": "string",
-            "minLength": 1
-          },
-          "last": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "required": ["first", "last"]
-      },
-      "libPath": "dist/lib/actions/test.js",
-      "viewPath": "actions/test.html"
     }
   ],
   "events": [

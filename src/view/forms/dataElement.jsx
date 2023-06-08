@@ -4,21 +4,17 @@ import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
-import { simpleGetInitialValues, simpleGetSettings } from "./utils";
 
 /**
  * This creates a form field that is required to be a single data element.
- * @param {object} options
- * @param {string} options.key - The formik key to use for this field.
- * @param {boolean} [options.isRequired=false] - Whether or not this field is required.
- * @param {string} options.label - The label to use for this field.
- * @param {string} [options.description] - The description to use for this field.
- * @returns {FormPart}
+ * @param {object} props
+ * @param {string} props.name - The formik key to use for this field.
+ * @param {boolean} [props.isRequired=false] - Whether or not this field is required.
+ * @param {string} props.label - The label to use for this field.
+ * @param {string} [props.description] - The description to use for this field.
+ * @returns {FormFragment}
  */
-export default ({ key, isRequired = false, label, description }) => {
-  const getInitialValues = simpleGetInitialValues({ key });
-  const getSettings = simpleGetSettings({ key });
-
+export default ({ name, isRequired = false, label, description }) => {
   let fieldSchema = string().matches(
     singleDataElementRegex,
     DATA_ELEMENT_REQUIRED
@@ -30,17 +26,27 @@ export default ({ key, isRequired = false, label, description }) => {
   }
 
   return {
-    getInitialValues,
-    getSettings,
-    validationSchema: {
-      [key]: fieldSchema
+    getInitialValues({ initInfo }) {
+      const { [name]: value = "" } = initInfo.settings || {};
+      return { [name]: value };
     },
-    Component: () => {
+    getSettings({ values }) {
+      const { [name]: value } = values;
+      const settings = {};
+      if (value) {
+        settings[name] = value;
+      }
+      return settings;
+    },
+    validationShape: {
+      [name]: fieldSchema
+    },
+    Component: (namePrefix = "") => {
       return (
         <DataElementSelector>
           <FormikTextField
-            data-test-id={`${key}TextField`}
-            name={key}
+            data-test-id={`${namePrefix}${name}TextField`}
+            name={`${namePrefix}${name}`}
             label={label}
             isRequired={isRequired}
             description={description}

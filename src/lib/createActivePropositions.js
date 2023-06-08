@@ -9,19 +9,50 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ sendEventCallbackStorage }) => {
-  let activePropositions = [];
+const defer = require("@adobe/alloy/libEs6/utils/defer");
+const flatMap = require("@adobe/alloy/libEs6/utils/flatMap");
 
-  sendEventCallbackStorage.add(({ propositions }) => {
-    // TODO: figure out what to put here... Should it just be for requests that
-    // are top of page or should it be for requests that include "__view__" with
-    // renderDecisions == false?... or just "decisioning.propositionsFetch" events?
-    activePropositions = propositions;
-  });
+module.exports = () => {
+  const promisesByScope = {};
 
   return {
-    get() {
-      return activePropositions;
+    updateScopes(scopes, promise) {
+      const savedPropositionsByScope = Object.assign({}, promisesByScope);
+      const defersByScope = scopes.reduce((memo, scope) => {
+        memo[scope] = defer();
+        promisesByScope[scope] = memo[scope].promise;
+        return memo;
+      }, {});
+      promise
+        .then(propositions => {
+          const propositionsByScope = {};
+          propositions.forEach(proposition => {
+            propositionsByScope[proposition.scope] ||= [];
+            propositionsByScope[proposition.scope].push(proposition);
+          });
+          scopes.forEach(scope => {
+            defersByScope[scope].resolve(propositionsByScope[scope] || []);
+          });
+        })
+        .catch(() => {
+          scopes.forEach(scope => {
+            defersByScope[scope].resolve(savedPropositionsByScope[scope]);
+          });
+        });
+    },
+    getPropositionsForScopes(scopes) {
+      return Promise.all(scopes.map(scope => promisesByScope[scope])).then(
+        propositions => {
+          return flatMap(propositions, proposition => proposition);
+        }
+      );
+    },
+    getAllPropositions() {
+      return Promise.all(
+        Object.keys(promisesByScope).map(key => promisesByScope[key])
+      ).then(propositions => {
+        return flatMap(propositions, proposition => proposition);
+      });
     }
   };
 };

@@ -8,12 +8,7 @@ import FormikTextField from "../components/formikReactSpectrum3/formikTextField"
 import DataElementSelector from "../components/dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
-import {
-  combineComponents,
-  combineGetInitialValues,
-  combineGetSettings,
-  combineValidationSchemas
-} from "./utils";
+import form from "./form";
 
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
@@ -22,46 +17,49 @@ const DATA_ELEMENT = "dataElement";
  * This creates a form element that allows the user to create an array of
  * objects, or an object with string keys and object values. Any items with no
  * values filled in will be removed from the final settings.
- * @param {object} options
- * @param {string} options.key - The formik key to use for this field.
+ * @param {object} props
+ * @param {string} props.name - The formik key to use for this field.
  *  - `${key}` will be used to store the array of objects.
  *  - `${key}InputMethod` will be used to determine whether or not to use a data
  *    element.
  *  - `${key}DataElement` will be used to store the data element value.
- * @param {string} options.label - The label to use for the field.
- * @param {string} options.singularLabel - The singular label to use for the add
+ * @param {string} props.label - The label to use for the field.
+ * @param {string} props.singularLabel - The singular label to use for the add
  * button.
- * @param {string} [options.dataElementDescription] - The description to use for
+ * @param {string} [props.dataElementDescription] - The description to use for
  * the data element field. Usually you would use this to describe the type the
  * data element should be.
- * @param {string} [options.objectKey] - If you want to create an object, use
+ * @param {string} [props.objectKey] - If you want to create an object, use
  * this to specify the Formik key to use for the keys of the object. If you want
  * to create an array of objects, omit this.
- * @param {string} [options.objectLabelPlural] - If you have set `objectKey`,
+ * @param {string} [props.objectLabelPlural] - If you have set `objectKey`,
  * this will be used to describe the object keys in the validation error message
  * to make sure they are unique.
- * @param {...FormPart} parts - The Form parts to use for the object. These will
+ * @param {Form[]} props.children - The Form parts to use for the object. These will
  * be used to create the form for each object in the array. When rendering the
- * components, the `prefixKey` prop will be set to `${key}.${index}.`
- * @returns {FormPart}
+ * components, the `prefixName` prop will be set to `${name}.${index}.`
+ * @returns {Form}
  */
-export default (
-  {
-    key,
-    label,
-    singularLabel,
-    dataElementDescription,
-    objectKey,
-    objectLabelPlural
-  },
-  ...parts
-) => {
-  const getItemInitialValues = combineGetInitialValues(parts);
-  const getItemSettings = combineGetSettings(parts);
+export default ({
+  name,
+  label,
+  singularLabel,
+  dataElementDescription,
+  objectKey,
+  objectLabelPlural,
+  children
+}) => {
+  const {
+    getInitialValues: getItemInitialValues,
+    getSettings: getItemSettings,
+    validationShape: itemValidationShape,
+    Component: ItemComponent
+  } = form({ children });
+
   const buildDefaultItem = () =>
     getItemInitialValues({ initInfo: { settings: null } });
 
-  let itemSchema = object().shape(combineValidationSchemas(parts));
+  let itemSchema = object().shape(itemValidationShape);
 
   if (objectKey) {
     itemSchema = itemSchema.test(
@@ -89,17 +87,17 @@ export default (
     );
   }
 
-  const validationSchema = {};
-  validationSchema[key] = array()
+  const validationShape = {};
+  validationShape[name] = array()
     .compact(
       item => Object.keys(getItemSettings({ values: item })).length === 0
     )
-    .when(`${key}InputMethod`, {
+    .when(`${name}InputMethod`, {
       is: FORM,
       then: schema => schema.of(itemSchema)
     });
 
-  validationSchema[`${key}DataElement`] = string().when(`${key}InputMethod`, {
+  validationShape[`${name}DataElement`] = string().when(`${name}InputMethod`, {
     is: DATA_ELEMENT,
     then: schema =>
       schema
@@ -107,11 +105,9 @@ export default (
         .required(DATA_ELEMENT_REQUIRED)
   });
 
-  const CombinedComponent = combineComponents(parts);
-
   const formPart = {
     getInitialValues({ initInfo }) {
-      const { [key]: value } = initInfo.settings || {};
+      const { [name]: value } = initInfo.settings || {};
 
       let transformedValue = value;
       if (transformedValue && objectKey) {
@@ -129,58 +125,64 @@ export default (
       }
 
       const initialValues = {
-        [key]: transformedValue,
-        [`${key}InputMethod`]: FORM,
-        [`${key}DataElement`]: ""
+        [name]: transformedValue,
+        [`${name}InputMethod`]: FORM,
+        [`${name}DataElement`]: ""
       };
 
       if (typeof value === "string") {
-        initialValues[key] = [""];
-        initialValues[`${key}InputMethod`] = DATA_ELEMENT;
-        initialValues[`${key}DataElement`] = value;
+        initialValues[name] = [""];
+        initialValues[`${name}InputMethod`] = DATA_ELEMENT;
+        initialValues[`${name}DataElement`] = value;
       }
       return initialValues;
     },
     getSettings({ values }) {
       const settings = {};
-      if (values[`${key}InputMethod`] === FORM) {
-        const itemSettings = values[key].map(getItemSettings);
+      if (values[`${name}InputMethod`] === FORM) {
+        const itemSettings = values[name].map(item =>
+          getItemSettings({ values: item })
+        );
         const filteredItems = itemSettings.filter(
           item => Object.keys(item).length > 0
         );
         if (filteredItems.length > 0) {
           if (objectKey) {
-            settings[key] = filteredItems.reduce((acc, item) => {
+            settings[name] = filteredItems.reduce((acc, item) => {
               const { [objectKey]: settingKey, ...rest } = item;
               acc[settingKey] = rest;
               return acc;
             }, {});
           } else {
-            settings[key] = filteredItems;
+            settings[name] = filteredItems;
           }
         }
       } else {
-        settings[key] = values[`${key}DataElement`];
+        settings[name] = values[`${name}DataElement`];
       }
       return settings;
     },
-    validationSchema,
-    Component: ({ initInfo }) => {
-      const [{ value: inputMethod }] = useField(`${key}InputMethod`);
-      const [{ value: items }, , { setValue: setItems }] = useField(key);
+    validationShape,
+    Component: ({ namePrefix = "", ...props }) => {
+      const [{ value: inputMethod }] = useField(
+        `${namePrefix}${name}InputMethod`
+      );
+      const [{ value: items }, , { setValue: setItems }] = useField(
+        `${namePrefix}${name}`
+      );
 
       return (
         <>
           <FormikRadioGroup
-            name={`${key}InputMethod`}
+            name={`${namePrefix}${name}InputMethod`}
             orientation="horizontal"
             label={label}
           >
-            <Radio data-test-id={`${key}FormOption`} value={FORM}>
+            <Radio data-test-id={`${namePrefix}${name}FormOption`} value={FORM}>
               Use a form.
             </Radio>
             <Radio
-              data-test-id={`${key}DataElementOption`}
+              data-test-id={`${namePrefix}${name}DataElementOption`}
               value={DATA_ELEMENT}
             >
               Provide a data element.
@@ -188,7 +190,7 @@ export default (
           </FormikRadioGroup>
           {inputMethod === FORM && (
             <FieldArray
-              name={key}
+              name={`${namePrefix}${name}`}
               render={arrayHelpers => {
                 return (
                   <>
@@ -200,14 +202,14 @@ export default (
                           direction="column"
                           gap="size-100"
                         >
-                          <CombinedComponent
-                            initInfo={initInfo}
-                            keyPrefix={`${key}.${index}.`}
+                          <ItemComponent
+                            namePrefix={`${namePrefix}${name}.${index}.`}
+                            {...props}
                           />
                           <Flex direction="row">
                             <Button
                               variant="secondary"
-                              data-test-id={`${key}${index}RemoveButton`}
+                              data-test-id={`${namePrefix}${name}${index}RemoveButton`}
                               onPress={() => {
                                 // using arrayHelpers.remove mangles the error message
                                 setItems(
@@ -226,7 +228,7 @@ export default (
                     <div>
                       <Button
                         variant="secondary"
-                        data-test-id={`${key}AddButton`}
+                        data-test-id={`${namePrefix}${name}AddButton`}
                         onPress={() => arrayHelpers.push(buildDefaultItem())}
                       >
                         Add {singularLabel.toLowerCase()}
@@ -240,8 +242,8 @@ export default (
           {inputMethod === DATA_ELEMENT && (
             <DataElementSelector>
               <FormikTextField
-                data-test-id={`${key}DataElementField`}
-                name={`${key}DataElement`}
+                data-test-id={`${namePrefix}${name}DataElementField`}
+                name={`${namePrefix}${name}DataElement`}
                 description={dataElementDescription}
                 width="size-5000"
                 aria-label={`${label} data element`}
@@ -253,7 +255,7 @@ export default (
     }
   };
   formPart.Component.propTypes = {
-    initInfo: PropTypes.object.isRequired
+    namePrefix: PropTypes.string
   };
   return formPart;
 };
