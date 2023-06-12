@@ -35,14 +35,14 @@ const DATA_ELEMENT = "dataElement";
  * required. When required, the user will need to enter at least one string.
  * @returns {Form}
  */
-export default ({
+export default function StringArray({
   name,
   isRequired = false,
   label,
   singularLabel,
   description,
   dataElementDescription
-}) => {
+}) {
   const validationShape = {};
   if (isRequired) {
     validationShape[name] = array()
@@ -93,7 +93,7 @@ export default ({
       }
       return settings;
     },
-    validationSchema: validationShape,
+    validationShape,
     Component: ({ namePrefix = "" }) => {
       const [{ value: inputMethod }] = useField(
         `${namePrefix}${name}InputMethod`
@@ -199,4 +199,5 @@ export default ({
   part.Component.propTypes = {
     namePrefix: PropTypes.string
   };
-};
+  return part;
+}

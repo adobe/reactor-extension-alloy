@@ -12,7 +12,12 @@ import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
  * checkbox.
  * @returns {FormPart}
  */
-export default ({ name, label, description, defaultValue = false }) => {
+export default function Checkbox({
+  name,
+  label,
+  description,
+  defaultValue = false
+}) {
   const part = {
     getInitialValues({ initInfo }) {
       const { [name]: value = defaultValue } = initInfo.settings || {};
@@ -41,4 +46,4 @@ export default ({ name, label, description, defaultValue = false }) => {
     namePrefix: PropTypes.string
   };
   return part;
-};
+}

@@ -9,7 +9,7 @@ import form from "./form";
  * @param {string} [props.learnMoreUrl] - The url to use for the learn more link.
  * @returns {FormPart}
  */
-export default ({ label, learnMoreUrl, children }) => {
+export default function Section({ label, learnMoreUrl, children }) {
   const { getInitialValues, getSettings, validationSchema, Component } = form({
     children
   });
@@ -25,4 +25,4 @@ export default ({ label, learnMoreUrl, children }) => {
       </>
     )
   };
-};
+}

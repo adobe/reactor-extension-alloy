@@ -16,13 +16,13 @@ import FormikTextField from "../components/formikReactSpectrum3/formikTextField"
  * @param {string} props.description - The description to use for the field.
  * @returns {FormPart}
  */
-export default ({
+export default function TextField({
   name,
   isRequired = false,
   dataElementSupported = true,
   label,
   description
-}) => {
+}) {
   let validationSchema = string();
   if (isRequired) {
     validationSchema = validationSchema.required(
@@ -83,4 +83,4 @@ export default ({
     },
     Component
   };
-};
+}

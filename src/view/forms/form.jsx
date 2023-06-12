@@ -13,47 +13,60 @@ import FormElementContainer from "../components/formElementContainer";
  * component will be passes the props "namePrefix", "initInfo", and "formikProps".
  */
 
+const Identity = x => x;
+
 /**
  * This creates a composite form.
  * @param {Form[]} children - The children forms to combine.
  * @returns {Form}
  */
-export default ({ children }) => ({
-  getInitialValues({ initInfo }) {
-    return children
-      .filter(child => child.getInitialValues)
-      .reduce((values, child) => {
+export default function Form({
+  children,
+  wrapGetInitialValues = Identity,
+  wrapGetSettings = Identity,
+  wrapValidationShape = Identity
+}) {
+  const part = {
+    getInitialValues({ initInfo }) {
+      return children
+        .filter(child => child.getInitialValues)
+        .reduce((values, child) => {
+          return {
+            ...values,
+            ...child.getInitialValues({ initInfo })
+          };
+        }, {});
+    },
+    getSettings({ values }) {
+      return children
+        .filter(child => child.getSettings)
+        .reduce((settings, child) => {
+          return {
+            ...settings,
+            ...child.getSettings({ values })
+          };
+        }, {});
+    },
+    validationShape: children
+      .filter(child => child.validationShape)
+      .reduce((shape, child) => {
         return {
-          ...values,
-          ...child.getInitialValues({ initInfo })
+          ...shape,
+          ...child.validationShape
         };
-      }, {});
-  },
-  getSettings({ values }) {
-    return children
-      .filter(child => child.getSettings)
-      .reduce((settings, child) => {
-        return {
-          ...settings,
-          ...child.getSettings({ values })
-        };
-      }, {});
-  },
-  validationShape: children
-    .filter(child => child.validationShape)
-    .reduce((shape, child) => {
-      return {
-        ...shape,
-        ...child.validationShape
-      };
-    }, {}),
-  Component(props) {
-    return (
-      <FormElementContainer>
-        {children.map(({ Component }, index) => {
-          return <Component key={`${index}`} {...props} />;
-        })}
-      </FormElementContainer>
-    );
-  }
-});
+      }, {}),
+    Component(props) {
+      return (
+        <FormElementContainer>
+          {children.map(({ Component }, index) => {
+            return <Component key={`${index}`} {...props} />;
+          })}
+        </FormElementContainer>
+      );
+    }
+  };
+  part.getInitialValues = wrapGetInitialValues(part.getInitialValues);
+  part.getSettings = wrapGetSettings(part.getSettings);
+  part.validationShape = wrapValidationShape(part.validationShape);
+  return part;
+}

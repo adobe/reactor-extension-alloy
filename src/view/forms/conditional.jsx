@@ -16,7 +16,7 @@ import form from "./form";
  *
  * @returns {Form}
  */
-export default ({ args, condition, children }) => {
+export default function Conditional({ args, condition, children }) {
   const argsArray = Array.isArray(args) ? args : [args];
   const { getInitialValues, getSettings, validationShape, Component } = form({
     children
@@ -51,4 +51,4 @@ export default ({ args, condition, children }) => {
       return <Component {...props} />;
     }
   };
-};
+}

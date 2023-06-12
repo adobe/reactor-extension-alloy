@@ -10,20 +10,28 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const defer = require("@adobe/alloy/libEs6/utils/defer");
+const defer = require("../../utils/defer");
 const clone = require("../../utils/clone");
+
+// TODO: support decisionScopes at top level
 
 module.exports = ({
   instanceManager,
   sendEventCallbackStorage,
-  activePropositions
+  propositionCache
 }) => settings => {
   const {
     instanceName,
     propositions,
     propositionsEventType,
-    applyPropositions,
-    applyPropositionsMetadata,
+    propositionScopes,
+    personalization: {
+      sendNotifications = true,
+      metadata: applyPropositionsMetadata = {},
+      decisionScopes,
+      surfaces
+    } = {},
+    renderDecisions,
     ...otherSettings
   } = settings;
   const instance = instanceManager.getInstance(instanceName);
@@ -45,14 +53,15 @@ module.exports = ({
     otherSettings.data = clone(otherSettings.data);
   }
 
+  let propositionsPromise = Promise.resolve();
   if (propositions === "all") {
-    otherSettings.propositions = activePropositions.getAllPropositions();
+    propositionsPromise = propositionCache.clearAllRenderedPropositions();
   } else if (propositions === "scoped") {
-    otherSettings.propositions = activePropositions.getScopedPropositions(
+    propositionsPromise = propositionCache.clearScopedRenderedPropositions(
       propositionScopes
     );
   } else if (propositions) {
-    otherSettings.propositions = propositions;
+    propositionsPromise = Promise.resolve(propositions);
   }
   if (propositionsEventType === "interact") {
     otherSettings.xdm._experience ||= {};
@@ -60,15 +69,26 @@ module.exports = ({
     otherSettings.xdm._experience.decisioning.propositionEventType ||= {};
     otherSettings.xdm._experience.decisioning.propositionEventType.interact = 1;
   }
+  if (renderDecisions && sendNotifications) {
+    otherSettings.renderDecisions = true;
+  }
 
   const deferred = defer();
-  const { propositions: { scopes, surfaces } = {} } = otherSettings;
-  activePropositions.updateScopes([...scopes, ...surfaces], deferred.promise);
+  propositionCache.updateScopes(
+    [...decisionScopes, ...surfaces],
+    deferred.promise
+  );
 
-  return instance("sendEvent", otherSettings)
+  return propositionsPromise
+    .then(propositionsToReport => {
+      if (propositionsToReport) {
+        otherSettings.propositions = propositionsToReport;
+      }
+      return instance("sendEvent", otherSettings);
+    })
     .then(result => {
       sendEventCallbackStorage.triggerEvent(result);
-      if (applyPropositions) {
+      if (renderDecisions && !sendNotifications) {
         return instance("applyPropositions", {
           metadata: applyPropositionsMetadata,
           propositions: result.propositions
@@ -76,8 +96,8 @@ module.exports = ({
       }
       return result;
     })
-    .then(({ propositions }) => {
-      deferred.resolve(propositions);
+    .then(({ propositions: returnedPropositions }) => {
+      deferred.resolve(returnedPropositions);
     })
     .catch(error => {
       deferred.reject(error);

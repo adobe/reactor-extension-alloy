@@ -1,6 +1,6 @@
 {
-  "displayName": "Adobe Experience Platform Web SDK",
-  "name": "adobe-alloy",
+  "displayName": "Adobe Experience Platform Web SDK (josnyder)",
+  "name": "adobe-alloy-josnyder",
   "iconPath": "resources/images/icon.svg",
   "exchangeUrl": "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
   "platform": "web",
@@ -237,7 +237,7 @@
         "properties": {
           "eventStyle": {
             "type": "string",
-            "enum": ["standard", "top", "bottom"]
+            "enum": ["fetch", "collect"]
           },
           "instanceName": {
             "type": "string",
@@ -292,6 +292,42 @@
                     "pattern": "^%[^%]+%$"
                   }
                 ]
+              },
+              "sendNotifications": {
+                "type": "boolean"
+              },
+              "metadata": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^%[^%]+%$"
+                  },
+                  {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "selector": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "actionType": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "pattern": "^%[^%]+%$"
+                            },
+                            {
+                              "type": "string",
+                              "enum": ["setHtml", "replaceHtml", "appendHtml"]
+                            }
+                          ]
+                        }
+                      },
+                      "required": ["selector", "actionType"]
+                    }
+                  }
+                ]
               }
             },
             "additionalProperties": false
@@ -327,7 +363,23 @@
               },
               {
                 "type": "string",
-                "enum": ["active"]
+                "enum": ["all", "scoped"]
+              }
+            ]
+          },
+          "propositionScopes": {
+            "anyOf": [
+              {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              {
+                "type": "string",
+                "pattern": "^%[^%]+%$"
               }
             ]
           },

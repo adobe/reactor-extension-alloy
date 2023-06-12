@@ -21,7 +21,7 @@ import FieldSubset from "../components/fieldSubset";
  * @param {boolean} [props.dataElementSupported=true] - Whether or not a "Provide a
  * data element" option should be available.
  * @param {string} props.label - The label to use for the field.
- * @param {string} props.defaultValue - The default value to use for the radio
+ * @param {string} [props.defaultValue] - The default value to use for the radio
  * group.
  * @param {string} [props.dataElementDescription] - The description to use for
  * the data element field. Usually you would use this to describe the values the
@@ -30,16 +30,19 @@ import FieldSubset from "../components/fieldSubset";
  * should be objects with keys "value" and "label".
  * @returns {Form}
  */
-export default ({
+export default function RadioGroup({
   name,
   isRequired = false,
   dataElementSupported = true,
   label,
   dataElementDescription,
   items,
-  defaultValue
-}) => {
+  defaultValue = ""
+}) {
   const validationShape = {};
+  if (isRequired) {
+    validationShape[name] = string().required("Please select an option.");
+  }
   if (dataElementSupported) {
     validationShape[`${name}DataElement`] = string().when(name, {
       is: "dataElement",
@@ -127,4 +130,4 @@ export default ({
   };
 
   return formPart;
-};
+}

@@ -40,7 +40,7 @@ const DATA_ELEMENT = "dataElement";
  * components, the `prefixName` prop will be set to `${name}.${index}.`
  * @returns {Form}
  */
-export default ({
+export default function ObjectArray({
   name,
   label,
   singularLabel,
@@ -48,7 +48,7 @@ export default ({
   objectKey,
   objectLabelPlural,
   children
-}) => {
+}) {
   const {
     getInitialValues: getItemInitialValues,
     getSettings: getItemSettings,
@@ -258,4 +258,4 @@ export default ({
     namePrefix: PropTypes.string
   };
   return formPart;
-};
+}

@@ -14,7 +14,12 @@ import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
  * @param {string} [props.description] - The description to use for this field.
  * @returns {FormFragment}
  */
-export default ({ name, isRequired = false, label, description }) => {
+export default function DataElement({
+  name,
+  isRequired = false,
+  label,
+  description
+}) {
   let fieldSchema = string().matches(
     singleDataElementRegex,
     DATA_ELEMENT_REQUIRED
@@ -56,4 +61,4 @@ export default ({ name, isRequired = false, label, description }) => {
       );
     }
   };
-};
+}

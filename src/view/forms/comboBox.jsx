@@ -25,7 +25,7 @@ import singleDataElementRegex from "../constants/singleDataElementRegex";
  * "label". The "value" is the value that will be saved to the settings, and the
  * "label" is the text that will be shown in the combo box.
  */
-export default ({
+export default function ComboBox({
   name,
   isRequired = false,
   dataElementSupported = true,
@@ -33,7 +33,7 @@ export default ({
   description,
   dataElementDescription,
   items
-}) => {
+}) {
   let fieldSchema = string().test(
     name,
     `Please choose a ${label.toLowerCase()} from the list or specify a single data element.`,
@@ -128,4 +128,4 @@ export default ({
     namePrefix: PropTypes.string
   };
   return part;
-};
+}

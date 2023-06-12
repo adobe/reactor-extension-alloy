@@ -20,6 +20,10 @@ import eventTypes from "./constants/eventTypes";
 import renderForm from "../forms/renderForm";
 import TextField from "../forms/textField";
 
+const UNGUIDED = "unguided";
+const FETCH = "fetch";
+const COLLECT = "collect";
+
 const xdmFieldDescription = (
   <>
     Provide a data element which returns an object matching your XDM schema. You
@@ -49,24 +53,53 @@ const xdmFieldDescription = (
 );
 
 const SendEventForm = (
-  <Form>
+  <Form
+    wrapGetInitialValues={getInitialValues => ({ initInfo }) => {
+      const { personalization = {}, ...otherSettings } =
+        initInfo.settings || {};
+      return getInitialValues({
+        initInfo: {
+          ...initInfo,
+          settings: { ...personalization, ...otherSettings }
+        }
+      });
+    }}
+    wrapGetSettings={getSettings => ({ values }) => {
+      const {
+        decisionScopes,
+        surfaces,
+        sendNotifications,
+        metadata,
+        ...otherValues
+      } = getSettings({ values });
+      return {
+        ...otherValues,
+        personalization: {
+          decisionScopes,
+          surfaces,
+          sendNotifications,
+          metadata
+        }
+      };
+    }}
+  >
     <RadioGroup
       name="eventStyle"
       label="Guided event style"
       dataElementSupported={false}
-      defaultValue="standard"
+      defaultValue={UNGUIDED}
       items={[
-        { value: "standard", label: "Unguided (all fields)" },
-        { value: "fetch", label: "Fetch propositions" },
-        { value: "pageView", label: "Page view" }
+        { value: UNGUIDED, label: "Unguided (all fields)" },
+        { value: FETCH, label: "Fetch personalization" },
+        { value: COLLECT, label: "Data collection with display notifications" }
       ]}
-      description="Select the event style. Fetch propositions events do not record events in Adobe Analytics and have the type decisioning.propositionFetch. Pave view events do not request personalization decisions."
+      description="Select the event style. Fetch personalization events do not record events in Adobe Analytics and have the type decisioning.propositionFetch. Data collection events do not request personalization decisions."
     />
     <InstancePicker name="instanceName" />
     <Section label="Data collection">
       <Conditional
         args="eventStyle"
-        condition={eventStyle => eventStyle !== "fetch"}
+        condition={eventStyle => eventStyle !== FETCH}
       >
         <ComboBox
           name="type"
@@ -83,7 +116,7 @@ const SendEventForm = (
       </Conditional>
       <Conditional
         args="eventStyle"
-        condition={eventStyle => eventStyle === "fetch"}
+        condition={eventStyle => eventStyle === FETCH}
       >
         <DisabledTextField
           name="type"
@@ -101,7 +134,7 @@ const SendEventForm = (
       />
       <Conditional
         args="eventStyle"
-        condition={eventStyle => eventStyle !== "fetch"}
+        condition={eventStyle => eventStyle !== FETCH}
       >
         <RadioGroup
           name="propositions"
@@ -132,7 +165,7 @@ const SendEventForm = (
       <Conditional
         args={["eventStyle", "propositions"]}
         condition={(eventStyle, propositions) =>
-          eventStyle === "standard" && propositions !== "none"
+          eventStyle === UNGUIDED && propositions !== "none"
         }
       >
         <ComboBox
@@ -147,7 +180,7 @@ const SendEventForm = (
       </Conditional>
       <Conditional
         args="eventStyle"
-        condition={eventStyle => eventStyle === "standard"}
+        condition={eventStyle => eventStyle === UNGUIDED}
       >
         <DataElement
           name="mergeId"
@@ -163,11 +196,11 @@ const SendEventForm = (
     </Section>
     <Conditional
       args="eventStyle"
-      condition={eventStyle => eventStyle !== "pageView"}
+      condition={eventStyle => eventStyle !== COLLECT}
     >
       <Section label="Personalization">
         <StringArray
-          name="scopes"
+          name="decisionScopes"
           label="Scopes"
           singularLabel="Scope"
           description="Create an array of decision scopes to query with the event."
@@ -182,7 +215,7 @@ const SendEventForm = (
         />
         <Conditional
           args="eventStyle"
-          condition={eventStyle => eventStyle === "standard"}
+          condition={eventStyle => eventStyle === UNGUIDED}
         >
           <Checkbox
             name="renderDecisions"
@@ -210,7 +243,7 @@ const SendEventForm = (
         </Conditional>
         <Conditional
           args="eventStyle"
-          condition={eventStyle => eventStyle === "fetch"}
+          condition={eventStyle => eventStyle === FETCH}
         >
           <DisabledCheckbox
             name="renderDecisions"
@@ -230,7 +263,7 @@ const SendEventForm = (
     </Conditional>
     <Conditional
       args="eventStyle"
-      condition={eventStyle => eventStyle === "standard"}
+      condition={eventStyle => eventStyle === UNGUIDED}
     >
       <Section label="Configuration overrides">
         <ConfigOverrides />

@@ -15,14 +15,14 @@ import PropTypes from "prop-types";
  * combo box.
  * @returns {FormFragment}
  */
-export default ({
+export default function DisabledTextField({
   name,
   value,
   valueLabel,
   isRequired,
   label,
   description
-}) => {
+}) {
   const Component = ({ namePrefix = "" }) => {
     return (
       <TextField
@@ -48,4 +48,4 @@ export default ({
     },
     Component
   };
-};
+}

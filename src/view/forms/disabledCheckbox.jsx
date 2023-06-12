@@ -13,7 +13,7 @@ import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
  * checkbox.
  * @returns {Form}
  */
-export default ({ name, value, label, description }) => {
+export default function DisabledCheckbox({ name, value, label, description }) {
   const Component = ({ namePrefix = "" }) => {
     return (
       <FieldDescriptionAndError
@@ -44,4 +44,4 @@ export default ({ name, value, label, description }) => {
     },
     Component
   };
-};
+}

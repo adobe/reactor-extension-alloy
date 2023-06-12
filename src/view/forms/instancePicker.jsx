@@ -8,7 +8,7 @@ import InstanceNamePicker from "../components/instanceNamePicker";
  * @param {string} props.name - The formik key to use for this field.
  * @returns {Form}
  */
-export default ({ name }) => {
+export default function InstancePicker({ name }) {
   const form = {
     getInitialValues({ initInfo }) {
       const { [name]: value = initInfo.extensionSettings.instances[0].name } =
@@ -38,4 +38,4 @@ export default ({ name }) => {
     namePrefix: PropTypes.string
   };
   return form;
-};
+}
