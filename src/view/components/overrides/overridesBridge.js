@@ -22,6 +22,7 @@ export const bridge = {
       (acc, env) => ({
         ...acc,
         [env]: {
+          datastreamId: "",
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -121,6 +122,7 @@ export const bridge = {
         (acc, env) => ({
           ...acc,
           [env]: object({
+            datastreamId: string(),
             com_adobe_experience_platform: object({
               datasets: object({
                 event: object({

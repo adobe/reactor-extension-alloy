@@ -26,11 +26,11 @@ import { useField } from "formik";
 import Copy from "@spectrum-icons/workflow/Copy";
 import Delete from "@spectrum-icons/workflow/Delete";
 import copyToClipboard from "clipboard-copy";
-import fetchConfigs from "./utils/fetchConfigs";
+import fetchConfigs from "../configuration/utils/fetchConfigs";
 import usePrevious from "../utils/usePrevious";
-import Alert from "../components/alert";
-import { PRODUCTION } from "./constants/environmentType";
-import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
+import Alert from "./alert";
+import { PRODUCTION } from "../configuration/constants/environmentType";
+import FormikTextField from "./formikReactSpectrum3/formikTextField";
 
 // eslint-disable-next-line no-underscore-dangle
 const getKey = datastream => datastream && datastream._system.id;
@@ -262,14 +262,34 @@ const DatastreamSelector = ({
   );
 };
 
+const datastreamShape = PropTypes.shape({
+  _system: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired,
+  region: PropTypes.string,
+  data: PropTypes.shape({
+    title: PropTypes.string.isRequired
+  })
+});
+
 DatastreamSelector.propTypes = {
-  defaultSelectedDatastream: PropTypes.object,
-  initInfo: PropTypes.object,
-  name: PropTypes.string,
-  selectedSandbox: PropTypes.object,
+  defaultSelectedDatastream: datastreamShape,
+  initInfo: PropTypes.shape({
+    company: PropTypes.shape({
+      orgId: PropTypes.string.isRequired
+    }).isRequired,
+    tokens: PropTypes.shape({
+      imsAccess: PropTypes.string.isRequired
+    }).isRequired
+  }),
+  name: PropTypes.string.isRequired,
+  selectedSandbox: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired
+  }).isRequired,
   defaultSandboxOnly: PropTypes.bool,
-  environmentType: PropTypes.string,
-  items: PropTypes.array,
+  environmentType: PropTypes.string.isRequired,
+  items: PropTypes.arrayOf(datastreamShape),
   description: PropTypes.string
 };
 

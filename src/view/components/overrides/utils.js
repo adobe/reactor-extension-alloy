@@ -28,7 +28,7 @@ export const FIELD_NAMES = Object.freeze({
   idSyncContainerOverride: "idSyncContainerOverride",
   targetPropertyTokenOverride: "targetPropertyTokenOverride",
   reportSuitesOverride: "reportSuitesOverride",
-  edgeConfigId: "edgeConfigId"
+  datastreamId: "datastreamId"
 });
 
 /**

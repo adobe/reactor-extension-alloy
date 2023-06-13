@@ -120,6 +120,10 @@
                 "additionalProperties": false,
                 "properties": {
                   "development": {
+                    "datastreamId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
                     "com_adobe_experience_platform": {
                       "type": "object",
                       "properties": {
@@ -173,6 +177,10 @@
                     }
                   },
                   "staging": {
+                    "datastreamId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
                     "com_adobe_experience_platform": {
                       "type": "object",
                       "properties": {
@@ -226,6 +234,10 @@
                     }
                   },
                   "production": {
+                    "datastreamId": {
+                      "type": "string",
+                      "minLength": 1
+                    },
                     "com_adobe_experience_platform": {
                       "type": "object",
                       "properties": {
@@ -417,6 +429,10 @@
             "additionalProperties": false,
             "properties": {
               "development": {
+                "datastreamId": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -470,6 +486,10 @@
                 }
               },
               "staging": {
+                "datastreamId": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -523,6 +543,10 @@
                 }
               },
               "production": {
+                "datastreamId": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -704,6 +728,10 @@
             "additionalProperties": false,
             "properties": {
               "development": {
+                "datastreamId": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -757,6 +785,10 @@
                 }
               },
               "staging": {
+                "datastreamId": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -810,6 +842,10 @@
                 }
               },
               "production": {
+                "datastreamId": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -887,6 +923,10 @@
             "additionalProperties": false,
             "properties": {
               "development": {
+                "datastreamId": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -940,6 +980,10 @@
                 }
               },
               "staging": {
+                "datastreamId": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -993,6 +1037,10 @@
                 }
               },
               "production": {
+                "datastreamId": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {

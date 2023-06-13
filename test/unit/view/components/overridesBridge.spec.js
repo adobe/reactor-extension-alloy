@@ -18,6 +18,7 @@ describe("overridesBridge", () => {
       const edgeConfigOverrides = {};
       ["production", "staging", "development"].forEach(env => {
         edgeConfigOverrides[env] = {
+          datastreamId: "",
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -79,6 +80,7 @@ describe("overridesBridge", () => {
       const edgeConfigOverrides = {};
       ["production", "staging", "development"].forEach(env => {
         edgeConfigOverrides[env] = {
+          datastreamId: "",
           com_adobe_experience_platform: {
             datasets: {
               event: {

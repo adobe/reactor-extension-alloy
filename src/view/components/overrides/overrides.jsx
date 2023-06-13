@@ -32,7 +32,7 @@ import {
   isDataElement,
   useFetchConfig
 } from "./utils";
-import FormikTextField from "../formikReactSpectrum3/formikTextField";
+import DatastreamSelector from "../datastreamSelector";
 
 /**
  * A section of a form that allows the user to override datastream configuration
@@ -233,13 +233,18 @@ const Overrides = ({
                     gap="size-100"
                   >
                     <SettingsCopySection currentEnv={env} onPress={onCopy} />
-                    {!hideFieldsSet.has(FIELD_NAMES.edgeConfigId) && (
-                      <FormikTextField
-                        data-test-id={FIELD_NAMES.edgeConfigId}
-                        name={`${prefix}.${env}.edgeConfigId`}
-                        label="Edge Config ID"
+                    {!hideFieldsSet.has(FIELD_NAMES.datastreamId) && (
+                      <DatastreamSelector
+                        data-test-id={FIELD_NAMES.datastreamId}
                         description="The destination edge config ID in the Adobe Experience Platform."
-                        width="size-5000"
+                        initInfo={initInfo}
+                        name={`${prefix}.${env}.datastreamId`}
+                        // TODO: add sandbox selector
+                        selectedSandbox={{
+                          name: "prod",
+                          title: "prod"
+                        }}
+                        environmentType={env}
                       />
                     )}
                     {!hideFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
