@@ -245,7 +245,7 @@ const Overrides = ({
                         <DatastreamSelector
                           data-test-id={FIELD_NAMES.datastreamId}
                           label="Datastream"
-                          description="The destination edge config ID in the Adobe Experience Platform."
+                          description="Override the default datastream with a different one. Does not support cross-organiztion datastream overrides."
                           initInfo={initInfo}
                           name={`${prefix}.${env}.datastreamId`}
                           selectedSandbox={{

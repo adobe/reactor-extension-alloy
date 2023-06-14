@@ -54,6 +54,7 @@ const DatastreamSelector = ({
   selectedSandbox,
   items,
   defaultSandboxOnly,
+  label,
   environmentType,
   description
 }) => {
@@ -114,7 +115,7 @@ const DatastreamSelector = ({
 
   const datastreamProps = {
     isRequired: defaultSandboxOnly && environmentType === PRODUCTION,
-    label: defaultSandboxOnly ? `${environmentType} datastream` : " ",
+    label: label ?? defaultSandboxOnly ? `${environmentType} datastream` : " ",
     "aria-label": `${environmentType} datastream`,
     "data-test-id": `${environmentType}DatastreamField`,
     UNSAFE_className: "CapitalizedLabel"
@@ -286,6 +287,7 @@ DatastreamSelector.propTypes = {
     }).isRequired
   }),
   name: PropTypes.string.isRequired,
+  label: PropTypes.string,
   selectedSandbox: PropTypes.shape({
     name: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired
