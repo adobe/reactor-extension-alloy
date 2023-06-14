@@ -13,9 +13,19 @@ governing permissions and limitations under the License.
 import { Item } from "@adobe/react-spectrum";
 import React from "react";
 
-// I would create a SandboxItem component, but react-spectrum doesn't let
-// you wrap Items. See https://github.com/adobe/react-spectrum/issues/2746
-// Instead, this is a function you can use as the inside of a Picker.
+/**
+ * Map a sandbox item to a JSX element to be used inside a Picker.
+ *
+ * I would create a SandboxItem component, but react-spectrum doesn't let you
+ * wrap Items. See https://github.com/adobe/react-spectrum/issues/2746.
+ * Instead, this is a function you can use as the inside of a Picker.
+ * @param {Object} item A sandbox item
+ * @param {string} item.name
+ * @param {string} item.title
+ * @param {string?} item.region
+ * @param {string} item.type
+ * @returns {JSX.Element}
+ */
 const sandboxItems = item => {
   const region = item.region ? ` (${item.region.toUpperCase()})` : "";
   const label = `${item.type.toUpperCase()} ${item.title}${region}`;

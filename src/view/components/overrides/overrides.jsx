@@ -33,6 +33,7 @@ import {
   useFetchConfig
 } from "./utils";
 import DatastreamSelector from "../datastreamSelector";
+import SandboxSelector from "../sandboxSelector";
 
 /**
  * A section of a form that allows the user to override datastream configuration
@@ -102,8 +103,6 @@ const Overrides = ({
       requestCache
     })
   };
-
-  console.log("CARTER initInfo", initInfo);
 
   const [
     ,
@@ -224,6 +223,8 @@ const Overrides = ({
                   isDataElement(value) || itemIsInReportSuiteOptions(value)
                 );
               };
+              const sandboxFieldName = `${prefix}.${env}.sandbox`;
+              const [{ value: sandbox }] = useField(sandboxFieldName);
 
               return (
                 <Item key={env}>
@@ -234,18 +235,26 @@ const Overrides = ({
                   >
                     <SettingsCopySection currentEnv={env} onPress={onCopy} />
                     {!hideFieldsSet.has(FIELD_NAMES.datastreamId) && (
-                      <DatastreamSelector
-                        data-test-id={FIELD_NAMES.datastreamId}
-                        description="The destination edge config ID in the Adobe Experience Platform."
-                        initInfo={initInfo}
-                        name={`${prefix}.${env}.datastreamId`}
-                        // TODO: add sandbox selector
-                        selectedSandbox={{
-                          name: "prod",
-                          title: "prod"
-                        }}
-                        environmentType={env}
-                      />
+                      <>
+                        <SandboxSelector
+                          initInfo={initInfo}
+                          label="Adobe Experience Platform Sandbox"
+                          name={sandboxFieldName}
+                          width="size-5000"
+                        />
+                        <DatastreamSelector
+                          data-test-id={FIELD_NAMES.datastreamId}
+                          label="Datastream"
+                          description="The destination edge config ID in the Adobe Experience Platform."
+                          initInfo={initInfo}
+                          name={`${prefix}.${env}.datastreamId`}
+                          selectedSandbox={{
+                            name: sandbox,
+                            title: sandbox
+                          }}
+                          environmentType={env}
+                        />
+                      </>
                     )}
                     {!hideFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
                       <OverrideInput

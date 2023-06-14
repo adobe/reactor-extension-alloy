@@ -29,7 +29,10 @@ import copyToClipboard from "clipboard-copy";
 import fetchConfigs from "../configuration/utils/fetchConfigs";
 import usePrevious from "../utils/usePrevious";
 import Alert from "./alert";
-import { PRODUCTION } from "../configuration/constants/environmentType";
+import {
+  PRODUCTION,
+  ENVIRONMENTS
+} from "../configuration/constants/environmentType";
 import FormikTextField from "./formikReactSpectrum3/formikTextField";
 
 // eslint-disable-next-line no-underscore-dangle
@@ -288,7 +291,7 @@ DatastreamSelector.propTypes = {
     title: PropTypes.string.isRequired
   }).isRequired,
   defaultSandboxOnly: PropTypes.bool,
-  environmentType: PropTypes.string.isRequired,
+  environmentType: PropTypes.oneOf(ENVIRONMENTS).isRequired,
   items: PropTypes.arrayOf(datastreamShape),
   description: PropTypes.string
 };
