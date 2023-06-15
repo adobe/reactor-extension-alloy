@@ -57,7 +57,8 @@ const DatastreamSelector = ({
   defaultSandboxOnly,
   label,
   environmentType,
-  description
+  description,
+  fallbackToManualEntry
 }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
@@ -145,7 +146,7 @@ const DatastreamSelector = ({
   if (datastreamList.loadingState === "error" && !datastreamList.items.length) {
     const errorMessage = datastreamList?.error?.originatingError?.message;
 
-    if (value) {
+    if (value || fallbackToManualEntry) {
       return (
         <Flex direction="row" gap="size-100">
           <View>
@@ -155,7 +156,7 @@ const DatastreamSelector = ({
               name={name}
               description={errorLoadingDatastreamsDescription}
               width="size-5000"
-              isDisabled="true"
+              isDisabled={!fallbackToManualEntry}
             />
           </View>
           <Flex direction="row" gap="size-100" marginTop="size-250">
@@ -299,7 +300,8 @@ DatastreamSelector.propTypes = {
   defaultSandboxOnly: PropTypes.bool,
   environmentType: PropTypes.oneOf(ENVIRONMENTS).isRequired,
   items: PropTypes.arrayOf(datastreamShape),
-  description: PropTypes.string
+  description: PropTypes.string,
+  fallbackToManualEntry: PropTypes.bool
 };
 
 export default DatastreamSelector;

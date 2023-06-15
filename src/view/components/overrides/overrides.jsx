@@ -271,6 +271,7 @@ const Overrides = ({
                             title: sandbox
                           }}
                           environmentType={env}
+                          fallbackToManualEntry
                         />
                       </>
                     )}
