@@ -165,9 +165,9 @@ const Overrides = ({
                   ({ primary }) => !primary
                 ) ?? [];
               let eventDatasetDescription =
-                "The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration.";
+                "The ID for the destination event dataset in the Adobe Experience Platform.  The value must be a preconfigured secondary dataset from your datastream configuration.";
               if (primaryEventDataset) {
-                eventDatasetDescription = `Overrides default dataset of "${primaryEventDataset}". ${eventDatasetDescription}`;
+                eventDatasetDescription = `Overrides the default dataset (${primaryEventDataset}). ${eventDatasetDescription}`;
               }
               const itemIsInDatasetOptions = createIsItemInArray(
                 eventDatasetOptions.map(({ datasetId }) => datasetId),
@@ -185,7 +185,7 @@ const Overrides = ({
               let idSyncContainerDescription =
                 "The ID for the destination third-party ID sync container in Adobe Audience Manager. The value must be a preconfigured secondary container from your datastream configuration and overrides the primary container.";
               if (primaryIdSyncContainer) {
-                idSyncContainerDescription = `Overrides default container of "${primaryIdSyncContainer}". ${idSyncContainerDescription}`;
+                idSyncContainerDescription = `Overrides the default container (${primaryIdSyncContainer}). ${idSyncContainerDescription}`;
               }
               const itemIsInIdSyncContainerOptions = createIsItemInArray(
                 idSyncContainers.map(({ label }) => label),
@@ -203,7 +203,7 @@ const Overrides = ({
               let propertyTokenDescription =
                 "The token for the destination property in Adobe Target. The value must be a preconfigured property override from your datastream configuration and overrides the primary property.";
               if (primaryPropertyToken) {
-                propertyTokenDescription = `Overrides default property of "${primaryPropertyToken}". ${propertyTokenDescription}`;
+                propertyTokenDescription = `Overrides the default property (${primaryPropertyToken}). ${propertyTokenDescription}`;
               }
               const itemIsInPropertyTokenOptions = createIsItemInArray(
                 propertyTokenOptions.map(({ value }) => value),
