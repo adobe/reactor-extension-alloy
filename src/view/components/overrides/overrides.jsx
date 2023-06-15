@@ -238,7 +238,7 @@ const Overrides = ({
                       <>
                         <SandboxSelector
                           initInfo={initInfo}
-                          label="Adobe Experience Platform Sandbox"
+                          label="Sandbox"
                           name={sandboxFieldName}
                           width="size-5000"
                         />
