@@ -661,7 +661,7 @@
       "viewPath": "actions/applyResponse.html"
     },
     {
-      "displayName": "Update variable (beta)",
+      "displayName": "Update variable",
       "name": "update-variable",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
@@ -833,7 +833,7 @@
       "viewPath": "dataElements/xdmObject.html"
     },
     {
-      "displayName": "Variable (beta)",
+      "displayName": "Variable",
       "name": "variable",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
