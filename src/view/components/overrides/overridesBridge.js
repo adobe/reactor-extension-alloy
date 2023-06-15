@@ -87,31 +87,24 @@ export const bridge = {
     });
 
     OVERRIDE_ENVIRONMENTS.forEach(env => {
+      const overrides = instanceSettings.edgeConfigOverrides?.[env];
+      if (!overrides || Object.keys(overrides).length === 0) {
+        return;
+      }
       // Alloy, Konductor, and Blackbird expect the idSyncContainerID to be a
       // number
-      if (
-        instanceSettings.edgeConfigOverrides?.[env]?.com_adobe_identity
-          ?.idSyncContainerId
-      ) {
-        instanceSettings.edgeConfigOverrides[
-          env
-        ].com_adobe_identity.idSyncContainerId = parseInt(
-          instanceSettings.edgeConfigOverrides[env].com_adobe_identity
-            .idSyncContainerId,
+      if (overrides?.com_adobe_identity?.idSyncContainerId) {
+        overrides.com_adobe_identity.idSyncContainerId = parseInt(
+          overrides.com_adobe_identity.idSyncContainerId,
           10
         );
       }
 
       // filter out the blank report suites
-      if (
-        instanceSettings.edgeConfigOverrides?.[env]?.com_adobe_analytics
-          ?.reportSuites
-      ) {
-        instanceSettings.edgeConfigOverrides[
-          env
-        ].com_adobe_analytics.reportSuites = instanceSettings.edgeConfigOverrides[
-          env
-        ].com_adobe_analytics.reportSuites.filter(rs => rs !== "");
+      if (overrides.com_adobe_analytics?.reportSuites) {
+        overrides.com_adobe_analytics.reportSuites = overrides.com_adobe_analytics.reportSuites.filter(
+          rs => rs !== ""
+        );
       }
     });
 

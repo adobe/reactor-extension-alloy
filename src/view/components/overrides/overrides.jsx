@@ -75,35 +75,6 @@ const Overrides = ({
     : "edgeConfigOverrides";
   const hideFieldsSet = new Set(hideFields);
 
-  const requestCache = useRef({});
-  const authOrgId = initInfo.company.orgId;
-  const edgeConfigs = {
-    [DEVELOPMENT]: useFetchConfig({
-      authOrgId,
-      configOrgId,
-      imsAccess: initInfo.tokens.imsAccess,
-      edgeConfigId: edgeConfigIds.developmentEnvironment.datastreamId,
-      sandbox: edgeConfigIds.developmentEnvironment.sandbox,
-      requestCache
-    }),
-    [STAGING]: useFetchConfig({
-      authOrgId,
-      configOrgId,
-      imsAccess: initInfo.tokens.imsAccess,
-      edgeConfigId: edgeConfigIds.stagingEnvironment.datastreamId,
-      sandbox: edgeConfigIds.stagingEnvironment.sandbox,
-      requestCache
-    }),
-    [PRODUCTION]: useFetchConfig({
-      authOrgId,
-      configOrgId,
-      imsAccess: initInfo.tokens.imsAccess,
-      edgeConfigId: edgeConfigIds.productionEnvironment.datastreamId,
-      sandbox: edgeConfigIds.productionEnvironment.sandbox,
-      requestCache
-    })
-  };
-
   const [
     ,
     { value: edgeConfigOverrides },
@@ -118,6 +89,47 @@ const Overrides = ({
   const onCopy = (source, destination) => {
     edgeConfigOverrides[destination] = edgeConfigOverrides[source];
     setEdgeConfigOverrides(edgeConfigOverrides);
+  };
+
+  const requestCache = useRef({});
+  const authOrgId = initInfo.company.orgId;
+  const edgeConfigs = {
+    [DEVELOPMENT]: useFetchConfig({
+      authOrgId,
+      configOrgId,
+      imsAccess: initInfo.tokens.imsAccess,
+      edgeConfigId:
+        edgeConfigOverrides.development.datastreamId ||
+        edgeConfigIds.developmentEnvironment.datastreamId,
+      sandbox:
+        edgeConfigOverrides.development.sandbox ||
+        edgeConfigIds.developmentEnvironment.sandbox,
+      requestCache
+    }),
+    [STAGING]: useFetchConfig({
+      authOrgId,
+      configOrgId,
+      imsAccess: initInfo.tokens.imsAccess,
+      edgeConfigId:
+        edgeConfigOverrides.staging.datastreamId ||
+        edgeConfigIds.stagingEnvironment.datastreamId,
+      sandbox:
+        edgeConfigOverrides.staging.sandbox ||
+        edgeConfigIds.stagingEnvironment.sandbox,
+      requestCache
+    }),
+    [PRODUCTION]: useFetchConfig({
+      authOrgId,
+      configOrgId,
+      imsAccess: initInfo.tokens.imsAccess,
+      edgeConfigId:
+        edgeConfigOverrides.production.datastreamId ||
+        edgeConfigIds.productionEnvironment.datastreamId,
+      sandbox:
+        edgeConfigOverrides.production.sandbox ||
+        edgeConfigIds.productionEnvironment.sandbox,
+      requestCache
+    })
   };
 
   return (
@@ -141,6 +153,8 @@ const Overrides = ({
             {OVERRIDE_ENVIRONMENTS.map(env => {
               const { result, isLoading, error } = edgeConfigs[env];
               const useManualEntry = !result || Boolean(error);
+
+              const envEdgeConfigIds = edgeConfigIds[`${env}Environment`];
 
               const primaryEventDataset =
                 result?.com_adobe_experience_platform?.datasets?.event?.find(
@@ -245,7 +259,11 @@ const Overrides = ({
                         <DatastreamSelector
                           data-test-id={FIELD_NAMES.datastreamId}
                           label="Datastream"
-                          description="Override the default datastream with a different one. Does not support cross-organiztion datastream overrides."
+                          description={`Override the default datastream${
+                            envEdgeConfigIds.datastreamId
+                              ? ` (${envEdgeConfigIds.datastreamId})`
+                              : ""
+                          }. Does not support cross-organiztion datastream overrides.`}
                           initInfo={initInfo}
                           name={`${prefix}.${env}.datastreamId`}
                           selectedSandbox={{

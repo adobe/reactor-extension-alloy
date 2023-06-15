@@ -34,6 +34,7 @@ import {
   ENVIRONMENTS
 } from "../configuration/constants/environmentType";
 import FormikTextField from "./formikReactSpectrum3/formikTextField";
+import { capitialize } from "./overrides/utils";
 
 // eslint-disable-next-line no-underscore-dangle
 const getKey = datastream => datastream && datastream._system.id;
@@ -115,7 +116,10 @@ const DatastreamSelector = ({
 
   const datastreamProps = {
     isRequired: defaultSandboxOnly && environmentType === PRODUCTION,
-    label: label ?? defaultSandboxOnly ? `${environmentType} datastream` : " ",
+    label:
+      label ?? defaultSandboxOnly
+        ? `${capitialize(environmentType)} datastream`
+        : " ",
     "aria-label": `${environmentType} datastream`,
     "data-test-id": `${environmentType}DatastreamField`,
     UNSAFE_className: "CapitalizedLabel"
