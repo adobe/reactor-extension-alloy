@@ -8,7 +8,7 @@ const convertToFormPart = element => {
   const {
     type,
     props: { children, ...props } = {},
-    _source: { fileName, lineNumber }
+    _source: { fileName, lineNumber } = {}
   } = element;
   if (typeof type !== "function") {
     throw new Error(`Unresolved type ${type} at ${fileName}:${lineNumber}`);
