@@ -49,6 +49,12 @@ const overrideViewSelectors = {
     production: spectrumWrappers.button("copyFromProductionButton"),
     staging: spectrumWrappers.button("copyFromStagingButton"),
     development: spectrumWrappers.button("copyFromDevelopmentButton")
+  },
+  sandbox: spectrumWrappers.picker("sandbox"),
+  datastreamId: {
+    production: spectrumWrappers.picker("productionDatastreamField"),
+    staging: spectrumWrappers.picker("stagingDatastreamField"),
+    development: spectrumWrappers.picker("developmentDatastreamField")
   }
 };
 

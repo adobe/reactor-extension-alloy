@@ -117,6 +117,7 @@ export const bridge = {
           ...acc,
           [env]: object({
             datastreamId: string(),
+            sandbox: string(),
             com_adobe_experience_platform: object({
               datasets: object({
                 event: object({

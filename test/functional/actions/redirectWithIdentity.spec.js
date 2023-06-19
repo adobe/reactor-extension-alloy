@@ -53,7 +53,8 @@ test("initializes form fields with settings", async () => {
           },
           com_adobe_target: {
             propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-          }
+          },
+          sandbox: "prod"
         },
         staging: {
           com_adobe_experience_platform: {
@@ -71,7 +72,8 @@ test("initializes form fields with settings", async () => {
           },
           com_adobe_target: {
             propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-          }
+          },
+          sandbox: "prod"
         },
         development: {
           com_adobe_experience_platform: {
@@ -89,7 +91,8 @@ test("initializes form fields with settings", async () => {
           },
           com_adobe_target: {
             propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-          }
+          },
+          sandbox: "prod"
         }
       }
     },
@@ -226,7 +229,8 @@ test("returns valid settings", async () => {
         },
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-        }
+        },
+        sandbox: "prod"
       },
       staging: {
         com_adobe_experience_platform: {
@@ -244,7 +248,8 @@ test("returns valid settings", async () => {
         },
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-        }
+        },
+        sandbox: "prod"
       },
       development: {
         com_adobe_experience_platform: {
@@ -262,7 +267,8 @@ test("returns valid settings", async () => {
         },
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-        }
+        },
+        sandbox: "prod"
       }
     }
   });
@@ -294,7 +300,12 @@ test.requestHooks(
     }
   });
 
+  await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
+  await overrideViewSelectors.datastreamId.production.selectOption(
+    "Test Config Overrides"
+  );
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectExists();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.openMenu();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectMenuOptionLabels(

@@ -97,6 +97,8 @@ test("initializes form fields with full settings, when decision scopes is data e
       renderDecisions: true,
       edgeConfigOverrides: {
         production: {
+          sandbox: "prod",
+          datastreamId: mockExtensionSettings.instances[0].edgeConfigId,
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -115,6 +117,8 @@ test("initializes form fields with full settings, when decision scopes is data e
           }
         },
         staging: {
+          sandbox: "prod",
+          datastreamId: mockExtensionSettings.instances[0].edgeConfigId,
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -133,6 +137,8 @@ test("initializes form fields with full settings, when decision scopes is data e
           }
         },
         development: {
+          sandbox: "prod",
+          datastreamId: mockExtensionSettings.instances[0].edgeConfigId,
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -170,6 +176,13 @@ test("initializes form fields with full settings, when decision scopes is data e
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
+  await overrideViewSelectors.datastreamId.production.selectOption(
+    "alloyio.com: Development"
+  );
+  await overrideViewSelectors.datastreamId.production.expectText(
+    "alloyio.com: Development"
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -185,6 +198,13 @@ test("initializes form fields with full settings, when decision scopes is data e
 
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
+  await overrideViewSelectors.datastreamId.staging.selectOption(
+    "alloyio.com: Development"
+  );
+  await overrideViewSelectors.datastreamId.staging.expectText(
+    "alloyio.com: Development"
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -200,6 +220,13 @@ test("initializes form fields with full settings, when decision scopes is data e
 
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
+  await overrideViewSelectors.datastreamId.development.selectOption(
+    "alloyio.com: Development"
+  );
+  await overrideViewSelectors.datastreamId.development.expectText(
+    "alloyio.com: Development"
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -417,6 +444,7 @@ test("returns full valid settings with decision scopes as data element", async (
     },
     edgeConfigOverrides: {
       production: {
+        sandbox: "prod",
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -435,6 +463,7 @@ test("returns full valid settings with decision scopes as data element", async (
         }
       },
       staging: {
+        sandbox: "prod",
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -453,6 +482,7 @@ test("returns full valid settings with decision scopes as data element", async (
         }
       },
       development: {
+        sandbox: "prod",
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -499,6 +529,11 @@ test("returns decision scopes settings as an array", async () => {
     instanceName: "alloy1",
     personalization: {
       decisionScopes: ["foo", "foo2"]
+    },
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
     }
   });
 });
@@ -519,6 +554,11 @@ test("returns surfaces settings as an array", async () => {
     instanceName: "alloy1",
     personalization: {
       surfaces: ["web://foo", "web://foo2"]
+    },
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
     }
   });
 });
@@ -532,7 +572,12 @@ test("does not return decision scopes settings when provided with array of empty
   await addDecisionScopeButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    instanceName: "alloy1"
+    instanceName: "alloy1",
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
+    }
   });
 });
 
@@ -545,7 +590,12 @@ test("does not return surface settings when provided with array of empty strings
   await addSurfaceButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    instanceName: "alloy1"
+    instanceName: "alloy1",
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
+    }
   });
 });
 

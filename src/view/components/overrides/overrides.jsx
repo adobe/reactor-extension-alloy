@@ -237,7 +237,9 @@ const Overrides = ({
                   isDataElement(value) || itemIsInReportSuiteOptions(value)
                 );
               };
-              const sandboxFieldName = `${prefix}.${env}.sandbox`;
+              const sandboxFieldName = `${prefix}.${env}.${
+                FIELD_NAMES.sandbox
+              }`;
               const [{ value: sandbox }] = useField(sandboxFieldName);
 
               return (
@@ -251,6 +253,7 @@ const Overrides = ({
                     {!hideFieldsSet.has(FIELD_NAMES.datastreamId) && (
                       <>
                         <SandboxSelector
+                          data-test-id={FIELD_NAMES.sandbox}
                           initInfo={initInfo}
                           label="Sandbox"
                           name={sandboxFieldName}
