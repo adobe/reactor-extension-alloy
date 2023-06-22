@@ -13,6 +13,16 @@ governing permissions and limitations under the License.
 const defer = require("../../utils/defer");
 const clone = require("../../utils/clone");
 
+const showContainers = () => {
+  const prehidingNode = document.getElementById("alloy-prehiding");
+  if (prehidingNode) {
+    const parent = prehidingNode.parentNode;
+    if (parent) {
+      parent.removeChild(prehidingNode);
+    }
+  }
+};
+
 // TODO: support decisionScopes at top level
 
 module.exports = ({
@@ -28,8 +38,8 @@ module.exports = ({
     personalization: {
       sendNotifications = true,
       metadata: applyPropositionsMetadata = {},
-      decisionScopes,
-      surfaces
+      decisionScopes = [],
+      surfaces = []
     } = {},
     renderDecisions,
     ...otherSettings
@@ -55,9 +65,9 @@ module.exports = ({
 
   let propositionsPromise = Promise.resolve();
   if (propositions === "all") {
-    propositionsPromise = propositionCache.clearAllRenderedPropositions();
+    propositionsPromise = propositionCache.flushAllRenderedPropositions();
   } else if (propositions === "scoped") {
-    propositionsPromise = propositionCache.clearScopedRenderedPropositions(
+    propositionsPromise = propositionCache.flushScopedRenderedPropositions(
       propositionScopes
     );
   } else if (propositions) {
@@ -72,6 +82,7 @@ module.exports = ({
   if (renderDecisions && sendNotifications) {
     otherSettings.renderDecisions = true;
   }
+  otherSettings.personalization = { decisionScopes, surfaces };
 
   const deferred = defer();
   propositionCache.updateScopes(
@@ -98,8 +109,11 @@ module.exports = ({
     })
     .then(({ propositions: returnedPropositions }) => {
       deferred.resolve(returnedPropositions);
+
+      showContainers();
     })
     .catch(error => {
       deferred.reject(error);
+      showContainers();
     });
 };

@@ -1,6 +1,6 @@
 {
-  "displayName": "Adobe Experience Platform Web SDK (josnyder)",
-  "name": "adobe-alloy-josnyder",
+  "displayName": "Adobe Experience Platform Web SDK (fetch)",
+  "name": "adobe-alloy-fetch",
   "iconPath": "resources/images/icon.svg",
   "exchangeUrl": "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
   "platform": "web",
@@ -455,6 +455,12 @@
         "required": ["instanceName"],
         "additionalProperties": false
       },
+      "transforms": [
+        {
+          "type": "remove",
+          "propertyPath": "eventStyle"
+        }
+      ],
       "libPath": "dist/lib/actions/sendEvent/index.js",
       "viewPath": "actions/sendEvent.html"
     },

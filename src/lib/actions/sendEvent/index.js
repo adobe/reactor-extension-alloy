@@ -12,9 +12,10 @@ governing permissions and limitations under the License.
 
 const createSendEvent = require("./createSendEvent");
 const instanceManager = require("../../instanceManager/index");
-const { sendEventCallbackStorage } = require("../../index");
+const { sendEventCallbackStorage, propositionCache } = require("../../index");
 
 module.exports = createSendEvent({
   instanceManager,
-  sendEventCallbackStorage
+  sendEventCallbackStorage,
+  propositionCache
 });
