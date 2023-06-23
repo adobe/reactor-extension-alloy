@@ -262,11 +262,11 @@ const Overrides = ({
                         <DatastreamSelector
                           data-test-id={FIELD_NAMES.datastreamId}
                           label="Datastream"
-                          description={`Override the default datastream${
+                          description={`Override the configured datastream${
                             envEdgeConfigIds.datastreamId
                               ? ` (${envEdgeConfigIds.datastreamId})`
                               : ""
-                          }. Does not support cross-organiztion datastream overrides.`}
+                          }. This does not support cross-organiztion datastream overrides.`}
                           initInfo={initInfo}
                           name={`${prefix}.${env}.datastreamId`}
                           selectedSandbox={{
