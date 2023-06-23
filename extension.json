@@ -120,6 +120,10 @@
                 "additionalProperties": false,
                 "properties": {
                   "development": {
+                    "sandbox": {
+                      "type": "string",
+                      "minLength": 1
+                    },
                     "datastreamId": {
                       "type": "string",
                       "minLength": 1
@@ -177,6 +181,10 @@
                     }
                   },
                   "staging": {
+                    "sandbox": {
+                      "type": "string",
+                      "minLength": 1
+                    },
                     "datastreamId": {
                       "type": "string",
                       "minLength": 1
@@ -234,6 +242,10 @@
                     }
                   },
                   "production": {
+                    "sandbox": {
+                      "type": "string",
+                      "minLength": 1
+                    },
                     "datastreamId": {
                       "type": "string",
                       "minLength": 1
@@ -429,6 +441,10 @@
             "additionalProperties": false,
             "properties": {
               "development": {
+                "sandbox": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
@@ -486,6 +502,10 @@
                 }
               },
               "staging": {
+                "sandbox": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
@@ -543,6 +563,10 @@
                 }
               },
               "production": {
+                "sandbox": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
@@ -728,6 +752,10 @@
             "additionalProperties": false,
             "properties": {
               "development": {
+                "sandbox": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
@@ -785,6 +813,10 @@
                 }
               },
               "staging": {
+                "sandbox": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
@@ -842,6 +874,10 @@
                 }
               },
               "production": {
+                "sandbox": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
@@ -923,6 +959,10 @@
             "additionalProperties": false,
             "properties": {
               "development": {
+                "sandbox": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
@@ -980,6 +1020,10 @@
                 }
               },
               "staging": {
+                "sandbox": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
@@ -1037,6 +1081,10 @@
                 }
               },
               "production": {
+                "sandbox": {
+                  "type": "string",
+                  "minLength": 1
+                },
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
