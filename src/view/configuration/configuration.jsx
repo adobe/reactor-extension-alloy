@@ -231,7 +231,6 @@ const Configuration = ({ initInfo, context }) => {
                           edgeConfigIds={edgeConfigIds}
                           configOrgId={instance.orgId}
                           hideFields={[FIELD_NAMES.datastreamId]}
-                          largeHeader
                         />
                         <AdvancedSection
                           instanceFieldName={instanceFieldName}

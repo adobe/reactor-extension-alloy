@@ -20,8 +20,10 @@ import {
   PRODUCTION,
   STAGING
 } from "../../configuration/constants/environmentType";
+import DatastreamSelector from "../datastreamSelector";
 import FormElementContainer from "../formElementContainer";
-import HeaderContainer from "./headerContainer";
+import SandboxSelector from "../sandboxSelector";
+import SectionHeader from "../sectionHeader";
 import OverrideInput from "./overrideInput";
 import ReportSuitesOverride from "./reportSuiteOverrides";
 import SettingsCopySection from "./settingsCopySection";
@@ -32,8 +34,6 @@ import {
   isDataElement,
   useFetchConfig
 } from "./utils";
-import DatastreamSelector from "../datastreamSelector";
-import SandboxSelector from "../sandboxSelector";
 
 /**
  * A section of a form that allows the user to override datastream configuration
@@ -42,7 +42,6 @@ import SandboxSelector from "../sandboxSelector";
  * @property {Object} initInfo
  * @property {string?} options.instanceFieldName
  * The name of the Formik parent form. State will be stored as a nested object under the "edgeConfigOverrides" key.
- * @property {boolean} options.largeHeader Whether to use the large header. Defaults to false.
  * @property {Array<"eventDatasetOverride" | "idSyncContainerOverride" | "targetPropertyTokenOverride" | "targetPropertyTokenOverride" | "reportSuitesOverride">} options.showFields
  * Which fields to show. Defaults to showing all fields
  * @property {string} options.configOrgId The org id to use for fetching datastream configurations.
@@ -67,7 +66,6 @@ const Overrides = ({
   instanceFieldName,
   edgeConfigIds,
   configOrgId,
-  largeHeader = false,
   hideFields = []
 }) => {
   const prefix = instanceFieldName
@@ -134,12 +132,9 @@ const Overrides = ({
 
   return (
     <>
-      <HeaderContainer
-        largeHeader={largeHeader}
-        learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides"
-      >
+      <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides">
         Datastream Configuration Overrides
-      </HeaderContainer>
+      </SectionHeader>
       <FormElementContainer>
         <Tabs aria-label="Datastream Configuration Overrides">
           <TabList>
@@ -244,11 +239,7 @@ const Overrides = ({
 
               return (
                 <Item key={env}>
-                  <Flex
-                    direction="column"
-                    marginX={largeHeader ? "" : "size-300"}
-                    gap="size-100"
-                  >
+                  <Flex direction="column" gap="size-100">
                     <SettingsCopySection currentEnv={env} onPress={onCopy} />
                     {!hideFieldsSet.has(FIELD_NAMES.datastreamId) && (
                       <>
@@ -380,7 +371,6 @@ Overrides.propTypes = {
     })
   }).isRequired,
   configOrgId: PropTypes.string.isRequired,
-  largeHeader: PropTypes.bool,
   hideFields: PropTypes.arrayOf(PropTypes.oneOf(Object.values(FIELD_NAMES)))
 };
 
