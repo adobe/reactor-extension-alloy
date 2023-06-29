@@ -177,8 +177,7 @@ test("initializes form fields with full settings, when decision scopes is data e
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
-  await overrideViewSelectors.datastreamIdDropdown.openMenu();
-  await overrideViewSelectors.datastreamIdDropdown("alloyio.com: Development");
+  await overrideViewSelectors.datastreamInputMethod.select.click();
   await overrideViewSelectors.datastreamIdDropdown.expectText(
     "alloyio.com: Development"
   );
@@ -198,10 +197,7 @@ test("initializes form fields with full settings, when decision scopes is data e
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
-  await overrideViewSelectors.datastreamIdDropdown.openMenu();
-  await overrideViewSelectors.datastreamIdDropdown.selectMenuOption(
-    "alloyio.com: Development"
-  );
+  await overrideViewSelectors.datastreamInputMethod.select.click();
   await overrideViewSelectors.datastreamIdDropdown.expectText(
     "alloyio.com: Development"
   );
@@ -221,8 +217,8 @@ test("initializes form fields with full settings, when decision scopes is data e
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
-  await overrideViewSelectors.datastreamIdDropdown.openMenu();
-  await overrideViewSelectors.datastreamIdDropdown.selectMenuOption(
+  await overrideViewSelectors.datastreamInputMethod.select.click();
+  await overrideViewSelectors.datastreamIdDropdown.expectText(
     "alloyio.com: Development"
   );
   await overrideViewSelectors.datastreamIdDropdown.expectText(
@@ -723,6 +719,27 @@ test.requestHooks(
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].selectMenuOption(
     "unifiedjsqeonlylatest"
   );
+
+  await extensionViewController.expectIsValid();
+});
+
+test("can type a datastream overrides", async () => {
+  await extensionViewController.init({
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy",
+          edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+          sandbox: "prod"
+        }
+      ]
+    }
+  });
+
+  await overrideViewSelectors.envTabs.production.click();
+  await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("1234");
 
   await extensionViewController.expectIsValid();
 });

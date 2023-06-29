@@ -52,12 +52,10 @@ const overrideViewSelectors = {
   },
   sandbox: spectrumWrappers.picker("sandbox"),
   datastreamInputMethod: {
-    freeform: spectrumWrappers.radioButton(
+    freeform: spectrumWrappers.radio(
       "datastreamOverrideInputMethodFreeformRadio"
     ),
-    select: spectrumWrappers.radioButton(
-      "datastreamOverrideInputMethodSelectRadio"
-    )
+    select: spectrumWrappers.radio("datastreamOverrideInputMethodSelectRadio")
   },
   datastreamIdDropdown: spectrumWrappers.picker("datastreamId"),
   datastreamIdFreeform: spectrumWrappers.textField("datastreamId")
