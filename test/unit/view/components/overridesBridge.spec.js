@@ -20,6 +20,7 @@ describe("overridesBridge", () => {
         edgeConfigOverrides[env] = {
           sandbox: "",
           datastreamId: "",
+          datastreamIdInputMethod: "freeform",
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -63,6 +64,7 @@ describe("overridesBridge", () => {
           '// Pass the ECID from the adobe_mc param if it exists.\n\nconsole.log("IN ON BEFORE EVENT SEND");\n\nvar adobeMcEcid = _satellite.getVar("adobeMcEcid");\n\nif (adobeMcEcid) {\n  // TODO: Expire existing kndctr_ORG ID_AdobeOrg_identity\n  \n  if (!content.xdm.identityMap) {\n    content.xdm.identityMap = {\n      ECID: []\n    }\n  }\n  \n  content.xdm.identityMap.ECID = [{\n    "id": adobeMcEcid,\n    "authenticatedState": "ambiguous"\n  }];\n  \n  console.log("ECID WAS ADDED TO EVENT -> XDM -> IDENTITYMAP");\n}',
         developmentSandbox: "prod",
         edgeConfigOverrides: {
+          datastreamIdInputMethod: "freeform",
           development: {
             com_adobe_target: {
               propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
@@ -83,6 +85,7 @@ describe("overridesBridge", () => {
         edgeConfigOverrides[env] = {
           sandbox: "",
           datastreamId: "",
+          datastreamIdInputMethod: "freeform",
           com_adobe_experience_platform: {
             datasets: {
               event: {

@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { array, number, object, string } from "yup";
+import { array, mixed, number, object, string } from "yup";
 import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/constants/environmentType";
 import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
@@ -24,6 +24,7 @@ export const bridge = {
         [env]: {
           sandbox: "",
           datastreamId: "",
+          datastreamIdInputMethod: "freeform",
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -117,6 +118,7 @@ export const bridge = {
           ...acc,
           [env]: object({
             datastreamId: string(),
+            datastreamInputMethod: mixed().oneOf(["freeform", "select"]),
             sandbox: string(),
             com_adobe_experience_platform: object({
               datasets: object({

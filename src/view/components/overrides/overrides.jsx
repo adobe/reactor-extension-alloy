@@ -20,10 +20,10 @@ import {
   PRODUCTION,
   STAGING
 } from "../../configuration/constants/environmentType";
-import DatastreamSelector from "../datastreamSelector";
 import FormElementContainer from "../formElementContainer";
 import SandboxSelector from "../sandboxSelector";
 import SectionHeader from "../sectionHeader";
+import DatastreamOverrideSelector from "./datastreamOverrideSelector";
 import OverrideInput from "./overrideInput";
 import ReportSuitesOverride from "./reportSuiteOverrides";
 import SettingsCopySection from "./settingsCopySection";
@@ -250,7 +250,7 @@ const Overrides = ({
                           name={sandboxFieldName}
                           width="size-5000"
                         />
-                        <DatastreamSelector
+                        <DatastreamOverrideSelector
                           data-test-id={FIELD_NAMES.datastreamId}
                           label="Datastream"
                           description={`Override the configured datastream${
@@ -258,14 +258,11 @@ const Overrides = ({
                               ? ` (${envEdgeConfigIds.datastreamId})`
                               : ""
                           }. This does not support cross-organiztion datastream overrides.`}
-                          initInfo={initInfo}
+                          orgId={initInfo.company.orgId}
+                          imsAccess={initInfo.tokens.imsAccess}
                           name={`${prefix}.${env}.datastreamId`}
-                          selectedSandbox={{
-                            name: sandbox,
-                            title: sandbox
-                          }}
-                          environmentType={env}
-                          fallbackToManualEntry
+                          sandbox={sandbox}
+                          width="size-5000"
                         />
                       </>
                     )}

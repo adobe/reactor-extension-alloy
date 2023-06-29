@@ -177,10 +177,9 @@ test("initializes form fields with full settings, when decision scopes is data e
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
-  await overrideViewSelectors.datastreamId.production.selectOption(
-    "alloyio.com: Development"
-  );
-  await overrideViewSelectors.datastreamId.production.expectText(
+  await overrideViewSelectors.datastreamIdDropdown.openMenu();
+  await overrideViewSelectors.datastreamIdDropdown("alloyio.com: Development");
+  await overrideViewSelectors.datastreamIdDropdown.expectText(
     "alloyio.com: Development"
   );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
@@ -199,10 +198,11 @@ test("initializes form fields with full settings, when decision scopes is data e
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
-  await overrideViewSelectors.datastreamId.staging.selectOption(
+  await overrideViewSelectors.datastreamIdDropdown.openMenu();
+  await overrideViewSelectors.datastreamIdDropdown.selectMenuOption(
     "alloyio.com: Development"
   );
-  await overrideViewSelectors.datastreamId.staging.expectText(
+  await overrideViewSelectors.datastreamIdDropdown.expectText(
     "alloyio.com: Development"
   );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
@@ -221,10 +221,11 @@ test("initializes form fields with full settings, when decision scopes is data e
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
-  await overrideViewSelectors.datastreamId.development.selectOption(
+  await overrideViewSelectors.datastreamIdDropdown.openMenu();
+  await overrideViewSelectors.datastreamIdDropdown.selectMenuOption(
     "alloyio.com: Development"
   );
-  await overrideViewSelectors.datastreamId.development.expectText(
+  await overrideViewSelectors.datastreamIdDropdown.expectText(
     "alloyio.com: Development"
   );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(

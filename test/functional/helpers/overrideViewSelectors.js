@@ -51,11 +51,16 @@ const overrideViewSelectors = {
     development: spectrumWrappers.button("copyFromDevelopmentButton")
   },
   sandbox: spectrumWrappers.picker("sandbox"),
-  datastreamId: {
-    production: spectrumWrappers.picker("productionDatastreamField"),
-    staging: spectrumWrappers.picker("stagingDatastreamField"),
-    development: spectrumWrappers.picker("developmentDatastreamField")
-  }
+  datastreamInputMethod: {
+    freeform: spectrumWrappers.radioButton(
+      "datastreamOverrideInputMethodFreeformRadio"
+    ),
+    select: spectrumWrappers.radioButton(
+      "datastreamOverrideInputMethodSelectRadio"
+    )
+  },
+  datastreamIdDropdown: spectrumWrappers.picker("datastreamId"),
+  datastreamIdFreeform: spectrumWrappers.textField("datastreamId")
 };
 
 export default overrideViewSelectors;
