@@ -12,10 +12,11 @@ governing permissions and limitations under the License.
 import { Item, Radio, useAsyncList } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect } from "react";
 import fetchConfigs from "../../configuration/utils/fetchConfigs";
 import OverrideInput from "./overrideInput";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
+import useIsFirstRender from "../../utils/useIsFirstRender";
 
 /**
  * @typedef {Object} Datastream
@@ -104,14 +105,28 @@ const DatastreamOverrideSelector = ({
   const [{ value }] = useField(name);
   const inputMethodFieldName = `${name}InputMethod`;
   /** @type {[{ value: "select" | "freeform" }]} */
-  const [{ value: inputMethod }] = useField(inputMethodFieldName);
+  const [{ value: inputMethod }, , { setValue: setInputMethod }] = useField(
+    inputMethodFieldName
+  );
+  const selectedDatastream = datastreamList.items.find(
+    item => getKey(item) === value
+  );
+  const isFirstRender = useIsFirstRender();
+  useEffect(() => {
+    if (
+      Boolean(selectedDatastream) &&
+      inputMethod !== InputMethod.SELECT &&
+      isFirstRender
+    ) {
+      setInputMethod(InputMethod.SELECT);
+    } else {
+      setInputMethod(InputMethod.FREEFORM);
+    }
+  }, [selectedDatastream, inputMethod, isFirstRender]);
   const useManualEntry =
     inputMethod === InputMethod.FREEFORM ||
     datastreamList.items.length === 0 ||
     Boolean(datastreamList.error);
-  const selectedDatastream = datastreamList.items.find(
-    item => getLabel(item) === value
-  );
 
   return (
     <>
