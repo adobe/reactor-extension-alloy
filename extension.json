@@ -26,6 +26,10 @@
                 "type": "string",
                 "pattern": "\\D+"
               },
+              "datastreamId": {
+                "type": "string",
+                "minLength": 1
+              },
               "edgeConfigId": {
                 "type": "string",
                 "minLength": 1
@@ -317,7 +321,7 @@
                 }
               }
             },
-            "required": ["edgeConfigId", "name"],
+            "required": ["datastreamId", "name"],
             "additionalProperties": false
           }
         }
