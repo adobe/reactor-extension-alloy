@@ -177,9 +177,9 @@ test("initializes form fields with full settings, when decision scopes is data e
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
-  await overrideViewSelectors.datastreamInputMethod.select.click();
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectSelected();
   await overrideViewSelectors.datastreamIdDropdown.expectText(
-    "alloyio.com: Development"
+    mockExtensionSettings.instances[0].edgeConfigId
   );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
@@ -197,9 +197,9 @@ test("initializes form fields with full settings, when decision scopes is data e
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
-  await overrideViewSelectors.datastreamInputMethod.select.click();
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectSelected();
   await overrideViewSelectors.datastreamIdDropdown.expectText(
-    "alloyio.com: Development"
+    mockExtensionSettings.instances[0].edgeConfigId
   );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
@@ -217,12 +217,9 @@ test("initializes form fields with full settings, when decision scopes is data e
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
-  await overrideViewSelectors.datastreamInputMethod.select.click();
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectSelected();
   await overrideViewSelectors.datastreamIdDropdown.expectText(
-    "alloyio.com: Development"
-  );
-  await overrideViewSelectors.datastreamIdDropdown.expectText(
-    "alloyio.com: Development"
+    mockExtensionSettings.instances[0].edgeConfigId
   );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
@@ -739,6 +736,7 @@ test("can type a datastream overrides", async () => {
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
   await overrideViewSelectors.datastreamIdFreeform.typeText("1234");
 
   await extensionViewController.expectIsValid();

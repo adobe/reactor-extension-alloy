@@ -473,10 +473,6 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "datastreamIdInputMethod": {
-                  "type": "string",
-                  "enum": ["freeform", "select"]
-                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -537,10 +533,6 @@
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
-                },
-                "datastreamIdInputMethod": {
-                  "type": "string",
-                  "enum": ["freeform", "select"]
                 },
                 "com_adobe_experience_platform": {
                   "type": "object",
@@ -603,10 +595,6 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "datastreamIdInputMethod": {
-                  "type": "string",
-                  "enum": ["freeform", "select"]
-                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -665,6 +653,20 @@
         "required": ["instanceName"],
         "additionalProperties": false
       },
+      "transforms": [
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.development.datastreamIdInputMethod"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.staging.datastreamIdInputMethod"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.production.datastreamIdInputMethod"
+        }
+      ],
       "libPath": "dist/lib/actions/sendEvent/index.js",
       "viewPath": "actions/sendEvent.html"
     },
@@ -796,10 +798,6 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "datastreamIdInputMethod": {
-                  "type": "string",
-                  "enum": ["freeform", "select"]
-                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -861,10 +859,6 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "datastreamIdInputMethod": {
-                  "type": "string",
-                  "enum": ["freeform", "select"]
-                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -925,10 +919,6 @@
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
-                },
-                "datastreamIdInputMethod": {
-                  "type": "string",
-                  "enum": ["freeform", "select"]
                 },
                 "com_adobe_experience_platform": {
                   "type": "object",
@@ -988,6 +978,20 @@
         "required": ["instanceName", "consent"],
         "additionalProperties": false
       },
+      "transforms": [
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.development.datastreamIdInputMethod"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.staging.datastreamIdInputMethod"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.production.datastreamIdInputMethod"
+        }
+      ],
       "libPath": "dist/lib/actions/setConsent/index.js",
       "viewPath": "actions/setConsent.html"
     },
@@ -1014,10 +1018,6 @@
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
-                },
-                "datastreamIdInputMethod": {
-                  "type": "string",
-                  "enum": ["freeform", "select"]
                 },
                 "com_adobe_experience_platform": {
                   "type": "object",
@@ -1080,10 +1080,6 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "datastreamIdInputMethod": {
-                  "type": "string",
-                  "enum": ["freeform", "select"]
-                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -1145,10 +1141,6 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "datastreamIdInputMethod": {
-                  "type": "string",
-                  "enum": ["freeform", "select"]
-                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -1207,6 +1199,20 @@
         "required": ["instanceName"],
         "additionalProperties": false
       },
+      "transforms": [
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.development.datastreamIdInputMethod"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.staging.datastreamIdInputMethod"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.production.datastreamIdInputMethod"
+        }
+      ],
       "libPath": "dist/lib/actions/redirectWithIdentity/index.js",
       "viewPath": "actions/redirectWithIdentity.html"
     },

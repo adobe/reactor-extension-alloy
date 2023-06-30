@@ -119,8 +119,6 @@ const DatastreamOverrideSelector = ({
       isFirstRender
     ) {
       setInputMethod(InputMethod.SELECT);
-    } else {
-      setInputMethod(InputMethod.FREEFORM);
     }
   }, [selectedDatastream, inputMethod, isFirstRender]);
   const useManualEntry =
