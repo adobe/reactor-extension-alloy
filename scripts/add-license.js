@@ -130,7 +130,7 @@ const run = async () => {
   const runTime = performance.now() - startTime;
   console.log(
     `✨ Added license to ${alteredFileCount} of ${filesInspected.length} ${
-      stagedOnly ? "staged" : ""
+      stagedOnly ? "staged " : ""
     }files in ${runTime}ms.`
   );
 };
