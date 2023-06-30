@@ -75,6 +75,7 @@ const InputMethod = Object.freeze({
  * @param {string} options.sandbox
  * @param {number} options.limit
  * @param {Object} options.otherProps
+ * @param {string} options.label
  * @returns {React.ReactElement}
  */
 const DatastreamOverrideSelector = ({
@@ -83,6 +84,7 @@ const DatastreamOverrideSelector = ({
   sandbox,
   name,
   limit = 1000,
+  label,
   ...otherProps
 }) => {
   /** @type {import("@adobe/react-spectrum").AsyncListData<Datastream, string>} */
@@ -129,7 +131,7 @@ const DatastreamOverrideSelector = ({
   return (
     <>
       <FormikRadioGroup
-        label="Datastream input method"
+        label={label}
         name={inputMethodFieldName}
         orientation="horizontal"
       >
@@ -148,6 +150,7 @@ const DatastreamOverrideSelector = ({
       </FormikRadioGroup>
       <OverrideInput
         {...otherProps}
+        aria-label={label}
         selectedKey={getKey(selectedDatastream)}
         items={datastreamList.items}
         name={name}
@@ -167,6 +170,7 @@ DatastreamOverrideSelector.propTypes = {
   imsAccess: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   sandbox: PropTypes.string.isRequired,
+  label: PropTypes.string,
   limit: PropTypes.number
 };
 
