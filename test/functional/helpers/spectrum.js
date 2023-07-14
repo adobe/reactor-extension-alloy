@@ -110,6 +110,12 @@ const createExpectDisabled = selector => async () => {
   await t.expect(selector.hasAttribute("disabled")).ok();
 };
 
+const createExpectHasRole = (selector, expectedRole) => () =>
+  t.expect(selector.getAttribute("role")).eql(expectedRole);
+
+const createExpectNotHasRole = (selector, expectedRole) => () =>
+  t.expect(selector.getAttribute("role")).notEql(expectedRole);
+
 // The menu items are virtualized, meaning that any items that
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
@@ -195,6 +201,7 @@ const createSelectMenuOption = menuSelector => async label => {
 const componentWrappers = {
   comboBox(selector) {
     return {
+      expectIsComboBox: createExpectHasRole(selector, "combobox"),
       expectError: createExpectError(selector),
       expectNoError: createExpectNoError(selector),
       // We use createExpectValue because the text is stored on a value attribute of
@@ -288,6 +295,7 @@ const componentWrappers = {
   },
   textField(selector) {
     return {
+      expectIsTextField: createExpectNotHasRole(selector, "combobox"),
       expectError: createExpectError(selector),
       expectNoError: createExpectNoError(selector),
       expectValue: createExpectValue(selector),

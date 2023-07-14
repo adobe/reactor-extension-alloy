@@ -36,6 +36,44 @@ const defaultEdgeBasePath = "ee";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
 
+test.requestHooks(
+  sandboxesMocks.singleDefault,
+  datastreamsMocks.single,
+  datastreamMocks.withConfigOverrides
+)(
+  "does not populate override dropdowns after switching instances (because of different orgIDs)",
+  async () => {
+    await extensionViewController.init();
+
+    await instances[0].nameField.expectValue("alloy");
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.development.selectMenuOption(
+      "Test Config Overrides"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectExists();
+    await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
+    await instances[0].overrides.comboBoxes.eventDatasetOverride.expectIsComboBox();
+    await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectExists();
+    await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectIsComboBox();
+    await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectExists();
+    await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectIsComboBox();
+    await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectExists();
+    await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectIsComboBox();
+
+    await addInstanceButton.click();
+    await instances[1].overrides.textFields.eventDatasetOverride.expectExists();
+    await instances[1].overrides.textFields.eventDatasetOverride.expectIsTextField();
+    await instances[1].overrides.textFields.idSyncContainerOverride.expectExists();
+    await instances[1].overrides.textFields.idSyncContainerOverride.expectIsTextField();
+    await instances[1].overrides.textFields.targetPropertyTokenOverride.expectExists();
+    await instances[1].overrides.textFields.targetPropertyTokenOverride.expectIsTextField();
+    await instances[1].overrides.textFields.reportSuiteOverrides[0].expectExists();
+    await instances[1].overrides.textFields.reportSuiteOverrides[0].expectIsTextField();
+  }
+);
+
 test("initializes form fields with full settings", async () => {
   await extensionViewController.init({
     settings: {
