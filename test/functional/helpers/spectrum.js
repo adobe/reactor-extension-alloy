@@ -265,6 +265,11 @@ const componentWrappers = {
   },
   picker(selector) {
     return {
+      async expectIsPicker() {
+        await t.expect(selector.getAttribute("aria-haspopup")).eql("listbox");
+        // must be a button element
+        await t.expect(selector.tagName).eql("button");
+      },
       expectError: createExpectInvalidCssClass(selector),
       expectNoError: createExpectNoError(selector),
       expectText: createExpectText(selector),

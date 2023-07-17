@@ -58,6 +58,19 @@ const SandboxSelector = ({ initInfo, name, ...otherProps }) => {
   /** @type {import("@adobe/react-spectrum").AsyncListData<Sandbox, string>} */
   const sandboxList = useAsyncList({
     async load({ signal }) {
+      if (!orgId || !imsAccess) {
+        const missingParams = Object.entries({
+          orgId,
+          imsAccess
+        })
+          .filter(([value]) => value)
+          .map(([key]) => key)
+          .join(", ");
+        return {
+          items: [],
+          error: new Error(`Missing required parameters: ${missingParams}`)
+        };
+      }
       /** @type {{ results: Sandbox[] }} */
       const { results: sandboxes } = await fetchSandboxes({
         orgId,
@@ -77,8 +90,17 @@ const SandboxSelector = ({ initInfo, name, ...otherProps }) => {
   useEffect(() => {
     if (sandboxList.items.length === 1 && !sandbox) {
       setSandbox(sandboxList.items[0].name);
+    } else {
+      const defaultSandbox = sandboxList.items.find(s => s.isDefault);
+      if (defaultSandbox && !sandbox) {
+        setSandbox(defaultSandbox.name);
+      }
     }
   }, [sandboxList.items, sandbox]);
+
+  if (sandboxList.error || sandboxList.items.length === 0) {
+    return null;
+  }
 
   return (
     <FormikPicker

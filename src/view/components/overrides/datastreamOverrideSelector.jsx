@@ -90,6 +90,20 @@ const DatastreamOverrideSelector = ({
   /** @type {import("@adobe/react-spectrum").AsyncListData<Datastream, string>} */
   const datastreamList = useAsyncList({
     async load({ signal }) {
+      if (!orgId || !imsAccess || !sandbox) {
+        const missingParams = Object.entries({
+          orgId,
+          imsAccess,
+          sandbox
+        })
+          .filter(([value]) => value)
+          .map(([key]) => key)
+          .join(", ");
+        return {
+          items: [],
+          error: new Error(`Missing required parameters: ${missingParams}`)
+        };
+      }
       /** @type {{ results: Datastream[] }} */
       const { results: datastreams } = await fetchConfigs({
         orgId,
@@ -103,36 +117,53 @@ const DatastreamOverrideSelector = ({
       };
     }
   });
+  // Reload the list when the orgId changes after the first render
+  const isFirstRender = useIsFirstRender();
+  useEffect(() => {
+    if (!isFirstRender) {
+      datastreamList.reload();
+    }
+  }, [orgId, imsAccess, sandbox, limit, isFirstRender]);
 
   const [{ value }] = useField(name);
   const inputMethodFieldName = `${name}InputMethod`;
   /** @type {[{ value: "select" | "freeform" }]} */
-  const [{ value: inputMethod }, , { setValue: setInputMethod }] = useField(
-    inputMethodFieldName
-  );
+  const [
+    { value: inputMethod },
+    { touched: inputMethodTouched },
+    { setValue: setInputMethod }
+  ] = useField(inputMethodFieldName);
   const selectedDatastream = datastreamList.items.find(
     item => getKey(item) === value
   );
-  const isFirstRender = useIsFirstRender();
   useEffect(() => {
-    if (
-      Boolean(selectedDatastream) &&
-      inputMethod !== InputMethod.SELECT &&
-      isFirstRender
-    ) {
-      setInputMethod(InputMethod.SELECT);
+    if (datastreamList.error || datastreamList.items.length === 0) {
+      setInputMethod(InputMethod.FREEFORM);
+    } else if (!inputMethodTouched) {
+      if (datastreamList.items.length > 0 && (selectedDatastream || !value)) {
+        setInputMethod(InputMethod.SELECT);
+      }
+      if (value && !selectedDatastream) {
+        setInputMethod(InputMethod.FREEFORM);
+      }
     }
-  }, [selectedDatastream, inputMethod, isFirstRender]);
-  const useManualEntry =
-    inputMethod === InputMethod.FREEFORM ||
-    datastreamList.items.length === 0 ||
-    Boolean(datastreamList.error);
+  }, [
+    datastreamList.error,
+    datastreamList.items.length,
+    selectedDatastream,
+    inputMethodTouched,
+    value
+  ]);
+  const useManualEntry = inputMethod === InputMethod.FREEFORM;
+  const inputMethodIsDisabled =
+    datastreamList.items.length === 0 || Boolean(datastreamList.error);
 
   return (
     <>
       <FormikRadioGroup
         label={label}
         name={inputMethodFieldName}
+        isDisabled={inputMethodIsDisabled}
         orientation="horizontal"
       >
         <Radio
