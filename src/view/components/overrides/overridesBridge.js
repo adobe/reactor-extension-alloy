@@ -15,7 +15,7 @@ import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
 import trimValue from "../../utils/trimValues";
 
-const dataElementValidator = string().matches(/^%.+%$/gi);
+const dataElementValidator = string().matches(/^\d*(%.+%)+\d*$/gi);
 
 export const bridge = {
   // return formik state

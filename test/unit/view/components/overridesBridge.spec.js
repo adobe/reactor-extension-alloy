@@ -421,5 +421,29 @@ describe("overridesBridge", () => {
         });
       }).not.toThrow();
     });
+
+    it("validates partial data elements", () => {
+      expect(() => {
+        bridge.formikStateValidationSchema.validateSync({
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_experience_platform: {
+                datasets: {
+                  event: {
+                    datasetId: "%Data Element 2%"
+                  }
+                }
+              },
+              com_adobe_analytics: {
+                reportSuites: ["%Data Element 3%", "%Data Element 4%"]
+              },
+              com_adobe_identity: {
+                idSyncContainerId: "1234%Data Element 5%333"
+              }
+            }
+          }
+        });
+      }).not.toThrow();
+    });
   });
 });
