@@ -26,11 +26,15 @@ import { useField } from "formik";
 import Copy from "@spectrum-icons/workflow/Copy";
 import Delete from "@spectrum-icons/workflow/Delete";
 import copyToClipboard from "clipboard-copy";
-import fetchConfigs from "./utils/fetchConfigs";
+import fetchConfigs from "../configuration/utils/fetchConfigs";
 import usePrevious from "../utils/usePrevious";
-import Alert from "../components/alert";
-import { PRODUCTION } from "./constants/environmentType";
-import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
+import Alert from "./alert";
+import {
+  PRODUCTION,
+  ENVIRONMENTS
+} from "../configuration/constants/environmentType";
+import FormikTextField from "./formikReactSpectrum3/formikTextField";
+import { capitialize } from "./overrides/utils";
 
 // eslint-disable-next-line no-underscore-dangle
 const getKey = datastream => datastream && datastream._system.id;
@@ -51,8 +55,10 @@ const DatastreamSelector = ({
   selectedSandbox,
   items,
   defaultSandboxOnly,
+  label,
   environmentType,
-  description
+  description,
+  fallbackToManualEntry
 }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
     name
@@ -111,7 +117,10 @@ const DatastreamSelector = ({
 
   const datastreamProps = {
     isRequired: defaultSandboxOnly && environmentType === PRODUCTION,
-    label: defaultSandboxOnly ? `${environmentType} datastream` : " ",
+    label:
+      label ?? defaultSandboxOnly
+        ? `${capitialize(environmentType)} datastream`
+        : " ",
     "aria-label": `${environmentType} datastream`,
     "data-test-id": `${environmentType}DatastreamField`,
     UNSAFE_className: "CapitalizedLabel"
@@ -137,7 +146,7 @@ const DatastreamSelector = ({
   if (datastreamList.loadingState === "error" && !datastreamList.items.length) {
     const errorMessage = datastreamList?.error?.originatingError?.message;
 
-    if (value) {
+    if (value || fallbackToManualEntry) {
       return (
         <Flex direction="row" gap="size-100">
           <View>
@@ -147,7 +156,7 @@ const DatastreamSelector = ({
               name={name}
               description={errorLoadingDatastreamsDescription}
               width="size-5000"
-              isDisabled="true"
+              isDisabled={!fallbackToManualEntry}
             />
           </View>
           <Flex direction="row" gap="size-100" marginTop="size-250">
@@ -262,15 +271,37 @@ const DatastreamSelector = ({
   );
 };
 
+const datastreamShape = PropTypes.shape({
+  _system: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired,
+  region: PropTypes.string,
+  data: PropTypes.shape({
+    title: PropTypes.string.isRequired
+  })
+});
+
 DatastreamSelector.propTypes = {
-  defaultSelectedDatastream: PropTypes.object,
-  initInfo: PropTypes.object,
-  name: PropTypes.string,
-  selectedSandbox: PropTypes.object,
+  defaultSelectedDatastream: datastreamShape,
+  initInfo: PropTypes.shape({
+    company: PropTypes.shape({
+      orgId: PropTypes.string.isRequired
+    }).isRequired,
+    tokens: PropTypes.shape({
+      imsAccess: PropTypes.string.isRequired
+    }).isRequired
+  }),
+  name: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  selectedSandbox: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired
+  }).isRequired,
   defaultSandboxOnly: PropTypes.bool,
-  environmentType: PropTypes.string,
-  items: PropTypes.array,
-  description: PropTypes.string
+  environmentType: PropTypes.oneOf(ENVIRONMENTS).isRequired,
+  items: PropTypes.arrayOf(datastreamShape),
+  description: PropTypes.string,
+  fallbackToManualEntry: PropTypes.bool
 };
 
 export default DatastreamSelector;

@@ -21,7 +21,9 @@ import {
   STAGING
 } from "../../configuration/constants/environmentType";
 import FormElementContainer from "../formElementContainer";
-import HeaderContainer from "./headerContainer";
+import SandboxSelector from "../sandboxSelector";
+import SectionHeader from "../sectionHeader";
+import DatastreamOverrideSelector from "./datastreamOverrideSelector";
 import OverrideInput from "./overrideInput";
 import ReportSuitesOverride from "./reportSuiteOverrides";
 import SettingsCopySection from "./settingsCopySection";
@@ -40,7 +42,6 @@ import {
  * @property {Object} initInfo
  * @property {string?} options.instanceFieldName
  * The name of the Formik parent form. State will be stored as a nested object under the "edgeConfigOverrides" key.
- * @property {boolean} options.largeHeader Whether to use the large header. Defaults to false.
  * @property {Array<"eventDatasetOverride" | "idSyncContainerOverride" | "targetPropertyTokenOverride" | "targetPropertyTokenOverride" | "reportSuitesOverride">} options.showFields
  * Which fields to show. Defaults to showing all fields
  * @property {string} options.configOrgId The org id to use for fetching datastream configurations.
@@ -65,42 +66,12 @@ const Overrides = ({
   instanceFieldName,
   edgeConfigIds,
   configOrgId,
-  largeHeader = false,
-  showFields = [...Object.values(FIELD_NAMES)]
+  hideFields = []
 }) => {
   const prefix = instanceFieldName
     ? `${instanceFieldName}.edgeConfigOverrides`
     : "edgeConfigOverrides";
-  const showFieldsSet = new Set(showFields);
-
-  const requestCache = useRef({});
-  const authOrgId = initInfo.company.orgId;
-  const edgeConfigs = {
-    [DEVELOPMENT]: useFetchConfig({
-      authOrgId,
-      configOrgId,
-      imsAccess: initInfo.tokens.imsAccess,
-      edgeConfigId: edgeConfigIds.developmentEnvironment.datastreamId,
-      sandbox: edgeConfigIds.developmentEnvironment.sandbox,
-      requestCache
-    }),
-    [STAGING]: useFetchConfig({
-      authOrgId,
-      configOrgId,
-      imsAccess: initInfo.tokens.imsAccess,
-      edgeConfigId: edgeConfigIds.stagingEnvironment.datastreamId,
-      sandbox: edgeConfigIds.stagingEnvironment.sandbox,
-      requestCache
-    }),
-    [PRODUCTION]: useFetchConfig({
-      authOrgId,
-      configOrgId,
-      imsAccess: initInfo.tokens.imsAccess,
-      edgeConfigId: edgeConfigIds.productionEnvironment.datastreamId,
-      sandbox: edgeConfigIds.productionEnvironment.sandbox,
-      requestCache
-    })
-  };
+  const hideFieldsSet = new Set(hideFields);
 
   const [
     ,
@@ -118,14 +89,52 @@ const Overrides = ({
     setEdgeConfigOverrides(edgeConfigOverrides);
   };
 
+  const requestCache = useRef({});
+  const authOrgId = initInfo.company.orgId;
+  const edgeConfigs = {
+    [DEVELOPMENT]: useFetchConfig({
+      authOrgId,
+      configOrgId,
+      imsAccess: initInfo.tokens.imsAccess,
+      edgeConfigId:
+        edgeConfigOverrides.development.datastreamId ||
+        edgeConfigIds.developmentEnvironment.datastreamId,
+      sandbox:
+        edgeConfigOverrides.development.sandbox ||
+        edgeConfigIds.developmentEnvironment.sandbox,
+      requestCache
+    }),
+    [STAGING]: useFetchConfig({
+      authOrgId,
+      configOrgId,
+      imsAccess: initInfo.tokens.imsAccess,
+      edgeConfigId:
+        edgeConfigOverrides.staging.datastreamId ||
+        edgeConfigIds.stagingEnvironment.datastreamId,
+      sandbox:
+        edgeConfigOverrides.staging.sandbox ||
+        edgeConfigIds.stagingEnvironment.sandbox,
+      requestCache
+    }),
+    [PRODUCTION]: useFetchConfig({
+      authOrgId,
+      configOrgId,
+      imsAccess: initInfo.tokens.imsAccess,
+      edgeConfigId:
+        edgeConfigOverrides.production.datastreamId ||
+        edgeConfigIds.productionEnvironment.datastreamId,
+      sandbox:
+        edgeConfigOverrides.production.sandbox ||
+        edgeConfigIds.productionEnvironment.sandbox,
+      requestCache
+    })
+  };
+
   return (
     <>
-      <HeaderContainer
-        largeHeader={largeHeader}
-        learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides"
-      >
+      <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides">
         Datastream Configuration Overrides
-      </HeaderContainer>
+      </SectionHeader>
       <FormElementContainer>
         <Tabs aria-label="Datastream Configuration Overrides">
           <TabList>
@@ -140,6 +149,8 @@ const Overrides = ({
               const { result, isLoading, error } = edgeConfigs[env];
               const useManualEntry = !result || Boolean(error);
 
+              const envEdgeConfigIds = edgeConfigIds[`${env}Environment`];
+
               const primaryEventDataset =
                 result?.com_adobe_experience_platform?.datasets?.event?.find(
                   ({ primary }) => primary
@@ -149,9 +160,9 @@ const Overrides = ({
                   ({ primary }) => !primary
                 ) ?? [];
               let eventDatasetDescription =
-                "The ID for the destination event dataset in the Adobe Experience Platform. The value must be a preconfigured secondary dataset from your datastream configuration.";
+                "The ID for the destination event dataset in the Adobe Experience Platform.  The value must be a preconfigured secondary dataset from your datastream configuration.";
               if (primaryEventDataset) {
-                eventDatasetDescription = `Overrides default dataset of "${primaryEventDataset}". ${eventDatasetDescription}`;
+                eventDatasetDescription = `Overrides the default dataset (${primaryEventDataset}). ${eventDatasetDescription}`;
               }
               const itemIsInDatasetOptions = createIsItemInArray(
                 eventDatasetOptions.map(({ datasetId }) => datasetId),
@@ -169,7 +180,7 @@ const Overrides = ({
               let idSyncContainerDescription =
                 "The ID for the destination third-party ID sync container in Adobe Audience Manager. The value must be a preconfigured secondary container from your datastream configuration and overrides the primary container.";
               if (primaryIdSyncContainer) {
-                idSyncContainerDescription = `Overrides default container of "${primaryIdSyncContainer}". ${idSyncContainerDescription}`;
+                idSyncContainerDescription = `Overrides the default container (${primaryIdSyncContainer}). ${idSyncContainerDescription}`;
               }
               const itemIsInIdSyncContainerOptions = createIsItemInArray(
                 idSyncContainers.map(({ label }) => label),
@@ -187,7 +198,7 @@ const Overrides = ({
               let propertyTokenDescription =
                 "The token for the destination property in Adobe Target. The value must be a preconfigured property override from your datastream configuration and overrides the primary property.";
               if (primaryPropertyToken) {
-                propertyTokenDescription = `Overrides default property of "${primaryPropertyToken}". ${propertyTokenDescription}`;
+                propertyTokenDescription = `Overrides the default property (${primaryPropertyToken}). ${propertyTokenDescription}`;
               }
               const itemIsInPropertyTokenOptions = createIsItemInArray(
                 propertyTokenOptions.map(({ value }) => value),
@@ -221,16 +232,41 @@ const Overrides = ({
                   isDataElement(value) || itemIsInReportSuiteOptions(value)
                 );
               };
+              const sandboxFieldName = `${prefix}.${env}.${
+                FIELD_NAMES.sandbox
+              }`;
+              const [{ value: sandbox }] = useField(sandboxFieldName);
 
               return (
                 <Item key={env}>
-                  <Flex
-                    direction="column"
-                    marginX={largeHeader ? "" : "size-300"}
-                    gap="size-100"
-                  >
+                  <Flex direction="column" gap="size-100">
                     <SettingsCopySection currentEnv={env} onPress={onCopy} />
-                    {showFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
+                    {!hideFieldsSet.has(FIELD_NAMES.datastreamId) && (
+                      <>
+                        <SandboxSelector
+                          data-test-id={FIELD_NAMES.sandbox}
+                          initInfo={initInfo}
+                          label="Sandbox"
+                          name={sandboxFieldName}
+                          width="size-5000"
+                        />
+                        <DatastreamOverrideSelector
+                          data-test-id={FIELD_NAMES.datastreamId}
+                          label="Datastream"
+                          description={`Override the configured datastream${
+                            envEdgeConfigIds.datastreamId
+                              ? ` (${envEdgeConfigIds.datastreamId})`
+                              : ""
+                          }. This does not support cross-organiztion datastream overrides.`}
+                          orgId={configOrgId}
+                          imsAccess={initInfo.tokens.imsAccess}
+                          name={`${prefix}.${env}.datastreamId`}
+                          sandbox={sandbox}
+                          width="size-5000"
+                        />
+                      </>
+                    )}
+                    {!hideFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
                       <OverrideInput
                         useManualEntry={
                           useManualEntry || eventDatasetOptions.length === 0
@@ -250,7 +286,9 @@ const Overrides = ({
                         )}
                       </OverrideInput>
                     )}
-                    {showFieldsSet.has(FIELD_NAMES.idSyncContainerOverride) && (
+                    {!hideFieldsSet.has(
+                      FIELD_NAMES.idSyncContainerOverride
+                    ) && (
                       <OverrideInput
                         data-test-id={FIELD_NAMES.idSyncContainerOverride}
                         label="Third-party ID sync container"
@@ -271,7 +309,7 @@ const Overrides = ({
                         {({ value, label }) => <Item key={value}>{label}</Item>}
                       </OverrideInput>
                     )}
-                    {showFieldsSet.has(
+                    {!hideFieldsSet.has(
                       FIELD_NAMES.targetPropertyTokenOverride
                     ) && (
                       <OverrideInput
@@ -292,7 +330,7 @@ const Overrides = ({
                         {({ value, label }) => <Item key={value}>{label}</Item>}
                       </OverrideInput>
                     )}
-                    {showFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
+                    {!hideFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
                       <ReportSuitesOverride
                         useManualEntry={useManualEntry}
                         isValid={isValidReportSuiteOption}
@@ -330,8 +368,7 @@ Overrides.propTypes = {
     })
   }).isRequired,
   configOrgId: PropTypes.string.isRequired,
-  largeHeader: PropTypes.bool,
-  showFields: PropTypes.arrayOf(PropTypes.oneOf(Object.values(FIELD_NAMES)))
+  hideFields: PropTypes.arrayOf(PropTypes.oneOf(Object.values(FIELD_NAMES)))
 };
 
 export default Overrides;

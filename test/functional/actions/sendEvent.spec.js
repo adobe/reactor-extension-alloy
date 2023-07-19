@@ -10,15 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
+import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";
+import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
+import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
 import extensionViewController from "../helpers/extensionViewController";
+import overrideViewSelectors from "../helpers/overrideViewSelectors";
 import spectrum from "../helpers/spectrum";
 import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
-import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
-import overrideViewSelectors from "../helpers/overrideViewSelectors";
-import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
-import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
-import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";
 
 const instanceNameField = spectrum.picker("instanceNameField");
 const typeField = spectrum.comboBox("typeField");
@@ -97,6 +97,8 @@ test("initializes form fields with full settings, when decision scopes is data e
       renderDecisions: true,
       edgeConfigOverrides: {
         production: {
+          sandbox: "prod",
+          datastreamId: mockExtensionSettings.instances[0].edgeConfigId,
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -115,6 +117,8 @@ test("initializes form fields with full settings, when decision scopes is data e
           }
         },
         staging: {
+          sandbox: "prod",
+          datastreamId: mockExtensionSettings.instances[0].edgeConfigId,
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -133,6 +137,8 @@ test("initializes form fields with full settings, when decision scopes is data e
           }
         },
         development: {
+          sandbox: "prod",
+          datastreamId: mockExtensionSettings.instances[0].edgeConfigId,
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -170,6 +176,11 @@ test("initializes form fields with full settings, when decision scopes is data e
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
+  await overrideViewSelectors.datastreamIdFreeform.expectValue(
+    mockExtensionSettings.instances[0].edgeConfigId
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -185,6 +196,11 @@ test("initializes form fields with full settings, when decision scopes is data e
 
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
+  await overrideViewSelectors.datastreamIdFreeform.expectValue(
+    mockExtensionSettings.instances[0].edgeConfigId
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -200,6 +216,11 @@ test("initializes form fields with full settings, when decision scopes is data e
 
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
+  await overrideViewSelectors.datastreamIdFreeform.expectValue(
+    mockExtensionSettings.instances[0].edgeConfigId
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -417,6 +438,7 @@ test("returns full valid settings with decision scopes as data element", async (
     },
     edgeConfigOverrides: {
       production: {
+        sandbox: "prod",
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -435,6 +457,7 @@ test("returns full valid settings with decision scopes as data element", async (
         }
       },
       staging: {
+        sandbox: "prod",
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -453,6 +476,7 @@ test("returns full valid settings with decision scopes as data element", async (
         }
       },
       development: {
+        sandbox: "prod",
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -499,6 +523,11 @@ test("returns decision scopes settings as an array", async () => {
     instanceName: "alloy1",
     personalization: {
       decisionScopes: ["foo", "foo2"]
+    },
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
     }
   });
 });
@@ -519,6 +548,11 @@ test("returns surfaces settings as an array", async () => {
     instanceName: "alloy1",
     personalization: {
       surfaces: ["web://foo", "web://foo2"]
+    },
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
     }
   });
 });
@@ -532,7 +566,12 @@ test("does not return decision scopes settings when provided with array of empty
   await addDecisionScopeButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    instanceName: "alloy1"
+    instanceName: "alloy1",
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
+    }
   });
 });
 
@@ -545,7 +584,12 @@ test("does not return surface settings when provided with array of empty strings
   await addSurfaceButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    instanceName: "alloy1"
+    instanceName: "alloy1",
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
+    }
   });
 });
 
@@ -675,3 +719,72 @@ test.requestHooks(
 
   await extensionViewController.expectIsValid();
 });
+
+test("can type a datastream overrides", async () => {
+  await extensionViewController.init({
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy",
+          edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+          sandbox: "prod"
+        }
+      ]
+    }
+  });
+
+  await overrideViewSelectors.envTabs.production.click();
+  await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("1234");
+
+  await extensionViewController.expectIsValid();
+});
+
+test.requestHooks(
+  sandboxesMocks.multipleWithoutDefault,
+  datastreamsMocks.single,
+  datastreamMocks.withConfigOverrides
+)(
+  "overrides switch to textfields when the second instance is selected",
+  async () => {
+    await extensionViewController.init({
+      extensionSettings: {
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            sandbox: "prod",
+            stagingEdgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            stagingSandbox: "prod",
+            developmentEdgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            developmentSandbox: "prod"
+          },
+          {
+            name: "alloy2",
+            edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83",
+            sandbox: "testsandbox1",
+            stagingEdgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83",
+            stagingSandbox: "testsandbox1",
+            developmentEdgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83",
+            developmentSandbox: "testsandbox1"
+          }
+        ]
+      }
+    });
+
+    await instanceNameField.expectText("alloy1");
+    await overrideViewSelectors.sandbox.selectOption(
+      "PRODUCTION Test Sandbox Prod (VA7)"
+    );
+    await overrideViewSelectors.datastreamIdDropdown.expectExists();
+    await overrideViewSelectors.datastreamIdDropdown.expectIsPicker();
+    await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectIsComboBox();
+
+    await instanceNameField.selectOption("alloy2");
+    await overrideViewSelectors.datastreamIdFreeform.expectExists();
+    await overrideViewSelectors.datastreamIdFreeform.expectIsTextField();
+    await overrideViewSelectors.textFields.eventDatasetOverride.expectIsTextField();
+  }
+);

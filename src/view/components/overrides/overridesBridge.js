@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { array, lazy, number, object, string } from "yup";
+import { array, lazy, mixed, number, object, string } from "yup";
 import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/constants/environmentType";
 import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
@@ -24,6 +24,9 @@ export const bridge = {
       (acc, env) => ({
         ...acc,
         [env]: {
+          sandbox: "",
+          datastreamId: "",
+          datastreamIdInputMethod: "freeform",
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -87,35 +90,27 @@ export const bridge = {
     });
 
     OVERRIDE_ENVIRONMENTS.forEach(env => {
+      const overrides = instanceSettings.edgeConfigOverrides?.[env];
+      if (!overrides || Object.keys(overrides).length === 0) {
+        return;
+      }
       // Alloy, Konductor, and Blackbird expect the idSyncContainerID to be a
       // number, unless it is a data element (/^%.+%$/gi)
       if (
-        instanceSettings.edgeConfigOverrides?.[env]?.com_adobe_identity
-          ?.idSyncContainerId &&
-        !/^%.+%$/gi.test(
-          instanceSettings.edgeConfigOverrides[env].com_adobe_identity
-            .idSyncContainerId
-        )
+        overrides.com_adobe_identity?.idSyncContainerId &&
+        !/^%.+%$/gi.test(overrides.com_adobe_identity.idSyncContainerId)
       ) {
-        instanceSettings.edgeConfigOverrides[
-          env
-        ].com_adobe_identity.idSyncContainerId = parseInt(
-          instanceSettings.edgeConfigOverrides[env].com_adobe_identity
-            .idSyncContainerId,
+        overrides.com_adobe_identity.idSyncContainerId = parseInt(
+          overrides.com_adobe_identity.idSyncContainerId,
           10
         );
       }
 
       // filter out the blank report suites
-      if (
-        instanceSettings.edgeConfigOverrides?.[env]?.com_adobe_analytics
-          ?.reportSuites
-      ) {
-        instanceSettings.edgeConfigOverrides[
-          env
-        ].com_adobe_analytics.reportSuites = instanceSettings.edgeConfigOverrides[
-          env
-        ].com_adobe_analytics.reportSuites.filter(rs => rs !== "");
+      if (overrides.com_adobe_analytics?.reportSuites) {
+        overrides.com_adobe_analytics.reportSuites = overrides.com_adobe_analytics.reportSuites.filter(
+          rs => rs !== ""
+        );
       }
     });
 
@@ -127,18 +122,21 @@ export const bridge = {
         (acc, env) => ({
           ...acc,
           [env]: object({
+            datastreamId: string(),
+            datastreamInputMethod: mixed().oneOf(["freeform", "select"]),
+            sandbox: string(),
             com_adobe_experience_platform: object({
               datasets: object({
                 event: object({
-                  datasetId: string().trim()
+                  datasetId: string()
                 }),
                 profile: object({
-                  datasetId: string().trim()
+                  datasetId: string()
                 })
               })
             }),
             com_adobe_analytics: object({
-              reportSuites: array(string().trim()).compact()
+              reportSuites: array(string())
             }),
             com_adobe_identity: object({
               idSyncContainerId: lazy(value =>
@@ -150,7 +148,7 @@ export const bridge = {
               )
             }),
             com_adobe_target: object({
-              propertyToken: string().trim()
+              propertyToken: string()
             })
           })
         }),

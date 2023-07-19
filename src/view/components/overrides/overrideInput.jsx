@@ -13,6 +13,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import DataElementSelector from "../dataElementSelector";
 import FormikComboBox from "../formikReactSpectrum3/formikComboBox";
+import FormikPicker from "../formikReactSpectrum3/formikPicker";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
 
 /**
@@ -28,7 +29,12 @@ import FormikTextField from "../formikReactSpectrum3/formikTextField";
  * representing each option in the combo box.
  * @returns {React.Element}
  */
-const OverrideInput = ({ useManualEntry, children, ...otherProps }) => {
+const OverrideInput = ({
+  useManualEntry,
+  children,
+  allowsCustomValue = false,
+  ...otherProps
+}) => {
   if (useManualEntry) {
     return (
       <DataElementSelector>
@@ -36,16 +42,22 @@ const OverrideInput = ({ useManualEntry, children, ...otherProps }) => {
       </DataElementSelector>
     );
   }
+  if (!allowsCustomValue) {
+    return <FormikPicker {...otherProps}>{children}</FormikPicker>;
+  }
   return (
     <DataElementSelector>
-      <FormikComboBox {...otherProps}>{children}</FormikComboBox>
+      <FormikComboBox allowsCustomValue={allowsCustomValue} {...otherProps}>
+        {children}
+      </FormikComboBox>
     </DataElementSelector>
   );
 };
 
 OverrideInput.propTypes = {
   useManualEntry: PropTypes.bool.isRequired,
-  children: PropTypes.func.isRequired
+  children: PropTypes.func.isRequired,
+  allowsCustomValue: PropTypes.bool
 };
 
 export default OverrideInput;

@@ -13,7 +13,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useField } from "formik";
 
-import DatastreamSelector from "./datastreamSelector";
+import DatastreamSelector from "../components/datastreamSelector";
 import { PRODUCTION } from "./constants/environmentType";
 import "./style.styl";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";

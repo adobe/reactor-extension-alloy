@@ -27,7 +27,9 @@ export const FIELD_NAMES = Object.freeze({
   eventDatasetOverride: "eventDatasetOverride",
   idSyncContainerOverride: "idSyncContainerOverride",
   targetPropertyTokenOverride: "targetPropertyTokenOverride",
-  reportSuitesOverride: "reportSuitesOverride"
+  reportSuitesOverride: "reportSuitesOverride",
+  datastreamId: "datastreamId",
+  sandbox: "sandbox"
 });
 
 /**

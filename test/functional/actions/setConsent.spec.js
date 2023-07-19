@@ -105,6 +105,7 @@ test("initializes form fields with settings containing a static consent array", 
       ],
       edgeConfigOverrides: {
         production: {
+          sandbox: "prod",
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -123,6 +124,7 @@ test("initializes form fields with settings containing a static consent array", 
           }
         },
         staging: {
+          sandbox: "prod",
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -141,6 +143,7 @@ test("initializes form fields with settings containing a static consent array", 
           }
         },
         development: {
+          sandbox: "prod",
           com_adobe_experience_platform: {
             datasets: {
               event: {
@@ -224,6 +227,7 @@ test("initializes form fields with settings containing a static consent array", 
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -483,7 +487,12 @@ test("returns minimal valid settings", async () => {
         version: "2.0",
         value: "%dataelement2%"
       }
-    ]
+    ],
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
+    }
   });
 });
 
@@ -595,7 +604,8 @@ test("returns full valid settings", async () => {
         },
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-        }
+        },
+        sandbox: "prod"
       },
       staging: {
         com_adobe_experience_platform: {
@@ -613,7 +623,8 @@ test("returns full valid settings", async () => {
         },
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-        }
+        },
+        sandbox: "prod"
       },
       development: {
         com_adobe_experience_platform: {
@@ -631,7 +642,8 @@ test("returns full valid settings", async () => {
         },
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-        }
+        },
+        sandbox: "prod"
       }
     }
   });
@@ -670,7 +682,12 @@ test("returns valid settings for guided form data elements", async () => {
         gdprApplies: "%data3%",
         gdprContainsPersonalData: "%data4%"
       }
-    ]
+    ],
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
+    }
   });
 });
 
@@ -683,7 +700,12 @@ test("returns valid settings for data element", async () => {
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
-    consent: "%data2%"
+    consent: "%data2%",
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
+    }
   });
 });
 
@@ -792,7 +814,12 @@ test("remembers the initial data element value", async () => {
         version: "1.0",
         value: { general: "%dataelement1%" }
       }
-    ]
+    ],
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod"
+      }
+    }
   };
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,

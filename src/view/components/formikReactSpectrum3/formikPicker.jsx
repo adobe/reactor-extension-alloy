@@ -31,6 +31,7 @@ const FormikPicker = ({ name, width, ...otherProps }) => {
       validationState={touched && error ? "invalid" : undefined}
       errorMessage={error}
       width={width}
+      {...otherProps}
     />
   );
 };
