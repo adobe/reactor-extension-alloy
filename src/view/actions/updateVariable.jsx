@@ -29,7 +29,6 @@ import fetchDataElement from "../utils/fetchDataElement";
 import useChanged from "../utils/useChanged";
 import Alert from "../components/alert";
 import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRequestsAndCreateSignal";
-import BetaNotice from "../components/betaNotice";
 
 const getInitialFormStateFromDataElement = async ({
   dataElement,
@@ -252,7 +251,6 @@ const UpdateVariable = ({
 
   return (
     <FormElementContainer>
-      <BetaNotice componentName="update variable action" />
       {dataElementsFirstPage.length === 0 && (
         <Alert variant="negative" title="Error" data-test-id="noDataElements">
           No `variable` type data elements are available. Create a variable type

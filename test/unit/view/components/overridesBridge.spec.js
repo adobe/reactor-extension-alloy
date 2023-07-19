@@ -217,6 +217,57 @@ describe("overridesBridge", () => {
         }
       });
     });
+
+    it("should allow for data elements", () => {
+      const instanceValues = {
+        edgeConfigOverrides: {
+          development: {
+            com_adobe_target: {
+              propertyToken: "%Data Element 1%"
+            },
+            com_adobe_experience_platform: {
+              datasets: {
+                event: {
+                  datasetId: "%Data Element 2%"
+                }
+              }
+            },
+            com_adobe_analytics: {
+              reportSuites: ["%Data Element 3%", "%Data Element 4%"]
+            },
+            com_adobe_identity: {
+              idSyncContainerId: "%Data Element 5%"
+            }
+          }
+        }
+      };
+
+      const instanceSettings = bridge.getInstanceSettings({
+        instanceValues
+      });
+      expect(instanceSettings).toEqual({
+        edgeConfigOverrides: {
+          development: {
+            com_adobe_target: {
+              propertyToken: "%Data Element 1%"
+            },
+            com_adobe_experience_platform: {
+              datasets: {
+                event: {
+                  datasetId: "%Data Element 2%"
+                }
+              }
+            },
+            com_adobe_analytics: {
+              reportSuites: ["%Data Element 3%", "%Data Element 4%"]
+            },
+            com_adobe_identity: {
+              idSyncContainerId: "%Data Element 5%"
+            }
+          }
+        }
+      });
+    });
   });
 
   describe("formikStateValidationSchema", () => {
@@ -270,6 +321,30 @@ describe("overridesBridge", () => {
           value.edgeConfigOverrides.development.com_adobe_identity
             .idSyncContainerId
         ).toBe(30793);
+      }).not.toThrow();
+    });
+
+    it("validates data elements", () => {
+      expect(() => {
+        bridge.formikStateValidationSchema.validateSync({
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_experience_platform: {
+                datasets: {
+                  event: {
+                    datasetId: "%Data Element 2%"
+                  }
+                }
+              },
+              com_adobe_analytics: {
+                reportSuites: ["%Data Element 3%", "%Data Element 4%"]
+              },
+              com_adobe_identity: {
+                idSyncContainerId: "%Data Element 5%"
+              }
+            }
+          }
+        });
       }).not.toThrow();
     });
   });
