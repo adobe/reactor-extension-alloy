@@ -15,10 +15,11 @@ import PropTypes from "prop-types";
 import { Picker } from "@adobe/react-spectrum";
 import { useField } from "formik";
 
-const FormikPicker = ({ name, width, ...otherProps }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+const FormikPicker = ({ name, width, validate, ...otherProps }) => {
+  const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
+    name,
+    validate
+  });
 
   return (
     <Picker
@@ -38,7 +39,8 @@ const FormikPicker = ({ name, width, ...otherProps }) => {
 
 FormikPicker.propTypes = {
   name: PropTypes.string.isRequired,
-  width: PropTypes.string
+  width: PropTypes.string,
+  validate: PropTypes.func
 };
 
 export default FormikPicker;

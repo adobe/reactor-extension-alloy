@@ -121,6 +121,7 @@ export const useFetchConfig = ({
  * Returns a function that takes an item and returns whether the item is in the
  * array. Items must be primatives, no objects.
  * Uses a Set internally for quick lookups.
+ * @template T
  * @param {Array<T>} array
  * @param {Object} options
  * @param {boolean} options.errorOnEmptyArray errorOnEmptyArray Whether or not to return false if searching
@@ -149,4 +150,16 @@ export const createIsItemInArray = (
  * @param {string} value
  * @returns {boolean}
  */
-export const isDataElement = value => /^%.+%$/.test(value);
+export const isDataElement = value => /^\S*(%.+%)\S*$/.test(value);
+
+/**
+ * Creates a function that validates a given value. If it passes validation, it
+ * returns null. Otherwise, it returns the given message.
+ * @template T
+ * @param {(value: T) => boolean} validator
+ * @param {string} message
+ * @param {boolean} appendValue If true, the value will be appended to the error message.
+ * @returns {(value: T) => string | undefined}
+ */
+export const createValidatorWithMessage = (validator, message) => value =>
+  validator(value) ? undefined : message.trim();

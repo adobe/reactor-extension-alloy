@@ -19,20 +19,16 @@ import { useField } from "formik";
  * @param {Object} params
  * @param {string} params.name
  * @param {string?} params.width
- * @param {((val: string) => boolean)?} params.isValid A function that is called with
- * the value of the input and expects boolean to be returned representing the
- * validity of the input.
+ * @param {(value: T) => undefined | string} params.validate A function that will be called to validate
+ * the value entered by the user. The function should return an error message if
+ * the value is invalid, or null if the value is valid.
  * @returns {React.Element}
  */
-const FormikComboBox = ({
-  name,
-  width,
-  isValid = () => true,
-  ...otherProps
-}) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+const FormikComboBox = ({ name, width, validate, ...otherProps }) => {
+  const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
+    name,
+    validate
+  });
   return (
     <ComboBox
       {...otherProps}
@@ -41,9 +37,7 @@ const FormikComboBox = ({
       onBlur={() => {
         setTouched(true);
       }}
-      validationState={
-        touched && (error || !isValid(value)) ? "invalid" : undefined
-      }
+      validationState={touched && error ? "invalid" : undefined}
       width={width}
       errorMessage={error}
     />
@@ -52,7 +46,7 @@ const FormikComboBox = ({
 
 FormikComboBox.propTypes = {
   name: PropTypes.string.isRequired,
-  isValid: PropTypes.func,
+  validate: PropTypes.func,
   width: PropTypes.string
 };
 

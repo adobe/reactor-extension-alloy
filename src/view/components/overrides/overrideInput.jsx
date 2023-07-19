@@ -23,10 +23,14 @@ import FormikTextField from "../formikReactSpectrum3/formikTextField";
  * value that is being overridden.
  *
  * @param {Object} options
+ * @param {string} options.name The name of the field in the formik form.
  * @param {boolean} options.useManualEntry If true, the component will be a text
  * field. If false, the component will be a combo box.
  * @param {Function} options.children A function that returns a React element
  * representing each option in the combo box.
+ * @param {boolean} options.allowsCustomValue If true, the combo box will allow
+ * the user to enter a custom value. If false, the combo box will only allow the
+ * user to select from the options provided.
  * @returns {React.Element}
  */
 const OverrideInput = ({
