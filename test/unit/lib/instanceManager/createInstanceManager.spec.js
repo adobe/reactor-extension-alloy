@@ -85,14 +85,14 @@ describe("Instance Manager", () => {
   it("configures an SDK instance for each configured instance", () => {
     build();
     expect(alloy1).toHaveBeenCalledWith("configure", {
-      edgeConfigId: "PR123",
+      datastreamId: "PR123",
       debugEnabled: false,
       orgId: "ABC@AdobeOrg",
       onBeforeEventSend: jasmine.any(Function),
       edgeConfigOverrides: undefined
     });
     expect(alloy2).toHaveBeenCalledWith("configure", {
-      edgeConfigId: "PR456",
+      datastreamId: "PR456",
       debugEnabled: false,
       orgId: "DIFFERENTORG@AdobeOrg",
       onBeforeEventSend: jasmine.any(Function),
@@ -104,7 +104,7 @@ describe("Instance Manager", () => {
     turbine.debugEnabled = true;
     build();
     expect(alloy1).toHaveBeenCalledWith("configure", {
-      edgeConfigId: "PR123",
+      datastreamId: "PR123",
       debugEnabled: true,
       orgId: "ABC@AdobeOrg",
       onBeforeEventSend: jasmine.any(Function),
@@ -146,15 +146,15 @@ describe("Instance Manager", () => {
   it("handles a staging environment", () => {
     turbine.environment.stage = "staging";
     build();
-    expect(alloy1.calls.argsFor(0)[1].edgeConfigId).toEqual("PR123:stage");
-    expect(alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
+    expect(alloy1.calls.argsFor(0)[1].datastreamId).toEqual("PR123:stage");
+    expect(alloy2.calls.argsFor(0)[1].datastreamId).toEqual("PR456");
   });
 
   it("handles a development environment", () => {
     turbine.environment.stage = "development";
     build();
-    expect(alloy1.calls.argsFor(0)[1].edgeConfigId).toEqual("PR123:dev");
-    expect(alloy2.calls.argsFor(0)[1].edgeConfigId).toEqual("PR456");
+    expect(alloy1.calls.argsFor(0)[1].datastreamId).toEqual("PR123:dev");
+    expect(alloy2.calls.argsFor(0)[1].datastreamId).toEqual("PR456");
   });
 
   it("wraps onBeforeEventSend", () => {

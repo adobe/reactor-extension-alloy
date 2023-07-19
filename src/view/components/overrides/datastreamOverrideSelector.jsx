@@ -16,7 +16,6 @@ import React, { useEffect } from "react";
 import fetchConfigs from "../../configuration/utils/fetchConfigs";
 import OverrideInput from "./overrideInput";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
-import useIsFirstRender from "../../utils/useIsFirstRender";
 
 /**
  * @typedef {Object} Datastream
@@ -90,20 +89,6 @@ const DatastreamOverrideSelector = ({
   /** @type {import("@adobe/react-spectrum").AsyncListData<Datastream, string>} */
   const datastreamList = useAsyncList({
     async load({ signal }) {
-      if (!orgId || !imsAccess || !sandbox) {
-        const missingParams = Object.entries({
-          orgId,
-          imsAccess,
-          sandbox
-        })
-          .filter(([value]) => value)
-          .map(([key]) => key)
-          .join(", ");
-        return {
-          items: [],
-          error: new Error(`Missing required parameters: ${missingParams}`)
-        };
-      }
       /** @type {{ results: Datastream[] }} */
       const { results: datastreams } = await fetchConfigs({
         orgId,
@@ -117,13 +102,6 @@ const DatastreamOverrideSelector = ({
       };
     }
   });
-  // Reload the list when the orgId changes after the first render
-  const isFirstRender = useIsFirstRender();
-  useEffect(() => {
-    if (!isFirstRender) {
-      datastreamList.reload();
-    }
-  }, [orgId, imsAccess, sandbox, limit, isFirstRender]);
 
   const [{ value }] = useField(name);
   const inputMethodFieldName = `${name}InputMethod`;

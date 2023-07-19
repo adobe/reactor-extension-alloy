@@ -44,7 +44,7 @@ module.exports = ({
 
       instance("configure", {
         ...options,
-        edgeConfigId: computedEdgeConfigId,
+        datastreamId: computedEdgeConfigId,
         debugEnabled: turbine.debugEnabled,
         orgId: options.orgId || orgId,
         onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend)
