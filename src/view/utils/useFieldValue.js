@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Adobe. All rights reserved.
+Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,16 +9,18 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import { useField } from "formik";
 
-const createRedirectWithIdentity = require("./createRedirectWithIdentity");
-const instanceManager = require("../../instanceManager/index");
-const createGetConfigOverrides = require("../../utils/createGetConfigOverrides");
-
-const document = window.document;
-
-module.exports = createRedirectWithIdentity({
-  instanceManager,
-  document,
-  logger: turbine.logger,
-  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage)
-});
+/**
+ * A wrapper around the formik hook useField that returns just the reactive
+ * value of that field.
+ *
+ * See https://formik.org/docs/api/useField for more information.
+ *
+ * @param {string} fieldName
+ * @returns {any} The value of the field.
+ */
+export const useFieldValue = fieldName => {
+  const [, { value }] = useField(fieldName);
+  return value;
+};

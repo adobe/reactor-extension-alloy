@@ -57,6 +57,7 @@ import OverridesSection, {
 import AdvancedSection, {
   bridge as advancedSectionBridge
 } from "./advancedSection";
+import getEdgeConfigIds from "../utils/getEdgeConfigIds";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -200,6 +201,7 @@ const Configuration = ({ initInfo, context }) => {
                 <TabPanels>
                   {instances.map((instance, index) => {
                     const instanceFieldName = `instances.${index}`;
+                    const edgeConfigIds = getEdgeConfigIds(instance);
                     return (
                       <Item key={index}>
                         <BasicSection
@@ -223,7 +225,10 @@ const Configuration = ({ initInfo, context }) => {
                           instanceFieldName={instanceFieldName}
                         />
                         <OverridesSection
+                          initInfo={initInfo}
                           instanceFieldName={instanceFieldName}
+                          edgeConfigIds={edgeConfigIds}
+                          configOrgId={instance.orgId}
                           largeHeader
                         />
                         <AdvancedSection

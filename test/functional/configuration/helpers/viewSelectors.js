@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import spectrum from "../../helpers/spectrum";
+import overrideWrappers from "../../helpers/overrideViewSelectors";
 
 export const addInstanceButton = spectrum.button("addInstanceButton");
 export const instancesTabs = spectrum.tabs();
@@ -139,7 +140,8 @@ for (let i = 0; i < 3; i += 1) {
         "contextHighEntropyUserAgentHintsField"
       )
     },
-    deleteButton: spectrum.button("deleteInstanceButton")
+    deleteButton: spectrum.button("deleteInstanceButton"),
+    overrides: overrideWrappers
   });
 }
 

@@ -9,14 +9,14 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
 module.exports = ({
   turbine,
   window,
   createInstance,
   createEventMergeId,
   orgId,
-  wrapOnBeforeEventSend
+  wrapOnBeforeEventSend,
+  getConfigOverrides
 }) => {
   const { instances: instancesSettings } = turbine.getExtensionSettings();
   const instanceByName = {};
@@ -34,10 +34,13 @@ module.exports = ({
       window[name] = instance;
       instanceByName[name] = instance;
       const environment = turbine.environment && turbine.environment.stage;
+
       const computedEdgeConfigId =
         (environment === "development" && developmentEdgeConfigId) ||
         (environment === "staging" && stagingEdgeConfigId) ||
         edgeConfigId;
+
+      options.edgeConfigOverrides = getConfigOverrides(options);
 
       instance("configure", {
         ...options,

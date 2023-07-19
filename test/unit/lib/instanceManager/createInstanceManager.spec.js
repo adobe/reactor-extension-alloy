@@ -21,6 +21,8 @@ describe("Instance Manager", () => {
   let onBeforeEventSend;
   let alloy1;
   let alloy2;
+  let extensionSettings;
+  let getConfigOverrides;
 
   const build = () => {
     instanceManager = createInstanceManager({
@@ -29,32 +31,35 @@ describe("Instance Manager", () => {
       createInstance,
       orgId: "ABC@AdobeOrg",
       createEventMergeId,
-      wrapOnBeforeEventSend
+      wrapOnBeforeEventSend,
+      getConfigOverrides
     });
   };
 
   beforeEach(() => {
+    extensionSettings = {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+          stagingEdgeConfigId: "PR123:stage",
+          developmentEdgeConfigId: "PR123:dev"
+        },
+        {
+          name: "alloy2",
+          edgeConfigId: "PR456",
+          orgId: "DIFFERENTORG@AdobeOrg"
+        }
+      ]
+    };
     turbine = jasmine.createSpyObj({
-      getExtensionSettings: {
-        instances: [
-          {
-            name: "alloy1",
-            edgeConfigId: "PR123",
-            stagingEdgeConfigId: "PR123:stage",
-            developmentEdgeConfigId: "PR123:dev"
-          },
-          {
-            name: "alloy2",
-            edgeConfigId: "PR456",
-            orgId: "DIFFERENTORG@AdobeOrg"
-          }
-        ]
-      },
+      getExtensionSettings: extensionSettings,
       onDebugChanged: undefined,
       environment: { stage: "production" }
     });
     turbine.debugEnabled = false;
     mockWindow = {};
+    getConfigOverrides = jasmine.createSpy("getConfigOverrides");
     alloy1 = jasmine.createSpy("alloy1");
     alloy2 = jasmine.createSpy("alloy2");
     createInstance = jasmine.createSpy().and.callFake(({ name }) => {
@@ -83,13 +88,15 @@ describe("Instance Manager", () => {
       edgeConfigId: "PR123",
       debugEnabled: false,
       orgId: "ABC@AdobeOrg",
-      onBeforeEventSend: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function),
+      edgeConfigOverrides: undefined
     });
     expect(alloy2).toHaveBeenCalledWith("configure", {
       edgeConfigId: "PR456",
       debugEnabled: false,
       orgId: "DIFFERENTORG@AdobeOrg",
-      onBeforeEventSend: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function),
+      edgeConfigOverrides: undefined
     });
   });
 
@@ -100,7 +107,8 @@ describe("Instance Manager", () => {
       edgeConfigId: "PR123",
       debugEnabled: true,
       orgId: "ABC@AdobeOrg",
-      onBeforeEventSend: jasmine.any(Function)
+      onBeforeEventSend: jasmine.any(Function),
+      edgeConfigOverrides: undefined
     });
   });
 
@@ -155,5 +163,17 @@ describe("Instance Manager", () => {
       onBeforeEventSend: configuredOnBeforeEventSend
     } = alloy1.calls.argsFor(0)[1];
     expect(configuredOnBeforeEventSend).toBe(onBeforeEventSend);
+  });
+
+  it("handles config overrides", () => {
+    turbine.environment.stage = "development";
+    getConfigOverrides.and.returnValue({
+      com_adobe_target: { propertyToken: "development-property-token" }
+    });
+    build();
+    const { edgeConfigOverrides } = alloy1.calls.argsFor(0)[1];
+    expect(edgeConfigOverrides).toEqual({
+      com_adobe_target: { propertyToken: "development-property-token" }
+    });
   });
 });

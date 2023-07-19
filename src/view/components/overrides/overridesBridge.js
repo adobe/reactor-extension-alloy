@@ -9,32 +9,43 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { array, number, object, string } from "yup";
+import { array, lazy, number, object, string } from "yup";
+import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/constants/environmentType";
 import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
+import trimValue from "../../utils/trimValues";
+
+const dataElementValidator = string().matches(/^%.+%$/gi);
 
 export const bridge = {
   // return formik state
   getInstanceDefaults: () => ({
-    edgeConfigOverrides: {
-      com_adobe_experience_platform: {
-        datasets: {
-          event: {
-            datasetId: ""
+    edgeConfigOverrides: OVERRIDE_ENVIRONMENTS.reduce(
+      (acc, env) => ({
+        ...acc,
+        [env]: {
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: ""
+              }
+            }
+          },
+          com_adobe_analytics: {
+            reportSuites: [""]
+          },
+          com_adobe_identity: {
+            idSyncContainerId: undefined
+          },
+          com_adobe_target: {
+            propertyToken: ""
           }
         }
-      },
-      com_adobe_analytics: {
-        reportSuites: [""]
-      },
-      com_adobe_identity: {
-        idSyncContainerId: ""
-      },
-      com_adobe_target: {
-        propertyToken: ""
-      }
-    }
+      }),
+      {}
+    )
   }),
+
   // convert launch settings to formik state
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
@@ -44,6 +55,21 @@ export const bridge = {
       fromObj: instanceSettings,
       defaultsObj: bridge.getInstanceDefaults(),
       keys: ["edgeConfigOverrides"]
+    });
+
+    OVERRIDE_ENVIRONMENTS.forEach(env => {
+      if (
+        instanceValues.edgeConfigOverrides?.[env]?.com_adobe_identity
+          ?.idSyncContainerId
+      ) {
+        // Launch UI components expect this to be a string
+        instanceValues.edgeConfigOverrides[
+          env
+        ].com_adobe_identity.idSyncContainerId = `${
+          instanceValues.edgeConfigOverrides[env].com_adobe_identity
+            .idSyncContainerId
+        }`;
+      }
     });
 
     return instanceValues;
@@ -60,43 +86,76 @@ export const bridge = {
       keys: propertyKeysToCopy
     });
 
-    if (
-      instanceSettings.edgeConfigOverrides?.com_adobe_identity
-        ?.idSyncContainerId
-    ) {
-      // Alloy, Konductor, and Blackbird expect this to be a number
-      instanceSettings.edgeConfigOverrides.com_adobe_identity.idSyncContainerId = parseInt(
-        instanceSettings.edgeConfigOverrides.com_adobe_identity
-          .idSyncContainerId,
-        10
-      );
-    }
+    OVERRIDE_ENVIRONMENTS.forEach(env => {
+      // Alloy, Konductor, and Blackbird expect the idSyncContainerID to be a
+      // number, unless it is a data element (/^%.+%$/gi)
+      if (
+        instanceSettings.edgeConfigOverrides?.[env]?.com_adobe_identity
+          ?.idSyncContainerId &&
+        !/^%.+%$/gi.test(
+          instanceSettings.edgeConfigOverrides[env].com_adobe_identity
+            .idSyncContainerId
+        )
+      ) {
+        instanceSettings.edgeConfigOverrides[
+          env
+        ].com_adobe_identity.idSyncContainerId = parseInt(
+          instanceSettings.edgeConfigOverrides[env].com_adobe_identity
+            .idSyncContainerId,
+          10
+        );
+      }
 
-    return instanceSettings;
+      // filter out the blank report suites
+      if (
+        instanceSettings.edgeConfigOverrides?.[env]?.com_adobe_analytics
+          ?.reportSuites
+      ) {
+        instanceSettings.edgeConfigOverrides[
+          env
+        ].com_adobe_analytics.reportSuites = instanceSettings.edgeConfigOverrides[
+          env
+        ].com_adobe_analytics.reportSuites.filter(rs => rs !== "");
+      }
+    });
+
+    return trimValue(instanceSettings);
   },
   formikStateValidationSchema: object({
-    edgeConfigOverrides: object({
-      com_adobe_experience_platform: object({
-        datasets: object({
-          event: object({
-            datasetId: string()
-          }),
-          profile: object({
-            datasetId: string()
+    edgeConfigOverrides: object(
+      OVERRIDE_ENVIRONMENTS.reduce(
+        (acc, env) => ({
+          ...acc,
+          [env]: object({
+            com_adobe_experience_platform: object({
+              datasets: object({
+                event: object({
+                  datasetId: string().trim()
+                }),
+                profile: object({
+                  datasetId: string().trim()
+                })
+              })
+            }),
+            com_adobe_analytics: object({
+              reportSuites: array(string().trim()).compact()
+            }),
+            com_adobe_identity: object({
+              idSyncContainerId: lazy(value =>
+                typeof value === "string" && value.includes("%")
+                  ? dataElementValidator
+                  : number()
+                      .positive()
+                      .integer()
+              )
+            }),
+            com_adobe_target: object({
+              propertyToken: string().trim()
+            })
           })
-        })
-      }),
-      com_adobe_analytics: object({
-        reportSuites: array(string())
-      }),
-      com_adobe_identity: object({
-        idSyncContainerId: number()
-          .positive()
-          .integer()
-      }),
-      com_adobe_target: object({
-        propertyToken: string()
-      })
-    })
+        }),
+        {}
+      )
+    )
   })
 };

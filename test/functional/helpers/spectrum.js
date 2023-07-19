@@ -168,6 +168,10 @@ const createExpectMenuOptionLabelsExclude = menuSelector => async labels => {
   }
 };
 
+const createExpectTabSelected = selector => async () => {
+  await t.expect(selector.getAttribute("aria-selected")).eql("true");
+};
+
 // The menu items are virtualized, meaning that any items that
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
@@ -192,12 +196,15 @@ const componentWrappers = {
   comboBox(selector) {
     return {
       expectError: createExpectError(selector),
+      expectNoError: createExpectNoError(selector),
       // We use createExpectValue because the text is stored on a value attribute of
       // the element with our data-test-id, even though our true intention is to assert
       // the text in the textfield.
       expectText: createExpectValue(selector),
       async openMenu() {
-        await t.click(selector.parent().find("button"));
+        await t.click(
+          selector.parent().find("button[aria-haspopup='listbox']")
+        );
       },
       // If the user needs to manually open the menu before selecting an
       // item, you'll need to call openMenu first.
@@ -325,6 +332,12 @@ const componentWrappers = {
           .expect(selector.find("section").withText(message).exists)
           .ok(`Message ${message} not found.`);
       }
+    };
+  },
+  tab(selector) {
+    return {
+      click: createClick(selector),
+      expectSelected: createExpectTabSelected(selector)
     };
   },
   tabs() {

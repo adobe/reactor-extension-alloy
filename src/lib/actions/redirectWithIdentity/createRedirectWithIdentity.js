@@ -9,12 +9,13 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
-module.exports = ({ instanceManager, document, logger }) => (
-  settings,
-  event
-) => {
-  const { instanceName, edgeConfigOverrides } = settings;
+module.exports = ({
+  instanceManager,
+  document,
+  logger,
+  getConfigOverrides
+}) => (settings, event) => {
+  const { instanceName } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -43,9 +44,12 @@ module.exports = ({ instanceManager, document, logger }) => (
   }
 
   const url = event.element.href;
-  return instance("appendIdentityToUrl", { url, edgeConfigOverrides }).then(
-    ({ url: newLocation }) => {
-      document.location = newLocation;
-    }
-  );
+  const edgeConfigOverrides = getConfigOverrides(settings);
+
+  return instance("appendIdentityToUrl", {
+    url,
+    edgeConfigOverrides
+  }).then(({ url: newLocation }) => {
+    document.location = newLocation;
+  });
 };

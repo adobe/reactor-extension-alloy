@@ -28,6 +28,7 @@ import Overrides, { bridge as overridesBridge } from "../components/overrides";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
+import getEdgeConfigIds from "../utils/getEdgeConfigIds";
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -148,110 +149,122 @@ const SendEvent = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       formikStateValidationSchema={validationSchema}
-      render={({ initInfo }) => (
-        <FormElementContainer>
-          <InstanceNamePicker
-            data-test-id="instanceNameField"
-            name="instanceName"
-            initInfo={initInfo}
-          />
-          <DataElementSelector>
-            <FormikComboBox
-              data-test-id="typeField"
-              name="type"
-              label="Type"
-              description="Enter an event type to populate the `eventType` XDM field. Select a predefined value or enter a custom value."
-              defaultItems={knownEventTypeOptions}
-              allowsCustomValue
+      render={({ initInfo, formikProps: { values } }) => {
+        const { instanceName } = values;
+        const instanceSettings = initInfo.extensionSettings.instances.find(
+          instance => instance.name === instanceName
+        );
+        const edgeConfigIds = getEdgeConfigIds(instanceSettings);
+        const orgId = instanceSettings.orgId ?? initInfo.company.orgId;
+        return (
+          <FormElementContainer>
+            <InstanceNamePicker
+              data-test-id="instanceNameField"
+              name="instanceName"
+              initInfo={initInfo}
+            />
+            <DataElementSelector>
+              <FormikComboBox
+                data-test-id="typeField"
+                name="type"
+                label="Type"
+                description="Enter an event type to populate the `eventType` XDM field. Select a predefined value or enter a custom value."
+                defaultItems={knownEventTypeOptions}
+                allowsCustomValue
+                width="size-5000"
+              >
+                {item => <Item key={item.type}>{item.type}</Item>}
+              </FormikComboBox>
+            </DataElementSelector>
+            <DataElementSelector>
+              <FormikTextField
+                data-test-id="xdmField"
+                name="xdm"
+                label="XDM data"
+                description={
+                  <>
+                    Provide a data element which returns an object matching your
+                    XDM schema. You may want to use the{" "}
+                    <Link>
+                      <a
+                        href="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/data-element-types.html?lang=en#xdm-object"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        XDM Object
+                      </a>
+                    </Link>{" "}
+                    data element type to build this object. You can also combine
+                    objects using the{" "}
+                    <Link>
+                      <a
+                        href="https://experienceleague.adobe.com/docs/experience-platform/tags/extensions/adobe/core/overview.html?lang=en#merged-objects"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Merged Objects
+                      </a>
+                    </Link>{" "}
+                    data element type from the Core extension.
+                  </>
+                }
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <DataElementSelector>
+              <FormikTextField
+                data-test-id="dataField"
+                name="data"
+                label="Data"
+                description="Provide a data element which returns an object to send as free-form data."
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <DataElementSelector>
+              <FormikTextField
+                data-test-id="mergeIdField"
+                name="mergeId"
+                description="Provide an identifier used to merge multiple events. This will
+                          populate the `eventMergeId` XDM field."
+                label="Merge ID"
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <DataElementSelector>
+              <FormikTextField
+                data-test-id="datasetIdField"
+                name="datasetId"
+                description='Send data to a different dataset than what&apos;s been provided in the datastream. Note: this option is deprecated. Use "Event dataset" in the "Datastream Configuration Overrides" options instead.'
+                label="Dataset ID (deprecated)"
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <FormikCheckbox
+              data-test-id="documentUnloadingField"
+              name="documentUnloading"
+              description="Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
               width="size-5000"
             >
-              {item => <Item key={item.type}>{item.type}</Item>}
-            </FormikComboBox>
-          </DataElementSelector>
-          <DataElementSelector>
-            <FormikTextField
-              data-test-id="xdmField"
-              name="xdm"
-              label="XDM data"
-              description={
-                <>
-                  Provide a data element which returns an object matching your
-                  XDM schema. You may want to use the{" "}
-                  <Link>
-                    <a
-                      href="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/data-element-types.html?lang=en#xdm-object"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      XDM Object
-                    </a>
-                  </Link>{" "}
-                  data element type to build this object. You can also combine
-                  objects using the{" "}
-                  <Link>
-                    <a
-                      href="https://experienceleague.adobe.com/docs/experience-platform/tags/extensions/adobe/core/overview.html?lang=en#merged-objects"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Merged Objects
-                    </a>
-                  </Link>{" "}
-                  data element type from the Core extension.
-                </>
-              }
+              Document will unload
+            </FormikCheckbox>
+            <FormikCheckbox
+              data-test-id="renderDecisionsField"
+              name="renderDecisions"
+              description="Check this to automatically render personalization and pre-hide the content to prevent flicker."
               width="size-5000"
+            >
+              Render visual personalization decisions
+            </FormikCheckbox>
+            <DecisionScopes />
+            <Surfaces />
+            <Overrides
+              initInfo={initInfo}
+              edgeConfigIds={edgeConfigIds}
+              configOrgId={orgId}
             />
-          </DataElementSelector>
-          <DataElementSelector>
-            <FormikTextField
-              data-test-id="dataField"
-              name="data"
-              label="Data"
-              description="Provide a data element which returns an object to send as free-form data."
-              width="size-5000"
-            />
-          </DataElementSelector>
-          <DataElementSelector>
-            <FormikTextField
-              data-test-id="mergeIdField"
-              name="mergeId"
-              description="Provide an identifier used to merge multiple events. This will
-                          populate the `eventMergeId` XDM field."
-              label="Merge ID"
-              width="size-5000"
-            />
-          </DataElementSelector>
-          <DataElementSelector>
-            <FormikTextField
-              data-test-id="datasetIdField"
-              name="datasetId"
-              description='Send data to a different dataset than what&apos;s been provided in the datastream. Note: this option is deprecated. Use "Event dataset" in the "Datastream Configuration Overrides" options instead.'
-              label="Dataset ID (deprecated)"
-              width="size-5000"
-            />
-          </DataElementSelector>
-          <FormikCheckbox
-            data-test-id="documentUnloadingField"
-            name="documentUnloading"
-            description="Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
-            width="size-5000"
-          >
-            Document will unload
-          </FormikCheckbox>
-          <FormikCheckbox
-            data-test-id="renderDecisionsField"
-            name="renderDecisions"
-            description="Check this to automatically render personalization and pre-hide the content to prevent flicker."
-            width="size-5000"
-          >
-            Render visual personalization decisions
-          </FormikCheckbox>
-          <DecisionScopes />
-          <Surfaces />
-          <Overrides />
-        </FormElementContainer>
-      )}
+          </FormElementContainer>
+        );
+      }}
     />
   );
 };
