@@ -10,15 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
+import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";
+import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
+import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
 import extensionViewController from "../helpers/extensionViewController";
+import overrideViewSelectors from "../helpers/overrideViewSelectors";
 import spectrum from "../helpers/spectrum";
 import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
-import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
-import overrideViewSelectors from "../helpers/overrideViewSelectors";
-import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
-import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
-import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";
 
 const instanceNameField = spectrum.picker("instanceNameField");
 const typeField = spectrum.comboBox("typeField");
@@ -741,3 +741,50 @@ test("can type a datastream overrides", async () => {
 
   await extensionViewController.expectIsValid();
 });
+
+test.requestHooks(
+  sandboxesMocks.multipleWithoutDefault,
+  datastreamsMocks.single,
+  datastreamMocks.withConfigOverrides
+)(
+  "overrides switch to textfields when the second instance is selected",
+  async () => {
+    await extensionViewController.init({
+      extensionSettings: {
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            sandbox: "prod",
+            stagingEdgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            stagingSandbox: "prod",
+            developmentEdgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            developmentSandbox: "prod"
+          },
+          {
+            name: "alloy2",
+            edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83",
+            sandbox: "testsandbox1",
+            stagingEdgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83",
+            stagingSandbox: "testsandbox1",
+            developmentEdgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83",
+            developmentSandbox: "testsandbox1"
+          }
+        ]
+      }
+    });
+
+    await instanceNameField.expectText("alloy1");
+    await overrideViewSelectors.sandbox.selectOption(
+      "PRODUCTION Test Sandbox Prod (VA7)"
+    );
+    await overrideViewSelectors.datastreamIdDropdown.expectExists();
+    await overrideViewSelectors.datastreamIdDropdown.expectIsPicker();
+    await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectIsComboBox();
+
+    await instanceNameField.selectOption("alloy2");
+    await overrideViewSelectors.datastreamIdFreeform.expectExists();
+    await overrideViewSelectors.datastreamIdFreeform.expectIsTextField();
+    await overrideViewSelectors.textFields.eventDatasetOverride.expectIsTextField();
+  }
+);

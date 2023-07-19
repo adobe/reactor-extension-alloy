@@ -9,11 +9,13 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { array, mixed, number, object, string } from "yup";
+import { array, lazy, mixed, number, object, string } from "yup";
 import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/constants/environmentType";
 import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
 import trimValue from "../../utils/trimValues";
+
+const dataElementValidator = string().matches(/^%.+%$/gi);
 
 export const bridge = {
   // return formik state
@@ -93,8 +95,11 @@ export const bridge = {
         return;
       }
       // Alloy, Konductor, and Blackbird expect the idSyncContainerID to be a
-      // number
-      if (overrides?.com_adobe_identity?.idSyncContainerId) {
+      // number, unless it is a data element (/^%.+%$/gi)
+      if (
+        overrides.com_adobe_identity?.idSyncContainerId &&
+        !/^%.+%$/gi.test(overrides.com_adobe_identity.idSyncContainerId)
+      ) {
         overrides.com_adobe_identity.idSyncContainerId = parseInt(
           overrides.com_adobe_identity.idSyncContainerId,
           10
@@ -134,9 +139,13 @@ export const bridge = {
               reportSuites: array(string())
             }),
             com_adobe_identity: object({
-              idSyncContainerId: number()
-                .positive()
-                .integer()
+              idSyncContainerId: lazy(value =>
+                typeof value === "string" && value.includes("%")
+                  ? dataElementValidator
+                  : number()
+                      .positive()
+                      .integer()
+              )
             }),
             com_adobe_target: object({
               propertyToken: string()

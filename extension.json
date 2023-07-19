@@ -4,7 +4,7 @@
   "iconPath": "resources/images/icon.svg",
   "exchangeUrl": "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
   "platform": "web",
-  "version": "2.17.0",
+  "version": "2.20.0-beta.2",
   "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
   "author": {
     "name": "Adobe"
@@ -339,18 +339,6 @@
       {
         "type": "remove",
         "propertyPath": "instances[].edgeConfigInputMethod"
-      },
-      {
-        "type": "remove",
-        "propertyPath": "instances[].sandbox"
-      },
-      {
-        "type": "remove",
-        "propertyPath": "instances[].stagingSandbox"
-      },
-      {
-        "type": "remove",
-        "propertyPath": "instances[].developmentSandbox"
       }
     ]
   },
@@ -1247,7 +1235,7 @@
       "viewPath": "actions/applyResponse.html"
     },
     {
-      "displayName": "Update variable (beta)",
+      "displayName": "Update variable",
       "name": "update-variable",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",
@@ -1419,7 +1407,7 @@
       "viewPath": "dataElements/xdmObject.html"
     },
     {
-      "displayName": "Variable (beta)",
+      "displayName": "Variable",
       "name": "variable",
       "schema": {
         "$schema": "http://json-schema.org/draft-04/schema#",

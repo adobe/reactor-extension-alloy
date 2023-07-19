@@ -16,7 +16,6 @@ import React, { useEffect } from "react";
 import fetchConfigs from "../../configuration/utils/fetchConfigs";
 import OverrideInput from "./overrideInput";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
-import useIsFirstRender from "../../utils/useIsFirstRender";
 
 /**
  * @typedef {Object} Datastream
@@ -107,32 +106,42 @@ const DatastreamOverrideSelector = ({
   const [{ value }] = useField(name);
   const inputMethodFieldName = `${name}InputMethod`;
   /** @type {[{ value: "select" | "freeform" }]} */
-  const [{ value: inputMethod }, , { setValue: setInputMethod }] = useField(
-    inputMethodFieldName
-  );
+  const [
+    { value: inputMethod },
+    { touched: inputMethodTouched },
+    { setValue: setInputMethod }
+  ] = useField(inputMethodFieldName);
   const selectedDatastream = datastreamList.items.find(
     item => getKey(item) === value
   );
-  const isFirstRender = useIsFirstRender();
   useEffect(() => {
-    if (
-      Boolean(selectedDatastream) &&
-      inputMethod !== InputMethod.SELECT &&
-      isFirstRender
-    ) {
-      setInputMethod(InputMethod.SELECT);
+    if (datastreamList.error || datastreamList.items.length === 0) {
+      setInputMethod(InputMethod.FREEFORM);
+    } else if (!inputMethodTouched) {
+      if (datastreamList.items.length > 0 && (selectedDatastream || !value)) {
+        setInputMethod(InputMethod.SELECT);
+      }
+      if (value && !selectedDatastream) {
+        setInputMethod(InputMethod.FREEFORM);
+      }
     }
-  }, [selectedDatastream, inputMethod, isFirstRender]);
-  const useManualEntry =
-    inputMethod === InputMethod.FREEFORM ||
-    datastreamList.items.length === 0 ||
-    Boolean(datastreamList.error);
+  }, [
+    datastreamList.error,
+    datastreamList.items.length,
+    selectedDatastream,
+    inputMethodTouched,
+    value
+  ]);
+  const useManualEntry = inputMethod === InputMethod.FREEFORM;
+  const inputMethodIsDisabled =
+    datastreamList.items.length === 0 || Boolean(datastreamList.error);
 
   return (
     <>
       <FormikRadioGroup
         label={label}
         name={inputMethodFieldName}
+        isDisabled={inputMethodIsDisabled}
         orientation="horizontal"
       >
         <Radio

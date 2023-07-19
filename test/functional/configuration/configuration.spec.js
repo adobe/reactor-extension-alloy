@@ -36,6 +36,44 @@ const defaultEdgeBasePath = "ee";
 const defaultDownloadLinkQualifier =
   "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$";
 
+test.requestHooks(
+  sandboxesMocks.singleDefault,
+  datastreamsMocks.single,
+  datastreamMocks.withConfigOverrides
+)(
+  "does not populate override dropdowns after switching instances (because of different orgIDs)",
+  async () => {
+    await extensionViewController.init();
+
+    await instances[0].nameField.expectValue("alloy");
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.development.selectMenuOption(
+      "Test Config Overrides"
+    );
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectExists();
+    await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
+    await instances[0].overrides.comboBoxes.eventDatasetOverride.expectIsComboBox();
+    await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectExists();
+    await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectIsComboBox();
+    await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectExists();
+    await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectIsComboBox();
+    await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectExists();
+    await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectIsComboBox();
+
+    await addInstanceButton.click();
+    await instances[1].overrides.textFields.eventDatasetOverride.expectExists();
+    await instances[1].overrides.textFields.eventDatasetOverride.expectIsTextField();
+    await instances[1].overrides.textFields.idSyncContainerOverride.expectExists();
+    await instances[1].overrides.textFields.idSyncContainerOverride.expectIsTextField();
+    await instances[1].overrides.textFields.targetPropertyTokenOverride.expectExists();
+    await instances[1].overrides.textFields.targetPropertyTokenOverride.expectIsTextField();
+    await instances[1].overrides.textFields.reportSuiteOverrides[0].expectExists();
+    await instances[1].overrides.textFields.reportSuiteOverrides[0].expectIsTextField();
+  }
+);
+
 test("initializes form fields with full settings", async () => {
   await extensionViewController.init({
     settings: {
@@ -508,6 +546,94 @@ test("returns full valid settings", async () => {
         edgeConfigId: "PR789",
         orgId: "5BFE274A5F6980A50A495C08@AdobeOrg3",
         defaultConsent: "pending"
+      }
+    ]
+  });
+});
+
+test("returns full valid settings with maximal data elements", async () => {
+  await extensionViewController.init();
+
+  await instances[0].nameField.clear();
+  await instances[0].nameField.typeText("%foo%");
+
+  await instances[0].orgIdField.clear();
+  await instances[0].orgIdField.typeText("%foo%");
+  await instances[0].orgIdField.expectValue("%foo%");
+  await instances[0].defaultConsent.dataElementRadio.click();
+  await instances[0].defaultConsent.dataElementField.typeText("%foo%");
+  await instances[0].edgeConfig.inputMethodFreeformRadio.click();
+  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
+    "%foo%"
+  );
+  await instances[0].edgeConfig.inputMethodFreeform.stagingEnvironmentField.typeText(
+    "%foo%"
+  );
+  await instances[0].edgeConfig.inputMethodFreeform.developmentEnvironmentField.typeText(
+    "%foo%"
+  );
+  await instances[0].edgeDomainField.clear();
+  await instances[0].edgeDomainField.typeText("%foo%");
+  await instances[0].edgeBasePathField.clear();
+  await instances[0].edgeBasePathField.typeText("%foo%");
+
+  await instances[0].defaultConsent.outRadio.click();
+  await instances[0].idMigrationEnabled.click();
+  await instances[0].thirdPartyCookiesEnabled.click();
+  await instances[0].targetMigrationEnabled.click();
+
+  await instances[0].overrides.envTabs.production.expectExists();
+  await instances[0].overrides.envTabs.staging.expectExists();
+  await instances[0].overrides.envTabs.development.expectExists();
+  await instances[0].overrides.envTabs.development.expectSelected();
+  await instances[0].overrides.textFields.eventDatasetOverride.typeText(
+    "%foo%"
+  );
+  await instances[0].overrides.textFields.idSyncContainerOverride.typeText(
+    "%foo%"
+  );
+  await instances[0].overrides.textFields.targetPropertyTokenOverride.typeText(
+    "%foo%"
+  );
+  await instances[0].overrides.textFields.reportSuiteOverrides[0].typeText(
+    "%foo%"
+  );
+
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
+    instances: [
+      {
+        name: "%foo%",
+        orgId: "%foo%",
+        edgeConfigId: "%foo%",
+        stagingEdgeConfigId: "%foo%",
+        developmentEdgeConfigId: "%foo%",
+        edgeDomain: `%foo%`,
+        edgeBasePath: `%foo%`,
+        defaultConsent: "out",
+        idMigrationEnabled: false,
+        thirdPartyCookiesEnabled: false,
+        targetMigrationEnabled: true,
+        edgeConfigOverrides: {
+          development: {
+            com_adobe_experience_platform: {
+              datasets: {
+                event: {
+                  datasetId: "%foo%"
+                }
+              }
+            },
+            com_adobe_analytics: {
+              reportSuites: ["%foo%"]
+            },
+            com_adobe_identity: {
+              idSyncContainerId: "%foo%"
+            },
+            com_adobe_target: {
+              propertyToken: "%foo%"
+            }
+          }
+        }
       }
     ]
   });
