@@ -53,6 +53,21 @@ export const bridge = {
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
 
+    // copy settings from the pre-per-environment schema
+    if (
+      !(
+        "development" in instanceSettings.edgeConfigOverrides ||
+        "staging" in instanceSettings.edgeConfigOverrides ||
+        "production" in instanceSettings.edgeConfigOverrides
+      )
+    ) {
+      const oldOverrides = { ...instanceSettings.edgeConfigOverrides };
+      instanceSettings.edgeConfigOverrides = {};
+      OVERRIDE_ENVIRONMENTS.forEach(env => {
+        instanceSettings.edgeConfigOverrides[env] = oldOverrides;
+      });
+    }
+
     copyPropertiesWithDefaultFallback({
       toObj: instanceValues,
       fromObj: instanceSettings,

@@ -111,6 +111,80 @@ describe("overridesBridge", () => {
         edgeConfigOverrides
       });
     });
+
+    it("should copy old settings to new settings", () => {
+      const instanceSettings = {
+        name: "alloy",
+        context: [
+          "web",
+          "device",
+          "environment",
+          "placeContext",
+          "highEntropyUserAgentHints"
+        ],
+        sandbox: "prod",
+        edgeDomain: "firstparty.alloyio.com",
+        edgeConfigId: "140a1d7d-90ac-44d4-921e-6bb819da36b7",
+        stagingSandbox: "prod",
+        onBeforeEventSend:
+          '// Pass the ECID from the adobe_mc param if it exists.\n\nconsole.log("IN ON BEFORE EVENT SEND");\n\nvar adobeMcEcid = _satellite.getVar("adobeMcEcid");\n\nif (adobeMcEcid) {\n  // TODO: Expire existing kndctr_ORG ID_AdobeOrg_identity\n  \n  if (!content.xdm.identityMap) {\n    content.xdm.identityMap = {\n      ECID: []\n    }\n  }\n  \n  content.xdm.identityMap.ECID = [{\n    "id": adobeMcEcid,\n    "authenticatedState": "ambiguous"\n  }];\n  \n  console.log("ECID WAS ADDED TO EVENT -> XDM -> IDENTITYMAP");\n}',
+        developmentSandbox: "prod",
+        edgeConfigOverrides: {
+          datastreamIdInputMethod: "freeform",
+          com_adobe_target: {
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          },
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: "6335faf30f5a161c0b4b1444"
+              }
+            }
+          },
+          com_adobe_analytics: {
+            reportSuites: ["unifiedjsqeonly2"]
+          },
+          com_adobe_identity: {
+            idSyncContainerId: 30793
+          }
+        },
+        stagingEdgeConfigId: "140a1d7d-90ac-44d4-921e-6bb819da36b7:stage",
+        targetMigrationEnabled: true,
+        developmentEdgeConfigId: "140a1d7d-90ac-44d4-921e-6bb819da36b7:dev",
+        thirdPartyCookiesEnabled: false
+      };
+
+      const instanceValues = bridge.getInitialInstanceValues({
+        instanceSettings
+      });
+      const edgeConfigOverrides = {};
+      ["production", "staging", "development"].forEach(env => {
+        edgeConfigOverrides[env] = {
+          sandbox: "",
+          datastreamId: "",
+          datastreamIdInputMethod: "freeform",
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: "6335faf30f5a161c0b4b1444"
+              }
+            }
+          },
+          com_adobe_analytics: {
+            reportSuites: ["unifiedjsqeonly2"]
+          },
+          com_adobe_identity: {
+            idSyncContainerId: "30793"
+          },
+          com_adobe_target: {
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          }
+        };
+      });
+      expect(instanceValues).toEqual({
+        edgeConfigOverrides
+      });
+    });
   });
 
   describe("getInstanceSettings", () => {
