@@ -54,18 +54,24 @@ export const bridge = {
     const instanceValues = {};
 
     // copy settings from the pre-per-environment schema
-    if (
-      "edgeConfigOverrides" in instanceSettings &&
-      !(
-        "development" in instanceSettings.edgeConfigOverrides ||
-        "staging" in instanceSettings.edgeConfigOverrides ||
-        "production" in instanceSettings.edgeConfigOverrides
-      )
-    ) {
-      const oldOverrides = { ...instanceSettings.edgeConfigOverrides };
+    const overridesKeys = [
+      "com_adobe_identity",
+      "com_adobe_target",
+      "com_adobe_analytics",
+      "com_adobe_experience_platform"
+    ];
+    const oldOverrides = overridesKeys.reduce((acc, key) => {
+      if (instanceSettings.edgeConfigOverrides?.[key]) {
+        acc[key] = instanceSettings.edgeConfigOverrides[key];
+      }
+      return acc;
+    }, {});
+    if (Object.keys(oldOverrides).length > 0) {
+      const overrideSettings = { ...oldOverrides };
       instanceSettings.edgeConfigOverrides = {};
       OVERRIDE_ENVIRONMENTS.forEach(env => {
-        instanceSettings.edgeConfigOverrides[env] = oldOverrides;
+        instanceSettings.edgeConfigOverrides[env] =
+          overrideSettings[env] ?? oldOverrides;
       });
     }
 
