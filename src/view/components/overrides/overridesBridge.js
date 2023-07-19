@@ -55,6 +55,7 @@ export const bridge = {
 
     // copy settings from the pre-per-environment schema
     if (
+      "edgeConfigOverrides" in instanceSettings &&
       !(
         "development" in instanceSettings.edgeConfigOverrides ||
         "staging" in instanceSettings.edgeConfigOverrides ||
