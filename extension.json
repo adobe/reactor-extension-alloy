@@ -755,6 +755,18 @@
         {
           "type": "remove",
           "propertyPath": "edgeConfigOverrides.production.datastreamIdInputMethod"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.development.sandbox"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.staging.sandbox"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.production.sandbox"
         }
       ],
       "libPath": "dist/lib/actions/sendEvent/index.js",
@@ -939,6 +951,10 @@
                   "type": "string",
                   "minLength": 1
                 },
+                "datastreamIdInputMethod": {
+                  "type": "string",
+                  "enum": ["freeform", "select"]
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -1000,6 +1016,10 @@
                   "type": "string",
                   "minLength": 1
                 },
+                "datastreamIdInputMethod": {
+                  "type": "string",
+                  "enum": ["freeform", "select"]
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -1060,6 +1080,10 @@
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
+                },
+                "datastreamIdInputMethod": {
+                  "type": "string",
+                  "enum": ["freeform", "select"]
                 },
                 "com_adobe_experience_platform": {
                   "type": "object",
@@ -1131,6 +1155,18 @@
         {
           "type": "remove",
           "propertyPath": "edgeConfigOverrides.production.datastreamIdInputMethod"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.development.sandbox"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.staging.sandbox"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.production.sandbox"
         }
       ],
       "libPath": "dist/lib/actions/setConsent/index.js",
@@ -1211,6 +1247,10 @@
                   "type": "string",
                   "minLength": 1
                 },
+                "datastreamIdInputMethod": {
+                  "type": "string",
+                  "enum": ["freeform", "select"]
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -1272,6 +1312,10 @@
                   "type": "string",
                   "minLength": 1
                 },
+                "datastreamIdInputMethod": {
+                  "type": "string",
+                  "enum": ["freeform", "select"]
+                },
                 "com_adobe_experience_platform": {
                   "type": "object",
                   "properties": {
@@ -1332,6 +1376,10 @@
                 "datastreamId": {
                   "type": "string",
                   "minLength": 1
+                },
+                "datastreamIdInputMethod": {
+                  "type": "string",
+                  "enum": ["freeform", "select"]
                 },
                 "com_adobe_experience_platform": {
                   "type": "object",
@@ -1403,6 +1451,18 @@
         {
           "type": "remove",
           "propertyPath": "edgeConfigOverrides.production.datastreamIdInputMethod"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.development.sandbox"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.staging.sandbox"
+        },
+        {
+          "type": "remove",
+          "propertyPath": "edgeConfigOverrides.production.sandbox"
         }
       ],
       "libPath": "dist/lib/actions/redirectWithIdentity/index.js",
