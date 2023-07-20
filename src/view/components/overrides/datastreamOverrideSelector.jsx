@@ -9,10 +9,17 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { Item, Radio, useAsyncList } from "@adobe/react-spectrum";
+import {
+  ActionButton,
+  Flex,
+  Item,
+  Radio,
+  useAsyncList
+} from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
+import Delete from "@spectrum-icons/workflow/Delete";
 import fetchConfigs from "../../configuration/utils/fetchConfigs";
 import usePrevious from "../../utils/usePrevious";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
@@ -151,6 +158,12 @@ const DatastreamOverrideSelector = ({
     }
   }, [sandbox]);
 
+  const onClear = () => {
+    setValue(undefined);
+    datastreamList.setSelectedKeys(null);
+    datastreamList.reload();
+  };
+
   return (
     <>
       <FormikRadioGroup
@@ -172,19 +185,27 @@ const DatastreamOverrideSelector = ({
           Enter values
         </Radio>
       </FormikRadioGroup>
-      <OverrideInput
-        {...otherProps}
-        aria-label={label}
-        selectedKey={getKey(selectedDatastream)}
-        items={datastreamList.items}
-        name={name}
-        loadingState={datastreamList.loadingState}
-        useManualEntry={useManualEntry}
-      >
-        {(/** @type {Datastream} */ item) => (
-          <Item key={getKey(item)}>{getLabel(item)}</Item>
+      <Flex direction="row">
+        <OverrideInput
+          {...otherProps}
+          aria-label={label}
+          allowClear
+          selectedKey={getKey(selectedDatastream)}
+          items={datastreamList.items}
+          name={name}
+          loadingState={datastreamList.loadingState}
+          useManualEntry={useManualEntry}
+        >
+          {(/** @type {Datastream} */ item) => (
+            <Item key={getKey(item)}>{getLabel(item)}</Item>
+          )}
+        </OverrideInput>
+        {!useManualEntry && (
+          <ActionButton isQuiet aria-label="Clear" onPress={onClear}>
+            <Delete />
+          </ActionButton>
         )}
-      </OverrideInput>
+      </Flex>
     </>
   );
 };

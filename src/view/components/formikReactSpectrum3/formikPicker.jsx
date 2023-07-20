@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
-import PropTypes from "prop-types";
 import { Picker } from "@adobe/react-spectrum";
 import { useField } from "formik";
+import PropTypes from "prop-types";
+import React from "react";
 
 const FormikPicker = ({ name, width, validate, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
@@ -23,7 +23,6 @@ const FormikPicker = ({ name, width, validate, ...otherProps }) => {
 
   return (
     <Picker
-      {...otherProps}
       selectedKey={value}
       onSelectionChange={setValue}
       onBlur={() => {
