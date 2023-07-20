@@ -14,8 +14,9 @@ import { useField } from "formik";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
 import fetchConfigs from "../../configuration/utils/fetchConfigs";
-import OverrideInput from "./overrideInput";
+import usePrevious from "../../utils/usePrevious";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
+import OverrideInput from "./overrideInput";
 
 /**
  * @typedef {Object} Datastream
@@ -102,8 +103,7 @@ const DatastreamOverrideSelector = ({
       };
     }
   });
-
-  const [{ value }] = useField(name);
+  const [{ value }, , { setValue }] = useField(name);
   const inputMethodFieldName = `${name}InputMethod`;
   /** @type {[{ value: "select" | "freeform" }]} */
   const [
@@ -135,6 +135,21 @@ const DatastreamOverrideSelector = ({
   const useManualEntry = inputMethod === InputMethod.FREEFORM;
   const inputMethodIsDisabled =
     datastreamList.items.length === 0 || Boolean(datastreamList.error);
+
+  const previousSelectedSandbox = usePrevious(sandbox);
+  useEffect(() => {
+    // Reset the datastreams options if the user selects a different sandbox.
+    // if the selected sandbox was changed we want to reload the datastreams dropdown and
+    // reset the formik value, otherwise in case there the user haven't selected another datastream
+    // formik will keep the old datastream value( when the extension was previously set up)
+    if (previousSelectedSandbox && sandbox) {
+      datastreamList.selectedKeys = null;
+      if (value) {
+        setValue(undefined);
+      }
+      datastreamList.reload();
+    }
+  }, [sandbox]);
 
   return (
     <>
