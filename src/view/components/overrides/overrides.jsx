@@ -70,7 +70,7 @@ const createValidateItemIsInArray = (
  * @returns
  */
 const combineValidatorWithIsDataElement = validator => value =>
-  value.includes("%") ? validateIsDataElement(value) : validator(value);
+  value?.includes("%") ? validateIsDataElement(value) : validator(value);
 
 /**
  * A section of a form that allows the user to override datastream configuration
@@ -225,7 +225,7 @@ const Overrides = ({
                 "The value must be one of the preconfigured ID sync containers."
               );
               const validateIdSyncContainerOption = value => {
-                if (value.includes("%")) {
+                if (value?.includes("%")) {
                   // can only contain numbers and data elements
                   if (/^\d*(%.+%)+\d*$/.test(value)) {
                     return undefined;
@@ -270,7 +270,7 @@ const Overrides = ({
                * @param {string} value
                * @returns {string | undefined}
                */
-              const validateReportSuiteOption = value =>
+              const validateReportSuiteOption = (value = "") =>
                 value
                   .split(",")
                   .map(v => v.trim())
