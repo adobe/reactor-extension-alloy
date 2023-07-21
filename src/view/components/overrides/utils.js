@@ -145,12 +145,14 @@ export const createIsItemInArray = (
   };
 };
 
+export const dataElementRegex = /^([^%\n]*(%[^%\n]+%)+[^%\n]*)$/gi;
+
 /**
  * Returns whether or not the value is a data element expression
  * @param {string} value
  * @returns {boolean}
  */
-export const isDataElement = value => /^\S*(%.+%)\S*$/.test(value);
+export const isDataElement = value => dataElementRegex.test(value);
 
 /**
  * Creates a function that validates a given value. If it passes validation, it

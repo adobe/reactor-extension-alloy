@@ -227,7 +227,7 @@ const Overrides = ({
               const validateIdSyncContainerOption = value => {
                 if (value?.includes("%")) {
                   // can only contain numbers and data elements
-                  if (/^\d*(%.+%)+\d*$/.test(value)) {
+                  if (/^(\d*(%[^%\n]%)+\d*)+$/.test(value)) {
                     return undefined;
                   }
                   return "The value must contain one or more valid data elements.";
