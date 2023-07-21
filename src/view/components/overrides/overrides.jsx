@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { Flex, Item, TabList, TabPanels, Tabs } from "@adobe/react-spectrum";
-import { useField } from "formik";
+import { getIn, useField, useFormikContext } from "formik";
 import PropTypes from "prop-types";
 import React, { useRef } from "react";
 
@@ -110,11 +110,8 @@ const Overrides = ({
     : "edgeConfigOverrides";
   const hideFieldsSet = new Set(hideFields);
 
-  const [
-    ,
-    { value: edgeConfigOverrides },
-    { setValue: setEdgeConfigOverrides }
-  ] = useField(prefix);
+  const [{ value: edgeConfigOverrides }] = useField(prefix);
+  const formikContext = useFormikContext();
   /**
    * Import the settings from the destination to the source
    *
@@ -123,7 +120,29 @@ const Overrides = ({
    */
   const onCopy = (source, destination) => {
     edgeConfigOverrides[destination] = edgeConfigOverrides[source];
-    setEdgeConfigOverrides(edgeConfigOverrides);
+    [
+      "com_adobe_experience_platform.datasets.event.datasetId",
+      "com_adobe_identity.idSyncContainerId",
+      "com_adobe_target.propertyToken",
+      "com_adobe_analytics.reportSuites"
+    ]
+      .filter(
+        field =>
+          getIn(edgeConfigOverrides[source], field) !==
+          getIn(edgeConfigOverrides[destination], field)
+      )
+      .forEach(field => {
+        formikContext.setFieldValue(
+          `${prefix}.${destination}.${field}`,
+          getIn(edgeConfigOverrides[source], field),
+          true
+        );
+        formikContext.setFieldTouched(
+          `${prefix}.${destination}.${field}`,
+          true,
+          true
+        );
+      });
   };
 
   const requestCache = useRef({});
