@@ -14,7 +14,6 @@ import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/const
 import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
 import trimValue from "../../utils/trimValues";
-import { dataElementRegex } from "./utils";
 
 export const bridge = {
   // return formik state
@@ -162,7 +161,7 @@ export const bridge = {
             com_adobe_identity: object({
               idSyncContainerId: lazy(value =>
                 typeof value === "string" && value.includes("%")
-                  ? string().matches(dataElementRegex)
+                  ? string().matches(/^([^%\n]*(%[^%\n]+%)+[^%\n]*)$/gi)
                   : number()
                       .positive()
                       .integer()
