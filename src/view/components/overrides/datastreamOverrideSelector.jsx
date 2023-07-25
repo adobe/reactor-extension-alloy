@@ -9,13 +9,21 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { Item, Radio, useAsyncList } from "@adobe/react-spectrum";
+import {
+  ActionButton,
+  Flex,
+  Item,
+  Radio,
+  useAsyncList
+} from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
+import Delete from "@spectrum-icons/workflow/Delete";
 import fetchConfigs from "../../configuration/utils/fetchConfigs";
-import OverrideInput from "./overrideInput";
+import usePrevious from "../../utils/usePrevious";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
+import OverrideInput from "./overrideInput";
 
 /**
  * @typedef {Object} Datastream
@@ -102,8 +110,7 @@ const DatastreamOverrideSelector = ({
       };
     }
   });
-
-  const [{ value }] = useField(name);
+  const [{ value }, , { setValue }] = useField(name);
   const inputMethodFieldName = `${name}InputMethod`;
   /** @type {[{ value: "select" | "freeform" }]} */
   const [
@@ -136,6 +143,27 @@ const DatastreamOverrideSelector = ({
   const inputMethodIsDisabled =
     datastreamList.items.length === 0 || Boolean(datastreamList.error);
 
+  const previousSelectedSandbox = usePrevious(sandbox);
+  useEffect(() => {
+    // Reset the datastreams options if the user selects a different sandbox.
+    // if the selected sandbox was changed we want to reload the datastreams dropdown and
+    // reset the formik value, otherwise in case there the user haven't selected another datastream
+    // formik will keep the old datastream value( when the extension was previously set up)
+    if (previousSelectedSandbox && sandbox) {
+      datastreamList.selectedKeys = null;
+      if (value) {
+        setValue(undefined);
+      }
+      datastreamList.reload();
+    }
+  }, [sandbox]);
+
+  const onClear = () => {
+    setValue(undefined);
+    datastreamList.setSelectedKeys(null);
+    datastreamList.reload();
+  };
+
   return (
     <>
       <FormikRadioGroup
@@ -157,19 +185,27 @@ const DatastreamOverrideSelector = ({
           Enter values
         </Radio>
       </FormikRadioGroup>
-      <OverrideInput
-        {...otherProps}
-        aria-label={label}
-        selectedKey={getKey(selectedDatastream)}
-        items={datastreamList.items}
-        name={name}
-        loadingState={datastreamList.loadingState}
-        useManualEntry={useManualEntry}
-      >
-        {(/** @type {Datastream} */ item) => (
-          <Item key={getKey(item)}>{getLabel(item)}</Item>
+      <Flex direction="row">
+        <OverrideInput
+          {...otherProps}
+          aria-label={label}
+          allowClear
+          selectedKey={getKey(selectedDatastream)}
+          items={datastreamList.items}
+          name={name}
+          loadingState={datastreamList.loadingState}
+          useManualEntry={useManualEntry}
+        >
+          {(/** @type {Datastream} */ item) => (
+            <Item key={getKey(item)}>{getLabel(item)}</Item>
+          )}
+        </OverrideInput>
+        {!useManualEntry && (
+          <ActionButton isQuiet aria-label="Clear" onPress={onClear}>
+            <Delete />
+          </ActionButton>
         )}
-      </OverrideInput>
+      </Flex>
     </>
   );
 };

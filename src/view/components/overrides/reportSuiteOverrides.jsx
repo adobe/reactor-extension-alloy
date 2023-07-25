@@ -29,8 +29,9 @@ import { FIELD_NAMES } from "./utils";
  * display in the dropdown.
  * @param {string[]} props.primaryItem The list of report suites that are being
  * overridden.
- * @param {(value: string) => boolean} props.isValid A function that returns
- * true if the given value is valid. This is used to validate the input.
+ * @param {(value: string) => string | undefined} props.validate A function that
+ * returns undefined if the value is valid, or an error message if the value is
+ * invalid.
  * @param {boolean} props.useManualEntry If true, the input is a text field. If
  * false, the input is a combo box.
  * @returns
@@ -39,7 +40,7 @@ const ReportSuitesOverride = ({
   prefix,
   items,
   primaryItem,
-  isValid,
+  validate,
   useManualEntry
 }) => {
   const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
@@ -65,7 +66,7 @@ const ReportSuitesOverride = ({
                   allowsCustomValue
                   overrideType="report suites"
                   primaryItem={primaryItem}
-                  isValid={isValid}
+                  validate={validate}
                   defaultItems={items}
                   name={`${fieldName}.${index}`}
                   description={
@@ -112,7 +113,7 @@ ReportSuitesOverride.propTypes = {
     })
   ).isRequired,
   primaryItem: PropTypes.arrayOf(PropTypes.string).isRequired,
-  isValid: PropTypes.func.isRequired,
+  validate: PropTypes.func.isRequired,
   useManualEntry: PropTypes.bool.isRequired
 };
 

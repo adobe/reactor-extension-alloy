@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { Flex, Item, TabList, TabPanels, Tabs } from "@adobe/react-spectrum";
-import { useField } from "formik";
+import { getIn, useField, useFormikContext } from "formik";
 import PropTypes from "prop-types";
 import React, { useRef } from "react";
 
@@ -31,9 +31,46 @@ import {
   FIELD_NAMES,
   capitialize,
   createIsItemInArray,
+  createValidatorWithMessage,
   isDataElement,
   useFetchConfig
 } from "./utils";
+
+/**
+ * Validate that a given item is a valid data element expression.
+ * If not, return an error message.
+ * @param {string} value
+ * @returns {string | undefined}
+ */
+const validateIsDataElement = createValidatorWithMessage(
+  isDataElement,
+  "The value must contain one or more valid data elements."
+);
+
+/**
+ * Validate that a given item is in the array. If not, return an error message.
+ * @template T
+ * @param {Array<T>} array
+ * @param {string} message
+ * @param {Object} options
+ * @param {boolean} options.errorOnEmptyArray errorOnEmptyArray Whether or not to return false if searching
+ * for an item in an empty array.
+ * @param {boolean} options.errorOnEmptyItem Whether or not to return false if searching for an empty item.
+ * @returns {(value: T) => string | undefined}
+ */
+const createValidateItemIsInArray = (
+  array,
+  message,
+  options = { errorOnEmptyArray: false, errorOnEmptyItem: false }
+) => createValidatorWithMessage(createIsItemInArray(array, options), message);
+
+/**
+ *
+ * @param {(value: T) => string | undefined} validator
+ * @returns
+ */
+const combineValidatorWithIsDataElement = validator => value =>
+  value?.includes("%") ? validateIsDataElement(value) : validator(value);
 
 /**
  * A section of a form that allows the user to override datastream configuration
@@ -73,11 +110,8 @@ const Overrides = ({
     : "edgeConfigOverrides";
   const hideFieldsSet = new Set(hideFields);
 
-  const [
-    ,
-    { value: edgeConfigOverrides },
-    { setValue: setEdgeConfigOverrides }
-  ] = useField(prefix);
+  const [{ value: edgeConfigOverrides }] = useField(prefix);
+  const formikContext = useFormikContext();
   /**
    * Import the settings from the destination to the source
    *
@@ -86,7 +120,29 @@ const Overrides = ({
    */
   const onCopy = (source, destination) => {
     edgeConfigOverrides[destination] = edgeConfigOverrides[source];
-    setEdgeConfigOverrides(edgeConfigOverrides);
+    [
+      "com_adobe_experience_platform.datasets.event.datasetId",
+      "com_adobe_identity.idSyncContainerId",
+      "com_adobe_target.propertyToken",
+      "com_adobe_analytics.reportSuites"
+    ]
+      .filter(
+        field =>
+          getIn(edgeConfigOverrides[source], field) !==
+          getIn(edgeConfigOverrides[destination], field)
+      )
+      .forEach(field => {
+        formikContext.setFieldValue(
+          `${prefix}.${destination}.${field}`,
+          getIn(edgeConfigOverrides[source], field),
+          true
+        );
+        formikContext.setFieldTouched(
+          `${prefix}.${destination}.${field}`,
+          true,
+          true
+        );
+      });
   };
 
   const requestCache = useRef({});
@@ -164,12 +220,13 @@ const Overrides = ({
               if (primaryEventDataset) {
                 eventDatasetDescription = `Overrides the default dataset (${primaryEventDataset}). ${eventDatasetDescription}`;
               }
-              const itemIsInDatasetOptions = createIsItemInArray(
+              const validateItemIsInDatasetsList = createValidateItemIsInArray(
                 eventDatasetOptions.map(({ datasetId }) => datasetId),
-                { errorOnEmptyArray: false, errorOnEmptyItem: false }
+                "The value must be one of the preconfigured datasets."
               );
-              const isValidDatasetOption = value =>
-                isDataElement(value) || itemIsInDatasetOptions(value);
+              const validateDatasetOption = combineValidatorWithIsDataElement(
+                validateItemIsInDatasetsList
+              );
 
               const primaryIdSyncContainer = `${result?.com_adobe_identity
                 ?.idSyncContainerId ?? ""}`;
@@ -182,12 +239,20 @@ const Overrides = ({
               if (primaryIdSyncContainer) {
                 idSyncContainerDescription = `Overrides the default container (${primaryIdSyncContainer}). ${idSyncContainerDescription}`;
               }
-              const itemIsInIdSyncContainerOptions = createIsItemInArray(
+              const validateItemIsInContainersList = createValidateItemIsInArray(
                 idSyncContainers.map(({ label }) => label),
-                { errorOnEmptyArray: false, errorOnEmptyItem: false }
+                "The value must be one of the preconfigured ID sync containers."
               );
-              const isValidIdSyncContainerOption = value =>
-                isDataElement(value) || itemIsInIdSyncContainerOptions(value);
+              const validateIdSyncContainerOption = value => {
+                if (value?.includes("%")) {
+                  // can only contain numbers and data elements
+                  if (/^(\d*(%[^%\n]+%)+\d*)+$/.test(value)) {
+                    return undefined;
+                  }
+                  return "The value must contain one or more valid data elements.";
+                }
+                return validateItemIsInContainersList(value);
+              };
 
               const primaryPropertyToken =
                 result?.com_adobe_target?.propertyToken ?? "";
@@ -200,12 +265,13 @@ const Overrides = ({
               if (primaryPropertyToken) {
                 propertyTokenDescription = `Overrides the default property (${primaryPropertyToken}). ${propertyTokenDescription}`;
               }
-              const itemIsInPropertyTokenOptions = createIsItemInArray(
+              const itemIsInPropertyTokenOptions = createValidateItemIsInArray(
                 propertyTokenOptions.map(({ value }) => value),
-                { errorOnEmptyArray: false, errorOnEmptyItem: false }
+                "The value must be one of the preconfigured property tokens."
               );
-              const isValidPropertyTokenOption = value =>
-                isDataElement(value) || itemIsInPropertyTokenOptions(value);
+              const validatePropertyTokenOption = combineValidatorWithIsDataElement(
+                itemIsInPropertyTokenOptions
+              );
 
               /** @type {string[]} */
               const primaryReportSuites =
@@ -215,23 +281,25 @@ const Overrides = ({
                   .concat(result?.com_adobe_analytics?.reportSuites__additional)
                   .filter(Boolean)
                   .map(value => ({ value, label: value })) ?? [];
-              const itemIsInReportSuiteOptions = createIsItemInArray(
+              const validateItemIsInReportSuiteOptions = createValidateItemIsInArray(
                 reportSuiteOptions.map(({ value }) => value),
-                { errorOnEmptyArray: false, errorOnEmptyItem: false }
+                "The value must be one of the preconfigured report suites."
               );
-              const isValidReportSuiteOption = value => {
-                if (value?.includes(",")) {
-                  return value
-                    .split(",")
-                    .map(v => v.trim())
-                    .every(
-                      v => isDataElement(v) || itemIsInReportSuiteOptions(v)
-                    );
-                }
-                return (
-                  isDataElement(value) || itemIsInReportSuiteOptions(value)
-                );
-              };
+              /**
+               * @param {string} value
+               * @returns {string | undefined}
+               */
+              const validateReportSuiteOption = (value = "") =>
+                value
+                  .split(",")
+                  .map(v => v.trim())
+                  .filter(v => Boolean(v))
+                  .map(
+                    combineValidatorWithIsDataElement(
+                      validateItemIsInReportSuiteOptions
+                    )
+                  )
+                  .filter(v => Boolean(v))[0];
               const sandboxFieldName = `${prefix}.${env}.${
                 FIELD_NAMES.sandbox
               }`;
@@ -257,7 +325,7 @@ const Overrides = ({
                             envEdgeConfigIds.datastreamId
                               ? ` (${envEdgeConfigIds.datastreamId})`
                               : ""
-                          }. This does not support cross-organiztion datastream overrides.`}
+                          }. This does not support cross-organization datastream overrides.`}
                           orgId={configOrgId}
                           imsAccess={initInfo.tokens.imsAccess}
                           name={`${prefix}.${env}.datastreamId`}
@@ -277,7 +345,7 @@ const Overrides = ({
                         description={eventDatasetDescription}
                         width="size-5000"
                         allowsCustomValue
-                        isValid={isValidDatasetOption}
+                        validate={validateDatasetOption}
                         loadingState={isLoading}
                         name={`${prefix}.${env}.com_adobe_experience_platform.datasets.event.datasetId`}
                       >
@@ -299,7 +367,7 @@ const Overrides = ({
                         overrideType="third-party ID sync container"
                         primaryItem={primaryIdSyncContainer}
                         defaultItems={idSyncContainers}
-                        isValid={isValidIdSyncContainerOption}
+                        validate={validateIdSyncContainerOption}
                         name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
                         inputMode="numeric"
                         width="size-5000"
@@ -318,7 +386,7 @@ const Overrides = ({
                         allowsCustomValue
                         overrideType="property token"
                         primaryItem={primaryPropertyToken}
-                        isValid={isValidPropertyTokenOption}
+                        validate={validatePropertyTokenOption}
                         defaultItems={propertyTokenOptions}
                         useManualEntry={
                           useManualEntry || propertyTokenOptions.length === 0
@@ -333,7 +401,7 @@ const Overrides = ({
                     {!hideFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
                       <ReportSuitesOverride
                         useManualEntry={useManualEntry}
-                        isValid={isValidReportSuiteOption}
+                        validate={validateReportSuiteOption}
                         primaryItem={primaryReportSuites}
                         items={reportSuiteOptions}
                         prefix={`${prefix}.${env}`}

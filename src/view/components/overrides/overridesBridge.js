@@ -15,8 +15,6 @@ import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
 import trimValue from "../../utils/trimValues";
 
-const dataElementValidator = string().matches(/^%.+%$/gi);
-
 export const bridge = {
   // return formik state
   getInstanceDefaults: () => ({
@@ -52,6 +50,28 @@ export const bridge = {
   // convert launch settings to formik state
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
+
+    // copy settings from the pre-per-environment schema
+    const overridesKeys = [
+      "com_adobe_identity",
+      "com_adobe_target",
+      "com_adobe_analytics",
+      "com_adobe_experience_platform"
+    ];
+    const oldOverrides = overridesKeys.reduce((acc, key) => {
+      if (instanceSettings.edgeConfigOverrides?.[key]) {
+        acc[key] = instanceSettings.edgeConfigOverrides[key];
+      }
+      return acc;
+    }, {});
+    if (Object.keys(oldOverrides).length > 0) {
+      const overrideSettings = { ...oldOverrides };
+      instanceSettings.edgeConfigOverrides = {};
+      OVERRIDE_ENVIRONMENTS.forEach(env => {
+        instanceSettings.edgeConfigOverrides[env] =
+          overrideSettings[env] ?? oldOverrides;
+      });
+    }
 
     copyPropertiesWithDefaultFallback({
       toObj: instanceValues,
@@ -141,7 +161,7 @@ export const bridge = {
             com_adobe_identity: object({
               idSyncContainerId: lazy(value =>
                 typeof value === "string" && value.includes("%")
-                  ? dataElementValidator
+                  ? string().matches(/^([^%\n]*(%[^%\n]+%)+[^%\n]*)$/gi)
                   : number()
                       .positive()
                       .integer()
