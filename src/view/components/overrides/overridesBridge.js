@@ -15,6 +15,8 @@ import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
 import trimValue from "../../utils/trimValues";
 
+const dataElementRegex = /^([^%\n]*(%[^%\n]+%)+[^%\n]*)$/gi;
+
 export const bridge = {
   // return formik state
   getInstanceDefaults: () => ({
@@ -118,7 +120,7 @@ export const bridge = {
       // number, unless it is a data element (/^%.+%$/gi)
       if (
         overrides.com_adobe_identity?.idSyncContainerId &&
-        !/^%.+%$/gi.test(overrides.com_adobe_identity.idSyncContainerId)
+        !dataElementRegex.test(overrides.com_adobe_identity.idSyncContainerId)
       ) {
         overrides.com_adobe_identity.idSyncContainerId = parseInt(
           overrides.com_adobe_identity.idSyncContainerId,
@@ -161,7 +163,7 @@ export const bridge = {
             com_adobe_identity: object({
               idSyncContainerId: lazy(value =>
                 typeof value === "string" && value.includes("%")
-                  ? string().matches(/^([^%\n]*(%[^%\n]+%)+[^%\n]*)$/gi)
+                  ? string().matches(dataElementRegex)
                   : number()
                       .positive()
                       .integer()
