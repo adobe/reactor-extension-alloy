@@ -155,9 +155,9 @@ const Overrides = ({
       edgeConfigId:
         edgeConfigOverrides.development.datastreamId ||
         edgeConfigIds.developmentEnvironment.datastreamId,
-      sandbox:
-        edgeConfigOverrides.development.sandbox ||
-        edgeConfigIds.developmentEnvironment.sandbox,
+      sandbox: edgeConfigOverrides.development.datastreamId
+        ? edgeConfigOverrides.development.sandbox
+        : edgeConfigIds.developmentEnvironment.sandbox,
       requestCache
     }),
     [STAGING]: useFetchConfig({
@@ -167,9 +167,9 @@ const Overrides = ({
       edgeConfigId:
         edgeConfigOverrides.staging.datastreamId ||
         edgeConfigIds.stagingEnvironment.datastreamId,
-      sandbox:
-        edgeConfigOverrides.staging.sandbox ||
-        edgeConfigIds.stagingEnvironment.sandbox,
+      sandbox: edgeConfigOverrides.staging.datastreamId
+        ? edgeConfigOverrides.staging.sandbox
+        : edgeConfigIds.stagingEnvironment.sandbox,
       requestCache
     }),
     [PRODUCTION]: useFetchConfig({
@@ -179,9 +179,9 @@ const Overrides = ({
       edgeConfigId:
         edgeConfigOverrides.production.datastreamId ||
         edgeConfigIds.productionEnvironment.datastreamId,
-      sandbox:
-        edgeConfigOverrides.production.sandbox ||
-        edgeConfigIds.productionEnvironment.sandbox,
+      sandbox: edgeConfigOverrides.production.datastreamId
+        ? edgeConfigOverrides.production.sandbox
+        : edgeConfigIds.productionEnvironment.sandbox,
       requestCache
     })
   };
