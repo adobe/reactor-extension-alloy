@@ -325,7 +325,7 @@ const Overrides = ({
                             envEdgeConfigIds.datastreamId
                               ? ` (${envEdgeConfigIds.datastreamId})`
                               : ""
-                          }. This does not support cross-organization datastream overrides.`}
+                          }.`}
                           orgId={configOrgId}
                           imsAccess={initInfo.tokens.imsAccess}
                           name={`${prefix}.${env}.datastreamId`}
