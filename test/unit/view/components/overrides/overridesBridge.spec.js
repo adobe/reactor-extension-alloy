@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 // eslint-disable-next-line import/extensions
-import { bridge } from "../../../../src/view/components/overrides/overridesBridge.js";
+import { bridge } from "../../../../../src/view/components/overrides/overridesBridge.js";
 
 describe("overridesBridge", () => {
   describe("getInstanceDefaults", () => {
