@@ -24,6 +24,7 @@ import FormElementContainer from "../formElementContainer";
 import SandboxSelector from "../sandboxSelector";
 import SectionHeader from "../sectionHeader";
 import DatastreamOverrideSelector from "./datastreamOverrideSelector";
+import { useFetchConfig } from "./hooks";
 import OverrideInput from "./overrideInput";
 import ReportSuitesOverride from "./reportSuiteOverrides";
 import SettingsCopySection from "./settingsCopySection";
@@ -31,8 +32,7 @@ import {
   FIELD_NAMES,
   capitialize,
   combineValidatorWithIsDataElement,
-  createValidateItemIsInArray,
-  useFetchConfig
+  createValidateItemIsInArray
 } from "./utils";
 
 /**
