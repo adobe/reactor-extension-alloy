@@ -445,5 +445,45 @@ describe("overridesBridge", () => {
         });
       }).not.toThrow();
     });
+
+    it("gives friendly errors", () => {
+      expect(() =>
+        bridge.formikStateValidationSchema.validateSync({
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_identity: {
+                idSyncContainerId: "not a number"
+              }
+            }
+          }
+        })
+      ).toThrowMatching(err => err.message.includes("Please"));
+    });
+
+    it("rejects negative and non-integer idSyncContainerId", () => {
+      expect(() =>
+        bridge.formikStateValidationSchema.validateSync({
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_identity: {
+                idSyncContainerId: -1
+              }
+            }
+          }
+        })
+      ).toThrow();
+
+      expect(() =>
+        bridge.formikStateValidationSchema.validateSync({
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_identity: {
+                idSyncContainerId: 1.1
+              }
+            }
+          }
+        })
+      ).toThrow();
+    });
   });
 });

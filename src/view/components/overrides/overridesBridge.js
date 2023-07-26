@@ -162,8 +162,12 @@ export const bridge = {
             com_adobe_identity: object({
               idSyncContainerId: lazy(value =>
                 typeof value === "string" && value.includes("%")
-                  ? string().matches(dataElementRegex)
-                  : number("Please enter a number.")
+                  ? string().matches(
+                      dataElementRegex,
+                      "Please enter a valid data element."
+                    )
+                  : number()
+                      .typeError("Please enter a number.")
                       .positive("Please enter a positive number.")
                       .integer("Please enter a whole number.")
               )
