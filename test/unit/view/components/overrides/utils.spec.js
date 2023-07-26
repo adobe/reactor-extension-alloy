@@ -9,7 +9,13 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { isDataElement } from "../../../../../src/view/components/overrides/utils";
+import {
+  isDataElement,
+  createValidatorWithMessage,
+  validateIsDataElement,
+  createValidateItemIsInArray,
+  combineValidatorWithIsDataElement
+} from "../../../../../src/view/components/overrides/utils";
 
 describe("overrides/utils.js", () => {
   describe("isDataElement()", () => {
@@ -39,6 +45,47 @@ describe("overrides/utils.js", () => {
       it(testName, () => {
         expect(isDataElement(testValue)).toBe(true);
       });
+    });
+  });
+
+  describe("createValidatorWithMessage()", () => {
+    it("should return the message when the validation fails", () => {
+      const validator = createValidatorWithMessage(() => false, "message");
+      expect(validator()).toBe("message");
+    });
+
+    it("should return undefined when the validation passes", () => {
+      const validator = createValidatorWithMessage(() => true, "message");
+      expect(validator()).toBe(undefined);
+    });
+  });
+
+  describe("validateIsDataElement()", () => {
+    it("should return the message when the value is not a data element", () => {
+      expect(typeof validateIsDataElement("abc")).toBe("string");
+    });
+  });
+
+  describe("createValidateItemIsInArray()", () => {
+    it("should return the message when the value is not in the array", () => {
+      const validator = createValidateItemIsInArray(["a", "b"], "message");
+      expect(typeof validator("c")).toBe("string");
+    });
+
+    it("should return undefined when the value is in the array", () => {
+      const validator = createValidateItemIsInArray(["a", "b"], "message");
+      expect(validator("a")).toBe(undefined);
+    });
+  });
+
+  describe("combineValidatorWithIsDataElement()", () => {
+    it("should validate data elements and the other validator", () => {
+      const combinedValidator = combineValidatorWithIsDataElement(
+        () => undefined
+      );
+      expect(typeof combinedValidator("%my data element")).toBe("string");
+      expect(combinedValidator("%my data element%")).toBe(undefined);
+      expect(combinedValidator("abc")).toBe(undefined);
     });
   });
 });
