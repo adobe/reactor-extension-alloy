@@ -213,6 +213,20 @@ const Overrides = ({
                   }
                   return "The value must contain one or more valid data elements.";
                 }
+                if (idSyncContainers.length === 0) {
+                  try {
+                    const parsedValue = parseInt(value, 10);
+                    if (parsedValue < 0) {
+                      return "The value must be a positive number.";
+                    }
+                    if (value.includes(".")) {
+                      return "The value must whole number.";
+                    }
+                    return undefined;
+                  } catch (e) {
+                    return "The value must positive, whole number.";
+                  }
+                }
                 return validateItemIsInContainersList(value);
               };
 
