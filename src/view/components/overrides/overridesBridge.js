@@ -14,8 +14,7 @@ import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/const
 import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
 import trimValue from "../../utils/trimValues";
-
-const dataElementRegex = /^([^%\n]*(%[^%\n]+%)+[^%\n]*)$/gi;
+import { dataElementRegex } from "./utils";
 
 export const bridge = {
   // return formik state
