@@ -20,17 +20,19 @@ import React from "react";
  */
 class UserReportableError extends Error {
   constructor(message, { originatingError, additionalInfoUrl } = {}) {
+    let newMessage = message;
     if (originatingError instanceof UserReportableError) {
-      message = (
-        <>
-          {message} {originatingError.message}
-        </>
+      newMessage = React.createElement(
+        React.Fragment,
+        null,
+        message,
+        originatingError.message
       );
       additionalInfoUrl =
         additionalInfoUrl ?? originatingError.additionalInfoUrl;
     }
 
-    super(message);
+    super(newMessage);
     this.originatingError = originatingError;
     this.name = "UserReportableError";
     this.message = message;
