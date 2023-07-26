@@ -82,7 +82,6 @@ const Overrides = ({
    * @param {"production" | "staging" | "development"} destination
    */
   const onCopy = (source, destination) => {
-    edgeConfigOverrides[destination] = edgeConfigOverrides[source];
     [
       "com_adobe_experience_platform.datasets.event.datasetId",
       "com_adobe_identity.idSyncContainerId",
