@@ -414,6 +414,18 @@
       {
         "type": "remove",
         "propertyPath": "instances[].edgeConfigOverrides.production.datastreamIdInputMethod"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].sandbox"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].stagingSandbox"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].developmentSandbox"
       }
     ]
   },
