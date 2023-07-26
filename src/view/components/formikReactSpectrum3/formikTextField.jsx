@@ -15,6 +15,15 @@ import PropTypes from "prop-types";
 import { TextField } from "@adobe/react-spectrum";
 import { useField } from "formik";
 
+/**
+ * @param {Object} params
+ * @param {string} params.name
+ * @param {string?} params.width
+ * @param {(value: T) => undefined | string} params.validate A function that will be called to validate
+ * the value entered by the user. The function should return an error message if
+ * the value is invalid, or null if the value is valid.
+ * @returns {React.Element}
+ */
 const FormikTextField = ({ name, width, validate, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
     name,

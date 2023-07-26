@@ -30,47 +30,10 @@ import SettingsCopySection from "./settingsCopySection";
 import {
   FIELD_NAMES,
   capitialize,
-  createIsItemInArray,
-  createValidatorWithMessage,
-  isDataElement,
+  combineValidatorWithIsDataElement,
+  createValidateItemIsInArray,
   useFetchConfig
 } from "./utils";
-
-/**
- * Validate that a given item is a valid data element expression.
- * If not, return an error message.
- * @param {string} value
- * @returns {string | undefined}
- */
-const validateIsDataElement = createValidatorWithMessage(
-  isDataElement,
-  "The value must contain one or more valid data elements."
-);
-
-/**
- * Validate that a given item is in the array. If not, return an error message.
- * @template T
- * @param {Array<T>} array
- * @param {string} message
- * @param {Object} options
- * @param {boolean} options.errorOnEmptyArray errorOnEmptyArray Whether or not to return false if searching
- * for an item in an empty array.
- * @param {boolean} options.errorOnEmptyItem Whether or not to return false if searching for an empty item.
- * @returns {(value: T) => string | undefined}
- */
-const createValidateItemIsInArray = (
-  array,
-  message,
-  options = { errorOnEmptyArray: false, errorOnEmptyItem: false }
-) => createValidatorWithMessage(createIsItemInArray(array, options), message);
-
-/**
- *
- * @param {(value: T) => string | undefined} validator
- * @returns
- */
-const combineValidatorWithIsDataElement = validator => value =>
-  value?.includes("%") ? validateIsDataElement(value) : validator(value);
 
 /**
  * A section of a form that allows the user to override datastream configuration
