@@ -485,5 +485,32 @@ describe("overridesBridge", () => {
         })
       ).toThrow();
     });
+
+    it("allows for empty string entries", () => {
+      expect(() =>
+        bridge.formikStateValidationSchema.validateSync({
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_experience_platform: {
+                datasets: {
+                  event: {
+                    datasetId: ""
+                  }
+                }
+              },
+              com_adobe_analytics: {
+                reportSuites: [""]
+              },
+              com_adobe_identity: {
+                idSyncContainerId: ""
+              },
+              com_adobe_target: {
+                propertyToken: ""
+              }
+            }
+          }
+        })
+      ).not.toThrow();
+    });
   });
 });
