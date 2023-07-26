@@ -390,6 +390,30 @@
       {
         "type": "remove",
         "propertyPath": "instances[].edgeConfigInputMethod"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].edgeConfigOverrides.development.sandbox"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].edgeConfigOverrides.staging.sandbox"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].edgeConfigOverrides.production.sandbox"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].edgeConfigOverrides.development.datastreamIdInputMethod"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].edgeConfigOverrides.staging.datastreamIdInputMethod"
+      },
+      {
+        "type": "remove",
+        "propertyPath": "instances[].edgeConfigOverrides.production.datastreamIdInputMethod"
       }
     ]
   },
