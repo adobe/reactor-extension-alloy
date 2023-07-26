@@ -512,5 +512,57 @@ describe("overridesBridge", () => {
         })
       ).not.toThrow();
     });
+
+    it("allows for null and undefined entries", () => {
+      expect(() =>
+        bridge.formikStateValidationSchema.validateSync({
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_experience_platform: {
+                datasets: {
+                  event: {
+                    datasetId: null
+                  }
+                }
+              },
+              com_adobe_analytics: {
+                reportSuites: null
+              },
+              com_adobe_identity: {
+                idSyncContainerId: null
+              },
+              com_adobe_target: {
+                propertyToken: null
+              }
+            }
+          }
+        })
+      ).not.toThrow();
+
+      expect(() =>
+        bridge.formikStateValidationSchema.validateSync({
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_experience_platform: {
+                datasets: {
+                  event: {
+                    datasetId: undefined
+                  }
+                }
+              },
+              com_adobe_analytics: {
+                reportSuites: undefined
+              },
+              com_adobe_identity: {
+                idSyncContainerId: undefined
+              },
+              com_adobe_target: {
+                propertyToken: undefined
+              }
+            }
+          }
+        })
+      ).not.toThrow();
+    });
   });
 });

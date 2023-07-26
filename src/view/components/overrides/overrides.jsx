@@ -214,6 +214,9 @@ const Overrides = ({
                   return "The value must contain one or more valid data elements.";
                 }
                 try {
+                  if (value === "") {
+                    return undefined;
+                  }
                   const parsedValue = parseInt(value, 10);
                   if (Number.isNaN(parsedValue)) {
                     return "The value must positive, whole number.";

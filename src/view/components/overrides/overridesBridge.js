@@ -143,38 +143,43 @@ export const bridge = {
         (acc, env) => ({
           ...acc,
           [env]: object({
-            datastreamId: string(),
-            datastreamInputMethod: mixed().oneOf(["freeform", "select"]),
-            sandbox: string(),
+            datastreamId: string().nullable(),
+            datastreamInputMethod: mixed()
+              .oneOf(["freeform", "select"])
+              .nullable(),
+            sandbox: string().nullable(),
             com_adobe_experience_platform: object({
               datasets: object({
                 event: object({
-                  datasetId: string()
+                  datasetId: string().nullable()
                 }),
                 profile: object({
-                  datasetId: string()
+                  datasetId: string().nullable()
                 })
               })
             }),
             com_adobe_analytics: object({
-              reportSuites: array(string())
+              reportSuites: array(string()).nullable()
             }),
             com_adobe_identity: object({
               idSyncContainerId: lazy(value =>
                 typeof value === "string" &&
                 (value.includes("%") || value === "")
-                  ? string().matches(dataElementRegex, {
-                      message: "Please enter a valid data element.",
-                      excludeEmptyString: true
-                    })
+                  ? string()
+                      .matches(dataElementRegex, {
+                        message: "Please enter a valid data element.",
+                        excludeEmptyString: true
+                      })
+                      .nullable()
                   : number()
                       .typeError("Please enter a number.")
                       .positive("Please enter a positive number.")
                       .integer("Please enter a whole number.")
+                      .nullable()
               )
             }),
             com_adobe_target: object({
-              propertyToken: string()
+              propertyToken: string().nullable()
             })
           })
         }),
