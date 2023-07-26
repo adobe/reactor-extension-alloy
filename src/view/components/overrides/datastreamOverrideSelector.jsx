@@ -122,15 +122,22 @@ const DatastreamOverrideSelector = ({
     item => getKey(item) === value
   );
   useEffect(() => {
-    if (datastreamList.error || datastreamList.items.length === 0) {
+    if (datastreamList.error) {
       setInputMethod(InputMethod.FREEFORM);
-    } else if (!inputMethodTouched) {
-      if (datastreamList.items.length > 0 && (selectedDatastream || !value)) {
-        setInputMethod(InputMethod.SELECT);
-      }
-      if (value && !selectedDatastream) {
-        setInputMethod(InputMethod.FREEFORM);
-      }
+      return;
+    }
+    if (inputMethodTouched) {
+      return;
+    }
+    if (datastreamList.items.length === 0) {
+      setInputMethod(InputMethod.FREEFORM);
+    } else if (
+      datastreamList.items.length > 0 &&
+      (selectedDatastream || !value)
+    ) {
+      setInputMethod(InputMethod.SELECT);
+    } else {
+      setInputMethod(InputMethod.FREEFORM);
     }
   }, [
     datastreamList.error,
