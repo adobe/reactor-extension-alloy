@@ -21,10 +21,30 @@ governing permissions and limitations under the License.
  */
 const createGetConfigOverrides = environmentName => settings => {
   const { edgeConfigOverrides } = settings;
-  if (!edgeConfigOverrides || !edgeConfigOverrides[environmentName]) {
+  if (!edgeConfigOverrides) {
     return undefined;
   }
+  if (!edgeConfigOverrides[environmentName]) {
+    // there are no settings for any env
+    if (Object.keys(edgeConfigOverrides).length === 0) {
+      return undefined;
+    }
+    // there are no settings for this current env, but there are settings for others
+    if (
+      edgeConfigOverrides.development ||
+      edgeConfigOverrides.staging ||
+      edgeConfigOverrides.production
+    ) {
+      return undefined;
+    }
+    // there are old settings
+    return edgeConfigOverrides;
+  }
   const computedConfigOverrides = { ...edgeConfigOverrides[environmentName] };
+
+  if (Object.keys(computedConfigOverrides).length === 0) {
+    return undefined;
+  }
 
   if (computedConfigOverrides.com_adobe_analytics?.reportSuites?.length > 0) {
     computedConfigOverrides.com_adobe_analytics.reportSuites = computedConfigOverrides.com_adobe_analytics.reportSuites
