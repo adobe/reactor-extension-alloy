@@ -214,7 +214,8 @@ const Overrides = ({
                   return "The value must contain one or more valid data elements.";
                 }
                 try {
-                  if (value === "") {
+                  // forbid empty string but allow other falsey inputs
+                  if (value === "" || value === undefined || value === null) {
                     return undefined;
                   }
                   const parsedValue = parseInt(value, 10);
