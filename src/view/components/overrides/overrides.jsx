@@ -83,6 +83,8 @@ const Overrides = ({
    */
   const onCopy = (source, destination) => {
     [
+      FIELD_NAMES.sandbox,
+      "datastreamId",
       "com_adobe_experience_platform.datasets.event.datasetId",
       "com_adobe_identity.idSyncContainerId",
       "com_adobe_target.propertyToken",
