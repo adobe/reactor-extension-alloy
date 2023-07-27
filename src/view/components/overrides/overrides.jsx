@@ -206,7 +206,7 @@ const Overrides = ({
                 "The value must be one of the preconfigured ID sync containers."
               );
               const validateIdSyncContainerOption = value => {
-                if (value?.includes("%")) {
+                if (typeof value === "string" && value?.includes("%")) {
                   // can only contain numbers and data elements
                   if (/^(\d*(%[^%\n]+%)+\d*)+$/.test(value)) {
                     return undefined;
@@ -214,7 +214,8 @@ const Overrides = ({
                   return "The value must contain one or more valid data elements.";
                 }
                 try {
-                  if (value === "") {
+                  // forbid empty string but allow other falsey inputs
+                  if (value === "" || value === undefined || value === null) {
                     return undefined;
                   }
                   const parsedValue = parseInt(value, 10);

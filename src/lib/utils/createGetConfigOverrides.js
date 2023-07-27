@@ -21,14 +21,11 @@ governing permissions and limitations under the License.
  */
 const createGetConfigOverrides = environmentName => settings => {
   const { edgeConfigOverrides } = settings;
+  let computedConfigOverrides;
   if (!edgeConfigOverrides) {
     return undefined;
   }
   if (!edgeConfigOverrides[environmentName]) {
-    // there are no settings for any env
-    if (Object.keys(edgeConfigOverrides).length === 0) {
-      return undefined;
-    }
     // there are no settings for this current env, but there are settings for others
     if (
       edgeConfigOverrides.development ||
@@ -38,9 +35,10 @@ const createGetConfigOverrides = environmentName => settings => {
       return undefined;
     }
     // there are old settings
-    return edgeConfigOverrides;
+    computedConfigOverrides = edgeConfigOverrides;
+  } else {
+    computedConfigOverrides = { ...edgeConfigOverrides[environmentName] };
   }
-  const computedConfigOverrides = { ...edgeConfigOverrides[environmentName] };
 
   if (Object.keys(computedConfigOverrides).length === 0) {
     return undefined;
