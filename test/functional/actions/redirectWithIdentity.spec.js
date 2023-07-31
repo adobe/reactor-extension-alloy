@@ -357,3 +357,139 @@ test.requestHooks(
 
   await extensionViewController.expectIsValid();
 });
+
+test("can copy override settings between environments", async () => {
+  await extensionViewController.init({ extensionSettings });
+
+  await instanceNamePicker.selectOption("alloy2");
+
+  await overrideViewSelectors.envTabs.production.expectExists();
+  await overrideViewSelectors.envTabs.production.click();
+  await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
+  await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
+    "unifiedjsqeonly2"
+  );
+  await overrideViewSelectors.addReportSuiteButton.click();
+  await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
+    "unifiedjsqeonly3"
+  );
+  await overrideViewSelectors.envTabs.staging.expectExists();
+  await overrideViewSelectors.envTabs.staging.click();
+  await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.copyButtons.production.click();
+  await overrideViewSelectors.datastreamIdFreeform.expectValue("PR123");
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[1].expectValue(
+    "unifiedjsqeonly3"
+  );
+
+  await overrideViewSelectors.envTabs.development.expectExists();
+  await overrideViewSelectors.envTabs.development.click();
+  await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.copyButtons.staging.click();
+  await overrideViewSelectors.datastreamIdFreeform.expectValue("PR123");
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[1].expectValue(
+    "unifiedjsqeonly3"
+  );
+
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
+    instanceName: "alloy2",
+    edgeConfigOverrides: {
+      production: {
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6336ff95ba16ca1c07b4c0db"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 23512312
+        },
+        com_adobe_target: {
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+        },
+        sandbox: "prod",
+        datastreamId: "PR123"
+      },
+      staging: {
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6336ff95ba16ca1c07b4c0db"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 23512312
+        },
+        com_adobe_target: {
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+        },
+        sandbox: "prod",
+        datastreamId: "PR123"
+      },
+      development: {
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6336ff95ba16ca1c07b4c0db"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 23512312
+        },
+        com_adobe_target: {
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+        },
+        sandbox: "prod",
+        datastreamId: "PR123"
+      }
+    }
+  });
+});
