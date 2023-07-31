@@ -39,7 +39,7 @@ describe("overrides/utils.js", () => {
       ],
       [
         "should validate multiple data elements in the same string",
-        "%my data element% %my other data element%"
+        "%my data element% %my other data element%%my third data element%%my fourth data element%"
       ]
     ].forEach(([testName, testValue]) => {
       it(testName, () => {
