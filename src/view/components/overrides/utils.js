@@ -83,7 +83,7 @@ export const createIsItemInArray = (
   };
 };
 
-export const dataElementRegex = /^([^%\n]*(%[^%\n]+%)+[^%\n]*)+$/i;
+export const dataElementRegex = /^([^%\n]*%[^%\n]+%)+[^%\n]*$/i;
 
 /**
  * Returns whether or not the value is a data element expression
