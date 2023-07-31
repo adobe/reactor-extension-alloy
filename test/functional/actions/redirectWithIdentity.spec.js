@@ -154,6 +154,8 @@ test("returns valid settings", async () => {
   await overrideViewSelectors.envTabs.production.expectExists();
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -173,6 +175,8 @@ test("returns valid settings", async () => {
   await overrideViewSelectors.envTabs.staging.expectExists();
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -192,6 +196,8 @@ test("returns valid settings", async () => {
   await overrideViewSelectors.envTabs.development.expectExists();
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -230,7 +236,8 @@ test("returns valid settings", async () => {
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
         },
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamId: "PR123"
       },
       staging: {
         com_adobe_experience_platform: {
@@ -249,7 +256,8 @@ test("returns valid settings", async () => {
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
         },
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamId: "PR123"
       },
       development: {
         com_adobe_experience_platform: {
@@ -268,7 +276,8 @@ test("returns valid settings", async () => {
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
         },
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamId: "PR123"
       }
     }
   });
@@ -303,7 +312,8 @@ test.requestHooks(
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
-  await overrideViewSelectors.datastreamId.production.selectOption(
+  await overrideViewSelectors.datastreamIdDropdown.expectExists();
+  await overrideViewSelectors.datastreamIdDropdown.selectOption(
     "Test Config Overrides"
   );
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectExists();

@@ -490,7 +490,8 @@ test("returns minimal valid settings", async () => {
     ],
     edgeConfigOverrides: {
       development: {
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
       }
     }
   });
@@ -514,6 +515,8 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.envTabs.production.expectExists();
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -533,6 +536,8 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.envTabs.staging.expectExists();
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -552,6 +557,8 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.envTabs.development.expectExists();
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -605,7 +612,8 @@ test("returns full valid settings", async () => {
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
         },
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamId: "1234abcd"
       },
       staging: {
         com_adobe_experience_platform: {
@@ -624,7 +632,8 @@ test("returns full valid settings", async () => {
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
         },
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamId: "1234abcd"
       },
       development: {
         com_adobe_experience_platform: {
@@ -643,7 +652,8 @@ test("returns full valid settings", async () => {
         com_adobe_target: {
           propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
         },
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamId: "1234abcd"
       }
     }
   });
@@ -685,7 +695,8 @@ test("returns valid settings for guided form data elements", async () => {
     ],
     edgeConfigOverrides: {
       development: {
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
       }
     }
   });
@@ -703,7 +714,8 @@ test("returns valid settings for data element", async () => {
     consent: "%data2%",
     edgeConfigOverrides: {
       development: {
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
       }
     }
   });
@@ -817,7 +829,8 @@ test("remembers the initial data element value", async () => {
     ],
     edgeConfigOverrides: {
       development: {
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
       }
     }
   };
