@@ -368,6 +368,8 @@ test("returns full valid settings with decision scopes as data element", async (
   await overrideViewSelectors.envTabs.production.expectExists();
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -387,6 +389,8 @@ test("returns full valid settings with decision scopes as data element", async (
   await overrideViewSelectors.envTabs.staging.expectExists();
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -406,6 +410,8 @@ test("returns full valid settings with decision scopes as data element", async (
   await overrideViewSelectors.envTabs.development.expectExists();
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db"
   );
@@ -439,6 +445,7 @@ test("returns full valid settings with decision scopes as data element", async (
     edgeConfigOverrides: {
       production: {
         sandbox: "prod",
+        datastreamId: "PR123",
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -458,6 +465,7 @@ test("returns full valid settings with decision scopes as data element", async (
       },
       staging: {
         sandbox: "prod",
+        datastreamId: "PR123",
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -477,6 +485,7 @@ test("returns full valid settings with decision scopes as data element", async (
       },
       development: {
         sandbox: "prod",
+        datastreamId: "PR123",
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -526,7 +535,8 @@ test("returns decision scopes settings as an array", async () => {
     },
     edgeConfigOverrides: {
       development: {
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
       }
     }
   });
@@ -551,7 +561,8 @@ test("returns surfaces settings as an array", async () => {
     },
     edgeConfigOverrides: {
       development: {
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
       }
     }
   });
@@ -569,7 +580,8 @@ test("does not return decision scopes settings when provided with array of empty
     instanceName: "alloy1",
     edgeConfigOverrides: {
       development: {
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
       }
     }
   });
@@ -587,7 +599,8 @@ test("does not return surface settings when provided with array of empty strings
     instanceName: "alloy1",
     edgeConfigOverrides: {
       development: {
-        sandbox: "prod"
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
       }
     }
   });
@@ -658,8 +671,6 @@ test("shows error for data value that is more than one data element", async () =
   await dataField.expectError();
 });
 
-testInstanceNameOptions(extensionViewController, instanceNameField);
-
 test.requestHooks(
   sandboxesMocks.singleDefault,
   datastreamsMocks.single,
@@ -677,6 +688,7 @@ test.requestHooks(
     }
   });
 
+  await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectExists();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.openMenu();
@@ -788,3 +800,5 @@ test.requestHooks(
     await overrideViewSelectors.textFields.eventDatasetOverride.expectIsTextField();
   }
 );
+
+testInstanceNameOptions(extensionViewController, instanceNameField);

@@ -275,6 +275,7 @@ const componentWrappers = {
       expectText: createExpectText(selector),
       async selectOption(label) {
         await compatibleClick(selector);
+        await this.scrollDownToItem(label);
         await createSelectMenuOption(popoverMenuSelector)(label);
       },
       async expectSelectedOptionLabel(label) {
@@ -295,7 +296,31 @@ const componentWrappers = {
       },
       expectDisabled: createExpectDisabled(selector),
       expectEnabled: createExpectEnabled(selector.find("button")),
-      expectHidden: createExpectHidden(selector.parent().parent())
+      expectHidden: createExpectHidden(selector.parent().parent()),
+      openMenu: createClick(selector),
+      // When the combobox loads pages of data when scrolling, this
+      // will keep scrolling until the the item is reached.
+      async scrollDownToItem(label) {
+        for (let i = 0; i < 10; i += 1) {
+          if (
+            // eslint-disable-next-line no-await-in-loop
+            await popoverMenuSelector
+              .find(menuItemCssSelector)
+              .withExactText(label).exists
+          ) {
+            return;
+          }
+
+          // eslint-disable-next-line no-await-in-loop
+          await t.scrollIntoView(
+            popoverMenuSelector.find(menuItemCssSelector).nth(-1)
+          );
+        }
+
+        throw new Error(
+          `Option with label ${label} does not exist while scrolling down when it is expected to exist.`
+        );
+      }
     };
   },
   textField(selector) {
