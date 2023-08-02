@@ -39,12 +39,146 @@ const prettier = require("prettier");
  */
 
 /**
+ * Create a slice of a JSON schema used to describe the edge overrides
+ * configuration.
+ * Works for both actions and extension configuration
+ * @param {boolean} isAction
+ * @returns {Object}
+ */
+const createEdgeConfigOverridesSchema = isAction => {
+  const configOverridesProps = {
+    com_adobe_experience_platform: {
+      type: "object",
+      properties: {
+        datasets: {
+          type: "object",
+          properties: {
+            event: {
+              type: "object",
+              properties: {
+                datasetId: {
+                  type: "string"
+                }
+              },
+              required: ["datasetId"]
+            }
+          },
+          required: ["event"]
+        }
+      },
+      required: ["datasets"]
+    },
+    com_adobe_analytics: {
+      type: "object",
+      properties: {
+        reportSuites: {
+          type: "array",
+          items: {
+            type: "string"
+          }
+        }
+      },
+      required: ["reportSuites"]
+    },
+    com_adobe_identity: {
+      type: "object",
+      properties: {
+        idSyncContainerId: {
+          type: "integer"
+        }
+      },
+      required: ["idSyncContainerId"]
+    },
+    com_adobe_target: {
+      type: "object",
+      properties: {
+        propertyToken: {
+          type: "string"
+        }
+      },
+      required: ["propertyToken"]
+    }
+  };
+  const configOverridesWithDatastream = {
+    ...configOverridesProps,
+    sandbox: {
+      type: "string",
+      minLength: 1
+    },
+    datastreamId: {
+      type: "string",
+      minLength: 1
+    },
+    datastreamIdInputMethod: {
+      type: "string",
+      enum: ["freeform", "select"]
+    }
+  };
+  return {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      ...configOverridesProps,
+      development: {
+        ...(isAction ? configOverridesWithDatastream : configOverridesProps)
+      },
+      staging: {
+        ...(isAction ? configOverridesWithDatastream : configOverridesProps)
+      },
+      production: {
+        ...(isAction ? configOverridesWithDatastream : configOverridesProps)
+      }
+    }
+  };
+};
+
+/**
+ * Create a list of common transforms used to with edge config overrides.
+ * Works for both actions and extension configuration.
+ * @param {boolean} isAction
+ * @returns {{ type: "remove", propertyPath: string }[]}
+ */
+const createEdgeConfigOverridesTransforms = isAction => {
+  const prefix = isAction ? "" : "instances[].";
+  return [
+    {
+      type: "remove",
+      propertyPath: `${prefix}edgeConfigOverrides.development.sandbox`
+    },
+    {
+      type: "remove",
+      propertyPath: `${prefix}edgeConfigOverrides.staging.sandbox`
+    },
+    {
+      type: "remove",
+      propertyPath: `${prefix}edgeConfigOverrides.production.sandbox`
+    },
+    {
+      type: "remove",
+      propertyPath: `${prefix}edgeConfigOverrides.development.datastreamIdInputMethod`
+    },
+    {
+      type: "remove",
+      propertyPath: `${prefix}edgeConfigOverrides.staging.datastreamIdInputMethod`
+    },
+    {
+      type: "remove",
+      propertyPath: `${prefix}edgeConfigOverrides.production.datastreamIdInputMethod`
+    }
+  ];
+};
+
+/**
  * Create the contents of the extension.json aka the extension definition.
  *
  * @param {ExtensionManifestConfiguration} options
  * @returns {ExtensionManifest}
  */
 const createExtensionManifest = ({ version }) => {
+  const actionEdgeConfigOverridesSchema = createEdgeConfigOverridesSchema(true);
+  const actionEdgeConfigOverridesTransforms = createEdgeConfigOverridesTransforms(
+    true
+  );
   /** @type {ExtensionManifest} */
   const extensionManifest = {
     version,
@@ -165,258 +299,7 @@ const createExtensionManifest = ({ version }) => {
                   type: "string",
                   minLength: 1
                 },
-                edgeConfigOverrides: {
-                  type: "object",
-                  additionalProperties: false,
-                  properties: {
-                    com_adobe_experience_platform: {
-                      type: "object",
-                      properties: {
-                        datasets: {
-                          type: "object",
-                          properties: {
-                            event: {
-                              type: "object",
-                              properties: {
-                                datasetId: {
-                                  type: "string"
-                                }
-                              },
-                              required: ["datasetId"]
-                            }
-                          },
-                          required: ["event"]
-                        }
-                      },
-                      required: ["datasets"]
-                    },
-                    com_adobe_analytics: {
-                      type: "object",
-                      properties: {
-                        reportSuites: {
-                          type: "array",
-                          items: {
-                            type: "string"
-                          }
-                        }
-                      },
-                      required: ["reportSuites"]
-                    },
-                    com_adobe_identity: {
-                      type: "object",
-                      properties: {
-                        idSyncContainerId: {
-                          type: "integer"
-                        }
-                      },
-                      required: ["idSyncContainerId"]
-                    },
-                    com_adobe_target: {
-                      type: "object",
-                      properties: {
-                        propertyToken: {
-                          type: "string"
-                        }
-                      },
-                      required: ["propertyToken"]
-                    },
-                    development: {
-                      sandbox: {
-                        type: "string",
-                        minLength: 1
-                      },
-                      datastreamId: {
-                        type: "string",
-                        minLength: 1
-                      },
-                      datastreamIdInputMethod: {
-                        type: "string",
-                        enum: ["freeform", "select"]
-                      },
-                      com_adobe_experience_platform: {
-                        type: "object",
-                        properties: {
-                          datasets: {
-                            type: "object",
-                            properties: {
-                              event: {
-                                type: "object",
-                                properties: {
-                                  datasetId: {
-                                    type: "string"
-                                  }
-                                },
-                                required: ["datasetId"]
-                              }
-                            },
-                            required: ["event"]
-                          }
-                        },
-                        required: ["datasets"]
-                      },
-                      com_adobe_analytics: {
-                        type: "object",
-                        properties: {
-                          reportSuites: {
-                            type: "array",
-                            items: {
-                              type: "string"
-                            }
-                          }
-                        },
-                        required: ["reportSuites"]
-                      },
-                      com_adobe_identity: {
-                        type: "object",
-                        properties: {
-                          idSyncContainerId: {
-                            type: "integer"
-                          }
-                        },
-                        required: ["idSyncContainerId"]
-                      },
-                      com_adobe_target: {
-                        type: "object",
-                        properties: {
-                          propertyToken: {
-                            type: "string"
-                          }
-                        },
-                        required: ["propertyToken"]
-                      }
-                    },
-                    staging: {
-                      sandbox: {
-                        type: "string",
-                        minLength: 1
-                      },
-                      datastreamId: {
-                        type: "string",
-                        minLength: 1
-                      },
-                      datastreamIdInputMethod: {
-                        type: "string",
-                        enum: ["freeform", "select"]
-                      },
-                      com_adobe_experience_platform: {
-                        type: "object",
-                        properties: {
-                          datasets: {
-                            type: "object",
-                            properties: {
-                              event: {
-                                type: "object",
-                                properties: {
-                                  datasetId: {
-                                    type: "string"
-                                  }
-                                },
-                                required: ["datasetId"]
-                              }
-                            },
-                            required: ["event"]
-                          }
-                        },
-                        required: ["datasets"]
-                      },
-                      com_adobe_analytics: {
-                        type: "object",
-                        properties: {
-                          reportSuites: {
-                            type: "array",
-                            items: {
-                              type: "string"
-                            }
-                          }
-                        },
-                        required: ["reportSuites"]
-                      },
-                      com_adobe_identity: {
-                        type: "object",
-                        properties: {
-                          idSyncContainerId: {
-                            type: "integer"
-                          }
-                        },
-                        required: ["idSyncContainerId"]
-                      },
-                      com_adobe_target: {
-                        type: "object",
-                        properties: {
-                          propertyToken: {
-                            type: "string"
-                          }
-                        },
-                        required: ["propertyToken"]
-                      }
-                    },
-                    production: {
-                      sandbox: {
-                        type: "string",
-                        minLength: 1
-                      },
-                      datastreamId: {
-                        type: "string",
-                        minLength: 1
-                      },
-                      datastreamIdInputMethod: {
-                        type: "string",
-                        enum: ["freeform", "select"]
-                      },
-                      com_adobe_experience_platform: {
-                        type: "object",
-                        properties: {
-                          datasets: {
-                            type: "object",
-                            properties: {
-                              event: {
-                                type: "object",
-                                properties: {
-                                  datasetId: {
-                                    type: "string"
-                                  }
-                                },
-                                required: ["datasetId"]
-                              }
-                            },
-                            required: ["event"]
-                          }
-                        },
-                        required: ["datasets"]
-                      },
-                      com_adobe_analytics: {
-                        type: "object",
-                        properties: {
-                          reportSuites: {
-                            type: "array",
-                            items: {
-                              type: "string"
-                            }
-                          }
-                        },
-                        required: ["reportSuites"]
-                      },
-                      com_adobe_identity: {
-                        type: "object",
-                        properties: {
-                          idSyncContainerId: {
-                            type: "integer"
-                          }
-                        },
-                        required: ["idSyncContainerId"]
-                      },
-                      com_adobe_target: {
-                        type: "object",
-                        properties: {
-                          propertyToken: {
-                            type: "string"
-                          }
-                        },
-                        required: ["propertyToken"]
-                      }
-                    }
-                  }
-                }
+                edgeConfigOverrides: createEdgeConfigOverridesSchema(false)
               },
               required: ["edgeConfigId", "name"],
               additionalProperties: false
@@ -443,33 +326,6 @@ const createExtensionManifest = ({ version }) => {
         },
         {
           type: "remove",
-          propertyPath: "instances[].edgeConfigOverrides.development.sandbox"
-        },
-        {
-          type: "remove",
-          propertyPath: "instances[].edgeConfigOverrides.staging.sandbox"
-        },
-        {
-          type: "remove",
-          propertyPath: "instances[].edgeConfigOverrides.production.sandbox"
-        },
-        {
-          type: "remove",
-          propertyPath:
-            "instances[].edgeConfigOverrides.development.datastreamIdInputMethod"
-        },
-        {
-          type: "remove",
-          propertyPath:
-            "instances[].edgeConfigOverrides.staging.datastreamIdInputMethod"
-        },
-        {
-          type: "remove",
-          propertyPath:
-            "instances[].edgeConfigOverrides.production.datastreamIdInputMethod"
-        },
-        {
-          type: "remove",
           propertyPath: "instances[].sandbox"
         },
         {
@@ -479,7 +335,8 @@ const createExtensionManifest = ({ version }) => {
         {
           type: "remove",
           propertyPath: "instances[].developmentSandbox"
-        }
+        },
+        ...createEdgeConfigOverridesTransforms(false)
       ]
     },
     actions: [
@@ -588,278 +445,12 @@ const createExtensionManifest = ({ version }) => {
             documentUnloading: {
               type: "boolean"
             },
-            edgeConfigOverrides: {
-              type: "object",
-              additionalProperties: false,
-              properties: {
-                com_adobe_experience_platform: {
-                  type: "object",
-                  properties: {
-                    datasets: {
-                      type: "object",
-                      properties: {
-                        event: {
-                          type: "object",
-                          properties: {
-                            datasetId: {
-                              type: "string"
-                            }
-                          },
-                          required: ["datasetId"]
-                        }
-                      },
-                      required: ["event"]
-                    }
-                  },
-                  required: ["datasets"]
-                },
-                com_adobe_analytics: {
-                  type: "object",
-                  properties: {
-                    reportSuites: {
-                      type: "array",
-                      items: {
-                        type: "string"
-                      }
-                    }
-                  },
-                  required: ["reportSuites"]
-                },
-                com_adobe_identity: {
-                  type: "object",
-                  properties: {
-                    idSyncContainerId: {
-                      type: "integer"
-                    }
-                  },
-                  required: ["idSyncContainerId"]
-                },
-                com_adobe_target: {
-                  type: "object",
-                  properties: {
-                    propertyToken: {
-                      type: "string"
-                    }
-                  },
-                  required: ["propertyToken"]
-                },
-                development: {
-                  sandbox: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamId: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  com_adobe_experience_platform: {
-                    type: "object",
-                    properties: {
-                      datasets: {
-                        type: "object",
-                        properties: {
-                          event: {
-                            type: "object",
-                            properties: {
-                              datasetId: {
-                                type: "string"
-                              }
-                            },
-                            required: ["datasetId"]
-                          }
-                        },
-                        required: ["event"]
-                      }
-                    },
-                    required: ["datasets"]
-                  },
-                  com_adobe_analytics: {
-                    type: "object",
-                    properties: {
-                      reportSuites: {
-                        type: "array",
-                        items: {
-                          type: "string"
-                        }
-                      }
-                    },
-                    required: ["reportSuites"]
-                  },
-                  com_adobe_identity: {
-                    type: "object",
-                    properties: {
-                      idSyncContainerId: {
-                        type: "integer"
-                      }
-                    },
-                    required: ["idSyncContainerId"]
-                  },
-                  com_adobe_target: {
-                    type: "object",
-                    properties: {
-                      propertyToken: {
-                        type: "string"
-                      }
-                    },
-                    required: ["propertyToken"]
-                  }
-                },
-                staging: {
-                  sandbox: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamId: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  com_adobe_experience_platform: {
-                    type: "object",
-                    properties: {
-                      datasets: {
-                        type: "object",
-                        properties: {
-                          event: {
-                            type: "object",
-                            properties: {
-                              datasetId: {
-                                type: "string"
-                              }
-                            },
-                            required: ["datasetId"]
-                          }
-                        },
-                        required: ["event"]
-                      }
-                    },
-                    required: ["datasets"]
-                  },
-                  com_adobe_analytics: {
-                    type: "object",
-                    properties: {
-                      reportSuites: {
-                        type: "array",
-                        items: {
-                          type: "string"
-                        }
-                      }
-                    },
-                    required: ["reportSuites"]
-                  },
-                  com_adobe_identity: {
-                    type: "object",
-                    properties: {
-                      idSyncContainerId: {
-                        type: "integer"
-                      }
-                    },
-                    required: ["idSyncContainerId"]
-                  },
-                  com_adobe_target: {
-                    type: "object",
-                    properties: {
-                      propertyToken: {
-                        type: "string"
-                      }
-                    },
-                    required: ["propertyToken"]
-                  }
-                },
-                production: {
-                  sandbox: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamId: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  com_adobe_experience_platform: {
-                    type: "object",
-                    properties: {
-                      datasets: {
-                        type: "object",
-                        properties: {
-                          event: {
-                            type: "object",
-                            properties: {
-                              datasetId: {
-                                type: "string"
-                              }
-                            },
-                            required: ["datasetId"]
-                          }
-                        },
-                        required: ["event"]
-                      }
-                    },
-                    required: ["datasets"]
-                  },
-                  com_adobe_analytics: {
-                    type: "object",
-                    properties: {
-                      reportSuites: {
-                        type: "array",
-                        items: {
-                          type: "string"
-                        }
-                      }
-                    },
-                    required: ["reportSuites"]
-                  },
-                  com_adobe_identity: {
-                    type: "object",
-                    properties: {
-                      idSyncContainerId: {
-                        type: "integer"
-                      }
-                    },
-                    required: ["idSyncContainerId"]
-                  },
-                  com_adobe_target: {
-                    type: "object",
-                    properties: {
-                      propertyToken: {
-                        type: "string"
-                      }
-                    },
-                    required: ["propertyToken"]
-                  }
-                }
-              }
-            }
+            edgeConfigOverrides: actionEdgeConfigOverridesSchema
           },
           required: ["instanceName"],
           additionalProperties: false
         },
-        transforms: [
-          {
-            type: "remove",
-            propertyPath:
-              "edgeConfigOverrides.development.datastreamIdInputMethod"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.staging.datastreamIdInputMethod"
-          },
-          {
-            type: "remove",
-            propertyPath:
-              "edgeConfigOverrides.production.datastreamIdInputMethod"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.development.sandbox"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.staging.sandbox"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.production.sandbox"
-          }
-        ],
+        transforms: [...actionEdgeConfigOverridesTransforms],
         libPath: "dist/lib/actions/sendEvent/index.js",
         viewPath: "actions/sendEvent.html"
       },
@@ -978,290 +569,12 @@ const createExtensionManifest = ({ version }) => {
                 }
               ]
             },
-            edgeConfigOverrides: {
-              type: "object",
-              additionalProperties: false,
-              properties: {
-                com_adobe_experience_platform: {
-                  type: "object",
-                  properties: {
-                    datasets: {
-                      type: "object",
-                      properties: {
-                        event: {
-                          type: "object",
-                          properties: {
-                            datasetId: {
-                              type: "string"
-                            }
-                          },
-                          required: ["datasetId"]
-                        }
-                      },
-                      required: ["event"]
-                    }
-                  },
-                  required: ["datasets"]
-                },
-                com_adobe_analytics: {
-                  type: "object",
-                  properties: {
-                    reportSuites: {
-                      type: "array",
-                      items: {
-                        type: "string"
-                      }
-                    }
-                  },
-                  required: ["reportSuites"]
-                },
-                com_adobe_identity: {
-                  type: "object",
-                  properties: {
-                    idSyncContainerId: {
-                      type: "integer"
-                    }
-                  },
-                  required: ["idSyncContainerId"]
-                },
-                com_adobe_target: {
-                  type: "object",
-                  properties: {
-                    propertyToken: {
-                      type: "string"
-                    }
-                  },
-                  required: ["propertyToken"]
-                },
-                development: {
-                  sandbox: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamId: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamIdInputMethod: {
-                    type: "string",
-                    enum: ["freeform", "select"]
-                  },
-                  com_adobe_experience_platform: {
-                    type: "object",
-                    properties: {
-                      datasets: {
-                        type: "object",
-                        properties: {
-                          event: {
-                            type: "object",
-                            properties: {
-                              datasetId: {
-                                type: "string"
-                              }
-                            },
-                            required: ["datasetId"]
-                          }
-                        },
-                        required: ["event"]
-                      }
-                    },
-                    required: ["datasets"]
-                  },
-                  com_adobe_analytics: {
-                    type: "object",
-                    properties: {
-                      reportSuites: {
-                        type: "array",
-                        items: {
-                          type: "string"
-                        }
-                      }
-                    },
-                    required: ["reportSuites"]
-                  },
-                  com_adobe_identity: {
-                    type: "object",
-                    properties: {
-                      idSyncContainerId: {
-                        type: "integer"
-                      }
-                    },
-                    required: ["idSyncContainerId"]
-                  },
-                  com_adobe_target: {
-                    type: "object",
-                    properties: {
-                      propertyToken: {
-                        type: "string"
-                      }
-                    },
-                    required: ["propertyToken"]
-                  }
-                },
-                staging: {
-                  sandbox: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamId: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamIdInputMethod: {
-                    type: "string",
-                    enum: ["freeform", "select"]
-                  },
-                  com_adobe_experience_platform: {
-                    type: "object",
-                    properties: {
-                      datasets: {
-                        type: "object",
-                        properties: {
-                          event: {
-                            type: "object",
-                            properties: {
-                              datasetId: {
-                                type: "string"
-                              }
-                            },
-                            required: ["datasetId"]
-                          }
-                        },
-                        required: ["event"]
-                      }
-                    },
-                    required: ["datasets"]
-                  },
-                  com_adobe_analytics: {
-                    type: "object",
-                    properties: {
-                      reportSuites: {
-                        type: "array",
-                        items: {
-                          type: "string"
-                        }
-                      }
-                    },
-                    required: ["reportSuites"]
-                  },
-                  com_adobe_identity: {
-                    type: "object",
-                    properties: {
-                      idSyncContainerId: {
-                        type: "integer"
-                      }
-                    },
-                    required: ["idSyncContainerId"]
-                  },
-                  com_adobe_target: {
-                    type: "object",
-                    properties: {
-                      propertyToken: {
-                        type: "string"
-                      }
-                    },
-                    required: ["propertyToken"]
-                  }
-                },
-                production: {
-                  sandbox: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamId: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamIdInputMethod: {
-                    type: "string",
-                    enum: ["freeform", "select"]
-                  },
-                  com_adobe_experience_platform: {
-                    type: "object",
-                    properties: {
-                      datasets: {
-                        type: "object",
-                        properties: {
-                          event: {
-                            type: "object",
-                            properties: {
-                              datasetId: {
-                                type: "string"
-                              }
-                            },
-                            required: ["datasetId"]
-                          }
-                        },
-                        required: ["event"]
-                      }
-                    },
-                    required: ["datasets"]
-                  },
-                  com_adobe_analytics: {
-                    type: "object",
-                    properties: {
-                      reportSuites: {
-                        type: "array",
-                        items: {
-                          type: "string"
-                        }
-                      }
-                    },
-                    required: ["reportSuites"]
-                  },
-                  com_adobe_identity: {
-                    type: "object",
-                    properties: {
-                      idSyncContainerId: {
-                        type: "integer"
-                      }
-                    },
-                    required: ["idSyncContainerId"]
-                  },
-                  com_adobe_target: {
-                    type: "object",
-                    properties: {
-                      propertyToken: {
-                        type: "string"
-                      }
-                    },
-                    required: ["propertyToken"]
-                  }
-                }
-              }
-            }
+            edgeConfigOverrides: actionEdgeConfigOverridesSchema
           },
           required: ["instanceName", "consent"],
           additionalProperties: false
         },
-        transforms: [
-          {
-            type: "remove",
-            propertyPath:
-              "edgeConfigOverrides.development.datastreamIdInputMethod"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.staging.datastreamIdInputMethod"
-          },
-          {
-            type: "remove",
-            propertyPath:
-              "edgeConfigOverrides.production.datastreamIdInputMethod"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.development.sandbox"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.staging.sandbox"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.production.sandbox"
-          }
-        ],
+        transforms: [...actionEdgeConfigOverridesTransforms],
         libPath: "dist/lib/actions/setConsent/index.js",
         viewPath: "actions/setConsent.html"
       },
@@ -1276,290 +589,12 @@ const createExtensionManifest = ({ version }) => {
               type: "string",
               minLength: 1
             },
-            edgeConfigOverrides: {
-              type: "object",
-              additionalProperties: false,
-              properties: {
-                com_adobe_experience_platform: {
-                  type: "object",
-                  properties: {
-                    datasets: {
-                      type: "object",
-                      properties: {
-                        event: {
-                          type: "object",
-                          properties: {
-                            datasetId: {
-                              type: "string"
-                            }
-                          },
-                          required: ["datasetId"]
-                        }
-                      },
-                      required: ["event"]
-                    }
-                  },
-                  required: ["datasets"]
-                },
-                com_adobe_analytics: {
-                  type: "object",
-                  properties: {
-                    reportSuites: {
-                      type: "array",
-                      items: {
-                        type: "string"
-                      }
-                    }
-                  },
-                  required: ["reportSuites"]
-                },
-                com_adobe_identity: {
-                  type: "object",
-                  properties: {
-                    idSyncContainerId: {
-                      type: "integer"
-                    }
-                  },
-                  required: ["idSyncContainerId"]
-                },
-                com_adobe_target: {
-                  type: "object",
-                  properties: {
-                    propertyToken: {
-                      type: "string"
-                    }
-                  },
-                  required: ["propertyToken"]
-                },
-                development: {
-                  sandbox: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamId: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamIdInputMethod: {
-                    type: "string",
-                    enum: ["freeform", "select"]
-                  },
-                  com_adobe_experience_platform: {
-                    type: "object",
-                    properties: {
-                      datasets: {
-                        type: "object",
-                        properties: {
-                          event: {
-                            type: "object",
-                            properties: {
-                              datasetId: {
-                                type: "string"
-                              }
-                            },
-                            required: ["datasetId"]
-                          }
-                        },
-                        required: ["event"]
-                      }
-                    },
-                    required: ["datasets"]
-                  },
-                  com_adobe_analytics: {
-                    type: "object",
-                    properties: {
-                      reportSuites: {
-                        type: "array",
-                        items: {
-                          type: "string"
-                        }
-                      }
-                    },
-                    required: ["reportSuites"]
-                  },
-                  com_adobe_identity: {
-                    type: "object",
-                    properties: {
-                      idSyncContainerId: {
-                        type: "integer"
-                      }
-                    },
-                    required: ["idSyncContainerId"]
-                  },
-                  com_adobe_target: {
-                    type: "object",
-                    properties: {
-                      propertyToken: {
-                        type: "string"
-                      }
-                    },
-                    required: ["propertyToken"]
-                  }
-                },
-                staging: {
-                  sandbox: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamId: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamIdInputMethod: {
-                    type: "string",
-                    enum: ["freeform", "select"]
-                  },
-                  com_adobe_experience_platform: {
-                    type: "object",
-                    properties: {
-                      datasets: {
-                        type: "object",
-                        properties: {
-                          event: {
-                            type: "object",
-                            properties: {
-                              datasetId: {
-                                type: "string"
-                              }
-                            },
-                            required: ["datasetId"]
-                          }
-                        },
-                        required: ["event"]
-                      }
-                    },
-                    required: ["datasets"]
-                  },
-                  com_adobe_analytics: {
-                    type: "object",
-                    properties: {
-                      reportSuites: {
-                        type: "array",
-                        items: {
-                          type: "string"
-                        }
-                      }
-                    },
-                    required: ["reportSuites"]
-                  },
-                  com_adobe_identity: {
-                    type: "object",
-                    properties: {
-                      idSyncContainerId: {
-                        type: "integer"
-                      }
-                    },
-                    required: ["idSyncContainerId"]
-                  },
-                  com_adobe_target: {
-                    type: "object",
-                    properties: {
-                      propertyToken: {
-                        type: "string"
-                      }
-                    },
-                    required: ["propertyToken"]
-                  }
-                },
-                production: {
-                  sandbox: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamId: {
-                    type: "string",
-                    minLength: 1
-                  },
-                  datastreamIdInputMethod: {
-                    type: "string",
-                    enum: ["freeform", "select"]
-                  },
-                  com_adobe_experience_platform: {
-                    type: "object",
-                    properties: {
-                      datasets: {
-                        type: "object",
-                        properties: {
-                          event: {
-                            type: "object",
-                            properties: {
-                              datasetId: {
-                                type: "string"
-                              }
-                            },
-                            required: ["datasetId"]
-                          }
-                        },
-                        required: ["event"]
-                      }
-                    },
-                    required: ["datasets"]
-                  },
-                  com_adobe_analytics: {
-                    type: "object",
-                    properties: {
-                      reportSuites: {
-                        type: "array",
-                        items: {
-                          type: "string"
-                        }
-                      }
-                    },
-                    required: ["reportSuites"]
-                  },
-                  com_adobe_identity: {
-                    type: "object",
-                    properties: {
-                      idSyncContainerId: {
-                        type: "integer"
-                      }
-                    },
-                    required: ["idSyncContainerId"]
-                  },
-                  com_adobe_target: {
-                    type: "object",
-                    properties: {
-                      propertyToken: {
-                        type: "string"
-                      }
-                    },
-                    required: ["propertyToken"]
-                  }
-                }
-              }
-            }
+            edgeConfigOverrides: actionEdgeConfigOverridesSchema
           },
           required: ["instanceName"],
           additionalProperties: false
         },
-        transforms: [
-          {
-            type: "remove",
-            propertyPath:
-              "edgeConfigOverrides.development.datastreamIdInputMethod"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.staging.datastreamIdInputMethod"
-          },
-          {
-            type: "remove",
-            propertyPath:
-              "edgeConfigOverrides.production.datastreamIdInputMethod"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.development.sandbox"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.staging.sandbox"
-          },
-          {
-            type: "remove",
-            propertyPath: "edgeConfigOverrides.production.sandbox"
-          }
-        ],
+        transforms: [...actionEdgeConfigOverridesTransforms],
         libPath: "dist/lib/actions/redirectWithIdentity/index.js",
         viewPath: "actions/redirectWithIdentity.html"
       },
