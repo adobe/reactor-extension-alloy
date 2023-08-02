@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import validateManifest from "@adobe/reactor-validator";
 import { writeFile } from "fs/promises";
 import { dirname, join, resolve } from "path";
+import prettier from "prettier";
 
 /**
  * @typedef {Object} ExtensionManifest
@@ -1839,14 +1840,28 @@ const getDestination = () => {
 };
 
 /**
+ * Stringify and format the object as JSON.
+ * @param {Object} obj
+ * @param {boolean} prettyPrint Whether to pretty print the JSON.
+ * @returns {string}
+ */
+const stringify = (obj, prettyPrint = true) => {
+  const result = JSON.stringify(obj);
+  if (!prettyPrint) {
+    return result;
+  }
+  const prettierConfig = prettier.resolveConfig();
+  return prettier.format(result, { ...prettierConfig, parser: "json" });
+};
+
+/**
  * Write the given content tob the given path. Serializes the object if needed.
  * @param {string} path
  * @param {Object | string} content
  * @returns {Promise<void>}
  */
 const write = async (path, content) => {
-  const result =
-    typeof content === "string" ? content : JSON.stringify(content, null, 2);
+  const result = typeof content === "string" ? content : stringify(content);
   await writeFile(path, result, "utf8");
 };
 
