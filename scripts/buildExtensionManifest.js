@@ -10,11 +10,11 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import validateManifest from "@adobe/reactor-validator";
-import { writeFile } from "fs/promises";
-import { dirname, join, resolve } from "path";
-import { env } from "process";
-import prettier from "prettier";
+const validateManifest = require("@adobe/reactor-validator");
+const { writeFile } = require("fs/promises");
+const { join, resolve } = require("path");
+const { env } = require("process");
+const prettier = require("prettier");
 
 /**
  * @typedef {Object} ExtensionManifest
@@ -1847,14 +1847,12 @@ const validate = manifest => {
 };
 
 /**
- * Get the base path of the repo.
- * @param {string} scriptUrl The URL of this script. import.meta.url
+ * Get the filepath of the extension.json
+ * @param {string} repoRoot The root path of the repository.
  * @returns {string}
  */
-const getDestination = scriptUrl => {
-  // go up one level from the directory of this script
-  const scriptBase = dirname(scriptUrl.split("file://")[1]);
-  return resolve(join(scriptBase, "..", "extension.json"));
+const getDestination = repoRoot => {
+  return resolve(join(repoRoot, "extension.json"));
 };
 
 /**
@@ -1883,6 +1881,12 @@ const write = async (path, content) => {
   await writeFile(path, result, "utf8");
 };
 
+/**
+ * Builds the extension manifest by pulling the configuration from package.json
+ * and writes it to the filesystem as extension.json in the root of the
+ * repository.
+ * @returns {Promise<void>}
+ */
 const main = async () => {
   const options = await getOptions(env);
   const manifest = createExtensionManifest(options);
@@ -1891,11 +1895,16 @@ const main = async () => {
     throw new Error(`Invalid extension manifest: ${error}`);
   }
   console.log(`✅ Extension manifest is valid.`);
-  const writePath = getDestination(import.meta.url);
+  const writePath = getDestination(env.npm_config_local_prefix);
   await write(writePath, manifest);
   console.log(`✅ Wrote extension.json to "${writePath}".`);
 };
 
-main().catch(e => {
-  console.error(e);
-});
+// if this file is being run directly, execute the main function
+if (require.main === module) {
+  main().catch(e => {
+    console.error(e);
+  });
+}
+
+module.exports = main;

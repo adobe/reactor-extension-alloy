@@ -17,7 +17,7 @@
     "sandbox": "reactor-sandbox",
     "build": "./scripts/build.js",
     "build:prod": "npm run clean && NODE_ENV=production npm run build",
-    "build:json": "./scripts/build-extension-json.mjs",
+    "build:json": "./scripts/buildExtensionManifest.js",
     "package": "npm run build:prod && npx @adobe/reactor-packager",
     "dev": "./scripts/dev.js",
     "lint": "eslint \"*.{js,jsx}\" \"{src,test,scripts}/**/*.{js,jsx}\" --cache --fix",
