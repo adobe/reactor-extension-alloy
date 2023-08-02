@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import validateManifest from "@adobe/reactor-validator";
 import { writeFile } from "fs/promises";
 import { dirname, join, resolve } from "path";
+import { env } from "process";
 import prettier from "prettier";
 
 /**
@@ -32,22 +33,26 @@ import prettier from "prettier";
  * @property {Object[]} actions
  * @property {Object[]} events
  * @property {Object[]} dataElements
+ *
+ * @typedef {Pick<ExtensionManifest, "version">} ExtensionManifestConfiguration
  */
 
 /**
  * Create the contents of the extension.json aka the extension definition.
+ *
+ * @param {ExtensionManifestConfiguration} options
  * @returns {ExtensionManifest}
  */
-const createExtensionManifest = () => {
+const createExtensionManifest = ({ version }) => {
   /** @type {ExtensionManifest} */
   const extensionManifest = {
+    version,
     displayName: "Adobe Experience Platform Web SDK",
     name: "adobe-alloy",
     iconPath: "resources/images/icon.svg",
     exchangeUrl:
       "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
     platform: "web",
-    version: "2.20.0",
     description:
       "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
     author: {
@@ -1821,6 +1826,18 @@ const createExtensionManifest = () => {
 };
 
 /**
+ * Get the variable options for the manifest.
+ *
+ * @returns {ExtensionManifestConfiguration}
+ */
+const getOptions = () => {
+  // get version from environment
+  return {
+    version: env.npm_package_version
+  };
+};
+
+/**
  * Validate the given manifest.
  * @param {ExtensionManifest} manifest
  * @returns {string | undefined} An error message if invalid, undefined if valid.
@@ -1866,7 +1883,8 @@ const write = async (path, content) => {
 };
 
 const main = async () => {
-  const manifest = createExtensionManifest();
+  const options = await getOptions();
+  const manifest = createExtensionManifest(options);
   const error = validate(manifest);
   if (error) {
     throw new Error(`Invalid extension manifest: ${error}`);
