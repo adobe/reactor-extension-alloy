@@ -1832,6 +1832,7 @@ const createExtensionManifest = ({ version }) => {
  */
 const getOptions = environment => {
   // get version from environment
+  /** @type {ExtensionManifestConfiguration} */
   return {
     version: environment.npm_package_version
   };
@@ -1885,7 +1886,7 @@ const write = async (path, content) => {
  * Builds the extension manifest by pulling the configuration from package.json
  * and writes it to the filesystem as extension.json in the root of the
  * repository.
- * @returns {Promise<void>}
+ * @returns {Promise<string>} The path to the written file.
  */
 const main = async () => {
   const options = await getOptions(env);
@@ -1894,17 +1895,23 @@ const main = async () => {
   if (error) {
     throw new Error(`Invalid extension manifest: ${error}`);
   }
-  console.log(`✅ Extension manifest is valid.`);
   const writePath = getDestination(env.npm_config_local_prefix);
   await write(writePath, manifest);
-  console.log(`✅ Wrote extension.json to "${writePath}".`);
+  return writePath;
 };
 
 // if this file is being run directly, execute the main function
 if (require.main === module) {
-  main().catch(e => {
-    console.error(e);
-  });
+  main()
+    .then(resultPath => {
+      console.log(
+        "\x1b[32m%s\x1b[0m",
+        `✅ Extension manifest written to ${resultPath}`
+      );
+    })
+    .catch(e => {
+      console.error(e);
+    });
 }
 
 module.exports = main;
