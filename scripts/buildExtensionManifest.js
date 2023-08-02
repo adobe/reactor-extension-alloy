@@ -10,7 +10,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const validateManifest = require("@adobe/reactor-validator");
+const extensionDescriptorSchema = require("@adobe/reactor-turbine-schemas/schemas/extension-package-web.json");
+const Ajv = require("ajv-draft-04");
+const addAJVFormats = require("ajv-formats");
 const { writeFile } = require("fs/promises");
 const { join, resolve } = require("path");
 const { env } = require("process");
@@ -1844,7 +1846,19 @@ const getOptions = environment => {
  * @returns {string | undefined} An error message if invalid, undefined if valid.
  */
 const validate = manifest => {
-  return validateManifest(manifest);
+  // This code is based on validateJsonStructure() in @adobe/reactor-validator.
+  // We don't use that package directly because it also validates the files
+  // mentioned in the extension manifest, which may not be present yet.
+
+  const ajv = new Ajv({
+    schemaId: "auto",
+    strict: false
+  });
+  addAJVFormats(ajv);
+  if (!ajv.validate(extensionDescriptorSchema, manifest)) {
+    return ajv.errorsText();
+  }
+  return undefined;
 };
 
 /**
