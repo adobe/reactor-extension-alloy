@@ -10,6 +10,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import validateManifest from "@adobe/reactor-validator";
 import { writeFile } from "fs/promises";
 import { dirname, join, resolve } from "path";
 
@@ -1819,6 +1820,15 @@ const createExtensionManifest = () => {
 };
 
 /**
+ * Validate the given manifest.
+ * @param {ExtensionManifest} manifest
+ * @returns {string | undefined} An error message if invalid, undefined if valid.
+ */
+const validate = manifest => {
+  return validateManifest(manifest);
+};
+
+/**
  * Get the base path of the repo.
  * @returns {string}
  */
@@ -1841,13 +1851,17 @@ const write = async (path, content) => {
 };
 
 const main = async () => {
-  const extensionDefinition = createExtensionManifest();
+  const manifest = createExtensionManifest();
+  const error = validate(manifest);
+  if (error) {
+    throw new Error(`Invalid extension manifest: ${error}`);
+  }
+  console.log(`✅ Extension manifest is valid.`);
   const writePath = getDestination();
-  await write(writePath, extensionDefinition);
-  console.log(`✅ Wrote extension.json to ${writePath}`);
+  await write(writePath, manifest);
+  console.log(`✅ Wrote extension.json to "${writePath}".`);
 };
 
 main().catch(e => {
   console.error(e);
-  process.exit(1);
 });
