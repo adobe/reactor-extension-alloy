@@ -1827,13 +1827,13 @@ const createExtensionManifest = ({ version }) => {
 
 /**
  * Get the variable options for the manifest.
- *
+ * @param {Object} environment
  * @returns {ExtensionManifestConfiguration}
  */
-const getOptions = () => {
+const getOptions = environment => {
   // get version from environment
   return {
-    version: env.npm_package_version
+    version: environment.npm_package_version
   };
 };
 
@@ -1848,18 +1848,19 @@ const validate = manifest => {
 
 /**
  * Get the base path of the repo.
+ * @param {string} scriptUrl The URL of this script. import.meta.url
  * @returns {string}
  */
-const getDestination = () => {
+const getDestination = scriptUrl => {
   // go up one level from the directory of this script
-  const scriptBase = dirname(import.meta.url.split("file://")[1]);
+  const scriptBase = dirname(scriptUrl.split("file://")[1]);
   return resolve(join(scriptBase, "..", "extension.json"));
 };
 
 /**
  * Stringify and format the object as JSON.
  * @param {Object} obj
- * @param {boolean} prettyPrint Whether to pretty print the JSON.
+ * @param {boolean=} prettyPrint Whether to pretty print the JSON.
  * @returns {string}
  */
 const stringify = (obj, prettyPrint = true) => {
@@ -1883,14 +1884,14 @@ const write = async (path, content) => {
 };
 
 const main = async () => {
-  const options = await getOptions();
+  const options = await getOptions(env);
   const manifest = createExtensionManifest(options);
   const error = validate(manifest);
   if (error) {
     throw new Error(`Invalid extension manifest: ${error}`);
   }
   console.log(`✅ Extension manifest is valid.`);
-  const writePath = getDestination();
+  const writePath = getDestination(import.meta.url);
   await write(writePath, manifest);
   console.log(`✅ Wrote extension.json to "${writePath}".`);
 };
