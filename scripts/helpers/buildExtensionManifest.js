@@ -120,13 +120,25 @@ const createEdgeConfigOverridesSchema = isAction => {
     properties: {
       ...configOverridesProps,
       development: {
-        ...(isAction ? configOverridesWithDatastream : configOverridesProps)
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          ...(isAction ? configOverridesWithDatastream : configOverridesProps)
+        }
       },
       staging: {
-        ...(isAction ? configOverridesWithDatastream : configOverridesProps)
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          ...(isAction ? configOverridesWithDatastream : configOverridesProps)
+        }
       },
       production: {
-        ...(isAction ? configOverridesWithDatastream : configOverridesProps)
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          ...(isAction ? configOverridesWithDatastream : configOverridesProps)
+        }
       }
     }
   };
