@@ -14,7 +14,7 @@
     "prepare": "husky install",
     "prepush-msg": "echo 'Running pre-push scripts...' && exit 0",
     "precommit-msg": "echo 'Running pre-commit scripts...' && exit 0",
-    "sandbox": "reactor-sandbox",
+    "sandbox": "npm run build:json && reactor-sandbox",
     "build": "./scripts/build.js",
     "build:prod": "npm run clean && NODE_ENV=production npm run build",
     "build:json": "./scripts/buildExtensionManifest.js",
