@@ -10,7 +10,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "add-license": "./scripts/add-license.js",
-    "clean": "rimraf dist",
+    "clean": "rimraf dist extension.json",
     "prepare": "husky install",
     "prepush-msg": "echo 'Running pre-push scripts...' && exit 0",
     "precommit-msg": "echo 'Running pre-commit scripts...' && exit 0",
