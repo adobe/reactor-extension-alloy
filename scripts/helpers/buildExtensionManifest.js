@@ -116,7 +116,6 @@ const createEdgeConfigOverridesSchema = isAction => {
   };
   return {
     type: "object",
-    additionalProperties: false,
     properties: {
       ...configOverridesProps,
       development: {
