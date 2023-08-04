@@ -72,7 +72,10 @@ const stringify = (obj, prettyPrint = true) => {
     return result;
   }
   const prettierConfig = prettier.resolveConfig();
-  return prettier.format(result, { ...prettierConfig, parser: "json" });
+  return prettier.format(result, {
+    ...prettierConfig,
+    parser: "json-stringify"
+  });
 };
 
 /**
