@@ -82,8 +82,7 @@ const createEdgeConfigOverridesSchema = isAction => {
               type: "integer"
             },
             {
-              type: "string",
-              pattern: "^([^%\n]*%[^%\n]+%)+[^%\n]*$"
+              type: "string"
             }
           ]
         }
