@@ -77,7 +77,15 @@ const createEdgeConfigOverridesSchema = isAction => {
       type: "object",
       properties: {
         idSyncContainerId: {
-          type: "integer"
+          anyOf: [
+            {
+              type: "integer"
+            },
+            {
+              type: "string",
+              pattern: "^([^%\n]*%[^%\n]+%)+[^%\n]*$"
+            }
+          ]
         }
       },
       required: ["idSyncContainerId"]
