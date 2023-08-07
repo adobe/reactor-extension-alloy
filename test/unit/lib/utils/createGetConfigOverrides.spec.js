@@ -127,6 +127,25 @@ describe("createGetConfigOverrides", () => {
           }
         });
       });
+
+      it("should throw an exception with a friendly error when the ID sync container ID cannot be parsed to an int", () => {
+        expect(() => {
+          createConfigOverrides(
+            {
+              edgeConfigOverrides: {
+                [stage]: {
+                  com_adobe_identity: {
+                    idSyncContainerId: "not a number"
+                  }
+                }
+              }
+            },
+            stage
+          );
+        }).toThrowError(
+          `The ID sync container ID "not a number" is not a valid integer.`
+        );
+      });
     });
   });
 

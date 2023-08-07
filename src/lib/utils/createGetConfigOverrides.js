@@ -58,10 +58,18 @@ const createGetConfigOverrides = environmentName => settings => {
     typeof computedConfigOverrides.com_adobe_identity?.idSyncContainerId ===
       "string"
   ) {
-    computedConfigOverrides.com_adobe_identity.idSyncContainerId = parseInt(
+    const parsedValue = parseInt(
       computedConfigOverrides.com_adobe_identity.idSyncContainerId.trim(),
       10
     );
+    if (Number.isNaN(parsedValue)) {
+      throw new Error(
+        `The ID sync container ID "${
+          computedConfigOverrides.com_adobe_identity.idSyncContainerId
+        }" is not a valid integer.`
+      );
+    }
+    computedConfigOverrides.com_adobe_identity.idSyncContainerId = parsedValue;
   }
   return computedConfigOverrides;
 };
