@@ -89,6 +89,44 @@ describe("createGetConfigOverrides", () => {
           }
         });
       });
+
+      it("should convert string values to numbers when appropriate", () => {
+        const result = createConfigOverrides(
+          {
+            edgeConfigOverrides: {
+              [stage]: {
+                com_adobe_identity: {
+                  idSyncContainerId: "30793"
+                }
+              }
+            }
+          },
+          stage
+        );
+        expect(result).toEqual({
+          com_adobe_identity: {
+            idSyncContainerId: 30793
+          }
+        });
+
+        const result2 = createConfigOverrides(
+          {
+            edgeConfigOverrides: {
+              [stage]: {
+                com_adobe_identity: {
+                  idSyncContainerId: 30793
+                }
+              }
+            }
+          },
+          stage
+        );
+        expect(result2).toEqual({
+          com_adobe_identity: {
+            idSyncContainerId: 30793
+          }
+        });
+      });
     });
   });
 

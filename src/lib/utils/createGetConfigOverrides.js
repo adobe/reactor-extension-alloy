@@ -51,6 +51,18 @@ const createGetConfigOverrides = environmentName => settings => {
       .filter(Boolean);
   }
 
+  if (
+    computedConfigOverrides.com_adobe_identity?.idSyncContainerId !==
+      undefined &&
+    computedConfigOverrides.com_adobe_identity?.idSyncContainerId !== null &&
+    typeof computedConfigOverrides.com_adobe_identity?.idSyncContainerId ===
+      "string"
+  ) {
+    computedConfigOverrides.com_adobe_identity.idSyncContainerId = parseInt(
+      computedConfigOverrides.com_adobe_identity.idSyncContainerId.trim(),
+      10
+    );
+  }
   return computedConfigOverrides;
 };
 
