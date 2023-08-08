@@ -10,16 +10,16 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
-import * as dataElementsMocks from "../helpers/endpointMocks/dataElementsMocks";
-import * as dataElementMocks from "../helpers/endpointMocks/dataElementMocks";
-import * as schemaMocks from "../helpers/endpointMocks/schemaMocks";
-import extensionViewController from "../helpers/extensionViewController";
-import spectrum from "../helpers/spectrum";
-import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
-import xdmTree from "../helpers/objectEditor/xdmTree";
-import stringEdit from "../helpers/objectEditor/stringEdit";
-import arrayEdit from "../helpers/objectEditor/arrayEdit";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
+import * as dataElementsMocks from "../../helpers/endpointMocks/dataElementsMocks";
+import * as dataElementMocks from "../../helpers/endpointMocks/dataElementMocks";
+import * as schemaMocks from "../../helpers/endpointMocks/schemaMocks";
+import extensionViewController from "../../helpers/extensionViewController";
+import spectrum from "../../helpers/spectrum";
+import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
+import xdmTree from "../../helpers/objectEditor/xdmTree";
+import stringEdit from "../../helpers/objectEditor/stringEdit";
+import arrayEdit from "../../helpers/objectEditor/arrayEdit";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(
   "errorBoundaryMessage"

@@ -11,9 +11,9 @@ governing permissions and limitations under the License.
 */
 
 import { t } from "testcafe";
-import createNetworkLogger from "./helpers/createNetworkLogger";
-import appendLaunchLibrary from "./helpers/appendLaunchLibrary";
-import { TEST_PAGE } from "./helpers/constants/url";
+import createNetworkLogger from "../../helpers/runtime/createNetworkLogger";
+import appendLaunchLibrary from "../../helpers/runtime/appendLaunchLibrary";
+import { TEST_PAGE } from "../../helpers/runtime/constants/url";
 
 const networkLogger = createNetworkLogger();
 

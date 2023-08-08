@@ -10,18 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { t } from "testcafe";
-import extensionViewController from "../helpers/extensionViewController";
-import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
+import extensionViewController from "../../helpers/extensionViewController";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 import {
   addInstanceButton,
   instancesTabs,
   resourceUsageDialog,
   instances
-} from "./helpers/viewSelectors";
-import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
-import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
-import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
-import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";
+} from "../../helpers/viewSelectors";
+import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
+import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks";
+import * as datastreamsMocks from "../../helpers/endpointMocks/datastreamsMocks";
+import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks";
 
 createExtensionViewFixture({
   title: "Extension Configuration View",

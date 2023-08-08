@@ -11,10 +11,9 @@ governing permissions and limitations under the License.
 */
 
 import { t } from "testcafe";
-import createNetworkLogger from "./helpers/createNetworkLogger";
-import appendLaunchLibrary from "./helpers/appendLaunchLibrary";
-import getReturnedEcid from "./helpers/getReturnedEcid";
-import { TEST_PAGE } from "./helpers/constants/url";
+import createNetworkLogger from "../../helpers/runtime/createNetworkLogger";
+import appendLaunchLibrary from "../../helpers/runtime/appendLaunchLibrary";
+import { TEST_PAGE } from "../../helpers/runtime/constants/url";
 
 const networkLogger = createNetworkLogger();
 
@@ -30,10 +29,25 @@ const container = {
           }
         ]
       }
-    },
-    "adobe-mcid": {
-      displayName: "Mock Visitor",
-      settings: {}
+    }
+  },
+  dataElements: {
+    "XDM Object 1": {
+      settings: {
+        cacheId: "47ec6bcf-a41a-4dde-8883-88c18a867d70",
+        sandbox: {
+          name: "prod"
+        },
+        schema: {
+          id:
+            "https://ns.adobe.com/unifiedjsqeonly/schemas/75bc29dc603dbb5c8ba7c9f5be97b852a48772ccc69d0921",
+          version: "1.1"
+        }
+      },
+      cleanText: false,
+      forceLowerCase: false,
+      modulePath: "adobe-alloy/dist/lib/dataElements/variable/index.js",
+      storageDuration: ""
     }
   },
   rules: [
@@ -48,9 +62,21 @@ const container = {
       ],
       actions: [
         {
+          modulePath: "adobe-alloy/dist/lib/actions/updateVariable/index.js",
+          settings: {
+            dataElementCacheId: "47ec6bcf-a41a-4dde-8883-88c18a867d70",
+            data: {
+              device: {
+                colorDepth: 42
+              }
+            }
+          }
+        },
+        {
           modulePath: "adobe-alloy/dist/lib/actions/sendEvent/index.js",
           settings: {
-            instanceName: "alloy"
+            instanceName: "alloy",
+            xdm: "%XDM Object 1%"
           }
         }
       ]
@@ -73,23 +99,24 @@ const container = {
   },
   buildInfo: {
     turbineVersion: "27.2.1",
-    turbineBuildDate: "2022-04-29T16:01:37.616Z",
-    buildDate: "2022-04-29T16:01:37.616Z",
+    turbineBuildDate: "2022-10-28T21:23:47.138Z",
+    buildDate: "2022-10-28T21:23:47.139Z",
     environment: "development"
   }
 };
 
-fixture("Visitor migration")
+fixture("Update variable")
   .page(TEST_PAGE)
   .requestHooks([networkLogger.edgeEndpointLogs]);
 
-test("waits for Visitor to be initialized before running", async () => {
+test("Updates a variable", async () => {
   await appendLaunchLibrary(container);
   // The requestLogger.count method uses TestCafe's smart query
   // assertion mechanism, so it will wait for the request to be
   // made or a timeout is reached.
   await t.expect(networkLogger.edgeEndpointLogs.count(() => true)).eql(1);
-  const ecid = getReturnedEcid(networkLogger.edgeEndpointLogs.requests[0]);
-  // This is the ID returned from the mock visitor extension.
-  await t.expect(ecid).eql("00781847927133700121980094732316198575");
+  const requestBody = JSON.parse(
+    networkLogger.edgeEndpointLogs.requests[0].request.body
+  );
+  await t.expect(requestBody.events[0].xdm.device.colorDepth).eql(42);
 });

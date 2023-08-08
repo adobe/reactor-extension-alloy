@@ -12,11 +12,11 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import { t, Selector } from "testcafe";
-import createComponentFixture from "../helpers/createComponentFixture";
-import renderReactElement from "../helpers/renderReactElement";
+import createComponentFixture from "../../helpers/components/createComponentFixture";
+import renderReactElement from "../../helpers/components/renderReactElement";
 
 createComponentFixture({
-  title: "Heading component"
+  title: "Body component"
 });
 
 const scenarios = [
@@ -25,8 +25,7 @@ const scenarios = [
       size: "XXXL"
     },
     assertions: {
-      tagName: "h1",
-      classNames: ["spectrum-Heading--sizeXXXL"]
+      classNames: ["spectrum-Body--sizeXXXL"]
     }
   },
   {
@@ -34,8 +33,7 @@ const scenarios = [
       size: "XXL"
     },
     assertions: {
-      tagName: "h1",
-      classNames: ["spectrum-Heading--sizeXXL"]
+      classNames: ["spectrum-Body--sizeXXL"]
     }
   },
   {
@@ -43,8 +41,7 @@ const scenarios = [
       size: "XL"
     },
     assertions: {
-      tagName: "h1",
-      classNames: ["spectrum-Heading--sizeXL"]
+      classNames: ["spectrum-Body--sizeXL"]
     }
   },
   {
@@ -52,8 +49,7 @@ const scenarios = [
       size: "L"
     },
     assertions: {
-      tagName: "h2",
-      classNames: ["spectrum-Heading--sizeL"]
+      classNames: ["spectrum-Body--sizeL"]
     }
   },
   {
@@ -61,8 +57,7 @@ const scenarios = [
       size: "M"
     },
     assertions: {
-      tagName: "h3",
-      classNames: ["spectrum-Heading--sizeM"]
+      classNames: ["spectrum-Body--sizeM"]
     }
   },
   {
@@ -70,8 +65,7 @@ const scenarios = [
       size: "S"
     },
     assertions: {
-      tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS"]
+      classNames: ["spectrum-Body--sizeS"]
     }
   },
   {
@@ -79,8 +73,7 @@ const scenarios = [
       size: "XS"
     },
     assertions: {
-      tagName: "h5",
-      classNames: ["spectrum-Heading--sizeXS"]
+      classNames: ["spectrum-Body--sizeXS"]
     }
   },
   {
@@ -88,35 +81,7 @@ const scenarios = [
       size: "XXS"
     },
     assertions: {
-      tagName: "h6",
-      classNames: ["spectrum-Heading--sizeXXS"]
-    }
-  },
-  {
-    props: {
-      variant: "heavy"
-    },
-    assertions: {
-      tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS", "spectrum-Heading--heavy"]
-    }
-  },
-  {
-    props: {
-      variant: "light"
-    },
-    assertions: {
-      tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS", "spectrum-Heading--light"]
-    }
-  },
-  {
-    props: {
-      isSerif: true
-    },
-    assertions: {
-      tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS", "spectrum-Heading--serif"]
+      classNames: ["spectrum-Body--sizeXXS"]
     }
   },
   {
@@ -124,8 +89,7 @@ const scenarios = [
       marginTop: "size-300"
     },
     assertions: {
-      tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS"],
+      classNames: ["spectrum-Body--sizeS"],
       style:
         "margin-top: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);"
     }
@@ -135,8 +99,7 @@ const scenarios = [
       marginBottom: "size-300"
     },
     assertions: {
-      tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS"],
+      classNames: ["spectrum-Body--sizeS"],
       style:
         "margin-bottom: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);"
     }
@@ -144,22 +107,19 @@ const scenarios = [
   {
     props: {},
     assertions: {
-      tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS"]
+      classNames: ["spectrum-Body--sizeS"]
     }
   }
 ];
 
 scenarios.forEach(({ props, assertions }) => {
   test(`renders with props: ${JSON.stringify(props)}`, async () => {
-    await renderReactElement(
-      React.createElement("Heading", props, "Test Heading")
-    );
-    const selector = Selector(assertions.tagName);
-    await t.expect(selector.textContent).eql("Test Heading");
+    await renderReactElement(React.createElement("Body", props, "Test Body"));
+    const selector = Selector("p");
+    await t.expect(selector.textContent).eql("Test Body");
     await t
       .expect(selector.classNames)
-      .eql(["spectrum-Heading"].concat(assertions.classNames));
+      .eql(["spectrum-Body"].concat(assertions.classNames));
     if (assertions.style) {
       await t.expect(selector.getAttribute("style")).eql(assertions.style);
     } else {

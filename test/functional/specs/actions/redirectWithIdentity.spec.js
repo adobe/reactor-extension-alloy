@@ -10,14 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import extensionViewController from "../helpers/extensionViewController";
-import spectrum from "../helpers/spectrum";
-import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
-import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
-import overrideViewSelectors from "../helpers/overrideViewSelectors";
-import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
-import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
-import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";
+import extensionViewController from "../../helpers/extensionViewController";
+import spectrum from "../../helpers/spectrum";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
+import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
+import overrideViewSelectors from "../../helpers/overrideViewSelectors";
+import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks";
+import * as datastreamsMocks from "../../helpers/endpointMocks/datastreamsMocks";
+import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks";
 
 const instanceNamePicker = spectrum.picker("instanceNamePicker");
 
