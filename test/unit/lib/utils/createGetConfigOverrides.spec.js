@@ -89,6 +89,63 @@ describe("createGetConfigOverrides", () => {
           }
         });
       });
+
+      it("should convert string values to numbers when appropriate", () => {
+        const result = createConfigOverrides(
+          {
+            edgeConfigOverrides: {
+              [stage]: {
+                com_adobe_identity: {
+                  idSyncContainerId: "30793"
+                }
+              }
+            }
+          },
+          stage
+        );
+        expect(result).toEqual({
+          com_adobe_identity: {
+            idSyncContainerId: 30793
+          }
+        });
+
+        const result2 = createConfigOverrides(
+          {
+            edgeConfigOverrides: {
+              [stage]: {
+                com_adobe_identity: {
+                  idSyncContainerId: 30793
+                }
+              }
+            }
+          },
+          stage
+        );
+        expect(result2).toEqual({
+          com_adobe_identity: {
+            idSyncContainerId: 30793
+          }
+        });
+      });
+
+      it("should throw an exception with a friendly error when the ID sync container ID cannot be parsed to an int", () => {
+        expect(() => {
+          createConfigOverrides(
+            {
+              edgeConfigOverrides: {
+                [stage]: {
+                  com_adobe_identity: {
+                    idSyncContainerId: "not a number"
+                  }
+                }
+              }
+            },
+            stage
+          );
+        }).toThrowError(
+          `The ID sync container ID "not a number" is not a valid integer.`
+        );
+      });
     });
   });
 

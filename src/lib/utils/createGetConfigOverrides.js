@@ -51,6 +51,26 @@ const createGetConfigOverrides = environmentName => settings => {
       .filter(Boolean);
   }
 
+  if (
+    computedConfigOverrides.com_adobe_identity?.idSyncContainerId !==
+      undefined &&
+    computedConfigOverrides.com_adobe_identity?.idSyncContainerId !== null &&
+    typeof computedConfigOverrides.com_adobe_identity?.idSyncContainerId ===
+      "string"
+  ) {
+    const parsedValue = parseInt(
+      computedConfigOverrides.com_adobe_identity.idSyncContainerId.trim(),
+      10
+    );
+    if (Number.isNaN(parsedValue)) {
+      throw new Error(
+        `The ID sync container ID "${
+          computedConfigOverrides.com_adobe_identity.idSyncContainerId
+        }" is not a valid integer.`
+      );
+    }
+    computedConfigOverrides.com_adobe_identity.idSyncContainerId = parsedValue;
+  }
   return computedConfigOverrides;
 };
 
