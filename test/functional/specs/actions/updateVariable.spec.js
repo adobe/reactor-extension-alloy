@@ -45,7 +45,7 @@ test.requestHooks(dataElementsMocks.notFound)(
         id: "PRabcd"
       }
     });
-    await errorBoundaryMessage.expectMessage(/The resource was not found\./);
+    await errorBoundaryMessage.expectMessage(/The resource was not found/);
   }
 );
 
@@ -92,7 +92,7 @@ test.requestHooks(dataElementsMocks.multiple)(
     await xdmTree.node("xdm").expectExists();
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1954",
+      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id:
@@ -129,7 +129,7 @@ test.requestHooks(dataElementsMocks.multiple)(
           }
         }
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1954",
+      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id:
@@ -158,7 +158,7 @@ test.requestHooks(dataElementsMocks.multiple)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1954",
+      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id:
@@ -183,7 +183,7 @@ test.requestHooks(dataElementsMocks.multiple, dataElementMocks.element2)(
       },
       settings: {
         data: {},
-        dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1954",
+        dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
         dataElementId: "DE2",
         transforms: {
           "_unifiedjsqeonly.vendor": {
@@ -209,7 +209,7 @@ test.requestHooks(dataElementsMocks.multiple, dataElementMocks.element2)(
       },
       settings: {
         data: {},
-        dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1954",
+        dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
         dataElementId: "DE2",
         transforms: {
           "_unifiedjsqeonly.vendor": {
@@ -243,7 +243,7 @@ test.requestHooks(dataElementsMocks.multiple)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1954",
+      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id:

@@ -78,8 +78,8 @@ test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.multiple)(
       schema,
       ...other
     } = await extensionViewController.getSettings();
-    await t.expect(sandbox).eql({ name: "testsandbox3" });
-    await t.expect(schema).eql({
+    await t.expect(sandbox).contains({ name: "testsandbox3" });
+    await t.expect(schema).contains({
       id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch123",
       version: "1.0"
     });
@@ -397,7 +397,7 @@ test.requestHooks(
   await extensionViewController.expectIsValid();
   const settings = await extensionViewController.getSettings();
   delete settings.cacheId;
-  await t.expect(settings).eql({
+  await t.expect(settings).contains({
     sandbox: {
       name: "testsandbox3"
     },

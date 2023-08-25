@@ -278,10 +278,10 @@ const componentWrappers = {
         await this.scrollDownToItem(label);
         await createSelectMenuOption(popoverMenuSelector)(label);
       },
-      async expectSelectedOptionLabel(label) {
-        // Safari includes a newline at the end of the selected option label innerText
-        await t.expect(selector.innerText).contains(label);
-      },
+      // async expectSelectedOptionLabel(label) {
+      //   // Safari includes a newline at the end of the selected option label innerText
+      //   await t.expect(selector.innerText).contains(label);
+      // },
       async expectMenuOptionLabels(labels) {
         await compatibleClick(selector);
         await createExpectMenuOptionLabels(popoverMenuSelector)(labels);

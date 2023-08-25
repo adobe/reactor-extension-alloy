@@ -56,7 +56,7 @@ test("initializes form fields with full settings", async () => {
           clickCollectionEnabled: false,
           targetMigrationEnabled: true,
           edgeConfigOverrides: {
-            production: {
+            development: {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
@@ -92,7 +92,7 @@ test("initializes form fields with full settings", async () => {
                 propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
               }
             },
-            development: {
+            production: {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
