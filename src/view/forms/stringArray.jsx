@@ -17,21 +17,21 @@ const DATA_ELEMENT = "dataElement";
  * This creates a form that just supports an array of strings. Any fields not
  * filled in will be removed from the array. Each item in the array can be a
  * data element or the entire array can be a data element.
- * @param {object} props
- * @param {string} props.name - The formik key to use for this field.
+ * @param {object} options
+ * @param {string} options.name - The formik key to use for this field.
  * - `${key}` will be used to store the array of strings.
  * - `${key}InputMethod` will be used to determine whether or not to use a data
  *   element.
  * - `${key}DataElement` will be used to store the data element value.
- * @param {string} props.label - The label to use for the field.
- * @param {string} props.singularLabel - The singular label to use for the add
+ * @param {string} options.label - The label to use for the field.
+ * @param {string} options.singularLabel - The singular label to use for the add
  * button.
- * @param {string} [props.description] - The description to use for the field.
+ * @param {string} [options.description] - The description to use for the field.
  * This will appear bellow the last string field.
- * @param {string} [props.dataElementDescription] - The description to use for
+ * @param {string} [options.dataElementDescription] - The description to use for
  * the data element field. Usually you would use this to describe the type the
  * data element should be.
- * @param {boolean} [props.isRequired=false] - Whether or not the field is
+ * @param {boolean} [options.isRequired=false] - Whether or not the field is
  * required. When required, the user will need to enter at least one string.
  * @returns {Form}
  */

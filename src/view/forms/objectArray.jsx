@@ -17,25 +17,25 @@ const DATA_ELEMENT = "dataElement";
  * This creates a form element that allows the user to create an array of
  * objects, or an object with string keys and object values. Any items with no
  * values filled in will be removed from the final settings.
- * @param {object} props
- * @param {string} props.name - The formik key to use for this field.
+ * @param {object} options
+ * @param {string} options.name - The formik key to use for this field.
  *  - `${key}` will be used to store the array of objects.
  *  - `${key}InputMethod` will be used to determine whether or not to use a data
  *    element.
  *  - `${key}DataElement` will be used to store the data element value.
- * @param {string} props.label - The label to use for the field.
- * @param {string} props.singularLabel - The singular label to use for the add
+ * @param {string} options.label - The label to use for the field.
+ * @param {string} options.singularLabel - The singular label to use for the add
  * button.
- * @param {string} [props.dataElementDescription] - The description to use for
+ * @param {string} [options.dataElementDescription] - The description to use for
  * the data element field. Usually you would use this to describe the type the
  * data element should be.
- * @param {string} [props.objectKey] - If you want to create an object, use
+ * @param {string} [options.objectKey] - If you want to create an object, use
  * this to specify the Formik key to use for the keys of the object. If you want
  * to create an array of objects, omit this.
- * @param {string} [props.objectLabelPlural] - If you have set `objectKey`,
+ * @param {string} [options.objectLabelPlural] - If you have set `objectKey`,
  * this will be used to describe the object keys in the validation error message
  * to make sure they are unique.
- * @param {Form[]} props.children - The Form parts to use for the object. These will
+ * @param {Form[]} children - The Form parts to use for the object. These will
  * be used to create the form for each object in the array. When rendering the
  * components, the `prefixName` prop will be set to `${name}.${index}.`
  * @returns {Form}

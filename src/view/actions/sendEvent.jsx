@@ -11,7 +11,6 @@ import dataElement from "../forms/dataElement";
 import stringArray from "../forms/stringArray";
 import disabledTextField from "../forms/disabledTextField";
 import conditional from "../forms/conditional";
-import propositionMetadata from "../forms/propositionMetadata";
 import disabledCheckbox from "../forms/disabledCheckbox";
 import configOverrides from "../forms/configOverrides";
 
@@ -115,34 +114,21 @@ const dataField = dataElement({
   description: "Provide a data element which returns an object to send as data."
 });
 
-const propositionsField = radioGroup({
-  name: "propositions",
-  label: "Propositions",
+const includePendingDisplayNotificationsField = checkbox({
+  name: "includePendingDisplayNotifications",
+  label: "Include pending display notifications",
   description:
-    "Select the propositions to include in the XDM payload as display or interact notifications.",
-  dataElementSupported: true,
-  defaultValue: "none",
-  items: [
-    { value: "none", label: "None" },
-    { value: "all", label: "All rendered propositions" },
-    { value: "scoped", label: "Scoped propositions" }
-  ]
+    "Check this to include pending display notifications in the response. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
+  defaultValue: false
 });
 
-const propositionScopesField = conditional({
-  args: "propositions",
-  condition: propositions => propositions === "scoped"
-}, [
-  stringArray({
-    name: "propositionScopes",
-    label: "Proposition scopes",
-    isRequired: true,
-    singularLabel: "Scope",
-    description:
-      "Create an array of decision scopes to include in the XDM payload as display or interact notifications.",
-    dataElementDescription: "This data element should resolve to an array of scopes."
-  })
-]);
+const disabledIncludePendingDisplayNotificationsField = disabledCheckbox({
+  name: "includePendingDisplayNotifications",
+  label: "Include pending display notifications",
+  description:
+    "Check this to include pending display notifications in the response. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
+  value: true
+});
 
 const propositionEventTypeField = conditional({
   args: "propositions",
@@ -265,9 +251,7 @@ const sendEventForm = form({
       eventTypeField,
       xdmField,
       dataField,
-      propositionsField,
-      propositionScopesField,
-      propositionEventTypeField,
+      includePendingDisplayNotificationsField,
       documentUnloadingField,
       mergeIdField
     ]),
@@ -275,8 +259,7 @@ const sendEventForm = form({
       decisionScopesField,
       surfacesField,
       renderDecisionsField,
-      sendNotificationsField,
-      propositionMetadata
+      sendNotificationsField
     ]),
     section({ label: "Configuration overrides" }, [
       configOverrideFields,
@@ -296,8 +279,7 @@ const sendEventForm = form({
       decisionScopesField,
       surfacesField,
       renderDecisionsChecked,
-      sendNotificationsUnchecked,
-      propositionMetadata
+      sendNotificationsUnchecked
     ]),
     section({ label: "Configuration overrides" }, [
       configOverrideFields
@@ -311,8 +293,10 @@ const sendEventForm = form({
       eventTypeField,
       xdmField,
       dataField,
-      propositionsField,
-      propositionScopesField
+      disabledIncludePendingDisplayNotificationsField
+    ]),
+    section({ label: "Configuration overrides" }, [
+      configOverrideFields
     ])
   ])
 ]);

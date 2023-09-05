@@ -4,14 +4,14 @@ import PropTypes from "prop-types";
 
 /**
  * Form builder for a disabled text field. When getSettings is called, this always returns the same value.
- * @param {object} props
- * @param {string} props.name - The name of the field to include in settings.
- * @param {string} props.value - The value of the field to include in settings.
- * @param {string} props.valueLabel - The value to display in the text field.
- * @param {boolean} [props.isRequired=false] - If true, an asterisk is added
+ * @param {object} options
+ * @param {string} options.name - The name of the field to include in settings.
+ * @param {string} options.value - The value of the field to include in settings.
+ * @param {string} options.valueLabel - The value to display in the text field.
+ * @param {boolean} [options.isRequired=false] - If true, an asterisk is added
  * to the label, and the schema is updated to require the field.
- * @param {string} props.label - The label for the field.
- * @param {string} [props.description] - The description text to put under the
+ * @param {string} options.label - The label for the field.
+ * @param {string} [options.description] - The description text to put under the
  * combo box.
  * @returns {FormFragment}
  */
@@ -19,9 +19,9 @@ export default function disabledTextField({
   name,
   value,
   valueLabel,
-  isRequired,
+  isRequired=false,
   label,
-  description
+  description=""
 }) {
   const Component = ({ namePrefix = "" }) => {
     return (

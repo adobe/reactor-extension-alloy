@@ -5,11 +5,11 @@ import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 
 /**
  * Form builder for a disabled text field. When getSettings is called, this always returns the same value.
- * @param {object} props
- * @param {string} props.name - The name of the field to include in settings.
- * @param {string} props.value - The value of the field to include in settings.
- * @param {string} props.label - The label for the field.
- * @param {string} [props.description] - The description text to put under the
+ * @param {object} options
+ * @param {string} options.name - The name of the field to include in settings.
+ * @param {string} options.value - The value of the field to include in settings.
+ * @param {string} options.label - The label for the field.
+ * @param {string} [options.description] - The description text to put under the
  * checkbox.
  * @returns {Form}
  */

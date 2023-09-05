@@ -10,13 +10,23 @@ import FormElementContainer from "../components/formElementContainer";
  * @property {Object} validationShape - An object containing Formik fields as
  * keys and Yup validation schemas as values.
  * @property {Function} Component - The react component to render. This
- * component will be passes the props "namePrefix", "initInfo", and "formikProps".
+ * component will be passes the props "namePrefix", "initInfo", and
+ * "formikProps".
  */
 
 const Identity = x => x;
 
 /**
  * This creates a composite form.
+ * @param {Object} [options] - The options for the form.
+ * @param {Function} [options.wrapGetInitialValues] - A function that is given
+ * the computed initial values from the children form elements and returns the
+ * new initial values.
+ * @param {Function} [options.wrapGetSettings] - A function that is given the computed
+ * settings from the children form elements and returns the new settings.
+ * @param {Function} [options.wrapValidationShape] - A function that is given the computed
+ * validation shape from the children form elements and returns the new validation
+ * shape.
  * @param {Form[]} children - The children forms to combine.
  * @returns {Form}
  */
@@ -24,10 +34,10 @@ export default function Form({
   wrapGetInitialValues = Identity,
   wrapGetSettings = Identity,
   wrapValidationShape = Identity
-}, children = []) {
+} = {}, children = []) {
   const part = {
     getInitialValues({ initInfo }) {
-      return children
+      const initialValues = children
         .filter(child => child.getInitialValues)
         .reduce((values, child) => {
           return {
@@ -35,6 +45,8 @@ export default function Form({
             ...child.getInitialValues({ initInfo })
           };
         }, {});
+      console.log("InitialValues", initialValues);
+      return initialValues;
     },
     getSettings({ values }) {
       return children

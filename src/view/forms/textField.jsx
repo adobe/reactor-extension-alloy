@@ -6,14 +6,14 @@ import FormikTextField from "../components/formikReactSpectrum3/formikTextField"
 
 /**
  * This creates a form field for a text field and supports data elements.
- * @param {object} props
- * @param {string} props.key - The formik key to use for this field.
- * @param {boolean} [props.isRequired=false] - Whether or not the field is
+ * @param {object} options
+ * @param {string} options.key - The formik key to use for this field.
+ * @param {boolean} [options.isRequired=false] - Whether or not the field is
  * required.
- * @param {boolean} [props.dataElementSupported=true] - Whether or not a data
+ * @param {boolean} [options.dataElementSupported=true] - Whether or not a data
  * element button should be included.
- * @param {string} props.label - The label to use for the field.
- * @param {string} props.description - The description to use for the field.
+ * @param {string} options.label - The label to use for the field.
+ * @param {string} options.description - The description to use for the field.
  * @returns {FormPart}
  */
 export default function textField({

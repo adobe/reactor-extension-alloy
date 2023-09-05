@@ -7,11 +7,11 @@ import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 
 /**
  * This creates a form field that is required to be a single data element.
- * @param {object} props
- * @param {string} props.name - The formik key to use for this field.
- * @param {boolean} [props.isRequired=false] - Whether or not this field is required.
- * @param {string} props.label - The label to use for this field.
- * @param {string} [props.description] - The description to use for this field.
+ * @param {object} options
+ * @param {string} options.name - The formik key to use for this field.
+ * @param {boolean} [options.isRequired=false] - Whether or not this field is required.
+ * @param {string} options.label - The label to use for this field.
+ * @param {string} [options.description] - The description to use for this field.
  * @returns {FormFragment}
  */
 export default function dataElement({
@@ -46,7 +46,7 @@ export default function dataElement({
     validationShape: {
       [name]: fieldSchema
     },
-    Component: (namePrefix = "") => {
+    Component: ({ namePrefix = "" }) => {
       return (
         <DataElementSelector>
           <FormikTextField

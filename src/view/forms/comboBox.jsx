@@ -9,19 +9,19 @@ import singleDataElementRegex from "../constants/singleDataElementRegex";
 
 /**
  * Form builder for a combo box. Use this when you have a static list of items.
- * @param {object} props
- * @param {string} props.name - The formik key for the field.
- * @param {boolean} [props.isRequired=false] - If true, an asterisk is added
+ * @param {object} options
+ * @param {string} options.name - The formik key for the field.
+ * @param {boolean} [options.isRequired=false] - If true, an asterisk is added
  * to the label, and the schema is updated to require the field.
- * @param {boolean} [props.dataElementSupported=true] - If true, the field
+ * @param {boolean} [options.dataElementSupported=true] - If true, the field
  * will support data elements.
- * @param {string} props.label - The label for the field.
- * @param {string} [props.description] - The description text to put under the
+ * @param {string} options.label - The label for the field.
+ * @param {string} [options.description] - The description text to put under the
  * combo box.
- * @param {string} [props.dataElementDescription] - The description text to
+ * @param {string} [options.dataElementDescription] - The description text to
  * put under the combo box when a data element is chosen. This is useful to tell
  * what the data element should resolve to.
- * @param {array} props.items - An array of objects with keys "value" and
+ * @param {array} options.items - An array of objects with keys "value" and
  * "label". The "value" is the value that will be saved to the settings, and the
  * "label" is the text that will be shown in the combo box.
  */

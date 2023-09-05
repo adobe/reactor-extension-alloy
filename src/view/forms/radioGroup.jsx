@@ -12,21 +12,21 @@ import FieldSubset from "../components/fieldSubset";
 
 /**
  * This creates a form field for a radio group and supports data elements.
- * @param {object} props
- * @param {string} props.name - The formik key to use for this field. The
+ * @param {object} options
+ * @param {string} options.name - The formik key to use for this field. The
  * following formik keys will be used:
  *  - `${name}` - The radio group field.
  *  - `${name}DataElement` - The data element field.
- * @param {boolean} [props.isRequired=false] - Whether or not the field is required.
- * @param {boolean} [props.dataElementSupported=true] - Whether or not a "Provide a
+ * @param {boolean} [options.isRequired=false] - Whether or not the field is required.
+ * @param {boolean} [options.dataElementSupported=true] - Whether or not a "Provide a
  * data element" option should be available.
- * @param {string} props.label - The label to use for the field.
- * @param {string} [props.defaultValue] - The default value to use for the radio
+ * @param {string} options.label - The label to use for the field.
+ * @param {string} [options.defaultValue] - The default value to use for the radio
  * group.
- * @param {string} [props.dataElementDescription] - The description to use for
+ * @param {string} [options.dataElementDescription] - The description to use for
  * the data element field. Usually you would use this to describe the values the
  * data element could resolve to.
- * @param {array} props.items - The items to use for the radio group. These
+ * @param {array} options.items - The items to use for the radio group. These
  * should be objects with keys "value" and "label".
  * @returns {Form}
  */
