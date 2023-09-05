@@ -21,11 +21,10 @@ const Identity = x => x;
  * @returns {Form}
  */
 export default function Form({
-  children,
   wrapGetInitialValues = Identity,
   wrapGetSettings = Identity,
   wrapValidationShape = Identity
-}) {
+}, children = []) {
   const part = {
     getInitialValues({ initInfo }) {
       return children
@@ -59,7 +58,10 @@ export default function Form({
       return (
         <FormElementContainer>
           {children.map(({ Component }, index) => {
-            return <Component key={`${index}`} {...props} />;
+            if (Component) {
+              return <Component key={`${index}`} {...props} />;
+            }
+            return null;
           })}
         </FormElementContainer>
       );

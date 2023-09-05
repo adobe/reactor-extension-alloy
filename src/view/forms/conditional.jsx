@@ -16,11 +16,9 @@ import form from "./form";
  *
  * @returns {Form}
  */
-export default function Conditional({ args, condition, children }) {
+export default function conditional({ args, condition }, children) {
   const argsArray = Array.isArray(args) ? args : [args];
-  const { getInitialValues, getSettings, validationShape, Component } = form({
-    children
-  });
+  const { getInitialValues, getSettings, validationShape, Component } = form({}, children);
 
   return {
     // getInitialValues should run regardless of the condition so that the

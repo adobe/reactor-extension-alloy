@@ -16,7 +16,7 @@ import FormikTextField from "../components/formikReactSpectrum3/formikTextField"
  * @param {string} props.description - The description to use for the field.
  * @returns {FormPart}
  */
-export default function TextField({
+export default function textField({
   name,
   isRequired = false,
   dataElementSupported = true,

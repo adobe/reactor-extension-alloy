@@ -25,7 +25,7 @@ import singleDataElementRegex from "../constants/singleDataElementRegex";
  * "label". The "value" is the value that will be saved to the settings, and the
  * "label" is the text that will be shown in the combo box.
  */
-export default function ComboBox({
+export default function comboBox({
   name,
   isRequired = false,
   dataElementSupported = true,

@@ -30,7 +30,7 @@ import FieldSubset from "../components/fieldSubset";
  * should be objects with keys "value" and "label".
  * @returns {Form}
  */
-export default function RadioGroup({
+export default function radioGroup({
   name,
   isRequired = false,
   dataElementSupported = true,

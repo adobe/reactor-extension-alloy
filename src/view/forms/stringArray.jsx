@@ -35,7 +35,7 @@ const DATA_ELEMENT = "dataElement";
  * required. When required, the user will need to enter at least one string.
  * @returns {Form}
  */
-export default function StringArray({
+export default function stringArray({
   name,
   isRequired = false,
   label,

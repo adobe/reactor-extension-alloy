@@ -12,7 +12,7 @@ import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
  * checkbox.
  * @returns {FormPart}
  */
-export default function Checkbox({
+export default function checkbox({
   name,
   label,
   description,

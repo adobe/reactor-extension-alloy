@@ -4,21 +4,6 @@ import PropTypes from "prop-types";
 import ExtensionView from "../components/extensionView";
 import render from "../render";
 
-const convertToFormPart = element => {
-  const {
-    type,
-    props: { children, ...props } = {},
-    _source: { fileName, lineNumber } = {}
-  } = element;
-  if (typeof type !== "function") {
-    throw new Error(`Unresolved type ${type} at ${fileName}:${lineNumber}`);
-  }
-  const parts =
-    children &&
-    (Array.isArray(children) ? children : [children]).map(convertToFormPart);
-  return type({ ...props, children: parts });
-};
-
 const FormExtensionView = ({
   getInitialValues,
   getSettings,
@@ -39,8 +24,7 @@ FormExtensionView.propTypes = {
   Component: PropTypes.func
 };
 
-export default element => {
-  const formPart = convertToFormPart(element);
-  formPart.validationSchema = object().shape(formPart.validationShape);
+export default ({ validationShape, ...formPart }) => {
+  formPart.validationSchema = object().shape(validationShape);
   render(() => <FormExtensionView {...formPart} />);
 };

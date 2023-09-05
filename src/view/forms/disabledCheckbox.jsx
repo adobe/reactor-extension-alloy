@@ -13,7 +13,7 @@ import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
  * checkbox.
  * @returns {Form}
  */
-export default function DisabledCheckbox({ name, value, label, description }) {
+export default function disabledCheckbox({ name, value, label, description }) {
   const Component = ({ namePrefix = "" }) => {
     return (
       <FieldDescriptionAndError

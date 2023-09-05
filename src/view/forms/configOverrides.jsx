@@ -1,7 +1,7 @@
 import { reach } from "yup";
 import Overrides, { bridge as overridesBridge } from "../components/overrides";
 
-export default function ConfigOverrides() {
+export default function configOverrides() {
   return {
     getInitialValues({ initInfo }) {
       return overridesBridge.getInitialInstanceValues({

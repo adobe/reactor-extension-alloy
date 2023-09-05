@@ -14,7 +14,7 @@ import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
  * @param {string} [props.description] - The description to use for this field.
  * @returns {FormFragment}
  */
-export default function DataElement({
+export default function dataElement({
   name,
   isRequired = false,
   label,

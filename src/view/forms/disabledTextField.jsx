@@ -15,7 +15,7 @@ import PropTypes from "prop-types";
  * combo box.
  * @returns {FormFragment}
  */
-export default function DisabledTextField({
+export default function disabledTextField({
   name,
   value,
   valueLabel,

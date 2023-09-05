@@ -40,21 +40,20 @@ const DATA_ELEMENT = "dataElement";
  * components, the `prefixName` prop will be set to `${name}.${index}.`
  * @returns {Form}
  */
-export default function ObjectArray({
+export default function objectArray({
   name,
   label,
   singularLabel,
   dataElementDescription,
   objectKey,
-  objectLabelPlural,
-  children
-}) {
+  objectLabelPlural
+}, children = []) {
   const {
     getInitialValues: getItemInitialValues,
     getSettings: getItemSettings,
     validationShape: itemValidationShape,
     Component: ItemComponent
-  } = form({ children });
+  } = form({}, children);
 
   const buildDefaultItem = () =>
     getItemInitialValues({ initInfo: { settings: null } });

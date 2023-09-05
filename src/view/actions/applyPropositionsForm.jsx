@@ -1,37 +1,36 @@
 import React from "react";
 import propositionMetadata from "../forms/propositionMetadata";
-import Form from "../forms/form";
-import InstancePicker from "../forms/instancePicker";
-import Conditional from "../forms/conditional";
-import StringArray from "../forms/stringArray";
-import RadioGroup from "../forms/radioGroup";
+import form from "../forms/form";
+import instancePicker from "../forms/instancePicker";
+import conditional from "../forms/conditional";
+import stringArray from "../forms/stringArray";
+import radioGroup from "../forms/radioGroup";
 
 export default (
-  <Form>
-    <InstancePicker name="instanceName" />
-    <RadioGroup
-      name="propositions"
-      label="Propositions"
-      dataElementDescription="Provide a data element that resolves to an array of propositions"
-      isRequired
-      items={[
+  form({},[
+    instancePicker({ name: "instanceName" }),
+    radioGroup({
+      name: "propositions",
+      label: "Propositions",
+      dataElementDescription: "Provide a data element that resolves to an array of propositions",
+      isRequired: true,
+      items: [
         { value: "all", label: "All propositions" },
         { value: "scoped", label: "Propositions from specific scopes" }
-      ]}
-    />
-    <Conditional
-      args="propositions"
-      condition={propositions => propositions === "scoped"}
-    >
-      <StringArray
-        name="scopes"
-        label="Scopes"
-        singularLabel="Scope"
-        description="Provide a list of scopes to render."
-        dataElementDescription="Provide a data element that resolves to an array of strings."
-        isRequired
-      />
-    </Conditional>
-    {propositionMetadata}
-  </Form>
+      ]
+    }),
+    conditional({
+      args: "propositions",
+      condition: propositions => propositions === "scoped"
+    },[
+      stringArray({
+        name: "scopes",
+        label: "Scopes",
+        singularLabel: "Scope",
+        description: "Provide a list of scopes to render.",
+        dataElementDescription: "Provide a data element that resolves to an array of strings.",
+        isRequired: true
+      })
+    ])
+  ])
 );
