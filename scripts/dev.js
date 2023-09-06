@@ -11,11 +11,12 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
-const sandbox = require("@adobe/reactor-sandbox");
 const build = require("./helpers/build");
 
 (async () => {
   await build({ watch: true });
-  await sandbox.run();
+  // importing @adobe/reactor-sandbox requires that an extension.json file exists
+  // so we need to wait for the build to start before importing it
+  // eslint-disable-next-line global-require
+  await require("@adobe/reactor-sandbox").run();
 })();

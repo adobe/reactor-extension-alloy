@@ -17,6 +17,7 @@ governing permissions and limitations under the License.
 const { createInstance, createEventMergeId } = require("../alloy");
 const createInstanceManager = require("./createInstanceManager");
 const injectWrapOnBeforeEventSend = require("./injectWrapOnBeforeEventSend");
+const createGetConfigOverrides = require("../utils/createGetConfigOverrides");
 
 const version = "__VERSION__";
 
@@ -28,5 +29,6 @@ module.exports = createInstanceManager({
   createInstance,
   createEventMergeId,
   orgId: _satellite.company.orgId,
-  wrapOnBeforeEventSend
+  wrapOnBeforeEventSend,
+  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage)
 });

@@ -13,8 +13,11 @@ governing permissions and limitations under the License.
 import createSendEvent from "../../../../../src/lib/actions/sendEvent/createSendEvent";
 
 describe("Send Event", () => {
-  // TODO: fix and re-enable this test.
-  xit("executes event command and notifies sendEventCallbackStorage", () => {
+  let getConfigOverrides;
+  beforeEach(() => {
+    getConfigOverrides = jasmine.createSpy("getConfigOverrides");
+  });
+  it("executes event command and notifies sendEventCallbackStorage", () => {
     const instance = jasmine
       .createSpy()
       .and.returnValue(Promise.resolve({ foo: "bar" }));
@@ -27,7 +30,8 @@ describe("Send Event", () => {
     );
     const action = createSendEvent({
       instanceManager,
-      sendEventCallbackStorage
+      sendEventCallbackStorage,
+      getConfigOverrides
     });
     const dataLayer = {
       fruits: [
@@ -50,6 +54,7 @@ describe("Send Event", () => {
     expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
     expect(instance).toHaveBeenCalledWith("sendEvent", {
       renderDecisions: true,
+      edgeConfigOverrides: undefined,
       xdm: {
         fruits: [
           {
@@ -78,7 +83,7 @@ describe("Send Event", () => {
     const instanceManager = jasmine.createSpyObj("instanceManager", [
       "getInstance"
     ]);
-    const action = createSendEvent({ instanceManager });
+    const action = createSendEvent({ instanceManager, getConfigOverrides });
 
     expect(() => {
       action({
@@ -93,5 +98,44 @@ describe("Send Event", () => {
         'Failed to send event for instance "myinstance". No matching instance was configured with this name.'
       )
     );
+  });
+
+  it("calls sendEvent with edgeConfigOverrides", () => {
+    const instance = jasmine
+      .createSpy()
+      .and.returnValue(Promise.resolve({ foo: "bar" }));
+    getConfigOverrides.and.returnValue({
+      test: "test"
+    });
+    const instanceManager = jasmine.createSpyObj("instanceManager", {
+      getInstance: instance
+    });
+    const sendEventCallbackStorage = jasmine.createSpyObj(
+      "sendEventCallbackStorage",
+      ["triggerEvent"]
+    );
+    const action = createSendEvent({
+      instanceManager,
+      sendEventCallbackStorage,
+      getConfigOverrides
+    });
+    const promiseReturnedFromAction = action({
+      instanceName: "myinstance",
+      renderDecisions: true,
+      edgeConfigOverrides: {
+        development: {
+          test: "test"
+        }
+      }
+    });
+
+    expect(instance).toHaveBeenCalledWith("sendEvent", {
+      renderDecisions: true,
+      edgeConfigOverrides: {
+        test: "test"
+      }
+    });
+
+    return promiseReturnedFromAction;
   });
 });

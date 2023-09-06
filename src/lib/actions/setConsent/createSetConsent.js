@@ -9,9 +9,11 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+module.exports = ({ instanceManager, getConfigOverrides }) => settings => {
+  const { instanceName, identityMap, consent } = settings;
 
-module.exports = ({ instanceManager }) => settings => {
-  const { instanceName, identityMap, consent, edgeConfigOverrides } = settings;
+  const edgeConfigOverrides = getConfigOverrides(settings);
+
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -26,5 +28,8 @@ module.exports = ({ instanceManager }) => settings => {
       edgeConfigOverrides
     });
   }
-  return instance("setConsent", { consent, edgeConfigOverrides });
+  return instance("setConsent", {
+    consent,
+    edgeConfigOverrides
+  });
 };

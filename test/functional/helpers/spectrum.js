@@ -110,6 +110,12 @@ const createExpectDisabled = selector => async () => {
   await t.expect(selector.hasAttribute("disabled")).ok();
 };
 
+const createExpectHasRole = (selector, expectedRole) => () =>
+  t.expect(selector.getAttribute("role")).eql(expectedRole);
+
+const createExpectNotHasRole = (selector, expectedRole) => () =>
+  t.expect(selector.getAttribute("role")).notEql(expectedRole);
+
 // The menu items are virtualized, meaning that any items that
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
@@ -168,6 +174,10 @@ const createExpectMenuOptionLabelsExclude = menuSelector => async labels => {
   }
 };
 
+const createExpectTabSelected = selector => async () => {
+  await t.expect(selector.getAttribute("aria-selected")).eql("true");
+};
+
 // The menu items are virtualized, meaning that any items that
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
@@ -191,13 +201,17 @@ const createSelectMenuOption = menuSelector => async label => {
 const componentWrappers = {
   comboBox(selector) {
     return {
+      expectIsComboBox: createExpectHasRole(selector, "combobox"),
       expectError: createExpectError(selector),
+      expectNoError: createExpectNoError(selector),
       // We use createExpectValue because the text is stored on a value attribute of
       // the element with our data-test-id, even though our true intention is to assert
       // the text in the textfield.
       expectText: createExpectValue(selector),
       async openMenu() {
-        await t.click(selector.parent().find("button"));
+        await t.click(
+          selector.parent().find("button[aria-haspopup='listbox']")
+        );
       },
       // If the user needs to manually open the menu before selecting an
       // item, you'll need to call openMenu first.
@@ -251,11 +265,17 @@ const componentWrappers = {
   },
   picker(selector) {
     return {
+      async expectIsPicker() {
+        await t.expect(selector.getAttribute("aria-haspopup")).eql("listbox");
+        // must be a button element
+        await t.expect(selector.tagName).eql("button");
+      },
       expectError: createExpectInvalidCssClass(selector),
       expectNoError: createExpectNoError(selector),
       expectText: createExpectText(selector),
       async selectOption(label) {
         await compatibleClick(selector);
+        await this.scrollDownToItem(label);
         await createSelectMenuOption(popoverMenuSelector)(label);
       },
       async expectSelectedOptionLabel(label) {
@@ -276,11 +296,36 @@ const componentWrappers = {
       },
       expectDisabled: createExpectDisabled(selector),
       expectEnabled: createExpectEnabled(selector.find("button")),
-      expectHidden: createExpectHidden(selector.parent().parent())
+      expectHidden: createExpectHidden(selector.parent().parent()),
+      openMenu: createClick(selector),
+      // When the combobox loads pages of data when scrolling, this
+      // will keep scrolling until the the item is reached.
+      async scrollDownToItem(label) {
+        for (let i = 0; i < 10; i += 1) {
+          if (
+            // eslint-disable-next-line no-await-in-loop
+            await popoverMenuSelector
+              .find(menuItemCssSelector)
+              .withExactText(label).exists
+          ) {
+            return;
+          }
+
+          // eslint-disable-next-line no-await-in-loop
+          await t.scrollIntoView(
+            popoverMenuSelector.find(menuItemCssSelector).nth(-1)
+          );
+        }
+
+        throw new Error(
+          `Option with label ${label} does not exist while scrolling down when it is expected to exist.`
+        );
+      }
     };
   },
   textField(selector) {
     return {
+      expectIsTextField: createExpectNotHasRole(selector, "combobox"),
       expectError: createExpectError(selector),
       expectNoError: createExpectNoError(selector),
       expectValue: createExpectValue(selector),
@@ -325,6 +370,12 @@ const componentWrappers = {
           .expect(selector.find("section").withText(message).exists)
           .ok(`Message ${message} not found.`);
       }
+    };
+  },
+  tab(selector) {
+    return {
+      click: createClick(selector),
+      expectSelected: createExpectTabSelected(selector)
     };
   },
   tabs() {

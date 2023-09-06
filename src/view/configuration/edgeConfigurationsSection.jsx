@@ -24,6 +24,7 @@ import EdgeConfigurationFreeformInputMethod from "./edgeConfigurationFreeformInp
 import fetchConfig from "./utils/fetchConfig";
 import fetchConfigs from "./utils/fetchConfigs";
 import getPartsFromEnvironmentCompositeId from "./utils/getPartsFromEnvironmentCompositeId";
+import { useFieldValue } from "../utils/useFieldValue";
 
 const INPUT_METHOD = {
   SELECT: "select",
@@ -581,6 +582,55 @@ export const bridge = {
     })
 };
 
+const getInputMethodFieldName = instanceFieldName =>
+  `${instanceFieldName}.edgeConfigInputMethod`;
+const getSelectInputMethodFieldName = instanceFieldName =>
+  `${instanceFieldName}.edgeConfigSelectInputMethod`;
+const getFreeformInputMethodFieldName = instanceFieldName =>
+  `${instanceFieldName}.edgeConfigFreeformInputMethod`;
+
+/**
+ * A custom React hook that provides the edge config IDs and sandboxes.
+ * @param {string} instanceFieldName
+ * @returns {{
+ *  developmentEnvironment: {
+ *   datastreamId: string,
+ *   sandbox?: string
+ * },
+ * stagingEnvironment: {
+ *   datastreamId: string,
+ *   sandbox?: string
+ * },
+ * productionEnvironment: {
+ *   datastreamId: string,
+ *   sandbox?: string
+ * }}}
+ */
+export const useEdgeConfigIdFields = instanceFieldName => {
+  const inputMethod = useFieldValue(getInputMethodFieldName(instanceFieldName));
+
+  if (inputMethod === INPUT_METHOD.SELECT) {
+    return useFieldValue(getSelectInputMethodFieldName(instanceFieldName));
+  }
+
+  const {
+    developmentEdgeConfigId,
+    stagingEdgeConfigId,
+    edgeConfigId
+  } = useFieldValue(getFreeformInputMethodFieldName(instanceFieldName));
+  return {
+    developmentEnvironment: {
+      datastreamId: developmentEdgeConfigId
+    },
+    stagingEnvironment: {
+      datastreamId: stagingEdgeConfigId
+    },
+    productionEnvironment: {
+      datastreamId: edgeConfigId
+    }
+  };
+};
+
 const EdgeConfigurationsSection = ({
   instanceFieldName,
   instanceIndex,
@@ -588,7 +638,7 @@ const EdgeConfigurationsSection = ({
   context
 }) => {
   const [{ value: inputMethod }] = useField(
-    `${instanceFieldName}.edgeConfigInputMethod`
+    getInputMethodFieldName(instanceFieldName)
   );
 
   return (
@@ -606,7 +656,7 @@ const EdgeConfigurationsSection = ({
         instanceIndex === 0 && (
           <FormikRadioGroup
             label="Input method"
-            name={`${instanceFieldName}.edgeConfigInputMethod`}
+            name={getInputMethodFieldName(instanceFieldName)}
             orientation="horizontal"
           >
             <Radio
@@ -625,13 +675,13 @@ const EdgeConfigurationsSection = ({
         )}
         {inputMethod === INPUT_METHOD.SELECT ? (
           <EdgeConfigurationSelectInputMethod
-            name={`${instanceFieldName}.edgeConfigSelectInputMethod`}
+            name={getSelectInputMethodFieldName(instanceFieldName)}
             initInfo={initInfo}
             context={context}
           />
         ) : (
           <EdgeConfigurationFreeformInputMethod
-            name={`${instanceFieldName}.edgeConfigFreeformInputMethod`}
+            name={getFreeformInputMethodFieldName(instanceFieldName)}
           />
         )}
       </FormElementContainer>

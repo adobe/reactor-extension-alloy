@@ -10,10 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
+import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";
+import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
+import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
 import extensionViewController from "../helpers/extensionViewController";
+import overrideViewSelectors from "../helpers/overrideViewSelectors";
 import spectrum from "../helpers/spectrum";
 import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
-import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
 
 const instanceNameField = spectrum.picker("instanceNameField");
@@ -90,7 +94,69 @@ test("initializes form fields with full settings, when decision scopes is data e
       },
       datasetId: "%myDatasetId%",
       documentUnloading: true,
-      renderDecisions: true
+      renderDecisions: true,
+      edgeConfigOverrides: {
+        production: {
+          sandbox: "prod",
+          datastreamId: mockExtensionSettings.instances[0].edgeConfigId,
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: "6336ff95ba16ca1c07b4c0db"
+              }
+            }
+          },
+          com_adobe_analytics: {
+            reportSuites: ["unifiedjsqeonly2"]
+          },
+          com_adobe_identity: {
+            idSyncContainerId: 23512312
+          },
+          com_adobe_target: {
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          }
+        },
+        staging: {
+          sandbox: "prod",
+          datastreamId: mockExtensionSettings.instances[0].edgeConfigId,
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: "6336ff95ba16ca1c07b4c0db"
+              }
+            }
+          },
+          com_adobe_analytics: {
+            reportSuites: ["unifiedjsqeonly2"]
+          },
+          com_adobe_identity: {
+            idSyncContainerId: 23512312
+          },
+          com_adobe_target: {
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          }
+        },
+        development: {
+          sandbox: "prod",
+          datastreamId: mockExtensionSettings.instances[0].edgeConfigId,
+          com_adobe_experience_platform: {
+            datasets: {
+              event: {
+                datasetId: "6336ff95ba16ca1c07b4c0db"
+              }
+            }
+          },
+          com_adobe_analytics: {
+            reportSuites: ["unifiedjsqeonly2"]
+          },
+          com_adobe_identity: {
+            idSyncContainerId: 23512312
+          },
+          com_adobe_target: {
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          }
+        }
+      }
     }
   });
   await instanceNameField.expectText("alloy2");
@@ -107,6 +173,68 @@ test("initializes form fields with full settings, when decision scopes is data e
   await surfacesRadioGroup.dataElement.expectChecked();
   await surfacesRadioGroup.values.expectUnchecked();
   await surfaceDataElementField.expectValue("%mySurface%");
+
+  await overrideViewSelectors.envTabs.production.click();
+  await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
+  await overrideViewSelectors.datastreamIdFreeform.expectValue(
+    mockExtensionSettings.instances[0].edgeConfigId
+  );
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2"
+  );
+
+  await overrideViewSelectors.envTabs.staging.click();
+  await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
+  await overrideViewSelectors.datastreamIdFreeform.expectValue(
+    mockExtensionSettings.instances[0].edgeConfigId
+  );
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2"
+  );
+
+  await overrideViewSelectors.envTabs.development.click();
+  await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
+  await overrideViewSelectors.datastreamIdFreeform.expectValue(
+    mockExtensionSettings.instances[0].edgeConfigId
+  );
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2"
+  );
+
+  await extensionViewController.expectIsValid();
 });
 
 test("initializes legacy decision scopes form fields, when decision scopes is an array of scopes", async () => {
@@ -195,6 +323,16 @@ test("initializes form fields with no settings", async () => {
   await surfacesRadioGroup.values.expectChecked();
   await surfacesRadioGroup.dataElement.expectUnchecked();
   await surfaceArrayValues[0].value.expectValue("");
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue("");
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
+    ""
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
+    ""
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
+    ""
+  );
 });
 
 test("returns minimal valid settings", async () => {
@@ -226,6 +364,71 @@ test("returns full valid settings with decision scopes as data element", async (
   await surfacesRadioGroup.dataElement.click();
   await surfaceDataElementField.typeText("%mySurface%");
   await extensionViewController.expectIsValid();
+
+  await overrideViewSelectors.envTabs.production.expectExists();
+  await overrideViewSelectors.envTabs.production.click();
+  await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
+  await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
+    "unifiedjsqeonly2"
+  );
+  await overrideViewSelectors.addReportSuiteButton.click();
+  await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
+    "unifiedjsqeonly3"
+  );
+  await overrideViewSelectors.envTabs.staging.expectExists();
+  await overrideViewSelectors.envTabs.staging.click();
+  await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
+  await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
+    "unifiedjsqeonly2"
+  );
+  await overrideViewSelectors.addReportSuiteButton.click();
+  await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
+    "unifiedjsqeonly3"
+  );
+  await overrideViewSelectors.envTabs.development.expectExists();
+  await overrideViewSelectors.envTabs.development.click();
+  await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
+  await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
+    "23512312"
+  );
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+  );
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
+    "unifiedjsqeonly2"
+  );
+  await overrideViewSelectors.addReportSuiteButton.click();
+  await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
+    "unifiedjsqeonly3"
+  );
+
   await extensionViewController.expectSettings({
     instanceName: "alloy2",
     type: "mytype1",
@@ -238,6 +441,68 @@ test("returns full valid settings with decision scopes as data element", async (
     personalization: {
       decisionScopes: "%myScope%",
       surfaces: "%mySurface%"
+    },
+    edgeConfigOverrides: {
+      production: {
+        sandbox: "prod",
+        datastreamId: "PR123",
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6336ff95ba16ca1c07b4c0db"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 23512312
+        },
+        com_adobe_target: {
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+        }
+      },
+      staging: {
+        sandbox: "prod",
+        datastreamId: "PR123",
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6336ff95ba16ca1c07b4c0db"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 23512312
+        },
+        com_adobe_target: {
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+        }
+      },
+      development: {
+        sandbox: "prod",
+        datastreamId: "PR123",
+        com_adobe_experience_platform: {
+          datasets: {
+            event: {
+              datasetId: "6336ff95ba16ca1c07b4c0db"
+            }
+          }
+        },
+        com_adobe_analytics: {
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+        },
+        com_adobe_identity: {
+          idSyncContainerId: 23512312
+        },
+        com_adobe_target: {
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+        }
+      }
     }
   });
 });
@@ -267,6 +532,12 @@ test("returns decision scopes settings as an array", async () => {
     instanceName: "alloy1",
     personalization: {
       decisionScopes: ["foo", "foo2"]
+    },
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
+      }
     }
   });
 });
@@ -287,6 +558,12 @@ test("returns surfaces settings as an array", async () => {
     instanceName: "alloy1",
     personalization: {
       surfaces: ["web://foo", "web://foo2"]
+    },
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
+      }
     }
   });
 });
@@ -300,7 +577,13 @@ test("does not return decision scopes settings when provided with array of empty
   await addDecisionScopeButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    instanceName: "alloy1"
+    instanceName: "alloy1",
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
+      }
+    }
   });
 });
 
@@ -313,7 +596,13 @@ test("does not return surface settings when provided with array of empty strings
   await addSurfaceButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    instanceName: "alloy1"
+    instanceName: "alloy1",
+    edgeConfigOverrides: {
+      development: {
+        sandbox: "prod",
+        datastreamIdInputMethod: "select"
+      }
+    }
   });
 });
 
@@ -381,5 +670,135 @@ test("shows error for data value that is more than one data element", async () =
   await extensionViewController.expectIsNotValid();
   await dataField.expectError();
 });
+
+test.requestHooks(
+  sandboxesMocks.singleDefault,
+  datastreamsMocks.single,
+  datastreamMocks.withConfigOverrides
+)("populates overrides dropdowns with Blackbird config data", async () => {
+  await extensionViewController.init({
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy",
+          edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+          sandbox: "prod"
+        }
+      ]
+    }
+  });
+
+  await overrideViewSelectors.envTabs.production.click();
+  await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectExists();
+  await overrideViewSelectors.comboBoxes.eventDatasetOverride.openMenu();
+  await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectMenuOptionLabels(
+    ["6335faf30f5a161c0b4b1444"]
+  );
+  await overrideViewSelectors.comboBoxes.eventDatasetOverride.selectMenuOption(
+    "6335faf30f5a161c0b4b1444"
+  );
+
+  await overrideViewSelectors.comboBoxes.idSyncContainerOverride.expectExists();
+  await overrideViewSelectors.comboBoxes.idSyncContainerOverride.openMenu();
+  await overrideViewSelectors.comboBoxes.idSyncContainerOverride.expectMenuOptionLabels(
+    ["107756", "107757"]
+  );
+  await overrideViewSelectors.comboBoxes.idSyncContainerOverride.selectMenuOption(
+    "107756"
+  );
+
+  await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.expectExists();
+  await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.openMenu();
+  await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.expectMenuOptionLabels(
+    [
+      "aba5431a-9f59-f816-7d73-8e40c8f4c4fd",
+      "65d186ff-be14-dfa0-75fa-546d93bebf91"
+    ]
+  );
+  await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.selectMenuOption(
+    "aba5431a-9f59-f816-7d73-8e40c8f4c4fd"
+  );
+
+  await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].expectExists();
+  await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].openMenu();
+  await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].expectMenuOptionLabels(
+    ["unifiedjsqeonly2", "unifiedjsqeonlylatest", "unifiedjsqeonlymobileweb"]
+  );
+  await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].selectMenuOption(
+    "unifiedjsqeonlylatest"
+  );
+
+  await extensionViewController.expectIsValid();
+});
+
+test("can type a datastream overrides", async () => {
+  await extensionViewController.init({
+    extensionSettings: {
+      instances: [
+        {
+          name: "alloy",
+          edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+          sandbox: "prod"
+        }
+      ]
+    }
+  });
+
+  await overrideViewSelectors.envTabs.production.click();
+  await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.datastreamInputMethod.freeform.click();
+  await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
+  await overrideViewSelectors.datastreamIdFreeform.typeText("1234");
+
+  await extensionViewController.expectIsValid();
+});
+
+test.requestHooks(
+  sandboxesMocks.multipleWithoutDefault,
+  datastreamsMocks.single,
+  datastreamMocks.withConfigOverrides
+)(
+  "overrides switch to textfields when the second instance is selected",
+  async () => {
+    await extensionViewController.init({
+      extensionSettings: {
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            sandbox: "prod",
+            stagingEdgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            stagingSandbox: "prod",
+            developmentEdgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            developmentSandbox: "prod"
+          },
+          {
+            name: "alloy2",
+            edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83",
+            sandbox: "testsandbox1",
+            stagingEdgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83",
+            stagingSandbox: "testsandbox1",
+            developmentEdgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83",
+            developmentSandbox: "testsandbox1"
+          }
+        ]
+      }
+    });
+
+    await instanceNameField.expectText("alloy1");
+    await overrideViewSelectors.sandbox.selectOption(
+      "PRODUCTION Test Sandbox Prod (VA7)"
+    );
+    await overrideViewSelectors.datastreamIdDropdown.expectExists();
+    await overrideViewSelectors.datastreamIdDropdown.expectIsPicker();
+    await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectIsComboBox();
+
+    await instanceNameField.selectOption("alloy2");
+    await overrideViewSelectors.datastreamIdFreeform.expectExists();
+    await overrideViewSelectors.datastreamIdFreeform.expectIsTextField();
+    await overrideViewSelectors.textFields.eventDatasetOverride.expectIsTextField();
+  }
+);
 
 testInstanceNameOptions(extensionViewController, instanceNameField);

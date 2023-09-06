@@ -15,10 +15,20 @@ import PropTypes from "prop-types";
 import { ComboBox } from "@adobe/react-spectrum";
 import { useField } from "formik";
 
-const FormikComboBox = ({ name, width, ...otherProps }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+/**
+ * @param {Object} params
+ * @param {string} params.name
+ * @param {string?} params.width
+ * @param {(value: T) => undefined | string} params.validate A function that will be called to validate
+ * the value entered by the user. The function should return an error message if
+ * the value is invalid, or null if the value is valid.
+ * @returns {React.Element}
+ */
+const FormikComboBox = ({ name, width, validate, ...otherProps }) => {
+  const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
+    name,
+    validate
+  });
   return (
     <ComboBox
       {...otherProps}
@@ -36,6 +46,7 @@ const FormikComboBox = ({ name, width, ...otherProps }) => {
 
 FormikComboBox.propTypes = {
   name: PropTypes.string.isRequired,
+  validate: PropTypes.func,
   width: PropTypes.string
 };
 

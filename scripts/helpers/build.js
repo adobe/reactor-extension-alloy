@@ -18,6 +18,7 @@ const rimraf = require("rimraf");
 const { Parcel } = require("@parcel/core");
 const path = require("path");
 const fsPromises = require("fs").promises;
+const buildManifest = require("./buildExtensionManifest");
 
 const inputDir = path.join(__dirname, "../../src");
 const tempDir = path.join(__dirname, "../../temp");
@@ -55,6 +56,7 @@ rimraf.sync(outputDir);
 
 module.exports = (options = {}) => {
   const { watch, isProd = isProdEnv } = options;
+
   const bundler = new Parcel({
     entries: viewEntries,
     defaultConfig: "@parcel/config-default",
@@ -148,5 +150,12 @@ module.exports = (options = {}) => {
     )
     .finally(() => toPromise(callback => rimraf(tempDir, callback)));
 
-  return Promise.all([babelPromise, parcelPromise, alloyPromise]);
+  const manifestPromise = buildManifest();
+
+  return Promise.all([
+    babelPromise,
+    parcelPromise,
+    alloyPromise,
+    manifestPromise
+  ]);
 };
