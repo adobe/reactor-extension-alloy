@@ -1,3 +1,14 @@
+/*
+Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 import React from "react";
 import { Link } from "@adobe/react-spectrum";
 
@@ -22,6 +33,23 @@ import textField from "../forms/textField";
 const UNGUIDED = "unguided";
 const FETCH = "fetch";
 const COLLECT = "collect";
+
+import { object, string, mixed } from "yup";
+import singleDataElementRegex from "../constants/singleDataElementRegex";
+import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+const validation =
+  object().shape({
+    data: mixed().when("eventStyle", {
+      is: UNGUIDED,
+      then: () => string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
+      otherwise: () => mixed().when("eventStyle", {
+        is: FETCH,
+        then: () => string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+      })
+    })
+  });
+console.log("validation", validation.validate({ data: "fff", eventStyle: UNGUIDED }));
+console.log("describe", validation.describe({ value: { data: "fff", eventStyle: UNGUIDED }}));
 
 const xdmFieldDescription = (
   <>
@@ -65,19 +93,26 @@ const wrapGetSettings = getSettings => ({ values }) => {
   const {
     decisionScopes,
     surfaces,
-    sendNotifications,
-    metadata,
-    ...otherValues
+    sendDisplayNotifications,
+    includePendingDisplayNotifications,
+    ...settings
   } = getSettings({ values });
-  return {
-    ...otherValues,
-    personalization: {
-      decisionScopes,
-      surfaces,
-      sendNotifications,
-      metadata
-    }
-  };
+  if (decisionScopes || surfaces || sendDisplayNotifications === false || includePendingDisplayNotifications) {
+    settings.personalization = {};
+  }
+  if (decisionScopes) {
+    settings.personalization.decisionScopes = decisionScopes;
+  }
+  if (surfaces) {
+    settings.personalization.surfaces = surfaces;
+  }
+  if (sendDisplayNotifications === false) {
+    settings.personalization.sendDisplayNotifications = sendDisplayNotifications;
+  }
+  if (includePendingDisplayNotifications) {
+    settings.personalization.includePendingDisplayNotifications = includePendingDisplayNotifications;
+  }
+  return settings;
 };
 
 const eventTypeField = comboBox({
@@ -90,7 +125,8 @@ const eventTypeField = comboBox({
     .reduce((items, key) => {
       items.push({ value: key, label: eventTypes[key] });
       return items;
-    }, [])
+    }, []),
+  allowsCustomValue: true
 });
 
 const fetchEventTypeField = disabledTextField({
@@ -129,22 +165,6 @@ const disabledIncludePendingDisplayNotificationsField = disabledCheckbox({
     "Check this to include pending display notifications in the response. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
   value: true
 });
-
-const propositionEventTypeField = conditional({
-  args: "propositions",
-  condition: propositions => propositions !== "none"
-}, [
-  comboBox({
-    name: "propositionEventType",
-    label: "Display or interact notification",
-    description:
-      "Enter an event type to populate the `propositionEventType` XDM field. Select a predefined value or enter a data element.",
-    items: [
-      { value: "display", label: "Display" },
-      { value: "interact", label: "Interact" }
-    ]
-  })
-]);
 
 const documentUnloadingField = checkbox({
   name: "documentUnloading",
@@ -185,7 +205,7 @@ const renderDecisionsField = checkbox({
   label: "Render visual personalization decisions",
   description:
     "Check this to render visual personalization decisions.",
-  defaultValue: true
+  defaultValue: false
 });
 
 const renderDecisionsChecked = disabledCheckbox({
@@ -196,12 +216,12 @@ const renderDecisionsChecked = disabledCheckbox({
   value: true
 });
 
-const sendNotificationsField = conditional({
+const sendDisplayNotificationsField = conditional({
   args: "renderDecisions",
   condition: renderDecisions => renderDecisions
 }, [
   checkbox({
-    name: "sendNotifications",
+    name: "sendDisplayNotifications",
     label: "Automatically send a display notification",
     description:
       "Check this to automatically send a display notification. (Note when automatically sending a display notification, you cannot set the proposition metadata.)",
@@ -210,7 +230,7 @@ const sendNotificationsField = conditional({
 ]);
 
 const sendNotificationsUnchecked = disabledCheckbox({
-  name: "sendNotifications",
+  name: "sendDisplayNotifications",
   label: "Automatically send a display notification",
   description:
     "Check this to automatically send a display notification. (Note when automatically sending a display notification, you cannot set the proposition metadata.)",
@@ -259,12 +279,10 @@ const sendEventForm = form({
       decisionScopesField,
       surfacesField,
       renderDecisionsField,
-      sendNotificationsField
+      sendDisplayNotificationsField
     ]),
-    section({ label: "Configuration overrides" }, [
-      configOverrideFields,
-      datasetIdField
-    ])
+    configOverrideFields,
+    datasetIdField
   ]),
   conditional({
     args: "eventStyle",
@@ -281,9 +299,7 @@ const sendEventForm = form({
       renderDecisionsChecked,
       sendNotificationsUnchecked
     ]),
-    section({ label: "Configuration overrides" }, [
-      configOverrideFields
-    ])
+    configOverrideFields
   ]),
   conditional({
     args: "eventStyle",
@@ -295,9 +311,7 @@ const sendEventForm = form({
       dataField,
       disabledIncludePendingDisplayNotificationsField
     ]),
-    section({ label: "Configuration overrides" }, [
-      configOverrideFields
-    ])
+    configOverrideFields
   ])
 ]);
 

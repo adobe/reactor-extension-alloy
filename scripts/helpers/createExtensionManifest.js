@@ -376,6 +376,9 @@ const createExtensionManifest = ({ version }) => {
           $schema: "http://json-schema.org/draft-04/schema#",
           type: "object",
           properties: {
+            eventStyle: {
+              type: "string"
+            },
             instanceName: {
               type: "string",
               minLength: 1
@@ -470,7 +473,13 @@ const createExtensionManifest = ({ version }) => {
           required: ["instanceName"],
           additionalProperties: false
         },
-        transforms: [...actionEdgeConfigOverridesTransforms],
+        transforms: [
+          {
+            type: "remove",
+            propertyPath: "eventStyle"
+          },
+          ...actionEdgeConfigOverridesTransforms
+        ],
         libPath: "dist/lib/actions/sendEvent/index.js",
         viewPath: "actions/sendEvent.html"
       },

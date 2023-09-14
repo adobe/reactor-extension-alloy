@@ -109,8 +109,9 @@ fixture("Update variable")
   .page(TEST_PAGE)
   .requestHooks([networkLogger.edgeEndpointLogs]);
 
-test("Updates a variable", async () => {
+test("Updates a variable", async (t) => {
   await appendLaunchLibrary(container);
+  await t.debug();
   // The requestLogger.count method uses TestCafe's smart query
   // assertion mechanism, so it will wait for the request to be
   // made or a timeout is reached.

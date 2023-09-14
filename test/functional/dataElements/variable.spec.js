@@ -403,8 +403,7 @@ test
     schemasMocks.sandbox2,
     schemasMocks.sandbox3,
     schemaMocks.schema3b
-  )
-  .only(
+  )(
     "Allows you to select a schema from the non-default sandbox",
     async () => {
       await extensionViewController.init({});

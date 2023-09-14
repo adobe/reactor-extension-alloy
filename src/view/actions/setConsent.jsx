@@ -234,7 +234,7 @@ const validationSchema = object()
         )
     })
   })
-  .concat(overridesBridge.validationSchema);
+  .concat(overridesBridge.formikStateValidationSchema);
 
 const ConsentObject = ({ value, index }) => {
   return (
@@ -361,7 +361,7 @@ const SetConsent = () => {
           instance => instance.name === instanceName
         );
         const edgeConfigIds = getEdgeConfigIds(instanceSettings);
-        const orgId = instanceSettings.orgId ?? initInfo.company.orgId;
+        const orgId = instanceSettings?.orgId ?? initInfo.company.orgId;
         return (
           <FormElementContainer>
             <InstanceNamePicker

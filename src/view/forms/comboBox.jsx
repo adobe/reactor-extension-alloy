@@ -1,3 +1,14 @@
+/*
+Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 import React from "react";
 import { string } from "yup";
 import { Item } from "@adobe/react-spectrum";
@@ -32,16 +43,20 @@ export default function comboBox({
   label,
   description,
   dataElementDescription,
-  items
+  items,
+  allowsCustomValue = false
 }) {
-  let fieldSchema = string().test(
-    name,
-    `Please choose a ${label.toLowerCase()} from the list or specify a single data element.`,
-    value =>
-      value &&
-      (items.find(item => item.value === value) ||
-        value.match(singleDataElementRegex))
-  );
+  let fieldSchema = string();
+  if (!allowsCustomValue) {
+    fieldSchema = fieldSchema.test(
+      name,
+      `Please choose a ${label.toLowerCase()} from the list or specify a single data element.`,
+      value =>
+        !value ||
+        items.find(item => item.value === value) ||
+        value.match(singleDataElementRegex)
+    );
+  }
   if (isRequired) {
     fieldSchema = fieldSchema.required(
       `Please choose a ${label.toLowerCase()}.`
@@ -63,7 +78,7 @@ export default function comboBox({
         description={innerDescription}
         width="size-5000"
         items={items}
-        allowsCustomValue={dataElementSupported}
+        allowsCustomValue={allowsCustomValue || dataElementSupported}
         getKey={item => item.value}
         getLabel={item => item.label}
       >

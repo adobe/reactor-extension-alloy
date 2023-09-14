@@ -29,6 +29,13 @@ governing permissions and limitations under the License.
  * }}}
  */
 const getEdgeConfigIds = instanceSettings => {
+  if (!instanceSettings) {
+    return {
+      developmentEnvironment: {},
+      stagingEnvironment: {},
+      productionEnvironment: {}
+    };
+  }
   if (instanceSettings.edgeConfigInputMethod === "freeform") {
     return {
       developmentEnvironment: {

@@ -153,10 +153,10 @@ const Overrides = ({
   return (
     <>
       <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides">
-        Datastream Configuration Overrides
+        Datastream configuration overrides
       </SectionHeader>
       <FormElementContainer>
-        <Tabs aria-label="Datastream Configuration Overrides">
+        <Tabs aria-label="Datastream configuration overrides">
           <TabList>
             {OVERRIDE_ENVIRONMENTS.map(env => (
               <Item key={env} data-test-id={`${env}OverridesTab`}>
@@ -405,15 +405,15 @@ Overrides.propTypes = {
   instanceFieldName: PropTypes.string,
   edgeConfigIds: PropTypes.shape({
     developmentEnvironment: PropTypes.shape({
-      datastreamId: PropTypes.string.isRequired,
+      datastreamId: PropTypes.string,
       sandbox: PropTypes.string
     }),
     stagingEnvironment: PropTypes.shape({
-      datastreamId: PropTypes.string.isRequired,
+      datastreamId: PropTypes.string,
       sandbox: PropTypes.string
     }),
     productionEnvironment: PropTypes.shape({
-      datastreamId: PropTypes.string.isRequired,
+      datastreamId: PropTypes.string,
       sandbox: PropTypes.string
     })
   }).isRequired,

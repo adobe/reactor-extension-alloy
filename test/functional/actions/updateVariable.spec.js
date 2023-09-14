@@ -45,7 +45,7 @@ test.requestHooks(dataElementsMocks.notFound)(
         id: "PRabcd"
       }
     });
-    await errorBoundaryMessage.expectMessage(/The resource was not found\./);
+    await errorBoundaryMessage.expectMessage(/Failed to load data elements\./);
   }
 );
 
