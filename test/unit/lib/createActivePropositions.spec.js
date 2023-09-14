@@ -1,4 +1,4 @@
-/*import createPropositionCache from "../../../src/lib/createPropositionCache.js";
+/* import createPropositionCache from "../../../src/lib/createPropositionCache.js";
 
 fdescribe("createActivePropositions", () => {
   let activePropositions;

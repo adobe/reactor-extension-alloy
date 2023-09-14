@@ -1,5 +1,6 @@
 import React from "react";
 import { string } from "yup";
+import PropTypes from "prop-types";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
@@ -30,7 +31,7 @@ export default function dataElement({
     );
   }
 
-  return {
+  const part = {
     getInitialValues({ initInfo }) {
       const { [name]: value = "" } = initInfo.settings || {};
       return { [name]: value };
@@ -61,4 +62,9 @@ export default function dataElement({
       );
     }
   };
+  part.Component.propTypes = {
+    namePrefix: PropTypes.string
+  };
+
+  return part;
 }

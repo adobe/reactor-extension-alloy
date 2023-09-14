@@ -41,20 +41,14 @@ const Identity = x => x;
  * @param {Form[]} children - The children forms to combine.
  * @returns {Form}
  */
-export default function Form({
-  wrapGetInitialValues = Identity,
-  wrapGetSettings = Identity,
-  wrapValidationShape = Identity
-} = {}, children = []) {
-  const keys = children
-    .filter(({ validationShape }) => validationShape)
-    .map(({ validationShape }) => Object.keys(validationShape).join(","));
-  console.log("Form combine:", keys);
-
-
-
-
-
+export default function Form(
+  {
+    wrapGetInitialValues = Identity,
+    wrapGetSettings = Identity,
+    wrapValidationShape = Identity
+  } = {},
+  children = []
+) {
   const part = {
     getInitialValues({ initInfo }) {
       const initialValues = children
@@ -65,7 +59,6 @@ export default function Form({
             ...child.getInitialValues({ initInfo })
           };
         }, {});
-      console.log("InitialValues", initialValues);
       return initialValues;
     },
     getSettings({ values }) {
@@ -79,11 +72,20 @@ export default function Form({
         }, {});
     },
     validationShape: children
-      .filter(({ validationShape, addToValidationShape }) => validationShape || addToValidationShape)
+      .filter(
+        ({ validationShape, addToValidationShape }) =>
+          validationShape || addToValidationShape
+      )
       .reduce((memo, { validationShape, addToValidationShape }) => {
         if (validationShape) {
-          if (Object.keys(memo).find(existingKey => validationShape[existingKey])) {
-            throw new Error(`Duplicate validation key ${existingKey}`);
+          if (
+            Object.keys(memo).find(existingKey => validationShape[existingKey])
+          ) {
+            throw new Error(
+              `Duplicate validation key (${Object.keys(memo).join(
+                ","
+              )}) versus (${Object.keys(validationShape).join(",")})`
+            );
           }
           return {
             ...memo,

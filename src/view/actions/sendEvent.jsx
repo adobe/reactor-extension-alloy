@@ -34,23 +34,6 @@ const UNGUIDED = "unguided";
 const FETCH = "fetch";
 const COLLECT = "collect";
 
-import { object, string, mixed } from "yup";
-import singleDataElementRegex from "../constants/singleDataElementRegex";
-import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
-const validation =
-  object().shape({
-    data: mixed().when("eventStyle", {
-      is: UNGUIDED,
-      then: () => string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
-      otherwise: () => mixed().when("eventStyle", {
-        is: FETCH,
-        then: () => string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-      })
-    })
-  });
-console.log("validation", validation.validate({ data: "fff", eventStyle: UNGUIDED }));
-console.log("describe", validation.describe({ value: { data: "fff", eventStyle: UNGUIDED }}));
-
 const xdmFieldDescription = (
   <>
     Provide a data element which returns an object matching your XDM schema. You
@@ -97,7 +80,12 @@ const wrapGetSettings = getSettings => ({ values }) => {
     includePendingDisplayNotifications,
     ...settings
   } = getSettings({ values });
-  if (decisionScopes || surfaces || sendDisplayNotifications === false || includePendingDisplayNotifications) {
+  if (
+    decisionScopes ||
+    surfaces ||
+    sendDisplayNotifications === false ||
+    includePendingDisplayNotifications
+  ) {
     settings.personalization = {};
   }
   if (decisionScopes) {
@@ -120,12 +108,12 @@ const eventTypeField = comboBox({
   label: "Type",
   description:
     "Enter an event type to populate the `eventType` XDM field. Select a predefined value or enter a custom value.",
-  dataElementDescription: "Enter a data element that resolves to an event type.",
-  items: Object.keys(eventTypes)
-    .reduce((items, key) => {
-      items.push({ value: key, label: eventTypes[key] });
-      return items;
-    }, []),
+  dataElementDescription:
+    "Enter a data element that resolves to an event type.",
+  items: Object.keys(eventTypes).reduce((items, key) => {
+    items.push({ value: key, label: eventTypes[key] });
+    return items;
+  }, []),
   allowsCustomValue: true
 });
 
@@ -184,8 +172,7 @@ const decisionScopesField = stringArray({
   name: "decisionScopes",
   label: "Scopes",
   singularLabel: "Scope",
-  description:
-    "Create an array of decision scopes to query with the event.",
+  description: "Create an array of decision scopes to query with the event.",
   dataElementDescription:
     "This data element should resolve to an array of scopes."
 });
@@ -194,8 +181,7 @@ const surfacesField = stringArray({
   name: "surfaces",
   label: "Surfaces",
   singularLabel: "Surface",
-  description:
-    "Create an array of surfaces to query with the event.",
+  description: "Create an array of surfaces to query with the event.",
   dataElementDescription:
     "This data element should resolve to an array of surfaces."
 });
@@ -203,31 +189,32 @@ const surfacesField = stringArray({
 const renderDecisionsField = checkbox({
   name: "renderDecisions",
   label: "Render visual personalization decisions",
-  description:
-    "Check this to render visual personalization decisions.",
+  description: "Check this to render visual personalization decisions.",
   defaultValue: false
 });
 
 const renderDecisionsChecked = disabledCheckbox({
   name: "renderDecisions",
   label: "Render visual personalization decisions",
-  description:
-    "Check this to render visual personalization decisions.",
+  description: "Check this to render visual personalization decisions.",
   value: true
 });
 
-const sendDisplayNotificationsField = conditional({
-  args: "renderDecisions",
-  condition: renderDecisions => renderDecisions
-}, [
-  checkbox({
-    name: "sendDisplayNotifications",
-    label: "Automatically send a display notification",
-    description:
-      "Check this to automatically send a display notification. (Note when automatically sending a display notification, you cannot set the proposition metadata.)",
-    defaultValue: true
-  })
-]);
+const sendDisplayNotificationsField = conditional(
+  {
+    args: "renderDecisions",
+    condition: renderDecisions => renderDecisions
+  },
+  [
+    checkbox({
+      name: "sendDisplayNotifications",
+      label: "Automatically send a display notification",
+      description:
+        "Check this to automatically send a display notification. (Note when automatically sending a display notification, you cannot set the proposition metadata.)",
+      defaultValue: true
+    })
+  ]
+);
 
 const sendNotificationsUnchecked = disabledCheckbox({
   name: "sendDisplayNotifications",
@@ -245,74 +232,86 @@ const datasetIdField = textField({
     "Send data to a different dataset than what's been provided in the datastream. Note: this option is deprecated. Use 'Event dataset' instead."
 });
 
-const sendEventForm = form({
-  wrapGetInitialValues,
-  wrapGetSettings
-}, [
-  radioGroup({
-    name: "eventStyle",
-    label: "Guided event style",
-    dataElementSupported: false,
-    defaultValue: UNGUIDED,
-    items: [
-      { value: UNGUIDED, label: "Unguided (all fields)" },
-      { value: FETCH, label: "Fetch personalization" },
-      { value: COLLECT, label: "Data collection with display notifications" }
-    ],
-    description:
-      "Select the event style. Fetch personalization events do not record events in Adobe Analytics and have the type decisioning.propositionFetch. Data collection events do not request personalization decisions."
-  }),
-  instancePicker({ name: "instanceName" }),
-  conditional({
-    args: "eventStyle",
-    condition: eventStyle => eventStyle === UNGUIDED
-  }, [
-    section({ label: "Data collection" }, [
-      eventTypeField,
-      xdmField,
-      dataField,
-      includePendingDisplayNotificationsField,
-      documentUnloadingField,
-      mergeIdField
-    ]),
-    section({ label: "Personalization" }, [
-      decisionScopesField,
-      surfacesField,
-      renderDecisionsField,
-      sendDisplayNotificationsField
-    ]),
-    configOverrideFields,
-    datasetIdField
-  ]),
-  conditional({
-    args: "eventStyle",
-    condition: eventStyle => eventStyle === FETCH
-  }, [
-    section({ label: "Data collection" }, [
-      fetchEventTypeField,
-      xdmField,
-      dataField
-    ]),
-    section({ label: "Personalization" }, [
-      decisionScopesField,
-      surfacesField,
-      renderDecisionsChecked,
-      sendNotificationsUnchecked
-    ]),
-    configOverrideFields
-  ]),
-  conditional({
-    args: "eventStyle",
-    condition: eventStyle => eventStyle === COLLECT
-  }, [
-    section({ label: "Data collection" }, [
-      eventTypeField,
-      xdmField,
-      dataField,
-      disabledIncludePendingDisplayNotificationsField
-    ]),
-    configOverrideFields
-  ])
-]);
+const sendEventForm = form(
+  {
+    wrapGetInitialValues,
+    wrapGetSettings
+  },
+  [
+    radioGroup({
+      name: "eventStyle",
+      label: "Guided event style",
+      dataElementSupported: false,
+      defaultValue: UNGUIDED,
+      items: [
+        { value: UNGUIDED, label: "Unguided (all fields)" },
+        { value: FETCH, label: "Fetch personalization" },
+        { value: COLLECT, label: "Data collection with display notifications" }
+      ],
+      description:
+        "Select the event style. Fetch personalization events do not record events in Adobe Analytics and have the type decisioning.propositionFetch. Data collection events do not request personalization decisions."
+    }),
+    instancePicker({ name: "instanceName" }),
+    conditional(
+      {
+        args: "eventStyle",
+        condition: eventStyle => eventStyle === UNGUIDED
+      },
+      [
+        section({ label: "Data collection" }, [
+          eventTypeField,
+          xdmField,
+          dataField,
+          includePendingDisplayNotificationsField,
+          documentUnloadingField,
+          mergeIdField
+        ]),
+        section({ label: "Personalization" }, [
+          decisionScopesField,
+          surfacesField,
+          renderDecisionsField,
+          sendDisplayNotificationsField
+        ]),
+        configOverrideFields,
+        datasetIdField
+      ]
+    ),
+    conditional(
+      {
+        args: "eventStyle",
+        condition: eventStyle => eventStyle === FETCH
+      },
+      [
+        section({ label: "Data collection" }, [
+          fetchEventTypeField,
+          xdmField,
+          dataField
+        ]),
+        section({ label: "Personalization" }, [
+          decisionScopesField,
+          surfacesField,
+          renderDecisionsChecked,
+          sendNotificationsUnchecked
+        ]),
+        configOverrideFields
+      ]
+    ),
+    conditional(
+      {
+        args: "eventStyle",
+        condition: eventStyle => eventStyle === COLLECT
+      },
+      [
+        section({ label: "Data collection" }, [
+          eventTypeField,
+          xdmField,
+          dataField,
+          disabledIncludePendingDisplayNotificationsField
+        ]),
+        configOverrideFields
+      ]
+    )
+  ]
+);
 
 renderForm(sendEventForm);

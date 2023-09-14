@@ -10,18 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const defer = require("../../utils/defer");
 const clone = require("../../utils/clone");
-
-const showContainers = () => {
-  const prehidingNode = document.getElementById("alloy-prehiding");
-  if (prehidingNode) {
-    const parent = prehidingNode.parentNode;
-    if (parent) {
-      parent.removeChild(prehidingNode);
-    }
-  }
-};
 
 // TODO: support decisionScopes at top level
 

@@ -658,53 +658,53 @@ const createExtensionManifest = ({ version }) => {
         viewPath: "actions/applyResponse.html"
       },
       {
-        "displayName": "Apply propositions",
-        "name": "apply-propositions",
-        "schema": {
-          "$schema": "http://json-schema.org/draft-04/schema#",
-          "type": "object",
-          "properties": {
-            "instanceName": {
-              "type": "string",
-              "minLength": 1
+        displayName: "Apply propositions",
+        name: "apply-propositions",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            instanceName: {
+              type: "string",
+              minLength: 1
             },
-            "propositions": {
-              "type": "string",
-              "pattern": "^%[^%]+%$"
+            propositions: {
+              type: "string",
+              pattern: "^%[^%]+%$"
             },
-            "metadata": {
-              "anyOf": [
+            metadata: {
+              anyOf: [
                 {
-                  "type": "string",
-                  "pattern": "^%[^%]+%$"
+                  type: "string",
+                  pattern: "^%[^%]+%$"
                 },
                 {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object",
-                    "properties": {
-                      "selector": {
-                        "type": "string",
-                        "minLength": 1
+                  type: "object",
+                  additionalProperties: {
+                    type: "object",
+                    properties: {
+                      selector: {
+                        type: "string",
+                        minLength: 1
                       },
-                      "actionType": {
-                        "type": "string",
-                        "enum": ["setHtml", "replaceHtml", "appendHtml"]
+                      actionType: {
+                        type: "string",
+                        enum: ["setHtml", "replaceHtml", "appendHtml"]
                       }
                     },
-                    "required": ["selector", "actionType"]
+                    required: ["selector", "actionType"]
                   }
                 }
               ]
             },
-            "viewName": {
-              "type": "string",
-              "minLength": 1
+            viewName: {
+              type: "string",
+              minLength: 1
             }
           }
         },
-        "libPath": "dist/lib/actions/applyPropositions/index.js",
-        "viewPath": "actions/applyPropositions.html"
+        libPath: "dist/lib/actions/applyPropositions/index.js",
+        viewPath: "actions/applyPropositions.html"
       },
       {
         displayName: "Update variable",

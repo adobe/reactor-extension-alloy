@@ -30,7 +30,10 @@ import form from "./form";
  */
 export default function conditional({ args, condition }, children) {
   const argsArray = Array.isArray(args) ? args : [args];
-  const { getInitialValues, getSettings, validationShape, Component } = form({}, children);
+  const { getInitialValues, getSettings, validationShape, Component } = form(
+    {},
+    children
+  );
 
   return {
     // getInitialValues should run regardless of the condition so that the
@@ -44,22 +47,25 @@ export default function conditional({ args, condition }, children) {
       return getSettings({ values });
     },
     addToValidationShape(existingValidationShape) {
-      return Object.keys(validationShape).reduce((memo, key) => {
-        const existingValidation = memo[key];
-        if (existingValidation) {
-          memo[key] = mixed().when(args, {
-            is: condition,
-            then: () => validationShape[key],
-            otherwise: () => existingValidation
-          });
-        } else {
-          memo[key] = mixed().when(args, {
-            is: condition,
-            then: () => validationShape[key]
-          });
-        }
-        return memo;
-      }, { ...existingValidationShape });
+      return Object.keys(validationShape).reduce(
+        (memo, key) => {
+          const existingValidation = memo[key];
+          if (existingValidation) {
+            memo[key] = mixed().when(args, {
+              is: condition,
+              then: () => validationShape[key],
+              otherwise: () => existingValidation
+            });
+          } else {
+            memo[key] = mixed().when(args, {
+              is: condition,
+              then: () => validationShape[key]
+            });
+          }
+          return memo;
+        },
+        { ...existingValidationShape }
+      );
     },
     Component: props => {
       const conditionalArgValues = argsArray.map(arg => {

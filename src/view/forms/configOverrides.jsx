@@ -9,12 +9,14 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import React from "react";
 import { reach } from "yup";
+import PropTypes from "prop-types";
 import Overrides, { bridge as overridesBridge } from "../components/overrides";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
 
 export default function configOverrides() {
-  return {
+  const part = {
     getInitialValues({ initInfo }) {
       return overridesBridge.getInitialInstanceValues({
         instanceSettings: initInfo.settings || {}
@@ -45,4 +47,13 @@ export default function configOverrides() {
       );
     }
   };
+
+  part.Component.propTypes = {
+    initInfo: PropTypes.object.isRequired,
+    formikProps: PropTypes.shape({
+      values: PropTypes.object.isRequired
+    }).isRequired
+  };
+
+  return part;
 }

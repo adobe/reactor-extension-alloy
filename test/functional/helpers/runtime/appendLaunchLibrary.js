@@ -15,23 +15,17 @@ import getContainer from "@adobe/reactor-sandbox/src/tasks/helpers/getContainer"
 import appendScript from "./appendScript";
 
 export default container => {
-  console.log("applendLaunchLibrary1");
   // Write the container.js file here because getContainer requires the file
   const containerPath = path.join(
     __dirname,
     "../../../../.sandbox/container.js"
   );
-  console.log("applendLaunchLibrary2");
   const text = `module.exports = ${JSON.stringify(container, null, 2)};`;
-  console.log("applendLaunchLibrary3");
   fs.writeFileSync(containerPath, text);
-  console.log("applendLaunchLibrary4");
   const containerJS = getContainer();
 
-  console.log("applendLaunchLibrary5");
   const turbine = fs.readFileSync(
     require.resolve(`@adobe/reactor-turbine/dist/engine.js`)
   );
-  console.log("appending script");
   return appendScript(containerJS + turbine);
 };

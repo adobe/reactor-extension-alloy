@@ -21,7 +21,9 @@ const convertToWrappedFormPart = element => {
   }
   const parts =
     children &&
-    (Array.isArray(children) ? children : [children]).map(convertToWrappedFormPart);
+    (Array.isArray(children) ? children : [children]).map(
+      convertToWrappedFormPart
+    );
   const finalProps = { ...props, children: parts };
   return {
     ...type(finalProps),

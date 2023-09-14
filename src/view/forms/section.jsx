@@ -22,7 +22,10 @@ import form from "./form";
  * @returns {FormPart}
  */
 export default function section({ label, learnMoreUrl }, children = []) {
-  const { getInitialValues, getSettings, validationShape, Component } = form({}, children);
+  const { getInitialValues, getSettings, validationShape, Component } = form(
+    {},
+    children
+  );
 
   return {
     getInitialValues,

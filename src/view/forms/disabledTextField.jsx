@@ -19,9 +19,9 @@ export default function disabledTextField({
   name,
   value,
   valueLabel,
-  isRequired=false,
+  isRequired = false,
   label,
-  description=""
+  description = ""
 }) {
   const Component = ({ namePrefix = "" }) => {
     return (
