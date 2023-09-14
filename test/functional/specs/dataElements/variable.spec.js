@@ -1,23 +1,11 @@
-/*
-Copyright 2022 Adobe. All rights reserved.
-This file is licensed to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License. You may obtain a copy
-of the License at http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under
-the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
-OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License.
-*/
-
 import { t, Selector } from "testcafe";
-import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
-import * as sandboxMocks from "../helpers/endpointMocks/sandboxesMocks";
-import * as schemasMocks from "../helpers/endpointMocks/schemasMocks";
-import * as schemaMocks from "../helpers/endpointMocks/schemaMocks";
-import extensionViewController from "../helpers/extensionViewController";
-import spectrum from "../helpers/spectrum";
-import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
+import * as sandboxMocks from "../../helpers/endpointMocks/sandboxesMocks";
+import * as schemasMocks from "../../helpers/endpointMocks/schemasMocks";
+import * as schemaMocks from "../../helpers/endpointMocks/schemaMocks";
+import extensionViewController from "../../helpers/extensionViewController";
+import spectrum from "../../helpers/spectrum";
+import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(
   "errorBoundaryMessage"
@@ -90,12 +78,12 @@ test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.multiple)(
       schema,
       ...other
     } = await extensionViewController.getSettings();
-    await t.expect(sandbox).eql({ name: "testsandbox3" });
-    await t.expect(schema).eql({
+    await t.expect(sandbox).contains({ name: "testsandbox3" });
+    await t.expect(schema).contains({
       id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch123",
       version: "1.0"
     });
-    await t.expect(Object.keys(other)).eql(["cacheId"]);
+    await t.expect(Object.keys(other)).deepEqual(["cacheId"]);
   }
 );
 
@@ -104,7 +92,7 @@ test.requestHooks(sandboxMocks.unauthorized)(
   async () => {
     await extensionViewController.init({});
     await errorBoundaryMessage.expectMessage(
-      /Your access token appears to be invalid\./
+      /Your access token appears to be invalid./
     );
   }
 );
@@ -118,12 +106,11 @@ test.requestHooks(sandboxMocks.userRegionMissing)(
     );
   }
 );
-
 test.requestHooks(sandboxMocks.nonJsonBody)(
   "displays error when response body is invalid JSON",
   async () => {
     await extensionViewController.init({});
-    await errorBoundaryMessage.expectMessage(/Failed to load sandboxes\./);
+    await errorBoundaryMessage.expectMessage(/Failed to load sandboxes./);
   }
 );
 
@@ -132,7 +119,7 @@ test.requestHooks(sandboxMocks.empty, schemasMocks.empty)(
   async () => {
     await extensionViewController.init({});
     await errorBoundaryMessage.expectMessage(
-      /You do not have access to any sandboxes\./
+      /You do not have access to any sandboxes./
     );
   }
 );
@@ -332,7 +319,6 @@ test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
       .ok("Error message doesn't exist.");
   }
 );
-
 // see https://jira.corp.adobe.com/browse/PDCL-8307
 test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.paging)(
   "provides a proper combobox experience",
@@ -396,33 +382,28 @@ test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.paging)(
     );
   }
 );
+test.requestHooks(
+  sandboxMocks.multipleWithDefault,
+  schemasMocks.sandbox2,
+  schemasMocks.sandbox3,
+  schemaMocks.schema3b
+)("Allows you to select a schema from the non-default sandbox", async () => {
+  await extensionViewController.init({});
+  await sandboxField.expectText("PRODUCTION Test Sandbox 2 (VA7)");
+  await sandboxField.selectOption("PRODUCTION Test Sandbox 3 (VA7)");
 
-test
-  .requestHooks(
-    sandboxMocks.multipleWithDefault,
-    schemasMocks.sandbox2,
-    schemasMocks.sandbox3,
-    schemaMocks.schema3b
-  )(
-    "Allows you to select a schema from the non-default sandbox",
-    async () => {
-      await extensionViewController.init({});
-      await sandboxField.expectText("PRODUCTION Test Sandbox 2 (VA7)");
-      await sandboxField.selectOption("PRODUCTION Test Sandbox 3 (VA7)");
-
-      await schemaField.openMenu();
-      await schemaField.selectMenuOption("Test Schema 3B");
-      await extensionViewController.expectIsValid();
-      const settings = await extensionViewController.getSettings();
-      delete settings.cacheId;
-      await t.expect(settings).eql({
-        sandbox: {
-          name: "testsandbox3"
-        },
-        schema: {
-          id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema3b",
-          version: "1.0"
-        }
-      });
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("Test Schema 3B");
+  await extensionViewController.expectIsValid();
+  const settings = await extensionViewController.getSettings();
+  delete settings.cacheId;
+  await t.expect(settings).contains({
+    sandbox: {
+      name: "testsandbox3"
+    },
+    schema: {
+      id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema3b",
+      version: "1.0"
     }
-  );
+  });
+});

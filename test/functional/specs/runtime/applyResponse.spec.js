@@ -11,10 +11,10 @@ governing permissions and limitations under the License.
 */
 
 import { t, Selector } from "testcafe";
-import createNetworkLogger from "./helpers/createNetworkLogger";
-import addHtmlToBody from "./helpers/addHtmlToBody";
-import { TEST_PAGE } from "./helpers/constants/url";
-import appendLaunchLibrary from "./helpers/appendLaunchLibrary";
+import createNetworkLogger from "../../helpers/runtime/createNetworkLogger";
+import addHtmlToBody from "../../helpers/runtime/addHtmlToBody";
+import { TEST_PAGE } from "../../helpers/runtime/constants/url";
+import appendLaunchLibrary from "../../helpers/runtime/appendLaunchLibrary";
 
 const networkLogger = createNetworkLogger();
 

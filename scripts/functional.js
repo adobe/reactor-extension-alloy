@@ -40,7 +40,7 @@ const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClie
 
 const componentFixturePath = path.join(
   __dirname,
-  "../test/functional/components/helpers/fixture.html"
+  "../test/functional/helpers/components/fixture.html"
 );
 const componentFixtureOutputDir = path.join(
   __dirname,
@@ -130,8 +130,8 @@ const buildComponentFixtures = async () => {
       selectorTimeout: 50000,
       assertionTimeout: 7000,
       pageLoadTimeout: 8000,
-      speed: 0.01,
-      stopOnFirstFail: true
+      speed: 0.75,
+      stopOnFirstFail: false
     });
   testcafe.close();
   process.exit(failedCount ? 1 : 0);

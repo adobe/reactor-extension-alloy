@@ -10,15 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
-import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";
-import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
-import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
-import extensionViewController from "../helpers/extensionViewController";
-import overrideViewSelectors from "../helpers/overrideViewSelectors";
-import spectrum from "../helpers/spectrum";
-import testInstanceNameOptions from "../helpers/testInstanceNameOptions";
-import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
+import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks";
+import * as datastreamsMocks from "../../helpers/endpointMocks/datastreamsMocks";
+import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks";
+import extensionViewController from "../../helpers/extensionViewController";
+import overrideViewSelectors from "../../helpers/overrideViewSelectors";
+import spectrum from "../../helpers/spectrum";
+import testInstanceNameOptions from "../../helpers/testInstanceNameOptions";
+import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 
 const instanceNameField = spectrum.picker("instanceNamePicker");
 const typeField = spectrum.comboBox("typeField");
@@ -28,7 +28,9 @@ const mergeIdField = spectrum.textField("mergeIdTextField");
 const datasetIdField = spectrum.textField("datasetIdTextField");
 const documentUnloadingField = spectrum.checkbox("documentUnloadingCheckbox");
 const renderDecisionsField = spectrum.checkbox("renderDecisionsCheckbox");
-const scopeDataElementField = spectrum.textField("decisionScopesDataElementField");
+const scopeDataElementField = spectrum.textField(
+  "decisionScopesDataElementField"
+);
 const surfaceDataElementField = spectrum.textField("surfacesDataElementField");
 const scopesRadioGroup = {
   dataElement: spectrum.radio("decisionScopesDataElementOption"),

@@ -10,18 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { t } from "testcafe";
-import extensionViewController from "../helpers/extensionViewController";
-import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
+import extensionViewController from "../../helpers/extensionViewController";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 import {
   addInstanceButton,
   instancesTabs,
   resourceUsageDialog,
   instances
-} from "./helpers/viewSelectors";
-import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
-import * as sandboxesMocks from "../helpers/endpointMocks/sandboxesMocks";
-import * as datastreamsMocks from "../helpers/endpointMocks/datastreamsMocks";
-import * as datastreamMocks from "../helpers/endpointMocks/datastreamMocks";
+} from "../../helpers/viewSelectors";
+import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
+import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks";
+import * as datastreamsMocks from "../../helpers/endpointMocks/datastreamsMocks";
+import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks";
 
 createExtensionViewFixture({
   title: "Extension Configuration View",
@@ -56,7 +56,7 @@ test("initializes form fields with full settings", async () => {
           clickCollectionEnabled: false,
           targetMigrationEnabled: true,
           edgeConfigOverrides: {
-            production: {
+            development: {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
@@ -92,7 +92,7 @@ test("initializes form fields with full settings", async () => {
                 propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
               }
             },
-            development: {
+            production: {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {

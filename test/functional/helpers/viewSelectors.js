@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import spectrum from "../../helpers/spectrum";
-import overrideWrappers from "../../helpers/overrideViewSelectors";
+import spectrum from "./spectrum";
+import overrideWrappers from "./overrideViewSelectors";
 
 export const addInstanceButton = spectrum.button("addInstanceButton");
 export const instancesTabs = spectrum.tabs();

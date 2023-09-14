@@ -10,12 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { t, ClientFunction, Selector } from "testcafe";
-import createNetworkLogger from "./helpers/createNetworkLogger";
-import addHtmlToBody from "./helpers/addHtmlToBody";
-import { SECONDARY_TEST_PAGE, TEST_PAGE } from "./helpers/constants/url";
-import getReturnedEcid from "./helpers/getReturnedEcid";
-import appendLaunchLibrary from "./helpers/appendLaunchLibrary";
+import createNetworkLogger from "../../helpers/runtime/createNetworkLogger";
+import appendLaunchLibrary from "../../helpers/runtime/appendLaunchLibrary";
+import { TEST_PAGE } from "../../helpers/runtime/constants/url";
 
 const networkLogger = createNetworkLogger();
 
@@ -27,11 +24,29 @@ const container = {
         instances: [
           {
             name: "alloy",
-            edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:AditiTest",
-            thirdPartyCookiesEnabled: false
+            edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:AditiTest"
           }
         ]
       }
+    }
+  },
+  dataElements: {
+    "XDM Object 1": {
+      settings: {
+        cacheId: "47ec6bcf-a41a-4dde-8883-88c18a867d70",
+        sandbox: {
+          name: "prod"
+        },
+        schema: {
+          id:
+            "https://ns.adobe.com/unifiedjsqeonly/schemas/75bc29dc603dbb5c8ba7c9f5be97b852a48772ccc69d0921",
+          version: "1.1"
+        }
+      },
+      cleanText: false,
+      forceLowerCase: false,
+      modulePath: "adobe-alloy/dist/lib/dataElements/variable/index.js",
+      storageDuration: ""
     }
   },
   rules: [
@@ -46,28 +61,21 @@ const container = {
       ],
       actions: [
         {
+          modulePath: "adobe-alloy/dist/lib/actions/updateVariable/index.js",
+          settings: {
+            dataElementCacheId: "47ec6bcf-a41a-4dde-8883-88c18a867d70",
+            data: {
+              device: {
+                colorDepth: 42
+              }
+            }
+          }
+        },
+        {
           modulePath: "adobe-alloy/dist/lib/actions/sendEvent/index.js",
           settings: {
-            instanceName: "alloy"
-          }
-        }
-      ]
-    },
-    {
-      id: "RL1653692204047",
-      name: "Append identity to urls",
-      events: [
-        {
-          modulePath: "sandbox/click.js",
-          settings: {}
-        }
-      ],
-      actions: [
-        {
-          modulePath:
-            "adobe-alloy/dist/lib/actions/redirectWithIdentity/index.js",
-          settings: {
-            instanceName: "alloy"
+            instanceName: "alloy",
+            xdm: "%XDM Object 1%"
           }
         }
       ]
@@ -90,39 +98,25 @@ const container = {
   },
   buildInfo: {
     turbineVersion: "27.2.1",
-    turbineBuildDate: "2022-05-27T22:57:44.929Z",
-    buildDate: "2022-05-27T22:57:44.929Z",
+    turbineBuildDate: "2022-10-28T21:23:47.138Z",
+    buildDate: "2022-10-28T21:23:47.139Z",
     environment: "development"
   }
 };
 
-fixture("Redirect with identity")
+fixture("Update variable")
   .page(TEST_PAGE)
   .requestHooks([networkLogger.edgeEndpointLogs]);
 
-const getLocation = ClientFunction(() => document.location.href);
-
-test("Redirects with an identity", async () => {
+test("Updates a variable", async t => {
   await appendLaunchLibrary(container);
-
-  await addHtmlToBody(
-    `<a href="${SECONDARY_TEST_PAGE}"><div id="mylink">My link</div></a>`
-  );
+  await t.debug();
   // The requestLogger.count method uses TestCafe's smart query
   // assertion mechanism, so it will wait for the request to be
   // made or a timeout is reached.
   await t.expect(networkLogger.edgeEndpointLogs.count(() => true)).eql(1);
-  await t.click(Selector("#mylink"));
-  await t.expect(getLocation()).contains(SECONDARY_TEST_PAGE);
-  await appendLaunchLibrary(container);
-
-  // Events are: page load, link click, page load.
-  await t.expect(networkLogger.edgeEndpointLogs.count(() => true)).eql(3);
-  const pageLoad1Ecid = getReturnedEcid(
-    networkLogger.edgeEndpointLogs.requests[0]
+  const requestBody = JSON.parse(
+    networkLogger.edgeEndpointLogs.requests[0].request.body
   );
-  const pageLoad2Ecid = getReturnedEcid(
-    networkLogger.edgeEndpointLogs.requests[2]
-  );
-  await t.expect(pageLoad1Ecid).eql(pageLoad2Ecid);
+  await t.expect(requestBody.events[0].xdm.device.colorDepth).eql(42);
 });

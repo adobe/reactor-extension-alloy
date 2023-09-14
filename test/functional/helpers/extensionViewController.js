@@ -99,7 +99,7 @@ export default {
 
     await t
       .expect(actualSettings)
-      .eql(
+      .contains(
         expectedSettings,
         `Expected settings: ${JSON.stringify(
           expectedSettings

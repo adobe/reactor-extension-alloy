@@ -10,9 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import extensionViewController from "../helpers/extensionViewController";
-import createExtensionViewFixture from "../helpers/createExtensionViewFixture";
-import runCommonExtensionViewTests from "../runCommonExtensionViewTests";
+import extensionViewController from "../../helpers/extensionViewController";
+import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
+import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 
 const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
