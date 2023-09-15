@@ -137,11 +137,15 @@ export const bridge = {
 
     const trimmedInstanceSettings = trimValue(instanceSettings);
     if (
-      trimmedInstanceSettings?.development?.sandbox === "prod" &&
-      Object.keys(trimmedInstanceSettings || {}).length === 1 &&
-      Object.keys(trimmedInstanceSettings?.development || {}).length === 1
+      trimmedInstanceSettings?.edgeConfigOverrides?.development?.sandbox ===
+        "prod" &&
+      Object.keys(trimmedInstanceSettings?.edgeConfigOverrides || {}).length ===
+        1 &&
+      Object.keys(
+        trimmedInstanceSettings?.edgeConfigOverrides?.development || {}
+      ).length === 1
     ) {
-      return undefined;
+      delete trimmedInstanceSettings.edgeConfigOverrides;
     }
     return trimmedInstanceSettings;
   },

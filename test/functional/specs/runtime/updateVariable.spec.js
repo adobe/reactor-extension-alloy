@@ -24,7 +24,8 @@ const container = {
         instances: [
           {
             name: "alloy",
-            edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:AditiTest"
+            edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:AditiTest",
+            debugEnabled: true
           }
         ]
       }
@@ -110,7 +111,6 @@ fixture("Update variable")
 
 test("Updates a variable", async t => {
   await appendLaunchLibrary(container);
-  await t.debug();
   // The requestLogger.count method uses TestCafe's smart query
   // assertion mechanism, so it will wait for the request to be
   // made or a timeout is reached.

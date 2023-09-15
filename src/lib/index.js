@@ -19,4 +19,4 @@ exports.propositionCache = createPropositionCache({
 });
 exports.eventMergeIdCache = createEventMergeIdCache();
 exports.sendEventCallbackStorage = createSendEventCallbackStorage();
-exports.createVariableStore = createVariableStore();
+exports.variableStore = createVariableStore();

@@ -96,8 +96,8 @@ export default {
   },
   async expectSettings(expectedSettings) {
     const actualSettings = await getSettings();
-
-    await t
+    await t.expect(actualSettings).eql(expectedSettings);
+    /* await t
       .expect(actualSettings)
       .contains(
         expectedSettings,
@@ -105,5 +105,6 @@ export default {
           expectedSettings
         )} Actual settings: ${JSON.stringify(actualSettings)}`
       );
+    */
   }
 };
