@@ -12,9 +12,7 @@ governing permissions and limitations under the License.
 
 const createApplyPropositions = require("./createApplyPropositions");
 const instanceManager = require("../../instanceManager/index");
-const { propositionCache } = require("../../index");
 
 module.exports = createApplyPropositions({
-  instanceManager,
-  propositionCache
+  instanceManager
 });

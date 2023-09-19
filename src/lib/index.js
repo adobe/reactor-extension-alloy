@@ -9,14 +9,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createPropositionCache = require("./createPropositionCache");
 const createEventMergeIdCache = require("./createEventMergeIdCache");
 const createSendEventCallbackStorage = require("./createSendEventCallbackStorage");
 const createVariableStore = require("./createVariableStore");
 
-exports.propositionCache = createPropositionCache({
-  getPageLocation: () => window.location
-});
 exports.eventMergeIdCache = createEventMergeIdCache();
 exports.sendEventCallbackStorage = createSendEventCallbackStorage();
 exports.variableStore = createVariableStore();

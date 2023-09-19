@@ -433,9 +433,6 @@ const createExtensionManifest = ({ version }) => {
                     }
                   ]
                 },
-                renderDecisions: {
-                  type: "boolean"
-                },
                 sendDisplayNotifications: {
                   type: "boolean"
                 },

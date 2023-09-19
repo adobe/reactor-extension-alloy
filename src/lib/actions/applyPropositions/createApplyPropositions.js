@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager, propositionCache }) => settings => {
-  const { instanceName, propositions, metadata, scopes } = settings;
+module.exports = ({ instanceManager }) => settings => {
+  const { instanceName, ...options } = settings;
 
   const instance = instanceManager.getInstance(instanceName);
   if (!instance) {
@@ -20,15 +20,5 @@ module.exports = ({ instanceManager, propositionCache }) => settings => {
     );
   }
 
-  let propositionsToApply = propositions;
-  if (propositions === "all") {
-    propositionsToApply = propositionCache.getAllActivePropositions();
-  } else if (propositions === "scoped") {
-    propositionsToApply = propositionCache.getScopedActivePropositions(scopes);
-  }
-
-  return instance("applyPropositions", {
-    propositions: propositionsToApply,
-    metadata
-  });
+  return instance("applyPropositions", options);
 };
