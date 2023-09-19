@@ -12,8 +12,6 @@ governing permissions and limitations under the License.
 
 const clone = require("../../utils/clone");
 
-// TODO: support decisionScopes at top level
-
 module.exports = ({
   instanceManager,
   sendEventCallbackStorage,

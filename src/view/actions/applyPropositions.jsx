@@ -36,7 +36,7 @@ const applyPropositionsForm = form({}, [
       label: "Proposition metadata",
       singularLabel: "Scope",
       dataElementDescription:
-        "Provide a data element that resolves to an object with keys of the scopes, and values an object with keys: selector and actionType.",
+        "Provide a data element that resolves to an object scope keys, and object values with keys: selector and actionType.",
       objectKey: "scope",
       objectLabelPlural: "Scopes"
     },
