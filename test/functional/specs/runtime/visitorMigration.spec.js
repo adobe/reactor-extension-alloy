@@ -83,6 +83,8 @@ fixture("Visitor migration")
   .page(TEST_PAGE)
   .requestHooks([networkLogger.edgeEndpointLogs]);
 
+// The mock visitor extension is different enough that this test doesn't work,
+// but it does work in prod.
 test.skip("waits for Visitor to be initialized before running", async () => {
   await appendLaunchLibrary(container);
   // The requestLogger.count method uses TestCafe's smart query
