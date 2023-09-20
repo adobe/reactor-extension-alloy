@@ -70,7 +70,6 @@ export default function stringArray({
           )
       });
   }
-  console.log("validationSchema", validationSchema);
   if (validationSchema) {
     validationShape[name] = validationShape[name].when(`${name}InputMethod`, {
       is: FORM,

@@ -190,7 +190,6 @@ const surfacesField = stringArray({
     "is-surface",
     () => "Please provide a valid surface",
     (value, testContext) => {
-      console.log("Running test", value);
       const message = validateSurface(value);
       if (message) {
         return testContext.createError({ message });
