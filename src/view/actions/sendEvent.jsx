@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import { Link } from "@adobe/react-spectrum";
 
+import { string } from "yup";
 import checkbox from "../forms/checkbox";
 import comboBox from "../forms/comboBox";
 import instancePicker from "../forms/instancePicker";
@@ -29,6 +30,7 @@ import eventTypes from "./constants/eventTypes";
 
 import renderForm from "../forms/renderForm";
 import textField from "../forms/textField";
+import { validateSurface } from "../utils/surfaceUtils";
 
 const UNGUIDED = "unguided";
 const FETCH = "fetch";
@@ -183,7 +185,19 @@ const surfacesField = stringArray({
   singularLabel: "Surface",
   description: "Create an array of surfaces to query with the event.",
   dataElementDescription:
-    "This data element should resolve to an array of surfaces."
+    "This data element should resolve to an array of surfaces.",
+  validationSchema: string().test(
+    "is-surface",
+    () => "Please provide a valid surface",
+    (value, testContext) => {
+      console.log("Running test", value);
+      const message = validateSurface(value);
+      if (message) {
+        return testContext.createError({ message });
+      }
+      return true;
+    }
+  )
 });
 
 const renderDecisionsField = checkbox({

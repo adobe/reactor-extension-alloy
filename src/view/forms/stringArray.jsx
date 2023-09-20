@@ -1,3 +1,14 @@
+/*
+Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 import React from "react";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { array, string } from "yup";
@@ -41,11 +52,14 @@ export default function stringArray({
   label,
   singularLabel,
   description,
-  dataElementDescription
+  dataElementDescription,
+  validationSchema
 }) {
-  const validationShape = {};
+  const validationShape = {
+    [name]: array()
+  };
   if (isRequired) {
-    validationShape[name] = array()
+    validationShape[name] = validationShape[name]
       .compact()
       .when(`${name}InputMethod`, {
         is: FORM,
@@ -55,6 +69,13 @@ export default function stringArray({
             `Please provide at least one ${singularLabel.toLowerCase()}.`
           )
       });
+  }
+  console.log("validationSchema", validationSchema);
+  if (validationSchema) {
+    validationShape[name] = validationShape[name].when(`${name}InputMethod`, {
+      is: FORM,
+      then: schema => schema.of(validationSchema)
+    });
   }
   validationShape[`${name}DataElement`] = string().when(`${name}InputMethod`, {
     is: DATA_ELEMENT,
@@ -104,6 +125,7 @@ export default function stringArray({
         { setValue: setItems }
       ] = useField(`${namePrefix}${name}`);
 
+      const error = typeof itemsError === "string" ? itemsError : undefined;
       return (
         <>
           <FormikRadioGroup
@@ -145,9 +167,9 @@ export default function stringArray({
                                     : undefined
                                 }
                                 error={
-                                  index === items.length - 1 ? itemsError : ""
+                                  index === items.length - 1 ? error : undefined
                                 }
-                                invalid={itemsError && itemsTouched}
+                                invalid={error && itemsTouched}
                                 touched={itemsTouched}
                               />
                             </DataElementSelector>
