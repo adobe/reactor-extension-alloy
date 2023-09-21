@@ -15,6 +15,11 @@ import PropTypes from "prop-types";
 import Overrides, { bridge as overridesBridge } from "../components/overrides";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
 
+/** @typedef {import("./form").Form} Form */
+/**
+ * This creates a form field for edge config overrides.
+ * @returns {Form} A config overrides form.
+ */
 export default function configOverrides() {
   const part = {
     getInitialValues({ initInfo }) {

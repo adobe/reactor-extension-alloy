@@ -35,6 +35,11 @@ FormExtensionView.propTypes = {
   Component: PropTypes.func
 };
 
+/** @typedef {import("./form").Form} Form */
+/**
+ * Render a form
+ * @param {Form} form - The form to render.
+ */
 export default ({ validationShape, ...formPart }) => {
   formPart.validationSchema = object().shape(validationShape);
   render(() => <FormExtensionView {...formPart} />);

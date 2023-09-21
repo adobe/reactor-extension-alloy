@@ -17,14 +17,15 @@ import FormikTextField from "../components/formikReactSpectrum3/formikTextField"
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 
+/** @typedef {import("./form").Form} Form */
 /**
  * This creates a form field that is required to be a single data element.
- * @param {object} options
+ * @param {object} options - Options for the field.
  * @param {string} options.name - The formik key to use for this field.
- * @param {boolean} [options.isRequired=false] - Whether or not this field is required.
+ * @param {boolean} [options.isRequired] - Whether or not this field is required.
  * @param {string} options.label - The label to use for this field.
  * @param {string} [options.description] - The description to use for this field.
- * @returns {FormFragment}
+ * @returns {Form} A form field that is a single data element.
  */
 export default function dataElement({
   name,

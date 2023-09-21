@@ -13,13 +13,14 @@ import React from "react";
 import SectionHeader from "../components/sectionHeader";
 import form from "./form";
 
+/** @typedef {import("./form").Form} Form */
 /**
  * This creates a section header with a learn more url.
- * @param {object} options
+ * @param {object} options - Options for the section header.
  * @param {string} options.label - The heading to use for the field.
  * @param {string} [options.learnMoreUrl] - The url to use for the learn more link.
- * @param {Form[]} [children=[]] - The children forms to include in the section.
- * @returns {FormPart}
+ * @param {Form[]} [children] - The children forms to include in the section.
+ * @returns {Form} A section header form.
  */
 export default function section({ label, learnMoreUrl }, children = []) {
   const { getInitialValues, getSettings, validationShape, Component } = form(

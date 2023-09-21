@@ -13,15 +13,16 @@ import React from "react";
 import PropTypes from "prop-types";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 
+/** @typedef {import("./form").Form} Form */
 /**
  * This creates a form checkbox field.
- * @param {object} options
+ * @param {object} options - Options for the checkbox.
  * @param {string} options.name - The formik key to use for this field.
  * @param {string} options.label - The label to use for the field.
  * @param {string} options.description - The description to use for the field.
- * @param {boolean} [options.defaultValue=false] - The default value for the
+ * @param {boolean} [options.defaultValue] - The default value for the
  * checkbox.
- * @returns {FormPart}
+ * @returns {Form} A checkbox form.
  */
 export default function checkbox({
   name,

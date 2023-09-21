@@ -14,19 +14,19 @@ import { mixed } from "yup";
 import { useField } from "formik";
 import form from "./form";
 
+/** @typedef {import("./form").Form} Form */
 /**
  * This function is used to create a form that conditionally renders
  * other form based on a conditional function.
  * @param {object} options The options for the conditional form.
- * @param {array|string} options.args The name of the formik state field or fields
+ * @param {Array | string} options.args The name of the formik state field or fields
  * that will be passed to the conditional function as arguments.
- * @param {function} options.condition If this function returns true, the part's
+ * @param {Function} options.condition If this function returns true, the part's
  * Components will be rendered, the part's schema will be used, and the part's
  * settings will be returned.
  * @param  {Form[]} children The form fragments that will be used when
  * the conditional returns true.
- *
- * @returns {Form}
+ * @returns {Form} A form that conditionally renders other forms.
  */
 export default function conditional({ args, condition }, children) {
   const argsArray = Array.isArray(args) ? args : [args];

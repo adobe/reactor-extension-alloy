@@ -2,11 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import InstanceNamePicker from "../components/instanceNamePicker";
 
+/** @typedef {import("./form").Form} Form */
 /**
  * This creates a form field for an instance name picker.
- * @param {object} options
+ * @param {object} options - Options for the field.
  * @param {string} options.name - The formik key to use for this field.
- * @returns {Form}
+ * @returns {Form} A form field for an instance name picker.
  */
 export default function instancePicker({ name }) {
   const form = {

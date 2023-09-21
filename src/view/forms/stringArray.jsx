@@ -24,11 +24,12 @@ import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
 
+/** @typedef {import("./form").Form} Form */
 /**
  * This creates a form that just supports an array of strings. Any fields not
  * filled in will be removed from the array. Each item in the array can be a
  * data element or the entire array can be a data element.
- * @param {object} options
+ * @param {object} options - Options for the field.
  * @param {string} options.name - The formik key to use for this field.
  * - `${key}` will be used to store the array of strings.
  * - `${key}InputMethod` will be used to determine whether or not to use a data
@@ -42,9 +43,11 @@ const DATA_ELEMENT = "dataElement";
  * @param {string} [options.dataElementDescription] - The description to use for
  * the data element field. Usually you would use this to describe the type the
  * data element should be.
- * @param {boolean} [options.isRequired=false] - Whether or not the field is
+ * @param {boolean} [options.isRequired] - Whether or not the field is
  * required. When required, the user will need to enter at least one string.
- * @returns {Form}
+ * @param options.validationSchema - A yup validation schema to use for each
+ * string in the array.
+ * @returns {Form} A form field for an array of strings.
  */
 export default function stringArray({
   name,

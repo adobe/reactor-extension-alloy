@@ -18,13 +18,14 @@ import DataElementSelector from "../components/dataElementSelector";
 import FormikKeyedComboBox from "../components/formikReactSpectrum3/formikKeyedComboBox";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 
+/** @typedef {import("./form").Form} Form */
 /**
  * Form builder for a combo box. Use this when you have a static list of items.
- * @param {object} options
+ * @param {object} options - Options for the combo box.
  * @param {string} options.name - The formik key for the field.
- * @param {boolean} [options.isRequired=false] - If true, an asterisk is added
+ * @param {boolean} [options.isRequired] - If true, an asterisk is added
  * to the label, and the schema is updated to require the field.
- * @param {boolean} [options.dataElementSupported=true] - If true, the field
+ * @param {boolean} [options.dataElementSupported] - If true, the field
  * will support data elements.
  * @param {string} options.label - The label for the field.
  * @param {string} [options.description] - The description text to put under the
@@ -32,9 +33,12 @@ import singleDataElementRegex from "../constants/singleDataElementRegex";
  * @param {string} [options.dataElementDescription] - The description text to
  * put under the combo box when a data element is chosen. This is useful to tell
  * what the data element should resolve to.
- * @param {array} options.items - An array of objects with keys "value" and
+ * @param {{ value: string, label: string }[]} options.items - An array of objects with keys "value" and
  * "label". The "value" is the value that will be saved to the settings, and the
  * "label" is the text that will be shown in the combo box.
+ * @param {boolean} options.allowsCustomValue - If true, the user can type in
+ * a custom value that will be saved to the settings.
+ * @returns {Form} A combo box form.
  */
 export default function comboBox({
   name,

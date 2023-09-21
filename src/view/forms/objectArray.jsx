@@ -24,11 +24,12 @@ import form from "./form";
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
 
+/** @typedef {import("./form").Form} Form */
 /**
  * This creates a form element that allows the user to create an array of
  * objects, or an object with string keys and object values. Any items with no
  * values filled in will be removed from the final settings.
- * @param {object} options
+ * @param {object} options - Options for the field.
  * @param {string} options.name - The formik key to use for this field.
  *  - `${key}` will be used to store the array of objects.
  *  - `${key}InputMethod` will be used to determine whether or not to use a data
@@ -49,7 +50,8 @@ const DATA_ELEMENT = "dataElement";
  * @param {Form[]} children - The Form parts to use for the object. These will
  * be used to create the form for each object in the array. When rendering the
  * components, the `prefixName` prop will be set to `${name}.${index}.`
- * @returns {Form}
+ * @returns {Form} A form element that allows the user to create an array of
+ * objects, or an object with string keys and object values.
  */
 export default function objectArray(
   {
