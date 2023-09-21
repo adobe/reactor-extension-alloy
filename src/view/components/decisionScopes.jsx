@@ -77,7 +77,8 @@ export const bridge = {
   formikStateValidationSchema: object().shape({
     decisionScopesDataElement: string().when("decisionsInputMethod", {
       is: DATA_ELEMENT,
-      then: string().matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+      then: schema =>
+        schema.matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
     })
   })
 };
@@ -150,7 +151,6 @@ const DecisionScopes = () => {
                     <Button
                       variant="secondary"
                       data-test-id="addDecisionScopeButton"
-                      marginTop="size-100"
                       onPress={() => {
                         arrayHelpers.push("");
                       }}

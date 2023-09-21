@@ -376,6 +376,9 @@ const createExtensionManifest = ({ version }) => {
           $schema: "http://json-schema.org/draft-04/schema#",
           type: "object",
           properties: {
+            eventStyle: {
+              type: "string"
+            },
             instanceName: {
               type: "string",
               minLength: 1
@@ -429,6 +432,12 @@ const createExtensionManifest = ({ version }) => {
                       pattern: "^%[^%]+%$"
                     }
                   ]
+                },
+                sendDisplayNotifications: {
+                  type: "boolean"
+                },
+                includePendingDisplayNotifications: {
+                  type: "boolean"
                 }
               },
               additionalProperties: false
@@ -461,7 +470,13 @@ const createExtensionManifest = ({ version }) => {
           required: ["instanceName"],
           additionalProperties: false
         },
-        transforms: [...actionEdgeConfigOverridesTransforms],
+        transforms: [
+          {
+            type: "remove",
+            propertyPath: "eventStyle"
+          },
+          ...actionEdgeConfigOverridesTransforms
+        ],
         libPath: "dist/lib/actions/sendEvent/index.js",
         viewPath: "actions/sendEvent.html"
       },
@@ -638,6 +653,55 @@ const createExtensionManifest = ({ version }) => {
         },
         libPath: "dist/lib/actions/applyResponse/index.js",
         viewPath: "actions/applyResponse.html"
+      },
+      {
+        displayName: "Apply propositions",
+        name: "apply-propositions",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            instanceName: {
+              type: "string",
+              minLength: 1
+            },
+            propositions: {
+              type: "string",
+              pattern: "^%[^%]+%$"
+            },
+            metadata: {
+              anyOf: [
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$"
+                },
+                {
+                  type: "object",
+                  additionalProperties: {
+                    type: "object",
+                    properties: {
+                      selector: {
+                        type: "string",
+                        minLength: 1
+                      },
+                      actionType: {
+                        type: "string",
+                        enum: ["setHtml", "replaceHtml", "appendHtml"]
+                      }
+                    },
+                    required: ["selector", "actionType"]
+                  }
+                }
+              ]
+            },
+            viewName: {
+              type: "string",
+              minLength: 1
+            }
+          }
+        },
+        libPath: "dist/lib/actions/applyPropositions/index.js",
+        viewPath: "actions/applyPropositions.html"
       },
       {
         displayName: "Update variable",

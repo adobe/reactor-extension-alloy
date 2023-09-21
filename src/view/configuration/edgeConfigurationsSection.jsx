@@ -526,18 +526,20 @@ export const bridge = {
     .shape({
       edgeConfigSelectInputMethod: object().when("edgeConfigInputMethod", {
         is: INPUT_METHOD.SELECT,
-        then: object().shape({
-          productionEnvironment: object().shape({
-            datastreamId: string().required("Please specify a datastream."),
-            sandbox: string().required("Please specify a sandbox.")
+        then: schema =>
+          schema.shape({
+            productionEnvironment: object().shape({
+              datastreamId: string().required("Please specify a datastream."),
+              sandbox: string().required("Please specify a sandbox.")
+            })
           })
-        })
       }),
       edgeConfigFreeformInputMethod: object().when("edgeConfigInputMethod", {
         is: INPUT_METHOD.FREEFORM,
-        then: object().shape({
-          edgeConfigId: string().required("Please specify a datastream.")
-        })
+        then: schema =>
+          schema.shape({
+            edgeConfigId: string().required("Please specify a datastream.")
+          })
       })
     })
     // TestCafe doesn't allow this to be an arrow function because of

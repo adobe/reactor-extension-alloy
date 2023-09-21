@@ -20,40 +20,42 @@ import spectrum from "../../helpers/spectrum";
 import testInstanceNameOptions from "../../helpers/testInstanceNameOptions";
 import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 
-const instanceNameField = spectrum.picker("instanceNameField");
+const instanceNameField = spectrum.picker("instanceNamePicker");
 const typeField = spectrum.comboBox("typeField");
-const xdmField = spectrum.textField("xdmField");
-const dataField = spectrum.textField("dataField");
-const mergeIdField = spectrum.textField("mergeIdField");
-const datasetIdField = spectrum.textField("datasetIdField");
-const documentUnloadingField = spectrum.checkbox("documentUnloadingField");
-const renderDecisionsField = spectrum.checkbox("renderDecisionsField");
-const scopeDataElementField = spectrum.textField("scopeDataElementField");
-const surfaceDataElementField = spectrum.textField("surfaceDataElementField");
+const xdmField = spectrum.textField("xdmTextField");
+const dataField = spectrum.textField("dataTextField");
+const mergeIdField = spectrum.textField("mergeIdTextField");
+const datasetIdField = spectrum.textField("datasetIdTextField");
+const documentUnloadingField = spectrum.checkbox("documentUnloadingCheckbox");
+const renderDecisionsField = spectrum.checkbox("renderDecisionsCheckbox");
+const scopeDataElementField = spectrum.textField(
+  "decisionScopesDataElementField"
+);
+const surfaceDataElementField = spectrum.textField("surfacesDataElementField");
 const scopesRadioGroup = {
-  dataElement: spectrum.radio("scopeDataElementOptionField"),
-  values: spectrum.radio("scopeConstantOptionField")
+  dataElement: spectrum.radio("decisionScopesDataElementOption"),
+  values: spectrum.radio("decisionScopesFormOption")
 };
 const surfacesRadioGroup = {
-  dataElement: spectrum.radio("surfaceDataElementOptionField"),
-  values: spectrum.radio("surfaceConstantOptionField")
+  dataElement: spectrum.radio("surfacesDataElementOption"),
+  values: spectrum.radio("surfacesFormOption")
 };
-const addDecisionScopeButton = spectrum.button("addDecisionScopeButton");
-const addSurfaceButton = spectrum.button("addSurfaceButton");
+const addDecisionScopeButton = spectrum.button("decisionScopesAddButton");
+const addSurfaceButton = spectrum.button("surfacesAddButton");
 const scopeArrayValues = [];
 const surfaceArrayValues = [];
 
 for (let i = 0; i < 3; i += 1) {
   scopeArrayValues.push({
-    value: spectrum.textField(`scope${i}Field`),
-    deleteButton: spectrum.button(`deleteScope${i}Button`)
+    value: spectrum.textField(`decisionScopes${i}Field`),
+    deleteButton: spectrum.button(`decisionScopes${i}RemoveButton`)
   });
 }
 
 for (let i = 0; i < 3; i += 1) {
   surfaceArrayValues.push({
-    value: spectrum.textField(`surface${i}Field`),
-    deleteButton: spectrum.button(`deleteSurface${i}Button`)
+    value: spectrum.textField(`surfaces${i}Field`),
+    deleteButton: spectrum.button(`surfaces${i}RemoveButton`)
   });
 }
 

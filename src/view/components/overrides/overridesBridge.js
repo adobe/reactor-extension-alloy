@@ -135,7 +135,19 @@ export const bridge = {
       }
     });
 
-    return trimValue(instanceSettings);
+    const trimmedInstanceSettings = trimValue(instanceSettings);
+    if (
+      trimmedInstanceSettings?.edgeConfigOverrides?.development?.sandbox ===
+        "prod" &&
+      Object.keys(trimmedInstanceSettings?.edgeConfigOverrides || {}).length ===
+        1 &&
+      Object.keys(
+        trimmedInstanceSettings?.edgeConfigOverrides?.development || {}
+      ).length === 1
+    ) {
+      delete trimmedInstanceSettings.edgeConfigOverrides;
+    }
+    return trimmedInstanceSettings;
   },
   formikStateValidationSchema: object({
     edgeConfigOverrides: object(

@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const sendEventCallbackStorage = require("../../sendEventCallbackStorage");
+const { sendEventCallbackStorage } = require("../../index");
 const createDecisionsReceived = require("./createDecisionsReceived");
 
 module.exports = createDecisionsReceived({

@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 const createEventMergeId = require("./createEventMergeId");
 const instanceManager = require("../../instanceManager/index");
-const eventMergeIdCache = require("../../eventMergeIdCache");
+const { eventMergeIdCache } = require("../../index");
 
 module.exports = createEventMergeId({
   instanceManager,

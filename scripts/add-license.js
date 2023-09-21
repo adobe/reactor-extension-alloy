@@ -128,6 +128,7 @@ const run = async () => {
   const alteredFileCount = filesInspected.filter(Boolean).length;
 
   const runTime = performance.now() - startTime;
+  // eslint-disable-next-line no-console
   console.log(
     `✨ Added license to ${alteredFileCount} of ${filesInspected.length} ${
       stagedOnly ? "staged " : ""

@@ -23,9 +23,10 @@ import FieldSubset from "../fieldSubset";
 export const createRadioGroupWithDataElementValidationSchema = name => {
   return string().when([`${name}DataElement`], {
     is: ({ isDataElement } = {}) => isDataElement,
-    then: string()
-      .required(DATA_ELEMENT_REQUIRED)
-      .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+    then: schema =>
+      schema
+        .required(DATA_ELEMENT_REQUIRED)
+        .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
   });
 };
 

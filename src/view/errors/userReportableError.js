@@ -26,6 +26,7 @@ class UserReportableError extends Error {
         React.Fragment,
         null,
         message,
+        " ",
         originatingError.message
       );
       additionalInfoUrl =
@@ -35,7 +36,7 @@ class UserReportableError extends Error {
     super(newMessage);
     this.originatingError = originatingError;
     this.name = "UserReportableError";
-    this.message = message;
+    this.message = newMessage;
     this.additionalInfoUrl = additionalInfoUrl;
   }
 }

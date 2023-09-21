@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 const createApplyResponse = require("./createApplyResponse");
 const instanceManager = require("../../instanceManager/index");
-const sendEventCallbackStorage = require("../../sendEventCallbackStorage");
+const { sendEventCallbackStorage } = require("../../index");
 
 module.exports = createApplyResponse({
   instanceManager,

@@ -83,7 +83,7 @@ test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.multiple)(
       id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch123",
       version: "1.0"
     });
-    await t.expect(Object.keys(other)).deepEqual(["cacheId"]);
+    await t.expect(Object.keys(other)).eql(["cacheId"]);
   }
 );
 
@@ -397,7 +397,7 @@ test.requestHooks(
   await extensionViewController.expectIsValid();
   const settings = await extensionViewController.getSettings();
   delete settings.cacheId;
-  await t.expect(settings).contains({
+  await t.expect(settings).eql({
     sandbox: {
       name: "testsandbox3"
     },

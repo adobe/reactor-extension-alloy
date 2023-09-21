@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { t } from "testcafe";
 import createNetworkLogger from "../../helpers/runtime/createNetworkLogger";
 import appendLaunchLibrary from "../../helpers/runtime/appendLaunchLibrary";
 import { TEST_PAGE } from "../../helpers/runtime/constants/url";
@@ -25,7 +24,8 @@ const container = {
         instances: [
           {
             name: "alloy",
-            edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:AditiTest"
+            edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:AditiTest",
+            debugEnabled: true
           }
         ]
       }
@@ -109,7 +109,7 @@ fixture("Update variable")
   .page(TEST_PAGE)
   .requestHooks([networkLogger.edgeEndpointLogs]);
 
-test("Updates a variable", async () => {
+test("Updates a variable", async t => {
   await appendLaunchLibrary(container);
   // The requestLogger.count method uses TestCafe's smart query
   // assertion mechanism, so it will wait for the request to be
