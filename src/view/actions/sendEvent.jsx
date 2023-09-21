@@ -144,7 +144,7 @@ const includePendingDisplayNotificationsField = checkbox({
   name: "includePendingDisplayNotifications",
   label: "Include pending display notifications",
   description:
-    "Check this to include pending display notifications in the response. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
+    "Check this to include pending display notifications in the response. Use this on a bottom of page event to include the display notifications that were not automatically sent from the top of page event. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
   defaultValue: false
 });
 
@@ -152,7 +152,7 @@ const disabledIncludePendingDisplayNotificationsField = disabledCheckbox({
   name: "includePendingDisplayNotifications",
   label: "Include pending display notifications",
   description:
-    "Check this to include pending display notifications in the response. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
+    "Check this to include pending display notifications in the response. Use this on a bottom of page event to include the display notifications that were not automatically sent from the top of page event. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
   value: true
 });
 
@@ -167,7 +167,7 @@ const mergeIdField = dataElement({
   name: "mergeId",
   label: "Merge ID (Deprecated)",
   description:
-    "Provide an identifier used to merge multiple events. This will populate the `eventMergeId` XDM field. This field has been deprecated until it is supported by Adobe Experience Platform."
+    "Provide an identifier used to merge multiple events. This will populate the `eventMergeId` XDM field. This field has been deprecated because it is not supported by Adobe Experience Platform."
 });
 
 const decisionScopesField = stringArray({
@@ -223,7 +223,7 @@ const sendDisplayNotificationsField = conditional(
       name: "sendDisplayNotifications",
       label: "Automatically send a display notification",
       description:
-        "Check this to automatically send a display notification. (Note when automatically sending a display notification, you cannot set the proposition metadata.)",
+        "Check this to automatically send an extra experience event containing display notifications after personalization is rendered. Uncheck this so that you can include the display notifications in a subsequent event.",
       defaultValue: true
     })
   ]
@@ -233,7 +233,7 @@ const sendNotificationsUnchecked = disabledCheckbox({
   name: "sendDisplayNotifications",
   label: "Automatically send a display notification",
   description:
-    "Check this to automatically send a display notification. (Note when automatically sending a display notification, you cannot set the proposition metadata.)",
+    "Check this to automatically send an extra experience event containing display notifications after personalization is rendered. Uncheck this so that you can include the display notifications in a subsequent event.",
   value: false
 });
 
@@ -242,7 +242,7 @@ const datasetIdField = textField({
   name: "datasetId",
   label: "Dataset ID (deprecated)",
   description:
-    "Send data to a different dataset than what's been provided in the datastream. Note: this option is deprecated. Use 'Event dataset' instead."
+    "Send data to a different dataset than what's been provided in the datastream. Note: this field is deprecated. Use the 'Event dataset' field instead."
 });
 
 const sendEventForm = form(
@@ -251,27 +251,30 @@ const sendEventForm = form(
     wrapGetSettings
   },
   [
+    instancePicker({ name: "instanceName" }),
     radioGroup({
       name: "eventStyle",
       label: "Guided event style",
       dataElementSupported: false,
       defaultValue: UNGUIDED,
       items: [
-        { value: UNGUIDED, label: "Unguided (all fields)" },
-        { value: FETCH, label: "Fetch personalization" },
-        { value: COLLECT, label: "Data collection with display notifications" }
+        {
+          value: FETCH,
+          label: "Top of page event - request personalization decisions."
+        },
+        { value: COLLECT, label: "Bottom of page event - collect analytics." },
+        { value: UNGUIDED, label: "Unguided - show all fields." }
       ],
       description:
-        "Select the event style. Fetch personalization events do not record events in Adobe Analytics and have the type decisioning.propositionFetch. Data collection events do not request personalization decisions."
+        "Event styles automatically fill in or hide certain fields below. Top of page events fetch personalization decisions and do not record events in Adobe Analytics and have the type decisioning.propositionFetch. Bottom of page events record events and do not request personalization decisions. The unguided event style shows all fields."
     }),
-    instancePicker({ name: "instanceName" }),
     conditional(
       {
         args: "eventStyle",
         condition: eventStyle => eventStyle === UNGUIDED
       },
       [
-        section({ label: "Data collection" }, [
+        section({ label: "Data" }, [
           eventTypeField,
           xdmField,
           dataField,
@@ -295,11 +298,7 @@ const sendEventForm = form(
         condition: eventStyle => eventStyle === FETCH
       },
       [
-        section({ label: "Data collection" }, [
-          fetchEventTypeField,
-          xdmField,
-          dataField
-        ]),
+        section({ label: "Data" }, [fetchEventTypeField, xdmField, dataField]),
         section({ label: "Personalization" }, [
           decisionScopesField,
           surfacesField,
@@ -315,7 +314,7 @@ const sendEventForm = form(
         condition: eventStyle => eventStyle === COLLECT
       },
       [
-        section({ label: "Data collection" }, [
+        section({ label: "Data" }, [
           eventTypeField,
           xdmField,
           dataField,

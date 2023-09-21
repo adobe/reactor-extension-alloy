@@ -28,6 +28,7 @@ import FieldSubset from "../components/fieldSubset";
  * data element could resolve to.
  * @param {array} options.items - The items to use for the radio group. These
  * should be objects with keys "value" and "label".
+ * @param {string} [options.description] - The description to use for the radio group.
  * @returns {Form}
  */
 export default function radioGroup({
@@ -37,7 +38,8 @@ export default function radioGroup({
   label,
   dataElementDescription,
   items,
-  defaultValue = ""
+  defaultValue = "",
+  description
 }) {
   const validationShape = {};
   if (isRequired) {
@@ -86,6 +88,7 @@ export default function radioGroup({
             label={label}
             isRequired={isRequired}
             width="size-5000"
+            description={description}
           >
             <>
               {items.map(item => (
