@@ -14,7 +14,11 @@ module.exports = {
     "no-var": "off",
     "func-names": "off",
     "import/no-default-export": 2,
-    "import/no-named-export": 2
+    "import/no-named-export": 2,
+    "no-underscore-dangle": [
+      "error",
+      { allow: ["__alloyNS", "__alloyMonitors"] }
+    ]
   },
   globals: {
     turbine: "readonly"
