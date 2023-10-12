@@ -32,6 +32,10 @@ module.exports = ({
     }) => {
       const instance = createInstance({ name });
       window[name] = instance;
+      if (!window.__alloyNS) {
+        window.__alloyNS = [];
+      }
+      window.__alloyNS.push(name);
       instanceByName[name] = instance;
       const environment = turbine.environment && turbine.environment.stage;
 

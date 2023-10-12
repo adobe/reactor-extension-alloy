@@ -79,7 +79,11 @@ describe("Instance Manager", () => {
 
   it("creates SDK instances", () => {
     build();
-    expect(mockWindow).toEqual({ alloy1, alloy2 });
+    expect(mockWindow).toEqual({
+      alloy1,
+      alloy2,
+      __alloyNS: ["alloy1", "alloy2"]
+    });
   });
 
   it("configures an SDK instance for each configured instance", () => {
