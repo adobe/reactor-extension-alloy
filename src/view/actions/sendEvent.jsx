@@ -20,11 +20,12 @@ import form from "../forms/form";
 import radioGroup from "../forms/radioGroup";
 import section from "../forms/section";
 import dataElement from "../forms/dataElement";
-import stringArray from "../forms/stringArray";
+import fieldArray from "../forms/fieldArray";
 import disabledTextField from "../forms/disabledTextField";
 import conditional from "../forms/conditional";
 import disabledCheckbox from "../forms/disabledCheckbox";
 import configOverrides from "../forms/configOverrides";
+import simpleMap from "../forms/simpleMap";
 
 import eventTypes from "./constants/eventTypes";
 
@@ -170,7 +171,7 @@ const mergeIdField = dataElement({
     "Provide an identifier used to merge multiple events. This will populate the `eventMergeId` XDM field. This field has been deprecated because it is not supported by Adobe Experience Platform."
 });
 
-const decisionScopesField = stringArray({
+const decisionScopesField = fieldArray({
   name: "decisionScopes",
   label: "Scopes",
   singularLabel: "Scope",
@@ -179,7 +180,7 @@ const decisionScopesField = stringArray({
     "This data element should resolve to an array of scopes."
 });
 
-const surfacesField = stringArray({
+const surfacesField = fieldArray({
   name: "surfaces",
   label: "Surfaces",
   singularLabel: "Surface",
@@ -211,6 +212,19 @@ const renderDecisionsChecked = disabledCheckbox({
   label: "Render visual personalization decisions",
   description: "Check this to render visual personalization decisions.",
   value: true
+});
+
+const decisionContext = simpleMap({
+  name: "decisionContext",
+  label: "Decision context",
+  singularLabel: "Context item",
+  dataElementDescription:
+    "Provide a data element that resolves to a map of strings",
+  keyLabel: "Key",
+  keyLabelPlural: "Keys",
+  keyDescription: "Enter the context key",
+  valueLabel: "Value",
+  valueDescription: "Enter the context value"
 });
 
 const sendDisplayNotificationsField = conditional(
@@ -286,7 +300,8 @@ const sendEventForm = form(
           decisionScopesField,
           surfacesField,
           renderDecisionsField,
-          sendDisplayNotificationsField
+          sendDisplayNotificationsField,
+          decisionContext
         ]),
         configOverrideFields,
         datasetIdField
@@ -303,7 +318,8 @@ const sendEventForm = form(
           decisionScopesField,
           surfacesField,
           renderDecisionsChecked,
-          sendNotificationsUnchecked
+          sendNotificationsUnchecked,
+          decisionContext
         ]),
         configOverrideFields
       ]

@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 /**
- * @typedef {Object} ExtensionManifest
+ * @typedef {object} ExtensionManifest
  * https://experienceleague.adobe.com/docs/experience-platform/tags/extension-dev/manifest.html?lang=en
  * @property {string} displayName
  * @property {string} name
@@ -23,11 +23,10 @@ governing permissions and limitations under the License.
  * @property {string} author.name
  * @property {string} viewBasePath
  * @property {string} main
- * @property {Object} configuration
- * @property {Object[]} actions
- * @property {Object[]} events
- * @property {Object[]} dataElements
- *
+ * @property {object} configuration
+ * @property {object[]} actions
+ * @property {object[]} events
+ * @property {object[]} dataElements
  * @typedef {Pick<ExtensionManifest, "version">} ExtensionManifestConfiguration
  */
 
@@ -36,7 +35,7 @@ governing permissions and limitations under the License.
  * configuration.
  * Works for both actions and extension configuration
  * @param {boolean} isAction
- * @returns {Object}
+ * @returns {object}
  */
 const createEdgeConfigOverridesSchema = isAction => {
   const configOverridesProps = {
@@ -181,7 +180,6 @@ const createEdgeConfigOverridesTransforms = isAction => {
 
 /**
  * Create the contents of the extension.json aka the extension definition.
- *
  * @param {ExtensionManifestConfiguration} options
  * @returns {ExtensionManifest}
  */
@@ -762,6 +760,37 @@ const createExtensionManifest = ({ version }) => {
         ],
         libPath: "dist/lib/actions/updateVariable/index.js",
         viewPath: "actions/updateVariable.html"
+      },
+      {
+        displayName: "Evaluate rulesets",
+        name: "evaluate-rulesets",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          instanceName: {
+            type: "string",
+            minLength: 1
+          },
+          renderDecisions: {
+            type: "boolean"
+          },
+          decisionContext: {
+            anyOf: [
+              {
+                type: "string",
+                pattern: "^%[^%]+%$"
+              },
+              {
+                type: "object",
+                additionalProperties: {
+                  type: "string"
+                }
+              }
+            ]
+          }
+        },
+        libPath: "dist/lib/actions/evaluateRulesets/index.js",
+        viewPath: "actions/evaluateRulesets.html"
       }
     ],
     events: [
@@ -776,6 +805,52 @@ const createExtensionManifest = ({ version }) => {
         displayName: "Send event complete",
         libPath: "dist/lib/events/sendEventComplete/index.js",
         schema: {}
+      },
+      {
+        name: "subscribe-ruleset-items",
+        displayName: "Subscribe ruleset items",
+        libPath: "dist/lib/events/subscribeRulesetItems/index.js",
+        viewPath: "events/subscribeRulesetItems.html",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          instanceName: {
+            type: "string",
+            minLength: 1
+          },
+          surfaces: {
+            anyOf: [
+              {
+                type: "array",
+                minItems: 1,
+                items: {
+                  type: "string",
+                  minLength: 1
+                }
+              },
+              {
+                type: "string",
+                pattern: "^%[^%]+%$"
+              }
+            ]
+          },
+          schemas: {
+            anyOf: [
+              {
+                type: "array",
+                minItems: 1,
+                items: {
+                  type: "string",
+                  minLength: 1
+                }
+              },
+              {
+                type: "string",
+                pattern: "^%[^%]+%$"
+              }
+            ]
+          }
+        }
       }
     ],
     dataElements: [
