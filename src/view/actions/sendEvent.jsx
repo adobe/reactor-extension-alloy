@@ -78,15 +78,15 @@ const wrapGetSettings = getSettings => ({ values }) => {
   const {
     decisionScopes,
     surfaces,
-    sendDisplayNotifications,
-    includePendingDisplayNotifications,
+    sendDisplayEvent,
+    includeRenderedPropositions,
     ...settings
   } = getSettings({ values });
   if (
     decisionScopes ||
     surfaces ||
-    sendDisplayNotifications === false ||
-    includePendingDisplayNotifications
+    sendDisplayEvent === false ||
+    includeRenderedPropositions
   ) {
     settings.personalization = {};
   }
@@ -96,11 +96,11 @@ const wrapGetSettings = getSettings => ({ values }) => {
   if (surfaces) {
     settings.personalization.surfaces = surfaces;
   }
-  if (sendDisplayNotifications === false) {
-    settings.personalization.sendDisplayNotifications = sendDisplayNotifications;
+  if (sendDisplayEvent === false) {
+    settings.personalization.sendDisplayEvent = sendDisplayEvent;
   }
-  if (includePendingDisplayNotifications) {
-    settings.personalization.includePendingDisplayNotifications = includePendingDisplayNotifications;
+  if (includeRenderedPropositions) {
+    settings.personalization.includeRenderedPropositions = includeRenderedPropositions;
   }
   return settings;
 };
@@ -140,19 +140,19 @@ const dataField = dataElement({
   description: "Provide a data element which returns an object to send as data."
 });
 
-const includePendingDisplayNotificationsField = checkbox({
-  name: "includePendingDisplayNotifications",
-  label: "Include pending display notifications",
+const includeRenderedPropositionsField = checkbox({
+  name: "includeRenderedPropositions",
+  label: "Include rendered propositions",
   description:
-    "Check this to include pending display notifications in the response. Use this on a bottom of page event to include the display notifications that were not automatically sent from the top of page event. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
+    "Check this to include propositions that have been rendered, but the display notification has not been sent. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
   defaultValue: false
 });
 
-const disabledIncludePendingDisplayNotificationsField = disabledCheckbox({
-  name: "includePendingDisplayNotifications",
-  label: "Include pending display notifications",
+const disabledIncludeRenderedPropositionsField = disabledCheckbox({
+  name: "includeRenderedPropositions",
+  label: "Include renderedPropositions",
   description:
-    "Check this to include pending display notifications in the response. Use this on a bottom of page event to include the display notifications that were not automatically sent from the top of page event. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
+    "Check this to include propositions that have been rendered, but the display notification has not been sent. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
   value: true
 });
 
@@ -213,25 +213,25 @@ const renderDecisionsChecked = disabledCheckbox({
   value: true
 });
 
-const sendDisplayNotificationsField = conditional(
+const sendDisplayEventField = conditional(
   {
     args: "renderDecisions",
     condition: renderDecisions => renderDecisions
   },
   [
     checkbox({
-      name: "sendDisplayNotifications",
-      label: "Automatically send a display notification",
+      name: "sendDisplayEvent",
+      label: "Automatically send a display event",
       description:
-        "Check this to automatically send an extra experience event containing display notifications after personalization is rendered. Uncheck this so that you can include the display notifications in a subsequent event.",
+        "Check this to automatically send an extra experience event containing display event after personalization is rendered. Uncheck this so that you can include the display notifications in a subsequent event.",
       defaultValue: true
     })
   ]
 );
 
-const sendNotificationsUnchecked = disabledCheckbox({
-  name: "sendDisplayNotifications",
-  label: "Automatically send a display notification",
+const sendDisplayEventUnchecked = disabledCheckbox({
+  name: "sendDisplayEvent",
+  label: "Automatically send a display event",
   description:
     "Check this to automatically send an extra experience event containing display notifications after personalization is rendered. Uncheck this so that you can include the display notifications in a subsequent event.",
   value: false
@@ -278,7 +278,7 @@ const sendEventForm = form(
           eventTypeField,
           xdmField,
           dataField,
-          includePendingDisplayNotificationsField,
+          includeRenderedPropositionsField,
           documentUnloadingField,
           mergeIdField
         ]),
@@ -286,7 +286,7 @@ const sendEventForm = form(
           decisionScopesField,
           surfacesField,
           renderDecisionsField,
-          sendDisplayNotificationsField
+          sendDisplayEventField
         ]),
         configOverrideFields,
         datasetIdField
@@ -303,7 +303,7 @@ const sendEventForm = form(
           decisionScopesField,
           surfacesField,
           renderDecisionsChecked,
-          sendNotificationsUnchecked
+          sendDisplayEventUnchecked
         ]),
         configOverrideFields
       ]
@@ -318,7 +318,7 @@ const sendEventForm = form(
           eventTypeField,
           xdmField,
           dataField,
-          disabledIncludePendingDisplayNotificationsField
+          disabledIncludeRenderedPropositionsField
         ]),
         configOverrideFields
       ]
