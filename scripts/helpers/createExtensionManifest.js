@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 /**
- * @typedef {Object} ExtensionManifest
+ * @typedef {object} ExtensionManifest
  * https://experienceleague.adobe.com/docs/experience-platform/tags/extension-dev/manifest.html?lang=en
  * @property {string} displayName
  * @property {string} name
@@ -23,11 +23,10 @@ governing permissions and limitations under the License.
  * @property {string} author.name
  * @property {string} viewBasePath
  * @property {string} main
- * @property {Object} configuration
- * @property {Object[]} actions
- * @property {Object[]} events
- * @property {Object[]} dataElements
- *
+ * @property {object} configuration
+ * @property {object[]} actions
+ * @property {object[]} events
+ * @property {object[]} dataElements
  * @typedef {Pick<ExtensionManifest, "version">} ExtensionManifestConfiguration
  */
 
@@ -36,7 +35,7 @@ governing permissions and limitations under the License.
  * configuration.
  * Works for both actions and extension configuration
  * @param {boolean} isAction
- * @returns {Object}
+ * @returns {object}
  */
 const createEdgeConfigOverridesSchema = isAction => {
   const configOverridesProps = {
@@ -181,7 +180,6 @@ const createEdgeConfigOverridesTransforms = isAction => {
 
 /**
  * Create the contents of the extension.json aka the extension definition.
- *
  * @param {ExtensionManifestConfiguration} options
  * @returns {ExtensionManifest}
  */
@@ -433,10 +431,10 @@ const createExtensionManifest = ({ version }) => {
                     }
                   ]
                 },
-                sendDisplayNotifications: {
+                sendDisplayEvent: {
                   type: "boolean"
                 },
-                includePendingDisplayNotifications: {
+                includeRenderedPropositions: {
                   type: "boolean"
                 }
               },
