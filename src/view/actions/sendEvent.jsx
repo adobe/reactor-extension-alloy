@@ -144,7 +144,8 @@ const includeRenderedPropositionsField = checkbox({
   label: "Include rendered propositions",
   description:
     "Check this to include propositions that have been rendered, but the display notification has not been sent. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
-  defaultValue: false
+  defaultValue: false,
+  beta: true
 });
 
 const disabledIncludeRenderedPropositionsField = disabledCheckbox({
@@ -152,7 +153,8 @@ const disabledIncludeRenderedPropositionsField = disabledCheckbox({
   label: "Include renderedPropositions",
   description:
     "Check this to include propositions that have been rendered, but the display notification has not been sent. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
-  value: true
+  value: true,
+  beta: true
 });
 
 const documentUnloadingField = checkbox({
@@ -205,13 +207,6 @@ const renderDecisionsField = checkbox({
   defaultValue: false
 });
 
-const renderDecisionsChecked = disabledCheckbox({
-  name: "renderDecisions",
-  label: "Render visual personalization decisions",
-  description: "Check this to render visual personalization decisions.",
-  value: true
-});
-
 const sendDisplayEventField = conditional(
   {
     args: "renderDecisions",
@@ -223,7 +218,8 @@ const sendDisplayEventField = conditional(
       label: "Automatically send a display event",
       description:
         "Check this to automatically send an extra experience event containing display event after personalization is rendered. Uncheck this so that you can include the display notifications in a subsequent event.",
-      defaultValue: true
+      defaultValue: true,
+      beta: true
     })
   ]
 );
@@ -233,7 +229,8 @@ const sendDisplayEventUnchecked = disabledCheckbox({
   label: "Automatically send a display event",
   description:
     "Check this to automatically send an extra experience event containing display notifications after personalization is rendered. Uncheck this so that you can include the display notifications in a subsequent event.",
-  value: false
+  value: false,
+  beta: true
 });
 
 const configOverrideFields = configOverrides();
@@ -255,8 +252,9 @@ const sendEventForm = form(
       name: "guidedStyleEnabled",
       label: "Use guided event style",
       description:
-        "Guided event styles automatically fill in or hide certain fields below to enable a particular use-case.",
-      defaultValue: false
+        "Check this box to automatically fill in or hide certain fields to enable a particular use-case.",
+      defaultValue: false,
+      beta: true
     }),
     conditional(
       {
@@ -297,15 +295,15 @@ const sendEventForm = form(
             {
               value: FETCH,
               label:
-                "Request personalization - get the latest personalization decisions without recording events in Adobe Analytics. This is meant to be called early in the page load."
+                "Request personalization - get the latest personalization decisions without recording an event. This is meant to be called early in the page load."
             },
             {
               value: COLLECT,
               label:
-                "Collect analytics - record an event with the results of the personalization rendering."
+                "Collect analytics - record an event without getting personalization decisions. This is meant to be called late in the page load."
             }
           ],
-          description: "This is the primary purpose for the event."
+          beta: true
         }),
         conditional(
           {
@@ -321,7 +319,7 @@ const sendEventForm = form(
             section({ label: "Personalization" }, [
               decisionScopesField,
               surfacesField,
-              renderDecisionsChecked,
+              renderDecisionsField,
               sendDisplayEventUnchecked
             ]),
             configOverrideFields

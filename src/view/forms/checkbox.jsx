@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
+import BetaBadge from "../components/betaBadge";
 
 /** @typedef {import("./form").Form} Form */
 /**
@@ -21,6 +22,7 @@ import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
  * @param {string} options.label - The label to use for the field.
  * @param {string} options.description - The description to use for the field.
  * @param {boolean} [options.defaultValue] - The default value for the
+ * @param {boolean} [options.beta] - If true, a beta badge will be shown next to the
  * checkbox.
  * @returns {Form} A checkbox form.
  */
@@ -28,7 +30,8 @@ export default function checkbox({
   name,
   label,
   description,
-  defaultValue = false
+  defaultValue = false,
+  beta
 }) {
   const part = {
     getInitialValues({ initInfo }) {
@@ -50,6 +53,7 @@ export default function checkbox({
         width="size-5000"
       >
         {label}
+        {beta && <BetaBadge />}
       </FormikCheckbox>
     )
   };
