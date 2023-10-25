@@ -32,7 +32,6 @@ import renderForm from "../forms/renderForm";
 import textField from "../forms/textField";
 import { validateSurface } from "../utils/surfaceUtils";
 
-const UNGUIDED = "unguided";
 const FETCH = "fetch";
 const COLLECT = "collect";
 
@@ -252,26 +251,17 @@ const sendEventForm = form(
   },
   [
     instancePicker({ name: "instanceName" }),
-    radioGroup({
-      name: "eventStyle",
-      label: "Guided event style",
-      dataElementSupported: false,
-      defaultValue: UNGUIDED,
-      items: [
-        {
-          value: FETCH,
-          label: "Top of page event - request personalization decisions."
-        },
-        { value: COLLECT, label: "Bottom of page event - collect analytics." },
-        { value: UNGUIDED, label: "Unguided - show all fields." }
-      ],
+    checkbox({
+      name: "guidedStyleEnabled",
+      label: "Use guided event style",
       description:
-        "Event styles automatically fill in or hide certain fields below. Top of page events fetch personalization decisions and do not record events in Adobe Analytics and have the type decisioning.propositionFetch. Bottom of page events record events and do not request personalization decisions. The unguided event style shows all fields."
+        "Guided event styles automatically fill in or hide certain fields below to enable a particular use-case.",
+      defaultValue: false
     }),
     conditional(
       {
-        args: "eventStyle",
-        condition: eventStyle => eventStyle === UNGUIDED
+        args: "guidedStyleEnabled",
+        condition: guidedStyleEnabled => !guidedStyleEnabled
       },
       [
         section({ label: "Data" }, [
@@ -294,33 +284,64 @@ const sendEventForm = form(
     ),
     conditional(
       {
-        args: "eventStyle",
-        condition: eventStyle => eventStyle === FETCH
+        args: "guidedStyleEnabled",
+        condition: guidedStyleEnabled => guidedStyleEnabled
       },
       [
-        section({ label: "Data" }, [fetchEventTypeField, xdmField, dataField]),
-        section({ label: "Personalization" }, [
-          decisionScopesField,
-          surfacesField,
-          renderDecisionsChecked,
-          sendDisplayEventUnchecked
-        ]),
-        configOverrideFields
-      ]
-    ),
-    conditional(
-      {
-        args: "eventStyle",
-        condition: eventStyle => eventStyle === COLLECT
-      },
-      [
-        section({ label: "Data" }, [
-          eventTypeField,
-          xdmField,
-          dataField,
-          disabledIncludeRenderedPropositionsField
-        ]),
-        configOverrideFields
+        radioGroup({
+          name: "eventStyle",
+          label: "Guided event style",
+          dataElementSupported: false,
+          defaultValue: FETCH,
+          items: [
+            {
+              value: FETCH,
+              label:
+                "Request personalization - get the latest personalization decisions without recording events in Adobe Analytics. This is meant to be called early in the page load."
+            },
+            {
+              value: COLLECT,
+              label:
+                "Collect analytics - record an event with the results of the personalization rendering."
+            }
+          ],
+          description: "This is the primary purpose for the event."
+        }),
+        conditional(
+          {
+            args: "eventStyle",
+            condition: eventStyle => eventStyle === FETCH
+          },
+          [
+            section({ label: "Data" }, [
+              fetchEventTypeField,
+              xdmField,
+              dataField
+            ]),
+            section({ label: "Personalization" }, [
+              decisionScopesField,
+              surfacesField,
+              renderDecisionsChecked,
+              sendDisplayEventUnchecked
+            ]),
+            configOverrideFields
+          ]
+        ),
+        conditional(
+          {
+            args: "eventStyle",
+            condition: eventStyle => eventStyle === COLLECT
+          },
+          [
+            section({ label: "Data" }, [
+              eventTypeField,
+              xdmField,
+              dataField,
+              disabledIncludeRenderedPropositionsField
+            ]),
+            configOverrideFields
+          ]
+        )
       ]
     )
   ]
