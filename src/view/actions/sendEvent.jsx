@@ -250,7 +250,7 @@ const sendEventForm = form(
     instancePicker({ name: "instanceName" }),
     checkbox({
       name: "guidedStyleEnabled",
-      label: "Use guided event style",
+      label: "Use guided events",
       description:
         "Check this box to automatically fill in or hide certain fields to enable a particular use-case.",
       defaultValue: false,
@@ -288,14 +288,14 @@ const sendEventForm = form(
       [
         radioGroup({
           name: "eventStyle",
-          label: "Guided event style",
+          label: "Guided events",
           dataElementSupported: false,
           defaultValue: FETCH,
           items: [
             {
               value: FETCH,
               label:
-                "Request personalization - get the latest personalization decisions without recording an event. This is meant to be called early in the page load."
+                "Request personalization - get the latest personalization decisions without recording an Adobe Analytics event. This is meant to be called early in the page load."
             },
             {
               value: COLLECT,
