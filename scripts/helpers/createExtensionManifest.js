@@ -437,6 +437,9 @@ const createExtensionManifest = ({ version }) => {
                 includeRenderedPropositions: {
                   type: "boolean"
                 },
+                defaultPersonalizationEnabled: {
+                  type: "boolean"
+                },
                 decisionContext: {
                   anyOf: [
                     {

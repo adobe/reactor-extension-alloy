@@ -80,6 +80,7 @@ const wrapGetSettings = getSettings => ({ values }) => {
     surfaces,
     sendDisplayEvent,
     includeRenderedPropositions,
+    defaultPersonalizationEnabled,
     decisionContext,
     ...settings
   } = getSettings({ values });
@@ -88,6 +89,7 @@ const wrapGetSettings = getSettings => ({ values }) => {
     surfaces ||
     sendDisplayEvent === false ||
     includeRenderedPropositions ||
+    defaultPersonalizationEnabled ||
     decisionContext
   ) {
     settings.personalization = {};
@@ -103,6 +105,10 @@ const wrapGetSettings = getSettings => ({ values }) => {
   }
   if (includeRenderedPropositions) {
     settings.personalization.includeRenderedPropositions = includeRenderedPropositions;
+  }
+  if (defaultPersonalizationEnabled) {
+    settings.personalization.defaultPersonalizationEnabled =
+      defaultPersonalizationEnabled === "true";
   }
   if (decisionContext) {
     settings.personalization.decisionContext = decisionContext;
@@ -239,6 +245,31 @@ const sendDisplayEventUnchecked = disabledCheckbox({
   beta: true
 });
 
+const defaultPersonalizationEnabledField = radioGroup({
+  name: "defaultPersonalizationEnabled",
+  label: "Request default personalization",
+  dataElementSupported: false,
+  defaultValue: "auto",
+  items: [
+    {
+      value: "auto",
+      label:
+        "Automatic - request default personalization when it has not yet been requested."
+    },
+    {
+      value: "true",
+      label:
+        "Enabled - explicitly request the page scope and default surface. This will update the SPA view cache."
+    },
+    {
+      value: "false",
+      label:
+        "Disabled - explicitly suppress the request for the page scope and default surface."
+    }
+  ],
+  beta: true
+});
+
 const decisionContext = simpleMap({
   name: "decisionContext",
   label: "Decision context",
@@ -297,6 +328,7 @@ const sendEventForm = form(
           surfacesField,
           renderDecisionsField,
           sendDisplayEventField,
+          defaultPersonalizationEnabledField,
           decisionContext
         ]),
         configOverrideFields,
@@ -344,6 +376,7 @@ const sendEventForm = form(
               surfacesField,
               renderDecisionsField,
               sendDisplayEventUnchecked,
+              defaultPersonalizationEnabledField,
               decisionContext
             ]),
             configOverrideFields
