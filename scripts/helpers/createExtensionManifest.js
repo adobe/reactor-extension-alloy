@@ -431,10 +431,10 @@ const createExtensionManifest = ({ version }) => {
                     }
                   ]
                 },
-                sendDisplayNotifications: {
+                sendDisplayEvent: {
                   type: "boolean"
                 },
-                includePendingDisplayNotifications: {
+                includeRenderedPropositions: {
                   type: "boolean"
                 }
               },
