@@ -249,7 +249,7 @@ const sendEventForm = form(
   [
     instancePicker({ name: "instanceName" }),
     checkbox({
-      name: "guidedStyleEnabled",
+      name: "guidedEventsEnabled",
       label: "Use guided events",
       description:
         "Check this box to automatically fill in or hide certain fields to enable a particular use-case.",
@@ -258,8 +258,8 @@ const sendEventForm = form(
     }),
     conditional(
       {
-        args: "guidedStyleEnabled",
-        condition: guidedStyleEnabled => !guidedStyleEnabled
+        args: "guidedEventsEnabled",
+        condition: guidedEventsEnabled => !guidedEventsEnabled
       },
       [
         section({ label: "Data" }, [
@@ -282,12 +282,12 @@ const sendEventForm = form(
     ),
     conditional(
       {
-        args: "guidedStyleEnabled",
-        condition: guidedStyleEnabled => guidedStyleEnabled
+        args: "guidedEventsEnabled",
+        condition: guidedEventsEnabled => guidedEventsEnabled
       },
       [
         radioGroup({
-          name: "eventStyle",
+          name: "guidedEvent",
           label: "Guided events",
           dataElementSupported: false,
           defaultValue: FETCH,
@@ -307,8 +307,8 @@ const sendEventForm = form(
         }),
         conditional(
           {
-            args: "eventStyle",
-            condition: eventStyle => eventStyle === FETCH
+            args: "guidedEvent",
+            condition: guidedEvent => guidedEvent === FETCH
           },
           [
             section({ label: "Data" }, [
@@ -327,8 +327,8 @@ const sendEventForm = form(
         ),
         conditional(
           {
-            args: "eventStyle",
-            condition: eventStyle => eventStyle === COLLECT
+            args: "guidedEvent",
+            condition: guidedEvent => guidedEvent === COLLECT
           },
           [
             section({ label: "Data" }, [
