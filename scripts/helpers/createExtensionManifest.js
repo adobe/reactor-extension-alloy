@@ -436,6 +436,20 @@ const createExtensionManifest = ({ version }) => {
                 },
                 includeRenderedPropositions: {
                   type: "boolean"
+                },
+                decisionContext: {
+                  anyOf: [
+                    {
+                      type: "string",
+                      pattern: "^%[^%]+%$"
+                    },
+                    {
+                      type: "object",
+                      additionalProperties: {
+                        type: "string"
+                      }
+                    }
+                  ]
                 }
               },
               additionalProperties: false
@@ -774,19 +788,24 @@ const createExtensionManifest = ({ version }) => {
           renderDecisions: {
             type: "boolean"
           },
-          decisionContext: {
-            anyOf: [
-              {
-                type: "string",
-                pattern: "^%[^%]+%$"
-              },
-              {
-                type: "object",
-                additionalProperties: {
-                  type: "string"
-                }
+          personalization: {
+            type: "object",
+            properties: {
+              decisionContext: {
+                anyOf: [
+                  {
+                    type: "string",
+                    pattern: "^%[^%]+%$"
+                  },
+                  {
+                    type: "object",
+                    additionalProperties: {
+                      type: "string"
+                    }
+                  }
+                ]
               }
-            ]
+            }
           }
         },
         libPath: "dist/lib/actions/evaluateRulesets/index.js",

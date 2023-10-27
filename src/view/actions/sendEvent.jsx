@@ -80,13 +80,15 @@ const wrapGetSettings = getSettings => ({ values }) => {
     surfaces,
     sendDisplayEvent,
     includeRenderedPropositions,
+    decisionContext,
     ...settings
   } = getSettings({ values });
   if (
     decisionScopes ||
     surfaces ||
     sendDisplayEvent === false ||
-    includeRenderedPropositions
+    includeRenderedPropositions ||
+    decisionContext
   ) {
     settings.personalization = {};
   }
@@ -101,6 +103,9 @@ const wrapGetSettings = getSettings => ({ values }) => {
   }
   if (includeRenderedPropositions) {
     settings.personalization.includeRenderedPropositions = includeRenderedPropositions;
+  }
+  if (decisionContext) {
+    settings.personalization.decisionContext = decisionContext;
   }
   return settings;
 };
@@ -238,13 +243,16 @@ const decisionContext = simpleMap({
   name: "decisionContext",
   label: "Decision context",
   singularLabel: "Context item",
+  description:
+    "Provide the keys and values that the rulesets will use to determine which experience to deliver.",
   dataElementDescription:
-    "Provide a data element that resolves to a map of strings",
+    "Provide a data element that resolves to a map of key/value pairs.",
   keyLabel: "Key",
   keyLabelPlural: "Keys",
-  keyDescription: "Enter the context key",
+  keyDescription: "Enter the context key.",
   valueLabel: "Value",
-  valueDescription: "Enter the context value"
+  valueDescription: "Enter the context value.",
+  beta: true
 });
 
 const configOverrideFields = configOverrides();

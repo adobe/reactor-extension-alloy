@@ -14,28 +14,62 @@ import form from "../forms/form";
 import instancePicker from "../forms/instancePicker";
 import checkbox from "../forms/checkbox";
 import simpleMap from "../forms/simpleMap";
+import notice from "../forms/notice";
 
-const evaluateRulesetsForm = form({}, [
-  instancePicker({ name: "instanceName" }),
-  checkbox({
-    name: "renderDecisions",
-    label: "Render decisions",
-    description:
-      "Select this option to render decisions. If you do not select this option, decisions will not be rendered.",
-    defaultValue: false
-  }),
-  simpleMap({
-    name: "decisionContext",
-    label: "Decision context",
-    singularLabel: "Context item",
-    dataElementDescription:
-      "Provide a data element that resolves to a map of strings",
-    keyLabel: "Key",
-    keyLabelPlural: "Keys",
-    keyDescription: "Enter the context key",
-    valueLabel: "Value",
-    valueDescription: "Enter the context value"
-  })
-]);
+const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
+  const { personalization = {}, ...otherSettings } = initInfo.settings || {};
+  return getInitialValues({
+    initInfo: {
+      ...initInfo,
+      settings: { ...personalization, ...otherSettings }
+    }
+  });
+};
+
+const wrapGetSettings = getSettings => ({ values }) => {
+  const { decisionContext, ...settings } = getSettings({ values });
+  if (decisionContext) {
+    settings.personalization = {};
+    settings.personalization.decisionContext = decisionContext;
+  }
+  return settings;
+};
+
+const evaluateRulesetsForm = form(
+  {
+    wrapGetInitialValues,
+    wrapGetSettings
+  },
+  [
+    notice({
+      title: "Evaluate rulesets action",
+      description:
+        "This action manually triggers ruleset evaluation. Rulesets are returned from Adobe Journey Optimizer in-browser-messages.",
+      beta: true
+    }),
+    instancePicker({ name: "instanceName" }),
+    checkbox({
+      name: "renderDecisions",
+      label: "Render visual personalization decisions",
+      description:
+        "Check this to render visual personalization decisions for the ruleset items that match.",
+      defaultValue: false
+    }),
+    simpleMap({
+      name: "decisionContext",
+      label: "Decision context",
+      singularLabel: "Context item",
+      description:
+        "Provide the keys and values that the rulesets will use to determine which experience to deliver.",
+      dataElementDescription:
+        "Provide a data element that resolves to a map of key/value pairs.",
+      keyLabel: "Key",
+      keyLabelPlural: "Keys",
+      keyDescription: "Enter the context key.",
+      valueLabel: "Value",
+      valueDescription: "Enter the context value."
+    })
+  ]
+);
 
 renderForm(evaluateRulesetsForm);

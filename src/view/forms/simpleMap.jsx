@@ -20,6 +20,7 @@ import DataElementSelector from "../components/dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormElementContainer from "../components/formElementContainer";
+import BetaBadge from "../components/betaBadge";
 
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
@@ -36,6 +37,8 @@ const DATA_ELEMENT = "dataElement";
  * @param {string} options.label - The label to use for the field.
  * @param {string} options.singularLabel - The singular label to use for the add
  * button. (i.e. "entry" for "Add entry")
+ * @param {string} options.description - The description to use for the field.
+ * This appears just below the radio buttons and above the array items.
  * @param {string} [options.dataElementDescription] - The description to use for
  * the data element field. Usually you would use this to describe the type the
  * data element should be.
@@ -45,18 +48,22 @@ const DATA_ELEMENT = "dataElement";
  * @param {string} [options.valueLabel] - The label to use for the value field.
  * @param {string} [options.valueDescription] - The description to use for the
  * value field.
+ * @param {boolean} [options.beta] - If true, a beta badge will be shown next to
+ * the label.
  * @returns {Form} A form field for an array of strings.
  */
 export default function simpleMap({
   name,
   label,
   singularLabel,
+  description,
   dataElementDescription,
   keyLabel,
   keyLabelPlural,
   keyDescription,
   valueLabel,
-  valueDescription
+  valueDescription,
+  beta
 }) {
   const itemSchema = object()
     .shape({
@@ -157,13 +164,19 @@ export default function simpleMap({
       const [{ value: items }, , { setValue: setItems }] = useField(
         `${namePrefix}${name}`
       );
-
+      const labelElement = (
+        <>
+          {label}
+          {beta && <BetaBadge />}
+        </>
+      );
       return (
         <>
           <FormikRadioGroup
             name={`${namePrefix}${name}InputMethod`}
             orientation="horizontal"
-            label={label}
+            label={labelElement}
+            description={description}
           >
             <Radio data-test-id={`${namePrefix}${name}FormOption`} value={FORM}>
               Manually enter {label.toLowerCase()}.
