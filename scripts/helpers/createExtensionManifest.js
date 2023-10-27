@@ -436,6 +436,9 @@ const createExtensionManifest = ({ version }) => {
                 },
                 includeRenderedPropositions: {
                   type: "boolean"
+                },
+                defaultPersonalizationEnabled: {
+                  type: "boolean"
                 }
               },
               additionalProperties: false
