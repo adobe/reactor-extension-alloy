@@ -20,6 +20,7 @@ import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGrou
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FieldSubset from "../components/fieldSubset";
+import BetaBadge from "../components/betaBadge";
 
 /** @typedef {import("./form").Form} Form */
 /**
@@ -40,6 +41,8 @@ import FieldSubset from "../components/fieldSubset";
  * data element could resolve to.
  * @param {{ value: string, label: string }[]} options.items - The items to use for the radio group.
  * @param {string} [options.description] - The description to use for the radio group.
+ * @param {boolean} [options.beta] - If true, a beta badge will be shown next to the
+ * radio group label.
  * @returns {Form} A form field for a radio group.
  */
 export default function radioGroup({
@@ -50,7 +53,8 @@ export default function radioGroup({
   dataElementDescription,
   items,
   defaultValue = "",
-  description
+  description,
+  beta
 }) {
   const validationShape = {};
   if (isRequired) {
@@ -65,6 +69,13 @@ export default function radioGroup({
           .required(DATA_ELEMENT_REQUIRED)
     });
   }
+
+  const labelElement = (
+    <>
+      {label}
+      {beta && <BetaBadge />}
+    </>
+  );
 
   const formPart = {
     getInitialValues({ initInfo }) {
@@ -96,7 +107,7 @@ export default function radioGroup({
           <FormikRadioGroup
             data-test-id={`${namePrefix}${name}Field`}
             name={name}
-            label={label}
+            label={labelElement}
             isRequired={isRequired}
             width="size-5000"
             description={description}

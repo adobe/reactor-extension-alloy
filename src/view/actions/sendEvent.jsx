@@ -32,7 +32,6 @@ import renderForm from "../forms/renderForm";
 import textField from "../forms/textField";
 import { validateSurface } from "../utils/surfaceUtils";
 
-const UNGUIDED = "unguided";
 const FETCH = "fetch";
 const COLLECT = "collect";
 
@@ -145,7 +144,8 @@ const includeRenderedPropositionsField = checkbox({
   label: "Include rendered propositions",
   description:
     "Check this to include propositions that have been rendered, but the display notification has not been sent. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
-  defaultValue: false
+  defaultValue: false,
+  beta: true
 });
 
 const disabledIncludeRenderedPropositionsField = disabledCheckbox({
@@ -153,7 +153,8 @@ const disabledIncludeRenderedPropositionsField = disabledCheckbox({
   label: "Include renderedPropositions",
   description:
     "Check this to include propositions that have been rendered, but the display notification has not been sent. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
-  value: true
+  value: true,
+  beta: true
 });
 
 const documentUnloadingField = checkbox({
@@ -206,13 +207,6 @@ const renderDecisionsField = checkbox({
   defaultValue: false
 });
 
-const renderDecisionsChecked = disabledCheckbox({
-  name: "renderDecisions",
-  label: "Render visual personalization decisions",
-  description: "Check this to render visual personalization decisions.",
-  value: true
-});
-
 const sendDisplayEventField = conditional(
   {
     args: "renderDecisions",
@@ -224,7 +218,8 @@ const sendDisplayEventField = conditional(
       label: "Automatically send a display event",
       description:
         "Check this to automatically send an extra experience event containing display event after personalization is rendered. Uncheck this so that you can include the display notifications in a subsequent event.",
-      defaultValue: true
+      defaultValue: true,
+      beta: true
     })
   ]
 );
@@ -234,7 +229,8 @@ const sendDisplayEventUnchecked = disabledCheckbox({
   label: "Automatically send a display event",
   description:
     "Check this to automatically send an extra experience event containing display notifications after personalization is rendered. Uncheck this so that you can include the display notifications in a subsequent event.",
-  value: false
+  value: false,
+  beta: true
 });
 
 const configOverrideFields = configOverrides();
@@ -252,26 +248,18 @@ const sendEventForm = form(
   },
   [
     instancePicker({ name: "instanceName" }),
-    radioGroup({
-      name: "eventStyle",
-      label: "Guided event style",
-      dataElementSupported: false,
-      defaultValue: UNGUIDED,
-      items: [
-        {
-          value: FETCH,
-          label: "Top of page event - request personalization decisions."
-        },
-        { value: COLLECT, label: "Bottom of page event - collect analytics." },
-        { value: UNGUIDED, label: "Unguided - show all fields." }
-      ],
+    checkbox({
+      name: "guidedEventsEnabled",
+      label: "Use guided events",
       description:
-        "Event styles automatically fill in or hide certain fields below. Top of page events fetch personalization decisions and do not record events in Adobe Analytics and have the type decisioning.propositionFetch. Bottom of page events record events and do not request personalization decisions. The unguided event style shows all fields."
+        "Check this box to automatically fill in or hide certain fields to enable a particular use-case.",
+      defaultValue: false,
+      beta: true
     }),
     conditional(
       {
-        args: "eventStyle",
-        condition: eventStyle => eventStyle === UNGUIDED
+        args: "guidedEventsEnabled",
+        condition: guidedEventsEnabled => !guidedEventsEnabled
       },
       [
         section({ label: "Data" }, [
@@ -294,33 +282,64 @@ const sendEventForm = form(
     ),
     conditional(
       {
-        args: "eventStyle",
-        condition: eventStyle => eventStyle === FETCH
+        args: "guidedEventsEnabled",
+        condition: guidedEventsEnabled => guidedEventsEnabled
       },
       [
-        section({ label: "Data" }, [fetchEventTypeField, xdmField, dataField]),
-        section({ label: "Personalization" }, [
-          decisionScopesField,
-          surfacesField,
-          renderDecisionsChecked,
-          sendDisplayEventUnchecked
-        ]),
-        configOverrideFields
-      ]
-    ),
-    conditional(
-      {
-        args: "eventStyle",
-        condition: eventStyle => eventStyle === COLLECT
-      },
-      [
-        section({ label: "Data" }, [
-          eventTypeField,
-          xdmField,
-          dataField,
-          disabledIncludeRenderedPropositionsField
-        ]),
-        configOverrideFields
+        radioGroup({
+          name: "guidedEvent",
+          label: "Guided events",
+          dataElementSupported: false,
+          defaultValue: FETCH,
+          items: [
+            {
+              value: FETCH,
+              label:
+                "Request personalization - get the latest personalization decisions without recording an Adobe Analytics event. This is meant to be called early in the page load."
+            },
+            {
+              value: COLLECT,
+              label:
+                "Collect analytics - record an event without getting personalization decisions. This is meant to be called late in the page load."
+            }
+          ],
+          beta: true
+        }),
+        conditional(
+          {
+            args: "guidedEvent",
+            condition: guidedEvent => guidedEvent === FETCH
+          },
+          [
+            section({ label: "Data" }, [
+              fetchEventTypeField,
+              xdmField,
+              dataField
+            ]),
+            section({ label: "Personalization" }, [
+              decisionScopesField,
+              surfacesField,
+              renderDecisionsField,
+              sendDisplayEventUnchecked
+            ]),
+            configOverrideFields
+          ]
+        ),
+        conditional(
+          {
+            args: "guidedEvent",
+            condition: guidedEvent => guidedEvent === COLLECT
+          },
+          [
+            section({ label: "Data" }, [
+              eventTypeField,
+              xdmField,
+              dataField,
+              disabledIncludeRenderedPropositionsField
+            ]),
+            configOverrideFields
+          ]
+        )
       ]
     )
   ]
