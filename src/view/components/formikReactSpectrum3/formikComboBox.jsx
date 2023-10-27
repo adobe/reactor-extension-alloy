@@ -16,7 +16,7 @@ import { ComboBox } from "@adobe/react-spectrum";
 import { useField } from "formik";
 
 /**
- * @param {Object} params
+ * @param {object} params
  * @param {string} params.name
  * @param {string?} params.width
  * @param {(value: T) => undefined | string} params.validate A function that will be called to validate
@@ -29,6 +29,7 @@ const FormikComboBox = ({ name, width, validate, ...otherProps }) => {
     name,
     validate
   });
+  console.log("FormikComboBox", otherProps);
   return (
     <ComboBox
       {...otherProps}
