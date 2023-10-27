@@ -13,16 +13,96 @@ import React from "react";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { array, string } from "yup";
 import { FieldArray, useField } from "formik";
-import { Flex, Radio, ActionButton, Button } from "@adobe/react-spectrum";
+import { Flex, Radio, ActionButton, Button, Item } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import DataElementSelector from "../components/dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import FormikKeyedComboBox from "../components/formikReactSpectrum3/formikKeyedComboBox";
 
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
+
+const StringItem = ({
+  namePrefix,
+  name,
+  index,
+  description,
+  error,
+  touched,
+  isLast
+}) => (
+  <DataElementSelector>
+    <FormikTextField
+      data-test-id={`${namePrefix}${name}${index}Field`}
+      aria-label={`Item ${index + 1}`}
+      name={`${namePrefix}${name}.${index}`}
+      width="size-5000"
+      marginTop="size-0"
+      description={isLast ? description : undefined}
+      error={isLast ? error : undefined}
+      invalid={error && touched}
+      touched={touched}
+    />
+  </DataElementSelector>
+);
+StringItem.propTypes = {
+  namePrefix: PropTypes.string,
+  name: PropTypes.string,
+  index: PropTypes.number,
+  description: PropTypes.string,
+  error: PropTypes.string,
+  touched: PropTypes.bool,
+  isLast: PropTypes.bool
+};
+
+const ComboboxItem = ({
+  namePrefix,
+  name,
+  index,
+  description,
+  error,
+  touched,
+  isLast,
+  items
+}) => (
+  <DataElementSelector>
+    <FormikKeyedComboBox
+      data-test-id={`${namePrefix}${name}${index}Field`}
+      aria-label={`Item ${index + 1}`}
+      name={`${namePrefix}${name}.${index}`}
+      width="size-5000"
+      marginTop="size-0"
+      description={isLast ? description : undefined}
+      error={isLast ? error : undefined}
+      invalid={error && touched}
+      touched={touched}
+      items={items}
+      getKey={item => item.value}
+      getLabel={item => item.label}
+      allowsCustomValue
+    >
+      {item => (
+        <Item key={item.value} data-test-id={item.value}>
+          {item.label}
+        </Item>
+      )}
+    </FormikKeyedComboBox>
+  </DataElementSelector>
+);
+
+ComboboxItem.propTypes = {
+  namePrefix: PropTypes.string,
+  name: PropTypes.string,
+  index: PropTypes.number,
+  description: PropTypes.string,
+  error: PropTypes.string,
+  touched: PropTypes.bool,
+  isLast: PropTypes.bool,
+  items: PropTypes.array
+};
 
 /** @typedef {import("./form").Form} Form */
 /**
@@ -47,16 +127,18 @@ const DATA_ELEMENT = "dataElement";
  * required. When required, the user will need to enter at least one string.
  * @param options.validationSchema - A yup validation schema to use for each
  * string in the array.
+ * @param options.fieldItems
  * @returns {Form} A form field for an array of strings.
  */
-export default function stringArray({
+export default function fieldArray({
   name,
   isRequired = false,
   label,
   singularLabel,
   description,
   dataElementDescription,
-  validationSchema
+  validationSchema,
+  fieldItems
 }) {
   const validationShape = {
     [name]: array()
@@ -86,6 +168,8 @@ export default function stringArray({
         .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
         .required(DATA_ELEMENT_REQUIRED)
   });
+
+  const FieldItem = fieldItems ? ComboboxItem : StringItem;
 
   const part = {
     getInitialValues({ initInfo }) {
@@ -156,25 +240,16 @@ export default function stringArray({
                       {items.map((item, index) => {
                         return (
                           <Flex key={index} alignItems="start">
-                            <DataElementSelector>
-                              <FormikTextField
-                                data-test-id={`${namePrefix}${name}${index}Field`}
-                                aria-label={`${label} ${index + 1}`}
-                                name={`${namePrefix}${name}.${index}`}
-                                width="size-5000"
-                                marginTop="size-0"
-                                description={
-                                  index === items.length - 1
-                                    ? description
-                                    : undefined
-                                }
-                                error={
-                                  index === items.length - 1 ? error : undefined
-                                }
-                                invalid={error && itemsTouched}
-                                touched={itemsTouched}
-                              />
-                            </DataElementSelector>
+                            <FieldItem
+                              namePrefix={namePrefix}
+                              name={name}
+                              index={index}
+                              description={description}
+                              error={error}
+                              touched={itemsTouched}
+                              isLast={index === items.length - 1}
+                              items={fieldItems}
+                            />
                             <ActionButton
                               data-test-id={`${namePrefix}${name}${index}RemoveButton`}
                               isQuiet

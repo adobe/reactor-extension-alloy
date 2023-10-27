@@ -439,6 +439,20 @@ const createExtensionManifest = ({ version }) => {
                 },
                 defaultPersonalizationEnabled: {
                   type: "boolean"
+                },
+                decisionContext: {
+                  anyOf: [
+                    {
+                      type: "string",
+                      pattern: "^%[^%]+%$"
+                    },
+                    {
+                      type: "object",
+                      additionalProperties: {
+                        type: "string"
+                      }
+                    }
+                  ]
                 }
               },
               additionalProperties: false
@@ -763,6 +777,42 @@ const createExtensionManifest = ({ version }) => {
         ],
         libPath: "dist/lib/actions/updateVariable/index.js",
         viewPath: "actions/updateVariable.html"
+      },
+      {
+        displayName: "Evaluate rulesets",
+        name: "evaluate-rulesets",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          instanceName: {
+            type: "string",
+            minLength: 1
+          },
+          renderDecisions: {
+            type: "boolean"
+          },
+          personalization: {
+            type: "object",
+            properties: {
+              decisionContext: {
+                anyOf: [
+                  {
+                    type: "string",
+                    pattern: "^%[^%]+%$"
+                  },
+                  {
+                    type: "object",
+                    additionalProperties: {
+                      type: "string"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        libPath: "dist/lib/actions/evaluateRulesets/index.js",
+        viewPath: "actions/evaluateRulesets.html"
       }
     ],
     events: [
@@ -777,6 +827,52 @@ const createExtensionManifest = ({ version }) => {
         displayName: "Send event complete",
         libPath: "dist/lib/events/sendEventComplete/index.js",
         schema: {}
+      },
+      {
+        name: "subscribe-ruleset-items",
+        displayName: "Subscribe ruleset items",
+        libPath: "dist/lib/events/subscribeRulesetItems/index.js",
+        viewPath: "events/subscribeRulesetItems.html",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          instanceName: {
+            type: "string",
+            minLength: 1
+          },
+          surfaces: {
+            anyOf: [
+              {
+                type: "array",
+                minItems: 1,
+                items: {
+                  type: "string",
+                  minLength: 1
+                }
+              },
+              {
+                type: "string",
+                pattern: "^%[^%]+%$"
+              }
+            ]
+          },
+          schemas: {
+            anyOf: [
+              {
+                type: "array",
+                minItems: 1,
+                items: {
+                  type: "string",
+                  minLength: 1
+                }
+              },
+              {
+                type: "string",
+                pattern: "^%[^%]+%$"
+              }
+            ]
+          }
+        }
       }
     ],
     dataElements: [

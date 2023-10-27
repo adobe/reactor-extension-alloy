@@ -10,107 +10,105 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import React from "react";
-import { array, string, object } from "yup";
+import { array, object, string } from "yup";
 import { FieldArray, useField } from "formik";
-import { Flex, Radio, Button, Well } from "@adobe/react-spectrum";
+import { Well, Radio, Flex, Button } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
-import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
+import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import DataElementSelector from "../components/dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
-import form from "./form";
+import FormElementContainer from "../components/formElementContainer";
+import BetaBadge from "../components/betaBadge";
 
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
 
 /** @typedef {import("./form").Form} Form */
 /**
- * This creates a form element that allows the user to create an array of
- * objects, or an object with string keys and object values. Any items with no
- * values filled in will be removed from the final settings.
+ * This creates a form that builds an object with key value pairs.
  * @param {object} options - Options for the field.
  * @param {string} options.name - The formik key to use for this field.
- *  - `${key}` will be used to store the array of objects.
- *  - `${key}InputMethod` will be used to determine whether or not to use a data
- *    element.
- *  - `${key}DataElement` will be used to store the data element value.
+ * - `${key}` will be used to store the object.
+ * - `${key}InputMethod` will be used to determine whether or not to use a data
+ *   element.
+ * - `${key}DataElement` will be used to store the data element value.
  * @param {string} options.label - The label to use for the field.
  * @param {string} options.singularLabel - The singular label to use for the add
- * button.
+ * button. (i.e. "entry" for "Add entry")
+ * @param {string} options.description - The description to use for the field.
+ * This appears just below the radio buttons and above the array items.
  * @param {string} [options.dataElementDescription] - The description to use for
  * the data element field. Usually you would use this to describe the type the
  * data element should be.
- * @param {string} [options.objectKey] - If you want to create an object, use
- * this to specify the Formik key to use for the keys of the object. If you want
- * to create an array of objects, omit this.
- * @param {string} [options.objectLabelPlural] - If you have set `objectKey`,
- * this will be used to describe the object keys in the validation error message
- * to make sure they are unique.
- * @param {Form[]} children - The Form parts to use for the object. These will
- * be used to create the form for each object in the array. When rendering the
- * components, the `prefixName` prop will be set to `${name}.${index}.`
- * @returns {Form} A form element that allows the user to create an array of
- * objects, or an object with string keys and object values.
+ * @param {string} [options.keyLabel] - The label to use for the key field.
+ * @param {string} [options.keyDescription] - The description to use for the key
+ * field.
+ * @param {string} [options.valueLabel] - The label to use for the value field.
+ * @param {string} [options.valueDescription] - The description to use for the
+ * value field.
+ * @param {boolean} [options.beta] - If true, a beta badge will be shown next to
+ * the label.
+ * @returns {Form} A form field for an array of strings.
  */
-export default function objectArray(
-  {
-    name,
-    label,
-    singularLabel,
-    dataElementDescription,
-    objectKey,
-    objectLabelPlural
-  },
-  children = []
-) {
-  const {
-    getInitialValues: getItemInitialValues,
-    getSettings: getItemSettings,
-    validationShape: itemValidationShape,
-    Component: ItemComponent
-  } = form({}, children);
-
-  const buildDefaultItem = () =>
-    getItemInitialValues({ initInfo: { settings: null } });
-
-  let itemSchema = object().shape(itemValidationShape);
-
-  if (objectKey) {
-    itemSchema = itemSchema.test(
-      "unique",
-      `Duplicate ${objectLabelPlural.toLowerCase()} are not allowed`,
-      (value, context) => {
-        if (!value || !value[objectKey]) {
+export default function simpleMap({
+  name,
+  label,
+  singularLabel,
+  description,
+  dataElementDescription,
+  keyLabel,
+  keyLabelPlural,
+  keyDescription,
+  valueLabel,
+  valueDescription,
+  beta
+}) {
+  const itemSchema = object()
+    .shape({
+      key: string(),
+      value: string()
+    })
+    .test(
+      "Map key unique and present",
+      `Duplicate ${keyLabelPlural.toLowerCase()} are not allowed`,
+      (item, context) => {
+        const { key, value } = item || {};
+        if (!key && !value) {
           return true;
+        }
+
+        if (!key && value) {
+          throw context.createError({
+            path: `${context.path}.key`,
+            message: `Please provide a ${keyLabel.toLowerCase()}.`
+          });
         }
 
         const { path, parent } = context;
         const items = [...parent];
-        const currentIndex = items.indexOf(value);
+        const currentIndex = items.indexOf(item);
         const previousItems = items.slice(0, currentIndex);
+        console.log("unique key validator 2", currentIndex, previousItems);
 
-        if (previousItems.some(item => item[objectKey] === value[objectKey])) {
+        if (previousItems.some(({ key: previousKey }) => key === previousKey)) {
           throw context.createError({
-            path: `${path}.${objectKey}`,
-            message: `Duplicate ${objectLabelPlural.toLowerCase()} are not allowed`
+            path: `${path}.key`,
+            message: `Duplicate ${keyLabelPlural.toLowerCase()} are not allowed`
           });
         }
 
         return true;
       }
     );
-  }
 
-  const validationShape = {};
-  validationShape[name] = array()
-    .compact(
-      item => Object.keys(getItemSettings({ values: item })).length === 0
-    )
-    .when(`${name}InputMethod`, {
+  const validationShape = {
+    [name]: array().when(`${name}InputMethod`, {
       is: FORM,
       then: schema => schema.of(itemSchema)
-    });
+    })
+  };
 
   validationShape[`${name}DataElement`] = string().when(`${name}InputMethod`, {
     is: DATA_ELEMENT,
@@ -120,57 +118,38 @@ export default function objectArray(
         .required(DATA_ELEMENT_REQUIRED)
   });
 
-  const formPart = {
+  const part = {
     getInitialValues({ initInfo }) {
       const { [name]: value } = initInfo.settings || {};
 
-      let transformedValue = value;
-      if (transformedValue && objectKey) {
-        transformedValue = Object.keys(transformedValue).reduce((acc, k) => {
-          acc.push({ [objectKey]: k, ...transformedValue[k] });
-          return acc;
-        }, []);
-      }
-      if (transformedValue && Array.isArray(transformedValue)) {
-        transformedValue = transformedValue.map(item =>
-          getItemInitialValues({ initInfo: { settings: item } })
-        );
-      } else {
-        transformedValue = [buildDefaultItem()];
-      }
-
       const initialValues = {
-        [name]: transformedValue,
         [`${name}InputMethod`]: FORM,
         [`${name}DataElement`]: ""
       };
 
       if (typeof value === "string") {
-        initialValues[name] = [""];
+        initialValues[name] = [{ key: "", value: "" }];
         initialValues[`${name}InputMethod`] = DATA_ELEMENT;
         initialValues[`${name}DataElement`] = value;
+      } else if (value) {
+        initialValues[name] = Object.keys(value).map(key => ({
+          key,
+          value: value[key] || ""
+        }));
+      } else {
+        initialValues[name] = [{ key: "", value: "" }];
       }
       return initialValues;
     },
     getSettings({ values }) {
       const settings = {};
       if (values[`${name}InputMethod`] === FORM) {
-        const itemSettings = values[name].map(item =>
-          getItemSettings({ values: item })
-        );
-        const filteredItems = itemSettings.filter(
-          item => Object.keys(item).length > 0
-        );
-        if (filteredItems.length > 0) {
-          if (objectKey) {
-            settings[name] = filteredItems.reduce((acc, item) => {
-              const { [objectKey]: settingKey, ...rest } = item;
-              acc[settingKey] = rest;
-              return acc;
-            }, {});
-          } else {
-            settings[name] = filteredItems;
-          }
+        const filteredValues = values[name].filter(({ key }) => key);
+        if (filteredValues.length > 0) {
+          settings[name] = filteredValues.reduce((obj, { key, value }) => {
+            obj[key] = value;
+            return obj;
+          }, {});
         }
       } else {
         settings[name] = values[`${name}DataElement`];
@@ -178,23 +157,29 @@ export default function objectArray(
       return settings;
     },
     validationShape,
-    Component: ({ namePrefix = "", ...props }) => {
+    Component: ({ namePrefix = "" }) => {
       const [{ value: inputMethod }] = useField(
         `${namePrefix}${name}InputMethod`
       );
       const [{ value: items }, , { setValue: setItems }] = useField(
         `${namePrefix}${name}`
       );
-
+      const labelElement = (
+        <>
+          {label}
+          {beta && <BetaBadge />}
+        </>
+      );
       return (
         <>
           <FormikRadioGroup
             name={`${namePrefix}${name}InputMethod`}
             orientation="horizontal"
-            label={label}
+            label={labelElement}
+            description={description}
           >
             <Radio data-test-id={`${namePrefix}${name}FormOption`} value={FORM}>
-              Use a form.
+              Manually enter {label.toLowerCase()}.
             </Radio>
             <Radio
               data-test-id={`${namePrefix}${name}DataElementOption`}
@@ -205,7 +190,7 @@ export default function objectArray(
           </FormikRadioGroup>
           {inputMethod === FORM && (
             <FieldArray
-              name={`${namePrefix}${name}`}
+              name={name}
               render={arrayHelpers => {
                 return (
                   <>
@@ -217,19 +202,38 @@ export default function objectArray(
                           direction="column"
                           gap="size-100"
                         >
-                          <ItemComponent
-                            namePrefix={`${namePrefix}${name}.${index}.`}
-                            {...props}
-                          />
+                          <FormElementContainer>
+                            <DataElementSelector>
+                              <FormikTextField
+                                data-test-id={`${namePrefix}Key${index}Field`}
+                                label={keyLabel}
+                                name={`${namePrefix}${name}.${index}.key`}
+                                width="size-5000"
+                                marginTop="size-0"
+                                description={keyDescription}
+                                isRequired
+                              />
+                            </DataElementSelector>
+                            <DataElementSelector>
+                              <FormikTextField
+                                data-test-id={`${namePrefix}Value${index}Field`}
+                                label={valueLabel}
+                                name={`${namePrefix}${name}.${index}.value`}
+                                width="size-5000"
+                                marginTop="size-0"
+                                description={valueDescription}
+                              />
+                            </DataElementSelector>
+                          </FormElementContainer>
                           <Flex direction="row">
                             <Button
                               variant="secondary"
                               data-test-id={`${namePrefix}${name}${index}RemoveButton`}
+                              isDisabled={items.length === 1}
                               onPress={() => {
                                 // using arrayHelpers.remove mangles the error message
                                 setItems(items.filter((_, i) => i !== index));
                               }}
-                              isDisabled={items.length === 1}
                               marginStart="auto"
                             >
                               Remove {singularLabel.toLowerCase()}
@@ -242,7 +246,9 @@ export default function objectArray(
                       <Button
                         variant="secondary"
                         data-test-id={`${namePrefix}${name}AddButton`}
-                        onPress={() => arrayHelpers.push(buildDefaultItem())}
+                        onPress={() =>
+                          arrayHelpers.push({ key: "", value: "" })
+                        }
                       >
                         Add {singularLabel.toLowerCase()}
                       </Button>
@@ -267,8 +273,8 @@ export default function objectArray(
       );
     }
   };
-  formPart.Component.propTypes = {
+  part.Component.propTypes = {
     namePrefix: PropTypes.string
   };
-  return formPart;
+  return part;
 }

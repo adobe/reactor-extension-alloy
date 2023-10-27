@@ -20,11 +20,12 @@ import form from "../forms/form";
 import radioGroup from "../forms/radioGroup";
 import section from "../forms/section";
 import dataElement from "../forms/dataElement";
-import stringArray from "../forms/stringArray";
+import fieldArray from "../forms/fieldArray";
 import disabledTextField from "../forms/disabledTextField";
 import conditional from "../forms/conditional";
 import disabledCheckbox from "../forms/disabledCheckbox";
 import configOverrides from "../forms/configOverrides";
+import simpleMap from "../forms/simpleMap";
 
 import eventTypes from "./constants/eventTypes";
 
@@ -80,6 +81,7 @@ const wrapGetSettings = getSettings => ({ values }) => {
     sendDisplayEvent,
     includeRenderedPropositions,
     defaultPersonalizationEnabled,
+    decisionContext,
     ...settings
   } = getSettings({ values });
   if (
@@ -87,7 +89,8 @@ const wrapGetSettings = getSettings => ({ values }) => {
     surfaces ||
     sendDisplayEvent === false ||
     includeRenderedPropositions ||
-    defaultPersonalizationEnabled
+    defaultPersonalizationEnabled ||
+    decisionContext
   ) {
     settings.personalization = {};
   }
@@ -106,6 +109,9 @@ const wrapGetSettings = getSettings => ({ values }) => {
   if (defaultPersonalizationEnabled) {
     settings.personalization.defaultPersonalizationEnabled =
       defaultPersonalizationEnabled === "true";
+  }
+  if (decisionContext) {
+    settings.personalization.decisionContext = decisionContext;
   }
   return settings;
 };
@@ -177,7 +183,7 @@ const mergeIdField = dataElement({
     "Provide an identifier used to merge multiple events. This will populate the `eventMergeId` XDM field. This field has been deprecated because it is not supported by Adobe Experience Platform."
 });
 
-const decisionScopesField = stringArray({
+const decisionScopesField = fieldArray({
   name: "decisionScopes",
   label: "Scopes",
   singularLabel: "Scope",
@@ -186,7 +192,7 @@ const decisionScopesField = stringArray({
     "This data element should resolve to an array of scopes."
 });
 
-const surfacesField = stringArray({
+const surfacesField = fieldArray({
   name: "surfaces",
   label: "Surfaces",
   singularLabel: "Surface",
@@ -264,6 +270,22 @@ const defaultPersonalizationEnabledField = radioGroup({
   beta: true
 });
 
+const decisionContext = simpleMap({
+  name: "decisionContext",
+  label: "Decision context",
+  singularLabel: "Context item",
+  description:
+    "Provide the keys and values that the rulesets will use to determine which experience to deliver.",
+  dataElementDescription:
+    "Provide a data element that resolves to a map of key/value pairs.",
+  keyLabel: "Key",
+  keyLabelPlural: "Keys",
+  keyDescription: "Enter the context key.",
+  valueLabel: "Value",
+  valueDescription: "Enter the context value.",
+  beta: true
+});
+
 const configOverrideFields = configOverrides();
 const datasetIdField = textField({
   name: "datasetId",
@@ -306,7 +328,8 @@ const sendEventForm = form(
           surfacesField,
           renderDecisionsField,
           sendDisplayEventField,
-          defaultPersonalizationEnabledField
+          defaultPersonalizationEnabledField,
+          decisionContext
         ]),
         configOverrideFields,
         datasetIdField
@@ -353,7 +376,8 @@ const sendEventForm = form(
               surfacesField,
               renderDecisionsField,
               sendDisplayEventUnchecked,
-              defaultPersonalizationEnabledField
+              defaultPersonalizationEnabledField,
+              decisionContext
             ]),
             configOverrideFields
           ]
