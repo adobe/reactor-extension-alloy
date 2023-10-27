@@ -253,7 +253,7 @@ const defaultPersonalizationEnabledField = radioGroup({
     {
       value: "true",
       label:
-        "Enabled - explicitly request the page scope and default surface. This will also refresh the view cache."
+        "Enabled - explicitly request the page scope and default surface. This will update the SPA view cache."
     },
     {
       value: "false",
