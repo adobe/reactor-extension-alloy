@@ -253,11 +253,16 @@ export default function fieldArray({
                             <ActionButton
                               data-test-id={`${namePrefix}${name}${index}RemoveButton`}
                               isQuiet
-                              isDisabled={items.length === 1}
                               variant="secondary"
                               onPress={() => {
                                 // using arrayHelpers.remove mangles the error message
-                                setItems(items.filter((_, i) => i !== index));
+                                const newItems = items.filter(
+                                  (_, i) => i !== index
+                                );
+                                if (newItems.length === 0) {
+                                  newItems.push("");
+                                }
+                                setItems(newItems);
                               }}
                               aria-label={`Remove ${label} ${index + 1}`}
                               marginTop={0}
