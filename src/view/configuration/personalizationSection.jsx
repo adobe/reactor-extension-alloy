@@ -21,12 +21,13 @@ import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfV
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import FormElementContainer from "../components/formElementContainer";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
+import BetaBadge from "../components/betaBadge";
 
 export const bridge = {
   getInstanceDefaults: () => ({
     prehidingStyle: "",
     targetMigrationEnabled: false,
-    personalizationStorageEnabled: true
+    personalizationStorageEnabled: false
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
@@ -105,7 +106,7 @@ const PersonalizationSection = ({ instanceFieldName }) => {
           description="Use this option to store personalization events in the browser's local storage. This allows the Web SDK to keep track of which experiences have been seen by the user across page loads."
           width="size-5000"
         >
-          Enable personalization storage
+          Enable personalization storage <BetaBadge />
         </FormikCheckbox>
       </FormElementContainer>
     </>
