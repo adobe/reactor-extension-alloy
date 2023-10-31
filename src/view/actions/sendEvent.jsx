@@ -155,7 +155,7 @@ const includeRenderedPropositionsField = checkbox({
   name: "includeRenderedPropositions",
   label: "Include rendered propositions",
   description:
-    'Check this to use this event as a display event, including the propositions that rendered when "automaically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
+    'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
   defaultValue: false,
   beta: true
 });
@@ -164,7 +164,7 @@ const disabledIncludeRenderedPropositionsField = disabledCheckbox({
   name: "includeRenderedPropositions",
   label: "Include rendered propositions",
   description:
-    'Check this to use this event as a display event, including the propositions that rendered when "automaically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
+    'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
   value: true,
   beta: true
 });
