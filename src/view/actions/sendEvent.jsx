@@ -155,16 +155,16 @@ const includeRenderedPropositionsField = checkbox({
   name: "includeRenderedPropositions",
   label: "Include rendered propositions",
   description:
-    "Check this to include propositions that have been rendered, but the display notification has not been sent. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
+    'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
   defaultValue: false,
   beta: true
 });
 
 const disabledIncludeRenderedPropositionsField = disabledCheckbox({
   name: "includeRenderedPropositions",
-  label: "Include renderedPropositions",
+  label: "Include rendered propositions",
   description:
-    "Check this to include propositions that have been rendered, but the display notification has not been sent. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.",
+    'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
   value: true,
   beta: true
 });
@@ -229,7 +229,7 @@ const sendDisplayEventField = conditional(
       name: "sendDisplayEvent",
       label: "Automatically send a display event",
       description:
-        "Check this to automatically send an extra experience event containing display event after personalization is rendered. Uncheck this so that you can include the display notifications in a subsequent event.",
+        'Check this to send a display event after personalization is rendered. Uncheck this to include the display notifications in a subsequent event with the "include rendered propositions" checked.',
       defaultValue: true,
       beta: true
     })
@@ -240,7 +240,7 @@ const sendDisplayEventUnchecked = disabledCheckbox({
   name: "sendDisplayEvent",
   label: "Automatically send a display event",
   description:
-    "Check this to automatically send an extra experience event containing display notifications after personalization is rendered. Uncheck this so that you can include the display notifications in a subsequent event.",
+    'Check this to send a display event after personalization is rendered. Uncheck this to include the display notifications in a subsequent event with the "include rendered propositions" checked.',
   value: false,
   beta: true
 });
