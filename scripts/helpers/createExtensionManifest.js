@@ -308,7 +308,10 @@ const createExtensionManifest = ({ version }) => {
                   type: "string",
                   minLength: 1
                 },
-                edgeConfigOverrides: createEdgeConfigOverridesSchema(false)
+                edgeConfigOverrides: createEdgeConfigOverridesSchema(false),
+                personalizationStorageEnabled: {
+                  type: "boolean"
+                }
               },
               required: ["edgeConfigId", "name"],
               additionalProperties: false
