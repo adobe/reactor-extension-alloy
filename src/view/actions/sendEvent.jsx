@@ -66,6 +66,11 @@ const xdmFieldDescription = (
 
 const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
   const { personalization = {}, ...otherSettings } = initInfo.settings || {};
+  if (personalization.defaultPersonalizationEnabled === true) {
+    personalization.defaultPersonalizationEnabled = "true";
+  } else if (personalization.defaultPersonalizationEnabled === false) {
+    personalization.defaultPersonalizationEnabled = "false";
+  }
   return getInitialValues({
     initInfo: {
       ...initInfo,
