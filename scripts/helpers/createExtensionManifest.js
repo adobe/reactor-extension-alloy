@@ -377,7 +377,7 @@ const createExtensionManifest = ({ version }) => {
           $schema: "http://json-schema.org/draft-04/schema#",
           type: "object",
           properties: {
-            guidedEventsEnabled: {
+            guidedEvent: {
               type: "boolean"
             },
             eventStyle: {
