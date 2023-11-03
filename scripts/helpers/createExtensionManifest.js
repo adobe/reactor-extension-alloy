@@ -494,7 +494,11 @@ const createExtensionManifest = ({ version }) => {
         transforms: [
           {
             type: "remove",
-            propertyPath: "eventStyle"
+            propertyPath: "guidedEventsEnabled"
+          },
+          {
+            type: "remove",
+            propertyPath: "guidedEvent"
           },
           ...actionEdgeConfigOverridesTransforms
         ],
