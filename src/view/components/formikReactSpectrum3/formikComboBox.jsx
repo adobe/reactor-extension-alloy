@@ -29,7 +29,6 @@ const FormikComboBox = ({ name, width, validate, ...otherProps }) => {
     name,
     validate
   });
-  console.log("FormikComboBox", otherProps);
   return (
     <ComboBox
       {...otherProps}
