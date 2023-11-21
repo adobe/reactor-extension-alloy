@@ -32,13 +32,9 @@ export const bridge = {
     mediaAnalytics: getMediaAnalytics()
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
-    console.log("instanceSettings1", instanceSettings);
-
     if (!instanceSettings.mediaAnalytics) {
-      const mediaDefaults = bridge.getInstanceDefaults();
-      instanceSettings.mediaAnalytics = mediaDefaults;
+      instanceSettings.mediaAnalytics = getMediaAnalytics();
     }
-    console.log("instanceSettings2", instanceSettings);
 
     return instanceSettings;
   },

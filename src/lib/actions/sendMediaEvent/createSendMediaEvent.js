@@ -10,10 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const clone = require("../../utils/clone");
+const { deepAssign } = require("../../alloy");
 
 module.exports = ({ instanceManager }) => settings => {
-  const { instanceName, ...createMediaEventSettings } = settings;
+  const {
+    instanceName,
+    eventType,
+    playerId,
+    ...createMediaEventSettings
+  } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -21,14 +26,8 @@ module.exports = ({ instanceManager }) => settings => {
       `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
     );
   }
+  const { xdm = {} } = createMediaEventSettings;
+  deepAssign(xdm, { eventType });
 
-  // If the customer modifies the xdm or data object (or anything nested in the object) after this action runs,
-  // we want to make sure those modifications are not reflected in the data sent to the server. By cloning the
-  // objects here, we ensure we use a snapshot that will remain unchanged during the time period between when
-  // sendEvent is called and the network request is made.
-  if (createMediaEventSettings.xdm) {
-    createMediaEventSettings.xdm = clone(createMediaEventSettings.xdm);
-  }
-
-  return instance("sendMediaEvent", createMediaEventSettings);
+  return instance("sendMediaEvent", { xdm, playerId });
 };

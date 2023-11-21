@@ -1,3 +1,5 @@
+import mediaEventTypes from "./mediaEventTypes";
+
 export default {
   "advertising.completes": "Advertising Completes",
   "advertising.timePlayed": "Advertising Time Played",
@@ -72,30 +74,12 @@ export default {
   "inappmessageTracking.dismiss": "inapp message was dimissed",
   "inappmessageTracking.display": "inapp message was displayed",
   "inappmessageTracking.interact": "inapp message was interacted with",
-  "media.ping": "Media ping",
-  "media.sessionStart": "Media sessionStart",
-  "media.play": "Media play",
-  "media.bufferStart": "Media bufferStart",
-  "media.pauseStart": "Media pauseStart",
-  "media.chapterStart": "Media chapterStart",
-  "media.chapterSkip": "Media chapterSkip",
-  "media.chapterComplete": "Media chapterComplete",
-  "media.adStart": "Media adStart",
-  "media.adSkip": "Media adSkip",
-  "media.adComplete": "Media adComplete",
-  "media.adBreakStart": "Media adBreakStart",
-  "media.adBreakComplete": "Media adBreakComplete",
-  "media.bitrateChange": "Media bitrateChange",
-  "media.error": "Media error",
-  "media.sessionComplete": "Media sessionComplete",
-  "media.sessionEnd": "Media sessionEnd",
-  "media.statesUpdate": "Media statesUpdate",
-  "media.downloaded": "Media downloaded content",
   "media.reporting.sessionStart": "Media reporting sessionStart",
   "media.reporting.sessionClose": "Media reporting sessionClose",
   "media.reporting.adStart": "Media reporting adStart",
   "media.reporting.adClose": "Media reporting adClose",
   "media.reporting.chapterClose": "Media reporting chapterClose",
   "location.entry": "Location entry",
-  "location.exit": "Location exit"
+  "location.exit": "Location exit",
+  ...mediaEventTypes
 };

@@ -192,7 +192,7 @@ const createExtensionManifest = ({ version }) => {
   const extensionManifest = {
     version,
     displayName: "Adobe Experience Platform Web SDK",
-    name: "adobe-alloy",
+    name: "adobe-alloy-nina",
     iconPath: "resources/images/icon.svg",
     exchangeUrl:
       "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
@@ -854,20 +854,22 @@ const createExtensionManifest = ({ version }) => {
               type: "string",
               minLength: 1
             },
-            xdm: {
+            eventType: {
               type: "string",
-              pattern: "^%[^%]+%$"
+              minLength: 1
             },
             playerId: {
               type: "string",
               minLength: 1
+            },
+            xdm: {
+              type: "object"
             }
           },
-          required: ["instanceName"],
-          additionalProperties: false
+          required: ["instanceName"]
         },
         libPath: "dist/lib/actions/sendMediaEvent/index.js",
-        viewPath: "actions/sendMediaEvent.html"
+        viewPath: "actions/sendMediaAnalyticsEvent.html"
       },
       {
         displayName: "Evaluate rulesets",

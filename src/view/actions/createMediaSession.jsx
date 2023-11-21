@@ -12,19 +12,19 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import { object, string } from "yup";
-import { Link } from "@adobe/react-spectrum";
-import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
-import DataElementSelector from "../components/dataElementSelector";
-import render from "../render";
-import ExtensionView from "../components/extensionView";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
-import FormElementContainer from "../components/formElementContainer";
-import InstanceNamePicker from "../components/instanceNamePicker";
-import CodeField from "../components/codeField";
+import form from "../forms/form";
+import instancePicker from "../forms/instancePicker";
+import comboBox from "../forms/comboBox";
+import mediaEventTypes from "./constants/mediaEventTypes";
+import conditional from "../forms/conditional";
+import textField from "../forms/textField";
+import dataElement from "../forms/dataElement";
+import renderForm from "../forms/renderForm";
+import codeField from "../forms/codeField";
 
 const getInitialValues = ({ initInfo }) => {
-  console.log("init", initInfo);
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
     xdm = "",
@@ -63,6 +63,7 @@ const validationSchema = object().shape({
   onBeforeMediaEvent: string()
 });
 
+/*
 const CreateMediaSession = () => {
   return (
     <ExtensionView
@@ -141,3 +142,55 @@ const CreateMediaSession = () => {
 };
 
 render(CreateMediaSession);
+*/
+
+const createSessionEventForm = form(
+  {
+    getInitialValues,
+    getSettings
+  },
+  [
+    instancePicker({ name: "instanceName" }),
+    comboBox({
+      name: "eventType",
+      label: "Media Event Type",
+      description: "Select your media event type",
+      isRequired: true,
+      items: Object.keys(mediaEventTypes).reduce((items, key) => {
+        items.push({ value: key, label: mediaEventTypes[key] });
+        return items;
+      }, [])
+    }),
+    textField({
+      name: "playerId",
+      label: "Player ID",
+      description: "Enter your player ID"
+    }),
+    dataElement({
+      name: "xdm",
+      label: "XDM",
+      description: "XDM Object defining the mediaCollection Object.",
+      isRequired: true
+    }),
+    conditional(
+      {
+        args: "playerId",
+        condition: playerId => playerId
+      },
+      [
+        codeField({
+          name: "onBeforeMediaEvent",
+          isRequired: true,
+          label: "On before media event send callback",
+          description:
+            "Callback function for retrieving the playhead, Quality of Experience Data.",
+          placeholder:
+            "// introduce the function code to retrieve the playhead.",
+          buttonLabelSuffix: ""
+        })
+      ]
+    )
+  ]
+);
+
+renderForm(createSessionEventForm);
