@@ -73,6 +73,7 @@ const Overrides = ({
     : "edgeConfigOverrides";
   const hideFieldsSet = new Set(hideFields);
 
+  /** @type {{value: import("./overridesBridge").EnvironmentConfigOverrideFormikState}[] } */
   const [{ value: edgeConfigOverrides }] = useField(prefix);
   const formikContext = useFormikContext();
   /**
@@ -117,9 +118,9 @@ const Overrides = ({
       configOrgId,
       imsAccess: initInfo.tokens.imsAccess,
       edgeConfigId:
-        edgeConfigOverrides.development.datastreamId ||
+        edgeConfigOverrides.development?.datastreamId ||
         edgeConfigIds.developmentEnvironment.datastreamId,
-      sandbox: edgeConfigOverrides.development.datastreamId
+      sandbox: edgeConfigOverrides.development?.datastreamId
         ? edgeConfigOverrides.development.sandbox
         : edgeConfigIds.developmentEnvironment.sandbox,
       requestCache
@@ -129,11 +130,11 @@ const Overrides = ({
       configOrgId,
       imsAccess: initInfo.tokens.imsAccess,
       edgeConfigId:
-        edgeConfigOverrides.staging.datastreamId ||
-        edgeConfigIds.stagingEnvironment.datastreamId,
-      sandbox: edgeConfigOverrides.staging.datastreamId
-        ? edgeConfigOverrides.staging.sandbox
-        : edgeConfigIds.stagingEnvironment.sandbox,
+        edgeConfigOverrides.staging?.datastreamId ||
+        edgeConfigIds.stagingEnvironment?.datastreamId,
+      sandbox: edgeConfigOverrides.staging?.datastreamId
+        ? edgeConfigOverrides.staging?.sandbox
+        : edgeConfigIds.stagingEnvironment?.sandbox,
       requestCache
     }),
     [PRODUCTION]: useFetchConfig({
@@ -141,9 +142,9 @@ const Overrides = ({
       configOrgId,
       imsAccess: initInfo.tokens.imsAccess,
       edgeConfigId:
-        edgeConfigOverrides.production.datastreamId ||
+        edgeConfigOverrides.production?.datastreamId ||
         edgeConfigIds.productionEnvironment.datastreamId,
-      sandbox: edgeConfigOverrides.production.datastreamId
+      sandbox: edgeConfigOverrides.production?.datastreamId
         ? edgeConfigOverrides.production.sandbox
         : edgeConfigIds.productionEnvironment.sandbox,
       requestCache
