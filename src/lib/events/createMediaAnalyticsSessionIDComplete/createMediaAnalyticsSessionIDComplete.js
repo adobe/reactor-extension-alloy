@@ -10,9 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ createMediaAnalyticsSessionCallbackStorage }) => (
+module.exports = ({ mediaAnalyticsSessionCallbackStorage }) => (
   settings,
   trigger
 ) => {
-  createMediaAnalyticsSessionCallbackStorage.add(trigger);
+  mediaAnalyticsSessionCallbackStorage.add(result => {
+    if (result.sessionId) {
+      trigger({ sessionId: result.sessionId });
+    }
+  });
 };

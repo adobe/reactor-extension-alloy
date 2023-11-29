@@ -30,11 +30,19 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
     initInfo.settings || {};
   const { mediaCollection = {} } = xdm;
   const { sessionID = "", playhead = "" } = mediaCollection;
+  const {
+    qoeDataDetails,
+    advertisingDetails,
+    chapterDetails,
+    advertisingPodDetails,
+    errorDetails
+  } = mediaCollection;
 
   let automaticSessionHandler = false;
   if (playerId) {
     automaticSessionHandler = true;
   }
+
   return getInitialValues({
     initInfo: {
       ...initInfo,
@@ -44,7 +52,12 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
         instanceName,
         automaticSessionHandler,
         sessionID,
-        playhead
+        playhead,
+        ...qoeDataDetails,
+        ...chapterDetails,
+        ...advertisingDetails,
+        ...advertisingPodDetails,
+        ...errorDetails
       }
     }
   });

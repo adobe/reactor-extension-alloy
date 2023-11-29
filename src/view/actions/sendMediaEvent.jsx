@@ -23,7 +23,6 @@ import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
 
 const getInitialValues = ({ initInfo }) => {
-  console.log("init", initInfo);
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
     xdm = "",

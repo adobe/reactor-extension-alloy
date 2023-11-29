@@ -28,6 +28,5 @@ module.exports = ({ instanceManager }) => settings => {
   }
   const { xdm = {} } = createMediaEventSettings;
   deepAssign(xdm, { eventType });
-
   return instance("sendMediaEvent", { xdm, playerId });
 };
