@@ -10,12 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({
-  instanceManager,
-  mediaAnalyticsSessionCallbackStorage,
-  wrapOnBeforeMediaEvent
-}) => settings => {
-  const { instanceName, ...createMediaSessionSettings } = settings;
+module.exports = ({ instanceManager, windowObject }) => settings => {
+  const { instanceName, objectName = "Media" } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   if (!instance) {
@@ -24,18 +20,7 @@ module.exports = ({
     );
   }
 
-  const options = { xdm: createMediaSessionSettings.xdm };
-  if (
-    createMediaSessionSettings.playerId &&
-    createMediaSessionSettings.onBeforeMediaEvent
-  ) {
-    options.playerId = createMediaSessionSettings.playerId;
-    options.onBeforeMediaEvent = wrapOnBeforeMediaEvent(
-      createMediaSessionSettings.onBeforeMediaEvent
-    );
-  }
-
-  return instance("createMediaSession", options).then(result => {
-    mediaAnalyticsSessionCallbackStorage.triggerEvent(result);
+  return instance("getMediaAnalyticsTracker", {}).then(result => {
+    windowObject[objectName] = result;
   });
 };

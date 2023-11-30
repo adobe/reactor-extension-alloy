@@ -309,7 +309,7 @@ const createExtensionManifest = ({ version }) => {
                   minLength: 1
                 },
                 edgeConfigOverrides: createEdgeConfigOverridesSchema(false),
-                mediaAnalytics: {
+                mediaCollection: {
                   type: "object",
                   properties: {
                     channel: {
@@ -870,6 +870,27 @@ const createExtensionManifest = ({ version }) => {
         },
         libPath: "dist/lib/actions/sendMediaEvent/index.js",
         viewPath: "actions/sendMediaAnalyticsEvent.html"
+      },
+      {
+        displayName: "Get Media Tracker API",
+        name: "get-media-tracker-api",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            instanceName: {
+              type: "string",
+              minLength: 1
+            },
+            objectName: {
+              type: "string",
+              minLength: 1
+            }
+          },
+          required: ["instanceName"]
+        },
+        libPath: "dist/lib/actions/getMediaTrackerAPI/index.js",
+        viewPath: "actions/createMediaTracker.html"
       },
       {
         displayName: "Evaluate rulesets",

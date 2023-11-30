@@ -18,7 +18,7 @@ import FormElementContainer from "../components/formElementContainer";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FormikNumberField from "../components/formikReactSpectrum3/formikNumberField";
 
-const getMediaAnalytics = () => {
+const getMediaCollection = () => {
   return {
     channel: "",
     playerName: "",
@@ -29,30 +29,30 @@ const getMediaAnalytics = () => {
 };
 export const bridge = {
   getInstanceDefaults: () => ({
-    mediaAnalytics: getMediaAnalytics()
+    mediaCollection: getMediaCollection()
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
-    if (!instanceSettings.mediaAnalytics) {
-      instanceSettings.mediaAnalytics = getMediaAnalytics();
+    if (!instanceSettings.mediaCollection) {
+      instanceSettings.mediaCollection = getMediaCollection();
     }
 
     return instanceSettings;
   },
   getInstanceSettings: ({ instanceValues }) => {
     const instanceSettings = {};
-    const { mediaAnalytics } = instanceValues;
+    const { mediaCollection } = instanceValues;
 
     if (
-      mediaAnalytics.channel &&
-      mediaAnalytics.playerName &&
-      mediaAnalytics.version
+      mediaCollection.channel &&
+      mediaCollection.playerName &&
+      mediaCollection.version
     ) {
-      instanceSettings.mediaAnalytics = mediaAnalytics;
+      instanceSettings.mediaCollection = mediaCollection;
     }
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
-    mediaAnalytics: object().shape(
+    mediaCollection: object().shape(
       {
         channel: string().when("playerName", {
           is: playerName => playerName,
@@ -89,7 +89,7 @@ export const bridge = {
   })
 };
 
-const MediaAnalyticsSection = ({ instanceFieldName }) => {
+const MediaCollectionSection = ({ instanceFieldName }) => {
   return (
     <>
       <SectionHeader learnMoreUrl="https://adobe.ly/3fYDkfh">
@@ -99,35 +99,35 @@ const MediaAnalyticsSection = ({ instanceFieldName }) => {
         <FormikTextField
           data-test-id="mediaChannelField"
           label="Channel"
-          name={`${instanceFieldName}.mediaAnalytics.channel`}
+          name={`${instanceFieldName}.mediaCollection.channel`}
           description="Distribution Station/Channels or where the content is played. Any string value is accepted here."
           width="size-5000"
         />
         <FormikTextField
           data-test-id="mediaPlayerNameField"
           label="Player Name"
-          name={`${instanceFieldName}.mediaAnalytics.playerName`}
-          description="The Media Analytics Player Name that will be used in every media session."
+          name={`${instanceFieldName}.mediaCollection.playerName`}
+          description="The Media Collection Player Name that will be used in every media session."
           width="size-5000"
         />
         <FormikTextField
           data-test-id="mediaVersionField"
           label="Application version"
-          name={`${instanceFieldName}.mediaAnalytics.version`}
+          name={`${instanceFieldName}.mediaCollection.version`}
           description="The SDK version used by the player. This could have any custom value that makes sense for your player."
           width="size-5000"
         />
         <FormikNumberField
           data-test-id="mediaMainPingIntervalField"
           label="Main ping interval"
-          name={`${instanceFieldName}.mediaAnalytics.mainPingInterval`}
+          name={`${instanceFieldName}.mediaCollection.mainPingInterval`}
           description="The ping interval frequency for main content."
           width="size-5000"
         />
         <FormikNumberField
           data-test-id="mediaAdPingIntervalField"
           label="Ad ping interval"
-          name={`${instanceFieldName}.mediaAnalytics.adPingInterval`}
+          name={`${instanceFieldName}.mediaCollection.adPingInterval`}
           description="The ping interval frequency for ad content."
           width="size-5000"
         />
@@ -136,8 +136,8 @@ const MediaAnalyticsSection = ({ instanceFieldName }) => {
   );
 };
 
-MediaAnalyticsSection.propTypes = {
+MediaCollectionSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired
 };
 
-export default MediaAnalyticsSection;
+export default MediaCollectionSection;

@@ -81,7 +81,7 @@ const wrapGetSettings = getSettings => ({ values }) => {
     settings.playerId = playerId;
   } else {
     mediaCollection.sessionID = sessionID;
-    mediaCollection.playhead = playhead;
+    mediaCollection.playhead = parseInt(playhead, 10);
 
     // adding QOE data
     const qoeDataDetails = {};
