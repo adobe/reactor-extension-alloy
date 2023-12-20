@@ -191,14 +191,15 @@ const createExtensionManifest = ({ version }) => {
   /** @type {ExtensionManifest} */
   const extensionManifest = {
     version,
-    displayName: "Adobe Experience Platform Web SDK",
-    name: "adobe-alloy-nina",
+    displayName: "BETA - Adobe Experience Platform Web SDK",
+    name: "adobe-alloy-beta",
     iconPath: "resources/images/icon.svg",
     exchangeUrl:
       "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
     platform: "web",
     description:
-      "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
+      "This is the AEP Web SDK official channel for Beta features. This extension should NOT be used for production environments. " +
+      "This extension contains features that are not included in the AEP Web SDK extension.",
     author: {
       name: "Adobe"
     },

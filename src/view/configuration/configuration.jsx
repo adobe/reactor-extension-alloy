@@ -62,6 +62,8 @@ import { FIELD_NAMES } from "../components/overrides/utils";
 import MediaCollectionSection, {
   bridge as mediaBridge
 } from "./mediaCollectionSection";
+import Alert from "../components/alert";
+import BetaBadge from "../components/betaBadge";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -145,7 +147,6 @@ const validationSchema = object().shape({
     }, object())
   )
 });
-
 const Configuration = ({ initInfo, context }) => {
   const [{ value: instances }] = useField("instances");
   const [selectedTabKey, setSelectedTabKey] = useState("0");
@@ -161,7 +162,13 @@ const Configuration = ({ initInfo, context }) => {
       setSelectedTabKey(String(instanceIndexContainingErrors));
     }
   });
-
+  const title = (
+    <>
+      <BetaBadge /> This is the beta version of the AEP Web SDK extension. Do
+      NOT use in Production. Do NOT use this Beta extension simultaneously with
+      the Production version.
+    </>
+  );
   return (
     <div>
       <FieldArray
@@ -169,6 +176,23 @@ const Configuration = ({ initInfo, context }) => {
         render={arrayHelpers => {
           return (
             <div>
+              <Alert
+                variant="negative"
+                title={title}
+                width="size-10000"
+                marginBottom="size-200"
+                className="BetaAlertBox"
+              >
+                <h3> Features included: </h3>
+                <ul>
+                  <li>
+                    <h4>Media Collection</h4>
+                  </li>
+                  <li>
+                    <h4>Legacy Media Analytics</h4>
+                  </li>
+                </ul>
+              </Alert>
               <Flex alignItems="center">
                 <Heading size="M">SDK instances</Heading>
                 <Button
