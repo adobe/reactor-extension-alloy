@@ -29,8 +29,9 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
   const { eventType, playerId, instanceName, xdm = {} } =
     initInfo.settings || {};
   const { mediaCollection = {} } = xdm;
-  const { sessionID = "", playhead = "" } = mediaCollection;
   const {
+    sessionID = "",
+    playhead = "",
     qoeDataDetails,
     advertisingDetails,
     chapterDetails,
@@ -81,7 +82,7 @@ const wrapGetSettings = getSettings => ({ values }) => {
     settings.playerId = playerId;
   } else {
     mediaCollection.sessionID = sessionID;
-    mediaCollection.playhead = parseInt(playhead, 10);
+    mediaCollection.playhead = playhead;
 
     // adding QOE data
     const qoeDataDetails = {};
@@ -423,7 +424,7 @@ const sendEventForm = form(
       name: "automaticSessionHandler",
       label: "Handle Media Session automatically.",
       description:
-        "Check this to let Web SDK to retrieve the playHead, session, QOE data by using the PlayerID bellow.",
+        "Check this to let Web SDK to retrieve the current play head, session ID, QOE data by using the PlayerID bellow.",
       defaultValue: true
     }),
     conditional(

@@ -844,7 +844,7 @@ const createExtensionManifest = ({ version }) => {
         ]
       },
       {
-        displayName: "Send Media Analytics Event",
+        displayName: "Send Media Event",
         name: "send-media-event",
         schema: {
           $schema: "http://json-schema.org/draft-04/schema#",

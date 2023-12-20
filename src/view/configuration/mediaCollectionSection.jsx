@@ -42,11 +42,7 @@ export const bridge = {
     const instanceSettings = {};
     const { mediaCollection } = instanceValues;
 
-    if (
-      mediaCollection.channel &&
-      mediaCollection.playerName &&
-      mediaCollection.version
-    ) {
+    if (mediaCollection.channel && mediaCollection.playerName) {
       instanceSettings.mediaCollection = mediaCollection;
     }
     return instanceSettings;
@@ -102,6 +98,7 @@ const MediaCollectionSection = ({ instanceFieldName }) => {
           name={`${instanceFieldName}.mediaCollection.channel`}
           description="Distribution Station/Channels or where the content is played. Any string value is accepted here."
           width="size-5000"
+          isRequired
         />
         <FormikTextField
           data-test-id="mediaPlayerNameField"
@@ -109,6 +106,7 @@ const MediaCollectionSection = ({ instanceFieldName }) => {
           name={`${instanceFieldName}.mediaCollection.playerName`}
           description="The Media Collection Player Name that will be used in every media session."
           width="size-5000"
+          isRequired
         />
         <FormikTextField
           data-test-id="mediaVersionField"
