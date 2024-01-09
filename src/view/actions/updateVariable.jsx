@@ -132,7 +132,8 @@ const getInitialValues = context => async ({ initInfo }) => {
 
   if (dataElement) {
     const prefixedTransforms = Object.keys(transforms).reduce((memo, key) => {
-      memo[`xdm.${key}`] = transforms[key];
+      // The key for a root element transform is "".
+      memo[key === "" ? "xdm" : `xdm.${key}`] = transforms[key];
       return memo;
     }, {});
     const initialFormState = await getInitialFormStateFromDataElement({
