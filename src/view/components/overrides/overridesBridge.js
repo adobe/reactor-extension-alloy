@@ -16,8 +16,57 @@ import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPro
 import trimValue from "../../utils/trimValues";
 import { dataElementRegex } from "./utils";
 
+/**
+ * @typedef {Object} EnvironmentConfigOverrideFormikState
+ * @property {string} [sandbox]
+ * @property {string} [datastreamId]
+ * @property {string} [datastreamIdInputMethod]
+ * @property {Object} [com_adobe_experience_platform]
+ * @property {Object} [com_adobe_experience_platform.datasets]
+ * @property {Object} [com_adobe_experience_platform.datasets.event]
+ * @property {string} [com_adobe_experience_platform.datasets.event.datasetId]
+ * @property {Object} [com_adobe_experience_platform.datasets.profile]
+ * @property {string} [com_adobe_experience_platform.datasets.profile.datasetId]
+ * @property {Object} [com_adobe_analytics]
+ * @property {string[]} [com_adobe_analytics.reportSuites]
+ * @property {Object} [com_adobe_identity]
+ * @property {string} [com_adobe_identity.idSyncContainerId]
+ * @property {Object} [com_adobe_target]
+ * @property {string} [com_adobe_target.propertyToken]
+ *
+ * @typedef {Object} ConfigOverridesFormikState
+ * @property {EnvironmentConfigOverrideFormikState} [development]
+ * @property {EnvironmentConfigOverrideFormikState} [staging]
+ * @property {EnvironmentConfigOverrideFormikState} [production]
+ *
+ * @typedef {Object} EnvironmentConfigOverrideLaunchSettings
+ * @property {string} [sandbox]
+ * @property {string} [datastreamId]
+ * @property {string} [datastreamIdInputMethod]
+ * @property {Object} [com_adobe_experience_platform]
+ * @property {Object} [com_adobe_experience_platform.datasets]
+ * @property {Object} [com_adobe_experience_platform.datasets.event]
+ * @property {string} [com_adobe_experience_platform.datasets.event.datasetId]
+ * @property {Object} [com_adobe_experience_platform.datasets.profile]
+ * @property {string} [com_adobe_experience_platform.datasets.profile.datasetId]
+ * @property {Object} [com_adobe_analytics]
+ * @property {string[]} [com_adobe_analytics.reportSuites]
+ * @property {Object} [com_adobe_identity]
+ * @property {number} [com_adobe_identity.idSyncContainerId]
+ * @property {Object} [com_adobe_target]
+ * @property {string} [com_adobe_target.propertyToken]
+ *
+ * @typedef {Object} ConfigOverridesLaunchSettings
+ * @property {EnvironmentConfigOverrideLaunchSettings} [development]
+ * @property {EnvironmentConfigOverrideLaunchSettings} [staging]
+ * @property {EnvironmentConfigOverrideLaunchSettings} [production]
+ */
+
 export const bridge = {
-  // return formik state
+  /**
+   * Get the default formik state for the overrides form.
+   * @returns {ConfigOverridesFormikState}
+   */
   getInstanceDefaults: () => ({
     edgeConfigOverrides: OVERRIDE_ENVIRONMENTS.reduce(
       (acc, env) => ({
@@ -47,8 +96,11 @@ export const bridge = {
       {}
     )
   }),
-
-  // convert launch settings to formik state
+  /**
+   * Converts the saved Launch instance settings to the formik state.
+   * @param {{ edgeConfigOverrides: ConfigOverridesLaunchSettings }} params
+   * @returns {ConfigOverridesFormikState}
+   */
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
 
@@ -98,8 +150,13 @@ export const bridge = {
 
     return instanceValues;
   },
-  // convert formik state to launch settings
+  /**
+   * Converts the formik state to the Launch instance settings.
+   * @param {{ instanceValues: { edgeConfigOverrides: ConfigOverridesFormikState }}} params
+   * @returns {{ edgeConfigOverrides: ConfigOverridesLaunchSettings }}
+   */
   getInstanceSettings: ({ instanceValues }) => {
+    /** @type {{ edgeConfigOverrides?: ConfigOverridesLaunchSettings }} */
     const instanceSettings = {};
     const propertyKeysToCopy = ["edgeConfigOverrides"];
 
@@ -111,6 +168,7 @@ export const bridge = {
     });
 
     OVERRIDE_ENVIRONMENTS.forEach(env => {
+      /** @type {EnvironmentConfigOverrideLaunchSettings} */
       const overrides = instanceSettings.edgeConfigOverrides?.[env];
       if (!overrides || Object.keys(overrides).length === 0) {
         return;
@@ -135,6 +193,7 @@ export const bridge = {
       }
     });
 
+    /** @type {{ edgeConfigOverrides: ConfigOverridesLaunchSettings }} */
     const trimmedInstanceSettings = trimValue(instanceSettings);
     if (
       trimmedInstanceSettings?.edgeConfigOverrides?.development?.sandbox ===
