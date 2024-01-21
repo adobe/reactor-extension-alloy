@@ -36,6 +36,13 @@ module.exports = ({
   }
 
   return instance("createMediaSession", options).then(result => {
-    mediaAnalyticsSessionCallbackStorage.triggerEvent(result);
+    const { sessionId } = result;
+    const playerId = options.playerId;
+    const eventDetails = {
+      playerId,
+      sessionId
+    };
+
+    mediaAnalyticsSessionCallbackStorage.triggerEvent(eventDetails);
   });
 };

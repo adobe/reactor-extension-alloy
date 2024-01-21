@@ -12,7 +12,6 @@ governing permissions and limitations under the License.
 
 import form from "../forms/form";
 import instancePicker from "../forms/instancePicker";
-import conditional from "../forms/conditional";
 import textField from "../forms/textField";
 import dataElement from "../forms/dataElement";
 import renderForm from "../forms/renderForm";
@@ -61,7 +60,8 @@ const createSessionEventForm = form(
     textField({
       name: "playerId",
       label: "Player ID",
-      description: "Enter your player ID"
+      description: "Enter your player ID",
+      isRequired: true
     }),
     dataElement({
       name: "xdm",
@@ -69,24 +69,14 @@ const createSessionEventForm = form(
       description: "XDM Object defining the mediaCollection Object.",
       isRequired: true
     }),
-    conditional(
-      {
-        args: "playerId",
-        condition: playerId => playerId
-      },
-      [
-        codeField({
-          name: "onBeforeMediaEvent",
-          isRequired: true,
-          label: "On before media event send callback",
-          description:
-            "Callback function for retrieving the playhead, Quality of Experience Data.",
-          placeholder:
-            "// introduce the function code to retrieve the playhead.",
-          buttonLabelSuffix: ""
-        })
-      ]
-    )
+    codeField({
+      name: "onBeforeMediaEvent",
+      label: "On before media event send callback",
+      description:
+        "Callback function for retrieving the playhead, Quality of Experience Data.",
+      placeholder: "// introduce the function code to retrieve the playhead.",
+      buttonLabelSuffix: ""
+    })
   ]
 );
 

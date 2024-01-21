@@ -809,7 +809,7 @@ const createExtensionManifest = ({ version }) => {
         viewPath: "actions/updateVariable.html"
       },
       {
-        displayName: "Create Media Analytics Session",
+        displayName: "Create Media Session",
         name: "create-media-session",
         schema: {
           $schema: "http://json-schema.org/draft-04/schema#",

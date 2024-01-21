@@ -16,7 +16,10 @@ module.exports = ({ mediaAnalyticsSessionCallbackStorage }) => (
 ) => {
   mediaAnalyticsSessionCallbackStorage.add(result => {
     if (result.sessionId) {
-      trigger({ sessionId: result.sessionId });
+      trigger({
+        sessionId: result.sessionId,
+        playerId: result.playerId
+      });
     }
   });
 };
