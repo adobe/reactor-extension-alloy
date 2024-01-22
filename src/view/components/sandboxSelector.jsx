@@ -49,7 +49,7 @@ const getKey = sandbox => sandbox.name;
  * @param {string} props.name
  * @returns {JSX.Element}
  */
-const SandboxSelector = ({ initInfo, name, ...otherProps }) => {
+function SandboxSelector({ initInfo, name, ...otherProps }) {
   const {
     company: { orgId },
     tokens: { imsAccess }
@@ -113,7 +113,7 @@ const SandboxSelector = ({ initInfo, name, ...otherProps }) => {
       {sandboxItems}
     </FormikPicker>
   );
-};
+}
 
 SandboxSelector.propTypes = {
   initInfo: PropTypes.shape({

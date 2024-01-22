@@ -85,7 +85,7 @@ const InputMethod = Object.freeze({
  * @param {string} options.label
  * @returns {React.ReactElement}
  */
-const DatastreamOverrideSelector = ({
+function DatastreamOverrideSelector({
   orgId,
   imsAccess,
   sandbox,
@@ -93,7 +93,7 @@ const DatastreamOverrideSelector = ({
   limit = 1000,
   label,
   ...otherProps
-}) => {
+}) {
   /** @type {import("@adobe/react-spectrum").AsyncListData<Datastream, string>} */
   const datastreamList = useAsyncList({
     async load({ signal }) {
@@ -215,7 +215,7 @@ const DatastreamOverrideSelector = ({
       </Flex>
     </>
   );
-};
+}
 
 DatastreamOverrideSelector.propTypes = {
   orgId: PropTypes.string.isRequired,

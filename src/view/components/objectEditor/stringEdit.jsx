@@ -18,7 +18,7 @@ import DataElementSelector from "../dataElementSelector";
 /**
  * The form for editing a string field.
  */
-const StringEdit = props => {
+function StringEdit(props) {
   const { fieldName } = props;
 
   return (
@@ -33,7 +33,7 @@ const StringEdit = props => {
       </DataElementSelector>
     </div>
   );
-};
+}
 
 StringEdit.propTypes = {
   fieldName: PropTypes.string.isRequired

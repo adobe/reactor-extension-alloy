@@ -185,9 +185,8 @@ const createEdgeConfigOverridesTransforms = isAction => {
  */
 const createExtensionManifest = ({ version }) => {
   const actionEdgeConfigOverridesSchema = createEdgeConfigOverridesSchema(true);
-  const actionEdgeConfigOverridesTransforms = createEdgeConfigOverridesTransforms(
-    true
-  );
+  const actionEdgeConfigOverridesTransforms =
+    createEdgeConfigOverridesTransforms(true);
   /** @type {ExtensionManifest} */
   const extensionManifest = {
     version,

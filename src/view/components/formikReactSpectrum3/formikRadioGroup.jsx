@@ -16,22 +16,21 @@ import { RadioGroup } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const FormikRadioGroup = ({
+function FormikRadioGroup({
   name,
   children,
   description,
   width,
   ...otherProps
-}) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+}) {
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
   const radioGroupRef = createRef();
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for RadioGroup, so we wire up Formik's
   // onBlur to every radio.
-  const childrenWithOnBlur = React.Children.map(children, child => {
-    return React.cloneElement(child, {
+  const childrenWithOnBlur = React.Children.map(children, child =>
+    React.cloneElement(child, {
       onBlur: event => {
         // If the target that will receive focus is not a child of the
         // radio group, we know the radio group has lost focus.
@@ -43,8 +42,8 @@ const FormikRadioGroup = ({
           setTouched(true);
         }
       }
-    });
-  });
+    })
+  );
   return (
     <FieldDescriptionAndError
       description={description}
@@ -62,7 +61,7 @@ const FormikRadioGroup = ({
       </RadioGroup>
     </FieldDescriptionAndError>
   );
-};
+}
 
 FormikRadioGroup.propTypes = {
   name: PropTypes.string.isRequired,

@@ -63,7 +63,7 @@ export const bridge = {
   }
 };
 
-const PersonalizationSection = ({ instanceFieldName }) => {
+function PersonalizationSection({ instanceFieldName }) {
   return (
     <>
       <SectionHeader learnMoreUrl="https://adobe.ly/3fYDkfh">
@@ -111,7 +111,7 @@ const PersonalizationSection = ({ instanceFieldName }) => {
       </FormElementContainer>
     </>
   );
-};
+}
 
 PersonalizationSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired

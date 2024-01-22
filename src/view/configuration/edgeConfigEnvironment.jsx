@@ -19,12 +19,7 @@ import "./style.styl";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import sandboxItems from "../components/sandboxItems";
 
-const EdgeConfigEnvironment = ({
-  name,
-  initInfo,
-  environmentType,
-  context
-}) => {
+function EdgeConfigEnvironment({ name, initInfo, environmentType, context }) {
   const [{ value: sandboxName }] = useField(`${name}.sandbox`);
   const { current } = context;
   const { sandboxes, datastreams } = current;
@@ -74,7 +69,7 @@ const EdgeConfigEnvironment = ({
       )}
     </>
   );
-};
+}
 
 EdgeConfigEnvironment.propTypes = {
   name: PropTypes.string.isRequired,

@@ -65,7 +65,7 @@ const validationSchema = object().shape({
     .required("Please provide a response body.")
 });
 
-const ApplyResponse = () => {
+function ApplyResponse() {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -109,6 +109,6 @@ const ApplyResponse = () => {
       )}
     />
   );
-};
+}
 
 render(ApplyResponse);

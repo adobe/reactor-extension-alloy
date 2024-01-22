@@ -22,11 +22,11 @@ import IndicatorDescription from "./indicatorDescription";
 /**
  * Shown when no node is selected within the XDM tree.
  */
-const NoSelectedNodeView = ({
+function NoSelectedNodeView({
   schema,
   previouslySavedSchemaInfo,
   componentName
-}) => {
+}) {
   // The schema used when the data element was last saved is different
   // from the latest configured schema. Either the customer has since
   // changed which dataset is configured in the edge configuration
@@ -83,7 +83,7 @@ const NoSelectedNodeView = ({
       </div>
     </div>
   );
-};
+}
 
 NoSelectedNodeView.propTypes = {
   schema: PropTypes.object.isRequired,

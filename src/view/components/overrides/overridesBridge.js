@@ -141,10 +141,8 @@ export const bridge = {
         // Launch UI components expect this to be a string
         instanceValues.edgeConfigOverrides[
           env
-        ].com_adobe_identity.idSyncContainerId = `${
-          instanceValues.edgeConfigOverrides[env].com_adobe_identity
-            .idSyncContainerId
-        }`;
+        ].com_adobe_identity.idSyncContainerId =
+          `${instanceValues.edgeConfigOverrides[env].com_adobe_identity.idSyncContainerId}`;
       }
     });
 
@@ -187,9 +185,8 @@ export const bridge = {
 
       // filter out the blank report suites
       if (overrides.com_adobe_analytics?.reportSuites) {
-        overrides.com_adobe_analytics.reportSuites = overrides.com_adobe_analytics.reportSuites.filter(
-          rs => rs !== ""
-        );
+        overrides.com_adobe_analytics.reportSuites =
+          overrides.com_adobe_analytics.reportSuites.filter(rs => rs !== "");
       }
     });
 

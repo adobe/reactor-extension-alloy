@@ -146,7 +146,7 @@ export const bridge = {
   })
 };
 
-const DataCollectionSection = ({ instanceFieldName }) => {
+function DataCollectionSection({ instanceFieldName }) {
   const { setFieldValue } = useFormikContext();
   const [{ value: instanceValues }] = useField(instanceFieldName);
   const instanceDefaults = bridge.getInstanceDefaults();
@@ -192,11 +192,10 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                   data-test-id="downloadLinkQualifierTestButton"
                   onPress={async () => {
                     const currentPattern = instanceValues.downloadLinkQualifier;
-                    const newPattern = await window.extensionBridge.openRegexTester(
-                      {
+                    const newPattern =
+                      await window.extensionBridge.openRegexTester({
                         pattern: currentPattern
-                      }
-                    );
+                      });
                     setFieldValue(
                       `${instanceFieldName}.downloadLinkQualifier`,
                       newPattern
@@ -254,25 +253,23 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                 aria-label="Context data categories"
                 name={`${instanceFieldName}.context`}
               >
-                {contextOptions.map(contextOption => {
-                  return (
-                    <FieldDescriptionAndError
-                      description={contextOption.description}
-                      messagePaddingTop="size-0"
-                      messagePaddingStart="size-300"
+                {contextOptions.map(contextOption => (
+                  <FieldDescriptionAndError
+                    description={contextOption.description}
+                    messagePaddingTop="size-0"
+                    messagePaddingStart="size-300"
+                    key={contextOption.value}
+                  >
+                    <Checkbox
                       key={contextOption.value}
+                      data-test-id={contextOption.testId}
+                      value={contextOption.value}
+                      width="size-5000"
                     >
-                      <Checkbox
-                        key={contextOption.value}
-                        data-test-id={contextOption.testId}
-                        value={contextOption.value}
-                        width="size-5000"
-                      >
-                        {contextOption.label}
-                      </Checkbox>
-                    </FieldDescriptionAndError>
-                  );
-                })}
+                      {contextOption.label}
+                    </Checkbox>
+                  </FieldDescriptionAndError>
+                ))}
               </FormikCheckboxGroup>
             </FieldSubset>
           )}
@@ -280,7 +277,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
       </FormElementContainer>
     </>
   );
-};
+}
 
 DataCollectionSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired

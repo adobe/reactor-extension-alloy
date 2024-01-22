@@ -36,13 +36,13 @@ import { FIELD_NAMES } from "./utils";
  * false, the input is a combo box.
  * @returns
  */
-const ReportSuitesOverride = ({
+function ReportSuitesOverride({
   prefix,
   items,
   primaryItem,
   validate,
   useManualEntry
-}) => {
+}) {
   const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
   const rsids = useFieldValue(fieldName);
   let reportSuiteDescription =
@@ -102,7 +102,7 @@ const ReportSuitesOverride = ({
       )}
     </FieldArray>
   );
-};
+}
 
 ReportSuitesOverride.propTypes = {
   prefix: PropTypes.string.isRequired,

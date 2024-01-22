@@ -14,32 +14,33 @@ import { EMPTY, FULL, PARTIAL, BLANK } from "../constants/populationAmount";
 import { PARTS } from "../constants/populationStrategy";
 import isFormStateValuePopulated from "./isFormStateValuePopulated";
 
-const calculatePopulationAmountForPartsPopulationStrategy = childrenTreeNodes => {
-  if (childrenTreeNodes && childrenTreeNodes.length) {
-    const tally = childrenTreeNodes.reduce(
-      (memo, childTreeNode) => {
-        memo[childTreeNode.populationAmount] += 1;
-        return memo;
-      },
-      {
-        [FULL]: 0,
-        [PARTIAL]: 0,
-        [EMPTY]: 0,
-        [BLANK]: 0
+const calculatePopulationAmountForPartsPopulationStrategy =
+  childrenTreeNodes => {
+    if (childrenTreeNodes && childrenTreeNodes.length) {
+      const tally = childrenTreeNodes.reduce(
+        (memo, childTreeNode) => {
+          memo[childTreeNode.populationAmount] += 1;
+          return memo;
+        },
+        {
+          [FULL]: 0,
+          [PARTIAL]: 0,
+          [EMPTY]: 0,
+          [BLANK]: 0
+        }
+      );
+
+      if (tally[FULL] === childrenTreeNodes.length) {
+        return FULL;
       }
-    );
 
-    if (tally[FULL] === childrenTreeNodes.length) {
-      return FULL;
+      if (tally[FULL] > 0 || tally[PARTIAL] > 0) {
+        return PARTIAL;
+      }
     }
 
-    if (tally[FULL] > 0 || tally[PARTIAL] > 0) {
-      return PARTIAL;
-    }
-  }
-
-  return EMPTY;
-};
+    return EMPTY;
+  };
 
 export default ({
   formStateNode,

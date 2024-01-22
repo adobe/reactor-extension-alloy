@@ -33,12 +33,12 @@ import FormikTextField from "../formikReactSpectrum3/formikTextField";
  * user to select from the options provided.
  * @returns {React.Element}
  */
-const OverrideInput = ({
+function OverrideInput({
   useManualEntry,
   children,
   allowsCustomValue = false,
   ...otherProps
-}) => {
+}) {
   if (useManualEntry) {
     return (
       <DataElementSelector>
@@ -56,7 +56,7 @@ const OverrideInput = ({
       </FormikComboBox>
     </DataElementSelector>
   );
-};
+}
 
 OverrideInput.propTypes = {
   useManualEntry: PropTypes.bool.isRequired,

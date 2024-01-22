@@ -27,15 +27,11 @@ export default {
         .find('[role="link"]')
         .withExactText(label);
       return {
-        click: async () => {
-          return t.click(node);
-        }
+        click: async () => t.click(node)
       };
     }
   },
   heading: {
-    expectText: async text => {
-      return t.expect(heading.withExactText(text).exists).ok();
-    }
+    expectText: async text => t.expect(heading.withExactText(text).exists).ok()
   }
 };

@@ -12,34 +12,33 @@ governing permissions and limitations under the License.
 
 const clone = require("../../utils/clone");
 
-module.exports = ({
-  instanceManager,
-  sendEventCallbackStorage,
-  getConfigOverrides
-}) => settings => {
-  const { instanceName, ...sendEventSettings } = settings;
-  sendEventSettings.edgeConfigOverrides = getConfigOverrides(sendEventSettings);
+module.exports =
+  ({ instanceManager, sendEventCallbackStorage, getConfigOverrides }) =>
+  settings => {
+    const { instanceName, ...sendEventSettings } = settings;
+    sendEventSettings.edgeConfigOverrides =
+      getConfigOverrides(sendEventSettings);
 
-  const instance = instanceManager.getInstance(instanceName);
+    const instance = instanceManager.getInstance(instanceName);
 
-  if (!instance) {
-    throw new Error(
-      `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
-    );
-  }
+    if (!instance) {
+      throw new Error(
+        `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
+      );
+    }
 
-  // If the customer modifies the xdm or data object (or anything nested in the object) after this action runs,
-  // we want to make sure those modifications are not reflected in the data sent to the server. By cloning the
-  // objects here, we ensure we use a snapshot that will remain unchanged during the time period between when
-  // sendEvent is called and the network request is made.
-  if (sendEventSettings.xdm) {
-    sendEventSettings.xdm = clone(sendEventSettings.xdm);
-  }
-  if (sendEventSettings.data) {
-    sendEventSettings.data = clone(sendEventSettings.data);
-  }
+    // If the customer modifies the xdm or data object (or anything nested in the object) after this action runs,
+    // we want to make sure those modifications are not reflected in the data sent to the server. By cloning the
+    // objects here, we ensure we use a snapshot that will remain unchanged during the time period between when
+    // sendEvent is called and the network request is made.
+    if (sendEventSettings.xdm) {
+      sendEventSettings.xdm = clone(sendEventSettings.xdm);
+    }
+    if (sendEventSettings.data) {
+      sendEventSettings.data = clone(sendEventSettings.data);
+    }
 
-  return instance("sendEvent", sendEventSettings).then(result => {
-    sendEventCallbackStorage.triggerEvent(result);
-  });
-};
+    return instance("sendEvent", sendEventSettings).then(result => {
+      sendEventCallbackStorage.triggerEvent(result);
+    });
+  };

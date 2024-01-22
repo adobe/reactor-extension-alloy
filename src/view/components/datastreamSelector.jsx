@@ -48,7 +48,7 @@ const getLabel = datastream => {
   return `${datastream.data.title}${region}`;
 };
 
-const DatastreamSelector = ({
+function DatastreamSelector({
   name,
   defaultSelectedDatastream,
   initInfo,
@@ -59,10 +59,9 @@ const DatastreamSelector = ({
   environmentType,
   description,
   fallbackToManualEntry
-}) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+}) {
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
   const previousSelectedSandbox = usePrevious(selectedSandbox);
 
   const datastreamList = useAsyncList({
@@ -76,18 +75,14 @@ const DatastreamSelector = ({
         tokens: { imsAccess }
       } = initInfo;
 
-      let datastreams;
-      try {
-        ({ results: datastreams } = await fetchConfigs({
-          orgId,
-          imsAccess,
-          signal,
-          limit: 1000,
-          sandbox: selectedSandbox.name
-        }));
-      } catch (e) {
-        throw e;
-      }
+      const { results: datastreams } = await fetchConfigs({
+        orgId,
+        imsAccess,
+        signal,
+        limit: 1000,
+        sandbox: selectedSandbox.name
+      });
+
       return {
         items: datastreams
       };
@@ -127,9 +122,7 @@ const DatastreamSelector = ({
   };
   const errorLoadingDatastreamsDescription = (
     <>
-      {`You do not have enough permissions to fetch the ${
-        selectedSandbox.title
-      } sandbox configurations. See the documentation for `}
+      {`You do not have enough permissions to fetch the ${selectedSandbox.title} sandbox configurations. See the documentation for `}
       <Link>
         <a
           href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
@@ -230,9 +223,7 @@ const DatastreamSelector = ({
           description={touched && error ? "" : description}
           errorMessage={touched && error ? error : undefined}
         >
-          {item => {
-            return <Item key={getKey(item)}>{getLabel(item)}</Item>;
-          }}
+          {item => <Item key={getKey(item)}>{getLabel(item)}</Item>}
         </Picker>
       </View>
 
@@ -269,7 +260,7 @@ const DatastreamSelector = ({
       </Flex>
     </Flex>
   );
-};
+}
 
 const datastreamShape = PropTypes.shape({
   _system: PropTypes.shape({

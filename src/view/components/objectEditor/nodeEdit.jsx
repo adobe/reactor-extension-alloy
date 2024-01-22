@@ -56,7 +56,7 @@ const getViewBySchemaType = schemaType => {
  * The form for editing a node in the XDM object. The form fields
  * that are shown depend on the node's type.
  */
-const NodeEdit = props => {
+function NodeEdit(props) {
   const { values: formState } = useFormikContext();
   const { onNodeSelect, selectedNodeId } = props;
 
@@ -137,7 +137,7 @@ const NodeEdit = props => {
       )}
     </Flex>
   );
-};
+}
 
 NodeEdit.propTypes = {
   onNodeSelect: PropTypes.func.isRequired,

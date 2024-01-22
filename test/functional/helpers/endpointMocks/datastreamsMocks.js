@@ -39,8 +39,7 @@ export const single = RequestMock()
             },
             _links: {
               self: {
-                href:
-                  "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
+                href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
                 title: ""
               }
             }
@@ -49,8 +48,7 @@ export const single = RequestMock()
       },
       _links: {
         self: {
-          href:
-            "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
+          href: "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
           title: ""
         }
       }
@@ -60,13 +58,12 @@ export const single = RequestMock()
   );
 
 export const multiple = RequestMock()
-  .onRequestTo(async request => {
-    return (
+  .onRequestTo(
+    async request =>
       DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
       request.headers["x-sandbox-name"] === "testsandbox1" &&
       request.method === "get"
-    );
-  })
+  )
   .respond(
     {
       _embedded: {
@@ -89,8 +86,7 @@ export const multiple = RequestMock()
             },
             _links: {
               self: {
-                href:
-                  "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
+                href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
                 title: ""
               }
             }
@@ -113,8 +109,7 @@ export const multiple = RequestMock()
             },
             _links: {
               self: {
-                href:
-                  "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
+                href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
                 title: ""
               }
             }
@@ -137,8 +132,7 @@ export const multiple = RequestMock()
             },
             _links: {
               self: {
-                href:
-                  "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
+                href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
                 title: ""
               }
             }
@@ -147,8 +141,7 @@ export const multiple = RequestMock()
       },
       _links: {
         self: {
-          href:
-            "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
+          href: "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
           title: ""
         }
       }
@@ -158,13 +151,12 @@ export const multiple = RequestMock()
   );
 
 export const empty = RequestMock()
-  .onRequestTo(async request => {
-    return (
+  .onRequestTo(
+    async request =>
       DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
       request.headers["x-sandbox-name"] === "prod" &&
       request.method === "get"
-    );
-  })
+  )
   .respond(
     {
       _embedded: {
@@ -172,8 +164,7 @@ export const empty = RequestMock()
       },
       _links: {
         self: {
-          href:
-            "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
+          href: "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
           title: ""
         }
       }
@@ -182,13 +173,12 @@ export const empty = RequestMock()
     responseHeaders
   );
 export const forbidden = RequestMock()
-  .onRequestTo(async request => {
-    return (
+  .onRequestTo(
+    async request =>
       DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
       request.headers["x-sandbox-name"] === "testsandbox2" &&
       request.method === "get"
-    );
-  })
+  )
   .respond(
     {
       type: "https://ns.adobe.com/aep/errors/EXEG-3050-403",

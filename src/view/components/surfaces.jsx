@@ -79,7 +79,7 @@ export const bridge = {
   })
 };
 
-const Surfaces = () => {
+function Surfaces() {
   const [{ value: surfacesInputMethod }] = useField("surfacesInputMethod");
   const [{ value: surfacesArray }] = useField("surfacesArray");
 
@@ -118,55 +118,51 @@ const Surfaces = () => {
           <Flex direction="column" gap="size-100" alignItems="start">
             <FieldArray
               name="surfacesArray"
-              render={arrayHelpers => {
-                return (
-                  <div>
-                    {surfacesArray.map((surface, index) => {
-                      return (
-                        <Flex key={index} alignItems="end">
-                          <FormikTextField
-                            data-test-id={`surface${index}Field`}
-                            label="Surface"
-                            name={`surfacesArray.${index}`}
-                            width="size-5000"
-                            aria-label="Surface"
-                            marginTop="size-0"
-                            validate={validateSurface}
-                          />
-                          <ActionButton
-                            data-test-id={`deleteSurface${index}Button`}
-                            isQuiet
-                            isDisabled={surfacesArray.length === 1}
-                            variant="secondary"
-                            onPress={() => {
-                              arrayHelpers.remove(index);
-                            }}
-                            aria-label="Remove surface"
-                          >
-                            <Delete />
-                          </ActionButton>
-                        </Flex>
-                      );
-                    })}
-                    <Button
-                      variant="secondary"
-                      data-test-id="addSurfaceButton"
-                      marginTop="size-100"
-                      onPress={() => {
-                        arrayHelpers.push("");
-                      }}
-                    >
-                      Add surface
-                    </Button>
-                  </div>
-                );
-              }}
+              render={arrayHelpers => (
+                <div>
+                  {surfacesArray.map((surface, index) => (
+                    <Flex key={index} alignItems="end">
+                      <FormikTextField
+                        data-test-id={`surface${index}Field`}
+                        label="Surface"
+                        name={`surfacesArray.${index}`}
+                        width="size-5000"
+                        aria-label="Surface"
+                        marginTop="size-0"
+                        validate={validateSurface}
+                      />
+                      <ActionButton
+                        data-test-id={`deleteSurface${index}Button`}
+                        isQuiet
+                        isDisabled={surfacesArray.length === 1}
+                        variant="secondary"
+                        onPress={() => {
+                          arrayHelpers.remove(index);
+                        }}
+                        aria-label="Remove surface"
+                      >
+                        <Delete />
+                      </ActionButton>
+                    </Flex>
+                  ))}
+                  <Button
+                    variant="secondary"
+                    data-test-id="addSurfaceButton"
+                    marginTop="size-100"
+                    onPress={() => {
+                      arrayHelpers.push("");
+                    }}
+                  >
+                    Add surface
+                  </Button>
+                </div>
+              )}
             />
           </Flex>
         </FieldSubset>
       )}
     </div>
   );
-};
+}
 
 export default Surfaces;

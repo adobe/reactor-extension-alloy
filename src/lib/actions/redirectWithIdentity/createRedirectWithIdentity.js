@@ -9,47 +9,44 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-module.exports = ({
-  instanceManager,
-  document,
-  logger,
-  getConfigOverrides
-}) => (settings, event) => {
-  const { instanceName } = settings;
-  const instance = instanceManager.getInstance(instanceName);
+module.exports =
+  ({ instanceManager, document, logger, getConfigOverrides }) =>
+  (settings, event) => {
+    const { instanceName } = settings;
+    const instance = instanceManager.getInstance(instanceName);
 
-  if (!instance) {
-    logger.warn(
-      `Instance "${instanceName}" not found when running "Redirect with identity."`
-    );
-    return Promise.resolve();
-  }
+    if (!instance) {
+      logger.warn(
+        `Instance "${instanceName}" not found when running "Redirect with identity."`
+      );
+      return Promise.resolve();
+    }
 
-  if (!event || !event.element) {
-    logger.warn(
-      `Clicked element not found when running "Redirect with identity." This action is meant to be used with a Core click event.`
-    );
-    return Promise.resolve();
-  }
+    if (!event || !event.element) {
+      logger.warn(
+        `Clicked element not found when running "Redirect with identity." This action is meant to be used with a Core click event.`
+      );
+      return Promise.resolve();
+    }
 
-  if (!event.element.href) {
-    logger.warn(
-      `Invalid event target when running "Redirect with identity." This action is meant to be used with a Core click event using an "a[href]" selector.`
-    );
-    return Promise.resolve();
-  }
+    if (!event.element.href) {
+      logger.warn(
+        `Invalid event target when running "Redirect with identity." This action is meant to be used with a Core click event using an "a[href]" selector.`
+      );
+      return Promise.resolve();
+    }
 
-  if (event.nativeEvent.preventDefault) {
-    event.nativeEvent.preventDefault();
-  }
+    if (event.nativeEvent.preventDefault) {
+      event.nativeEvent.preventDefault();
+    }
 
-  const url = event.element.href;
-  const edgeConfigOverrides = getConfigOverrides(settings);
+    const url = event.element.href;
+    const edgeConfigOverrides = getConfigOverrides(settings);
 
-  return instance("appendIdentityToUrl", {
-    url,
-    edgeConfigOverrides
-  }).then(({ url: newLocation }) => {
-    document.location = newLocation;
-  });
-};
+    return instance("appendIdentityToUrl", {
+      url,
+      edgeConfigOverrides
+    }).then(({ url: newLocation }) => {
+      document.location = newLocation;
+    });
+  };

@@ -59,20 +59,18 @@ export default function dataElement({
     validationShape: {
       [name]: fieldSchema
     },
-    Component: ({ namePrefix = "" }) => {
-      return (
-        <DataElementSelector>
-          <FormikTextField
-            data-test-id={`${namePrefix}${name}TextField`}
-            name={`${namePrefix}${name}`}
-            label={label}
-            isRequired={isRequired}
-            description={description}
-            width="size-5000"
-          />
-        </DataElementSelector>
-      );
-    }
+    Component: ({ namePrefix = "" }) => (
+      <DataElementSelector>
+        <FormikTextField
+          data-test-id={`${namePrefix}${name}TextField`}
+          name={`${namePrefix}${name}`}
+          label={label}
+          isRequired={isRequired}
+          description={description}
+          width="size-5000"
+        />
+      </DataElementSelector>
+    )
   };
   part.Component.propTypes = {
     namePrefix: PropTypes.string

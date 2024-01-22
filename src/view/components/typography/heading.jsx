@@ -36,7 +36,7 @@ const tagBySize = {
  * for more info. Once React-Spectrum provides a Heading component
  * that handles typography, we can get rid of this.
  */
-const Heading = ({
+function Heading({
   "data-test-id": dataTestId,
   children,
   size = "S",
@@ -44,7 +44,7 @@ const Heading = ({
   isSerif,
   marginTop,
   marginBottom
-}) => {
+}) {
   const style = {};
 
   if (marginTop !== undefined) {
@@ -73,7 +73,7 @@ const Heading = ({
       {children}
     </HeadingElement>
   );
-};
+}
 
 export default Heading;
 

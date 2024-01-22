@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
 process.env.THEME_LIGHTEST = true;
 
 const { spawn } = require("child_process");
-const rimraf = require("rimraf");
+const { rimraf, rimrafSync } = require("rimraf");
 const { Parcel } = require("@parcel/core");
 const path = require("path");
 const fsPromises = require("fs").promises;
@@ -32,8 +32,8 @@ const browserslistrcFile = path.join(libInDir, ".browserslistrc");
 const browserslistrcTempFile = path.join(tempDir, ".browserslistrc");
 const isProdEnv = process.env.NODE_ENV === "production";
 
-const toPromise = func => {
-  return new Promise((resolve, reject) => {
+const toPromise = func =>
+  new Promise((resolve, reject) => {
     const callback = error => {
       if (error) {
         reject(error);
@@ -43,15 +43,13 @@ const toPromise = func => {
     };
     func(callback);
   });
-};
 
-const run = (command, options) => {
-  return toPromise(callback =>
+const run = (command, options) =>
+  toPromise(callback =>
     spawn(command, options, { stdio: "inherit" }).on("exit", callback)
   );
-};
 
-rimraf.sync(outputDir);
+rimrafSync(outputDir);
 
 module.exports = (options = {}) => {
   const { watch, isProd = isProdEnv } = options;
@@ -147,7 +145,12 @@ module.exports = (options = {}) => {
         "--presets=@babel/preset-env"
       ])
     )
-    .finally(() => toPromise(callback => rimraf(tempDir, callback)));
+    .finally(() =>
+      toPromise(async callback => {
+        await rimraf(tempDir);
+        callback();
+      })
+    );
 
   return Promise.all([babelPromise, parcelPromise, alloyPromise]);
 };

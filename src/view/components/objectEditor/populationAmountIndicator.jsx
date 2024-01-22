@@ -15,7 +15,7 @@ import classNames from "classnames";
 import { FULL, PARTIAL, EMPTY, BLANK } from "./constants/populationAmount";
 import "./populationAmountIndictor.styl";
 
-const PopulationAmountIndicator = ({ className, populationAmount }) => {
+function PopulationAmountIndicator({ className, populationAmount }) {
   return populationAmount && populationAmount !== BLANK ? (
     <svg
       width="100%"
@@ -47,7 +47,7 @@ const PopulationAmountIndicator = ({ className, populationAmount }) => {
       />
     </svg>
   ) : null;
-};
+}
 
 PopulationAmountIndicator.propTypes = {
   className: PropTypes.string,

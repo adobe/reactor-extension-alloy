@@ -20,9 +20,8 @@ const networkLoggerOptions = {
   logResponseHeaders: true
 };
 
-const createRequestLogger = endpoint => {
-  return RequestLogger(endpoint, networkLoggerOptions);
-};
+const createRequestLogger = endpoint =>
+  RequestLogger(endpoint, networkLoggerOptions);
 
 const createNetworkLogger = () => {
   const edgeEndpoint = /v1\/(interact|collect)\?configId=/;

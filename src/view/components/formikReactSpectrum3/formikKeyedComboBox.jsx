@@ -16,17 +16,16 @@ import { ComboBox } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import useForceRender from "../../utils/useForceRender";
 
-const FormikKeyedComboBox = ({
+function FormikKeyedComboBox({
   name,
   width,
   items,
   getKey,
   getLabel,
   ...otherProps
-}) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+}) {
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
   const forceRender = useForceRender();
   const isFilteringRef = React.useRef(false);
   const itemsRef = React.useRef(items);
@@ -53,12 +52,8 @@ const FormikKeyedComboBox = ({
           const newTextLowerCase = newText.toLowerCase();
           itemsRef.current = items.filter(
             item =>
-              getLabel(item)
-                .toLowerCase()
-                .includes(newTextLowerCase) ||
-              getKey(item)
-                .toLowerCase()
-                .includes(newTextLowerCase)
+              getLabel(item).toLowerCase().includes(newTextLowerCase) ||
+              getKey(item).toLowerCase().includes(newTextLowerCase)
           );
         }
         // This will cause a re-render.
@@ -94,7 +89,7 @@ const FormikKeyedComboBox = ({
       }}
     />
   );
-};
+}
 
 FormikKeyedComboBox.propTypes = {
   name: PropTypes.string.isRequired,

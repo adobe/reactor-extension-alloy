@@ -96,12 +96,11 @@ const getTreeNode = ({
     confirmTouchedAtCurrentOrDescendantNode,
     errors,
     touched,
-    getTreeNode: ({ ...args }) => {
-      return getTreeNode({
+    getTreeNode: ({ ...args }) =>
+      getTreeNode({
         ...args,
         isAncestorCleared: formStateNode.transform.clear || isAncestorCleared
-      });
-    }
+      })
   });
 
   // To illustrate why we check for isTouchedAtCurrentOrDescendantNode,
@@ -120,8 +119,8 @@ const getTreeNode = ({
 
 // Avoid exposing all of getTreeNode's parameters since
 // they're only used internally for recursion.
-export default ({ treeNodeComponent, formState, errors, touched }) => {
-  return getTreeNode({
+export default ({ treeNodeComponent, formState, errors, touched }) =>
+  getTreeNode({
     formStateNode: formState,
     treeNodeComponent,
     // Display name for the top-level node doesn't really
@@ -130,4 +129,3 @@ export default ({ treeNodeComponent, formState, errors, touched }) => {
     errors,
     touched
   });
-};

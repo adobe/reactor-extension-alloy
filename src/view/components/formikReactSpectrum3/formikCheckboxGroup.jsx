@@ -16,22 +16,21 @@ import { CheckboxGroup } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const FormikCheckboxGroup = ({
+function FormikCheckboxGroup({
   name,
   children,
   description,
   width,
   ...otherProps
-}) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+}) {
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
   const checkboxGroupRef = createRef();
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for FormikCheckboxGroup, so we wire up Formik's
   // onBlur to every checkbox.
-  const childrenWithOnBlur = React.Children.map(children, child => {
-    return React.cloneElement(child, {
+  const childrenWithOnBlur = React.Children.map(children, child =>
+    React.cloneElement(child, {
       onBlur: event => {
         // If the target that will receive focus is not a child of the
         // checkbox group, we know the checkbox group has lost focus.
@@ -43,8 +42,8 @@ const FormikCheckboxGroup = ({
           setTouched(true);
         }
       }
-    });
-  });
+    })
+  );
 
   return (
     <FieldDescriptionAndError
@@ -63,7 +62,7 @@ const FormikCheckboxGroup = ({
       </CheckboxGroup>
     </FieldDescriptionAndError>
   );
-};
+}
 
 FormikCheckboxGroup.propTypes = {
   name: PropTypes.string.isRequired,

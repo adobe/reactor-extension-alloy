@@ -23,13 +23,11 @@ import FormElementContainer from "../formElementContainer";
 /**
  * The form for editing a node that is an object type.
  */
-const ObjectEdit = ({ fieldName }) => {
+function ObjectEdit({ fieldName }) {
   const [{ value: formStateNode }] = useField(fieldName);
 
-  const {
-    isPartsPopulationStrategySupported,
-    populationStrategy
-  } = formStateNode;
+  const { isPartsPopulationStrategySupported, populationStrategy } =
+    formStateNode;
 
   return (
     <FormElementContainer>
@@ -65,7 +63,7 @@ const ObjectEdit = ({ fieldName }) => {
       )}
     </FormElementContainer>
   );
-};
+}
 
 ObjectEdit.propTypes = {
   fieldName: PropTypes.string.isRequired

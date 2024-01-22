@@ -21,7 +21,7 @@ import CodePreview from "./codePreview";
  * closes the editor, this calls onChange with the updated
  * code.
  */
-const CodeField = ({
+function CodeField({
   "data-test-id": dataTestId,
   label,
   buttonLabelSuffix,
@@ -29,10 +29,9 @@ const CodeField = ({
   description,
   language,
   placeholder
-}) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+}) {
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
   const onPress = async () => {
     setTouched(true);
 
@@ -65,7 +64,7 @@ const CodeField = ({
       onPress={onPress}
     />
   );
-};
+}
 
 CodeField.propTypes = {
   "data-test-id": PropTypes.string,

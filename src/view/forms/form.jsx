@@ -57,23 +57,25 @@ export default function Form(
     getInitialValues({ initInfo }) {
       const initialValues = children
         .filter(child => child.getInitialValues)
-        .reduce((values, child) => {
-          return {
+        .reduce(
+          (values, child) => ({
             ...values,
             ...child.getInitialValues({ initInfo })
-          };
-        }, {});
+          }),
+          {}
+        );
       return initialValues;
     },
     getSettings({ values }) {
       return children
         .filter(child => child.getSettings)
-        .reduce((settings, child) => {
-          return {
+        .reduce(
+          (settings, child) => ({
             ...settings,
             ...child.getSettings({ values })
-          };
-        }, {});
+          }),
+          {}
+        );
     },
     validationShape: children
       .filter(

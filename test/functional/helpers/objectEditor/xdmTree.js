@@ -18,10 +18,10 @@ import {
 
 const xdmTree = createTestIdSelector("xdmTree");
 
-const getIsElementInViewport = selector => {
-  return ClientFunction(
-    () => {
-      return new Promise(resolve => {
+const getIsElementInViewport = selector =>
+  ClientFunction(
+    () =>
+      new Promise(resolve => {
         const observer = new IntersectionObserver(
           entries => {
             resolve(entries[0].isIntersecting);
@@ -32,15 +32,13 @@ const getIsElementInViewport = selector => {
         );
         // eslint-disable-next-line no-undef
         observer.observe(selector());
-      });
-    },
+      }),
     {
       dependencies: {
         selector
       }
     }
   )();
-};
 
 const create = node => {
   const populationIndicator = node.find(
@@ -65,9 +63,8 @@ const create = node => {
       expectFull: async () => {
         await t.expect(populationIndicator.hasClass("is-full")).ok();
       },
-      expectPartial: async () => {
-        return t.expect(populationIndicator.hasClass("is-partial")).ok();
-      },
+      expectPartial: async () =>
+        t.expect(populationIndicator.hasClass("is-partial")).ok(),
       expectEmpty: async () => {
         await t.expect(populationIndicator.hasClass("is-empty")).ok();
       },
@@ -95,15 +92,14 @@ const create = node => {
         )
         .eql(title);
     },
-    next: () => {
-      return create(
+    next: () =>
+      create(
         node()
           .parent(".ant-tree-treenode")
           .nth(0)
           .nextSibling()
           .find(createTestIdSelectorString("xdmTreeNodeTitle"))
-      );
-    }
+      )
   };
 };
 

@@ -115,9 +115,8 @@ const getInitialFormStateNode = ({
     formStateNode,
     value,
     nodePath,
-    getInitialFormStateNode: ({ ...args }) => {
-      return getInitialFormStateNode({ ...args, transforms, updateMode });
-    },
+    getInitialFormStateNode: ({ ...args }) =>
+      getInitialFormStateNode({ ...args, transforms, updateMode }),
     existingFormStateNode
   });
 
@@ -137,8 +136,8 @@ export default ({
   updateMode = false,
   transforms = {},
   existingFormStateNode
-}) => {
-  return getInitialFormStateNode({
+}) =>
+  getInitialFormStateNode({
     schema,
     value,
     nodePath: "",
@@ -146,7 +145,6 @@ export default ({
     transforms,
     existingFormStateNode
   });
-};
 
 const formStateNodeShape = {
   id: PropTypes.string.isRequired,

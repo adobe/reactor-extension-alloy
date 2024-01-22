@@ -14,7 +14,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Flex } from "@adobe/react-spectrum";
 
-const FillParentAndCenterChildren = ({ children }) => {
+function FillParentAndCenterChildren({ children }) {
   return (
     <Flex
       height="100%"
@@ -25,7 +25,7 @@ const FillParentAndCenterChildren = ({ children }) => {
       {children}
     </Flex>
   );
-};
+}
 
 FillParentAndCenterChildren.propTypes = {
   children: PropTypes.node.isRequired

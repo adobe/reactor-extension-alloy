@@ -15,10 +15,11 @@ governing permissions and limitations under the License.
  * identifiers whose ID values are not populated strings. Namespaces
  * without identifiers are also excluded.
  */
-module.exports = ({ logger }) => {
-  return settings => {
+module.exports =
+  ({ logger }) =>
+  settings =>
     // settings _are_ the identity map
-    return Object.keys(settings).reduce((newIdentityMap, namespace) => {
+    Object.keys(settings).reduce((newIdentityMap, namespace) => {
       const filteredIdentifiers = settings[namespace].filter(({ id }, i) => {
         const isValidId = typeof id === "string" && id.length;
         if (!isValidId) {
@@ -39,5 +40,3 @@ module.exports = ({ logger }) => {
       }
       return newIdentityMap;
     }, {});
-  };
-};

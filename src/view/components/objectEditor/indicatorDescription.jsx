@@ -14,7 +14,7 @@ import React from "react";
 import { Flex, View } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 
-const IndicatorDescription = ({ indicator, children }) => {
+function IndicatorDescription({ indicator, children }) {
   return (
     <Flex>
       <Flex
@@ -29,7 +29,7 @@ const IndicatorDescription = ({ indicator, children }) => {
       <View>{children}</View>
     </Flex>
   );
-};
+}
 
 IndicatorDescription.propTypes = {
   indicator: PropTypes.node.isRequired,

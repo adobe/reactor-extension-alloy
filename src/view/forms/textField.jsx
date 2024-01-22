@@ -34,8 +34,31 @@ export default function textField({
 
   let Component;
   if (dataElementSupported) {
-    const ComponentWithDataElement = ({ namePrefix = "" }) => (
-      <DataElementSelector>
+    const ComponentWithDataElement = function ComponentWithDataElement({
+      namePrefix = ""
+    }) {
+      return (
+        <DataElementSelector>
+          <FormikTextField
+            data-test-id={`${namePrefix}${name}TextField`}
+            name={`${namePrefix}${name}`}
+            label={label}
+            isRequired={isRequired}
+            description={description}
+            width="size-5000"
+          />
+        </DataElementSelector>
+      );
+    };
+    ComponentWithDataElement.propTypes = {
+      namePrefix: PropTypes.string
+    };
+    Component = ComponentWithDataElement;
+  } else {
+    const ComponentWithoutDataElement = function ComponentWithoutDataElement({
+      namePrefix = ""
+    }) {
+      return (
         <FormikTextField
           data-test-id={`${namePrefix}${name}TextField`}
           name={`${namePrefix}${name}`}
@@ -44,23 +67,8 @@ export default function textField({
           description={description}
           width="size-5000"
         />
-      </DataElementSelector>
-    );
-    ComponentWithDataElement.propTypes = {
-      namePrefix: PropTypes.string
+      );
     };
-    Component = ComponentWithDataElement;
-  } else {
-    const ComponentWithoutDataElement = ({ namePrefix = "" }) => (
-      <FormikTextField
-        data-test-id={`${namePrefix}${name}TextField`}
-        name={`${namePrefix}${name}`}
-        label={label}
-        isRequired={isRequired}
-        description={description}
-        width="size-5000"
-      />
-    );
     ComponentWithoutDataElement.propTypes = {
       namePrefix: PropTypes.string
     };

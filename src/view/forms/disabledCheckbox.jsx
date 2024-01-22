@@ -34,7 +34,7 @@ export default function disabledCheckbox({
   description,
   beta
 }) {
-  const Component = ({ namePrefix = "" }) => {
+  function Component({ namePrefix = "" }) {
     return (
       <FieldDescriptionAndError
         description={description}
@@ -52,7 +52,7 @@ export default function disabledCheckbox({
         </Checkbox>
       </FieldDescriptionAndError>
     );
-  };
+  }
   Component.propTypes = {
     namePrefix: PropTypes.string
   };

@@ -32,12 +32,10 @@ export default function notice({ title, description, beta }) {
   );
 
   return {
-    Component: () => {
-      return (
-        <Alert variant="informative" title={titleElement} width="size-5000">
-          {description}
-        </Alert>
-      );
-    }
+    Component: () => (
+      <Alert variant="informative" title={titleElement} width="size-5000">
+        {description}
+      </Alert>
+    )
   };
 }

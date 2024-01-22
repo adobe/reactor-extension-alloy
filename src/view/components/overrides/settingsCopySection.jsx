@@ -30,7 +30,7 @@ import { capitialize } from "./utils";
  *
  * @returns {React.Element}
  */
-const SettingsCopySection = ({ currentEnv, onPress }) => {
+function SettingsCopySection({ currentEnv, onPress }) {
   return (
     <Flex direction="row" gap="size-100" wrap>
       {OVERRIDE_ENVIRONMENTS.filter(source => source !== currentEnv).map(
@@ -47,7 +47,7 @@ const SettingsCopySection = ({ currentEnv, onPress }) => {
       )}
     </Flex>
   );
-};
+}
 
 SettingsCopySection.propTypes = {
   currentEnv: PropTypes.oneOf(OVERRIDE_ENVIRONMENTS).isRequired,

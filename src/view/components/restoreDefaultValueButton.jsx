@@ -15,13 +15,13 @@ import React from "react";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 
-const RestoreDefaultValueButton = ({
+function RestoreDefaultValueButton({
   "data-test-id": dataTestId,
   name,
   defaultValue,
   fieldHasLabel = true,
   ...otherProps
-}) => {
+}) {
   const [, , { setValue }] = useField(name);
   return (
     <ActionButton
@@ -35,7 +35,7 @@ const RestoreDefaultValueButton = ({
       Restore default
     </ActionButton>
   );
-};
+}
 
 RestoreDefaultValueButton.propTypes = {
   "data-test-id": PropTypes.string,

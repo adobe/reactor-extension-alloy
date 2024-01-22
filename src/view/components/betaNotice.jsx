@@ -14,14 +14,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import Alert from "./alert";
 
-const BetaNotice = ({ componentName }) => {
+function BetaNotice({ componentName }) {
   return (
     <Alert variant="notice" title="Beta feature">
       This {componentName} is a beta feature while the development team gathers
       feedback. Future versions may contain breaking changes.
     </Alert>
   );
-};
+}
 
 BetaNotice.propTypes = {
   componentName: PropTypes.string.isRequired

@@ -35,7 +35,7 @@ export default function disabledTextField({
   label,
   description = ""
 }) {
-  const Component = ({ namePrefix = "" }) => {
+  function Component({ namePrefix = "" }) {
     return (
       <TextField
         data-test-id={`${namePrefix}${name}DisabledField`}
@@ -47,7 +47,7 @@ export default function disabledTextField({
         isDisabled
       />
     );
-  };
+  }
   Component.propTypes = {
     namePrefix: PropTypes.string
   };

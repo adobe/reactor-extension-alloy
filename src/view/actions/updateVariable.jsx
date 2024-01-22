@@ -85,107 +85,111 @@ const getInitialFormStateFromDataElement = async ({
   return {};
 };
 
-const getInitialValues = context => async ({ initInfo }) => {
-  const {
-    propertySettings: { id: propertyId } = {},
-    company: { orgId },
-    tokens: { imsAccess }
-  } = initInfo;
-  const {
-    dataElementId,
-    data = {},
-    transforms = {},
-    schema: previouslySavedSchemaInfo
-  } = initInfo.settings || {};
+const getInitialValues =
+  context =>
+  async ({ initInfo }) => {
+    const {
+      propertySettings: { id: propertyId } = {},
+      company: { orgId },
+      tokens: { imsAccess }
+    } = initInfo;
+    const {
+      dataElementId,
+      data = {},
+      transforms = {},
+      schema: previouslySavedSchemaInfo
+    } = initInfo.settings || {};
 
-  const initialValues = {
-    data
-  };
+    const initialValues = {
+      data
+    };
 
-  const {
-    results: dataElementsFirstPage,
-    nextPage: dataElementsFirstPageCursor
-  } = await fetchDataElements({
-    orgId,
-    imsAccess,
-    propertyId
-  });
-
-  context.dataElementsFirstPage = dataElementsFirstPage;
-  context.dataElementsFirstPageCursor = dataElementsFirstPageCursor;
-
-  let dataElement;
-  if (dataElementId) {
-    dataElement = await fetchDataElement({
+    const {
+      results: dataElementsFirstPage,
+      nextPage: dataElementsFirstPageCursor
+    } = await fetchDataElements({
       orgId,
       imsAccess,
-      dataElementId
+      propertyId
     });
-    context.previouslySavedSchemaInfo = previouslySavedSchemaInfo;
-  } else if (
-    dataElementsFirstPage.length === 1 &&
-    dataElementsFirstPageCursor === null
-  ) {
-    dataElement = dataElementsFirstPage[0];
-  }
-  initialValues.dataElement = dataElement;
 
-  if (dataElement) {
-    const prefixedTransforms = Object.keys(transforms).reduce((memo, key) => {
-      // The key for a root element transform is "".
-      memo[key === "" ? "xdm" : `xdm.${key}`] = transforms[key];
+    context.dataElementsFirstPage = dataElementsFirstPage;
+    context.dataElementsFirstPageCursor = dataElementsFirstPageCursor;
+
+    let dataElement;
+    if (dataElementId) {
+      dataElement = await fetchDataElement({
+        orgId,
+        imsAccess,
+        dataElementId
+      });
+      context.previouslySavedSchemaInfo = previouslySavedSchemaInfo;
+    } else if (
+      dataElementsFirstPage.length === 1 &&
+      dataElementsFirstPageCursor === null
+    ) {
+      dataElement = dataElementsFirstPage[0];
+    }
+    initialValues.dataElement = dataElement;
+
+    if (dataElement) {
+      const prefixedTransforms = Object.keys(transforms).reduce((memo, key) => {
+        // The key for a root element transform is "".
+        memo[key === "" ? "xdm" : `xdm.${key}`] = transforms[key];
+        return memo;
+      }, {});
+      const initialFormState = await getInitialFormStateFromDataElement({
+        dataElement,
+        context,
+        orgId,
+        imsAccess,
+        data: { xdm: data },
+        transforms: prefixedTransforms
+      });
+      return { ...initialValues, ...initialFormState };
+    }
+
+    return initialValues;
+  };
+
+const getSettings =
+  context =>
+  ({ values }) => {
+    const { dataElement } = values;
+    const { id: dataElementId, settings } = dataElement || {};
+    const { cacheId: dataElementCacheId } = settings || {};
+
+    const transforms = {};
+
+    // everything is prefixed with "xdm", lets change that to data.
+    const { xdm = {} } =
+      getValueFromFormState({ formStateNode: values, transforms }) || {};
+    const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
+      memo[key.substring(4)] = transforms[key];
       return memo;
     }, {});
-    const initialFormState = await getInitialFormStateFromDataElement({
-      dataElement,
-      context,
-      orgId,
-      imsAccess,
-      data: { xdm: data },
-      transforms: prefixedTransforms
-    });
-    return { ...initialValues, ...initialFormState };
-  }
 
-  return initialValues;
-};
-
-const getSettings = context => ({ values }) => {
-  const { dataElement } = values;
-  const { id: dataElementId, settings } = dataElement || {};
-  const { cacheId: dataElementCacheId } = settings || {};
-
-  const transforms = {};
-
-  // everything is prefixed with "xdm", lets change that to data.
-  const { xdm = {} } =
-    getValueFromFormState({ formStateNode: values, transforms }) || {};
-  const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
-    memo[key.substring(4)] = transforms[key];
-    return memo;
-  }, {});
-
-  return {
-    dataElementId,
-    dataElementCacheId,
-    schema: {
-      id: context.schema?.$id,
-      version: context.schema?.version
-    },
-    data: xdm,
-    transforms: dataTransforms
+    return {
+      dataElementId,
+      dataElementCacheId,
+      schema: {
+        id: context.schema?.$id,
+        version: context.schema?.version
+      },
+      data: xdm,
+      transforms: dataTransforms
+    };
   };
-};
 
 const validationSchema = object().shape({
   dataElement: object().required("Please specify a data element.")
 });
 
-const UpdateVariable = ({
+function UpdateVariable({
   initInfo,
   formikProps: { resetForm, values },
   context
-}) => {
+}) {
   const {
     schema,
     dataElementsFirstPage,
@@ -196,7 +200,8 @@ const UpdateVariable = ({
   const [{ value: dataElement }] = useField("dataElement");
   const [hasSchema, setHasSchema] = useState(schema != null);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
-  const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
+  const abortPreviousRequestsAndCreateSignal =
+    useAbortPreviousRequestsAndCreateSignal();
 
   const {
     propertySettings: { id: propertyId } = {},
@@ -292,7 +297,7 @@ const UpdateVariable = ({
       )}
     </FormElementContainer>
   );
-};
+}
 
 UpdateVariable.propTypes = {
   context: PropTypes.object,
@@ -300,7 +305,7 @@ UpdateVariable.propTypes = {
   formikProps: PropTypes.object
 };
 
-const UpdateVariableExtensionView = () => {
+function UpdateVariableExtensionView() {
   const { current: context } = useRef({});
 
   return (
@@ -308,11 +313,9 @@ const UpdateVariableExtensionView = () => {
       getInitialValues={getInitialValues(context)}
       getSettings={getSettings(context)}
       formikStateValidationSchema={validationSchema}
-      render={props => {
-        return <UpdateVariable context={context} {...props} />;
-      }}
+      render={props => <UpdateVariable context={context} {...props} />}
     />
   );
-};
+}
 
 render(UpdateVariableExtensionView);

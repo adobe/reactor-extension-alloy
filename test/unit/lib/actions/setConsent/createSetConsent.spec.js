@@ -60,7 +60,9 @@ describe("Set Consent", () => {
       identityMap
     )}`, () => {
       const instance = jasmine.createSpy();
-      const instanceManager = { getInstance: () => instance };
+      const instanceManager = {
+        getInstance: () => instance
+      };
       const getConfigOverrides = jasmine.createSpy("getConfigOverrides");
       const action = createSetConsent({ instanceManager, getConfigOverrides });
       action({
@@ -118,7 +120,9 @@ describe("Set Consent", () => {
     const getConfigOverrides = jasmine
       .createSpy("getConfigOverrides")
       .and.returnValue(edgeConfigOverrides);
-    const instanceManager = { getInstance: () => instance };
+    const instanceManager = {
+      getInstance: () => instance
+    };
     const action = createSetConsent({ instanceManager, getConfigOverrides });
     action({
       instanceName: "myinstance",

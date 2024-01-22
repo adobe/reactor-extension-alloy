@@ -10,15 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager }) => settings => {
-  const { instanceName, ...options } = settings;
+module.exports =
+  ({ instanceManager }) =>
+  settings => {
+    const { instanceName, ...options } = settings;
 
-  const instance = instanceManager.getInstance(instanceName);
-  if (!instance) {
-    throw new Error(
-      `Failed to apply propositions for instance "${instanceName}". No instance was found with this name.`
-    );
-  }
+    const instance = instanceManager.getInstance(instanceName);
+    if (!instance) {
+      throw new Error(
+        `Failed to apply propositions for instance "${instanceName}". No instance was found with this name.`
+      );
+    }
 
-  return instance("applyPropositions", options);
-};
+    return instance("applyPropositions", options);
+  };

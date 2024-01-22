@@ -32,40 +32,35 @@ const fetchNodeIdsForDepth = (formStateNode, depth) => {
   } = formStateNode;
   if (type === OBJECT && properties) {
     return Object.keys(properties).reduce(
-      (nodeIds, key) => {
-        return nodeIds.concat(fetchNodeIdsForDepth(properties[key], depth - 1));
-      },
+      (nodeIds, key) =>
+        nodeIds.concat(fetchNodeIdsForDepth(properties[key], depth - 1)),
       [id]
     );
   }
   if (type === ARRAY && items) {
     return items.reduce(
-      (nodeIds, item) => {
-        return nodeIds.concat(fetchNodeIdsForDepth(item, depth - 1));
-      },
+      (nodeIds, item) => nodeIds.concat(fetchNodeIdsForDepth(item, depth - 1)),
       [id]
     );
   }
   return [];
 };
 
-const Editor = ({
+function Editor({
   selectedNodeId,
   setSelectedNodeId,
   schema,
   previouslySavedSchemaInfo,
   initialExpandedDepth = 0,
   componentName
-}) => {
+}) {
   const { values: formState } = useFormikContext();
-  const [expandedNodeIdsInTree, setExpandedNodeIdsInTree] = useState(() => {
+  const [expandedNodeIdsInTree, setExpandedNodeIdsInTree] = useState(() =>
     // There is a root node with the id node-1. We don't want that.
-    return fetchNodeIdsForDepth(formState, initialExpandedDepth + 1).slice(1);
-  });
-  const [
-    nodeIdToScrollIntoViewInTree,
-    setNodeIdToScrollIntoViewInTree
-  ] = useState();
+    fetchNodeIdsForDepth(formState, initialExpandedDepth + 1).slice(1)
+  );
+  const [nodeIdToScrollIntoViewInTree, setNodeIdToScrollIntoViewInTree] =
+    useState();
 
   const expandNodeAndAncestorsInTree = nodeId => {
     if (!nodeId) {
@@ -157,7 +152,7 @@ const Editor = ({
       </View>
     </Flex>
   );
-};
+}
 
 Editor.propTypes = {
   selectedNodeId: PropTypes.string,

@@ -60,8 +60,8 @@ const walk = async (dir, matchesFilter) => {
   return files.reduce((all, folderContents) => all.concat(folderContents), []);
 };
 
-const getStagedGitFiles = async () => {
-  return (await stagedGitFiles())
+const getStagedGitFiles = async () =>
+  (await stagedGitFiles())
     .filter(detail => {
       const parts = detail.filename.split(".");
       return (
@@ -71,7 +71,6 @@ const getStagedGitFiles = async () => {
       );
     })
     .map(detail => path.join(PROJECT_ROOT, detail.filename));
-};
 
 const getAllSourceFiles = () => {
   const IGNORED = ["node_modules", ".git", "dist"];

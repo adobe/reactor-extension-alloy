@@ -14,9 +14,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 
-const isCustomElement = type => {
-  return /[A-Z]/.test(type.charAt(0));
-};
+const isCustomElement = type => /[A-Z]/.test(type.charAt(0));
 
 const deserialize = (element, components) => {
   if (typeof element !== "object") {
@@ -78,8 +76,7 @@ const deserialize = (element, components) => {
  * the react element or its descendents. The keys are the element types
  * and the values are the corresponding component functions.
  */
-const deserializeReactElement = ({ element, components }) => {
-  return deserialize(element, components);
-};
+const deserializeReactElement = ({ element, components }) =>
+  deserialize(element, components);
 
 export default deserializeReactElement;

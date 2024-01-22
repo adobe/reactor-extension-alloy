@@ -26,11 +26,9 @@ const getInitialValues = ({ initInfo }) => {
   };
 };
 
-const getSettings = ({ values }) => {
-  return values;
-};
+const getSettings = ({ values }) => values;
 
-const EventMergeId = () => {
+function EventMergeId() {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -55,6 +53,6 @@ const EventMergeId = () => {
       )}
     />
   );
-};
+}
 
 render(EventMergeId);

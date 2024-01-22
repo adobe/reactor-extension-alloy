@@ -12,10 +12,8 @@ governing permissions and limitations under the License.
 
 import { AMBIGUOUS } from "../constants/authenticatedState";
 
-export default () => {
-  return {
-    id: "",
-    authenticatedState: AMBIGUOUS,
-    primary: false
-  };
-};
+export default () => ({
+  id: "",
+  authenticatedState: AMBIGUOUS,
+  primary: false
+});

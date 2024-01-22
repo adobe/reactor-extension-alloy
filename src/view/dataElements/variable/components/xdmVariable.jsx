@@ -84,14 +84,12 @@ const initializeSchemas = async ({
   imsAccess
 }) => {
   if (initialValues.sandbox) {
-    const {
-      results: schemasFirstPage,
-      nextPage: schemasFirstPageCursor
-    } = await fetchSchemasMeta({
-      orgId,
-      imsAccess,
-      sandboxName: initialValues.sandbox
-    });
+    const { results: schemasFirstPage, nextPage: schemasFirstPageCursor } =
+      await fetchSchemasMeta({
+        orgId,
+        imsAccess,
+        sandboxName: initialValues.sandbox
+      });
 
     context.schemasFirstPage = schemasFirstPage;
     context.schemasFirstPageCursor = schemasFirstPageCursor;
@@ -142,19 +140,17 @@ export const bridge = {
   },
   formikStateValidationSchema: object().shape({
     sandbox: string().required("Please select a sandbox."),
-    schema: object()
-      .nullable()
-      .required("Please select a schema.")
+    schema: object().nullable().required("Please select a schema.")
   })
 };
 
 const getKey = item => item && `${item.$id}_${item.version}`;
 const getLabel = item => item?.title;
 
-const XdmVariable = ({
+function XdmVariable({
   context: { sandboxes, schemasFirstPage, schemasFirstPageCursor },
   initInfo
-}) => {
+}) {
   const {
     company: { orgId },
     tokens: { imsAccess }
@@ -223,7 +219,7 @@ const XdmVariable = ({
       />
     </>
   );
-};
+}
 
 XdmVariable.propTypes = {
   initInfo: PropTypes.object,

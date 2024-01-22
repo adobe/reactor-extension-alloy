@@ -19,7 +19,7 @@ import { formStateNodePropTypes } from "./helpers/getInitialFormState";
  * Shown on the edit form for any fields that get populated
  * automatically by Alloy.
  */
-const AutoPopulationAlert = ({ formStateNode }) => {
+function AutoPopulationAlert({ formStateNode }) {
   const { autoPopulationSource, contextKey, schema } = formStateNode;
 
   return (
@@ -65,7 +65,7 @@ const AutoPopulationAlert = ({ formStateNode }) => {
       )}
     </Alert>
   );
-};
+}
 
 AutoPopulationAlert.propTypes = {
   formStateNode: formStateNodePropTypes.isRequired

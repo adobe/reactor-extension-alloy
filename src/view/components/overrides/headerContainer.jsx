@@ -21,7 +21,7 @@ import SectionHeader from "../sectionHeader";
  * @param {string | React.Element | React.Element[]} options.children
  * @returns {React.Element}
  */
-const HeaderContainer = ({ largeHeader = false, children, ...props }) => {
+function HeaderContainer({ largeHeader = false, children, ...props }) {
   const marginTop = largeHeader ? null : "size-200";
   const marginBottom = largeHeader ? null : "size-0";
   return (
@@ -29,7 +29,7 @@ const HeaderContainer = ({ largeHeader = false, children, ...props }) => {
       {children}
     </SectionHeader>
   );
-};
+}
 
 HeaderContainer.propTypes = {
   largeHeader: PropTypes.bool,

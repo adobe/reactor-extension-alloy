@@ -189,71 +189,65 @@ export default function simpleMap({
           {inputMethod === FORM && (
             <FieldArray
               name={name}
-              render={arrayHelpers => {
-                return (
-                  <>
-                    {items.map((__, index) => {
-                      return (
-                        <Well
-                          key={index}
-                          alignSelf="flex-start"
-                          direction="column"
-                          gap="size-100"
+              render={arrayHelpers => (
+                <>
+                  {items.map((__, index) => (
+                    <Well
+                      key={index}
+                      alignSelf="flex-start"
+                      direction="column"
+                      gap="size-100"
+                    >
+                      <FormElementContainer>
+                        <DataElementSelector>
+                          <FormikTextField
+                            data-test-id={`${namePrefix}Key${index}Field`}
+                            label={keyLabel}
+                            name={`${namePrefix}${name}.${index}.key`}
+                            width="size-5000"
+                            marginTop="size-0"
+                            description={keyDescription}
+                            isRequired
+                          />
+                        </DataElementSelector>
+                        <DataElementSelector>
+                          <FormikTextField
+                            data-test-id={`${namePrefix}Value${index}Field`}
+                            label={valueLabel}
+                            name={`${namePrefix}${name}.${index}.value`}
+                            width="size-5000"
+                            marginTop="size-0"
+                            description={valueDescription}
+                          />
+                        </DataElementSelector>
+                      </FormElementContainer>
+                      <Flex direction="row">
+                        <Button
+                          variant="secondary"
+                          data-test-id={`${namePrefix}${name}${index}RemoveButton`}
+                          isDisabled={items.length === 1}
+                          onPress={() => {
+                            // using arrayHelpers.remove mangles the error message
+                            setItems(items.filter((_, i) => i !== index));
+                          }}
+                          marginStart="auto"
                         >
-                          <FormElementContainer>
-                            <DataElementSelector>
-                              <FormikTextField
-                                data-test-id={`${namePrefix}Key${index}Field`}
-                                label={keyLabel}
-                                name={`${namePrefix}${name}.${index}.key`}
-                                width="size-5000"
-                                marginTop="size-0"
-                                description={keyDescription}
-                                isRequired
-                              />
-                            </DataElementSelector>
-                            <DataElementSelector>
-                              <FormikTextField
-                                data-test-id={`${namePrefix}Value${index}Field`}
-                                label={valueLabel}
-                                name={`${namePrefix}${name}.${index}.value`}
-                                width="size-5000"
-                                marginTop="size-0"
-                                description={valueDescription}
-                              />
-                            </DataElementSelector>
-                          </FormElementContainer>
-                          <Flex direction="row">
-                            <Button
-                              variant="secondary"
-                              data-test-id={`${namePrefix}${name}${index}RemoveButton`}
-                              isDisabled={items.length === 1}
-                              onPress={() => {
-                                // using arrayHelpers.remove mangles the error message
-                                setItems(items.filter((_, i) => i !== index));
-                              }}
-                              marginStart="auto"
-                            >
-                              Remove {singularLabel.toLowerCase()}
-                            </Button>
-                          </Flex>
-                        </Well>
-                      );
-                    })}
-                    <div>
-                      <Button
-                        variant="secondary"
-                        data-test-id={`${namePrefix}${name}AddButton`}
-                        onPress={() =>
-                          arrayHelpers.push({ key: "", value: "" })
-                        }
-                      >
-                        Add {singularLabel.toLowerCase()}
-                      </Button>
-                    </div>
-                  </>
-                );
-              }}
+                          Remove {singularLabel.toLowerCase()}
+                        </Button>
+                      </Flex>
+                    </Well>
+                  ))}
+                  <div>
+                    <Button
+                      variant="secondary"
+                      data-test-id={`${namePrefix}${name}AddButton`}
+                      onPress={() => arrayHelpers.push({ key: "", value: "" })}
+                    >
+                      Add {singularLabel.toLowerCase()}
+                    </Button>
+                  </div>
+                </>
+              )}
             />
           )}
           {inputMethod === DATA_ELEMENT && (

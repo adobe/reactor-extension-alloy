@@ -1,7 +1,5 @@
 {
-  "plugins": [
-    "version"
-  ],
+  "plugins": ["version"],
   "env": {
     "production": {
       "plugins": [

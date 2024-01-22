@@ -45,6 +45,4 @@ const validate = ({
 
 // Avoid exposing all of validate's parameters since
 // they're only used internally for recursion.
-export default formStateNode => {
-  return validate({ formStateNode });
-};
+export default formStateNode => validate({ formStateNode });

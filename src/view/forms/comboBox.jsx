@@ -68,11 +68,11 @@ export default function comboBox({
   }
 
   // DataElementSelector looks for name and label to do its calculations, so we have to have them here.
-  const InnerComponent = ({
+  function InnerComponent({
     name: innerName,
     label: innerLabel,
     description: innerDescription
-  }) => {
+  }) {
     return (
       <FormikKeyedComboBox
         data-test-id={`${innerName}Field`}
@@ -93,7 +93,7 @@ export default function comboBox({
         )}
       </FormikKeyedComboBox>
     );
-  };
+  }
   InnerComponent.propTypes = {
     name: PropTypes.string.isRequired,
     label: PropTypes.string,

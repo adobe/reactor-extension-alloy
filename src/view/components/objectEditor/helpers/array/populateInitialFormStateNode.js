@@ -29,21 +29,21 @@ export default ({
 
     const itemSchema = schema.items;
     if (formStateNode.items && formStateNode.items.length) {
-      itemFormStateNodes = formStateNode.items.map((itemValue, index) => {
-        return getInitialFormStateNode({
+      itemFormStateNodes = formStateNode.items.map((itemValue, index) =>
+        getInitialFormStateNode({
           schema: itemSchema,
           nodePath: nodePath !== "" ? `${nodePath}.${index}` : `${index}`,
           existingFormStateNode: itemValue
-        });
-      });
+        })
+      );
     } else if (Array.isArray(value) && value.length) {
-      itemFormStateNodes = value.map((itemValue, index) => {
-        return getInitialFormStateNode({
+      itemFormStateNodes = value.map((itemValue, index) =>
+        getInitialFormStateNode({
           schema: itemSchema,
           value: itemValue,
           nodePath: nodePath !== "" ? `${nodePath}.${index}` : `${index}`
-        });
-      });
+        })
+      );
     }
   }
 
@@ -58,9 +58,8 @@ export default ({
     formStateNode.populationStrategy = WHOLE;
     formStateNode.value = value;
   } else {
-    formStateNode.populationStrategy = formStateNode.isPartsPopulationStrategySupported
-      ? PARTS
-      : WHOLE;
+    formStateNode.populationStrategy =
+      formStateNode.isPartsPopulationStrategySupported ? PARTS : WHOLE;
     formStateNode.value = "";
   }
 };

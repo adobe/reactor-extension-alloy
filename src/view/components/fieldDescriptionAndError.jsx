@@ -18,14 +18,14 @@ import { Flex, Link, View } from "@adobe/react-spectrum";
 // This is intended as a temporary solution until descriptions and errors
 // supported natively in React-Spectrum.
 // https://github.com/adobe/react-spectrum/issues/1346
-const FieldDescriptionAndError = ({
+function FieldDescriptionAndError({
   children,
   description,
   error,
   messagePaddingTop,
   messagePaddingStart,
   learnMoreLink
-}) => {
+}) {
   const child = React.Children.only(children);
   const width = child.props.width;
   const isDisabled = child.props.isDisabled;
@@ -73,7 +73,7 @@ const FieldDescriptionAndError = ({
       )}
     </Flex>
   );
-};
+}
 
 FieldDescriptionAndError.propTypes = {
   children: PropTypes.node.isRequired,

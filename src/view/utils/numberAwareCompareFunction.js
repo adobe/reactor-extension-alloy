@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 // This function compares strings that may have numbers in them.
 // It splits the string into numbers and non-numbers, then compares
 // each piece one at a time.
-const regex = new RegExp("([^0-9]*)([0-9]*)", "g");
+const regex = /([^0-9]*)([0-9]*)/g;
 const compare = new Intl.Collator().compare;
 
 export default (a, b) => {

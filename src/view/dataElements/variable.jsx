@@ -21,18 +21,20 @@ import XdmVariable, {
 } from "./variable/components/xdmVariable";
 import render from "../render";
 
-const getInitialValues = ({ xdmVariableContext }) => async ({ initInfo }) => {
-  const { cacheId = uuid() } = initInfo.settings || {};
+const getInitialValues =
+  ({ xdmVariableContext }) =>
+  async ({ initInfo }) => {
+    const { cacheId = uuid() } = initInfo.settings || {};
 
-  const initialValues = {
-    cacheId,
-    ...(await xdmVariableBridge.getInitialValues({
-      initInfo,
-      context: xdmVariableContext
-    }))
+    const initialValues = {
+      cacheId,
+      ...(await xdmVariableBridge.getInitialValues({
+        initInfo,
+        context: xdmVariableContext
+      }))
+    };
+    return initialValues;
   };
-  return initialValues;
-};
 
 const getSettings = ({ values }) => {
   const settings = {
@@ -47,7 +49,7 @@ const validationSchema = object().concat(
   xdmVariableBridge.formikStateValidationSchema
 );
 
-const Schema = ({ xdmVariableContext, initInfo }) => {
+function Schema({ xdmVariableContext, initInfo }) {
   return (
     <>
       <Content width="size-5000">
@@ -61,13 +63,13 @@ const Schema = ({ xdmVariableContext, initInfo }) => {
       <XdmVariable context={xdmVariableContext} initInfo={initInfo} />
     </>
   );
-};
+}
 Schema.propTypes = {
   xdmVariableContext: PropTypes.object,
   initInfo: PropTypes.object
 };
 
-const Variable = () => {
+function Variable() {
   const { current: xdmVariableContext } = useRef({});
   return (
     <ExtensionView
@@ -81,6 +83,6 @@ const Variable = () => {
       )}
     />
   );
-};
+}
 
 render(Variable);

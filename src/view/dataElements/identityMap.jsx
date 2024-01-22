@@ -19,26 +19,22 @@ import * as AUTHENTICATED_STATE from "./identityMap/constants/authenticatedState
 import Identity from "./identityMap/components/Identity";
 import { getNamespacesOptions } from "./identityMap/utils/namespacesUtils";
 
-const identitiesMapToArray = identityMap => {
-  return Object.keys(identityMap)
+const identitiesMapToArray = identityMap =>
+  Object.keys(identityMap)
     .sort((firstNamespaceCode, secondNamespaceCode) =>
       firstNamespaceCode.localeCompare(secondNamespaceCode)
     )
-    .map(namespaceCode => {
-      return {
-        namespaceCode,
-        identifiers: identityMap[namespaceCode]
-      };
-    });
-};
+    .map(namespaceCode => ({
+      namespaceCode,
+      identifiers: identityMap[namespaceCode]
+    }));
 
-const identitiesArrayToMap = identitiesArray => {
-  return identitiesArray.reduce((identityMap, identity) => {
+const identitiesArrayToMap = identitiesArray =>
+  identitiesArray.reduce((identityMap, identity) => {
     const { namespaceCode, identifiers } = identity;
     identityMap[namespaceCode] = identifiers;
     return identityMap;
   }, {});
-};
 
 const getInitialValues = async ({ initInfo, context }) => {
   const identities = initInfo.settings
@@ -53,9 +49,7 @@ const getInitialValues = async ({ initInfo, context }) => {
   };
 };
 
-const getSettings = ({ values }) => {
-  return identitiesArrayToMap(values.identities);
-};
+const getSettings = ({ values }) => identitiesArrayToMap(values.identities);
 
 const validateDuplicateValue = (
   createError,
@@ -147,7 +141,7 @@ const validationSchema = object()
     );
   });
 
-const IdentityMapExtensionView = () => {
+function IdentityMapExtensionView() {
   const context = useRef();
   return (
     <ExtensionView
@@ -156,11 +150,9 @@ const IdentityMapExtensionView = () => {
       }
       getSettings={getSettings}
       formikStateValidationSchema={validationSchema}
-      render={() => {
-        return <Identity context={context} />;
-      }}
+      render={() => <Identity context={context} />}
     />
   );
-};
+}
 
 render(IdentityMapExtensionView);

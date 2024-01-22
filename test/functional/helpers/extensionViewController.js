@@ -14,17 +14,16 @@ import { t } from "testcafe";
 import credentials from "./adobeIOClientCredentials";
 import getAdobeIOAccessToken from "./getAdobeIOAccessToken";
 
-const getSettings = async () => {
-  return t.eval(() => {
-    return window.initializeExtensionViewPromise.then(extensionView => {
-      return extensionView.getSettings();
-    });
-  });
-};
+const getSettings = async () =>
+  t.eval(() =>
+    window.initializeExtensionViewPromise.then(extensionView =>
+      extensionView.getSettings()
+    )
+  );
 
-const validate = async () => {
-  return t.eval(() => {
-    return window.initializeExtensionViewPromise.then(extensionView => {
+const validate = async () =>
+  t.eval(() =>
+    window.initializeExtensionViewPromise.then(extensionView =>
       // Reactor calls getSettings in a couple scenarios that may not be
       // obvious:
       //
@@ -44,14 +43,11 @@ const validate = async () => {
       // By calling getSettings every time we call validate, we can
       // be more certain getSettings is properly handling scenarios
       // where the view is in an invalid state.
-      return extensionView.validate().then(isValid => {
-        return extensionView.getSettings().then(() => {
-          return isValid;
-        });
-      });
-    });
-  });
-};
+      extensionView
+        .validate()
+        .then(isValid => extensionView.getSettings().then(() => isValid))
+    )
+  );
 
 export default {
   async init(additionalInitInfo = {}, sharedViewMethodMocks = {}) {

@@ -65,13 +65,12 @@ export const multiple = RequestMock()
   );
 
 export const sandbox2 = RequestMock()
-  .onRequestTo(async request => {
-    return (
+  .onRequestTo(
+    async request =>
       request.url.match(SCHEMAS_ENDPOINT_REGEX) &&
       request.headers["x-sandbox-name"] === "testsandbox2" &&
       request.method === "get"
-    );
-  })
+  )
   .respond(
     {
       results: [
@@ -95,13 +94,12 @@ export const sandbox2 = RequestMock()
   );
 
 export const sandbox3 = RequestMock()
-  .onRequestTo(async request => {
-    return (
+  .onRequestTo(
+    async request =>
       request.url.match(SCHEMAS_ENDPOINT_REGEX) &&
       request.headers["x-sandbox-name"] === "testsandbox3" &&
       request.method === "get"
-    );
-  })
+  )
   .respond(
     {
       results: [
@@ -272,13 +270,11 @@ export const paging = RequestMock()
     );
 
     res.setBody({
-      results: filteredTitles.slice(startIndex, endIndex).map(name => {
-        return {
-          $id: `https://ns.adobe.com/unifiedjsqeonly/schemas/${name}`,
-          version: "1.0",
-          title: name
-        };
-      }),
+      results: filteredTitles.slice(startIndex, endIndex).map(name => ({
+        $id: `https://ns.adobe.com/unifiedjsqeonly/schemas/${name}`,
+        version: "1.0",
+        title: name
+      })),
       _page: {
         next: endIndex < filteredTitles.length ? filteredTitles[endIndex] : null
       }

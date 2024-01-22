@@ -14,8 +14,10 @@ import { RequestMock } from "testcafe";
 import responseHeaders from "./responseHeaders";
 
 const DATA_ELEMENTS_REGEX = /properties\/PRabcd\/data_elements/;
-const DATA_ELEMENTS_FIRST_PAGE_REGEX = /properties\/PRabcd\/data_elements?.*page%5Bnumber%5D=1/;
-const DATA_ELEMENTS_SECOND_PAGE_REGEX = /properties\/PRabcd\/data_elements?.*page%5Bnumber%5D=2/;
+const DATA_ELEMENTS_FIRST_PAGE_REGEX =
+  /properties\/PRabcd\/data_elements?.*page%5Bnumber%5D=1/;
+const DATA_ELEMENTS_SECOND_PAGE_REGEX =
+  /properties\/PRabcd\/data_elements?.*page%5Bnumber%5D=2/;
 
 const testDataVariable1 = {
   id: "DE1",
@@ -28,8 +30,7 @@ const testDataVariable1 = {
         name: "prod"
       },
       schema: {
-        id:
-          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+        id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
         version: "1.2"
       }
     })
@@ -46,8 +47,7 @@ const testDataVariable2 = {
         name: "prod"
       },
       schema: {
-        id:
-          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+        id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
         version: "1.1"
       }
     })

@@ -11,8 +11,8 @@ governing permissions and limitations under the License.
 */
 const IS_NUMBER_REGEX = /^-?[0-9]+$/;
 
-const resolvePath = path => {
-  return path
+const resolvePath = path =>
+  path
     .split(".")
     .map(pathElement => {
       if (IS_NUMBER_REGEX.test(pathElement)) {
@@ -21,7 +21,6 @@ const resolvePath = path => {
       return pathElement;
     })
     .filter(pathElement => pathElement !== "");
-};
 
 const toObject = mixed => {
   const obj = mixed || {};
@@ -84,17 +83,10 @@ const run = (parent, key, path, i, onLeafNode) => {
   );
 };
 
-const createOperation = onLeafNode => (mixed, pathString, value) => {
-  return run(
-    { value: mixed },
-    "value",
-    resolvePath(pathString),
-    0,
-    (parent, key) => {
-      return onLeafNode(parent, key, value);
-    }
+const createOperation = onLeafNode => (mixed, pathString, value) =>
+  run({ value: mixed }, "value", resolvePath(pathString), 0, (parent, key) =>
+    onLeafNode(parent, key, value)
   ).value;
-};
 
 exports.setValue = createOperation(setValue);
 exports.deletePath = createOperation(deletePath);

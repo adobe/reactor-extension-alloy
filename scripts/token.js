@@ -11,8 +11,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import adobeIOClientCredentials from "../test/functional/helpers/adobeIOClientCredentials";
+
 const auth = require("@adobe/jwt-auth");
-const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
 
 (async () => {
   if (adobeIOClientCredentials) {

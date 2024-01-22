@@ -9,27 +9,29 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-module.exports = ({ instanceManager, getConfigOverrides }) => settings => {
-  const { instanceName, identityMap, consent } = settings;
+module.exports =
+  ({ instanceManager, getConfigOverrides }) =>
+  settings => {
+    const { instanceName, identityMap, consent } = settings;
 
-  const edgeConfigOverrides = getConfigOverrides(settings);
+    const edgeConfigOverrides = getConfigOverrides(settings);
 
-  const instance = instanceManager.getInstance(instanceName);
+    const instance = instanceManager.getInstance(instanceName);
 
-  if (!instance) {
-    throw new Error(
-      `Failed to set consent for instance "${instanceName}". No matching instance was configured with this name.`
-    );
-  }
-  if (identityMap) {
+    if (!instance) {
+      throw new Error(
+        `Failed to set consent for instance "${instanceName}". No matching instance was configured with this name.`
+      );
+    }
+    if (identityMap) {
+      return instance("setConsent", {
+        identityMap,
+        consent,
+        edgeConfigOverrides
+      });
+    }
     return instance("setConsent", {
-      identityMap,
       consent,
       edgeConfigOverrides
     });
-  }
-  return instance("setConsent", {
-    consent,
-    edgeConfigOverrides
-  });
-};
+  };

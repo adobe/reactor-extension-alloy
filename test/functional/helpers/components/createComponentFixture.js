@@ -12,10 +12,9 @@ governing permissions and limitations under the License.
 
 import path from "path";
 
-const createComponentFixture = ({ title }) => {
-  return fixture(title).page(
+const createComponentFixture = ({ title }) =>
+  fixture(title).page(
     path.join(__dirname, `../../../../componentFixtureDist/fixture.html`)
   );
-};
 
 export default createComponentFixture;

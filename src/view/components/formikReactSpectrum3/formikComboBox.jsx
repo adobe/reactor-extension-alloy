@@ -24,7 +24,7 @@ import { useField } from "formik";
  * the value is invalid, or null if the value is valid.
  * @returns {React.Element}
  */
-const FormikComboBox = ({ name, width, validate, ...otherProps }) => {
+function FormikComboBox({ name, width, validate, ...otherProps }) {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
     name,
     validate
@@ -42,7 +42,7 @@ const FormikComboBox = ({ name, width, validate, ...otherProps }) => {
       errorMessage={error}
     />
   );
-};
+}
 
 FormikComboBox.propTypes = {
   name: PropTypes.string.isRequired,

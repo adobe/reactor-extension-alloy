@@ -27,9 +27,7 @@ const getInitialValues = ({ initInfo }) => {
   };
 };
 
-const getSettings = ({ values }) => {
-  return values;
-};
+const getSettings = ({ values }) => values;
 
 const validationSchema = object().shape({
   eventMergeId: string()
@@ -37,7 +35,7 @@ const validationSchema = object().shape({
     .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
 });
 
-const ResetEventMergeId = () => {
+function ResetEventMergeId() {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -59,6 +57,6 @@ const ResetEventMergeId = () => {
       )}
     />
   );
-};
+}
 
 render(ResetEventMergeId);

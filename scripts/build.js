@@ -12,8 +12,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const build = require("./helpers/build.js");
-const buildExtensionManifest = require("./helpers/buildExtensionManifest.js");
+const build = require("./helpers/build");
+const buildExtensionManifest = require("./helpers/buildExtensionManifest");
 
 buildExtensionManifest()
   .then(resultPath => {
@@ -27,6 +27,8 @@ buildExtensionManifest()
   .then(() => {
     process.exit(0);
   })
-  .catch(() => {
+  .catch(e => {
+    // eslint-disable-next-line no-console
+    console.log(e);
     process.exit(1);
   });

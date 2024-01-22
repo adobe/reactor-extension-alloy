@@ -127,9 +127,8 @@ const getNodeEditData = ({
   return undefined;
 };
 
-export default ({ formState, nodeId }) => {
-  return getNodeEditData({
+export default ({ formState, nodeId }) =>
+  getNodeEditData({
     candidateFormStateNode: formState,
     nodeIdToFind: nodeId
   });
-};

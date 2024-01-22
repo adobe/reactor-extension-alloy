@@ -36,13 +36,12 @@ const getValueFromFormState = ({
   }
   return getTypeSpecificHelpers(schema.type).getValueFromFormState({
     formStateNode,
-    getValueFromFormState: ({ formStateNode: subFormStateNode }) => {
-      return getValueFromFormState({
+    getValueFromFormState: ({ formStateNode: subFormStateNode }) =>
+      getValueFromFormState({
         formStateNode: subFormStateNode,
         transforms,
         isAncestorCleared: clear || isAncestorCleared
-      });
-    }
+      })
   });
 };
 

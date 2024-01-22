@@ -26,14 +26,14 @@ import "./body.styl";
  * for more info. Once React-Spectrum provides a Body component
  * that handles typography, we can get rid of this.
  */
-const Body = ({
+function Body({
   "data-test-id": dataTestId,
   children,
   size = "S",
   isSerif,
   marginTop,
   marginBottom
-}) => {
+}) {
   const style = {};
 
   if (marginTop !== undefined) {
@@ -55,7 +55,7 @@ const Body = ({
       {children}
     </p>
   );
-};
+}
 
 export default Body;
 

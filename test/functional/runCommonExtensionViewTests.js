@@ -17,9 +17,9 @@ export default additionalInitInfo => {
   // This fails in saucelabs. Skipping for now.
   test.skip("loads Adobe Clean font", async () => {
     await extensionViewController.init(additionalInitInfo);
-    const adobeCleanLoadedPromise = t.eval(() => {
-      return document.fonts.check("12px Adobe Clean");
-    });
+    const adobeCleanLoadedPromise = t.eval(() =>
+      document.fonts.check("12px Adobe Clean")
+    );
     await t.expect(adobeCleanLoadedPromise).ok("Adobe Clean font not loaded.");
   });
 };

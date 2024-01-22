@@ -15,7 +15,7 @@ import PropTypes from "prop-types";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import DataElementSelector from "../components/dataElementSelector";
 
-const EdgeConfigurationFreeformInputMethod = ({ name }) => {
+function EdgeConfigurationFreeformInputMethod({ name }) {
   return (
     <>
       <DataElementSelector>
@@ -48,7 +48,7 @@ const EdgeConfigurationFreeformInputMethod = ({ name }) => {
       </DataElementSelector>
     </>
   );
-};
+}
 
 EdgeConfigurationFreeformInputMethod.propTypes = {
   name: PropTypes.string.isRequired

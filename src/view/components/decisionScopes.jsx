@@ -83,7 +83,7 @@ export const bridge = {
   })
 };
 
-const DecisionScopes = () => {
+function DecisionScopes() {
   const [{ value: decisionsInputMethod }] = useField("decisionsInputMethod");
   const [{ value: decisionScopesArray }] = useField("decisionScopesArray");
 
@@ -119,53 +119,49 @@ const DecisionScopes = () => {
           <Flex direction="column" gap="size-100" alignItems="start">
             <FieldArray
               name="decisionScopesArray"
-              render={arrayHelpers => {
-                return (
-                  <div>
-                    {decisionScopesArray.map((scope, index) => {
-                      return (
-                        <Flex key={index} alignItems="end">
-                          <FormikTextField
-                            data-test-id={`scope${index}Field`}
-                            label="Scope"
-                            name={`decisionScopesArray.${index}`}
-                            width="size-5000"
-                            aria-label="Decision scope"
-                            marginTop="size-0"
-                          />
-                          <ActionButton
-                            data-test-id={`deleteScope${index}Button`}
-                            isQuiet
-                            isDisabled={decisionScopesArray.length === 1}
-                            variant="secondary"
-                            onPress={() => {
-                              arrayHelpers.remove(index);
-                            }}
-                            aria-label="Remove decision scope"
-                          >
-                            <Delete />
-                          </ActionButton>
-                        </Flex>
-                      );
-                    })}
-                    <Button
-                      variant="secondary"
-                      data-test-id="addDecisionScopeButton"
-                      onPress={() => {
-                        arrayHelpers.push("");
-                      }}
-                    >
-                      Add scope
-                    </Button>
-                  </div>
-                );
-              }}
+              render={arrayHelpers => (
+                <div>
+                  {decisionScopesArray.map((scope, index) => (
+                    <Flex key={index} alignItems="end">
+                      <FormikTextField
+                        data-test-id={`scope${index}Field`}
+                        label="Scope"
+                        name={`decisionScopesArray.${index}`}
+                        width="size-5000"
+                        aria-label="Decision scope"
+                        marginTop="size-0"
+                      />
+                      <ActionButton
+                        data-test-id={`deleteScope${index}Button`}
+                        isQuiet
+                        isDisabled={decisionScopesArray.length === 1}
+                        variant="secondary"
+                        onPress={() => {
+                          arrayHelpers.remove(index);
+                        }}
+                        aria-label="Remove decision scope"
+                      >
+                        <Delete />
+                      </ActionButton>
+                    </Flex>
+                  ))}
+                  <Button
+                    variant="secondary"
+                    data-test-id="addDecisionScopeButton"
+                    onPress={() => {
+                      arrayHelpers.push("");
+                    }}
+                  >
+                    Add scope
+                  </Button>
+                </div>
+              )}
             />
           </Flex>
         </FieldSubset>
       )}
     </div>
   );
-};
+}
 
 export default DecisionScopes;

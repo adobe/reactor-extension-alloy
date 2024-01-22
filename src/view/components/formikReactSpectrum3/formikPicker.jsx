@@ -15,7 +15,7 @@ import { useField } from "formik";
 import PropTypes from "prop-types";
 import React from "react";
 
-const FormikPicker = ({ name, width, validate, ...otherProps }) => {
+function FormikPicker({ name, width, validate, ...otherProps }) {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
     name,
     validate
@@ -34,7 +34,7 @@ const FormikPicker = ({ name, width, validate, ...otherProps }) => {
       {...otherProps}
     />
   );
-};
+}
 
 FormikPicker.propTypes = {
   name: PropTypes.string.isRequired,

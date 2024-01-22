@@ -13,9 +13,7 @@ governing permissions and limitations under the License.
 import fetchSandboxes from "../../../utils/fetchSandboxes";
 import fetchNamespaces from "./fetchNamespaces";
 
-const isNotECID = namespace => {
-  return namespace.code !== "ECID";
-};
+const isNotECID = namespace => namespace.code !== "ECID";
 
 const getNamespaces = async (initInfo, sandbox) => {
   const namespaces = await fetchNamespaces({
@@ -27,20 +25,16 @@ const getNamespaces = async (initInfo, sandbox) => {
   return namespaces || [];
 };
 
-const getDefaultSandbox = sandboxes => {
-  return sandboxes.find(sandbox => sandbox.isDefault);
-};
+const getDefaultSandbox = sandboxes =>
+  sandboxes.find(sandbox => sandbox.isDefault);
 
-const getNamespacesForDefaultSandbox = initInfo => {
-  return fetchSandboxes({
+const getNamespacesForDefaultSandbox = initInfo =>
+  fetchSandboxes({
     orgId: initInfo.company.orgId,
     imsAccess: initInfo.tokens.imsAccess
   })
-    .then(result => {
-      return getDefaultSandbox(result.results);
-    })
+    .then(result => getDefaultSandbox(result.results))
     .then(sandbox => getNamespaces(initInfo, sandbox.name));
-};
 
 const dedupeBy = (arr, keyFunc) => {
   const set = new Set();
@@ -79,11 +73,10 @@ const getExtensionSandboxes = initInfo => {
   return [...extensionSandboxes];
 };
 
-const filterAndSortNamespaces = namespaces => {
-  return namespaces
+const filterAndSortNamespaces = namespaces =>
+  namespaces
     .filter(isNotECID)
     .sort((first, second) => first.code.localeCompare(second.code));
-};
 
 export const getNamespacesOptions = initInfo => {
   const extensionSandboxes = getExtensionSandboxes(initInfo);
@@ -97,21 +90,16 @@ export const getNamespacesOptions = initInfo => {
 
         return dedupeBy(allNamespaces, e => e.code);
       })
-      .then(namespaces => {
-        return filterAndSortNamespaces(namespaces);
-      })
+      .then(namespaces => filterAndSortNamespaces(namespaces))
       .catch(() => []);
   }
 
   return getNamespacesForDefaultSandbox(initInfo, extensionSandboxes)
-    .then(namespaces => {
-      return filterAndSortNamespaces(namespaces);
-    })
+    .then(namespaces => filterAndSortNamespaces(namespaces))
     .catch(() => []);
 };
 
-export const findNamespace = (namespaces, namespaceCode) => {
-  return namespaces.find(
+export const findNamespace = (namespaces, namespaceCode) =>
+  namespaces.find(
     namespace => namespace.code.toUpperCase() === namespaceCode.toUpperCase()
   );
-};

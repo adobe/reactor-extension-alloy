@@ -23,7 +23,7 @@ import CodeIcon from "@spectrum-icons/workflow/Code";
 import FieldDescriptionAndError from "./fieldDescriptionAndError";
 import "./codePreview.styl";
 
-const CodePreview = ({
+function CodePreview({
   "data-test-id": dataTestId,
   label,
   buttonLabel,
@@ -31,7 +31,7 @@ const CodePreview = ({
   description,
   error,
   onPress
-}) => {
+}) {
   return (
     // To get this element to shrink to its contents, we had to use
     // alignSelf="flex-start" because this is currently a child of
@@ -60,7 +60,7 @@ const CodePreview = ({
       </ActionButton>
     </View>
   );
-};
+}
 
 CodePreview.propTypes = {
   "data-test-id": PropTypes.string,

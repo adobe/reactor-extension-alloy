@@ -16,10 +16,9 @@ import { Checkbox } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const FormikCheckbox = ({ name, description, width, ...otherProps }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+function FormikCheckbox({ name, description, width, ...otherProps }) {
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
   return (
     <FieldDescriptionAndError
       description={description}
@@ -39,7 +38,7 @@ const FormikCheckbox = ({ name, description, width, ...otherProps }) => {
       />
     </FieldDescriptionAndError>
   );
-};
+}
 
 FormikCheckbox.propTypes = {
   name: PropTypes.string.isRequired,

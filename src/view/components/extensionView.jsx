@@ -20,14 +20,14 @@ import useExtensionBridge from "../utils/useExtensionBridge";
 import useReportAsyncError from "../utils/useReportAsyncError";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 
-const ExtensionView = ({
+function ExtensionView({
   render,
   getInitialValues,
   getSettings,
   validateFormikState,
   formikStateValidationSchema,
   validateNonFormikState
-}) => {
+}) {
   const reportAsyncError = useReportAsyncError();
   const [initInfo, setInitInfo] = useState();
   const viewRegistrationRef = useRef();
@@ -52,11 +52,8 @@ const ExtensionView = ({
 
       return errors;
     },
-    validationSchema: () => {
-      return (
-        viewRegistrationRef.current?.formikStateValidationSchema ?? object()
-      );
-    }
+    validationSchema: () =>
+      viewRegistrationRef.current?.formikStateValidationSchema ?? object()
   });
 
   const myValidateFormikState = async () => {
@@ -181,7 +178,7 @@ const ExtensionView = ({
       })}
     </FormikProvider>
   );
-};
+}
 
 ExtensionView.propTypes = {
   render: PropTypes.func,

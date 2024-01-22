@@ -15,13 +15,13 @@ import PropTypes from "prop-types";
 import Data from "@spectrum-icons/workflow/Data";
 import { ActionButton, Flex } from "@adobe/react-spectrum";
 
-const RawDataElementSelector = ({
+function RawDataElementSelector({
   children,
   augmentValue,
   value,
   onChange,
   adjustForLabel
-}) => {
+}) {
   // We have to vertically nudge down the data element selector
   // button if the field has a label so the button aligns
   // with the input box.
@@ -50,7 +50,7 @@ const RawDataElementSelector = ({
       </ActionButton>
     </Flex>
   );
-};
+}
 
 // You only need to specify value if augmentValue is true
 RawDataElementSelector.propTypes = {

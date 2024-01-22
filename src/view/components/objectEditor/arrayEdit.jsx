@@ -29,17 +29,19 @@ import FormElementContainer from "../formElementContainer";
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
  */
-const WholePopulationStrategyForm = ({ fieldName }) => (
-  <DataElementSelector>
-    <FormikTextField
-      data-test-id="valueField"
-      name={`${fieldName}.value`}
-      label="Data element"
-      description="This data element should resolve to an array."
-      width="size-5000"
-    />
-  </DataElementSelector>
-);
+function WholePopulationStrategyForm({ fieldName }) {
+  return (
+    <DataElementSelector>
+      <FormikTextField
+        data-test-id="valueField"
+        name={`${fieldName}.value`}
+        label="Data element"
+        description="This data element should resolve to an array."
+        width="size-5000"
+      />
+    </DataElementSelector>
+  );
+}
 
 WholePopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired
@@ -49,47 +51,45 @@ WholePopulationStrategyForm.propTypes = {
  * Displayed when the PARTS population strategy is selected.
  * Allows the user to provide individual items within the array.
  */
-const PartsPopulationStrategyForm = ({
+function PartsPopulationStrategyForm({
   fieldName,
   schema,
   items,
   onNodeSelect,
   updateMode
-}) => (
-  <FieldArray
-    name={`${fieldName}.items`}
-    render={arrayHelpers => {
-      return (
+}) {
+  return (
+    <FieldArray
+      name={`${fieldName}.items`}
+      render={arrayHelpers => (
         <Flex
           gap="size-200"
           marginTop="size-200"
           direction="column"
           alignItems="start"
         >
-          {items.map((itemNode, index) => {
-            return (
-              <div key={`${fieldName}.${index}`}>
-                <Button
-                  data-test-id={`item${index}SelectButton`}
-                  isQuiet
-                  variant="secondary"
-                  onPress={() => onNodeSelect(itemNode.id)}
-                >
-                  Item {index + 1}
-                </Button>
-                <Button
-                  data-test-id={`item${index}RemoveButton`}
-                  isQuiet
-                  variant="secondary"
-                  minWidth={0}
-                  aria-label="Delete"
-                  onPress={() => arrayHelpers.remove(index)}
-                >
-                  <Delete />
-                </Button>
-              </div>
-            );
-          })}
+          {items.map((itemNode, index) => (
+            <div key={`${fieldName}.${index}`}>
+              <Button
+                data-test-id={`item${index}SelectButton`}
+                isQuiet
+                variant="secondary"
+                onPress={() => onNodeSelect(itemNode.id)}
+              >
+                Item {index + 1}
+              </Button>
+              <Button
+                data-test-id={`item${index}RemoveButton`}
+                isQuiet
+                variant="secondary"
+                minWidth={0}
+                aria-label="Delete"
+                onPress={() => arrayHelpers.remove(index)}
+              >
+                <Delete />
+              </Button>
+            </div>
+          ))}
           <Button
             data-test-id="addItemButton"
             onPress={() => {
@@ -116,10 +116,10 @@ const PartsPopulationStrategyForm = ({
             Add item
           </Button>
         </Flex>
-      );
-    }}
-  />
-);
+      )}
+    />
+  );
+}
 
 PartsPopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired,
@@ -132,7 +132,7 @@ PartsPopulationStrategyForm.propTypes = {
 /**
  * The form for editing a node that is an array type.
  */
-const ArrayEdit = props => {
+function ArrayEdit(props) {
   const { fieldName, onNodeSelect } = props;
   const [{ value: formStateNode }] = useField(fieldName);
 
@@ -175,7 +175,7 @@ const ArrayEdit = props => {
       </div>
     </FormElementContainer>
   );
-};
+}
 
 ArrayEdit.propTypes = {
   fieldName: PropTypes.string.isRequired,

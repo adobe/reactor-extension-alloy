@@ -15,7 +15,7 @@ import Error from "@spectrum-icons/illustrations/Error";
 import PropTypes from "prop-types";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 
-const ErrorMessage = ({ children, dataTestId }) => {
+function ErrorMessage({ children, dataTestId }) {
   return (
     <FillParentAndCenterChildren>
       <IllustratedMessage data-test-id={dataTestId}>
@@ -25,7 +25,7 @@ const ErrorMessage = ({ children, dataTestId }) => {
       </IllustratedMessage>
     </FillParentAndCenterChildren>
   );
-};
+}
 
 ErrorMessage.propTypes = {
   children: PropTypes.node.isRequired,

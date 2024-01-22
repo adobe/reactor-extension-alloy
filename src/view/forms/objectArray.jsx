@@ -206,50 +206,46 @@ export default function objectArray(
           {inputMethod === FORM && (
             <FieldArray
               name={`${namePrefix}${name}`}
-              render={arrayHelpers => {
-                return (
-                  <>
-                    {items.map((__, index) => {
-                      return (
-                        <Well
-                          key={index}
-                          alignSelf="flex-start"
-                          direction="column"
-                          gap="size-100"
+              render={arrayHelpers => (
+                <>
+                  {items.map((__, index) => (
+                    <Well
+                      key={index}
+                      alignSelf="flex-start"
+                      direction="column"
+                      gap="size-100"
+                    >
+                      <ItemComponent
+                        namePrefix={`${namePrefix}${name}.${index}.`}
+                        {...props}
+                      />
+                      <Flex direction="row">
+                        <Button
+                          variant="secondary"
+                          data-test-id={`${namePrefix}${name}${index}RemoveButton`}
+                          onPress={() => {
+                            // using arrayHelpers.remove mangles the error message
+                            setItems(items.filter((_, i) => i !== index));
+                          }}
+                          isDisabled={items.length === 1}
+                          marginStart="auto"
                         >
-                          <ItemComponent
-                            namePrefix={`${namePrefix}${name}.${index}.`}
-                            {...props}
-                          />
-                          <Flex direction="row">
-                            <Button
-                              variant="secondary"
-                              data-test-id={`${namePrefix}${name}${index}RemoveButton`}
-                              onPress={() => {
-                                // using arrayHelpers.remove mangles the error message
-                                setItems(items.filter((_, i) => i !== index));
-                              }}
-                              isDisabled={items.length === 1}
-                              marginStart="auto"
-                            >
-                              Remove {singularLabel.toLowerCase()}
-                            </Button>
-                          </Flex>
-                        </Well>
-                      );
-                    })}
-                    <div>
-                      <Button
-                        variant="secondary"
-                        data-test-id={`${namePrefix}${name}AddButton`}
-                        onPress={() => arrayHelpers.push(buildDefaultItem())}
-                      >
-                        Add {singularLabel.toLowerCase()}
-                      </Button>
-                    </div>
-                  </>
-                );
-              }}
+                          Remove {singularLabel.toLowerCase()}
+                        </Button>
+                      </Flex>
+                    </Well>
+                  ))}
+                  <div>
+                    <Button
+                      variant="secondary"
+                      data-test-id={`${namePrefix}${name}AddButton`}
+                      onPress={() => arrayHelpers.push(buildDefaultItem())}
+                    >
+                      Add {singularLabel.toLowerCase()}
+                    </Button>
+                  </div>
+                </>
+              )}
             />
           )}
           {inputMethod === DATA_ELEMENT && (

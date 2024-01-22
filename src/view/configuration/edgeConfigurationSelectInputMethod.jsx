@@ -17,7 +17,7 @@ import EdgeConfigEnvironment from "./edgeConfigEnvironment";
 import { DEVELOPMENT, PRODUCTION, STAGING } from "./constants/environmentType";
 import Alert from "../components/alert";
 
-const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
+function EdgeConfigurationSelectInputMethod({ name, initInfo, context }) {
   const { current } = context;
   const { fetchSandboxError, fetchConfigsError } = current;
   if (fetchSandboxError || fetchConfigsError) {
@@ -66,7 +66,7 @@ const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
       />
     </>
   );
-};
+}
 
 EdgeConfigurationSelectInputMethod.propTypes = {
   name: PropTypes.string.isRequired,

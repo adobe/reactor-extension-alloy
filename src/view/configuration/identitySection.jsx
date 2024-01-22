@@ -49,7 +49,7 @@ export const bridge = {
   }
 };
 
-const IdentitySection = ({ instanceFieldName }) => {
+function IdentitySection({ instanceFieldName }) {
   return (
     <>
       <SectionHeader learnMoreUrl="https://adobe.ly/39ouRzA">
@@ -75,7 +75,7 @@ const IdentitySection = ({ instanceFieldName }) => {
       </FormElementContainer>
     </>
   );
-};
+}
 
 IdentitySection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired

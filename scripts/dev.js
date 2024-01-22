@@ -11,11 +11,12 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const build = require("./helpers/build.js");
-const buildExtensionManifest = require("./helpers/buildExtensionManifest.js");
+const build = require("./helpers/build");
+const buildExtensionManifest = require("./helpers/buildExtensionManifest");
 
 (async () => {
   const manifestPath = await buildExtensionManifest();
+  // eslint-disable-next-line no-console
   console.log(
     "\x1b[32m%s\x1b[0m",
     `✅ Extension manifest written to ${manifestPath}`

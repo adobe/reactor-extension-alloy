@@ -25,7 +25,7 @@ import FormikKeyedComboBox from "../components/formikReactSpectrum3/formikKeyedC
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
 
-const StringItem = ({
+function StringItem({
   namePrefix,
   name,
   index,
@@ -33,21 +33,23 @@ const StringItem = ({
   error,
   touched,
   isLast
-}) => (
-  <DataElementSelector>
-    <FormikTextField
-      data-test-id={`${namePrefix}${name}${index}Field`}
-      aria-label={`Item ${index + 1}`}
-      name={`${namePrefix}${name}.${index}`}
-      width="size-5000"
-      marginTop="size-0"
-      description={isLast ? description : undefined}
-      error={isLast ? error : undefined}
-      invalid={error && touched}
-      touched={touched}
-    />
-  </DataElementSelector>
-);
+}) {
+  return (
+    <DataElementSelector>
+      <FormikTextField
+        data-test-id={`${namePrefix}${name}${index}Field`}
+        aria-label={`Item ${index + 1}`}
+        name={`${namePrefix}${name}.${index}`}
+        width="size-5000"
+        marginTop="size-0"
+        description={isLast ? description : undefined}
+        error={isLast ? error : undefined}
+        invalid={error && touched}
+        touched={touched}
+      />
+    </DataElementSelector>
+  );
+}
 StringItem.propTypes = {
   namePrefix: PropTypes.string,
   name: PropTypes.string,
@@ -58,7 +60,7 @@ StringItem.propTypes = {
   isLast: PropTypes.bool
 };
 
-const ComboboxItem = ({
+function ComboboxItem({
   namePrefix,
   name,
   index,
@@ -67,31 +69,33 @@ const ComboboxItem = ({
   touched,
   isLast,
   items
-}) => (
-  <DataElementSelector>
-    <FormikKeyedComboBox
-      data-test-id={`${namePrefix}${name}${index}Field`}
-      aria-label={`Item ${index + 1}`}
-      name={`${namePrefix}${name}.${index}`}
-      width="size-5000"
-      marginTop="size-0"
-      description={isLast ? description : undefined}
-      error={isLast ? error : undefined}
-      invalid={error && touched}
-      touched={touched}
-      items={items}
-      getKey={item => item.value}
-      getLabel={item => item.label}
-      allowsCustomValue
-    >
-      {item => (
-        <Item key={item.value} data-test-id={item.value}>
-          {item.label}
-        </Item>
-      )}
-    </FormikKeyedComboBox>
-  </DataElementSelector>
-);
+}) {
+  return (
+    <DataElementSelector>
+      <FormikKeyedComboBox
+        data-test-id={`${namePrefix}${name}${index}Field`}
+        aria-label={`Item ${index + 1}`}
+        name={`${namePrefix}${name}.${index}`}
+        width="size-5000"
+        marginTop="size-0"
+        description={isLast ? description : undefined}
+        error={isLast ? error : undefined}
+        invalid={error && touched}
+        touched={touched}
+        items={items}
+        getKey={item => item.value}
+        getLabel={item => item.label}
+        allowsCustomValue
+      >
+        {item => (
+          <Item key={item.value} data-test-id={item.value}>
+            {item.label}
+          </Item>
+        )}
+      </FormikKeyedComboBox>
+    </DataElementSelector>
+  );
+}
 
 ComboboxItem.propTypes = {
   namePrefix: PropTypes.string,
@@ -233,56 +237,52 @@ export default function fieldArray({
           {inputMethod === FORM && (
             <FieldArray
               name={name}
-              render={arrayHelpers => {
-                return (
-                  <div>
-                    <Flex direction="column" gap="size-100" alignItems="start">
-                      {items.map((item, index) => {
-                        return (
-                          <Flex key={index} alignItems="start">
-                            <FieldItem
-                              namePrefix={namePrefix}
-                              name={name}
-                              index={index}
-                              description={description}
-                              error={error}
-                              touched={itemsTouched}
-                              isLast={index === items.length - 1}
-                              items={fieldItems}
-                            />
-                            <ActionButton
-                              data-test-id={`${namePrefix}${name}${index}RemoveButton`}
-                              isQuiet
-                              variant="secondary"
-                              onPress={() => {
-                                // using arrayHelpers.remove mangles the error message
-                                const newItems = items.filter(
-                                  (_, i) => i !== index
-                                );
-                                if (newItems.length === 0) {
-                                  newItems.push("");
-                                }
-                                setItems(newItems);
-                              }}
-                              aria-label={`Remove ${label} ${index + 1}`}
-                              marginTop={0}
-                            >
-                              <Delete />
-                            </ActionButton>
-                          </Flex>
-                        );
-                      })}
-                    </Flex>
-                    <Button
-                      variant="secondary"
-                      data-test-id={`${namePrefix}${name}AddButton`}
-                      onPress={() => arrayHelpers.push("")}
-                    >
-                      Add {singularLabel.toLowerCase()}
-                    </Button>
-                  </div>
-                );
-              }}
+              render={arrayHelpers => (
+                <div>
+                  <Flex direction="column" gap="size-100" alignItems="start">
+                    {items.map((item, index) => (
+                      <Flex key={index} alignItems="start">
+                        <FieldItem
+                          namePrefix={namePrefix}
+                          name={name}
+                          index={index}
+                          description={description}
+                          error={error}
+                          touched={itemsTouched}
+                          isLast={index === items.length - 1}
+                          items={fieldItems}
+                        />
+                        <ActionButton
+                          data-test-id={`${namePrefix}${name}${index}RemoveButton`}
+                          isQuiet
+                          variant="secondary"
+                          onPress={() => {
+                            // using arrayHelpers.remove mangles the error message
+                            const newItems = items.filter(
+                              (_, i) => i !== index
+                            );
+                            if (newItems.length === 0) {
+                              newItems.push("");
+                            }
+                            setItems(newItems);
+                          }}
+                          aria-label={`Remove ${label} ${index + 1}`}
+                          marginTop={0}
+                        >
+                          <Delete />
+                        </ActionButton>
+                      </Flex>
+                    ))}
+                  </Flex>
+                  <Button
+                    variant="secondary"
+                    data-test-id={`${namePrefix}${name}AddButton`}
+                    onPress={() => arrayHelpers.push("")}
+                  >
+                    Add {singularLabel.toLowerCase()}
+                  </Button>
+                </div>
+              )}
             />
           )}
           {inputMethod === DATA_ELEMENT && (

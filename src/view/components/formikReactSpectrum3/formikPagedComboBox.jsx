@@ -19,7 +19,7 @@ import usePagedComboBox from "../../utils/usePagedComboBox";
 import useIsFirstRender from "../../utils/useIsFirstRender";
 import Alert from "../alert";
 
-const FormikPagedComboBox = ({
+function FormikPagedComboBox({
   name,
   width,
   loadItems,
@@ -32,11 +32,10 @@ const FormikPagedComboBox = ({
   alertTitle,
   alertDescription,
   ...otherProps
-}) => {
+}) {
   const isFirstRender = useIsFirstRender();
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
 
   const pagedComboBox = usePagedComboBox({
     defaultSelectedItem: value,
@@ -100,7 +99,7 @@ const FormikPagedComboBox = ({
         )}
     </>
   );
-};
+}
 
 FormikPagedComboBox.propTypes = {
   name: PropTypes.string.isRequired,

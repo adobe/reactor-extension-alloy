@@ -21,22 +21,20 @@ import PropTypes from "prop-types";
 import Heading from "./typography/heading";
 
 const iconByVariant = {
-  neutral: () => {
-    return null;
-  },
+  neutral: () => null,
   informative: InfoIcon,
   positive: CheckmarkCircle,
   notice: AlertIcon,
   negative: AlertIcon
 };
 
-const Alert = ({
+function Alert({
   variant = "neutral",
   title,
   children,
   className,
   ...otherProps
-}) => {
+}) {
   const Icon = iconByVariant[variant];
   return (
     <Flex
@@ -52,7 +50,7 @@ const Alert = ({
       <div className="Alert-description">{children}</div>
     </Flex>
   );
-};
+}
 
 Alert.propTypes = {
   variant: PropTypes.oneOf([

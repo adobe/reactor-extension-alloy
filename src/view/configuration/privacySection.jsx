@@ -57,13 +57,12 @@ export const bridge = {
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
-    defaultConsent: createRadioGroupWithDataElementValidationSchema(
-      "defaultConsent"
-    )
+    defaultConsent:
+      createRadioGroupWithDataElementValidationSchema("defaultConsent")
   })
 };
 
-const PrivacySection = ({ instanceFieldName }) => {
+function PrivacySection({ instanceFieldName }) {
   return (
     <>
       <SectionHeader learnMoreUrl="https://adobe.ly/2WSngEh">
@@ -100,7 +99,7 @@ const PrivacySection = ({ instanceFieldName }) => {
       </FormElementContainer>
     </>
   );
-};
+}
 
 PrivacySection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired

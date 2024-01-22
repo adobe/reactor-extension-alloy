@@ -23,13 +23,11 @@ const createExtensionManifest = require("./createExtensionManifest");
  * @param {Object} environment
  * @returns {import("./createExtensionManifest").ExtensionManifestConfiguration}
  */
-const getOptions = environment => {
+const getOptions = environment =>
   // get version from environment
-  return {
+  ({
     version: environment.npm_package_version
-  };
-};
-
+  });
 /**
  * Validate the given manifest.
  * @param {ExtensionManifest} manifest
@@ -56,9 +54,7 @@ const validate = manifest => {
  * @param {string} repoRoot The root path of the repository.
  * @returns {string}
  */
-const getDestination = repoRoot => {
-  return resolve(join(repoRoot, "extension.json"));
-};
+const getDestination = repoRoot => resolve(join(repoRoot, "extension.json"));
 
 /**
  * Stringify and format the object as JSON.
@@ -103,7 +99,7 @@ const build = async () => {
     throw new Error(`Invalid extension manifest: ${error}`);
   }
   const writePath = getDestination(env.npm_config_local_prefix);
-  await write(writePath, manifest);
+  await write(writePath, JSON.stringify(manifest, null, 2));
   return writePath;
 };
 

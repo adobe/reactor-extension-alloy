@@ -11,18 +11,19 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { lightTheme, Provider } from "@adobe/react-spectrum";
 
 export default ComponentFixture => {
-  ReactDOM.render(
+  const container = document.getElementById("root");
+  const root = createRoot(container);
+  root.render(
     <Provider
       theme={lightTheme}
       colorScheme="light"
       UNSAFE_className="react-spectrum-provider"
     >
       <ComponentFixture />
-    </Provider>,
-    document.getElementById("root")
+    </Provider>
   );
 };

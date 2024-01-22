@@ -27,7 +27,7 @@ const inputMethods = {
 /**
  * The form for editing a boolean field.
  */
-const BooleanEdit = props => {
+function BooleanEdit(props) {
   const { fieldName } = props;
   const valueFieldName = `${fieldName}.value`;
   const [{ value }, , { setValue }] = useField(valueFieldName);
@@ -101,7 +101,7 @@ const BooleanEdit = props => {
       )}
     </FormElementContainer>
   );
-};
+}
 
 BooleanEdit.propTypes = {
   fieldName: PropTypes.string.isRequired

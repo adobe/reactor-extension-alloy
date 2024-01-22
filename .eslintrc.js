@@ -10,12 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 module.exports = {
-  extends: [
-    "airbnb",
-    "prettier",
-    "prettier/react",
-    "plugin:testcafe/recommended"
-  ],
+  extends: ["airbnb", "prettier", "plugin:testcafe/recommended"],
   env: {
     browser: true,
     node: true,
@@ -54,6 +49,7 @@ module.exports = {
     "import/no-extraneous-dependencies": "off",
     "prefer-destructuring": "off",
     "import/prefer-default-export": "off",
+    "react/jsx-props-no-spreading": "off",
     "no-console": [
       "warn",
       {
@@ -75,5 +71,11 @@ module.exports = {
     ],
     "no-underscore-dangle": ["Error", { allow: ["_experience"] }]
   },
-  parser: "babel-eslint"
+
+  parser: "@babel/eslint-parser",
+  parserOptions: {
+    babelOptions: {
+      presets: ["@babel/preset-env", "@babel/preset-react"]
+    }
+  }
 };

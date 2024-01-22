@@ -116,7 +116,9 @@ export const multipleWithDefault = RequestMock()
 export const longLasting = RequestMock()
   .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: "GET" })
   .respond(async (req, res) => {
-    await new Promise(r => setTimeout(r, 10000));
+    await new Promise(r => {
+      setTimeout(r, 10000);
+    });
 
     res.setBody({
       sandboxes: [

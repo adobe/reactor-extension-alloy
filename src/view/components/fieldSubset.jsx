@@ -14,9 +14,9 @@ import React from "react";
 import { View } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 
-const FieldSubset = ({ children }) => {
+function FieldSubset({ children }) {
   return <View marginStart="size-300">{children}</View>;
-};
+}
 
 FieldSubset.propTypes = {
   children: PropTypes.node.isRequired

@@ -12,9 +12,7 @@ governing permissions and limitations under the License.
 
 import getDefaultIdentifier from "./getDefaultIdentifier";
 
-export default () => {
-  return {
-    namespaceCode: "",
-    identifiers: [getDefaultIdentifier()]
-  };
-};
+export default () => ({
+  namespaceCode: "",
+  identifiers: [getDefaultIdentifier()]
+});

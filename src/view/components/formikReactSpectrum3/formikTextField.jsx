@@ -24,7 +24,7 @@ import { useField } from "formik";
  * the value is invalid, or null if the value is valid.
  * @returns {React.Element}
  */
-const FormikTextField = ({ name, width, validate, ...otherProps }) => {
+function FormikTextField({ name, width, validate, ...otherProps }) {
   const [
     { value },
     { touched: fieldTouched, error: fieldError },
@@ -54,7 +54,7 @@ const FormikTextField = ({ name, width, validate, ...otherProps }) => {
       width={width}
     />
   );
-};
+}
 
 FormikTextField.propTypes = {
   name: PropTypes.string.isRequired,

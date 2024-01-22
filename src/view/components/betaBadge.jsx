@@ -13,7 +13,7 @@ import React from "react";
 import { Badge } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 
-const betaBadge = ({ isDisabled }) => {
+function betaBadge({ isDisabled }) {
   const styles = {
     padding: "0"
   };
@@ -26,7 +26,7 @@ const betaBadge = ({ isDisabled }) => {
       Beta
     </Badge>
   );
-};
+}
 
 betaBadge.propTypes = {
   isDisabled: PropTypes.bool

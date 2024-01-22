@@ -20,23 +20,22 @@ import singleDataElementRegex from "../../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../../constants/validationErrorMessages";
 import FieldSubset from "../fieldSubset";
 
-export const createRadioGroupWithDataElementValidationSchema = name => {
-  return string().when([`${name}DataElement`], {
+export const createRadioGroupWithDataElementValidationSchema = name =>
+  string().when([`${name}DataElement`], {
     is: ({ isDataElement } = {}) => isDataElement,
     then: schema =>
       schema
         .required(DATA_ELEMENT_REQUIRED)
         .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
   });
-};
 
-const FormikRadioGroupWithDataElement = ({
+function FormikRadioGroupWithDataElement({
   name,
   children,
   dataElementDescription,
   dataTestIdPrefix = name,
   ...otherProps
-}) => {
+}) {
   const options = React.Children.map(children, child => {
     const { value } = child.props;
     return value;
@@ -63,11 +62,11 @@ const FormikRadioGroupWithDataElement = ({
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for RadioGroup, so we wire up Formik's
   // onBlur to every radio.
-  const childrenWithOnBlur = React.Children.map(children, child => {
-    return React.cloneElement(child, {
+  const childrenWithOnBlur = React.Children.map(children, child =>
+    React.cloneElement(child, {
       onBlur: radioOnBlur
-    });
-  });
+    })
+  );
 
   let radioValue;
   let dataElementText;
@@ -150,7 +149,7 @@ const FormikRadioGroupWithDataElement = ({
       )}
     </div>
   );
-};
+}
 
 FormikRadioGroupWithDataElement.propTypes = {
   name: PropTypes.string.isRequired,

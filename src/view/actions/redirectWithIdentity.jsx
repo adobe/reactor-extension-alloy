@@ -53,7 +53,7 @@ const getSettings = ({ values }) => {
 
 const validationSchema = overridesBridge.formikStateValidationSchema;
 
-const RedirectWithIdentity = () => {
+function RedirectWithIdentity() {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -108,6 +108,6 @@ const RedirectWithIdentity = () => {
       }}
     />
   );
-};
+}
 
 render(RedirectWithIdentity);

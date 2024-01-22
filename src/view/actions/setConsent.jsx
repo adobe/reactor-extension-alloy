@@ -39,18 +39,16 @@ const IAB_TCF = { value: "iab_tcf", label: "IAB TCF" };
 const VERSION_1_0 = { value: "1.0", label: "1.0" };
 const VERSION_2_0 = { value: "2.0", label: "2.0" };
 
-const createBlankConsentObject = () => {
-  return {
-    standard: "adobe",
-    adobeVersion: "1.0",
-    iabVersion: "2.0",
-    general: "in",
-    value: "",
-    iabValue: "",
-    gdprApplies: true,
-    gdprContainsPersonalData: false
-  };
-};
+const createBlankConsentObject = () => ({
+  standard: "adobe",
+  adobeVersion: "1.0",
+  iabVersion: "2.0",
+  general: "in",
+  value: "",
+  iabValue: "",
+  gdprApplies: true,
+  gdprContainsPersonalData: false
+});
 
 const getInitialValues = ({ initInfo }) => {
   const {
@@ -116,13 +114,8 @@ const getInitialValues = ({ initInfo }) => {
 };
 
 const getSettings = ({ values }) => {
-  const {
-    instanceName,
-    identityMap,
-    inputMethod,
-    dataElement,
-    consent
-  } = values;
+  const { instanceName, identityMap, inputMethod, dataElement, consent } =
+    values;
 
   const settings = {
     instanceName
@@ -236,7 +229,7 @@ const validationSchema = object()
   })
   .concat(overridesBridge.formikStateValidationSchema);
 
-const ConsentObject = ({ value, index }) => {
+function ConsentObject({ value, index }) {
   return (
     <>
       <FormikPicker
@@ -342,14 +335,14 @@ const ConsentObject = ({ value, index }) => {
       )}
     </>
   );
-};
+}
 
 ConsentObject.propTypes = {
   value: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired
 };
 
-const SetConsent = () => {
+function SetConsent() {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -459,6 +452,6 @@ const SetConsent = () => {
       }}
     />
   );
-};
+}
 
 render(SetConsent);

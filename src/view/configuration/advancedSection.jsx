@@ -55,7 +55,7 @@ export const bridge = {
   })
 };
 
-const AdvancedSection = ({ instanceFieldName }) => {
+function AdvancedSection({ instanceFieldName }) {
   const instanceDefaults = bridge.getInstanceDefaults();
   return (
     <>
@@ -81,7 +81,7 @@ const AdvancedSection = ({ instanceFieldName }) => {
       </FormElementContainer>
     </>
   );
-};
+}
 
 AdvancedSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired

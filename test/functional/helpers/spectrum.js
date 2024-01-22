@@ -10,7 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+// eslint-disable-next-line import/no-import-module-exports
 import { Selector, t, ClientFunction } from "testcafe";
+// eslint-disable-next-line import/no-import-module-exports
 import {
   createTestIdSelector,
   createTestIdSelectorString
@@ -128,9 +130,7 @@ const createExpectMenuOptionLabels = menuSelector => async labels => {
     await t
       .expect(menuItems.nth(i).withExactText(labels[i]).exists)
       .ok(
-        `Option with label ${
-          labels[i]
-        } does not exist when it is expected to exist. Be sure you've opened the menu first.`
+        `Option with label ${labels[i]} does not exist when it is expected to exist. Be sure you've opened the menu first.`
       );
   }
   await t.expect(menuItems.count).eql(labels.length);
@@ -148,9 +148,7 @@ const createExpectMenuOptionsLabelsInclude = menuSelector => async labels => {
     await t
       .expect(menuItems.withExactText(labels[i]).exists)
       .ok(
-        `Option with label ${
-          labels[i]
-        } does not exist when it is expected to exist. Be sure you've opened the menu first.`
+        `Option with label ${labels[i]} does not exist when it is expected to exist. Be sure you've opened the menu first.`
       );
   }
 };
@@ -167,9 +165,7 @@ const createExpectMenuOptionLabelsExclude = menuSelector => async labels => {
     await t
       .expect(menuItems.withExactText(labels[i]).exists)
       .notOk(
-        `Option with label ${
-          labels[i]
-        } exists when it is expected to not exist.`
+        `Option with label ${labels[i]} exists when it is expected to not exist.`
       );
   }
 };
@@ -219,12 +215,10 @@ const componentWrappers = {
       // If the user needs to manually open the menu before viewing option
       // labels, you'll need to call openMenu first.
       expectMenuOptionLabels: createExpectMenuOptionLabels(popoverMenuSelector),
-      expectMenuOptionLabelsInclude: createExpectMenuOptionsLabelsInclude(
-        popoverMenuSelector
-      ),
-      expectMenuOptionLabelsExclude: createExpectMenuOptionLabelsExclude(
-        popoverMenuSelector
-      ),
+      expectMenuOptionLabelsInclude:
+        createExpectMenuOptionsLabelsInclude(popoverMenuSelector),
+      expectMenuOptionLabelsExclude:
+        createExpectMenuOptionLabelsExclude(popoverMenuSelector),
       async enterSearch(text) {
         await t.typeText(selector, text);
       },
@@ -396,9 +390,7 @@ const componentWrappers = {
           await t
             .expect(tabSelector.nth(i).withExactText(labels[i]).exists)
             .ok(
-              `Tab with label ${
-                labels[i]
-              } does not exist when it is expected to exist.`
+              `Tab with label ${labels[i]} does not exist when it is expected to exist.`
             );
         }
         await t.expect(tabSelector.count).eql(labels.length);
@@ -439,11 +431,10 @@ const componentWrappers = {
  * @param {string|Selector} testIdOrSelector
  * @returns {Selector}
  */
-const selectorize = testIdOrSelector => {
-  return typeof testIdOrSelector === "string"
+const selectorize = testIdOrSelector =>
+  typeof testIdOrSelector === "string"
     ? createTestIdSelector(testIdOrSelector)
     : testIdOrSelector;
-};
 
 // This adds certain properties to all component wrappers.
 Object.keys(componentWrappers).forEach(componentName => {
