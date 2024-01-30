@@ -988,40 +988,63 @@ const createExtensionManifest = ({ version }) => {
         schema: {
           $schema: "http://json-schema.org/draft-04/schema#",
           type: "object",
-          properties: {
-            cacheId: {
-              type: "string",
-              minLength: 1
-            },
-            sandbox: {
-              type: "object",
+          anyOf: [
+            {
               properties: {
-                name: {
-                  type: "string",
-                  minLength: 1
-                }
-              },
-              required: ["name"],
-              additionalProperties: false
-            },
-            schema: {
-              type: "object",
-              properties: {
-                id: {
+                cacheId: {
                   type: "string",
                   minLength: 1
                 },
-                version: {
-                  type: "string",
-                  minLength: 1
+                sandbox: {
+                  type: "object",
+                  properties: {
+                    name: {
+                      type: "string",
+                      minLength: 1
+                    }
+                  },
+                  required: ["name"],
+                  additionalProperties: false
+                },
+                schema: {
+                  type: "object",
+                  properties: {
+                    id: {
+                      type: "string",
+                      minLength: 1
+                    },
+                    version: {
+                      type: "string",
+                      minLength: 1
+                    }
+                  },
+                  required: ["id", "version"],
+                  additionalProperties: false
                 }
               },
-              required: ["id", "version"],
+              required: ["cacheId", "sandbox", "schema"],
+              additionalProperties: false
+            },
+            {
+              properties: {
+                cacheId: {
+                  type: "string",
+                  minLength: 1
+                },
+                solutions: {
+                  type: "array",
+                  minItems: 1,
+                  items: {
+                    enum: ["analytics", "target", "audienceManager"]
+                  },
+                  required: ["name"],
+                  additionalProperties: false
+                }
+              },
+              required: ["cacheId", "solutions"],
               additionalProperties: false
             }
-          },
-          required: ["cacheId"],
-          additionalProperties: false
+          ]
         },
         transforms: [
           {
