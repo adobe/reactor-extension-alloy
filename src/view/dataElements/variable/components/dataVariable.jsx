@@ -67,7 +67,7 @@ const DataVariable = () => (
         return (
           <Checkbox
             key={solution}
-            data-test-id={solution}
+            data-test-id={`${solution}Checkbox`}
             value={solution}
             width="size-5000"
           >

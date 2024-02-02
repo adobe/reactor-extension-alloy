@@ -77,10 +77,10 @@ const Schema = ({ xdmVariableContext, initInfo }) => {
         name="type"
         orientation="horizontal"
       >
-        <Radio data-test-id="variableTypeXdm" value={XDM}>
+        <Radio data-test-id="xdmRadioButton" value={XDM}>
           XDM
         </Radio>
-        <Radio data-test-id="variableTypeData" value={DATA}>
+        <Radio data-test-id="dataRadioButton" value={DATA}>
           Data
         </Radio>
       </FormikRadioGroup>
