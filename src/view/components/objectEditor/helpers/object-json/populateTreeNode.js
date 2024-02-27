@@ -10,8 +10,40 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import computePopulationAmount from "../computePopulationAmount";
 import computePopulationNote from "../computePopulationNote";
+import { EMPTY, FULL, BLANK } from "../../constants/populationAmount";
+import { WHOLE, PARTS } from "../../constants/populationStrategy";
+
+const isFormStateValuePopulated = ({ raw, items, populationStrategy }) => {
+  if (populationStrategy === WHOLE && raw !== "") {
+    return true;
+  }
+
+  if (
+    populationStrategy === PARTS &&
+    (items.length > 1 ||
+      (items.length === 1 && (items[0].key || items[0].value)))
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+const computePopulationAmount = ({
+  formStateNode,
+  isAncestorUsingWholePopulationStrategy
+}) => {
+  if (isAncestorUsingWholePopulationStrategy) {
+    return BLANK;
+  }
+
+  if (isFormStateValuePopulated(formStateNode)) {
+    return FULL;
+  }
+
+  return EMPTY;
+};
 
 export default ({
   treeNode,
@@ -22,6 +54,7 @@ export default ({
     formStateNode,
     isAncestorUsingWholePopulationStrategy
   });
+
   treeNode.infoTip = computePopulationNote({
     formStateNode,
     isAncestorUsingWholePopulationStrategy
