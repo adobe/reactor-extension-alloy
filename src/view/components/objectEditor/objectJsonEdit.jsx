@@ -164,9 +164,19 @@ PartsPopulationStrategyForm.propTypes = {
 
 const getEmptyItem = () => ({ key: "", value: "" });
 
-const updateJsonTextarea = ({ setValue, formStateNode: { items } }) => {
+const updateJsonTextarea = ({
+  setValue,
+  formStateNode: {
+    items,
+    schema: { expandPaths }
+  }
+}) => {
   if (items.length > 1 || items[0].key) {
-    let entity = JSON.stringify(addToEntityFromVariables({}, items), null, 2);
+    let entity = JSON.stringify(
+      addToEntityFromVariables({}, items, { expandPaths }),
+      null,
+      2
+    );
 
     if (entity === "{}") {
       entity = "";
@@ -176,10 +186,16 @@ const updateJsonTextarea = ({ setValue, formStateNode: { items } }) => {
   }
 };
 
-const updateRows = ({ setValue, formStateNode: { raw } }) => {
+const updateRows = ({
+  setValue,
+  formStateNode: {
+    raw,
+    schema: { expandPaths }
+  }
+}) => {
   let variables = [];
   try {
-    variables = addToVariablesFromEntity([], JSON.parse(raw));
+    variables = addToVariablesFromEntity([], JSON.parse(raw), { expandPaths });
   } catch (e) {
     // Don't do anything
   }

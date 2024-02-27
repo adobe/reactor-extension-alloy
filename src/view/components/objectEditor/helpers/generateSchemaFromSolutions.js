@@ -21,7 +21,8 @@ export default solutions => ({
           type: "object",
           properties: solutions.reduce((accumulator, currentValue) => {
             accumulator[currentValue] = {
-              type: OBJECT_JSON
+              type: OBJECT_JSON,
+              expandPaths: false
             };
             return accumulator;
           }, {})

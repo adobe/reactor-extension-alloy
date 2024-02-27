@@ -15,7 +15,12 @@ import { addToEntityFromVariables } from "../entityVariablesConverter";
 import { WHOLE } from "../../constants/populationStrategy";
 
 export default ({ formStateNode }) => {
-  const { raw, items, populationStrategy } = formStateNode;
+  const {
+    raw,
+    items,
+    populationStrategy,
+    schema: { expandPaths }
+  } = formStateNode;
 
   if (populationStrategy === WHOLE) {
     if (singleDataElementRegex.test(raw)) {
@@ -29,7 +34,9 @@ export default ({ formStateNode }) => {
     }
   }
 
-  let data = addToEntityFromVariables({}, items.filter(p => p.key || p.value));
+  let data = addToEntityFromVariables({}, items.filter(p => p.key || p.value), {
+    expandPaths
+  });
 
   if (Object.keys(data).length === 0) {
     data = undefined;

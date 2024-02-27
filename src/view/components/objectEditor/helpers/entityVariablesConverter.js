@@ -113,12 +113,30 @@ const addToEntityFromVariable = (parentNode, remainingPath, variableValue) => {
   }
 };
 
-export const addToEntityFromVariables = (o, variables) => {
+export const addToEntityFromVariables = (o, variables, { expandPaths }) => {
+  if (expandPaths === false) {
+    return variables.reduce((acc, { key, value }) => {
+      acc[key] = value;
+      return acc;
+    }, {});
+  }
+
   variables.forEach(q => addToEntityFromVariable(o, q.key, q.value));
   return o;
 };
 
-export const addToVariablesFromEntity = (variables, entity) => {
+export const addToVariablesFromEntity = (
+  variables,
+  entity,
+  { expandPaths }
+) => {
+  if (expandPaths === false) {
+    return Object.keys(entity).reduce((acc, key) => {
+      acc.push({ key, value: entity[key] });
+      return acc;
+    }, []);
+  }
+
   Object.keys(entity).forEach(key => {
     addVariablesFromEntity(variables, key, entity[key]);
   });
