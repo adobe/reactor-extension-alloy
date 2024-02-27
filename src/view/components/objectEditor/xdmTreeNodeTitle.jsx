@@ -66,7 +66,7 @@ const XdmTreeNodeTitle = props => {
           </Flex>
         </div>
       )}
-      <span className="XdmTreeNodeTitle-type">{type}</span>
+      <span className="XdmTreeNodeTitle-type">{type.split("-")[0]}</span>
     </Flex>
   );
 };
