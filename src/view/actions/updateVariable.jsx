@@ -29,6 +29,10 @@ import fetchDataElement from "../utils/fetchDataElement";
 import useChanged from "../utils/useChanged";
 import Alert from "../components/alert";
 import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRequestsAndCreateSignal";
+import generateSchemaFromSolutions from "../components/objectEditor/helpers/generateSchemaFromSolutions";
+import validate from "../components/objectEditor/helpers/validate";
+
+const bypass = 1;
 
 const getInitialFormStateFromDataElement = async ({
   dataElement,
@@ -82,6 +86,19 @@ const getInitialFormStateFromDataElement = async ({
       });
     }
   }
+  if (dataElement?.settings?.data) {
+    const schema = generateSchemaFromSolutions(dataElement.settings.data);
+    context.schema = schema;
+
+    return getInitialFormState({
+      schema,
+      value: data,
+      updateMode: true,
+      transforms,
+      existingFormStateNode
+    });
+  }
+
   return {};
 };
 
@@ -91,12 +108,10 @@ const getInitialValues = context => async ({ initInfo }) => {
     company: { orgId },
     tokens: { imsAccess }
   } = initInfo;
-  const {
-    dataElementId,
-    data = {},
-    transforms = {},
-    schema: previouslySavedSchemaInfo
-  } = initInfo.settings || {};
+  const { dataElementId, transforms = {}, schema: previouslySavedSchemaInfo } =
+    initInfo.settings || {};
+
+  let { data = {} } = initInfo.settings || {};
 
   const initialValues = {
     data
@@ -128,6 +143,14 @@ const getInitialValues = context => async ({ initInfo }) => {
   ) {
     dataElement = dataElementsFirstPage[0];
   }
+
+  if (bypass && dataElement) {
+    dataElement.settings = {
+      cacheId: "e4d4092c-0f95-42fd-9d51-b40328fee5eb",
+      data: ["target", "analytics"]
+    };
+  }
+
   initialValues.dataElement = dataElement;
 
   if (dataElement) {
@@ -136,14 +159,22 @@ const getInitialValues = context => async ({ initInfo }) => {
       memo[key === "" ? "xdm" : `xdm.${key}`] = transforms[key];
       return memo;
     }, {});
+
+    if (dataElement?.settings?.data) {
+      data = { data };
+    } else {
+      data = { xdm: data };
+    }
+
     const initialFormState = await getInitialFormStateFromDataElement({
       dataElement,
       context,
       orgId,
       imsAccess,
-      data: { xdm: data },
+      data,
       transforms: prefixedTransforms
     });
+
     return { ...initialValues, ...initialFormState };
   }
 
@@ -158,28 +189,48 @@ const getSettings = context => ({ values }) => {
   const transforms = {};
 
   // everything is prefixed with "xdm", lets change that to data.
-  const { xdm = {} } =
+  const { xdm, data } =
     getValueFromFormState({ formStateNode: values, transforms }) || {};
+
   const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
     memo[key.substring(4)] = transforms[key];
     return memo;
   }, {});
 
-  return {
+  const schema = {
+    id: context.schema?.$id,
+    version: context.schema?.version
+  };
+
+  const response = {
     dataElementId,
     dataElementCacheId,
-    schema: {
-      id: context.schema?.$id,
-      version: context.schema?.version
-    },
-    data: xdm,
-    transforms: dataTransforms
+    data: xdm || data || {}
   };
+
+  if (schema.id) {
+    response.schema = schema;
+  }
+
+  if (Object.keys(dataTransforms).length > 0) {
+    response.transforms = dataTransforms;
+  }
+
+  return response;
 };
 
 const validationSchema = object().shape({
   dataElement: object().required("Please specify a data element.")
 });
+
+const validateFormikState = context => ({ values }) => {
+  const { schema } = context;
+  if (!schema) {
+    return {};
+  }
+
+  return validate(values);
+};
 
 const UpdateVariable = ({
   initInfo,
@@ -308,6 +359,7 @@ const UpdateVariableExtensionView = () => {
       getInitialValues={getInitialValues(context)}
       getSettings={getSettings(context)}
       formikStateValidationSchema={validationSchema}
+      validateFormikState={validateFormikState(context)}
       render={props => {
         return <UpdateVariable context={context} {...props} />;
       }}

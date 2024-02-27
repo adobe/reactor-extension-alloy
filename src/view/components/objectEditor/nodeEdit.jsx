@@ -21,11 +21,13 @@ import {
   BOOLEAN,
   INTEGER,
   NUMBER,
-  OBJECT
+  OBJECT,
+  OBJECT_JSON
 } from "./constants/schemaType";
 import ArrayEdit from "./arrayEdit";
 import BooleanEdit from "./booleanEdit";
 import IntegerEdit from "./integerEdit";
+import ObjectJsonEdit from "./objectJsonEdit";
 import NumberEdit from "./numberEdit";
 import ObjectEdit from "./objectEdit";
 import StringEdit from "./stringEdit";
@@ -47,6 +49,8 @@ const getViewBySchemaType = schemaType => {
       return NumberEdit;
     case OBJECT:
       return ObjectEdit;
+    case OBJECT_JSON:
+      return ObjectJsonEdit;
     default:
       return StringEdit;
   }
