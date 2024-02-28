@@ -37,7 +37,7 @@ import {
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
  */
-const WholePopulationStrategyForm = ({ fieldName }) => (
+const WholePopulationStrategyForm = ({ fieldName, setTouched }) => (
   <DataElementSelector>
     <FormikTextArea
       data-test-id="valueField"
@@ -46,19 +46,21 @@ const WholePopulationStrategyForm = ({ fieldName }) => (
       description="A valid JSON object or a data element."
       width="100%"
       minWidth="size-4600"
+      onBlur={setTouched}
     />
   </DataElementSelector>
 );
 
 WholePopulationStrategyForm.propTypes = {
-  fieldName: PropTypes.string.isRequired
+  fieldName: PropTypes.string.isRequired,
+  setTouched: PropTypes.func.isRequired
 };
 
 /**
  * Displayed when the PARTS population strategy is selected.
  * Allows the user to provide individual items within the array.
  */
-const PartsPopulationStrategyForm = ({ fieldName, items }) => (
+const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
   <FieldArray
     name={`${fieldName}.items`}
     render={arrayHelpers => {
@@ -96,7 +98,7 @@ const PartsPopulationStrategyForm = ({ fieldName, items }) => (
 
           <Divider size="S" marginStart="0" />
 
-          {items.map((itemNode, index) => {
+          {items.map((_, index) => {
             return (
               <Flex
                 gap="size-200"
@@ -111,6 +113,7 @@ const PartsPopulationStrategyForm = ({ fieldName, items }) => (
                     aria-label="Key"
                     description="&nbsp;"
                     width="100%"
+                    onBlur={setTouched}
                   />
                 </View>
 
@@ -121,6 +124,7 @@ const PartsPopulationStrategyForm = ({ fieldName, items }) => (
                       name={`${fieldName}.items.${index}.value`}
                       aria-label="Value"
                       width="100%"
+                      onBlur={setTouched}
                     />
                   </DataElementSelector>
                 </View>
@@ -159,7 +163,8 @@ const PartsPopulationStrategyForm = ({ fieldName, items }) => (
 
 PartsPopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired,
-  items: PropTypes.arrayOf(PropTypes.object).isRequired
+  items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  setTouched: PropTypes.func.isRequired
 };
 
 const getEmptyItem = () => ({ key: "", value: "" });
@@ -213,6 +218,7 @@ const updateRows = ({
 const ObjectJsonEdit = props => {
   const { fieldName } = props;
   const [{ value: formStateNode }] = useField(fieldName);
+  const [, , { setTouched }] = useField(`${fieldName}.value`);
   const [, , { setValue: setRawValue }] = useField(`${fieldName}.raw`);
   const [, , { setValue: setItemsValue }] = useField(`${fieldName}.items`);
 
@@ -251,9 +257,16 @@ const ObjectJsonEdit = props => {
         </FormikRadioGroup>
       )}
       {populationStrategy === WHOLE ? (
-        <WholePopulationStrategyForm fieldName={fieldName} />
+        <WholePopulationStrategyForm
+          fieldName={fieldName}
+          setTouched={setTouched}
+        />
       ) : (
-        <PartsPopulationStrategyForm fieldName={fieldName} items={items} />
+        <PartsPopulationStrategyForm
+          fieldName={fieldName}
+          items={items}
+          setTouched={setTouched}
+        />
       )}
     </FormElementContainer>
   );
