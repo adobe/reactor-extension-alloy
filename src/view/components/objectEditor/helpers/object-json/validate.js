@@ -13,6 +13,22 @@ governing permissions and limitations under the License.
 import singleDataElementRegex from "../../../../constants/singleDataElementRegex";
 import { WHOLE } from "../../constants/populationStrategy";
 
+const checkKeyUniqueness = array => {
+  const valuesAlreadySeen = {};
+
+  for (let i = 0; i < array.length; i += 1) {
+    const value = array[i];
+
+    if (valuesAlreadySeen[value]) {
+      return [false, value, i];
+    }
+
+    valuesAlreadySeen[value] = true;
+  }
+
+  return [true, null, null];
+};
+
 export default ({ formStateNode }) => {
   const { raw, items, populationStrategy } = formStateNode;
 
@@ -41,6 +57,18 @@ export default ({ formStateNode }) => {
 
     return e;
   }, errors.items);
+
+  if (items.length > 1) {
+    const [result, duplicatedValue, duplicatedIndex] = checkKeyUniqueness(
+      items.map(({ key }) => key)
+    );
+
+    if (result === false) {
+      errors.items[duplicatedIndex] = {
+        key: `The key "${duplicatedValue}" is already present.`
+      };
+    }
+  }
 
   if (Object.keys(errors.items).length > 0) {
     return errors;
