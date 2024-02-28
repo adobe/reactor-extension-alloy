@@ -20,8 +20,12 @@ export default ({ formStateNode }) => {
     if (raw !== "" && !singleDataElementRegex.test(raw)) {
       try {
         JSON.parse(raw);
-      } catch {
-        return { raw: "Please enter a valid JSON or a data element." };
+      } catch ({ message = "" }) {
+        return {
+          raw: `Please enter a valid JSON or a data element. ${
+            message ? ` ${message}.` : ""
+          }`
+        };
       }
     }
 
