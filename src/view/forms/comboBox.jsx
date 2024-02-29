@@ -48,13 +48,16 @@ export default function comboBox({
   description,
   dataElementDescription,
   items,
-  allowsCustomValue = false
+  allowsCustomValue = false,
+  width = "size-5000"
 }) {
   let fieldSchema = string();
   if (!allowsCustomValue) {
     fieldSchema = fieldSchema.test(
       name,
-      `Please choose a ${label.toLowerCase()} from the list or specify a single data element.`,
+      `Please choose a ${
+        label ? label.toLowerCase() : "value"
+      } from the list or specify a single data element.`,
       value =>
         !value ||
         items.find(item => item.value === value) ||
@@ -63,7 +66,7 @@ export default function comboBox({
   }
   if (isRequired) {
     fieldSchema = fieldSchema.required(
-      `Please choose a ${label.toLowerCase()}.`
+      `Please choose a ${label ? label.toLowerCase() : "value"}.`
     );
   }
 
@@ -80,7 +83,7 @@ export default function comboBox({
         label={innerLabel}
         isRequired={isRequired}
         description={innerDescription}
-        width="size-5000"
+        width={width}
         items={items}
         allowsCustomValue={allowsCustomValue || dataElementSupported}
         getKey={item => item.value}
@@ -117,14 +120,15 @@ export default function comboBox({
     validationShape: {
       [name]: fieldSchema
     },
-    Component: ({ namePrefix = "" }) => {
+    Component: ({ namePrefix = "", hideLabel = false }) => {
       if (dataElementSupported) {
         const [{ value = "" }] = useField(`${namePrefix}${name}`);
         return (
           <DataElementSelector>
             <InnerComponent
               name={`${namePrefix}${name}`}
-              label={label}
+              label={hideLabel ? undefined : label}
+              aria-label={label}
               description={
                 value.match(singleDataElementRegex)
                   ? dataElementDescription
@@ -137,14 +141,16 @@ export default function comboBox({
       return (
         <InnerComponent
           name={`${namePrefix}${name}`}
-          label={label}
+          label={hideLabel ? undefined : label}
+          aria-label={label}
           description={description}
         />
       );
     }
   };
   part.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
+    hideLabel: PropTypes.bool
   };
   return part;
 }

@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import React from "react";
+import PropTypes from "prop-types";
 import FormElementContainer from "../components/formElementContainer";
 
 /**
@@ -99,8 +100,9 @@ export default function Form(
         return addToValidationShape(memo);
       }, {}),
     Component(props) {
+      const { horizontal = false } = props;
       return (
-        <FormElementContainer>
+        <FormElementContainer direction={horizontal ? "row" : "column"}>
           {children.map(({ Component }, index) => {
             if (Component) {
               return <Component key={`${index}`} {...props} />;
@@ -110,6 +112,9 @@ export default function Form(
         </FormElementContainer>
       );
     }
+  };
+  part.Component.propTypes = {
+    horizontal: PropTypes.bool
   };
   part.getInitialValues = wrapGetInitialValues(part.getInitialValues);
   part.getSettings = wrapGetSettings(part.getSettings);
