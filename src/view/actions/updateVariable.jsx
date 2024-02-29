@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { object } from "yup";
 import { Item, Flex, ProgressCircle } from "@adobe/react-spectrum";
 import { useField } from "formik";
@@ -235,7 +235,8 @@ const validateFormikState = context => ({ values }) => {
 const UpdateVariable = ({
   initInfo,
   formikProps: { resetForm, values },
-  context
+  context,
+  renderId
 }) => {
   const {
     schema,
@@ -248,6 +249,10 @@ const UpdateVariable = ({
   const [hasSchema, setHasSchema] = useState(schema != null);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
+
+  useEffect(() => {
+    setSelectedNodeId(null);
+  }, [renderId]);
 
   const {
     propertySettings: { id: propertyId } = {},
@@ -348,7 +353,8 @@ const UpdateVariable = ({
 UpdateVariable.propTypes = {
   context: PropTypes.object,
   initInfo: PropTypes.object,
-  formikProps: PropTypes.object
+  formikProps: PropTypes.object,
+  renderId: PropTypes.number
 };
 
 const UpdateVariableExtensionView = () => {

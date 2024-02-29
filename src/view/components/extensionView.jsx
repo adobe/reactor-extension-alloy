@@ -20,6 +20,14 @@ import useExtensionBridge from "../utils/useExtensionBridge";
 import useReportAsyncError from "../utils/useReportAsyncError";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
 
+const getUniqueRenderId = (() => {
+  let id = 0;
+  return () => {
+    id += 1;
+    return id;
+  };
+})();
+
 const ExtensionView = ({
   render,
   getInitialValues,
@@ -30,6 +38,7 @@ const ExtensionView = ({
 }) => {
   const reportAsyncError = useReportAsyncError();
   const [initInfo, setInitInfo] = useState();
+  const [renderId, setRenderId] = useState(0);
   const viewRegistrationRef = useRef();
   const formikPropsRef = useRef();
   const getInitialValuesPromiseRef = useRef();
@@ -93,6 +102,7 @@ const ExtensionView = ({
   useExtensionBridge({
     init({ initInfo: _initInfo }) {
       setInitInfo(_initInfo);
+      setRenderId(getUniqueRenderId());
     },
     async getSettings() {
       if (!viewRegistrationRef.current) {
@@ -176,6 +186,7 @@ const ExtensionView = ({
     <FormikProvider value={formikPropsRef.current}>
       {render({
         initInfo,
+        renderId,
         formikProps: formikPropsRef.current,
         registerImperativeFormApi
       })}
