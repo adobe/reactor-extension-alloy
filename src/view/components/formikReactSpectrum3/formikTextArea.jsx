@@ -55,6 +55,7 @@ const FormikTextField = ({ name, width, validate, onBlur, ...otherProps }) => {
       validationState={validationState}
       errorMessage={error}
       width={width}
+      UNSAFE_className="formik-field"
     />
   );
 };
