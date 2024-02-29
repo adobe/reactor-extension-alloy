@@ -15,11 +15,11 @@ import { PARTS, WHOLE } from "../../constants/populationStrategy";
 
 export default ({ formStateNode, value = {} }) => {
   formStateNode.isPartsPopulationStrategySupported = true;
-  formStateNode.raw = "";
+  formStateNode.value = "";
 
   if (typeof value === "string" && singleDataElementRegex.test(value)) {
     formStateNode.populationStrategy = WHOLE;
-    formStateNode.raw = value;
+    formStateNode.value = value;
   } else {
     formStateNode.populationStrategy = PARTS;
     formStateNode.items = Object.keys(value).reduce((accumulator, key) => {

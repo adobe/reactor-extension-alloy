@@ -14,8 +14,8 @@ import computePopulationNote from "../computePopulationNote";
 import { EMPTY, FULL, BLANK } from "../../constants/populationAmount";
 import { WHOLE, PARTS } from "../../constants/populationStrategy";
 
-const isFormStateValuePopulated = ({ raw, items, populationStrategy }) => {
-  if (populationStrategy === WHOLE && raw !== "") {
+const isFormStateValuePopulated = ({ value, items, populationStrategy }) => {
+  if (populationStrategy === WHOLE && value !== "") {
     return true;
   }
 

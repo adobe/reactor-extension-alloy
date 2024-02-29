@@ -30,15 +30,15 @@ const checkKeyUniqueness = array => {
 };
 
 export default ({ formStateNode }) => {
-  const { raw, items, populationStrategy } = formStateNode;
+  const { value, items, populationStrategy } = formStateNode;
 
   if (populationStrategy === WHOLE) {
-    if (raw !== "" && !singleDataElementRegex.test(raw)) {
+    if (value !== "" && !singleDataElementRegex.test(value)) {
       try {
-        JSON.parse(raw);
+        JSON.parse(value);
       } catch ({ message = "" }) {
         return {
-          raw: `Please enter a valid JSON or a data element. ${
+          value: `Please enter a valid JSON or a data element. ${
             message ? ` ${message}.` : ""
           }`
         };
@@ -50,8 +50,8 @@ export default ({ formStateNode }) => {
 
   const errors = { items: [] };
 
-  items.reduce((e, { key, value }, index) => {
-    if (!key && value) {
+  items.reduce((e, { key, value: val }, index) => {
+    if (!key && val) {
       e[index] = { key: "Please provide a key name." };
     }
 

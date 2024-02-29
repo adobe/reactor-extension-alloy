@@ -41,7 +41,7 @@ const WholePopulationStrategyForm = ({ fieldName, setTouched }) => (
   <DataElementSelector>
     <FormikTextArea
       data-test-id="valueField"
-      name={`${fieldName}.raw`}
+      name={`${fieldName}.value`}
       label="Data element"
       description="A valid JSON object or a data element."
       width="100%"
@@ -194,13 +194,15 @@ const updateJsonTextarea = ({
 const updateRows = ({
   setValue,
   formStateNode: {
-    raw,
+    value,
     schema: { expandPaths }
   }
 }) => {
   let variables = [];
   try {
-    variables = addToVariablesFromEntity([], JSON.parse(raw), { expandPaths });
+    variables = addToVariablesFromEntity([], JSON.parse(value), {
+      expandPaths
+    });
   } catch (e) {
     // Don't do anything
   }
@@ -218,8 +220,7 @@ const updateRows = ({
 const ObjectJsonEdit = props => {
   const { fieldName } = props;
   const [{ value: formStateNode }] = useField(fieldName);
-  const [, , { setTouched }] = useField(`${fieldName}.value`);
-  const [, , { setValue: setRawValue }] = useField(`${fieldName}.raw`);
+  const [, , { setTouched, setValue }] = useField(`${fieldName}.value`);
   const [, , { setValue: setItemsValue }] = useField(`${fieldName}.items`);
 
   const {
@@ -231,7 +232,7 @@ const ObjectJsonEdit = props => {
   const strategyOnChange = useCallback(
     currentValue => {
       if (currentValue === WHOLE) {
-        updateJsonTextarea({ setValue: setRawValue, formStateNode });
+        updateJsonTextarea({ setValue, formStateNode });
       } else {
         updateRows({ setValue: setItemsValue, formStateNode });
       }

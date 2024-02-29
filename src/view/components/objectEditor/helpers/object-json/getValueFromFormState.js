@@ -16,19 +16,19 @@ import { WHOLE } from "../../constants/populationStrategy";
 
 export default ({ formStateNode }) => {
   const {
-    raw,
+    value,
     items,
     populationStrategy,
     schema: { expandPaths }
   } = formStateNode;
 
   if (populationStrategy === WHOLE) {
-    if (singleDataElementRegex.test(raw)) {
-      return raw;
+    if (singleDataElementRegex.test(value)) {
+      return value;
     }
 
     try {
-      return JSON.parse(raw);
+      return JSON.parse(value);
     } catch {
       return undefined;
     }
