@@ -86,8 +86,8 @@ const getInitialFormStateFromDataElement = async ({
       });
     }
   }
-  if (dataElement?.settings?.data) {
-    const schema = generateSchemaFromSolutions(dataElement.settings.data);
+  if (dataElement?.settings?.solutions) {
+    const schema = generateSchemaFromSolutions(dataElement.settings.solutions);
     context.schema = schema;
 
     return getInitialFormState({
@@ -147,7 +147,7 @@ const getInitialValues = context => async ({ initInfo }) => {
   if (bypass && dataElement) {
     dataElement.settings = {
       cacheId: "e4d4092c-0f95-42fd-9d51-b40328fee5eb",
-      data: ["target", "analytics"]
+      solutions: ["target", "analytics"]
     };
   }
 
@@ -160,7 +160,7 @@ const getInitialValues = context => async ({ initInfo }) => {
       return memo;
     }, {});
 
-    if (dataElement?.settings?.data) {
+    if (dataElement?.settings?.solutions?.length > 0) {
       data = { data };
     } else {
       data = { xdm: data };
