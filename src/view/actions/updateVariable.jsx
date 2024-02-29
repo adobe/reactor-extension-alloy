@@ -32,8 +32,6 @@ import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRe
 import generateSchemaFromSolutions from "../components/objectEditor/helpers/generateSchemaFromSolutions";
 import validate from "../components/objectEditor/helpers/validate";
 
-const bypass = 1;
-
 const getInitialFormStateFromDataElement = async ({
   dataElement,
   context,
@@ -142,13 +140,6 @@ const getInitialValues = context => async ({ initInfo }) => {
     dataElementsFirstPageCursor === null
   ) {
     dataElement = dataElementsFirstPage[0];
-  }
-
-  if (bypass && dataElement) {
-    dataElement.settings = {
-      cacheId: "e4d4092c-0f95-42fd-9d51-b40328fee5eb",
-      solutions: ["target", "analytics"]
-    };
   }
 
   initialValues.dataElement = dataElement;
