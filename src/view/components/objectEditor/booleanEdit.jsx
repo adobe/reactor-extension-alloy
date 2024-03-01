@@ -39,7 +39,7 @@ const BooleanEdit = props => {
   // component a little more. Without adding more state management in this
   // component, it also means that when users switch input methods, the field's
   // value gets reset each time.
-  const [inputMethod, setInputMethod] = useState();
+  const [inputMethod, setInputMethod] = useState("");
 
   useEffect(() => {
     const defaultInputMethod =

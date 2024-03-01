@@ -68,7 +68,7 @@ const PartsPopulationStrategyForm = ({
         >
           {items.map((itemNode, index) => {
             return (
-              <div key={`${fieldName}.${index}`}>
+              <Flex gap="size-200" key={`${fieldName}.${index}`}>
                 <Button
                   data-test-id={`item${index}SelectButton`}
                   isQuiet
@@ -87,7 +87,7 @@ const PartsPopulationStrategyForm = ({
                 >
                   <Delete />
                 </Button>
-              </div>
+              </Flex>
             );
           })}
           <Button

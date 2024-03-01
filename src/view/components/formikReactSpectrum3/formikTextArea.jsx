@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { TextField } from "@adobe/react-spectrum";
+import { TextArea } from "@adobe/react-spectrum";
 import { useField } from "formik";
 
 /**
@@ -40,7 +40,7 @@ const FormikTextField = ({ name, width, validate, onBlur, ...otherProps }) => {
     otherProps.invalid || (touched && error) ? "invalid" : undefined;
 
   return (
-    <TextField
+    <TextArea
       {...otherProps}
       value={value}
       onChange={newValue => {
@@ -55,6 +55,7 @@ const FormikTextField = ({ name, width, validate, onBlur, ...otherProps }) => {
       validationState={validationState}
       errorMessage={error}
       width={width}
+      UNSAFE_className="formik-field"
     />
   );
 };

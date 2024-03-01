@@ -14,7 +14,8 @@ import {
   BOOLEAN,
   INTEGER,
   NUMBER,
-  OBJECT
+  OBJECT,
+  OBJECT_JSON
 } from "../constants/schemaType";
 import arrayHelpers from "./array";
 import booleanHelpers from "./boolean";
@@ -22,6 +23,7 @@ import integerHelpers from "./integer";
 import numberHelpers from "./number";
 import objectHelpers from "./object";
 import stringHelpers from "./string";
+import objectJsonHelpers from "./object-json";
 
 export default schemaType => {
   switch (schemaType) {
@@ -35,6 +37,8 @@ export default schemaType => {
       return numberHelpers;
     case OBJECT:
       return objectHelpers;
+    case OBJECT_JSON:
+      return objectJsonHelpers;
     default:
       return stringHelpers;
   }

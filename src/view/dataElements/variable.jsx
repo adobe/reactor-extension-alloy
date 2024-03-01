@@ -10,25 +10,34 @@ governing permissions and limitations under the License.
 */
 
 import React, { useRef } from "react";
-import { object } from "yup";
 import { v4 as uuid } from "uuid";
 import PropTypes from "prop-types";
-import { Content } from "@adobe/react-spectrum";
+import { useField } from "formik";
+import { Content, Radio } from "@adobe/react-spectrum";
 import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
 import XdmVariable, {
   bridge as xdmVariableBridge
 } from "./variable/components/xdmVariable";
+import DataVariable, {
+  bridge as dataVariableBridge
+} from "./variable/components/dataVariable";
 import render from "../render";
+import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
+import { XDM, DATA } from "./variable/constants/variableTypes";
 
 const getInitialValues = ({ xdmVariableContext }) => async ({ initInfo }) => {
   const { cacheId = uuid() } = initInfo.settings || {};
 
   const initialValues = {
     cacheId,
+    type: initInfo?.settings?.solutions ? DATA : XDM,
     ...(await xdmVariableBridge.getInitialValues({
       initInfo,
       context: xdmVariableContext
+    })),
+    ...(await dataVariableBridge.getInitialValues({
+      initInfo
     }))
   };
   return initialValues;
@@ -37,28 +46,50 @@ const getInitialValues = ({ xdmVariableContext }) => async ({ initInfo }) => {
 const getSettings = ({ values }) => {
   const settings = {
     cacheId: values.cacheId,
-    ...xdmVariableBridge.getSettings({ values })
+    ...xdmVariableBridge.getSettings({ values }),
+    ...dataVariableBridge.getSettings({ values })
   };
 
   return settings;
 };
 
-const validationSchema = object().concat(
-  xdmVariableBridge.formikStateValidationSchema
-);
+const validateFormikState = ({ values }) => ({
+  ...xdmVariableBridge.validateFormikState(values),
+  ...dataVariableBridge.validateFormikState(values)
+});
 
 const Schema = ({ xdmVariableContext, initInfo }) => {
+  const [{ value: type }] = useField("type");
+
   return (
     <>
       <Content width="size-5000">
-        Variable data elements are used to build up an XDM object using actions.
-        Variable data elements start out empty, but you can update XDM
+        Variable data elements are used to build up an XDM or Data object using
+        actions. Variable data elements start out empty, but you can update
         properties using Web SDK update variable actions. You can reference the
         variable data element just like any other data element. For example,
         inside of a send event action you can specify this data element as the
         value for XDM.
       </Content>
-      <XdmVariable context={xdmVariableContext} initInfo={initInfo} />
+
+      <FormikRadioGroup
+        label="Choose the property you want to populate"
+        name="type"
+        orientation="horizontal"
+      >
+        <Radio data-test-id="xdmRadioButton" value={XDM}>
+          XDM
+        </Radio>
+        <Radio data-test-id="dataRadioButton" value={DATA}>
+          Data
+        </Radio>
+      </FormikRadioGroup>
+
+      {type === XDM && (
+        <XdmVariable context={xdmVariableContext} initInfo={initInfo} />
+      )}
+
+      {type === DATA && <DataVariable initInfo={initInfo} />}
     </>
   );
 };
@@ -73,7 +104,7 @@ const Variable = () => {
     <ExtensionView
       getInitialValues={getInitialValues({ xdmVariableContext })}
       getSettings={getSettings}
-      formikStateValidationSchema={validationSchema}
+      validateFormikState={validateFormikState}
       render={({ initInfo }) => (
         <FormElementContainer>
           <Schema xdmVariableContext={xdmVariableContext} initInfo={initInfo} />
