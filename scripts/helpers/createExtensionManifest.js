@@ -771,6 +771,10 @@ const createExtensionManifest = ({ version }) => {
             },
             transforms: {
               type: "object"
+            },
+            customCode: {
+              type: "string",
+              minLength: 1
             }
           },
           required: ["dataElementCacheId", "dataElementId"]
@@ -783,6 +787,11 @@ const createExtensionManifest = ({ version }) => {
           {
             type: "remove",
             propertyPath: "schema"
+          },
+          {
+            type: "function",
+            propertyPath: "customCode",
+            parameters: ["content"]
           }
         ],
         libPath: "dist/lib/actions/updateVariable/index.js",
