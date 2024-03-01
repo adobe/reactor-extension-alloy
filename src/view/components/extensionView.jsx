@@ -15,7 +15,7 @@ import PropTypes from "prop-types";
 
 import { useFormik, FormikProvider } from "formik";
 import { object } from "yup";
-import { ProgressCircle } from "@adobe/react-spectrum";
+import { ProgressCircle, View } from "@adobe/react-spectrum";
 import useExtensionBridge from "../utils/useExtensionBridge";
 import useReportAsyncError from "../utils/useReportAsyncError";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
@@ -183,14 +183,15 @@ const ExtensionView = ({
   }
 
   return (
-    <FormikProvider value={formikPropsRef.current}>
-      {render({
-        initInfo,
-        renderId,
-        formikProps: formikPropsRef.current,
-        registerImperativeFormApi
-      })}
-    </FormikProvider>
+    <View key={renderId}>
+      <FormikProvider value={formikPropsRef.current}>
+        {render({
+          initInfo,
+          formikProps: formikPropsRef.current,
+          registerImperativeFormApi
+        })}
+      </FormikProvider>
+    </View>
   );
 };
 
