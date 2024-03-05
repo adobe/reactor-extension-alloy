@@ -15,7 +15,8 @@ const { deletePath } = require("../../utils/pathUtils");
 module.exports = ({ variableStore, deepAssign }) => ({
   data,
   dataElementCacheId,
-  transforms
+  transforms,
+  customCode
 }) => {
   const existingValue = Object.keys(transforms || {}).reduce((memo, path) => {
     const { clear } = transforms[path];
@@ -23,6 +24,10 @@ module.exports = ({ variableStore, deepAssign }) => ({
   }, variableStore[dataElementCacheId] || {});
 
   variableStore[dataElementCacheId] = deepAssign({}, existingValue, data);
+
+  if (customCode) {
+    customCode(variableStore[dataElementCacheId]);
+  }
 
   return Promise.resolve();
 };

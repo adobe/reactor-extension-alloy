@@ -12,12 +12,19 @@ governing permissions and limitations under the License.
 
 import React, { useRef, useState } from "react";
 import { object } from "yup";
-import { Item, Flex, ProgressCircle } from "@adobe/react-spectrum";
+import {
+  Item,
+  Flex,
+  ProgressCircle,
+  Heading,
+  Divider
+} from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
+import CodeField from "../components/codeField";
 import getValueFromFormState from "../components/objectEditor/helpers/getValueFromFormState";
 import fetchDataElements from "../utils/fetchDataElements";
 import fetchSchema from "../utils/fetchSchema";
@@ -106,13 +113,18 @@ const getInitialValues = context => async ({ initInfo }) => {
     company: { orgId },
     tokens: { imsAccess }
   } = initInfo;
-  const { dataElementId, transforms = {}, schema: previouslySavedSchemaInfo } =
-    initInfo.settings || {};
+  const {
+    dataElementId,
+    transforms = {},
+    schema: previouslySavedSchemaInfo,
+    customCode = ""
+  } = initInfo.settings || {};
 
   let { data = {} } = initInfo.settings || {};
 
   const initialValues = {
-    data
+    data,
+    customCode
   };
 
   const {
@@ -179,7 +191,6 @@ const getSettings = context => ({ values }) => {
 
   const transforms = {};
 
-  // everything is prefixed with "xdm", lets change that to data.
   const { xdm, data } =
     getValueFromFormState({ formStateNode: values, transforms }) || {};
 
@@ -205,6 +216,10 @@ const getSettings = context => ({ values }) => {
 
   if (Object.keys(dataTransforms).length > 0) {
     response.transforms = dataTransforms;
+  }
+
+  if (values.customCode) {
+    response.customCode = values.customCode;
   }
 
   return response;
@@ -318,14 +333,45 @@ const UpdateVariable = ({
         </FormikPagedComboBox>
       )}
       {hasSchema && (
-        <Editor
-          selectedNodeId={selectedNodeId}
-          setSelectedNodeId={setSelectedNodeId}
-          schema={schema}
-          previouslySavedSchemaInfo={previouslySavedSchemaInfo}
-          initialExpandedDepth={dataElement.settings.solutions ? 2 : 1}
-          componentName="update variable action"
-        />
+        <>
+          <Heading size="M" margin="0">
+            Variable Editor
+          </Heading>
+          <Divider margin={0} size="M" />
+
+          <Editor
+            selectedNodeId={selectedNodeId}
+            setSelectedNodeId={setSelectedNodeId}
+            schema={schema}
+            previouslySavedSchemaInfo={previouslySavedSchemaInfo}
+            initialExpandedDepth={dataElement.settings.solutions ? 2 : 1}
+            componentName="update variable action"
+          />
+
+          <Heading size="M" margin="0">
+            Custom Code
+          </Heading>
+          <Divider margin={0} size="M" />
+
+          <CodeField
+            data-test-id="onBeforeEventSendEditButton"
+            label="Callback"
+            buttonLabelSuffix="callback code"
+            name="customCode"
+            description={
+              "Callback function for updating the variable. The callback will be executed after the changes " +
+              "defined inside the variable editor are applied to the variable." +
+              ' A variable named "content" will be available for use within your custom code.'
+            }
+            language="javascript"
+            placeholder={
+              "// Modify content as necessary. There is no need to wrap the code in a function or return a value." +
+              "\n// For example you can set the page name by writing" +
+              '\n// content.web.webPageDetails.name = "Checkout";' +
+              "\n// or you can add an Analytics eVar by writing \n// content.__adobe.analytics.eVar15 = 'value';"
+            }
+          />
+        </>
       )}
       {!hasSchema && dataElement && (
         <Flex alignItems="center" justifyContent="center" height="size-2000">
