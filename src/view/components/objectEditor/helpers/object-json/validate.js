@@ -23,9 +23,10 @@ const checkKeyUniqueness = array => {
       return [false, value, i];
     }
 
-    valuesAlreadySeen[value] = true;
+    if (value) {
+      valuesAlreadySeen[value] = true;
+    }
   }
-
   return [true, null, null];
 };
 
