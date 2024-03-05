@@ -823,18 +823,6 @@ const createExtensionManifest = ({ version }) => {
         },
         libPath: "dist/lib/actions/evaluateRulesets/index.js",
         viewPath: "actions/evaluateRulesets.html"
-      },
-      {
-        displayName: "Analytics",
-        name: "analytics",
-        schema: {
-          $schema: "http://json-schema.org/draft-04/schema#",
-          type: "object",
-          properties: {},
-          additionalProperties: false
-        },
-        libPath: "dist/lib/actions/updateVariable/index.js",
-        viewPath: "actions/analytics.html"
       }
     ],
     events: [
