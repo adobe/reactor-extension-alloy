@@ -74,13 +74,15 @@ export default function comboBox({
   const InnerComponent = ({
     name: innerName,
     label: innerLabel,
-    description: innerDescription
+    description: innerDescription,
+    "aria-label": ariaLabel
   }) => {
     return (
       <FormikKeyedComboBox
         data-test-id={`${innerName}Field`}
         name={innerName}
         label={innerLabel}
+        aria-label={ariaLabel}
         isRequired={isRequired}
         description={innerDescription}
         width={width}
@@ -100,7 +102,8 @@ export default function comboBox({
   InnerComponent.propTypes = {
     name: PropTypes.string.isRequired,
     label: PropTypes.string,
-    description: PropTypes.string
+    description: PropTypes.string,
+    "aria-label": PropTypes.string
   };
 
   const part = {
