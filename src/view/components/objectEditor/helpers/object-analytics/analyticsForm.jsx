@@ -40,18 +40,19 @@ const eventItems = [
   { label: "scView: Cart View", value: "scView" },
   ...numberedEventItems
 ];
-const INVALID_ADDITIONAL_FIELDS_REGEX = /^(eVar\d+|prop\d+|event\d+|contextData|pageName|pageURL|server|channel|referrer|campaign|state|zip|transactionID|purchaseID)$/;
-const individualFields = [
-  "pageName",
-  "pageURL",
-  "server",
-  "channel",
-  "referrer",
-  "campaign",
-  "state",
-  "zip",
-  "transactionID",
-  "purchaseID"
+const INVALID_ADDITIONAL_FIELDS_REGEX = /^(eVar\d+|prop\d+|event\d+|contextData)$/;
+const additionalFieldsItems = [
+  { label: "Campaign", value: "campaign" },
+  { label: "Channel", value: "channel" },
+  { label: "Page name", value: "pageName" },
+  { label: "Page URL", value: "pageURL" },
+  { label: "Purchase ID", value: "purchaseID" },
+  { label: "Products", value: "products" },
+  { label: "Referrer", value: "referrer" },
+  { label: "Server", value: "server" },
+  { label: "State", value: "state" },
+  { label: "Transaction ID", value: "transactionID" },
+  { label: "Zip", value: "zip" }
 ];
 
 const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
@@ -62,8 +63,6 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
         memo.evars[key] = { value: originalSettings[key] };
       } else if (key.startsWith("prop")) {
         memo.props[key] = { value: originalSettings[key] };
-      } else if (individualFields.includes(key)) {
-        memo[key] = originalSettings[key];
       } else if (key !== "events" && key !== "contextData") {
         memo.additionalProperties[key] = { value: originalSettings[key] };
       }
@@ -130,8 +129,7 @@ const wrapGetSettings = getSettings => ({ values }) => {
     props = {},
     events = {},
     contextData = {},
-    additionalProperties = {},
-    ...settings
+    additionalProperties = {}
   } = getSettings({ values });
   const flattenedEvars = Object.keys(evars)
     .sort(numberAwareCompareFunction)
@@ -169,7 +167,6 @@ const wrapGetSettings = getSettings => ({ values }) => {
     .join(",");
   const finalSettings = {
     ...flattenedAdditionalProperties,
-    ...settings,
     ...flattenedEvars,
     ...flattenedProps
   };
@@ -304,16 +301,6 @@ const analyticsForm = form(
         })
       ]
     ),
-    textField({ name: "pageName", label: "Page name" }),
-    textField({ name: "pageURL", label: "Page URL" }),
-    textField({ name: "server", label: "Server" }),
-    textField({ name: "channel", label: "Channel" }),
-    textField({ name: "referrer", label: "Referrer" }),
-    textField({ name: "campaign", label: "Campaign" }),
-    textField({ name: "state", label: "State" }),
-    textField({ name: "zip", label: "Zip" }),
-    textField({ name: "transactionID", label: "Transaction ID" }),
-    textField({ name: "purchaseID", label: "Purchase ID" }),
     objectArray(
       {
         name: "additionalProperties",
@@ -324,11 +311,13 @@ const analyticsForm = form(
         horizontal: true
       },
       [
-        textField({
+        comboBox({
           name: "property",
           dataElementSupported: false,
+          items: additionalFieldsItems,
           width: "size-3000",
           label: "Additional properties",
+          allowsCustomValue: true,
           validationSchemaBase: string().test(
             "is-valid-additional-property",
             "Please use the fields provided above for this property.",
