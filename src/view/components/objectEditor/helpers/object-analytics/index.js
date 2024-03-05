@@ -9,26 +9,15 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { OBJECT_ANALYTICS, OBJECT_JSON } from "../constants/schemaType";
 
-export default solutions => ({
-  type: "object",
-  properties: {
-    data: {
-      type: "object",
-      properties: {
-        __adobe: {
-          type: "object",
-          properties: solutions.reduce((accumulator, currentValue) => {
-            accumulator[currentValue] = {
-              type:
-                currentValue === "analytics" ? OBJECT_ANALYTICS : OBJECT_JSON,
-              expandPaths: false
-            };
-            return accumulator;
-          }, {})
-        }
-      }
-    }
-  }
-});
+import getValueFromFormState from "./getValueFromFormState";
+import validate from "./validate";
+import populateTreeNode from "./populateTreeNode";
+import populateInitialFormStateNode from "./populateInitialFormStateNode";
+
+export default {
+  populateInitialFormStateNode,
+  getValueFromFormState,
+  validate,
+  populateTreeNode
+};

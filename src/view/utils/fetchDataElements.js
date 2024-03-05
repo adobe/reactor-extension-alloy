@@ -11,6 +11,11 @@ governing permissions and limitations under the License.
 
 import fetchFromReactor from "./fetchFromReactor";
 import UserReportableError from "../errors/userReportableError";
+import {
+  testDataVariable1,
+  testDataVariable2,
+  testDataVariable3
+} from "./fetchDataElement";
 
 // EXTENSION_NAME will be replace with this extension's name
 const DELEGATE_DESCRIPTOR_ID = "__EXTENSION_NAME__::dataElements::variable";
@@ -53,6 +58,11 @@ const fetchDataElements = async ({
         originatingError: e
       });
     }
+    const data = parsedResponse.parsedBody.data;
+
+    data.push(testDataVariable1);
+    data.push(testDataVariable2);
+    data.push(testDataVariable3);
 
     parsedResponse.parsedBody.data
       .filter(
@@ -68,7 +78,6 @@ const fetchDataElements = async ({
 
     nextPage = parsedResponse.parsedBody.meta.pagination.next_page;
   }
-
   return { results: allResults, nextPage };
 };
 

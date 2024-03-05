@@ -100,7 +100,7 @@ export default function Form(
         return addToValidationShape(memo);
       }, {}),
     Component(props) {
-      const { horizontal = false } = props;
+      const { horizontal } = props;
       return (
         <FormElementContainer direction={horizontal ? "row" : "column"}>
           {children.map(({ Component }, index) => {
@@ -113,11 +113,11 @@ export default function Form(
       );
     }
   };
-  part.Component.propTypes = {
-    horizontal: PropTypes.bool
-  };
   part.getInitialValues = wrapGetInitialValues(part.getInitialValues);
   part.getSettings = wrapGetSettings(part.getSettings);
   part.validationShape = wrapValidationShape(part.validationShape);
+  part.Component.propTypes = {
+    horizontal: PropTypes.bool
+  };
   return part;
 }

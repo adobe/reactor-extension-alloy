@@ -293,7 +293,7 @@ const UpdateVariable = ({
   );
 
   return (
-    <FormElementContainer>
+    <FormElementContainer direction="column">
       {dataElementsFirstPage.length === 0 && (
         <Alert variant="negative" title="Error" data-test-id="noDataElements">
           No `variable` type data elements are available. Create a variable type
@@ -323,7 +323,7 @@ const UpdateVariable = ({
           setSelectedNodeId={setSelectedNodeId}
           schema={schema}
           previouslySavedSchemaInfo={previouslySavedSchemaInfo}
-          initialExpandedDepth={1}
+          initialExpandedDepth={dataElement.settings.solutions ? 2 : 1}
           componentName="update variable action"
         />
       )}

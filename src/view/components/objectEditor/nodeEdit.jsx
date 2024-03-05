@@ -22,12 +22,14 @@ import {
   INTEGER,
   NUMBER,
   OBJECT,
-  OBJECT_JSON
+  OBJECT_JSON,
+  OBJECT_ANALYTICS
 } from "./constants/schemaType";
 import ArrayEdit from "./arrayEdit";
 import BooleanEdit from "./booleanEdit";
 import IntegerEdit from "./integerEdit";
 import ObjectJsonEdit from "./objectJsonEdit";
+import analyticsForm from "./helpers/object-analytics/analyticsForm";
 import NumberEdit from "./numberEdit";
 import ObjectEdit from "./objectEdit";
 import StringEdit from "./stringEdit";
@@ -36,6 +38,15 @@ import { ALWAYS, NONE } from "./constants/autoPopulationSource";
 import "./nodeEdit.styl";
 import FormikCheckbox from "../formikReactSpectrum3/formikCheckbox";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
+
+const ObjectAnalyticsEdit = ({ fieldName, ...otherProps }) => {
+  return (
+    <analyticsForm.Component namePrefix={`${fieldName}.`} {...otherProps} />
+  );
+};
+ObjectAnalyticsEdit.propTypes = {
+  fieldName: PropTypes.string.isRequired
+};
 
 const getViewBySchemaType = schemaType => {
   switch (schemaType) {
@@ -51,6 +62,8 @@ const getViewBySchemaType = schemaType => {
       return ObjectEdit;
     case OBJECT_JSON:
       return ObjectJsonEdit;
+    case OBJECT_ANALYTICS:
+      return ObjectAnalyticsEdit;
     default:
       return StringEdit;
   }
