@@ -13,5 +13,6 @@ governing permissions and limitations under the License.
 import analyticsForm from "./analyticsForm";
 
 export default ({ formStateNode }) => {
-  return analyticsForm.getSettings({ values: formStateNode });
+  const { value } = analyticsForm.getSettings({ values: formStateNode }) || {};
+  return value;
 };
