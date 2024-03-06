@@ -791,7 +791,7 @@ const createExtensionManifest = ({ version }) => {
           {
             type: "function",
             propertyPath: "customCode",
-            parameters: ["content"]
+            parameters: ["content", "event"]
           }
         ],
         libPath: "dist/lib/actions/updateVariable/index.js",
