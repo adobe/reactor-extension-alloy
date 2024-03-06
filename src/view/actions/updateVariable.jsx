@@ -278,6 +278,7 @@ const UpdateVariable = ({
           existingFormStateNode: values,
           signal
         });
+
         if (!signal.aborted) {
           resetForm({ values: { ...initialFormState, dataElement } });
           if (context.schema) {
@@ -286,7 +287,7 @@ const UpdateVariable = ({
         }
       }
     }),
-    [dataElement?.settings?.schema?.id]
+    [dataElement?.settings?.schema?.id || dataElement?.settings?.solutions]
   );
 
   const loadItems = useReportAsyncError(
@@ -346,6 +347,7 @@ const UpdateVariable = ({
             previouslySavedSchemaInfo={previouslySavedSchemaInfo}
             initialExpandedDepth={dataElement.settings.solutions ? 2 : 1}
             componentName="update variable action"
+            verticalLayout={!!dataElement.settings.solutions}
           />
 
           <Heading size="M" margin="0">

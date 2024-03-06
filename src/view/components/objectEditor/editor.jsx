@@ -55,7 +55,8 @@ const Editor = ({
   schema,
   previouslySavedSchemaInfo,
   initialExpandedDepth = 0,
-  componentName
+  componentName,
+  verticalLayout = false
 }) => {
   const { values: formState } = useFormikContext();
   const [expandedNodeIdsInTree, setExpandedNodeIdsInTree] = useState(() => {
@@ -107,6 +108,7 @@ const Editor = ({
       marginTop="size-100"
       minHeight={0}
       gap="size-200"
+      direction={verticalLayout ? "column" : ""}
     >
       {
         // Minimum of 300px wide, but can expand. This is for when the user
@@ -117,7 +119,7 @@ const Editor = ({
         // scrolling the scroll wheel or swiping when the cursor is over an element
         // that has a scrollbar (vertical or horizontal).
       }
-      <View flex="1 0 300px">
+      <View flex={verticalLayout ? "" : "1 0 300px"}>
         <XdmTree
           selectedNodeId={selectedNodeId}
           expandedNodeIds={expandedNodeIdsInTree}
@@ -168,7 +170,8 @@ Editor.propTypes = {
     version: PropTypes.string.isRequired
   }),
   initialExpandedDepth: PropTypes.number,
-  componentName: PropTypes.string.isRequired
+  componentName: PropTypes.string.isRequired,
+  verticalLayout: PropTypes.bool
 };
 
 export default Editor;
