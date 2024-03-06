@@ -44,6 +44,9 @@ const INVALID_ADDITIONAL_FIELDS_REGEX = /^(eVar\d+|prop\d+|event\d+|contextData)
 const additionalFieldsItems = [
   { label: "Campaign", value: "campaign" },
   { label: "Channel", value: "channel" },
+  { label: "Link name", value: "linkName" },
+  { label: "Link type", value: "linkType" },
+  { label: "Link URL", value: "linkURL" },
   { label: "Page name", value: "pageName" },
   { label: "Page URL", value: "pageURL" },
   { label: "Purchase ID", value: "purchaseID" },
