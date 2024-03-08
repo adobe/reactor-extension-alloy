@@ -53,7 +53,6 @@ const additionalFieldsItems = [
   { label: "Products", value: "products" },
   { label: "Referrer", value: "referrer" },
   { label: "Server", value: "server" },
-  { label: "State", value: "state" },
   { label: "Transaction ID", value: "transactionID" },
   { label: "Zip", value: "zip" }
 ];
