@@ -11,8 +11,22 @@ governing permissions and limitations under the License.
 */
 
 const createMediaEvent = require("./createSendMediaEvent");
+const createMediaSession = require("./createMediaSession");
 const instanceManager = require("../../instanceManager/index");
+const { mediaAnalyticsSessionCallbackStorage } = require("../../index");
+const { mediaCollectionSessionStorage } = require("../../index");
+const injectWrapOnBeforeMediaEvent = require("./injectWrapOnBeforeMediaEvent");
 
+const wrapOnBeforeMediaEvent = injectWrapOnBeforeMediaEvent();
+
+const trackMediaSession = createMediaSession({
+  instanceManager,
+  mediaCollectionSessionStorage,
+  mediaAnalyticsSessionCallbackStorage,
+  wrapOnBeforeMediaEvent
+});
 module.exports = createMediaEvent({
-  instanceManager
+  instanceManager,
+  trackMediaSession,
+  mediaCollectionSessionStorage
 });

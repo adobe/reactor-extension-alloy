@@ -864,12 +864,22 @@ const createExtensionManifest = ({ version }) => {
             },
             xdm: {
               type: "object"
+            },
+            onBeforeMediaEvent: {
+              type: "string"
             }
           },
           required: ["instanceName"]
         },
         libPath: "dist/lib/actions/sendMediaEvent/index.js",
-        viewPath: "actions/sendMediaAnalyticsEvent.html"
+        viewPath: "actions/sendMediaAnalyticsEvent.html",
+        transforms: [
+          {
+            type: "function",
+            propertyPath: "onBeforeMediaEvent",
+            parameters: ["content"]
+          }
+        ]
       },
       {
         displayName: "Get Media Tracker API",

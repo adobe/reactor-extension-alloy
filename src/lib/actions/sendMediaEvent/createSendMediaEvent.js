@@ -12,7 +12,11 @@ governing permissions and limitations under the License.
 
 const { deepAssign } = require("../../alloy");
 
-module.exports = ({ instanceManager }) => settings => {
+module.exports = ({
+  instanceManager,
+  trackMediaSession,
+  mediaCollectionSessionStorage
+}) => settings => {
   const {
     instanceName,
     eventType,
@@ -26,7 +30,39 @@ module.exports = ({ instanceManager }) => settings => {
       `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
     );
   }
+
+  if (!playerId) {
+    throw new Error(
+      "Failed to send media event. No playerId was provided in the settings."
+    );
+  }
+  const sessionID = mediaCollectionSessionStorage.get({ playerId });
+
+  if (!sessionID) {
+    if (eventType === "media.sessionStart") {
+      return trackMediaSession(settings);
+    }
+    return Promise.resolve();
+  }
+
+  if (
+    eventType === "media.sessionEnd" ||
+    eventType === "media.sessionComplete"
+  ) {
+    mediaCollectionSessionStorage.remove({ playerId });
+  }
+
   const { xdm = {} } = createMediaEventSettings;
-  deepAssign(xdm, { eventType });
+  if (eventType === "media.sessionStart") {
+    deepAssign(xdm, {
+      eventType: "media.play",
+      mediaCollection: { sessionDetails: undefined }
+    });
+  } else {
+    deepAssign(xdm, { eventType });
+  }
+
+  deepAssign(xdm.mediaCollection, { sessionID });
+
   return instance("sendMediaEvent", { xdm, playerId });
 };

@@ -66,7 +66,8 @@ export const bridge = {
           is: (channel, playerName) => channel && playerName,
           then: schema =>
             schema
-              .min(10, "The Ad Ping Interval must be greater than 10 seconds.")
+              .min(1, "The Ad Ping Interval must be greater than 1 second.")
+              .max(10, "The Ad Ping Interval must be less than 10 seconds.")
               .default(10)
         }),
         mainPingInterval: number().when(["channel", "playerName"], {
@@ -77,6 +78,7 @@ export const bridge = {
                 10,
                 "The Main Ping Interval must be greater than 10 seconds."
               )
+              .max(60, "The Main Ping Interval must be less than 60 seconds.")
               .default(10)
         })
       },
