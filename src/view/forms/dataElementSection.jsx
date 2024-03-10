@@ -76,7 +76,6 @@ export default function dataElementSection(
   const formPart = {
     getInitialValues({ initInfo }) {
       const { [name]: value } = initInfo.settings || {};
-
       const initialValues = {
         [name]: buildDefaultValues(),
         [`${name}InputMethod`]: FORM,
@@ -89,7 +88,6 @@ export default function dataElementSection(
       }
 
       if (typeof value === "string") {
-        initialValues[name] = [""];
         initialValues[`${name}InputMethod`] = DATA_ELEMENT;
         initialValues[`${name}DataElement`] = value;
       }
