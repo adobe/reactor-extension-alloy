@@ -23,11 +23,8 @@ import section from "../forms/section";
 import fieldArray from "../forms/fieldArray";
 import codeField from "../forms/codeField";
 import numberField from "../forms/numberField";
-import radioGroup from "../forms/radioGroup";
+import dataElementSection from "../forms/dataElementSection";
 
-const isNonEmptyObject = obj => {
-  return Object.keys(obj).length > 0;
-};
 const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
   const {
     eventType,
@@ -62,12 +59,12 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
         automaticSessionHandler,
         sessionID,
         playhead,
-        ...qoeDataDetails,
-        ...chapterDetails,
-        ...advertisingDetails,
-        ...advertisingPodDetails,
-        ...errorDetails,
-        ...sessionDetails
+        qoeDataDetails,
+        chapterDetails,
+        advertisingDetails,
+        advertisingPodDetails,
+        errorDetails,
+        sessionDetails
       }
     }
   });
@@ -82,7 +79,12 @@ const wrapGetSettings = getSettings => ({ values }) => {
     sessionID,
     playhead,
     onBeforeMediaEvent,
-    ...otherSettings
+    qoeDataDetails,
+    chapterDetails,
+    advertisingPodDetails,
+    advertisingDetails,
+    errorDetails,
+    sessionDetails
   } = getSettings({ values });
   const settings = { eventType, instanceName };
   const mediaCollection = {};
@@ -96,181 +98,26 @@ const wrapGetSettings = getSettings => ({ values }) => {
     settings.playerId = playerId;
     mediaCollection.sessionID = sessionID;
     mediaCollection.playhead = playhead;
-
-    // adding QOE data
-    const qoeDataDetails = {};
-
-    if (otherSettings.bitrate) {
-      qoeDataDetails.bitrate = otherSettings.bitrate;
-    }
-    if (otherSettings.droppedFrames) {
-      qoeDataDetails.droppedFrames = otherSettings.droppedFrames;
-    }
-    if (otherSettings.framesPerSecond) {
-      qoeDataDetails.framesPerSecond = otherSettings.framesPerSecond;
-    }
-    if (otherSettings.timeToStart) {
-      qoeDataDetails.timeToStart = otherSettings.timeToStart;
-    }
-    if (isNonEmptyObject(qoeDataDetails)) {
-      mediaCollection.qoeDataDetails = qoeDataDetails;
-    }
   }
-  if (eventType === "media.adBreakStart") {
-    const advertisingPodDetails = {};
-    if (otherSettings.friendlyName) {
-      advertisingPodDetails.friendlyName = otherSettings.friendlyName;
-    }
-    if (otherSettings.offset) {
-      advertisingPodDetails.offset = otherSettings.offset;
-    }
-    if (otherSettings.index) {
-      advertisingPodDetails.index = otherSettings.index;
-    }
-
-    mediaCollection.advertisingPodDetails = advertisingPodDetails;
+  if (qoeDataDetails) {
+    mediaCollection.qoeDataDetails = qoeDataDetails;
   }
-
-  if (eventType === "media.adStart") {
-    const advertisingDetails = {};
-    if (otherSettings.friendlyName) {
-      advertisingDetails.friendlyName = otherSettings.friendlyName;
-    }
-    if (otherSettings.name) {
-      advertisingDetails.name = otherSettings.name;
-    }
-    if (otherSettings.advertiser) {
-      advertisingDetails.advertiser = otherSettings.advertiser;
-    }
-    if (otherSettings.length) {
-      advertisingDetails.length = otherSettings.length;
-    }
-    if (otherSettings.campaignID) {
-      advertisingDetails.campaignID = otherSettings.campaignID;
-    }
-    if (otherSettings.creativeID) {
-      advertisingDetails.creativeID = otherSettings.creativeID;
-    }
-    if (otherSettings.creativeURL) {
-      advertisingDetails.creativeURL = otherSettings.creativeURL;
-    }
-    if (otherSettings.placementID) {
-      advertisingDetails.placementID = otherSettings.placementID;
-    }
-    if (otherSettings.siteID) {
-      advertisingDetails.siteID = otherSettings.siteID;
-    }
-    if (otherSettings.podPosition) {
-      advertisingDetails.podPosition = otherSettings.podPosition;
-    }
-    if (otherSettings.playerName) {
-      advertisingDetails.playerName = otherSettings.playerName;
-    }
-
-    mediaCollection.advertisingDetails = advertisingDetails;
-  }
-
-  if (eventType === "media.chapterStart") {
-    const chapterDetails = {};
-    if (otherSettings.friendlyName) {
-      chapterDetails.friendlyName = otherSettings.friendlyName;
-    }
-    if (otherSettings.length) {
-      chapterDetails.length = otherSettings.length;
-    }
-    if (otherSettings.index) {
-      chapterDetails.index = otherSettings.index;
-    }
-    if (otherSettings.offset) {
-      chapterDetails.offset = otherSettings.offset;
-    }
-
+  if (chapterDetails) {
     mediaCollection.chapterDetails = chapterDetails;
   }
-
-  if (eventType === "media.error") {
-    const errorDetails = {};
-
-    if (otherSettings.name) {
-      errorDetails.name = otherSettings.name;
-    }
-    if (otherSettings.source) {
-      errorDetails.source = otherSettings.source;
-    }
-
+  if (advertisingDetails) {
+    mediaCollection.advertisingDetails = advertisingDetails;
+  }
+  if (advertisingPodDetails) {
+    mediaCollection.advertisingPodDetails = advertisingPodDetails;
+  }
+  if (errorDetails) {
     mediaCollection.errorDetails = errorDetails;
   }
-
-  if (eventType === "media.sessionStart") {
-    const {
-      channel,
-      contentType,
-      playerName,
-      length,
-      name,
-      adLoad,
-      appVersion,
-      artist,
-      rating,
-      show,
-      episode,
-      originator,
-      firstAirDate,
-      streamType,
-      authorized,
-      streamFormat,
-      station,
-      genre,
-      season,
-      showType,
-      friendlyName,
-      author,
-      album,
-      dayPart,
-      label,
-      mvpd,
-      feed,
-      assetID,
-      publisher,
-      firstDigitalDate,
-      network
-    } = otherSettings;
-
-    const sessionDetails = {
-      channel,
-      contentType,
-      playerName,
-      length,
-      name,
-      adLoad,
-      appVersion,
-      artist,
-      rating,
-      show,
-      episode,
-      originator,
-      firstAirDate,
-      streamType,
-      authorized,
-      streamFormat,
-      station,
-      genre,
-      season,
-      showType,
-      friendlyName,
-      author,
-      album,
-      dayPart,
-      label,
-      mvpd,
-      feed,
-      assetID,
-      publisher,
-      firstDigitalDate,
-      network
-    };
+  if (sessionDetails) {
     mediaCollection.sessionDetails = sessionDetails;
   }
+
   settings.xdm = {
     eventType,
     mediaCollection
@@ -280,7 +127,13 @@ const wrapGetSettings = getSettings => ({ values }) => {
 };
 
 const advertisingPodDetailsSection = section(
-  { label: "Advertising Pod Details" },
+  {
+    label: "Advertising Pod Details",
+    name: "advertisingPodDetails",
+    objectKey: "advertisingPodDetails",
+    dataElementDescription:
+      "Enter the data element that returns advertising pod details."
+  },
   [
     textField({
       name: "friendlyName",
@@ -301,110 +154,137 @@ const advertisingPodDetailsSection = section(
     })
   ]
 );
-const chapterSection = section({ label: "Chapter details" }, [
-  textField({
-    name: "friendlyName",
-    label: "Friendly name",
-    description: "The name of the chapter and/or segment."
-  }),
-  textField({
-    name: "length",
-    label: "Length",
-    isRequired: true,
-    description: "The length of the chapter, in seconds."
-  }),
-  textField({
-    name: "index",
-    label: "Index",
-    isRequired: true,
-    description:
-      "The position (index, integer) of the chapter inside the content."
-  }),
-  textField({
-    name: "offset",
-    label: "offset",
-    isRequired: true,
-    description:
-      "The offset of the chapter inside the content (in seconds) from the start."
-  })
-]);
-const advertisingDetailsSection = section({ label: "Advertising Details" }, [
-  textField({
-    name: "friendlyName",
-    label: "Friendly Name",
-    description: "Friendly name of the ad."
-  }),
-  textField({
-    name: "name",
-    label: "Name",
-    isRequired: true,
-    description: "ID of the ad. (Any integer and/or letter combination)"
-  }),
-  textField({
-    name: "length",
-    label: "Length",
-    isRequired: true,
-    description: "Enter index."
-  }),
-  textField({
-    name: "advertiser",
-    label: "Advertiser",
-    description: "Company/Brand whose product is featured in the ad."
-  }),
-  textField({
-    name: "campaignID",
-    label: "Campaign ID",
-    isRequired: true,
-    description: "ID of the ad campaign."
-  }),
-  textField({
-    name: "creativeID",
-    label: "Creative ID",
-    description: "ID of the ad creative."
-  }),
-  textField({
-    name: "creativeURL",
-    label: "Creative URL",
-    description: "URL of the ad creative."
-  }),
-  textField({
-    name: "placementID",
-    label: "Placement ID",
-    description: "Placement ID of the ad."
-  }),
-  textField({
-    name: "siteID",
-    label: "Site ID",
-    description: "ID of the ad site."
-  }),
-  textField({
-    name: "podPosition",
-    label: "Pod Position",
-    isRequired: true,
-    description:
-      "The position (index) of the ad inside the parent ad break. The first ad has index 0, the second ad has index 1 etc."
-  }),
-  textField({
-    name: "playerName",
-    label: "Player name",
-    isRequired: true,
-    description: "The name of the player responsible for rendering the ad."
-  })
-]);
-const errorDetailsSection = section({ label: "Error Details" }, [
-  textField({
-    name: "name",
-    label: "Error Name",
-    isRequired: true,
-    description: "Enter the error name."
-  }),
-  textField({
-    name: "source",
-    label: "Source",
-    isRequired: true,
-    description: "Enter the error source."
-  })
-]);
+const chapterSection = dataElementSection(
+  {
+    label: "Chapter details",
+    name: "chapterDetails",
+    objectKey: "chapterDetails",
+    dataElementDescription:
+      "Enter the data element that returns chapter details object."
+  },
+  [
+    textField({
+      name: "friendlyName",
+      label: "Friendly name",
+      description: "The name of the chapter and/or segment."
+    }),
+    textField({
+      name: "length",
+      label: "Length",
+      isRequired: true,
+      description: "The length of the chapter, in seconds."
+    }),
+    textField({
+      name: "index",
+      label: "Index",
+      isRequired: true,
+      description:
+        "The position (index, integer) of the chapter inside the content."
+    }),
+    textField({
+      name: "offset",
+      label: "offset",
+      isRequired: true,
+      description:
+        "The offset of the chapter inside the content (in seconds) from the start."
+    })
+  ]
+);
+const advertisingDetailsSection = dataElementSection(
+  {
+    label: "Advertising Details",
+    name: "advertisingDetails",
+    dataElementDescription:
+      "This should resolve to an object containing advertising details.",
+    objectKey: "advertisingDetails"
+  },
+  [
+    textField({
+      name: "friendlyName",
+      label: "Friendly Name",
+      description: "Friendly name of the ad."
+    }),
+    textField({
+      name: "name",
+      label: "Name",
+      isRequired: true,
+      description: "ID of the ad. (Any integer and/or letter combination)"
+    }),
+    textField({
+      name: "length",
+      label: "Length",
+      isRequired: true,
+      description: "Enter index."
+    }),
+    textField({
+      name: "advertiser",
+      label: "Advertiser",
+      description: "Company/Brand whose product is featured in the ad."
+    }),
+    textField({
+      name: "campaignID",
+      label: "Campaign ID",
+      isRequired: true,
+      description: "ID of the ad campaign."
+    }),
+    textField({
+      name: "creativeID",
+      label: "Creative ID",
+      description: "ID of the ad creative."
+    }),
+    textField({
+      name: "creativeURL",
+      label: "Creative URL",
+      description: "URL of the ad creative."
+    }),
+    textField({
+      name: "placementID",
+      label: "Placement ID",
+      description: "Placement ID of the ad."
+    }),
+    textField({
+      name: "siteID",
+      label: "Site ID",
+      description: "ID of the ad site."
+    }),
+    textField({
+      name: "podPosition",
+      label: "Pod Position",
+      isRequired: true,
+      description:
+        "The position (index) of the ad inside the parent ad break. The first ad has index 0, the second ad has index 1 etc."
+    }),
+    textField({
+      name: "playerName",
+      label: "Player name",
+      isRequired: true,
+      description: "The name of the player responsible for rendering the ad."
+    })
+  ]
+);
+const errorDetailsSection = dataElementSection(
+  {
+    label: "Error Details",
+    name: "errorDetails",
+    dataElementDescription:
+      "This should resolve to an object containing error details.",
+    objectKey: "errorDetails"
+  },
+  [
+    textField({
+      name: "name",
+      label: "Error Name",
+      isRequired: true,
+      description: "Enter the error name."
+    }),
+    textField({
+      name: "source",
+      label: "Source",
+      isRequired: true,
+      description: "Enter the error source."
+    })
+  ]
+);
 const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
   fieldArray({
     name: "states",
@@ -416,215 +296,225 @@ const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
     validationSchema: string()
   })
 ]);
-const sessionDetailsSection = section({ label: "Media Session details" }, [
-  textField({
-    name: "channel",
-    label: "Channel",
-    isRequired: true,
-    description:
-      "Distribution Station/Channels or where the content is played. Any string value is accepted here"
-  }),
-  textField({
-    name: "contentType",
-    label: "Content Type",
-    isRequired: true,
-    description:
-      "Available values per Stream Type: Audio - “song”, “podcast”, “audiobook”, “radio”; Video: “VoD”, “Live”, " +
-      "“Linear”, “UGC”, “DVoD” Customers can provide custom values for this parameter."
-  }),
-  textField({
-    name: "playerName",
-    label: "PlayerName",
-    isRequired: true,
-    description: "Name of the player."
-  }),
-  textField({
-    name: "length", // integer
-    label: "Length",
-    isRequired: true,
-    description:
-      "Clip Length/Runtime - This is the maximum length (or duration) of the content being consumed (in seconds)"
-  }),
-  textField({
-    name: "name",
-    label: "Name",
-    isRequired: true,
-    description:
-      "Content ID of the content, which can be used to tie back to other industry / CMS IDs."
-  }),
-  textField({
-    name: "adLoad",
-    label: "Ad Load",
-    isRequired: false,
-    description: ""
-  }),
-  textField({
-    name: "appVersion",
-    label: "Application Version",
-    isRequired: false,
-    description:
-      "The SDK version used by the player. This could have any custom value that makes sense for your player."
-  }),
-  textField({
-    name: "artist",
-    label: "Artist",
-    isRequired: false,
-    description: ""
-  }),
-  textField({
-    name: "rating",
-    label: "Rating",
-    isRequired: false,
-    description: "Rating as defined by TV Parental Guidelines"
-  }),
-  textField({
-    name: "show",
-    label: "Show",
-    isRequired: false,
-    description:
-      "Program/Series Name. Program Name is required only if the show is part of a series."
-  }),
-  textField({
-    name: "episode",
-    label: "Episode",
-    isRequired: false,
-    description: "The number of the episode."
-  }),
-  textField({
-    name: "originator",
-    label: "Originator",
-    isRequired: false,
-    description: "Creator of the content."
-  }),
-  textField({
-    name: "firstAirDate",
-    label: "First Air Date",
-    isRequired: false,
-    description:
-      "The date when the content first aired on television. Any date format is acceptable, but Adobe recommends: YYYY-MM-DD."
-  }),
-  textField({
-    name: "streamType", // add here types of stream audio - video
-    label: "Stream type",
-    isRequired: false,
-    description: "Identifies the stream type."
-  }),
-  textField({
-    name: "authorized",
-    label: "Authorized",
-    isRequired: false,
-    description: "The user has been authorized via Adobe authentication."
-  }),
-  textField({
-    name: "streamFormat",
-    label: "Stream Format",
-    isRequired: false,
-    description: "Format of the stream (HD, SD)."
-  }),
-  textField({
-    name: "station",
-    label: "Station",
-    isRequired: false,
-    description: "Name / ID of the radio station."
-  }),
-  textField({
-    name: "genre",
-    label: "Genre",
-    isRequired: false,
-    description:
-      "Type or grouping of content as defined by content producer. Values should be comma delimited in variable i" +
-      "mplementation. In reporting, the list eVar will split each value into a line item, " +
-      "with each line item receiving equal metrics weight."
-  }),
-  textField({
-    name: "season",
-    label: "Season",
-    isRequired: false,
-    description:
-      "The season number the show belongs to. Season Series is required only if the show is part of a series."
-  }),
-  textField({
-    name: "showType",
-    label: "Show Type",
-    isRequired: false,
-    description:
-      "Available values per Stream Type: Audio - “song”, “podcast”, “audiobook”, “radio”; Video: “VoD”, “Live”, " +
-      "“Linear”, “UGC”, “DVoD” Customers can provide custom values for this parameter."
-  }),
-  textField({
-    name: "friendlyName",
-    label: "Friendly Name",
-    isRequired: false,
-    description: "This is the “friendly” (human-readable) name of the content."
-  }),
-  textField({
-    name: "author",
-    label: "Author",
-    isRequired: false,
-    description: "Name of the author (of an audiobook)."
-  }),
-  textField({
-    name: "album",
-    label: "Album",
-    isRequired: false,
-    description: "The author of the content."
-  }),
-  textField({
-    name: "dayPart",
-    label: "Day Part",
-    isRequired: false,
-    description:
-      "A property that defines the time of the day when the content was broadcast or played. This could have " +
-      "any value set as necessary by customers"
-  }),
-  textField({
-    name: "label",
-    label: "Label",
-    isRequired: false,
-    description: "Name of the record label."
-  }),
-  textField({
-    name: "mvpd",
-    label: "MVPD",
-    isRequired: false,
-    description: "MVPD provided via Adobe authentication."
-  }),
-  textField({
-    name: "feed",
-    label: "Feed",
-    isRequired: false,
-    description: "Type of feed."
-  }),
-  textField({
-    name: "assetID",
-    label: "Asset ID",
-    isRequired: false,
-    description:
-      "This is the unique identifier for the content of the media asset, such as the TV series episode identifier, " +
-      "movie asset identifier, or live event identifier. Typically these IDs are derived from metadata authorities " +
-      "such as EIDR, TMS/Gracenote, or Rovi. These identifiers can also be from other proprietary or in-house systems."
-  }),
-  textField({
-    name: "publisher",
-    label: "Publisher",
-    isRequired: false,
-    description: "Name of the audio content publisher"
-  }),
-  textField({
-    name: "firstDigitalDate",
-    label: "First Digital Date",
-    isRequired: false,
-    description:
-      "The date when the content first aired on any digital channel or platform. Any date format is " +
-      "acceptable but Adobe recommends: YYYY-MM-DD"
-  }),
-  textField({
-    name: "network",
-    label: "Network",
-    isRequired: false,
-    description: "The network/channel name"
-  })
-]);
+const sessionDetailsSection = dataElementSection(
+  {
+    label: "Media Session details",
+    name: "sessionDetails",
+    dataElementDescription:
+      "This should resolve to an object containing session details.",
+    objectKey: "sessionDetails"
+  },
+  [
+    textField({
+      name: "channel",
+      label: "Channel",
+      isRequired: true,
+      description:
+        "Distribution Station/Channels or where the content is played. Any string value is accepted here"
+    }),
+    textField({
+      name: "contentType",
+      label: "Content Type",
+      isRequired: true,
+      description:
+        "Available values per Stream Type: Audio - “song”, “podcast”, “audiobook”, “radio”; Video: “VoD”, “Live”, " +
+        "“Linear”, “UGC”, “DVoD” Customers can provide custom values for this parameter."
+    }),
+    textField({
+      name: "playerName",
+      label: "PlayerName",
+      isRequired: true,
+      description: "Name of the player."
+    }),
+    textField({
+      name: "length", // integer
+      label: "Length",
+      isRequired: true,
+      description:
+        "Clip Length/Runtime - This is the maximum length (or duration) of the content being consumed (in seconds)"
+    }),
+    textField({
+      name: "name",
+      label: "Name",
+      isRequired: true,
+      description:
+        "Content ID of the content, which can be used to tie back to other industry / CMS IDs."
+    }),
+    textField({
+      name: "adLoad",
+      label: "Ad Load",
+      isRequired: false,
+      description: ""
+    }),
+    textField({
+      name: "appVersion",
+      label: "Application Version",
+      isRequired: false,
+      description:
+        "The SDK version used by the player. This could have any custom value that makes sense for your player."
+    }),
+    textField({
+      name: "artist",
+      label: "Artist",
+      isRequired: false,
+      description: ""
+    }),
+    textField({
+      name: "rating",
+      label: "Rating",
+      isRequired: false,
+      description: "Rating as defined by TV Parental Guidelines"
+    }),
+    textField({
+      name: "show",
+      label: "Show",
+      isRequired: false,
+      description:
+        "Program/Series Name. Program Name is required only if the show is part of a series."
+    }),
+    textField({
+      name: "episode",
+      label: "Episode",
+      isRequired: false,
+      description: "The number of the episode."
+    }),
+    textField({
+      name: "originator",
+      label: "Originator",
+      isRequired: false,
+      description: "Creator of the content."
+    }),
+    textField({
+      name: "firstAirDate",
+      label: "First Air Date",
+      isRequired: false,
+      description:
+        "The date when the content first aired on television. Any date format is acceptable, but Adobe recommends: YYYY-MM-DD."
+    }),
+    textField({
+      name: "streamType", // add here types of stream audio - video
+      label: "Stream type",
+      isRequired: false,
+      description: "Identifies the stream type."
+    }),
+    textField({
+      name: "authorized",
+      label: "Authorized",
+      isRequired: false,
+      description: "The user has been authorized via Adobe authentication."
+    }),
+    textField({
+      name: "streamFormat",
+      label: "Stream Format",
+      isRequired: false,
+      description: "Format of the stream (HD, SD)."
+    }),
+    textField({
+      name: "station",
+      label: "Station",
+      isRequired: false,
+      description: "Name / ID of the radio station."
+    }),
+    textField({
+      name: "genre",
+      label: "Genre",
+      isRequired: false,
+      description:
+        "Type or grouping of content as defined by content producer. Values should be comma delimited in variable i" +
+        "mplementation. In reporting, the list eVar will split each value into a line item, " +
+        "with each line item receiving equal metrics weight."
+    }),
+    textField({
+      name: "season",
+      label: "Season",
+      isRequired: false,
+      description:
+        "The season number the show belongs to. Season Series is required only if the show is part of a series."
+    }),
+    textField({
+      name: "showType",
+      label: "Show Type",
+      isRequired: false,
+      description:
+        "Available values per Stream Type: Audio - “song”, “podcast”, “audiobook”, “radio”; Video: “VoD”, “Live”, " +
+        "“Linear”, “UGC”, “DVoD” Customers can provide custom values for this parameter."
+    }),
+    textField({
+      name: "friendlyName",
+      label: "Friendly Name",
+      isRequired: false,
+      description:
+        "This is the “friendly” (human-readable) name of the content."
+    }),
+    textField({
+      name: "author",
+      label: "Author",
+      isRequired: false,
+      description: "Name of the author (of an audiobook)."
+    }),
+    textField({
+      name: "album",
+      label: "Album",
+      isRequired: false,
+      description: "The author of the content."
+    }),
+    textField({
+      name: "dayPart",
+      label: "Day Part",
+      isRequired: false,
+      description:
+        "A property that defines the time of the day when the content was broadcast or played. This could have " +
+        "any value set as necessary by customers"
+    }),
+    textField({
+      name: "label",
+      label: "Label",
+      isRequired: false,
+      description: "Name of the record label."
+    }),
+    textField({
+      name: "mvpd",
+      label: "MVPD",
+      isRequired: false,
+      description: "MVPD provided via Adobe authentication."
+    }),
+    textField({
+      name: "feed",
+      label: "Feed",
+      isRequired: false,
+      description: "Type of feed."
+    }),
+    textField({
+      name: "assetID",
+      label: "Asset ID",
+      isRequired: false,
+      description:
+        "This is the unique identifier for the content of the media asset, such as the TV series episode identifier, " +
+        "movie asset identifier, or live event identifier. Typically these IDs are derived from metadata authorities " +
+        "such as EIDR, TMS/Gracenote, or Rovi. These identifiers can also be from other proprietary or in-house systems."
+    }),
+    textField({
+      name: "publisher",
+      label: "Publisher",
+      isRequired: false,
+      description: "Name of the audio content publisher"
+    }),
+    textField({
+      name: "firstDigitalDate",
+      label: "First Digital Date",
+      isRequired: false,
+      description:
+        "The date when the content first aired on any digital channel or platform. Any date format is " +
+        "acceptable but Adobe recommends: YYYY-MM-DD"
+    }),
+    textField({
+      name: "network",
+      label: "Network",
+      isRequired: false,
+      description: "The network/channel name"
+    })
+  ]
+);
 
 const eventBasedDetailFormConditionals = [
   conditional(
@@ -670,58 +560,38 @@ const eventBasedDetailFormConditionals = [
     [sessionDetailsSection]
   )
 ];
-
-const qoeDataSection = section({ label: "Quality of Experience data" }, [
-  radioGroup({
-    name: "qoeInputType",
-    label: "Quality of Experience Input Type",
-    description: "Select your Quality of Experience input type",
-    isRequired: true,
-    items: [{ value: "manual", label: "Manual" }],
-    defaultValue: "manual"
-  }),
-  conditional(
-    {
-      args: "qoeInputType",
-      condition: qoeInputType => qoeInputType === "manual"
-    },
-    [
-      textField({
-        name: "bitrate",
-        label: "Bitrate",
-        description: "Enter bitrate."
-      }),
-      textField({
-        name: "droppedFrames",
-        label: "Dropped Frames",
-        description: "Enter dropped frames."
-      }),
-      textField({
-        name: "framesPerSecond",
-        label: "Frames Per Second",
-        description: "Enter Frames Per Second."
-      }),
-      textField({
-        name: "timeToStart",
-        label: "Time To Start",
-        description: "Enter Time To Start."
-      })
-    ]
-  ),
-  conditional(
-    {
-      args: "qoeInputType",
-      condition: qoeInputType => qoeInputType === "automatic"
-    },
-    [
-      textField({
-        name: "timeToStart",
-        label: "Time To Start",
-        description: "Enter Time To Start."
-      })
-    ]
-  )
-]);
+const qoeDataSection = dataElementSection(
+  {
+    label: "Quality of Experience data",
+    name: "qoeDataDetails",
+    dataElementDescription:
+      "This should resolve to an object containing Quality of Experience data.",
+    objectKey: "qoeDataDetails"
+  },
+  [
+    textField({
+      name: "bitrate",
+      label: "Bitrate",
+      description: "Enter bitrate.",
+      isRequired: true
+    }),
+    textField({
+      name: "droppedFrames",
+      label: "Dropped Frames",
+      description: "Enter dropped frames."
+    }),
+    textField({
+      name: "framesPerSecond",
+      label: "Frames Per Second",
+      description: "Enter Frames Per Second."
+    }),
+    textField({
+      name: "timeToStart",
+      label: "Time To Start",
+      description: "Enter Time To Start."
+    })
+  ]
+);
 
 const sendEventForm = form(
   {
