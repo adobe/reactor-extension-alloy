@@ -54,7 +54,7 @@ export const bridge = {
   }
 };
 
-const solutionsContext = [
+export const solutionsContext = [
   ["analytics", "Adobe Analytics"],
   ["target", "Adobe Target"],
   ["audienceManager", "Adobe Audience Manager"]

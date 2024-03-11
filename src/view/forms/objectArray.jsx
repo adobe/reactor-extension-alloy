@@ -22,6 +22,7 @@ import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import form from "./form";
 import numberAwareCompareFunction from "../utils/numberAwareCompareFunction";
+import FormElementContainer from "../components/formElementContainer";
 
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
@@ -31,6 +32,26 @@ const lowerInitialLetters = s => {
     .split(" ")
     .map(word => word.charAt(0).toLowerCase() + word.slice(1))
     .join(" ");
+};
+
+const ObjectArrayContainer = ({ horizontal, children }) => {
+  if (horizontal) {
+    return (
+      <Well
+        UNSAFE_style={{
+          "padding-top": "var(--spectrum-global-dimension-size-100)"
+        }}
+      >
+        <FormElementContainer>{children}</FormElementContainer>
+      </Well>
+    );
+  }
+  return <>{children}</>;
+};
+
+ObjectArrayContainer.propTypes = {
+  horizontal: PropTypes.bool,
+  children: PropTypes.node
 };
 
 /** @typedef {import("./form").Form} Form */
@@ -222,7 +243,7 @@ export default function objectArray(
       );
 
       return (
-        <>
+        <ObjectArrayContainer horizontal={horizontal}>
           {dataElementSupported && (
             <FormikRadioGroup
               name={`${namePrefix}${name}InputMethod`}
@@ -307,13 +328,12 @@ export default function objectArray(
                       );
                     })}
                     <div>
-                      <Button
-                        variant="secondary"
+                      <ActionButton
                         data-test-id={`${namePrefix}${name}AddButton`}
                         onPress={() => arrayHelpers.push(buildDefaultItem())}
                       >
                         Add another {lowerInitialLetters(singularLabel)}
-                      </Button>
+                      </ActionButton>
                     </div>
                   </>
                 );
@@ -331,7 +351,7 @@ export default function objectArray(
               />
             </DataElementSelector>
           )}
-        </>
+        </ObjectArrayContainer>
       );
     }
   };

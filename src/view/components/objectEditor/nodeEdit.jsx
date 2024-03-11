@@ -75,7 +75,7 @@ const getViewBySchemaType = schemaType => {
  */
 const NodeEdit = props => {
   const { values: formState } = useFormikContext();
-  const { onNodeSelect, selectedNodeId } = props;
+  const { onNodeSelect, selectedNodeId, verticalLayout = false } = props;
 
   const {
     formStateNode,
@@ -97,21 +97,23 @@ const NodeEdit = props => {
       marginBottom="size-200"
       direction="column"
     >
-      <View data-test-id="breadcrumb" UNSAFE_className="NodeEdit-breadcrumbs">
-        {
-          // There's currently a known error that occurs when Breadcrumbs
-          // is unmounted, but it doesn't seem to affect the UX.
-          // https://github.com/adobe/react-spectrum/issues/1979
-        }
-        {breadcrumb.length > 1 && (
-          <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
-            {breadcrumb.map(item => (
-              <Item key={item.nodeId}>{item.label}</Item>
-            ))}
-          </Breadcrumbs>
-        )}
-      </View>
-      <Heading data-test-id="heading" size="M">
+      {!verticalLayout && (
+        <View data-test-id="breadcrumb" UNSAFE_className="NodeEdit-breadcrumbs">
+          {
+            // There's currently a known error that occurs when Breadcrumbs
+            // is unmounted, but it doesn't seem to affect the UX.
+            // https://github.com/adobe/react-spectrum/issues/1979
+          }
+          {breadcrumb.length > 1 && (
+            <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
+              {breadcrumb.map(item => (
+                <Item key={item.nodeId}>{item.label}</Item>
+              ))}
+            </Breadcrumbs>
+          )}
+        </View>
+      )}
+      <Heading data-test-id="heading" size="S">
         {displayName}
       </Heading>
       {formStateNode.autoPopulationSource !== NONE && (
@@ -122,6 +124,7 @@ const NodeEdit = props => {
           <TypeSpecificNodeEdit
             fieldName={fieldName}
             onNodeSelect={onNodeSelect}
+            verticalLayout={verticalLayout}
           />
           {formStateNode.updateMode && hasClearedAncestor && (
             <FieldDescriptionAndError
@@ -158,7 +161,8 @@ const NodeEdit = props => {
 
 NodeEdit.propTypes = {
   onNodeSelect: PropTypes.func.isRequired,
-  selectedNodeId: PropTypes.string.isRequired
+  selectedNodeId: PropTypes.string.isRequired,
+  verticalLayout: PropTypes.bool
 };
 
 export default NodeEdit;

@@ -38,6 +38,7 @@ import Alert from "../components/alert";
 import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRequestsAndCreateSignal";
 import generateSchemaFromSolutions from "../components/objectEditor/helpers/generateSchemaFromSolutions";
 import validate from "../components/objectEditor/helpers/validate";
+import { ARRAY, OBJECT } from "../components/objectEditor/constants/schemaType";
 
 const getInitialFormStateFromDataElement = async ({
   dataElement,
@@ -238,6 +239,30 @@ const validateFormikState = context => ({ values }) => {
   return validate(values);
 };
 
+const findFirstNodeIdForDepth = (formStateNode, depth) => {
+  const {
+    schema: { type },
+    properties,
+    items,
+    id
+  } = formStateNode;
+  if (depth > 0) {
+    if (type === OBJECT && properties) {
+      const [firstProperty] = Object.keys(properties);
+      if (firstProperty) {
+        return findFirstNodeIdForDepth(properties[firstProperty], depth - 1);
+      }
+    }
+    if (type === ARRAY && items) {
+      const [firstItem] = items;
+      if (firstItem) {
+        return findFirstNodeIdForDepth(firstItem, depth - 1);
+      }
+    }
+  }
+  return id;
+};
+
 const UpdateVariable = ({
   initInfo,
   formikProps: { resetForm, values },
@@ -252,7 +277,12 @@ const UpdateVariable = ({
 
   const [{ value: dataElement }] = useField("dataElement");
   const [hasSchema, setHasSchema] = useState(schema != null);
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [selectedNodeId, setSelectedNodeId] = useState(() => {
+    if (dataElement?.settings?.solutions) {
+      return findFirstNodeIdForDepth(values, 3);
+    }
+    return null;
+  });
   const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
 
   const {
@@ -284,6 +314,9 @@ const UpdateVariable = ({
           if (context.schema) {
             setHasSchema(true);
           }
+        }
+        if (dataElement.settings.solutions) {
+          setSelectedNodeId(findFirstNodeIdForDepth(values, 3));
         }
       }
     }),

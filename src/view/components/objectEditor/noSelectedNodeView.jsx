@@ -25,7 +25,8 @@ import IndicatorDescription from "./indicatorDescription";
 const NoSelectedNodeView = ({
   schema,
   previouslySavedSchemaInfo,
-  componentName
+  componentName,
+  verticalLayout
 }) => {
   // The schema used when the data element was last saved is different
   // from the latest configured schema. Either the customer has since
@@ -54,7 +55,8 @@ const NoSelectedNodeView = ({
       <div>
         <p>
           Build an object that complies with your configured schema by selecting
-          attributes on the left and providing their values.
+          attributes {verticalLayout ? "above" : "on the left"} and providing
+          their values.
         </p>
         <Flex direction="column" gap="size-100">
           <IndicatorDescription
@@ -91,7 +93,8 @@ NoSelectedNodeView.propTypes = {
     id: PropTypes.string.isRequired,
     version: PropTypes.string.isRequired
   }),
-  componentName: PropTypes.string.isRequired
+  componentName: PropTypes.string.isRequired,
+  verticalLayout: PropTypes.bool
 };
 
 export default NoSelectedNodeView;

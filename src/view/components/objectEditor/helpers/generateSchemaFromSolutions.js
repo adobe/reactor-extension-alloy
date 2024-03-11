@@ -10,20 +10,26 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { OBJECT_ANALYTICS, OBJECT_JSON } from "../constants/schemaType";
+import { solutionsContext } from "../../../dataElements/variable/components/dataVariable";
 
 export default solutions => ({
   type: "object",
   properties: {
     data: {
+      title: "Data",
       type: "object",
       properties: {
         __adobe: {
+          title: "Adobe",
           type: "object",
           properties: solutions.reduce((accumulator, currentValue) => {
             accumulator[currentValue] = {
               type:
                 currentValue === "analytics" ? OBJECT_ANALYTICS : OBJECT_JSON,
-              expandPaths: false
+              expandPaths: false,
+              title: solutionsContext.find(
+                ([solution]) => currentValue === solution
+              )[1]
             };
             return accumulator;
           }, {})

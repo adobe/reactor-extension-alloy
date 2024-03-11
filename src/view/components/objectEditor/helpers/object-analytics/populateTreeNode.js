@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import computePopulationNote from "../computePopulationNote";
-import { EMPTY, FULL, BLANK } from "../../constants/populationAmount";
+import { EMPTY, PARTIAL, BLANK } from "../../constants/populationAmount";
 import analyticsForm from "./analyticsForm";
 
 const computePopulationAmount = ({
@@ -22,10 +22,9 @@ const computePopulationAmount = ({
     return BLANK;
   }
 
-  if (
-    Object.keys(analyticsForm.getSettings({ values: formStateNode })).length > 0
-  ) {
-    return FULL;
+  const { value = {} } = analyticsForm.getSettings({ values: formStateNode });
+  if (Object.keys(value).length > 0) {
+    return PARTIAL;
   }
 
   return EMPTY;

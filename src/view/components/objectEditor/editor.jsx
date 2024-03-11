@@ -148,12 +148,14 @@ const Editor = ({
               setNodeIdToScrollIntoViewInTree(nodeId);
             }}
             selectedNodeId={selectedNodeId}
+            verticalLayout={verticalLayout}
           />
         ) : (
           <NoSelectedNodeView
             schema={schema}
             previouslySavedSchemaInfo={previouslySavedSchemaInfo}
             componentName={componentName}
+            verticalLayout={verticalLayout}
           />
         )}
       </View>
