@@ -49,7 +49,8 @@ export default function comboBox({
   dataElementDescription,
   items,
   allowsCustomValue = false,
-  width = "size-5000"
+  width = "size-5000",
+  defaultValue = ""
 }) {
   let fieldSchema = string();
   if (!allowsCustomValue) {
@@ -108,7 +109,7 @@ export default function comboBox({
 
   const part = {
     getInitialValues({ initInfo }) {
-      const { [name]: value = "" } = initInfo.settings || {};
+      const { [name]: value = defaultValue } = initInfo.settings || {};
       const item = items.find(({ value: v }) => v === value);
       return { [name]: item ? item.value : value };
     },

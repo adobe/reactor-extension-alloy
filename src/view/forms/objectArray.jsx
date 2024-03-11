@@ -39,7 +39,7 @@ const ObjectArrayContainer = ({ horizontal, children }) => {
     return (
       <Well
         UNSAFE_style={{
-          "padding-top": "var(--spectrum-global-dimension-size-100)"
+          paddingTop: "var(--spectrum-global-dimension-size-100)"
         }}
       >
         <FormElementContainer>{children}</FormElementContainer>
@@ -214,8 +214,8 @@ export default function objectArray(
         const itemSettings = values[name].map(item =>
           getItemSettings({ values: item })
         );
-        const filteredItems = itemSettings.filter(
-          item => Object.keys(item).length > 0
+        const filteredItems = itemSettings.filter(item =>
+          objectKey ? item[objectKey] : Object.keys(item).length > 0
         );
         if (filteredItems.length > 0) {
           if (objectKey) {

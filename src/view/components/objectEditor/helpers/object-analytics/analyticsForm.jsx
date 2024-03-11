@@ -17,6 +17,9 @@ import comboBox from "../../../../forms/comboBox";
 import jsonOptionalEditor from "../../../../forms/jsonOptionalEditor";
 import numberAwareCompareFunction from "../../../../utils/numberAwareCompareFunction";
 import eventCompareFunction from "../../../../utils/eventCompareFunction";
+import conditional from "../../../../forms/conditional";
+
+const DYNAMIC_VARIABLE_REGEX = /^D=[cv]\d+$/;
 
 const evarItems = Array.from({ length: 250 }, (_, i) => ({
   label: `eVar${i + 1}`,
@@ -61,12 +64,23 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
   const originalSettings = initInfo.settings || {};
   const settings = Object.keys(originalSettings).reduce(
     (memo, key) => {
+      let copy = "";
+      let value = originalSettings[key];
+      let action = "set";
+      if (
+        (key.startsWith("eVar") || key.startsWith("prop")) &&
+        value.match(DYNAMIC_VARIABLE_REGEX)
+      ) {
+        copy = value.replace("D=v", "eVar").replace("D=c", "prop");
+        value = "";
+        action = "copy";
+      }
       if (key.startsWith("eVar")) {
-        memo.evars[key] = { value: originalSettings[key] };
+        memo.evars[key] = { value, action, copy };
       } else if (key.startsWith("prop")) {
-        memo.props[key] = { value: originalSettings[key] };
+        memo.props[key] = { value, action, copy };
       } else if (key !== "events" && key !== "contextData") {
-        memo.additionalProperties[key] = { value: originalSettings[key] };
+        memo.additionalProperties[key] = { value };
       }
       return memo;
     },
@@ -136,13 +150,25 @@ const wrapGetSettings = getSettings => ({ values }) => {
   const flattenedEvars = Object.keys(evars)
     .sort(numberAwareCompareFunction)
     .reduce((memo, key) => {
-      memo[key] = evars[key].value || "";
+      if (evars[key].action === "copy" && evars[key].copy) {
+        memo[key] = `D=${evars[key].copy
+          .replace("eVar", "v")
+          .replace("prop", "c")}`;
+      } else {
+        memo[key] = evars[key].value || "";
+      }
       return memo;
     }, {});
   const flattenedProps = Object.keys(props)
     .sort(numberAwareCompareFunction)
     .reduce((memo, key) => {
-      memo[key] = props[key].value || "";
+      if (props[key].action === "copy" && props[key].copy) {
+        memo[key] = `D=${props[key].copy
+          .replace("eVar", "v")
+          .replace("prop", "c")}`;
+      } else {
+        memo[key] = props[key].value || "";
+      }
       return memo;
     }, {});
   const flattenedAdditionalProperties = Object.keys(
@@ -196,6 +222,59 @@ const wrapGetSettings = getSettings => ({ values }) => {
     }, {});
 };
 
+const setOrCopyRow = (name, label, items) => {
+  return [
+    comboBox({
+      name,
+      dataElementSupported: false,
+      items,
+      width: "size-3000",
+      label
+    }),
+    comboBox({
+      name: "action",
+      dataElementSupported: false,
+      items: [
+        { label: "Set as", value: "set" },
+        { label: "Copy from", value: "copy" }
+      ],
+      width: "size-2000",
+      label: "Action",
+      defaultValue: "set"
+    }),
+    conditional(
+      {
+        args: "action",
+        condition: action => {
+          return action !== "copy";
+        }
+      },
+      [
+        textField({
+          name: "value",
+          width: "size-3000",
+          label: "Value"
+        })
+      ]
+    ),
+    conditional(
+      {
+        args: "action",
+        condition: action => action === "copy"
+      },
+      [
+        comboBox({
+          name: "copy",
+          dataElementSupported: false,
+          items: evarItems.concat(propItems),
+          width: "size-3000",
+          label: "Value"
+        })
+      ]
+    )
+  ];
+};
+
 const analyticsForm = form(
   {
     wrapGetInitialValues,
@@ -211,20 +290,7 @@ const analyticsForm = form(
         dataElementSupported: false,
         horizontal: true
       },
-      [
-        comboBox({
-          name: "evar",
-          dataElementSupported: false,
-          items: evarItems,
-          width: "size-3000",
-          label: "eVar"
-        }),
-        textField({
-          name: "value",
-          width: "size-3000",
-          label: "Value"
-        })
-      ]
+      setOrCopyRow("evar", "eVar", evarItems)
     ),
     objectArray(
       {
@@ -235,20 +301,7 @@ const analyticsForm = form(
         dataElementSupported: false,
         horizontal: true
       },
-      [
-        comboBox({
-          name: "prop",
-          dataElementSupported: false,
-          items: propItems,
-          width: "size-3000",
-          label: "Prop"
-        }),
-        textField({
-          name: "value",
-          width: "size-3000",
-          label: "Value"
-        })
-      ]
+      setOrCopyRow("prop", "Prop", propItems)
     ),
     objectArray(
       {

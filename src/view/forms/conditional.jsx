@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import { mixed } from "yup";
 import { useField } from "formik";
+import PropTypes from "prop-types";
 import form from "./form";
 
 /** @typedef {import("./form").Form} Form */
@@ -35,7 +36,7 @@ export default function conditional({ args, condition }, children) {
     children
   );
 
-  return {
+  const parts = {
     // getInitialValues should run regardless of the condition so that the
     // default formik state can be set up.
     getInitialValues,
@@ -68,8 +69,9 @@ export default function conditional({ args, condition }, children) {
       );
     },
     Component: props => {
+      const { namePrefix } = props;
       const conditionalArgValues = argsArray.map(arg => {
-        const [{ value }] = useField(arg);
+        const [{ value }] = useField(`${namePrefix}${arg}`);
         return value;
       });
       if (!condition(...conditionalArgValues)) {
@@ -78,4 +80,9 @@ export default function conditional({ args, condition }, children) {
       return <Component {...props} />;
     }
   };
+  parts.Component.propTypes = {
+    namePrefix: PropTypes.string
+  };
+
+  return parts;
 }
