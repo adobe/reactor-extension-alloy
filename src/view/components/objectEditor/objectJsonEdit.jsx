@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import { FieldArray, useField } from "formik";
-import { Radio, ActionButton, Well, Flex, View } from "@adobe/react-spectrum";
+import { Radio, ActionButton, Well, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
 import FormikTextArea from "../formikReactSpectrum3/formikTextArea";
@@ -58,48 +58,39 @@ const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
     name={`${fieldName}.items`}
     render={arrayHelpers => {
       return (
-        <Well alignSelf="flex-start" direction="column" gap="size-100">
+        <Well>
           <Flex gap="size-100" direction="column" alignItems="start">
             {items.map((_, index) => {
               return (
-                <Flex
-                  key={`${fieldName}.${index}`}
-                  alignItems="end"
-                  width="100%"
-                >
-                  <Flex>
-                    <View flex marginEnd="size-100" width="size-3000">
-                      <FormikTextField
-                        data-test-id={`keyField${index}`}
-                        name={`${fieldName}.items.${index}.key`}
-                        aria-label="Key"
-                        label={index === 0 ? "Key" : ""}
-                        width="100%"
-                        onBlur={setTouched}
-                      />
-                    </View>
+                <Flex key={`${fieldName}.${index}`}>
+                  <FormikTextField
+                    data-test-id={`keyField${index}`}
+                    name={`${fieldName}.items.${index}.key`}
+                    aria-label="Key"
+                    label={index === 0 ? "Key" : ""}
+                    width="size-3000"
+                    onBlur={setTouched}
+                  />
 
-                    <View flex width="size-3000">
-                      <DataElementSelector>
-                        <FormikTextField
-                          data-test-id={`valueField${index}`}
-                          name={`${fieldName}.items.${index}.value`}
-                          aria-label="Value"
-                          label={index === 0 ? "Value" : ""}
-                          width="100%"
-                          onBlur={setTouched}
-                        />
-                      </DataElementSelector>
-                    </View>
-                  </Flex>
+                  <DataElementSelector>
+                    <FormikTextField
+                      data-test-id={`valueField${index}`}
+                      name={`${fieldName}.items.${index}.value`}
+                      aria-label="Value"
+                      label={index === 0 ? "Value" : ""}
+                      width="size-3000"
+                      onBlur={setTouched}
+                      marginStart="size-100"
+                    />
+                  </DataElementSelector>
 
                   <ActionButton
                     data-test-id={`item${index}RemoveButton`}
                     isQuiet
                     variant="secondary"
-                    minWidth={0}
                     aria-label="Delete"
                     isDisabled={items.length === 1}
+                    marginTop={index === 0 ? "size-300" : ""}
                     onPress={() => arrayHelpers.remove(index)}
                   >
                     <Delete />
@@ -107,6 +98,7 @@ const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
                 </Flex>
               );
             })}
+
             <ActionButton
               data-test-id="addItemButton"
               onPress={() => {
