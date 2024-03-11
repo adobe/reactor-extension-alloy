@@ -100,7 +100,7 @@ const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
             })}
 
             <ActionButton
-              data-test-id="addItemButton"
+              data-test-id="addPropertyButton"
               onPress={() => {
                 arrayHelpers.push({ key: "", value: "" });
               }}
