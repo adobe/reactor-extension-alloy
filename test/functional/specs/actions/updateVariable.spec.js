@@ -49,9 +49,9 @@ test.requestHooks(dataElementsMocks.notFound)(
   }
 );
 
-test
-  .requestHooks(dataElementsMocks.single)
-  .only("selects the variable when there is only one", async () => {
+test.requestHooks(dataElementsMocks.single)(
+  "selects the variable when there is only one",
+  async () => {
     await extensionViewController.init({
       propertySettings: {
         id: "PRabcd"
@@ -60,7 +60,8 @@ test
     await dataElementField.expectText("Test data variable 1");
     await noDataElementsAlert.expectNotExists();
     await xdmTree.node("xdm").expectExists();
-  });
+  }
+);
 
 test.requestHooks(
   dataElementsMocks.noneWithNextPage,
