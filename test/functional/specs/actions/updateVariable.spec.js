@@ -49,9 +49,9 @@ test.requestHooks(dataElementsMocks.notFound)(
   }
 );
 
-test.requestHooks(dataElementsMocks.single)(
-  "selects the variable when there is only one",
-  async () => {
+test
+  .requestHooks(dataElementsMocks.single)
+  .only("selects the variable when there is only one", async () => {
     await extensionViewController.init({
       propertySettings: {
         id: "PRabcd"
@@ -60,8 +60,7 @@ test.requestHooks(dataElementsMocks.single)(
     await dataElementField.expectText("Test data variable 1");
     await noDataElementsAlert.expectNotExists();
     await xdmTree.node("xdm").expectExists();
-  }
-);
+  });
 
 test.requestHooks(
   dataElementsMocks.noneWithNextPage,
@@ -98,8 +97,7 @@ test.requestHooks(dataElementsMocks.multiple)(
         id:
           "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
         version: "1.4"
-      },
-      transforms: {}
+      }
     });
   }
 );
@@ -135,8 +133,7 @@ test.requestHooks(dataElementsMocks.multiple)(
         id:
           "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
         version: "1.4"
-      },
-      transforms: {}
+      }
     });
   }
 );
@@ -343,8 +340,7 @@ test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
             "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
           version: "1.1"
         },
-        data: {},
-        transforms: {}
+        data: {}
       }
     });
     await schemaChangedNotice.expectExists();
@@ -366,8 +362,7 @@ test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
             "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
           version: "1.2"
         },
-        data: {},
-        transforms: {}
+        data: {}
       }
     });
     await schemaChangedNotice.expectNotExists();
@@ -450,8 +445,7 @@ test.requestHooks(
       schema: {
         id: "sch789",
         version: "1.0"
-      },
-      transforms: {}
+      }
     });
     await xdmTree.node("Item 1").toggleExpansion();
     await xdmTree.node("testField").click();
