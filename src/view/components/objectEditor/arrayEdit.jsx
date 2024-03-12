@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { FieldArray, useField } from "formik";
-import { Radio, Button, Flex } from "@adobe/react-spectrum";
+import { Radio, Button, ActionButton, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
@@ -77,7 +77,7 @@ const PartsPopulationStrategyForm = ({
                 >
                   Item {index + 1}
                 </Button>
-                <Button
+                <ActionButton
                   data-test-id={`item${index}RemoveButton`}
                   isQuiet
                   variant="secondary"
@@ -86,7 +86,7 @@ const PartsPopulationStrategyForm = ({
                   onPress={() => arrayHelpers.remove(index)}
                 >
                   <Delete />
-                </Button>
+                </ActionButton>
               </Flex>
             );
           })}

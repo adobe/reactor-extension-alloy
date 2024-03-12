@@ -44,6 +44,7 @@ const CodePreview = ({
       <FieldDescriptionAndError description={description} error={error}>
         <TextArea
           width="size-5000"
+          aria-label={label}
           height="size-1600"
           value={value}
           isDisabled

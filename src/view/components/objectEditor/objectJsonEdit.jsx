@@ -13,14 +13,7 @@ governing permissions and limitations under the License.
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import { FieldArray, useField } from "formik";
-import {
-  Radio,
-  Button,
-  Flex,
-  View,
-  Heading,
-  Divider
-} from "@adobe/react-spectrum";
+import { Radio, ActionButton, Well, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
 import FormikTextArea from "../formikReactSpectrum3/formikTextArea";
@@ -65,97 +58,57 @@ const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
     name={`${fieldName}.items`}
     render={arrayHelpers => {
       return (
-        <Flex gap="size-200" direction="column" alignItems="start">
-          <Flex
-            direction="row"
-            gap="size-200"
-            width="100%"
-            position="relative"
-            top="size-200"
-          >
-            <View flex>
-              <Heading
-                level="4"
-                marginStart="size-100"
-                marginTop="size-100"
-                marginBottom="size-50"
-              >
-                KEY
-              </Heading>
-            </View>
-            <View flex>
-              <Heading
-                level="4"
-                marginStart="size-100"
-                marginTop="size-100"
-                marginBottom="size-50"
-              >
-                VALUE
-              </Heading>
-            </View>
-            <View width="size-450" />
-          </Flex>
-
-          <Divider size="S" marginStart="0" />
-
-          {items.map((_, index) => {
-            return (
-              <Flex
-                gap="size-200"
-                key={`${fieldName}.${index}`}
-                alignItems="start"
-                width="100%"
-              >
-                <View flex>
+        <Well>
+          <Flex gap="size-100" direction="column" alignItems="start">
+            {items.map((_, index) => {
+              return (
+                <Flex key={`${fieldName}.${index}`}>
                   <FormikTextField
                     data-test-id={`keyField${index}`}
                     name={`${fieldName}.items.${index}.key`}
                     aria-label="Key"
-                    description="&nbsp;"
-                    width="100%"
+                    label={index === 0 ? "Key" : ""}
+                    width="size-3000"
                     onBlur={setTouched}
                   />
-                </View>
 
-                <View flex>
                   <DataElementSelector>
                     <FormikTextField
                       data-test-id={`valueField${index}`}
                       name={`${fieldName}.items.${index}.value`}
                       aria-label="Value"
-                      width="100%"
+                      label={index === 0 ? "Value" : ""}
+                      width="size-3000"
                       onBlur={setTouched}
+                      marginStart="size-100"
                     />
                   </DataElementSelector>
-                </View>
 
-                <View width="size-450">
-                  {items.length > 1 && (
-                    <Button
-                      data-test-id={`item${index}RemoveButton`}
-                      isQuiet
-                      variant="secondary"
-                      minWidth={0}
-                      aria-label="Delete"
-                      onPress={() => arrayHelpers.remove(index)}
-                    >
-                      <Delete />
-                    </Button>
-                  )}
-                </View>
-              </Flex>
-            );
-          })}
-          <Button
-            data-test-id="addItemButton"
-            onPress={() => {
-              arrayHelpers.push({ key: "", value: "" });
-            }}
-            variant="primary"
-          >
-            Add item
-          </Button>
-        </Flex>
+                  <ActionButton
+                    data-test-id={`item${index}RemoveButton`}
+                    isQuiet
+                    variant="secondary"
+                    aria-label="Delete"
+                    isDisabled={items.length === 1}
+                    marginTop={index === 0 ? "size-300" : ""}
+                    onPress={() => arrayHelpers.remove(index)}
+                  >
+                    <Delete />
+                  </ActionButton>
+                </Flex>
+              );
+            })}
+
+            <ActionButton
+              data-test-id="addPropertyButton"
+              onPress={() => {
+                arrayHelpers.push({ key: "", value: "" });
+              }}
+            >
+              Add another property
+            </ActionButton>
+          </Flex>
+        </Well>
       );
     }}
   />

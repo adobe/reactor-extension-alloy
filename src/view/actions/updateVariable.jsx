@@ -240,12 +240,7 @@ const validateFormikState = context => ({ values }) => {
 };
 
 const findFirstNodeIdForDepth = (formStateNode, depth) => {
-  const {
-    schema: { type },
-    properties,
-    items,
-    id
-  } = formStateNode;
+  const { schema: { type } = {}, properties, items, id } = formStateNode;
   if (depth > 0) {
     if (type === OBJECT && properties) {
       const [firstProperty] = Object.keys(properties);

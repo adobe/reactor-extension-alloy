@@ -139,7 +139,7 @@ const Editor = ({
         // and we don't want to shrink too much. If there isn't enough
         // space on the page, the page will receive a horizontal scrollbar.
       }
-      <View flex="1 0 450px" alignSelf="flex-start" position="sticky" top={0}>
+      <View flex="1 0" alignSelf="flex-start" position="sticky" top={0}>
         {selectedNodeId ? (
           <NodeEdit
             onNodeSelect={nodeId => {
