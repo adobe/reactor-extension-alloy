@@ -15,6 +15,11 @@ import { Checkbox } from "@adobe/react-spectrum";
 import FormikCheckboxGroup from "../../../components/formikReactSpectrum3/formikCheckboxGroup";
 import FieldSubset from "../../../components/fieldSubset";
 import { XDM } from "../constants/variableTypes";
+import {
+  ADOBE_ANALYTICS,
+  ADOBE_AUDIENCE_MANAGER,
+  ADOBE_TARGET
+} from "../../../constants/solutions";
 
 export const bridge = {
   async getInitialValues({ initInfo }) {
@@ -55,9 +60,9 @@ export const bridge = {
 };
 
 export const solutionsContext = [
-  ["analytics", "Adobe Analytics"],
-  ["target", "Adobe Target"],
-  ["audienceManager", "Adobe Audience Manager"]
+  [ADOBE_ANALYTICS, "Adobe Analytics"],
+  [ADOBE_TARGET, "Adobe Target"],
+  [ADOBE_AUDIENCE_MANAGER, "Adobe Audience Manager"]
 ];
 
 const DataVariable = () => (

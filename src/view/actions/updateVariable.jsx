@@ -39,6 +39,13 @@ import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRe
 import generateSchemaFromSolutions from "../components/objectEditor/helpers/generateSchemaFromSolutions";
 import validate from "../components/objectEditor/helpers/validate";
 import { ARRAY, OBJECT } from "../components/objectEditor/constants/schemaType";
+import isObjectJsonEditorEmpty from "../components/objectEditor/helpers/object-json/isEditorEmpty";
+import isAnalyticsEditorEmpty from "../components/objectEditor/helpers/object-analytics/isEditorEmpty";
+import {
+  ADOBE_ANALYTICS,
+  ADOBE_AUDIENCE_MANAGER,
+  ADOBE_TARGET
+} from "../constants/solutions";
 
 const getInitialFormStateFromDataElement = async ({
   dataElement,
@@ -243,7 +250,29 @@ const findFirstNodeIdForDepth = (formStateNode, depth) => {
   const { schema: { type } = {}, properties, items, id } = formStateNode;
   if (depth > 0) {
     if (type === OBJECT && properties) {
-      const [firstProperty] = Object.keys(properties);
+      const sortedEditors = Object.keys(properties).sort();
+      const editorsContainingValues = sortedEditors.filter(k => {
+        const map = {
+          [ADOBE_ANALYTICS]: isAnalyticsEditorEmpty,
+          [ADOBE_TARGET]: isObjectJsonEditorEmpty,
+          [ADOBE_AUDIENCE_MANAGER]: isObjectJsonEditorEmpty
+        };
+
+        if (map[k]) {
+          return map[k](properties[k]);
+        }
+
+        return false;
+      });
+
+      let firstProperty;
+
+      if (editorsContainingValues.length > 0) {
+        firstProperty = editorsContainingValues[0];
+      } else {
+        [firstProperty] = sortedEditors;
+      }
+
       if (firstProperty) {
         return findFirstNodeIdForDepth(properties[firstProperty], depth - 1);
       }
