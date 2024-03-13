@@ -809,41 +809,6 @@ const createExtensionManifest = ({ version }) => {
         viewPath: "actions/updateVariable.html"
       },
       {
-        displayName: "Create Media Session",
-        name: "create-media-session",
-        schema: {
-          $schema: "http://json-schema.org/draft-04/schema#",
-          type: "object",
-          properties: {
-            instanceName: {
-              type: "string",
-              minLength: 1
-            },
-            xdm: {
-              type: "string",
-              pattern: "^%[^%]+%$"
-            },
-            playerId: {
-              type: "string"
-            },
-            onBeforeMediaEvent: {
-              type: "string"
-            }
-          },
-          required: ["instanceName"],
-          additionalProperties: false
-        },
-        libPath: "dist/lib/actions/createMediaSession/index.js",
-        viewPath: "actions/createMediaSession.html",
-        transforms: [
-          {
-            type: "function",
-            propertyPath: "onBeforeMediaEvent",
-            parameters: ["content"]
-          }
-        ]
-      },
-      {
         displayName: "Send Media Event",
         name: "send-media-event",
         schema: {
@@ -997,13 +962,6 @@ const createExtensionManifest = ({ version }) => {
             ]
           }
         }
-      },
-      {
-        name: "media-session-id-received",
-        displayName: "Media Analytics Session ID received",
-        libPath:
-          "dist/lib/events/createMediaAnalyticsSessionIDComplete/index.js",
-        schema: {}
       }
     ],
     dataElements: [
