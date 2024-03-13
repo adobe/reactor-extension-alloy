@@ -44,6 +44,9 @@ module.exports = ({
     }
     return Promise.resolve();
   }
+  if (eventType === "media.sessionStart") {
+    return Promise.resolve();
+  }
 
   if (
     eventType === "media.sessionEnd" ||
@@ -53,14 +56,8 @@ module.exports = ({
   }
 
   const { xdm = {} } = createMediaEventSettings;
-  if (eventType === "media.sessionStart") {
-    deepAssign(xdm, {
-      eventType: "media.play",
-      mediaCollection: { sessionDetails: undefined }
-    });
-  } else {
-    deepAssign(xdm, { eventType });
-  }
+
+  deepAssign(xdm, { eventType });
 
   deepAssign(xdm.mediaCollection, { sessionID });
 

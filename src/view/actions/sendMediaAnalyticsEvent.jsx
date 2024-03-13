@@ -14,7 +14,6 @@ import comboBox from "../forms/comboBox";
 import instancePicker from "../forms/instancePicker";
 import form from "../forms/form";
 import conditional from "../forms/conditional";
-
 import renderForm from "../forms/renderForm";
 import textField from "../forms/textField";
 import mediaEventTypes from "./constants/mediaEventTypes";
@@ -650,8 +649,7 @@ const sendEventForm = form(
             })
           ]
         ),
-        ...eventBasedDetailFormConditionals,
-        qoeDataSection
+        ...eventBasedDetailFormConditionals
       ]
     ),
     conditional(
