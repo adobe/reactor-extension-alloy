@@ -13,7 +13,7 @@ import React, { useRef } from "react";
 import { v4 as uuid } from "uuid";
 import PropTypes from "prop-types";
 import { useField } from "formik";
-import { Content, Radio } from "@adobe/react-spectrum";
+import { Content, Radio, Badge } from "@adobe/react-spectrum";
 import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
 import XdmVariable, {
@@ -71,7 +71,6 @@ const Schema = ({ xdmVariableContext, initInfo }) => {
         inside of a send event action you can specify this data element as the
         value for XDM.
       </Content>
-
       <FormikRadioGroup
         label="Choose the property you want to populate"
         name="type"
@@ -83,6 +82,16 @@ const Schema = ({ xdmVariableContext, initInfo }) => {
         <Radio data-test-id="dataRadioButton" value={DATA}>
           Data
         </Radio>
+        <Badge
+          variant="info"
+          UNSAFE_style={{
+            transform: "scale(0.7)",
+            position: "relative",
+            left: "-1rem"
+          }}
+        >
+          BETA
+        </Badge>
       </FormikRadioGroup>
 
       {type === XDM && (

@@ -162,7 +162,6 @@ export default function jsonOptionalEditor(
             label={label}
             aria-label={label || ariaLabel}
             orientation="horizontal"
-            width="size-5000"
             description={description}
           >
             <Radio
@@ -172,7 +171,7 @@ export default function jsonOptionalEditor(
               Provide individual attributes
             </Radio>
             <Radio value={WHOLE} data-test-id={`${namePrefix}${name}Whole`}>
-              Provide entire object
+              Provide JSON or Data Element
             </Radio>
           </FormikRadioGroup>
           {optionValue === WHOLE && (
@@ -182,9 +181,11 @@ export default function jsonOptionalEditor(
                   data-test-id={`${namePrefix}${name}Whole`}
                   name={`${namePrefix}${name}Whole`}
                   aria-label="Value"
-                  description="Provide the entire object as JSON or a data element."
-                  width="100%"
-                  minWidth="size-5000"
+                  description={
+                    "You can provide Data Elements for individual fields within the JSON " +
+                    '(e.g. "%My Data%") or provide one data element for the entire object.'
+                  }
+                  width="size-6000"
                 />
               </DataElementSelector>
             </FieldSubset>

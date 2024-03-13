@@ -17,7 +17,9 @@ import {
   Flex,
   ProgressCircle,
   Heading,
-  Divider
+  Divider,
+  Text,
+  Badge
 } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
@@ -46,6 +48,8 @@ import {
   ADOBE_AUDIENCE_MANAGER,
   ADOBE_TARGET
 } from "../constants/solutions";
+
+const isDataVariable = data => data?.settings?.solutions?.length > 0;
 
 const getInitialFormStateFromDataElement = async ({
   dataElement,
@@ -99,7 +103,7 @@ const getInitialFormStateFromDataElement = async ({
       });
     }
   }
-  if (dataElement?.settings?.solutions) {
+  if (isDataVariable(dataElement)) {
     const schema = generateSchemaFromSolutions(dataElement.settings.solutions);
     context.schema = schema;
 
@@ -171,7 +175,7 @@ const getInitialValues = context => async ({ initInfo }) => {
       return memo;
     }, {});
 
-    if (dataElement?.settings?.solutions?.length > 0) {
+    if (isDataVariable(dataElement)) {
       data = { data };
     } else {
       data = { xdm: data };
@@ -394,6 +398,15 @@ const UpdateVariable = ({
         <>
           <Heading size="M" margin="0">
             Variable Editor
+            {isDataVariable(dataElement) && (
+              <Badge
+                marginStart="size-10"
+                variant="info"
+                UNSAFE_style={{ transform: "scale(0.7)" }}
+              >
+                BETA
+              </Badge>
+            )}
           </Heading>
           <Divider margin={0} size="M" />
 
@@ -414,20 +427,34 @@ const UpdateVariable = ({
 
           <CodeField
             data-test-id="onBeforeEventSendEditButton"
-            label="Callback"
-            buttonLabelSuffix="callback code"
+            aria-label="Custom Code"
+            buttonLabelSuffix="custom code"
             name="customCode"
             description={
-              "Callback function for updating the variable. The callback will be executed after the changes " +
-              "defined inside the variable editor are applied to the variable." +
-              ' A variable named "content" will be available for use within your custom code.'
+              <Text>
+                Use this editor to set additional properties on the variable
+                object using custom code. The custom code will be executed after
+                the properties defined inside the variable editor are applied to
+                the variable. <br />
+                <br />
+                The following variables are available for use within your custom
+                code:
+                <ul style={{ margin: 0 }}>
+                  <li>content - The variable object.</li>
+                  <li>
+                    event - The underlying event object that caused this rule to
+                    fire.
+                  </li>
+                </ul>
+              </Text>
             }
             language="javascript"
             placeholder={
               "// Modify content as necessary. There is no need to wrap the code in a function or return a value." +
-              "\n// For example you can set the page name by writing" +
+              "\n// For example if you are updating an XDM Variable Data Element, you can set the page name by writing:" +
               '\n// content.web.webPageDetails.name = "Checkout";' +
-              "\n// or you can add an Analytics eVar by writing \n// content.__adobe.analytics.eVar15 = 'value';"
+              "\n// If you are updating a Data Variable Data Element you can update an Analytics page name by writing:" +
+              "\n// content.__adobe.analytics.eVar15 = 'value';"
             }
           />
         </>

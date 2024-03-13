@@ -23,6 +23,7 @@ import CodePreview from "./codePreview";
  */
 const CodeField = ({
   "data-test-id": dataTestId,
+  "aria-label": ariaLabel,
   label,
   buttonLabelSuffix,
   name,
@@ -59,6 +60,7 @@ const CodeField = ({
       data-test-id={dataTestId}
       value={value}
       label={label}
+      aria-label={ariaLabel}
       buttonLabel={`${value ? "Edit" : "Provide"} ${buttonLabelSuffix}`}
       description={description}
       error={touched && error ? error : undefined}
@@ -69,10 +71,11 @@ const CodeField = ({
 
 CodeField.propTypes = {
   "data-test-id": PropTypes.string,
+  "aria-label": PropTypes.string,
   label: PropTypes.string,
   buttonLabelSuffix: PropTypes.string,
   name: PropTypes.string.isRequired,
-  description: PropTypes.string,
+  description: PropTypes.node,
   language: PropTypes.string,
   placeholder: PropTypes.string
 };

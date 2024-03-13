@@ -35,10 +35,13 @@ const WholePopulationStrategyForm = ({ fieldName, setTouched }) => (
     <FormikTextArea
       data-test-id="valueField"
       name={`${fieldName}.value`}
-      label="Data element"
-      description="A valid JSON object or a data element."
-      width="100%"
-      minWidth="size-4600"
+      aria-label="Value"
+      description={
+        "You can provide Data Elements for individual fields within the JSON " +
+        '(e.g. "%My Data%") or provide one data element for the entire object.'
+      }
+      width="size-6000"
+      marginStart="size-300"
       onBlur={setTouched}
     />
   </DataElementSelector>
@@ -58,7 +61,7 @@ const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
     name={`${fieldName}.items`}
     render={arrayHelpers => {
       return (
-        <Well>
+        <Well marginStart="size-300">
           <Flex gap="size-100" direction="column" alignItems="start">
             {items.map((_, index) => {
               return (
@@ -197,7 +200,7 @@ const ObjectJsonEdit = props => {
     <FormElementContainer>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
-          label="Population strategy"
+          aria-label="Population strategy"
           name={`${fieldName}.populationStrategy`}
           orientation="horizontal"
           onChange={strategyOnChange}
@@ -206,7 +209,7 @@ const ObjectJsonEdit = props => {
             Provide individual attributes
           </Radio>
           <Radio data-test-id="wholePopulationStrategyField" value={WHOLE}>
-            Provide entire object
+            Provide JSON or Data Element
           </Radio>
         </FormikRadioGroup>
       )}
