@@ -122,7 +122,7 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
     settings.contextData = Object.keys(
       originalSettings.contextData || {}
     ).reduce((memo, key) => {
-      memo[key] = originalSettings.contextData[key];
+      memo[key] = { value: originalSettings.contextData[key] };
       return memo;
     }, {});
     if (Object.keys(settings.contextData).length === 0) {
