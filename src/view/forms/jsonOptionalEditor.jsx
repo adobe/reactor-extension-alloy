@@ -145,12 +145,18 @@ export default function jsonOptionalEditor(
               })
             );
           } catch (e) {
-            // eslint-disable-next-line no-empty
+            setValue(getChildrenInitialValues({ initInfo: { settings: {} } }));
           }
         } else if (optionValue === WHOLE && lastOptionValue.current === PARTS) {
-          setWholeValue(
-            JSON.stringify(getChildrenSettings({ values: value }), null, 2)
+          const v = JSON.stringify(
+            getChildrenSettings({ values: value }),
+            null,
+            2
           );
+
+          if (v !== "{}") {
+            setWholeValue(v);
+          }
         }
         lastOptionValue.current = optionValue;
       }, [optionValue]);
