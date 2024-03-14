@@ -343,12 +343,13 @@ const UpdateVariable = ({
             setHasSchema(true);
           }
         }
-        if (dataElement.settings.solutions) {
+
+        if (isDataVariable(dataElement)) {
           setSelectedNodeId(findFirstNodeIdForDepth(values, 3));
         }
       }
     }),
-    [dataElement?.settings?.schema?.id || dataElement?.settings?.solutions]
+    [dataElement]
   );
 
   const loadItems = useReportAsyncError(
