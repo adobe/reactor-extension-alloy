@@ -389,20 +389,6 @@ const analyticsForm = form(
   ]
 );
 
-/*
-const testForm = form({}, [
-  textField({
-    name: "testField",
-    label: "Test Field",
-    isRequired: true
-  }),
-  textField({
-    name: "testField2",
-    label: "Test Field 2",
-    isRequired: true
-  })
-]); */
-
 export default jsonOptionalEditor(
   {
     name: "value",
