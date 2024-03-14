@@ -66,7 +66,7 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
     (memo, key) => {
       let copy = "";
       let value = originalSettings[key];
-      let action = "set";
+      let action;
       if (
         (key.startsWith("eVar") || key.startsWith("prop")) &&
         value.match(DYNAMIC_VARIABLE_REGEX)
@@ -229,7 +229,8 @@ const setOrCopyRow = (name, label, items) => {
       dataElementSupported: false,
       items,
       width: "size-3000",
-      label
+      label,
+      isRequired: true
     }),
     comboBox({
       name: "action",
@@ -319,7 +320,8 @@ const analyticsForm = form(
           dataElementSupported: false,
           items: eventItems,
           width: "size-3000",
-          label: "Event"
+          label: "Event",
+          isRequired: true
         }),
         textField({
           name: "id",
@@ -347,7 +349,8 @@ const analyticsForm = form(
           name: "key",
           dataElementSupported: false,
           width: "size-3000",
-          label: "Context data key"
+          label: "Context data key",
+          isRequired: true
         }),
         textField({
           name: "value",
@@ -363,7 +366,8 @@ const analyticsForm = form(
         objectKey: "property",
         objectLabelPlural: "Properties",
         dataElementSupported: false,
-        horizontal: true
+        horizontal: true,
+        isRequired: true
       },
       [
         comboBox({

@@ -115,7 +115,7 @@ export default function comboBox({
     },
     getSettings({ values }) {
       const settings = {};
-      if (values[name]) {
+      if (values[name] !== defaultValue) {
         const item = items.find(({ label: l }) => l === values[name]);
         settings[name] = item ? item.value : values[name];
       }
