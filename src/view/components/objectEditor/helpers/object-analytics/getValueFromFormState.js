@@ -15,7 +15,7 @@ import analyticsForm from "./analyticsForm";
 export default ({ formStateNode }) => {
   let { value } = analyticsForm.getSettings({ values: formStateNode }) || {};
 
-  if (Object.keys(value).length === 0) {
+  if (value && Object.keys(value).length === 0) {
     value = undefined;
   }
 
