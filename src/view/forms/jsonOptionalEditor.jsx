@@ -176,7 +176,7 @@ export default function jsonOptionalEditor(
             >
               Provide individual attributes
             </Radio>
-            <Radio value={WHOLE} data-test-id={`${namePrefix}${name}Whole`}>
+            <Radio value={WHOLE} data-test-id={`${namePrefix}${name}WholeOption`}>
               Provide JSON or Data Element
             </Radio>
           </FormikRadioGroup>
