@@ -69,7 +69,7 @@ export default function conditional({ args, condition }, children) {
       );
     },
     Component: props => {
-      const { namePrefix } = props;
+      const { namePrefix = "" } = props;
       const conditionalArgValues = argsArray.map(arg => {
         const [{ value }] = useField(`${namePrefix}${arg}`);
         return value;
