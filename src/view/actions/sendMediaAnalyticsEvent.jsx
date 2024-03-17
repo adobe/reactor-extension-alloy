@@ -137,20 +137,25 @@ const advertisingPodDetailsSection = section(
   [
     textField({
       name: "friendlyName",
-      label: "Friendly Name",
+      label: "Ad Break Name",
       description: "The friendly name of the Ad Break."
     }),
-    textField({
+    numberField({
       name: "offset",
-      label: "Offset",
+      label: "Ad Break Offset (seconds)",
       isRequired: true,
-      description: "The offset of the ad break inside the content, in seconds."
+      description: "The offset of the ad break inside the content, in seconds.",
+      dataElementDescription:
+        "This data element should resolve to a integer number."
     }),
-    textField({
+    numberField({
       name: "index",
-      label: "Index",
+      label: "Ad Break Index",
       isRequired: true,
-      description: "The index of the ad break inside the content starting at 1."
+      description:
+        "The index of the ad break inside the content starting at 1.",
+      dataElementDescription:
+        "This data element should resolve to a integer number."
     })
   ]
 );
@@ -160,33 +165,39 @@ const chapterSection = dataElementSection(
     name: "chapterDetails",
     objectKey: "chapterDetails",
     dataElementDescription:
-      "Enter the data element that returns chapter details object."
+      "Enter the data element that returns a chapter details object."
   },
   [
     textField({
       name: "friendlyName",
-      label: "Friendly name",
+      label: "Chapter Name",
       description: "The name of the chapter and/or segment."
     }),
-    textField({
+    numberField({
       name: "length",
-      label: "Length",
+      label: "Chapter Length",
       isRequired: true,
-      description: "The length of the chapter, in seconds."
+      description: "The length of the chapter, in seconds.",
+      dataElementDescription:
+        "Enter the data element that returns a integer length."
     }),
-    textField({
+    numberField({
       name: "index",
-      label: "Index",
+      label: "Chapter Index",
       isRequired: true,
       description:
-        "The position (index, integer) of the chapter inside the content."
+        "The position (index, integer) of the chapter inside the content.",
+      dataElementDescription:
+        "Enter the data element that returns a integer position (index, integer) of the chapter inside the content."
     }),
-    textField({
+    numberField({
       name: "offset",
-      label: "offset",
+      label: "Chapter Offset",
       isRequired: true,
       description:
-        "The offset of the chapter inside the content (in seconds) from the start."
+        "The offset of the chapter inside the content (in seconds) from the start.",
+      dataElementDescription:
+        "Enter the data element that returns a integer number representing offset of the chapter inside the content (in seconds) from the start."
     })
   ]
 );
@@ -201,20 +212,22 @@ const advertisingDetailsSection = dataElementSection(
   [
     textField({
       name: "friendlyName",
-      label: "Friendly Name",
+      label: "Ad Name",
       description: "Friendly name of the ad."
     }),
     textField({
       name: "name",
-      label: "Name",
+      label: "Ad ID",
       isRequired: true,
       description: "ID of the ad. (Any integer and/or letter combination)"
     }),
-    textField({
+    numberField({
       name: "length",
-      label: "Length",
+      label: "Ad length (seconds)",
       isRequired: true,
-      description: "Enter index."
+      description: "Length of the video ad in seconds.",
+      dataElementDescription:
+        "This data element should resolve to a integer number."
     }),
     textField({
       name: "advertiser",
@@ -247,16 +260,18 @@ const advertisingDetailsSection = dataElementSection(
       label: "Site ID",
       description: "ID of the ad site."
     }),
-    textField({
+    numberField({
       name: "podPosition",
       label: "Pod Position",
       isRequired: true,
       description:
-        "The position (index) of the ad inside the parent ad break. The first ad has index 0, the second ad has index 1 etc."
+        "The position (index) of the ad inside the parent ad break. The first ad has index 0, the second ad has index 1 etc.",
+      dataElementDescription:
+        "This data element should resolve to a integer number."
     }),
     textField({
       name: "playerName",
-      label: "Player name",
+      label: "Ad Player Name",
       isRequired: true,
       description: "The name of the player responsible for rendering the ad."
     })
@@ -339,14 +354,15 @@ const sessionDetailsSection = dataElementSection(
       isRequired: true,
       description: "Name of the media player."
     }),
-    textField({
+    numberField({
       name: "length", // integer
       label: "Clip Length/Runtime (seconds)",
       isRequired: true,
       description:
         "This is the maximum length (or duration) of the content being consumed (in seconds)." +
         "\nImportant: This property is used to compute several metrics, such as progress tracking metrics and Average Minute Audience. If this is not set, or not greater than zero, then these metrics are not available. \n" +
-        "For Live media with an unknown duration, the value of 86400 is the default."
+        "For Live media with an unknown duration, the value of 86400 is the default.",
+      dataElementDescription: "This data element should resolve to a number."
     }),
     textField({
       name: "name",
