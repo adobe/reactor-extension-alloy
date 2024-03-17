@@ -17,10 +17,8 @@ import conditional from "../forms/conditional";
 import renderForm from "../forms/renderForm";
 import textField from "../forms/textField";
 import mediaEventTypes from "./constants/mediaEventTypes";
-import checkbox from "../forms/checkbox";
 import section from "../forms/section";
 import fieldArray from "../forms/fieldArray";
-import codeField from "../forms/codeField";
 import numberField from "../forms/numberField";
 import dataElementSection from "../forms/dataElementSection";
 
@@ -300,7 +298,7 @@ const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
 ]);
 const sessionDetailsSection = dataElementSection(
   {
-    label: "Media Session details",
+    label: "Media session details",
     name: "sessionDetails",
     dataElementDescription:
       "This should resolve to an object containing session details.",
@@ -312,39 +310,54 @@ const sessionDetailsSection = dataElementSection(
       label: "Channel",
       isRequired: true,
       description:
-        "Distribution Station/Channels or where the content is played. Any string value is accepted here"
+        "Distribution Station/Channels where the content is played. Any string value is accepted here."
     }),
-    textField({
+    comboBox({
       name: "contentType",
-      label: "Content Type",
+      label: "Content type",
       isRequired: true,
       description:
-        "Available values per Stream Type: Audio - “song”, “podcast”, “audiobook”, “radio”; Video: “VoD”, “Live”, " +
-        "“Linear”, “UGC”, “DVoD” Customers can provide custom values for this parameter."
+        "Enter the content type of the media session. Select a predefined value or enter a custom value.",
+      dataElementDescription:
+        "Enter a data element that resolves to a content type.",
+      items: [
+        { value: "vod", label: "Video-on-demand" },
+        { value: "live", label: "Live streaming" },
+        { value: "linear", label: "Linear playback of the media asset" },
+        { value: "ugc", label: "User-generated content" },
+        { value: "dvod", label: "Downloaded video-on-demand" },
+        { value: "radio", label: "Radio show" },
+        { value: "podcast", label: "Podcast" },
+        { value: "audiobook", label: "Audiobook" },
+        { value: "song", label: "Song" }
+      ],
+      allowsCustomValue: true
     }),
     textField({
       name: "playerName",
-      label: "PlayerName",
+      label: "Content player name",
       isRequired: true,
-      description: "Name of the player."
+      description: "Name of the media player."
     }),
     textField({
       name: "length", // integer
-      label: "Length",
+      label: "Clip Length/Runtime (seconds)",
       isRequired: true,
       description:
-        "Clip Length/Runtime - This is the maximum length (or duration) of the content being consumed (in seconds)"
+        "This is the maximum length (or duration) of the content being consumed (in seconds)." +
+        "\nImportant: This property is used to compute several metrics, such as progress tracking metrics and Average Minute Audience. If this is not set, or not greater than zero, then these metrics are not available. \n" +
+        "For Live media with an unknown duration, the value of 86400 is the default."
     }),
     textField({
       name: "name",
-      label: "Name",
+      label: "Content ID",
       isRequired: true,
       description:
         "Content ID of the content, which can be used to tie back to other industry / CMS IDs."
     }),
     textField({
       name: "adLoad",
-      label: "Ad Load",
+      label: "Ad Load Type",
       isRequired: false,
       description: ""
     }),
@@ -359,7 +372,7 @@ const sessionDetailsSection = dataElementSection(
       name: "artist",
       label: "Artist",
       isRequired: false,
-      description: ""
+      description: "Artist's name."
     }),
     textField({
       name: "rating",
@@ -378,7 +391,7 @@ const sessionDetailsSection = dataElementSection(
       name: "episode",
       label: "Episode",
       isRequired: false,
-      description: "The number of the episode."
+      description: "Episode number."
     }),
     textField({
       name: "originator",
@@ -433,17 +446,24 @@ const sessionDetailsSection = dataElementSection(
       description:
         "The season number the show belongs to. Season Series is required only if the show is part of a series."
     }),
-    textField({
+    comboBox({
       name: "showType",
       label: "Show Type",
-      isRequired: false,
       description:
-        "Available values per Stream Type: Audio - “song”, “podcast”, “audiobook”, “radio”; Video: “VoD”, “Live”, " +
-        "“Linear”, “UGC”, “DVoD” Customers can provide custom values for this parameter."
+        "Type of content, expressed as an integer between 0 and 3. Select a predefined value or enter a custom value.",
+      dataElementDescription:
+        "Enter a data element that resolves to a show type.",
+      items: [
+        { value: "0", label: "Full episode" },
+        { value: "1", label: "Preview/trailer" },
+        { value: "2", label: "Clip" },
+        { value: "3", label: "Other" }
+      ],
+      allowsCustomValue: true
     }),
     textField({
       name: "friendlyName",
-      label: "Friendly Name",
+      label: "Content name",
       isRequired: false,
       description:
         "This is the “friendly” (human-readable) name of the content."
@@ -482,7 +502,7 @@ const sessionDetailsSection = dataElementSection(
     }),
     textField({
       name: "feed",
-      label: "Feed",
+      label: "Feed type",
       isRequired: false,
       description: "Type of feed."
     }),
@@ -573,24 +593,32 @@ const qoeDataSection = dataElementSection(
   [
     textField({
       name: "bitrate",
-      label: "Bitrate",
-      description: "Enter bitrate.",
+      label: "Average bitrate (in kbps)",
+      description:
+        "The average bitrate (in kbps). The value is predefined buckets at 100kbps intervals. " +
+        "The Average Bitrate is computed as a weighted average of all bitrate values related to the play " +
+        "duration that occurred during a playback session.",
       isRequired: true
     }),
     textField({
       name: "droppedFrames",
-      label: "Dropped Frames",
-      description: "Enter dropped frames."
+      label: "Dropped Frames (Int)",
+      description:
+        "The number of dropped frames (Int). This value is computed as a sum of " +
+        "all frames dropped during a playback session. "
     }),
     textField({
       name: "framesPerSecond",
-      label: "Frames Per Second",
-      description: "Enter Frames Per Second."
+      label: "Frames Per Second (in frames per second)",
+      description:
+        "The current value of the stream frame-rate (in frames per second). "
     }),
     textField({
       name: "timeToStart",
-      label: "Time To Start",
-      description: "Enter Time To Start."
+      label: "Time To Start (milliseconds)",
+      description:
+        "This value defaults to zero if you do not set it through the QoSObject. " +
+        "You set this value in milliseconds. The value will be displayed in the time format (HH:MM:SS) "
     })
   ]
 );
@@ -612,70 +640,21 @@ const sendEventForm = form(
         return items;
       }, [])
     }),
-    checkbox({
-      name: "automaticSessionHandler",
-      label: "Handle Media Session automatically.",
-      description:
-        "Check this to let Web SDK to retrieve the current play head, session ID, QOE data by using the PlayerID bellow.",
-      defaultValue: true
+    textField({
+      name: "playerId",
+      label: "Player ID",
+      isRequired: true,
+      description: "Enter your player ID"
     }),
-    conditional(
-      {
-        args: "automaticSessionHandler",
-        condition: automaticSessionHandler => automaticSessionHandler === true
-      },
-      [
-        textField({
-          name: "playerId",
-          label: "Player ID",
-          isRequired: true,
-          description: "Enter your player ID"
-        }),
-        conditional(
-          {
-            args: "eventType",
-            condition: eventType => eventType === "media.sessionStart"
-          },
-          [
-            codeField({
-              name: "onBeforeMediaEvent",
-              label: "On before media event send callback",
-              description:
-                "Callback function for retrieving the playhead, Quality of Experience Data.",
-              placeholder:
-                "// introduce the function code to retrieve the playhead.",
-              buttonLabelSuffix: "",
-              isRequired: true
-            })
-          ]
-        ),
-        ...eventBasedDetailFormConditionals
-      ]
-    ),
-    conditional(
-      {
-        args: "automaticSessionHandler",
-        condition: automaticSessionHandler => automaticSessionHandler === false
-      },
-      [
-        textField({
-          name: "playerId",
-          label: "Player ID",
-          isRequired: true,
-          description: "Enter your player ID"
-        }),
-        numberField({
-          name: "playhead",
-          label: "Playhead",
-          isRequired: true,
-          description: "Enter the playhead",
-          dataElementDescription:
-            "This data element should resolve to a number."
-        }),
-        ...eventBasedDetailFormConditionals,
-        qoeDataSection
-      ]
-    )
+    numberField({
+      name: "playhead",
+      label: "Playhead",
+      isRequired: true,
+      description: "Enter the playhead",
+      dataElementDescription: "This data element should resolve to a number."
+    }),
+    ...eventBasedDetailFormConditionals,
+    qoeDataSection
   ]
 );
 
