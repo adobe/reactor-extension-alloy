@@ -289,7 +289,8 @@ const analyticsForm = form(
         objectKey: "evar",
         objectLabelPlural: "eVars",
         dataElementSupported: false,
-        horizontal: true
+        horizontal: true,
+        isRowEmpty: ({ evar, value }) => evar === "" && value === ""
       },
       setOrCopyRow("evar", "eVar", evarItems)
     ),
@@ -300,7 +301,8 @@ const analyticsForm = form(
         objectKey: "prop",
         objectLabelPlural: "Props",
         dataElementSupported: false,
-        horizontal: true
+        horizontal: true,
+        isRowEmpty: ({ prop, value }) => prop === "" && value === ""
       },
       setOrCopyRow("prop", "Prop", propItems)
     ),
@@ -312,7 +314,9 @@ const analyticsForm = form(
         objectLabelPlural: "Events",
         dataElementSupported: false,
         horizontal: true,
-        compareFunction: eventCompareFunction
+        compareFunction: eventCompareFunction,
+        isRowEmpty: ({ event, id, value }) =>
+          event === "" && value === "" && id === ""
       },
       [
         comboBox({
@@ -342,7 +346,8 @@ const analyticsForm = form(
         singularLabel: "Context data key",
         objectKey: "key",
         objectLabelPlural: "Context data values",
-        horizontal: true
+        horizontal: true,
+        isRowEmpty: ({ key, value }) => key === "" && value === ""
       },
       [
         textField({
@@ -367,7 +372,8 @@ const analyticsForm = form(
         objectLabelPlural: "Properties",
         dataElementSupported: false,
         horizontal: true,
-        isRequired: true
+        isRequired: true,
+        isRowEmpty: ({ property, value }) => property === "" && value === ""
       },
       [
         comboBox({

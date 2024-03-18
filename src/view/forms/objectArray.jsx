@@ -93,7 +93,8 @@ export default function objectArray(
     objectLabelPlural,
     dataElementSupported = true,
     horizontal = false,
-    compareFunction = numberAwareCompareFunction
+    compareFunction = numberAwareCompareFunction,
+    isRowEmpty = () => true
   },
   children = []
 ) {
@@ -270,7 +271,7 @@ export default function objectArray(
               render={arrayHelpers => {
                 return (
                   <>
-                    {items.map((__, index) => {
+                    {items.map((item, index) => {
                       return (
                         <div key={index}>
                           {!horizontal && (
@@ -293,7 +294,9 @@ export default function objectArray(
                                       items.filter((_, i) => i !== index)
                                     );
                                   }}
-                                  isDisabled={items.length === 1}
+                                  isDisabled={
+                                    items.length === 1 && isRowEmpty(item)
+                                  }
                                   marginStart="auto"
                                 >
                                   Remove {lowerInitialLetters(singularLabel)}
@@ -313,11 +316,17 @@ export default function objectArray(
                                 isQuiet
                                 variant="secondary"
                                 data-test-id={`${namePrefix}${name}${index}RemoveButton`}
-                                onPress={() => {
+                                onPress={() =>
                                   // using arrayHelpers.remove mangles the error message
-                                  setItems(items.filter((_, i) => i !== index));
-                                }}
-                                isDisabled={items.length === 1}
+                                  items.length > 1
+                                    ? setItems(
+                                        items.filter((_, i) => i !== index)
+                                      )
+                                    : setItems([buildDefaultItem()])
+                                }
+                                isDisabled={
+                                  items.length === 1 && isRowEmpty(item)
+                                }
                                 marginTop={index === 0 ? "size-300" : 0}
                               >
                                 <Delete />

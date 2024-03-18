@@ -26,6 +26,8 @@ import {
   addToVariablesFromEntity
 } from "./helpers/entityVariablesConverter";
 
+const getEmptyItem = () => ({ key: "", value: "" });
+
 /**
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
@@ -63,7 +65,7 @@ const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
       return (
         <Well marginStart="size-300">
           <Flex gap="size-100" direction="column" alignItems="start">
-            {items.map((_, index) => {
+            {items.map(({ key, value }, index) => {
               return (
                 <Flex key={`${fieldName}.${index}`}>
                   <FormikTextField
@@ -92,9 +94,13 @@ const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
                     isQuiet
                     variant="secondary"
                     aria-label="Delete"
-                    isDisabled={items.length === 1}
+                    isDisabled={items.length === 1 && !key && !value}
                     marginTop={index === 0 ? "size-300" : ""}
-                    onPress={() => arrayHelpers.remove(index)}
+                    onPress={() =>
+                      items.length > 1
+                        ? arrayHelpers.remove(index)
+                        : arrayHelpers.replace(index, getEmptyItem())
+                    }
                   >
                     <Delete />
                   </ActionButton>
@@ -122,8 +128,6 @@ PartsPopulationStrategyForm.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   setTouched: PropTypes.func.isRequired
 };
-
-const getEmptyItem = () => ({ key: "", value: "" });
 
 const updateJsonTextarea = ({
   setValue,
