@@ -18,6 +18,7 @@ import jsonOptionalEditor from "../../../../forms/jsonOptionalEditor";
 import numberAwareCompareFunction from "../../../../utils/numberAwareCompareFunction";
 import eventCompareFunction from "../../../../utils/eventCompareFunction";
 import conditional from "../../../../forms/conditional";
+import FormikPicker from "../../../formikReactSpectrum3/formikPicker";
 
 const DYNAMIC_VARIABLE_REGEX = /^D=[cv]\d+$/;
 
@@ -241,7 +242,8 @@ const setOrCopyRow = (name, label, items) => {
       ],
       width: "size-2000",
       label: "Action",
-      defaultValue: "set"
+      defaultValue: "set",
+      Component: FormikPicker
     }),
     conditional(
       {

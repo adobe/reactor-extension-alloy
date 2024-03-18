@@ -52,7 +52,8 @@ export default function comboBox({
   items,
   allowsCustomValue = false,
   width = "size-5000",
-  defaultValue = ""
+  defaultValue = "",
+  Component = FormikKeyedComboBox
 }) {
   let fieldSchema = string();
   if (!allowsCustomValue) {
@@ -82,7 +83,7 @@ export default function comboBox({
     ...otherProps
   }) => {
     return (
-      <FormikKeyedComboBox
+      <Component
         {...otherProps}
         data-test-id={`${innerName}Field`}
         name={innerName}
@@ -101,7 +102,7 @@ export default function comboBox({
             {item.label}
           </Item>
         )}
-      </FormikKeyedComboBox>
+      </Component>
     );
   };
   InnerComponent.propTypes = {
