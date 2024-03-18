@@ -14,6 +14,7 @@ import { string } from "yup";
 import { Item } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
+import Data from "@spectrum-icons/workflow/Data";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikKeyedComboBox from "../components/formikReactSpectrum3/formikKeyedComboBox";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
@@ -44,6 +45,7 @@ export default function comboBox({
   name,
   isRequired = false,
   dataElementSupported = true,
+  fillDataElementIconSpace = false,
   label,
   description,
   dataElementDescription,
@@ -76,10 +78,12 @@ export default function comboBox({
     name: innerName,
     label: innerLabel,
     description: innerDescription,
-    "aria-label": ariaLabel
+    "aria-label": ariaLabel,
+    ...otherProps
   }) => {
     return (
       <FormikKeyedComboBox
+        {...otherProps}
         data-test-id={`${innerName}Field`}
         name={innerName}
         label={innerLabel}
@@ -143,12 +147,18 @@ export default function comboBox({
         );
       }
       return (
-        <InnerComponent
-          name={`${namePrefix}${name}`}
-          label={hideLabel ? undefined : label}
-          aria-label={label}
-          description={description}
-        />
+        <>
+          <InnerComponent
+            name={`${namePrefix}${name}`}
+            label={hideLabel ? undefined : label}
+            aria-label={label}
+            description={description}
+            marginEnd={fillDataElementIconSpace ? "size-25" : ""}
+          />
+          {fillDataElementIconSpace && (
+            <Data UNSAFE_style={{ visibility: "hidden" }} />
+          )}
+        </>
       );
     }
   };

@@ -269,7 +269,8 @@ const setOrCopyRow = (name, label, items) => {
           dataElementSupported: false,
           items: evarItems.concat(propItems),
           width: "size-3000",
-          label: "Value"
+          label: "Value",
+          fillDataElementIconSpace: true
         })
       ]
     )
