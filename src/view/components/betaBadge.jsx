@@ -23,7 +23,7 @@ const betaBadge = ({ isDisabled }) => {
 
   return (
     <Badge variant="info" marginStart="size-100" UNSAFE_style={styles}>
-      Beta
+      BETA
     </Badge>
   );
 };

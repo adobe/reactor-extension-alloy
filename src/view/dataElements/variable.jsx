@@ -13,7 +13,7 @@ import React, { useRef } from "react";
 import { v4 as uuid } from "uuid";
 import PropTypes from "prop-types";
 import { useField } from "formik";
-import { Content, Radio, Badge } from "@adobe/react-spectrum";
+import { Content, Radio } from "@adobe/react-spectrum";
 import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
 import XdmVariable, {
@@ -25,6 +25,7 @@ import DataVariable, {
 import render from "../render";
 import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import { XDM, DATA } from "./variable/constants/variableTypes";
+import BetaBadge from "../components/betaBadge";
 
 const getInitialValues = ({ xdmVariableContext }) => async ({ initInfo }) => {
   const { cacheId = uuid() } = initInfo.settings || {};
@@ -81,17 +82,8 @@ const Schema = ({ xdmVariableContext, initInfo }) => {
         </Radio>
         <Radio data-test-id="dataRadioButton" value={DATA}>
           Data
+          <BetaBadge />
         </Radio>
-        <Badge
-          variant="info"
-          UNSAFE_style={{
-            transform: "scale(0.7)",
-            position: "relative",
-            left: "-1rem"
-          }}
-        >
-          BETA
-        </Badge>
       </FormikRadioGroup>
 
       {type === XDM && (
