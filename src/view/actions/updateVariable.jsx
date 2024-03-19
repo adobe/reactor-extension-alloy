@@ -445,9 +445,13 @@ const UpdateVariable = ({
             placeholder={
               "// Modify content as necessary. There is no need to wrap the code in a function or return a value." +
               "\n// For example if you are updating an XDM Variable Data Element, you can set the page name by writing:" +
-              '\n// content.web.webPageDetails.name = "Checkout";' +
-              "\n// If you are updating a Data Variable Data Element you can update an Analytics page name by writing:" +
-              "\n// content.__adobe.analytics.eVar15 = 'value';"
+              "\n\n// content.web = content.web || {};" +
+              "\n// content.web.webPageDetails = content.web.webPageDetails || {};" +
+              '\n// content.web.webPageDetails.name = "Home";' +
+              "\n\n// If you are updating a Data Variable Data Element you can update an Analytics page name by writing:" +
+              "\n\n// content.__adobe = content.__adobe || {};" +
+              "\n// content.__adobe.analytics = content.__adobe.analytics || {};" +
+              '\n// content.__adobe.analytics.eVar5 = "Test";'
             }
           />
         </>
