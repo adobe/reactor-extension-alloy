@@ -29,28 +29,16 @@ import {
 
 /** @typedef {import("./form").Form} Form */
 /**
- * This creates a form field for a radio group and supports data elements.
- * @param {object} options - Options for the radio group.
- * @param {string} options.name - The formik key to use for this field. The
- * following formik keys will be used:
- *  - `${name}Option` - The radio group field.
- *  - `${name}DataElement` - The data element field.
- *  - `${name}` - The field for the child form.
- * @param {boolean} [options.isRequired] - Whether or not the field is required.
- * @param {boolean} [options.dataElementSupported] - Whether or not a "Provide a
- * data element" option should be available.
- * @param {string} options.label - The label to use for the field.
- * @param {string} [options.defaultValue] - The default value to use for the radio
- * group.
- * @param {string} [options.dataElementDescription] - The description to use for
- * the data element field. Usually you would use this to describe the values the
- * data element could resolve to.
- * @param {{ value: string, label: string }[]} options.items - The items to use for the radio group.
- * @param {string} [options.description] - The description to use for the radio group.
- * @param {boolean} [options.beta] - If true, a beta badge will be shown next to the
- * radio group label.
- * @returns {Form} A form field for a radio group.
- */
+ * @property {string} name - The name of the field. This will resolve to one of the following:
+ *  - A string containing a data element
+ *  - An parsed object from the JSON editor
+ *  - An object containing the values of the children fields
+ * @property {string} [optionName] - The name of the field that will determine if the user is
+ * providing a JSON object or individual fields. Defaults to `${name}Option`.
+ * @property {string} label - The label for the field.
+ * @property {string} [aria-label] - The aria-label for the field.
+ * @property {string} [description] - The description for the field.
+ * */
 export default function jsonOptionalEditor(
   {
     name,
@@ -176,7 +164,10 @@ export default function jsonOptionalEditor(
             >
               Provide individual attributes
             </Radio>
-            <Radio value={WHOLE} data-test-id={`${namePrefix}${name}WholeOption`}>
+            <Radio
+              value={WHOLE}
+              data-test-id={`${namePrefix}${name}WholeOption`}
+            >
               Provide JSON or Data Element
             </Radio>
           </FormikRadioGroup>
