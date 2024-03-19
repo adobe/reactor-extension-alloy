@@ -29,7 +29,7 @@ import ArrayEdit from "./arrayEdit";
 import BooleanEdit from "./booleanEdit";
 import IntegerEdit from "./integerEdit";
 import ObjectJsonEdit from "./objectJsonEdit";
-import analyticsForm from "./helpers/object-analytics/analyticsForm";
+import ObjectAnalyticsEdit from "./objectAnalyticsEdit";
 import NumberEdit from "./numberEdit";
 import ObjectEdit from "./objectEdit";
 import StringEdit from "./stringEdit";
@@ -38,15 +38,6 @@ import { ALWAYS, NONE } from "./constants/autoPopulationSource";
 import "./nodeEdit.styl";
 import FormikCheckbox from "../formikReactSpectrum3/formikCheckbox";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
-
-const ObjectAnalyticsEdit = ({ fieldName, ...otherProps }) => {
-  return (
-    <analyticsForm.Component namePrefix={`${fieldName}.`} {...otherProps} />
-  );
-};
-ObjectAnalyticsEdit.propTypes = {
-  fieldName: PropTypes.string.isRequired
-};
 
 const getViewBySchemaType = schemaType => {
   switch (schemaType) {
