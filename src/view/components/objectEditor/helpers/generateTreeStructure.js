@@ -112,7 +112,10 @@ const getTreeNode = ({
   // has tried to save the data element (formik marks all fields as touched
   // upon save).
   if (isTouchedAtCurrentOrDescendantNode && errors) {
-    treeNode.error = errors.value;
+    treeNode.error =
+      Object.keys(errors).length > 0
+        ? "This field contains an error"
+        : undefined;
   }
 
   return treeNode;

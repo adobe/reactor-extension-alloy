@@ -19,3 +19,5 @@ export const ARRAY = "array";
 export const BOOLEAN = "boolean";
 export const NUMBER = "number";
 export const INTEGER = "integer";
+export const OBJECT_JSON = "object-json";
+export const OBJECT_ANALYTICS = "object-analytics";

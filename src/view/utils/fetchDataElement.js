@@ -12,42 +12,6 @@ governing permissions and limitations under the License.
 import fetchFromReactor from "./fetchFromReactor";
 import UserReportableError from "../errors/userReportableError";
 
-const testDataVariable1 = {
-  id: "DE1",
-  attributes: {
-    name: "Test data variable 1",
-    delegate_descriptor_id: "adobe-alloy::dataElements::variable",
-    settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
-      sandbox: {
-        name: "prod"
-      },
-      schema: {
-        id:
-          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.2"
-      }
-    })
-  }
-};
-const testDataVariable2 = {
-  id: "DE2",
-  attributes: {
-    name: "Test data variable 2",
-    delegate_descriptor_id: "adobe-alloy::dataElements::variable",
-    settings: JSON.stringify({
-      cacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
-      sandbox: {
-        name: "prod"
-      },
-      schema: {
-        id:
-          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.2"
-      }
-    })
-  }
-};
 const fetchDataElement = async ({ orgId, imsAccess, dataElementId }) => {
   let parsedResponse;
   try {
@@ -60,15 +24,9 @@ const fetchDataElement = async ({ orgId, imsAccess, dataElementId }) => {
     if (e.name === "AbortError") {
       throw e;
     }
-    if (dataElementId === "DE1") {
-      parsedResponse = { parsedBody: { data: testDataVariable1 } };
-    } else if (dataElementId === "DE2") {
-      parsedResponse = { parsedBody: { data: testDataVariable2 } };
-    } else {
-      throw new UserReportableError("Failed to load data element.", {
-        originatingError: e
-      });
-    }
+    throw new UserReportableError("Failed to load data element.", {
+      originatingError: e
+    });
   }
 
   const {

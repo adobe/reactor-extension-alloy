@@ -77,7 +77,7 @@ const FieldDescriptionAndError = ({
 
 FieldDescriptionAndError.propTypes = {
   children: PropTypes.node.isRequired,
-  description: PropTypes.string,
+  description: PropTypes.node,
   error: PropTypes.string,
   messagePaddingTop: PropTypes.string,
   messagePaddingStart: PropTypes.string,

@@ -25,6 +25,7 @@ import "./codePreview.styl";
 
 const CodePreview = ({
   "data-test-id": dataTestId,
+  "aria-label": ariaLabel,
   label,
   buttonLabel,
   value,
@@ -40,10 +41,11 @@ const CodePreview = ({
     // label on the textarea because there is a bug in react-spectrum
     // textarea sizing when there is a label on it.
     <View position="relative" alignSelf="flex-start">
-      <LabeledValue label={label} />
+      <LabeledValue label={label} aria-label={ariaLabel} />
       <FieldDescriptionAndError description={description} error={error}>
         <TextArea
           width="size-5000"
+          aria-label={label || ariaLabel}
           height="size-1600"
           value={value}
           isDisabled
@@ -64,10 +66,11 @@ const CodePreview = ({
 
 CodePreview.propTypes = {
   "data-test-id": PropTypes.string,
+  "aria-label": PropTypes.string,
   label: PropTypes.string,
   buttonLabel: PropTypes.string.isRequired,
   value: PropTypes.string,
-  description: PropTypes.string,
+  description: PropTypes.node,
   error: PropTypes.string,
   onPress: PropTypes.func.isRequired
 };

@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { object, string } from "yup";
 import { Item } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
@@ -21,7 +20,10 @@ import fetchSchema from "../../../utils/fetchSchema";
 import fetchSchemasMeta from "../../../utils/fetchSchemasMeta";
 import FormikPicker from "../../../components/formikReactSpectrum3/formikPicker";
 import FormikPagedComboBox from "../../../components/formikReactSpectrum3/formikPagedComboBox";
+import FieldSubset from "../../../components/fieldSubset";
+import FormElementContainer from "../../../components/formElementContainer";
 import useReportAsyncError from "../../../utils/useReportAsyncError";
+import { DATA } from "../constants/variableTypes";
 
 const initializeSandboxes = async ({
   initialValues,
@@ -130,7 +132,11 @@ export const bridge = {
     return initialValues;
   },
   getSettings({ values }) {
-    const { sandbox, schema } = values;
+    const { sandbox, schema, type } = values;
+
+    if (type === DATA) {
+      return {};
+    }
 
     return {
       sandbox: { name: sandbox },
@@ -140,12 +146,23 @@ export const bridge = {
       }
     };
   },
-  formikStateValidationSchema: object().shape({
-    sandbox: string().required("Please select a sandbox."),
-    schema: object()
-      .nullable()
-      .required("Please select a schema.")
-  })
+  validateFormikState: ({ type, sandbox, schema }) => {
+    const result = {};
+
+    if (type === DATA) {
+      return result;
+    }
+
+    if (!sandbox) {
+      result.sandbox = "Please select a sandbox.";
+    }
+
+    if (!schema || Object.keys(schema).length === 0) {
+      result.schema = "Please select a schema.";
+    }
+
+    return result;
+  }
 };
 
 const getKey = item => item && `${item.$id}_${item.version}`;
@@ -190,38 +207,40 @@ const XdmVariable = ({
   };
 
   return (
-    <>
-      <FormikPicker
-        data-test-id="sandboxField"
-        name="sandbox"
-        label="Sandbox"
-        items={sandboxes}
-        width="size-5000"
-        description="Choose a sandbox containing the schema you wish to use."
-        placeholder="Select a sandbox"
-      >
-        {item => {
-          const region = item.region ? ` (${item.region.toUpperCase()})` : "";
-          const label = `${item.type.toUpperCase()} ${item.title}${region}`;
-          return <Item key={item.name}>{label}</Item>;
-        }}
-      </FormikPicker>
-      <FormikPagedComboBox
-        data-test-id="schemaField"
-        name="schema"
-        label="Schema"
-        width="size-5000"
-        description="Choose an XDM schema for this variable."
-        loadItems={loadItems}
-        getKey={getKey}
-        getLabel={getLabel}
-        dependencies={[sandbox]}
-        firstPage={schemasFirstPage}
-        firstPageCursor={schemasFirstPageCursor}
-        alertTitle="No schemas found"
-        alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
-      />
-    </>
+    <FieldSubset>
+      <FormElementContainer>
+        <FormikPicker
+          data-test-id="sandboxField"
+          name="sandbox"
+          label="Sandbox"
+          items={sandboxes}
+          width="size-5000"
+          description="Choose a sandbox containing the schema you wish to use."
+          placeholder="Select a sandbox"
+        >
+          {item => {
+            const region = item.region ? ` (${item.region.toUpperCase()})` : "";
+            const label = `${item.type.toUpperCase()} ${item.title}${region}`;
+            return <Item key={item.name}>{label}</Item>;
+          }}
+        </FormikPicker>
+        <FormikPagedComboBox
+          data-test-id="schemaField"
+          name="schema"
+          label="Schema"
+          width="size-5000"
+          description="Choose an XDM schema for this variable."
+          loadItems={loadItems}
+          getKey={getKey}
+          getLabel={getLabel}
+          dependencies={[sandbox]}
+          firstPage={schemasFirstPage}
+          firstPageCursor={schemasFirstPageCursor}
+          alertTitle="No schemas found"
+          alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
+        />
+      </FormElementContainer>
+    </FieldSubset>
   );
 };
 
