@@ -169,17 +169,15 @@ const getInitialValues = context => async ({ initInfo }) => {
   initialValues.dataElement = dataElement;
 
   if (dataElement) {
+    const prefix = isDataVariable(dataElement) ? "data" : "xdm";
+
     const prefixedTransforms = Object.keys(transforms).reduce((memo, key) => {
       // The key for a root element transform is "".
-      memo[key === "" ? "xdm" : `xdm.${key}`] = transforms[key];
+      memo[key === "" ? prefix : `${prefix}.${key}`] = transforms[key];
       return memo;
     }, {});
 
-    if (isDataVariable(dataElement)) {
-      data = { data };
-    } else {
-      data = { xdm: data };
-    }
+    data = { [prefix]: data };
 
     const initialFormState = await getInitialFormStateFromDataElement({
       dataElement,
@@ -207,7 +205,10 @@ const getSettings = context => ({ values }) => {
     getValueFromFormState({ formStateNode: values, transforms }) || {};
 
   const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
-    memo[key.substring(4)] = transforms[key];
+    const firstDotIndex = key.indexOf(".");
+    const strippedKey =
+      firstDotIndex === -1 ? key : key.substring(firstDotIndex + 1);
+    memo[strippedKey] = transforms[key];
     return memo;
   }, {});
 
