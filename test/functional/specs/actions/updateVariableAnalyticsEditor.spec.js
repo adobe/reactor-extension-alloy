@@ -27,8 +27,7 @@ const eVarAddButton = analyticsField("button", "value.evarsAddButton");
 createExtensionViewFixture({
   title: "Update variable analytics editor",
   viewPath: "actions/updateVariable.html",
-  requiresAdobeIOIntegration: true,
-  only: true
+  requiresAdobeIOIntegration: true
 });
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
