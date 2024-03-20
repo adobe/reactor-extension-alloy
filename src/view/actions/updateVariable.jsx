@@ -207,7 +207,7 @@ const getSettings = context => ({ values }) => {
   const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
     const firstDotIndex = key.indexOf(".");
     const strippedKey =
-      firstDotIndex === -1 ? key : key.substring(firstDotIndex + 1);
+      firstDotIndex === -1 ? "" : key.substring(firstDotIndex + 1);
     memo[strippedKey] = transforms[key];
     return memo;
   }, {});

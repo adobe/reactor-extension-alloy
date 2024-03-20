@@ -120,7 +120,7 @@ export default function comboBox({
     },
     getSettings({ values }) {
       const settings = {};
-      if (values[name] !== defaultValue) {
+      if (values[name] !== defaultValue && values[name] !== undefined) {
         const item = items.find(({ label: l }) => l === values[name]);
         settings[name] = item ? item.value : values[name];
       }
