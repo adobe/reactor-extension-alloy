@@ -830,7 +830,7 @@ const createExtensionManifest = ({ version }) => {
             xdm: {
               type: "object"
             },
-            onBeforeMediaEvent: {
+            getPlayerDetails: {
               type: "string"
             }
           },
@@ -841,7 +841,7 @@ const createExtensionManifest = ({ version }) => {
         transforms: [
           {
             type: "function",
-            propertyPath: "onBeforeMediaEvent",
+            propertyPath: "getPlayerDetails",
             parameters: ["content"]
           }
         ]

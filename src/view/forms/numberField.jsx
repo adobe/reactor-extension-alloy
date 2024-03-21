@@ -86,7 +86,6 @@ export default function numberField({
     },
     getSettings({ values }) {
       const settings = {};
-      console.log("values", values);
       if (values[`${name}InputMethod`] === NUMBER) {
         settings[name] = values[name];
       }

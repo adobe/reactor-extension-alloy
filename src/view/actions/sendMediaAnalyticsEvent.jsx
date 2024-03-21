@@ -17,19 +17,15 @@ import conditional from "../forms/conditional";
 import renderForm from "../forms/renderForm";
 import textField from "../forms/textField";
 import mediaEventTypes from "./constants/mediaEventTypes";
-import section from "../forms/section";
 import fieldArray from "../forms/fieldArray";
 import numberField from "../forms/numberField";
 import dataElementSection from "../forms/dataElementSection";
+import codeField from "../forms/codeField";
+import checkbox from "../forms/checkbox";
 
 const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
-  const {
-    eventType,
-    playerId,
-    onBeforeMediaEvent = "",
-    instanceName,
-    xdm = {}
-  } = initInfo.settings || {};
+  const { eventType, playerId, getPlayerDetails = "", instanceName, xdm = {} } =
+    initInfo.settings || {};
 
   const { mediaCollection = {} } = xdm;
   const {
@@ -54,7 +50,7 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
       settings: {
         eventType,
         playerId,
-        onBeforeMediaEvent,
+        getPlayerDetails,
         instanceName,
         automaticSessionHandler,
         sessionID,
@@ -78,7 +74,7 @@ const wrapGetSettings = getSettings => ({ values }) => {
     eventType,
     sessionID,
     playhead,
-    onBeforeMediaEvent,
+    getPlayerDetails,
     qoeDataDetails,
     chapterDetails,
     advertisingPodDetails,
@@ -91,8 +87,8 @@ const wrapGetSettings = getSettings => ({ values }) => {
 
   if (automaticSessionHandler) {
     settings.playerId = playerId;
-    if (onBeforeMediaEvent) {
-      settings.onBeforeMediaEvent = onBeforeMediaEvent;
+    if (getPlayerDetails) {
+      settings.getPlayerDetails = getPlayerDetails;
     }
   } else {
     settings.playerId = playerId;
@@ -126,9 +122,9 @@ const wrapGetSettings = getSettings => ({ values }) => {
   return settings;
 };
 
-const advertisingPodDetailsSection = section(
+const advertisingPodDetailsSection = dataElementSection(
   {
-    label: "Advertising Pod Details",
+    label: "Advertising pod details",
     name: "advertisingPodDetails",
     objectKey: "advertisingPodDetails",
     dataElementDescription:
@@ -137,12 +133,12 @@ const advertisingPodDetailsSection = section(
   [
     textField({
       name: "friendlyName",
-      label: "Ad Break Name",
+      label: "Ad break name",
       description: "The friendly name of the Ad Break."
     }),
     numberField({
       name: "offset",
-      label: "Ad Break Offset (seconds)",
+      label: "Ad break offset (seconds)",
       isRequired: true,
       description: "The offset of the ad break inside the content, in seconds.",
       dataElementDescription:
@@ -150,7 +146,7 @@ const advertisingPodDetailsSection = section(
     }),
     numberField({
       name: "index",
-      label: "Ad Break Index",
+      label: "Ad break index",
       isRequired: true,
       description:
         "The index of the ad break inside the content starting at 1.",
@@ -170,12 +166,12 @@ const chapterSection = dataElementSection(
   [
     textField({
       name: "friendlyName",
-      label: "Chapter Name",
+      label: "Chapter name",
       description: "The name of the chapter and/or segment."
     }),
     numberField({
       name: "length",
-      label: "Chapter Length",
+      label: "Chapter length",
       isRequired: true,
       description: "The length of the chapter, in seconds.",
       dataElementDescription:
@@ -183,7 +179,7 @@ const chapterSection = dataElementSection(
     }),
     numberField({
       name: "index",
-      label: "Chapter Index",
+      label: "Chapter index",
       isRequired: true,
       description:
         "The position (index, integer) of the chapter inside the content.",
@@ -192,7 +188,7 @@ const chapterSection = dataElementSection(
     }),
     numberField({
       name: "offset",
-      label: "Chapter Offset",
+      label: "Chapter offset",
       isRequired: true,
       description:
         "The offset of the chapter inside the content (in seconds) from the start.",
@@ -203,7 +199,7 @@ const chapterSection = dataElementSection(
 );
 const advertisingDetailsSection = dataElementSection(
   {
-    label: "Advertising Details",
+    label: "Advertising details",
     name: "advertisingDetails",
     dataElementDescription:
       "This should resolve to an object containing advertising details.",
@@ -212,7 +208,7 @@ const advertisingDetailsSection = dataElementSection(
   [
     textField({
       name: "friendlyName",
-      label: "Ad Name",
+      label: "Ad name",
       description: "Friendly name of the ad."
     }),
     textField({
@@ -262,7 +258,7 @@ const advertisingDetailsSection = dataElementSection(
     }),
     numberField({
       name: "podPosition",
-      label: "Pod Position",
+      label: "Pod position",
       isRequired: true,
       description:
         "The position (index) of the ad inside the parent ad break. The first ad has index 0, the second ad has index 1 etc.",
@@ -271,7 +267,7 @@ const advertisingDetailsSection = dataElementSection(
     }),
     textField({
       name: "playerName",
-      label: "Ad Player Name",
+      label: "Ad player name",
       isRequired: true,
       description: "The name of the player responsible for rendering the ad."
     })
@@ -279,7 +275,7 @@ const advertisingDetailsSection = dataElementSection(
 );
 const errorDetailsSection = dataElementSection(
   {
-    label: "Error Details",
+    label: "Error details",
     name: "errorDetails",
     dataElementDescription:
       "This should resolve to an object containing error details.",
@@ -288,7 +284,7 @@ const errorDetailsSection = dataElementSection(
   [
     textField({
       name: "name",
-      label: "Error Name",
+      label: "Error name",
       isRequired: true,
       description: "Enter the error name."
     }),
@@ -300,17 +296,20 @@ const errorDetailsSection = dataElementSection(
     })
   ]
 );
-const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
-  fieldArray({
-    name: "states",
-    label: "States",
-    singularLabel: "State",
-    description: "Create an array of states that were updated.",
-    dataElementDescription:
-      "This data element should resolve to an array of states.",
-    validationSchema: string()
-  })
-]);
+const stateUpdateDetailsSection = dataElementSection(
+  { label: "State Update Details" },
+  [
+    fieldArray({
+      name: "states",
+      label: "States",
+      singularLabel: "State",
+      description: "Create an array of states that were updated.",
+      dataElementDescription:
+        "This data element should resolve to an array of states.",
+      validationSchema: string()
+    })
+  ]
+);
 const sessionDetailsSection = dataElementSection(
   {
     label: "Media session details",
@@ -373,13 +372,13 @@ const sessionDetailsSection = dataElementSection(
     }),
     textField({
       name: "adLoad",
-      label: "Ad Load Type",
+      label: "Ad load type",
       isRequired: false,
       description: ""
     }),
     textField({
       name: "appVersion",
-      label: "Application Version",
+      label: "Application version",
       isRequired: false,
       description:
         "The SDK version used by the player. This could have any custom value that makes sense for your player."
@@ -417,7 +416,7 @@ const sessionDetailsSection = dataElementSection(
     }),
     textField({
       name: "firstAirDate",
-      label: "First Air Date",
+      label: "First air date",
       isRequired: false,
       description:
         "The date when the content first aired on television. Any date format is acceptable, but Adobe recommends: YYYY-MM-DD."
@@ -436,7 +435,7 @@ const sessionDetailsSection = dataElementSection(
     }),
     textField({
       name: "streamFormat",
-      label: "Stream Format",
+      label: "Stream format",
       isRequired: false,
       description: "Format of the stream (HD, SD)."
     }),
@@ -464,7 +463,7 @@ const sessionDetailsSection = dataElementSection(
     }),
     comboBox({
       name: "showType",
-      label: "Show Type",
+      label: "Show type",
       description:
         "Type of content, expressed as an integer between 0 and 3. Select a predefined value or enter a custom value.",
       dataElementDescription:
@@ -539,7 +538,7 @@ const sessionDetailsSection = dataElementSection(
     }),
     textField({
       name: "firstDigitalDate",
-      label: "First Digital Date",
+      label: "First digital date",
       isRequired: false,
       description:
         "The date when the content first aired on any digital channel or platform. Any date format is " +
@@ -600,7 +599,7 @@ const eventBasedDetailFormConditionals = [
 ];
 const qoeDataSection = dataElementSection(
   {
-    label: "Quality of Experience data",
+    label: "Quality of experience data",
     name: "qoeDataDetails",
     dataElementDescription:
       "This should resolve to an object containing Quality of Experience data.",
@@ -618,20 +617,20 @@ const qoeDataSection = dataElementSection(
     }),
     textField({
       name: "droppedFrames",
-      label: "Dropped Frames (Int)",
+      label: "Dropped frames (Int)",
       description:
         "The number of dropped frames (Int). This value is computed as a sum of " +
         "all frames dropped during a playback session. "
     }),
     textField({
       name: "framesPerSecond",
-      label: "Frames Per Second (in frames per second)",
+      label: "Frames per second (in frames per second)",
       description:
         "The current value of the stream frame-rate (in frames per second). "
     }),
     textField({
       name: "timeToStart",
-      label: "Time To Start (milliseconds)",
+      label: "Time to start (milliseconds)",
       description:
         "This value defaults to zero if you do not set it through the QoSObject. " +
         "You set this value in milliseconds. The value will be displayed in the time format (HH:MM:SS) "
@@ -648,7 +647,7 @@ const sendEventForm = form(
     instancePicker({ name: "instanceName" }),
     comboBox({
       name: "eventType",
-      label: "Media Event Type",
+      label: "Media event type",
       description: "Select your media event type",
       isRequired: true,
       items: Object.keys(mediaEventTypes).reduce((items, key) => {
@@ -662,6 +661,22 @@ const sendEventForm = form(
       isRequired: true,
       description: "Enter your player ID"
     }),
+    conditional(
+      {
+        args: "eventType",
+        condition: eventType => eventType === "media.sessionStart"
+      },
+      [
+        checkbox({
+          name: "automaticSessionHandler",
+          label: "Automatic session handler",
+          description:
+            "Choose 'Automatic Session Handler' if you want the Web SDK to manage your media session and send necessary updates automatically. If you prefer to have more control and manually manage your media session, you can deselect this option.",
+          isRequired: false,
+          defaultValue: true
+        })
+      ]
+    ),
     numberField({
       name: "playhead",
       label: "Playhead",
@@ -669,6 +684,26 @@ const sendEventForm = form(
       description: "Enter the playhead",
       dataElementDescription: "This data element should resolve to a number."
     }),
+    conditional(
+      {
+        args: "eventType",
+        condition: eventType => eventType === "media.sessionStart"
+      },
+      [
+        codeField({
+          name: "getPlayerDetails",
+          label: "Get player details callback function",
+          description:
+            "This is a callback function that is invoked before the media event is sent. The function is responsible " +
+            "for retrieving the playhead and Quality of Experience Data. If this callback is set, the Web SDK will" +
+            " automatically trigger the pings. If you prefer to manually trigger the pings, do not set this callback.",
+          placeholder:
+            "// introduce the function code to retrieve the playhead.",
+          buttonLabelSuffix: "Player Details retrieval callback",
+          isRequired: true
+        })
+      ]
+    ),
     ...eventBasedDetailFormConditionals,
     qoeDataSection
   ]
