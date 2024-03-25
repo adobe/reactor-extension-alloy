@@ -33,7 +33,7 @@ module.exports = config => {
       platformName: "Windows 11",
       browserVersion: "latest",
       "sauce:options": {
-        geckodriverVersion: "0.27.0"
+        geckodriverVersion: "0.34.0"
       }
     },
     sl_edgeW3C: {
@@ -43,30 +43,6 @@ module.exports = config => {
       platform: "Windows 11"
     }
   };
-  // const customLaunchers = {
-  //   sl_chromeW3C: {
-  //     base: "SauceLabs",
-  //     browserName: "chrome",
-  //     browserVersion: "latest",
-  //     "sauce:options": {
-  //       tags: ["w3c-chrome"]
-  //     }
-  //   },
-  //   sl_firefoxW3C: {
-  //     base: "SauceLabs",
-  //     browserName: "firefox",
-  //     browserVersion: "latest",
-  //     "sauce:options": {
-  //       tags: ["w3c-firefox"]
-  //     }
-  //   },
-  //   sl_safariW3C: {
-  //     base: "SauceLabs",
-  //     browserName: "safari",
-  //     browserVersion: "latest",
-  //     platform: "macOS 11.00"
-  //   }
-  // };
 
   config.set({
     browsers: Object.keys(customLaunchers),
