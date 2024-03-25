@@ -1,0 +1,12 @@
+.babelrc
+.eslint*
+.husky
+.parcel-cache
+.tool-version
+coverage
+.git/
+.github/
+.DS_Store
+.gitignore
+.npmrc
+node_modules/
