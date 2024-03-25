@@ -134,5 +134,10 @@
     "stylus": "^0.54.8",
     "testcafe": "^2.6.2",
     "testcafe-browser-provider-saucelabs": "^1.9.0"
+  },
+  "overrides": {
+    "karma-sauce-launcher": {
+      "webdriverio": "^8.35.1"
+    }
   }
 }
