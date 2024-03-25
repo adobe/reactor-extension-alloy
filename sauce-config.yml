@@ -1,0 +1,55 @@
+apiVersion: v1alpha
+kind: testcafe
+sauce:
+  region: us-west-1
+  concurrency: 2 # Controls how many suites are executed at the same time.
+  metadata:
+    tags:
+      - e2e
+    build: Release $CI_COMMIT_SHORT_SHA
+testcafe:
+  version: 3.5.0
+# Controls what files are available in the context of a test run (unless explicitly excluded by .sauceignore).
+rootDir: ./
+suites:
+  - name: "Chrome on macOS"
+    browserName: "chrome"
+    src:
+      - "test/functional/**/*.spec.js" # test files glob
+    platformName: "macOS 12"
+  - name: "Firefox on Windows"
+    browserName: "firefox"
+    src:
+      - "test/functional/**/*.spec.js" # test files glob
+    platformName: "Windows 11"
+npm:
+  registry: https://registry.npmjs.org
+  registries:
+    - url: https://registry.npmjs.org
+  packages:
+    "@adobe/alloy": "^2.19.2"
+    "@adobe/react-spectrum": "^3.33.1"
+    "@react-stately/data": "^3.4.0"
+    "@spectrum-css/typography": "^3.0.2"
+    "@spectrum-icons/illustrations": "^3.2.1"
+    "@spectrum-icons/workflow": "^3.2.0"
+    "antd": "^4.16.1"
+    "classnames": "^2.2.6"
+    "clipboard-copy": "^4.0.1"
+    "escape-string-regexp": "^1.0.5"
+    "formik": "^2.2.6"
+    "once": "^1.4.0"
+    "prop-types": "^15.7.2"
+    "react": "^17.0.1"
+    "react-dom": "^17.0.1"
+    "saucectl": "^0.174.0"
+    "uuid": "^8.3.2"
+    "yup": "^1.2.0"
+    "@adobe/jwt-auth": "^2.0.0",
+# Controls what artifacts to fetch when the suites have finished.
+artifacts:
+  download:
+    when: always
+    match:
+      - console.log
+    directory: ./artifacts/
