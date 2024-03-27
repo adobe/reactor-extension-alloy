@@ -98,8 +98,7 @@ test.requestHooks(dataElementsMocks.multiple)(
         id:
           "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
         version: "1.4"
-      },
-      transforms: {}
+      }
     });
   }
 );
@@ -135,8 +134,7 @@ test.requestHooks(dataElementsMocks.multiple)(
         id:
           "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
         version: "1.4"
-      },
-      transforms: {}
+      }
     });
   }
 );
@@ -174,6 +172,38 @@ test.requestHooks(dataElementsMocks.multiple)(
   }
 );
 
+test.requestHooks(dataElementsMocks.multiple)(
+  "Allows the user to clear the root element",
+  async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd"
+      }
+    });
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 2");
+    await xdmTree.node("xdm").expectExists();
+    await xdmTree.node("xdm").click();
+    await clearField.click();
+
+    await extensionViewController.expectSettings({
+      data: {},
+      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
+      dataElementId: "DE2",
+      schema: {
+        id:
+          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+        version: "1.4"
+      },
+      transforms: {
+        "": {
+          clear: true
+        }
+      }
+    });
+  }
+);
+
 test.requestHooks(dataElementsMocks.multiple, dataElementMocks.element2)(
   "Allows a cleared element to be loaded",
   async () => {
@@ -196,6 +226,31 @@ test.requestHooks(dataElementsMocks.multiple, dataElementMocks.element2)(
     await xdmTree.node("xdm").expectExists();
     await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
     await xdmTree.node("vendor").click();
+    await clearField.expectChecked();
+  }
+);
+
+test.requestHooks(dataElementsMocks.multiple, dataElementMocks.element2)(
+  "Allows the root cleared element to be loaded",
+  async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd"
+      },
+      settings: {
+        data: {},
+        dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
+        dataElementId: "DE2",
+        transforms: {
+          "": {
+            clear: true
+          }
+        }
+      }
+    });
+    await dataElementField.expectText("Test data variable 2");
+    await xdmTree.node("xdm").expectExists();
+    await xdmTree.node("xdm").click();
     await clearField.expectChecked();
   }
 );
@@ -286,8 +341,7 @@ test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
             "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
           version: "1.1"
         },
-        data: {},
-        transforms: {}
+        data: {}
       }
     });
     await schemaChangedNotice.expectExists();
@@ -309,8 +363,7 @@ test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
             "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
           version: "1.2"
         },
-        data: {},
-        transforms: {}
+        data: {}
       }
     });
     await schemaChangedNotice.expectNotExists();
@@ -393,8 +446,7 @@ test.requestHooks(
       schema: {
         id: "sch789",
         version: "1.0"
-      },
-      transforms: {}
+      }
     });
     await xdmTree.node("Item 1").toggleExpansion();
     await xdmTree.node("testField").click();

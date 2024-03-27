@@ -14,6 +14,9 @@ const testSchemaTitle = "XDM Object Data Element Tests";
 const sandboxField = spectrum.picker("sandboxField");
 const schemaField = spectrum.comboBox("schemaField");
 const noSchemasAlert = spectrum.alert("schemaFieldAlert");
+const variableTypeDataRadio = spectrum.radio("dataRadioButton");
+const analyticsCheckbox = spectrum.checkbox("analyticsCheckbox");
+const targetCheckbox = spectrum.checkbox("targetCheckbox");
 
 createExtensionViewFixture({
   title: "Variable Data Element View",
@@ -27,7 +30,7 @@ test.requestHooks(
   sandboxMocks.multipleWithoutDefault,
   schemaMocks.basic,
   schemasMocks.multiple
-)("initializes form fields with full settings", async () => {
+)("initializes form fields with full XDM settings", async () => {
   await extensionViewController.init({
     settings: {
       sandbox: {
@@ -42,6 +45,18 @@ test.requestHooks(
   await sandboxField.expectText("PRODUCTION Test Sandbox 3 (VA7)");
   await schemaField.expectText("Test Schema 1");
 });
+
+test.requestHooks(sandboxMocks.multipleWithoutDefault, schemaMocks.basic)(
+  "initializes form fields with full data settings",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        solutions: ["target"]
+      }
+    });
+    await targetCheckbox.expectChecked();
+  }
+);
 
 test.requestHooks(
   sandboxMocks.multipleWithoutDefault,
@@ -66,7 +81,7 @@ test.requestHooks(
 });
 
 test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.multiple)(
-  "returns full valid settings",
+  "returns full valid XDM settings",
   async () => {
     await extensionViewController.init({});
     await sandboxField.selectOption("PRODUCTION Test Sandbox 3 (VA7)");
@@ -83,6 +98,19 @@ test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.multiple)(
       id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch123",
       version: "1.0"
     });
+    await t.expect(Object.keys(other)).eql(["cacheId"]);
+  }
+);
+
+test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.multiple)(
+  "returns full valid data settings",
+  async () => {
+    await extensionViewController.init({});
+    await variableTypeDataRadio.click();
+    await analyticsCheckbox.click();
+
+    const { solutions, ...other } = await extensionViewController.getSettings();
+    await t.expect(solutions).contains("analytics");
     await t.expect(Object.keys(other)).eql(["cacheId"]);
   }
 );
@@ -319,6 +347,22 @@ test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
       .ok("Error message doesn't exist.");
   }
 );
+
+test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
+  "show error when attempting to save with no solution selected",
+  async () => {
+    await extensionViewController.init({});
+    await variableTypeDataRadio.click();
+    await extensionViewController.expectIsNotValid();
+    await t
+      .expect(
+        Selector("div").withText("Please select at least one Adobe solution.")
+          .exists
+      )
+      .ok("Error message doesn't exist.");
+  }
+);
+
 // see https://jira.corp.adobe.com/browse/PDCL-8307
 test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.paging)(
   "provides a proper combobox experience",

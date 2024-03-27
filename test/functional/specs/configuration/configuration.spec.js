@@ -1756,3 +1756,35 @@ test.requestHooks(
     await instances[1].overrides.textFields.reportSuiteOverrides[0].expectIsTextField();
   }
 );
+
+test("allows the setting of overrides in only a single environment", async () => {
+  await extensionViewController.init();
+  await instances[0].edgeConfig.inputMethodFreeformRadio.click();
+  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
+    "PR123"
+  );
+  await instances[0].overrides.envTabs.development.click();
+  await instances[0].overrides.textFields.eventDatasetOverride.typeText(
+    "6336ff95ba16ca1c07b4c0db"
+  );
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
+    instances: [
+      {
+        edgeConfigId: "PR123",
+        name: "alloy",
+        edgeConfigOverrides: {
+          development: {
+            com_adobe_experience_platform: {
+              datasets: {
+                event: {
+                  datasetId: "6336ff95ba16ca1c07b4c0db"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  });
+});

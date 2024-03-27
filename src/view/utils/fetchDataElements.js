@@ -68,7 +68,6 @@ const fetchDataElements = async ({
 
     nextPage = parsedResponse.parsedBody.meta.pagination.next_page;
   }
-
   return { results: allResults, nextPage };
 };
 

@@ -18,7 +18,6 @@ const rimraf = require("rimraf");
 const { Parcel } = require("@parcel/core");
 const path = require("path");
 const fsPromises = require("fs").promises;
-const buildManifest = require("./buildExtensionManifest");
 
 const inputDir = path.join(__dirname, "../../src");
 const tempDir = path.join(__dirname, "../../temp");
@@ -150,12 +149,5 @@ module.exports = (options = {}) => {
     )
     .finally(() => toPromise(callback => rimraf(tempDir, callback)));
 
-  const manifestPromise = buildManifest();
-
-  return Promise.all([
-    babelPromise,
-    parcelPromise,
-    alloyPromise,
-    manifestPromise
-  ]);
+  return Promise.all([babelPromise, parcelPromise, alloyPromise]);
 };

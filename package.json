@@ -1,6 +1,6 @@
 {
   "name": "reactor-extension-alloy",
-  "version": "2.21.4",
+  "version": "2.22.0-beta.3",
   "description": "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
   "author": {
     "name": "Adobe",
@@ -36,8 +36,7 @@
     "test:functional:watch:debug": "echo \"open chrome://inspect in Chrome and click 'inspect'\" && node --inspect-brk ./scripts/functional.js --watch",
     "test": "npm-run-all --parallel test:unit test:functional",
     "token": "node scripts/token.js",
-    "version": "./scripts/version.sh",
-    "upload": "reactor-uploader --org-id=$REACTOR_UPLOADER_ORG_ID --tech-account-id=$REACTOR_UPLOADER_TECH_ACCOUNT_ID --api-key=$REACTOR_UPLOADER_API_KEY --client-secret=$REACTOR_IO_INTEGRATION_CLIENT_SECRET"
+    "version": "./scripts/version.sh"
   },
   "lint-staged": {
     "./*.{js,jsx}": [
@@ -54,8 +53,8 @@
     ]
   },
   "dependencies": {
-    "@adobe/alloy": "file:../adobe/alloy",
-    "@adobe/react-spectrum": "^3.26.0",
+    "@adobe/alloy": "^2.19.2",
+    "@adobe/react-spectrum": "^3.33.1",
     "@react-stately/data": "^3.4.0",
     "@spectrum-css/typography": "^3.0.2",
     "@spectrum-icons/illustrations": "^3.2.1",
@@ -77,7 +76,6 @@
     "@adobe/reactor-sandbox": "^12.5.0",
     "@adobe/reactor-turbine": "^27.2.1",
     "@adobe/reactor-turbine-schemas": "^10.5.0",
-    "@adobe/reactor-uploader": "^4.1.0",
     "@babel/cli": "^7.12.16",
     "@babel/core": "^7.12.16",
     "@babel/plugin-proposal-class-properties": "^7.12.13",

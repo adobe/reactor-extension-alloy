@@ -44,7 +44,7 @@ const evaluateRulesetsForm = form(
     notice({
       title: "Evaluate rulesets action",
       description:
-        "This action manually triggers ruleset evaluation. Rulesets are returned from Adobe Journey Optimizer in-browser-messages.",
+        "This action manually triggers ruleset evaluation. Rulesets are returned by Adobe Journey Optimizer to support features like in-browser messages.",
       beta: true
     }),
     instancePicker({ name: "instanceName" }),

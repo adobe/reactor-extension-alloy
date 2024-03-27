@@ -14,6 +14,7 @@ import { string } from "yup";
 import { Item } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
+import Data from "@spectrum-icons/workflow/Data";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikKeyedComboBox from "../components/formikReactSpectrum3/formikKeyedComboBox";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
@@ -44,17 +45,23 @@ export default function comboBox({
   name,
   isRequired = false,
   dataElementSupported = true,
+  fillDataElementIconSpace = false,
   label,
   description,
   dataElementDescription,
   items,
-  allowsCustomValue = false
+  allowsCustomValue = false,
+  width = "size-5000",
+  defaultValue = "",
+  Component = FormikKeyedComboBox
 }) {
   let fieldSchema = string();
   if (!allowsCustomValue) {
     fieldSchema = fieldSchema.test(
       name,
-      `Please choose a ${label.toLowerCase()} from the list or specify a single data element.`,
+      `Please choose a ${
+        label ? label.toLowerCase() : "value"
+      } from the list or specify a single data element.`,
       value =>
         !value ||
         items.find(item => item.value === value) ||
@@ -63,7 +70,7 @@ export default function comboBox({
   }
   if (isRequired) {
     fieldSchema = fieldSchema.required(
-      `Please choose a ${label.toLowerCase()}.`
+      `Please choose a ${label ? label.toLowerCase() : "value"}.`
     );
   }
 
@@ -71,16 +78,20 @@ export default function comboBox({
   const InnerComponent = ({
     name: innerName,
     label: innerLabel,
-    description: innerDescription
+    description: innerDescription,
+    "aria-label": ariaLabel,
+    ...otherProps
   }) => {
     return (
-      <FormikKeyedComboBox
+      <Component
+        {...otherProps}
         data-test-id={`${innerName}Field`}
         name={innerName}
         label={innerLabel}
+        aria-label={ariaLabel}
         isRequired={isRequired}
         description={innerDescription}
-        width="size-5000"
+        width={width}
         items={items}
         allowsCustomValue={allowsCustomValue || dataElementSupported}
         getKey={item => item.value}
@@ -91,24 +102,25 @@ export default function comboBox({
             {item.label}
           </Item>
         )}
-      </FormikKeyedComboBox>
+      </Component>
     );
   };
   InnerComponent.propTypes = {
     name: PropTypes.string.isRequired,
     label: PropTypes.string,
-    description: PropTypes.string
+    description: PropTypes.string,
+    "aria-label": PropTypes.string
   };
 
   const part = {
     getInitialValues({ initInfo }) {
-      const { [name]: value = "" } = initInfo.settings || {};
+      const { [name]: value = defaultValue } = initInfo.settings || {};
       const item = items.find(({ value: v }) => v === value);
       return { [name]: item ? item.value : value };
     },
     getSettings({ values }) {
       const settings = {};
-      if (values[name]) {
+      if (values[name] !== defaultValue) {
         const item = items.find(({ label: l }) => l === values[name]);
         settings[name] = item ? item.value : values[name];
       }
@@ -117,14 +129,15 @@ export default function comboBox({
     validationShape: {
       [name]: fieldSchema
     },
-    Component: ({ namePrefix = "" }) => {
+    Component: ({ namePrefix = "", hideLabel = false }) => {
       if (dataElementSupported) {
         const [{ value = "" }] = useField(`${namePrefix}${name}`);
         return (
           <DataElementSelector>
             <InnerComponent
               name={`${namePrefix}${name}`}
-              label={label}
+              label={hideLabel ? undefined : label}
+              aria-label={label}
               description={
                 value.match(singleDataElementRegex)
                   ? dataElementDescription
@@ -135,16 +148,24 @@ export default function comboBox({
         );
       }
       return (
-        <InnerComponent
-          name={`${namePrefix}${name}`}
-          label={label}
-          description={description}
-        />
+        <>
+          <InnerComponent
+            name={`${namePrefix}${name}`}
+            label={hideLabel ? undefined : label}
+            aria-label={label}
+            description={description}
+            marginEnd={fillDataElementIconSpace ? "size-25" : ""}
+          />
+          {fillDataElementIconSpace && (
+            <Data UNSAFE_style={{ visibility: "hidden" }} />
+          )}
+        </>
       );
     }
   };
   part.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
+    hideLabel: PropTypes.bool
   };
   return part;
 }

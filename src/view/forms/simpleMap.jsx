@@ -90,7 +90,6 @@ export default function simpleMap({
         const items = [...parent];
         const currentIndex = items.indexOf(item);
         const previousItems = items.slice(0, currentIndex);
-
         if (previousItems.some(({ key: previousKey }) => key === previousKey)) {
           throw context.createError({
             path: `${path}.key`,

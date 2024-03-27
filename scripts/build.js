@@ -13,8 +13,17 @@ governing permissions and limitations under the License.
 */
 
 const build = require("./helpers/build.js");
+const buildExtensionManifest = require("./helpers/buildExtensionManifest.js");
 
-build()
+buildExtensionManifest()
+  .then(resultPath => {
+    // eslint-disable-next-line no-console
+    console.log(
+      "\x1b[32m%s\x1b[0m",
+      `✅ Extension manifest written to ${resultPath}`
+    );
+  })
+  .then(() => build())
   .then(() => {
     process.exit(0);
   })

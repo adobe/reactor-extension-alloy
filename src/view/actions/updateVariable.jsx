@@ -12,12 +12,21 @@ governing permissions and limitations under the License.
 
 import React, { useRef, useState } from "react";
 import { object } from "yup";
-import { Item, Flex, ProgressCircle } from "@adobe/react-spectrum";
+import {
+  Item,
+  Flex,
+  ProgressCircle,
+  Heading,
+  Divider,
+  Text,
+  Badge
+} from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
+import CodeField from "../components/codeField";
 import getValueFromFormState from "../components/objectEditor/helpers/getValueFromFormState";
 import fetchDataElements from "../utils/fetchDataElements";
 import fetchSchema from "../utils/fetchSchema";
@@ -29,6 +38,18 @@ import fetchDataElement from "../utils/fetchDataElement";
 import useChanged from "../utils/useChanged";
 import Alert from "../components/alert";
 import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRequestsAndCreateSignal";
+import generateSchemaFromSolutions from "../components/objectEditor/helpers/generateSchemaFromSolutions";
+import validate from "../components/objectEditor/helpers/validate";
+import { ARRAY, OBJECT } from "../components/objectEditor/constants/schemaType";
+import isObjectJsonEditorEmpty from "../components/objectEditor/helpers/object-json/isEditorEmpty";
+import isAnalyticsEditorEmpty from "../components/objectEditor/helpers/object-analytics/isEditorEmpty";
+import {
+  ADOBE_ANALYTICS,
+  ADOBE_AUDIENCE_MANAGER,
+  ADOBE_TARGET
+} from "../constants/solutions";
+
+const isDataVariable = data => data?.settings?.solutions?.length > 0;
 
 const getInitialFormStateFromDataElement = async ({
   dataElement,
@@ -82,6 +103,19 @@ const getInitialFormStateFromDataElement = async ({
       });
     }
   }
+  if (isDataVariable(dataElement)) {
+    const schema = generateSchemaFromSolutions(dataElement.settings.solutions);
+    context.schema = schema;
+
+    return getInitialFormState({
+      schema,
+      value: data,
+      updateMode: true,
+      transforms,
+      existingFormStateNode
+    });
+  }
+
   return {};
 };
 
@@ -93,13 +127,16 @@ const getInitialValues = context => async ({ initInfo }) => {
   } = initInfo;
   const {
     dataElementId,
-    data = {},
     transforms = {},
-    schema: previouslySavedSchemaInfo
+    schema: previouslySavedSchemaInfo,
+    customCode = ""
   } = initInfo.settings || {};
 
+  let { data = {} } = initInfo.settings || {};
+
   const initialValues = {
-    data
+    data,
+    customCode
   };
 
   const {
@@ -128,21 +165,31 @@ const getInitialValues = context => async ({ initInfo }) => {
   ) {
     dataElement = dataElementsFirstPage[0];
   }
+
   initialValues.dataElement = dataElement;
 
   if (dataElement) {
     const prefixedTransforms = Object.keys(transforms).reduce((memo, key) => {
-      memo[`xdm.${key}`] = transforms[key];
+      // The key for a root element transform is "".
+      memo[key === "" ? "xdm" : `xdm.${key}`] = transforms[key];
       return memo;
     }, {});
+
+    if (isDataVariable(dataElement)) {
+      data = { data };
+    } else {
+      data = { xdm: data };
+    }
+
     const initialFormState = await getInitialFormStateFromDataElement({
       dataElement,
       context,
       orgId,
       imsAccess,
-      data: { xdm: data },
+      data,
       transforms: prefixedTransforms
     });
+
     return { ...initialValues, ...initialFormState };
   }
 
@@ -156,29 +203,93 @@ const getSettings = context => ({ values }) => {
 
   const transforms = {};
 
-  // everything is prefixed with "xdm", lets change that to data.
-  const { xdm = {} } =
+  const { xdm, data } =
     getValueFromFormState({ formStateNode: values, transforms }) || {};
+
   const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
     memo[key.substring(4)] = transforms[key];
     return memo;
   }, {});
 
-  return {
+  const schema = {
+    id: context.schema?.$id,
+    version: context.schema?.version
+  };
+
+  const response = {
     dataElementId,
     dataElementCacheId,
-    schema: {
-      id: context.schema?.$id,
-      version: context.schema?.version
-    },
-    data: xdm,
-    transforms: dataTransforms
+    data: xdm || data || {}
   };
+
+  if (schema.id) {
+    response.schema = schema;
+  }
+
+  if (Object.keys(dataTransforms).length > 0) {
+    response.transforms = dataTransforms;
+  }
+
+  if (values.customCode) {
+    response.customCode = values.customCode;
+  }
+
+  return response;
 };
 
 const validationSchema = object().shape({
   dataElement: object().required("Please specify a data element.")
 });
+
+const validateFormikState = context => ({ values }) => {
+  const { schema } = context;
+  if (!schema) {
+    return {};
+  }
+
+  return validate(values);
+};
+
+const findFirstNodeIdForDepth = (formStateNode, depth) => {
+  const { schema: { type } = {}, properties, items, id } = formStateNode;
+  if (depth > 0) {
+    if (type === OBJECT && properties) {
+      const sortedEditors = Object.keys(properties).sort();
+      const editorsContainingValues = sortedEditors.filter(k => {
+        const map = {
+          [ADOBE_ANALYTICS]: isAnalyticsEditorEmpty,
+          [ADOBE_TARGET]: isObjectJsonEditorEmpty,
+          [ADOBE_AUDIENCE_MANAGER]: isObjectJsonEditorEmpty
+        };
+
+        if (map[k]) {
+          return map[k](properties[k]);
+        }
+
+        return false;
+      });
+
+      let firstProperty;
+
+      if (editorsContainingValues.length > 0) {
+        firstProperty = editorsContainingValues[0];
+      } else {
+        [firstProperty] = sortedEditors;
+      }
+
+      if (firstProperty) {
+        return findFirstNodeIdForDepth(properties[firstProperty], depth - 1);
+      }
+    }
+    if (type === ARRAY && items) {
+      const [firstItem] = items;
+      if (firstItem) {
+        return findFirstNodeIdForDepth(firstItem, depth - 1);
+      }
+    }
+  }
+  return id;
+};
 
 const UpdateVariable = ({
   initInfo,
@@ -194,7 +305,12 @@ const UpdateVariable = ({
 
   const [{ value: dataElement }] = useField("dataElement");
   const [hasSchema, setHasSchema] = useState(schema != null);
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [selectedNodeId, setSelectedNodeId] = useState(() => {
+    if (dataElement?.settings?.solutions) {
+      return findFirstNodeIdForDepth(values, 3);
+    }
+    return null;
+  });
   const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
 
   const {
@@ -220,15 +336,20 @@ const UpdateVariable = ({
           existingFormStateNode: values,
           signal
         });
+
         if (!signal.aborted) {
           resetForm({ values: { ...initialFormState, dataElement } });
           if (context.schema) {
             setHasSchema(true);
           }
         }
+
+        if (isDataVariable(dataElement)) {
+          setSelectedNodeId(findFirstNodeIdForDepth(values, 3));
+        }
       }
     }),
-    [dataElement?.settings?.schema?.id]
+    [dataElement]
   );
 
   const loadItems = useReportAsyncError(
@@ -250,7 +371,7 @@ const UpdateVariable = ({
   );
 
   return (
-    <FormElementContainer>
+    <FormElementContainer direction="column">
       {dataElementsFirstPage.length === 0 && (
         <Alert variant="negative" title="Error" data-test-id="noDataElements">
           No `variable` type data elements are available. Create a variable type
@@ -275,14 +396,69 @@ const UpdateVariable = ({
         </FormikPagedComboBox>
       )}
       {hasSchema && (
-        <Editor
-          selectedNodeId={selectedNodeId}
-          setSelectedNodeId={setSelectedNodeId}
-          schema={schema}
-          previouslySavedSchemaInfo={previouslySavedSchemaInfo}
-          initialExpandedDepth={1}
-          componentName="update variable action"
-        />
+        <>
+          <Heading size="M" margin="0">
+            Variable Editor
+            {isDataVariable(dataElement) && (
+              <Badge
+                marginStart="size-10"
+                variant="info"
+                UNSAFE_style={{ transform: "scale(0.7)" }}
+              >
+                BETA
+              </Badge>
+            )}
+          </Heading>
+          <Divider margin={0} size="M" />
+
+          <Editor
+            selectedNodeId={selectedNodeId}
+            setSelectedNodeId={setSelectedNodeId}
+            schema={schema}
+            previouslySavedSchemaInfo={previouslySavedSchemaInfo}
+            initialExpandedDepth={dataElement.settings.solutions ? 2 : 1}
+            componentName="update variable action"
+            verticalLayout={!!dataElement.settings.solutions}
+          />
+
+          <Heading size="M" margin="0">
+            Custom Code
+          </Heading>
+          <Divider margin={0} size="M" />
+
+          <CodeField
+            data-test-id="onBeforeEventSendEditButton"
+            aria-label="Custom Code"
+            buttonLabelSuffix="custom code"
+            name="customCode"
+            description={
+              <Text>
+                Use this editor to set additional properties on the variable
+                object using custom code. The custom code will be executed after
+                the properties defined inside the variable editor are applied to
+                the variable. <br />
+                <br />
+                The following variables are available for use within your custom
+                code:
+                <ul style={{ margin: 0 }}>
+                  <li>content - The variable object.</li>
+                  <li>
+                    event - The underlying event object that caused this rule to
+                    fire.
+                  </li>
+                </ul>
+              </Text>
+            }
+            language="javascript"
+            placeholder={
+              "// Modify content as necessary. There is no need to wrap the code in a function or return a value." +
+              "\n// For example if you are updating an XDM Variable Data Element, you can set the page name by writing:" +
+              '\n// content.web.webPageDetails.name = "Checkout";' +
+              "\n// If you are updating a Data Variable Data Element you can update an Analytics page name by writing:" +
+              "\n// content.__adobe.analytics.eVar15 = 'value';"
+            }
+          />
+        </>
       )}
       {!hasSchema && dataElement && (
         <Flex alignItems="center" justifyContent="center" height="size-2000">
@@ -307,6 +483,7 @@ const UpdateVariableExtensionView = () => {
       getInitialValues={getInitialValues(context)}
       getSettings={getSettings(context)}
       formikStateValidationSchema={validationSchema}
+      validateFormikState={validateFormikState(context)}
       render={props => {
         return <UpdateVariable context={context} {...props} />;
       }}

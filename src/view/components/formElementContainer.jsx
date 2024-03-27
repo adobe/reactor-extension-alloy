@@ -13,16 +13,21 @@ import React from "react";
 import { Flex } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 
-const FormElementContainer = ({ children, ...otherProps }) => {
+const FormElementContainer = ({
+  children,
+  direction = "column",
+  ...otherProps
+}) => {
   return (
-    <Flex direction="column" gap="size-100" {...otherProps}>
+    <Flex direction={direction} gap="size-100" {...otherProps}>
       {children}
     </Flex>
   );
 };
 
 FormElementContainer.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
+  direction: PropTypes.string
 };
 
 export default FormElementContainer;

@@ -15,7 +15,7 @@ import PropTypes from "prop-types";
 
 import { useFormik, FormikProvider } from "formik";
 import { object } from "yup";
-import { ProgressCircle } from "@adobe/react-spectrum";
+import { ProgressCircle, View } from "@adobe/react-spectrum";
 import useExtensionBridge from "../utils/useExtensionBridge";
 import useReportAsyncError from "../utils/useReportAsyncError";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
@@ -30,6 +30,7 @@ const ExtensionView = ({
 }) => {
   const reportAsyncError = useReportAsyncError();
   const [initInfo, setInitInfo] = useState();
+  const [canRenderView, setCanRenderView] = useState(false);
   const viewRegistrationRef = useRef();
   const formikPropsRef = useRef();
   const getInitialValuesPromiseRef = useRef();
@@ -92,6 +93,7 @@ const ExtensionView = ({
 
   useExtensionBridge({
     init({ initInfo: _initInfo }) {
+      setCanRenderView(false);
       setInitInfo(_initInfo);
     },
     async getSettings() {
@@ -151,35 +153,32 @@ const ExtensionView = ({
           formikPropsRef.current.resetForm({
             values: await getInitialValuesPromise
           });
+          setCanRenderView(true);
         } catch (e) {
           reportAsyncError(e);
         }
       }
     }, [initInfo]);
-
-    // Show the spinner if getInitialValues is not done
-    if (!formikPropsRef.current.values) {
-      return (
-        <FillParentAndCenterChildren>
-          <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
-        </FillParentAndCenterChildren>
-      );
-    }
   }
-
-  // Don't render anything until extension bridge calls init
-  if (!initInfo) {
-    return null;
+  // Show the spinner until getInitialValues is done
+  if (!canRenderView) {
+    return (
+      <FillParentAndCenterChildren>
+        <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
+      </FillParentAndCenterChildren>
+    );
   }
 
   return (
-    <FormikProvider value={formikPropsRef.current}>
-      {render({
-        initInfo,
-        formikProps: formikPropsRef.current,
-        registerImperativeFormApi
-      })}
-    </FormikProvider>
+    <View>
+      <FormikProvider value={formikPropsRef.current}>
+        {render({
+          initInfo,
+          formikProps: formikPropsRef.current,
+          registerImperativeFormApi
+        })}
+      </FormikProvider>
+    </View>
   );
 };
 
