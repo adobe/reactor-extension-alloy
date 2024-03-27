@@ -10,15 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { deepAssign } = require("../../alloy");
-
 module.exports = ({
   instanceManager,
   trackMediaSession,
   mediaCollectionSessionStorage
 }) => {
   return settings => {
-
     const {
       instanceName,
       eventType,
@@ -58,10 +55,8 @@ module.exports = ({
     }
 
     const { xdm = {} } = createMediaEventSettings;
-
-    deepAssign(xdm, { eventType });
-
-    deepAssign(xdm.mediaCollection, { sessionID });
+    xdm.eventType = eventType;
+    xdm.mediaCollection.sessionID = sessionID;
 
     return instance("sendMediaEvent", { xdm, playerId });
   };

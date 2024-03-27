@@ -13,14 +13,12 @@ import React from "react";
 import { useField } from "formik";
 import { Radio } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
-import { object, string } from "yup";
+import { object } from "yup";
 import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import DataElementSelector from "../components/dataElementSelector";
 import form from "./form";
 import SectionHeader from "../components/sectionHeader";
-import singleDataElementRegex from "../constants/singleDataElementRegex";
-import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
@@ -51,6 +49,7 @@ export default function dataElementSection(
   children = []
 ) {
   const {
+    getSettings: getChildrenSettings,
     getInitialValues: getChildrenInitialValues,
     validationShape: childrenValidationShape,
     Component
@@ -83,11 +82,13 @@ export default function dataElementSection(
     },
     getSettings({ values }) {
       const settings = {};
+
       if (values[`${name}InputMethod`] === DATA_ELEMENT) {
         settings[name] = values[`${name}DataElement`];
       }
+
       if (values[`${name}InputMethod`] === FORM) {
-        settings[name] = values[name];
+        settings[name] = getChildrenSettings({ values: values[name] });
       }
       return settings;
     },
