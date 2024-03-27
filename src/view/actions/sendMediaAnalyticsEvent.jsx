@@ -24,12 +24,17 @@ import codeField from "../forms/codeField";
 import checkbox from "../forms/checkbox";
 
 const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
-  const { eventType, playerId, getPlayerDetails = "", instanceName, xdm = {} } =
-    initInfo.settings || {};
+  const {
+    eventType,
+    playerId,
+    automaticSessionHandler = true,
+    getPlayerDetails = "",
+    instanceName,
+    xdm = {}
+  } = initInfo.settings || {};
 
   const { mediaCollection = {} } = xdm;
   const {
-    sessionID = "",
     playhead,
     qoeDataDetails,
     advertisingDetails,
@@ -38,11 +43,6 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
     sessionDetails,
     errorDetails
   } = mediaCollection;
-
-  let automaticSessionHandler = true;
-  if (playhead !== undefined) {
-    automaticSessionHandler = false;
-  }
 
   return getInitialValues({
     initInfo: {
@@ -53,7 +53,6 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
         getPlayerDetails,
         instanceName,
         automaticSessionHandler,
-        sessionID,
         playhead,
         qoeDataDetails,
         chapterDetails,
@@ -69,10 +68,8 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
 const wrapGetSettings = getSettings => ({ values }) => {
   const {
     instanceName,
-    automaticSessionHandler = true,
     playerId,
     eventType,
-    sessionID,
     playhead,
     getPlayerDetails,
     qoeDataDetails,
@@ -82,19 +79,11 @@ const wrapGetSettings = getSettings => ({ values }) => {
     errorDetails,
     sessionDetails
   } = getSettings({ values });
-  const settings = { eventType, instanceName };
+  const settings = { eventType, instanceName, playerId, getPlayerDetails };
   const mediaCollection = {};
 
-  if (automaticSessionHandler) {
-    settings.playerId = playerId;
-    if (getPlayerDetails) {
-      settings.getPlayerDetails = getPlayerDetails;
-    }
-  } else {
-    settings.playerId = playerId;
-    mediaCollection.sessionID = sessionID;
-    mediaCollection.playhead = playhead;
-  }
+  mediaCollection.playhead = playhead;
+
   if (qoeDataDetails) {
     mediaCollection.qoeDataDetails = qoeDataDetails;
   }
@@ -612,8 +601,7 @@ const qoeDataSection = dataElementSection(
       description:
         "The average bitrate (in kbps). The value is predefined buckets at 100kbps intervals. " +
         "The Average Bitrate is computed as a weighted average of all bitrate values related to the play " +
-        "duration that occurred during a playback session.",
-      isRequired: true
+        "duration that occurred during a playback session."
     }),
     textField({
       name: "droppedFrames",
@@ -699,8 +687,7 @@ const sendEventForm = form(
             " automatically trigger the pings. If you prefer to manually trigger the pings, do not set this callback.",
           placeholder:
             "// introduce the function code to retrieve the playhead.",
-          buttonLabelSuffix: "Player Details retrieval callback",
-          isRequired: true
+          buttonLabelSuffix: "Player Details retrieval callback"
         })
       ]
     ),

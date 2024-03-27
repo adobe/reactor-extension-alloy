@@ -47,7 +47,7 @@ const DATA_ELEMENT = "dataElement";
  * @returns {Form} A form element that allows the user to create an object with string keys and values.
  */
 export default function dataElementSection(
-  { name, label, learnMoreUrl, dataElementDescription, objectKey },
+  { name, label, learnMoreUrl, dataElementDescription },
   children = []
 ) {
   const {
@@ -55,24 +55,12 @@ export default function dataElementSection(
     validationShape: childrenValidationShape,
     Component
   } = form({}, children);
-
   const buildDefaultValues = () =>
     getChildrenInitialValues({ initInfo: { settings: null } });
 
   const validationShape = {
-    [name]: object().when(`${name}InputMethod`, {
-      is: FORM,
-      then: schema => schema.shape(childrenValidationShape)
-    }),
-    [`${name}DataElement`]: string().when(`${name}InputMethod`, {
-      is: DATA_ELEMENT,
-      then: schema =>
-        schema
-          .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-          .required(DATA_ELEMENT_REQUIRED)
-    })
+    [name]: object().shape({ ...childrenValidationShape })
   };
-
   const formPart = {
     getInitialValues({ initInfo }) {
       const { [name]: value } = initInfo.settings || {};

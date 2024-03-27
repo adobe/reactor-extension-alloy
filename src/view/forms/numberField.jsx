@@ -53,20 +53,33 @@ export default function numberField({
   dataElementDescription
 }) {
   const validationShape = {
-    [name]: number().when(`${name}InputMethod`, {
-      is: NUMBER,
-      then: schema =>
-        schema.required("Please provide the playhead as a number.")
-    }),
+    [name]: number(),
     [`${name}DataElement`]: string().when(`${name}InputMethod`, {
       is: DATA_ELEMENT,
       then: schema =>
-        schema
-          .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-          .required(DATA_ELEMENT_REQUIRED)
+        schema.matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
     })
   };
 
+  if (isRequired) {
+    validationShape[name] = number().when(`${name}InputMethod`, {
+      is: NUMBER,
+      then: schema =>
+        schema.required(
+          `Please provide the ${label.toLowerCase()} as a number.`
+        )
+    });
+    validationShape[`${name}DataElement`] = string().when(
+      `${name}InputMethod`,
+      {
+        is: DATA_ELEMENT,
+        then: schema =>
+          schema
+            .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+            .required(DATA_ELEMENT_REQUIRED)
+      }
+    );
+  }
   const part = {
     getInitialValues({ initInfo }) {
       const { [name]: value } = initInfo.settings || {};
@@ -78,7 +91,7 @@ export default function numberField({
       };
 
       if (typeof value === "string") {
-        initialValues[name] = [""];
+        initialValues[name] = undefined;
         initialValues[`${name}InputMethod`] = DATA_ELEMENT;
         initialValues[`${name}DataElement`] = value;
       }
@@ -138,6 +151,7 @@ export default function numberField({
                 name={`${namePrefix}${name}DataElement`}
                 description={dataElementDescription}
                 width="size-5000"
+                isRequired={isRequired}
                 aria-label={`${label} data element`}
               />
             </DataElementSelector>

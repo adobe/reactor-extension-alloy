@@ -12,7 +12,6 @@ governing permissions and limitations under the License.
 
 module.exports = ({
   instanceManager,
-  mediaAnalyticsSessionCallbackStorage,
   mediaCollectionSessionStorage,
   wrapOnBeforeMediaEvent
 }) => settings => {
@@ -22,28 +21,22 @@ module.exports = ({
   const options = { xdm: createMediaSessionSettings.xdm };
   if (
     createMediaSessionSettings.playerId &&
-    createMediaSessionSettings.onBeforeMediaEvent
+    createMediaSessionSettings.getPlayerDetails
   ) {
     options.playerId = createMediaSessionSettings.playerId;
-    options.onBeforeMediaEvent = wrapOnBeforeMediaEvent(
-      createMediaSessionSettings.onBeforeMediaEvent
+    options.getPlayerDetails = wrapOnBeforeMediaEvent(
+      createMediaSessionSettings.getPlayerDetails
     );
   }
-
   return instance("createMediaSession", options)
     .then(result => {
       const { sessionId } = result;
-      const playerId = options.playerId;
-      const eventDetails = {
-        playerId,
-        sessionId
-      };
+      const playerId = createMediaSessionSettings.playerId;
+
       mediaCollectionSessionStorage.add({
         playerId,
-        sessionDetails: result.sessionId
+        sessionDetails: sessionId
       });
-
-      mediaAnalyticsSessionCallbackStorage.triggerEvent(eventDetails);
     })
     .catch(error => {
       console.error("Error creating media session", error);

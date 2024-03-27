@@ -16,50 +16,53 @@ module.exports = ({
   instanceManager,
   trackMediaSession,
   mediaCollectionSessionStorage
-}) => settings => {
-  const {
-    instanceName,
-    eventType,
-    playerId,
-    ...createMediaEventSettings
-  } = settings;
-  const instance = instanceManager.getInstance(instanceName);
+}) => {
+  return settings => {
 
-  if (!instance) {
-    throw new Error(
-      `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
-    );
-  }
+    const {
+      instanceName,
+      eventType,
+      playerId,
+      ...createMediaEventSettings
+    } = settings;
+    const instance = instanceManager.getInstance(instanceName);
 
-  if (!playerId) {
-    throw new Error(
-      "Failed to send media event. No playerId was provided in the settings."
-    );
-  }
-  const sessionID = mediaCollectionSessionStorage.get({ playerId });
-
-  if (!sessionID) {
-    if (eventType === "media.sessionStart") {
-      return trackMediaSession(settings);
+    if (!instance) {
+      throw new Error(
+        `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
+      );
     }
-    return Promise.resolve();
-  }
-  if (eventType === "media.sessionStart") {
-    return Promise.resolve();
-  }
 
-  if (
-    eventType === "media.sessionEnd" ||
-    eventType === "media.sessionComplete"
-  ) {
-    mediaCollectionSessionStorage.remove({ playerId });
-  }
+    if (!playerId) {
+      throw new Error(
+        "Failed to send media event. No playerId was provided in the settings."
+      );
+    }
+    const sessionID = mediaCollectionSessionStorage.get({ playerId });
 
-  const { xdm = {} } = createMediaEventSettings;
+    if (!sessionID) {
+      if (eventType === "media.sessionStart") {
+        return trackMediaSession(settings);
+      }
+      return Promise.resolve();
+    }
+    if (eventType === "media.sessionStart") {
+      return Promise.resolve();
+    }
 
-  deepAssign(xdm, { eventType });
+    if (
+      eventType === "media.sessionEnd" ||
+      eventType === "media.sessionComplete"
+    ) {
+      mediaCollectionSessionStorage.remove({ playerId });
+    }
 
-  deepAssign(xdm.mediaCollection, { sessionID });
+    const { xdm = {} } = createMediaEventSettings;
 
-  return instance("sendMediaEvent", { xdm, playerId });
+    deepAssign(xdm, { eventType });
+
+    deepAssign(xdm.mediaCollection, { sessionID });
+
+    return instance("sendMediaEvent", { xdm, playerId });
+  };
 };
