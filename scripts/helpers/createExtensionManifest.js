@@ -192,7 +192,7 @@ const createExtensionManifest = ({ version }) => {
   const extensionManifest = {
     version,
     displayName: "Adobe Experience Platform Web SDK",
-    name: "adobe-alloy",
+    name: "adobe-alloy-nina",
     iconPath: "resources/images/icon.svg",
     exchangeUrl:
       "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
@@ -309,6 +309,26 @@ const createExtensionManifest = ({ version }) => {
                   minLength: 1
                 },
                 edgeConfigOverrides: createEdgeConfigOverridesSchema(false),
+                mediaCollection: {
+                  type: "object",
+                  properties: {
+                    channel: {
+                      type: "string"
+                    },
+                    playerName: {
+                      type: "string"
+                    },
+                    version: {
+                      type: "string"
+                    },
+                    mainPingInterval: {
+                      type: "integer"
+                    },
+                    adPingInterval: {
+                      type: "integer"
+                    }
+                  }
+                },
                 personalizationStorageEnabled: {
                   type: "boolean"
                 }
@@ -796,6 +816,65 @@ const createExtensionManifest = ({ version }) => {
         ],
         libPath: "dist/lib/actions/updateVariable/index.js",
         viewPath: "actions/updateVariable.html"
+      },
+      {
+        displayName: "Send Media Event",
+        name: "send-media-event",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            instanceName: {
+              type: "string",
+              minLength: 1
+            },
+            eventType: {
+              type: "string",
+              minLength: 1
+            },
+            playerId: {
+              type: "string",
+              minLength: 1
+            },
+            xdm: {
+              type: "object"
+            },
+            getPlayerDetails: {
+              type: "string"
+            }
+          },
+          required: ["instanceName"]
+        },
+        libPath: "dist/lib/actions/sendMediaEvent/index.js",
+        viewPath: "actions/sendMediaAnalyticsEvent.html",
+        transforms: [
+          {
+            type: "function",
+            propertyPath: "getPlayerDetails",
+            parameters: ["content"]
+          }
+        ]
+      },
+      {
+        displayName: "Get Media Tracker API",
+        name: "get-media-tracker-api",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            instanceName: {
+              type: "string",
+              minLength: 1
+            },
+            objectName: {
+              type: "string",
+              minLength: 1
+            }
+          },
+          required: ["instanceName"]
+        },
+        libPath: "dist/lib/actions/getMediaTrackerAPI/index.js",
+        viewPath: "actions/createMediaTracker.html"
       },
       {
         displayName: "Evaluate rulesets",
