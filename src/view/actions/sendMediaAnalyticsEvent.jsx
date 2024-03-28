@@ -22,12 +22,14 @@ import numberField from "../forms/numberField";
 import dataElementSection from "../forms/dataElementSection";
 import codeField from "../forms/codeField";
 import checkbox from "../forms/checkbox";
+import objectArray from "../forms/objectArray";
+import section from "../forms/section";
 
 const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
   const {
     eventType,
     playerId,
-    automaticSessionHandler = true,
+    automaticSessionHandler = false,
     getPlayerDetails = "",
     instanceName,
     xdm = {}
@@ -41,7 +43,8 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
     chapterDetails,
     advertisingPodDetails,
     sessionDetails,
-    errorDetails
+    errorDetails,
+    customMetadata
   } = mediaCollection;
 
   return getInitialValues({
@@ -59,7 +62,8 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
         advertisingDetails,
         advertisingPodDetails,
         errorDetails,
-        sessionDetails
+        sessionDetails,
+        customMetadata
       }
     }
   });
@@ -68,6 +72,7 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
 const wrapGetSettings = getSettings => ({ values }) => {
   const {
     instanceName,
+    automaticSessionHandler = false,
     playerId,
     eventType,
     playhead,
@@ -77,9 +82,17 @@ const wrapGetSettings = getSettings => ({ values }) => {
     advertisingPodDetails,
     advertisingDetails,
     errorDetails,
-    sessionDetails
+    sessionDetails,
+    customMetadata
   } = getSettings({ values });
-  const settings = { eventType, instanceName, playerId, getPlayerDetails };
+
+  const settings = {
+    eventType,
+    instanceName,
+    playerId,
+    getPlayerDetails,
+    automaticSessionHandler
+  };
   const mediaCollection = {};
 
   mediaCollection.playhead = playhead;
@@ -101,6 +114,10 @@ const wrapGetSettings = getSettings => ({ values }) => {
   }
   if (sessionDetails) {
     mediaCollection.sessionDetails = sessionDetails;
+  }
+
+  if (customMetadata) {
+    mediaCollection.customMetadata = customMetadata;
   }
 
   settings.xdm = {
@@ -142,6 +159,37 @@ const advertisingPodDetailsSection = dataElementSection(
       dataElementDescription:
         "This data element should resolve to a integer number."
     })
+  ]
+);
+const customMetadataSection = section(
+  {
+    label: "Custom metadata",
+    learnMoreUrl: "https://example.com"
+  },
+  [
+    objectArray(
+      {
+        name: "customMetadata",
+        singularLabel: "Scope",
+        dataElementDescription:
+          "Provide a data element that resolves to an object scope keys, and object values with keys: selector and actionType.",
+        objectLabelPlural: "Scopes"
+      },
+      [
+        textField({
+          name: "name",
+          label: "Key",
+          isRequired: true,
+          description: "Enter metadata key"
+        }),
+        textField({
+          name: "value",
+          label: "Value",
+          isRequired: true,
+          description: "Enter metadata value"
+        })
+      ]
+    )
   ]
 );
 const chapterSection = dataElementSection(
@@ -548,21 +596,21 @@ const eventBasedDetailFormConditionals = [
       args: "eventType",
       condition: eventType => eventType === "media.adBreakStart"
     },
-    [advertisingPodDetailsSection]
+    [advertisingPodDetailsSection, customMetadataSection]
   ),
   conditional(
     {
       args: "eventType",
       condition: eventType => eventType === "media.adStart"
     },
-    [advertisingDetailsSection]
+    [advertisingDetailsSection, customMetadataSection]
   ),
   conditional(
     {
       args: "eventType",
       condition: eventType => eventType === "media.chapterStart"
     },
-    [chapterSection]
+    [chapterSection, customMetadataSection]
   ),
   conditional(
     {
@@ -583,7 +631,7 @@ const eventBasedDetailFormConditionals = [
       args: "eventType",
       condition: eventType => eventType === "media.sessionStart"
     },
-    [sessionDetailsSection]
+    [sessionDetailsSection, customMetadataSection]
   )
 ];
 const qoeDataSection = dataElementSection(
@@ -659,9 +707,8 @@ const sendEventForm = form(
           name: "automaticSessionHandler",
           label: "Automatic session handler",
           description:
-            "Choose 'Automatic Session Handler' if you want the Web SDK to manage your media session and send necessary updates automatically. If you prefer to have more control and manually manage your media session, you can deselect this option.",
-          isRequired: false,
-          defaultValue: true
+            "Choose 'Automatic Session Handler' if you want the Web SDK to manage your media session and send necessary pings automatically. If you prefer to have more control and manually manage your media session, you can deselect this option.",
+          isRequired: false
         })
       ]
     ),
