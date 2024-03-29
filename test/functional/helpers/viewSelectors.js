@@ -141,7 +141,16 @@ for (let i = 0; i < 3; i += 1) {
       )
     },
     deleteButton: spectrum.button("deleteInstanceButton"),
-    overrides: overrideWrappers
+    overrides: overrideWrappers,
+    mediaCollection: {
+      mediaChannelField: spectrum.textField("mediaChannelField"),
+      mediaPlayerNameField: spectrum.textField("mediaPlayerNameField"),
+      mediaVersionField: spectrum.textField("mediaVersionField"),
+      mediaMainPingIntervalField: spectrum.textField(
+        "mediaMainPingIntervalField"
+      ),
+      mediaAdPingIntervalField: spectrum.textField("mediaAdPingIntervalField")
+    }
   });
 }
 
