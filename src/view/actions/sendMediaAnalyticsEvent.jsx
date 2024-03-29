@@ -20,10 +20,10 @@ import mediaEventTypes from "./constants/mediaEventTypes";
 import fieldArray from "../forms/fieldArray";
 import numberField from "../forms/numberField";
 import dataElementSection from "../forms/dataElementSection";
-import codeField from "../forms/codeField";
 import checkbox from "../forms/checkbox";
 import objectArray from "../forms/objectArray";
 import section from "../forms/section";
+import dataElement from "../forms/dataElement";
 
 const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
   const {
@@ -180,13 +180,13 @@ const customMetadataSection = section(
           name: "name",
           label: "Key",
           isRequired: true,
-          description: "Enter metadata key"
+          description: "Enter metadata key."
         }),
         textField({
           name: "value",
           label: "Value",
           isRequired: true,
-          description: "Enter metadata value"
+          description: "Enter metadata value."
         })
       ]
     )
@@ -252,7 +252,7 @@ const advertisingDetailsSection = dataElementSection(
       name: "name",
       label: "Ad ID",
       isRequired: true,
-      description: "ID of the ad. (Any integer and/or letter combination)"
+      description: "ID of the ad. (Any integer and/or letter combination)."
     }),
     numberField({
       name: "length",
@@ -430,7 +430,7 @@ const sessionDetailsSection = dataElementSection(
       name: "rating",
       label: "Rating",
       isRequired: false,
-      description: "Rating as defined by TV Parental Guidelines"
+      description: "Rating as defined by TV Parental Guidelines."
     }),
     textField({
       name: "show",
@@ -538,7 +538,7 @@ const sessionDetailsSection = dataElementSection(
       isRequired: false,
       description:
         "A property that defines the time of the day when the content was broadcast or played. This could have " +
-        "any value set as necessary by customers"
+        "any value set as necessary by customers."
     }),
     textField({
       name: "label",
@@ -571,7 +571,7 @@ const sessionDetailsSection = dataElementSection(
       name: "publisher",
       label: "Publisher",
       isRequired: false,
-      description: "Name of the audio content publisher"
+      description: "Name of the audio content publisher."
     }),
     textField({
       name: "firstDigitalDate",
@@ -579,13 +579,13 @@ const sessionDetailsSection = dataElementSection(
       isRequired: false,
       description:
         "The date when the content first aired on any digital channel or platform. Any date format is " +
-        "acceptable but Adobe recommends: YYYY-MM-DD"
+        "acceptable but Adobe recommends: YYYY-MM-DD."
     }),
     textField({
       name: "network",
       label: "Network",
       isRequired: false,
-      description: "The network/channel name"
+      description: "The network/channel name."
     })
   ]
 );
@@ -634,45 +634,6 @@ const eventBasedDetailFormConditionals = [
     [sessionDetailsSection, customMetadataSection]
   )
 ];
-const qoeDataSection = dataElementSection(
-  {
-    label: "Quality of experience data",
-    name: "qoeDataDetails",
-    dataElementDescription:
-      "This should resolve to an object containing Quality of Experience data.",
-    objectKey: "qoeDataDetails"
-  },
-  [
-    textField({
-      name: "bitrate",
-      label: "Average bitrate (in kbps)",
-      description:
-        "The average bitrate (in kbps). The value is predefined buckets at 100kbps intervals. " +
-        "The Average Bitrate is computed as a weighted average of all bitrate values related to the play " +
-        "duration that occurred during a playback session."
-    }),
-    textField({
-      name: "droppedFrames",
-      label: "Dropped frames (Int)",
-      description:
-        "The number of dropped frames (Int). This value is computed as a sum of " +
-        "all frames dropped during a playback session. "
-    }),
-    textField({
-      name: "framesPerSecond",
-      label: "Frames per second (in frames per second)",
-      description:
-        "The current value of the stream frame-rate (in frames per second). "
-    }),
-    textField({
-      name: "timeToStart",
-      label: "Time to start (milliseconds)",
-      description:
-        "This value defaults to zero if you do not set it through the QoSObject. " +
-        "You set this value in milliseconds. The value will be displayed in the time format (HH:MM:SS) "
-    })
-  ]
-);
 
 const sendEventForm = form(
   {
@@ -684,7 +645,7 @@ const sendEventForm = form(
     comboBox({
       name: "eventType",
       label: "Media event type",
-      description: "Select your media event type",
+      description: "Select your media event type.",
       isRequired: true,
       items: Object.keys(mediaEventTypes).reduce((items, key) => {
         items.push({ value: key, label: mediaEventTypes[key] });
@@ -695,7 +656,7 @@ const sendEventForm = form(
       name: "playerId",
       label: "Player ID",
       isRequired: true,
-      description: "Enter your player ID"
+      description: "Enter your player ID."
     }),
     conditional(
       {
@@ -705,41 +666,81 @@ const sendEventForm = form(
       [
         checkbox({
           name: "automaticSessionHandler",
-          label: "Automatic session handler",
+          label: "Handle media session automatically",
           description:
-            "Choose 'Automatic Session Handler' if you want the Web SDK to manage your media session and send necessary pings automatically. If you prefer to have more control and manually manage your media session, you can deselect this option.",
+            "Choose 'Handle media session automatically' if you want the Web SDK to manage your media session and send necessary pings automatically. If you prefer to have more control and manually manage sending pings, you can deselect this option.",
           isRequired: false
+        }),
+        numberField({
+          name: "playhead",
+          label: "Playhead",
+          isRequired: true,
+          description: "Enter the playhead.",
+          dataElementDescription:
+            "This data element should resolve to a number."
         })
       ]
     ),
-    numberField({
-      name: "playhead",
-      label: "Playhead",
-      isRequired: true,
-      description: "Enter the playhead",
-      dataElementDescription: "This data element should resolve to a number."
-    }),
     conditional(
       {
         args: "eventType",
-        condition: eventType => eventType === "media.sessionStart"
+        condition: eventType => eventType !== "media.sessionStart"
       },
       [
-        codeField({
-          name: "getPlayerDetails",
-          label: "Get player details callback function",
-          description:
-            "This is a callback function that is invoked before the media event is sent. The function is responsible " +
-            "for retrieving the playhead and Quality of Experience Data. If this callback is set, the Web SDK will" +
-            " automatically trigger the pings. If you prefer to manually trigger the pings, do not set this callback.",
-          placeholder:
-            "// introduce the function code to retrieve the playhead.",
-          buttonLabelSuffix: "Player Details retrieval callback"
+        numberField({
+          name: "playhead",
+          label: "Playhead",
+          isRequired: false,
+          description: "Enter the playhead.",
+          dataElementDescription:
+            "This data element should resolve to a number."
         })
       ]
     ),
     ...eventBasedDetailFormConditionals,
-    qoeDataSection
+    conditional(
+      {
+        args: "eventType",
+        condition: eventType => eventType !== "media.bitrateChange"
+      },
+      [
+        section(
+          {
+            label: "Quality of experience data"
+          },
+          [
+            dataElement({
+              name: "qoeDataDetails",
+              label: "Quality of experience data",
+              description:
+                "This should resolve to an object containing Quality of Experience data."
+            })
+          ]
+        )
+      ]
+    ),
+    conditional(
+      {
+        args: "eventType",
+        condition: eventType => eventType === "media.bitrateChange"
+      },
+      [
+        section(
+          {
+            label: "Quality of experience data"
+          },
+          [
+            dataElement({
+              name: "qoeDataDetails",
+              label: "Quality of experience data",
+              isRequired: true,
+              description:
+                "This should resolve to an object containing Quality of Experience data."
+            })
+          ]
+        )
+      ]
+    )
   ]
 );
 
