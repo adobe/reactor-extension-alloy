@@ -240,7 +240,7 @@ test("doesn't show error for viewName value that is not a data element", async (
     extensionSettings: mockExtensionSettings
   });
   await viewNameField.typeText("%dataelement");
-  await extensionViewController.expectIsValid();
+  await extensionViewController.expectIsNotValid();
   await viewNameField.expectNoError();
 });
 

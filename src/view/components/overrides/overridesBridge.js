@@ -191,6 +191,10 @@ export const bridge = {
           rs => rs !== ""
         );
       }
+      if (!overrides.datastreamId) {
+        delete overrides.datastreamId;
+        delete overrides.datastreamIdInputMethod;
+      }
     });
 
     /** @type {{ edgeConfigOverrides: ConfigOverridesLaunchSettings }} */
@@ -206,6 +210,7 @@ export const bridge = {
     ) {
       delete trimmedInstanceSettings.edgeConfigOverrides;
     }
+
     return trimmedInstanceSettings;
   },
   formikStateValidationSchema: object({
