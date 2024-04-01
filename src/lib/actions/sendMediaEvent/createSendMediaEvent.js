@@ -35,17 +35,10 @@ module.exports = ({
         "Failed to send media event. No playerId was provided in the settings."
       );
     }
-    const sessionID = mediaCollectionSessionStorage.get({ playerId });
-
-    if (!sessionID) {
-      if (eventType === "media.sessionStart") {
-        return trackMediaSession(settings);
-      }
-      return Promise.resolve();
-    }
     if (eventType === "media.sessionStart") {
-      return Promise.resolve();
+      return trackMediaSession(settings);
     }
+    const sessionID = mediaCollectionSessionStorage.get({ playerId });
 
     if (
       eventType === "media.sessionEnd" ||
@@ -53,11 +46,17 @@ module.exports = ({
     ) {
       mediaCollectionSessionStorage.remove({ playerId });
     }
-
     const { xdm = {} } = createMediaEventSettings;
     xdm.eventType = eventType;
-    xdm.mediaCollection.sessionID = sessionID;
 
-    return instance("sendMediaEvent", { xdm, playerId });
+    const options = { xdm };
+
+    if (!sessionID) {
+      options.playerId = playerId;
+    } else {
+      xdm.mediaCollection.sessionID = sessionID;
+    }
+
+    return instance("sendMediaEvent", options);
   };
 };

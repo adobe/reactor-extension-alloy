@@ -22,7 +22,7 @@ const getMediaCollection = () => {
   return {
     channel: "",
     playerName: "",
-    version: "",
+    appVersion: "",
     adPingInterval: 10,
     mainPingInterval: 10
   };
@@ -113,7 +113,7 @@ const MediaCollectionSection = ({ instanceFieldName }) => {
         <FormikTextField
           data-test-id="mediaVersionField"
           label="Application version"
-          name={`${instanceFieldName}.mediaCollection.version`}
+          name={`${instanceFieldName}.mediaCollection.appVersion`}
           description="The SDK version used by the player. This could have any custom value that makes sense for your player."
           width="size-5000"
         />

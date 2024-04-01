@@ -1,5 +1,5 @@
 /*
-Copyright 2023 Adobe. All rights reserved.
+Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -12,31 +12,40 @@ governing permissions and limitations under the License.
 
 module.exports = ({
   instanceManager,
-  mediaCollectionSessionStorage,
-  wrapOnBeforeMediaEvent
+  mediaCollectionSessionStorage
 }) => settings => {
-  const { instanceName, ...createMediaSessionSettings } = settings;
+  const { instanceName, automaticSessionHandler, playerId, xdm } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
-  const options = { xdm: createMediaSessionSettings.xdm };
-  if (
-    createMediaSessionSettings.playerId &&
-    createMediaSessionSettings.getPlayerDetails
-  ) {
-    options.playerId = createMediaSessionSettings.playerId;
-    options.getPlayerDetails = wrapOnBeforeMediaEvent(
-      createMediaSessionSettings.getPlayerDetails
-    );
+  const options = { xdm };
+  const sessionID = mediaCollectionSessionStorage.get({ playerId });
+
+  if (sessionID) {
+    // if we have a mapping in cache we resolve the promise and not start another session again
+    return Promise.resolve();
   }
+
+  if (automaticSessionHandler) {
+    options.playerId = playerId;
+
+    options.getPlayerDetails = () => {
+      return {
+        playhead: xdm.mediaCollection.playhead || 0,
+        qoeDataDetails: xdm.mediaCollection.qoeDataDetails || undefined
+      };
+    };
+  }
+
   return instance("createMediaSession", options)
     .then(result => {
       const { sessionId } = result;
-      const playerId = createMediaSessionSettings.playerId;
 
-      mediaCollectionSessionStorage.add({
-        playerId,
-        sessionDetails: sessionId
-      });
+      if (!automaticSessionHandler) {
+        mediaCollectionSessionStorage.add({
+          playerId,
+          sessionDetails: sessionId
+        });
+      }
     })
     .catch(error => {
       console.error("Error creating media session", error);
