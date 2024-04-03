@@ -402,7 +402,7 @@ test.requestHooks(
   }
 );
 
-test.only.requestHooks(
+test.requestHooks(
   schemaMocks.basicArray,
   schemaMocks.otherArray,
   dataElementsMocks.multiple

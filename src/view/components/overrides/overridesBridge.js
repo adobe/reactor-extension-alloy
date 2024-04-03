@@ -206,7 +206,6 @@ export const bridge = {
     ) {
       delete trimmedInstanceSettings.edgeConfigOverrides;
     }
-
     return trimmedInstanceSettings;
   },
   formikStateValidationSchema: object({
