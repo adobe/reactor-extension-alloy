@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { t } from "testcafe";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks";
 import * as datastreamsMocks from "../../helpers/endpointMocks/datastreamsMocks";
@@ -344,9 +343,7 @@ test("returns minimal valid settings", async () => {
   });
 
   await extensionViewController.expectIsValid();
-
-  const settings = await extensionViewController.getSettings();
-  await t.expect(settings).contains({
+  await extensionViewController.expectSettingsToContain({
     instanceName: "alloy1"
   });
 });

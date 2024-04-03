@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { t } from "testcafe";
 import extensionViewController from "../../helpers/extensionViewController";
 import spectrum from "../../helpers/spectrum";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
@@ -288,9 +287,7 @@ test("defaults to the first instance name", async () => {
   await extensionViewController.init({ extensionSettings });
   await instanceNamePicker.expectSelectedOptionLabel("alloy1");
   await extensionViewController.expectIsValid();
-
-  const settings = await extensionViewController.getSettings();
-  await t.expect(settings).contains({
+  await extensionViewController.expectSettingsToContain({
     instanceName: "alloy1"
   });
 });
