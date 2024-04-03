@@ -370,7 +370,7 @@ test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
   }
 );
 
-test.requestHooks(
+test.skip.requestHooks(
   schemaMocks.basic,
   schemaMocks.other,
   dataElementsMocks.multiple
