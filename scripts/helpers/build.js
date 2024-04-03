@@ -93,7 +93,9 @@ module.exports = (options = {}) => {
       });
       process.on("exit", () => {
         // stop watching when the main process exits
-        subscription.unsubscribe();
+        if (typeof subscription?.unsubscribe === "function") {
+          subscription.unsubscribe();
+        }
       });
     });
   } else {
