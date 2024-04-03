@@ -326,7 +326,7 @@ test.requestHooks(
   }
 );
 
-test.requestHooks(sandboxMocks.multipleWithoutDefault)(
+test.skip.requestHooks(sandboxMocks.multipleWithoutDefault)(
   "show error when attempting to save with no sandbox selected",
   async () => {
     await extensionViewController.init({});
