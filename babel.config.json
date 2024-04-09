@@ -1,12 +1,11 @@
 {
-  "presets": ["@babel/preset-env", "@babel/preset-react"],
   "plugins": ["version"],
   "env": {
     "production": {
       "plugins": [
         "babel-plugin-jsx-remove-data-test-id",
-        "@babel/proposal-nullish-coalescing-operator",
-        "@babel/proposal-optional-chaining"
+        "@babel/plugin-transform-nullish-coalescing-operator",
+        "@babel/plugin-transform-optional-chaining"
       ]
     }
   }

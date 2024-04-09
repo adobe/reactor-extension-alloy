@@ -28,6 +28,11 @@ const config = [
     files: ["**/*.{js,jsx}"],
     languageOptions: {
       parser: babelParser,
+      parserOptions: {
+        babelOptions: {
+          presets: ["@babel/preset-env", "@babel/preset-react"]
+        }
+      },
       ecmaVersion: 2021,
       globals: {
         ...globals.jasmine,
