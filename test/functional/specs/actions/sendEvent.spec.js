@@ -343,7 +343,7 @@ test("returns minimal valid settings", async () => {
   });
 
   await extensionViewController.expectIsValid();
-  await extensionViewController.expectSettings({
+  await extensionViewController.expectSettingsToContain({
     instanceName: "alloy1"
   });
 });

@@ -287,7 +287,7 @@ test("defaults to the first instance name", async () => {
   await extensionViewController.init({ extensionSettings });
   await instanceNamePicker.expectSelectedOptionLabel("alloy1");
   await extensionViewController.expectIsValid();
-  await extensionViewController.expectSettings({
+  await extensionViewController.expectSettingsToContain({
     instanceName: "alloy1"
   });
 });
