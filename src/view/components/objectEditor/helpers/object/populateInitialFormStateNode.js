@@ -56,9 +56,8 @@ export default ({
     formStateNode.populationStrategy = WHOLE;
     formStateNode.value = value;
   } else {
-    formStateNode.populationStrategy = formStateNode.isPartsPopulationStrategySupported
-      ? PARTS
-      : WHOLE;
+    formStateNode.populationStrategy =
+      formStateNode.isPartsPopulationStrategySupported ? PARTS : WHOLE;
     formStateNode.value = "";
   }
 };

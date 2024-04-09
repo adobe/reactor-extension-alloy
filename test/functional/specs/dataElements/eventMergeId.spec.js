@@ -14,7 +14,8 @@ import extensionViewController from "../../helpers/extensionViewController";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 
-const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+const uuidRegex =
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
 createExtensionViewFixture({
   title: "Event Merge ID View",

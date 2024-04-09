@@ -9,17 +9,19 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-module.exports = ({ instanceManager, eventMergeIdCache }) => settings => {
-  // Optimally we would use the data element name as the cache ID, but
-  // we don't receive the data element name from Turbine, so we have to use
-  // a separate cache ID that was generated when the data element was created.
-  const { cacheId } = settings;
-  let eventMergeId = eventMergeIdCache.getByCacheId(cacheId);
+module.exports =
+  ({ instanceManager, eventMergeIdCache }) =>
+  settings => {
+    // Optimally we would use the data element name as the cache ID, but
+    // we don't receive the data element name from Turbine, so we have to use
+    // a separate cache ID that was generated when the data element was created.
+    const { cacheId } = settings;
+    let eventMergeId = eventMergeIdCache.getByCacheId(cacheId);
 
-  if (!eventMergeId) {
-    ({ eventMergeId } = instanceManager.createEventMergeId());
-    eventMergeIdCache.set(cacheId, eventMergeId);
-  }
+    if (!eventMergeId) {
+      ({ eventMergeId } = instanceManager.createEventMergeId());
+      eventMergeIdCache.set(cacheId, eventMergeId);
+    }
 
-  return eventMergeId;
-};
+    return eventMergeId;
+  };

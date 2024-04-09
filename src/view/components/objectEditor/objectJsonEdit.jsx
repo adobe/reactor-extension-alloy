@@ -32,22 +32,24 @@ const getEmptyItem = () => ({ key: "", value: "" });
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
  */
-const WholePopulationStrategyForm = ({ fieldName, setTouched }) => (
-  <DataElementSelector>
-    <FormikTextArea
-      data-test-id="valueField"
-      name={`${fieldName}.value`}
-      aria-label="Value"
-      description={
-        "You can provide Data Elements for individual fields within the JSON " +
-        '(e.g. "%My Data%") or provide one data element for the entire object.'
-      }
-      width="size-6000"
-      marginStart="size-300"
-      onBlur={setTouched}
-    />
-  </DataElementSelector>
-);
+const WholePopulationStrategyForm = ({ fieldName, setTouched }) => {
+  return (
+    <DataElementSelector>
+      <FormikTextArea
+        data-test-id="valueField"
+        name={`${fieldName}.value`}
+        aria-label="Value"
+        description={
+          "You can provide Data Elements for individual fields within the JSON " +
+          '(e.g. "%My Data%") or provide one data element for the entire object.'
+        }
+        width="size-6000"
+        marginStart="size-300"
+        onBlur={setTouched}
+      />
+    </DataElementSelector>
+  );
+};
 
 WholePopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired,
@@ -58,70 +60,72 @@ WholePopulationStrategyForm.propTypes = {
  * Displayed when the PARTS population strategy is selected.
  * Allows the user to provide individual items within the array.
  */
-const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
-  <FieldArray
-    name={`${fieldName}.items`}
-    render={arrayHelpers => {
-      return (
-        <Well marginStart="size-300">
-          <Flex gap="size-100" direction="column" alignItems="start">
-            {items.map(({ key, value }, index) => {
-              return (
-                <Flex key={`${fieldName}.${index}`}>
-                  <FormikTextField
-                    data-test-id={`keyField${index}`}
-                    name={`${fieldName}.items.${index}.key`}
-                    aria-label="Key"
-                    label={index === 0 ? "Key" : ""}
-                    width="size-3000"
-                    onBlur={setTouched}
-                  />
-
-                  <DataElementSelector>
+const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => {
+  return (
+    <FieldArray
+      name={`${fieldName}.items`}
+      render={arrayHelpers => {
+        return (
+          <Well marginStart="size-300">
+            <Flex gap="size-100" direction="column" alignItems="start">
+              {items.map(({ key, value }, index) => {
+                return (
+                  <Flex key={`${fieldName}.${index}`}>
                     <FormikTextField
-                      data-test-id={`valueField${index}`}
-                      name={`${fieldName}.items.${index}.value`}
-                      aria-label="Value"
-                      label={index === 0 ? "Value" : ""}
+                      data-test-id={`keyField${index}`}
+                      name={`${fieldName}.items.${index}.key`}
+                      aria-label="Key"
+                      label={index === 0 ? "Key" : ""}
                       width="size-3000"
                       onBlur={setTouched}
-                      marginStart="size-100"
                     />
-                  </DataElementSelector>
 
-                  <ActionButton
-                    data-test-id={`item${index}RemoveButton`}
-                    isQuiet
-                    variant="secondary"
-                    aria-label="Delete"
-                    isDisabled={items.length === 1 && !key && !value}
-                    marginTop={index === 0 ? "size-300" : ""}
-                    onPress={() =>
-                      items.length > 1
-                        ? arrayHelpers.remove(index)
-                        : arrayHelpers.replace(index, getEmptyItem())
-                    }
-                  >
-                    <Delete />
-                  </ActionButton>
-                </Flex>
-              );
-            })}
+                    <DataElementSelector>
+                      <FormikTextField
+                        data-test-id={`valueField${index}`}
+                        name={`${fieldName}.items.${index}.value`}
+                        aria-label="Value"
+                        label={index === 0 ? "Value" : ""}
+                        width="size-3000"
+                        onBlur={setTouched}
+                        marginStart="size-100"
+                      />
+                    </DataElementSelector>
 
-            <ActionButton
-              data-test-id="addPropertyButton"
-              onPress={() => {
-                arrayHelpers.push({ key: "", value: "" });
-              }}
-            >
-              Add another property
-            </ActionButton>
-          </Flex>
-        </Well>
-      );
-    }}
-  />
-);
+                    <ActionButton
+                      data-test-id={`item${index}RemoveButton`}
+                      isQuiet
+                      variant="secondary"
+                      aria-label="Delete"
+                      isDisabled={items.length === 1 && !key && !value}
+                      marginTop={index === 0 ? "size-300" : ""}
+                      onPress={() =>
+                        items.length > 1
+                          ? arrayHelpers.remove(index)
+                          : arrayHelpers.replace(index, getEmptyItem())
+                      }
+                    >
+                      <Delete />
+                    </ActionButton>
+                  </Flex>
+                );
+              })}
+
+              <ActionButton
+                data-test-id="addPropertyButton"
+                onPress={() => {
+                  arrayHelpers.push({ key: "", value: "" });
+                }}
+              >
+                Add another property
+              </ActionButton>
+            </Flex>
+          </Well>
+        );
+      }}
+    />
+  );
+};
 
 PartsPopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired,
@@ -183,11 +187,8 @@ const ObjectJsonEdit = props => {
   const [, , { setTouched, setValue }] = useField(`${fieldName}.value`);
   const [, , { setValue: setItemsValue }] = useField(`${fieldName}.items`);
 
-  const {
-    isPartsPopulationStrategySupported,
-    populationStrategy,
-    items
-  } = formStateNode;
+  const { isPartsPopulationStrategySupported, populationStrategy, items } =
+    formStateNode;
 
   const strategyOnChange = useCallback(
     currentValue => {

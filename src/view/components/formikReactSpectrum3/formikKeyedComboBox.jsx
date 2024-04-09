@@ -24,9 +24,8 @@ const FormikKeyedComboBox = ({
   getLabel,
   ...otherProps
 }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
   const forceRender = useForceRender();
   const isFilteringRef = React.useRef(false);
   const itemsRef = React.useRef(items);
@@ -53,12 +52,8 @@ const FormikKeyedComboBox = ({
           const newTextLowerCase = newText.toLowerCase();
           itemsRef.current = items.filter(
             item =>
-              getLabel(item)
-                .toLowerCase()
-                .includes(newTextLowerCase) ||
-              getKey(item)
-                .toLowerCase()
-                .includes(newTextLowerCase)
+              getLabel(item).toLowerCase().includes(newTextLowerCase) ||
+              getKey(item).toLowerCase().includes(newTextLowerCase)
           );
         }
         // This will cause a re-render.

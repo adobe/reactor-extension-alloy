@@ -44,7 +44,8 @@ const eventItems = [
   { label: "scView: Cart View", value: "scView" },
   ...numberedEventItems
 ];
-const INVALID_ADDITIONAL_FIELDS_REGEX = /^(eVar\d+|prop\d+|event\d+|contextData)$/;
+const INVALID_ADDITIONAL_FIELDS_REGEX =
+  /^(eVar\d+|prop\d+|event\d+|contextData)$/;
 const additionalFieldsItems = [
   { label: "Campaign", value: "campaign" },
   { label: "Channel", value: "channel" },
@@ -61,167 +62,171 @@ const additionalFieldsItems = [
   { label: "Zip", value: "zip" }
 ];
 
-const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
-  const originalSettings = initInfo.settings || {};
-  const settings = Object.keys(originalSettings).reduce(
-    (memo, key) => {
-      let copy = "";
-      let value = originalSettings[key];
-      let action;
-      if (
-        (key.startsWith("eVar") || key.startsWith("prop")) &&
-        value.match(DYNAMIC_VARIABLE_REGEX)
-      ) {
-        copy = value.replace("D=v", "eVar").replace("D=c", "prop");
-        value = "";
-        action = "copy";
-      }
-      if (key.startsWith("eVar")) {
-        memo.evars[key] = { value, action, copy };
-      } else if (key.startsWith("prop")) {
-        memo.props[key] = { value, action, copy };
-      } else if (key !== "events" && key !== "contextData") {
-        memo.additionalProperties[key] = { value };
-      }
-      return memo;
-    },
-    { evars: {}, props: {}, additionalProperties: {} }
-  );
-  // Split the events string into an array of events and sort them.
-  // Using this regex to handle commas inside of data element names.
-  settings.events = Array.from(
-    (originalSettings.events || "").matchAll(/(%[^%]+%|[^%,]+)+/g)
-  )
-    .map(match => match[0].trim())
-    .filter(match => match)
-    .sort(eventCompareFunction)
-    .reduce((memo, event) => {
-      const [key, value = ""] = event.split("=");
-      const [a, b = ""] = key.split(":");
-      memo[a] = { id: b, value };
-      return memo;
-    }, {});
-  if (Object.keys(settings.evars).length === 0) {
-    delete settings.evars;
-  }
-  if (Object.keys(settings.props).length === 0) {
-    delete settings.props;
-  }
-  if (Object.keys(settings.events).length === 0) {
-    delete settings.events;
-  }
-  if (Object.keys(settings.additionalProperties).length === 0) {
-    delete settings.additionalProperties;
-  }
-
-  if (
-    originalSettings.contextData &&
-    typeof originalSettings.contextData === "string"
-  ) {
-    settings.contextData = originalSettings.contextData;
-  } else {
-    settings.contextData = Object.keys(
-      originalSettings.contextData || {}
-    ).reduce((memo, key) => {
-      memo[key] = { value: originalSettings.contextData[key] };
-      return memo;
-    }, {});
-    if (Object.keys(settings.contextData).length === 0) {
-      delete settings.contextData;
-    }
-  }
-
-  const initialValues = getInitialValues({
-    initInfo: {
-      ...initInfo,
-      settings
-    }
-  });
-  return initialValues;
-};
-
-const wrapGetSettings = getSettings => ({ values }) => {
-  const {
-    evars = {},
-    props = {},
-    events = {},
-    contextData = {},
-    additionalProperties = {}
-  } = getSettings({ values });
-  const flattenedEvars = Object.keys(evars)
-    .sort(numberAwareCompareFunction)
-    .reduce((memo, key) => {
-      if (evars[key].action === "copy" && evars[key].copy) {
-        memo[key] = `D=${evars[key].copy
-          .replace("eVar", "v")
-          .replace("prop", "c")}`;
-      } else {
-        memo[key] = evars[key].value || "";
-      }
-      return memo;
-    }, {});
-  const flattenedProps = Object.keys(props)
-    .sort(numberAwareCompareFunction)
-    .reduce((memo, key) => {
-      if (props[key].action === "copy" && props[key].copy) {
-        memo[key] = `D=${props[key].copy
-          .replace("eVar", "v")
-          .replace("prop", "c")}`;
-      } else {
-        memo[key] = props[key].value || "";
-      }
-      return memo;
-    }, {});
-  const flattenedAdditionalProperties = Object.keys(
-    additionalProperties
-  ).reduce((memo, key) => {
-    memo[key] = additionalProperties[key].value || "";
-    return memo;
-  }, {});
-  const eventString = Object.keys(events)
-    .sort(eventCompareFunction)
-    .map(key => {
-      const { id, value } = events[key];
-      if (value && id) {
-        return `${key}:${id}=${value}`;
-      }
-      if (value) {
-        return `${key}=${value}`;
-      }
-      if (id) {
-        return `${key}:${id}`;
-      }
-      return key;
-    })
-    .join(",");
-  const finalSettings = {
-    ...flattenedAdditionalProperties,
-    ...flattenedEvars,
-    ...flattenedProps
-  };
-  if (Object.keys(events).length > 0) {
-    finalSettings.events = eventString;
-  }
-  if (typeof contextData === "string") {
-    finalSettings.contextData = contextData;
-  } else {
-    const flattenedContextData = Object.keys(contextData)
-      .sort(numberAwareCompareFunction)
-      .reduce((memo, key) => {
-        memo[key] = contextData[key].value || "";
+const wrapGetInitialValues =
+  getInitialValues =>
+  ({ initInfo }) => {
+    const originalSettings = initInfo.settings || {};
+    const settings = Object.keys(originalSettings).reduce(
+      (memo, key) => {
+        let copy = "";
+        let value = originalSettings[key];
+        let action;
+        if (
+          (key.startsWith("eVar") || key.startsWith("prop")) &&
+          value.match(DYNAMIC_VARIABLE_REGEX)
+        ) {
+          copy = value.replace("D=v", "eVar").replace("D=c", "prop");
+          value = "";
+          action = "copy";
+        }
+        if (key.startsWith("eVar")) {
+          memo.evars[key] = { value, action, copy };
+        } else if (key.startsWith("prop")) {
+          memo.props[key] = { value, action, copy };
+        } else if (key !== "events" && key !== "contextData") {
+          memo.additionalProperties[key] = { value };
+        }
+        return memo;
+      },
+      { evars: {}, props: {}, additionalProperties: {} }
+    );
+    // Split the events string into an array of events and sort them.
+    // Using this regex to handle commas inside of data element names.
+    settings.events = Array.from(
+      (originalSettings.events || "").matchAll(/(%[^%]+%|[^%,]+)+/g)
+    )
+      .map(match => match[0].trim())
+      .filter(match => match)
+      .sort(eventCompareFunction)
+      .reduce((memo, event) => {
+        const [key, value = ""] = event.split("=");
+        const [a, b = ""] = key.split(":");
+        memo[a] = { id: b, value };
         return memo;
       }, {});
-    if (Object.keys(flattenedContextData).length > 0) {
-      finalSettings.contextData = flattenedContextData;
+    if (Object.keys(settings.evars).length === 0) {
+      delete settings.evars;
     }
-  }
-  return Object.keys(finalSettings)
-    .sort(numberAwareCompareFunction)
-    .reduce((memo, key) => {
-      memo[key] = finalSettings[key] || "";
+    if (Object.keys(settings.props).length === 0) {
+      delete settings.props;
+    }
+    if (Object.keys(settings.events).length === 0) {
+      delete settings.events;
+    }
+    if (Object.keys(settings.additionalProperties).length === 0) {
+      delete settings.additionalProperties;
+    }
+
+    if (
+      originalSettings.contextData &&
+      typeof originalSettings.contextData === "string"
+    ) {
+      settings.contextData = originalSettings.contextData;
+    } else {
+      settings.contextData = Object.keys(
+        originalSettings.contextData || {}
+      ).reduce((memo, key) => {
+        memo[key] = { value: originalSettings.contextData[key] };
+        return memo;
+      }, {});
+      if (Object.keys(settings.contextData).length === 0) {
+        delete settings.contextData;
+      }
+    }
+
+    const initialValues = getInitialValues({
+      initInfo: {
+        ...initInfo,
+        settings
+      }
+    });
+    return initialValues;
+  };
+
+const wrapGetSettings =
+  getSettings =>
+  ({ values }) => {
+    const {
+      evars = {},
+      props = {},
+      events = {},
+      contextData = {},
+      additionalProperties = {}
+    } = getSettings({ values });
+    const flattenedEvars = Object.keys(evars)
+      .sort(numberAwareCompareFunction)
+      .reduce((memo, key) => {
+        if (evars[key].action === "copy" && evars[key].copy) {
+          memo[key] = `D=${evars[key].copy
+            .replace("eVar", "v")
+            .replace("prop", "c")}`;
+        } else {
+          memo[key] = evars[key].value || "";
+        }
+        return memo;
+      }, {});
+    const flattenedProps = Object.keys(props)
+      .sort(numberAwareCompareFunction)
+      .reduce((memo, key) => {
+        if (props[key].action === "copy" && props[key].copy) {
+          memo[key] = `D=${props[key].copy
+            .replace("eVar", "v")
+            .replace("prop", "c")}`;
+        } else {
+          memo[key] = props[key].value || "";
+        }
+        return memo;
+      }, {});
+    const flattenedAdditionalProperties = Object.keys(
+      additionalProperties
+    ).reduce((memo, key) => {
+      memo[key] = additionalProperties[key].value || "";
       return memo;
     }, {});
-};
+    const eventString = Object.keys(events)
+      .sort(eventCompareFunction)
+      .map(key => {
+        const { id, value } = events[key];
+        if (value && id) {
+          return `${key}:${id}=${value}`;
+        }
+        if (value) {
+          return `${key}=${value}`;
+        }
+        if (id) {
+          return `${key}:${id}`;
+        }
+        return key;
+      })
+      .join(",");
+    const finalSettings = {
+      ...flattenedAdditionalProperties,
+      ...flattenedEvars,
+      ...flattenedProps
+    };
+    if (Object.keys(events).length > 0) {
+      finalSettings.events = eventString;
+    }
+    if (typeof contextData === "string") {
+      finalSettings.contextData = contextData;
+    } else {
+      const flattenedContextData = Object.keys(contextData)
+        .sort(numberAwareCompareFunction)
+        .reduce((memo, key) => {
+          memo[key] = contextData[key].value || "";
+          return memo;
+        }, {});
+      if (Object.keys(flattenedContextData).length > 0) {
+        finalSettings.contextData = flattenedContextData;
+      }
+    }
+    return Object.keys(finalSettings)
+      .sort(numberAwareCompareFunction)
+      .reduce((memo, key) => {
+        memo[key] = finalSettings[key] || "";
+        return memo;
+      }, {});
+  };
 
 const setOrCopyRow = (name, label, items) => {
   return [

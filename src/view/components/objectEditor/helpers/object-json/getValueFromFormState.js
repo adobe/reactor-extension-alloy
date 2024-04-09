@@ -34,9 +34,13 @@ export default ({ formStateNode }) => {
     }
   }
 
-  let data = addToEntityFromVariables({}, items.filter(p => p.key || p.value), {
-    expandPaths
-  });
+  let data = addToEntityFromVariables(
+    {},
+    items.filter(p => p.key || p.value),
+    {
+      expandPaths
+    }
+  );
 
   if (Object.keys(data).length === 0) {
     data = undefined;

@@ -29,17 +29,19 @@ import FormElementContainer from "../formElementContainer";
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
  */
-const WholePopulationStrategyForm = ({ fieldName }) => (
-  <DataElementSelector>
-    <FormikTextField
-      data-test-id="valueField"
-      name={`${fieldName}.value`}
-      label="Data element"
-      description="This data element should resolve to an array."
-      width="size-5000"
-    />
-  </DataElementSelector>
-);
+const WholePopulationStrategyForm = ({ fieldName }) => {
+  return (
+    <DataElementSelector>
+      <FormikTextField
+        data-test-id="valueField"
+        name={`${fieldName}.value`}
+        label="Data element"
+        description="This data element should resolve to an array."
+        width="size-5000"
+      />
+    </DataElementSelector>
+  );
+};
 
 WholePopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired
@@ -55,71 +57,73 @@ const PartsPopulationStrategyForm = ({
   items,
   onNodeSelect,
   updateMode
-}) => (
-  <FieldArray
-    name={`${fieldName}.items`}
-    render={arrayHelpers => {
-      return (
-        <Flex
-          gap="size-200"
-          marginTop="size-200"
-          direction="column"
-          alignItems="start"
-        >
-          {items.map((itemNode, index) => {
-            return (
-              <Flex gap="size-200" key={`${fieldName}.${index}`}>
-                <Button
-                  data-test-id={`item${index}SelectButton`}
-                  isQuiet
-                  variant="secondary"
-                  onPress={() => onNodeSelect(itemNode.id)}
-                >
-                  Item {index + 1}
-                </Button>
-                <ActionButton
-                  data-test-id={`item${index}RemoveButton`}
-                  isQuiet
-                  variant="secondary"
-                  minWidth={0}
-                  aria-label="Delete"
-                  onPress={() => arrayHelpers.remove(index)}
-                >
-                  <Delete />
-                </ActionButton>
-              </Flex>
-            );
-          })}
-          <Button
-            data-test-id="addItemButton"
-            onPress={() => {
-              const itemSchema = schema.items;
-              let defaultValue;
-
-              if (itemSchema.type === OBJECT) {
-                defaultValue = {};
-              } else if (itemSchema.type === ARRAY) {
-                defaultValue = [];
-              } else {
-                defaultValue = "";
-              }
-
-              const itemFormStateNode = getInitialFormState({
-                schema: itemSchema,
-                value: defaultValue,
-                updateMode
-              });
-              arrayHelpers.push(itemFormStateNode);
-            }}
-            variant="primary"
+}) => {
+  return (
+    <FieldArray
+      name={`${fieldName}.items`}
+      render={arrayHelpers => {
+        return (
+          <Flex
+            gap="size-200"
+            marginTop="size-200"
+            direction="column"
+            alignItems="start"
           >
-            Add item
-          </Button>
-        </Flex>
-      );
-    }}
-  />
-);
+            {items.map((itemNode, index) => {
+              return (
+                <Flex gap="size-200" key={`${fieldName}.${index}`}>
+                  <Button
+                    data-test-id={`item${index}SelectButton`}
+                    isQuiet
+                    variant="secondary"
+                    onPress={() => onNodeSelect(itemNode.id)}
+                  >
+                    Item {index + 1}
+                  </Button>
+                  <ActionButton
+                    data-test-id={`item${index}RemoveButton`}
+                    isQuiet
+                    variant="secondary"
+                    minWidth={0}
+                    aria-label="Delete"
+                    onPress={() => arrayHelpers.remove(index)}
+                  >
+                    <Delete />
+                  </ActionButton>
+                </Flex>
+              );
+            })}
+            <Button
+              data-test-id="addItemButton"
+              onPress={() => {
+                const itemSchema = schema.items;
+                let defaultValue;
+
+                if (itemSchema.type === OBJECT) {
+                  defaultValue = {};
+                } else if (itemSchema.type === ARRAY) {
+                  defaultValue = [];
+                } else {
+                  defaultValue = "";
+                }
+
+                const itemFormStateNode = getInitialFormState({
+                  schema: itemSchema,
+                  value: defaultValue,
+                  updateMode
+                });
+                arrayHelpers.push(itemFormStateNode);
+              }}
+              variant="primary"
+            >
+              Add item
+            </Button>
+          </Flex>
+        );
+      }}
+    />
+  );
+};
 
 PartsPopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired,
