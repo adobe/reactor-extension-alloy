@@ -180,10 +180,10 @@ const customMetadataSection = section(
     objectArray(
       {
         name: "customMetadata",
-        singularLabel: "Scope",
+        singularLabel: "Custom Metadata",
         dataElementDescription:
-          "Provide a data element that resolves to an object scope keys, and object values with keys: selector and actionType.",
-        objectLabelPlural: "Scopes"
+          "Provide a data element that resolves to an array of objects values with keys: key and value.",
+        objectLabelPlural: "Custom Metadata"
       },
       [
         textField({
