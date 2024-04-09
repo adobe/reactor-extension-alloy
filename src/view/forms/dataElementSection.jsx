@@ -70,7 +70,9 @@ export default function dataElementSection(
       };
 
       if (typeof value === "object" && value !== null) {
-        initialValues[name] = value;
+        initialValues[name] = getChildrenInitialValues({
+          initInfo: { settings: value }
+        });
         initialValues[`${name}InputMethod`] = FORM;
       }
 

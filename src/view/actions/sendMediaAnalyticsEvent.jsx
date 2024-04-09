@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { string } from "yup";
+import { isEmptyArray } from "formik";
 import comboBox from "../forms/comboBox";
 import instancePicker from "../forms/instancePicker";
 import form from "../forms/form";
@@ -17,7 +18,6 @@ import conditional from "../forms/conditional";
 import renderForm from "../forms/renderForm";
 import textField from "../forms/textField";
 import mediaEventTypes from "./constants/mediaEventTypes";
-import fieldArray from "../forms/fieldArray";
 import numberField from "../forms/numberField";
 import dataElementSection from "../forms/dataElementSection";
 import checkbox from "../forms/checkbox";
@@ -30,7 +30,6 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
     eventType,
     playerId,
     automaticSessionHandler = false,
-    getPlayerDetails = "",
     instanceName,
     xdm = {}
   } = initInfo.settings || {};
@@ -44,7 +43,9 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
     advertisingPodDetails,
     sessionDetails,
     errorDetails,
-    customMetadata
+    customMetadata,
+    statesEnd,
+    statesStart
   } = mediaCollection;
 
   return getInitialValues({
@@ -53,7 +54,6 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
       settings: {
         eventType,
         playerId,
-        getPlayerDetails,
         instanceName,
         automaticSessionHandler,
         playhead,
@@ -63,7 +63,9 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
         advertisingPodDetails,
         errorDetails,
         sessionDetails,
-        customMetadata
+        customMetadata,
+        statesEnd,
+        statesStart
       }
     }
   });
@@ -76,8 +78,9 @@ const wrapGetSettings = getSettings => ({ values }) => {
     playerId,
     eventType,
     playhead,
-    getPlayerDetails,
     qoeDataDetails,
+    statesEnd,
+    statesStart,
     chapterDetails,
     advertisingPodDetails,
     advertisingDetails,
@@ -90,7 +93,6 @@ const wrapGetSettings = getSettings => ({ values }) => {
     eventType,
     instanceName,
     playerId,
-    getPlayerDetails,
     automaticSessionHandler
   };
   const mediaCollection = {};
@@ -118,6 +120,14 @@ const wrapGetSettings = getSettings => ({ values }) => {
 
   if (customMetadata) {
     mediaCollection.customMetadata = customMetadata;
+  }
+
+  if (!isEmptyArray(statesEnd)) {
+    mediaCollection.statesEnd = statesEnd;
+  }
+
+  if (!isEmptyArray(statesStart)) {
+    mediaCollection.statesStart = statesStart;
   }
 
   settings.xdm = {
@@ -333,20 +343,58 @@ const errorDetailsSection = dataElementSection(
     })
   ]
 );
-const stateUpdateDetailsSection = dataElementSection(
-  { label: "State Update Details" },
-  [
-    fieldArray({
-      name: "states",
-      label: "States",
+const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
+  objectArray(
+    {
+      name: "statesStart",
+      label: "States started",
       singularLabel: "State",
-      description: "Create an array of states that were updated.",
+      description: "Create an array of states that started.",
       dataElementDescription:
         "This data element should resolve to an array of states.",
       validationSchema: string()
-    })
-  ]
-);
+    },
+    [
+      comboBox({
+        name: "name",
+        description: "Select or enter the state that started.",
+        items: [
+          { value: "fullScreen", label: "Full screen" },
+          { value: "closedCaptioning", label: "Closed captioning" },
+          { value: "mute", label: "Mute" },
+          { value: "pictureInPicture", label: "Picture in picture" },
+          { value: "inFocus", label: "In focus" }
+        ],
+        allowsCustomValue: true
+      })
+    ]
+  ),
+  objectArray(
+    {
+      name: "statesEnd",
+      label: "States ended",
+      singularLabel: "State",
+      description: "Create an array of states that ended.",
+      dataElementDescription:
+        "This data element should resolve to an array of states.",
+      validationSchema: string()
+    },
+    [
+      comboBox({
+        name: "name",
+        description: "Select or enter the state that ended.",
+        items: [
+          { value: "fullScreen", label: "Full screen" },
+          { value: "closedCaptioning", label: "Closed captioning" },
+          { value: "mute", label: "Mute" },
+          { value: "pictureInPicture", label: "Picture in picture" },
+          { value: "inFocus", label: "In focus" }
+        ],
+        allowsCustomValue: true
+      })
+    ]
+  )
+]);
 const sessionDetailsSection = dataElementSection(
   {
     label: "Media session details",
@@ -671,13 +719,11 @@ const sendEventForm = form(
             "Choose 'Handle media session automatically' if you want the Web SDK to manage your media session and send necessary pings automatically. If you prefer to have more control and manually manage sending pings, you can deselect this option.",
           isRequired: false
         }),
-        numberField({
+        dataElement({
           name: "playhead",
           label: "Playhead",
           isRequired: true,
-          description: "Enter the playhead.",
-          dataElementDescription:
-            "This data element should resolve to a number."
+          description: "This data element should resolve to a number."
         })
       ]
     ),
@@ -687,13 +733,12 @@ const sendEventForm = form(
         condition: eventType => eventType !== "media.sessionStart"
       },
       [
-        numberField({
+        dataElement({
           name: "playhead",
           label: "Playhead",
           isRequired: false,
-          description: "Enter the playhead.",
-          dataElementDescription:
-            "This data element should resolve to a number."
+          description:
+            "Enter the playhead.This data element should resolve to a number."
         })
       ]
     ),

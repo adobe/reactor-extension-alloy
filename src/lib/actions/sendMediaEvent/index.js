@@ -14,14 +14,10 @@ const createMediaEvent = require("./createSendMediaEvent");
 const createMediaSession = require("./createMediaSession");
 const instanceManager = require("../../instanceManager/index");
 const { mediaCollectionSessionStorage } = require("../../index");
-const injectWrapGetPlayerDetails = require("./injectWrapGetPlayerDetails");
-
-const wrapOnBeforeMediaEvent = injectWrapGetPlayerDetails();
 
 const trackMediaSession = createMediaSession({
   instanceManager,
-  mediaCollectionSessionStorage,
-  wrapOnBeforeMediaEvent
+  mediaCollectionSessionStorage
 });
 module.exports = createMediaEvent({
   instanceManager,

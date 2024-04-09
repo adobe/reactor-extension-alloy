@@ -38,7 +38,8 @@ module.exports = ({
     if (eventType === "media.sessionStart") {
       return trackMediaSession(settings);
     }
-    const sessionID = mediaCollectionSessionStorage.get({ playerId });
+
+    const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
 
     if (
       eventType === "media.sessionEnd" ||
@@ -51,10 +52,12 @@ module.exports = ({
 
     const options = { xdm };
 
-    if (!sessionID) {
+    if (sessionDetails.automaticSessionHandler) {
       options.playerId = playerId;
     } else {
-      xdm.mediaCollection.sessionID = sessionID;
+      xdm.mediaCollection.sessionID = sessionDetails.sessionId;
+      xdm.mediaCollection.playhead = sessionDetails.playhead;
+      xdm.mediaCollection.qoeDataDetails = sessionDetails.qoeDataDetails;
     }
 
     return instance("sendMediaEvent", options);

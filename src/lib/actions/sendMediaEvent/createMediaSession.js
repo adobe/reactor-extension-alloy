@@ -18,9 +18,9 @@ module.exports = ({
   const instance = instanceManager.getInstance(instanceName);
 
   const options = { xdm };
-  const sessionID = mediaCollectionSessionStorage.get({ playerId });
+  const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
 
-  if (sessionID) {
+  if (sessionDetails && sessionDetails.sessionId) {
     // if we have a mapping in cache we resolve the promise and not start another session again
     return Promise.resolve();
   }
@@ -40,10 +40,15 @@ module.exports = ({
     .then(result => {
       const { sessionId } = result;
 
-      if (!automaticSessionHandler) {
+      if (sessionId) {
         mediaCollectionSessionStorage.add({
           playerId,
-          sessionDetails: sessionId
+          sessionDetails: {
+            automaticSessionHandler,
+            sessionId,
+            playhead: xdm.mediaCollection.playhead,
+            qoeDataDetails: xdm.mediaCollection.qoeDataDetails
+          }
         });
       }
     })
