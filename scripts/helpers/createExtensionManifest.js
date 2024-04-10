@@ -828,6 +828,9 @@ const createExtensionManifest = ({ version }) => {
               type: "string",
               minLength: 1
             },
+            automaticSessionHandler: {
+              type: "boolean"
+            },
             eventType: {
               type: "string",
               minLength: 1
@@ -838,22 +841,12 @@ const createExtensionManifest = ({ version }) => {
             },
             xdm: {
               type: "object"
-            },
-            getPlayerDetails: {
-              type: "string"
             }
           },
           required: ["instanceName"]
         },
         libPath: "dist/lib/actions/sendMediaEvent/index.js",
-        viewPath: "actions/sendMediaAnalyticsEvent.html",
-        transforms: [
-          {
-            type: "function",
-            propertyPath: "getPlayerDetails",
-            parameters: ["content"]
-          }
-        ]
+        viewPath: "actions/sendMediaAnalyticsEvent.html"
       },
       {
         displayName: "Get Media Tracker API",
@@ -974,6 +967,63 @@ const createExtensionManifest = ({ version }) => {
       }
     ],
     dataElements: [
+      {
+        displayName: "Quality of Experience data",
+        name: "qoe-details-data",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            bitrate: {
+              oneOf: [
+                {
+                  type: "integer"
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$"
+                }
+              ]
+            },
+            droppedFrames: {
+              oneOf: [
+                {
+                  type: "integer"
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$"
+                }
+              ]
+            },
+            framesPerSecond: {
+              oneOf: [
+                {
+                  type: "integer"
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$"
+                }
+              ]
+            },
+            timeToStart: {
+              oneOf: [
+                {
+                  type: "integer"
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$"
+                }
+              ]
+            }
+          },
+          additionalProperties: false
+        },
+        libPath: "dist/lib/dataElements/qoeDetailsData/index.js",
+        viewPath: "dataElements/qoeDetailsDataElement.html"
+      },
       {
         displayName: "Event merge ID",
         name: "event-merge-id",

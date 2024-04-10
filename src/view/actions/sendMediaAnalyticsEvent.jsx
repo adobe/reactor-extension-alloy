@@ -189,13 +189,11 @@ const customMetadataSection = section(
         textField({
           name: "name",
           label: "Key",
-          isRequired: true,
           description: "Enter metadata key."
         }),
         textField({
           name: "value",
           label: "Value",
-          isRequired: true,
           description: "Enter metadata value."
         })
       ]
@@ -724,21 +722,6 @@ const sendEventForm = form(
           label: "Playhead",
           isRequired: true,
           description: "This data element should resolve to a number."
-        })
-      ]
-    ),
-    conditional(
-      {
-        args: "eventType",
-        condition: eventType => eventType !== "media.sessionStart"
-      },
-      [
-        dataElement({
-          name: "playhead",
-          label: "Playhead",
-          isRequired: false,
-          description:
-            "Enter the playhead.This data element should resolve to a number."
         })
       ]
     ),
