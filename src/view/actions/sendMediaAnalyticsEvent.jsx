@@ -642,7 +642,7 @@ const eventBasedDetailFormConditionals = [
       args: "eventType",
       condition: eventType => eventType === "media.adBreakStart"
     },
-    [advertisingPodDetailsSection, customMetadataSection]
+    [advertisingPodDetailsSection]
   ),
   conditional(
     {
