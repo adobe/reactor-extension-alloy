@@ -251,10 +251,15 @@ const validateFormikState = context => ({ values }) => {
 };
 
 const findFirstNodeIdForDepth = (formStateNode, depth) => {
-  const { schema: { type } = {}, properties, items, id } = formStateNode;
+  const {
+    schema: { type, properties: schemaProperties } = {},
+    properties,
+    items,
+    id
+  } = formStateNode;
   if (depth > 0) {
     if (type === OBJECT && properties) {
-      const sortedEditors = Object.keys(properties).sort();
+      const sortedEditors = Object.keys(schemaProperties).sort();
       const editorsContainingValues = sortedEditors.filter(k => {
         const map = {
           [ADOBE_ANALYTICS]: isAnalyticsEditorEmpty,
@@ -345,7 +350,7 @@ const UpdateVariable = ({
         }
 
         if (isDataVariable(dataElement)) {
-          setSelectedNodeId(findFirstNodeIdForDepth(values, 3));
+          setSelectedNodeId(findFirstNodeIdForDepth(initialFormState, 3));
         }
       }
     }),
