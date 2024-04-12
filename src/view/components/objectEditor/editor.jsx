@@ -107,7 +107,7 @@ const Editor = ({
       data-test-id="editor"
       marginTop="size-100"
       minHeight={0}
-      gap="size-200"
+      gap="size-400"
       direction={verticalLayout ? "column" : ""}
     >
       {
@@ -138,8 +138,16 @@ const Editor = ({
         // We have 450px as min width because the tree can stretch in width
         // and we don't want to shrink too much. If there isn't enough
         // space on the page, the page will receive a horizontal scrollbar.
+        // We want the first column to be at least 300px wide, but it can
+        // grow the tree gets bigger. Then the second column will take the
+        // rest of the space.
       }
-      <View flex="1 0" alignSelf="flex-start" position="sticky" top={0}>
+      <View
+        flex={verticalLayout ? "" : "0 1 100%"}
+        alignSelf="flex-start"
+        position="sticky"
+        top={0}
+      >
         {selectedNodeId ? (
           <NodeEdit
             onNodeSelect={nodeId => {
