@@ -30,7 +30,7 @@ export default [
   ...compat.extends("airbnb", "plugin:testcafe/recommended"),
   ...compat.plugins("unused-imports", "ban", "testcafe"),
   {
-    files: ["**/*.{js,jsx}"],
+    files: ["**/*.{mjs,js,jsx}"],
     languageOptions: {
       parser: babelParser,
       parserOptions: {
@@ -113,7 +113,7 @@ export default [
     }
   },
   {
-    files: ["src/**/*.{js,jsx}"],
+    files: ["src/**/*.{mjs,js,jsx}"],
     languageOptions: {
       globals: {
         _satellite: "readonly"
