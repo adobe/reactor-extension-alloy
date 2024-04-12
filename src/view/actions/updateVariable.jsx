@@ -309,6 +309,7 @@ const UpdateVariable = ({
   } = context;
 
   const [{ value: dataElement }] = useField("dataElement");
+  const [{ value: customCode }] = useField("customCode");
   const [hasSchema, setHasSchema] = useState(schema != null);
   const [selectedNodeId, setSelectedNodeId] = useState(() => {
     if (dataElement?.settings?.solutions) {
@@ -343,7 +344,9 @@ const UpdateVariable = ({
         });
 
         if (!signal.aborted) {
-          resetForm({ values: { ...initialFormState, dataElement } });
+          resetForm({
+            values: { ...initialFormState, dataElement, customCode }
+          });
           if (context.schema) {
             setHasSchema(true);
           }
@@ -457,10 +460,14 @@ const UpdateVariable = ({
             language="javascript"
             placeholder={
               "// Modify content as necessary. There is no need to wrap the code in a function or return a value." +
-              "\n// For example if you are updating an XDM Variable Data Element, you can set the page name by writing:" +
-              '\n// content.web.webPageDetails.name = "Checkout";' +
-              "\n// If you are updating a Data Variable Data Element you can update an Analytics page name by writing:" +
-              "\n// content.__adobe.analytics.eVar15 = 'value';"
+              "\n\n// For example if you are updating an XDM Variable Data Element, you can set the page name by writing:" +
+              "\n\n// content.web = content.web || {};" +
+              "\n// content.web.webPageDetails = content.web.webPageDetails || {};" +
+              '\n// content.web.webPageDetails.name = "Home";' +
+              "\n\n// If you are updating a Data Variable Data Element you can update an Analytics page name by writing:" +
+              "\n\n// content.__adobe = content.__adobe || { };" +
+              "\n// content.__adobe.analytics = content.__adobe.analytics || { };" +
+              '\n// content.__adobe.analytics.eVar5 = "Test";'
             }
           />
         </>
