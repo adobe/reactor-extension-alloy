@@ -63,7 +63,12 @@ const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
     name={`${fieldName}.items`}
     render={arrayHelpers => {
       return (
-        <Well marginStart="size-300">
+        <Well
+          marginStart="size-300"
+          UNSAFE_style={{
+            paddingTop: "var(--spectrum-global-dimension-size-100)"
+          }}
+        >
           <Flex gap="size-100" direction="column" alignItems="start">
             {items.map(({ key, value }, index) => {
               return (
