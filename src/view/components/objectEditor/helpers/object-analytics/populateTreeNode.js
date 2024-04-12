@@ -14,6 +14,7 @@ import computePopulationNote from "../computePopulationNote";
 import { EMPTY, FULL, BLANK } from "../../constants/populationAmount";
 import analyticsForm from "./analyticsForm";
 import anyErrorsTouched from "../anyErrorsTouched";
+import { PARTS, WHOLE } from "../../constants/populationStrategy";
 
 const computePopulationAmount = ({
   formStateNode,
@@ -39,7 +40,13 @@ export default ({
   errors,
   touched
 }) => {
-  if (anyErrorsTouched(errors, touched)) {
+  if (
+    (formStateNode.populationStrategy === WHOLE &&
+      errors?.wholeValue &&
+      touched?.wholeValue) ||
+    (formStateNode.populationStrategy === PARTS &&
+      anyErrorsTouched(errors?.value, touched?.value))
+  ) {
     confirmTouchedAtCurrentOrDescendantNode();
   }
 

@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 import React, { useEffect } from "react";
 import { string, object } from "yup";
 import { Radio } from "@adobe/react-spectrum";
-import { useField } from "formik";
+import { useField, useFormikContext } from "formik";
 import PropTypes from "prop-types";
 import DataElementSelector from "../components/dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
@@ -118,6 +118,7 @@ export default function jsonOptionalEditor(
     },
     validationShape,
     Component: ({ namePrefix = "" }) => {
+      const { validateForm } = useFormikContext();
       const [{ value: optionValue }] = useField(`${namePrefix}${optionName}`);
       const [{ value }, , { setValue }] = useField(`${namePrefix}${name}`);
       const [{ value: wholeValue }, , { setValue: setWholeValue }] = useField(
@@ -131,7 +132,7 @@ export default function jsonOptionalEditor(
               getChildrenInitialValues({
                 initInfo: { settings: JSON.parse(wholeValue) }
               })
-            );
+            ).then(() => validateForm());
           } catch (e) {
             setValue(getChildrenInitialValues({ initInfo: { settings: {} } }));
           }
@@ -143,7 +144,7 @@ export default function jsonOptionalEditor(
           );
 
           if (v !== "{}") {
-            setWholeValue(v);
+            setWholeValue(v).then(() => validateForm());
           }
         }
         lastOptionValue.current = optionValue;
