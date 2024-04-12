@@ -10,15 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ version }) => onBeforeEventSend => content => {
-  content.xdm.implementationDetails.name = `${
-    content.xdm.implementationDetails.name
-  }/reactor`;
-  content.xdm.implementationDetails.version = `${
-    content.xdm.implementationDetails.version
-  }+${version}`;
-  if (onBeforeEventSend) {
-    return onBeforeEventSend(content);
-  }
-  return undefined;
-};
+module.exports =
+  ({ version }) =>
+  onBeforeEventSend =>
+  content => {
+    content.xdm.implementationDetails.name = `${content.xdm.implementationDetails.name}/reactor`;
+    content.xdm.implementationDetails.version = `${content.xdm.implementationDetails.version}+${version}`;
+    if (onBeforeEventSend) {
+      return onBeforeEventSend(content);
+    }
+    return undefined;
+  };

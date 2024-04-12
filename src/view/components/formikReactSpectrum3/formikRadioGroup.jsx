@@ -24,9 +24,8 @@ const FormikRadioGroup = ({
   onChange,
   ...otherProps
 }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
   const radioGroupRef = createRef();
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for RadioGroup, so we wire up Formik's

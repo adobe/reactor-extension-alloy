@@ -26,22 +26,24 @@ import render from "../render";
 import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import { XDM, DATA } from "./variable/constants/variableTypes";
 
-const getInitialValues = ({ xdmVariableContext }) => async ({ initInfo }) => {
-  const { cacheId = uuid() } = initInfo.settings || {};
+const getInitialValues =
+  ({ xdmVariableContext }) =>
+  async ({ initInfo }) => {
+    const { cacheId = uuid() } = initInfo.settings || {};
 
-  const initialValues = {
-    cacheId,
-    type: initInfo?.settings?.solutions ? DATA : XDM,
-    ...(await xdmVariableBridge.getInitialValues({
-      initInfo,
-      context: xdmVariableContext
-    })),
-    ...(await dataVariableBridge.getInitialValues({
-      initInfo
-    }))
+    const initialValues = {
+      cacheId,
+      type: initInfo?.settings?.solutions ? DATA : XDM,
+      ...(await xdmVariableBridge.getInitialValues({
+        initInfo,
+        context: xdmVariableContext
+      })),
+      ...(await dataVariableBridge.getInitialValues({
+        initInfo
+      }))
+    };
+    return initialValues;
   };
-  return initialValues;
-};
 
 const getSettings = ({ values }) => {
   const settings = {

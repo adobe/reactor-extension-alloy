@@ -17,9 +17,8 @@ import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
 const FormikCheckbox = ({ name, description, width, ...otherProps }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
   return (
     <FieldDescriptionAndError
       description={description}

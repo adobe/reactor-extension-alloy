@@ -66,12 +66,12 @@ const getDestination = repoRoot => {
  * @param {boolean=} prettyPrint Whether to pretty print the JSON.
  * @returns {string}
  */
-const stringify = (obj, prettyPrint = true) => {
+const stringify = async (obj, prettyPrint = true) => {
   const result = JSON.stringify(obj);
   if (!prettyPrint) {
     return result;
   }
-  const prettierConfig = prettier.resolveConfig();
+  const prettierConfig = await prettier.resolveConfig();
   return prettier.format(result, {
     ...prettierConfig,
     parser: "json-stringify"
@@ -85,7 +85,8 @@ const stringify = (obj, prettyPrint = true) => {
  * @returns {Promise<void>}
  */
 const write = async (path, content) => {
-  const result = typeof content === "string" ? content : stringify(content);
+  const result =
+    typeof content === "string" ? content : await stringify(content);
   await writeFile(path, result, "utf8");
 };
 

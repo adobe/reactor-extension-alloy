@@ -31,9 +31,9 @@ const CodeField = ({
   language,
   placeholder
 }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
 
   const onPress = async () => {
     setTouched(true);

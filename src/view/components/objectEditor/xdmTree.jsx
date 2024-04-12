@@ -69,9 +69,8 @@ const XdmTree = ({
   // validation occurs as a result of a user changing the value of a field because
   // it's a jarring experience.
   useNewlyValidatedFormSubmission(() => {
-    const nodeIdsContainingError = getNodeIdsToExpandForValidation(
-      treeStructure
-    );
+    const nodeIdsContainingError =
+      getNodeIdsToExpandForValidation(treeStructure);
 
     if (nodeIdsContainingError.length) {
       setExpandedNodeIds(nodeIdsContainingError);

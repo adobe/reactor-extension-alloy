@@ -63,10 +63,8 @@ const Editor = ({
     // There is a root node with the id node-1. We don't want that.
     return fetchNodeIdsForDepth(formState, initialExpandedDepth + 1).slice(1);
   });
-  const [
-    nodeIdToScrollIntoViewInTree,
-    setNodeIdToScrollIntoViewInTree
-  ] = useState();
+  const [nodeIdToScrollIntoViewInTree, setNodeIdToScrollIntoViewInTree] =
+    useState();
 
   const expandNodeAndAncestorsInTree = nodeId => {
     if (!nodeId) {

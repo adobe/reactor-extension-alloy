@@ -39,8 +39,7 @@ const container = {
           name: "prod"
         },
         schema: {
-          id:
-            "https://ns.adobe.com/unifiedjsqeonly/schemas/75bc29dc603dbb5c8ba7c9f5be97b852a48772ccc69d0921",
+          id: "https://ns.adobe.com/unifiedjsqeonly/schemas/75bc29dc603dbb5c8ba7c9f5be97b852a48772ccc69d0921",
           version: "1.1"
         }
       },

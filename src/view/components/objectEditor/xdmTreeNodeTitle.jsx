@@ -21,16 +21,8 @@ import "./xdmTreeNodeTitle.styl";
 import { EMPTY, FULL, PARTIAL, BLANK } from "./constants/populationAmount";
 
 const XdmTreeNodeTitle = props => {
-  const {
-    id,
-    displayName,
-    type,
-    populationAmount,
-    error,
-    infoTip,
-    clear
-  } = props;
-
+  const { id, displayName, type, populationAmount, error, infoTip, clear } =
+    props;
   return (
     <Flex
       data-test-id="xdmTreeNodeTitle"

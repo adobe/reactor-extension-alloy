@@ -88,7 +88,7 @@ export const bridge = {
     // TestCafe doesn't allow this to be an arrow function because of
     // how it scopes "this".
     // eslint-disable-next-line func-names
-    .test("uniqueName", function(instance, testContext) {
+    .test("uniqueName", function (instance, testContext) {
       const { path: instancePath, parent: instances } = testContext;
       return validateDuplicateValue({
         createError: this.createError,
@@ -103,7 +103,7 @@ export const bridge = {
     // TestCafe doesn't allow this to be an arrow function because of
     // how it scopes "this".
     // eslint-disable-next-line func-names
-    .test("uniqueOrgId", function(instance, testContext) {
+    .test("uniqueOrgId", function (instance, testContext) {
       const { path: instancePath, parent: instances } = testContext;
       return validateDuplicateValue({
         createError: this.createError,
