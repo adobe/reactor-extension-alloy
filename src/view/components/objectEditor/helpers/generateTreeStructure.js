@@ -135,7 +135,6 @@ const getTreeNode = ({
 // Avoid exposing all of getTreeNode's parameters since
 // they're only used internally for recursion.
 export default ({ treeNodeComponent, formState, errors, touched }) => {
-  console.log("root generate tree structure", errors, touched);
   return getTreeNode({
     formStateNode: formState,
     treeNodeComponent,

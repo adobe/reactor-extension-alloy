@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
-import { FieldArray, useField } from "formik";
+import { FieldArray, useField, useFormikContext } from "formik";
 import { Radio, ActionButton, Well, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
@@ -32,7 +32,7 @@ const getEmptyItem = () => ({ key: "", value: "" });
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
  */
-const WholePopulationStrategyForm = ({ fieldName, setTouched }) => (
+const WholePopulationStrategyForm = ({ fieldName }) => (
   <DataElementSelector>
     <FormikTextArea
       data-test-id="valueField"
@@ -44,21 +44,19 @@ const WholePopulationStrategyForm = ({ fieldName, setTouched }) => (
       }
       width="size-6000"
       marginStart="size-300"
-      onBlur={setTouched}
     />
   </DataElementSelector>
 );
 
 WholePopulationStrategyForm.propTypes = {
-  fieldName: PropTypes.string.isRequired,
-  setTouched: PropTypes.func.isRequired
+  fieldName: PropTypes.string.isRequired
 };
 
 /**
  * Displayed when the PARTS population strategy is selected.
  * Allows the user to provide individual items within the array.
  */
-const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
+const PartsPopulationStrategyForm = ({ fieldName, items }) => (
   <FieldArray
     name={`${fieldName}.items`}
     render={arrayHelpers => {
@@ -79,7 +77,6 @@ const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
                     aria-label="Key"
                     label={index === 0 ? "Key" : ""}
                     width="size-3000"
-                    onBlur={setTouched}
                   />
 
                   <DataElementSelector>
@@ -89,7 +86,6 @@ const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
                       aria-label="Value"
                       label={index === 0 ? "Value" : ""}
                       width="size-3000"
-                      onBlur={setTouched}
                       marginStart="size-100"
                     />
                   </DataElementSelector>
@@ -130,8 +126,7 @@ const PartsPopulationStrategyForm = ({ fieldName, items, setTouched }) => (
 
 PartsPopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired,
-  items: PropTypes.arrayOf(PropTypes.object).isRequired,
-  setTouched: PropTypes.func.isRequired
+  items: PropTypes.arrayOf(PropTypes.object).isRequired
 };
 
 const updateJsonTextarea = ({
@@ -139,20 +134,24 @@ const updateJsonTextarea = ({
   formStateNode: {
     items,
     schema: { expandPaths }
-  }
+  },
+  validateForm
 }) => {
-  if (items.length > 1 || items[0].key) {
-    let entity = JSON.stringify(
-      addToEntityFromVariables({}, items, { expandPaths }),
+  const nonEmptyItems = items.filter(
+    ({ key, value }) => key.trim() !== "" || value.trim() !== ""
+  );
+  if (
+    !nonEmptyItems.some(({ key }) => key.trim() === "") &&
+    nonEmptyItems.length > 0
+  ) {
+    const entity = JSON.stringify(
+      addToEntityFromVariables({}, nonEmptyItems, { expandPaths }),
       null,
       2
     );
-
-    if (entity === "{}") {
-      entity = "";
-    }
-
-    setValue(entity, true);
+    // Even though we are passing true for the second argument, the value is
+    // not being validated, so we need to call validateForm manually.
+    setValue(entity, true).then(() => validateForm());
   }
 };
 
@@ -161,31 +160,35 @@ const updateRows = ({
   formStateNode: {
     value,
     schema: { expandPaths }
-  }
+  },
+  validateForm
 }) => {
-  let variables = [];
   try {
-    variables = addToVariablesFromEntity([], JSON.parse(value), {
-      expandPaths
-    });
+    const parsedValue = JSON.parse(value);
+    if (!Object.keys(parsedValue).some(key => key.trim() === "")) {
+      const variables = addToVariablesFromEntity([], JSON.parse(value), {
+        expandPaths
+      });
+      if (variables.length > 0) {
+        // Even though we are passing true for the second argument, the value is
+        // not being validated, so we need to call validateForm manually.
+        setValue(variables, true).then(() => validateForm());
+      }
+    }
   } catch (e) {
-    // Don't do anything
+    // Don't do anything if the JSON is invalid. This will leave the form in the same state.
   }
-
-  if (variables.length === 0) {
-    variables.push(getEmptyItem());
-  }
-
-  setValue(variables, true);
+  return Promise.resolve();
 };
 
 /**
  * The form for editing a node that is an object that contains JSON.
  */
 const ObjectJsonEdit = props => {
+  const { validateForm } = useFormikContext();
   const { fieldName } = props;
   const [{ value: formStateNode }] = useField(fieldName);
-  const [, , { setTouched, setValue }] = useField(`${fieldName}.value`);
+  const [, , { setValue }] = useField(`${fieldName}.value`);
   const [, , { setValue: setItemsValue }] = useField(`${fieldName}.items`);
 
   const {
@@ -197,9 +200,9 @@ const ObjectJsonEdit = props => {
   const strategyOnChange = useCallback(
     currentValue => {
       if (currentValue === WHOLE) {
-        updateJsonTextarea({ setValue, formStateNode });
+        updateJsonTextarea({ setValue, formStateNode, validateForm });
       } else {
-        updateRows({ setValue: setItemsValue, formStateNode });
+        updateRows({ setValue: setItemsValue, formStateNode, validateForm });
       }
     },
     [formStateNode]
@@ -223,16 +226,9 @@ const ObjectJsonEdit = props => {
         </FormikRadioGroup>
       )}
       {populationStrategy === WHOLE ? (
-        <WholePopulationStrategyForm
-          fieldName={fieldName}
-          setTouched={setTouched}
-        />
+        <WholePopulationStrategyForm fieldName={fieldName} />
       ) : (
-        <PartsPopulationStrategyForm
-          fieldName={fieldName}
-          items={items}
-          setTouched={setTouched}
-        />
+        <PartsPopulationStrategyForm fieldName={fieldName} items={items} />
       )}
     </FormElementContainer>
   );
