@@ -10,14 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const resolve = require("rollup-plugin-node-resolve");
-const commonjs = require("rollup-plugin-commonjs");
-const babel = require("rollup-plugin-babel");
+const resolve = require("@rollup/plugin-node-resolve");
+const commonjs = require("@rollup/plugin-commonjs");
+const babel = require("@rollup/plugin-babel");
 const istanbul = require("rollup-plugin-istanbul");
 const minimist = require("minimist");
 
 const argv = minimist(process.argv.slice(2));
-const plugins = [resolve(), commonjs(), babel({ runtimeHelpers: true })];
+const plugins = [resolve(), commonjs(), babel({ babelHelpers: "bundled" })];
 
 if (argv.reporters && argv.reporters.split(",").includes("coverage")) {
   plugins.unshift(
