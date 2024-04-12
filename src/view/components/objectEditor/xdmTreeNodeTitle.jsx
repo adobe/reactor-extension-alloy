@@ -30,6 +30,7 @@ const XdmTreeNodeTitle = props => {
     infoTip,
     clear
   } = props;
+
   return (
     <Flex
       data-test-id="xdmTreeNodeTitle"

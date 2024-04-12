@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import computePopulationNote from "../computePopulationNote";
 import { EMPTY, FULL, BLANK } from "../../constants/populationAmount";
 import analyticsForm from "./analyticsForm";
+import anyErrorsTouched from "../anyErrorsTouched";
 
 const computePopulationAmount = ({
   formStateNode,
@@ -33,8 +34,15 @@ const computePopulationAmount = ({
 export default ({
   treeNode,
   formStateNode,
-  isAncestorUsingWholePopulationStrategy
+  isAncestorUsingWholePopulationStrategy,
+  confirmTouchedAtCurrentOrDescendantNode,
+  errors,
+  touched
 }) => {
+  if (anyErrorsTouched(errors, touched)) {
+    confirmTouchedAtCurrentOrDescendantNode();
+  }
+
   treeNode.populationAmount = computePopulationAmount({
     formStateNode,
     isAncestorUsingWholePopulationStrategy

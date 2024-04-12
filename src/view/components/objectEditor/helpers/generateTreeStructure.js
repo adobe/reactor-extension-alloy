@@ -75,6 +75,9 @@ const getTreeNode = ({
     clear: formStateNode.transform.clear && !isAncestorCleared
   };
 
+  // This variable keeps track of whether any of the errors have been
+  // touched. This is imporant because we don't want to show errors
+  // until the user has navigated away from the field at least once.
   let isTouchedAtCurrentOrDescendantNode = false;
 
   const confirmTouchedAtCurrentOrDescendantNode = () => {
@@ -84,7 +87,15 @@ const getTreeNode = ({
     }
   };
 
-  if (touched && touched.value) {
+  if (
+    touched &&
+    touched.value === true &&
+    errors &&
+    typeof errors.value === "string"
+  ) {
+    // This case handles most of the data types. Other logic, such as within the
+    // object-analytics and object-json types handle this within their
+    // populateTreeNode functions.
     confirmTouchedAtCurrentOrDescendantNode();
   }
 
@@ -124,6 +135,7 @@ const getTreeNode = ({
 // Avoid exposing all of getTreeNode's parameters since
 // they're only used internally for recursion.
 export default ({ treeNodeComponent, formState, errors, touched }) => {
+  console.log("root generate tree structure", errors, touched);
   return getTreeNode({
     formStateNode: formState,
     treeNodeComponent,
