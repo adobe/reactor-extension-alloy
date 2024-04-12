@@ -81,52 +81,50 @@ const PartsPopulationStrategyForm = ({ fieldName, items }) => (
                     width="size-3000"
                   />
 
-                    <DataElementSelector>
-                      <FormikTextField
-                        data-test-id={`valueField${index}`}
-                        name={`${fieldName}.items.${index}.value`}
-                        aria-label="Value"
-                        label={index === 0 ? "Value" : ""}
-                        width="size-3000"
-                        onBlur={setTouched}
-                        marginStart="size-100"
-                      />
-                    </DataElementSelector>
+                  <DataElementSelector>
+                    <FormikTextField
+                      data-test-id={`valueField${index}`}
+                      name={`${fieldName}.items.${index}.value`}
+                      aria-label="Value"
+                      label={index === 0 ? "Value" : ""}
+                      width="size-3000"
+                      marginStart="size-100"
+                    />
+                  </DataElementSelector>
 
-                    <ActionButton
-                      data-test-id={`item${index}RemoveButton`}
-                      isQuiet
-                      variant="secondary"
-                      aria-label="Delete"
-                      isDisabled={items.length === 1 && !key && !value}
-                      marginTop={index === 0 ? "size-300" : ""}
-                      onPress={() =>
-                        items.length > 1
-                          ? arrayHelpers.remove(index)
-                          : arrayHelpers.replace(index, getEmptyItem())
-                      }
-                    >
-                      <Delete />
-                    </ActionButton>
-                  </Flex>
-                );
-              })}
+                  <ActionButton
+                    data-test-id={`item${index}RemoveButton`}
+                    isQuiet
+                    variant="secondary"
+                    aria-label="Delete"
+                    isDisabled={items.length === 1 && !key && !value}
+                    marginTop={index === 0 ? "size-300" : ""}
+                    onPress={() =>
+                      items.length > 1
+                        ? arrayHelpers.remove(index)
+                        : arrayHelpers.replace(index, getEmptyItem())
+                    }
+                  >
+                    <Delete />
+                  </ActionButton>
+                </Flex>
+              );
+            })}
 
-              <ActionButton
-                data-test-id="addPropertyButton"
-                onPress={() => {
-                  arrayHelpers.push({ key: "", value: "" });
-                }}
-              >
-                Add another property
-              </ActionButton>
-            </Flex>
-          </Well>
-        );
-      }}
-    />
-  );
-};
+            <ActionButton
+              data-test-id="addPropertyButton"
+              onPress={() => {
+                arrayHelpers.push({ key: "", value: "" });
+              }}
+            >
+              Add another property
+            </ActionButton>
+          </Flex>
+        </Well>
+      );
+    }}
+  />
+);
 
 PartsPopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired,
