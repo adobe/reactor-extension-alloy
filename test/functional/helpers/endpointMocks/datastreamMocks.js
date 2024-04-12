@@ -14,8 +14,10 @@ import { RequestMock } from "testcafe";
 import responseHeaders from "./responseHeaders";
 
 const DATASTREAM_ENDPOINT_REGEX = /\/edge\/datasets\/datastreams\/records\/.+/;
-const specificDatastream = /\/edge\/datasets\/datastreams\/records\/64c31a3b-d031-4a2f-8834-e96fc15d3030/;
-const configOverridesDatastream = /\/edge\/datasets\/datastreams\/records\/aca8c786-4940-442f-ace5-7c4aba02118e/;
+const specificDatastream =
+  /\/edge\/datasets\/datastreams\/records\/64c31a3b-d031-4a2f-8834-e96fc15d3030/;
+const configOverridesDatastream =
+  /\/edge\/datasets\/datastreams\/records\/aca8c786-4940-442f-ace5-7c4aba02118e/;
 
 export const basic = RequestMock()
   .onRequestTo(async request => {

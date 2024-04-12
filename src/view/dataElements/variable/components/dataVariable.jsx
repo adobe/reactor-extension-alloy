@@ -65,24 +65,26 @@ export const solutionsContext = [
   [ADOBE_AUDIENCE_MANAGER, "Adobe Audience Manager"]
 ];
 
-const DataVariable = () => (
-  <FieldSubset>
-    <FormikCheckboxGroup label="Solutions" name="solutions">
-      {solutionsContext.map(([solution, name]) => {
-        return (
-          <Checkbox
-            key={solution}
-            data-test-id={`${solution}Checkbox`}
-            value={solution}
-            width="size-5000"
-          >
-            {name}
-          </Checkbox>
-        );
-      })}
-    </FormikCheckboxGroup>
-  </FieldSubset>
-);
+const DataVariable = () => {
+  return (
+    <FieldSubset>
+      <FormikCheckboxGroup label="Solutions" name="solutions">
+        {solutionsContext.map(([solution, name]) => {
+          return (
+            <Checkbox
+              key={solution}
+              data-test-id={`${solution}Checkbox`}
+              value={solution}
+              width="size-5000"
+            >
+              {name}
+            </Checkbox>
+          );
+        })}
+      </FormikCheckboxGroup>
+    </FieldSubset>
+  );
+};
 
 DataVariable.propTypes = {};
 

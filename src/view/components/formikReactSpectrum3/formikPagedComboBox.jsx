@@ -34,9 +34,8 @@ const FormikPagedComboBox = ({
   ...otherProps
 }) => {
   const isFirstRender = useIsFirstRender();
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
 
   const pagedComboBox = usePagedComboBox({
     defaultSelectedItem: value,

@@ -50,19 +50,21 @@ export default function textField({
     const ComponentWithDataElement = ({
       namePrefix = "",
       hideLabel = false
-    }) => (
-      <DataElementSelector>
-        <FormikTextField
-          data-test-id={`${namePrefix}${name}TextField`}
-          name={`${namePrefix}${name}`}
-          label={hideLabel ? undefined : label}
-          aria-label={label}
-          isRequired={isRequired}
-          description={description}
-          width={width}
-        />
-      </DataElementSelector>
-    );
+    }) => {
+      return (
+        <DataElementSelector>
+          <FormikTextField
+            data-test-id={`${namePrefix}${name}TextField`}
+            name={`${namePrefix}${name}`}
+            label={hideLabel ? undefined : label}
+            aria-label={label}
+            isRequired={isRequired}
+            description={description}
+            width={width}
+          />
+        </DataElementSelector>
+      );
+    };
     ComponentWithDataElement.propTypes = {
       namePrefix: PropTypes.string,
       hideLabel: PropTypes.bool
@@ -72,17 +74,19 @@ export default function textField({
     const ComponentWithoutDataElement = ({
       namePrefix = "",
       hideLabel = false
-    }) => (
-      <FormikTextField
-        data-test-id={`${namePrefix}${name}TextField`}
-        name={`${namePrefix}${name}`}
-        label={hideLabel ? undefined : label}
-        aria-label={label}
-        isRequired={isRequired}
-        description={description}
-        width={width}
-      />
-    );
+    }) => {
+      return (
+        <FormikTextField
+          data-test-id={`${namePrefix}${name}TextField`}
+          name={`${namePrefix}${name}`}
+          label={hideLabel ? undefined : label}
+          aria-label={label}
+          isRequired={isRequired}
+          description={description}
+          width={width}
+        />
+      );
+    };
     ComponentWithoutDataElement.propTypes = {
       namePrefix: PropTypes.string,
       hideLabel: PropTypes.bool

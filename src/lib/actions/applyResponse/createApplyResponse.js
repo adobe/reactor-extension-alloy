@@ -10,20 +10,19 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({
-  instanceManager,
-  sendEventCallbackStorage
-}) => settings => {
-  const { instanceName, ...otherSettings } = settings;
-  const instance = instanceManager.getInstance(instanceName);
+module.exports =
+  ({ instanceManager, sendEventCallbackStorage }) =>
+  settings => {
+    const { instanceName, ...otherSettings } = settings;
+    const instance = instanceManager.getInstance(instanceName);
 
-  if (!instance) {
-    throw new Error(
-      `Failed to apply response for instance "${instanceName}". No matching instance was configured with this name.`
-    );
-  }
+    if (!instance) {
+      throw new Error(
+        `Failed to apply response for instance "${instanceName}". No matching instance was configured with this name.`
+      );
+    }
 
-  return instance("applyResponse", otherSettings).then(result => {
-    sendEventCallbackStorage.triggerEvent(result);
-  });
-};
+    return instance("applyResponse", otherSettings).then(result => {
+      sendEventCallbackStorage.triggerEvent(result);
+    });
+  };

@@ -26,10 +26,8 @@ import FormElementContainer from "../formElementContainer";
 const ObjectEdit = ({ fieldName, verticalLayout = false }) => {
   const [{ value: formStateNode }] = useField(fieldName);
 
-  const {
-    isPartsPopulationStrategySupported,
-    populationStrategy
-  } = formStateNode;
+  const { isPartsPopulationStrategySupported, populationStrategy } =
+    formStateNode;
 
   return (
     <FormElementContainer>

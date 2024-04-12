@@ -163,9 +163,8 @@ describe("Instance Manager", () => {
 
   it("wraps onBeforeEventSend", () => {
     build();
-    const {
-      onBeforeEventSend: configuredOnBeforeEventSend
-    } = alloy1.calls.argsFor(0)[1];
+    const { onBeforeEventSend: configuredOnBeforeEventSend } =
+      alloy1.calls.argsFor(0)[1];
     expect(configuredOnBeforeEventSend).toBe(onBeforeEventSend);
   });
 

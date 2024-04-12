@@ -193,8 +193,9 @@ const Overrides = ({
                 validateItemIsInDatasetsList
               );
 
-              const primaryIdSyncContainer = `${result?.com_adobe_identity
-                ?.idSyncContainerId ?? ""}`;
+              const primaryIdSyncContainer = `${
+                result?.com_adobe_identity?.idSyncContainerId ?? ""
+              }`;
               const idSyncContainers =
                 result?.com_adobe_identity?.idSyncContainerId__additional?.map(
                   value => ({ value, label: `${value}` })
@@ -204,10 +205,11 @@ const Overrides = ({
               if (primaryIdSyncContainer) {
                 idSyncContainerDescription = `Overrides the default container (${primaryIdSyncContainer}). ${idSyncContainerDescription}`;
               }
-              const validateItemIsInContainersList = createValidateItemIsInArray(
-                idSyncContainers.map(({ label }) => label),
-                "The value must be one of the preconfigured ID sync containers."
-              );
+              const validateItemIsInContainersList =
+                createValidateItemIsInArray(
+                  idSyncContainers.map(({ label }) => label),
+                  "The value must be one of the preconfigured ID sync containers."
+                );
               const validateIdSyncContainerOption = value => {
                 if (typeof value === "string" && value?.includes("%")) {
                   // can only contain numbers and data elements
@@ -252,9 +254,8 @@ const Overrides = ({
                 propertyTokenOptions.map(({ value }) => value),
                 "The value must be one of the preconfigured property tokens."
               );
-              const validatePropertyTokenOption = combineValidatorWithIsDataElement(
-                itemIsInPropertyTokenOptions
-              );
+              const validatePropertyTokenOption =
+                combineValidatorWithIsDataElement(itemIsInPropertyTokenOptions);
 
               /** @type {string[]} */
               const primaryReportSuites =
@@ -264,10 +265,11 @@ const Overrides = ({
                   .concat(result?.com_adobe_analytics?.reportSuites__additional)
                   .filter(Boolean)
                   .map(value => ({ value, label: value })) ?? [];
-              const validateItemIsInReportSuiteOptions = createValidateItemIsInArray(
-                reportSuiteOptions.map(({ value }) => value),
-                "The value must be one of the preconfigured report suites."
-              );
+              const validateItemIsInReportSuiteOptions =
+                createValidateItemIsInArray(
+                  reportSuiteOptions.map(({ value }) => value),
+                  "The value must be one of the preconfigured report suites."
+                );
               /**
                * @param {string} value
                * @returns {string | undefined}
@@ -283,9 +285,7 @@ const Overrides = ({
                     )
                   )
                   .filter(v => Boolean(v))[0];
-              const sandboxFieldName = `${prefix}.${env}.${
-                FIELD_NAMES.sandbox
-              }`;
+              const sandboxFieldName = `${prefix}.${env}.${FIELD_NAMES.sandbox}`;
               const [{ value: sandbox }] = useField(sandboxFieldName);
 
               return (

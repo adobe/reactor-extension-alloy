@@ -86,14 +86,12 @@ const initializeSchemas = async ({
   imsAccess
 }) => {
   if (initialValues.sandbox) {
-    const {
-      results: schemasFirstPage,
-      nextPage: schemasFirstPageCursor
-    } = await fetchSchemasMeta({
-      orgId,
-      imsAccess,
-      sandboxName: initialValues.sandbox
-    });
+    const { results: schemasFirstPage, nextPage: schemasFirstPageCursor } =
+      await fetchSchemasMeta({
+        orgId,
+        imsAccess,
+        sandboxName: initialValues.sandbox
+      });
 
     context.schemasFirstPage = schemasFirstPage;
     context.schemasFirstPageCursor = schemasFirstPageCursor;

@@ -88,11 +88,8 @@ test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.multiple)(
     await schemaField.openMenu();
     await schemaField.selectMenuOption("Test Schema 1");
     await extensionViewController.expectIsValid();
-    const {
-      sandbox,
-      schema,
-      ...other
-    } = await extensionViewController.getSettings();
+    const { sandbox, schema, ...other } =
+      await extensionViewController.getSettings();
     await t.expect(sandbox).contains({ name: "testsandbox3" });
     await t.expect(schema).contains({
       id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch123",

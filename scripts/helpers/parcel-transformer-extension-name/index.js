@@ -17,10 +17,9 @@ module.exports = new plugin.Transformer({
     const source = await asset.getCode();
 
     // eslint-disable-next-line import/no-dynamic-require,global-require
-    const { name: extensionName } = require(path.resolve(
-      process.cwd(),
-      "extension.json"
-    ));
+    const { name: extensionName } = require(
+      path.resolve(process.cwd(), "extension.json")
+    );
 
     asset.setCode(source.replace(/__EXTENSION_NAME__/g, extensionName));
 
