@@ -13,7 +13,6 @@ governing permissions and limitations under the License.
 // This is a commonjs module instead of an ES6 module because it's also used by a node script
 // outside of TestCafe.
 const fs = require("fs");
-const chalk = require("chalk");
 
 const CLIENT_SECRET_ENV_VAR_NAME = "EDGE_E2E_CLIENT_SECRET";
 const PRIVATE_KEY_FILE_ENV_VAR_NAME = "EDGE_E2E_PRIVATE_KEY_FILE";
@@ -42,9 +41,7 @@ if (clientSecret && (privateKeyPath || privateKeyContents)) {
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(
-      chalk.redBright(
-        `Failed to read private key at ${privateKeyPath}. Please ensure the value provided in the ${PRIVATE_KEY_FILE_ENV_VAR_NAME} environment variable is correct.`
-      )
+      `Failed to read private key at ${privateKeyPath}. Please ensure the value provided in the ${PRIVATE_KEY_FILE_ENV_VAR_NAME} environment variable is correct.`
     );
   }
 
@@ -62,9 +59,7 @@ if (clientSecret && (privateKeyPath || privateKeyContents)) {
 } else {
   // eslint-disable-next-line no-console
   console.error(
-    chalk.yellowBright(
-      `One or more environment variables required to obtain an IMS token are not set. Please ensure that ${PRIVATE_KEY_FILE_ENV_VAR_NAME}, and ${CLIENT_SECRET_ENV_VAR_NAME} are set.`
-    )
+    `One or more environment variables required to obtain an IMS token are not set. Please ensure that ${PRIVATE_KEY_FILE_ENV_VAR_NAME}, and ${CLIENT_SECRET_ENV_VAR_NAME} are set.`
   );
 }
 
