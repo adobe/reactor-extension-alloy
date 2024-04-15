@@ -145,19 +145,23 @@ const ExtensionView = ({
     }, []);
   }
   if (getInitialValues) {
-    useEffect(async () => {
-      if (initInfo) {
-        try {
-          const getInitialValuesPromise = getInitialValues({ initInfo });
-          getInitialValuesPromiseRef.current = getInitialValuesPromise;
-          formikPropsRef.current.resetForm({
-            values: await getInitialValuesPromise
-          });
-          setCanRenderView(true);
-        } catch (e) {
-          reportAsyncError(e);
+    useEffect(() => {
+      async function getData() {
+        if (initInfo) {
+          try {
+            const getInitialValuesPromise = getInitialValues({ initInfo });
+            getInitialValuesPromiseRef.current = getInitialValuesPromise;
+            formikPropsRef.current.resetForm({
+              values: await getInitialValuesPromise
+            });
+            setCanRenderView(true);
+          } catch (e) {
+            reportAsyncError(e);
+          }
         }
       }
+
+      getData();
     }, [initInfo]);
   }
   // Show the spinner until getInitialValues is done
