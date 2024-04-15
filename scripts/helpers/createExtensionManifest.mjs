@@ -1074,4 +1074,4 @@ const createExtensionManifest = ({ version }) => {
   return extensionManifest;
 };
 
-module.exports = createExtensionManifest;
+export default createExtensionManifest;

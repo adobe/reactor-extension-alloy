@@ -12,22 +12,21 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const build = require("./helpers/build");
-const buildExtensionManifest = require("./helpers/buildExtensionManifest");
+import build from "./helpers/build.mjs";
+import buildExtensionManifest from "./helpers/buildExtensionManifest.mjs";
 
-buildExtensionManifest()
-  .then(resultPath => {
-    // eslint-disable-next-line no-console
-    console.log(
-      "\x1b[32m%s\x1b[0m",
-      `✅ Extension manifest written to ${resultPath}`
-    );
-  })
-  .then(() => build())
-  .then(() => {
-    process.exit(0);
-  })
-  .catch(e => {
-    console.error(e);
-    process.exit(1);
-  });
+try {
+  const resultPath = await buildExtensionManifest();
+  // eslint-disable-next-line no-console
+  console.log(
+    "\x1b[32m%s\x1b[0m",
+    `✅ Extension manifest written to ${resultPath}`
+  );
+
+  await build();
+
+  process.exit(0);
+} catch (e) {
+  console.error(e);
+  process.exit(1);
+}
