@@ -11,15 +11,16 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
 const auth = require("@adobe/jwt-auth");
 const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
 
-(async () => {
-  if (adobeIOClientCredentials) {
-    // eslint-disable-next-line no-console
-    console.log("Org ID:", adobeIOClientCredentials.orgId);
-    const result = await auth(adobeIOClientCredentials);
-    // eslint-disable-next-line no-console
-    console.log("IMS Access Token:", result.access_token);
-  }
-})();
+if (adobeIOClientCredentials) {
+  // eslint-disable-next-line no-console
+  console.log("Org ID:", adobeIOClientCredentials.orgId);
+  const result = await auth(adobeIOClientCredentials);
+  // eslint-disable-next-line no-console
+  console.log("IMS Access Token:", result.access_token);
+}
