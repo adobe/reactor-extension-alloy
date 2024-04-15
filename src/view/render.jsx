@@ -11,7 +11,9 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { createRoot } from "react-dom/client";
+// import { createRoot } from "react-dom/client";
+// eslint-disable-next-line react/no-deprecated
+import { render } from "react-dom";
 
 import { Provider, lightTheme } from "@adobe/react-spectrum";
 import ErrorBoundary from "./components/errorBoundary";
@@ -21,10 +23,10 @@ import monitorForOriginatingErrors from "./utils/monitorForOriginatingErrors";
 monitorForOriginatingErrors();
 
 const container = document.getElementById("root");
-const root = createRoot(container);
+// const root = createRoot(container);
 
 export default View => {
-  root.render(
+  render(
     <Provider
       theme={lightTheme}
       colorScheme="light"
@@ -33,6 +35,7 @@ export default View => {
       <ErrorBoundary>
         <View />
       </ErrorBoundary>
-    </Provider>
+    </Provider>,
+    container
   );
 };

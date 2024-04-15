@@ -10,20 +10,24 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import React from "react";
-import { createRoot } from "react-dom/client";
+// import { createRoot } from "react-dom/client";
+// eslint-disable-next-line react/no-deprecated
+import { render } from "react-dom";
+
 import { lightTheme, Provider } from "@adobe/react-spectrum";
 
 const container = document.getElementById("root");
-const root = createRoot(container);
+// const root = createRoot(container);
 
 export default ComponentFixture => {
-  root.render(
+  render(
     <Provider
       theme={lightTheme}
       colorScheme="light"
       UNSAFE_className="react-spectrum-provider"
     >
       <ComponentFixture />
-    </Provider>
+    </Provider>,
+    container
   );
 };
