@@ -327,34 +327,37 @@ const UpdateVariable = ({
   } = initInfo;
 
   useChanged(
-    useReportAsyncError(async () => {
-      setHasSchema(false);
-      setSelectedNodeId(null);
+    useReportAsyncError(() => {
+      async function reloadDataElement() {
+        setHasSchema(false);
+        setSelectedNodeId(null);
 
-      if (dataElement) {
-        const transforms = {};
-        const signal = abortPreviousRequestsAndCreateSignal();
-        const initialFormState = await getInitialFormStateFromDataElement({
-          dataElement,
-          context,
-          orgId,
-          imsAccess,
-          transforms,
-          existingFormStateNode: values,
-          signal
-        });
+        if (dataElement) {
+          const transforms = {};
+          const signal = abortPreviousRequestsAndCreateSignal();
+          const initialFormState = await getInitialFormStateFromDataElement({
+            dataElement,
+            context,
+            orgId,
+            imsAccess,
+            transforms,
+            existingFormStateNode: values,
+            signal
+          });
 
-        if (!signal.aborted) {
-          resetForm({ values: { ...initialFormState, dataElement } });
-          if (context.schema) {
-            setHasSchema(true);
+          if (!signal.aborted) {
+            resetForm({ values: { ...initialFormState, dataElement } });
+            if (context.schema) {
+              setHasSchema(true);
+            }
+          }
+
+          if (isDataVariable(dataElement)) {
+            setSelectedNodeId(findFirstNodeIdForDepth(values, 3));
           }
         }
-
-        if (isDataVariable(dataElement)) {
-          setSelectedNodeId(findFirstNodeIdForDepth(values, 3));
-        }
       }
+      reloadDataElement();
     }),
     [dataElement]
   );
