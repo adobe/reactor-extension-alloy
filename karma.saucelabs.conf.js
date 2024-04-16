@@ -52,7 +52,7 @@ module.exports = config => {
     sauceLabs: {
       screenResolution: "800x600",
       build: `GH #${process.env.BUILD_NUMBER} (${process.env.BUILD_ID})`,
-      tunnelIdentifier: "unit-test"
+      tunnelIdentifier: process.env.JOB_NUMBER
     },
     plugins: [
       "karma-jasmine",
