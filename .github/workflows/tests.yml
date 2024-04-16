@@ -22,11 +22,12 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
-      - uses: saucelabs/sauce-connect-action@v2.2.1
+      - uses: saucelabs/sauce-connect-action@v2
         with:
           username: ${{ secrets.SAUCE_USERNAME }}
           accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
           tunnelName: ${{ github.job }}
+          scVersion: 4.8.1
       - name: Run Unit Test
         run: npx karma start karma.saucelabs.conf.js --single-run
         env:
