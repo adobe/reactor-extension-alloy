@@ -244,9 +244,7 @@ const componentWrappers = {
           }
 
           // eslint-disable-next-line no-await-in-loop
-          await t.scrollIntoView(
-            popoverMenuSelector.find(menuItemCssSelector).nth(-1)
-          );
+          await t.scrollBy(popoverMenuSelector, 0, 200);
         }
 
         throw new Error(
@@ -293,6 +291,7 @@ const componentWrappers = {
       // When the combobox loads pages of data when scrolling, this
       // will keep scrolling until the the item is reached.
       async scrollDownToItem(label) {
+        console.log("Scrolling down to item", label);
         for (let i = 0; i < 10; i += 1) {
           if (
             // eslint-disable-next-line no-await-in-loop
@@ -303,10 +302,12 @@ const componentWrappers = {
             return;
           }
 
+          console.log("Scrolling down 200px");
           // eslint-disable-next-line no-await-in-loop
-          await t.scrollIntoView(
-            popoverMenuSelector.find(menuItemCssSelector).nth(-1)
-          );
+          await t.scrollBy(popoverMenuSelector, 0, 200);
+          // await t.scrollIntoView(
+          //  popoverMenuSelector.find(menuItemCssSelector).nth(20)
+          // );
         }
 
         throw new Error(

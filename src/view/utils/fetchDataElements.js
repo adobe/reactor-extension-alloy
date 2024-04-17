@@ -10,7 +10,6 @@ governing permissions and limitations under the License.
 */
 
 import fetchFromReactor from "./fetchFromReactor";
-import UserReportableError from "../errors/userReportableError";
 
 // EXTENSION_NAME will be replace with this extension's name
 const DELEGATE_DESCRIPTOR_ID = "__EXTENSION_NAME__::dataElements::variable";
@@ -49,9 +48,55 @@ const fetchDataElements = async ({
         throw e;
       }
 
+      return {
+        results: [
+          {
+            id: "DE6",
+            name: "Test XDM variable 6",
+            settings: {
+              cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1956",
+              sandbox: {
+                name: "prod"
+              },
+              schema: {
+                id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+                version: "1.2"
+              }
+            }
+          },
+          {
+            id: "SDE1",
+            name: "Test data variable 1 (both)",
+            settings: {
+              cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1957",
+              solutions: ["analytics", "target"]
+            }
+          },
+          {
+            id: "SDE2",
+            name: "Test data variable 2 (analytics only)",
+            settings: {
+              cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1958",
+              solutions: ["analytics"]
+            }
+          },
+          {
+            id: "SDE3",
+            name: "Test data variable 3 (target only)",
+            settings: {
+              cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
+              solutions: ["target"]
+            }
+          }
+        ],
+        nextPage: null
+      };
+
+      /*
       throw new UserReportableError("Failed to load data elements.", {
         originatingError: e
       });
+      */
     }
 
     parsedResponse.parsedBody.data

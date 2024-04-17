@@ -1,5 +1,6 @@
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 import * as dataElementsMocks from "../../helpers/endpointMocks/dataElementsMocks";
+import * as dataElementMocks from "../../helpers/endpointMocks/dataElementMocks";
 import extensionViewController from "../../helpers/extensionViewController";
 
 import spectrum from "../../helpers/spectrum";
@@ -19,10 +20,59 @@ const individualAttributesOption = analyticsField("radio", "valuePartsOption");
 const entireObjectOption = analyticsField("radio", "valueWholeOption");
 const jsonEditor = analyticsField("textField", "valueWhole");
 const eVarName = analyticsArrayField("comboBox", "evars", "evarField");
-const eVarAction = analyticsArrayField("comboBox", "evars", "actionField");
+const eVarAction = analyticsArrayField("picker", "evars", "actionField");
 const eVarValue = analyticsArrayField("textField", "evars", "valueTextField");
 const eVarCopy = analyticsArrayField("comboBox", "evars", "copyField");
 const eVarAddButton = analyticsField("button", "value.evarsAddButton");
+
+const propName = analyticsArrayField("comboBox", "props", "propField");
+const propAction = analyticsArrayField("picker", "props", "actionField");
+const propValue = analyticsArrayField("textField", "props", "valueTextField");
+const propCopy = analyticsArrayField("comboBox", "props", "copyField");
+const propAddButton = analyticsField("button", "value.propsAddButton");
+
+const eventName = analyticsArrayField("comboBox", "events", "eventField");
+const eventId = analyticsArrayField("textField", "events", "idTextField");
+const eventValue = analyticsArrayField("textField", "events", "valueTextField");
+const eventAddButton = analyticsField("button", "value.eventsAddButton");
+
+const contextDataDataElementOption = analyticsField(
+  "radio",
+  "value.contextDataDataElementOption"
+);
+const contextDataDataElementField = analyticsField(
+  "textField",
+  "value.contextDataDataElementField"
+);
+const contextDataKey = analyticsArrayField(
+  "textField",
+  "contextData",
+  "keyTextField"
+);
+const contextDataValue = analyticsArrayField(
+  "textField",
+  "contextData",
+  "valueTextField"
+);
+const contextDataAddButton = analyticsField(
+  "button",
+  "value.contextDataAddButton"
+);
+
+const additionalPropertiesName = analyticsArrayField(
+  "comboBox",
+  "additionalProperties",
+  "propertyField"
+);
+const additionalPropertiesValue = analyticsArrayField(
+  "textField",
+  "additionalProperties",
+  "valueTextField"
+);
+const additionalPropertiesAddButton = analyticsField(
+  "button",
+  "value.additionalPropertiesAddButton"
+);
 
 createExtensionViewFixture({
   title: "Update variable analytics editor",
@@ -66,13 +116,56 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await eVarCopy(1).openMenu();
     await eVarCopy(1).selectMenuOption("eVar10");
 
+    await propName(0).openMenu();
+    await propName(0).scrollDownToItem("prop42");
+    await propName(0).selectMenuOption("prop42");
+    await propValue(0).typeText("value42");
+    await propAddButton.click();
+    await propName(1).openMenu();
+    await propName(1).scrollDownToItem("prop75");
+    await propName(1).selectMenuOption("prop75");
+    await propAction(1).openMenu();
+    await propAction(1).selectMenuOption("Copy from");
+    await propCopy(1).enterSearch("prop4");
+    await propCopy(1).selectMenuOption("prop42");
+
+    await eventName(0).openMenu();
+    await eventName(0).selectMenuOption("event1");
+    await eventId(0).typeText("123");
+    await eventValue(0).typeText("value1");
+    await eventAddButton.click();
+    await eventName(1).openMenu();
+    await eventName(1).selectMenuOption("scAdd: Cart Addition");
+
+    await contextDataKey(0).typeText("key1");
+    await contextDataValue(0).typeText("value1");
+    await contextDataAddButton.click();
+    await contextDataKey(1).typeText("key2");
+    await contextDataValue(1).typeText("value2");
+
+    await additionalPropertiesName(0).openMenu();
+    await additionalPropertiesName(0).selectMenuOption("Campaign");
+    await additionalPropertiesValue(0).typeText("mycampaign");
+    await additionalPropertiesAddButton.click();
+    await additionalPropertiesName(1).enterSearch("tnta");
+    await additionalPropertiesValue(1).typeText("mytnta");
+
     await extensionViewController.expectIsValid();
     await extensionViewController.expectSettings({
       data: {
         __adobe: {
           analytics: {
             eVar2: "D=v10",
-            eVar10: "value10"
+            eVar10: "value10",
+            prop42: "value42",
+            prop75: "D=c42",
+            events: "scAdd,event1:123=value1",
+            contextData: {
+              key1: "value1",
+              key2: "value2"
+            },
+            campaign: "mycampaign",
+            tnta: "mytnta"
           }
         }
       },
@@ -81,6 +174,63 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     });
   }
 );
+
+test.requestHooks(
+  dataElementsMocks.singleSolutions,
+  dataElementMocks.solutionsElement1
+)("it fills in values", async () => {
+  await extensionViewController.init({
+    propertySettings: {
+      id: "PRabcd"
+    },
+    settings: {
+      data: {
+        __adobe: {
+          analytics: {
+            eVar2: "D=v10",
+            eVar10: "value10",
+            prop42: "value42",
+            prop75: "D=c42",
+            events: "scAdd,event1:123=value1",
+            contextData: {
+              key1: "value1",
+              key2: "value2"
+            },
+            campaign: "mycampaign",
+            tnta: "mytnta"
+          }
+        }
+      },
+      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
+      dataElementId: "SDE1"
+    }
+  });
+  await eVarName(0).expectText("eVar2");
+  await eVarAction(0).expectText("Copy from");
+  await eVarCopy(0).expectText("eVar10");
+  await eVarName(1).expectText("eVar10");
+  await eVarAction(1).expectText("Set as");
+  await eVarValue(1).expectValue("value10");
+  await propName(0).expectText("prop42");
+  await propValue(0).expectValue("value42");
+  await propName(1).expectText("prop75");
+  await propAction(1).expectText("Copy from");
+  await propCopy(1).expectText("prop42");
+  await eventName(0).expectText("scAdd: Cart Addition");
+  await eventId(0).expectValue("");
+  await eventValue(0).expectValue("");
+  await eventName(1).expectText("event1");
+  await eventId(1).expectValue("123");
+  await eventValue(1).expectValue("value1");
+  await contextDataKey(0).expectValue("key1");
+  await contextDataValue(0).expectValue("value1");
+  await contextDataKey(1).expectValue("key2");
+  await contextDataValue(1).expectValue("value2");
+  await additionalPropertiesName(0).expectText("Campaign");
+  await additionalPropertiesValue(0).expectValue("mycampaign");
+  await additionalPropertiesName(1).expectText("tnta");
+  await additionalPropertiesValue(1).expectValue("mytnta");
+});
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
   "returns single data element",
@@ -116,14 +266,34 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     });
     await eVarName(0).openMenu();
     await eVarName(0).selectMenuOption("eVar10");
-    await eVarValue(0).typeText("%value10%");
+    await eVarValue(0).typeText("%v10%");
+
+    await propName(0).openMenu();
+    await propName(0).selectMenuOption("prop11");
+    await propValue(0).typeText("%c11%other%element%");
+
+    await eventName(0).openMenu();
+    await eventName(0).selectMenuOption("event1");
+    await eventId(0).typeText("%id1%");
+    await eventValue(0).typeText("%value1%");
+
+    await contextDataDataElementOption.click();
+    await contextDataDataElementField.typeText("%contextDataElement%");
+
+    await additionalPropertiesName(0).openMenu();
+    await additionalPropertiesName(0).selectMenuOption("Channel");
+    await additionalPropertiesValue(0).typeText("%channel%");
 
     await extensionViewController.expectIsValid();
     await extensionViewController.expectSettings({
       data: {
         __adobe: {
           analytics: {
-            eVar10: "%value10%"
+            eVar10: "%v10%",
+            prop11: "%c11%other%element%",
+            events: "event1:%id1%=%value1%",
+            contextData: "%contextDataElement%",
+            channel: "%channel%"
           }
         }
       },
@@ -184,5 +354,17 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
       dataElementId: "SDE1"
     });
+  }
+);
+
+test.requestHooks(dataElementsMocks.singleSolutions)(
+  "validates fields",
+  async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd"
+      }
+    });
+    await eVarValue(0).typeText("value10");
   }
 );
