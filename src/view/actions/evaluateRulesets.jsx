@@ -16,24 +16,28 @@ import checkbox from "../forms/checkbox";
 import simpleMap from "../forms/simpleMap";
 import notice from "../forms/notice";
 
-const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
-  const { personalization = {}, ...otherSettings } = initInfo.settings || {};
-  return getInitialValues({
-    initInfo: {
-      ...initInfo,
-      settings: { ...personalization, ...otherSettings }
-    }
-  });
-};
+const wrapGetInitialValues =
+  getInitialValues =>
+  ({ initInfo }) => {
+    const { personalization = {}, ...otherSettings } = initInfo.settings || {};
+    return getInitialValues({
+      initInfo: {
+        ...initInfo,
+        settings: { ...personalization, ...otherSettings }
+      }
+    });
+  };
 
-const wrapGetSettings = getSettings => ({ values }) => {
-  const { decisionContext, ...settings } = getSettings({ values });
-  if (decisionContext) {
-    settings.personalization = {};
-    settings.personalization.decisionContext = decisionContext;
-  }
-  return settings;
-};
+const wrapGetSettings =
+  getSettings =>
+  ({ values }) => {
+    const { decisionContext, ...settings } = getSettings({ values });
+    if (decisionContext) {
+      settings.personalization = {};
+      settings.personalization.decisionContext = decisionContext;
+    }
+    return settings;
+  };
 
 const evaluateRulesetsForm = form(
   {

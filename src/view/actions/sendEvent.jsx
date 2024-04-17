@@ -64,62 +64,67 @@ const xdmFieldDescription = (
   </>
 );
 
-const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
-  const { personalization = {}, ...otherSettings } = initInfo.settings || {};
-  if (personalization.defaultPersonalizationEnabled === true) {
-    personalization.defaultPersonalizationEnabled = "true";
-  } else if (personalization.defaultPersonalizationEnabled === false) {
-    personalization.defaultPersonalizationEnabled = "false";
-  }
-  return getInitialValues({
-    initInfo: {
-      ...initInfo,
-      settings: { ...personalization, ...otherSettings }
+const wrapGetInitialValues =
+  getInitialValues =>
+  ({ initInfo }) => {
+    const { personalization = {}, ...otherSettings } = initInfo.settings || {};
+    if (personalization.defaultPersonalizationEnabled === true) {
+      personalization.defaultPersonalizationEnabled = "true";
+    } else if (personalization.defaultPersonalizationEnabled === false) {
+      personalization.defaultPersonalizationEnabled = "false";
     }
-  });
-};
+    return getInitialValues({
+      initInfo: {
+        ...initInfo,
+        settings: { ...personalization, ...otherSettings }
+      }
+    });
+  };
 
-const wrapGetSettings = getSettings => ({ values }) => {
-  const {
-    decisionScopes,
-    surfaces,
-    sendDisplayEvent,
-    includeRenderedPropositions,
-    defaultPersonalizationEnabled,
-    decisionContext,
-    ...settings
-  } = getSettings({ values });
-  if (
-    decisionScopes ||
-    surfaces ||
-    sendDisplayEvent === false ||
-    includeRenderedPropositions ||
-    defaultPersonalizationEnabled ||
-    decisionContext
-  ) {
-    settings.personalization = {};
-  }
-  if (decisionScopes) {
-    settings.personalization.decisionScopes = decisionScopes;
-  }
-  if (surfaces) {
-    settings.personalization.surfaces = surfaces;
-  }
-  if (sendDisplayEvent === false) {
-    settings.personalization.sendDisplayEvent = sendDisplayEvent;
-  }
-  if (includeRenderedPropositions) {
-    settings.personalization.includeRenderedPropositions = includeRenderedPropositions;
-  }
-  if (defaultPersonalizationEnabled) {
-    settings.personalization.defaultPersonalizationEnabled =
-      defaultPersonalizationEnabled === "true";
-  }
-  if (decisionContext) {
-    settings.personalization.decisionContext = decisionContext;
-  }
-  return settings;
-};
+const wrapGetSettings =
+  getSettings =>
+  ({ values }) => {
+    const {
+      decisionScopes,
+      surfaces,
+      sendDisplayEvent,
+      includeRenderedPropositions,
+      defaultPersonalizationEnabled,
+      decisionContext,
+      ...settings
+    } = getSettings({ values });
+    if (
+      decisionScopes ||
+      surfaces ||
+      sendDisplayEvent === false ||
+      includeRenderedPropositions ||
+      defaultPersonalizationEnabled ||
+      decisionContext
+    ) {
+      settings.personalization = {};
+    }
+    if (decisionScopes) {
+      settings.personalization.decisionScopes = decisionScopes;
+    }
+    if (surfaces) {
+      settings.personalization.surfaces = surfaces;
+    }
+    if (sendDisplayEvent === false) {
+      settings.personalization.sendDisplayEvent = sendDisplayEvent;
+    }
+    if (includeRenderedPropositions) {
+      settings.personalization.includeRenderedPropositions =
+        includeRenderedPropositions;
+    }
+    if (defaultPersonalizationEnabled) {
+      settings.personalization.defaultPersonalizationEnabled =
+        defaultPersonalizationEnabled === "true";
+    }
+    if (decisionContext) {
+      settings.personalization.decisionContext = decisionContext;
+    }
+    return settings;
+  };
 
 const eventTypeField = comboBox({
   name: "type",

@@ -39,8 +39,7 @@ export const single = RequestMock()
             },
             _links: {
               self: {
-                href:
-                  "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
+                href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
                 title: ""
               }
             }
@@ -49,8 +48,7 @@ export const single = RequestMock()
       },
       _links: {
         self: {
-          href:
-            "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
+          href: "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
           title: ""
         }
       }
@@ -89,8 +87,7 @@ export const multiple = RequestMock()
             },
             _links: {
               self: {
-                href:
-                  "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
+                href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
                 title: ""
               }
             }
@@ -113,8 +110,7 @@ export const multiple = RequestMock()
             },
             _links: {
               self: {
-                href:
-                  "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
+                href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
                 title: ""
               }
             }
@@ -137,8 +133,7 @@ export const multiple = RequestMock()
             },
             _links: {
               self: {
-                href:
-                  "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
+                href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
                 title: ""
               }
             }
@@ -147,8 +142,7 @@ export const multiple = RequestMock()
       },
       _links: {
         self: {
-          href:
-            "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
+          href: "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
           title: ""
         }
       }
@@ -172,8 +166,7 @@ export const empty = RequestMock()
       },
       _links: {
         self: {
-          href:
-            "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
+          href: "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
           title: ""
         }
       }

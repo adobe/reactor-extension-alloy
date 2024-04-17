@@ -266,11 +266,12 @@ const getSelectInputMethodStateForExistingInstance = async ({
   const datastreamsMap = prepareDatastreamsMap(edgeConfigs);
 
   if (instanceSettings.edgeConfigId) {
-    selectInputMethodState.productionEnvironment = await getEnvironmentEdgeConfigs(
-      instanceSettings.edgeConfigId,
-      datastreamsMap,
-      parsedConfigIds.productionEnvironment
-    );
+    selectInputMethodState.productionEnvironment =
+      await getEnvironmentEdgeConfigs(
+        instanceSettings.edgeConfigId,
+        datastreamsMap,
+        parsedConfigIds.productionEnvironment
+      );
   }
   if (instanceSettings.stagingEdgeConfigId) {
     selectInputMethodState.stagingEnvironment = await getEnvironmentEdgeConfigs(
@@ -280,11 +281,12 @@ const getSelectInputMethodStateForExistingInstance = async ({
     );
   }
   if (instanceSettings.developmentEdgeConfigId) {
-    selectInputMethodState.developmentEnvironment = await getEnvironmentEdgeConfigs(
-      instanceSettings.developmentEdgeConfigId,
-      datastreamsMap,
-      parsedConfigIds.developmentEnvironment
-    );
+    selectInputMethodState.developmentEnvironment =
+      await getEnvironmentEdgeConfigs(
+        instanceSettings.developmentEdgeConfigId,
+        datastreamsMap,
+        parsedConfigIds.developmentEnvironment
+      );
   }
   return selectInputMethodState;
 };
@@ -383,13 +385,12 @@ export const bridge = {
       // their first instance, which would cause the selection components to be displayable for that
       // instance. We want the state to be ready for this case.
       edgeConfigFreeformInputMethod: getFreeformInputStateForNewInstance(),
-      edgeConfigSelectInputMethod: await getSelectInputMethodStateForNewInstance(
-        {
+      edgeConfigSelectInputMethod:
+        await getSelectInputMethodStateForNewInstance({
           orgId,
           imsAccess,
           context
-        }
-      )
+        })
     };
     if (
       context.current.fetchSandboxError ||
@@ -420,16 +421,16 @@ export const bridge = {
 
     if (isFirstInstance) {
       try {
-        instanceValues.edgeConfigSelectInputMethod = await getSelectInputMethodStateForExistingInstance(
-          {
+        instanceValues.edgeConfigSelectInputMethod =
+          await getSelectInputMethodStateForExistingInstance({
             orgId,
             imsAccess,
             instanceSettings,
             context
-          }
-        );
+          });
 
-        instanceValues.edgeConfigFreeformInputMethod = getFreeformInputStateForNewInstance();
+        instanceValues.edgeConfigFreeformInputMethod =
+          getFreeformInputStateForNewInstance();
         if (
           context.current.fetchSandboxError ||
           context.current.fetchConfigsError
@@ -452,19 +453,17 @@ export const bridge = {
       // their first instance, which would cause the selection components to be displayable for that
       // instance. We want the state to be ready for this case.
       try {
-        instanceValues.edgeConfigSelectInputMethod = await getSelectInputMethodStateForNewInstance(
-          {
+        instanceValues.edgeConfigSelectInputMethod =
+          await getSelectInputMethodStateForNewInstance({
             orgId,
             imsAccess,
             context
-          }
-        );
+          });
       } catch (error) {
         // do nothing we will fall back to free form
       }
-      instanceValues.edgeConfigFreeformInputMethod = getFreeformInputMethodStateForExistingInstance(
-        { instanceSettings }
-      );
+      instanceValues.edgeConfigFreeformInputMethod =
+        getFreeformInputMethodStateForExistingInstance({ instanceSettings });
       instanceValues.edgeConfigInputMethod = INPUT_METHOD.FREEFORM;
     }
 
@@ -545,7 +544,7 @@ export const bridge = {
     // TestCafe doesn't allow this to be an arrow function because of
     // how it scopes "this".
     // eslint-disable-next-line func-names
-    .test("uniqueEdgeConfigId", function(instance, testContext) {
+    .test("uniqueEdgeConfigId", function (instance, testContext) {
       const { path: instancePath, parent: instances } = testContext;
 
       const getEdgeConfigIdFromInstance = inst => {
@@ -613,11 +612,8 @@ export const useEdgeConfigIdFields = instanceFieldName => {
     return useFieldValue(getSelectInputMethodFieldName(instanceFieldName));
   }
 
-  const {
-    developmentEdgeConfigId,
-    stagingEdgeConfigId,
-    edgeConfigId
-  } = useFieldValue(getFreeformInputMethodFieldName(instanceFieldName));
+  const { developmentEdgeConfigId, stagingEdgeConfigId, edgeConfigId } =
+    useFieldValue(getFreeformInputMethodFieldName(instanceFieldName));
   return {
     developmentEnvironment: {
       datastreamId: developmentEdgeConfigId
@@ -647,32 +643,34 @@ const EdgeConfigurationsSection = ({
         Datastreams
       </SectionHeader>
       <FormElementContainer>
-        {// Each instance must have a unique org ID. Typically, the first instance will have
-        // the org ID that matches the Launch user's active org ID.
-        // The Launch user's active org is that only org we can retrieve edge configurations
-        // for via an API, so presenting edge configurations for the active org on an
-        // instance configured for a different org would most likely confuse the user.
-        // To prevent this confusion, we'll hide the radios on all but the first instance.
-        instanceIndex === 0 && (
-          <FormikRadioGroup
-            label="Input method"
-            name={getInputMethodFieldName(instanceFieldName)}
-            orientation="horizontal"
-          >
-            <Radio
-              data-test-id="edgeConfigInputMethodSelectRadio"
-              value={INPUT_METHOD.SELECT}
+        {
+          // Each instance must have a unique org ID. Typically, the first instance will have
+          // the org ID that matches the Launch user's active org ID.
+          // The Launch user's active org is that only org we can retrieve edge configurations
+          // for via an API, so presenting edge configurations for the active org on an
+          // instance configured for a different org would most likely confuse the user.
+          // To prevent this confusion, we'll hide the radios on all but the first instance.
+          instanceIndex === 0 && (
+            <FormikRadioGroup
+              label="Input method"
+              name={getInputMethodFieldName(instanceFieldName)}
+              orientation="horizontal"
             >
-              Choose from list
-            </Radio>
-            <Radio
-              data-test-id="edgeConfigInputMethodFreeformRadio"
-              value={INPUT_METHOD.FREEFORM}
-            >
-              Enter values
-            </Radio>
-          </FormikRadioGroup>
-        )}
+              <Radio
+                data-test-id="edgeConfigInputMethodSelectRadio"
+                value={INPUT_METHOD.SELECT}
+              >
+                Choose from list
+              </Radio>
+              <Radio
+                data-test-id="edgeConfigInputMethodFreeformRadio"
+                value={INPUT_METHOD.FREEFORM}
+              >
+                Enter values
+              </Radio>
+            </FormikRadioGroup>
+          )
+        }
         {inputMethod === INPUT_METHOD.SELECT ? (
           <EdgeConfigurationSelectInputMethod
             name={getSelectInputMethodFieldName(instanceFieldName)}

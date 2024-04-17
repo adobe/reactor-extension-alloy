@@ -46,7 +46,7 @@ const ObjectArrayContainer = ({ horizontal, children }) => {
       </Well>
     );
   }
-  return <>{children}</>;
+  return children;
 };
 
 ObjectArrayContainer.propTypes = {

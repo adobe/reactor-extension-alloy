@@ -116,13 +116,8 @@ const getInitialValues = ({ initInfo }) => {
 };
 
 const getSettings = ({ values }) => {
-  const {
-    instanceName,
-    identityMap,
-    inputMethod,
-    dataElement,
-    consent
-  } = values;
+  const { instanceName, identityMap, inputMethod, dataElement, consent } =
+    values;
 
   const settings = {
     instanceName

@@ -7,7 +7,9 @@ module.exports = ({ file, extension = ".tmp" }) => {
     fs.renameSync(file, backupFile);
 
     const cleanup = () => {
-      fs.renameSync(backupFile, file);
+      if (fs.existsSync(backupFile)) {
+        fs.renameSync(backupFile, file);
+      }
     };
 
     ["exit", "SIGINT", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(

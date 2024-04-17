@@ -52,38 +52,36 @@ const NamespacesComponent = ({ name, index, namespaces }) => {
     "https://experienceleague.adobe.com/docs/experience-platform/identity/namespaces.html?lang=en";
 
   return (
-    <>
-      <DataElementSelector>
-        {namespaces.length > 0 ? (
-          <FormikComboBox
-            data-test-id={`namespace${index}Combobox`}
-            name={name}
-            items={namespaces}
-            width="size-5000"
-            description={
-              !isNamespacePartOfSandboxNamespaces && selectedNamespaceCode
-                ? getNamespacesMissingDescription(namespacesLearnMoreLink)
-                : "Select from the options or type in the namespace identity."
-            }
-            label="Namespace"
-            allowsCustomValue
-          >
-            {namespace => <Item key={namespace.code}>{namespace.code}</Item>}
-          </FormikComboBox>
-        ) : (
-          <FormikTextField
-            data-test-id={`namespace${index}Field`}
-            label="Namespace"
-            name={name}
-            width="size-5000"
-            description=" You do not have enough permissions to fetch the identity namespaces
+    <DataElementSelector>
+      {namespaces.length > 0 ? (
+        <FormikComboBox
+          data-test-id={`namespace${index}Combobox`}
+          name={name}
+          items={namespaces}
+          width="size-5000"
+          description={
+            !isNamespacePartOfSandboxNamespaces && selectedNamespaceCode
+              ? getNamespacesMissingDescription(namespacesLearnMoreLink)
+              : "Select from the options or type in the namespace identity."
+          }
+          label="Namespace"
+          allowsCustomValue
+        >
+          {namespace => <Item key={namespace.code}>{namespace.code}</Item>}
+        </FormikComboBox>
+      ) : (
+        <FormikTextField
+          data-test-id={`namespace${index}Field`}
+          label="Namespace"
+          name={name}
+          width="size-5000"
+          description=" You do not have enough permissions to fetch the identity namespaces
       options, but you can enter the identity namespace code. Please ask your
       administrator to grant you more permissions."
-            isRequired
-          />
-        )}
-      </DataElementSelector>
-    </>
+          isRequired
+        />
+      )}
+    </DataElementSelector>
   );
 };
 
