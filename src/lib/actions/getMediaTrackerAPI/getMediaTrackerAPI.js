@@ -10,17 +10,19 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager, windowObject }) => settings => {
-  const { instanceName, objectName = "Media" } = settings;
-  const instance = instanceManager.getInstance(instanceName);
+module.exports =
+  ({ instanceManager, windowObject }) =>
+  settings => {
+    const { instanceName, objectName = "Media" } = settings;
+    const instance = instanceManager.getInstance(instanceName);
 
-  if (!instance) {
-    throw new Error(
-      `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
-    );
-  }
+    if (!instance) {
+      throw new Error(
+        `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
+      );
+    }
 
-  return instance("getMediaAnalyticsTracker", {}).then(result => {
-    windowObject[objectName] = result;
-  });
-};
+    return instance("getMediaAnalyticsTracker", {}).then(result => {
+      windowObject[objectName] = result;
+    });
+  };

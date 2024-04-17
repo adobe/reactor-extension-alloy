@@ -14,15 +14,19 @@ import form from "../forms/form";
 import renderForm from "../forms/renderForm";
 import numberField from "../forms/numberField";
 
-const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
-  return getInitialValues({
-    initInfo
-  });
-};
+const wrapGetInitialValues =
+  getInitialValues =>
+  ({ initInfo }) => {
+    return getInitialValues({
+      initInfo
+    });
+  };
 
-const wrapGetSettings = getSettings => ({ values }) => {
-  return getSettings({ values });
-};
+const wrapGetSettings =
+  getSettings =>
+  ({ values }) => {
+    return getSettings({ values });
+  };
 
 const qoeDataDetailsForm = form({ wrapGetInitialValues, wrapGetSettings }, [
   numberField({

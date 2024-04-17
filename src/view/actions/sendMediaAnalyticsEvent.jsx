@@ -25,118 +25,122 @@ import objectArray from "../forms/objectArray";
 import section from "../forms/section";
 import dataElement from "../forms/dataElement";
 
-const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
-  const {
-    eventType,
-    playerId,
-    handleMediaSessionAutomatically = false,
-    instanceName,
-    xdm = {}
-  } = initInfo.settings || {};
+const wrapGetInitialValues =
+  getInitialValues =>
+  ({ initInfo }) => {
+    const {
+      eventType,
+      playerId,
+      handleMediaSessionAutomatically = false,
+      instanceName,
+      xdm = {}
+    } = initInfo.settings || {};
 
-  const { mediaCollection = {} } = xdm;
-  const {
-    playhead,
-    qoeDataDetails,
-    advertisingDetails,
-    chapterDetails,
-    advertisingPodDetails,
-    sessionDetails,
-    errorDetails,
-    customMetadata,
-    statesEnd,
-    statesStart
-  } = mediaCollection;
+    const { mediaCollection = {} } = xdm;
+    const {
+      playhead,
+      qoeDataDetails,
+      advertisingDetails,
+      chapterDetails,
+      advertisingPodDetails,
+      sessionDetails,
+      errorDetails,
+      customMetadata,
+      statesEnd,
+      statesStart
+    } = mediaCollection;
 
-  return getInitialValues({
-    initInfo: {
-      ...initInfo,
-      settings: {
-        eventType,
-        playerId,
-        instanceName,
-        handleMediaSessionAutomatically,
-        playhead,
-        qoeDataDetails,
-        chapterDetails,
-        advertisingDetails,
-        advertisingPodDetails,
-        errorDetails,
-        sessionDetails,
-        customMetadata,
-        statesEnd,
-        statesStart
+    return getInitialValues({
+      initInfo: {
+        ...initInfo,
+        settings: {
+          eventType,
+          playerId,
+          instanceName,
+          handleMediaSessionAutomatically,
+          playhead,
+          qoeDataDetails,
+          chapterDetails,
+          advertisingDetails,
+          advertisingPodDetails,
+          errorDetails,
+          sessionDetails,
+          customMetadata,
+          statesEnd,
+          statesStart
+        }
       }
+    });
+  };
+
+const wrapGetSettings =
+  getSettings =>
+  ({ values }) => {
+    const {
+      instanceName,
+      handleMediaSessionAutomatically = false,
+      playerId,
+      eventType,
+      playhead,
+      qoeDataDetails,
+      statesEnd,
+      statesStart,
+      chapterDetails,
+      advertisingPodDetails,
+      advertisingDetails,
+      errorDetails,
+      sessionDetails,
+      customMetadata
+    } = getSettings({ values });
+
+    const settings = {
+      eventType,
+      instanceName,
+      playerId,
+      handleMediaSessionAutomatically
+    };
+    const mediaCollection = {};
+
+    mediaCollection.playhead = playhead;
+
+    if (qoeDataDetails) {
+      mediaCollection.qoeDataDetails = qoeDataDetails;
     }
-  });
-};
+    if (chapterDetails) {
+      mediaCollection.chapterDetails = chapterDetails;
+    }
+    if (advertisingDetails) {
+      mediaCollection.advertisingDetails = advertisingDetails;
+    }
+    if (advertisingPodDetails) {
+      mediaCollection.advertisingPodDetails = advertisingPodDetails;
+    }
+    if (errorDetails) {
+      mediaCollection.errorDetails = errorDetails;
+    }
+    if (sessionDetails) {
+      mediaCollection.sessionDetails = sessionDetails;
+    }
 
-const wrapGetSettings = getSettings => ({ values }) => {
-  const {
-    instanceName,
-    handleMediaSessionAutomatically = false,
-    playerId,
-    eventType,
-    playhead,
-    qoeDataDetails,
-    statesEnd,
-    statesStart,
-    chapterDetails,
-    advertisingPodDetails,
-    advertisingDetails,
-    errorDetails,
-    sessionDetails,
-    customMetadata
-  } = getSettings({ values });
+    if (customMetadata) {
+      mediaCollection.customMetadata = customMetadata;
+    }
 
-  const settings = {
-    eventType,
-    instanceName,
-    playerId,
-    handleMediaSessionAutomatically
+    if (!isEmptyArray(statesEnd)) {
+      mediaCollection.statesEnd = statesEnd;
+    }
+
+    if (!isEmptyArray(statesStart)) {
+      mediaCollection.statesStart = statesStart;
+    }
+
+    settings.xdm = {
+      eventType,
+      mediaCollection
+    };
+
+    return settings;
   };
-  const mediaCollection = {};
-
-  mediaCollection.playhead = playhead;
-
-  if (qoeDataDetails) {
-    mediaCollection.qoeDataDetails = qoeDataDetails;
-  }
-  if (chapterDetails) {
-    mediaCollection.chapterDetails = chapterDetails;
-  }
-  if (advertisingDetails) {
-    mediaCollection.advertisingDetails = advertisingDetails;
-  }
-  if (advertisingPodDetails) {
-    mediaCollection.advertisingPodDetails = advertisingPodDetails;
-  }
-  if (errorDetails) {
-    mediaCollection.errorDetails = errorDetails;
-  }
-  if (sessionDetails) {
-    mediaCollection.sessionDetails = sessionDetails;
-  }
-
-  if (customMetadata) {
-    mediaCollection.customMetadata = customMetadata;
-  }
-
-  if (!isEmptyArray(statesEnd)) {
-    mediaCollection.statesEnd = statesEnd;
-  }
-
-  if (!isEmptyArray(statesStart)) {
-    mediaCollection.statesStart = statesStart;
-  }
-
-  settings.xdm = {
-    eventType,
-    mediaCollection
-  };
-
-  return settings;
-};
 
 const advertisingPodDetailsSection = dataElementSection(
   {

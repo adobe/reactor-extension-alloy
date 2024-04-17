@@ -10,72 +10,67 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({
-  instanceManager,
-  mediaCollectionSessionStorage
-}) => settings => {
-  const {
-    instanceName,
-    handleMediaSessionAutomatically,
-    playerId,
-    xdm
-  } = settings;
-  const instance = instanceManager.getInstance(instanceName);
+module.exports =
+  ({ instanceManager, mediaCollectionSessionStorage, satelliteApi }) =>
+  settings => {
+    const { instanceName, handleMediaSessionAutomatically, playerId, xdm } =
+      settings;
+    const instance = instanceManager.getInstance(instanceName);
 
-  const options = { xdm };
-  const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
+    const options = { xdm };
+    const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
 
-  if (sessionDetails && sessionDetails.sessionId) {
-    return Promise.resolve();
-  }
-  const { playhead, qoeDataDetails } = xdm.mediaCollection;
-  // eslint-disable-next-line no-underscore-dangle
-  const playheadVar = window._satellite.getVar(playhead);
-  xdm.mediaCollection.playhead = playheadVar;
-
-  if (qoeDataDetails) {
+    if (sessionDetails && sessionDetails.sessionId) {
+      return Promise.resolve();
+    }
+    const { playhead, qoeDataDetails } = xdm.mediaCollection;
     // eslint-disable-next-line no-underscore-dangle
-    const qoeDataDetailsVar = window._satellite.getVar(qoeDataDetails);
-    xdm.mediaCollection.qoeDataDetails = qoeDataDetailsVar;
-  }
+    const playheadVar = window._satellite.getVar(playhead);
+    xdm.mediaCollection.playhead = playheadVar;
 
-  if (handleMediaSessionAutomatically) {
-    options.playerId = playerId;
-
-    options.getPlayerDetails = () => {
+    if (qoeDataDetails) {
       // eslint-disable-next-line no-underscore-dangle
-      const playerDetails = {
+      const qoeDataDetailsVar = window._satellite.getVar(qoeDataDetails);
+      xdm.mediaCollection.qoeDataDetails = qoeDataDetailsVar;
+    }
+
+    if (handleMediaSessionAutomatically) {
+      options.playerId = playerId;
+
+      options.getPlayerDetails = () => {
         // eslint-disable-next-line no-underscore-dangle
-        playhead: window._satellite.getVar(playhead)
+        const playerDetails = {
+          // eslint-disable-next-line no-underscore-dangle
+          playhead: window._satellite.getVar(playhead)
+        };
+
+        if (qoeDataDetails) {
+          // eslint-disable-next-line no-underscore-dangle
+          playerDetails.qoeDataDetails = satelliteApi.getVar(qoeDataDetails);
+        }
+
+        return playerDetails;
       };
+    }
 
-      if (qoeDataDetails) {
-        // eslint-disable-next-line no-underscore-dangle
-        playerDetails.qoeDataDetails = window._satellite.getVar(qoeDataDetails);
-      }
+    return instance("createMediaSession", options)
+      .then(result => {
+        const { sessionId } = result;
 
-      return playerDetails;
-    };
-  }
-
-  return instance("createMediaSession", options)
-    .then(result => {
-      const { sessionId } = result;
-
-      if (sessionId) {
-        mediaCollectionSessionStorage.add({
-          playerId,
-          sessionDetails: {
-            handleMediaSessionAutomatically,
-            sessionId,
-            playhead,
-            qoeDataDetails
-          }
-        });
-      }
-    })
-    .catch(error => {
-      console.error("Error creating media session", error);
-      throw error;
-    });
-};
+        if (sessionId) {
+          mediaCollectionSessionStorage.add({
+            playerId,
+            sessionDetails: {
+              handleMediaSessionAutomatically,
+              sessionId,
+              playhead,
+              qoeDataDetails
+            }
+          });
+        }
+      })
+      .catch(error => {
+        console.error("Error creating media session", error);
+        throw error;
+      });
+  };

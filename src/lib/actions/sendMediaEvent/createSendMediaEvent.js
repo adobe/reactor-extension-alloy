@@ -13,7 +13,8 @@ governing permissions and limitations under the License.
 module.exports = ({
   instanceManager,
   trackMediaSession,
-  mediaCollectionSessionStorage
+  mediaCollectionSessionStorage,
+  satelliteApi
 }) => {
   return settings => {
     const { instanceName, eventType, playerId, xdm } = settings;
@@ -49,14 +50,12 @@ module.exports = ({
     if (sessionDetails.handleMediaSessionAutomatically) {
       options.playerId = playerId;
     } else {
-      // eslint-disable-next-line no-underscore-dangle
-      xdm.mediaCollection.playhead = window._satellite.getVar(
+      xdm.mediaCollection.playhead = satelliteApi.getVar(
         sessionDetails.playhead
       );
 
       if (sessionDetails.qoeDataDetails) {
-        // eslint-disable-next-line no-underscore-dangle
-        xdm.mediaCollection.qoeDataDetails = window._satellite.getVar(
+        xdm.mediaCollection.qoeDataDetails = satelliteApi.getVar(
           sessionDetails.qoeDataDetails
         );
       }
