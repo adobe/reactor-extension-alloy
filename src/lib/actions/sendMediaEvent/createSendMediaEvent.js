@@ -1,5 +1,5 @@
 /*
-Copyright 2023 Adobe. All rights reserved.
+Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -16,48 +16,52 @@ module.exports = ({
   mediaCollectionSessionStorage
 }) => {
   return settings => {
-    const {
-      instanceName,
-      eventType,
-      playerId,
-      ...createMediaEventSettings
-    } = settings;
+    const { instanceName, eventType, playerId, xdm } = settings;
     const instance = instanceManager.getInstance(instanceName);
 
     if (!instance) {
       throw new Error(
-        `Failed to send event for instance "${instanceName}". No matching instance was configured with this name.`
+        `Failed to send media event for instance "${instanceName}". No matching instance was configured with this name.`
       );
     }
 
-    if (!playerId) {
-      throw new Error(
-        "Failed to send media event. No playerId was provided in the settings."
-      );
-    }
     if (eventType === "media.sessionStart") {
       return trackMediaSession(settings);
     }
 
     const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
-
+    if (!sessionDetails || !sessionDetails.sessionId) {
+      console.warn(
+        `No media session found for player ID ${playerId}. Skipping media event ${eventType}. Make sure the session has started.`
+      );
+      return Promise.resolve();
+    }
     if (
       eventType === "media.sessionEnd" ||
       eventType === "media.sessionComplete"
     ) {
       mediaCollectionSessionStorage.remove({ playerId });
     }
-    const { xdm = {} } = createMediaEventSettings;
+
     xdm.eventType = eventType;
 
     const options = { xdm };
-
-    if (sessionDetails.automaticSessionHandler) {
+    if (sessionDetails.handleMediaSessionAutomatically) {
       options.playerId = playerId;
     } else {
+      // eslint-disable-next-line no-underscore-dangle
+      xdm.mediaCollection.playhead = window._satellite.getVar(
+        sessionDetails.playhead
+      );
+
+      if (sessionDetails.qoeDataDetails) {
+        // eslint-disable-next-line no-underscore-dangle
+        xdm.mediaCollection.qoeDataDetails = window._satellite.getVar(
+          sessionDetails.qoeDataDetails
+        );
+      }
+
       xdm.mediaCollection.sessionID = sessionDetails.sessionId;
-      xdm.mediaCollection.playhead = sessionDetails.playhead;
-      xdm.mediaCollection.qoeDataDetails = sessionDetails.qoeDataDetails;
     }
 
     return instance("sendMediaEvent", options);

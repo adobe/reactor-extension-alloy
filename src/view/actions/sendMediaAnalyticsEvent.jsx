@@ -29,7 +29,7 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
   const {
     eventType,
     playerId,
-    automaticSessionHandler = false,
+    handleMediaSessionAutomatically = false,
     instanceName,
     xdm = {}
   } = initInfo.settings || {};
@@ -55,7 +55,7 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
         eventType,
         playerId,
         instanceName,
-        automaticSessionHandler,
+        handleMediaSessionAutomatically,
         playhead,
         qoeDataDetails,
         chapterDetails,
@@ -74,7 +74,7 @@ const wrapGetInitialValues = getInitialValues => ({ initInfo }) => {
 const wrapGetSettings = getSettings => ({ values }) => {
   const {
     instanceName,
-    automaticSessionHandler = false,
+    handleMediaSessionAutomatically = false,
     playerId,
     eventType,
     playhead,
@@ -93,7 +93,7 @@ const wrapGetSettings = getSettings => ({ values }) => {
     eventType,
     instanceName,
     playerId,
-    automaticSessionHandler
+    handleMediaSessionAutomatically
   };
   const mediaCollection = {};
 
@@ -677,7 +677,32 @@ const eventBasedDetailFormConditionals = [
       args: "eventType",
       condition: eventType => eventType === "media.sessionStart"
     },
-    [sessionDetailsSection, customMetadataSection]
+    [
+      sessionDetailsSection,
+      customMetadataSection,
+      dataElement({
+        name: "qoeDataDetails",
+        label: "Quality of experience data",
+        description:
+          "This should resolve to an object containing Quality of Experience data.",
+        tokenize: false
+      })
+    ]
+  ),
+  conditional(
+    {
+      args: "eventType",
+      condition: eventType => eventType === "media.bitrateChange"
+    },
+    [
+      dataElement({
+        name: "qoeDataDetails",
+        label: "Quality of experience data",
+        description:
+          "This should resolve to an object containing Quality of Experience data.",
+        tokenize: false
+      })
+    ]
   )
 ];
 
@@ -711,7 +736,7 @@ const sendEventForm = form(
       },
       [
         checkbox({
-          name: "automaticSessionHandler",
+          name: "handleMediaSessionAutomatically",
           label: "Handle media session automatically",
           description:
             "Choose 'Handle media session automatically' if you want the Web SDK to manage your media session and send necessary pings automatically. If you prefer to have more control and manually manage sending pings, you can deselect this option.",
@@ -721,54 +746,12 @@ const sendEventForm = form(
           name: "playhead",
           label: "Playhead",
           isRequired: true,
-          description: "This data element should resolve to a number."
+          description: "This data element should resolve to a number.",
+          tokenize: false
         })
       ]
     ),
-    ...eventBasedDetailFormConditionals,
-    conditional(
-      {
-        args: "eventType",
-        condition: eventType => eventType !== "media.bitrateChange"
-      },
-      [
-        section(
-          {
-            label: "Quality of experience data"
-          },
-          [
-            dataElement({
-              name: "qoeDataDetails",
-              label: "Quality of experience data",
-              description:
-                "This should resolve to an object containing Quality of Experience data."
-            })
-          ]
-        )
-      ]
-    ),
-    conditional(
-      {
-        args: "eventType",
-        condition: eventType => eventType === "media.bitrateChange"
-      },
-      [
-        section(
-          {
-            label: "Quality of experience data"
-          },
-          [
-            dataElement({
-              name: "qoeDataDetails",
-              label: "Quality of experience data",
-              isRequired: true,
-              description:
-                "This should resolve to an object containing Quality of Experience data."
-            })
-          ]
-        )
-      ]
-    )
+    ...eventBasedDetailFormConditionals
   ]
 );
 

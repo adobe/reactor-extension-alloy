@@ -828,7 +828,7 @@ const createExtensionManifest = ({ version }) => {
               type: "string",
               minLength: 1
             },
-            automaticSessionHandler: {
+            handleMediaSessionAutomatically: {
               type: "boolean"
             },
             eventType: {
@@ -843,7 +843,7 @@ const createExtensionManifest = ({ version }) => {
               type: "object"
             }
           },
-          required: ["instanceName"]
+          required: ["instanceName", "playerId"]
         },
         libPath: "dist/lib/actions/sendMediaEvent/index.js",
         viewPath: "actions/sendMediaAnalyticsEvent.html"

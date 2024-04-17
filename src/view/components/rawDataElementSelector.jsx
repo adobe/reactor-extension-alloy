@@ -20,21 +20,24 @@ const RawDataElementSelector = ({
   augmentValue,
   value,
   onChange,
-  adjustForLabel
+  adjustForLabel,
+  tokenize = true
 }) => {
   // We have to vertically nudge down the data element selector
   // button if the field has a label so the button aligns
   // with the input box.
   const openDataElementSelector = () => {
-    window.extensionBridge.openDataElementSelector().then(dataElement => {
-      // Maybe field value is an integer of 0 or something else falsy? That's
-      // why we check for undefined instead of a plain falsy check.
-      const previousValue = value === undefined ? "" : value;
-      const newValue = augmentValue
-        ? `${previousValue}${dataElement}`
-        : dataElement;
-      onChange(newValue);
-    });
+    window.extensionBridge
+      .openDataElementSelector({ tokenize })
+      .then(dataElement => {
+        // Maybe field value is an integer of 0 or something else falsy? That's
+        // why we check for undefined instead of a plain falsy check.
+        const previousValue = value === undefined ? "" : value;
+        const newValue = augmentValue
+          ? `${previousValue}${dataElement}`
+          : dataElement;
+        onChange(newValue);
+      });
   };
   return (
     <Flex>
@@ -62,7 +65,8 @@ RawDataElementSelector.propTypes = {
     PropTypes.bool
   ]),
   onChange: PropTypes.func.isRequired,
-  adjustForLabel: PropTypes.bool
+  adjustForLabel: PropTypes.bool,
+  tokenize: PropTypes.bool
 };
 
 export default RawDataElementSelector;

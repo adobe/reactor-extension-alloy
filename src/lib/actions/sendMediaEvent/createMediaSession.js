@@ -14,25 +14,47 @@ module.exports = ({
   instanceManager,
   mediaCollectionSessionStorage
 }) => settings => {
-  const { instanceName, automaticSessionHandler, playerId, xdm } = settings;
+  const {
+    instanceName,
+    handleMediaSessionAutomatically,
+    playerId,
+    xdm
+  } = settings;
   const instance = instanceManager.getInstance(instanceName);
 
   const options = { xdm };
   const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
 
   if (sessionDetails && sessionDetails.sessionId) {
-    // if we have a mapping in cache we resolve the promise and not start another session again
     return Promise.resolve();
   }
+  const { playhead, qoeDataDetails } = xdm.mediaCollection;
+  // eslint-disable-next-line no-underscore-dangle
+  const playheadVar = window._satellite.getVar(playhead);
+  xdm.mediaCollection.playhead = playheadVar;
 
-  if (automaticSessionHandler) {
+  if (qoeDataDetails) {
+    // eslint-disable-next-line no-underscore-dangle
+    const qoeDataDetailsVar = window._satellite.getVar(qoeDataDetails);
+    xdm.mediaCollection.qoeDataDetails = qoeDataDetailsVar;
+  }
+
+  if (handleMediaSessionAutomatically) {
     options.playerId = playerId;
 
     options.getPlayerDetails = () => {
-      return {
-        playhead: xdm.mediaCollection.playhead || 0,
-        qoeDataDetails: xdm.mediaCollection.qoeDataDetails || undefined
+      // eslint-disable-next-line no-underscore-dangle
+      const playerDetails = {
+        // eslint-disable-next-line no-underscore-dangle
+        playhead: window._satellite.getVar(playhead)
       };
+
+      if (qoeDataDetails) {
+        // eslint-disable-next-line no-underscore-dangle
+        playerDetails.qoeDataDetails = window._satellite.getVar(qoeDataDetails);
+      }
+
+      return playerDetails;
     };
   }
 
@@ -44,10 +66,10 @@ module.exports = ({
         mediaCollectionSessionStorage.add({
           playerId,
           sessionDetails: {
-            automaticSessionHandler,
+            handleMediaSessionAutomatically,
             sessionId,
-            playhead: xdm.mediaCollection.playhead,
-            qoeDataDetails: xdm.mediaCollection.qoeDataDetails
+            playhead,
+            qoeDataDetails
           }
         });
       }
