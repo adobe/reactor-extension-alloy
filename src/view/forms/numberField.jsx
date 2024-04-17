@@ -14,6 +14,7 @@ import { number, string } from "yup";
 import { useField } from "formik";
 import { Radio } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
+import { isEmptyString } from "@adobe/alloy/libEs5/components/ActivityCollector/utils";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import DataElementSelector from "../components/dataElementSelector";
@@ -102,7 +103,10 @@ export default function numberField({
       if (values[`${name}InputMethod`] === NUMBER) {
         settings[name] = values[name];
       }
-      if (values[`${name}InputMethod`] === DATA_ELEMENT) {
+      if (
+        values[`${name}InputMethod`] === DATA_ELEMENT &&
+        !isEmptyString(values[`${name}DataElement`])
+      ) {
         settings[name] = values[`${name}DataElement`];
       }
 
