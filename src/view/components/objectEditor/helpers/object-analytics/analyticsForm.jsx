@@ -396,7 +396,8 @@ const analyticsForm = form(
             "is-valid-additional-property",
             "Please use the fields provided above for this property.",
             value => !INVALID_ADDITIONAL_FIELDS_REGEX.test(value)
-          )
+          ),
+          isRequired: true
         }),
         textField({
           name: "value",
