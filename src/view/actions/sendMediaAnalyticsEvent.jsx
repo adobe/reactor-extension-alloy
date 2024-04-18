@@ -146,9 +146,11 @@ const advertisingPodDetailsSection = dataElementSection(
   {
     label: "Advertising pod details",
     name: "advertisingPodDetails",
+    learnMoreUrl:
+      "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/advertising-pod-details-collection",
     objectKey: "advertisingPodDetails",
     dataElementDescription:
-      "Enter the data element that returns advertising pod details."
+      "Provide a data element that returns advertising pod details object."
   },
   [
     textField({
@@ -161,8 +163,7 @@ const advertisingPodDetailsSection = dataElementSection(
       label: "Ad break offset (seconds)",
       isRequired: true,
       description: "The offset of the ad break inside the content, in seconds.",
-      dataElementDescription:
-        "This data element should resolve to a integer number."
+      dataElementDescription: "Provide a data element that returns an integer."
     }),
     numberField({
       name: "index",
@@ -170,15 +171,15 @@ const advertisingPodDetailsSection = dataElementSection(
       isRequired: true,
       description:
         "The index of the ad break inside the content starting at 1.",
-      dataElementDescription:
-        "This data element should resolve to a integer number."
+      dataElementDescription: "Provide a data element that returns an integer."
     })
   ]
 );
 const customMetadataSection = section(
   {
     label: "Custom metadata",
-    learnMoreUrl: "https://example.com"
+    learnMoreUrl:
+      "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/custom-metadata-details-collection"
   },
   [
     objectArray(
@@ -186,14 +187,14 @@ const customMetadataSection = section(
         name: "customMetadata",
         singularLabel: "Custom Metadata",
         dataElementDescription:
-          "Provide a data element that resolves to an array of objects values with keys: key and value.",
+          "Provide a data element that resolves to an array of objects with properties 'name' and 'value'.",
         objectLabelPlural: "Custom Metadata"
       },
       [
         textField({
           name: "name",
-          label: "Key",
-          description: "Enter metadata key."
+          label: "Name",
+          description: "Enter metadata name."
         }),
         textField({
           name: "value",
@@ -207,10 +208,12 @@ const customMetadataSection = section(
 const chapterSection = dataElementSection(
   {
     label: "Chapter details",
+    learnMoreUrl:
+      "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/chapter-details-collection",
     name: "chapterDetails",
     objectKey: "chapterDetails",
     dataElementDescription:
-      "Enter the data element that returns a chapter details object."
+      "Provide a data element that returns a chapter details object."
   },
   [
     textField({
@@ -224,7 +227,7 @@ const chapterSection = dataElementSection(
       isRequired: true,
       description: "The length of the chapter, in seconds.",
       dataElementDescription:
-        "Enter the data element that returns a integer length."
+        "Provide a data element that returns a integer length."
     }),
     numberField({
       name: "index",
@@ -233,7 +236,7 @@ const chapterSection = dataElementSection(
       description:
         "The position (index, integer) of the chapter inside the content.",
       dataElementDescription:
-        "Enter the data element that returns a integer position (index, integer) of the chapter inside the content."
+        "Provide a data element that returns the position of the chapter inside the content (index, integer)."
     }),
     numberField({
       name: "offset",
@@ -242,16 +245,18 @@ const chapterSection = dataElementSection(
       description:
         "The offset of the chapter inside the content (in seconds) from the start.",
       dataElementDescription:
-        "Enter the data element that returns a integer number representing offset of the chapter inside the content (in seconds) from the start."
+        "Provide a data element that returns an integer representing offset of the chapter inside the content (in seconds) from the start."
     })
   ]
 );
 const advertisingDetailsSection = dataElementSection(
   {
     label: "Advertising details",
+    learnMoreUrl:
+      "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/advertising-details-collection",
     name: "advertisingDetails",
     dataElementDescription:
-      "This should resolve to an object containing advertising details.",
+      "Provide a data element that returns advertising details object.",
     objectKey: "advertisingDetails"
   },
   [
@@ -271,13 +276,12 @@ const advertisingDetailsSection = dataElementSection(
       label: "Ad length (seconds)",
       isRequired: true,
       description: "Length of the video ad in seconds.",
-      dataElementDescription:
-        "This data element should resolve to a integer number."
+      dataElementDescription: "Provide a data element that returns an integer."
     }),
     textField({
       name: "advertiser",
       label: "Advertiser",
-      description: "Company/Brand whose product is featured in the ad."
+      description: "Company/brand whose product is featured in the ad."
     }),
     textField({
       name: "campaignID",
@@ -311,8 +315,7 @@ const advertisingDetailsSection = dataElementSection(
       isRequired: true,
       description:
         "The position (index) of the ad inside the parent ad break. The first ad has index 0, the second ad has index 1 etc.",
-      dataElementDescription:
-        "This data element should resolve to a integer number."
+      dataElementDescription: "Provide a data element that returns an integer."
     }),
     textField({
       name: "playerName",
@@ -326,8 +329,10 @@ const errorDetailsSection = dataElementSection(
   {
     label: "Error details",
     name: "errorDetails",
+    learnMoreUrl:
+      "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/error-details-collection",
     dataElementDescription:
-      "This should resolve to an object containing error details.",
+      "Provide a data element that returns an error details object.",
     objectKey: "errorDetails"
   },
   [
@@ -350,10 +355,12 @@ const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
     {
       name: "statesStart",
       label: "States started",
+      learnMoreUrl:
+        "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/list-of-states-start-collection",
       singularLabel: "State",
       description: "Create an array of states that started.",
       dataElementDescription:
-        "This data element should resolve to an array of states.",
+        "Provide a data element that returns an array of states that started.",
       validationSchema: string()
     },
     [
@@ -375,10 +382,12 @@ const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
     {
       name: "statesEnd",
       label: "States ended",
+      learnMoreUrl:
+        "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/list-of-states-end-collection",
       singularLabel: "State",
       description: "Create an array of states that ended.",
       dataElementDescription:
-        "This data element should resolve to an array of states.",
+        "Provide a data element that returns an array of states that ended.",
       validationSchema: string()
     },
     [
@@ -400,9 +409,11 @@ const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
 const sessionDetailsSection = dataElementSection(
   {
     label: "Media session details",
+    learnMoreUrl:
+      "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/session-details-collection",
     name: "sessionDetails",
     dataElementDescription:
-      "This should resolve to an object containing session details.",
+      "Provide a data element that returns a session details object.",
     objectKey: "sessionDetails"
   },
   [
@@ -411,7 +422,7 @@ const sessionDetailsSection = dataElementSection(
       label: "Channel",
       isRequired: true,
       description:
-        "Distribution Station/Channels where the content is played. Any string value is accepted here."
+        "Distribution station or channels where the content is played. Any string value is accepted here."
     }),
     comboBox({
       name: "contentType",
@@ -420,7 +431,7 @@ const sessionDetailsSection = dataElementSection(
       description:
         "Enter the content type of the media session. Select a predefined value or enter a custom value.",
       dataElementDescription:
-        "Enter a data element that resolves to a content type.",
+        "Provide a data element that returns to a content type.",
       items: [
         { value: "vod", label: "Video-on-demand" },
         { value: "live", label: "Live streaming" },
@@ -442,7 +453,7 @@ const sessionDetailsSection = dataElementSection(
     }),
     numberField({
       name: "length", // integer
-      label: "Clip Length/Runtime (seconds)",
+      label: "Clip length/runtime (seconds)",
       isRequired: true,
       description:
         "This is the maximum length (or duration) of the content being consumed (in seconds)." +
@@ -487,7 +498,7 @@ const sessionDetailsSection = dataElementSection(
       label: "Show",
       isRequired: false,
       description:
-        "Program/Series Name. Program Name is required only if the show is part of a series."
+        "Program/series name. Program name is required only if the show is part of a series."
     }),
     textField({
       name: "episode",
@@ -537,8 +548,8 @@ const sessionDetailsSection = dataElementSection(
       label: "Genre",
       isRequired: false,
       description:
-        "Type or grouping of content as defined by content producer. Values should be comma delimited in variable i" +
-        "mplementation. In reporting, the list eVar will split each value into a line item, " +
+        "Type or grouping of content as defined by content producer. Values should be comma delimited in variable " +
+        "implementation. In reporting, the list eVar will split each value into a line item, " +
         "with each line item receiving equal metrics weight."
     }),
     textField({
@@ -554,7 +565,7 @@ const sessionDetailsSection = dataElementSection(
       description:
         "Type of content, expressed as an integer between 0 and 3. Select a predefined value or enter a custom value.",
       dataElementDescription:
-        "Enter a data element that resolves to a show type.",
+        "Provide a data element that returns a show type.",
       items: [
         { value: "0", label: "Full episode" },
         { value: "1", label: "Preview/trailer" },
@@ -686,9 +697,13 @@ const eventBasedDetailFormConditionals = [
       customMetadataSection,
       dataElement({
         name: "qoeDataDetails",
-        label: "Quality of experience data",
+        label: "Quality of Experience data",
         description:
-          "This should resolve to an object containing Quality of Experience data.",
+          "This data element should resolve to a Quality of Experience object. This object should contain the following " +
+          "properties: 'bitrate', 'droppedFrames', 'framesPerSecond', 'timeToStart'. These properties represent " +
+          "the bitrate in kbps, the number of dropped frames, the frames per second, and the time to start in " +
+          "milliseconds, respectively. You can use a Media:Quality of Experience data element or a custom code " +
+          "data element to provide this information.",
         tokenize: false
       })
     ]
@@ -703,7 +718,11 @@ const eventBasedDetailFormConditionals = [
         name: "qoeDataDetails",
         label: "Quality of experience data",
         description:
-          "This should resolve to an object containing Quality of Experience data.",
+          "This data element should resolve to a Quality of Experience object. This object should contain the following " +
+          "properties: 'bitrate', 'droppedFrames', 'framesPerSecond', 'timeToStart'. These properties represent " +
+          "the bitrate in kbps, the number of dropped frames, the frames per second, and the time to start in " +
+          "milliseconds, respectively. You can use a Media:Quality of Experience data element or a custom code " +
+          "data element to provide this information.",
         tokenize: false
       })
     ]
@@ -743,7 +762,7 @@ const sendEventForm = form(
           name: "handleMediaSessionAutomatically",
           label: "Handle media session automatically",
           description:
-            "Choose 'Handle media session automatically' if you want the Web SDK to manage your media session and send necessary pings automatically. If you prefer to have more control and manually manage sending pings, you can deselect this option.",
+            "Choose 'Handle media session automatically' if you want the Web SDK to send necessary pings automatically. If you prefer to have more control and manually manage sending pings, you can deselect this option.",
           isRequired: false
         }),
         dataElement({
