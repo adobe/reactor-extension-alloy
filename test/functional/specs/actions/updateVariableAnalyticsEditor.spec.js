@@ -2,77 +2,33 @@ import createExtensionViewFixture from "../../helpers/createExtensionViewFixture
 import * as dataElementsMocks from "../../helpers/endpointMocks/dataElementsMocks";
 import * as dataElementMocks from "../../helpers/endpointMocks/dataElementMocks";
 import extensionViewController from "../../helpers/extensionViewController";
-
-import spectrum from "../../helpers/spectrum";
-
-const analyticsField = (type, dataTestId) => {
-  return spectrum[type](
-    `properties.data.properties.__adobe.properties.analytics.${dataTestId}`
-  );
-};
-const analyticsArrayField = (type, name, dataTestId) => index => {
-  return spectrum[type](
-    `properties.data.properties.__adobe.properties.analytics.value.${name}.${index}.${dataTestId}`
-  );
-};
-
-const individualAttributesOption = analyticsField("radio", "valuePartsOption");
-const entireObjectOption = analyticsField("radio", "valueWholeOption");
-const jsonEditor = analyticsField("textField", "valueWhole");
-const eVarName = analyticsArrayField("comboBox", "evars", "evarField");
-const eVarAction = analyticsArrayField("picker", "evars", "actionField");
-const eVarValue = analyticsArrayField("textField", "evars", "valueTextField");
-const eVarCopy = analyticsArrayField("comboBox", "evars", "copyField");
-const eVarAddButton = analyticsField("button", "value.evarsAddButton");
-
-const propName = analyticsArrayField("comboBox", "props", "propField");
-const propAction = analyticsArrayField("picker", "props", "actionField");
-const propValue = analyticsArrayField("textField", "props", "valueTextField");
-const propCopy = analyticsArrayField("comboBox", "props", "copyField");
-const propAddButton = analyticsField("button", "value.propsAddButton");
-
-const eventName = analyticsArrayField("comboBox", "events", "eventField");
-const eventId = analyticsArrayField("textField", "events", "idTextField");
-const eventValue = analyticsArrayField("textField", "events", "valueTextField");
-const eventAddButton = analyticsField("button", "value.eventsAddButton");
-
-const contextDataDataElementOption = analyticsField(
-  "radio",
-  "value.contextDataDataElementOption"
-);
-const contextDataDataElementField = analyticsField(
-  "textField",
-  "value.contextDataDataElementField"
-);
-const contextDataKey = analyticsArrayField(
-  "textField",
-  "contextData",
-  "keyTextField"
-);
-const contextDataValue = analyticsArrayField(
-  "textField",
-  "contextData",
-  "valueTextField"
-);
-const contextDataAddButton = analyticsField(
-  "button",
-  "value.contextDataAddButton"
-);
-
-const additionalPropertiesName = analyticsArrayField(
-  "comboBox",
-  "additionalProperties",
-  "propertyField"
-);
-const additionalPropertiesValue = analyticsArrayField(
-  "textField",
-  "additionalProperties",
-  "valueTextField"
-);
-const additionalPropertiesAddButton = analyticsField(
-  "button",
-  "value.additionalPropertiesAddButton"
-);
+import {
+  individualAttributesOption,
+  entireObjectOption,
+  jsonEditor,
+  eVarName,
+  eVarAction,
+  eVarValue,
+  eVarCopy,
+  eVarAddButton,
+  propName,
+  propAction,
+  propValue,
+  propCopy,
+  propAddButton,
+  eventName,
+  eventId,
+  eventValue,
+  eventAddButton,
+  contextDataDataElementOption,
+  contextDataDataElementField,
+  contextDataKey,
+  contextDataValue,
+  contextDataAddButton,
+  additionalPropertiesName,
+  additionalPropertiesValue,
+  additionalPropertiesAddButton
+} from "../../helpers/analyticsForm";
 
 createExtensionViewFixture({
   title: "Update variable analytics editor",
@@ -111,8 +67,7 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await eVarAddButton.click();
     await eVarName(1).openMenu();
     await eVarName(1).selectMenuOption("eVar2");
-    await eVarAction(1).openMenu();
-    await eVarAction(1).selectMenuOption("Copy from");
+    await eVarAction(1).selectOption("Copy from");
     await eVarCopy(1).openMenu();
     await eVarCopy(1).selectMenuOption("eVar10");
 
@@ -124,8 +79,7 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await propName(1).openMenu();
     await propName(1).scrollDownToItem("prop75");
     await propName(1).selectMenuOption("prop75");
-    await propAction(1).openMenu();
-    await propAction(1).selectMenuOption("Copy from");
+    await propAction(1).selectOption("Copy from");
     await propCopy(1).enterSearch("prop4");
     await propCopy(1).selectMenuOption("prop42");
 

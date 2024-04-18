@@ -336,6 +336,21 @@ const componentWrappers = {
       }
     };
   },
+  textArea(selector) {
+    return {
+      expectError: createExpectError(selector),
+      expectNoError: createExpectNoError(selector),
+      async expectValue(text) {
+        await t.expect(selector.getAttribute("innerText")).eql(text);
+      },
+      async typeText(text) {
+        await t.typeText(selector, text);
+      },
+      async clear() {
+        await t.selectText(selector).pressKey("delete");
+      }
+    };
+  },
   checkbox(selector) {
     return {
       expectError: createExpectError(selector),
