@@ -33,7 +33,7 @@ const qoeDataDetailsForm = form({ wrapGetInitialValues, wrapGetSettings }, [
     name: "bitrate",
     label: "Average bitrate (in kbps)",
     description:
-      "The average bitrate (in kbps). The value is predefined buckets at 100kbps intervals. " +
+      "The average bitrate (in kbps). The value is grouped into fixed buckets, with each bucket spanning 100kbps intervals. " +
       "The Average Bitrate is computed as a weighted average of all bitrate values related to the play " +
       "duration that occurred during a playback session."
   }),
@@ -46,7 +46,7 @@ const qoeDataDetailsForm = form({ wrapGetInitialValues, wrapGetSettings }, [
   }),
   numberField({
     name: "framesPerSecond",
-    label: "Frames per second (in frames per second)",
+    label: "Frames per second",
     description:
       "The current value of the stream frame-rate (in frames per second). "
   }),
@@ -55,7 +55,7 @@ const qoeDataDetailsForm = form({ wrapGetInitialValues, wrapGetSettings }, [
     label: "Time to start (milliseconds)",
     description:
       "This value defaults to zero if you do not set it through the QoSObject. " +
-      "You set this value in milliseconds. The value will be displayed in the time format (HH:MM:SS) "
+      "You set this value in milliseconds. The value will be displayed in the time format (HH:MM:SS) at reporting."
   })
 ]);
 renderForm(qoeDataDetailsForm);

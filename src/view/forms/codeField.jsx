@@ -23,7 +23,8 @@ import CodeField from "../components/codeField";
  * required.
  * @param {string} options.label - The label to use for the field.
  * @param {string} options.description - The description to use for the field.
- * @param options.name
+ * @param options.placeholder - The placeholder to use for the field.
+ * @param options.buttonLabelSuffix - The suffix to use for the button label.
  * @returns {Form} A form field for a code field.
  */
 export default function codeField({

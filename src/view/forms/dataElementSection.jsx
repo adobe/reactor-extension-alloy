@@ -1,5 +1,5 @@
 /*
-Copyright 2023 Adobe. All rights reserved.
+Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -25,7 +25,7 @@ const DATA_ELEMENT = "dataElement";
 
 /** @typedef {import("./form").Form} Form */
 /**
- * This creates a form element that allows to create an object with string keys and values or a string data element. Any items with no
+ * This creates a form element that allows to create a section with a form or a string data element. Any items with no
  * values filled in will be removed from the final settings.
  * @param {object} options - Options for the field.
  * @param {string} options.name - The formik key to use for this field.
@@ -33,12 +33,11 @@ const DATA_ELEMENT = "dataElement";
  *  - `${key}InputMethod` will be used to determine whether to use a data
  *    element.
  *  - `${key}DataElement` will be used to store the data element value.
- * @param {string} options.label - The label to use for the field.
+ @param {string} options.label - The label to use for the field.
+ * @param {string} options.learnMoreUrl - The URL to learn more information about this section.
  * @param {string} [options.dataElementDescription] - The description to use for
  * the data element field. Usually you would use this to describe the type the
  * data element should be or what object it should return.
- * @param {string} [options.objectKey] - If you want to create an object, use
- * this to specify the Formik key to use for the keys of the object.
  * @param {Form[]} children - The Form parts to use for the object. These will
  * be used to create the form. When rendering the
  * components, the `prefixName` prop will be set to `${name}.`
