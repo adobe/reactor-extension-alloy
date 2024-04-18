@@ -37,6 +37,7 @@ export default initInfo => {
   if (initInfo.settings) {
     const previouslySavedInstanceName = initInfo.settings.instanceName;
     if (
+      previouslySavedInstanceName &&
       !instanceOptions.some(
         instanceOption =>
           instanceOption.value === initInfo.settings.instanceName
