@@ -121,14 +121,14 @@ const MediaCollectionSection = ({ instanceFieldName }) => {
           data-test-id="mediaMainPingIntervalField"
           label="Main ping interval"
           name={`${instanceFieldName}.mediaCollection.mainPingInterval`}
-          description="The ping interval frequency for main content."
+          description="The ping interval frequency (in seconds) for main content."
           width="size-5000"
         />
         <FormikNumberField
           data-test-id="mediaAdPingIntervalField"
           label="Ad ping interval"
           name={`${instanceFieldName}.mediaCollection.adPingInterval`}
-          description="The ping interval frequency for ad content."
+          description="The ping interval frequency (in seconds) for ad content."
           width="size-5000"
         />
       </FormElementContainer>
