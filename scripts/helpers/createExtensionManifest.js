@@ -848,8 +848,8 @@ const createExtensionManifest = ({ version }) => {
         viewPath: "actions/sendMediaAnalyticsEvent.html"
       },
       {
-        displayName: "Get Media Tracker API",
-        name: "get-media-tracker-api",
+        displayName: "Get Media Analytics Tracker",
+        name: "get-media-tracker",
         schema: {
           $schema: "http://json-schema.org/draft-04/schema#",
           type: "object",
@@ -865,7 +865,7 @@ const createExtensionManifest = ({ version }) => {
           },
           required: ["instanceName"]
         },
-        libPath: "dist/lib/actions/getMediaTrackerAPI/index.js",
+        libPath: "dist/lib/actions/getMediaAnalyticsTracker/index.js",
         viewPath: "actions/createMediaTracker.html"
       },
       {
@@ -967,7 +967,7 @@ const createExtensionManifest = ({ version }) => {
     ],
     dataElements: [
       {
-        displayName: "Quality of Experience data",
+        displayName: "Media: Quality of Experience data",
         name: "qoe-details-data",
         schema: {
           $schema: "http://json-schema.org/draft-04/schema#",

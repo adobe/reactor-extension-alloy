@@ -15,43 +15,15 @@ import instancePicker from "../forms/instancePicker";
 import textField from "../forms/textField";
 import renderForm from "../forms/renderForm";
 
-const getInitialValues = ({ initInfo }) => {
-  const {
-    instanceName = initInfo.extensionSettings.instances[0].name,
-    objectName
-  } = initInfo.settings || {};
-
-  return {
-    instanceName,
-    objectName
-  };
-};
-
-const getSettings = ({ values }) => {
-  const settings = {
-    instanceName: values.instanceName
-  };
-  if (values.objectName) {
-    settings.objectName = values.objectName;
-  }
-  return settings;
-};
-
-const createMediaTrackerForm = form(
-  {
-    getInitialValues,
-    getSettings
-  },
-  [
-    instancePicker({ name: "instanceName" }),
-    textField({
-      name: "objectName",
-      label: "Export the Media Legacy API to this window object",
-      description:
-        "Enter the object name where you want the Media API to be exported." +
-        " If none is provided by default it is going to be exported to 'window.Media'."
-    })
-  ]
-);
+const createMediaTrackerForm = form({}, [
+  instancePicker({ name: "instanceName" }),
+  textField({
+    name: "objectName",
+    label: "Export the Media Legacy API to this window object",
+    description:
+      "Enter the object name where you want the Media API to be exported." +
+      " If none is provided by default it is going to be exported to 'window.Media'."
+  })
+]);
 
 renderForm(createMediaTrackerForm);
