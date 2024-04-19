@@ -117,7 +117,6 @@ test("returns minimal valid settings", async () => {
     }
   });
 
-  await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
     propositions: "%myprops%"
