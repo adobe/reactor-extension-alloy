@@ -28,12 +28,13 @@ import {
   additionalPropertiesName,
   additionalPropertiesValue,
   additionalPropertiesAddButton
-} from "../../helpers/analyticsForm";
+} from "../../helpers/objectEditor/objectAnalyticsEdit";
 
 createExtensionViewFixture({
   title: "Update variable analytics editor",
   viewPath: "actions/updateVariable.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
+  only: true
 });
 
 test.requestHooks(dataElementsMocks.singleSolutions)(

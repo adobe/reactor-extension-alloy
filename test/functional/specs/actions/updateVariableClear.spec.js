@@ -23,7 +23,8 @@ const clearField = spectrum.checkbox("clearField");
 createExtensionViewFixture({
   title: "Update variable action view (Clear checkbox)",
   viewPath: "actions/updateVariable.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
+  only: true
 });
 
 test.requestHooks(dataElementsMocks.multipleBothTypes)(

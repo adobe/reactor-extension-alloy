@@ -137,23 +137,24 @@ const updateJsonTextarea = ({
     items,
     schema: { expandPaths }
   },
-  validateForm
+  submitForm
 }) => {
   const nonEmptyItems = items.filter(
     ({ key, value }) => key.trim() !== "" || value.trim() !== ""
   );
-  if (
-    !nonEmptyItems.some(({ key }) => key.trim() === "") &&
-    nonEmptyItems.length > 0
-  ) {
-    const entity = JSON.stringify(
-      addToEntityFromVariables({}, nonEmptyItems, { expandPaths }),
-      null,
-      2
-    );
-    // Even though we are passing true for the second argument, the value is
-    // not being validated, so we need to call validateForm manually.
-    setValue(entity, true).then(() => validateForm());
+  if (nonEmptyItems.length > 0) {
+    if (!nonEmptyItems.some(({ key }) => key.trim() === "")) {
+      const entity = JSON.stringify(
+        addToEntityFromVariables({}, nonEmptyItems, { expandPaths }),
+        null,
+        2
+      );
+      setValue(entity).then(() => submitForm());
+    } else {
+      setValue("").then(() => submitForm());
+    }
+  } else {
+    Promise.resolve().then(() => submitForm());
   }
 };
 
@@ -163,31 +164,31 @@ const updateRows = ({
     value,
     schema: { expandPaths }
   },
-  validateForm
+  submitForm
 }) => {
-  try {
-    const parsedValue = JSON.parse(value);
-    if (!Object.keys(parsedValue).some(key => key.trim() === "")) {
+  if (value !== "") {
+    try {
+      const parsedValue = JSON.parse(value);
+      if (Object.keys(parsedValue).some(key => key.trim() === "")) {
+        throw new Error("Empty key found in JSON object.");
+      }
       const variables = addToVariablesFromEntity([], JSON.parse(value), {
         expandPaths
       });
-      if (variables.length > 0) {
-        // Even though we are passing true for the second argument, the value is
-        // not being validated, so we need to call validateForm manually.
-        setValue(variables, true).then(() => validateForm());
-      }
+      setValue(variables).then(() => submitForm());
+    } catch (e) {
+      setValue([{ key: "", value: "" }]).then(() => submitForm());
     }
-  } catch (e) {
-    // Don't do anything if the JSON is invalid. This will leave the form in the same state.
+  } else {
+    Promise.resolve().then(() => submitForm());
   }
-  return Promise.resolve();
 };
 
 /**
  * The form for editing a node that is an object that contains JSON.
  */
 const ObjectJsonEdit = props => {
-  const { validateForm } = useFormikContext();
+  const { submitForm } = useFormikContext();
   const { fieldName } = props;
   const [{ value: formStateNode }] = useField(fieldName);
   const [, , { setValue }] = useField(`${fieldName}.value`);
@@ -199,9 +200,9 @@ const ObjectJsonEdit = props => {
   const strategyOnChange = useCallback(
     currentValue => {
       if (currentValue === WHOLE) {
-        updateJsonTextarea({ setValue, formStateNode, validateForm });
+        updateJsonTextarea({ setValue, formStateNode, submitForm });
       } else {
-        updateRows({ setValue: setItemsValue, formStateNode, validateForm });
+        updateRows({ setValue: setItemsValue, formStateNode, submitForm });
       }
     },
     [formStateNode]
