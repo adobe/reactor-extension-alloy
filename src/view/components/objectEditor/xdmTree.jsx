@@ -33,16 +33,18 @@ import "./xdmTree.styl";
 
 export const scrollNodeIntoView = nodeId => {
   if (nodeId) {
-    const elementToScrollIntoView = document.querySelector(
-      `.XdmTree [data-node-id="${nodeId}"]`
-    );
+    setTimeout(() => {
+      const elementToScrollIntoView = document.querySelector(
+        `.XdmTree [data-node-id="${nodeId}"]`
+      );
 
-    if (elementToScrollIntoView) {
-      elementToScrollIntoView.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-    }
+      if (elementToScrollIntoView) {
+        elementToScrollIntoView.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
+      }
+    });
   }
 };
 
