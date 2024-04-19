@@ -159,6 +159,7 @@ const ExtensionView = ({
               values: await getInitialValuesPromise
             });
             setCanRenderView(true);
+            window.loaded = true;
           } catch (e) {
             reportAsyncError(e);
           }

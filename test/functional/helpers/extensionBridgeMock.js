@@ -71,9 +71,16 @@ governing permissions and limitations under the License.
     const registeredExtensionMethods = await registeredExtensionMethodsPromise;
     await registeredExtensionMethods.init(initInfo);
 
-    return {
-      getSettings: registeredExtensionMethods.getSettings,
-      validate: registeredExtensionMethods.validate
-    };
+    return new Promise(resolve => {
+      const i = window.setInterval(() => {
+        if (window.loaded) {
+          clearInterval(i);
+          resolve({
+            getSettings: registeredExtensionMethods.getSettings,
+            validate: registeredExtensionMethods.validate
+          });
+        }
+      }, 10);
+    });
   };
 })();
