@@ -33,8 +33,7 @@ import {
 createExtensionViewFixture({
   title: "Update variable analytics editor",
   viewPath: "actions/updateVariable.html",
-  requiresAdobeIOIntegration: true,
-  only: true
+  requiresAdobeIOIntegration: true
 });
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -321,5 +320,33 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
       }
     });
     await eVarValue(0).typeText("value10");
+    await eVarAddButton.click();
+    await eVarName(1).openMenu();
+    await eVarName(1).selectMenuOption("eVar10");
+    await eVarAction(1).selectOption("Copy from");
+
+    await propValue(0).typeText("value42");
+    await propAddButton.click();
+    await propName(1).openMenu();
+    await propName(1).selectMenuOption("prop7");
+    await propAction(1).selectOption("Copy from");
+
+    await eventValue(0).typeText("123");
+    await eventAddButton.click();
+    await eventId(1).typeText("456");
+
+    await contextDataValue(0).typeText("key1");
+
+    await additionalPropertiesValue(0).typeText("mycampaign");
+
+    await extensionViewController.expectIsNotValid();
+    await eVarName(0).expectError();
+    await eVarCopy(1).expectError();
+    await propName(0).expectError();
+    await propCopy(1).expectError();
+    await eventName(0).expectError();
+    await eventName(1).expectError();
+    await contextDataKey(0).expectError();
+    await additionalPropertiesName(0).expectError();
   }
 );

@@ -21,8 +21,7 @@ import * as jsonEdit from "../../helpers/objectEditor/objectJsonEdit";
 createExtensionViewFixture({
   title: "Update variable action view",
   viewPath: "actions/updateVariable.html",
-  requiresAdobeIOIntegration: false,
-  only: true
+  requiresAdobeIOIntegration: false
 });
 
 runCommonExtensionViewTests();

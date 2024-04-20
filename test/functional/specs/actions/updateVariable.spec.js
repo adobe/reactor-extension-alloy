@@ -32,8 +32,7 @@ const schemaChangedNotice = spectrum.alert("schemaChangedNotice");
 createExtensionViewFixture({
   title: "Update variable action view",
   viewPath: "actions/updateVariable.html",
-  requiresAdobeIOIntegration: true,
-  only: true
+  requiresAdobeIOIntegration: true
 });
 
 runCommonExtensionViewTests();
