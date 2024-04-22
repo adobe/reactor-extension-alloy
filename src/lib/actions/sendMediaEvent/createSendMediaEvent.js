@@ -17,7 +17,7 @@ module.exports = ({
   satelliteApi
 }) => {
   return settings => {
-    const { instanceName, eventType, playerId, xdm } = settings;
+    const {instanceName, eventType, playerId, xdm} = settings;
     const instance = instanceManager.getInstance(instanceName);
 
     if (!instance) {
@@ -30,39 +30,42 @@ module.exports = ({
       return trackMediaSession(settings);
     }
 
-    const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
-    if (!sessionDetails || !sessionDetails.sessionId) {
+    const sessionDetails = mediaCollectionSessionStorage.get({playerId});
+    if (!sessionDetails) {
       console.warn(
         `No media session found for player ID ${playerId}. Skipping media event ${eventType}. Make sure the session has started.`
       );
       return Promise.resolve();
     }
-    if (
-      eventType === "media.sessionEnd" ||
-      eventType === "media.sessionComplete"
-    ) {
-      mediaCollectionSessionStorage.remove({ playerId });
-    }
-
-    xdm.eventType = eventType;
-
-    const options = { xdm };
-    if (sessionDetails.handleMediaSessionAutomatically) {
-      options.playerId = playerId;
-    } else {
-      xdm.mediaCollection.playhead = satelliteApi.getVar(
-        sessionDetails.playhead
-      );
-
-      if (sessionDetails.qoeDataDetails) {
-        xdm.mediaCollection.qoeDataDetails = satelliteApi.getVar(
-          sessionDetails.qoeDataDetails
-        );
+    return sessionDetails.sessionPromise.then(sessionID => {
+      if (
+        eventType === "media.sessionEnd" ||
+        eventType === "media.sessionComplete"
+      ) {
+        mediaCollectionSessionStorage.remove({playerId});
       }
 
-      xdm.mediaCollection.sessionID = sessionDetails.sessionId;
-    }
+      xdm.eventType = eventType;
 
-    return instance("sendMediaEvent", options);
-  };
+      const options = {xdm};
+
+      if (sessionDetails.handleMediaSessionAutomatically) {
+        options.playerId = playerId;
+      } else {
+        xdm.mediaCollection.playhead = satelliteApi.getVar(
+          sessionDetails.playhead
+        );
+
+        if (sessionDetails.qoeDataDetails) {
+          xdm.mediaCollection.qoeDataDetails = satelliteApi.getVar(
+            sessionDetails.qoeDataDetails
+          );
+        }
+
+        xdm.mediaCollection.sessionID = sessionID;
+      }
+
+      return instance("sendMediaEvent", options);
+    });
+  }
 };

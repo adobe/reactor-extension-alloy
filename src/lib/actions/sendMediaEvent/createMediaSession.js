@@ -20,7 +20,7 @@ module.exports =
     const options = { xdm };
     const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
 
-    if (sessionDetails && sessionDetails.sessionId) {
+    if (sessionDetails) {
       return Promise.resolve();
     }
     const { playhead, qoeDataDetails } = xdm.mediaCollection;
@@ -53,24 +53,23 @@ module.exports =
       };
     }
 
-    return instance("createMediaSession", options)
+    const sessionPromise = instance("createMediaSession", options)
       .then(result => {
         const { sessionId } = result;
-
-        if (sessionId) {
-          mediaCollectionSessionStorage.add({
-            playerId,
-            sessionDetails: {
-              handleMediaSessionAutomatically,
-              sessionId,
-              playhead,
-              qoeDataDetails
-            }
-          });
-        }
+        return sessionId;
       })
       .catch(error => {
         console.error("Error creating media session", error);
         throw error;
       });
+
+    mediaCollectionSessionStorage.add({
+      playerId,
+      sessionDetails: {
+        handleMediaSessionAutomatically,
+        sessionPromise,
+        playhead,
+        qoeDataDetails
+      }
+    });
   };
