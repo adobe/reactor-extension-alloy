@@ -72,4 +72,5 @@ module.exports =
         qoeDataDetails
       }
     });
+    return sessionPromise;
   };
