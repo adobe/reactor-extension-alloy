@@ -96,9 +96,25 @@ const ExtensionView = ({
   };
 
   useExtensionBridge({
-    init({ initInfo: _initInfo }) {
+    async init({ initInfo: _initInfo }) {
       setCanRenderView(false);
       setInitInfo(_initInfo);
+
+      if (_initInfo && getInitialValues) {
+        try {
+          const getInitialValuesPromise = getInitialValues({
+            initInfo: _initInfo
+          });
+          getInitialValuesPromiseRef.current = getInitialValuesPromise;
+
+          formikPropsRef.current.resetForm({
+            values: await getInitialValuesPromise
+          });
+          setCanRenderView(true);
+        } catch (e) {
+          reportAsyncError(e);
+        }
+      }
     },
     async getSettings() {
       if (!viewRegistrationRef.current) {
@@ -148,27 +164,7 @@ const ExtensionView = ({
       });
     }, []);
   }
-  if (getInitialValues) {
-    useEffect(() => {
-      async function getData() {
-        if (initInfo) {
-          try {
-            const getInitialValuesPromise = getInitialValues({ initInfo });
-            getInitialValuesPromiseRef.current = getInitialValuesPromise;
-            formikPropsRef.current.resetForm({
-              values: await getInitialValuesPromise
-            });
-            setCanRenderView(true);
-            window.loaded = true;
-          } catch (e) {
-            reportAsyncError(e);
-          }
-        }
-      }
 
-      getData();
-    }, [initInfo]);
-  }
   // Show the spinner until getInitialValues is done
   if (!canRenderView) {
     return (
