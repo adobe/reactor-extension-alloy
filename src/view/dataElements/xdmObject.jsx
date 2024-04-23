@@ -278,35 +278,39 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
     setSelectedSchema(null);
   }, [selectedSandboxName]);
 
-  useChanged(async () => {
-    setHasSchema(false);
-    context.schema = null;
-    setSelectedNodeId(null);
+  useChanged(() => {
+    async function setNewSchema() {
+      setHasSchema(false);
+      context.schema = null;
+      setSelectedNodeId(null);
 
-    const signal = abortPreviousRequestsAndCreateSignal();
-    const newSchema = await fetchSchema({
-      orgId,
-      imsAccess,
-      schemaId: selectedSchema.$id,
-      schemaVersion: selectedSchema.version,
-      sandboxName: selectedSandboxName,
-      signal
-    });
-    if (newSchema) {
-      context.schema = newSchema;
-      const initialFormState = getInitialFormState({
-        schema: newSchema,
-        existingFormStateNode: values
+      const signal = abortPreviousRequestsAndCreateSignal();
+      const newSchema = await fetchSchema({
+        orgId,
+        imsAccess,
+        schemaId: selectedSchema.$id,
+        schemaVersion: selectedSchema.version,
+        sandboxName: selectedSandboxName,
+        signal
       });
-      resetForm({
-        values: {
-          ...initialFormState,
-          selectedSchema,
-          sandboxName: selectedSandboxName
-        }
-      });
-      setHasSchema(true);
+      if (newSchema) {
+        context.schema = newSchema;
+        const initialFormState = getInitialFormState({
+          schema: newSchema,
+          existingFormStateNode: values
+        });
+        resetForm({
+          values: {
+            ...initialFormState,
+            selectedSchema,
+            sandboxName: selectedSandboxName
+          }
+        });
+        setHasSchema(true);
+      }
     }
+
+    setNewSchema();
   }, [selectedSchema?.$id]);
 
   const loadSchemas = async ({ filterText, cursor, signal }) => {

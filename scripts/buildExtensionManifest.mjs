@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
-Copyright 2020 Adobe. All rights reserved.
+Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,16 +10,15 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import buildExtensionManifest from "./helpers/buildExtensionManifest.mjs";
 
-const auth = require("@adobe/jwt-auth");
-const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
-
-(async () => {
-  if (adobeIOClientCredentials) {
-    // eslint-disable-next-line no-console
-    console.log("Org ID:", adobeIOClientCredentials.orgId);
-    const result = await auth(adobeIOClientCredentials);
-    // eslint-disable-next-line no-console
-    console.log("IMS Access Token:", result.access_token);
-  }
-})();
+try {
+  const resultPath = await buildExtensionManifest();
+  // eslint-disable-next-line no-console
+  console.log(
+    "\x1b[32m%s\x1b[0m",
+    `✅ Extension manifest written to ${resultPath}`
+  );
+} catch (e) {
+  console.error(e);
+}

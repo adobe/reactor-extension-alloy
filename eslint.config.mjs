@@ -10,22 +10,27 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { FlatCompat } = require("@eslint/eslintrc");
-const js = require("@eslint/js");
-const babelParser = require("@babel/eslint-parser");
-const eslintPluginPrettierRecommended = require("eslint-plugin-prettier/recommended");
-const globals = require("globals");
+import { FlatCompat } from "@eslint/eslintrc";
+import path from "path";
+import { fileURLToPath } from "url";
+import js from "@eslint/js";
+import globals from "globals";
+import babelParser from "@babel/eslint-parser";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const compat = new FlatCompat({
-  baseDirectory: __dirname // optional; default: process.cwd()
+  baseDirectory: __dirname
 });
 
-const config = [
+export default [
   js.configs.recommended,
   ...compat.extends("airbnb", "plugin:testcafe/recommended"),
   ...compat.plugins("unused-imports", "ban", "testcafe"),
   {
-    files: ["**/*.{js,jsx}"],
+    files: ["**/*.{mjs,js,jsx}"],
     languageOptions: {
       parser: babelParser,
       parserOptions: {
@@ -93,18 +98,22 @@ const config = [
           components: []
         }
       ],
-      "no-underscore-dangle": [2, { allow: ["_experience"] }],
+      "no-underscore-dangle": [
+        2,
+        { allow: ["_experience", "__dirname", "__filename"] }
+      ],
       "react/jsx-props-no-spreading": "off",
       "react/function-component-definition": [
         2,
         { namedComponents: "arrow-function" }
       ],
+
       "import/no-named-as-default-member": "off",
       "import/no-named-as-default": "off"
     }
   },
   {
-    files: ["src/**/*.{js,jsx}"],
+    files: ["src/**/*.{mjs,js,jsx}"],
     languageOptions: {
       globals: {
         _satellite: "readonly"
@@ -135,5 +144,3 @@ const config = [
 
   eslintPluginPrettierRecommended
 ];
-
-module.exports = config;
