@@ -74,7 +74,11 @@ const ExtensionView = ({
     // (which were set during submitForm()) to see if the form is valid.
     // https://github.com/jaredpalmer/formik/issues/1580
     formikPropsRef.current.setSubmitting(false);
-    return Object.keys(formikPropsRef.current.errors).length === 0;
+
+    // Since React18, errors are not up to date on the formikPropsRef.current object.
+    // We collect the errors by running imperative validateForm() method.
+    const errors = await formikPropsRef.current.validateForm();
+    return Object.keys(errors).length === 0;
   };
 
   const myValidateNonFormikState = async () => {
@@ -145,21 +149,33 @@ const ExtensionView = ({
     }, []);
   }
   if (getInitialValues) {
-    useEffect(async () => {
-      if (initInfo) {
-        try {
-          const getInitialValuesPromise = getInitialValues({ initInfo });
-          getInitialValuesPromiseRef.current = getInitialValuesPromise;
-          formikPropsRef.current.resetForm({
-            values: await getInitialValuesPromise
-          });
-          setCanRenderView(true);
-        } catch (e) {
-          reportAsyncError(e);
+    useEffect(() => {
+      async function getData() {
+        if (initInfo) {
+          try {
+            const getInitialValuesPromise = getInitialValues({ initInfo });
+            getInitialValuesPromiseRef.current = getInitialValuesPromise;
+            formikPropsRef.current.resetForm({
+              values: await getInitialValuesPromise
+            });
+            setCanRenderView(true);
+            window.loaded = true;
+          } catch (e) {
+            reportAsyncError(e);
+          }
         }
       }
+
+      getData();
     }, [initInfo]);
   }
+
+  useEffect(() => {
+    if (canRenderView) {
+      window.dispatchEvent(new Event("extension-reactor-alloy:rendered"));
+    }
+  }, [canRenderView]);
+
   // Show the spinner until getInitialValues is done
   if (!canRenderView) {
     return (

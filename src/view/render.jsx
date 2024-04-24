@@ -11,7 +11,8 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
+
 import { Provider, lightTheme } from "@adobe/react-spectrum";
 import ErrorBoundary from "./components/errorBoundary";
 import "./global.styl";
@@ -19,8 +20,11 @@ import monitorForOriginatingErrors from "./utils/monitorForOriginatingErrors";
 
 monitorForOriginatingErrors();
 
+const container = document.getElementById("root");
+const root = createRoot(container);
+
 export default View => {
-  ReactDOM.render(
+  root.render(
     <Provider
       theme={lightTheme}
       colorScheme="light"
@@ -29,7 +33,6 @@ export default View => {
       <ErrorBoundary>
         <View />
       </ErrorBoundary>
-    </Provider>,
-    document.getElementById("root")
+    </Provider>
   );
 };
