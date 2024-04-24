@@ -53,9 +53,10 @@ export default function comboBox({
   allowsCustomValue = false,
   width = "size-5000",
   defaultValue = "",
-  Component = FormikKeyedComboBox
+  Component = FormikKeyedComboBox,
+  validationSchemaBase = string()
 }) {
-  let fieldSchema = string();
+  let fieldSchema = validationSchemaBase;
   if (!allowsCustomValue) {
     fieldSchema = fieldSchema.test(
       name,

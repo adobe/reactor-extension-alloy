@@ -228,7 +228,7 @@ const wrapGetSettings =
       }, {});
   };
 
-const setOrCopyRow = (name, label, items) => {
+const setOrCopyRow = (name, label, items, requiredMessage) => {
   return [
     comboBox({
       name,
@@ -236,7 +236,7 @@ const setOrCopyRow = (name, label, items) => {
       items,
       width: "size-3000",
       label,
-      isRequired: true
+      validationSchemaBase: string().required(requiredMessage)
     }),
     comboBox({
       name: "action",
@@ -301,7 +301,7 @@ const analyticsForm = form(
         horizontal: true,
         isRowEmpty: ({ evar, value }) => evar === "" && value === ""
       },
-      setOrCopyRow("evar", "eVar", evarItems)
+      setOrCopyRow("evar", "eVar", evarItems, "Please choose an eVar.")
     ),
     objectArray(
       {
@@ -313,7 +313,7 @@ const analyticsForm = form(
         horizontal: true,
         isRowEmpty: ({ prop, value }) => prop === "" && value === ""
       },
-      setOrCopyRow("prop", "Prop", propItems)
+      setOrCopyRow("prop", "Prop", propItems, "Please choose a prop.")
     ),
     objectArray(
       {
@@ -334,7 +334,7 @@ const analyticsForm = form(
           items: eventItems,
           width: "size-3000",
           label: "Event",
-          isRequired: true
+          validationSchemaBase: string().required("Please choose an event.")
         }),
         textField({
           name: "id",
@@ -364,7 +364,9 @@ const analyticsForm = form(
           dataElementSupported: false,
           width: "size-3000",
           label: "Context data key",
-          isRequired: true
+          validationSchemaBase: string().required(
+            "Please provide a context data key."
+          )
         }),
         textField({
           name: "value",
@@ -390,14 +392,15 @@ const analyticsForm = form(
           dataElementSupported: false,
           items: additionalFieldsItems,
           width: "size-3000",
-          label: "Additional properties",
+          label: "Additional property",
           allowsCustomValue: true,
-          validationSchemaBase: string().test(
-            "is-valid-additional-property",
-            "Please use the fields provided above for this property.",
-            value => !INVALID_ADDITIONAL_FIELDS_REGEX.test(value)
-          ),
-          isRequired: true
+          validationSchemaBase: string()
+            .test(
+              "is-valid-additional-property",
+              "Please use the fields provided above for this property.",
+              value => !INVALID_ADDITIONAL_FIELDS_REGEX.test(value)
+            )
+            .required("Please choose an additional property.")
         }),
         textField({
           name: "value",
