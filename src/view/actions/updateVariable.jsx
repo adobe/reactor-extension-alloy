@@ -332,34 +332,36 @@ const UpdateVariable = ({
   } = initInfo;
 
   useChanged(
-    useReportAsyncError(async function reloadDataElement() {
-      setHasSchema(false);
-      setSelectedNodeId(null);
+    useReportAsyncError(() => {
+      async function reloadDataElement() {
+        setHasSchema(false);
+        setSelectedNodeId(null);
 
-      if (dataElement) {
-        const transforms = {};
-        const signal = abortPreviousRequestsAndCreateSignal();
-        const initialFormState = await getInitialFormStateFromDataElement({
-          dataElement,
-          context,
-          orgId,
-          imsAccess,
-          transforms,
-          existingFormStateNode: values,
-          signal
-        });
-
-        if (!signal.aborted) {
-          resetForm({
-            values: { ...initialFormState, dataElement, customCode }
+        if (dataElement) {
+          const transforms = {};
+          const signal = abortPreviousRequestsAndCreateSignal();
+          const initialFormState = await getInitialFormStateFromDataElement({
+            dataElement,
+            context,
+            orgId,
+            imsAccess,
+            transforms,
+            existingFormStateNode: values,
+            signal
           });
-          if (context.schema) {
-            setHasSchema(true);
-          }
-        }
 
-        if (isDataVariable(dataElement)) {
-          setSelectedNodeId(findFirstNodeIdForDepth(initialFormState, 3));
+          if (!signal.aborted) {
+            resetForm({
+              values: { ...initialFormState, dataElement, customCode }
+            });
+            if (context.schema) {
+              setHasSchema(true);
+            }
+          }
+
+          if (isDataVariable(dataElement)) {
+            setSelectedNodeId(findFirstNodeIdForDepth(initialFormState, 3));
+          }
         }
       }
       reloadDataElement();
