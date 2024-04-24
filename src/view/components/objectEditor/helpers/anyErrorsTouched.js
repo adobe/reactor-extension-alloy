@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 const anyErrorsTouched = (errors, touched) => {
-  if (touched === undefined) {
+  if (errors === undefined || touched === undefined) {
     return false;
   }
   if (Array.isArray(errors)) {
