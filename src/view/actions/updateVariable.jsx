@@ -171,17 +171,14 @@ const getInitialValues =
     initialValues.dataElement = dataElement;
 
     if (dataElement) {
+      const prefix = isDataVariable(dataElement) ? "data" : "xdm";
       const prefixedTransforms = Object.keys(transforms).reduce((memo, key) => {
         // The key for a root element transform is "".
-        memo[key === "" ? "xdm" : `xdm.${key}`] = transforms[key];
+        memo[key === "" ? prefix : `${prefix}.${key}`] = transforms[key];
         return memo;
       }, {});
 
-      if (isDataVariable(dataElement)) {
-        data = { data };
-      } else {
-        data = { xdm: data };
-      }
+      data = { [prefix]: data };
 
       const initialFormState = await getInitialFormStateFromDataElement({
         dataElement,
@@ -211,7 +208,9 @@ const getSettings =
       getValueFromFormState({ formStateNode: values, transforms }) || {};
 
     const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
-      memo[key.substring(4)] = transforms[key];
+      const period = key.indexOf(".");
+      memo[key.substring(period === -1 ? key.length : period + 1)] =
+        transforms[key];
       return memo;
     }, {});
 
@@ -257,10 +256,15 @@ const validateFormikState =
   };
 
 const findFirstNodeIdForDepth = (formStateNode, depth) => {
-  const { schema: { type } = {}, properties, items, id } = formStateNode;
+  const {
+    schema: { type, properties: schemaProperties } = {},
+    properties,
+    items,
+    id
+  } = formStateNode;
   if (depth > 0) {
     if (type === OBJECT && properties) {
-      const sortedEditors = Object.keys(properties).sort();
+      const sortedEditors = Object.keys(schemaProperties).sort();
       const editorsContainingValues = sortedEditors.filter(k => {
         const map = {
           [ADOBE_ANALYTICS]: isAnalyticsEditorEmpty,
@@ -310,6 +314,7 @@ const UpdateVariable = ({
   } = context;
 
   const [{ value: dataElement }] = useField("dataElement");
+  const [{ value: customCode }] = useField("customCode");
   const [hasSchema, setHasSchema] = useState(schema != null);
   const [selectedNodeId, setSelectedNodeId] = useState(() => {
     if (dataElement?.settings?.solutions) {
@@ -346,14 +351,16 @@ const UpdateVariable = ({
           });
 
           if (!signal.aborted) {
-            resetForm({ values: { ...initialFormState, dataElement } });
+            resetForm({
+              values: { ...initialFormState, dataElement, customCode }
+            });
             if (context.schema) {
               setHasSchema(true);
             }
           }
 
           if (isDataVariable(dataElement)) {
-            setSelectedNodeId(findFirstNodeIdForDepth(values, 3));
+            setSelectedNodeId(findFirstNodeIdForDepth(initialFormState, 3));
           }
         }
       }
@@ -462,10 +469,14 @@ const UpdateVariable = ({
             language="javascript"
             placeholder={
               "// Modify content as necessary. There is no need to wrap the code in a function or return a value." +
-              "\n// For example if you are updating an XDM Variable Data Element, you can set the page name by writing:" +
-              '\n// content.web.webPageDetails.name = "Checkout";' +
-              "\n// If you are updating a Data Variable Data Element you can update an Analytics page name by writing:" +
-              "\n// content.__adobe.analytics.eVar15 = 'value';"
+              "\n\n// For example if you are updating an XDM Variable Data Element, you can set the page name by writing:" +
+              "\n\n// content.web = content.web || {};" +
+              "\n// content.web.webPageDetails = content.web.webPageDetails || {};" +
+              '\n// content.web.webPageDetails.name = "Home";' +
+              "\n\n// If you are updating a Data Variable Data Element you can update an Analytics page name by writing:" +
+              "\n\n// content.__adobe = content.__adobe || { };" +
+              "\n// content.__adobe.analytics = content.__adobe.analytics || { };" +
+              '\n// content.__adobe.analytics.eVar5 = "Test";'
             }
           />
         </>

@@ -244,9 +244,7 @@ const componentWrappers = {
           }
 
           // eslint-disable-next-line no-await-in-loop
-          await t.scrollIntoView(
-            popoverMenuSelector.find(menuItemCssSelector).nth(-1)
-          );
+          await t.scrollBy(popoverMenuSelector, 0, 200);
         }
 
         throw new Error(
@@ -304,9 +302,7 @@ const componentWrappers = {
           }
 
           // eslint-disable-next-line no-await-in-loop
-          await t.scrollIntoView(
-            popoverMenuSelector.find(menuItemCssSelector).nth(-1)
-          );
+          await t.scrollBy(popoverMenuSelector, 0, 200);
         }
 
         throw new Error(
@@ -332,6 +328,21 @@ const componentWrappers = {
       // are cleared to get rid of the "..." at the end.
       async click() {
         await t.click(selector);
+      }
+    };
+  },
+  textArea(selector) {
+    return {
+      expectError: createExpectError(selector),
+      expectNoError: createExpectNoError(selector),
+      async expectValue(text) {
+        await t.expect(selector.value).eql(text);
+      },
+      async typeText(text) {
+        await t.typeText(selector, text);
+      },
+      async clear() {
+        await t.selectText(selector).pressKey("delete");
       }
     };
   },

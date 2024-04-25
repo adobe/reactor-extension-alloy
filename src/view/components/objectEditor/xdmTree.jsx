@@ -58,6 +58,7 @@ const XdmTree = ({
   onSelect = () => {}
 }) => {
   const { values: formState, errors, touched } = useFormikContext();
+
   const treeStructure = generateTreeStructure({
     treeNodeComponent: XdmTreeNodeTitle,
     formState,

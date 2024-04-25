@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 import React, { useEffect } from "react";
 import { string, object } from "yup";
 import { Radio } from "@adobe/react-spectrum";
-import { useField } from "formik";
+import { useField, useFormikContext } from "formik";
 import PropTypes from "prop-types";
 import DataElementSelector from "../components/dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
@@ -118,6 +118,9 @@ export default function jsonOptionalEditor(
     },
     validationShape,
     Component: ({ namePrefix = "" }) => {
+      // We use submitForm so that when you switch population strategies,
+      // we can mark all the fields as touched and it will show the errors.
+      const { submitForm } = useFormikContext();
       const [{ value: optionValue }] = useField(`${namePrefix}${optionName}`);
       const [{ value }, , { setValue }] = useField(`${namePrefix}${name}`);
       const [{ value: wholeValue }, , { setValue: setWholeValue }] = useField(
@@ -126,25 +129,43 @@ export default function jsonOptionalEditor(
       const lastOptionValue = React.useRef(optionValue);
       useEffect(() => {
         if (optionValue === PARTS && lastOptionValue.current === WHOLE) {
-          try {
-            setValue(
-              getChildrenInitialValues({
-                initInfo: { settings: JSON.parse(wholeValue) }
-              })
-            );
-          } catch (e) {
-            setValue(getChildrenInitialValues({ initInfo: { settings: {} } }));
-          }
-        } else if (optionValue === WHOLE && lastOptionValue.current === PARTS) {
-          const v = JSON.stringify(
-            getChildrenSettings({ values: value }),
-            null,
-            2
-          );
+          Promise.resolve()
+            .then(() => {
+              if (wholeValue !== "") {
+                const wholeValueParsed = JSON.parse(wholeValue);
 
-          if (v !== "{}") {
-            setWholeValue(v);
-          }
+                return setValue(
+                  getChildrenInitialValues({
+                    initInfo: { settings: wholeValueParsed }
+                  })
+                );
+              }
+              return Promise.resolve();
+            })
+            .catch(() => {
+              return setValue(
+                getChildrenInitialValues({ initInfo: { settings: {} } })
+              );
+            })
+            .then(() => submitForm());
+        } else if (optionValue === WHOLE && lastOptionValue.current === PARTS) {
+          validationShape[name]
+            .validate(value)
+            .then(() => {
+              const v = JSON.stringify(
+                getChildrenSettings({ values: value }),
+                null,
+                2
+              );
+              if (v !== "{}") {
+                return setWholeValue(v);
+              }
+              return Promise.resolve();
+            })
+            .catch(() => {
+              return setWholeValue("");
+            })
+            .then(() => submitForm());
         }
         lastOptionValue.current = optionValue;
       }, [optionValue]);

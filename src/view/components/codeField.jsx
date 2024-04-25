@@ -31,8 +31,10 @@ const CodeField = ({
   language,
   placeholder
 }) => {
+
   const [{ value }, { touched, error }, { setValue, setTouched }] =
     useField(name);
+
   const onPress = async () => {
     setTouched(true);
 
@@ -44,13 +46,16 @@ const CodeField = ({
       options.language = language;
     }
 
+    // This returns undefined when the user clicks cancel.
     let updatedCode = await window.extensionBridge.openCodeEditor(options);
+    if (updatedCode === undefined) {
+      return;
+    }
 
     // If the user never changed placeholder code, don't save the placeholder code.
     if (placeholder && updatedCode === placeholder) {
       updatedCode = "";
     }
-
     setValue(updatedCode);
   };
 

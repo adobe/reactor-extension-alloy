@@ -36,7 +36,12 @@ export default ({ formStateNode }) => {
   if (populationStrategy === WHOLE) {
     if (value !== "" && !singleDataElementRegex.test(value)) {
       try {
-        JSON.parse(value);
+        const parsedValue = JSON.parse(value);
+        if (Object.keys(parsedValue).some(key => key.trim() === "")) {
+          return {
+            value: "Empty keys are not allowed."
+          };
+        }
       } catch ({ message = "" }) {
         return {
           value: `Please enter a valid JSON or a data element. ${

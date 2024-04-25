@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import numberAwareCompareFunction from "../../../utils/numberAwareCompareFunction";
+
 const pathSegmentRegex = /(.+?)([[.]|$)/;
 const arrayNotationRegex = /^\[(\d*)\]$/;
 
@@ -131,10 +133,12 @@ export const addToVariablesFromEntity = (
   { expandPaths }
 ) => {
   if (expandPaths === false) {
-    return Object.keys(entity).reduce((acc, key) => {
-      acc.push({ key, value: entity[key] });
-      return acc;
-    }, []);
+    return Object.keys(entity)
+      .sort(numberAwareCompareFunction)
+      .reduce((acc, key) => {
+        acc.push({ key, value: entity[key] });
+        return acc;
+      }, []);
   }
 
   Object.keys(entity).forEach(key => {
