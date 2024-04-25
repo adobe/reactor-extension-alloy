@@ -155,6 +155,7 @@ const Editor = ({
             previouslySavedSchemaInfo={previouslySavedSchemaInfo}
             componentName={componentName}
             verticalLayout={verticalLayout}
+            updateMode={formState.updateMode}
           />
         )}
       </View>

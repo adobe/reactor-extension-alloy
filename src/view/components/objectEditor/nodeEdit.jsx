@@ -124,7 +124,7 @@ const NodeEdit = props => {
           />
           {formStateNode.updateMode && hasClearedAncestor && (
             <FieldDescriptionAndError
-              description="Checking this box will cause this field to be deleted before setting any values. A field further up in the object is already cleared."
+              description="Checking this box will cause this field to be deleted before setting any values. A field further up in the object is already cleared. Fields that are cleared appear with a delete icon in the tree."
               messagePaddingTop="size-0"
               messagePaddingStart="size-300"
             >
@@ -142,7 +142,7 @@ const NodeEdit = props => {
             <FormikCheckbox
               data-test-id="clearField"
               name={`${fieldName}.transform.clear`}
-              description="Checking this box will cause this field to be deleted before setting any values."
+              description="Checking this box will cause this field to be deleted before setting any values. Fields that are cleared appear with a delet icon in the tree."
               width="size-5000"
               isDisabled={hasClearedAncestor}
             >
