@@ -18,8 +18,7 @@ import {
   ProgressCircle,
   Heading,
   Divider,
-  Text,
-  Badge
+  Text
 } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
@@ -416,15 +415,6 @@ const UpdateVariable = ({
         <>
           <Heading size="M" margin="0">
             Variable Editor
-            {isDataVariable(dataElement) && (
-              <Badge
-                marginStart="size-10"
-                variant="info"
-                UNSAFE_style={{ transform: "scale(0.7)" }}
-              >
-                BETA
-              </Badge>
-            )}
           </Heading>
           <Divider margin={0} size="M" />
 
