@@ -18,7 +18,7 @@ import FormElementContainer from "../components/formElementContainer";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FormikNumberField from "../components/formikReactSpectrum3/formikNumberField";
 
-const getMediaCollection = () => {
+const getDefaultSettings = () => {
   return {
     channel: "",
     playerName: "",
@@ -29,38 +29,38 @@ const getMediaCollection = () => {
 };
 export const bridge = {
   getInstanceDefaults: () => ({
-    mediaCollection: getMediaCollection()
+    streamingMedia: getDefaultSettings()
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
-    if (!instanceSettings.mediaCollection) {
-      instanceSettings.mediaCollection = getMediaCollection();
+    if (!instanceSettings.streamingMedia) {
+      instanceSettings.streamingMedia = getDefaultSettings();
     }
 
     return instanceSettings;
   },
   getInstanceSettings: ({ instanceValues }) => {
     const instanceSettings = {};
-    const { mediaCollection } = instanceValues;
+    const { streamingMedia } = instanceValues;
 
-    if (mediaCollection.channel && mediaCollection.playerName) {
-      instanceSettings.mediaCollection = mediaCollection;
+    if (streamingMedia.channel && streamingMedia.playerName) {
+      instanceSettings.streamingMedia = streamingMedia;
     }
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
-    mediaCollection: object().shape(
+    streamingMedia: object().shape(
       {
         channel: string().when("playerName", {
           is: playerName => playerName,
           then: schema =>
             schema.required(
-              "Please provide a channel name for Media Collection"
+              "Please provide a channel name for streaming media."
             )
         }),
         playerName: string().when("channel", {
           is: channel => channel,
           then: schema =>
-            schema.required("Please provide a player name for Media Collection")
+            schema.required("Please provide a player name for streaming media.")
         }),
         adPingInterval: number().when(["channel", "playerName"], {
           is: (channel, playerName) => channel && playerName,
@@ -87,47 +87,47 @@ export const bridge = {
   })
 };
 
-const MediaCollectionSection = ({ instanceFieldName }) => {
+const StreamingMediaSection = ({ instanceFieldName }) => {
   return (
     <>
-      <SectionHeader learnMoreUrl="https://adobe.ly/3fYDkfh">
-        Media Collection
+      <SectionHeader>
+        Streaming Media
       </SectionHeader>
       <FormElementContainer>
         <FormikTextField
           data-test-id="mediaChannelField"
           label="Channel"
-          name={`${instanceFieldName}.mediaCollection.channel`}
-          description="Distribution Station/Channels or where the content is played. Any string value is accepted here."
+          name={`${instanceFieldName}.streamingMedia.channel`}
+          description="Distribution station/channels or where the content is played. Any string value is accepted here."
           width="size-5000"
           isRequired
         />
         <FormikTextField
           data-test-id="mediaPlayerNameField"
           label="Player Name"
-          name={`${instanceFieldName}.mediaCollection.playerName`}
-          description="The Media Collection Player Name that will be used in every media session."
+          name={`${instanceFieldName}.streamingMedia.playerName`}
+          description="The streaming media player name that will be used in every media session."
           width="size-5000"
           isRequired
         />
         <FormikTextField
           data-test-id="mediaVersionField"
           label="Application version"
-          name={`${instanceFieldName}.mediaCollection.appVersion`}
+          name={`${instanceFieldName}.streamingMedia.appVersion`}
           description="The SDK version used by the player. This could have any custom value that makes sense for your player."
           width="size-5000"
         />
         <FormikNumberField
           data-test-id="mediaMainPingIntervalField"
           label="Main ping interval"
-          name={`${instanceFieldName}.mediaCollection.mainPingInterval`}
+          name={`${instanceFieldName}.streamingMedia.mainPingInterval`}
           description="The ping interval frequency (in seconds) for main content."
           width="size-5000"
         />
         <FormikNumberField
           data-test-id="mediaAdPingIntervalField"
           label="Ad ping interval"
-          name={`${instanceFieldName}.mediaCollection.adPingInterval`}
+          name={`${instanceFieldName}.streamingMedia.adPingInterval`}
           description="The ping interval frequency (in seconds) for ad content."
           width="size-5000"
         />
@@ -136,8 +136,8 @@ const MediaCollectionSection = ({ instanceFieldName }) => {
   );
 };
 
-MediaCollectionSection.propTypes = {
+StreamingMediaSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired
 };
 
-export default MediaCollectionSection;
+export default StreamingMediaSection;

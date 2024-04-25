@@ -308,7 +308,7 @@ const createExtensionManifest = ({ version }) => {
                   minLength: 1
                 },
                 edgeConfigOverrides: createEdgeConfigOverridesSchema(false),
-                mediaCollection: {
+                streamingMedia: {
                   type: "object",
                   properties: {
                     channel: {
@@ -845,7 +845,7 @@ const createExtensionManifest = ({ version }) => {
           required: ["instanceName", "playerId"]
         },
         libPath: "dist/lib/actions/sendMediaEvent/index.js",
-        viewPath: "actions/sendMediaAnalyticsEvent.html"
+        viewPath: "actions/sendStreamingMediaEvent.html"
       },
       {
         displayName: "Get Media Analytics Tracker",
