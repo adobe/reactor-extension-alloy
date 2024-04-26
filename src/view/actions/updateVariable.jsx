@@ -18,8 +18,7 @@ import {
   ProgressCircle,
   Heading,
   Divider,
-  Text,
-  Badge
+  Text
 } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
@@ -94,6 +93,7 @@ const getInitialFormStateFromDataElement = async ({
         version: schema.version
       };
       context.schema = newSchema;
+      context.dataElementId = dataElement.id;
       return getInitialFormState({
         schema: newSchema,
         value: data,
@@ -106,6 +106,7 @@ const getInitialFormStateFromDataElement = async ({
   if (isDataVariable(dataElement)) {
     const schema = generateSchemaFromSolutions(dataElement.settings.solutions);
     context.schema = schema;
+    context.dataElementId = dataElement.id;
 
     return getInitialFormState({
       schema,
@@ -369,6 +370,8 @@ const UpdateVariable = ({
     [dataElement]
   );
 
+  const isSchemaMatched = context.dataElementId === dataElement?.id;
+
   const loadItems = useReportAsyncError(
     async ({ filterText, cursor, signal }) => {
       const { results, nextPage } = await fetchDataElements({
@@ -412,30 +415,22 @@ const UpdateVariable = ({
           {item => <Item key={item.settings.cacheId}>{item.name}</Item>}
         </FormikPagedComboBox>
       )}
-      {hasSchema && (
+      {hasSchema && isSchemaMatched && (
         <>
           <Heading size="M" margin="0">
             Variable Editor
-            {isDataVariable(dataElement) && (
-              <Badge
-                marginStart="size-10"
-                variant="info"
-                UNSAFE_style={{ transform: "scale(0.7)" }}
-              >
-                BETA
-              </Badge>
-            )}
           </Heading>
           <Divider margin={0} size="M" />
 
           <Editor
+            key={isDataVariable(dataElement) ? "data" : "xdm"}
             selectedNodeId={selectedNodeId}
             setSelectedNodeId={setSelectedNodeId}
             schema={schema}
             previouslySavedSchemaInfo={previouslySavedSchemaInfo}
             initialExpandedDepth={dataElement.settings.solutions ? 2 : 1}
             componentName="update variable action"
-            verticalLayout={!!dataElement.settings.solutions}
+            verticalLayout={isDataVariable(dataElement)}
           />
 
           <Heading size="M" margin="0">
@@ -481,7 +476,7 @@ const UpdateVariable = ({
           />
         </>
       )}
-      {!hasSchema && dataElement && (
+      {!(hasSchema && isSchemaMatched) && dataElement && (
         <Flex alignItems="center" justifyContent="center" height="size-2000">
           <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
         </Flex>

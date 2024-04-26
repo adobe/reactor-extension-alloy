@@ -61,8 +61,8 @@ export const bridge = {
 
 export const solutionsContext = [
   [ADOBE_ANALYTICS, "Adobe Analytics"],
-  [ADOBE_TARGET, "Adobe Target"],
-  [ADOBE_AUDIENCE_MANAGER, "Adobe Audience Manager"]
+  [ADOBE_AUDIENCE_MANAGER, "Adobe Audience Manager"],
+  [ADOBE_TARGET, "Adobe Target"]
 ];
 
 const DataVariable = () => {

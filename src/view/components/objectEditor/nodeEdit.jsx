@@ -89,24 +89,29 @@ const NodeEdit = props => {
       direction="column"
     >
       {!verticalLayout && (
-        <View data-test-id="breadcrumb" UNSAFE_className="NodeEdit-breadcrumbs">
-          {
-            // There's currently a known error that occurs when Breadcrumbs
-            // is unmounted, but it doesn't seem to affect the UX.
-            // https://github.com/adobe/react-spectrum/issues/1979
-          }
-          {breadcrumb.length > 1 && (
-            <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
-              {breadcrumb.map(item => (
-                <Item key={item.nodeId}>{item.label}</Item>
-              ))}
-            </Breadcrumbs>
-          )}
-        </View>
+        <>
+          <View
+            data-test-id="breadcrumb"
+            UNSAFE_className="NodeEdit-breadcrumbs"
+          >
+            {
+              // There's currently a known error that occurs when Breadcrumbs
+              // is unmounted, but it doesn't seem to affect the UX.
+              // https://github.com/adobe/react-spectrum/issues/1979
+            }
+            {breadcrumb.length > 1 && (
+              <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
+                {breadcrumb.map(item => (
+                  <Item key={item.nodeId}>{item.label}</Item>
+                ))}
+              </Breadcrumbs>
+            )}
+          </View>
+          <Heading data-test-id="heading" size="S">
+            {displayName}
+          </Heading>
+        </>
       )}
-      <Heading data-test-id="heading" size="S">
-        {displayName}
-      </Heading>
       {formStateNode.autoPopulationSource !== NONE && (
         <AutoPopulationAlert formStateNode={formStateNode} />
       )}
@@ -119,7 +124,7 @@ const NodeEdit = props => {
           />
           {formStateNode.updateMode && hasClearedAncestor && (
             <FieldDescriptionAndError
-              description="Checking this box will cause this field to be deleted before setting any values. A field further up in the object is already cleared."
+              description="Checking this box will cause this field to be deleted before setting any values. A field further up in the object is already cleared. Fields that are cleared appear with a delete icon in the tree."
               messagePaddingTop="size-0"
               messagePaddingStart="size-300"
             >
@@ -137,7 +142,7 @@ const NodeEdit = props => {
             <FormikCheckbox
               data-test-id="clearField"
               name={`${fieldName}.transform.clear`}
-              description="Checking this box will cause this field to be deleted before setting any values."
+              description="Checking this box will cause this field to be deleted before setting any values. Fields that are cleared appear with a delet icon in the tree."
               width="size-5000"
               isDisabled={hasClearedAncestor}
             >
