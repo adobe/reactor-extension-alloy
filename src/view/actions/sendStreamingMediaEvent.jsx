@@ -749,7 +749,7 @@ const sendEventForm = form(
       name: "playerId",
       label: "Player ID",
       isRequired: true,
-      description: "Enter your player ID."
+      description: "Enter a name to represent this player."
     }),
     conditional(
       {
@@ -768,7 +768,7 @@ const sendEventForm = form(
           name: "playhead",
           label: "Playhead",
           isRequired: true,
-          description: "This data element should resolve to a number.",
+          description: "Provide a data element that returns the playback playhead in seconds.",
           tokenize: false
         })
       ]
