@@ -286,7 +286,6 @@ const advertisingDetailsSection = dataElementSection(
     textField({
       name: "campaignID",
       label: "Campaign ID",
-      isRequired: true,
       description: "ID of the ad campaign."
     }),
     textField({
