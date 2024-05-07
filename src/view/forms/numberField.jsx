@@ -54,7 +54,9 @@ export default function numberField({
   dataElementDescription
 }) {
   const validationShape = {
-    [name]: number(),
+    [name]: number().typeError(
+      `Please provide the ${label.toLowerCase()} as a number.`
+    ),
     [`${name}DataElement`]: string().when(`${name}InputMethod`, {
       is: DATA_ELEMENT,
       then: schema =>
@@ -63,13 +65,16 @@ export default function numberField({
   };
 
   if (isRequired) {
-    validationShape[name] = number().when(`${name}InputMethod`, {
-      is: NUMBER,
-      then: schema =>
-        schema.required(
-          `Please provide the ${label.toLowerCase()} as a number.`
-        )
-    });
+    validationShape[name] = number()
+      .min(0)
+      .typeError(`Please provide the ${label.toLowerCase()} as a number.`)
+      .when(`${name}InputMethod`, {
+        is: NUMBER,
+        then: schema =>
+          schema.required(
+            `Please provide the ${label.toLowerCase()} as a number.`
+          )
+      });
     validationShape[`${name}DataElement`] = string().when(
       `${name}InputMethod`,
       {
