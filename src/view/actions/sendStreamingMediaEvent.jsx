@@ -377,8 +377,9 @@ const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
     [
       comboBox({
         name: "name",
-        description: "Select or enter the state that started.",
         items: getSortedInputItems(mediaStates),
+        label:
+          "Select one of the standard states or enter a custom state that started.",
         allowsCustomValue: true
       })
     ]
@@ -398,8 +399,9 @@ const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
     [
       comboBox({
         name: "name",
-        description: "Select or enter the state that ended.",
         items: getSortedInputItems(mediaStates),
+        label:
+          "Select one of the standard states or enter a custom state that ended.",
         allowsCustomValue: true
       })
     ]
