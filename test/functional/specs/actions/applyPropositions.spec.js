@@ -167,7 +167,7 @@ test("removes a scope", async () => {
   await metadata[0].selectorField.typeText(".selector1");
   await metadata[0].actionType.openMenu();
   await metadata[0].actionType.selectMenuOption("Set HTML");
-  await metadata[0].removeButton.expectDisabled();
+  await metadata[0].removeButton.expectEnabled();
   await metadataAddButton.click();
   await metadata[1].scopeField.typeText("scope2");
   await metadata[1].selectorField.typeText(".selector2");
@@ -240,6 +240,7 @@ test("doesn't show error for viewName value that is not a data element", async (
     extensionSettings: mockExtensionSettings
   });
   await viewNameField.typeText("%dataelement");
+  await extensionViewController.expectIsValid();
   await viewNameField.expectNoError();
 });
 

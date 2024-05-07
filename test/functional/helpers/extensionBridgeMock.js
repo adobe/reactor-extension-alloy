@@ -71,9 +71,19 @@ governing permissions and limitations under the License.
     const registeredExtensionMethods = await registeredExtensionMethodsPromise;
     await registeredExtensionMethods.init(initInfo);
 
-    return {
-      getSettings: registeredExtensionMethods.getSettings,
-      validate: registeredExtensionMethods.validate
-    };
+    return new Promise(resolve => {
+      const listener = () => {
+        window.removeEventListener(
+          "extension-reactor-alloy:rendered",
+          listener
+        );
+        resolve({
+          getSettings: registeredExtensionMethods.getSettings,
+          validate: registeredExtensionMethods.validate
+        });
+      };
+
+      window.addEventListener("extension-reactor-alloy:rendered", listener);
+    });
   };
 })();

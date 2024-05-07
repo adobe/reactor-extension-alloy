@@ -9,6 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import { string } from "yup";
 import renderForm from "../forms/renderForm";
 import form from "../forms/form";
 import instancePicker from "../forms/instancePicker";
@@ -38,31 +39,35 @@ const applyPropositionsForm = form({}, [
       dataElementDescription:
         "Provide a data element that resolves to an object scope keys, and object values with keys: selector and actionType.",
       objectKey: "scope",
-      objectLabelPlural: "Scopes"
+      objectLabelPlural: "Scopes",
+      isRowEmpty: ({ scope, selector, actionType }) =>
+        scope === "" && selector === "" && actionType === ""
     },
     [
       textField({
         name: "scope",
         label: "Scope",
-        isRequired: true,
-        description: "Enter your scope"
+        description: "Enter your scope",
+        validationSchemaBase: string().required("Please provide a scope.")
       }),
       textField({
         name: "selector",
         label: "Selector",
-        isRequired: true,
-        description: "Enter your selector"
+        description: "Enter your selector",
+        validationSchemaBase: string().required("Please provide a selector.")
       }),
       comboBox({
         name: "actionType",
         label: "Action Type",
         description: "Select your action type",
-        isRequired: true,
         items: [
           { value: "setHtml", label: "Set HTML" },
           { value: "replaceHtml", label: "Replace HTML" },
           { value: "appendHtml", label: "Append HTML" }
-        ]
+        ],
+        validationSchemaBase: string().required(
+          "Please provide an action type."
+        )
       })
     ]
   )

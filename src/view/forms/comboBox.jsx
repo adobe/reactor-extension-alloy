@@ -53,9 +53,10 @@ export default function comboBox({
   allowsCustomValue = false,
   width = "size-5000",
   defaultValue = "",
-  Component = FormikKeyedComboBox
+  Component = FormikKeyedComboBox,
+  validationSchemaBase = string()
 }) {
-  let fieldSchema = string();
+  let fieldSchema = validationSchemaBase;
   if (!allowsCustomValue) {
     fieldSchema = fieldSchema.test(
       name,
@@ -120,7 +121,10 @@ export default function comboBox({
     },
     getSettings({ values }) {
       const settings = {};
-      if (values[name] !== defaultValue) {
+      if (
+        values[name] !== defaultValue &&
+        (defaultValue !== "" || values[name] !== undefined)
+      ) {
         const item = items.find(({ label: l }) => l === values[name]);
         settings[name] = item ? item.value : values[name];
       }
