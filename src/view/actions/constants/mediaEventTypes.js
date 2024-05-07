@@ -28,5 +28,4 @@ export default {
   "media.sessionComplete": "Media sessionComplete",
   "media.sessionEnd": "Media sessionEnd",
   "media.statesUpdate": "Media statesUpdate"
-  // "media.downloaded": "Media downloaded content" - this doesn't make sense in web
 };

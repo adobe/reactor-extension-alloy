@@ -24,6 +24,18 @@ import checkbox from "../forms/checkbox";
 import objectArray from "../forms/objectArray";
 import section from "../forms/section";
 import dataElement from "../forms/dataElement";
+import mediaStates from "./constants/mediaStates";
+import mediaContentTypes from "./constants/mediaContentTypes";
+import mediaShowTypes from "./constants/mediaShowTypes";
+
+const getSortedInputItems = mapItems => {
+  return Object.keys(mapItems)
+    .reduce((items, key) => {
+      items.push({ value: key, label: mapItems[key] });
+      return items;
+    }, [])
+    .sort((a, b) => a.label.localeCompare(b.label));
+};
 
 const wrapGetInitialValues =
   getInitialValues =>
@@ -356,7 +368,7 @@ const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
       label: "States started",
       learnMoreUrl:
         "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/list-of-states-start-collection",
-      singularLabel: "State",
+      singularLabel: "State that started",
       description: "Create an array of states that started.",
       dataElementDescription:
         "Provide a data element that returns an array of states that started.",
@@ -366,13 +378,7 @@ const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
       comboBox({
         name: "name",
         description: "Select or enter the state that started.",
-        items: [
-          { value: "fullScreen", label: "Full screen" },
-          { value: "closedCaptioning", label: "Closed captioning" },
-          { value: "mute", label: "Mute" },
-          { value: "pictureInPicture", label: "Picture in picture" },
-          { value: "inFocus", label: "In focus" }
-        ],
+        items: getSortedInputItems(mediaStates),
         allowsCustomValue: true
       })
     ]
@@ -383,7 +389,7 @@ const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
       label: "States ended",
       learnMoreUrl:
         "https://experienceleague.adobe.com/en/docs/experience-platform/xdm/data-types/list-of-states-end-collection",
-      singularLabel: "State",
+      singularLabel: "State that ended",
       description: "Create an array of states that ended.",
       dataElementDescription:
         "Provide a data element that returns an array of states that ended.",
@@ -393,13 +399,7 @@ const stateUpdateDetailsSection = section({ label: "State Update Details" }, [
       comboBox({
         name: "name",
         description: "Select or enter the state that ended.",
-        items: [
-          { value: "fullScreen", label: "Full screen" },
-          { value: "closedCaptioning", label: "Closed captioning" },
-          { value: "mute", label: "Mute" },
-          { value: "pictureInPicture", label: "Picture in picture" },
-          { value: "inFocus", label: "In focus" }
-        ],
+        items: getSortedInputItems(mediaStates),
         allowsCustomValue: true
       })
     ]
@@ -431,17 +431,7 @@ const sessionDetailsSection = dataElementSection(
         "Enter the content type of the media session. Select a predefined value or enter a custom value.",
       dataElementDescription:
         "Provide a data element that returns to a content type.",
-      items: [
-        { value: "vod", label: "Video-on-demand" },
-        { value: "live", label: "Live streaming" },
-        { value: "linear", label: "Linear playback of the media asset" },
-        { value: "ugc", label: "User-generated content" },
-        { value: "dvod", label: "Downloaded video-on-demand" },
-        { value: "radio", label: "Radio show" },
-        { value: "podcast", label: "Podcast" },
-        { value: "audiobook", label: "Audiobook" },
-        { value: "song", label: "Song" }
-      ],
+      items: getSortedInputItems(mediaContentTypes),
       allowsCustomValue: true
     }),
     textField({
@@ -565,12 +555,7 @@ const sessionDetailsSection = dataElementSection(
         "Type of content, expressed as an integer between 0 and 3. Select a predefined value or enter a custom value.",
       dataElementDescription:
         "Provide a data element that returns a show type.",
-      items: [
-        { value: "0", label: "Full episode" },
-        { value: "1", label: "Preview/trailer" },
-        { value: "2", label: "Clip" },
-        { value: "3", label: "Other" }
-      ],
+      items: getSortedInputItems(mediaShowTypes),
       allowsCustomValue: true
     }),
     textField({
@@ -740,10 +725,7 @@ const sendEventForm = form(
       label: "Media event type",
       description: "Select your media event type.",
       isRequired: true,
-      items: Object.keys(mediaEventTypes).reduce((items, key) => {
-        items.push({ value: key, label: mediaEventTypes[key] });
-        return items;
-      }, [])
+      items: getSortedInputItems(mediaEventTypes)
     }),
     textField({
       name: "playerId",
@@ -768,7 +750,8 @@ const sendEventForm = form(
           name: "playhead",
           label: "Playhead",
           isRequired: true,
-          description: "Provide a data element that returns the playback playhead in seconds.",
+          description:
+            "Provide a data element that returns the playback playhead in seconds.",
           tokenize: false
         })
       ]
