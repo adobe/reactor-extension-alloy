@@ -418,13 +418,6 @@ const sessionDetailsSection = dataElementSection(
     objectKey: "sessionDetails"
   },
   [
-    textField({
-      name: "channel",
-      label: "Channel",
-      isRequired: true,
-      description:
-        "Distribution station or channels where the content is played. Any string value is accepted here."
-    }),
     comboBox({
       name: "contentType",
       label: "Content type",
@@ -437,10 +430,11 @@ const sessionDetailsSection = dataElementSection(
       allowsCustomValue: true
     }),
     textField({
-      name: "playerName",
-      label: "Content player name",
+      name: "channel",
+      label: "Channel",
       isRequired: true,
-      description: "Name of the media player."
+      description:
+        "Distribution station or channels where the content is played. Any string value is accepted here."
     }),
     numberField({
       name: "length", // integer
@@ -460,10 +454,22 @@ const sessionDetailsSection = dataElementSection(
         "Content ID of the content, which can be used to tie back to other industry / CMS IDs."
     }),
     textField({
+      name: "playerName",
+      label: "Content player name",
+      isRequired: true,
+      description: "Name of the media player."
+    }),
+    textField({
       name: "adLoad",
       label: "Ad load type",
       isRequired: false,
       description: ""
+    }),
+    textField({
+      name: "album",
+      label: "Album",
+      isRequired: false,
+      description: "The author of the content."
     }),
     textField({
       name: "appVersion",
@@ -479,17 +485,33 @@ const sessionDetailsSection = dataElementSection(
       description: "Artist's name."
     }),
     textField({
-      name: "rating",
-      label: "Rating",
-      isRequired: false,
-      description: "Rating as defined by TV Parental Guidelines."
-    }),
-    textField({
-      name: "show",
-      label: "Show",
+      name: "assetID",
+      label: "Asset ID",
       isRequired: false,
       description:
-        "Program/series name. Program name is required only if the show is part of a series."
+        "This is the unique identifier for the content of the media asset, such as the TV series episode identifier, " +
+        "movie asset identifier, or live event identifier. Typically these IDs are derived from metadata authorities " +
+        "such as EIDR, TMS/Gracenote, or Rovi. These identifiers can also be from other proprietary or in-house systems."
+    }),
+    textField({
+      name: "author",
+      label: "Author",
+      isRequired: false,
+      description: "Name of the author (of an audiobook)."
+    }),
+    textField({
+      name: "authorized",
+      label: "Authorized",
+      isRequired: false,
+      description: "The user has been authorized via Adobe authentication."
+    }),
+    textField({
+      name: "dayPart",
+      label: "Day Part",
+      isRequired: false,
+      description:
+        "A property that defines the time of the day when the content was broadcast or played. This could have " +
+        "any value set as necessary by customers."
     }),
     textField({
       name: "episode",
@@ -498,10 +520,10 @@ const sessionDetailsSection = dataElementSection(
       description: "Episode number."
     }),
     textField({
-      name: "originator",
-      label: "Originator",
+      name: "feed",
+      label: "Feed type",
       isRequired: false,
-      description: "Creator of the content."
+      description: "Type of feed."
     }),
     textField({
       name: "firstAirDate",
@@ -511,28 +533,19 @@ const sessionDetailsSection = dataElementSection(
         "The date when the content first aired on television. Any date format is acceptable, but Adobe recommends: YYYY-MM-DD."
     }),
     textField({
-      name: "streamType", // add here types of stream audio - video
-      label: "Stream type",
+      name: "firstDigitalDate",
+      label: "First digital date",
       isRequired: false,
-      description: "Identifies the stream type."
+      description:
+        "The date when the content first aired on any digital channel or platform. Any date format is " +
+        "acceptable but Adobe recommends: YYYY-MM-DD."
     }),
     textField({
-      name: "authorized",
-      label: "Authorized",
+      name: "friendlyName",
+      label: "Content name",
       isRequired: false,
-      description: "The user has been authorized via Adobe authentication."
-    }),
-    textField({
-      name: "streamFormat",
-      label: "Stream format",
-      isRequired: false,
-      description: "Format of the stream (HD, SD)."
-    }),
-    textField({
-      name: "station",
-      label: "Station",
-      isRequired: false,
-      description: "Name / ID of the radio station."
+      description:
+        "This is the “friendly” (human-readable) name of the content."
     }),
     textField({
       name: "genre",
@@ -544,11 +557,54 @@ const sessionDetailsSection = dataElementSection(
         "with each line item receiving equal metrics weight."
     }),
     textField({
+      name: "label",
+      label: "Label",
+      isRequired: false,
+      description: "Name of the record label."
+    }),
+    textField({
+      name: "rating",
+      label: "Rating",
+      isRequired: false,
+      description: "Rating as defined by TV Parental Guidelines."
+    }),
+    textField({
+      name: "mvpd",
+      label: "MVPD",
+      isRequired: false,
+      description: "MVPD provided via Adobe authentication."
+    }),
+    textField({
+      name: "network",
+      label: "Network",
+      isRequired: false,
+      description: "The network/channel name."
+    }),
+    textField({
+      name: "originator",
+      label: "Originator",
+      isRequired: false,
+      description: "Creator of the content."
+    }),
+    textField({
+      name: "publisher",
+      label: "Publisher",
+      isRequired: false,
+      description: "Name of the audio content publisher."
+    }),
+    textField({
       name: "season",
       label: "Season",
       isRequired: false,
       description:
         "The season number the show belongs to. Season Series is required only if the show is part of a series."
+    }),
+    textField({
+      name: "show",
+      label: "Show",
+      isRequired: false,
+      description:
+        "Program/series name. Program name is required only if the show is part of a series."
     }),
     comboBox({
       name: "showType",
@@ -561,78 +617,22 @@ const sessionDetailsSection = dataElementSection(
       allowsCustomValue: true
     }),
     textField({
-      name: "friendlyName",
-      label: "Content name",
+      name: "streamType", // add here types of stream audio - video
+      label: "Stream type",
       isRequired: false,
-      description:
-        "This is the “friendly” (human-readable) name of the content."
+      description: "Identifies the stream type."
     }),
     textField({
-      name: "author",
-      label: "Author",
+      name: "streamFormat",
+      label: "Stream format",
       isRequired: false,
-      description: "Name of the author (of an audiobook)."
+      description: "Format of the stream (HD, SD)."
     }),
     textField({
-      name: "album",
-      label: "Album",
+      name: "station",
+      label: "Station",
       isRequired: false,
-      description: "The author of the content."
-    }),
-    textField({
-      name: "dayPart",
-      label: "Day Part",
-      isRequired: false,
-      description:
-        "A property that defines the time of the day when the content was broadcast or played. This could have " +
-        "any value set as necessary by customers."
-    }),
-    textField({
-      name: "label",
-      label: "Label",
-      isRequired: false,
-      description: "Name of the record label."
-    }),
-    textField({
-      name: "mvpd",
-      label: "MVPD",
-      isRequired: false,
-      description: "MVPD provided via Adobe authentication."
-    }),
-    textField({
-      name: "feed",
-      label: "Feed type",
-      isRequired: false,
-      description: "Type of feed."
-    }),
-    textField({
-      name: "assetID",
-      label: "Asset ID",
-      isRequired: false,
-      description:
-        "This is the unique identifier for the content of the media asset, such as the TV series episode identifier, " +
-        "movie asset identifier, or live event identifier. Typically these IDs are derived from metadata authorities " +
-        "such as EIDR, TMS/Gracenote, or Rovi. These identifiers can also be from other proprietary or in-house systems."
-    }),
-    textField({
-      name: "publisher",
-      label: "Publisher",
-      isRequired: false,
-      description: "Name of the audio content publisher."
-    }),
-    textField({
-      name: "firstDigitalDate",
-      label: "First digital date",
-      isRequired: false,
-      description:
-        "The date when the content first aired on any digital channel or platform. Any date format is " +
-        "acceptable but Adobe recommends: YYYY-MM-DD."
-    }),
-    textField({
-      name: "network",
-      label: "Network",
-      isRequired: false,
-      description: "The network/channel name."
+      description: "Name / ID of the radio station."
     })
   ]
 );
