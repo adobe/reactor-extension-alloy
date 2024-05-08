@@ -31,7 +31,6 @@ const CodeField = ({
   language,
   placeholder
 }) => {
-
   const [{ value }, { touched, error }, { setValue, setTouched }] =
     useField(name);
 
