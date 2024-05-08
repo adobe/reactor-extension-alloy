@@ -14,8 +14,10 @@ import { RequestMock } from "testcafe";
 import responseHeaders from "./responseHeaders";
 
 const DATA_ELEMENTS_REGEX = /properties\/PRabcd\/data_elements/;
-const DATA_ELEMENTS_FIRST_PAGE_REGEX = /properties\/PRabcd\/data_elements?.*page%5Bnumber%5D=1/;
-const DATA_ELEMENTS_SECOND_PAGE_REGEX = /properties\/PRabcd\/data_elements?.*page%5Bnumber%5D=2/;
+const DATA_ELEMENTS_FIRST_PAGE_REGEX =
+  /properties\/PRabcd\/data_elements?.*page%5Bnumber%5D=1/;
+const DATA_ELEMENTS_SECOND_PAGE_REGEX =
+  /properties\/PRabcd\/data_elements?.*page%5Bnumber%5D=2/;
 
 const testDataVariable1 = {
   id: "DE1",
@@ -28,8 +30,7 @@ const testDataVariable1 = {
         name: "prod"
       },
       schema: {
-        id:
-          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+        id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
         version: "1.2"
       }
     })
@@ -46,15 +47,14 @@ const testDataVariable2 = {
         name: "prod"
       },
       schema: {
-        id:
-          "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+        id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
         version: "1.1"
       }
     })
   }
 };
 const otherDataElement1 = {
-  id: "DE3",
+  id: "ODE1",
   attributes: {
     name: "Other data element 1",
     delegate_descriptor_id: "core::dataElements::constant",
@@ -96,7 +96,7 @@ const testDataVariable4 = {
   }
 };
 const testDataVariable5 = {
-  id: "DE4",
+  id: "DE5",
   attributes: {
     name: "Test data variable 5",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
@@ -113,7 +113,7 @@ const testDataVariable5 = {
   }
 };
 const testDataVariable6 = {
-  id: "DE4",
+  id: "DE6",
   attributes: {
     name: "Test data variable 6",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
@@ -129,6 +129,29 @@ const testDataVariable6 = {
     })
   }
 };
+const testSolutionsVariable1 = {
+  id: "SDE1",
+  attributes: {
+    name: "Test solutions variable 1",
+    delegate_descriptor_id: "adobe-alloy::dataElements::variable",
+    settings: JSON.stringify({
+      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
+      solutions: ["analytics", "target", "audienceManager"]
+    })
+  }
+};
+const testSolutionsVariable2 = {
+  id: "SDE2",
+  attributes: {
+    name: "Test solutions variable 2",
+    delegate_descriptor_id: "adobe-alloy::dataElements::variable",
+    settings: JSON.stringify({
+      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1960",
+      solutions: ["target"]
+    })
+  }
+};
+
 export const notFound = RequestMock()
   .onRequestTo({ url: DATA_ELEMENTS_REGEX, method: "GET" })
   .respond({}, 404, responseHeaders);
@@ -214,6 +237,46 @@ export const multiple = RequestMock()
         testDataVariable4,
         testDataVariable5,
         testDataVariable6
+      ],
+      meta: {
+        pagination: {
+          current_page: 1,
+          next_page: null
+        }
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const singleSolutions = RequestMock()
+  .onRequestTo({ url: DATA_ELEMENTS_REGEX, method: "GET" })
+  .respond(
+    {
+      data: [otherDataElement1, testSolutionsVariable1],
+      meta: {
+        pagination: {
+          current_page: 1,
+          next_page: null,
+          prev_page: null,
+          total_pages: 1,
+          total_count: 2
+        }
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const multipleBothTypes = RequestMock()
+  .onRequestTo({ url: DATA_ELEMENTS_REGEX, method: "GET" })
+  .respond(
+    {
+      data: [
+        testSolutionsVariable1,
+        testSolutionsVariable2,
+        testDataVariable1,
+        testDataVariable2
       ],
       meta: {
         pagination: {

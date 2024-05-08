@@ -11,18 +11,22 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const build = require("./helpers/build.js");
-const buildExtensionManifest = require("./helpers/buildExtensionManifest.js");
 
-(async () => {
-  const manifestPath = await buildExtensionManifest();
+import build from "./helpers/build.mjs";
+import buildExtensionManifest from "./helpers/buildExtensionManifest.mjs";
+
+try {
+  const resultPath = await buildExtensionManifest();
+  // eslint-disable-next-line no-console
   console.log(
     "\x1b[32m%s\x1b[0m",
-    `✅ Extension manifest written to ${manifestPath}`
+    `✅ Extension manifest written to ${resultPath}`
   );
-  await build({ watch: true });
-  // importing @adobe/reactor-sandbox requires that an extension.json file exists
-  // so we need to wait for the build to start before importing it
-  // eslint-disable-next-line global-require
-  await require("@adobe/reactor-sandbox").run();
-})();
+
+  await build();
+
+  process.exit(0);
+} catch (e) {
+  console.error(e);
+  process.exit(1);
+}

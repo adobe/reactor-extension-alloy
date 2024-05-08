@@ -23,13 +23,11 @@ import FormElementContainer from "../formElementContainer";
 /**
  * The form for editing a node that is an object type.
  */
-const ObjectEdit = ({ fieldName }) => {
+const ObjectEdit = ({ fieldName, verticalLayout = false }) => {
   const [{ value: formStateNode }] = useField(fieldName);
 
-  const {
-    isPartsPopulationStrategySupported,
-    populationStrategy
-  } = formStateNode;
+  const { isPartsPopulationStrategySupported, populationStrategy } =
+    formStateNode;
 
   return (
     <FormElementContainer>
@@ -60,7 +58,7 @@ const ObjectEdit = ({ fieldName }) => {
       ) : (
         <div>
           To provide values for individual attributes, please select the
-          attributes in the tree on the left.
+          attributes in the tree {verticalLayout ? "above" : "on the left"}.
         </div>
       )}
     </FormElementContainer>
@@ -68,7 +66,8 @@ const ObjectEdit = ({ fieldName }) => {
 };
 
 ObjectEdit.propTypes = {
-  fieldName: PropTypes.string.isRequired
+  fieldName: PropTypes.string.isRequired,
+  verticalLayout: PropTypes.bool
 };
 
 export default ObjectEdit;

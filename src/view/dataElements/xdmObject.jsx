@@ -111,14 +111,12 @@ const initializeSchemas = async ({
   imsAccess
 }) => {
   const { sandboxName } = initialValues;
-  const {
-    results: schemasFirstPage,
-    nextPage: schemasFirstPageCursor
-  } = await fetchSchemasMeta({
-    orgId,
-    imsAccess,
-    sandboxName
-  });
+  const { results: schemasFirstPage, nextPage: schemasFirstPageCursor } =
+    await fetchSchemasMeta({
+      orgId,
+      imsAccess,
+      sandboxName
+    });
 
   if (schemasFirstPage.length === 1 && !schemasFirstPageCursor) {
     const { $id, title, version } = schemasFirstPage[0];
@@ -138,92 +136,99 @@ const initializeSchemas = async ({
   context.schemasFirstPageCursor = schemasFirstPageCursor;
 };
 
-const getInitialValues = context => async ({ initInfo }) => {
-  const {
-    company: { orgId },
-    tokens: { imsAccess }
-  } = initInfo;
-  const {
-    sandbox: { name: sandboxName } = {},
-    schema: { id: schemaId, version: schemaVersion } = {},
-    data = {}
-  } = initInfo.settings || {};
+const getInitialValues =
+  context =>
+  async ({ initInfo }) => {
+    const {
+      company: { orgId },
+      tokens: { imsAccess }
+    } = initInfo;
+    const {
+      sandbox: { name: sandboxName } = {},
+      schema: { id: schemaId, version: schemaVersion } = {},
+      data = {}
+    } = initInfo.settings || {};
 
-  const initialValues = {
-    sandboxName: sandboxName || ""
+    const initialValues = {
+      sandboxName: sandboxName || ""
+    };
+
+    // settings.sandbox may not exist because sandboxes were introduced sometime
+    // after the XDM Object data element type was released to production. For
+    // this reason, we have to check to see if settings.sandbox exists. When
+    // Platform added support for sandboxes, they moved all existing schemas
+    // to a default "prod" sandbox, which is why we can fall back to
+    // DEFAULT_SANDBOX_NAME here.
+    if (schemaId && schemaVersion && !sandboxName) {
+      initialValues.sandboxName = DEFAULT_SANDBOX_NAME;
+    }
+
+    const args = {
+      initialValues,
+      context,
+      sandboxName,
+      schemaId,
+      schemaVersion,
+      orgId,
+      imsAccess
+    };
+
+    await initializeSandboxes(args);
+    await Promise.all([
+      initializeSelectedSchema(args),
+      initializeSchemas(args)
+    ]);
+
+    if (context.schema) {
+      const initialFormState = getInitialFormState({
+        schema: context.schema,
+        value: data
+      });
+      Object.assign(initialValues, initialFormState);
+    }
+    return initialValues;
   };
 
-  // settings.sandbox may not exist because sandboxes were introduced sometime
-  // after the XDM Object data element type was released to production. For
-  // this reason, we have to check to see if settings.sandbox exists. When
-  // Platform added support for sandboxes, they moved all existing schemas
-  // to a default "prod" sandbox, which is why we can fall back to
-  // DEFAULT_SANDBOX_NAME here.
-  if (schemaId && schemaVersion && !sandboxName) {
-    initialValues.sandboxName = DEFAULT_SANDBOX_NAME;
-  }
+const getSettings =
+  context =>
+  ({ values }) => {
+    const { sandboxName, selectedSchema } = values || {};
 
-  const args = {
-    initialValues,
-    context,
-    sandboxName,
-    schemaId,
-    schemaVersion,
-    orgId,
-    imsAccess
+    return {
+      sandbox: {
+        name: sandboxName
+      },
+      schema: {
+        id: selectedSchema?.$id,
+        version: selectedSchema?.version
+      },
+      data: context.schema
+        ? getValueFromFormState({
+            formStateNode: { ...values, schema: context.schema }
+          }) || {}
+        : {}
+    };
   };
-
-  await initializeSandboxes(args);
-  await Promise.all([initializeSelectedSchema(args), initializeSchemas(args)]);
-
-  if (context.schema) {
-    const initialFormState = getInitialFormState({
-      schema: context.schema,
-      value: data
-    });
-    Object.assign(initialValues, initialFormState);
-  }
-  return initialValues;
-};
-
-const getSettings = context => ({ values }) => {
-  const { sandboxName, selectedSchema } = values || {};
-
-  return {
-    sandbox: {
-      name: sandboxName
-    },
-    schema: {
-      id: selectedSchema?.$id,
-      version: selectedSchema?.version
-    },
-    data: context.schema
-      ? getValueFromFormState({
-          formStateNode: { ...values, schema: context.schema }
-        }) || {}
-      : {}
-  };
-};
 
 const formikStateValidationSchema = object().shape({
   sandboxName: string().required("Please select a sandbox."),
-  selectedSchema: object()
-    .nullable()
-    .required("Please select a schema.")
+  selectedSchema: object().nullable().required("Please select a schema.")
 });
 
-const validateFormikState = context => ({ values }) => {
-  // We can't and don't need to do validation on the formik values
-  // if the editor isn't even renderable. validateNonFormikState
-  // will ensure that the view is properly marked invalid in this
-  // case.
-  const { schema } = context;
-  if (!schema) {
-    return {};
-  }
+const validateFormikState =
+  context =>
+  ({ values }) => {
+    // We can't and don't need to do validation on the formik values
+    // if the editor isn't even renderable. validateNonFormikState
+    // will ensure that the view is properly marked invalid in this
+    // case.
+    const { schema } = context;
+    if (!schema) {
+      return {};
+    }
 
-  return validate(values);
-};
+    return validate(values);
+  };
 
 const validateNonFormikState = context => () => {
   const { schema } = context;
@@ -259,14 +264,12 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [hasSchema, setHasSchema] = useState(schema != null);
 
-  const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
+  const abortPreviousRequestsAndCreateSignal =
+    useAbortPreviousRequestsAndCreateSignal();
 
   const [{ value: selectedSandboxName }] = useField("sandboxName");
-  const [
-    { value: selectedSchema },
-    ,
-    { setValue: setSelectedSchema }
-  ] = useField("selectedSchema");
+  const [{ value: selectedSchema }, , { setValue: setSelectedSchema }] =
+    useField("selectedSchema");
 
   useChanged(() => {
     setHasSchema(false);
@@ -275,35 +278,39 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
     setSelectedSchema(null);
   }, [selectedSandboxName]);
 
-  useChanged(async () => {
-    setHasSchema(false);
-    context.schema = null;
-    setSelectedNodeId(null);
+  useChanged(() => {
+    async function setNewSchema() {
+      setHasSchema(false);
+      context.schema = null;
+      setSelectedNodeId(null);
 
-    const signal = abortPreviousRequestsAndCreateSignal();
-    const newSchema = await fetchSchema({
-      orgId,
-      imsAccess,
-      schemaId: selectedSchema.$id,
-      schemaVersion: selectedSchema.version,
-      sandboxName: selectedSandboxName,
-      signal
-    });
-    if (newSchema) {
-      context.schema = newSchema;
-      const initialFormState = getInitialFormState({
-        schema: newSchema,
-        existingFormStateNode: values
+      const signal = abortPreviousRequestsAndCreateSignal();
+      const newSchema = await fetchSchema({
+        orgId,
+        imsAccess,
+        schemaId: selectedSchema.$id,
+        schemaVersion: selectedSchema.version,
+        sandboxName: selectedSandboxName,
+        signal
       });
-      resetForm({
-        values: {
-          ...initialFormState,
-          selectedSchema,
-          sandboxName: selectedSandboxName
-        }
-      });
-      setHasSchema(true);
+      if (newSchema) {
+        context.schema = newSchema;
+        const initialFormState = getInitialFormState({
+          schema: newSchema,
+          existingFormStateNode: values
+        });
+        resetForm({
+          values: {
+            ...initialFormState,
+            selectedSchema,
+            sandboxName: selectedSandboxName
+          }
+        });
+        setHasSchema(true);
+      }
     }
+
+    setNewSchema();
   }, [selectedSchema?.$id]);
 
   const loadSchemas = async ({ filterText, cursor, signal }) => {

@@ -11,11 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { lightTheme, Provider } from "@adobe/react-spectrum";
 import deserializeReactElement from "./deserializeReactElement";
 import Heading from "../../../../src/view/components/typography/heading";
 import Body from "../../../../src/view/components/typography/body";
+
+const container = document.getElementById("root");
+const root = createRoot(container);
 
 // If you're adding tests for a component, be sure to add the component here.
 const components = {
@@ -29,14 +32,13 @@ window.renderSerializedReactElement = element => {
     components
   });
 
-  ReactDOM.render(
+  root.render(
     <Provider
       theme={lightTheme}
       colorScheme="light"
       UNSAFE_className="react-spectrum-provider"
     >
       {deserializedReactElement}
-    </Provider>,
-    document.getElementById("root")
+    </Provider>
   );
 };

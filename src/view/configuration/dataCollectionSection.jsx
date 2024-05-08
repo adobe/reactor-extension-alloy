@@ -192,11 +192,10 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                   data-test-id="downloadLinkQualifierTestButton"
                   onPress={async () => {
                     const currentPattern = instanceValues.downloadLinkQualifier;
-                    const newPattern = await window.extensionBridge.openRegexTester(
-                      {
+                    const newPattern =
+                      await window.extensionBridge.openRegexTester({
                         pattern: currentPattern
-                      }
-                    );
+                      });
                     setFieldValue(
                       `${instanceFieldName}.downloadLinkQualifier`,
                       newPattern

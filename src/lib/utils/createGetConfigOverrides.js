@@ -45,10 +45,11 @@ const createGetConfigOverrides = environmentName => settings => {
   }
 
   if (computedConfigOverrides.com_adobe_analytics?.reportSuites?.length > 0) {
-    computedConfigOverrides.com_adobe_analytics.reportSuites = computedConfigOverrides.com_adobe_analytics.reportSuites
-      .flatMap(val => (val.includes(",") ? val.split(/,\s*/gi) : val))
-      .map(rsid => rsid.trim())
-      .filter(Boolean);
+    computedConfigOverrides.com_adobe_analytics.reportSuites =
+      computedConfigOverrides.com_adobe_analytics.reportSuites
+        .flatMap(val => (val.includes(",") ? val.split(/,\s*/gi) : val))
+        .map(rsid => rsid.trim())
+        .filter(Boolean);
   }
 
   if (
@@ -64,9 +65,7 @@ const createGetConfigOverrides = environmentName => settings => {
     );
     if (Number.isNaN(parsedValue)) {
       throw new Error(
-        `The ID sync container ID "${
-          computedConfigOverrides.com_adobe_identity.idSyncContainerId
-        }" is not a valid integer.`
+        `The ID sync container ID "${computedConfigOverrides.com_adobe_identity.idSyncContainerId}" is not a valid integer.`
       );
     }
     computedConfigOverrides.com_adobe_identity.idSyncContainerId = parsedValue;

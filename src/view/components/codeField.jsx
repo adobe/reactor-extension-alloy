@@ -23,6 +23,7 @@ import CodePreview from "./codePreview";
  */
 const CodeField = ({
   "data-test-id": dataTestId,
+  "aria-label": ariaLabel,
   label,
   buttonLabelSuffix,
   name,
@@ -30,9 +31,9 @@ const CodeField = ({
   language,
   placeholder
 }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
+
   const onPress = async () => {
     setTouched(true);
 
@@ -44,13 +45,16 @@ const CodeField = ({
       options.language = language;
     }
 
+    // This returns undefined when the user clicks cancel.
     let updatedCode = await window.extensionBridge.openCodeEditor(options);
+    if (updatedCode === undefined) {
+      return;
+    }
 
     // If the user never changed placeholder code, don't save the placeholder code.
     if (placeholder && updatedCode === placeholder) {
       updatedCode = "";
     }
-
     setValue(updatedCode);
   };
 
@@ -59,6 +63,7 @@ const CodeField = ({
       data-test-id={dataTestId}
       value={value}
       label={label}
+      aria-label={ariaLabel}
       buttonLabel={`${value ? "Edit" : "Provide"} ${buttonLabelSuffix}`}
       description={description}
       error={touched && error ? error : undefined}
@@ -69,10 +74,11 @@ const CodeField = ({
 
 CodeField.propTypes = {
   "data-test-id": PropTypes.string,
+  "aria-label": PropTypes.string,
   label: PropTypes.string,
   buttonLabelSuffix: PropTypes.string,
   name: PropTypes.string.isRequired,
-  description: PropTypes.string,
+  description: PropTypes.node,
   language: PropTypes.string,
   placeholder: PropTypes.string
 };

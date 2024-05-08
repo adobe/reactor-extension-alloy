@@ -22,17 +22,17 @@ npm run package
 echo "$REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS" > private.key
 
 # reactor-uploader 5.0.5 has a bug where an error occurs during upload
-npx @adobe/reactor-uploader@5.0.4 package-adobe-alloy-${VERSION}.zip \
+# If this fails we sleep for 5 minutes, then run the next command. Sometimes the upload
+# just needs a little time to complete.
+npx @adobe/reactor-uploader@latest package-adobe-alloy-${VERSION}.zip \
   --org-id=97D1F3F459CE0AD80A495CBE@AdobeOrg \
   --tech-account-id=CC7A4BD95E695DBA0A495EB7@techacct.adobe.com \
   --api-key=f401a5fe22184c91a85fd441a8aa2976 \
-  --private-key="./private.key"
+  --private-key="./private.key" \
+  --upload-timeout=300
 
 echo "Y" | npx @adobe/reactor-releaser \
   --org-id=97D1F3F459CE0AD80A495CBE@AdobeOrg \
   --tech-account-id=CC7A4BD95E695DBA0A495EB7@techacct.adobe.com \
   --api-key=f401a5fe22184c91a85fd441a8aa2976 \
   --private-key="./private.key"
-
-
-

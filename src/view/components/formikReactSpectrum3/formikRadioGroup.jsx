@@ -21,11 +21,11 @@ const FormikRadioGroup = ({
   children,
   description,
   width,
+  onChange,
   ...otherProps
 }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
   const radioGroupRef = createRef();
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for RadioGroup, so we wire up Formik's
@@ -54,7 +54,12 @@ const FormikRadioGroup = ({
         {...otherProps}
         ref={radioGroupRef}
         value={value}
-        onChange={setValue}
+        onChange={currentValue => {
+          setValue(currentValue);
+          if (onChange) {
+            onChange(currentValue);
+          }
+        }}
         validationState={touched && error ? "invalid" : undefined}
         width={width}
       >
@@ -68,7 +73,8 @@ FormikRadioGroup.propTypes = {
   name: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   description: PropTypes.string,
-  width: PropTypes.string
+  width: PropTypes.string,
+  onChange: PropTypes.func
 };
 
 export default FormikRadioGroup;

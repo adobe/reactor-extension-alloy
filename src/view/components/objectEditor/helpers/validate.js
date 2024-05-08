@@ -28,6 +28,9 @@ const validate = ({
 }) => {
   const { schema } = formStateNode;
 
+  if (!schema) {
+    return {};
+  }
   const errors = getTypeSpecificHelpers(schema.type).validate({
     formStateNode,
     // By using "once", we ensure that the parent is notified that

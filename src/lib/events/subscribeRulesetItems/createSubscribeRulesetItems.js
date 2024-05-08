@@ -10,18 +10,20 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-module.exports = ({ instanceManager }) => (settings, trigger) => {
-  const { instanceName, ...options } = settings;
+module.exports =
+  ({ instanceManager }) =>
+  (settings, trigger) => {
+    const { instanceName, ...options } = settings;
 
-  const instance = instanceManager.getInstance(instanceName);
-  if (!instance) {
-    throw new Error(
-      `Failed to subscribe ruleset items for instance "${instanceName}". No instance was found with this name.`
-    );
-  }
+    const instance = instanceManager.getInstance(instanceName);
+    if (!instance) {
+      throw new Error(
+        `Failed to subscribe ruleset items for instance "${instanceName}". No instance was found with this name.`
+      );
+    }
 
-  return instance("subscribeRulesetItems", {
-    ...options,
-    callback: trigger
-  });
-};
+    return instance("subscribeRulesetItems", {
+      ...options,
+      callback: trigger
+    });
+  };

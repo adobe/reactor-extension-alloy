@@ -11,14 +11,26 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import path from "path";
+import minimist from "minimist";
+import chalk from "chalk";
+import { Parcel } from "@parcel/core";
+import { createRequire } from "module";
+import EventEmitter from "node:events";
+import { fileURLToPath } from "url";
+import createTestCafe from "testcafe";
+import build from "./helpers/build.mjs";
+import saveAndRestoreFile from "./helpers/saveAndRestoreFile.mjs";
 
-const path = require("path");
-const argv = require("minimist")(process.argv.slice(2));
-const chalk = require("chalk");
-const { Parcel } = require("@parcel/core");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const require = createRequire(import.meta.url);
+const argv = minimist(process.argv.slice(2));
 const sandbox = require("@adobe/reactor-sandbox");
+const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
 
-require("events").EventEmitter.defaultMaxListeners = 30;
+EventEmitter.defaultMaxListeners = 30;
 
 const defaultSpecsPath = path.join(
   __dirname,
@@ -33,10 +45,6 @@ const {
   testName: testNameFilter,
   specsPath = defaultSpecsPath
 } = argv;
-const createTestCafe = require("testcafe");
-const build = require("./helpers/build");
-const saveAndRestoreFile = require("./helpers/saveAndRestoreFile");
-const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
 
 const componentFixturePath = path.join(
   __dirname,
@@ -46,6 +54,7 @@ const componentFixtureOutputDir = path.join(
   __dirname,
   "../componentFixtureDist"
 );
+
 const buildComponentFixtures = async () => {
   const bundler = new Parcel({
     entries: componentFixturePath,
@@ -79,16 +88,16 @@ const buildComponentFixtures = async () => {
   let browsers;
 
   if (chrome) {
-    browsers = "saucelabs:Chrome@latest:macOS 11.00";
+    browsers = "saucelabs:chrome@123:Mac 13";
     concurrency = 4;
   } else if (firefox) {
-    browsers = "saucelabs:Firefox@latest:macOS 11.00";
+    browsers = "saucelabs:firefox@123:Mac 13";
     concurrency = 4;
   } else if (safari) {
-    browsers = "saucelabs:Safari@latest:macOS 11.00";
+    browsers = "saucelabs:safari@17:Mac 13";
     concurrency = 4;
   } else if (edge) {
-    browsers = "saucelabs:MicrosoftEdge@latest:Windows 10";
+    browsers = "saucelabs:MicrosoftEdge@121:Windows 11";
     concurrency = 4;
   } else {
     concurrency = 1;

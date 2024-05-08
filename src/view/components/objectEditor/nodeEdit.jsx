@@ -21,11 +21,15 @@ import {
   BOOLEAN,
   INTEGER,
   NUMBER,
-  OBJECT
+  OBJECT,
+  OBJECT_JSON,
+  OBJECT_ANALYTICS
 } from "./constants/schemaType";
 import ArrayEdit from "./arrayEdit";
 import BooleanEdit from "./booleanEdit";
 import IntegerEdit from "./integerEdit";
+import ObjectJsonEdit from "./objectJsonEdit";
+import ObjectAnalyticsEdit from "./objectAnalyticsEdit";
 import NumberEdit from "./numberEdit";
 import ObjectEdit from "./objectEdit";
 import StringEdit from "./stringEdit";
@@ -47,6 +51,10 @@ const getViewBySchemaType = schemaType => {
       return NumberEdit;
     case OBJECT:
       return ObjectEdit;
+    case OBJECT_JSON:
+      return ObjectJsonEdit;
+    case OBJECT_ANALYTICS:
+      return ObjectAnalyticsEdit;
     default:
       return StringEdit;
   }
@@ -58,7 +66,7 @@ const getViewBySchemaType = schemaType => {
  */
 const NodeEdit = props => {
   const { values: formState } = useFormikContext();
-  const { onNodeSelect, selectedNodeId } = props;
+  const { onNodeSelect, selectedNodeId, verticalLayout = false } = props;
 
   const {
     formStateNode,
@@ -80,23 +88,30 @@ const NodeEdit = props => {
       marginBottom="size-200"
       direction="column"
     >
-      <View data-test-id="breadcrumb" UNSAFE_className="NodeEdit-breadcrumbs">
-        {
-          // There's currently a known error that occurs when Breadcrumbs
-          // is unmounted, but it doesn't seem to affect the UX.
-          // https://github.com/adobe/react-spectrum/issues/1979
-        }
-        {breadcrumb.length > 1 && (
-          <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
-            {breadcrumb.map(item => (
-              <Item key={item.nodeId}>{item.label}</Item>
-            ))}
-          </Breadcrumbs>
-        )}
-      </View>
-      <Heading data-test-id="heading" size="M">
-        {displayName}
-      </Heading>
+      {!verticalLayout && (
+        <>
+          <View
+            data-test-id="breadcrumb"
+            UNSAFE_className="NodeEdit-breadcrumbs"
+          >
+            {
+              // There's currently a known error that occurs when Breadcrumbs
+              // is unmounted, but it doesn't seem to affect the UX.
+              // https://github.com/adobe/react-spectrum/issues/1979
+            }
+            {breadcrumb.length > 1 && (
+              <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
+                {breadcrumb.map(item => (
+                  <Item key={item.nodeId}>{item.label}</Item>
+                ))}
+              </Breadcrumbs>
+            )}
+          </View>
+          <Heading data-test-id="heading" size="S">
+            {displayName}
+          </Heading>
+        </>
+      )}
       {formStateNode.autoPopulationSource !== NONE && (
         <AutoPopulationAlert formStateNode={formStateNode} />
       )}
@@ -105,10 +120,11 @@ const NodeEdit = props => {
           <TypeSpecificNodeEdit
             fieldName={fieldName}
             onNodeSelect={onNodeSelect}
+            verticalLayout={verticalLayout}
           />
           {formStateNode.updateMode && hasClearedAncestor && (
             <FieldDescriptionAndError
-              description="Checking this box will cause this field to be deleted before setting any values. A field further up in the object is already cleared."
+              description="Checking this box will cause this field to be deleted before setting any values. A field further up in the object is already cleared. Fields that are cleared appear with a delete icon in the tree."
               messagePaddingTop="size-0"
               messagePaddingStart="size-300"
             >
@@ -126,7 +142,7 @@ const NodeEdit = props => {
             <FormikCheckbox
               data-test-id="clearField"
               name={`${fieldName}.transform.clear`}
-              description="Checking this box will cause this field to be deleted before setting any values."
+              description="Checking this box will cause this field to be deleted before setting any values. Fields that are cleared appear with a delet icon in the tree."
               width="size-5000"
               isDisabled={hasClearedAncestor}
             >
@@ -141,7 +157,8 @@ const NodeEdit = props => {
 
 NodeEdit.propTypes = {
   onNodeSelect: PropTypes.func.isRequired,
-  selectedNodeId: PropTypes.string.isRequired
+  selectedNodeId: PropTypes.string.isRequired,
+  verticalLayout: PropTypes.bool
 };
 
 export default NodeEdit;

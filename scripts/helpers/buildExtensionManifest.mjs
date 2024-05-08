@@ -9,19 +9,27 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const extensionDescriptorSchema = require("@adobe/reactor-turbine-schemas/schemas/extension-package-web.json");
-const Ajv = require("ajv-draft-04");
-const addAJVFormats = require("ajv-formats");
-const { writeFile } = require("fs/promises");
-const { join, resolve } = require("path");
-const { env } = require("process");
-const prettier = require("prettier");
-const createExtensionManifest = require("./createExtensionManifest");
+import { readFile, writeFile } from "fs/promises";
+import Ajv from "ajv-draft-04";
+import addAJVFormats from "ajv-formats";
+import { join, resolve } from "path";
+import { env } from "process";
+import prettier from "prettier";
+import createExtensionManifest from "./createExtensionManifest.mjs";
+
+const extensionDescriptorSchema = JSON.parse(
+  await readFile(
+    new URL(
+      "../../node_modules/@adobe/reactor-turbine-schemas/schemas/extension-package-web.json",
+      import.meta.url
+    )
+  )
+);
 
 /**
  * Get the variable options for the manifest.
  * @param {Object} environment
- * @returns {import("./createExtensionManifest").ExtensionManifestConfiguration}
+ * @returns {import("./createExtensionManifest.mjs").ExtensionManifestConfiguration}
  */
 const getOptions = environment => {
   // get version from environment
@@ -66,12 +74,12 @@ const getDestination = repoRoot => {
  * @param {boolean=} prettyPrint Whether to pretty print the JSON.
  * @returns {string}
  */
-const stringify = (obj, prettyPrint = true) => {
+const stringify = async (obj, prettyPrint = true) => {
   const result = JSON.stringify(obj);
   if (!prettyPrint) {
     return result;
   }
-  const prettierConfig = prettier.resolveConfig();
+  const prettierConfig = await prettier.resolveConfig();
   return prettier.format(result, {
     ...prettierConfig,
     parser: "json-stringify"
@@ -85,7 +93,8 @@ const stringify = (obj, prettyPrint = true) => {
  * @returns {Promise<void>}
  */
 const write = async (path, content) => {
-  const result = typeof content === "string" ? content : stringify(content);
+  const result =
+    typeof content === "string" ? content : await stringify(content);
   await writeFile(path, result, "utf8");
 };
 
@@ -107,4 +116,4 @@ const build = async () => {
   return writePath;
 };
 
-module.exports = build;
+export default build;

@@ -23,9 +23,8 @@ const FormikCheckboxGroup = ({
   width,
   ...otherProps
 }) => {
-  const [{ value }, { touched, error }, { setValue, setTouched }] = useField(
-    name
-  );
+  const [{ value }, { touched, error }, { setValue, setTouched }] =
+    useField(name);
   const checkboxGroupRef = createRef();
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for FormikCheckboxGroup, so we wire up Formik's

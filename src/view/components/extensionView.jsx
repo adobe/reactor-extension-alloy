@@ -15,7 +15,7 @@ import PropTypes from "prop-types";
 
 import { useFormik, FormikProvider } from "formik";
 import { object } from "yup";
-import { ProgressCircle } from "@adobe/react-spectrum";
+import { ProgressCircle, View } from "@adobe/react-spectrum";
 import useExtensionBridge from "../utils/useExtensionBridge";
 import useReportAsyncError from "../utils/useReportAsyncError";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
@@ -30,6 +30,7 @@ const ExtensionView = ({
 }) => {
   const reportAsyncError = useReportAsyncError();
   const [initInfo, setInitInfo] = useState();
+  const [canRenderView, setCanRenderView] = useState(false);
   const viewRegistrationRef = useRef();
   const formikPropsRef = useRef();
   const getInitialValuesPromiseRef = useRef();
@@ -73,7 +74,11 @@ const ExtensionView = ({
     // (which were set during submitForm()) to see if the form is valid.
     // https://github.com/jaredpalmer/formik/issues/1580
     formikPropsRef.current.setSubmitting(false);
-    return Object.keys(formikPropsRef.current.errors).length === 0;
+
+    // Since React18, errors are not up to date on the formikPropsRef.current object.
+    // We collect the errors by running imperative validateForm() method.
+    const errors = await formikPropsRef.current.validateForm();
+    return Object.keys(errors).length === 0;
   };
 
   const myValidateNonFormikState = async () => {
@@ -92,6 +97,7 @@ const ExtensionView = ({
 
   useExtensionBridge({
     init({ initInfo: _initInfo }) {
+      setCanRenderView(false);
       setInitInfo(_initInfo);
     },
     async getSettings() {
@@ -143,43 +149,52 @@ const ExtensionView = ({
     }, []);
   }
   if (getInitialValues) {
-    useEffect(async () => {
-      if (initInfo) {
-        try {
-          const getInitialValuesPromise = getInitialValues({ initInfo });
-          getInitialValuesPromiseRef.current = getInitialValuesPromise;
-          formikPropsRef.current.resetForm({
-            values: await getInitialValuesPromise
-          });
-        } catch (e) {
-          reportAsyncError(e);
+    useEffect(() => {
+      async function getData() {
+        if (initInfo) {
+          try {
+            const getInitialValuesPromise = getInitialValues({ initInfo });
+            getInitialValuesPromiseRef.current = getInitialValuesPromise;
+            formikPropsRef.current.resetForm({
+              values: await getInitialValuesPromise
+            });
+            setCanRenderView(true);
+            window.loaded = true;
+          } catch (e) {
+            reportAsyncError(e);
+          }
         }
       }
-    }, [initInfo]);
 
-    // Show the spinner if getInitialValues is not done
-    if (!formikPropsRef.current.values) {
-      return (
-        <FillParentAndCenterChildren>
-          <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
-        </FillParentAndCenterChildren>
-      );
-    }
+      getData();
+    }, [initInfo]);
   }
 
-  // Don't render anything until extension bridge calls init
-  if (!initInfo) {
-    return null;
+  useEffect(() => {
+    if (canRenderView) {
+      window.dispatchEvent(new Event("extension-reactor-alloy:rendered"));
+    }
+  }, [canRenderView]);
+
+  // Show the spinner until getInitialValues is done
+  if (!canRenderView) {
+    return (
+      <FillParentAndCenterChildren>
+        <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
+      </FillParentAndCenterChildren>
+    );
   }
 
   return (
-    <FormikProvider value={formikPropsRef.current}>
-      {render({
-        initInfo,
-        formikProps: formikPropsRef.current,
-        registerImperativeFormApi
-      })}
-    </FormikProvider>
+    <View>
+      <FormikProvider value={formikPropsRef.current}>
+        {render({
+          initInfo,
+          formikProps: formikPropsRef.current,
+          registerImperativeFormApi
+        })}
+      </FormikProvider>
+    </View>
   );
 };
 

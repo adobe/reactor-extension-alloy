@@ -10,12 +10,17 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const fs = require("node:fs");
-const path = require("node:path");
-const { performance } = require("node:perf_hooks");
-const stagedGitFiles = require("staged-git-files");
 
-const fsPromises = fs.promises;
+import fs from "fs";
+import fsPromises from "fs/promises";
+import path from "path";
+import { performance } from "perf_hooks";
+import stagedGitFiles from "staged-git-files";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const PROJECT_ROOT = path.resolve(__dirname, "../");
 const COMPARISON_LENGTH = `/*
 Copyright`.length;
@@ -136,4 +141,4 @@ const run = async () => {
   );
 };
 
-run();
+await run();

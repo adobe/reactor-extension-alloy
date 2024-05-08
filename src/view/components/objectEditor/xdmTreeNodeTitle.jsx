@@ -15,21 +15,14 @@ import classNames from "classnames";
 import { Flex } from "@adobe/react-spectrum";
 import AlertIcon from "@spectrum-icons/workflow/Alert";
 import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
-import RemoveCircleIcon from "@spectrum-icons/workflow/RemoveCircle";
+import Delete from "@spectrum-icons/workflow/Delete";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import "./xdmTreeNodeTitle.styl";
 import { EMPTY, FULL, PARTIAL, BLANK } from "./constants/populationAmount";
 
 const XdmTreeNodeTitle = props => {
-  const {
-    id,
-    displayName,
-    type,
-    populationAmount,
-    error,
-    infoTip,
-    clear
-  } = props;
+  const { id, displayName, type, populationAmount, error, infoTip, clear } =
+    props;
   return (
     <Flex
       data-test-id="xdmTreeNodeTitle"
@@ -56,7 +49,7 @@ const XdmTreeNodeTitle = props => {
       </span>
       {clear && (
         <Flex alignItems="center">
-          <RemoveCircleIcon size="XS" />
+          <Delete size="XS" />
         </Flex>
       )}
       {infoTip && (
@@ -66,7 +59,7 @@ const XdmTreeNodeTitle = props => {
           </Flex>
         </div>
       )}
-      <span className="XdmTreeNodeTitle-type">{type}</span>
+      <span className="XdmTreeNodeTitle-type">{type.split("-")[0]}</span>
     </Flex>
   );
 };

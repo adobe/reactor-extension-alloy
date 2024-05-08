@@ -14,6 +14,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Flex, View } from "@adobe/react-spectrum";
 import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
+import Delete from "@spectrum-icons/workflow/Delete";
 import Alert from "../alert";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import { EMPTY, PARTIAL, FULL } from "./constants/populationAmount";
@@ -25,7 +26,9 @@ import IndicatorDescription from "./indicatorDescription";
 const NoSelectedNodeView = ({
   schema,
   previouslySavedSchemaInfo,
-  componentName
+  componentName,
+  verticalLayout,
+  updateMode
 }) => {
   // The schema used when the data element was last saved is different
   // from the latest configured schema. Either the customer has since
@@ -54,9 +57,10 @@ const NoSelectedNodeView = ({
       <div>
         <p>
           Build an object that complies with your configured schema by selecting
-          attributes on the left and providing their values.
+          attributes {verticalLayout ? "above" : "on the left"} and providing
+          their values.
         </p>
-        <Flex direction="column" gap="size-100">
+        <Flex direction="column" gap="size-100" marginBottom="size-500">
           <IndicatorDescription
             indicator={<PopulationAmountIndicator populationAmount={EMPTY} />}
           >
@@ -79,6 +83,14 @@ const NoSelectedNodeView = ({
             Hovering over the icon shows a popup explaining when the field will
             be auto-populated.
           </IndicatorDescription>
+          {updateMode && (
+            <IndicatorDescription indicator={<Delete size="XS" />}>
+              A delete icon indicates that the field will be cleared before
+              setting any values. A field further up in the object is already
+              cleared. This is controlled by the &quot;Clear exisiting
+              values&quot; checkbox when editing a field.
+            </IndicatorDescription>
+          )}
         </Flex>
       </div>
     </div>
@@ -91,7 +103,9 @@ NoSelectedNodeView.propTypes = {
     id: PropTypes.string.isRequired,
     version: PropTypes.string.isRequired
   }),
-  componentName: PropTypes.string.isRequired
+  componentName: PropTypes.string.isRequired,
+  verticalLayout: PropTypes.bool,
+  updateMode: PropTypes.bool
 };
 
 export default NoSelectedNodeView;

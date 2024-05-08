@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /*
 Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -11,15 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const auth = require("@adobe/jwt-auth");
-const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
+import analyticsForm from "./analyticsForm";
 
-(async () => {
-  if (adobeIOClientCredentials) {
-    // eslint-disable-next-line no-console
-    console.log("Org ID:", adobeIOClientCredentials.orgId);
-    const result = await auth(adobeIOClientCredentials);
-    // eslint-disable-next-line no-console
-    console.log("IMS Access Token:", result.access_token);
-  }
-})();
+export default ({ formStateNode, value = {} }) => {
+  formStateNode.isPartsPopulationStrategySupported = true;
+
+  const initialValues = analyticsForm.getInitialValues({
+    initInfo: { settings: value }
+  });
+  Object.assign(formStateNode, initialValues);
+};

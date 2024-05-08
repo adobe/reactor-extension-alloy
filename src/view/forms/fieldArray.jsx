@@ -33,21 +33,23 @@ const StringItem = ({
   error,
   touched,
   isLast
-}) => (
-  <DataElementSelector>
-    <FormikTextField
-      data-test-id={`${namePrefix}${name}${index}Field`}
-      aria-label={`Item ${index + 1}`}
-      name={`${namePrefix}${name}.${index}`}
-      width="size-5000"
-      marginTop="size-0"
-      description={isLast ? description : undefined}
-      error={isLast ? error : undefined}
-      invalid={error && touched}
-      touched={touched}
-    />
-  </DataElementSelector>
-);
+}) => {
+  return (
+    <DataElementSelector>
+      <FormikTextField
+        data-test-id={`${namePrefix}${name}${index}Field`}
+        aria-label={`Item ${index + 1}`}
+        name={`${namePrefix}${name}.${index}`}
+        width="size-5000"
+        marginTop="size-0"
+        description={isLast ? description : undefined}
+        error={isLast ? error : undefined}
+        invalid={error && touched}
+        touched={touched}
+      />
+    </DataElementSelector>
+  );
+};
 StringItem.propTypes = {
   namePrefix: PropTypes.string,
   name: PropTypes.string,
@@ -67,31 +69,33 @@ const ComboboxItem = ({
   touched,
   isLast,
   items
-}) => (
-  <DataElementSelector>
-    <FormikKeyedComboBox
-      data-test-id={`${namePrefix}${name}${index}Field`}
-      aria-label={`Item ${index + 1}`}
-      name={`${namePrefix}${name}.${index}`}
-      width="size-5000"
-      marginTop="size-0"
-      description={isLast ? description : undefined}
-      error={isLast ? error : undefined}
-      invalid={error && touched}
-      touched={touched}
-      items={items}
-      getKey={item => item.value}
-      getLabel={item => item.label}
-      allowsCustomValue
-    >
-      {item => (
-        <Item key={item.value} data-test-id={item.value}>
-          {item.label}
-        </Item>
-      )}
-    </FormikKeyedComboBox>
-  </DataElementSelector>
-);
+}) => {
+  return (
+    <DataElementSelector>
+      <FormikKeyedComboBox
+        data-test-id={`${namePrefix}${name}${index}Field`}
+        aria-label={`Item ${index + 1}`}
+        name={`${namePrefix}${name}.${index}`}
+        width="size-5000"
+        marginTop="size-0"
+        description={isLast ? description : undefined}
+        error={isLast ? error : undefined}
+        invalid={error && touched}
+        touched={touched}
+        items={items}
+        getKey={item => item.value}
+        getLabel={item => item.label}
+        allowsCustomValue
+      >
+        {item => (
+          <Item key={item.value} data-test-id={item.value}>
+            {item.label}
+          </Item>
+        )}
+      </FormikKeyedComboBox>
+    </DataElementSelector>
+  );
+};
 
 ComboboxItem.propTypes = {
   namePrefix: PropTypes.string,

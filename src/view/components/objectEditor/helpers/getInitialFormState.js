@@ -104,6 +104,8 @@ const getInitialFormStateNode = ({
   if (existingFormStateNode) {
     formStateNode.properties = existingFormStateNode.properties;
     formStateNode.items = existingFormStateNode.items;
+    // Keep the ids the same so that the expansion stays the same
+    formStateNode.id = existingFormStateNode.id;
   }
 
   // Type specific helpers should set:

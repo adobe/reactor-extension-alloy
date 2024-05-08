@@ -57,9 +57,8 @@ export const bridge = {
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
-    defaultConsent: createRadioGroupWithDataElementValidationSchema(
-      "defaultConsent"
-    )
+    defaultConsent:
+      createRadioGroupWithDataElementValidationSchema("defaultConsent")
   })
 };
 

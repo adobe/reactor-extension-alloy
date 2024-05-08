@@ -12,17 +12,47 @@ governing permissions and limitations under the License.
 import React from "react";
 import { array, string, object } from "yup";
 import { FieldArray, useField } from "formik";
-import { Flex, Radio, Button, Well } from "@adobe/react-spectrum";
+import { Flex, Radio, Button, Well, ActionButton } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
+import Delete from "@spectrum-icons/workflow/Delete";
 import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import DataElementSelector from "../components/dataElementSelector";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import form from "./form";
+import numberAwareCompareFunction from "../utils/numberAwareCompareFunction";
+import FormElementContainer from "../components/formElementContainer";
 
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
+
+const lowerInitialLetters = s => {
+  return s
+    .split(" ")
+    .map(word => word.charAt(0).toLowerCase() + word.slice(1))
+    .join(" ");
+};
+
+const ObjectArrayContainer = ({ horizontal, children }) => {
+  if (horizontal) {
+    return (
+      <Well
+        UNSAFE_style={{
+          paddingTop: "var(--spectrum-global-dimension-size-100)"
+        }}
+      >
+        <FormElementContainer>{children}</FormElementContainer>
+      </Well>
+    );
+  }
+  return children;
+};
+
+ObjectArrayContainer.propTypes = {
+  horizontal: PropTypes.bool,
+  children: PropTypes.node
+};
 
 /** @typedef {import("./form").Form} Form */
 /**
@@ -60,7 +90,11 @@ export default function objectArray(
     singularLabel,
     dataElementDescription,
     objectKey,
-    objectLabelPlural
+    objectLabelPlural,
+    dataElementSupported = true,
+    horizontal = false,
+    compareFunction = numberAwareCompareFunction,
+    isRowEmpty = () => true
   },
   children = []
 ) {
@@ -77,29 +111,50 @@ export default function objectArray(
   let itemSchema = object().shape(itemValidationShape);
 
   if (objectKey) {
-    itemSchema = itemSchema.test(
-      "unique",
-      `Duplicate ${objectLabelPlural.toLowerCase()} are not allowed`,
-      (value, context) => {
-        if (!value || !value[objectKey]) {
+    itemSchema = itemSchema
+      .test(
+        "unique",
+        `Duplicate ${lowerInitialLetters(objectLabelPlural)} are not allowed`,
+        (value, context) => {
+          if (!value || !value[objectKey]) {
+            return true;
+          }
+
+          const { path, parent } = context;
+          const items = [...parent];
+          const currentIndex = items.indexOf(value);
+          const previousItems = items.slice(0, currentIndex);
+
+          if (
+            previousItems.some(item => item[objectKey] === value[objectKey])
+          ) {
+            throw context.createError({
+              path: `${path}.${objectKey}`,
+              message: `Duplicate ${lowerInitialLetters(
+                objectLabelPlural
+              )} are not allowed`
+            });
+          }
+
           return true;
         }
-
-        const { path, parent } = context;
-        const items = [...parent];
-        const currentIndex = items.indexOf(value);
-        const previousItems = items.slice(0, currentIndex);
-
-        if (previousItems.some(item => item[objectKey] === value[objectKey])) {
-          throw context.createError({
-            path: `${path}.${objectKey}`,
-            message: `Duplicate ${objectLabelPlural.toLowerCase()} are not allowed`
-          });
+      )
+      .test(
+        "key-required-when-values-present",
+        `Please provide a ${lowerInitialLetters(singularLabel)}.`,
+        (value, context) => {
+          if (
+            value[objectKey] === undefined &&
+            Object.keys(value).length !== 0
+          ) {
+            throw context.createError({
+              path: `${context.path}.${objectKey}`,
+              message: `Please provide a ${lowerInitialLetters(singularLabel)}.`
+            });
+          }
+          return true;
         }
-
-        return true;
-      }
-    );
+      );
   }
 
   const validationShape = {};
@@ -126,10 +181,12 @@ export default function objectArray(
 
       let transformedValue = value;
       if (transformedValue && objectKey) {
-        transformedValue = Object.keys(transformedValue).reduce((acc, k) => {
-          acc.push({ [objectKey]: k, ...transformedValue[k] });
-          return acc;
-        }, []);
+        transformedValue = Object.keys(transformedValue)
+          .sort(compareFunction)
+          .reduce((acc, k) => {
+            acc.push({ [objectKey]: k, ...transformedValue[k] });
+            return acc;
+          }, []);
       }
       if (transformedValue && Array.isArray(transformedValue)) {
         transformedValue = transformedValue.map(item =>
@@ -158,8 +215,8 @@ export default function objectArray(
         const itemSettings = values[name].map(item =>
           getItemSettings({ values: item })
         );
-        const filteredItems = itemSettings.filter(
-          item => Object.keys(item).length > 0
+        const filteredItems = itemSettings.filter(item =>
+          objectKey ? item[objectKey] : Object.keys(item).length > 0
         );
         if (filteredItems.length > 0) {
           if (objectKey) {
@@ -187,65 +244,105 @@ export default function objectArray(
       );
 
       return (
-        <>
-          <FormikRadioGroup
-            name={`${namePrefix}${name}InputMethod`}
-            orientation="horizontal"
-            label={label}
-          >
-            <Radio data-test-id={`${namePrefix}${name}FormOption`} value={FORM}>
-              Use a form.
-            </Radio>
-            <Radio
-              data-test-id={`${namePrefix}${name}DataElementOption`}
-              value={DATA_ELEMENT}
+        <ObjectArrayContainer horizontal={horizontal}>
+          {dataElementSupported && (
+            <FormikRadioGroup
+              name={`${namePrefix}${name}InputMethod`}
+              orientation="horizontal"
+              label={label}
             >
-              Provide a data element.
-            </Radio>
-          </FormikRadioGroup>
+              <Radio
+                data-test-id={`${namePrefix}${name}FormOption`}
+                value={FORM}
+              >
+                Use a form.
+              </Radio>
+              <Radio
+                data-test-id={`${namePrefix}${name}DataElementOption`}
+                value={DATA_ELEMENT}
+              >
+                Provide a data element.
+              </Radio>
+            </FormikRadioGroup>
+          )}
           {inputMethod === FORM && (
             <FieldArray
               name={`${namePrefix}${name}`}
               render={arrayHelpers => {
                 return (
                   <>
-                    {items.map((__, index) => {
+                    {items.map((item, index) => {
                       return (
-                        <Well
-                          key={index}
-                          alignSelf="flex-start"
-                          direction="column"
-                          gap="size-100"
-                        >
-                          <ItemComponent
-                            namePrefix={`${namePrefix}${name}.${index}.`}
-                            {...props}
-                          />
-                          <Flex direction="row">
-                            <Button
-                              variant="secondary"
-                              data-test-id={`${namePrefix}${name}${index}RemoveButton`}
-                              onPress={() => {
-                                // using arrayHelpers.remove mangles the error message
-                                setItems(items.filter((_, i) => i !== index));
-                              }}
-                              isDisabled={items.length === 1}
-                              marginStart="auto"
+                        <div key={index}>
+                          {!horizontal && (
+                            <Well
+                              alignSelf="flex-start"
+                              direction="column"
+                              gap="size-100"
                             >
-                              Remove {singularLabel.toLowerCase()}
-                            </Button>
-                          </Flex>
-                        </Well>
+                              <ItemComponent
+                                namePrefix={`${namePrefix}${name}.${index}.`}
+                                {...props}
+                              />
+                              <Flex direction="row">
+                                <Button
+                                  variant="secondary"
+                                  data-test-id={`${namePrefix}${name}${index}RemoveButton`}
+                                  onPress={() => {
+                                    // using arrayHelpers.remove mangles the error message
+                                    setItems(
+                                      items.filter((_, i) => i !== index)
+                                    );
+                                  }}
+                                  isDisabled={
+                                    items.length === 1 && isRowEmpty(item)
+                                  }
+                                  marginStart="auto"
+                                >
+                                  Remove {lowerInitialLetters(singularLabel)}
+                                </Button>
+                              </Flex>
+                            </Well>
+                          )}
+                          {horizontal && (
+                            <Flex direction="row">
+                              <ItemComponent
+                                namePrefix={`${namePrefix}${name}.${index}.`}
+                                hideLabel={index > 0}
+                                horizontal
+                                {...props}
+                              />
+                              <ActionButton
+                                isQuiet
+                                variant="secondary"
+                                data-test-id={`${namePrefix}${name}${index}RemoveButton`}
+                                onPress={() =>
+                                  // using arrayHelpers.remove mangles the error message
+                                  items.length > 1
+                                    ? setItems(
+                                        items.filter((_, i) => i !== index)
+                                      )
+                                    : setItems([buildDefaultItem()])
+                                }
+                                isDisabled={
+                                  items.length === 1 && isRowEmpty(item)
+                                }
+                                marginTop={index === 0 ? "size-300" : 0}
+                              >
+                                <Delete />
+                              </ActionButton>
+                            </Flex>
+                          )}
+                        </div>
                       );
                     })}
                     <div>
-                      <Button
-                        variant="secondary"
+                      <ActionButton
                         data-test-id={`${namePrefix}${name}AddButton`}
                         onPress={() => arrayHelpers.push(buildDefaultItem())}
                       >
-                        Add {singularLabel.toLowerCase()}
-                      </Button>
+                        Add another {lowerInitialLetters(singularLabel)}
+                      </ActionButton>
                     </div>
                   </>
                 );
@@ -263,7 +360,7 @@ export default function objectArray(
               />
             </DataElementSelector>
           )}
-        </>
+        </ObjectArrayContainer>
       );
     }
   };

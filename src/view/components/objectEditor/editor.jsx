@@ -55,17 +55,16 @@ const Editor = ({
   schema,
   previouslySavedSchemaInfo,
   initialExpandedDepth = 0,
-  componentName
+  componentName,
+  verticalLayout = false
 }) => {
   const { values: formState } = useFormikContext();
   const [expandedNodeIdsInTree, setExpandedNodeIdsInTree] = useState(() => {
     // There is a root node with the id node-1. We don't want that.
     return fetchNodeIdsForDepth(formState, initialExpandedDepth + 1).slice(1);
   });
-  const [
-    nodeIdToScrollIntoViewInTree,
-    setNodeIdToScrollIntoViewInTree
-  ] = useState();
+  const [nodeIdToScrollIntoViewInTree, setNodeIdToScrollIntoViewInTree] =
+    useState();
 
   const expandNodeAndAncestorsInTree = nodeId => {
     if (!nodeId) {
@@ -106,7 +105,8 @@ const Editor = ({
       data-test-id="editor"
       marginTop="size-100"
       minHeight={0}
-      gap="size-200"
+      gap="size-400"
+      direction={verticalLayout ? "column" : ""}
     >
       {
         // Minimum of 300px wide, but can expand. This is for when the user
@@ -117,7 +117,7 @@ const Editor = ({
         // scrolling the scroll wheel or swiping when the cursor is over an element
         // that has a scrollbar (vertical or horizontal).
       }
-      <View flex="1 0 300px">
+      <View flex={verticalLayout ? "" : "1 0 300px"}>
         <XdmTree
           selectedNodeId={selectedNodeId}
           expandedNodeIds={expandedNodeIdsInTree}
@@ -129,15 +129,16 @@ const Editor = ({
         />
       </View>
       {
-        // By default, this flex child will stretch to the height of the
-        // flex container. In our case, we want the flex child to shrink
-        // to its content so that it can float within the parent using
-        // position="sticky". This is why we have alignSelf="flex-start".
-        // We have 450px as min width because the tree can stretch in width
-        // and we don't want to shrink too much. If there isn't enough
-        // space on the page, the page will receive a horizontal scrollbar.
+        // We want the first column to be at least 300px wide, but it can
+        // grow the tree gets bigger. Then the second column will take the
+        // rest of the space.
       }
-      <View flex="1 0 450px" alignSelf="flex-start" position="sticky" top={0}>
+      <View
+        flex={verticalLayout ? "" : "0 1 100%"}
+        alignSelf="flex-start"
+        position="sticky"
+        top={0}
+      >
         {selectedNodeId ? (
           <NodeEdit
             onNodeSelect={nodeId => {
@@ -146,12 +147,15 @@ const Editor = ({
               setNodeIdToScrollIntoViewInTree(nodeId);
             }}
             selectedNodeId={selectedNodeId}
+            verticalLayout={verticalLayout}
           />
         ) : (
           <NoSelectedNodeView
             schema={schema}
             previouslySavedSchemaInfo={previouslySavedSchemaInfo}
             componentName={componentName}
+            verticalLayout={verticalLayout}
+            updateMode={formState.updateMode}
           />
         )}
       </View>
@@ -168,7 +172,8 @@ Editor.propTypes = {
     version: PropTypes.string.isRequired
   }),
   initialExpandedDepth: PropTypes.number,
-  componentName: PropTypes.string.isRequired
+  componentName: PropTypes.string.isRequired,
+  verticalLayout: PropTypes.bool
 };
 
 export default Editor;

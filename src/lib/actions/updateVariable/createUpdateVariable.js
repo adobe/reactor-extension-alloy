@@ -12,17 +12,19 @@ governing permissions and limitations under the License.
 
 const { deletePath } = require("../../utils/pathUtils");
 
-module.exports = ({ variableStore, deepAssign }) => ({
-  data,
-  dataElementCacheId,
-  transforms
-}) => {
-  const existingValue = Object.keys(transforms || {}).reduce((memo, path) => {
-    const { clear } = transforms[path];
-    return clear ? deletePath(memo, path) : memo;
-  }, variableStore[dataElementCacheId] || {});
+module.exports =
+  ({ variableStore, deepAssign }) =>
+  ({ data, dataElementCacheId, transforms, customCode }, event) => {
+    const existingValue = Object.keys(transforms || {}).reduce((memo, path) => {
+      const { clear } = transforms[path];
+      return clear ? deletePath(memo, path) : memo;
+    }, variableStore[dataElementCacheId] || {});
 
-  variableStore[dataElementCacheId] = deepAssign({}, existingValue, data);
+    variableStore[dataElementCacheId] = deepAssign({}, existingValue, data);
 
-  return Promise.resolve();
-};
+    if (customCode) {
+      customCode(variableStore[dataElementCacheId], event);
+    }
+
+    return Promise.resolve();
+  };

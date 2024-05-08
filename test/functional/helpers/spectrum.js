@@ -128,9 +128,7 @@ const createExpectMenuOptionLabels = menuSelector => async labels => {
     await t
       .expect(menuItems.nth(i).withExactText(labels[i]).exists)
       .ok(
-        `Option with label ${
-          labels[i]
-        } does not exist when it is expected to exist. Be sure you've opened the menu first.`
+        `Option with label ${labels[i]} does not exist when it is expected to exist. Be sure you've opened the menu first.`
       );
   }
   await t.expect(menuItems.count).eql(labels.length);
@@ -148,9 +146,7 @@ const createExpectMenuOptionsLabelsInclude = menuSelector => async labels => {
     await t
       .expect(menuItems.withExactText(labels[i]).exists)
       .ok(
-        `Option with label ${
-          labels[i]
-        } does not exist when it is expected to exist. Be sure you've opened the menu first.`
+        `Option with label ${labels[i]} does not exist when it is expected to exist. Be sure you've opened the menu first.`
       );
   }
 };
@@ -167,9 +163,7 @@ const createExpectMenuOptionLabelsExclude = menuSelector => async labels => {
     await t
       .expect(menuItems.withExactText(labels[i]).exists)
       .notOk(
-        `Option with label ${
-          labels[i]
-        } exists when it is expected to not exist.`
+        `Option with label ${labels[i]} exists when it is expected to not exist.`
       );
   }
 };
@@ -219,12 +213,10 @@ const componentWrappers = {
       // If the user needs to manually open the menu before viewing option
       // labels, you'll need to call openMenu first.
       expectMenuOptionLabels: createExpectMenuOptionLabels(popoverMenuSelector),
-      expectMenuOptionLabelsInclude: createExpectMenuOptionsLabelsInclude(
-        popoverMenuSelector
-      ),
-      expectMenuOptionLabelsExclude: createExpectMenuOptionLabelsExclude(
-        popoverMenuSelector
-      ),
+      expectMenuOptionLabelsInclude:
+        createExpectMenuOptionsLabelsInclude(popoverMenuSelector),
+      expectMenuOptionLabelsExclude:
+        createExpectMenuOptionLabelsExclude(popoverMenuSelector),
       async enterSearch(text) {
         await t.typeText(selector, text);
       },
@@ -252,9 +244,7 @@ const componentWrappers = {
           }
 
           // eslint-disable-next-line no-await-in-loop
-          await t.scrollIntoView(
-            popoverMenuSelector.find(menuItemCssSelector).nth(-1)
-          );
+          await t.scrollBy(popoverMenuSelector, 0, 200);
         }
 
         throw new Error(
@@ -312,9 +302,7 @@ const componentWrappers = {
           }
 
           // eslint-disable-next-line no-await-in-loop
-          await t.scrollIntoView(
-            popoverMenuSelector.find(menuItemCssSelector).nth(-1)
-          );
+          await t.scrollBy(popoverMenuSelector, 0, 200);
         }
 
         throw new Error(
@@ -340,6 +328,21 @@ const componentWrappers = {
       // are cleared to get rid of the "..." at the end.
       async click() {
         await t.click(selector);
+      }
+    };
+  },
+  textArea(selector) {
+    return {
+      expectError: createExpectError(selector),
+      expectNoError: createExpectNoError(selector),
+      async expectValue(text) {
+        await t.expect(selector.value).eql(text);
+      },
+      async typeText(text) {
+        await t.typeText(selector, text);
+      },
+      async clear() {
+        await t.selectText(selector).pressKey("delete");
       }
     };
   },
@@ -396,9 +399,7 @@ const componentWrappers = {
           await t
             .expect(tabSelector.nth(i).withExactText(labels[i]).exists)
             .ok(
-              `Tab with label ${
-                labels[i]
-              } does not exist when it is expected to exist.`
+              `Tab with label ${labels[i]} does not exist when it is expected to exist.`
             );
         }
         await t.expect(tabSelector.count).eql(labels.length);
@@ -463,4 +464,4 @@ Object.keys(componentWrappers).forEach(componentName => {
   };
 });
 
-module.exports = componentWrappers;
+export default componentWrappers;

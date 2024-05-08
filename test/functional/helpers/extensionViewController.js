@@ -97,5 +97,9 @@ export default {
   async expectSettings(expectedSettings) {
     const actualSettings = await getSettings();
     await t.expect(actualSettings).eql(expectedSettings);
+  },
+  async expectSettingsToContain(expectedSettings) {
+    const actualSettings = await getSettings();
+    await t.expect(actualSettings).contains(expectedSettings);
   }
 };

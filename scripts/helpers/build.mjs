@@ -11,13 +11,15 @@ governing permissions and limitations under the License.
 */
 
 // Ensure we only get the LIGHTEST spectrum theme in the build output.
-process.env.THEME_LIGHTEST = true;
+import { spawn } from "child_process";
+import { rimraf, rimrafSync } from "rimraf";
+import path from "path";
+import fsPromises from "fs/promises";
+import { Parcel } from "@parcel/core";
+import { fileURLToPath } from "url";
 
-const { spawn } = require("child_process");
-const rimraf = require("rimraf");
-const { Parcel } = require("@parcel/core");
-const path = require("path");
-const fsPromises = require("fs").promises;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const inputDir = path.join(__dirname, "../../src");
 const tempDir = path.join(__dirname, "../../temp");
@@ -30,6 +32,9 @@ const alloyInFile = path.join(libInDir, "alloy.js");
 const alloyTempFile = path.join(tempDir, "alloy.js");
 const browserslistrcFile = path.join(libInDir, ".browserslistrc");
 const browserslistrcTempFile = path.join(tempDir, ".browserslistrc");
+
+process.env.THEME_LIGHTEST = true;
+
 const isProdEnv = process.env.NODE_ENV === "production";
 
 const toPromise = func => {
@@ -51,9 +56,9 @@ const run = (command, options) => {
   );
 };
 
-rimraf.sync(outputDir);
+rimrafSync(outputDir);
 
-module.exports = (options = {}) => {
+export default (options = {}) => {
   const { watch, isProd = isProdEnv } = options;
 
   const bundler = new Parcel({
@@ -93,7 +98,9 @@ module.exports = (options = {}) => {
       });
       process.on("exit", () => {
         // stop watching when the main process exits
-        subscription.unsubscribe();
+        if (typeof subscription?.unsubscribe === "function") {
+          subscription.unsubscribe();
+        }
       });
     });
   } else {
@@ -147,7 +154,12 @@ module.exports = (options = {}) => {
         "--presets=@babel/preset-env"
       ])
     )
-    .finally(() => toPromise(callback => rimraf(tempDir, callback)));
+    .finally(() =>
+      toPromise(async callback => {
+        await rimraf(tempDir);
+        callback();
+      })
+    );
 
   return Promise.all([babelPromise, parcelPromise, alloyPromise]);
 };
