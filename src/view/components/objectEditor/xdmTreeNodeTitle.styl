@@ -1,10 +1,10 @@
 .XdmTreeNodeTitle {
   &.is-invalid {
-    color: #ec5b62;
+    color: var(--spectrum-negative-visual-color);
 
     .XdmTreeNodeTitle-type {
       &:before {
-        border-left-color: #ec5b62;
+        border-left-color: var(--spectrum-negative-visual-color);
       }
       color: inherit;
     }
@@ -18,12 +18,20 @@
 .XdmTreeNodeTitle-type {
   &:before {
     content: " ";
-    border-left: 1px solid #cacaca;
+    border-left: 1.5px solid var(--spectrum-gray-500);
     padding-left: 8px;
   }
-  color: #707070;
+  color: var(--spectrum-gray-600);
 }
 
-.ant-tree-treenode-disabled .XdmTreeNodeTitle-type {
-  color: inherit;
+.ant-tree-treenode-disabled {
+  .XdmTreeNodeTitle {
+    color: var(--spectrum-gray-500);
+    &:before {
+      border-left-color: var(--spectrum-gray-500)
+    }
+    .XdmTreeNodeTitle-type {
+      color: var(--spectrum-gray-500);
+    }
+  }
 }
