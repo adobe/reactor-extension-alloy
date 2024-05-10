@@ -24,7 +24,7 @@ html {
 // issue. Instead, we'll switch margin to padding.
 body {
   margin: 0;
-  padding: 8px;
+  padding: 0;
 }
 
 html
@@ -33,7 +33,11 @@ body,
 .react-spectrum-provider {
   display: flex;
   flex-direction: column;
-  flex: 1
+  flex: 1;
+}
+
+.react-spectrum-provider {
+  padding: 8px;
 }
 
 .formik-field textarea {

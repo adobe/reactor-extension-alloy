@@ -14,7 +14,6 @@ import React from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import getDimensionStyle from "../../utils/getDimensionStyle";
-import "./heading.styl";
 
 const tagBySize = {
   XXXL: "h1",
