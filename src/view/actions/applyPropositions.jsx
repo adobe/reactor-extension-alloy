@@ -17,8 +17,46 @@ import textField from "../forms/textField";
 import objectArray from "../forms/objectArray";
 import dataElement from "../forms/dataElement";
 import comboBox from "../forms/comboBox";
+import radioGroup from "../forms/radioGroup";
+import conditional from "../forms/conditional";
+import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
+import singleDataElementRegex from "../constants/singleDataElementRegex";
 
-const applyPropositionsForm = form({}, [
+const wrapGetInitialValues = getInitialValues => args => {
+  const initialValues = getInitialValues(args);
+  if (initialValues.metadata && initialValues.metadata.length > 0) {
+    initialValues.metadata = initialValues.metadata.map(
+      ({ scope, selector, element, actionType }) => {
+        return {
+          scope,
+          selector,
+          element,
+          actionType,
+          elementType: element ? "element" : "selector"
+        };
+      }
+    );
+  }
+  return initialValues;
+};
+
+const wrapGetSettings = getSettings => args => {
+  const settings = getSettings(args);
+  if (settings.metadata && settings.metadata.length > 0) {
+    settings.metadata = Object.keys(settings.metadata || {}).reduce(
+      (memo, scope) => {
+        // eslint-disable-next-line unused-imports/no-unused-vars
+        const { elementType, ...rest } = settings.metadata[scope];
+        memo[scope] = rest;
+        return memo;
+      },
+      {}
+    );
+  }
+  return settings;
+};
+
+const applyPropositionsForm = form({ wrapGetInitialValues, wrapGetSettings }, [
   instancePicker({ name: "instanceName" }),
   dataElement({
     name: "propositions",
@@ -50,12 +88,50 @@ const applyPropositionsForm = form({}, [
         description: "Enter your scope",
         validationSchemaBase: string().required("Please provide a scope.")
       }),
-      textField({
-        name: "selector",
-        label: "Selector",
-        description: "Enter your selector",
-        validationSchemaBase: string().required("Please provide a selector.")
+      radioGroup({
+        name: "elementType",
+        label: "Target element",
+        items: [
+          { value: "selector", label: "Selector" },
+          { value: "element", label: "Element" }
+        ],
+        defaultValue: "selector",
+        orientation: "horizontal",
+        dataElementSupported: false
       }),
+      conditional(
+        {
+          args: "elementType",
+          condition: elementType => elementType === "selector"
+        },
+        [
+          textField({
+            name: "selector",
+            ariaLabel: "Selector",
+            description: "Enter a css-selector for the target element.",
+            validationSchemaBase: string().required(
+              "Please provide a selector."
+            )
+          })
+        ]
+      ),
+      conditional(
+        {
+          args: "elementType",
+          condition: elementType => elementType === "element"
+        },
+        [
+          textField({
+            name: "element",
+            ariaLabel: "Element",
+            description:
+              "Provide a data element that resolves to a DOM element.",
+            validationSchemaBase: string()
+              .required("Please provide an element.")
+              .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+          })
+        ]
+      ),
       comboBox({
         name: "actionType",
         label: "Action Type",
@@ -63,7 +139,8 @@ const applyPropositionsForm = form({}, [
         items: [
           { value: "setHtml", label: "Set HTML" },
           { value: "replaceHtml", label: "Replace HTML" },
-          { value: "appendHtml", label: "Append HTML" }
+          { value: "appendHtml", label: "Append HTML" },
+          { value: "track", label: "Track" }
         ],
         validationSchemaBase: string().required(
           "Please provide an action type."

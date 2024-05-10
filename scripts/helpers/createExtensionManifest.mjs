@@ -310,6 +310,19 @@ const createExtensionManifest = ({ version }) => {
                 edgeConfigOverrides: createEdgeConfigOverridesSchema(false),
                 personalizationStorageEnabled: {
                   type: "boolean"
+                },
+                autoTrackPropositionInteractions: {
+                  type: "object",
+                  properties: {
+                    AJO: {
+                      type: "string",
+                      enum: ["always", "decoratedElementsOnly", "never"]
+                    },
+                    TGT: {
+                      type: "string",
+                      enum: ["always", "decoratedElementsOnly", "never"]
+                    }
+                  },
                 }
               },
               required: ["edgeConfigId", "name"],
@@ -702,18 +715,36 @@ const createExtensionManifest = ({ version }) => {
                 {
                   type: "object",
                   additionalProperties: {
-                    type: "object",
-                    properties: {
-                      selector: {
-                        type: "string",
-                        minLength: 1
+                    anyOf: [
+                      {
+                        type: "object",
+                        properties: {
+                          selector: {
+                            type: "string",
+                            minLength: 1
+                          },
+                          actionType: {
+                            type: "string",
+                            enum: ["setHtml", "replaceHtml", "appendHtml", "track"]
+                          }
+                        },
+                        required: ["selector", "actionType"]
                       },
-                      actionType: {
-                        type: "string",
-                        enum: ["setHtml", "replaceHtml", "appendHtml"]
+                      {
+                        type: "object",
+                        properties: {
+                          element: {
+                            type: "string",
+                            pattern: "^%[^%]+%$"
+                          },
+                          actionType: {
+                            type: "string",
+                            enum: ["setHtml", "replaceHtml", "appendHtml", "track"]
+                          }
+                        },
+                        required: ["element", "actionType"]
                       }
-                    },
-                    required: ["selector", "actionType"]
+                    ]
                   }
                 }
               ]
