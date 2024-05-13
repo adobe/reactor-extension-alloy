@@ -108,6 +108,14 @@ const getInitialFormStateFromDataElement = async ({
     context.schema = schema;
     context.dataElementId = dataElement.id;
 
+    // Temporary fix to support the audienceManager property that should have been lowercased.
+    // eslint-disable-next-line no-underscore-dangle
+    const analytics = data?.__adobe?.analytics || {};
+    if (analytics.audienceManager) {
+      analytics.audiencemanager = analytics.audienceManager;
+      delete analytics.audienceManager;
+    }
+
     return getInitialFormState({
       schema,
       value: data,
@@ -122,124 +130,124 @@ const getInitialFormStateFromDataElement = async ({
 
 const getInitialValues =
   context =>
-  async ({ initInfo }) => {
-    const {
-      propertySettings: { id: propertyId } = {},
-      company: { orgId },
-      tokens: { imsAccess }
-    } = initInfo;
-    const {
-      dataElementId,
-      transforms = {},
-      schema: previouslySavedSchemaInfo,
-      customCode = ""
-    } = initInfo.settings || {};
+    async ({ initInfo }) => {
+      const {
+        propertySettings: { id: propertyId } = {},
+        company: { orgId },
+        tokens: { imsAccess }
+      } = initInfo;
+      const {
+        dataElementId,
+        transforms = {},
+        schema: previouslySavedSchemaInfo,
+        customCode = ""
+      } = initInfo.settings || {};
 
-    let { data = {} } = initInfo.settings || {};
+      let { data = {} } = initInfo.settings || {};
 
-    const initialValues = {
-      data,
-      customCode
-    };
-
-    const {
-      results: dataElementsFirstPage,
-      nextPage: dataElementsFirstPageCursor
-    } = await fetchDataElements({
-      orgId,
-      imsAccess,
-      propertyId
-    });
-
-    context.dataElementsFirstPage = dataElementsFirstPage;
-    context.dataElementsFirstPageCursor = dataElementsFirstPageCursor;
-
-    let dataElement;
-    if (dataElementId) {
-      dataElement = await fetchDataElement({
-        orgId,
-        imsAccess,
-        dataElementId
-      });
-      context.previouslySavedSchemaInfo = previouslySavedSchemaInfo;
-    } else if (
-      dataElementsFirstPage.length === 1 &&
-      dataElementsFirstPageCursor === null
-    ) {
-      dataElement = dataElementsFirstPage[0];
-    }
-
-    initialValues.dataElement = dataElement;
-
-    if (dataElement) {
-      const prefix = isDataVariable(dataElement) ? "data" : "xdm";
-      const prefixedTransforms = Object.keys(transforms).reduce((memo, key) => {
-        // The key for a root element transform is "".
-        memo[key === "" ? prefix : `${prefix}.${key}`] = transforms[key];
-        return memo;
-      }, {});
-
-      data = { [prefix]: data };
-
-      const initialFormState = await getInitialFormStateFromDataElement({
-        dataElement,
-        context,
-        orgId,
-        imsAccess,
+      const initialValues = {
         data,
-        transforms: prefixedTransforms
+        customCode
+      };
+
+      const {
+        results: dataElementsFirstPage,
+        nextPage: dataElementsFirstPageCursor
+      } = await fetchDataElements({
+        orgId,
+        imsAccess,
+        propertyId
       });
 
-      return { ...initialValues, ...initialFormState };
-    }
+      context.dataElementsFirstPage = dataElementsFirstPage;
+      context.dataElementsFirstPageCursor = dataElementsFirstPageCursor;
 
-    return initialValues;
-  };
+      let dataElement;
+      if (dataElementId) {
+        dataElement = await fetchDataElement({
+          orgId,
+          imsAccess,
+          dataElementId
+        });
+        context.previouslySavedSchemaInfo = previouslySavedSchemaInfo;
+      } else if (
+        dataElementsFirstPage.length === 1 &&
+        dataElementsFirstPageCursor === null
+      ) {
+        dataElement = dataElementsFirstPage[0];
+      }
+
+      initialValues.dataElement = dataElement;
+
+      if (dataElement) {
+        const prefix = isDataVariable(dataElement) ? "data" : "xdm";
+        const prefixedTransforms = Object.keys(transforms).reduce((memo, key) => {
+          // The key for a root element transform is "".
+          memo[key === "" ? prefix : `${prefix}.${key}`] = transforms[key];
+          return memo;
+        }, {});
+
+        data = { [prefix]: data };
+
+        const initialFormState = await getInitialFormStateFromDataElement({
+          dataElement,
+          context,
+          orgId,
+          imsAccess,
+          data,
+          transforms: prefixedTransforms
+        });
+
+        return { ...initialValues, ...initialFormState };
+      }
+
+      return initialValues;
+    };
 
 const getSettings =
   context =>
-  ({ values }) => {
-    const { dataElement } = values;
-    const { id: dataElementId, settings } = dataElement || {};
-    const { cacheId: dataElementCacheId } = settings || {};
+    ({ values }) => {
+      const { dataElement } = values;
+      const { id: dataElementId, settings } = dataElement || {};
+      const { cacheId: dataElementCacheId } = settings || {};
 
-    const transforms = {};
+      const transforms = {};
 
-    const { xdm, data } =
-      getValueFromFormState({ formStateNode: values, transforms }) || {};
+      const { xdm, data } =
+        getValueFromFormState({ formStateNode: values, transforms }) || {};
 
-    const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
-      const period = key.indexOf(".");
-      memo[key.substring(period === -1 ? key.length : period + 1)] =
-        transforms[key];
-      return memo;
-    }, {});
+      const dataTransforms = Object.keys(transforms).reduce((memo, key) => {
+        const period = key.indexOf(".");
+        memo[key.substring(period === -1 ? key.length : period + 1)] =
+          transforms[key];
+        return memo;
+      }, {});
 
-    const schema = {
-      id: context.schema?.$id,
-      version: context.schema?.version
+      const schema = {
+        id: context.schema?.$id,
+        version: context.schema?.version
+      };
+
+      const response = {
+        dataElementId,
+        dataElementCacheId,
+        data: xdm || data || {}
+      };
+
+      if (schema.id) {
+        response.schema = schema;
+      }
+
+      if (Object.keys(dataTransforms).length > 0) {
+        response.transforms = dataTransforms;
+      }
+
+      if (values.customCode) {
+        response.customCode = values.customCode;
+      }
+
+      return response;
     };
-
-    const response = {
-      dataElementId,
-      dataElementCacheId,
-      data: xdm || data || {}
-    };
-
-    if (schema.id) {
-      response.schema = schema;
-    }
-
-    if (Object.keys(dataTransforms).length > 0) {
-      response.transforms = dataTransforms;
-    }
-
-    if (values.customCode) {
-      response.customCode = values.customCode;
-    }
-
-    return response;
-  };
 
 const validationSchema = object().shape({
   dataElement: object().required("Please specify a data element.")
@@ -247,14 +255,14 @@ const validationSchema = object().shape({
 
 const validateFormikState =
   context =>
-  ({ values }) => {
-    const { schema } = context;
-    if (!schema) {
-      return {};
-    }
+    ({ values }) => {
+      const { schema } = context;
+      if (!schema) {
+        return {};
+      }
 
-    return validate(values);
-  };
+      return validate(values);
+    };
 
 const findFirstNodeIdForDepth = (formStateNode, depth) => {
   const {
