@@ -44,18 +44,28 @@ const wrapGetInitialValues =
       eventType,
       playerId,
       handleMediaSessionAutomatically = false,
-      instanceName,
+      instanceName = initInfo.extensionSettings.instances[0].name,
       xdm = {}
     } = initInfo.settings || {};
 
     const { mediaCollection = {} } = xdm;
+
+    const instanceSettings = initInfo.extensionSettings.instances.find(
+      instance => instance.name === instanceName
+    );
     const {
       playhead,
       qoeDataDetails,
-      advertisingDetails,
+      advertisingDetails = {
+        playerName: instanceSettings?.streamingMedia?.playerName || ""
+      },
       chapterDetails,
       advertisingPodDetails,
-      sessionDetails,
+      sessionDetails = {
+        channel: instanceSettings?.streamingMedia?.channel || "",
+        playerName: instanceSettings?.streamingMedia?.playerName || "",
+        appVersion: instanceSettings?.streamingMedia?.appVersion || ""
+      },
       errorDetails,
       customMetadata,
       statesEnd,
@@ -331,8 +341,9 @@ const advertisingDetailsSection = dataElementSection(
     textField({
       name: "playerName",
       label: "Ad player name",
-      isRequired: true,
-      description: "The name of the player responsible for rendering the ad."
+      description: "The name of the player responsible for rendering the ad.",
+      dataElementSupported: false,
+      isDisabled: true
     })
   ]
 );
@@ -432,9 +443,10 @@ const sessionDetailsSection = dataElementSection(
     textField({
       name: "channel",
       label: "Channel",
-      isRequired: true,
+      isDisabled: true,
       description:
-        "Distribution station or channels where the content is played. Any string value is accepted here."
+        "Distribution station or channels where the content is played. Any string value is accepted here.",
+      dataElementSupported: false
     }),
     numberField({
       name: "length", // integer
@@ -456,8 +468,9 @@ const sessionDetailsSection = dataElementSection(
     textField({
       name: "playerName",
       label: "Content player name",
-      isRequired: true,
-      description: "Name of the media player."
+      dataElementSupported: false,
+      isDisabled: true,
+      description: "The name of the player responsible for playing the media."
     }),
     textField({
       name: "adLoad",
@@ -474,9 +487,10 @@ const sessionDetailsSection = dataElementSection(
     textField({
       name: "appVersion",
       label: "Application version",
-      isRequired: false,
       description:
-        "The SDK version used by the player. This could have any custom value that makes sense for your player."
+        "The SDK version used by the player. This could have any custom value that makes sense for your player.",
+      dataElementSupported: false,
+      isDisabled: true
     }),
     textField({
       name: "artist",
@@ -715,13 +729,41 @@ const eventBasedDetailFormConditionals = [
   )
 ];
 
+const onInstanceChange = ({ context, instanceName, initInfo }) => {
+  const extensionSettings = initInfo.extensionSettings;
+  const instanceSettings = extensionSettings.instances.find(
+    instance => instance.name === instanceName
+  );
+
+  context.setFieldValue(
+    `sessionDetails.channel`,
+    instanceSettings.streamingMedia.channel || "",
+    true
+  );
+  context.setFieldValue(
+    `sessionDetails.playerName`,
+    instanceSettings.streamingMedia.playerName || "",
+    true
+  );
+  context.setFieldValue(
+    `sessionDetails.appVersion`,
+    instanceSettings.streamingMedia.appVersion || "",
+    true
+  );
+  context.setFieldValue(
+    `advertisingDetails.playerName`,
+    instanceSettings.streamingMedia.playerName || "",
+    true
+  );
+};
+
 const sendEventForm = form(
   {
     wrapGetInitialValues,
     wrapGetSettings
   },
   [
-    instancePicker({ name: "instanceName" }),
+    instancePicker({ name: "instanceName", onInstanceChange }),
     comboBox({
       name: "eventType",
       label: "Media event type",
