@@ -26,7 +26,9 @@ const FormikPicker = ({ name, width, validate, onChange, ...otherProps }) => {
       selectedKey={value}
       onSelectionChange={key => {
         setValue(key);
-        onChange(key);
+        if (onChange) {
+          onChange(key);
+        }
       }}
       onBlur={() => {
         setTouched(true);
