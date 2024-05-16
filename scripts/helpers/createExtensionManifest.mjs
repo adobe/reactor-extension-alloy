@@ -310,6 +310,19 @@ const createExtensionManifest = ({ version }) => {
                 edgeConfigOverrides: createEdgeConfigOverridesSchema(false),
                 personalizationStorageEnabled: {
                   type: "boolean"
+                },
+                autoTrackPropositionInteractions: {
+                  type: "object",
+                  properties: {
+                    AJO: {
+                      type: "string",
+                      enum: ["always", "decoratedElementsOnly", "never"]
+                    },
+                    TGT: {
+                      type: "string",
+                      enum: ["always", "decoratedElementsOnly", "never"]
+                    }
+                  },
                 }
               },
               required: ["edgeConfigId", "name"],
@@ -710,7 +723,7 @@ const createExtensionManifest = ({ version }) => {
                       },
                       actionType: {
                         type: "string",
-                        enum: ["setHtml", "replaceHtml", "appendHtml"]
+                        enum: ["setHtml", "replaceHtml", "appendHtml", "track"]
                       }
                     },
                     required: ["selector", "actionType"]

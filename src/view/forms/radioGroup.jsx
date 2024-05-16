@@ -54,7 +54,8 @@ export default function radioGroup({
   items,
   defaultValue = "",
   description,
-  beta
+  beta,
+  orientation = "vertical"
 }) {
   const validationShape = {};
   if (isRequired) {
@@ -81,12 +82,14 @@ export default function radioGroup({
     getInitialValues({ initInfo }) {
       const { [name]: value = defaultValue } = initInfo.settings || {};
       const initialValues = {
-        [name]: value,
-        [`${name}DataElement`]: ""
+        [name]: value
       };
-      if (value.match(singleDataElementRegex)) {
-        initialValues[`${name}DataElement`] = value;
-        initialValues[name] = "dataElement";
+      if (dataElementSupported) {
+        initialValues[`${name}DataElement`] = "";
+        if (value.match(singleDataElementRegex)) {
+          initialValues[`${name}DataElement`] = value;
+          initialValues[name] = "dataElement";
+        }
       }
       return initialValues;
     },
@@ -106,11 +109,12 @@ export default function radioGroup({
         <>
           <FormikRadioGroup
             data-test-id={`${namePrefix}${name}Field`}
-            name={name}
+            name={`${namePrefix}${name}`}
             label={labelElement}
             isRequired={isRequired}
             width="size-5000"
             description={description}
+            orientation={orientation}
           >
             <>
               {items.map(item => (
