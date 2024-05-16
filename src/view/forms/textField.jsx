@@ -36,7 +36,8 @@ export default function textField({
   label,
   description,
   width = "size-5000",
-  validationSchemaBase = string()
+  validationSchemaBase = string(),
+  isDisabled = false
 }) {
   let validationSchema = validationSchemaBase;
   if (isRequired) {
@@ -61,6 +62,7 @@ export default function textField({
             isRequired={isRequired}
             description={description}
             width={width}
+            isDisabled={isDisabled}
           />
         </DataElementSelector>
       );
@@ -84,6 +86,7 @@ export default function textField({
           isRequired={isRequired}
           description={description}
           width={width}
+          isDisabled={isDisabled}
         />
       );
     };

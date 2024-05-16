@@ -308,6 +308,26 @@ const createExtensionManifest = ({ version }) => {
                   minLength: 1
                 },
                 edgeConfigOverrides: createEdgeConfigOverridesSchema(false),
+                streamingMedia: {
+                  type: "object",
+                  properties: {
+                    channel: {
+                      type: "string"
+                    },
+                    playerName: {
+                      type: "string"
+                    },
+                    appVersion: {
+                      type: "string"
+                    },
+                    mainPingInterval: {
+                      type: "integer"
+                    },
+                    adPingInterval: {
+                      type: "integer"
+                    }
+                  }
+                },
                 personalizationStorageEnabled: {
                   type: "boolean"
                 }
@@ -797,6 +817,58 @@ const createExtensionManifest = ({ version }) => {
         viewPath: "actions/updateVariable.html"
       },
       {
+        displayName: "Send Media Event",
+        name: "send-media-event",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            instanceName: {
+              type: "string",
+              minLength: 1
+            },
+            handleMediaSessionAutomatically: {
+              type: "boolean"
+            },
+            eventType: {
+              type: "string",
+              minLength: 1
+            },
+            playerId: {
+              type: "string",
+              minLength: 1
+            },
+            xdm: {
+              type: "object"
+            }
+          },
+          required: ["instanceName", "playerId"]
+        },
+        libPath: "dist/lib/actions/sendMediaEvent/index.js",
+        viewPath: "actions/sendStreamingMediaEvent.html"
+      },
+      {
+        displayName: "Get Media Analytics Tracker",
+        name: "get-media-tracker",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            instanceName: {
+              type: "string",
+              minLength: 1
+            },
+            objectName: {
+              type: "string",
+              minLength: 1
+            }
+          },
+          required: ["instanceName"]
+        },
+        libPath: "dist/lib/actions/getMediaAnalyticsTracker/index.js",
+        viewPath: "actions/createMediaTracker.html"
+      },
+      {
         displayName: "Evaluate rulesets",
         name: "evaluate-rulesets",
         schema: {
@@ -894,6 +966,63 @@ const createExtensionManifest = ({ version }) => {
       }
     ],
     dataElements: [
+      {
+        displayName: "Media: Quality of Experience data",
+        name: "qoe-details-data",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            bitrate: {
+              oneOf: [
+                {
+                  type: "integer"
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$"
+                }
+              ]
+            },
+            droppedFrames: {
+              oneOf: [
+                {
+                  type: "integer"
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$"
+                }
+              ]
+            },
+            framesPerSecond: {
+              oneOf: [
+                {
+                  type: "integer"
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$"
+                }
+              ]
+            },
+            timeToStart: {
+              oneOf: [
+                {
+                  type: "integer"
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$"
+                }
+              ]
+            }
+          },
+          additionalProperties: false
+        },
+        libPath: "dist/lib/dataElements/qoeDetailsData/index.js",
+        viewPath: "dataElements/qoeDetailsDataElement.html"
+      },
       {
         displayName: "Event merge ID",
         name: "event-merge-id",

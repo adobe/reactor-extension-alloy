@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 import React from "react";
 import PropTypes from "prop-types";
+import { useFormikContext } from "formik";
 import InstanceNamePicker from "../components/instanceNamePicker";
 
 /** @typedef {import("./form").Form} Form */
@@ -20,7 +21,7 @@ import InstanceNamePicker from "../components/instanceNamePicker";
  * @param {string} options.name - The formik key to use for this field.
  * @returns {Form} A form field for an instance name picker.
  */
-export default function instancePicker({ name }) {
+export default function instancePicker({ name, onInstanceChange }) {
   const form = {
     getInitialValues({ initInfo }) {
       const { [name]: value = initInfo.extensionSettings.instances[0].name } =
@@ -35,11 +36,18 @@ export default function instancePicker({ name }) {
       return settings;
     },
     Component({ namePrefix = "", initInfo }) {
+      const formikContext = useFormikContext();
+      const onChange = context => key => {
+        if (onInstanceChange) {
+          onInstanceChange({ context, instanceName: key, initInfo });
+        }
+      };
       return (
         <InstanceNamePicker
           data-test-id={`${namePrefix}${name}Picker`}
           name={`${namePrefix}${name}`}
           initInfo={initInfo}
+          onChange={onChange(formikContext)}
         />
       );
     }

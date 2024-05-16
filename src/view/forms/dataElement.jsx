@@ -17,26 +17,22 @@ import FormikTextField from "../components/formikReactSpectrum3/formikTextField"
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 
-/** @typedef {import("./form").Form} Form */
-/**
- * This creates a form field that is required to be a single data element.
- * @param {object} options - Options for the field.
- * @param {string} options.name - The formik key to use for this field.
- * @param {boolean} [options.isRequired] - Whether or not this field is required.
- * @param {string} options.label - The label to use for this field.
- * @param {string} [options.description] - The description to use for this field.
- * @returns {Form} A form field that is a single data element.
- */
 export default function dataElement({
   name,
   isRequired = false,
   label,
-  description
+  description,
+  tokenize = true
 }) {
-  let fieldSchema = string().matches(
-    singleDataElementRegex,
-    DATA_ELEMENT_REQUIRED
-  );
+  let fieldSchema = string();
+
+  if (tokenize) {
+    fieldSchema = fieldSchema.matches(
+      singleDataElementRegex,
+      DATA_ELEMENT_REQUIRED
+    );
+  }
+
   if (isRequired) {
     fieldSchema = fieldSchema.required(
       `Please provide a ${label.toLowerCase()}.`
@@ -61,7 +57,7 @@ export default function dataElement({
     },
     Component: ({ namePrefix = "" }) => {
       return (
-        <DataElementSelector>
+        <DataElementSelector tokenize={tokenize}>
           <FormikTextField
             data-test-id={`${namePrefix}${name}TextField`}
             name={`${namePrefix}${name}`}

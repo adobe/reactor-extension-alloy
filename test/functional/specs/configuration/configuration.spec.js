@@ -1788,3 +1788,33 @@ test("allows the setting of overrides in only a single environment", async () =>
     ]
   });
 });
+test("makes the media collection fields required if one is filled", async () => {
+  await extensionViewController.init();
+  await instances[0].edgeConfig.inputMethodFreeformRadio.click();
+  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
+    "123"
+  );
+  await instances[0].streamingMedia.mediaChannelField.typeText("testChanel");
+
+  await extensionViewController.expectIsNotValid();
+  await instances[0].streamingMedia.mediaPlayerNameField.typeText(
+    "testPlayerName"
+  );
+  await extensionViewController.expectIsValid();
+
+  await extensionViewController.expectSettings({
+    instances: [
+      {
+        edgeConfigId: "123",
+        name: "alloy",
+        streamingMedia: {
+          adPingInterval: 10,
+          channel: "testChanel",
+          mainPingInterval: 10,
+          playerName: "testPlayerName",
+          appVersion: ""
+        }
+      }
+    ]
+  });
+});

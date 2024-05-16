@@ -59,6 +59,9 @@ import AdvancedSection, {
 } from "./advancedSection";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
 import { FIELD_NAMES } from "../components/overrides/utils";
+import StreamingMediaSection, {
+  bridge as mediaBridge
+} from "./streamingMediaSection";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -68,7 +71,8 @@ const sectionBridges = [
   personalizationSectionBridge,
   dataCollectionSectionBridge,
   overridesBridge,
-  advancedSectionBridge
+  advancedSectionBridge,
+  mediaBridge
 ];
 
 /**
@@ -223,6 +227,9 @@ const Configuration = ({ initInfo, context }) => {
                           instanceFieldName={instanceFieldName}
                         />
                         <DataCollectionSection
+                          instanceFieldName={instanceFieldName}
+                        />
+                        <StreamingMediaSection
                           instanceFieldName={instanceFieldName}
                         />
                         <OverridesSection
