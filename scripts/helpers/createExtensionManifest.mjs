@@ -317,7 +317,7 @@ const createExtensionManifest = ({ version }) => {
                     playerName: {
                       type: "string"
                     },
-                    version: {
+                    appVersion: {
                       type: "string"
                     },
                     mainPingInterval: {
