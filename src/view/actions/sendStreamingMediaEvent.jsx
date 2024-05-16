@@ -72,6 +72,19 @@ const wrapGetInitialValues =
       statesStart
     } = mediaCollection;
 
+    if (eventType === "media.sessionStart") {
+      sessionDetails.channel = instanceSettings?.streamingMedia?.channel || "";
+      sessionDetails.playerName =
+        instanceSettings?.streamingMedia?.playerName || "";
+      sessionDetails.appVersion =
+        instanceSettings?.streamingMedia?.appVersion || "";
+    }
+
+    if (eventType === "media.adStart") {
+      advertisingDetails.playerName =
+        instanceSettings?.streamingMedia?.playerName || "";
+    }
+
     return getInitialValues({
       initInfo: {
         ...initInfo,
@@ -133,6 +146,7 @@ const wrapGetSettings =
     }
     if (advertisingDetails) {
       mediaCollection.advertisingDetails = advertisingDetails;
+      mediaCollection.advertisingDetails.playerName = undefined;
     }
     if (advertisingPodDetails) {
       mediaCollection.advertisingPodDetails = advertisingPodDetails;
@@ -142,6 +156,9 @@ const wrapGetSettings =
     }
     if (sessionDetails) {
       mediaCollection.sessionDetails = sessionDetails;
+      mediaCollection.sessionDetails.playerName = undefined;
+      mediaCollection.sessionDetails.appVersion = undefined;
+      mediaCollection.sessionDetails.channel = undefined;
     }
 
     if (customMetadata) {
@@ -341,7 +358,8 @@ const advertisingDetailsSection = dataElementSection(
     textField({
       name: "playerName",
       label: "Ad player name",
-      description: "The name of the player responsible for rendering the ad.",
+      description:
+        "The name of the player responsible for rendering the ad. To modify, update the extension configuration.",
       dataElementSupported: false,
       isDisabled: true
     })
@@ -445,7 +463,7 @@ const sessionDetailsSection = dataElementSection(
       label: "Channel",
       isDisabled: true,
       description:
-        "Distribution station or channels where the content is played. Any string value is accepted here.",
+        "Distribution station or channels where the content is played. To modify, update the extension configuration.",
       dataElementSupported: false
     }),
     numberField({
@@ -470,7 +488,8 @@ const sessionDetailsSection = dataElementSection(
       label: "Content player name",
       dataElementSupported: false,
       isDisabled: true,
-      description: "The name of the player responsible for playing the media."
+      description:
+        "The name of the player responsible for playing the media. To modify, update the extension configuration."
     }),
     textField({
       name: "adLoad",
@@ -488,7 +507,7 @@ const sessionDetailsSection = dataElementSection(
       name: "appVersion",
       label: "Application version",
       description:
-        "The SDK version used by the player. This could have any custom value that makes sense for your player.",
+        "The SDK version used by the player. This could have any custom value that makes sense for your player. To modify, update the extension configuration.",
       dataElementSupported: false,
       isDisabled: true
     }),
