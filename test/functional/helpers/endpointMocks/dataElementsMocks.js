@@ -136,7 +136,7 @@ const testSolutionsVariable1 = {
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
       cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      solutions: ["analytics", "target", "audienceManager"]
+      solutions: ["analytics", "target", "audiencemanager"]
     })
   }
 };

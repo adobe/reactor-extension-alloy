@@ -108,6 +108,15 @@ const getInitialFormStateFromDataElement = async ({
     context.schema = schema;
     context.dataElementId = dataElement.id;
 
+    // Temporary fix to support the audienceManager property that should have been lowercased.
+    // eslint-disable-next-line no-underscore-dangle
+    const adobe = data?.data?.__adobe || {};
+    if (adobe.audienceManager) {
+      adobe.audiencemanager = adobe.audienceManager;
+      delete adobe.audienceManager;
+    }
+    console.log("getInitialFormState from data element", data);
+
     return getInitialFormState({
       schema,
       value: data,

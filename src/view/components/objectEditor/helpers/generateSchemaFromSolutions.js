@@ -22,13 +22,15 @@ export default solutions => ({
         __adobe: {
           title: "Adobe",
           type: "object",
-          properties: solutions.reduce((accumulator, currentValue) => {
-            accumulator[currentValue] = {
+          properties: solutions.reduce((accumulator, solutionKey) => {
+            // Temporary support for 'audienceManager' property that should have been lowercased.
+            const solutionKeyLower = solutionKey.toLowerCase();
+            accumulator[solutionKeyLower] = {
               type:
-                currentValue === "analytics" ? OBJECT_ANALYTICS : OBJECT_JSON,
+                solutionKeyLower === "analytics" ? OBJECT_ANALYTICS : OBJECT_JSON,
               expandPaths: false,
               title: solutionsContext.find(
-                ([solution]) => currentValue === solution
+                ([solution]) => solutionKeyLower === solution
               )[1]
             };
             return accumulator;

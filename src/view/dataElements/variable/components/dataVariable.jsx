@@ -27,7 +27,8 @@ export const bridge = {
     const { solutions = [] } = settings;
 
     const initialValues = {
-      solutions
+      // Temporary support for 'audienceManager' property that should have been lowercased.
+      solutions: solutions.map(s => s.toLowerCase())
     };
 
     return initialValues;
