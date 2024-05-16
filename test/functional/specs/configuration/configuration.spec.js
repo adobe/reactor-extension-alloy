@@ -1794,10 +1794,10 @@ test("makes the media collection fields required if one is filled", async () => 
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
     "123"
   );
-  await instances[0].mediaCollection.mediaChannelField.typeText("testChanel");
+  await instances[0].streamingMedia.mediaChannelField.typeText("testChanel");
 
   await extensionViewController.expectIsNotValid();
-  await instances[0].mediaCollection.mediaPlayerNameField.typeText(
+  await instances[0].streamingMedia.mediaPlayerNameField.typeText(
     "testPlayerName"
   );
   await extensionViewController.expectIsValid();
@@ -1807,12 +1807,12 @@ test("makes the media collection fields required if one is filled", async () => 
       {
         edgeConfigId: "123",
         name: "alloy",
-        mediaCollection: {
+        streamingMedia: {
           adPingInterval: 10,
           channel: "testChanel",
           mainPingInterval: 10,
           playerName: "testPlayerName",
-          version: ""
+          appVersion: ""
         }
       }
     ]

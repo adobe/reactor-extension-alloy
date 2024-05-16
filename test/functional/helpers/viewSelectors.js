@@ -142,7 +142,7 @@ for (let i = 0; i < 3; i += 1) {
     },
     deleteButton: spectrum.button("deleteInstanceButton"),
     overrides: overrideWrappers,
-    mediaCollection: {
+    streamingMedia: {
       mediaChannelField: spectrum.textField("mediaChannelField"),
       mediaPlayerNameField: spectrum.textField("mediaPlayerNameField"),
       mediaVersionField: spectrum.textField("mediaVersionField"),
