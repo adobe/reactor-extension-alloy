@@ -30,16 +30,16 @@ export const bridge = {
     prehidingStyle: "",
     targetMigrationEnabled: false,
     personalizationStorageEnabled: false,
-    autoTrackPropositionInteractions: "always"
+    autoCollectPropositionInteractions: "always"
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
 
-    if (instanceSettings.autoTrackPropositionInteractions?.AJO) {
-      instanceSettings.autoTrackPropositionInteractions =
-        instanceSettings.autoTrackPropositionInteractions.AJO;
+    if (instanceSettings.autoCollectPropositionInteractions?.AJO) {
+      instanceSettings.autoCollectPropositionInteractions =
+        instanceSettings.autoCollectPropositionInteractions.AJO;
     } else {
-      delete instanceSettings.autoTrackPropositionInteractions;
+      delete instanceSettings.autoCollectPropositionInteractions;
     }
 
     copyPropertiesWithDefaultFallback({
@@ -50,7 +50,7 @@ export const bridge = {
         "prehidingStyle",
         "targetMigrationEnabled",
         "personalizationStorageEnabled",
-        "autoTrackPropositionInteractions"
+        "autoCollectPropositionInteractions"
       ]
     });
 
@@ -67,13 +67,13 @@ export const bridge = {
         "prehidingStyle",
         "targetMigrationEnabled",
         "personalizationStorageEnabled",
-        "autoTrackPropositionInteractions"
+        "autoCollectPropositionInteractions"
       ]
     });
 
-    if (instanceSettings.autoTrackPropositionInteractions) {
-      instanceSettings.autoTrackPropositionInteractions = {
-        AJO: instanceValues.autoTrackPropositionInteractions
+    if (instanceSettings.autoCollectPropositionInteractions) {
+      instanceSettings.autoCollectPropositionInteractions = {
+        AJO: instanceValues.autoCollectPropositionInteractions
       };
     }
 
@@ -127,23 +127,23 @@ const PersonalizationSection = ({ instanceFieldName }) => {
           Enable personalization storage <BetaBadge />
         </FormikCheckbox>
         <FormikRadioGroup
-          name={`${instanceFieldName}.autoTrackPropositionInteractions`}
-          label="Auto-track proposition interactions for Adobe Journey Optimizer"
+          name={`${instanceFieldName}.autoCollectPropositionInteractions`}
+          label="Automatically collect proposition interactions for Adobe Journey Optimizer"
           description="This controls whether the Web SDK automatically tracks interactions with propositions from Adobe Journey Optimizer."
           width="size-5000"
         >
           <Radio value="always" data-test-id="alwaysOption">
-            Always - Track all interactions with propositions.
+            Always - Collect all interactions with propositions.
           </Radio>
           <Radio
             value="decoratedElementsOnly"
             data-test-id="decoratedElementsOnlyOption"
           >
-            Decorated elements only - Only track interactions on elements with
+            Decorated elements only - Only collect interactions on elements with
             data-aep-click-label or data-aep-click-token attributes.
           </Radio>
           <Radio value="never" data-test-id="neverOption">
-            Never - Do not track interactions with propositions.
+            Never - Do not collect interactions with propositions.
           </Radio>
         </FormikRadioGroup>
       </FormElementContainer>
