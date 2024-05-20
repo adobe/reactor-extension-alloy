@@ -46,6 +46,7 @@ export default ({
         signal: currentAbortController.signal
       }));
     } catch (e) {
+      console.log(e);
       // Most of the times this is an AbortError, but for everything
       // else the loadItems function should handle the error itself.
       if (e.name !== "AbortError") {

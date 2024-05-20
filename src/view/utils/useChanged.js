@@ -22,9 +22,8 @@ const useChanged = (effect, dependencies) => {
   useEffect(() => {
     if (isFirstRenderRef.current) {
       isFirstRenderRef.current = false;
-      return undefined;
     }
-    return effect();
+    effect();
   }, dependencies);
 };
 

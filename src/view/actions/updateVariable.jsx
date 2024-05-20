@@ -115,8 +115,6 @@ const getInitialFormStateFromDataElement = async ({
       adobe.audiencemanager = adobe.audienceManager;
       delete adobe.audienceManager;
     }
-    console.log("getInitialFormState from data element", data);
-
     return getInitialFormState({
       schema,
       value: data,
