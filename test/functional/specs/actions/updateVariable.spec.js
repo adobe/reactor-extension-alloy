@@ -319,3 +319,23 @@ test.requestHooks(
     await stringEdit.expectValue("myvalue4");
   }
 );
+
+test.only.requestHooks(
+  schemaMocks.basic,
+  schemaMocks.other,
+  dataElementsMocks.multiple
+)("allows you to search for data elements", async () => {
+  await extensionViewController.init({
+    propertySettings: {
+      id: "PRabcd"
+    }
+  });
+  await dataElementField.clear();
+  await dataElementField.enterSearch("4");
+  // Because we are using mocks we can't actually search for the data element.
+  // The mock will return the same data elements no matter what. This does make
+  // sure we don't get an error when searching.
+  await dataElementField.expectMenuOptionLabelsInclude([
+    "Test data variable 4"
+  ]);
+});

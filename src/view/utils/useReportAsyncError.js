@@ -26,10 +26,10 @@ const useReportAsyncError = func => {
   const [, setState] = useState();
 
   if (func) {
-    return () => {
-      async function fn(...args) {
+    return (...args) => {
+      async function fn() {
         try {
-          await func(...args);
+          return await func(...args);
         } catch (e) {
           if (e.name !== "AbortError") {
             setState(() => {
@@ -40,7 +40,7 @@ const useReportAsyncError = func => {
         }
       }
 
-      fn();
+      return fn();
     };
   }
 
