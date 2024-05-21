@@ -491,11 +491,18 @@ const sessionDetailsSection = dataElementSection(
       description:
         "The name of the player responsible for playing the media. To modify, update the extension configuration."
     }),
-    textField({
+    comboBox({
       name: "adLoad",
       label: "Ad load type",
       isRequired: false,
-      description: ""
+      description: "Select the type of ad loaded. ",
+      dataElementDescription:
+        "Provide a data element that returns the type of ad loaded.",
+      items: [
+        { value: "1", label: "Ads same as TV" },
+        { value: "2", label: "Other (custom/dynamic ads)" }
+      ],
+      allowsCustomValue: false
     }),
     textField({
       name: "album",
