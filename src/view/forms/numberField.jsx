@@ -151,6 +151,7 @@ export default function numberField({
               isRequired={isRequired}
               description={description}
               width="size-5000"
+              aria-label={`${label} number field`}
             />
           )}
           {inputMethod === DATA_ELEMENT && (
