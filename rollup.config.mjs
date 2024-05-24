@@ -19,20 +19,20 @@ export default [
     output: [
       {
         file: "temp/alloy.js",
-        format: "esm"
-      }
+        format: "esm",
+      },
     ],
     plugins: [
       resolve({
         preferBuiltins: false,
-        mainFields: ["module", "main", "browser"]
+        mainFields: ["module", "main", "browser"],
       }),
-      commonjs()
+      commonjs(),
     ],
     external: [
       "@adobe/reactor-load-script",
       "@adobe/reactor-object-assign",
-      "@adobe/reactor-query-string"
-    ]
-  }
+      "@adobe/reactor-query-string",
+    ],
+  },
 ];
