@@ -17,7 +17,7 @@ module.exports = ({
   satelliteApi
 }) => {
   return settings => {
-    const {instanceName, eventType, playerId, xdm} = settings;
+    const { instanceName, eventType, playerId, xdm } = settings;
     const instance = instanceManager.getInstance(instanceName);
 
     if (!instance) {
@@ -30,8 +30,9 @@ module.exports = ({
       return trackMediaSession(settings);
     }
 
-    const sessionDetails = mediaCollectionSessionStorage.get({playerId});
+    const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
     if (!sessionDetails) {
+      // eslint-disable-next-line no-console
       console.warn(
         `No media session found for player ID ${playerId}. Skipping media event ${eventType}. Make sure the session has started.`
       );
@@ -42,12 +43,12 @@ module.exports = ({
         eventType === "media.sessionEnd" ||
         eventType === "media.sessionComplete"
       ) {
-        mediaCollectionSessionStorage.remove({playerId});
+        mediaCollectionSessionStorage.remove({ playerId });
       }
 
       xdm.eventType = eventType;
 
-      const options = {xdm};
+      const options = { xdm };
 
       if (sessionDetails.handleMediaSessionAutomatically) {
         options.playerId = playerId;
@@ -67,5 +68,5 @@ module.exports = ({
 
       return instance("sendMediaEvent", options);
     });
-  }
+  };
 };
