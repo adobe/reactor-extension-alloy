@@ -68,7 +68,7 @@ const AutoPopulationAlert = ({ formStateNode }) => {
 };
 
 AutoPopulationAlert.propTypes = {
-  formStateNode: formStateNodePropTypes.isRequired
+  formStateNode: formStateNodePropTypes.isRequired,
 };
 
 export default AutoPopulationAlert;

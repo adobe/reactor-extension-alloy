@@ -28,11 +28,11 @@ import { useFieldValue } from "../utils/useFieldValue";
 
 const INPUT_METHOD = {
   SELECT: "select",
-  FREEFORM: "freeform"
+  FREEFORM: "freeform",
 };
 const NOT_FOUND_STATUS = "not_found";
 
-const sandboxSettingsExist = instanceSettings => {
+const sandboxSettingsExist = (instanceSettings) => {
   return !!(
     instanceSettings.sandbox ||
     instanceSettings.stagingSandbox ||
@@ -44,26 +44,26 @@ const getSelectInputMethodStateNewInstance = () => {
   return {
     productionEnvironment: {
       datastreamId: "",
-      sandbox: ""
+      sandbox: "",
     },
     stagingEnvironment: {
       datastreamId: "",
-      sandbox: ""
+      sandbox: "",
     },
     developmentEnvironment: {
       datastreamId: "",
-      sandbox: ""
-    }
+      sandbox: "",
+    },
   };
 };
 
-const prepareDatastreamsMap = datastreams => {
+const prepareDatastreamsMap = (datastreams) => {
   return datastreams.reduce((acc, datastream) => {
     // eslint-disable-next-line no-underscore-dangle
     const datastreamId = datastream._system.id;
     acc[datastreamId] = {
       sandbox: datastream.sandboxName,
-      configId: datastreamId
+      configId: datastreamId,
     };
     return acc;
   }, {});
@@ -75,10 +75,10 @@ const createFindTheEdgeConfig = (orgId, imsAccess) => {
       orgId,
       imsAccess,
       edgeConfigId,
-      sandbox
+      sandbox,
     }).catch(() => {
       return {
-        status: NOT_FOUND_STATUS
+        status: NOT_FOUND_STATUS,
       };
     });
   };
@@ -87,20 +87,20 @@ const createFindTheEdgeConfig = (orgId, imsAccess) => {
 const getEnvironmentEdgeConfigs = (
   configId,
   datastreamsMap,
-  parsedConfigId
+  parsedConfigId,
 ) => {
   return new Promise((resolve, reject) => {
     if (datastreamsMap[configId]) {
       resolve({
         datastreamId: configId,
-        sandbox: datastreamsMap[configId].sandbox
+        sandbox: datastreamsMap[configId].sandbox,
       });
       return;
     }
     if (datastreamsMap[parsedConfigId]) {
       resolve({
         datastreamId: configId,
-        sandbox: datastreamsMap[parsedConfigId].sandbox
+        sandbox: datastreamsMap[parsedConfigId].sandbox,
       });
       return;
     }
@@ -111,7 +111,7 @@ const getEnvironmentEdgeConfigs = (
 
 const getSelectInputMethodStateFromExistingExtensionSettings = (
   instanceSettings,
-  sandboxes
+  sandboxes,
 ) => {
   const selectInputMethodState = getSelectInputMethodStateNewInstance();
   // if default sandbox only we pre-populate the environments sandboxes to have the form render correctly
@@ -147,7 +147,7 @@ const getSelectInputMethodStateFromExistingExtensionSettings = (
 
 const getSelectInputMethodStateForNotFullyPopulatedForDefaultSandbox = (
   context,
-  instanceSettings
+  instanceSettings,
 ) => {
   const { sandboxes, datastreams } = context;
   const datastreamsMap = prepareDatastreamsMap(datastreams);
@@ -179,7 +179,7 @@ const getSelectInputMethodStateForExistingInstance = async ({
   orgId,
   imsAccess,
   instanceSettings,
-  context
+  context,
 }) => {
   // if there are sandbox settings in the previously configured extension we just populate with values
   const { current } = context;
@@ -188,7 +188,7 @@ const getSelectInputMethodStateForExistingInstance = async ({
   if (sandboxSettingsExist(instanceSettings)) {
     return getSelectInputMethodStateFromExistingExtensionSettings(
       instanceSettings,
-      sandboxes
+      sandboxes,
     );
   }
 
@@ -202,25 +202,25 @@ const getSelectInputMethodStateForExistingInstance = async ({
   if (sandboxes.length === 1) {
     return getSelectInputMethodStateForNotFullyPopulatedForDefaultSandbox(
       current,
-      instanceSettings
+      instanceSettings,
     );
   }
   const selectInputMethodState = getSelectInputMethodStateNewInstance();
   const parsedConfigIds = {
     productionEnvironment: undefined,
     stagingEnvironment: undefined,
-    developmentEnvironment: undefined
+    developmentEnvironment: undefined,
   };
   const findTheEdgeConfig = createFindTheEdgeConfig(orgId, imsAccess);
   // try to find the sandbox for each edge config to pre - populate the select dropdowns
   const promises = [];
 
   const { edgeConfigId } = getPartsFromEnvironmentCompositeId(
-    instanceSettings.edgeConfigId
+    instanceSettings.edgeConfigId,
   );
   parsedConfigIds.productionEnvironment = edgeConfigId;
 
-  const findProdEdgeConfigPromises = sandboxes.map(sandbox => {
+  const findProdEdgeConfigPromises = sandboxes.map((sandbox) => {
     return findTheEdgeConfig(sandbox.name, edgeConfigId);
   });
 
@@ -228,15 +228,15 @@ const getSelectInputMethodStateForExistingInstance = async ({
 
   if (instanceSettings.stagingEdgeConfigId) {
     const stagingEdgeConfigId = getPartsFromEnvironmentCompositeId(
-      instanceSettings.stagingEdgeConfigId
+      instanceSettings.stagingEdgeConfigId,
     ).edgeConfigId;
     if (stagingEdgeConfigId === edgeConfigId) {
       parsedConfigIds.stagingEnvironment = stagingEdgeConfigId;
     } else {
-      const findStageEdgeConfigPromises = sandboxes.map(sandbox => {
+      const findStageEdgeConfigPromises = sandboxes.map((sandbox) => {
         return findTheEdgeConfig(
           sandbox.name,
-          instanceSettings.stagingEdgeConfigId
+          instanceSettings.stagingEdgeConfigId,
         );
       });
       promises.push(...findStageEdgeConfigPromises);
@@ -244,15 +244,15 @@ const getSelectInputMethodStateForExistingInstance = async ({
   }
   if (instanceSettings.developmentEdgeConfigId) {
     const developmentEdgeConfigId = getPartsFromEnvironmentCompositeId(
-      instanceSettings.developmentEdgeConfigId
+      instanceSettings.developmentEdgeConfigId,
     ).edgeConfigId;
     if (developmentEdgeConfigId === edgeConfigId) {
       parsedConfigIds.developmentEnvironment = developmentEdgeConfigId;
     } else {
-      const findDevEdgeConfigPromises = sandboxes.map(sandbox => {
+      const findDevEdgeConfigPromises = sandboxes.map((sandbox) => {
         return findTheEdgeConfig(
           sandbox.name,
-          instanceSettings.developmentEdgeConfigId
+          instanceSettings.developmentEdgeConfigId,
         );
       });
       promises.push(...findDevEdgeConfigPromises);
@@ -260,7 +260,7 @@ const getSelectInputMethodStateForExistingInstance = async ({
   }
 
   const edgeConfigs = (await Promise.all(promises)).filter(
-    result => result.status !== NOT_FOUND_STATUS
+    (result) => result.status !== NOT_FOUND_STATUS,
   );
 
   const datastreamsMap = prepareDatastreamsMap(edgeConfigs);
@@ -270,14 +270,14 @@ const getSelectInputMethodStateForExistingInstance = async ({
       await getEnvironmentEdgeConfigs(
         instanceSettings.edgeConfigId,
         datastreamsMap,
-        parsedConfigIds.productionEnvironment
+        parsedConfigIds.productionEnvironment,
       );
   }
   if (instanceSettings.stagingEdgeConfigId) {
     selectInputMethodState.stagingEnvironment = await getEnvironmentEdgeConfigs(
       instanceSettings.stagingEdgeConfigId,
       datastreamsMap,
-      parsedConfigIds.stagingEnvironment
+      parsedConfigIds.stagingEnvironment,
     );
   }
   if (instanceSettings.developmentEdgeConfigId) {
@@ -285,7 +285,7 @@ const getSelectInputMethodStateForExistingInstance = async ({
       await getEnvironmentEdgeConfigs(
         instanceSettings.developmentEdgeConfigId,
         datastreamsMap,
-        parsedConfigIds.developmentEnvironment
+        parsedConfigIds.developmentEnvironment,
       );
   }
   return selectInputMethodState;
@@ -296,7 +296,7 @@ let firstPageOfDatastreams;
 const getSelectInputMethodStateForNewInstance = async ({
   orgId,
   imsAccess,
-  context
+  context,
 }) => {
   const selectInputMethodState = getSelectInputMethodStateNewInstance();
 
@@ -307,7 +307,7 @@ const getSelectInputMethodStateForNewInstance = async ({
     try {
       ({ results: firstPageOfSandboxes } = await fetchSandboxes({
         orgId,
-        imsAccess
+        imsAccess,
       }));
     } catch (error) {
       context.current.fetchSandboxError = true;
@@ -330,7 +330,7 @@ const getSelectInputMethodStateForNewInstance = async ({
         orgId,
         imsAccess,
         limit: 1000,
-        sandbox: firstPageOfSandboxes[0].name
+        sandbox: firstPageOfSandboxes[0].name,
       }));
     } catch (error) {
       context.current.fetchConfigsError = true;
@@ -350,12 +350,12 @@ const getSelectInputMethodStateForNewInstance = async ({
 };
 
 const getFreeformInputMethodStateForExistingInstance = ({
-  instanceSettings
+  instanceSettings,
 }) => {
   return {
     edgeConfigId: instanceSettings.edgeConfigId ?? "",
     stagingEdgeConfigId: instanceSettings.stagingEdgeConfigId ?? "",
-    developmentEdgeConfigId: instanceSettings.developmentEdgeConfigId ?? ""
+    developmentEdgeConfigId: instanceSettings.developmentEdgeConfigId ?? "",
   };
 };
 
@@ -363,7 +363,7 @@ const getFreeformInputStateForNewInstance = () => {
   return {
     edgeConfigId: "",
     stagingEdgeConfigId: "",
-    developmentEdgeConfigId: ""
+    developmentEdgeConfigId: "",
   };
 };
 
@@ -371,7 +371,7 @@ export const bridge = {
   getInstanceDefaults: async ({ initInfo, isFirstInstance, context }) => {
     const {
       company: { orgId },
-      tokens: { imsAccess }
+      tokens: { imsAccess },
     } = initInfo;
 
     context.current = {};
@@ -389,8 +389,8 @@ export const bridge = {
         await getSelectInputMethodStateForNewInstance({
           orgId,
           imsAccess,
-          context
-        })
+          context,
+        }),
     };
     if (
       context.current.fetchSandboxError ||
@@ -405,17 +405,17 @@ export const bridge = {
     initInfo,
     isFirstInstance,
     instanceSettings,
-    context
+    context,
   }) => {
     const {
       company: { orgId },
-      tokens: { imsAccess }
+      tokens: { imsAccess },
     } = initInfo;
 
     const instanceValues = await bridge.getInstanceDefaults({
       initInfo,
       isFirstInstance,
-      context
+      context,
     });
     let isSuccessfullyPopulatedForSelectInputMethod = false;
 
@@ -426,7 +426,7 @@ export const bridge = {
             orgId,
             imsAccess,
             instanceSettings,
-            context
+            context,
           });
 
         instanceValues.edgeConfigFreeformInputMethod =
@@ -457,7 +457,7 @@ export const bridge = {
           await getSelectInputMethodStateForNewInstance({
             orgId,
             imsAccess,
-            context
+            context,
           });
       } catch (error) {
         // do nothing we will fall back to free form
@@ -525,21 +525,21 @@ export const bridge = {
     .shape({
       edgeConfigSelectInputMethod: object().when("edgeConfigInputMethod", {
         is: INPUT_METHOD.SELECT,
-        then: schema =>
+        then: (schema) =>
           schema.shape({
             productionEnvironment: object().shape({
               datastreamId: string().required("Please specify a datastream."),
-              sandbox: string().required("Please specify a sandbox.")
-            })
-          })
+              sandbox: string().required("Please specify a sandbox."),
+            }),
+          }),
       }),
       edgeConfigFreeformInputMethod: object().when("edgeConfigInputMethod", {
         is: INPUT_METHOD.FREEFORM,
-        then: schema =>
+        then: (schema) =>
           schema.shape({
-            edgeConfigId: string().required("Please specify a datastream.")
-          })
-      })
+            edgeConfigId: string().required("Please specify a datastream."),
+          }),
+      }),
     })
     // TestCafe doesn't allow this to be an arrow function because of
     // how it scopes "this".
@@ -547,7 +547,7 @@ export const bridge = {
     .test("uniqueEdgeConfigId", function (instance, testContext) {
       const { path: instancePath, parent: instances } = testContext;
 
-      const getEdgeConfigIdFromInstance = inst => {
+      const getEdgeConfigIdFromInstance = (inst) => {
         return inst.edgeConfigInputMethod === INPUT_METHOD.SELECT
           ? inst.edgeConfigSelectInputMethod.productionEnvironment.datastreamId
           : inst.edgeConfigFreeformInputMethod.edgeConfigId;
@@ -560,8 +560,8 @@ export const bridge = {
       }
 
       const firstInstanceWithSameEdgeConfigId = instances.find(
-        candidateInstance =>
-          getEdgeConfigIdFromInstance(candidateInstance) === edgeConfigId
+        (candidateInstance) =>
+          getEdgeConfigIdFromInstance(candidateInstance) === edgeConfigId,
       );
       const isDuplicate = firstInstanceWithSameEdgeConfigId !== instance;
 
@@ -575,17 +575,17 @@ export const bridge = {
         this.createError({
           path: `${instancePath}.${edgeConfigIdFieldName}`,
           message:
-            "Please provide a value unique from those used for other instances."
+            "Please provide a value unique from those used for other instances.",
         })
       );
-    })
+    }),
 };
 
-const getInputMethodFieldName = instanceFieldName =>
+const getInputMethodFieldName = (instanceFieldName) =>
   `${instanceFieldName}.edgeConfigInputMethod`;
-const getSelectInputMethodFieldName = instanceFieldName =>
+const getSelectInputMethodFieldName = (instanceFieldName) =>
   `${instanceFieldName}.edgeConfigSelectInputMethod`;
-const getFreeformInputMethodFieldName = instanceFieldName =>
+const getFreeformInputMethodFieldName = (instanceFieldName) =>
   `${instanceFieldName}.edgeConfigFreeformInputMethod`;
 
 /**
@@ -605,7 +605,7 @@ const getFreeformInputMethodFieldName = instanceFieldName =>
  *   sandbox?: string
  * }}}
  */
-export const useEdgeConfigIdFields = instanceFieldName => {
+export const useEdgeConfigIdFields = (instanceFieldName) => {
   const inputMethod = useFieldValue(getInputMethodFieldName(instanceFieldName));
 
   if (inputMethod === INPUT_METHOD.SELECT) {
@@ -616,14 +616,14 @@ export const useEdgeConfigIdFields = instanceFieldName => {
     useFieldValue(getFreeformInputMethodFieldName(instanceFieldName));
   return {
     developmentEnvironment: {
-      datastreamId: developmentEdgeConfigId
+      datastreamId: developmentEdgeConfigId,
     },
     stagingEnvironment: {
-      datastreamId: stagingEdgeConfigId
+      datastreamId: stagingEdgeConfigId,
     },
     productionEnvironment: {
-      datastreamId: edgeConfigId
-    }
+      datastreamId: edgeConfigId,
+    },
   };
 };
 
@@ -631,10 +631,10 @@ const EdgeConfigurationsSection = ({
   instanceFieldName,
   instanceIndex,
   initInfo,
-  context
+  context,
 }) => {
   const [{ value: inputMethod }] = useField(
-    getInputMethodFieldName(instanceFieldName)
+    getInputMethodFieldName(instanceFieldName),
   );
 
   return (
@@ -691,7 +691,7 @@ EdgeConfigurationsSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired,
   instanceIndex: PropTypes.number.isRequired,
   initInfo: PropTypes.object.isRequired,
-  context: PropTypes.object.isRequired
+  context: PropTypes.object.isRequired,
 };
 
 export default EdgeConfigurationsSection;

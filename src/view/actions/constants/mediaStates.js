@@ -14,5 +14,5 @@ export default {
   fullScreen: "Full screen",
   inFocus: "In focus",
   mute: "Mute",
-  pictureInPicture: "Picture in picture"
+  pictureInPicture: "Picture in picture",
 };

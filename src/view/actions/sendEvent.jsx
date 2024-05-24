@@ -65,7 +65,7 @@ const xdmFieldDescription = (
 );
 
 const wrapGetInitialValues =
-  getInitialValues =>
+  (getInitialValues) =>
   ({ initInfo }) => {
     const { personalization = {}, ...otherSettings } = initInfo.settings || {};
     if (personalization.defaultPersonalizationEnabled === true) {
@@ -76,13 +76,13 @@ const wrapGetInitialValues =
     return getInitialValues({
       initInfo: {
         ...initInfo,
-        settings: { ...personalization, ...otherSettings }
-      }
+        settings: { ...personalization, ...otherSettings },
+      },
     });
   };
 
 const wrapGetSettings =
-  getSettings =>
+  (getSettings) =>
   ({ values }) => {
     const {
       decisionScopes,
@@ -137,7 +137,7 @@ const eventTypeField = comboBox({
     items.push({ value: key, label: eventTypes[key] });
     return items;
   }, []),
-  allowsCustomValue: true
+  allowsCustomValue: true,
 });
 
 const fetchEventTypeField = disabledTextField({
@@ -146,19 +146,20 @@ const fetchEventTypeField = disabledTextField({
   description:
     "Enter an event type to populate the `eventType` XDM field. Select a predefined value or enter a custom value.",
   value: "decisioning.propositionFetch",
-  valueLabel: "Decisioning Proposition Fetch"
+  valueLabel: "Decisioning Proposition Fetch",
 });
 
 const xdmField = dataElement({
   name: "xdm",
   label: "XDM",
-  description: xdmFieldDescription
+  description: xdmFieldDescription,
 });
 
 const dataField = dataElement({
   name: "data",
   label: "Data",
-  description: "Provide a data element which returns an object to send as data."
+  description:
+    "Provide a data element which returns an object to send as data.",
 });
 
 const includeRenderedPropositionsField = checkbox({
@@ -167,7 +168,7 @@ const includeRenderedPropositionsField = checkbox({
   description:
     'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
   defaultValue: false,
-  beta: true
+  beta: true,
 });
 
 const disabledIncludeRenderedPropositionsField = disabledCheckbox({
@@ -176,21 +177,21 @@ const disabledIncludeRenderedPropositionsField = disabledCheckbox({
   description:
     'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
   value: true,
-  beta: true
+  beta: true,
 });
 
 const documentUnloadingField = checkbox({
   name: "documentUnloading",
   label: "Document will unload",
   description:
-    "Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored."
+    "Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored.",
 });
 
 const mergeIdField = dataElement({
   name: "mergeId",
   label: "Merge ID (Deprecated)",
   description:
-    "Provide an identifier used to merge multiple events. This will populate the `eventMergeId` XDM field. This field has been deprecated because it is not supported by Adobe Experience Platform."
+    "Provide an identifier used to merge multiple events. This will populate the `eventMergeId` XDM field. This field has been deprecated because it is not supported by Adobe Experience Platform.",
 });
 
 const decisionScopesField = fieldArray({
@@ -199,7 +200,7 @@ const decisionScopesField = fieldArray({
   singularLabel: "Scope",
   description: "Create an array of decision scopes to query with the event.",
   dataElementDescription:
-    "This data element should resolve to an array of scopes."
+    "This data element should resolve to an array of scopes.",
 });
 
 const surfacesField = fieldArray({
@@ -218,21 +219,21 @@ const surfacesField = fieldArray({
         return testContext.createError({ message });
       }
       return true;
-    }
-  )
+    },
+  ),
 });
 
 const renderDecisionsField = checkbox({
   name: "renderDecisions",
   label: "Render visual personalization decisions",
   description: "Check this to render visual personalization decisions.",
-  defaultValue: false
+  defaultValue: false,
 });
 
 const sendDisplayEventField = conditional(
   {
     args: "renderDecisions",
-    condition: renderDecisions => renderDecisions
+    condition: (renderDecisions) => renderDecisions,
   },
   [
     checkbox({
@@ -241,9 +242,9 @@ const sendDisplayEventField = conditional(
       description:
         'Check this to send a display event after personalization is rendered. Uncheck this to include the display notifications in a subsequent event with the "include rendered propositions" checked.',
       defaultValue: true,
-      beta: true
-    })
-  ]
+      beta: true,
+    }),
+  ],
 );
 
 const sendDisplayEventUnchecked = disabledCheckbox({
@@ -252,7 +253,7 @@ const sendDisplayEventUnchecked = disabledCheckbox({
   description:
     'Check this to send a display event after personalization is rendered. Uncheck this to include the display notifications in a subsequent event with the "include rendered propositions" checked.',
   value: false,
-  beta: true
+  beta: true,
 });
 
 const defaultPersonalizationEnabledField = radioGroup({
@@ -264,20 +265,20 @@ const defaultPersonalizationEnabledField = radioGroup({
     {
       value: "auto",
       label:
-        "Automatic - request default personalization when it has not yet been requested."
+        "Automatic - request default personalization when it has not yet been requested.",
     },
     {
       value: "true",
       label:
-        "Enabled - explicitly request the page scope and default surface. This will update the SPA view cache."
+        "Enabled - explicitly request the page scope and default surface. This will update the SPA view cache.",
     },
     {
       value: "false",
       label:
-        "Disabled - explicitly suppress the request for the page scope and default surface."
-    }
+        "Disabled - explicitly suppress the request for the page scope and default surface.",
+    },
   ],
-  beta: true
+  beta: true,
 });
 
 const decisionContext = simpleMap({
@@ -293,7 +294,7 @@ const decisionContext = simpleMap({
   keyDescription: "Enter the context key.",
   valueLabel: "Value",
   valueDescription: "Enter the context value.",
-  beta: true
+  beta: true,
 });
 
 const configOverrideFields = configOverrides();
@@ -301,13 +302,13 @@ const datasetIdField = textField({
   name: "datasetId",
   label: "Dataset ID (deprecated)",
   description:
-    "Send data to a different dataset than what's been provided in the datastream. Note: this field is deprecated. Use the 'Event dataset' field instead."
+    "Send data to a different dataset than what's been provided in the datastream. Note: this field is deprecated. Use the 'Event dataset' field instead.",
 });
 
 const sendEventForm = form(
   {
     wrapGetInitialValues,
-    wrapGetSettings
+    wrapGetSettings,
   },
   [
     instancePicker({ name: "instanceName" }),
@@ -317,12 +318,12 @@ const sendEventForm = form(
       description:
         "Check this box to automatically fill in or hide certain fields to enable a particular use-case.",
       defaultValue: false,
-      beta: true
+      beta: true,
     }),
     conditional(
       {
         args: "guidedEventsEnabled",
-        condition: guidedEventsEnabled => !guidedEventsEnabled
+        condition: (guidedEventsEnabled) => !guidedEventsEnabled,
       },
       [
         section({ label: "Data" }, [
@@ -331,7 +332,7 @@ const sendEventForm = form(
           dataField,
           includeRenderedPropositionsField,
           documentUnloadingField,
-          mergeIdField
+          mergeIdField,
         ]),
         section({ label: "Personalization" }, [
           decisionScopesField,
@@ -339,16 +340,16 @@ const sendEventForm = form(
           renderDecisionsField,
           sendDisplayEventField,
           defaultPersonalizationEnabledField,
-          decisionContext
+          decisionContext,
         ]),
         configOverrideFields,
-        datasetIdField
-      ]
+        datasetIdField,
+      ],
     ),
     conditional(
       {
         args: "guidedEventsEnabled",
-        condition: guidedEventsEnabled => guidedEventsEnabled
+        condition: (guidedEventsEnabled) => guidedEventsEnabled,
       },
       [
         radioGroup({
@@ -360,26 +361,26 @@ const sendEventForm = form(
             {
               value: FETCH,
               label:
-                "Request personalization - get the latest personalization decisions without recording an Adobe Analytics event. This is meant to be called early in the page load."
+                "Request personalization - get the latest personalization decisions without recording an Adobe Analytics event. This is meant to be called early in the page load.",
             },
             {
               value: COLLECT,
               label:
-                "Collect analytics - record an event without getting personalization decisions. This is meant to be called late in the page load."
-            }
+                "Collect analytics - record an event without getting personalization decisions. This is meant to be called late in the page load.",
+            },
           ],
-          beta: true
+          beta: true,
         }),
         conditional(
           {
             args: "guidedEvent",
-            condition: guidedEvent => guidedEvent === FETCH
+            condition: (guidedEvent) => guidedEvent === FETCH,
           },
           [
             section({ label: "Data" }, [
               fetchEventTypeField,
               xdmField,
-              dataField
+              dataField,
             ]),
             section({ label: "Personalization" }, [
               decisionScopesField,
@@ -387,29 +388,29 @@ const sendEventForm = form(
               renderDecisionsField,
               sendDisplayEventUnchecked,
               defaultPersonalizationEnabledField,
-              decisionContext
+              decisionContext,
             ]),
-            configOverrideFields
-          ]
+            configOverrideFields,
+          ],
         ),
         conditional(
           {
             args: "guidedEvent",
-            condition: guidedEvent => guidedEvent === COLLECT
+            condition: (guidedEvent) => guidedEvent === COLLECT,
           },
           [
             section({ label: "Data" }, [
               eventTypeField,
               xdmField,
               dataField,
-              disabledIncludeRenderedPropositionsField
+              disabledIncludeRenderedPropositionsField,
             ]),
-            configOverrideFields
-          ]
-        )
-      ]
-    )
-  ]
+            configOverrideFields,
+          ],
+        ),
+      ],
+    ),
+  ],
 );
 
 renderForm(sendEventForm);

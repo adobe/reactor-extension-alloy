@@ -59,7 +59,7 @@ const getTreeNode = ({
   notifyParentOfTouched = () => {},
   errors,
   touched,
-  isAncestorCleared = false
+  isAncestorCleared = false,
 }) => {
   const { id, schema, isAlwaysDisabled } = formStateNode;
 
@@ -72,7 +72,7 @@ const getTreeNode = ({
     // The Tree component, when rendering a tree node, will pass the treeNode
     // object into the component that renders the tree node, which is provided here.
     title: treeNodeComponent,
-    clear: formStateNode.transform.clear && !isAncestorCleared
+    clear: formStateNode.transform.clear && !isAncestorCleared,
   };
 
   // This variable keeps track of whether any of the errors have been
@@ -110,9 +110,9 @@ const getTreeNode = ({
     getTreeNode: ({ ...args }) => {
       return getTreeNode({
         ...args,
-        isAncestorCleared: formStateNode.transform.clear || isAncestorCleared
+        isAncestorCleared: formStateNode.transform.clear || isAncestorCleared,
       });
-    }
+    },
   });
 
   // To illustrate why we check for isTouchedAtCurrentOrDescendantNode,
@@ -142,6 +142,6 @@ export default ({ treeNodeComponent, formState, errors, touched }) => {
     // matter because it won't be shown in the tree anyway.
     displayName: "",
     errors,
-    touched
+    touched,
   });
 };

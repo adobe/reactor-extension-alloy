@@ -18,7 +18,7 @@ import { PARTS, WHOLE } from "../../constants/populationStrategy";
 
 const computePopulationAmount = ({
   formStateNode,
-  isAncestorUsingWholePopulationStrategy
+  isAncestorUsingWholePopulationStrategy,
 }) => {
   if (isAncestorUsingWholePopulationStrategy) {
     return BLANK;
@@ -38,7 +38,7 @@ export default ({
   isAncestorUsingWholePopulationStrategy,
   confirmTouchedAtCurrentOrDescendantNode,
   errors,
-  touched
+  touched,
 }) => {
   if (
     (formStateNode.populationStrategy === WHOLE &&
@@ -52,11 +52,11 @@ export default ({
 
   treeNode.populationAmount = computePopulationAmount({
     formStateNode,
-    isAncestorUsingWholePopulationStrategy
+    isAncestorUsingWholePopulationStrategy,
   });
 
   treeNode.infoTip = computePopulationNote({
     formStateNode,
-    isAncestorUsingWholePopulationStrategy
+    isAncestorUsingWholePopulationStrategy,
   });
 };

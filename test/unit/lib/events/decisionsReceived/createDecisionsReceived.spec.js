@@ -21,10 +21,10 @@ describe("Decisions received event", () => {
     trigger = jasmine.createSpy("trigger");
     sendEventCallbackStorage = jasmine.createSpyObj(
       "decisionsCallbackStorage",
-      ["add"]
+      ["add"],
     );
     decisionsReceived = createDecisionsReceived({
-      sendEventCallbackStorage
+      sendEventCallbackStorage,
     });
   });
 
@@ -35,7 +35,7 @@ describe("Decisions received event", () => {
     const decisions = [];
     callback({ decisions });
     expect(trigger).toHaveBeenCalledWith({
-      decisions: []
+      decisions: [],
     });
   });
 

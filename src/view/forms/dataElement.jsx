@@ -22,20 +22,20 @@ export default function dataElement({
   isRequired = false,
   label,
   description,
-  tokenize = true
+  tokenize = true,
 }) {
   let fieldSchema = string();
 
   if (tokenize) {
     fieldSchema = fieldSchema.matches(
       singleDataElementRegex,
-      DATA_ELEMENT_REQUIRED
+      DATA_ELEMENT_REQUIRED,
     );
   }
 
   if (isRequired) {
     fieldSchema = fieldSchema.required(
-      `Please provide a ${label.toLowerCase()}.`
+      `Please provide a ${label.toLowerCase()}.`,
     );
   }
 
@@ -53,7 +53,7 @@ export default function dataElement({
       return settings;
     },
     validationShape: {
-      [name]: fieldSchema
+      [name]: fieldSchema,
     },
     Component: ({ namePrefix = "" }) => {
       return (
@@ -68,10 +68,10 @@ export default function dataElement({
           />
         </DataElementSelector>
       );
-    }
+    },
   };
   part.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
 
   return part;

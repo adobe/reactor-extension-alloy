@@ -17,23 +17,23 @@ export default (extensionViewController, instanceNameField) => {
         instances: [
           {
             name: "alloy1",
-            edgeConfigId: "PR123"
+            edgeConfigId: "PR123",
           },
           {
             name: "alloy2",
-            edgeConfigId: "PR456"
-          }
-        ]
+            edgeConfigId: "PR456",
+          },
+        ],
       },
       settings: {
-        instanceName: "alloydeleted"
-      }
+        instanceName: "alloydeleted",
+      },
     });
     await instanceNameField.expectSelectedOptionLabel("alloydeleted (Deleted)");
     await instanceNameField.expectMenuOptionLabels([
       "alloydeleted (Deleted)",
       "alloy1",
-      "alloy2"
+      "alloy2",
     ]);
   });
 };

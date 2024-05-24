@@ -19,20 +19,20 @@ import * as AUTHENTICATED_STATE from "./identityMap/constants/authenticatedState
 import Identity from "./identityMap/components/Identity";
 import { getNamespacesOptions } from "./identityMap/utils/namespacesUtils";
 
-const identitiesMapToArray = identityMap => {
+const identitiesMapToArray = (identityMap) => {
   return Object.keys(identityMap)
     .sort((firstNamespaceCode, secondNamespaceCode) =>
-      firstNamespaceCode.localeCompare(secondNamespaceCode)
+      firstNamespaceCode.localeCompare(secondNamespaceCode),
     )
-    .map(namespaceCode => {
+    .map((namespaceCode) => {
       return {
         namespaceCode,
-        identifiers: identityMap[namespaceCode]
+        identifiers: identityMap[namespaceCode],
       };
     });
 };
 
-const identitiesArrayToMap = identitiesArray => {
+const identitiesArrayToMap = (identitiesArray) => {
   return identitiesArray.reduce((identityMap, identity) => {
     const { namespaceCode, identifiers } = identity;
     identityMap[namespaceCode] = identifiers;
@@ -49,7 +49,7 @@ const getInitialValues = async ({ initInfo, context }) => {
   context.current.namespaces = await getNamespacesOptions(initInfo);
 
   return {
-    identities
+    identities,
   };
 };
 
@@ -62,29 +62,29 @@ const validateDuplicateValue = (
   identities,
   key,
   message,
-  validateBooleanTrue
+  validateBooleanTrue,
 ) => {
-  const values = identities.map(identity =>
+  const values = identities.map((identity) =>
     // If the user didn't enter a value for the property
     // we're checking duplicates for, then the property will have
     // an undefined value (not an empty string).
-    identity[key] ? identity[key].toUpperCase() : identity[key]
+    identity[key] ? identity[key].toUpperCase() : identity[key],
   );
   const duplicateIndex = values.findIndex(
     (value, index) =>
-      values.indexOf(value) < index && (!validateBooleanTrue || value === true)
+      values.indexOf(value) < index && (!validateBooleanTrue || value === true),
   );
 
   return (
     duplicateIndex === -1 ||
     createError({
       path: `identities[${duplicateIndex}].${key}`,
-      message
+      message,
     })
   );
 };
 
-const hasPrimary = identifier => identifier.primary;
+const hasPrimary = (identifier) => identifier.primary;
 
 const validateOnePrimary = (createError, identities, message) => {
   let primaries = 0;
@@ -100,7 +100,7 @@ const validateOnePrimary = (createError, identities, message) => {
       if (primaries > 1) {
         return createError({
           path: `identities[${i}].identifiers[${j}].primary`,
-          message
+          message,
         });
       }
     }
@@ -119,31 +119,31 @@ const validationSchema = object()
             message: "ECID is not allowed",
             test(value) {
               return !value || value.toUpperCase() !== "ECID";
-            }
+            },
           }),
         identifiers: array().of(
           object().shape({
             id: string().required("Please specify an ID."),
             authenticatedState: string().default(AUTHENTICATED_STATE.AMBIGUOUS),
-            primary: boolean().default(false)
-          })
-        )
-      })
-    )
+            primary: boolean().default(false),
+          }),
+        ),
+      }),
+    ),
   })
   .test("uniqueNamespace", function uniqueNamespace(settings) {
     return validateDuplicateValue(
       this.createError.bind(this),
       settings.identities,
       "namespaceCode",
-      "Please provide a unique namespace."
+      "Please provide a unique namespace.",
     );
   })
   .test("uniquePrimary", function uniquePrimary(settings) {
     return validateOnePrimary(
       this.createError.bind(this),
       settings.identities,
-      "Only one identifier can be primary."
+      "Only one identifier can be primary.",
     );
   });
 

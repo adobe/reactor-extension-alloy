@@ -18,19 +18,19 @@ describe("copyPropertiesIfValueDifferentThanDefault", () => {
     const fromObj = {
       a: "foo",
       b: "bar",
-      c: ""
+      c: "",
     };
     const defaultsObj = {
       a: "",
       b: "",
-      c: ""
+      c: "",
     };
     const keys = ["a", "b"];
     copyPropertiesIfValueDifferentThanDefault({
       toObj,
       fromObj,
       defaultsObj,
-      keys
+      keys,
     });
     expect(Object.keys(toObj)).toEqual(keys);
   });
@@ -40,19 +40,19 @@ describe("copyPropertiesIfValueDifferentThanDefault", () => {
     const fromObj = {
       a: "foo",
       b: "bar",
-      c: ""
+      c: "",
     };
     const defaultsObj = {
       a: "",
       b: "bar",
-      c: ""
+      c: "",
     };
     const keys = ["a", "b", "c"];
     copyPropertiesIfValueDifferentThanDefault({
       toObj,
       fromObj,
       defaultsObj,
-      keys
+      keys,
     });
     expect(toObj).toEqual({ a: "foo" });
   });
@@ -65,9 +65,9 @@ describe("copyPropertiesIfValueDifferentThanDefault", () => {
       c: {
         d: {
           e: "baz",
-          f: null
-        }
-      }
+          f: null,
+        },
+      },
     };
     const defaultsObj = {
       a: "",
@@ -75,24 +75,24 @@ describe("copyPropertiesIfValueDifferentThanDefault", () => {
       c: {
         d: {
           e: "",
-          f: null
-        }
-      }
+          f: null,
+        },
+      },
     };
     const keys = ["a", "b", "c"];
     copyPropertiesIfValueDifferentThanDefault({
       toObj,
       fromObj,
       defaultsObj,
-      keys
+      keys,
     });
     expect(toObj).toEqual({
       a: "foo",
       c: {
         d: {
-          e: "baz"
-        }
-      }
+          e: "baz",
+        },
+      },
     });
   });
 
@@ -107,21 +107,21 @@ describe("copyPropertiesIfValueDifferentThanDefault", () => {
         edgeConfigFreeformInputMethod: {
           edgeConfigId: "",
           stagingEdgeConfigId: "",
-          developmentEdgeConfigId: ""
+          developmentEdgeConfigId: "",
         },
         edgeConfigSelectInputMethod: {
           productionEnvironment: {
             datastreamId: "",
-            sandbox: ""
+            sandbox: "",
           },
           stagingEnvironment: {
             datastreamId: "",
-            sandbox: ""
+            sandbox: "",
           },
           developmentEnvironment: {
             datastreamId: "",
-            sandbox: ""
-          }
+            sandbox: "",
+          },
         },
         defaultConsent: "in",
         idMigrationEnabled: true,
@@ -139,24 +139,24 @@ describe("copyPropertiesIfValueDifferentThanDefault", () => {
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: ""
+                datasetId: "",
               },
               profile: {
-                datasetId: ""
-              }
-            }
+                datasetId: "",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: [""]
+            reportSuites: [""],
           },
           com_adobe_identity: {
-            idSyncContainerId: ""
+            idSyncContainerId: "",
           },
           com_adobe_target: {
-            propertyToken: ""
-          }
+            propertyToken: "",
+          },
         },
-        edgeBasePath: "ee"
+        edgeBasePath: "ee",
       },
       defaultsObj: {
         globalOverridesEnabled: true,
@@ -164,25 +164,25 @@ describe("copyPropertiesIfValueDifferentThanDefault", () => {
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: ""
+                datasetId: "",
               },
               profile: {
-                datasetId: ""
-              }
-            }
+                datasetId: "",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: [""]
+            reportSuites: [""],
           },
           com_adobe_identity: {
-            idSyncContainerId: ""
+            idSyncContainerId: "",
           },
           com_adobe_target: {
-            propertyToken: ""
-          }
-        }
+            propertyToken: "",
+          },
+        },
       },
-      keys: ["name", "globalOverridesEnabled", "edgeConfigOverrides"]
+      keys: ["name", "globalOverridesEnabled", "edgeConfigOverrides"],
     };
     copyPropertiesIfValueDifferentThanDefault(options);
     expect(options.toObj).toEqual({ name: "alloy" });
@@ -193,17 +193,17 @@ describe("copyPropertiesIfValueDifferentThanDefault", () => {
       toObj: {},
       fromObj: {
         foo: "bar",
-        bar: ["baz"]
+        bar: ["baz"],
       },
       defaultsObj: {
         foo: "",
-        bar: [""]
+        bar: [""],
       },
-      keys: ["bar"]
+      keys: ["bar"],
     };
     copyPropertiesIfValueDifferentThanDefault(options);
     expect(options.toObj).toEqual({
-      bar: ["baz"]
+      bar: ["baz"],
     });
   });
 });

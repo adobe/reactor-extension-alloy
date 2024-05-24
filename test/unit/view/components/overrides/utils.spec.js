@@ -14,7 +14,7 @@ import {
   createValidatorWithMessage,
   validateIsDataElement,
   createValidateItemIsInArray,
-  combineValidatorWithIsDataElement
+  combineValidatorWithIsDataElement,
 } from "../../../../../src/view/components/overrides/utils";
 
 describe("overrides/utils.js", () => {
@@ -27,20 +27,20 @@ describe("overrides/utils.js", () => {
       ["should validate data element", "%my data element%"],
       [
         "should validate data elements with characters in front",
-        "abc%my data element%"
+        "abc%my data element%",
       ],
       [
         "should validate data elements with characters in back",
-        "%my data element%abc"
+        "%my data element%abc",
       ],
       [
         "should validate data elements with characters in front and back",
-        "abc%my data element%abc"
+        "abc%my data element%abc",
       ],
       [
         "should validate multiple data elements in the same string",
-        "%my data element% %my other data element%%my third data element%%my fourth data element%"
-      ]
+        "%my data element% %my other data element%%my third data element%%my fourth data element%",
+      ],
     ].forEach(([testName, testValue]) => {
       it(testName, () => {
         expect(isDataElement(testValue)).toBe(true);
@@ -81,7 +81,7 @@ describe("overrides/utils.js", () => {
   describe("combineValidatorWithIsDataElement()", () => {
     it("should validate data elements and the other validator", () => {
       const combinedValidator = combineValidatorWithIsDataElement(
-        () => undefined
+        () => undefined,
       );
       expect(typeof combinedValidator("%my data element")).toBe("string");
       expect(combinedValidator("%my data element%")).toBe(undefined);

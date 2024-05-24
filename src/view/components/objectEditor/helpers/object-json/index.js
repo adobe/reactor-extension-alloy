@@ -19,5 +19,5 @@ export default {
   populateInitialFormStateNode,
   getValueFromFormState,
   validate,
-  populateTreeNode
+  populateTreeNode,
 };

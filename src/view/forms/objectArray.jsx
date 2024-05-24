@@ -27,10 +27,10 @@ import FormElementContainer from "../components/formElementContainer";
 const FORM = "form";
 const DATA_ELEMENT = "dataElement";
 
-const lowerInitialLetters = s => {
+const lowerInitialLetters = (s) => {
   return s
     .split(" ")
-    .map(word => word.charAt(0).toLowerCase() + word.slice(1))
+    .map((word) => word.charAt(0).toLowerCase() + word.slice(1))
     .join(" ");
 };
 
@@ -39,7 +39,7 @@ const ObjectArrayContainer = ({ horizontal, children }) => {
     return (
       <Well
         UNSAFE_style={{
-          paddingTop: "var(--spectrum-global-dimension-size-100)"
+          paddingTop: "var(--spectrum-global-dimension-size-100)",
         }}
       >
         <FormElementContainer>{children}</FormElementContainer>
@@ -51,7 +51,7 @@ const ObjectArrayContainer = ({ horizontal, children }) => {
 
 ObjectArrayContainer.propTypes = {
   horizontal: PropTypes.bool,
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 /** @typedef {import("./form").Form} Form */
@@ -94,15 +94,15 @@ export default function objectArray(
     dataElementSupported = true,
     horizontal = false,
     compareFunction = numberAwareCompareFunction,
-    isRowEmpty = () => true
+    isRowEmpty = () => true,
   },
-  children = []
+  children = [],
 ) {
   const {
     getInitialValues: getItemInitialValues,
     getSettings: getItemSettings,
     validationShape: itemValidationShape,
-    Component: ItemComponent
+    Component: ItemComponent,
   } = form({}, children);
 
   const buildDefaultItem = () =>
@@ -126,18 +126,18 @@ export default function objectArray(
           const previousItems = items.slice(0, currentIndex);
 
           if (
-            previousItems.some(item => item[objectKey] === value[objectKey])
+            previousItems.some((item) => item[objectKey] === value[objectKey])
           ) {
             throw context.createError({
               path: `${path}.${objectKey}`,
               message: `Duplicate ${lowerInitialLetters(
-                objectLabelPlural
-              )} are not allowed`
+                objectLabelPlural,
+              )} are not allowed`,
             });
           }
 
           return true;
-        }
+        },
       )
       .test(
         "key-required-when-values-present",
@@ -149,30 +149,30 @@ export default function objectArray(
           ) {
             throw context.createError({
               path: `${context.path}.${objectKey}`,
-              message: `Please provide a ${lowerInitialLetters(singularLabel)}.`
+              message: `Please provide a ${lowerInitialLetters(singularLabel)}.`,
             });
           }
           return true;
-        }
+        },
       );
   }
 
   const validationShape = {};
   validationShape[name] = array()
     .compact(
-      item => Object.keys(getItemSettings({ values: item })).length === 0
+      (item) => Object.keys(getItemSettings({ values: item })).length === 0,
     )
     .when(`${name}InputMethod`, {
       is: FORM,
-      then: schema => schema.of(itemSchema)
+      then: (schema) => schema.of(itemSchema),
     });
 
   validationShape[`${name}DataElement`] = string().when(`${name}InputMethod`, {
     is: DATA_ELEMENT,
-    then: schema =>
+    then: (schema) =>
       schema
         .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-        .required(DATA_ELEMENT_REQUIRED)
+        .required(DATA_ELEMENT_REQUIRED),
   });
 
   const formPart = {
@@ -189,8 +189,8 @@ export default function objectArray(
           }, []);
       }
       if (transformedValue && Array.isArray(transformedValue)) {
-        transformedValue = transformedValue.map(item =>
-          getItemInitialValues({ initInfo: { settings: item } })
+        transformedValue = transformedValue.map((item) =>
+          getItemInitialValues({ initInfo: { settings: item } }),
         );
       } else {
         transformedValue = [buildDefaultItem()];
@@ -199,7 +199,7 @@ export default function objectArray(
       const initialValues = {
         [name]: transformedValue,
         [`${name}InputMethod`]: FORM,
-        [`${name}DataElement`]: ""
+        [`${name}DataElement`]: "",
       };
 
       if (typeof value === "string") {
@@ -212,11 +212,11 @@ export default function objectArray(
     getSettings({ values }) {
       const settings = {};
       if (values[`${name}InputMethod`] === FORM) {
-        const itemSettings = values[name].map(item =>
-          getItemSettings({ values: item })
+        const itemSettings = values[name].map((item) =>
+          getItemSettings({ values: item }),
         );
-        const filteredItems = itemSettings.filter(item =>
-          objectKey ? item[objectKey] : Object.keys(item).length > 0
+        const filteredItems = itemSettings.filter((item) =>
+          objectKey ? item[objectKey] : Object.keys(item).length > 0,
         );
         if (filteredItems.length > 0) {
           if (objectKey) {
@@ -237,10 +237,10 @@ export default function objectArray(
     validationShape,
     Component: ({ namePrefix = "", ...props }) => {
       const [{ value: inputMethod }] = useField(
-        `${namePrefix}${name}InputMethod`
+        `${namePrefix}${name}InputMethod`,
       );
       const [{ value: items }, , { setValue: setItems }] = useField(
-        `${namePrefix}${name}`
+        `${namePrefix}${name}`,
       );
 
       return (
@@ -268,7 +268,7 @@ export default function objectArray(
           {inputMethod === FORM && (
             <FieldArray
               name={`${namePrefix}${name}`}
-              render={arrayHelpers => {
+              render={(arrayHelpers) => {
                 return (
                   <>
                     {items.map((item, index) => {
@@ -291,7 +291,7 @@ export default function objectArray(
                                   onPress={() => {
                                     // using arrayHelpers.remove mangles the error message
                                     setItems(
-                                      items.filter((_, i) => i !== index)
+                                      items.filter((_, i) => i !== index),
                                     );
                                   }}
                                   isDisabled={
@@ -320,7 +320,7 @@ export default function objectArray(
                                   // using arrayHelpers.remove mangles the error message
                                   items.length > 1
                                     ? setItems(
-                                        items.filter((_, i) => i !== index)
+                                        items.filter((_, i) => i !== index),
                                       )
                                     : setItems([buildDefaultItem()])
                                 }
@@ -362,10 +362,10 @@ export default function objectArray(
           )}
         </ObjectArrayContainer>
       );
-    }
+    },
   };
   formPart.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
   return formPart;
 }

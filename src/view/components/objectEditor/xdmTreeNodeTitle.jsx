@@ -20,7 +20,7 @@ import PopulationAmountIndicator from "./populationAmountIndicator";
 import "./xdmTreeNodeTitle.styl";
 import { EMPTY, FULL, PARTIAL, BLANK } from "./constants/populationAmount";
 
-const XdmTreeNodeTitle = props => {
+const XdmTreeNodeTitle = (props) => {
   const { id, displayName, type, populationAmount, error, infoTip, clear } =
     props;
   return (
@@ -30,7 +30,7 @@ const XdmTreeNodeTitle = props => {
       alignItems="center"
       gap="size-100"
       UNSAFE_className={classNames("XdmTreeNodeTitle", {
-        "is-invalid": error
+        "is-invalid": error,
       })}
     >
       {error && (
@@ -71,7 +71,7 @@ XdmTreeNodeTitle.propTypes = {
   populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY, BLANK]),
   error: PropTypes.string,
   infoTip: PropTypes.string,
-  clear: PropTypes.bool.isRequired
+  clear: PropTypes.bool.isRequired,
 };
 
 export default XdmTreeNodeTitle;

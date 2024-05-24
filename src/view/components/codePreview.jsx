@@ -17,7 +17,7 @@ import {
   LabeledValue,
   Text,
   TextArea,
-  View
+  View,
 } from "@adobe/react-spectrum";
 import CodeIcon from "@spectrum-icons/workflow/Code";
 import FieldDescriptionAndError from "./fieldDescriptionAndError";
@@ -31,7 +31,7 @@ const CodePreview = ({
   value,
   description,
   error,
-  onPress
+  onPress,
 }) => {
   return (
     // To get this element to shrink to its contents, we had to use
@@ -72,7 +72,7 @@ CodePreview.propTypes = {
   value: PropTypes.string,
   description: PropTypes.node,
   error: PropTypes.string,
-  onPress: PropTypes.func.isRequired
+  onPress: PropTypes.func.isRequired,
 };
 
 export default CodePreview;

@@ -22,9 +22,9 @@ export default function copyPropertiesWithDefaultFallback({
   toObj,
   fromObj,
   defaultsObj,
-  keys
+  keys,
 }) {
-  keys.forEach(key => {
+  keys.forEach((key) => {
     if (
       typeof fromObj[key] === "object" &&
       fromObj[key] !== null &&
@@ -35,7 +35,7 @@ export default function copyPropertiesWithDefaultFallback({
         toObj: toObj[key],
         fromObj: fromObj[key],
         defaultsObj: defaultsObj[key],
-        keys: Object.keys(defaultsObj[key])
+        keys: Object.keys(defaultsObj[key]),
       });
       return;
     }

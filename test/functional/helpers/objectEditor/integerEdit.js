@@ -15,10 +15,10 @@ import spectrum from "../spectrum";
  * Provides methods for managing form fields when editing an integer node.
  */
 export default {
-  enterValue: async text => {
+  enterValue: async (text) => {
     await spectrum.textField("valueField").typeText(text);
   },
-  expectValue: async text => {
+  expectValue: async (text) => {
     await spectrum.textField("valueField").expectValue(text);
-  }
+  },
 };

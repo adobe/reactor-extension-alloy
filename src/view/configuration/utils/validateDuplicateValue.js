@@ -16,10 +16,10 @@ const validateDuplicateValue = ({
   instance,
   instancePath,
   key,
-  message
+  message,
 }) => {
   const firstInstanceWithSameValue = instances.find(
-    candidateInstance => candidateInstance[key] === instance[key]
+    (candidateInstance) => candidateInstance[key] === instance[key],
   );
   const isDuplicate = firstInstanceWithSameValue !== instance;
 
@@ -27,7 +27,7 @@ const validateDuplicateValue = ({
     !isDuplicate ||
     createError({
       path: `${instancePath}.${key}`,
-      message
+      message,
     })
   );
 };

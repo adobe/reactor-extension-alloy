@@ -18,11 +18,11 @@ const fetchConfig = async ({
   imsAccess,
   edgeConfigId,
   signal,
-  sandbox
+  sandbox,
 }) => {
   let parsedResponse;
   const headers = {
-    "x-sandbox-name": sandbox
+    "x-sandbox-name": sandbox,
   };
 
   try {
@@ -31,7 +31,7 @@ const fetchConfig = async ({
       imsAccess,
       path: `/metadata/namespaces/edge/datasets/datastreams/records/${edgeConfigId}`,
       headers,
-      signal
+      signal,
     });
   } catch (e) {
     if (e.name === "AbortError") {
@@ -39,7 +39,7 @@ const fetchConfig = async ({
     }
 
     throw new UserReportableError("Failed to load datastream.", {
-      originatingError: e
+      originatingError: e,
     });
   }
 

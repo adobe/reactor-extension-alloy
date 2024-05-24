@@ -28,10 +28,10 @@ for (let i = 0; i < 3; i += 1) {
     identifiers.push({
       id: spectrum.textField(`identity${i}idField${j}`),
       authenticatedState: spectrum.picker(
-        `identity${i}authenticatedStateField${j}`
+        `identity${i}authenticatedStateField${j}`,
       ),
       primary: spectrum.checkbox(`identity${i}primaryField${j}`),
-      deleteButton: spectrum.button(`deleteIdentifier${i}Button${j}`)
+      deleteButton: spectrum.button(`deleteIdentifier${i}Button${j}`),
     });
   }
   identities.push({
@@ -39,7 +39,7 @@ for (let i = 0; i < 3; i += 1) {
     identifiers,
     deleteButton: spectrum.button(`deleteIdentity${i}Button`),
     addIdentifierButton: spectrum.button(`addIdentifier${i}Button`),
-    namespacePicker: spectrum.comboBox(`namespace${i}Combobox`)
+    namespacePicker: spectrum.comboBox(`namespace${i}Combobox`),
   });
 }
 
@@ -47,7 +47,10 @@ createExtensionViewFixture({
   title: "Identity Map Data Element View",
   viewPath: "dataElements/identityMap.html",
   requiresAdobeIOIntegration: true,
-  requestHooks: [identityNamespaceMocks.empty, sandboxMocks.multipleWithDefault]
+  requestHooks: [
+    identityNamespaceMocks.empty,
+    sandboxMocks.multipleWithDefault,
+  ],
 });
 
 runCommonExtensionViewTests();
@@ -58,15 +61,15 @@ test("initializes identity map with default settings", async () => {
       instances: [
         {
           name: "alloy1",
-          edgeConfigId: "PR123"
-        }
-      ]
-    }
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
   });
   await identities[0].namespace.expectValue("");
   await identities[0].identifiers[0].id.expectValue("");
   await identities[0].identifiers[0].authenticatedState.expectSelectedOptionLabel(
-    "Ambiguous"
+    "Ambiguous",
   );
   await identities[0].identifiers[0].primary.expectUnchecked();
   await identities[0].identifiers[0].deleteButton.expectNotExists();
@@ -81,44 +84,44 @@ test("initializes identity map with sorted namespaces", async () => {
         {
           id: "test1",
           authenticatedState: "loggedOut",
-          primary: false
+          primary: false,
         },
         {
           id: "test2",
           authenticatedState: "ambiguous",
-          primary: true
-        }
+          primary: true,
+        },
       ],
       W_CUSTOM_IDENTITY2: [
         {
           id: "test3",
           authenticatedState: "authenticated",
-          primary: false
-        }
+          primary: false,
+        },
       ],
       B_CUSTOM_IDENTITY2: [
         {
           id: "test3",
           authenticatedState: "authenticated",
-          primary: false
-        }
-      ]
+          primary: false,
+        },
+      ],
     },
     extensionSettings: {
       instances: [
         {
           name: "alloy1",
-          edgeConfigId: "PR123"
-        }
-      ]
-    }
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
   });
 
   await tabs.selectTab("B_CUSTOM_IDENTITY2");
   await identities[0].namespace.expectValue("B_CUSTOM_IDENTITY2");
   await identities[0].identifiers[0].id.expectValue("test3");
   await identities[0].identifiers[0].authenticatedState.expectSelectedOptionLabel(
-    "Authenticated"
+    "Authenticated",
   );
   await identities[0].identifiers[0].primary.expectUnchecked();
   await identities[0].identifiers[0].deleteButton.expectNotExists();
@@ -129,14 +132,14 @@ test("initializes identity map with sorted namespaces", async () => {
 
   await identities[1].identifiers[0].id.expectValue("test1");
   await identities[1].identifiers[0].authenticatedState.expectSelectedOptionLabel(
-    "Logged Out"
+    "Logged Out",
   );
   await identities[1].identifiers[0].primary.expectUnchecked();
   await identities[1].identifiers[0].deleteButton.expectExists();
 
   await identities[1].identifiers[1].id.expectValue("test2");
   await identities[1].identifiers[1].authenticatedState.expectSelectedOptionLabel(
-    "Ambiguous"
+    "Ambiguous",
   );
   await identities[1].identifiers[1].primary.expectChecked();
   await identities[1].identifiers[1].deleteButton.expectExists();
@@ -147,7 +150,7 @@ test("initializes identity map with sorted namespaces", async () => {
   await identities[2].namespace.expectValue("W_CUSTOM_IDENTITY2");
   await identities[2].identifiers[0].id.expectValue("test3");
   await identities[2].identifiers[0].authenticatedState.expectSelectedOptionLabel(
-    "Authenticated"
+    "Authenticated",
   );
   await identities[2].identifiers[0].primary.expectUnchecked();
   await identities[2].identifiers[0].deleteButton.expectNotExists();
@@ -159,28 +162,28 @@ test("initializes identity map with sorted namespaces", async () => {
       {
         id: "test3",
         authenticatedState: "authenticated",
-        primary: false
-      }
+        primary: false,
+      },
     ],
     S_CUSTOM_IDENTITY: [
       {
         id: "test1",
         authenticatedState: "loggedOut",
-        primary: false
+        primary: false,
       },
       {
         id: "test2",
         authenticatedState: "ambiguous",
-        primary: true
-      }
+        primary: true,
+      },
     ],
     W_CUSTOM_IDENTITY2: [
       {
         id: "test3",
         authenticatedState: "authenticated",
-        primary: false
-      }
-    ]
+        primary: false,
+      },
+    ],
   });
 });
 test("adds a new identity and new identifier with minimal settings", async () => {
@@ -189,25 +192,25 @@ test("adds a new identity and new identifier with minimal settings", async () =>
       instances: [
         {
           name: "alloy1",
-          edgeConfigId: "PR123"
-        }
-      ]
+          edgeConfigId: "PR123",
+        },
+      ],
     },
     settings: {
       CUSTOM_IDENTITY: [
         {
           id: "test1",
           authenticatedState: "loggedOut",
-          primary: false
-        }
-      ]
-    }
+          primary: false,
+        },
+      ],
+    },
   });
 
   await identities[0].namespace.expectValue("CUSTOM_IDENTITY");
   await identities[0].identifiers[0].id.expectValue("test1");
   await identities[0].identifiers[0].authenticatedState.expectSelectedOptionLabel(
-    "Logged Out"
+    "Logged Out",
   );
   await identities[0].identifiers[0].primary.expectUnchecked();
   await identities[0].identifiers[0].deleteButton.expectNotExists();
@@ -215,7 +218,7 @@ test("adds a new identity and new identifier with minimal settings", async () =>
   await identities[0].addIdentifierButton.click();
   await identities[0].identifiers[1].id.typeText("test2");
   await identities[0].identifiers[1].authenticatedState.selectOption(
-    "Ambiguous"
+    "Ambiguous",
   );
   await identities[0].identifiers[1].primary.click();
 
@@ -223,7 +226,7 @@ test("adds a new identity and new identifier with minimal settings", async () =>
   await identities[1].namespace.typeText("CUSTOM_IDENTITY2");
   await identities[1].identifiers[0].id.typeText("test3");
   await identities[1].identifiers[0].authenticatedState.selectOption(
-    "Authenticated"
+    "Authenticated",
   );
 
   await extensionViewController.expectIsValid();
@@ -232,21 +235,21 @@ test("adds a new identity and new identifier with minimal settings", async () =>
       {
         id: "test1",
         authenticatedState: "loggedOut",
-        primary: false
+        primary: false,
       },
       {
         id: "test2",
         authenticatedState: "ambiguous",
-        primary: true
-      }
+        primary: true,
+      },
     ],
     CUSTOM_IDENTITY2: [
       {
         id: "test3",
         authenticatedState: "authenticated",
-        primary: false
-      }
-    ]
+        primary: false,
+      },
+    ],
   });
 });
 test("removing identifier returns the correct settings", async () => {
@@ -256,30 +259,30 @@ test("removing identifier returns the correct settings", async () => {
         {
           id: "test1",
           authenticatedState: "loggedOut",
-          primary: false
-        }
+          primary: false,
+        },
       ],
       CUSTOM_IDENTITY2: [
         {
           id: "test3",
           authenticatedState: "authenticated",
-          primary: false
+          primary: false,
         },
         {
           id: "test2",
           authenticatedState: "ambiguous",
-          primary: true
-        }
-      ]
+          primary: true,
+        },
+      ],
     },
     extensionSettings: {
       instances: [
         {
           name: "alloy1",
-          edgeConfigId: "PR123"
-        }
-      ]
-    }
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
   });
 
   await tabs.selectTab("CUSTOM_IDENTITY2");
@@ -291,16 +294,16 @@ test("removing identifier returns the correct settings", async () => {
       {
         id: "test1",
         authenticatedState: "loggedOut",
-        primary: false
-      }
+        primary: false,
+      },
     ],
     CUSTOM_IDENTITY2: [
       {
         id: "test3",
         authenticatedState: "authenticated",
-        primary: false
-      }
-    ]
+        primary: false,
+      },
+    ],
   });
 });
 test("shows error for identity without a namespace", async () => {
@@ -309,15 +312,15 @@ test("shows error for identity without a namespace", async () => {
       instances: [
         {
           name: "alloy1",
-          edgeConfigId: "PR123"
-        }
-      ]
-    }
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
   });
 
   await identities[0].identifiers[0].id.typeText("test3");
   await identities[0].identifiers[0].authenticatedState.selectOption(
-    "Authenticated"
+    "Authenticated",
   );
 
   await extensionViewController.expectIsNotValid();
@@ -329,15 +332,15 @@ test("shows error for identifier without an ID", async () => {
       instances: [
         {
           name: "alloy1",
-          edgeConfigId: "PR123"
-        }
-      ]
-    }
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
   });
 
   await identities[0].namespace.typeText("CUSTOM_IDENTITY");
   await identities[0].identifiers[0].authenticatedState.selectOption(
-    "Authenticated"
+    "Authenticated",
   );
 
   await extensionViewController.expectIsNotValid();
@@ -351,24 +354,24 @@ test("shows error for identity with duplicate namespace", async () => {
         {
           id: "foo",
           authenticatedState: "",
-          primary: false
-        }
-      ]
+          primary: false,
+        },
+      ],
     },
     extensionSettings: {
       instances: [
         {
           name: "alloy1",
-          edgeConfigId: "PR123"
-        }
-      ]
-    }
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
   });
   await addIdentityButton.click();
   await identities[1].namespace.typeText("CUSTOM_IDENTITY");
   await identities[1].identifiers[0].id.typeText("test3");
   await identities[1].identifiers[0].authenticatedState.selectOption(
-    "Authenticated"
+    "Authenticated",
   );
 
   // This should select the first tab. Since the error will show up on
@@ -396,10 +399,10 @@ test("initialization of namespaces as picker with namespace names", async () => 
       instances: [
         {
           name: "alloy1",
-          edgeConfigId: "PR123"
-        }
-      ]
-    }
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
   });
   await identities[0].namespacePicker.enterSearch("AAID");
   await identities[0].namespacePicker.pressEnterKey();
@@ -412,9 +415,9 @@ test("initialization of namespaces as picker with namespace names", async () => 
       {
         id: "test3",
         authenticatedState: "ambiguous",
-        primary: false
-      }
-    ]
+        primary: false,
+      },
+    ],
   });
 });
 
@@ -428,10 +431,10 @@ test("when namespaces call fails instantiate form with textfield", async () => {
       instances: [
         {
           name: "alloy1",
-          edgeConfigId: "PR123"
-        }
-      ]
-    }
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
   });
 
   await identities[0].namespace.expectValue("");
@@ -446,9 +449,9 @@ test("when namespaces call fails instantiate form with textfield", async () => {
       {
         id: "test3",
         authenticatedState: "ambiguous",
-        primary: false
-      }
-    ]
+        primary: false,
+      },
+    ],
   });
 });
 
@@ -459,24 +462,24 @@ test("shows error for multiple primary identifiers", async () => {
         {
           id: "123",
           authenticatedState: "authenticated",
-          primary: true
-        }
-      ]
+          primary: true,
+        },
+      ],
     },
     extensionSettings: {
       instances: [
         {
           name: "alloy1",
-          edgeConfigId: "PR123"
-        }
-      ]
-    }
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
   });
   await addIdentityButton.click();
   await identities[1].namespace.typeText("CUSTOM_IDENTITY2");
   await identities[1].identifiers[0].id.typeText("test3");
   await identities[1].identifiers[0].authenticatedState.selectOption(
-    "Authenticated"
+    "Authenticated",
   );
   await identities[1].identifiers[0].primary.click();
 

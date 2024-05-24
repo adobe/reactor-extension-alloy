@@ -16,7 +16,7 @@ window.Visitor.getInstance = () => {
   return {
     getMarketingCloudVisitorID(callback) {
       callback(ecid);
-    }
+    },
   };
 };
 

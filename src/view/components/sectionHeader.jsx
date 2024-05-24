@@ -19,7 +19,7 @@ const SectionHeader = ({
   children,
   learnMoreUrl,
   marginTop = "size-600",
-  marginBottom = "size-200"
+  marginBottom = "size-200",
 }) => {
   return (
     <View marginBottom={marginBottom}>
@@ -42,7 +42,7 @@ SectionHeader.propTypes = {
   children: PropTypes.node.isRequired,
   marginTop: PropTypes.string,
   marginBottom: PropTypes.string,
-  learnMoreUrl: PropTypes.string
+  learnMoreUrl: PropTypes.string,
 };
 
 export default SectionHeader;

@@ -16,7 +16,7 @@ describe("XDM Object", () => {
   it("returns data", () => {
     const data = { foo: "bar" };
     const value = xdmObject({
-      data
+      data,
     });
 
     expect(value).toBe(data);

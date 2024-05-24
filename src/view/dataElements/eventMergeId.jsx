@@ -22,7 +22,7 @@ const getInitialValues = ({ initInfo }) => {
   const { cacheId = uuid() } = initInfo.settings || {};
 
   return {
-    cacheId
+    cacheId,
   };
 };
 

@@ -11,6 +11,6 @@ governing permissions and limitations under the License.
 
 const { variableStore } = require("../../index");
 
-module.exports = settings => {
+module.exports = (settings) => {
   return variableStore[settings.cacheId] || {};
 };

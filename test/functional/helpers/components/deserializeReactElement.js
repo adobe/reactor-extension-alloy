@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 
-const isCustomElement = type => {
+const isCustomElement = (type) => {
   return /[A-Z]/.test(type.charAt(0));
 };
 
@@ -28,14 +28,14 @@ const deserialize = (element, components) => {
   }
 
   if (element instanceof Array) {
-    return element.map(el => deserialize(el, components));
+    return element.map((el) => deserialize(el, components));
   }
 
   const { type, props, key } = element;
 
   if (typeof type !== "string") {
     throw new Error(
-      `Element type must be string. Element type was ${JSON.stringify(type)}.`
+      `Element type must be string. Element type was ${JSON.stringify(type)}.`,
     );
   }
 
@@ -44,7 +44,7 @@ const deserialize = (element, components) => {
   if (isCustomElement(type)) {
     if (!components[type]) {
       throw new Error(
-        `Component not found for ${type}. Be sure you've imported the component within the test fixture.`
+        `Component not found for ${type}. Be sure you've imported the component within the test fixture.`,
       );
     }
 
@@ -56,7 +56,7 @@ const deserialize = (element, components) => {
     key,
     children: props.children
       ? deserialize(props.children, components)
-      : props.children
+      : props.children,
   };
 
   return React.createElement(newType, newProps);

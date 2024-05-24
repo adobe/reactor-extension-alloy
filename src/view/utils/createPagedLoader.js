@@ -19,7 +19,7 @@ export default ({
   firstPage = [],
   firstPageCursor = null,
   setData,
-  loadItems
+  loadItems,
 }) => {
   let items = firstPage;
   let cursor = firstPageCursor;
@@ -28,7 +28,7 @@ export default ({
   let abortController;
   let currentLoadItems = loadItems;
 
-  const load = async loadingState => {
+  const load = async (loadingState) => {
     state = loadingState;
     setData({ items, state });
     if (abortController) {
@@ -43,7 +43,7 @@ export default ({
       ({ items: newItems, cursor: newCursor } = await currentLoadItems({
         filterText,
         cursor,
-        signal: currentAbortController.signal
+        signal: currentAbortController.signal,
       }));
     } catch (e) {
       // Most of the times this is an AbortError, but for everything
@@ -88,6 +88,6 @@ export default ({
     },
     setLoadItems(newLoadItems) {
       currentLoadItems = newLoadItems;
-    }
+    },
   };
 };

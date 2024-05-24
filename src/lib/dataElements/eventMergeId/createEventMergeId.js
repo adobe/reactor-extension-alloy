@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 module.exports =
   ({ instanceManager, eventMergeIdCache }) =>
-  settings => {
+  (settings) => {
     // Optimally we would use the data element name as the cache ID, but
     // we don't receive the data element name from Turbine, so we have to use
     // a separate cache ID that was generated when the data element was created.

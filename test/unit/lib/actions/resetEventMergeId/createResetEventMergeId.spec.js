@@ -18,7 +18,7 @@ describe("createResetEventMergeId", () => {
 
   beforeEach(() => {
     eventMergeIdCache = jasmine.createSpyObj("eventMergeIdCache", [
-      "clearByEventMergeId"
+      "clearByEventMergeId",
     ]);
     resetEventMergeId = createResetEventMergeId(eventMergeIdCache);
   });

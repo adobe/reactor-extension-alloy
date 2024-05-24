@@ -24,7 +24,7 @@ import FormikTextArea from "../components/formikReactSpectrum3/formikTextArea";
 
 import {
   PARTS,
-  WHOLE
+  WHOLE,
 } from "../components/objectEditor/constants/populationStrategy";
 
 /** @typedef {import("./form").Form} Form */
@@ -45,21 +45,21 @@ export default function jsonOptionalEditor(
     optionName = `${name}Option`,
     label,
     "aria-label": ariaLabel,
-    description
+    description,
   },
-  children
+  children,
 ) {
   const {
     getInitialValues: getChildrenInitialValues,
     getSettings: getChildrenSettings,
     validationShape: childrenValidationShape,
-    Component: ChildrenComponent
+    Component: ChildrenComponent,
   } = form({}, children);
 
   const validationShape = {};
   validationShape[`${name}Whole`] = string().when(optionName, {
     is: WHOLE,
-    then: schema =>
+    then: (schema) =>
       schema.test(
         "is-json-or-data-element",
         "Please provide a valid JSON object or a data element.",
@@ -73,12 +73,12 @@ export default function jsonOptionalEditor(
           } catch ({ message = "" }) {
             context.createError({
               path: `${name}DataElement`,
-              message: `Please provide a valid JSON object or a data element. ${message}`
+              message: `Please provide a valid JSON object or a data element. ${message}`,
             });
             return false;
           }
-        }
-      )
+        },
+      ),
   });
   validationShape[name] = object().shape(childrenValidationShape);
 
@@ -87,7 +87,7 @@ export default function jsonOptionalEditor(
       const value = initInfo.settings || {};
       const initialValues = {
         [`${name}Whole`]: "",
-        [optionName]: PARTS
+        [optionName]: PARTS,
       };
       if (typeof value === "string") {
         initialValues[`${name}Whole`] = value;
@@ -95,7 +95,7 @@ export default function jsonOptionalEditor(
       }
 
       initialValues[name] = getChildrenInitialValues({
-        initInfo: { settings: value }
+        initInfo: { settings: value },
       });
       return initialValues;
     },
@@ -124,7 +124,7 @@ export default function jsonOptionalEditor(
       const [{ value: optionValue }] = useField(`${namePrefix}${optionName}`);
       const [{ value }, , { setValue }] = useField(`${namePrefix}${name}`);
       const [{ value: wholeValue }, , { setValue: setWholeValue }] = useField(
-        `${namePrefix}${name}Whole`
+        `${namePrefix}${name}Whole`,
       );
       const lastOptionValue = React.useRef(optionValue);
       useEffect(() => {
@@ -136,15 +136,15 @@ export default function jsonOptionalEditor(
 
                 return setValue(
                   getChildrenInitialValues({
-                    initInfo: { settings: wholeValueParsed }
-                  })
+                    initInfo: { settings: wholeValueParsed },
+                  }),
                 );
               }
               return Promise.resolve();
             })
             .catch(() => {
               return setValue(
-                getChildrenInitialValues({ initInfo: { settings: {} } })
+                getChildrenInitialValues({ initInfo: { settings: {} } }),
               );
             })
             .then(() => submitForm());
@@ -155,7 +155,7 @@ export default function jsonOptionalEditor(
               const v = JSON.stringify(
                 getChildrenSettings({ values: value }),
                 null,
-                2
+                2,
               );
               if (v !== "{}") {
                 return setWholeValue(v);
@@ -215,11 +215,11 @@ export default function jsonOptionalEditor(
           )}
         </FormElementContainer>
       );
-    }
+    },
   };
 
   formPart.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
 
   return formPart;

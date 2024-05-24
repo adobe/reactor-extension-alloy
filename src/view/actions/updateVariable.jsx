@@ -18,7 +18,7 @@ import {
   ProgressCircle,
   Heading,
   Divider,
-  Text
+  Text,
 } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
@@ -45,10 +45,10 @@ import isAnalyticsEditorEmpty from "../components/objectEditor/helpers/object-an
 import {
   ADOBE_ANALYTICS,
   ADOBE_AUDIENCE_MANAGER,
-  ADOBE_TARGET
+  ADOBE_TARGET,
 } from "../constants/solutions";
 
-const isDataVariable = data => data?.settings?.solutions?.length > 0;
+const isDataVariable = (data) => data?.settings?.solutions?.length > 0;
 
 const getInitialFormStateFromDataElement = async ({
   dataElement,
@@ -58,7 +58,7 @@ const getInitialFormStateFromDataElement = async ({
   transforms = {},
   data = {},
   existingFormStateNode,
-  signal
+  signal,
 }) => {
   if (
     dataElement.settings &&
@@ -76,7 +76,7 @@ const getInitialFormStateFromDataElement = async ({
         schemaId: dataElement.settings.schema.id,
         schemaVersion: dataElement.settings.schema.version,
         sandboxName: dataElement.settings.sandbox.name,
-        signal
+        signal,
       });
     } catch (e) {
       if (e.name !== "AbortError") {
@@ -87,10 +87,10 @@ const getInitialFormStateFromDataElement = async ({
       const newSchema = {
         type: "object",
         properties: {
-          xdm: schema
+          xdm: schema,
         },
         $id: schema.$id,
-        version: schema.version
+        version: schema.version,
       };
       context.schema = newSchema;
       context.dataElementId = dataElement.id;
@@ -99,7 +99,7 @@ const getInitialFormStateFromDataElement = async ({
         value: data,
         updateMode: true,
         transforms,
-        existingFormStateNode
+        existingFormStateNode,
       });
     }
   }
@@ -120,7 +120,7 @@ const getInitialFormStateFromDataElement = async ({
       value: data,
       updateMode: true,
       transforms,
-      existingFormStateNode
+      existingFormStateNode,
     });
   }
 
@@ -128,34 +128,34 @@ const getInitialFormStateFromDataElement = async ({
 };
 
 const getInitialValues =
-  context =>
+  (context) =>
   async ({ initInfo }) => {
     const {
       propertySettings: { id: propertyId } = {},
       company: { orgId },
-      tokens: { imsAccess }
+      tokens: { imsAccess },
     } = initInfo;
     const {
       dataElementId,
       transforms = {},
       schema: previouslySavedSchemaInfo,
-      customCode = ""
+      customCode = "",
     } = initInfo.settings || {};
 
     let { data = {} } = initInfo.settings || {};
 
     const initialValues = {
       data,
-      customCode
+      customCode,
     };
 
     const {
       results: dataElementsFirstPage,
-      nextPage: dataElementsFirstPageCursor
+      nextPage: dataElementsFirstPageCursor,
     } = await fetchDataElements({
       orgId,
       imsAccess,
-      propertyId
+      propertyId,
     });
 
     context.dataElementsFirstPage = dataElementsFirstPage;
@@ -166,7 +166,7 @@ const getInitialValues =
       dataElement = await fetchDataElement({
         orgId,
         imsAccess,
-        dataElementId
+        dataElementId,
       });
       context.previouslySavedSchemaInfo = previouslySavedSchemaInfo;
     } else if (
@@ -194,7 +194,7 @@ const getInitialValues =
         orgId,
         imsAccess,
         data,
-        transforms: prefixedTransforms
+        transforms: prefixedTransforms,
       });
 
       return { ...initialValues, ...initialFormState };
@@ -204,7 +204,7 @@ const getInitialValues =
   };
 
 const getSettings =
-  context =>
+  (context) =>
   ({ values }) => {
     const { dataElement } = values;
     const { id: dataElementId, settings } = dataElement || {};
@@ -224,13 +224,13 @@ const getSettings =
 
     const schema = {
       id: context.schema?.$id,
-      version: context.schema?.version
+      version: context.schema?.version,
     };
 
     const response = {
       dataElementId,
       dataElementCacheId,
-      data: xdm || data || {}
+      data: xdm || data || {},
     };
 
     if (schema.id) {
@@ -249,11 +249,11 @@ const getSettings =
   };
 
 const validationSchema = object().shape({
-  dataElement: object().required("Please specify a data element.")
+  dataElement: object().required("Please specify a data element."),
 });
 
 const validateFormikState =
-  context =>
+  (context) =>
   ({ values }) => {
     const { schema } = context;
     if (!schema) {
@@ -268,16 +268,16 @@ const findFirstNodeIdForDepth = (formStateNode, depth) => {
     schema: { type, properties: schemaProperties } = {},
     properties,
     items,
-    id
+    id,
   } = formStateNode;
   if (depth > 0) {
     if (type === OBJECT && properties) {
       const sortedEditors = Object.keys(schemaProperties).sort();
-      const editorsContainingValues = sortedEditors.filter(k => {
+      const editorsContainingValues = sortedEditors.filter((k) => {
         const map = {
           [ADOBE_ANALYTICS]: isAnalyticsEditorEmpty,
           [ADOBE_TARGET]: isObjectJsonEditorEmpty,
-          [ADOBE_AUDIENCE_MANAGER]: isObjectJsonEditorEmpty
+          [ADOBE_AUDIENCE_MANAGER]: isObjectJsonEditorEmpty,
         };
 
         if (map[k]) {
@@ -312,13 +312,13 @@ const findFirstNodeIdForDepth = (formStateNode, depth) => {
 const UpdateVariable = ({
   initInfo,
   formikProps: { resetForm, values },
-  context
+  context,
 }) => {
   const {
     schema,
     dataElementsFirstPage,
     dataElementsFirstPageCursor,
-    previouslySavedSchemaInfo
+    previouslySavedSchemaInfo,
   } = context;
 
   const [{ value: dataElement }] = useField("dataElement");
@@ -336,7 +336,7 @@ const UpdateVariable = ({
   const {
     propertySettings: { id: propertyId } = {},
     company: { orgId },
-    tokens: { imsAccess }
+    tokens: { imsAccess },
   } = initInfo;
 
   useChanged(
@@ -355,12 +355,12 @@ const UpdateVariable = ({
             imsAccess,
             transforms,
             existingFormStateNode: values,
-            signal
+            signal,
           });
 
           if (!signal.aborted) {
             resetForm({
-              values: { ...initialFormState, dataElement, customCode }
+              values: { ...initialFormState, dataElement, customCode },
             });
             if (context.schema) {
               setHasSchema(true);
@@ -374,7 +374,7 @@ const UpdateVariable = ({
       }
       reloadDataElement();
     }),
-    [dataElement]
+    [dataElement],
   );
 
   const isSchemaMatched = context.dataElementId === dataElement?.id;
@@ -387,14 +387,14 @@ const UpdateVariable = ({
         propertyId,
         search: filterText,
         page: cursor || 1,
-        signal
+        signal,
       });
 
       return {
         items: results,
-        cursor: nextPage
+        cursor: nextPage,
       };
-    }
+    },
   );
 
   return (
@@ -414,12 +414,12 @@ const UpdateVariable = ({
           width="size-5000"
           isRequired
           loadItems={loadItems}
-          getKey={item => item?.settings?.cacheId}
-          getLabel={item => item?.name}
+          getKey={(item) => item?.settings?.cacheId}
+          getLabel={(item) => item?.name}
           firstPage={dataElementsFirstPage}
           firstPageCursor={dataElementsFirstPageCursor}
         >
-          {item => <Item key={item.settings.cacheId}>{item.name}</Item>}
+          {(item) => <Item key={item.settings.cacheId}>{item.name}</Item>}
         </FormikPagedComboBox>
       )}
       {hasSchema && isSchemaMatched && (
@@ -495,7 +495,7 @@ const UpdateVariable = ({
 UpdateVariable.propTypes = {
   context: PropTypes.object,
   initInfo: PropTypes.object,
-  formikProps: PropTypes.object
+  formikProps: PropTypes.object,
 };
 
 const UpdateVariableExtensionView = () => {
@@ -507,7 +507,7 @@ const UpdateVariableExtensionView = () => {
       getSettings={getSettings(context)}
       formikStateValidationSchema={validationSchema}
       validateFormikState={validateFormikState(context)}
-      render={props => {
+      render={(props) => {
         return <UpdateVariable context={context} {...props} />;
       }}
     />

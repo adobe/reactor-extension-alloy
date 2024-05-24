@@ -31,17 +31,17 @@ import useNewlyValidatedFormSubmission from "../../utils/useNewlyValidatedFormSu
 import "antd/lib/tree/style/index";
 import "./xdmTree.styl";
 
-export const scrollNodeIntoView = nodeId => {
+export const scrollNodeIntoView = (nodeId) => {
   if (nodeId) {
     setTimeout(() => {
       const elementToScrollIntoView = document.querySelector(
-        `.XdmTree [data-node-id="${nodeId}"]`
+        `.XdmTree [data-node-id="${nodeId}"]`,
       );
 
       if (elementToScrollIntoView) {
         elementToScrollIntoView.scrollIntoView({
           behavior: "smooth",
-          block: "center"
+          block: "center",
         });
       }
     });
@@ -55,7 +55,7 @@ const XdmTree = ({
   selectedNodeId,
   expandedNodeIds,
   setExpandedNodeIds,
-  onSelect = () => {}
+  onSelect = () => {},
 }) => {
   const { values: formState, errors, touched } = useFormikContext();
 
@@ -63,7 +63,7 @@ const XdmTree = ({
     treeNodeComponent: XdmTreeNodeTitle,
     formState,
     errors,
-    touched
+    touched,
   });
 
   // Expand invalid items when the user attempts to submit the form by hitting
@@ -79,11 +79,11 @@ const XdmTree = ({
     }
   });
 
-  const onTreeSelect = newSelectedNodeIds => {
+  const onTreeSelect = (newSelectedNodeIds) => {
     onSelect(newSelectedNodeIds[0]);
   };
 
-  const onTreeExpand = newExpandedNodeIds => {
+  const onTreeExpand = (newExpandedNodeIds) => {
     setExpandedNodeIds(newExpandedNodeIds);
   };
 
@@ -106,7 +106,7 @@ XdmTree.propTypes = {
   selectedNodeId: PropTypes.string,
   expandedNodeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
   setExpandedNodeIds: PropTypes.func.isRequired,
-  onSelect: PropTypes.func
+  onSelect: PropTypes.func,
 };
 
 export default XdmTree;

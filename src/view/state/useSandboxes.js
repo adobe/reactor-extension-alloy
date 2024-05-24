@@ -23,7 +23,7 @@ export default ({ orgId, imsAccess }) => {
       try {
         const { results: firstPageOfSandboxes } = await fetchSandboxes(
           orgId,
-          imsAccess
+          imsAccess,
         );
         if (sandboxes && sandboxes.length) {
           setSandboxes(firstPageOfSandboxes);
@@ -42,6 +42,6 @@ export default ({ orgId, imsAccess }) => {
   return {
     sandboxes,
     loading,
-    error
+    error,
   };
 };

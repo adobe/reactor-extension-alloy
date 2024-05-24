@@ -21,7 +21,7 @@ import * as jsonEdit from "../../helpers/objectEditor/objectJsonEdit";
 createExtensionViewFixture({
   title: "Update variable action view",
   viewPath: "actions/updateVariable.html",
-  requiresAdobeIOIntegration: false
+  requiresAdobeIOIntegration: false,
 });
 
 runCommonExtensionViewTests();
@@ -31,8 +31,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await anEdit.eVarName(0).openMenu();
     await anEdit.eVarName(0).selectMenuOption("eVar10");
@@ -84,20 +84,20 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
           campaign: "mycampaign",
           contextData: {
             key1: "value1",
-            key2: "value2"
+            key2: "value2",
           },
           eVar2: "D=v10",
           eVar10: "value10",
           events: "scAdd,event1:123=value1",
           prop42: "value42",
           prop75: "D=c42",
-          tnta: "mytnta"
+          tnta: "mytnta",
         },
         null,
-        2
-      )
+        2,
+      ),
     );
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -105,8 +105,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     xdmTree.node("target").click();
     jsonEdit.key(0).typeText("zzz");
@@ -119,13 +119,13 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
       JSON.stringify(
         {
           aaa: "value2",
-          zzz: "value1"
+          zzz: "value1",
         },
         null,
-        2
-      )
+        2,
+      ),
     );
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -133,8 +133,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await anEdit.entireObjectOption.click();
     await anEdit.jsonEditor.typeText(
@@ -143,18 +143,18 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
           campaign: "mycampaign",
           contextData: {
             key1: "value1",
-            key2: "value2"
+            key2: "value2",
           },
           eVar2: "D=v10",
           eVar10: "value10",
           events: "scAdd,event1:123=value1",
           prop42: "value42",
           prop75: "D=c42",
-          tnta: "mytnta"
+          tnta: "mytnta",
         },
         null,
-        2
-      )
+        2,
+      ),
     );
 
     await anEdit.individualAttributesOption.click();
@@ -184,7 +184,7 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await anEdit.additionalPropertiesValue(0).expectValue("mycampaign");
     await anEdit.additionalPropertiesName(1).expectText("tnta");
     await anEdit.additionalPropertiesValue(1).expectValue("mytnta");
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -192,8 +192,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await xdmTree.node("target").click();
     await jsonEdit.entireObjectOption.click();
@@ -201,18 +201,18 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
       JSON.stringify(
         {
           zzz: "value1",
-          aaa: "value2"
+          aaa: "value2",
         },
         null,
-        2
-      )
+        2,
+      ),
     );
     await jsonEdit.individualAttributesOption.click();
     await jsonEdit.key(0).expectValue("aaa");
     await jsonEdit.value(0).expectValue("value2");
     await jsonEdit.key(1).expectValue("zzz");
     await jsonEdit.value(1).expectValue("value1");
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -220,8 +220,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await anEdit.entireObjectOption.click();
     await anEdit.jsonEditor.typeText('{ "eVar10": "value10" }');
@@ -232,7 +232,7 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await anEdit.jsonEditor.expectValue("");
     await anEdit.individualAttributesOption.click();
     await anEdit.eVarName(1).expectError();
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -240,8 +240,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await xdmTree.node("target").click();
     await jsonEdit.entireObjectOption.click();
@@ -253,7 +253,7 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await jsonEdit.jsonEditor.expectValue("");
     await jsonEdit.individualAttributesOption.click();
     await jsonEdit.key(1).expectError();
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -261,8 +261,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await anEdit.eVarName(0).openMenu();
     await anEdit.eVarName(0).selectMenuOption("eVar9");
@@ -276,7 +276,7 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await anEdit.entireObjectOption.click();
     await anEdit.jsonEditor.expectValue("error");
     await anEdit.jsonEditor.expectError();
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -284,8 +284,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await xdmTree.node("target").click();
     await jsonEdit.key(0).typeText("zzz");
@@ -299,5 +299,5 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await jsonEdit.entireObjectOption.click();
     await jsonEdit.jsonEditor.expectValue("error");
     await jsonEdit.jsonEditor.expectError();
-  }
+  },
 );

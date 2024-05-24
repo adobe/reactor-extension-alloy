@@ -27,7 +27,7 @@ import { useField } from "formik";
 const FormikComboBox = ({ name, width, validate, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
     name,
-    validate
+    validate,
   });
   return (
     <ComboBox
@@ -47,7 +47,7 @@ const FormikComboBox = ({ name, width, validate, ...otherProps }) => {
 FormikComboBox.propTypes = {
   name: PropTypes.string.isRequired,
   validate: PropTypes.func,
-  width: PropTypes.string
+  width: PropTypes.string,
 };
 
 export default FormikComboBox;

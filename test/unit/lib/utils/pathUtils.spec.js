@@ -41,7 +41,7 @@ describe("pathUtils", () => {
 
     it("sets nested arrays", () => {
       expect(setValue({}, "a.1.0", "crazy!")).toEqual({
-        a: [undefined, ["crazy!"]]
+        a: [undefined, ["crazy!"]],
       });
     });
 

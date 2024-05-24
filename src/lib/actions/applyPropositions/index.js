@@ -14,5 +14,5 @@ const createApplyPropositions = require("./createApplyPropositions");
 const instanceManager = require("../../instanceManager/index");
 
 module.exports = createApplyPropositions({
-  instanceManager
+  instanceManager,
 });

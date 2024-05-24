@@ -30,5 +30,5 @@ module.exports = createInstanceManager({
   createEventMergeId,
   orgId: _satellite.company.orgId,
   wrapOnBeforeEventSend,
-  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage)
+  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage),
 });

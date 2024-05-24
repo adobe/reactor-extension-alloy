@@ -93,5 +93,5 @@ export default {
   "media.reporting.chapterClose": "Media reporting chapterClose",
   "location.entry": "Location entry",
   "location.exit": "Location exit",
-  ...mediaEventTypes
+  ...mediaEventTypes,
 };

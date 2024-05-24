@@ -19,7 +19,7 @@ const FieldSubset = ({ children }) => {
 };
 
 FieldSubset.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };
 
 export default FieldSubset;

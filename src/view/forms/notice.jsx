@@ -38,6 +38,6 @@ export default function notice({ title, description, beta }) {
           {description}
         </Alert>
       );
-    }
+    },
   };
 }

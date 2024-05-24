@@ -21,7 +21,7 @@ import FormElementContainer from "../components/formElementContainer";
 export const bridge = {
   getInstanceDefaults: () => ({
     idMigrationEnabled: true,
-    thirdPartyCookiesEnabled: true
+    thirdPartyCookiesEnabled: true,
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
@@ -30,7 +30,7 @@ export const bridge = {
       toObj: instanceValues,
       fromObj: instanceSettings,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["idMigrationEnabled", "thirdPartyCookiesEnabled"]
+      keys: ["idMigrationEnabled", "thirdPartyCookiesEnabled"],
     });
 
     return instanceValues;
@@ -42,11 +42,11 @@ export const bridge = {
       toObj: instanceSettings,
       fromObj: instanceValues,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["idMigrationEnabled", "thirdPartyCookiesEnabled"]
+      keys: ["idMigrationEnabled", "thirdPartyCookiesEnabled"],
     });
 
     return instanceSettings;
-  }
+  },
 };
 
 const IdentitySection = ({ instanceFieldName }) => {
@@ -78,7 +78,7 @@ const IdentitySection = ({ instanceFieldName }) => {
 };
 
 IdentitySection.propTypes = {
-  instanceFieldName: PropTypes.string.isRequired
+  instanceFieldName: PropTypes.string.isRequired,
 };
 
 export default IdentitySection;

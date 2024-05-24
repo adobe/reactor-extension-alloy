@@ -16,7 +16,7 @@ import PropTypes from "prop-types";
 import { object } from "yup";
 import SectionHeader from "../components/sectionHeader";
 import FormikRadioGroupWithDataElement, {
-  createRadioGroupWithDataElementValidationSchema
+  createRadioGroupWithDataElementValidationSchema,
 } from "../components/formikReactSpectrum3/formikRadioGroupWithDataElement";
 import FormElementContainer from "../components/formElementContainer";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
@@ -25,12 +25,12 @@ import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfV
 const CONSENT_LEVEL = {
   IN: "in",
   OUT: "out",
-  PENDING: "pending"
+  PENDING: "pending",
 };
 
 export const bridge = {
   getInstanceDefaults: () => ({
-    defaultConsent: CONSENT_LEVEL.IN
+    defaultConsent: CONSENT_LEVEL.IN,
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
@@ -39,7 +39,7 @@ export const bridge = {
       toObj: instanceValues,
       fromObj: instanceSettings,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["defaultConsent"]
+      keys: ["defaultConsent"],
     });
 
     return instanceValues;
@@ -51,15 +51,15 @@ export const bridge = {
       toObj: instanceSettings,
       fromObj: instanceValues,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["defaultConsent"]
+      keys: ["defaultConsent"],
     });
 
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
     defaultConsent:
-      createRadioGroupWithDataElementValidationSchema("defaultConsent")
-  })
+      createRadioGroupWithDataElementValidationSchema("defaultConsent"),
+  }),
 };
 
 const PrivacySection = ({ instanceFieldName }) => {
@@ -102,7 +102,7 @@ const PrivacySection = ({ instanceFieldName }) => {
 };
 
 PrivacySection.propTypes = {
-  instanceFieldName: PropTypes.string.isRequired
+  instanceFieldName: PropTypes.string.isRequired,
 };
 
 export default PrivacySection;

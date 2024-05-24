@@ -24,24 +24,24 @@ const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
     edgeConfigOverrides = overridesBridge.getInstanceDefaults()
-      .edgeConfigOverrides
+      .edgeConfigOverrides,
   } = initInfo.settings ?? {};
 
   return {
     instanceName,
     ...overridesBridge.getInitialInstanceValues({
-      instanceSettings: { edgeConfigOverrides }
-    })
+      instanceSettings: { edgeConfigOverrides },
+    }),
   };
 };
 
 const getSettings = ({ values }) => {
   const settings = {
-    instanceName: values.instanceName
+    instanceName: values.instanceName,
   };
 
   const { edgeConfigOverrides } = overridesBridge.getInstanceSettings({
-    instanceValues: values
+    instanceValues: values,
   });
 
   if (edgeConfigOverrides && Object.keys(edgeConfigOverrides).length > 0) {
@@ -62,7 +62,7 @@ const RedirectWithIdentity = () => {
       render={({ initInfo, formikProps: { values } }) => {
         const { instanceName } = values;
         const instanceSettings = initInfo.extensionSettings.instances.find(
-          instance => instance.name === instanceName
+          (instance) => instance.name === instanceName,
         );
         const edgeConfigIds = getEdgeConfigIds(instanceSettings);
         const orgId = instanceSettings.orgId ?? initInfo.company.orgId;

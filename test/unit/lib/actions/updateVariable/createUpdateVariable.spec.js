@@ -32,7 +32,7 @@ describe("Update variable", () => {
     updateVariable({
       data: { a: 3, d: 4 },
       dataElementCacheId: "var1",
-      transforms: {}
+      transforms: {},
     });
     expect(variableStore).toEqual({ var1: { a: 3, b: 2, d: 4 } });
   });
@@ -42,7 +42,7 @@ describe("Update variable", () => {
     updateVariable({
       data: { b: 2 },
       dataElementCacheId: "var2",
-      transforms: {}
+      transforms: {},
     });
     expect(variableStore).toEqual({ var1: { a: 1 }, var2: { b: 2 } });
   });
@@ -52,7 +52,7 @@ describe("Update variable", () => {
     updateVariable({
       data: {},
       dataElementCacheId: "var1",
-      transforms: { "a.b": { clear: true } }
+      transforms: { "a.b": { clear: true } },
     });
     expect(variableStore).toEqual({ var1: { a: {} } });
   });
@@ -62,7 +62,7 @@ describe("Update variable", () => {
     updateVariable({
       data: { a: { b: { d: 4 } } },
       dataElementCacheId: "var1",
-      transforms: { "a.b": { clear: true } }
+      transforms: { "a.b": { clear: true } },
     });
     expect(variableStore).toEqual({ var1: { a: { b: { d: 4 } }, e: 5 } });
   });
@@ -74,8 +74,8 @@ describe("Update variable", () => {
       transforms: {
         a: { clear: true },
         c: { clear: true },
-        "d.1": { clear: true }
-      }
+        "d.1": { clear: true },
+      },
     });
     expect(variableStore).toEqual({ var1: { b: 2, d: [1, 3] } });
   });
@@ -85,7 +85,7 @@ describe("Update variable", () => {
     updateVariable({
       data: {},
       dataElementCacheId: "var1",
-      transforms: { "": { clear: true } }
+      transforms: { "": { clear: true } },
     });
     expect(variableStore).toEqual({ var1: {} });
   });
@@ -95,7 +95,7 @@ describe("Update variable", () => {
     updateVariable({
       data: { b: 2 },
       dataElementCacheId: "var1",
-      transforms: { "": { clear: true } }
+      transforms: { "": { clear: true } },
     });
     expect(variableStore).toEqual({ var1: { b: 2 } });
   });

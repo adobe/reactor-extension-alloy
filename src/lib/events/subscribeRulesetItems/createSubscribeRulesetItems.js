@@ -18,12 +18,12 @@ module.exports =
     const instance = instanceManager.getInstance(instanceName);
     if (!instance) {
       throw new Error(
-        `Failed to subscribe ruleset items for instance "${instanceName}". No instance was found with this name.`
+        `Failed to subscribe ruleset items for instance "${instanceName}". No instance was found with this name.`,
       );
     }
 
     return instance("subscribeRulesetItems", {
       ...options,
-      callback: trigger
+      callback: trigger,
     });
   };

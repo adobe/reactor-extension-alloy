@@ -63,12 +63,12 @@ export default function simpleMap({
   keyDescription,
   valueLabel,
   valueDescription,
-  beta
+  beta,
 }) {
   const itemSchema = object()
     .shape({
       key: string(),
-      value: string()
+      value: string(),
     })
     .test(
       "Map key unique and present",
@@ -82,7 +82,7 @@ export default function simpleMap({
         if (!key && value) {
           throw context.createError({
             path: `${context.path}.key`,
-            message: `Please provide a ${keyLabel.toLowerCase()}.`
+            message: `Please provide a ${keyLabel.toLowerCase()}.`,
           });
         }
 
@@ -93,27 +93,27 @@ export default function simpleMap({
         if (previousItems.some(({ key: previousKey }) => key === previousKey)) {
           throw context.createError({
             path: `${path}.key`,
-            message: `Duplicate ${keyLabelPlural.toLowerCase()} are not allowed`
+            message: `Duplicate ${keyLabelPlural.toLowerCase()} are not allowed`,
           });
         }
 
         return true;
-      }
+      },
     );
 
   const validationShape = {
     [name]: array().when(`${name}InputMethod`, {
       is: FORM,
-      then: schema => schema.of(itemSchema)
-    })
+      then: (schema) => schema.of(itemSchema),
+    }),
   };
 
   validationShape[`${name}DataElement`] = string().when(`${name}InputMethod`, {
     is: DATA_ELEMENT,
-    then: schema =>
+    then: (schema) =>
       schema
         .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-        .required(DATA_ELEMENT_REQUIRED)
+        .required(DATA_ELEMENT_REQUIRED),
   });
 
   const part = {
@@ -122,7 +122,7 @@ export default function simpleMap({
 
       const initialValues = {
         [`${name}InputMethod`]: FORM,
-        [`${name}DataElement`]: ""
+        [`${name}DataElement`]: "",
       };
 
       if (typeof value === "string") {
@@ -130,9 +130,9 @@ export default function simpleMap({
         initialValues[`${name}InputMethod`] = DATA_ELEMENT;
         initialValues[`${name}DataElement`] = value;
       } else if (value) {
-        initialValues[name] = Object.keys(value).map(key => ({
+        initialValues[name] = Object.keys(value).map((key) => ({
           key,
-          value: value[key] || ""
+          value: value[key] || "",
         }));
       } else {
         initialValues[name] = [{ key: "", value: "" }];
@@ -157,10 +157,10 @@ export default function simpleMap({
     validationShape,
     Component: ({ namePrefix = "" }) => {
       const [{ value: inputMethod }] = useField(
-        `${namePrefix}${name}InputMethod`
+        `${namePrefix}${name}InputMethod`,
       );
       const [{ value: items }, , { setValue: setItems }] = useField(
-        `${namePrefix}${name}`
+        `${namePrefix}${name}`,
       );
       const labelElement = (
         <>
@@ -189,7 +189,7 @@ export default function simpleMap({
           {inputMethod === FORM && (
             <FieldArray
               name={name}
-              render={arrayHelpers => {
+              render={(arrayHelpers) => {
                 return (
                   <>
                     {items.map((__, index) => {
@@ -269,10 +269,10 @@ export default function simpleMap({
           )}
         </>
       );
-    }
+    },
   };
   part.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
   return part;
 }

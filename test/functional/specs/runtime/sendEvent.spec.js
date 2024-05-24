@@ -27,11 +27,11 @@ const container = {
             name: "alloy",
             edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:AditiTest",
             stagingEdgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:stage",
-            debugEnabled: true
-          }
-        ]
-      }
-    }
+            debugEnabled: true,
+          },
+        ],
+      },
+    },
   },
   dataElements: {
     idmap: {
@@ -40,15 +40,15 @@ const container = {
           {
             id: "1234",
             authenticatedState: "ambiguous",
-            primary: false
-          }
-        ]
+            primary: false,
+          },
+        ],
       },
       cleanText: false,
       forceLowerCase: false,
       modulePath: "adobe-alloy/dist/lib/dataElements/identityMap/index.js",
-      storageDuration: ""
-    }
+      storageDuration: "",
+    },
   },
   rules: [
     {
@@ -57,40 +57,40 @@ const container = {
       events: [
         {
           modulePath: "sandbox/pageTop.js",
-          settings: {}
-        }
+          settings: {},
+        },
       ],
       actions: [
         {
           modulePath: "adobe-alloy/dist/lib/actions/sendEvent/index.js",
           settings: {
-            instanceName: "alloy"
-          }
-        }
-      ]
-    }
+            instanceName: "alloy",
+          },
+        },
+      ],
+    },
   ],
   property: {
     name: "Sandbox property",
     settings: {
       id: "PR12345",
       domains: ["adobe.com", "example.com"],
-      undefinedVarsReturnEmpty: false
-    }
+      undefinedVarsReturnEmpty: false,
+    },
   },
   company: {
-    orgId: "5BFE274A5F6980A50A495C08@AdobeOrg"
+    orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
   },
   environment: {
     id: "EN00000000000000000000000000000000",
-    stage: "development"
+    stage: "development",
   },
   buildInfo: {
     turbineVersion: "27.2.1",
     turbineBuildDate: "2022-04-29T16:01:37.616Z",
     buildDate: "2022-04-29T16:01:37.616Z",
-    environment: "development"
-  }
+    environment: "development",
+  },
 };
 
 fixture("Send event")

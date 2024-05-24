@@ -25,5 +25,5 @@ export default {
     await t
       .expect(editor.exists)
       .notOk("Editor does not exist when it is expected to exist.");
-  }
+  },
 };

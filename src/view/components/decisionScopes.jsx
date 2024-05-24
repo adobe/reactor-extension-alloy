@@ -37,20 +37,20 @@ export const bridge = {
       return {
         decisionsInputMethod: CONSTANT,
         decisionScopesDataElement: "",
-        decisionScopesArray: scopes
+        decisionScopesArray: scopes,
       };
     }
     if (typeof scopes === "string") {
       return {
         decisionsInputMethod: DATA_ELEMENT,
         decisionScopesDataElement: scopes,
-        decisionScopesArray: [""]
+        decisionScopesArray: [""],
       };
     }
     return {
       decisionsInputMethod: CONSTANT,
       decisionScopesDataElement: "",
-      decisionScopesArray: [""]
+      decisionScopesArray: [""],
     };
   },
   getSettings({ values }) {
@@ -66,7 +66,7 @@ export const bridge = {
       values.decisionScopesArray.length > 0
     ) {
       const decisionScopes = values.decisionScopesArray.filter(
-        scope => scope !== ""
+        (scope) => scope !== "",
       );
       if (decisionScopes.length) {
         return { decisionScopes };
@@ -77,10 +77,10 @@ export const bridge = {
   formikStateValidationSchema: object().shape({
     decisionScopesDataElement: string().when("decisionsInputMethod", {
       is: DATA_ELEMENT,
-      then: schema =>
-        schema.matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-    })
-  })
+      then: (schema) =>
+        schema.matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
+    }),
+  }),
 };
 
 const DecisionScopes = () => {
@@ -119,7 +119,7 @@ const DecisionScopes = () => {
           <Flex direction="column" gap="size-100" alignItems="start">
             <FieldArray
               name="decisionScopesArray"
-              render={arrayHelpers => {
+              render={(arrayHelpers) => {
                 return (
                   <div>
                     {decisionScopesArray.map((scope, index) => {

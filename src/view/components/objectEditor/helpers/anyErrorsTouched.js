@@ -16,12 +16,12 @@ const anyErrorsTouched = (errors, touched) => {
   }
   if (Array.isArray(errors)) {
     return errors.some((error, index) =>
-      anyErrorsTouched(error, touched[index])
+      anyErrorsTouched(error, touched[index]),
     );
   }
   if (typeof errors === "object") {
-    return Object.keys(errors).some(key =>
-      anyErrorsTouched(errors[key], touched[key])
+    return Object.keys(errors).some((key) =>
+      anyErrorsTouched(errors[key], touched[key]),
     );
   }
 

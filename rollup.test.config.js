@@ -22,14 +22,14 @@ const plugins = [resolve(), commonjs(), babel({ babelHelpers: "bundled" })];
 if (argv.reporters && argv.reporters.split(",").includes("coverage")) {
   plugins.unshift(
     istanbul({
-      exclude: ["test/unit/**/*.spec.js", "node_modules/**"]
-    })
+      exclude: ["test/unit/**/*.spec.js", "node_modules/**"],
+    }),
   );
 }
 
 module.exports = {
   output: {
-    format: "iife"
+    format: "iife",
   },
-  plugins
+  plugins,
 };

@@ -26,12 +26,12 @@ const getDefaultSettings = () => {
     playerName: "",
     appVersion: "",
     adPingInterval: 10,
-    mainPingInterval: 10
+    mainPingInterval: 10,
   };
 };
 export const bridge = {
   getInstanceDefaults: () => ({
-    streamingMedia: getDefaultSettings()
+    streamingMedia: getDefaultSettings(),
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     if (!instanceSettings.streamingMedia) {
@@ -53,48 +53,50 @@ export const bridge = {
     streamingMedia: object().shape(
       {
         channel: string().when("playerName", {
-          is: playerName => playerName,
-          then: schema =>
+          is: (playerName) => playerName,
+          then: (schema) =>
             schema.required(
-              "Please provide a channel name for streaming media."
-            )
+              "Please provide a channel name for streaming media.",
+            ),
         }),
         playerName: string().when("channel", {
-          is: channel => channel,
-          then: schema =>
-            schema.required("Please provide a player name for streaming media.")
+          is: (channel) => channel,
+          then: (schema) =>
+            schema.required(
+              "Please provide a player name for streaming media.",
+            ),
         }),
         adPingInterval: number().when(["channel", "playerName"], {
           is: (channel, playerName) => channel && playerName,
-          then: schema =>
+          then: (schema) =>
             schema
               .min(1, "The Ad Ping Interval must be greater than 1 second.")
               .max(10, "The Ad Ping Interval must be less than 10 seconds.")
-              .default(10)
+              .default(10),
         }),
         mainPingInterval: number().when(["channel", "playerName"], {
           is: (channel, playerName) => channel && playerName,
-          then: schema =>
+          then: (schema) =>
             schema
               .min(
                 10,
-                "The Main Ping Interval must be greater than 10 seconds."
+                "The Main Ping Interval must be greater than 10 seconds.",
               )
               .max(60, "The Main Ping Interval must be less than 60 seconds.")
-              .default(10)
-        })
+              .default(10),
+        }),
       },
-      ["channel", "playerName"]
-    )
-  })
+      ["channel", "playerName"],
+    ),
+  }),
 };
 
 const StreamingMediaSection = ({ instanceFieldName }) => {
   const [{ value: mediaChannel }] = useField(
-    `${instanceFieldName}.streamingMedia.channel`
+    `${instanceFieldName}.streamingMedia.channel`,
   );
   const [{ value: playerName }] = useField(
-    `${instanceFieldName}.streamingMedia.playerName`
+    `${instanceFieldName}.streamingMedia.playerName`,
   );
 
   const mediaRequiredFieldsProvided = () => {
@@ -153,7 +155,7 @@ const StreamingMediaSection = ({ instanceFieldName }) => {
 };
 
 StreamingMediaSection.propTypes = {
-  instanceFieldName: PropTypes.string.isRequired
+  instanceFieldName: PropTypes.string.isRequired,
 };
 
 export default StreamingMediaSection;

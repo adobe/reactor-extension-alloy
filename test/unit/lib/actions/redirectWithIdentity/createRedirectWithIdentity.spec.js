@@ -30,11 +30,11 @@ describe("createRedirectWithIdentity", () => {
     getConfigOverrides = jasmine.createSpy("getConfigOverrides");
     event = {
       nativeEvent: {
-        preventDefault: jasmine.createSpy("preventDefault")
+        preventDefault: jasmine.createSpy("preventDefault"),
       },
       element: {
-        href: "originalHref"
-      }
+        href: "originalHref",
+      },
     };
     logger = jasmine.createSpyObj("logger", ["warn"]);
 
@@ -42,14 +42,14 @@ describe("createRedirectWithIdentity", () => {
       instanceManager,
       document,
       logger,
-      getConfigOverrides
+      getConfigOverrides,
     });
   });
 
   it("returns resolved promise when instance isn't found", async () => {
     instanceManager.getInstance.and.returnValue(undefined);
     await expectAsync(
-      redirectWithIdentity({ instanceName: "myinstance" }, event)
+      redirectWithIdentity({ instanceName: "myinstance" }, event),
     ).toBeResolvedTo(undefined);
     expect(instanceManager.getInstance).toHaveBeenCalledOnceWith("myinstance");
     expect(document.location).toEqual("originalLocation");
@@ -69,10 +69,10 @@ describe("createRedirectWithIdentity", () => {
         { instanceName: "myinstance" },
         {
           nativeEvent: {
-            preventDefault: event.nativeEvent.preventDefault
-          }
-        }
-      )
+            preventDefault: event.nativeEvent.preventDefault,
+          },
+        },
+      ),
     ).toBeResolvedTo(undefined);
     expect(document.location).toEqual("originalLocation");
     expect(logger.warn).toHaveBeenCalled();
@@ -85,10 +85,10 @@ describe("createRedirectWithIdentity", () => {
         {
           nativeEvent: {},
           element: {
-            href: "originalHref"
-          }
-        }
-      )
+            href: "originalHref",
+          },
+        },
+      ),
     );
     expect(document.location).toEqual("newurl");
     expect(logger.warn).not.toHaveBeenCalled();
@@ -96,12 +96,12 @@ describe("createRedirectWithIdentity", () => {
 
   it("redirects", async () => {
     await expectAsync(
-      redirectWithIdentity({ instanceName: "myinstance" }, event)
+      redirectWithIdentity({ instanceName: "myinstance" }, event),
     );
     expect(event.nativeEvent.preventDefault).toHaveBeenCalledOnceWith();
     expect(instance).toHaveBeenCalledOnceWith("appendIdentityToUrl", {
       url: "originalHref",
-      edgeConfigOverrides: undefined
+      edgeConfigOverrides: undefined,
     });
     expect(document.location).toEqual("newurl");
   });
@@ -111,33 +111,33 @@ describe("createRedirectWithIdentity", () => {
       com_adobe_experience_platform: {
         datasets: {
           event: {
-            datasetId: "6335faf30f5a161c0b4b1444"
-          }
-        }
+            datasetId: "6335faf30f5a161c0b4b1444",
+          },
+        },
       },
       com_adobe_analytics: {
-        reportSuites: ["unifiedjsqeonly2"]
+        reportSuites: ["unifiedjsqeonly2"],
       },
       com_adobe_identity: {
-        idSyncContainerId: 30793
+        idSyncContainerId: 30793,
       },
       com_adobe_target: {
-        propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
-      }
+        propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+      },
     };
     getConfigOverrides.and.returnValue(developmentEdgeConfigOverrides);
     await expectAsync(
       redirectWithIdentity(
         {
           instanceName: "myinstance",
-          edgeConfigOverrides: developmentEdgeConfigOverrides
+          edgeConfigOverrides: developmentEdgeConfigOverrides,
         },
-        event
-      )
+        event,
+      ),
     );
     expect(instance).toHaveBeenCalledOnceWith("appendIdentityToUrl", {
       url: "originalHref",
-      edgeConfigOverrides: developmentEdgeConfigOverrides
+      edgeConfigOverrides: developmentEdgeConfigOverrides,
     });
   });
 });

@@ -20,7 +20,7 @@ export default ({ value, valueWhole }) => {
     [evars, "evar"],
     [props, "prop"],
     [events, "event"],
-    [additionalProperties, "property"]
+    [additionalProperties, "property"],
   ];
 
   for (let i = 0; i < editorSections.length; i += 1) {

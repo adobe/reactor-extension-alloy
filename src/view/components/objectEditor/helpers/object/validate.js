@@ -18,7 +18,7 @@ import { NONE } from "../../constants/autoPopulationSource";
 export default ({
   formStateNode,
   confirmDataPopulatedAtCurrentOrDescendantNode,
-  validate
+  validate,
 }) => {
   const { populationStrategy, value, properties } = formStateNode;
 
@@ -38,14 +38,14 @@ export default ({
     const propertyErrors = {};
     const propertyNames = Object.keys(properties);
 
-    propertyNames.forEach(propertyName => {
+    propertyNames.forEach((propertyName) => {
       const propertyFormStateNode = properties[propertyName];
       const error = validate({
         formStateNode: propertyFormStateNode,
         confirmDataPopulatedAtCurrentOrDescendantNode() {
           namesOfPopulatedProperties.add(propertyName);
           confirmDataPopulatedAtCurrentOrDescendantNode();
-        }
+        },
       });
 
       if (error) {
@@ -64,7 +64,7 @@ export default ({
     // stating that the property is required.
     // https://jira.corp.adobe.com/browse/PDCL-4413
     if (namesOfPopulatedProperties.size) {
-      propertyNames.forEach(propertyName => {
+      propertyNames.forEach((propertyName) => {
         if (
           // If the property is already populated, it won't qualify for an error.
           !namesOfPopulatedProperties.has(propertyName) &&
@@ -78,7 +78,7 @@ export default ({
             propertyFormStateNode.autoPopulationSource === NONE
           ) {
             propertyErrors[propertyName] = {
-              value: "This is a required field and must be populated."
+              value: "This is a required field and must be populated.",
             };
           }
         }

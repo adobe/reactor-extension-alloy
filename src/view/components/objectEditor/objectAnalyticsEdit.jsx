@@ -19,6 +19,6 @@ const ObjectAnalyticsEdit = ({ fieldName, ...otherProps }) => {
   );
 };
 ObjectAnalyticsEdit.propTypes = {
-  fieldName: PropTypes.string.isRequired
+  fieldName: PropTypes.string.isRequired,
 };
 export default ObjectAnalyticsEdit;

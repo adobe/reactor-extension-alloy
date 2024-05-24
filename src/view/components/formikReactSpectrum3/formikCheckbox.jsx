@@ -43,7 +43,7 @@ const FormikCheckbox = ({ name, description, width, ...otherProps }) => {
 FormikCheckbox.propTypes = {
   name: PropTypes.string.isRequired,
   description: PropTypes.string,
-  width: PropTypes.string
+  width: PropTypes.string,
 };
 
 export default FormikCheckbox;

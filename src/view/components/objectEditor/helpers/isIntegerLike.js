@@ -16,4 +16,5 @@ import isNumberLike from "./isNumberLike";
  * Returns whether the value is an integer or a string that represents an integer.
  * An empty string returns false.
  */
-export default value => isNumberLike(value) && Number.isInteger(Number(value));
+export default (value) =>
+  isNumberLike(value) && Number.isInteger(Number(value));

@@ -29,7 +29,7 @@ const ErrorMessage = ({ children, dataTestId }) => {
 
 ErrorMessage.propTypes = {
   children: PropTypes.node.isRequired,
-  dataTestId: PropTypes.string
+  dataTestId: PropTypes.string,
 };
 
 export default ErrorMessage;

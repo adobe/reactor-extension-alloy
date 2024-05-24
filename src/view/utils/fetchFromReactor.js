@@ -26,16 +26,16 @@ export default async ({ orgId, imsAccess, path, params, headers, signal }) => {
       headers: {
         ...baseRequestHeaders,
         Accept: "application/vnd.api+json;revision=1",
-        ...headers
+        ...headers,
       },
-      signal
+      signal,
     });
   } catch (e) {
     if (e.name === "AbortError") {
       throw e;
     }
     throw new UserReportableError(
-      NETWORK_ERROR_MESSAGE.UNABLE_TO_CONNECT_TO_SERVER
+      NETWORK_ERROR_MESSAGE.UNABLE_TO_CONNECT_TO_SERVER,
     );
   }
 
@@ -54,18 +54,18 @@ export default async ({ orgId, imsAccess, path, params, headers, signal }) => {
       throw e;
     }
     throw new UserReportableError(
-      NETWORK_ERROR_MESSAGE.UNEXPECTED_SERVER_RESPONSE
+      NETWORK_ERROR_MESSAGE.UNEXPECTED_SERVER_RESPONSE,
     );
   }
 
   if (!response.ok) {
     throw new UserReportableError(
-      NETWORK_ERROR_MESSAGE.UNEXPECTED_SERVER_RESPONSE
+      NETWORK_ERROR_MESSAGE.UNEXPECTED_SERVER_RESPONSE,
     );
   }
 
   return {
     status: response.status,
-    parsedBody
+    parsedBody,
   };
 };
