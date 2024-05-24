@@ -17,6 +17,7 @@ import js from "@eslint/js";
 import globals from "globals";
 import babelParser from "@babel/eslint-parser";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import unusedImports from "eslint-plugin-unused-imports";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,9 +29,12 @@ const compat = new FlatCompat({
 export default [
   js.configs.recommended,
   ...compat.extends("airbnb", "plugin:testcafe/recommended"),
-  ...compat.plugins("unused-imports", "ban", "testcafe"),
+  ...compat.plugins("ban", "testcafe"),
   {
     files: ["**/*.{mjs,js,jsx}"],
+    plugins: {
+      "unused-imports": unusedImports
+    },
     languageOptions: {
       parser: babelParser,
       parserOptions: {
