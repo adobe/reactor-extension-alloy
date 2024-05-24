@@ -23,7 +23,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const compat = new FlatCompat({
-  baseDirectory: __dirname
+  baseDirectory: __dirname,
 });
 
 export default [
@@ -33,14 +33,14 @@ export default [
   {
     files: ["**/*.{mjs,js,jsx}"],
     plugins: {
-      "unused-imports": unusedImports
+      "unused-imports": unusedImports,
     },
     languageOptions: {
       parser: babelParser,
       parserOptions: {
         babelOptions: {
-          presets: ["@babel/preset-env", "@babel/preset-react"]
-        }
+          presets: ["@babel/preset-env", "@babel/preset-react"],
+        },
       },
       ecmaVersion: 2021,
       globals: {
@@ -48,8 +48,8 @@ export default [
         ...globals.browser,
         ...globals.node,
         fixture: true,
-        test: true
-      }
+        test: true,
+      },
     },
     rules: {
       "unused-imports/no-unused-imports": "error",
@@ -62,7 +62,7 @@ export default [
         { name: "fit", message: "don't focus tests" },
         { name: ["fixture", "only"], message: "don't focus tests" },
         { name: ["test", "only"], message: "don't focus tests" },
-        { name: "ftest", message: "don't focus tests" }
+        { name: "ftest", message: "don't focus tests" },
       ],
       "no-param-reassign": "off",
       "prettier/prettier": "error",
@@ -72,8 +72,8 @@ export default [
       "jsx-a11y/label-has-associated-control": [
         2,
         {
-          controlComponents: ["WrappedField"]
-        }
+          controlComponents: ["WrappedField"],
+        },
       ],
       // Has been deprecated in favor of label-has-associated-control
       "jsx-a11y/label-has-for": "off",
@@ -86,8 +86,8 @@ export default [
       "no-console": [
         "warn",
         {
-          allow: ["error"]
-        }
+          allow: ["error"],
+        },
       ],
       // This rule typically shows an error if a Link component
       // doesn't have an href. We use React-Spectrum's Link
@@ -99,40 +99,40 @@ export default [
       "jsx-a11y/anchor-is-valid": [
         "error",
         {
-          components: []
-        }
+          components: [],
+        },
       ],
       "no-underscore-dangle": [
         2,
-        { allow: ["_experience", "__dirname", "__filename"] }
+        { allow: ["_experience", "__dirname", "__filename"] },
       ],
       "react/jsx-props-no-spreading": "off",
       "react/function-component-definition": [
         2,
-        { namedComponents: "arrow-function" }
+        { namedComponents: "arrow-function" },
       ],
 
       "import/no-named-as-default-member": "off",
-      "import/no-named-as-default": "off"
-    }
+      "import/no-named-as-default": "off",
+    },
   },
   {
     files: ["src/**/*.{mjs,js,jsx}"],
     languageOptions: {
       globals: {
-        _satellite: "readonly"
-      }
+        _satellite: "readonly",
+      },
     },
     rules: {
-      "import/no-extraneous-dependencies": "error"
-    }
+      "import/no-extraneous-dependencies": "error",
+    },
   },
   {
     files: ["src/lib/**/*.{js,jsx}"],
     languageOptions: {
       globals: {
-        turbine: "readonly"
-      }
+        turbine: "readonly",
+      },
     },
     rules: {
       "no-var": "off",
@@ -141,10 +141,10 @@ export default [
       "import/no-named-export": 2,
       "no-underscore-dangle": [
         "error",
-        { allow: ["__alloyNS", "__alloyMonitors"] }
-      ]
-    }
+        { allow: ["__alloyNS", "__alloyMonitors"] },
+      ],
+    },
   },
 
-  eslintPluginPrettierRecommended
+  eslintPluginPrettierRecommended,
 ];
