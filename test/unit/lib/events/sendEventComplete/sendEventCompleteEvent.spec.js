@@ -17,11 +17,11 @@ describe("SendEvent complete event", () => {
     const trigger = () => {};
     const sendEventCallbackStorage = jasmine.createSpyObj(
       "sendEventCallbackStorage",
-      ["add"]
+      ["add"],
     );
 
     const sendEventComplete = createSendEventComplete({
-      sendEventCallbackStorage
+      sendEventCallbackStorage,
     });
 
     sendEventComplete({}, trigger);

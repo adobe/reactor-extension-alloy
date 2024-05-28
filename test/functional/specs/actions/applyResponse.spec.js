@@ -25,22 +25,22 @@ const mockExtensionSettings = {
   instances: [
     {
       name: "alloy1",
-      edgeConfigId: "PR123"
+      edgeConfigId: "PR123",
     },
     {
       name: "alloy2",
-      edgeConfigId: "PR456"
-    }
-  ]
+      edgeConfigId: "PR456",
+    },
+  ],
 };
 
 createExtensionViewFixture({
   title: "Apply response view",
-  viewPath: "actions/applyResponse.html"
+  viewPath: "actions/applyResponse.html",
 });
 
 runCommonExtensionViewTests({
-  extensionSettings: mockExtensionSettings
+  extensionSettings: mockExtensionSettings,
 });
 
 test("initializes form fields with full settings", async () => {
@@ -50,8 +50,8 @@ test("initializes form fields with full settings", async () => {
       instanceName: "alloy2",
       responseHeaders: "%headers%",
       responseBody: "%body%",
-      renderDecisions: true
-    }
+      renderDecisions: true,
+    },
   });
   await instanceNameField.expectText("alloy2");
   await responseHeadersField.expectValue("%headers%");
@@ -64,8 +64,8 @@ test("initializes form fields with minimal settings", async () => {
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy1",
-      responseBody: "%mybody%"
-    }
+      responseBody: "%mybody%",
+    },
   });
   await instanceNameField.expectText("alloy1");
   await responseHeadersField.expectValue("");
@@ -75,7 +75,7 @@ test("initializes form fields with minimal settings", async () => {
 
 test("initializes form fields with no settings", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await instanceNameField.expectText("alloy1");
   await responseHeadersField.expectValue("");
@@ -87,20 +87,20 @@ test("returns minimal valid settings", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
-      responseBody: "%mybody%"
-    }
+      responseBody: "%mybody%",
+    },
   });
 
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
-    responseBody: "%mybody%"
+    responseBody: "%mybody%",
   });
 });
 
 test("returns full valid settings", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await instanceNameField.selectOption("alloy2");
   await responseHeadersField.typeText("%myheaders%");
@@ -111,13 +111,13 @@ test("returns full valid settings", async () => {
     instanceName: "alloy2",
     responseHeaders: "%myheaders%",
     responseBody: "%mybody%",
-    renderDecisions: true
+    renderDecisions: true,
   });
 });
 
 test("shows error for responseHeaders value that is not a data element", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await responseHeadersField.typeText("headers");
   await extensionViewController.expectIsNotValid();
@@ -126,7 +126,7 @@ test("shows error for responseHeaders value that is not a data element", async (
 
 test("shows error for responseBody value that is not a data element", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await responseBodyField.typeText("%body");
   await extensionViewController.expectIsNotValid();
@@ -135,7 +135,7 @@ test("shows error for responseBody value that is not a data element", async () =
 
 test("shows error for responseHeaders value that is more than one data element", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await responseHeadersField.typeText("%a%%b%");
   await extensionViewController.expectIsNotValid();
@@ -144,7 +144,7 @@ test("shows error for responseHeaders value that is more than one data element",
 
 test("shows error for responseBody value that is more than one data element", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await responseBodyField.typeText("%a%%b%");
   await extensionViewController.expectIsNotValid();
@@ -153,7 +153,7 @@ test("shows error for responseBody value that is more than one data element", as
 
 test("shows error when responseBody is not filled in", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await extensionViewController.expectIsNotValid();
   await responseBodyField.expectError();

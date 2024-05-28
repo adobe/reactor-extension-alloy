@@ -27,5 +27,5 @@ export default {
   "media.error": "Error",
   "media.sessionComplete": "Session complete",
   "media.sessionEnd": "Session end",
-  "media.statesUpdate": "States update"
+  "media.statesUpdate": "States update",
 };

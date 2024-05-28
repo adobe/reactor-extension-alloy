@@ -35,7 +35,7 @@ const PopulationAmountIndicator = ({ className, populationAmount }) => {
         className={classNames("PopulationAmountIndicator-emphasisRing", {
           "is-full": populationAmount === FULL,
           "is-partial": populationAmount === PARTIAL,
-          "is-empty": populationAmount === EMPTY
+          "is-empty": populationAmount === EMPTY,
         })}
         cx="21"
         cy="21"
@@ -51,7 +51,7 @@ const PopulationAmountIndicator = ({ className, populationAmount }) => {
 
 PopulationAmountIndicator.propTypes = {
   className: PropTypes.string,
-  populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY, BLANK])
+  populationAmount: PropTypes.oneOf([FULL, PARTIAL, EMPTY, BLANK]),
 };
 
 export default PopulationAmountIndicator;

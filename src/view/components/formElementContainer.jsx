@@ -27,7 +27,7 @@ const FormElementContainer = ({
 
 FormElementContainer.propTypes = {
   children: PropTypes.node,
-  direction: PropTypes.string
+  direction: PropTypes.string,
 };
 
 export default FormElementContainer;

@@ -25,18 +25,18 @@ import form from "./form";
 export default function section({ label, learnMoreUrl }, children = []) {
   const { getInitialValues, getSettings, validationShape, Component } = form(
     {},
-    children
+    children,
   );
 
   return {
     getInitialValues,
     getSettings,
     validationShape,
-    Component: props => (
+    Component: (props) => (
       <>
         <SectionHeader learnMoreUrl={learnMoreUrl}>{label}</SectionHeader>
         <Component {...props} />
       </>
-    )
+    ),
   };
 }

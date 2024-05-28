@@ -27,7 +27,7 @@ export const bridge = {
   getInstanceDefaults: () => ({
     prehidingStyle: "",
     targetMigrationEnabled: false,
-    personalizationStorageEnabled: false
+    personalizationStorageEnabled: false,
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
@@ -39,8 +39,8 @@ export const bridge = {
       keys: [
         "prehidingStyle",
         "targetMigrationEnabled",
-        "personalizationStorageEnabled"
-      ]
+        "personalizationStorageEnabled",
+      ],
     });
 
     return instanceValues;
@@ -55,12 +55,12 @@ export const bridge = {
       keys: [
         "prehidingStyle",
         "targetMigrationEnabled",
-        "personalizationStorageEnabled"
-      ]
+        "personalizationStorageEnabled",
+      ],
     });
 
     return instanceSettings;
-  }
+  },
 };
 
 const PersonalizationSection = ({ instanceFieldName }) => {
@@ -114,7 +114,7 @@ const PersonalizationSection = ({ instanceFieldName }) => {
 };
 
 PersonalizationSection.propTypes = {
-  instanceFieldName: PropTypes.string.isRequired
+  instanceFieldName: PropTypes.string.isRequired,
 };
 
 export default PersonalizationSection;

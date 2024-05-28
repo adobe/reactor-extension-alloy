@@ -16,7 +16,7 @@ import getAdobeIOAccessToken from "./getAdobeIOAccessToken";
 
 const getSettings = async () => {
   return t.eval(() => {
-    return window.initializeExtensionViewPromise.then(extensionView => {
+    return window.initializeExtensionViewPromise.then((extensionView) => {
       return extensionView.getSettings();
     });
   });
@@ -24,7 +24,7 @@ const getSettings = async () => {
 
 const validate = async () => {
   return t.eval(() => {
-    return window.initializeExtensionViewPromise.then(extensionView => {
+    return window.initializeExtensionViewPromise.then((extensionView) => {
       // Reactor calls getSettings in a couple scenarios that may not be
       // obvious:
       //
@@ -44,7 +44,7 @@ const validate = async () => {
       // By calling getSettings every time we call validate, we can
       // be more certain getSettings is properly handling scenarios
       // where the view is in an invalid state.
-      return extensionView.validate().then(isValid => {
+      return extensionView.validate().then((isValid) => {
         return extensionView.getSettings().then(() => {
           return isValid;
         });
@@ -60,24 +60,24 @@ export default {
       settings: null,
       extensionSettings: {},
       company: {
-        orgId: credentials.orgId
+        orgId: credentials.orgId,
       },
       tokens: { imsAccess: accessToken },
-      ...additionalInitInfo
+      ...additionalInitInfo,
     };
     return t.eval(
       () => {
         window.initializeExtensionViewPromise = window.initializeExtensionView({
           initInfo,
-          sharedViewMethodMocks
+          sharedViewMethodMocks,
         });
       },
       {
         dependencies: {
           initInfo,
-          sharedViewMethodMocks
-        }
-      }
+          sharedViewMethodMocks,
+        },
+      },
     );
   },
   getSettings,
@@ -101,5 +101,5 @@ export default {
   async expectSettingsToContain(expectedSettings) {
     const actualSettings = await getSettings();
     await t.expect(actualSettings).contains(expectedSettings);
-  }
+  },
 };

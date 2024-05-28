@@ -78,23 +78,23 @@ export const bridge = {
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: ""
-              }
-            }
+                datasetId: "",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: [""]
+            reportSuites: [""],
           },
           com_adobe_identity: {
-            idSyncContainerId: undefined
+            idSyncContainerId: undefined,
           },
           com_adobe_target: {
-            propertyToken: ""
-          }
-        }
+            propertyToken: "",
+          },
+        },
       }),
-      {}
-    )
+      {},
+    ),
   }),
   /**
    * Converts the saved Launch instance settings to the formik state.
@@ -109,7 +109,7 @@ export const bridge = {
       "com_adobe_identity",
       "com_adobe_target",
       "com_adobe_analytics",
-      "com_adobe_experience_platform"
+      "com_adobe_experience_platform",
     ];
     const oldOverrides = overridesKeys.reduce((acc, key) => {
       if (instanceSettings.edgeConfigOverrides?.[key]) {
@@ -120,7 +120,7 @@ export const bridge = {
     if (Object.keys(oldOverrides).length > 0) {
       const overrideSettings = { ...oldOverrides };
       instanceSettings.edgeConfigOverrides = {};
-      OVERRIDE_ENVIRONMENTS.forEach(env => {
+      OVERRIDE_ENVIRONMENTS.forEach((env) => {
         instanceSettings.edgeConfigOverrides[env] =
           overrideSettings[env] ?? oldOverrides;
       });
@@ -130,10 +130,10 @@ export const bridge = {
       toObj: instanceValues,
       fromObj: instanceSettings,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["edgeConfigOverrides"]
+      keys: ["edgeConfigOverrides"],
     });
 
-    OVERRIDE_ENVIRONMENTS.forEach(env => {
+    OVERRIDE_ENVIRONMENTS.forEach((env) => {
       if (
         instanceValues.edgeConfigOverrides?.[env]?.com_adobe_identity
           ?.idSyncContainerId
@@ -162,10 +162,10 @@ export const bridge = {
       toObj: instanceSettings,
       fromObj: instanceValues,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: propertyKeysToCopy
+      keys: propertyKeysToCopy,
     });
 
-    OVERRIDE_ENVIRONMENTS.forEach(env => {
+    OVERRIDE_ENVIRONMENTS.forEach((env) => {
       /** @type {EnvironmentConfigOverrideLaunchSettings} */
       const overrides = instanceSettings.edgeConfigOverrides?.[env];
       if (!overrides || Object.keys(overrides).length === 0) {
@@ -179,14 +179,14 @@ export const bridge = {
       ) {
         overrides.com_adobe_identity.idSyncContainerId = parseInt(
           overrides.com_adobe_identity.idSyncContainerId,
-          10
+          10,
         );
       }
 
       // filter out the blank report suites
       if (overrides.com_adobe_analytics?.reportSuites) {
         overrides.com_adobe_analytics.reportSuites =
-          overrides.com_adobe_analytics.reportSuites.filter(rs => rs !== "");
+          overrides.com_adobe_analytics.reportSuites.filter((rs) => rs !== "");
       }
     });
 
@@ -198,7 +198,7 @@ export const bridge = {
       Object.keys(trimmedInstanceSettings?.edgeConfigOverrides || {}).length ===
         1 &&
       Object.keys(
-        trimmedInstanceSettings?.edgeConfigOverrides?.development || {}
+        trimmedInstanceSettings?.edgeConfigOverrides?.development || {},
       ).length === 1
     ) {
       delete trimmedInstanceSettings.edgeConfigOverrides;
@@ -219,40 +219,40 @@ export const bridge = {
             com_adobe_experience_platform: object({
               datasets: object({
                 event: object({
-                  datasetId: string().nullable()
+                  datasetId: string().nullable(),
                 }),
                 profile: object({
-                  datasetId: string().nullable()
-                })
-              })
+                  datasetId: string().nullable(),
+                }),
+              }),
             }),
             com_adobe_analytics: object({
-              reportSuites: array(string()).nullable()
+              reportSuites: array(string()).nullable(),
             }),
             com_adobe_identity: object({
-              idSyncContainerId: lazy(value =>
+              idSyncContainerId: lazy((value) =>
                 typeof value === "string" &&
                 (value.includes("%") || value === "")
                   ? string()
                       .matches(dataElementRegex, {
                         message: "Please enter a valid data element.",
-                        excludeEmptyString: true
+                        excludeEmptyString: true,
                       })
                       .nullable()
                   : number()
                       .typeError("Please enter a number.")
                       .positive("Please enter a positive number.")
                       .integer("Please enter a whole number.")
-                      .nullable()
-              )
+                      .nullable(),
+              ),
             }),
             com_adobe_target: object({
-              propertyToken: string().nullable()
-            })
-          })
+              propertyToken: string().nullable(),
+            }),
+          }),
         }),
-        {}
-      )
-    )
-  })
+        {},
+      ),
+    ),
+  }),
 };

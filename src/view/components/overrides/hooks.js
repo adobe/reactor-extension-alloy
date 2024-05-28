@@ -31,7 +31,7 @@ export const useFetchConfig = ({
   imsAccess,
   edgeConfigId,
   sandbox,
-  requestCache
+  requestCache,
 }) => {
   const cacheKey = `${authOrgId}-${sandbox}-${edgeConfigId}`;
   const [result, setResult] = useState(null);
@@ -52,17 +52,17 @@ export const useFetchConfig = ({
         imsAccess,
         edgeConfigId,
         sandbox,
-        signal: null
+        signal: null,
       });
       requestCache.current[cacheKey] = request;
     }
     request
-      .then(response => {
+      .then((response) => {
         const { data: { settings = {} } = {} } = response;
         setResult(settings);
         setError(null);
       })
-      .catch(err => {
+      .catch((err) => {
         setError(err);
       })
       .finally(() => {

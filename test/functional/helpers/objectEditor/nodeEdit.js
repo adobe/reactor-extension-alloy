@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import { t } from "testcafe";
 import {
   createTestIdSelector,
-  createTestIdSelectorString
+  createTestIdSelectorString,
 } from "../dataTestIdSelectors";
 
 const nodeEdit = createTestIdSelector("nodeEdit");
@@ -21,7 +21,7 @@ const heading = createTestIdSelector("heading");
 
 export default {
   breadcrumb: {
-    item: label => {
+    item: (label) => {
       const node = nodeEdit
         .find(createTestIdSelectorString("breadcrumb"))
         .find('[role="link"]')
@@ -29,13 +29,13 @@ export default {
       return {
         click: async () => {
           return t.click(node);
-        }
+        },
       };
-    }
+    },
   },
   heading: {
-    expectText: async text => {
+    expectText: async (text) => {
       return t.expect(heading.withExactText(text).exists).ok();
-    }
-  }
+    },
+  },
 };

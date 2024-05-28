@@ -24,7 +24,7 @@ export default function configOverrides() {
   const part = {
     getInitialValues({ initInfo }) {
       return overridesBridge.getInitialInstanceValues({
-        instanceSettings: initInfo.settings || {}
+        instanceSettings: initInfo.settings || {},
       });
     },
     getSettings({ values }) {
@@ -33,13 +33,13 @@ export default function configOverrides() {
     validationShape: {
       edgeConfigOverrides: reach(
         overridesBridge.formikStateValidationSchema,
-        "edgeConfigOverrides"
-      )
+        "edgeConfigOverrides",
+      ),
     },
     Component({ initInfo, formikProps: { values } }) {
       const { instanceName } = values;
       const instanceSettings = initInfo.extensionSettings.instances.find(
-        instance => instance.name === instanceName
+        (instance) => instance.name === instanceName,
       );
       const edgeConfigIds = getEdgeConfigIds(instanceSettings);
       const orgId = instanceSettings?.orgId ?? initInfo.company.orgId;
@@ -50,14 +50,14 @@ export default function configOverrides() {
           configOrgId={orgId}
         />
       );
-    }
+    },
   };
 
   part.Component.propTypes = {
     initInfo: PropTypes.object.isRequired,
     formikProps: PropTypes.shape({
-      values: PropTypes.object.isRequired
-    }).isRequired
+      values: PropTypes.object.isRequired,
+    }).isRequired,
   };
 
   return part;

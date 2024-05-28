@@ -24,7 +24,7 @@ export const multiple = RequestMock()
         code: "CORE",
         status: "ACTIVE",
         name: "Audience Manager",
-        description: "Adobe Audience Manager UUID"
+        description: "Adobe Audience Manager UUID",
       },
       {
         updateTime: 1551688425455,
@@ -32,7 +32,7 @@ export const multiple = RequestMock()
         status: "ACTIVE",
         name: "Adobe Analytics",
         description: "Adobe Analytics (Legacy ID)",
-        id: 10
+        id: 10,
       },
       {
         updateTime: 1551688425455,
@@ -40,7 +40,7 @@ export const multiple = RequestMock()
         status: "ACTIVE",
         name: "Experience Cloud",
         description: "Adobe Experience Cloud ID",
-        id: 4
+        id: 4,
       },
       {
         updateTime: 1551688425455,
@@ -48,7 +48,7 @@ export const multiple = RequestMock()
         status: "ACTIVE",
         name: "Email",
         description: "Email Address",
-        id: 6
+        id: 6,
       },
       {
         updateTime: 1551688425455,
@@ -56,11 +56,11 @@ export const multiple = RequestMock()
         status: "ACTIVE",
         name: "Windows AID",
         description: "Windows AID",
-        id: 8
-      }
+        id: 8,
+      },
     ],
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const empty = RequestMock()

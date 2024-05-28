@@ -20,7 +20,7 @@ import { useField } from "formik";
  * @param {string} fieldName
  * @returns {any} The value of the field.
  */
-export const useFieldValue = fieldName => {
+export const useFieldValue = (fieldName) => {
   const [, { value }] = useField(fieldName);
   return value;
 };

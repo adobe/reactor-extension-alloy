@@ -25,29 +25,29 @@ const container = {
           {
             name: "alloy",
             edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:AditiTest",
-            debugEnabled: true
-          }
-        ]
-      }
-    }
+            debugEnabled: true,
+          },
+        ],
+      },
+    },
   },
   dataElements: {
     "XDM Object 1": {
       settings: {
         cacheId: "47ec6bcf-a41a-4dde-8883-88c18a867d70",
         sandbox: {
-          name: "prod"
+          name: "prod",
         },
         schema: {
           id: "https://ns.adobe.com/unifiedjsqeonly/schemas/75bc29dc603dbb5c8ba7c9f5be97b852a48772ccc69d0921",
-          version: "1.1"
-        }
+          version: "1.1",
+        },
       },
       cleanText: false,
       forceLowerCase: false,
       modulePath: "adobe-alloy/dist/lib/dataElements/variable/index.js",
-      storageDuration: ""
-    }
+      storageDuration: "",
+    },
   },
   rules: [
     {
@@ -56,8 +56,8 @@ const container = {
       events: [
         {
           modulePath: "sandbox/pageTop.js",
-          settings: {}
-        }
+          settings: {},
+        },
       ],
       actions: [
         {
@@ -66,56 +66,56 @@ const container = {
             dataElementCacheId: "47ec6bcf-a41a-4dde-8883-88c18a867d70",
             data: {
               device: {
-                colorDepth: 42
-              }
-            }
-          }
+                colorDepth: 42,
+              },
+            },
+          },
         },
         {
           modulePath: "adobe-alloy/dist/lib/actions/sendEvent/index.js",
           settings: {
             instanceName: "alloy",
-            xdm: "%XDM Object 1%"
-          }
-        }
-      ]
-    }
+            xdm: "%XDM Object 1%",
+          },
+        },
+      ],
+    },
   ],
   property: {
     name: "Sandbox property",
     settings: {
       id: "PR12345",
       domains: ["adobe.com", "example.com"],
-      undefinedVarsReturnEmpty: false
-    }
+      undefinedVarsReturnEmpty: false,
+    },
   },
   company: {
-    orgId: "5BFE274A5F6980A50A495C08@AdobeOrg"
+    orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
   },
   environment: {
     id: "EN00000000000000000000000000000000",
-    stage: "development"
+    stage: "development",
   },
   buildInfo: {
     turbineVersion: "27.2.1",
     turbineBuildDate: "2022-10-28T21:23:47.138Z",
     buildDate: "2022-10-28T21:23:47.139Z",
-    environment: "development"
-  }
+    environment: "development",
+  },
 };
 
 fixture("Update variable")
   .page(TEST_PAGE)
   .requestHooks([networkLogger.edgeEndpointLogs]);
 
-test("Updates a variable", async t => {
+test("Updates a variable", async (t) => {
   await appendLaunchLibrary(container);
   // The requestLogger.count method uses TestCafe's smart query
   // assertion mechanism, so it will wait for the request to be
   // made or a timeout is reached.
   await t.expect(networkLogger.edgeEndpointLogs.count(() => true)).eql(1);
   const requestBody = JSON.parse(
-    networkLogger.edgeEndpointLogs.requests[0].request.body
+    networkLogger.edgeEndpointLogs.requests[0].request.body,
   );
   await t.expect(requestBody.events[0].xdm.device.colorDepth).eql(42);
 });

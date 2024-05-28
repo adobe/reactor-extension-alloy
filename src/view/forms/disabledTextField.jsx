@@ -33,7 +33,7 @@ export default function disabledTextField({
   valueLabel,
   isRequired = false,
   label,
-  description = ""
+  description = "",
 }) {
   const Component = ({ namePrefix = "" }) => {
     return (
@@ -49,15 +49,15 @@ export default function disabledTextField({
     );
   };
   Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
 
   return {
     getSettings() {
       return {
-        [name]: value
+        [name]: value,
       };
     },
-    Component
+    Component,
   };
 }

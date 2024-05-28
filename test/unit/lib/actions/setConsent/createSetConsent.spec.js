@@ -13,14 +13,14 @@ governing permissions and limitations under the License.
 import createSetConsent from "../../../../../src/lib/actions/setConsent/createSetConsent";
 
 describe("Set Consent", () => {
-  ["in", "out"].forEach(generalConsent => {
+  ["in", "out"].forEach((generalConsent) => {
     it(`executes setConsent command with "${generalConsent}" general consent`, () => {
       const promiseReturnedFromInstance = Promise.resolve();
       const instance = jasmine
         .createSpy()
         .and.returnValue(promiseReturnedFromInstance);
       const instanceManager = jasmine.createSpyObj("instanceManager", {
-        getInstance: instance
+        getInstance: instance,
       });
       const getConfigOverrides = jasmine.createSpy("getConfigOverrides");
       const action = createSetConsent({ instanceManager, getConfigOverrides });
@@ -31,10 +31,10 @@ describe("Set Consent", () => {
           {
             standard: "Adobe",
             version: "1.0",
-            value: { general: generalConsent }
-          }
+            value: { general: generalConsent },
+          },
         ],
-        edgeConfigOverrides: undefined
+        edgeConfigOverrides: undefined,
       });
 
       expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
@@ -46,18 +46,18 @@ describe("Set Consent", () => {
             standard: "Adobe",
             version: "1.0",
             value: {
-              general: generalConsent
-            }
-          }
+              general: generalConsent,
+            },
+          },
         ],
-        edgeConfigOverrides: undefined
+        edgeConfigOverrides: undefined,
       });
     });
   });
 
-  ["", null, undefined].forEach(identityMap => {
+  ["", null, undefined].forEach((identityMap) => {
     it(`doesn't pass identityMap when it is ${JSON.stringify(
-      identityMap
+      identityMap,
     )}`, () => {
       const instance = jasmine.createSpy();
       const instanceManager = { getInstance: () => instance };
@@ -66,11 +66,11 @@ describe("Set Consent", () => {
       action({
         instanceName: "myinstance",
         identityMap,
-        consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }]
+        consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
       });
       expect(instance).toHaveBeenCalledWith("setConsent", {
         consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
-        edgeConfigOverrides: undefined
+        edgeConfigOverrides: undefined,
       });
     });
   });
@@ -78,19 +78,19 @@ describe("Set Consent", () => {
   it("throws an error when no matching instance found", () => {
     const getConfigOverrides = jasmine.createSpy("getConfigOverrides");
     const instanceManager = jasmine.createSpyObj("instanceManager", {
-      getInstance: undefined
+      getInstance: undefined,
     });
     const action = createSetConsent({ instanceManager, getConfigOverrides });
 
     expect(() => {
       action({
         instanceName: "myinstance",
-        purposes: "none"
+        purposes: "none",
       });
     }).toThrow(
       new Error(
-        'Failed to set consent for instance "myinstance". No matching instance was configured with this name.'
-      )
+        'Failed to set consent for instance "myinstance". No matching instance was configured with this name.',
+      ),
     );
   });
 
@@ -101,19 +101,19 @@ describe("Set Consent", () => {
       com_adobe_experience_platform: {
         datasets: {
           event: {
-            datasetId: "6335faf30f5a161c0b4b1444"
-          }
-        }
+            datasetId: "6335faf30f5a161c0b4b1444",
+          },
+        },
       },
       com_adobe_analytics: {
-        reportSuites: ["unifiedjsqeonly2"]
+        reportSuites: ["unifiedjsqeonly2"],
       },
       com_adobe_identity: {
-        idSyncContainerId: 30793
+        idSyncContainerId: 30793,
       },
       com_adobe_target: {
-        propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
-      }
+        propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+      },
     };
     const getConfigOverrides = jasmine
       .createSpy("getConfigOverrides")
@@ -123,7 +123,7 @@ describe("Set Consent", () => {
     action({
       instanceName: "myinstance",
       consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
-      edgeConfigOverrides
+      edgeConfigOverrides,
     });
     expect(instance).toHaveBeenCalledWith("setConsent", {
       consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
@@ -131,20 +131,20 @@ describe("Set Consent", () => {
         com_adobe_experience_platform: {
           datasets: {
             event: {
-              datasetId: "6335faf30f5a161c0b4b1444"
-            }
-          }
+              datasetId: "6335faf30f5a161c0b4b1444",
+            },
+          },
         },
         com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2"]
+          reportSuites: ["unifiedjsqeonly2"],
         },
         com_adobe_identity: {
-          idSyncContainerId: 30793
+          idSyncContainerId: 30793,
         },
         com_adobe_target: {
-          propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
-        }
-      }
+          propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+        },
+      },
     });
   });
 });

@@ -28,28 +28,29 @@ governing permissions and limitations under the License.
  *   sandbox?: string
  * }}}
  */
-const getEdgeConfigIds = instanceSettings => {
+const getEdgeConfigIds = (instanceSettings) => {
   if (!instanceSettings) {
     return {
       developmentEnvironment: {},
       stagingEnvironment: {},
-      productionEnvironment: {}
+      productionEnvironment: {},
     };
   }
   if (instanceSettings.edgeConfigInputMethod === "freeform") {
     return {
       developmentEnvironment: {
         datastreamId:
-          instanceSettings.edgeConfigFreeformInputMethod.developmentEdgeConfigId
+          instanceSettings.edgeConfigFreeformInputMethod
+            .developmentEdgeConfigId,
       },
       stagingEnvironment: {
         datastreamId:
-          instanceSettings.edgeConfigFreeformInputMethod.stagingEdgeConfigId
+          instanceSettings.edgeConfigFreeformInputMethod.stagingEdgeConfigId,
       },
       productionEnvironment: {
         datastreamId:
-          instanceSettings.edgeConfigFreeformInputMethod.edgeConfigId
-      }
+          instanceSettings.edgeConfigFreeformInputMethod.edgeConfigId,
+      },
     };
   }
   if (instanceSettings.edgeConfigInputMethod === "select") {
@@ -58,16 +59,16 @@ const getEdgeConfigIds = instanceSettings => {
   return {
     developmentEnvironment: {
       datastreamId: instanceSettings.developmentEdgeConfigId,
-      sandbox: instanceSettings.developmentSandbox
+      sandbox: instanceSettings.developmentSandbox,
     },
     stagingEnvironment: {
       datastreamId: instanceSettings.stagingEdgeConfigId,
-      sandbox: instanceSettings.stagingSandbox
+      sandbox: instanceSettings.stagingSandbox,
     },
     productionEnvironment: {
       datastreamId: instanceSettings.edgeConfigId,
-      sandbox: instanceSettings.sandbox
-    }
+      sandbox: instanceSettings.sandbox,
+    },
   };
 };
 export default getEdgeConfigIds;

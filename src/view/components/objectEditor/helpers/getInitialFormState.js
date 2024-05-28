@@ -83,7 +83,7 @@ const getInitialFormStateNode = ({
   nodePath,
   updateMode,
   transforms,
-  existingFormStateNode
+  existingFormStateNode,
 }) => {
   const formStateNode = {
     autoPopulationSource: autoPopulationSource.NONE,
@@ -98,7 +98,7 @@ const getInitialFormStateNode = ({
     schema,
     updateMode,
     transform: transforms[nodePath] || { clear: false },
-    nodePath
+    nodePath,
   };
 
   if (existingFormStateNode) {
@@ -120,7 +120,7 @@ const getInitialFormStateNode = ({
     getInitialFormStateNode: ({ ...args }) => {
       return getInitialFormStateNode({ ...args, transforms, updateMode });
     },
-    existingFormStateNode
+    existingFormStateNode,
   });
 
   if (existingFormStateNode) {
@@ -138,7 +138,7 @@ export default ({
   value,
   updateMode = false,
   transforms = {},
-  existingFormStateNode
+  existingFormStateNode,
 }) => {
   return getInitialFormStateNode({
     schema,
@@ -146,7 +146,7 @@ export default ({
     nodePath: "",
     updateMode,
     transforms,
-    existingFormStateNode
+    existingFormStateNode,
   });
 };
 
@@ -160,9 +160,9 @@ const formStateNodeShape = {
   populationStrategy: PropTypes.oneOf([WHOLE, PARTS]).isRequired,
   updateMode: PropTypes.bool.isRequired,
   transform: PropTypes.shape({
-    clear: PropTypes.bool.isRequired
+    clear: PropTypes.bool.isRequired,
   }).isRequired,
-  nodePath: PropTypes.string.isRequired
+  nodePath: PropTypes.string.isRequired,
 };
 
 export const formStateNodePropTypes = PropTypes.shape(formStateNodeShape);

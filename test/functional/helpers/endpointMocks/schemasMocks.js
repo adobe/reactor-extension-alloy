@@ -18,7 +18,7 @@ const SCHEMAS_ENDPOINT_REGEX = /\/schemaregistry\/tenant\/schemas(\?|$)/;
 export const single = RequestMock()
   .onRequestTo({
     url: SCHEMAS_ENDPOINT_REGEX,
-    method: "GET"
+    method: "GET",
   })
   .respond(
     {
@@ -26,21 +26,21 @@ export const single = RequestMock()
         {
           $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch123",
           version: "1.0",
-          title: "Test Schema 1"
-        }
+          title: "Test Schema 1",
+        },
       ],
       _page: {
-        next: null
-      }
+        next: null,
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const multiple = RequestMock()
   .onRequestTo({
     url: SCHEMAS_ENDPOINT_REGEX,
-    method: "GET"
+    method: "GET",
   })
   .respond(
     {
@@ -48,24 +48,24 @@ export const multiple = RequestMock()
         {
           $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch123",
           version: "1.0",
-          title: "Test Schema 1"
+          title: "Test Schema 1",
         },
         {
           $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch124",
           version: "1.0",
-          title: "Test Schema 2"
-        }
+          title: "Test Schema 2",
+        },
       ],
       _page: {
-        next: null
-      }
+        next: null,
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const sandbox2 = RequestMock()
-  .onRequestTo(async request => {
+  .onRequestTo(async (request) => {
     return (
       request.url.match(SCHEMAS_ENDPOINT_REGEX) &&
       request.headers["x-sandbox-name"] === "testsandbox2" &&
@@ -78,24 +78,24 @@ export const sandbox2 = RequestMock()
         {
           $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema2a",
           version: "1.0",
-          title: "Test Schema 2A"
+          title: "Test Schema 2A",
         },
         {
           $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema2b",
           version: "1.0",
-          title: "Test Schema 2B"
-        }
+          title: "Test Schema 2B",
+        },
       ],
       _page: {
-        next: null
-      }
+        next: null,
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const sandbox3 = RequestMock()
-  .onRequestTo(async request => {
+  .onRequestTo(async (request) => {
     return (
       request.url.match(SCHEMAS_ENDPOINT_REGEX) &&
       request.headers["x-sandbox-name"] === "testsandbox3" &&
@@ -108,25 +108,25 @@ export const sandbox3 = RequestMock()
         {
           $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema3a",
           version: "1.0",
-          title: "Test Schema 3A"
+          title: "Test Schema 3A",
         },
         {
           $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema3b",
           version: "1.0",
-          title: "Test Schema 3B"
-        }
+          title: "Test Schema 3B",
+        },
       ],
       _page: {
-        next: null
-      }
+        next: null,
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 export const search = RequestMock()
   .onRequestTo({
     url: /\/schemaregistry\/tenant\/schemas\?.*property=title/,
-    method: "GET"
+    method: "GET",
   })
   .respond(
     {
@@ -134,34 +134,34 @@ export const search = RequestMock()
         {
           $id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch125",
           version: "1.0",
-          title: "XDM Object Data Element Tests"
-        }
+          title: "XDM Object Data Element Tests",
+        },
       ],
       _page: {
-        next: null
-      }
+        next: null,
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const empty = RequestMock()
   .onRequestTo({
     url: SCHEMAS_ENDPOINT_REGEX,
     headers: {
-      "x-sandbox-name": "alloy-test"
+      "x-sandbox-name": "alloy-test",
     },
-    method: "GET"
+    method: "GET",
   })
   .respond(
     {
       results: [],
       _page: {
-        next: null
-      }
+        next: null,
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const pagingTitles = [
@@ -244,13 +244,13 @@ export const pagingTitles = [
   "Olpen",
   "Olwen",
   "Pamella",
-  "Paola"
+  "Paola",
 ];
 
 export const paging = RequestMock()
   .onRequestTo({
     url: SCHEMAS_ENDPOINT_REGEX,
-    method: "GET"
+    method: "GET",
   })
   .respond((req, res) => {
     const PAGE_ITEMS_LIMIT = 30;
@@ -260,28 +260,29 @@ export const paging = RequestMock()
     // used for matching the "title" property
     const titleQuery = url.searchParams
       .getAll("property")
-      .find(query => query.startsWith("title"));
+      .find((query) => query.startsWith("title"));
     const title = titleQuery ? titleQuery.split("~")[1] : null;
     const filteredTitles = pagingTitles.filter(
-      name => !title || new RegExp(title).test(name)
+      (name) => !title || new RegExp(title).test(name),
     );
     const startIndex = start ? filteredTitles.indexOf(start) : 0;
     const endIndex = Math.min(
       startIndex + PAGE_ITEMS_LIMIT,
-      filteredTitles.length
+      filteredTitles.length,
     );
 
     res.setBody({
-      results: filteredTitles.slice(startIndex, endIndex).map(name => {
+      results: filteredTitles.slice(startIndex, endIndex).map((name) => {
         return {
           $id: `https://ns.adobe.com/unifiedjsqeonly/schemas/${name}`,
           version: "1.0",
-          title: name
+          title: name,
         };
       }),
       _page: {
-        next: endIndex < filteredTitles.length ? filteredTitles[endIndex] : null
-      }
+        next:
+          endIndex < filteredTitles.length ? filteredTitles[endIndex] : null,
+      },
     });
     res.statusCode = 200;
     res.headers = responseHeaders;

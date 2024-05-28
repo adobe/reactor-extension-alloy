@@ -17,10 +17,10 @@ const DATASTREAMS_ENDPOINT_REGEX = /\/datasets\/datastreams\/records\/(\?|$)/;
 
 export const single = RequestMock()
   .onRequestTo(
-    async request =>
+    async (request) =>
       DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
       request.headers["x-sandbox-name"] === "prod" &&
-      request.method === "get"
+      request.method === "get",
   )
   .respond(
     {
@@ -29,36 +29,36 @@ export const single = RequestMock()
           {
             data: {
               title: "Test Config Overrides",
-              enabled: true
+              enabled: true,
             },
             orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
             sandboxName: "prod",
             _system: {
               id: "aca8c786-4940-442f-ace5-7c4aba02118e",
-              revision: 3
+              revision: 3,
             },
             _links: {
               self: {
                 href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
-                title: ""
-              }
-            }
-          }
-        ]
+                title: "",
+              },
+            },
+          },
+        ],
       },
       _links: {
         self: {
           href: "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
-          title: ""
-        }
-      }
+          title: "",
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const multiple = RequestMock()
-  .onRequestTo(async request => {
+  .onRequestTo(async (request) => {
     return (
       DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
       request.headers["x-sandbox-name"] === "testsandbox1" &&
@@ -74,85 +74,85 @@ export const multiple = RequestMock()
               title: "test datastream",
               settings: {
                 input: {
-                  schemaId: "test schema"
-                }
+                  schemaId: "test schema",
+                },
               },
-              enabled: true
+              enabled: true,
             },
             orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg",
             sandboxName: "prod",
             _system: {
               id: "64c31a3b-d031-4a2f-8834-e96fc15d3030",
-              revision: 3
+              revision: 3,
             },
             _links: {
               self: {
                 href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
-                title: ""
-              }
-            }
+                title: "",
+              },
+            },
           },
           {
             data: {
               title: "test datastream: stage",
               settings: {
                 input: {
-                  schemaId: "test schema"
-                }
+                  schemaId: "test schema",
+                },
               },
-              enabled: true
+              enabled: true,
             },
             orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg",
             sandboxName: "prod",
             _system: {
               id: "64c31a3b-d031-4a2f-8834-e96fc15d3030:stage",
-              revision: 3
+              revision: 3,
             },
             _links: {
               self: {
                 href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
-                title: ""
-              }
-            }
+                title: "",
+              },
+            },
           },
           {
             data: {
               title: "test datastream: development",
               settings: {
                 input: {
-                  schemaId: "test schema"
-                }
+                  schemaId: "test schema",
+                },
               },
-              enabled: true
+              enabled: true,
             },
             orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg",
             sandboxName: "prod",
             _system: {
               id: "64c31a3b-d031-4a2f-8834-e96fc15d3030:dev",
-              revision: 3
+              revision: 3,
             },
             _links: {
               self: {
                 href: "/metadata/namespaces/edge/datasets/datastreams/records/64c31a3b-d031-4a2f-8834-e96fc15d3030",
-                title: ""
-              }
-            }
-          }
-        ]
+                title: "",
+              },
+            },
+          },
+        ],
       },
       _links: {
         self: {
           href: "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
-          title: ""
-        }
-      }
+          title: "",
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const empty = RequestMock()
-  .onRequestTo(async request => {
+  .onRequestTo(async (request) => {
     return (
       DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
       request.headers["x-sandbox-name"] === "prod" &&
@@ -162,20 +162,20 @@ export const empty = RequestMock()
   .respond(
     {
       _embedded: {
-        records: []
+        records: [],
       },
       _links: {
         self: {
           href: "/metadata/namespaces/edge/datasets/datastreams/records?limit=1000&orderby=title",
-          title: ""
-        }
-      }
+          title: "",
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 export const forbidden = RequestMock()
-  .onRequestTo(async request => {
+  .onRequestTo(async (request) => {
     return (
       DATASTREAMS_ENDPOINT_REGEX.test(request.url) &&
       request.headers["x-sandbox-name"] === "testsandbox2" &&
@@ -192,9 +192,9 @@ export const forbidden = RequestMock()
         timestamp: "2022-10-20T12:31:11Z",
         version: "1.3.13",
         requestId: "1yMgl3lAhfaBzteXQiBPqymbbEhSNFQ5",
-        orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg"
-      }
+        orgId: "97D1F3F459CE0AD80A495CBE@AdobeOrg",
+      },
     },
     403,
-    responseHeaders
+    responseHeaders,
   );

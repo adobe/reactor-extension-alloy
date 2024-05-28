@@ -17,7 +17,7 @@ module.exports = ({
   createEventMergeId,
   orgId,
   wrapOnBeforeEventSend,
-  getConfigOverrides
+  getConfigOverrides,
 }) => {
   const { instances: instancesSettings } = turbine.getExtensionSettings();
   const instanceByName = {};
@@ -52,12 +52,12 @@ module.exports = ({
         datastreamId: computedEdgeConfigId,
         debugEnabled: turbine.debugEnabled,
         orgId: options.orgId || orgId,
-        onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend)
+        onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend),
       });
-      turbine.onDebugChanged(enabled => {
+      turbine.onDebugChanged((enabled) => {
         instance("setDebug", { enabled });
       });
-    }
+    },
   );
 
   return {
@@ -75,6 +75,6 @@ module.exports = ({
      */
     createEventMergeId() {
       return createEventMergeId();
-    }
+    },
   };
 };

@@ -21,9 +21,9 @@ const extensionDescriptorSchema = JSON.parse(
   await readFile(
     new URL(
       "../../node_modules/@adobe/reactor-turbine-schemas/schemas/extension-package-web.json",
-      import.meta.url
-    )
-  )
+      import.meta.url,
+    ),
+  ),
 );
 
 /**
@@ -31,10 +31,10 @@ const extensionDescriptorSchema = JSON.parse(
  * @param {Object} environment
  * @returns {import("./createExtensionManifest.mjs").ExtensionManifestConfiguration}
  */
-const getOptions = environment => {
+const getOptions = (environment) => {
   // get version from environment
   return {
-    version: environment.npm_package_version
+    version: environment.npm_package_version,
   };
 };
 
@@ -43,14 +43,14 @@ const getOptions = environment => {
  * @param {ExtensionManifest} manifest
  * @returns {string | undefined} An error message if invalid, undefined if valid.
  */
-const validate = manifest => {
+const validate = (manifest) => {
   // This code is based on validateJsonStructure() in @adobe/reactor-validator.
   // We don't use that package directly because it also validates the files
   // mentioned in the extension manifest, which may not be present yet.
 
   const ajv = new Ajv({
     schemaId: "auto",
-    strict: false
+    strict: false,
   });
   addAJVFormats(ajv);
   if (!ajv.validate(extensionDescriptorSchema, manifest)) {
@@ -64,7 +64,7 @@ const validate = manifest => {
  * @param {string} repoRoot The root path of the repository.
  * @returns {string}
  */
-const getDestination = repoRoot => {
+const getDestination = (repoRoot) => {
   return resolve(join(repoRoot, "extension.json"));
 };
 
@@ -82,7 +82,7 @@ const stringify = async (obj, prettyPrint = true) => {
   const prettierConfig = await prettier.resolveConfig();
   return prettier.format(result, {
     ...prettierConfig,
-    parser: "json-stringify"
+    parser: "json-stringify",
   });
 };
 

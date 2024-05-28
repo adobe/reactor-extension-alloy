@@ -18,13 +18,13 @@ import React from "react";
 const FormikPicker = ({ name, width, validate, onChange, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
     name,
-    validate
+    validate,
   });
 
   return (
     <Picker
       selectedKey={value}
-      onSelectionChange={key => {
+      onSelectionChange={(key) => {
         setValue(key);
         if (onChange) {
           onChange(key);
@@ -45,7 +45,7 @@ FormikPicker.propTypes = {
   name: PropTypes.string.isRequired,
   width: PropTypes.string,
   validate: PropTypes.func,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
 };
 
 export default FormikPicker;

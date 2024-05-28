@@ -25,7 +25,7 @@ monitorForOriginatingErrors();
 const container = document.getElementById("root");
 const root = createRoot(container);
 
-export default View => {
+export default (View) => {
   root.render(
     <Provider
       theme={lightTheme}
@@ -35,6 +35,6 @@ export default View => {
       <ErrorBoundary>
         <View />
       </ErrorBoundary>
-    </Provider>
+    </Provider>,
   );
 };

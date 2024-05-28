@@ -13,16 +13,18 @@ governing permissions and limitations under the License.
 import { t } from "testcafe";
 import extensionViewController from "../extensionViewController";
 
-export default async additionalInitInfo => {
+export default async (additionalInitInfo) => {
   const extendedExtensionViewController = Object.create(
-    extensionViewController
+    extensionViewController,
   );
   /**
    * Asserts that the extension view returns settings whose data
    * matches the expected data. It also asserts that the schema is
    * correct with fuzzy matching for the schema version.
    */
-  extendedExtensionViewController.expectSettingsToContainData = async data => {
+  extendedExtensionViewController.expectSettingsToContainData = async (
+    data,
+  ) => {
     const actualSettings = await extensionViewController.getSettings();
     // await t.expect(actualSettings.schema.id).eql(schema.id);
     // We use a regex here because as changes are made to the schema (to support
@@ -34,8 +36,8 @@ export default async additionalInitInfo => {
       .eql(
         data,
         `Expected data: ${JSON.stringify(data)} Actual data: ${JSON.stringify(
-          actualSettings.data
-        )}`
+          actualSettings.data,
+        )}`,
       );
   };
   await extendedExtensionViewController.init(additionalInitInfo);

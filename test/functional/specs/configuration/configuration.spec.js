@@ -16,7 +16,7 @@ import {
   addInstanceButton,
   instancesTabs,
   resourceUsageDialog,
-  instances
+  instances,
 } from "../../helpers/viewSelectors";
 import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
 import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks";
@@ -26,7 +26,7 @@ import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks";
 createExtensionViewFixture({
   title: "Extension Configuration View",
   viewPath: "configuration/configuration.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
 });
 
 runCommonExtensionViewTests();
@@ -60,57 +60,57 @@ test("initializes form fields with full settings", async () => {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
-                    datasetId: "6336ff95ba16ca1c07b4c0db"
-                  }
-                }
+                    datasetId: "6336ff95ba16ca1c07b4c0db",
+                  },
+                },
               },
               com_adobe_analytics: {
-                reportSuites: ["unifiedjsqeonly2"]
+                reportSuites: ["unifiedjsqeonly2"],
               },
               com_adobe_identity: {
-                idSyncContainerId: 23512312
+                idSyncContainerId: 23512312,
               },
               com_adobe_target: {
-                propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-              }
+                propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+              },
             },
             staging: {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
-                    datasetId: "6336ff95ba16ca1c07b4c0db"
-                  }
-                }
+                    datasetId: "6336ff95ba16ca1c07b4c0db",
+                  },
+                },
               },
               com_adobe_analytics: {
-                reportSuites: ["unifiedjsqeonly2"]
+                reportSuites: ["unifiedjsqeonly2"],
               },
               com_adobe_identity: {
-                idSyncContainerId: 23512312
+                idSyncContainerId: 23512312,
               },
               com_adobe_target: {
-                propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-              }
+                propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+              },
             },
             production: {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
-                    datasetId: "6336ff95ba16ca1c07b4c0db"
-                  }
-                }
+                    datasetId: "6336ff95ba16ca1c07b4c0db",
+                  },
+                },
               },
               com_adobe_analytics: {
-                reportSuites: ["unifiedjsqeonly2"]
+                reportSuites: ["unifiedjsqeonly2"],
               },
               com_adobe_identity: {
-                idSyncContainerId: 23512312
+                idSyncContainerId: 23512312,
               },
               com_adobe_target: {
-                propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-              }
-            }
-          }
+                propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+              },
+            },
+          },
         },
         {
           name: "alloy2",
@@ -120,28 +120,28 @@ test("initializes form fields with full settings", async () => {
           defaultConsent: "%dataelement123%",
           idMigrationEnabled: false,
           thirdPartyCookiesEnabled: false,
-          context: []
+          context: [],
         },
         {
           name: "alloy3",
           edgeConfigId: "PR789",
-          defaultConsent: "out"
-        }
-      ]
-    }
+          defaultConsent: "out",
+        },
+      ],
+    },
   });
 
   await instances[0].nameField.expectValue("alloy1");
   await instances[0].edgeConfig.inputMethodSelectRadio.expectUnchecked();
   await instances[0].edgeConfig.inputMethodFreeformRadio.expectChecked();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
-    "PR123"
+    "PR123",
   );
   await instances[0].edgeConfig.inputMethodFreeform.stagingEnvironmentField.expectValue(
-    "PR123:stage"
+    "PR123:stage",
   );
   await instances[0].edgeConfig.inputMethodFreeform.developmentEnvironmentField.expectValue(
-    "PR123:dev1"
+    "PR123:dev1",
   );
   await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
   await instances[0].edgeDomainField.expectValue("testedge.com");
@@ -164,44 +164,44 @@ test("initializes form fields with full settings", async () => {
 
   await instances[0].overrides.envTabs.development.expectSelected();
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await instances[0].overrides.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await instances[0].overrides.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await instances[0].overrides.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await instances[0].overrides.envTabs.staging.click();
   await instances[0].overrides.envTabs.staging.expectSelected();
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await instances[0].overrides.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await instances[0].overrides.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await instances[0].overrides.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await instances[0].overrides.envTabs.production.click();
   await instances[0].overrides.envTabs.production.expectSelected();
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await instances[0].overrides.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await instances[0].overrides.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await instances[0].overrides.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
 
   await instancesTabs.selectTab("alloy2");
@@ -210,16 +210,16 @@ test("initializes form fields with full settings", async () => {
   await instances[1].edgeConfig.inputMethodSelectRadio.expectNotExists();
   await instances[1].edgeConfig.inputMethodFreeformRadio.expectNotExists();
   await instances[1].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
-    "PR456"
+    "PR456",
   );
   await instances[1].edgeConfig.inputMethodFreeform.stagingEnvironmentField.expectValue(
-    "PR456:stage"
+    "PR456:stage",
   );
   await instances[1].edgeConfig.inputMethodFreeform.developmentEnvironmentField.expectValue(
-    "PR456:dev3"
+    "PR456:dev3",
   );
   await instances[1].orgIdField.expectValue(
-    "5BFE274A5F6980A50A495C08@AdobeOrg"
+    "5BFE274A5F6980A50A495C08@AdobeOrg",
   );
   await instances[1].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[1].edgeBasePathField.expectValue(defaultEdgeBasePath);
@@ -228,13 +228,13 @@ test("initializes form fields with full settings", async () => {
   await instances[1].defaultConsent.pendingRadio.expectUnchecked();
   await instances[1].defaultConsent.dataElementRadio.expectChecked();
   await instances[1].defaultConsent.dataElementField.expectValue(
-    "%dataelement123%"
+    "%dataelement123%",
   );
   await instances[1].idMigrationEnabled.expectUnchecked();
   await instances[1].thirdPartyCookiesEnabled.expectUnchecked();
   await instances[1].clickCollectionEnabledField.expectChecked();
   await instances[1].downloadLinkQualifierField.expectValue(
-    defaultDownloadLinkQualifier
+    defaultDownloadLinkQualifier,
   );
   await instances[1].contextGranularity.specificField.expectChecked();
   await instances[1].specificContext.webField.expectUnchecked();
@@ -260,26 +260,26 @@ test("initializes form fields with minimal settings", async () => {
       instances: [
         {
           name: "alloy1",
-          edgeConfigId: "PR123"
-        }
-      ]
-    }
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
   });
 
   await instances[0].nameField.expectValue("alloy1");
   await instances[0].edgeConfig.inputMethodSelectRadio.expectUnchecked();
   await instances[0].edgeConfig.inputMethodFreeformRadio.expectChecked();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
-    "PR123"
+    "PR123",
   );
   await instances[0].edgeConfig.inputMethodFreeform.stagingEnvironmentField.expectValue(
-    ""
+    "",
   );
   await instances[0].edgeConfig.inputMethodFreeform.developmentEnvironmentField.expectValue(
-    ""
+    "",
   );
   await instances[0].orgIdField.expectValue(
-    "5BFE274A5F6980A50A495C08@AdobeOrg"
+    "5BFE274A5F6980A50A495C08@AdobeOrg",
   );
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
   await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
@@ -292,7 +292,7 @@ test("initializes form fields with minimal settings", async () => {
   await instances[0].thirdPartyCookiesEnabled.expectChecked();
   await instances[0].clickCollectionEnabledField.expectChecked();
   await instances[0].downloadLinkQualifierField.expectValue(
-    defaultDownloadLinkQualifier
+    defaultDownloadLinkQualifier,
   );
   await instances[0].contextGranularity.allField.expectChecked();
   await instances[0].targetMigrationEnabled.expectUnchecked();
@@ -307,19 +307,19 @@ test.requestHooks(sandboxesMocks.singleDefault, datastreamsMocks.multiple)(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
-      "PRODUCTION Prod (VA7)"
+      "PRODUCTION Prod (VA7)",
     );
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
+      "Select a datastream",
     );
     await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
+      "Select a datastream",
     );
     await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
+      "Select a datastream",
     );
     await instances[0].orgIdField.expectValue(
-      "5BFE274A5F6980A50A495C08@AdobeOrg"
+      "5BFE274A5F6980A50A495C08@AdobeOrg",
     );
     await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
     await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
@@ -332,27 +332,27 @@ test.requestHooks(sandboxesMocks.singleDefault, datastreamsMocks.multiple)(
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
     await instances[0].clickCollectionEnabledField.expectChecked();
     await instances[0].downloadLinkQualifierField.expectValue(
-      defaultDownloadLinkQualifier
+      defaultDownloadLinkQualifier,
     );
     await instances[0].targetMigrationEnabled.expectUnchecked();
     await instances[0].contextGranularity.allField.expectChecked();
-  }
+  },
 );
 
 test("returns minimal valid settings", async () => {
   await extensionViewController.init();
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123"
+    "PR123",
   );
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instances: [
       {
         edgeConfigId: "PR123",
-        name: "alloy"
-      }
-    ]
+        name: "alloy",
+      },
+    ],
   });
 });
 
@@ -364,22 +364,22 @@ test("returns full valid settings", async () => {
         return Promise.resolve(
           // We include options.language and options.code in the result
           // just so we can assert that the code editor was properly configured
-          `language=${options.language};code=${options.code}`
+          `language=${options.language};code=${options.code}`,
         );
-      }
-    }
+      },
+    },
   );
 
   await instances[0].nameField.typeText("1");
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123"
+    "PR123",
   );
   await instances[0].edgeConfig.inputMethodFreeform.stagingEnvironmentField.typeText(
-    "PR123:stage"
+    "PR123:stage",
   );
   await instances[0].edgeConfig.inputMethodFreeform.developmentEnvironmentField.typeText(
-    "PR123:dev1"
+    "PR123:dev1",
   );
   await instances[0].edgeDomainField.typeText("2");
   await instances[0].edgeBasePathField.typeText("-alpha");
@@ -394,38 +394,38 @@ test("returns full valid settings", async () => {
   await instances[0].overrides.envTabs.development.expectExists();
   await instances[0].overrides.envTabs.development.expectSelected();
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await instances[0].overrides.textFields.idSyncContainerOverride.typeText(
-    "23512312"
+    "23512312",
   );
   await instances[0].overrides.textFields.targetPropertyTokenOverride.typeText(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await instances[0].overrides.textFields.reportSuiteOverrides[0].typeText(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await instances[0].overrides.addReportSuiteButton.click();
   await instances[0].overrides.textFields.reportSuiteOverrides[1].typeText(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
 
   await addInstanceButton.click();
 
   await instances[1].nameField.typeText("2");
   await instances[1].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR456"
+    "PR456",
   );
   await instances[1].edgeConfig.inputMethodFreeform.stagingEnvironmentField.typeText(
-    "PR456:stage"
+    "PR456:stage",
   );
   await instances[1].edgeConfig.inputMethodFreeform.developmentEnvironmentField.typeText(
-    "PR456:dev1"
+    "PR456:dev1",
   );
   await instances[1].orgIdField.typeText("2");
   await instances[1].defaultConsent.dataElementRadio.click();
   await instances[1].defaultConsent.dataElementField.typeText(
-    "%dataelement123%"
+    "%dataelement123%",
   );
   await instances[1].idMigrationEnabled.click();
   await instances[1].thirdPartyCookiesEnabled.click();
@@ -440,7 +440,7 @@ test("returns full valid settings", async () => {
   await addInstanceButton.click();
   await instances[2].nameField.typeText("3");
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR789"
+    "PR789",
   );
   await instances[2].orgIdField.typeText("3");
   await instances[2].defaultConsent.pendingRadio.click();
@@ -466,21 +466,21 @@ test("returns full valid settings", async () => {
             com_adobe_experience_platform: {
               datasets: {
                 event: {
-                  datasetId: "6336ff95ba16ca1c07b4c0db"
-                }
-              }
+                  datasetId: "6336ff95ba16ca1c07b4c0db",
+                },
+              },
             },
             com_adobe_analytics: {
-              reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+              reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
             },
             com_adobe_identity: {
-              idSyncContainerId: 23512312
+              idSyncContainerId: 23512312,
             },
             com_adobe_target: {
-              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-            }
-          }
-        }
+              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+            },
+          },
+        },
       },
       {
         name: "alloy2",
@@ -501,15 +501,15 @@ test("returns full valid settings", async () => {
           "// code in a function or return a value. For example:\n" +
           '// content.xdm.web.webPageDetails.name = "Checkout";',
         context: ["web", "device", "environment", "placeContext"],
-        downloadLinkQualifier: "[]"
+        downloadLinkQualifier: "[]",
       },
       {
         name: "alloy3",
         edgeConfigId: "PR789",
         orgId: "5BFE274A5F6980A50A495C08@AdobeOrg3",
-        defaultConsent: "pending"
-      }
-    ]
+        defaultConsent: "pending",
+      },
+    ],
   });
 });
 
@@ -526,13 +526,13 @@ test("returns full valid settings with maximal data elements", async () => {
   await instances[0].defaultConsent.dataElementField.typeText("%foo%");
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "%foo%"
+    "%foo%",
   );
   await instances[0].edgeConfig.inputMethodFreeform.stagingEnvironmentField.typeText(
-    "%foo%"
+    "%foo%",
   );
   await instances[0].edgeConfig.inputMethodFreeform.developmentEnvironmentField.typeText(
-    "%foo%"
+    "%foo%",
   );
   await instances[0].edgeDomainField.clear();
   await instances[0].edgeDomainField.typeText("%foo%");
@@ -549,16 +549,16 @@ test("returns full valid settings with maximal data elements", async () => {
   await instances[0].overrides.envTabs.development.expectExists();
   await instances[0].overrides.envTabs.development.expectSelected();
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
-    "%foo%"
+    "%foo%",
   );
   await instances[0].overrides.textFields.idSyncContainerOverride.typeText(
-    "%foo%"
+    "%foo%",
   );
   await instances[0].overrides.textFields.targetPropertyTokenOverride.typeText(
-    "%foo%"
+    "%foo%",
   );
   await instances[0].overrides.textFields.reportSuiteOverrides[0].typeText(
-    "%foo%"
+    "%foo%",
   );
 
   await extensionViewController.expectIsValid();
@@ -581,23 +581,23 @@ test("returns full valid settings with maximal data elements", async () => {
             com_adobe_experience_platform: {
               datasets: {
                 event: {
-                  datasetId: "%foo%"
-                }
-              }
+                  datasetId: "%foo%",
+                },
+              },
             },
             com_adobe_analytics: {
-              reportSuites: ["%foo%"]
+              reportSuites: ["%foo%"],
             },
             com_adobe_identity: {
-              idSyncContainerId: "%foo%"
+              idSyncContainerId: "%foo%",
             },
             com_adobe_target: {
-              propertyToken: "%foo%"
-            }
-          }
-        }
-      }
-    ]
+              propertyToken: "%foo%",
+            },
+          },
+        },
+      },
+    ],
   });
 });
 
@@ -615,7 +615,7 @@ test.requestHooks(sandboxesMocks.empty)(
     await instances[0].orgIdField.expectError();
     await instances[0].edgeDomainField.expectError();
     await instances[0].edgeBasePathField.expectError();
-  }
+  },
 );
 
 test("shows error on manual edgeConfigId entry", async () => {
@@ -629,11 +629,11 @@ test("shows error for duplicate name", async () => {
   await extensionViewController.init();
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123"
+    "PR123",
   );
   await addInstanceButton.click();
   await instances[1].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR456"
+    "PR456",
   );
   // We'll select the first instance before we validate to test that
   // validation selects the invalid instance (in this case, the second one)
@@ -665,10 +665,10 @@ test("shows a warning when name is changed on existing configuration", async () 
       instances: [
         {
           name: "alloy",
-          edgeConfigId: "PR123"
-        }
-      ]
-    }
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
   });
   await instances[0].nameField.typeText("123");
   await instances[0].nameChangeAlert.expectExists();
@@ -684,11 +684,11 @@ test("shows error for duplicate edge configuration ID", async () => {
   await extensionViewController.init();
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123"
+    "PR123",
   );
   await addInstanceButton.click();
   await instances[1].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123"
+    "PR123",
   );
   // We'll select the first instance before we validate to test that
   // validation selects the invalid instance (in this case, the second one)
@@ -702,11 +702,11 @@ test("shows error for duplicate IMS org ID", async () => {
   await extensionViewController.init();
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123"
+    "PR123",
   );
   await addInstanceButton.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR456"
+    "PR456",
   );
   // We'll select the first instance before we validate to test that
   // validation selects the invalid instance (in this case, the second one)
@@ -731,7 +731,7 @@ test("shows error for bad default consent data element", async () => {
 
   await instances[0].defaultConsent.dataElementRadio.click();
   await instances[0].defaultConsent.dataElementField.typeText(
-    "notadataelement"
+    "notadataelement",
   );
   await extensionViewController.expectIsNotValid();
   await instances[0].defaultConsent.dataElementField.expectError();
@@ -768,7 +768,7 @@ test("restores default IMS org ID value when restore button is clicked", async (
   await instances[0].orgIdField.typeText("foo");
   await instances[0].orgIdRestoreButton.click();
   await instances[0].orgIdField.expectValue(
-    "5BFE274A5F6980A50A495C08@AdobeOrg"
+    "5BFE274A5F6980A50A495C08@AdobeOrg",
   );
 });
 
@@ -793,7 +793,7 @@ test("restores default download link qualifier when restore button is clicked", 
   await instances[0].downloadLinkQualifierField.typeText(".");
   await instances[0].downloadLinkQualifierRestoreButton.click();
   await instances[0].downloadLinkQualifierField.expectValue(
-    defaultDownloadLinkQualifier
+    defaultDownloadLinkQualifier,
   );
 });
 
@@ -808,7 +808,7 @@ test("deletes an instance", async () => {
   await extensionViewController.init();
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123"
+    "PR123",
   );
   await instances[0].deleteButton.expectNotExists();
   await addInstanceButton.click();
@@ -816,20 +816,20 @@ test("deletes an instance", async () => {
   // Make tab label unique
   await instances[1].nameField.typeText("2");
   await instances[1].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR456"
+    "PR456",
   );
   await instancesTabs.selectTab("alloy");
   await instances[0].deleteButton.click();
   // Ensure that clicking cancel doesn't delete anything.
   await resourceUsageDialog.cancelDeleteInstanceButton.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
-    "PR123"
+    "PR123",
   );
   // Alright, delete for real.
   await instances[0].deleteButton.click();
   await resourceUsageDialog.confirmDeleteInstanceButton.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
-    "PR456"
+    "PR456",
   );
 });
 
@@ -839,13 +839,13 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
     {
       openCodeEditor(options) {
         return Promise.resolve(options.code);
-      }
-    }
+      },
+    },
   );
 
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123"
+    "PR123",
   );
   await instances[0].prehidingStyleEditButton.click();
   await extensionViewController.expectIsValid();
@@ -853,9 +853,9 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
     instances: [
       {
         name: "alloy",
-        edgeConfigId: "PR123"
-      }
-    ]
+        edgeConfigId: "PR123",
+      },
+    ],
   });
 });
 
@@ -865,13 +865,13 @@ test("does not save onBeforeEventSend and onBeforeLinkClickSend code if it match
     {
       openCodeEditor(options) {
         return Promise.resolve(options.code);
-      }
-    }
+      },
+    },
   );
 
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123"
+    "PR123",
   );
   await instances[0].onBeforeEventSendEditButton.click();
   await instances[0].onBeforeLinkClickSendEditButton.click();
@@ -880,15 +880,15 @@ test("does not save onBeforeEventSend and onBeforeLinkClickSend code if it match
     instances: [
       {
         name: "alloy",
-        edgeConfigId: "PR123"
-      }
-    ]
+        edgeConfigId: "PR123",
+      },
+    ],
   });
 });
 
 test.requestHooks(
   sandboxesMocks.singleWithoutDefault,
-  datastreamsMocks.multiple
+  datastreamsMocks.multiple,
 )(
   "initializes form: when default sandbox only we show only one disabled sandbox dropdown",
   async () => {
@@ -898,22 +898,22 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
-      "Test Sandbox 1"
+      "Test Sandbox 1",
     );
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
+      "Select a datastream",
     );
     await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectHidden();
     await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
+      "Select a datastream",
     );
     await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectHidden();
     await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
+      "Select a datastream",
     );
     await instances[0].orgIdField.expectValue(
-      "5BFE274A5F6980A50A495C08@AdobeOrg"
+      "5BFE274A5F6980A50A495C08@AdobeOrg",
     );
     await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
     await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
@@ -927,15 +927,15 @@ test.requestHooks(
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
     await instances[0].clickCollectionEnabledField.expectChecked();
     await instances[0].downloadLinkQualifierField.expectValue(
-      defaultDownloadLinkQualifier
+      defaultDownloadLinkQualifier,
     );
     await instances[0].contextGranularity.allField.expectChecked();
-  }
+  },
 );
 
 test.requestHooks(
   sandboxesMocks.multipleWithDefault,
-  datastreamsMocks.multiple
+  datastreamsMocks.multiple,
 )(
   "initializes form fields: when multiple sandboxes we show dropdowns for every env",
   async () => {
@@ -945,19 +945,19 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
-      "Select a sandbox"
+      "Select a sandbox",
     );
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectNotExists();
     await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectSelectedOptionLabel(
-      "Select a sandbox"
+      "Select a sandbox",
     );
     await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectNotExists();
     await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectSelectedOptionLabel(
-      "Select a sandbox"
+      "Select a sandbox",
     );
     await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectNotExists();
     await instances[0].orgIdField.expectValue(
-      "5BFE274A5F6980A50A495C08@AdobeOrg"
+      "5BFE274A5F6980A50A495C08@AdobeOrg",
     );
     await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
     await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
@@ -971,17 +971,17 @@ test.requestHooks(
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
     await instances[0].clickCollectionEnabledField.expectChecked();
     await instances[0].downloadLinkQualifierField.expectValue(
-      defaultDownloadLinkQualifier
+      defaultDownloadLinkQualifier,
     );
     await instances[0].contextGranularity.allField.expectChecked();
-  }
+  },
 );
 
 test.requestHooks(
   sandboxesMocks.multipleWithDefault,
   datastreamMocks.basic,
   datastreamMocks.notExist,
-  datastreamsMocks.multiple
+  datastreamsMocks.multiple,
 )(
   "initializes form fields with full settings but no sandbox configs",
   async () => {
@@ -1002,10 +1002,10 @@ test.requestHooks(
             prehidingStyle: "#container { display: none }",
             context: ["device", "placeContext", "highEntropyUserAgentHints"],
             clickCollectionEnabled: false,
-            targetMigrationEnabled: false
-          }
-        ]
-      }
+            targetMigrationEnabled: false,
+          },
+        ],
+      },
     });
 
     await instances[0].nameField.expectValue("alloy1");
@@ -1013,22 +1013,22 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
-      "Test Sandbox 1"
+      "Test Sandbox 1",
     );
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
-      "test datastream"
+      "test datastream",
     );
     await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectSelectedOptionLabel(
-      "Test Sandbox 1"
+      "Test Sandbox 1",
     );
     await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
-      "test datastream: stage"
+      "test datastream: stage",
     );
     await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectSelectedOptionLabel(
-      "Test Sandbox 1"
+      "Test Sandbox 1",
     );
     await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
-      "test datastream: development"
+      "test datastream: development",
     );
 
     await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
@@ -1049,13 +1049,13 @@ test.requestHooks(
     await instances[0].specificContext.environmentField.expectUnchecked();
     await instances[0].specificContext.placeContextField.expectChecked();
     await instances[0].specificContext.highEntropyUserAgentHintsContextField.expectChecked();
-  }
+  },
 );
 
 test.requestHooks(
   sandboxesMocks.singleWithoutDefault,
   datastreamMocks.basic,
-  datastreamsMocks.multiple
+  datastreamsMocks.multiple,
 )(
   "initializes form fields with prod edge configs, no sandbox configs, default sandbox use case",
   async () => {
@@ -1074,10 +1074,10 @@ test.requestHooks(
             prehidingStyle: "#container { display: none }",
             context: ["device", "placeContext"],
             clickCollectionEnabled: false,
-            targetMigrationEnabled: true
-          }
-        ]
-      }
+            targetMigrationEnabled: true,
+          },
+        ],
+      },
     });
 
     await instances[0].nameField.expectValue("alloy1");
@@ -1085,19 +1085,19 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
-      "Test Sandbox 1"
+      "Test Sandbox 1",
     );
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
-      "test datastream"
+      "test datastream",
     );
     await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectHidden();
     await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
+      "Select a datastream",
     );
     await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectHidden();
     await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.expectSelectedOptionLabel(
-      "Select a datastream"
+      "Select a datastream",
     );
 
     await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
@@ -1117,14 +1117,14 @@ test.requestHooks(
     await instances[0].specificContext.deviceField.expectChecked();
     await instances[0].specificContext.environmentField.expectUnchecked();
     await instances[0].specificContext.placeContextField.expectChecked();
-  }
+  },
 );
 
 test.requestHooks(
   sandboxesMocks.multipleWithDefault,
   datastreamMocks.basic,
   datastreamMocks.notExist,
-  datastreamsMocks.multiple
+  datastreamsMocks.multiple,
 )(
   "initializes form fields with prod edge configs settings but no sandbox configs, multiple sandboxes",
   async () => {
@@ -1142,10 +1142,10 @@ test.requestHooks(
             thirdPartyCookiesEnabled: true,
             prehidingStyle: "#container { display: none }",
             context: ["device", "placeContext"],
-            clickCollectionEnabled: false
-          }
-        ]
-      }
+            clickCollectionEnabled: false,
+          },
+        ],
+      },
     });
 
     await instances[0].nameField.expectValue("alloy1");
@@ -1153,17 +1153,17 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
-      "Test Sandbox 1"
+      "Test Sandbox 1",
     );
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectSelectedOptionLabel(
-      "test datastream"
+      "test datastream",
     );
     await instances[0].edgeConfig.inputMethodSelect.staging.sandboxField.expectSelectedOptionLabel(
-      "Select a sandbox"
+      "Select a sandbox",
     );
 
     await instances[0].edgeConfig.inputMethodSelect.development.sandboxField.expectSelectedOptionLabel(
-      "Select a sandbox"
+      "Select a sandbox",
     );
 
     await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
@@ -1184,14 +1184,14 @@ test.requestHooks(
     await instances[0].specificContext.environmentField.expectUnchecked();
     await instances[0].specificContext.placeContextField.expectChecked();
     await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectNotExists();
-  }
+  },
 );
 
 test.requestHooks(
   sandboxesMocks.userRegionMissing,
   datastreamMocks.basic,
   datastreamMocks.notExist,
-  datastreamsMocks.multiple
+  datastreamsMocks.multiple,
 )("initializes form fields with free form input configs settings", async () => {
   await extensionViewController.init({
     settings: {
@@ -1207,10 +1207,10 @@ test.requestHooks(
           thirdPartyCookiesEnabled: true,
           prehidingStyle: "#container { display: none }",
           context: ["device", "placeContext"],
-          clickCollectionEnabled: false
-        }
-      ]
-    }
+          clickCollectionEnabled: false,
+        },
+      ],
+    },
   });
 
   await instances[0].nameField.expectValue("alloy1");
@@ -1218,7 +1218,7 @@ test.requestHooks(
   await instances[0].edgeConfig.inputMethodSelectRadio.expectUnchecked();
   await instances[0].edgeConfig.inputMethodFreeformRadio.expectChecked();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
-    "64c31a3b-d031-4a2f-8834-e96fc15d3030"
+    "64c31a3b-d031-4a2f-8834-e96fc15d3030",
   );
   await instances[0].orgIdField.expectValue("ORG456@OtherCompanyOrg");
   await instances[0].edgeDomainField.expectValue("testedge.com");
@@ -1250,16 +1250,16 @@ test.requestHooks(sandboxesMocks.userRegionMissing, datastreamMocks.notExist)(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
-      ""
+      "",
     );
     await instances[0].edgeConfig.inputMethodFreeform.stagingEnvironmentField.expectValue(
-      ""
+      "",
     );
     await instances[0].edgeConfig.inputMethodFreeform.developmentEnvironmentField.expectValue(
-      ""
+      "",
     );
     await instances[0].orgIdField.expectValue(
-      "5BFE274A5F6980A50A495C08@AdobeOrg"
+      "5BFE274A5F6980A50A495C08@AdobeOrg",
     );
     await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
     await instances[0].edgeBasePathField.expectValue(defaultEdgeBasePath);
@@ -1272,18 +1272,18 @@ test.requestHooks(sandboxesMocks.userRegionMissing, datastreamMocks.notExist)(
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
     await instances[0].clickCollectionEnabledField.expectChecked();
     await instances[0].downloadLinkQualifierField.expectValue(
-      defaultDownloadLinkQualifier
+      defaultDownloadLinkQualifier,
     );
     await instances[0].contextGranularity.allField.expectChecked();
     await instances[0].edgeConfig.inputMethodSelectRadio.click();
     await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectExists();
-  }
+  },
 );
 
 test.requestHooks(
   sandboxesMocks.multipleWithDefault,
   datastreamsMocks.forbidden,
-  datastreamMocks.forbidden
+  datastreamMocks.forbidden,
 )(
   "initializes form fields with free form input when, forbidden access for sandbox and no sandbox setting provided",
   async () => {
@@ -1302,10 +1302,10 @@ test.requestHooks(
             thirdPartyCookiesEnabled: true,
             prehidingStyle: "#container { display: none }",
             context: ["device", "placeContext"],
-            clickCollectionEnabled: false
-          }
-        ]
-      }
+            clickCollectionEnabled: false,
+          },
+        ],
+      },
     });
 
     await instances[0].nameField.expectValue("alloy1");
@@ -1313,16 +1313,16 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectValue(
-      "64c31a3b-d031-4a2f-8834-e96fc15d3030"
+      "64c31a3b-d031-4a2f-8834-e96fc15d3030",
     );
     await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectNotExists();
     await extensionViewController.expectIsValid();
-  }
+  },
 );
 test.requestHooks(
   sandboxesMocks.multipleWithDefault,
   datastreamsMocks.forbidden,
-  datastreamMocks.forbidden
+  datastreamMocks.forbidden,
 )(
   "initializes form fields with prod edge config disabled field, forbidden access for sandbox",
   async () => {
@@ -1341,10 +1341,10 @@ test.requestHooks(
             thirdPartyCookiesEnabled: true,
             prehidingStyle: "#container { display: none }",
             context: ["device", "placeContext"],
-            clickCollectionEnabled: false
-          }
-        ]
-      }
+            clickCollectionEnabled: false,
+          },
+        ],
+      },
     });
 
     await instances[0].nameField.expectValue("alloy1");
@@ -1352,10 +1352,10 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectSelectedOptionLabel(
-      "PRODUCTION Test Sandbox 2 (VA7)"
+      "PRODUCTION Test Sandbox 2 (VA7)",
     );
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamDisabledField.expectValue(
-      "64c31a3b-d031-4a2f-8834-e96fc15d3030"
+      "64c31a3b-d031-4a2f-8834-e96fc15d3030",
     );
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamDisabledField.expectDisabled();
     await extensionViewController.expectIsValid();
@@ -1372,17 +1372,17 @@ test.requestHooks(
           name: "alloy1",
           orgId: "ORG456@OtherCompanyOrg",
           prehidingStyle: "#container { display: none }",
-          sandbox: "testsandbox2"
-        }
-      ]
+          sandbox: "testsandbox2",
+        },
+      ],
     });
-  }
+  },
 );
 
 test.requestHooks(
   sandboxesMocks.multipleWithDefault,
   datastreamsMocks.forbidden,
-  datastreamsMocks.multiple
+  datastreamsMocks.multiple,
 )(
   "initializes clean form with select input and choose thru different sandboxes",
   async () => {
@@ -1392,22 +1392,22 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.selectOption(
-      "PRODUCTION Test Sandbox 2 (VA7)"
+      "PRODUCTION Test Sandbox 2 (VA7)",
     );
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamErrorFetchingAlert.expectExists();
     await extensionViewController.expectIsNotValid();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.selectOption(
-      "PRODUCTION Test Sandbox 1 (VA7)"
+      "PRODUCTION Test Sandbox 1 (VA7)",
     );
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.selectOption(
-      "test datastream"
+      "test datastream",
     );
     await extensionViewController.expectIsValid();
-  }
+  },
 );
 test.requestHooks(
   sandboxesMocks.singleWithoutDefault,
-  datastreamsMocks.forbidden
+  datastreamsMocks.forbidden,
 )(
   "initializes clean form free form option selected by default, alert showed on the select form",
   async () => {
@@ -1419,7 +1419,7 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.click();
     await instances[0].edgeConfig.inputMethodSelect.fetchConfigsAlert.expectExists();
     await extensionViewController.expectIsNotValid();
-  }
+  },
 );
 
 test("is able to add and remove report suites from overrides", async () => {
@@ -1429,19 +1429,19 @@ test("is able to add and remove report suites from overrides", async () => {
 
   await instances[0].overrides.textFields.reportSuiteOverrides[0].expectExists();
   await instances[0].overrides.textFields.reportSuiteOverrides[0].typeText(
-    "test1"
+    "test1",
   );
 
   await instances[0].overrides.addReportSuiteButton.click();
   await instances[0].overrides.textFields.reportSuiteOverrides[1].expectExists();
   await instances[0].overrides.textFields.reportSuiteOverrides[1].typeText(
-    "test2"
+    "test2",
   );
 
   await instances[0].overrides.addReportSuiteButton.click();
   await instances[0].overrides.textFields.reportSuiteOverrides[2].expectExists();
   await instances[0].overrides.textFields.reportSuiteOverrides[2].typeText(
-    "test3"
+    "test3",
   );
 
   await instances[0].overrides.removeReportSuitesButtons[1].click();
@@ -1453,12 +1453,12 @@ test("is able to add and remove report suites from overrides", async () => {
         edgeConfigOverrides: {
           development: {
             com_adobe_analytics: {
-              reportSuites: ["test1", "test3"]
-            }
-          }
-        }
-      }
-    ]
+              reportSuites: ["test1", "test3"],
+            },
+          },
+        },
+      },
+    ],
   });
 });
 
@@ -1471,20 +1471,20 @@ test("copies overrides from one environment to another", async () => {
   await instances[0].overrides.copyButtons.staging.expectExists();
   await instances[0].overrides.copyButtons.production.expectExists();
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await instances[0].overrides.textFields.idSyncContainerOverride.typeText(
-    "23512312"
+    "23512312",
   );
   await instances[0].overrides.textFields.targetPropertyTokenOverride.typeText(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await instances[0].overrides.textFields.reportSuiteOverrides[0].typeText(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await instances[0].overrides.addReportSuiteButton.click();
   await instances[0].overrides.textFields.reportSuiteOverrides[1].typeText(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
 
   await instances[0].overrides.envTabs.staging.click();
@@ -1495,19 +1495,19 @@ test("copies overrides from one environment to another", async () => {
   await instances[0].overrides.copyButtons.development.click();
 
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await instances[0].overrides.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await instances[0].overrides.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await instances[0].overrides.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await instances[0].overrides.textFields.reportSuiteOverrides[1].expectValue(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
 
   await instances[0].overrides.envTabs.production.click();
@@ -1517,26 +1517,26 @@ test("copies overrides from one environment to another", async () => {
   await instances[0].overrides.copyButtons.production.expectNotExists();
   await instances[0].overrides.copyButtons.staging.click();
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await instances[0].overrides.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await instances[0].overrides.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await instances[0].overrides.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await instances[0].overrides.textFields.reportSuiteOverrides[1].expectValue(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
 });
 
 test.requestHooks(
   sandboxesMocks.singleDefault,
   datastreamsMocks.single,
-  datastreamMocks.withConfigOverrides
+  datastreamMocks.withConfigOverrides,
 )("populates overrides dropdowns with Blackbird config data", async () => {
   await extensionViewController.init();
 
@@ -1545,31 +1545,31 @@ test.requestHooks(
   await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
   await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
   await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.selectOption(
-    "Test Config Overrides"
+    "Test Config Overrides",
   );
   await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.selectOption(
-    "Test Config Overrides"
+    "Test Config Overrides",
   );
   await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.selectOption(
-    "Test Config Overrides"
+    "Test Config Overrides",
   );
 
   await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
   await instances[0].overrides.comboBoxes.eventDatasetOverride.openMenu();
   await instances[0].overrides.comboBoxes.eventDatasetOverride.expectMenuOptionLabels(
-    ["6335faf30f5a161c0b4b1444"]
+    ["6335faf30f5a161c0b4b1444"],
   );
   await instances[0].overrides.comboBoxes.eventDatasetOverride.selectMenuOption(
-    "6335faf30f5a161c0b4b1444"
+    "6335faf30f5a161c0b4b1444",
   );
 
   await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectExists();
   await instances[0].overrides.comboBoxes.idSyncContainerOverride.openMenu();
   await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectMenuOptionLabels(
-    ["107756", "107757"]
+    ["107756", "107757"],
   );
   await instances[0].overrides.comboBoxes.idSyncContainerOverride.selectMenuOption(
-    "107756"
+    "107756",
   );
 
   await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectExists();
@@ -1577,20 +1577,20 @@ test.requestHooks(
   await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectMenuOptionLabels(
     [
       "aba5431a-9f59-f816-7d73-8e40c8f4c4fd",
-      "65d186ff-be14-dfa0-75fa-546d93bebf91"
-    ]
+      "65d186ff-be14-dfa0-75fa-546d93bebf91",
+    ],
   );
   await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.selectMenuOption(
-    "aba5431a-9f59-f816-7d73-8e40c8f4c4fd"
+    "aba5431a-9f59-f816-7d73-8e40c8f4c4fd",
   );
 
   await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectExists();
   await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].openMenu();
   await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectMenuOptionLabels(
-    ["unifiedjsqeonly2", "unifiedjsqeonlylatest", "unifiedjsqeonlymobileweb"]
+    ["unifiedjsqeonly2", "unifiedjsqeonlylatest", "unifiedjsqeonlymobileweb"],
   );
   await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].selectMenuOption(
-    "unifiedjsqeonlylatest"
+    "unifiedjsqeonlylatest",
   );
 
   await extensionViewController.expectIsValid();
@@ -1599,7 +1599,7 @@ test.requestHooks(
 test.requestHooks(
   sandboxesMocks.singleDefault,
   datastreamsMocks.single,
-  datastreamMocks.withConfigOverrides
+  datastreamMocks.withConfigOverrides,
 )(
   "shows an error for custom overrides that are not in the dropdown",
   async () => {
@@ -1610,18 +1610,18 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.selectOption(
-      "Test Config Overrides"
+      "Test Config Overrides",
     );
     await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.selectOption(
-      "Test Config Overrides"
+      "Test Config Overrides",
     );
     await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.selectOption(
-      "Test Config Overrides"
+      "Test Config Overrides",
     );
 
     await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
     await instances[0].overrides.comboBoxes.eventDatasetOverride.enterSearch(
-      "foo"
+      "foo",
     );
     // unblur/deselect the input to trigger validation
     await t.pressKey("tab");
@@ -1632,7 +1632,7 @@ test.requestHooks(
 
     await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectExists();
     await instances[0].overrides.comboBoxes.idSyncContainerOverride.enterSearch(
-      "adobe"
+      "adobe",
     );
     await t.pressKey("tab");
     await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectError();
@@ -1642,7 +1642,7 @@ test.requestHooks(
 
     await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectExists();
     await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.enterSearch(
-      "alloy"
+      "alloy",
     );
     await t.pressKey("tab");
     await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectError();
@@ -1652,7 +1652,7 @@ test.requestHooks(
 
     await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectExists();
     await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].enterSearch(
-      "functional test"
+      "functional test",
     );
     await t.pressKey("tab");
     await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectError();
@@ -1661,17 +1661,17 @@ test.requestHooks(
     await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectNoError();
     // make sure that comma-separated lists are validated correctly.
     await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].enterSearch(
-      "unifiedjsqeonly2,unifiedjsqeonlylatest"
+      "unifiedjsqeonly2,unifiedjsqeonlylatest",
     );
     await t.pressKey("tab");
     await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectNoError();
-  }
+  },
 );
 
 test.requestHooks(
   sandboxesMocks.singleDefault,
   datastreamsMocks.single,
-  datastreamMocks.withConfigOverrides
+  datastreamMocks.withConfigOverrides,
 )("does not show an error for overrides that are data elements", async () => {
   await extensionViewController.init();
 
@@ -1680,18 +1680,18 @@ test.requestHooks(
   await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
   await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
   await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.selectOption(
-    "Test Config Overrides"
+    "Test Config Overrides",
   );
   await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.selectOption(
-    "Test Config Overrides"
+    "Test Config Overrides",
   );
   await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.selectOption(
-    "Test Config Overrides"
+    "Test Config Overrides",
   );
 
   await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
   await instances[0].overrides.comboBoxes.eventDatasetOverride.enterSearch(
-    "%Alloy Data Element%"
+    "%Alloy Data Element%",
   );
   // unblur/deselect the input to trigger validation
   await t.pressKey("tab");
@@ -1699,21 +1699,21 @@ test.requestHooks(
 
   await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectExists();
   await instances[0].overrides.comboBoxes.idSyncContainerOverride.enterSearch(
-    "%Alloy Data Element%"
+    "%Alloy Data Element%",
   );
   await t.pressKey("tab");
   await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectNoError();
 
   await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectExists();
   await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.enterSearch(
-    "%Alloy Data Element%"
+    "%Alloy Data Element%",
   );
   await t.pressKey("tab");
   await instances[0].overrides.comboBoxes.targetPropertyTokenOverride.expectNoError();
 
   await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectExists();
   await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].enterSearch(
-    "unifiedjsqeonly2, %Alloy Data Element%"
+    "unifiedjsqeonly2, %Alloy Data Element%",
   );
   await t.pressKey("tab");
   await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectNoError();
@@ -1722,7 +1722,7 @@ test.requestHooks(
 test.requestHooks(
   sandboxesMocks.singleDefault,
   datastreamsMocks.single,
-  datastreamMocks.withConfigOverrides
+  datastreamMocks.withConfigOverrides,
 )(
   "does not populate override dropdowns after switching instances (because of different orgIDs)",
   async () => {
@@ -1732,7 +1732,7 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
     await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
     await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.selectOption(
-      "Test Config Overrides"
+      "Test Config Overrides",
     );
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectExists();
@@ -1754,18 +1754,18 @@ test.requestHooks(
     await instances[1].overrides.textFields.targetPropertyTokenOverride.expectIsTextField();
     await instances[1].overrides.textFields.reportSuiteOverrides[0].expectExists();
     await instances[1].overrides.textFields.reportSuiteOverrides[0].expectIsTextField();
-  }
+  },
 );
 
 test("allows the setting of overrides in only a single environment", async () => {
   await extensionViewController.init();
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "PR123"
+    "PR123",
   );
   await instances[0].overrides.envTabs.development.click();
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
@@ -1778,27 +1778,27 @@ test("allows the setting of overrides in only a single environment", async () =>
             com_adobe_experience_platform: {
               datasets: {
                 event: {
-                  datasetId: "6336ff95ba16ca1c07b4c0db"
-                }
-              }
-            }
-          }
-        }
-      }
-    ]
+                  datasetId: "6336ff95ba16ca1c07b4c0db",
+                },
+              },
+            },
+          },
+        },
+      },
+    ],
   });
 });
 test("makes the media collection fields required if one is filled", async () => {
   await extensionViewController.init();
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
   await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
-    "123"
+    "123",
   );
   await instances[0].streamingMedia.mediaChannelField.typeText("testChanel");
 
   await extensionViewController.expectIsNotValid();
   await instances[0].streamingMedia.mediaPlayerNameField.typeText(
-    "testPlayerName"
+    "testPlayerName",
   );
   await extensionViewController.expectIsValid();
 
@@ -1812,9 +1812,9 @@ test("makes the media collection fields required if one is filled", async () => 
           channel: "testChanel",
           mainPingInterval: 10,
           playerName: "testPlayerName",
-          appVersion: ""
-        }
-      }
-    ]
+          appVersion: "",
+        },
+      },
+    ],
   });
 });

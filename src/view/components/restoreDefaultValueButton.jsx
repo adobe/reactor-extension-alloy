@@ -41,7 +41,7 @@ RestoreDefaultValueButton.propTypes = {
   "data-test-id": PropTypes.string,
   name: PropTypes.string.isRequired,
   defaultValue: PropTypes.string.isRequired,
-  fieldHasLabel: PropTypes.bool
+  fieldHasLabel: PropTypes.bool,
 };
 
 export default RestoreDefaultValueButton;

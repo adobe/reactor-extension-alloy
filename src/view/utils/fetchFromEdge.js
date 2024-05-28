@@ -27,7 +27,7 @@ export default async ({ orgId, imsAccess, path, params, headers, signal }) => {
   const host = getHost({
     imsAccess,
     productionHost: EDGE_HOST_PROD,
-    stagingHost: EDGE_HOST_STAGING
+    stagingHost: EDGE_HOST_STAGING,
   });
   const baseRequestHeaders = getBaseRequestHeaders({ orgId, imsAccess });
   const queryString = params ? `?${params.toString()}` : "";
@@ -37,16 +37,16 @@ export default async ({ orgId, imsAccess, path, params, headers, signal }) => {
     response = await fetch(`${host}${path}${queryString}`, {
       headers: {
         ...baseRequestHeaders,
-        ...headers
+        ...headers,
       },
-      signal
+      signal,
     });
   } catch (e) {
     if (e.name === "AbortError") {
       throw e;
     }
     throw new UserReportableError(
-      NETWORK_ERROR_MESSAGE.UNABLE_TO_CONNECT_TO_SERVER
+      NETWORK_ERROR_MESSAGE.UNABLE_TO_CONNECT_TO_SERVER,
     );
   }
 
@@ -65,7 +65,7 @@ export default async ({ orgId, imsAccess, path, params, headers, signal }) => {
       throw e;
     }
     throw new UserReportableError(
-      NETWORK_ERROR_MESSAGE.UNEXPECTED_SERVER_RESPONSE
+      NETWORK_ERROR_MESSAGE.UNEXPECTED_SERVER_RESPONSE,
     );
   }
 
@@ -85,12 +85,12 @@ export default async ({ orgId, imsAccess, path, params, headers, signal }) => {
 
   if (!response.ok) {
     throw new UserReportableError(
-      NETWORK_ERROR_MESSAGE.UNEXPECTED_SERVER_RESPONSE
+      NETWORK_ERROR_MESSAGE.UNEXPECTED_SERVER_RESPONSE,
     );
   }
 
   return {
     status: response.status,
-    parsedBody
+    parsedBody,
   };
 };

@@ -16,7 +16,7 @@ export default ({ formStateNode, value = {} }) => {
   formStateNode.isPartsPopulationStrategySupported = true;
 
   const initialValues = analyticsForm.getInitialValues({
-    initInfo: { settings: value }
+    initInfo: { settings: value },
   });
   Object.assign(formStateNode, initialValues);
 };

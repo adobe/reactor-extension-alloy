@@ -23,13 +23,13 @@ const root = createRoot(container);
 // If you're adding tests for a component, be sure to add the component here.
 const components = {
   Heading,
-  Body
+  Body,
 };
 
-window.renderSerializedReactElement = element => {
+window.renderSerializedReactElement = (element) => {
   const deserializedReactElement = deserializeReactElement({
     element,
-    components
+    components,
   });
 
   root.render(
@@ -39,6 +39,6 @@ window.renderSerializedReactElement = element => {
       UNSAFE_className="react-spectrum-provider"
     >
       {deserializedReactElement}
-    </Provider>
+    </Provider>,
   );
 };

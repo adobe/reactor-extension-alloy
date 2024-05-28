@@ -23,10 +23,10 @@ const populateNodeIdsContainingError = (treeNode, nodeIdsWithErrors) => {
   if (treeNode.children) {
     let descendantHasError = false;
 
-    treeNode.children.forEach(childTreeNode => {
+    treeNode.children.forEach((childTreeNode) => {
       const nodeOrDescendantHasError = populateNodeIdsContainingError(
         childTreeNode,
-        nodeIdsWithErrors
+        nodeIdsWithErrors,
       );
       descendantHasError = descendantHasError || nodeOrDescendantHasError;
     });
@@ -40,7 +40,7 @@ const populateNodeIdsContainingError = (treeNode, nodeIdsWithErrors) => {
   return Boolean(treeNode.error);
 };
 
-export default treeNode => {
+export default (treeNode) => {
   const nodeIdsWithErrors = [];
   populateNodeIdsContainingError(treeNode, nodeIdsWithErrors);
   return nodeIdsWithErrors;

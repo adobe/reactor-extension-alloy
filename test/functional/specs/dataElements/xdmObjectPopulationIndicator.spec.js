@@ -24,7 +24,7 @@ import spectrum from "../../helpers/spectrum";
 createExtensionViewFixture({
   title: "XDM Object Population Indicator",
   viewPath: "dataElements/xdmObject.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
 });
 
 const schemaField = spectrum.comboBox("schemaField");
@@ -102,35 +102,35 @@ test("show correct population amount for arrays", async () => {
     async set() {
       await arrayEdit.selectWholePopulationStrategy();
       await arrayEdit.enterValue("%industries%");
-    }
+    },
   },
   {
     title: "string value",
     field: "name",
     async set() {
       await stringEdit.enterValue("%name%");
-    }
+    },
   },
   {
     title: "integer value",
     field: "numEmployees",
     async set() {
       await integerEdit.enterValue("123");
-    }
+    },
   },
   {
     title: "number value",
     field: "revenue",
     async set() {
       await numberEdit.enterValue("123.123");
-    }
+    },
   },
   {
     title: "boolean data element",
     field: "isLicensed",
     async set() {
       await booleanEdit.enterDataElementValue("%isLicensed%");
-    }
+    },
   },
   {
     title: "boolean true",
@@ -138,7 +138,7 @@ test("show correct population amount for arrays", async () => {
     async set() {
       await booleanEdit.selectConstantInputMethod();
       await booleanEdit.selectConstantTrueValueField();
-    }
+    },
   },
   {
     title: "boolean false",
@@ -146,8 +146,8 @@ test("show correct population amount for arrays", async () => {
     async set() {
       await booleanEdit.selectConstantInputMethod();
       await booleanEdit.selectConstantFalseValueField();
-    }
-  }
+    },
+  },
 ].forEach(({ title, field, set }) => {
   test(`shows correct population amount for ${title}`, async () => {
     await initializeExtensionView();

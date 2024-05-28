@@ -43,7 +43,7 @@ const FormikPagedComboBox = ({
     getKey,
     getLabel,
     firstPage,
-    firstPageCursor
+    firstPageCursor,
   });
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const FormikPagedComboBox = ({
     }
   }, dependencies);
 
-  if (dependencies.length > 0 && !dependencies.find(d => d)) {
+  if (dependencies.length > 0 && !dependencies.find((d) => d)) {
     return null;
   }
 
@@ -82,7 +82,7 @@ const FormikPagedComboBox = ({
           setTouched(true);
         }}
       >
-        {item => <Item key={getKey(item)}>{getLabel(item)}</Item>}
+        {(item) => <Item key={getKey(item)}>{getLabel(item)}</Item>}
       </ComboBox>
       {pagedComboBox.inputValue === "" &&
         pagedComboBox.loadingState === "idle" &&
@@ -112,7 +112,7 @@ FormikPagedComboBox.propTypes = {
   firstPageCursor: PropTypes.any,
   alertTitle: PropTypes.string,
   alertDescription: PropTypes.string,
-  "data-test-id": PropTypes.string
+  "data-test-id": PropTypes.string,
 };
 
 export default FormikPagedComboBox;

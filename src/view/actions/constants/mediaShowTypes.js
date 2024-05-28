@@ -13,5 +13,5 @@ export default {
   0: "Full episode",
   1: "Preview/trailer",
   2: "Clip",
-  3: "Other"
+  3: "Other",
 };

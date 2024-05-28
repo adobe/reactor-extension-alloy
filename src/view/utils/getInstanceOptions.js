@@ -20,7 +20,7 @@ governing permissions and limitations under the License.
  * comes from Reactor.
  * @returns {Array}
  */
-export default initInfo => {
+export default (initInfo) => {
   // initInfo.extensionSettings.instances will always be defined and
   // be an array with at least one instance, except when we're testing
   // using the local sandbox tool where it might be undefined if we
@@ -29,9 +29,9 @@ export default initInfo => {
   // throwing an error.
   const instances = initInfo.extensionSettings.instances || [];
 
-  const instanceOptions = instances.map(instance => ({
+  const instanceOptions = instances.map((instance) => ({
     value: instance.name,
-    label: instance.name
+    label: instance.name,
   }));
 
   if (initInfo.settings) {
@@ -39,14 +39,14 @@ export default initInfo => {
     if (
       previouslySavedInstanceName &&
       !instanceOptions.some(
-        instanceOption =>
-          instanceOption.value === initInfo.settings.instanceName
+        (instanceOption) =>
+          instanceOption.value === initInfo.settings.instanceName,
       )
     ) {
       instanceOptions.unshift({
         value: previouslySavedInstanceName,
         label: `${previouslySavedInstanceName} (Deleted)`,
-        disabled: true
+        disabled: true,
       });
     }
   }

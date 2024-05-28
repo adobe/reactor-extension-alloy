@@ -15,7 +15,7 @@ describe("numberAwareCompareFunction", () => {
   it("compares evar2 and evar10", () => {
     expect(["evar10", "evar2"].sort(numberAwareCompareFunction)).toEqual([
       "evar2",
-      "evar10"
+      "evar10",
     ]);
   });
 
@@ -34,15 +34,15 @@ describe("numberAwareCompareFunction", () => {
 
   it("compares with multiple numbers", () => {
     expect(
-      ["a10a10", "a10a2", "a2a10", "a2a2"].sort(numberAwareCompareFunction)
+      ["a10a10", "a10a2", "a2a10", "a2a2"].sort(numberAwareCompareFunction),
     ).toEqual(["a2a2", "a2a10", "a10a2", "a10a10"]);
   });
 
   it("compares decimals", () => {
     expect(
       ["1.1", "1.02", "1.003", "1.1.2", "1.1.1"].sort(
-        numberAwareCompareFunction
-      )
+        numberAwareCompareFunction,
+      ),
     ).toEqual(["1.1", "1.1.1", "1.1.2", "1.02", "1.003"]);
   });
 
@@ -50,13 +50,13 @@ describe("numberAwareCompareFunction", () => {
     expect(["a.b", "a.a", "b.a"].sort(numberAwareCompareFunction)).toEqual([
       "a.a",
       "a.b",
-      "b.a"
+      "b.a",
     ]);
   });
 
   it("handles non-strings", () => {
     [undefined, null, 0, 42, { a: "foo" }, "foo"].sort(
-      numberAwareCompareFunction
+      numberAwareCompareFunction,
     );
   });
 });

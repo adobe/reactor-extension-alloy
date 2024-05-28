@@ -21,13 +21,13 @@ import DataElementSelector from "../dataElementSelector";
 
 const inputMethods = {
   CONSTANT: "constant",
-  DATA_ELEMENT: "dataElement"
+  DATA_ELEMENT: "dataElement",
 };
 
 /**
  * The form for editing a boolean field.
  */
-const BooleanEdit = props => {
+const BooleanEdit = (props) => {
   const { fieldName } = props;
   const valueFieldName = `${fieldName}.value`;
   const [{ value }, , { setValue }] = useField(valueFieldName);
@@ -55,7 +55,7 @@ const BooleanEdit = props => {
         label="Input method"
         orientation="horizontal"
         value={inputMethod}
-        onChange={newInputMethod => {
+        onChange={(newInputMethod) => {
           setValue("");
           setInputMethod(newInputMethod);
         }}
@@ -104,7 +104,7 @@ const BooleanEdit = props => {
 };
 
 BooleanEdit.propTypes = {
-  fieldName: PropTypes.string.isRequired
+  fieldName: PropTypes.string.isRequired,
 };
 
 export default BooleanEdit;

@@ -27,7 +27,7 @@ const addValueToPath = (existing, path, value) => {
     returnValue[index] = addValueToPath(
       returnValue[index],
       path.slice(indexOfEndBracket + 1),
-      value
+      value,
     );
   } else if (path[0] === ".") {
     returnValue = addValueToPath(existing, path.slice(1), value);
@@ -45,7 +45,7 @@ const addValueToPath = (existing, path, value) => {
         returnValue[key] = addValueToPath(
           returnValue[key],
           path.slice(indexOfBracket),
-          value
+          value,
         );
       }
     } else if (indexOfBracket === -1 || indexOfDot < indexOfBracket) {
@@ -53,14 +53,14 @@ const addValueToPath = (existing, path, value) => {
       returnValue[key] = addValueToPath(
         returnValue[key],
         path.slice(indexOfDot + 1),
-        value
+        value,
       );
     } else {
       const key = path.slice(0, indexOfBracket);
       returnValue[key] = addValueToPath(
         returnValue[key],
         path.slice(indexOfBracket),
-        value
+        value,
       );
     }
   }

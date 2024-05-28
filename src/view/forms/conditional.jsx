@@ -33,7 +33,7 @@ export default function conditional({ args, condition }, children) {
   const argsArray = Array.isArray(args) ? args : [args];
   const { getInitialValues, getSettings, validationShape, Component } = form(
     {},
-    children
+    children,
   );
 
   const parts = {
@@ -41,7 +41,7 @@ export default function conditional({ args, condition }, children) {
     // default formik state can be set up.
     getInitialValues,
     getSettings({ values }) {
-      const conditionalArgValues = argsArray.map(arg => values[arg]);
+      const conditionalArgValues = argsArray.map((arg) => values[arg]);
       if (!condition(...conditionalArgValues)) {
         return {};
       }
@@ -55,22 +55,22 @@ export default function conditional({ args, condition }, children) {
             memo[key] = mixed().when(args, {
               is: condition,
               then: () => validationShape[key],
-              otherwise: () => existingValidation
+              otherwise: () => existingValidation,
             });
           } else {
             memo[key] = mixed().when(args, {
               is: condition,
-              then: () => validationShape[key]
+              then: () => validationShape[key],
             });
           }
           return memo;
         },
-        { ...existingValidationShape }
+        { ...existingValidationShape },
       );
     },
-    Component: props => {
+    Component: (props) => {
       const { namePrefix = "" } = props;
-      const conditionalArgValues = argsArray.map(arg => {
+      const conditionalArgValues = argsArray.map((arg) => {
         const [{ value }] = useField(`${namePrefix}${arg}`);
         return value;
       });
@@ -78,10 +78,10 @@ export default function conditional({ args, condition }, children) {
         return null;
       }
       return <Component {...props} />;
-    }
+    },
   };
   parts.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
 
   return parts;

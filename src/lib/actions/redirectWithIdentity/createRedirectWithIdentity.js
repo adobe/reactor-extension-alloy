@@ -17,21 +17,21 @@ module.exports =
 
     if (!instance) {
       logger.warn(
-        `Instance "${instanceName}" not found when running "Redirect with identity."`
+        `Instance "${instanceName}" not found when running "Redirect with identity."`,
       );
       return Promise.resolve();
     }
 
     if (!event || !event.element) {
       logger.warn(
-        `Clicked element not found when running "Redirect with identity." This action is meant to be used with a Core click event.`
+        `Clicked element not found when running "Redirect with identity." This action is meant to be used with a Core click event.`,
       );
       return Promise.resolve();
     }
 
     if (!event.element.href) {
       logger.warn(
-        `Invalid event target when running "Redirect with identity." This action is meant to be used with a Core click event using an "a[href]" selector.`
+        `Invalid event target when running "Redirect with identity." This action is meant to be used with a Core click event using an "a[href]" selector.`,
       );
       return Promise.resolve();
     }
@@ -45,7 +45,7 @@ module.exports =
 
     return instance("appendIdentityToUrl", {
       url,
-      edgeConfigOverrides
+      edgeConfigOverrides,
     }).then(({ url: newLocation }) => {
       document.location = newLocation;
     });

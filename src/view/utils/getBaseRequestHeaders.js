@@ -15,6 +15,6 @@ export default ({ orgId, imsAccess }) => {
     "x-api-key": "Activation-DTM",
     "x-gw-ims-org-id": orgId,
     Authorization: `Bearer ${imsAccess}`,
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   };
 };

@@ -19,7 +19,7 @@ export default ({ formStateNode }) => {
     value,
     items,
     populationStrategy,
-    schema: { expandPaths }
+    schema: { expandPaths },
   } = formStateNode;
 
   if (populationStrategy === WHOLE) {
@@ -36,10 +36,10 @@ export default ({ formStateNode }) => {
 
   let data = addToEntityFromVariables(
     {},
-    items.filter(p => p.key || p.value),
+    items.filter((p) => p.key || p.value),
     {
-      expandPaths
-    }
+      expandPaths,
+    },
   );
 
   if (Object.keys(data).length === 0) {

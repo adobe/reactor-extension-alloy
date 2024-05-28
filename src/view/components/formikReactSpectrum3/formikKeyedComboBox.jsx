@@ -34,7 +34,7 @@ const FormikKeyedComboBox = ({
   if (isFilteringRef.current) {
     text = value;
   } else {
-    const currentItem = items.find(item => getKey(item) === value);
+    const currentItem = items.find((item) => getKey(item) === value);
     text = currentItem ? getLabel(currentItem) : value;
   }
 
@@ -44,22 +44,22 @@ const FormikKeyedComboBox = ({
       inputValue={text}
       items={itemsRef.current}
       loadingState="idle"
-      onInputChange={newText => {
+      onInputChange={(newText) => {
         isFilteringRef.current = true;
         if (newText === "") {
           itemsRef.current = items;
         } else {
           const newTextLowerCase = newText.toLowerCase();
           itemsRef.current = items.filter(
-            item =>
+            (item) =>
               getLabel(item).toLowerCase().includes(newTextLowerCase) ||
-              getKey(item).toLowerCase().includes(newTextLowerCase)
+              getKey(item).toLowerCase().includes(newTextLowerCase),
           );
         }
         // This will cause a re-render.
         setValue(newText);
       }}
-      onSelectionChange={key => {
+      onSelectionChange={(key) => {
         if (key) {
           isFilteringRef.current = false;
           itemsRef.current = items;
@@ -70,7 +70,7 @@ const FormikKeyedComboBox = ({
         isFilteringRef.current = false;
         itemsRef.current = items;
         const selectedItem = items.find(
-          item => getKey(item) === value || getLabel(item) === value
+          (item) => getKey(item) === value || getLabel(item) === value,
         );
         if (selectedItem) {
           setValue(getKey(selectedItem));
@@ -80,7 +80,7 @@ const FormikKeyedComboBox = ({
       validationState={touched && error ? "invalid" : undefined}
       width={width}
       errorMessage={error}
-      onOpenChange={isOpen => {
+      onOpenChange={(isOpen) => {
         if (!isOpen) {
           isFilteringRef.current = false;
           itemsRef.current = items;
@@ -96,7 +96,7 @@ FormikKeyedComboBox.propTypes = {
   width: PropTypes.string,
   items: PropTypes.array.isRequired,
   getKey: PropTypes.func.isRequired,
-  getLabel: PropTypes.func.isRequired
+  getLabel: PropTypes.func.isRequired,
 };
 
 export default FormikKeyedComboBox;

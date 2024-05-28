@@ -25,9 +25,9 @@ export default ({ file, extension = ".tmp" }) => {
     };
 
     ["exit", "SIGINT", "SIGUSR1", "SIGUSR2", "uncaughtException"].forEach(
-      event => {
+      (event) => {
         process.on(event, cleanup);
-      }
+      },
     );
   }
 };

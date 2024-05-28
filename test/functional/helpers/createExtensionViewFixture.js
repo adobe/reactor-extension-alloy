@@ -16,16 +16,16 @@ import { RequestMock } from "testcafe";
 
 const preventSpecificErrorsFromFailingTestsPath = path.join(
   __dirname,
-  "clientScripts/preventSpecificErrorsFromFailingTests.js"
+  "clientScripts/preventSpecificErrorsFromFailingTests.js",
 );
 
 const extensionBridgeMockContent = fs.readFileSync(
-  path.join(__dirname, "../helpers/extensionBridgeMock.js")
+  path.join(__dirname, "../helpers/extensionBridgeMock.js"),
 );
 
 const extensionBridgeRequestMock = RequestMock()
   .onRequestTo(
-    "https://assets.adobedtm.com/activation/reactor/extensionbridge/extensionbridge.min.js"
+    "https://assets.adobedtm.com/activation/reactor/extensionbridge/extensionbridge.min.js",
   )
   .respond(extensionBridgeMockContent);
 
@@ -34,7 +34,7 @@ const createExtensionViewFixture = ({
   viewPath,
   requiresAdobeIOIntegration = false,
   requestHooks = [],
-  only = false
+  only = false,
 }) => {
   let fixt = (only ? fixture.only : fixture)(title)
     .page(path.join(__dirname, "../../../dist/view", viewPath))

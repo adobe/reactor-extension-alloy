@@ -24,11 +24,11 @@ module.exports = () => {
       return eventMergeIdByCacheId[cacheId];
     },
     clearByEventMergeId(eventMergeId) {
-      Object.keys(eventMergeIdByCacheId).forEach(cacheId => {
+      Object.keys(eventMergeIdByCacheId).forEach((cacheId) => {
         if (eventMergeIdByCacheId[cacheId] === eventMergeId) {
           delete eventMergeIdByCacheId[cacheId];
         }
       });
-    }
+    },
   };
 };

@@ -51,7 +51,7 @@ const EdgeConfigurationFreeformInputMethod = ({ name }) => {
 };
 
 EdgeConfigurationFreeformInputMethod.propTypes = {
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
 };
 
 export default EdgeConfigurationFreeformInputMethod;

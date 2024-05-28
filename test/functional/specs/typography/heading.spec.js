@@ -16,144 +16,144 @@ import createComponentFixture from "../../helpers/components/createComponentFixt
 import renderReactElement from "../../helpers/components/renderReactElement";
 
 createComponentFixture({
-  title: "Heading component"
+  title: "Heading component",
 });
 
 const scenarios = [
   {
     props: {
-      size: "XXXL"
+      size: "XXXL",
     },
     assertions: {
       tagName: "h1",
-      classNames: ["spectrum-Heading--sizeXXXL"]
-    }
+      classNames: ["spectrum-Heading--sizeXXXL"],
+    },
   },
   {
     props: {
-      size: "XXL"
+      size: "XXL",
     },
     assertions: {
       tagName: "h1",
-      classNames: ["spectrum-Heading--sizeXXL"]
-    }
+      classNames: ["spectrum-Heading--sizeXXL"],
+    },
   },
   {
     props: {
-      size: "XL"
+      size: "XL",
     },
     assertions: {
       tagName: "h1",
-      classNames: ["spectrum-Heading--sizeXL"]
-    }
+      classNames: ["spectrum-Heading--sizeXL"],
+    },
   },
   {
     props: {
-      size: "L"
+      size: "L",
     },
     assertions: {
       tagName: "h2",
-      classNames: ["spectrum-Heading--sizeL"]
-    }
+      classNames: ["spectrum-Heading--sizeL"],
+    },
   },
   {
     props: {
-      size: "M"
+      size: "M",
     },
     assertions: {
       tagName: "h3",
-      classNames: ["spectrum-Heading--sizeM"]
-    }
+      classNames: ["spectrum-Heading--sizeM"],
+    },
   },
   {
     props: {
-      size: "S"
+      size: "S",
     },
     assertions: {
       tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS"]
-    }
+      classNames: ["spectrum-Heading--sizeS"],
+    },
   },
   {
     props: {
-      size: "XS"
+      size: "XS",
     },
     assertions: {
       tagName: "h5",
-      classNames: ["spectrum-Heading--sizeXS"]
-    }
+      classNames: ["spectrum-Heading--sizeXS"],
+    },
   },
   {
     props: {
-      size: "XXS"
+      size: "XXS",
     },
     assertions: {
       tagName: "h6",
-      classNames: ["spectrum-Heading--sizeXXS"]
-    }
+      classNames: ["spectrum-Heading--sizeXXS"],
+    },
   },
   {
     props: {
-      variant: "heavy"
+      variant: "heavy",
     },
     assertions: {
       tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS", "spectrum-Heading--heavy"]
-    }
+      classNames: ["spectrum-Heading--sizeS", "spectrum-Heading--heavy"],
+    },
   },
   {
     props: {
-      variant: "light"
+      variant: "light",
     },
     assertions: {
       tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS", "spectrum-Heading--light"]
-    }
+      classNames: ["spectrum-Heading--sizeS", "spectrum-Heading--light"],
+    },
   },
   {
     props: {
-      isSerif: true
+      isSerif: true,
     },
     assertions: {
       tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS", "spectrum-Heading--serif"]
-    }
-  },
-  {
-    props: {
-      marginTop: "size-300"
+      classNames: ["spectrum-Heading--sizeS", "spectrum-Heading--serif"],
     },
-    assertions: {
-      tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS"],
-      style:
-        "margin-top: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);"
-    }
   },
   {
     props: {
-      marginBottom: "size-300"
+      marginTop: "size-300",
     },
     assertions: {
       tagName: "h4",
       classNames: ["spectrum-Heading--sizeS"],
       style:
-        "margin-bottom: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);"
-    }
+        "margin-top: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);",
+    },
+  },
+  {
+    props: {
+      marginBottom: "size-300",
+    },
+    assertions: {
+      tagName: "h4",
+      classNames: ["spectrum-Heading--sizeS"],
+      style:
+        "margin-bottom: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);",
+    },
   },
   {
     props: {},
     assertions: {
       tagName: "h4",
-      classNames: ["spectrum-Heading--sizeS"]
-    }
-  }
+      classNames: ["spectrum-Heading--sizeS"],
+    },
+  },
 ];
 
 scenarios.forEach(({ props, assertions }) => {
   test(`renders with props: ${JSON.stringify(props)}`, async () => {
     await renderReactElement(
-      React.createElement("Heading", props, "Test Heading")
+      React.createElement("Heading", props, "Test Heading"),
     );
     const selector = Selector(assertions.tagName);
     await t.expect(selector.textContent).eql("Test Heading");

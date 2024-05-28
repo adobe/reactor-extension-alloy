@@ -15,7 +15,7 @@ import singleDataElementRegex from "../../../../constants/singleDataElementRegex
 
 export default ({
   formStateNode,
-  confirmDataPopulatedAtCurrentOrDescendantNode
+  confirmDataPopulatedAtCurrentOrDescendantNode,
 }) => {
   const { value } = formStateNode;
 

@@ -15,6 +15,6 @@ import getDefaultIdentifier from "./getDefaultIdentifier";
 export default () => {
   return {
     namespaceCode: "",
-    identifiers: [getDefaultIdentifier()]
+    identifiers: [getDefaultIdentifier()],
   };
 };
