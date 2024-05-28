@@ -1172,7 +1172,7 @@ const createExtensionManifest = ({ version }) => {
                   type: "array",
                   minItems: 1,
                   items: {
-                    enum: ["analytics", "target", "audiencemanager"],
+                    enum: ["analytics", "target", "audiencemanager", "audienceManager"]
                   },
                   required: ["name"],
                   additionalProperties: false,
