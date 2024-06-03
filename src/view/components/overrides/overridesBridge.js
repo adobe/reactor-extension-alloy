@@ -183,6 +183,10 @@ export const bridge = {
         );
       }
 
+      if (!overrides.com_adobe_identity?.idSyncContainerId) {
+        delete overrides.com_adobe_identity;
+      }
+
       // filter out the blank report suites
       if (overrides.com_adobe_analytics?.reportSuites) {
         overrides.com_adobe_analytics.reportSuites =
@@ -203,6 +207,25 @@ export const bridge = {
     ) {
       delete trimmedInstanceSettings.edgeConfigOverrides;
     }
+
+    Object.keys(trimmedInstanceSettings?.edgeConfigOverrides || {}).forEach(
+      (env) => {
+        if (
+          Object.keys(trimmedInstanceSettings?.edgeConfigOverrides[env] || {})
+            .length === 0
+        ) {
+          delete trimmedInstanceSettings.edgeConfigOverrides[env];
+        }
+      },
+    );
+
+    if (
+      Object.keys(trimmedInstanceSettings?.edgeConfigOverrides || []).length ===
+      0
+    ) {
+      delete trimmedInstanceSettings.edgeConfigOverrides;
+    }
+
     return trimmedInstanceSettings;
   },
   formikStateValidationSchema: object({
