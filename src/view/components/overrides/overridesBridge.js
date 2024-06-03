@@ -183,7 +183,7 @@ export const bridge = {
         );
       }
 
-      if (!overrides.com_adobe_identity?.idSyncContainerId) {
+      if (overrides.com_adobe_identity?.idSyncContainerId === "") {
         delete overrides.com_adobe_identity;
       }
 
