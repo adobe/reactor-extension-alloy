@@ -1788,6 +1788,33 @@ test("allows the setting of overrides in only a single environment", async () =>
     ],
   });
 });
+
+test("allows the load of the view with overrides settings in only a single environment", async () => {
+  await extensionViewController.init({
+    settings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_experience_platform: {
+                datasets: {
+                  event: {
+                    datasetId: "6336ff95ba16ca1c07b4c0db",
+                  },
+                },
+              },
+            },
+          },
+        },
+      ],
+    },
+  });
+
+  await instances[0].overrides.envTabs.development.expectExists();
+});
+
 test("makes the media collection fields required if one is filled", async () => {
   await extensionViewController.init();
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();
@@ -1812,7 +1839,6 @@ test("makes the media collection fields required if one is filled", async () => 
           channel: "testChanel",
           mainPingInterval: 10,
           playerName: "testPlayerName",
-          appVersion: "",
         },
       },
     ],

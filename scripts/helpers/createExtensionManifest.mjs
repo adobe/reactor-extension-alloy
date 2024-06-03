@@ -327,6 +327,8 @@ const createExtensionManifest = ({ version }) => {
                       type: "integer",
                     },
                   },
+                  required: ["channel", "playerName"],
+                  additionalProperties: false,
                 },
                 personalizationStorageEnabled: {
                   type: "boolean",
@@ -1172,7 +1174,12 @@ const createExtensionManifest = ({ version }) => {
                   type: "array",
                   minItems: 1,
                   items: {
-                    enum: ["analytics", "target", "audiencemanager", "audienceManager"]
+                    enum: [
+                      "analytics",
+                      "target",
+                      "audiencemanager",
+                      "audienceManager",
+                    ],
                   },
                   required: ["name"],
                   additionalProperties: false,

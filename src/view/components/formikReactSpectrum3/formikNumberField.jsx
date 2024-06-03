@@ -33,7 +33,7 @@ const FormikNumberField = ({ name, width, validate, ...otherProps }) => {
   return (
     <NumberField
       {...otherProps}
-      value={value}
+      value={value === "" ? null : value}
       onChange={(val) => {
         setValue(val).then(() => {
           setTouched(true);
