@@ -16,14 +16,14 @@ import computePopulationNote from "../computePopulationNote";
 export default ({
   treeNode,
   formStateNode,
-  isAncestorUsingWholePopulationStrategy
+  isAncestorUsingWholePopulationStrategy,
 }) => {
   treeNode.populationAmount = computePopulationAmount({
     formStateNode,
-    isAncestorUsingWholePopulationStrategy
+    isAncestorUsingWholePopulationStrategy,
   });
   treeNode.infoTip = computePopulationNote({
     formStateNode,
-    isAncestorUsingWholePopulationStrategy
+    isAncestorUsingWholePopulationStrategy,
   });
 };

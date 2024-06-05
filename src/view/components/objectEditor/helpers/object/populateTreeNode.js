@@ -23,7 +23,7 @@ export default ({
   confirmTouchedAtCurrentOrDescendantNode,
   errors,
   touched,
-  getTreeNode
+  getTreeNode,
 }) => {
   const { properties, populationStrategy, schema } = formStateNode;
 
@@ -32,7 +32,7 @@ export default ({
     if (propertyNames.length) {
       treeNode.children = propertyNames
         .sort(numberAwareCompareFunction)
-        .map(propertyName => {
+        .map((propertyName) => {
           const propertyFormStateNode = properties[propertyName];
           const childNode = getTreeNode({
             formStateNode: propertyFormStateNode,
@@ -49,7 +49,7 @@ export default ({
             touched:
               touched && touched.properties
                 ? touched.properties[propertyName]
-                : undefined
+                : undefined,
           });
           return childNode;
         });
@@ -59,10 +59,10 @@ export default ({
   treeNode.populationAmount = computePopulationAmount({
     formStateNode,
     isAncestorUsingWholePopulationStrategy,
-    childrenTreeNodes: treeNode.children
+    childrenTreeNodes: treeNode.children,
   });
   treeNode.infoTip = computePopulationNote({
     formStateNode,
-    isAncestorUsingWholePopulationStrategy
+    isAncestorUsingWholePopulationStrategy,
   });
 };

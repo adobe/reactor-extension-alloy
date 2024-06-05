@@ -35,20 +35,20 @@ export const bridge = {
       return {
         surfacesInputMethod: CONSTANT,
         surfacesDataElement: "",
-        surfacesArray: surfaces
+        surfacesArray: surfaces,
       };
     }
     if (typeof surfaces === "string") {
       return {
         surfacesInputMethod: DATA_ELEMENT,
         surfacesDataElement: surfaces,
-        surfacesArray: [""]
+        surfacesArray: [""],
       };
     }
     return {
       surfacesInputMethod: CONSTANT,
       surfacesDataElement: "",
-      surfacesArray: [""]
+      surfacesArray: [""],
     };
   },
   getSettings({ values }) {
@@ -63,7 +63,7 @@ export const bridge = {
       values.surfacesInputMethod === CONSTANT &&
       values.surfacesArray.length > 0
     ) {
-      const surfaces = values.surfacesArray.filter(surface => surface !== "");
+      const surfaces = values.surfacesArray.filter((surface) => surface !== "");
       if (surfaces.length) {
         return { surfaces };
       }
@@ -73,10 +73,10 @@ export const bridge = {
   formikStateValidationSchema: object().shape({
     surfacesDataElement: string().when("surfacesInputMethod", {
       is: DATA_ELEMENT,
-      then: schema =>
-        schema.matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-    })
-  })
+      then: (schema) =>
+        schema.matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
+    }),
+  }),
 };
 
 const Surfaces = () => {
@@ -118,7 +118,7 @@ const Surfaces = () => {
           <Flex direction="column" gap="size-100" alignItems="start">
             <FieldArray
               name="surfacesArray"
-              render={arrayHelpers => {
+              render={(arrayHelpers) => {
                 return (
                   <div>
                     {surfacesArray.map((surface, index) => {

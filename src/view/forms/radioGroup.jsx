@@ -55,7 +55,7 @@ export default function radioGroup({
   defaultValue = "",
   description,
   beta,
-  orientation = "vertical"
+  orientation = "vertical",
 }) {
   const validationShape = {};
   if (isRequired) {
@@ -64,10 +64,10 @@ export default function radioGroup({
   if (dataElementSupported) {
     validationShape[`${name}DataElement`] = string().when(name, {
       is: "dataElement",
-      then: schema =>
+      then: (schema) =>
         schema
           .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-          .required(DATA_ELEMENT_REQUIRED)
+          .required(DATA_ELEMENT_REQUIRED),
     });
   }
 
@@ -82,7 +82,8 @@ export default function radioGroup({
     getInitialValues({ initInfo }) {
       const { [name]: value = defaultValue } = initInfo.settings || {};
       const initialValues = {
-        [name]: value
+        [name]: value,
+        [`${name}DataElement`]: "",
       };
       if (dataElementSupported) {
         initialValues[`${name}DataElement`] = "";
@@ -117,7 +118,7 @@ export default function radioGroup({
             orientation={orientation}
           >
             <>
-              {items.map(item => (
+              {items.map((item) => (
                 <Radio
                   value={item.value}
                   key={item.value}
@@ -151,11 +152,11 @@ export default function radioGroup({
           )}
         </>
       );
-    }
+    },
   };
 
   formPart.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
 
   return formPart;

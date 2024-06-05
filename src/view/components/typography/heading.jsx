@@ -14,7 +14,6 @@ import React from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import getDimensionStyle from "../../utils/getDimensionStyle";
-import "./heading.styl";
 
 const tagBySize = {
   XXXL: "h1",
@@ -24,7 +23,7 @@ const tagBySize = {
   M: "h3",
   S: "h4",
   XS: "h5",
-  XXS: "h6"
+  XXS: "h6",
 };
 
 /**
@@ -43,7 +42,7 @@ const Heading = ({
   variant,
   isSerif,
   marginTop,
-  marginBottom
+  marginBottom,
 }) => {
   const style = {};
 
@@ -65,8 +64,8 @@ const Heading = ({
         {
           "spectrum-Heading--serif": isSerif,
           "spectrum-Heading--heavy": variant === "heavy",
-          "spectrum-Heading--light": variant === "light"
-        }
+          "spectrum-Heading--light": variant === "light",
+        },
       )}
       style={style}
     >
@@ -84,5 +83,5 @@ Heading.propTypes = {
   variant: PropTypes.oneOf(["heavy", "light"]),
   isSerif: PropTypes.bool,
   marginTop: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  marginBottom: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  marginBottom: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };

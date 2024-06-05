@@ -32,7 +32,7 @@ export default function disabledCheckbox({
   value,
   label,
   description,
-  beta
+  beta,
 }) {
   const Component = ({ namePrefix = "" }) => {
     return (
@@ -54,15 +54,15 @@ export default function disabledCheckbox({
     );
   };
   Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
 
   return {
     getSettings() {
       return {
-        [name]: value
+        [name]: value,
       };
     },
-    Component
+    Component,
   };
 }

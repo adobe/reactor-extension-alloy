@@ -25,7 +25,7 @@ export default async ({ orgId, imsAccess, signal }) => {
       orgId,
       imsAccess,
       path: `/data/foundation/sandbox-management/`,
-      signal
+      signal,
     });
   } catch (e) {
     if (e.name === "AbortError") {
@@ -33,11 +33,11 @@ export default async ({ orgId, imsAccess, signal }) => {
     }
 
     throw new UserReportableError(`Failed to load sandboxes.`, {
-      originatingError: e
+      originatingError: e,
     });
   }
 
   return {
-    results: parsedResponse.parsedBody.sandboxes
+    results: parsedResponse.parsedBody.sandboxes,
   };
 };

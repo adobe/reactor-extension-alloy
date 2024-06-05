@@ -12,8 +12,8 @@ governing permissions and limitations under the License.
 
 module.exports =
   ({ version }) =>
-  onBeforeEventSend =>
-  content => {
+  (onBeforeEventSend) =>
+  (content) => {
     content.xdm.implementationDetails.name = `${content.xdm.implementationDetails.name}/reactor`;
     content.xdm.implementationDetails.version = `${content.xdm.implementationDetails.version}+${version}`;
     if (onBeforeEventSend) {

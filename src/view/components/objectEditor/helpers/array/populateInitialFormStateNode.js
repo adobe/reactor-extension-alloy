@@ -16,7 +16,7 @@ export default ({
   formStateNode,
   value,
   nodePath,
-  getInitialFormStateNode
+  getInitialFormStateNode,
 }) => {
   const { schema } = formStateNode;
   let itemFormStateNodes = [];
@@ -33,7 +33,7 @@ export default ({
         return getInitialFormStateNode({
           schema: itemSchema,
           nodePath: nodePath !== "" ? `${nodePath}.${index}` : `${index}`,
-          existingFormStateNode: itemValue
+          existingFormStateNode: itemValue,
         });
       });
     } else if (Array.isArray(value) && value.length) {
@@ -41,7 +41,7 @@ export default ({
         return getInitialFormStateNode({
           schema: itemSchema,
           value: itemValue,
-          nodePath: nodePath !== "" ? `${nodePath}.${index}` : `${index}`
+          nodePath: nodePath !== "" ? `${nodePath}.${index}` : `${index}`,
         });
       });
     }

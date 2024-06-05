@@ -16,7 +16,7 @@ import { useRef, useEffect } from "react";
  * Call usePrevious on every render with the current value and
  * the hook will return the prior value.
  */
-const usePrevious = value => {
+const usePrevious = (value) => {
   const valueRef = useRef();
   useEffect(() => {
     valueRef.current = value;

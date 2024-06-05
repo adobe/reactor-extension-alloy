@@ -21,7 +21,8 @@ const InstanceNamePicker = ({
   name,
   initInfo,
   description,
-  disabledDescription
+  disabledDescription,
+  onChange,
 }) => {
   const items = getInstanceOptions(initInfo);
   const isDisabled = items.length <= 1;
@@ -36,8 +37,9 @@ const InstanceNamePicker = ({
       description={
         isDisabled && disabledDescription ? disabledDescription : description
       }
+      onChange={onChange}
     >
-      {item => <Item key={item.value}>{item.label}</Item>}
+      {(item) => <Item key={item.value}>{item.label}</Item>}
     </FormikPicker>
   );
 };
@@ -47,7 +49,8 @@ InstanceNamePicker.propTypes = {
   name: PropTypes.string.isRequired,
   initInfo: PropTypes.object.isRequired,
   description: PropTypes.string,
-  disabledDescription: PropTypes.string
+  disabledDescription: PropTypes.string,
+  onChange: PropTypes.func,
 };
 
 export default InstanceNamePicker;

@@ -9,6 +9,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+
+import mediaEventTypes from "./mediaEventTypes";
+
 export default {
   "advertising.completes": "Advertising Completes",
   "advertising.timePlayed": "Advertising Time Played",
@@ -83,6 +86,12 @@ export default {
   "inappmessageTracking.dismiss": "inapp message was dimissed",
   "inappmessageTracking.display": "inapp message was displayed",
   "inappmessageTracking.interact": "inapp message was interacted with",
+  "media.reporting.sessionStart": "Media reporting sessionStart",
+  "media.reporting.sessionClose": "Media reporting sessionClose",
+  "media.reporting.adStart": "Media reporting adStart",
+  "media.reporting.adClose": "Media reporting adClose",
+  "media.reporting.chapterClose": "Media reporting chapterClose",
   "location.entry": "Location entry",
-  "location.exit": "Location exit"
+  "location.exit": "Location exit",
+  ...mediaEventTypes,
 };

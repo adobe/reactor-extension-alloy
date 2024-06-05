@@ -30,7 +30,7 @@ import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 
 const CONTEXT_GRANULARITY = {
   ALL: "all",
-  SPECIFIC: "specific"
+  SPECIFIC: "specific",
 };
 
 const contextOptions = [
@@ -38,25 +38,25 @@ const contextOptions = [
     label: "Web (information about the current page)",
     value: "web",
     testId: "contextWebField",
-    default: true
+    default: true,
   },
   {
     label: "Device (information about the user's device)",
     value: "device",
     testId: "contextDeviceField",
-    default: true
+    default: true,
   },
   {
     label: "Environment (information about the user's browser)",
     value: "environment",
     testId: "contextEnvironmentField",
-    default: true
+    default: true,
   },
   {
     label: "Place context (information about the user's location)",
     value: "placeContext",
     testId: "contextPlaceContextField",
-    default: true
+    default: true,
   },
   {
     label: "High entropy user-agent hints",
@@ -64,8 +64,8 @@ const contextOptions = [
     testId: "contextHighEntropyUserAgentHintsField",
     description:
       "Provides more detailed information about the client device, such as platform version, architecture, model, bitness (64 bit or 32 bit platforms), or full operating system version",
-    default: false
-  }
+    default: false,
+  },
 ];
 
 export const bridge = {
@@ -77,8 +77,8 @@ export const bridge = {
       "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$",
     contextGranularity: CONTEXT_GRANULARITY.ALL,
     context: contextOptions
-      .filter(option => option.default)
-      .map(option => option.value)
+      .filter((option) => option.default)
+      .map((option) => option.value),
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
@@ -92,8 +92,8 @@ export const bridge = {
         "onBeforeLinkClickSend",
         "clickCollectionEnabled",
         "downloadLinkQualifier",
-        "context"
-      ]
+        "context",
+      ],
     });
 
     instanceValues.contextGranularity = instanceSettings.context
@@ -107,7 +107,7 @@ export const bridge = {
     const propertyKeysToCopy = [
       "onBeforeEventSend",
       "onBeforeLinkClickSend",
-      "clickCollectionEnabled"
+      "clickCollectionEnabled",
     ];
 
     if (instanceValues.clickCollectionEnabled) {
@@ -118,7 +118,7 @@ export const bridge = {
       toObj: instanceSettings,
       fromObj: instanceValues,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: propertyKeysToCopy
+      keys: propertyKeysToCopy,
     });
 
     if (instanceValues.contextGranularity === CONTEXT_GRANULARITY.SPECIFIC) {
@@ -130,7 +130,7 @@ export const bridge = {
   instanceValidationSchema: object().shape({
     downloadLinkQualifier: string().when("clickCollectionEnabled", {
       is: true,
-      then: schema =>
+      then: (schema) =>
         schema.required("Please provide a regular expression.").test({
           name: "invalidDownloadLinkQualifier",
           message: "Please provide a valid regular expression.",
@@ -140,10 +140,10 @@ export const bridge = {
             } catch (e) {
               return false;
             }
-          }
-        })
-    })
-  })
+          },
+        }),
+    }),
+  }),
 };
 
 const DataCollectionSection = ({ instanceFieldName }) => {
@@ -194,11 +194,11 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                     const currentPattern = instanceValues.downloadLinkQualifier;
                     const newPattern =
                       await window.extensionBridge.openRegexTester({
-                        pattern: currentPattern
+                        pattern: currentPattern,
                       });
                     setFieldValue(
                       `${instanceFieldName}.downloadLinkQualifier`,
-                      newPattern
+                      newPattern,
                     );
                   }}
                   marginTop="size-300"
@@ -253,7 +253,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                 aria-label="Context data categories"
                 name={`${instanceFieldName}.context`}
               >
-                {contextOptions.map(contextOption => {
+                {contextOptions.map((contextOption) => {
                   return (
                     <FieldDescriptionAndError
                       description={contextOption.description}
@@ -282,7 +282,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
 };
 
 DataCollectionSection.propTypes = {
-  instanceFieldName: PropTypes.string.isRequired
+  instanceFieldName: PropTypes.string.isRequired,
 };
 
 export default DataCollectionSection;

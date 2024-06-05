@@ -28,10 +28,10 @@ const FormikTextField = ({ name, width, validate, onBlur, ...otherProps }) => {
   const [
     { value },
     { touched: fieldTouched, error: fieldError },
-    { setValue, setTouched }
+    { setValue, setTouched },
   ] = useField({
     name,
-    validate
+    validate,
   });
 
   const touched = otherProps.touched || fieldTouched;
@@ -43,7 +43,7 @@ const FormikTextField = ({ name, width, validate, onBlur, ...otherProps }) => {
     <TextField
       {...otherProps}
       value={value}
-      onChange={newValue => {
+      onChange={(newValue) => {
         setValue(newValue);
       }}
       onBlur={() => {
@@ -63,7 +63,7 @@ FormikTextField.propTypes = {
   name: PropTypes.string.isRequired,
   width: PropTypes.string,
   validate: PropTypes.func,
-  onBlur: PropTypes.func
+  onBlur: PropTypes.func,
 };
 
 export default FormikTextField;

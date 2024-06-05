@@ -18,7 +18,7 @@ import { XDM } from "../constants/variableTypes";
 import {
   ADOBE_ANALYTICS,
   ADOBE_AUDIENCE_MANAGER,
-  ADOBE_TARGET
+  ADOBE_TARGET,
 } from "../../../constants/solutions";
 
 export const bridge = {
@@ -27,7 +27,8 @@ export const bridge = {
     const { solutions = [] } = settings;
 
     const initialValues = {
-      solutions
+      // Temporary support for 'audienceManager' property that should have been lowercased.
+      solutions: solutions.map((s) => s.toLowerCase()),
     };
 
     return initialValues;
@@ -56,13 +57,13 @@ export const bridge = {
     }
 
     return result;
-  }
+  },
 };
 
 export const solutionsContext = [
   [ADOBE_ANALYTICS, "Adobe Analytics"],
   [ADOBE_AUDIENCE_MANAGER, "Adobe Audience Manager"],
-  [ADOBE_TARGET, "Adobe Target"]
+  [ADOBE_TARGET, "Adobe Target"],
 ];
 
 const DataVariable = () => {

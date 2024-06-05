@@ -20,7 +20,7 @@ const fetchConfigs = async ({
   start,
   limit,
   signal,
-  sandbox
+  sandbox,
 }) => {
   const params = new URLSearchParams();
   params.append("orderby", "title");
@@ -39,7 +39,7 @@ const fetchConfigs = async ({
 
   let parsedResponse;
   const headers = {
-    "x-sandbox-name": sandbox
+    "x-sandbox-name": sandbox,
   };
 
   try {
@@ -49,7 +49,7 @@ const fetchConfigs = async ({
       path: "/metadata/namespaces/edge/datasets/datastreams/records/",
       params,
       headers,
-      signal
+      signal,
     });
   } catch (e) {
     if (e.name === "AbortError") {
@@ -57,19 +57,19 @@ const fetchConfigs = async ({
     }
 
     throw new UserReportableError("Failed to load datastreams.", {
-      originatingError: e
+      originatingError: e,
     });
   }
 
   const {
-    parsedBody: { _embedded, _links }
+    parsedBody: { _embedded, _links },
   } = parsedResponse;
 
   return {
     // eslint-disable-next-line no-underscore-dangle
     results: _embedded?.records ?? [],
     // parsedBody.page won't exist if there were 0 results
-    nextPage: _links && _links.next ? _links.next.href : null
+    nextPage: _links && _links.next ? _links.next.href : null,
   };
 };
 

@@ -22,7 +22,7 @@ const subscribeRulesetItemsForm = form({}, [
     title: "Subscribe ruleset items",
     description:
       "This event will trigger the rule whenever there are ruleset items that have matched. This is a good place to add an action to render the ruleset items. You can use the data element `%event.propositions%` to access the propositions. Or within a custom code action it is available as `event.propositions`.",
-    beta: true
+    beta: true,
   }),
   instancePicker({ name: "instanceName" }),
   fieldArray({
@@ -35,45 +35,45 @@ const subscribeRulesetItemsForm = form({}, [
     fieldItems: [
       {
         value: "https://ns.adobe.com/personalization/default-content-item",
-        label: "Default content item"
+        label: "Default content item",
       },
       {
         value: "https://ns.adobe.com/personalization/dom-action",
-        label: "Dom action"
+        label: "Dom action",
       },
       {
         value: "https://ns.adobe.com/personalization/html-content-item",
-        label: "HTML content item"
+        label: "HTML content item",
       },
       {
         value: "https://ns.adobe.com/personalization/message/in-app",
-        label: "In app message"
+        label: "In app message",
       },
       {
         value: "https://ns.adobe.com/personalization/json-content-item",
-        label: "JSON content item"
+        label: "JSON content item",
       },
       {
         value: "https://ns.adobe.com/personalization/measurement",
-        label: "Measurement item"
+        label: "Measurement item",
       },
       {
         value: "https://ns.adobe.com/personalization/message/feed-item",
-        label: "Message feed item"
+        label: "Message feed item",
       },
       {
         value: "https://ns.adobe.com/personalization/message/native-alert",
-        label: "Native alert message"
+        label: "Native alert message",
       },
       {
         value: "https://ns.adobe.com/personalization/redirect-item",
-        label: "Redirect item"
+        label: "Redirect item",
       },
       {
         value: "https://ns.adobe.com/personalization/ruleset-item",
-        label: "Ruleset item"
-      }
-    ]
+        label: "Ruleset item",
+      },
+    ],
   }),
   fieldArray({
     name: "surfaces",
@@ -91,9 +91,9 @@ const subscribeRulesetItemsForm = form({}, [
           return testContext.createError({ message });
         }
         return true;
-      }
-    )
-  })
+      },
+    ),
+  }),
 ]);
 
 renderForm(subscribeRulesetItemsForm);

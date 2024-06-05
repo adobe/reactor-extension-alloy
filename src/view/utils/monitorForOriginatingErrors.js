@@ -22,7 +22,7 @@ const monitorForOriginatingErrors = once(() => {
   // UserReportableError will go unhandled or not. We only want
   // to log the underlying error if the UserReportableError is
   // unhandled.
-  window.addEventListener("error", event => {
+  window.addEventListener("error", (event) => {
     const originatingErrors = [];
     let error = event.error;
 
@@ -37,10 +37,10 @@ const monitorForOriginatingErrors = once(() => {
       error = error.originatingError;
     }
 
-    originatingErrors.forEach(originatingError => {
+    originatingErrors.forEach((originatingError) => {
       console.error(
         "The subsequent UserReportableError was caused by:\n",
-        originatingError
+        originatingError,
       );
     });
   });

@@ -15,7 +15,7 @@ import fetchFromPlatform from "./fetchFromPlatform";
 import UserReportableError from "../errors/userReportableError";
 
 const metaClass = encodeURIComponent(
-  "https://ns.adobe.com/xdm/context/experienceevent"
+  "https://ns.adobe.com/xdm/context/experienceevent",
 );
 
 export default async ({
@@ -25,7 +25,7 @@ export default async ({
   search,
   limit,
   start,
-  signal
+  signal,
 }) => {
   const path = `/data/foundation/schemaregistry/tenant/schemas`;
 
@@ -51,7 +51,7 @@ export default async ({
   const headers = {
     // request a summary response with title , $id , meta:altId , and version attributes
     Accept: "application/vnd.adobe.xed-id+json",
-    "x-sandbox-name": sandboxName
+    "x-sandbox-name": sandboxName,
   };
 
   let parsedResponse;
@@ -62,20 +62,20 @@ export default async ({
       path,
       params,
       headers,
-      signal
+      signal,
     });
   } catch (e) {
     if (e.name === "AbortError") {
       throw e;
     }
     throw new UserReportableError("Failed to load schema metadata.", {
-      originatingError: e
+      originatingError: e,
     });
   }
 
   return {
     results: parsedResponse.parsedBody.results,
     // eslint-disable-next-line no-underscore-dangle
-    nextPage: parsedResponse.parsedBody._page.next
+    nextPage: parsedResponse.parsedBody._page.next,
   };
 };

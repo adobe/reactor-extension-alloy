@@ -15,7 +15,7 @@ import createNetworkLogger from "../../helpers/runtime/createNetworkLogger";
 import addHtmlToBody from "../../helpers/runtime/addHtmlToBody";
 import {
   SECONDARY_TEST_PAGE,
-  TEST_PAGE
+  TEST_PAGE,
 } from "../../helpers/runtime/constants/url";
 import getReturnedEcid from "../../helpers/runtime/getReturnedEcid";
 import appendLaunchLibrary from "../../helpers/runtime/appendLaunchLibrary";
@@ -31,11 +31,11 @@ const container = {
           {
             name: "alloy",
             edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:AditiTest",
-            thirdPartyCookiesEnabled: false
-          }
-        ]
-      }
-    }
+            thirdPartyCookiesEnabled: false,
+          },
+        ],
+      },
+    },
   },
   rules: [
     {
@@ -44,17 +44,17 @@ const container = {
       events: [
         {
           modulePath: "sandbox/pageTop.js",
-          settings: {}
-        }
+          settings: {},
+        },
       ],
       actions: [
         {
           modulePath: "adobe-alloy/dist/lib/actions/sendEvent/index.js",
           settings: {
-            instanceName: "alloy"
-          }
-        }
-      ]
+            instanceName: "alloy",
+          },
+        },
+      ],
     },
     {
       id: "RL1653692204047",
@@ -62,41 +62,41 @@ const container = {
       events: [
         {
           modulePath: "sandbox/click.js",
-          settings: {}
-        }
+          settings: {},
+        },
       ],
       actions: [
         {
           modulePath:
             "adobe-alloy/dist/lib/actions/redirectWithIdentity/index.js",
           settings: {
-            instanceName: "alloy"
-          }
-        }
-      ]
-    }
+            instanceName: "alloy",
+          },
+        },
+      ],
+    },
   ],
   property: {
     name: "Sandbox property",
     settings: {
       id: "PR12345",
       domains: ["adobe.com", "example.com"],
-      undefinedVarsReturnEmpty: false
-    }
+      undefinedVarsReturnEmpty: false,
+    },
   },
   company: {
-    orgId: "5BFE274A5F6980A50A495C08@AdobeOrg"
+    orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
   },
   environment: {
     id: "EN00000000000000000000000000000000",
-    stage: "development"
+    stage: "development",
   },
   buildInfo: {
     turbineVersion: "27.2.1",
     turbineBuildDate: "2022-05-27T22:57:44.929Z",
     buildDate: "2022-05-27T22:57:44.929Z",
-    environment: "development"
-  }
+    environment: "development",
+  },
 };
 
 fixture("Redirect with identity")
@@ -111,7 +111,7 @@ test.skip("Redirects with an identity", async () => {
   await appendLaunchLibrary(container);
 
   await addHtmlToBody(
-    `<a href="${SECONDARY_TEST_PAGE}"><div id="mylink">My link</div></a>`
+    `<a href="${SECONDARY_TEST_PAGE}"><div id="mylink">My link</div></a>`,
   );
   // The requestLogger.count method uses TestCafe's smart query
   // assertion mechanism, so it will wait for the request to be
@@ -124,10 +124,10 @@ test.skip("Redirects with an identity", async () => {
   // Events are: page load, link click, page load.
   await t.expect(networkLogger.edgeEndpointLogs.count(() => true)).eql(3);
   const pageLoad1Ecid = getReturnedEcid(
-    networkLogger.edgeEndpointLogs.requests[0]
+    networkLogger.edgeEndpointLogs.requests[0],
   );
   const pageLoad2Ecid = getReturnedEcid(
-    networkLogger.edgeEndpointLogs.requests[2]
+    networkLogger.edgeEndpointLogs.requests[2],
   );
   await t.expect(pageLoad1Ecid).eql(pageLoad2Ecid);
 });

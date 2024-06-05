@@ -27,7 +27,7 @@ import {
   TabList,
   TabPanels,
   Tabs,
-  View
+  View,
 } from "@adobe/react-spectrum";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import PropTypes from "prop-types";
@@ -37,28 +37,31 @@ import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmi
 import Heading from "../components/typography/heading";
 import BasicSection, { bridge as basicSectionBridge } from "./basicSection";
 import EdgeConfigurationsSection, {
-  bridge as edgeConfigurationsSectionBridge
+  bridge as edgeConfigurationsSectionBridge,
 } from "./edgeConfigurationsSection";
 import PrivacySection, {
-  bridge as privacySectionBridge
+  bridge as privacySectionBridge,
 } from "./privacySection";
 import IdentitySection, {
-  bridge as identitySectionBridge
+  bridge as identitySectionBridge,
 } from "./identitySection";
 import PersonalizationSection, {
-  bridge as personalizationSectionBridge
+  bridge as personalizationSectionBridge,
 } from "./personalizationSection";
 import DataCollectionSection, {
-  bridge as dataCollectionSectionBridge
+  bridge as dataCollectionSectionBridge,
 } from "./dataCollectionSection";
 import OverridesSection, {
-  bridge as overridesBridge
+  bridge as overridesBridge,
 } from "../components/overrides";
 import AdvancedSection, {
-  bridge as advancedSectionBridge
+  bridge as advancedSectionBridge,
 } from "./advancedSection";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
 import { FIELD_NAMES } from "../components/overrides/utils";
+import StreamingMediaSection, {
+  bridge as mediaBridge,
+} from "./streamingMediaSection";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -68,19 +71,20 @@ const sectionBridges = [
   personalizationSectionBridge,
   dataCollectionSectionBridge,
   overridesBridge,
-  advancedSectionBridge
+  advancedSectionBridge,
+  mediaBridge,
 ];
 
 /**
  * Produces a function that, when called, calls the method from
  * all section bridges and merges the result into a single object.
  */
-const getMergedBridgeMethod = methodName => {
-  return async params => {
+const getMergedBridgeMethod = (methodName) => {
+  return async (params) => {
     const bridgeMethodResults = await Promise.all(
-      sectionBridges.map(bridge => {
+      sectionBridges.map((bridge) => {
         return bridge[methodName] ? bridge[methodName](params) : {};
-      })
+      }),
     );
     return Object.assign(...bridgeMethodResults);
   };
@@ -88,7 +92,7 @@ const getMergedBridgeMethod = methodName => {
 
 const getInstanceDefaults = getMergedBridgeMethod("getInstanceDefaults");
 const getInitialInstanceValues = getMergedBridgeMethod(
-  "getInitialInstanceValues"
+  "getInitialInstanceValues",
 );
 const getInstanceSettings = getMergedBridgeMethod("getInstanceSettings");
 
@@ -104,31 +108,31 @@ const getInitialValues = async ({ initInfo, context }) => {
           initInfo,
           isFirstInstance: instanceSettingsIndex === 0,
           instanceSettings,
-          context
+          context,
         });
-      })
+      }),
     );
   } else {
     instancesInitialValues = [
-      await getInstanceDefaults({ initInfo, isFirstInstance: true, context })
+      await getInstanceDefaults({ initInfo, isFirstInstance: true, context }),
     ];
   }
 
   return {
-    instances: instancesInitialValues
+    instances: instancesInitialValues,
   };
 };
 
 const getSettings = async ({ values, initInfo }) => {
   return {
     instances: await Promise.all(
-      values.instances.map(instanceValues => {
+      values.instances.map((instanceValues) => {
         return getInstanceSettings({
           initInfo,
-          instanceValues
+          instanceValues,
         });
-      })
-    )
+      }),
+    ),
   };
 };
 
@@ -138,21 +142,21 @@ const validationSchema = object().shape({
       return bridge.instanceValidationSchema
         ? instanceSchema.concat(bridge.instanceValidationSchema)
         : instanceSchema;
-    }, object())
-  )
+    }, object()),
+  ),
 });
 
 const Configuration = ({ initInfo, context }) => {
   const [{ value: instances }] = useField("instances");
   const [selectedTabKey, setSelectedTabKey] = useState("0");
 
-  useNewlyValidatedFormSubmission(errors => {
+  useNewlyValidatedFormSubmission((errors) => {
     // If the user just tried to save the configuration and there's
     // a validation error, make sure the first accordion item containing
     // an error is shown.
     if (errors && errors.instances) {
       const instanceIndexContainingErrors = errors.instances.findIndex(
-        instance => instance
+        (instance) => instance,
       );
       setSelectedTabKey(String(instanceIndexContainingErrors));
     }
@@ -162,7 +166,7 @@ const Configuration = ({ initInfo, context }) => {
     <div>
       <FieldArray
         name="instances"
-        render={arrayHelpers => {
+        render={(arrayHelpers) => {
           return (
             <div>
               <Flex alignItems="center">
@@ -174,7 +178,7 @@ const Configuration = ({ initInfo, context }) => {
                     const newInstance = await getInstanceDefaults({
                       initInfo,
                       isFirstInstance: false,
-                      context
+                      context,
                     });
                     arrayHelpers.push(newInstance);
                     setSelectedTabKey(String(instances.length));
@@ -225,6 +229,9 @@ const Configuration = ({ initInfo, context }) => {
                         <DataCollectionSection
                           instanceFieldName={instanceFieldName}
                         />
+                        <StreamingMediaSection
+                          instanceFieldName={instanceFieldName}
+                        />
                         <OverridesSection
                           initInfo={initInfo}
                           instanceFieldName={instanceFieldName}
@@ -246,7 +253,7 @@ const Configuration = ({ initInfo, context }) => {
                               >
                                 Delete instance
                               </Button>
-                              {close => (
+                              {(close) => (
                                 <Dialog data-test-id="resourceUsageDialog">
                                   <HeadingSlot>Resource Usage</HeadingSlot>
                                   <Divider />
@@ -301,7 +308,7 @@ const Configuration = ({ initInfo, context }) => {
 
 Configuration.propTypes = {
   initInfo: PropTypes.object.isRequired,
-  context: PropTypes.object.isRequired
+  context: PropTypes.object.isRequired,
 };
 
 const ConfigurationExtensionView = () => {

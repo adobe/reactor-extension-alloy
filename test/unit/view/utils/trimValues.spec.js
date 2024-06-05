@@ -22,7 +22,7 @@ describe("trimValues", () => {
     [true, true, "booleans"],
     [null, null, "null"],
     [undefined, undefined, "undefined"],
-    [NaN, NaN, "NaN"]
+    [NaN, NaN, "NaN"],
   ].forEach(([value, expected, description]) => {
     let testTitle = "should trim";
     if (description) {

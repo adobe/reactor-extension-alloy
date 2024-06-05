@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 import { OBJECT_ANALYTICS, OBJECT_JSON } from "../constants/schemaType";
 import { solutionsContext } from "../../../dataElements/variable/components/dataVariable";
 
-export default solutions => ({
+export default (solutions) => ({
   type: "object",
   properties: {
     data: {
@@ -22,19 +22,23 @@ export default solutions => ({
         __adobe: {
           title: "Adobe",
           type: "object",
-          properties: solutions.reduce((accumulator, currentValue) => {
-            accumulator[currentValue] = {
+          properties: solutions.reduce((accumulator, solutionKey) => {
+            // Temporary support for 'audienceManager' property that should have been lowercased.
+            const solutionKeyLower = solutionKey.toLowerCase();
+            accumulator[solutionKeyLower] = {
               type:
-                currentValue === "analytics" ? OBJECT_ANALYTICS : OBJECT_JSON,
+                solutionKeyLower === "analytics"
+                  ? OBJECT_ANALYTICS
+                  : OBJECT_JSON,
               expandPaths: false,
               title: solutionsContext.find(
-                ([solution]) => currentValue === solution
-              )[1]
+                ([solution]) => solutionKeyLower === solution,
+              )[1],
             };
             return accumulator;
-          }, {})
-        }
-      }
-    }
-  }
+          }, {}),
+        },
+      },
+    },
+  },
 });

@@ -24,9 +24,9 @@ export default function copyPropertiesIfValueDifferentThanDefault({
   toObj,
   fromObj,
   defaultsObj,
-  keys
+  keys,
 }) {
-  keys.forEach(key => {
+  keys.forEach((key) => {
     const fromValue = fromObj[key];
     const defaultValue = defaultsObj[key];
 
@@ -41,7 +41,7 @@ export default function copyPropertiesIfValueDifferentThanDefault({
       const sortedDefaultValue = defaultValue.slice().sort();
       if (
         sortedFromValue.some(
-          (value, index) => value !== sortedDefaultValue[index]
+          (value, index) => value !== sortedDefaultValue[index],
         )
       ) {
         toObj[key] = fromValue;
@@ -58,7 +58,7 @@ export default function copyPropertiesIfValueDifferentThanDefault({
         toObj: nestedToObj,
         fromObj: fromValue,
         defaultsObj: defaultValue,
-        keys: Object.keys(fromValue)
+        keys: Object.keys(fromValue),
       });
       if (Object.keys(nestedToObj).length > 0) {
         toObj[key] = nestedToObj;

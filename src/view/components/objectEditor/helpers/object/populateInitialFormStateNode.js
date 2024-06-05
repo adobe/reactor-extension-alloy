@@ -16,7 +16,7 @@ export default ({
   formStateNode,
   value,
   getInitialFormStateNode,
-  nodePath
+  nodePath,
 }) => {
   const { schema } = formStateNode;
   // Note if we aren't provided properties, we don't supported the
@@ -41,7 +41,7 @@ export default ({
       schema: propertySchema,
       value: propertyValue,
       nodePath: nodePath !== "" ? `${nodePath}.${propertyName}` : propertyName,
-      existingFormStateNode: formStateNode.properties?.[propertyName]
+      existingFormStateNode: formStateNode.properties?.[propertyName],
     });
     memo[propertyName] = propertyFormStateNode;
     return memo;

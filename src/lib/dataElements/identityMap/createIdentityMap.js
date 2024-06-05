@@ -16,7 +16,7 @@ governing permissions and limitations under the License.
  * without identifiers are also excluded.
  */
 module.exports = ({ logger }) => {
-  return settings => {
+  return (settings) => {
     // settings _are_ the identity map
     return Object.keys(settings).reduce((newIdentityMap, namespace) => {
       const filteredIdentifiers = settings[namespace].filter(({ id }, i) => {
@@ -24,7 +24,7 @@ module.exports = ({ logger }) => {
         if (!isValidId) {
           logger.log(
             `The identifier at ${namespace}[${i}] was removed from the identity map because its ID is not a populated string. Its ID value is:`,
-            id
+            id,
           );
         }
         return isValidId;
@@ -34,7 +34,7 @@ module.exports = ({ logger }) => {
         newIdentityMap[namespace] = filteredIdentifiers;
       } else {
         logger.log(
-          `The ${namespace} namespace was removed from the identity map because it contains no identifiers.`
+          `The ${namespace} namespace was removed from the identity map because it contains no identifiers.`,
         );
       }
       return newIdentityMap;

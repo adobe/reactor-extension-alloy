@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import { ClientFunction } from "testcafe";
 
-const renderReactElement = ClientFunction(reactElement => {
+const renderReactElement = ClientFunction((reactElement) => {
   window.renderSerializedReactElement(reactElement);
 });
 

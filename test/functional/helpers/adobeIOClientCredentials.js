@@ -41,7 +41,7 @@ if (clientSecret && (privateKeyPath || privateKeyContents)) {
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(
-      `Failed to read private key at ${privateKeyPath}. Please ensure the value provided in the ${PRIVATE_KEY_FILE_ENV_VAR_NAME} environment variable is correct.`
+      `Failed to read private key at ${privateKeyPath}. Please ensure the value provided in the ${PRIVATE_KEY_FILE_ENV_VAR_NAME} environment variable is correct.`,
     );
   }
 
@@ -53,13 +53,13 @@ if (clientSecret && (privateKeyPath || privateKeyContents)) {
       clientSecret,
       privateKey,
       metaScopes: ["https://ims-na1.adobelogin.com/s/ent_dataservices_sdk"],
-      ims: "https://ims-na1.adobelogin.com"
+      ims: "https://ims-na1.adobelogin.com",
     };
   }
 } else {
   // eslint-disable-next-line no-console
   console.error(
-    `One or more environment variables required to obtain an IMS token are not set. Please ensure that ${PRIVATE_KEY_FILE_ENV_VAR_NAME}, and ${CLIENT_SECRET_ENV_VAR_NAME} are set.`
+    `One or more environment variables required to obtain an IMS token are not set. Please ensure that ${PRIVATE_KEY_FILE_ENV_VAR_NAME}, and ${CLIENT_SECRET_ENV_VAR_NAME} are set.`,
   );
 }
 

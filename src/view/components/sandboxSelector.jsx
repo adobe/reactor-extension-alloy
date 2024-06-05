@@ -37,7 +37,7 @@ import sandboxItems from "./sandboxItems";
  * @param {Sandbox} sandbox
  * @returns {string}
  */
-const getKey = sandbox => sandbox.name;
+const getKey = (sandbox) => sandbox.name;
 
 /**
  * @param {Object} props
@@ -52,7 +52,7 @@ const getKey = sandbox => sandbox.name;
 const SandboxSelector = ({ initInfo, name, ...otherProps }) => {
   const {
     company: { orgId },
-    tokens: { imsAccess }
+    tokens: { imsAccess },
   } = initInfo;
 
   /** @type {import("@adobe/react-spectrum").AsyncListData<Sandbox, string>} */
@@ -61,29 +61,29 @@ const SandboxSelector = ({ initInfo, name, ...otherProps }) => {
       if (!orgId || !imsAccess) {
         const missingParams = Object.entries({
           orgId,
-          imsAccess
+          imsAccess,
         })
           .filter(([value]) => value)
           .map(([key]) => key)
           .join(", ");
         return {
           items: [],
-          error: new Error(`Missing required parameters: ${missingParams}`)
+          error: new Error(`Missing required parameters: ${missingParams}`),
         };
       }
       /** @type {{ results: Sandbox[] }} */
       const { results: sandboxes } = await fetchSandboxes({
         orgId,
         imsAccess,
-        signal
+        signal,
       });
       return {
         items: sandboxes,
         initialSelectedKeys:
           sandboxes.length === 1 ? [getKey(sandboxes[0])] : [],
-        getKey
+        getKey,
       };
-    }
+    },
   });
 
   const [{ value: sandbox }, , { setValue: setSandbox }] = useField(name);
@@ -91,7 +91,7 @@ const SandboxSelector = ({ initInfo, name, ...otherProps }) => {
     if (sandboxList.items.length === 1 && !sandbox) {
       setSandbox(sandboxList.items[0].name);
     } else {
-      const defaultSandbox = sandboxList.items.find(s => s.isDefault);
+      const defaultSandbox = sandboxList.items.find((s) => s.isDefault);
       if (defaultSandbox && !sandbox) {
         setSandbox(defaultSandbox.name);
       }
@@ -118,13 +118,13 @@ const SandboxSelector = ({ initInfo, name, ...otherProps }) => {
 SandboxSelector.propTypes = {
   initInfo: PropTypes.shape({
     company: PropTypes.shape({
-      orgId: PropTypes.string.isRequired
+      orgId: PropTypes.string.isRequired,
     }).isRequired,
     tokens: PropTypes.shape({
-      imsAccess: PropTypes.string.isRequired
-    }).isRequired
+      imsAccess: PropTypes.string.isRequired,
+    }).isRequired,
   }).isRequired,
-  name: PropTypes.string.isRequired
+  name: PropTypes.string.isRequired,
 };
 
 export default SandboxSelector;

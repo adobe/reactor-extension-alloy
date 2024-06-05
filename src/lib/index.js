@@ -11,8 +11,10 @@ governing permissions and limitations under the License.
 
 const createEventMergeIdCache = require("./createEventMergeIdCache");
 const createSendEventCallbackStorage = require("./createSendEventCallbackStorage");
+const createMediaCollectionSessionStorage = require("./createMediaCollectionSessionStorage");
 const createVariableStore = require("./createVariableStore");
 
 exports.eventMergeIdCache = createEventMergeIdCache();
 exports.sendEventCallbackStorage = createSendEventCallbackStorage();
+exports.mediaCollectionSessionStorage = createMediaCollectionSessionStorage();
 exports.variableStore = createVariableStore();

@@ -27,20 +27,20 @@ const getInitialValues = ({ initInfo }) => {
     instanceName = initInfo.extensionSettings.instances[0].name,
     renderDecisions = false,
     responseHeaders = "",
-    responseBody = ""
+    responseBody = "",
   } = initInfo.settings || {};
 
   return {
     instanceName,
     renderDecisions,
     responseHeaders,
-    responseBody
+    responseBody,
   };
 };
 
 const getSettings = ({ values }) => {
   const settings = {
-    instanceName: values.instanceName
+    instanceName: values.instanceName,
   };
   // Only add if the value is different than the default (false).
   if (values.renderDecisions) {
@@ -58,11 +58,11 @@ const getSettings = ({ values }) => {
 const validationSchema = object().shape({
   responseHeaders: string().matches(
     singleDataElementRegex,
-    DATA_ELEMENT_REQUIRED
+    DATA_ELEMENT_REQUIRED,
   ),
   responseBody: string()
     .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-    .required("Please provide a response body.")
+    .required("Please provide a response body."),
 });
 
 const ApplyResponse = () => {

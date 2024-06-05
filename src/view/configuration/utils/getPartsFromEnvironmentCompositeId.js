@@ -15,12 +15,12 @@ governing permissions and limitations under the License.
  * and the environment name. If the composite ID isn't actually
  * a composite ID, the returned environment name will be undefined.
  */
-const getPartsFromEnvironmentCompositeId = compositeId => {
+const getPartsFromEnvironmentCompositeId = (compositeId) => {
   const [edgeConfigId, environmentName] = compositeId.split(":");
 
   return {
     edgeConfigId,
-    environmentName
+    environmentName,
   };
 };
 

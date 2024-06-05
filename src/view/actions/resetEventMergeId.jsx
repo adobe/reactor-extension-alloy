@@ -23,7 +23,7 @@ import DataElementSelector from "../components/dataElementSelector";
 const getInitialValues = ({ initInfo }) => {
   const { eventMergeId = "" } = initInfo.settings || {};
   return {
-    eventMergeId
+    eventMergeId,
   };
 };
 
@@ -34,7 +34,7 @@ const getSettings = ({ values }) => {
 const validationSchema = object().shape({
   eventMergeId: string()
     .required(DATA_ELEMENT_REQUIRED)
-    .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+    .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
 });
 
 const ResetEventMergeId = () => {

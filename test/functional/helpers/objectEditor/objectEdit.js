@@ -22,10 +22,10 @@ export default {
   selectWholePopulationStrategy: async () => {
     await spectrum.radio("wholePopulationStrategyField").click();
   },
-  enterValue: async text => {
+  enterValue: async (text) => {
     await spectrum.textField("valueField").typeText(text);
   },
-  expectValue: async text => {
+  expectValue: async (text) => {
     await spectrum.textField("valueField").expectValue(text);
-  }
+  },
 };

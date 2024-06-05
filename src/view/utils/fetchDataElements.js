@@ -21,14 +21,14 @@ const fetchDataElements = async ({
   propertyId,
   search = "",
   page = 1,
-  signal
+  signal,
 }) => {
   const allResults = [];
   let nextPage = page;
   while (allResults.length < 2 && nextPage) {
     const params = {
       "page[size]": "100",
-      "page[number]": `${nextPage}`
+      "page[number]": `${nextPage}`,
     };
     if (search !== "") {
       params["filter[name]"] = `CONTAINS ${search}`;
@@ -42,7 +42,7 @@ const fetchDataElements = async ({
         imsAccess,
         path: `/properties/${propertyId}/data_elements`,
         params: new URLSearchParams(params),
-        signal
+        signal,
       });
     } catch (e) {
       if (e.name === "AbortError") {
@@ -50,21 +50,21 @@ const fetchDataElements = async ({
       }
 
       throw new UserReportableError("Failed to load data elements.", {
-        originatingError: e
+        originatingError: e,
       });
     }
 
     parsedResponse.parsedBody.data
       .filter(
         ({ attributes: { delegate_descriptor_id: other } }) =>
-          DELEGATE_DESCRIPTOR_ID === other
+          DELEGATE_DESCRIPTOR_ID === other,
       )
       .map(({ id, attributes: { name, settings } }) => ({
         id,
         name,
-        settings: JSON.parse(settings)
+        settings: JSON.parse(settings),
       }))
-      .forEach(result => allResults.push(result));
+      .forEach((result) => allResults.push(result));
 
     nextPage = parsedResponse.parsedBody.meta.pagination.next_page;
   }

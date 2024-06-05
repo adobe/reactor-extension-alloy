@@ -19,12 +19,12 @@ const uuidRegex =
 
 createExtensionViewFixture({
   title: "Event Merge ID View",
-  viewPath: "dataElements/eventMergeId.html"
+  viewPath: "dataElements/eventMergeId.html",
 });
 
 runCommonExtensionViewTests();
 
-test("returns valid settings", async t => {
+test("returns valid settings", async (t) => {
   await extensionViewController.init();
   await extensionViewController.expectIsValid();
   // We can't use extensionViewController.expectSettings because we don't know
@@ -37,11 +37,11 @@ test("returns valid settings", async t => {
 test("does not modify cacheId if initialized with a cacheId", async () => {
   await extensionViewController.init({
     settings: {
-      cacheId: "ab3d0f9b-6faa-40c2-bf68-a77a9bbb686a"
-    }
+      cacheId: "ab3d0f9b-6faa-40c2-bf68-a77a9bbb686a",
+    },
   });
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    cacheId: "ab3d0f9b-6faa-40c2-bf68-a77a9bbb686a"
+    cacheId: "ab3d0f9b-6faa-40c2-bf68-a77a9bbb686a",
   });
 });

@@ -26,5 +26,13 @@ module.exports =
       customCode(variableStore[dataElementCacheId], event);
     }
 
+    // This is a temporary fix to support the 'audienceManager' property that should be lowercased.
+    // eslint-disable-next-line no-underscore-dangle
+    const adobe = variableStore[dataElementCacheId]?.__adobe || {};
+    if (adobe.audienceManager) {
+      adobe.audiencemanager = adobe.audienceManager;
+      delete adobe.audienceManager;
+    }
+
     return Promise.resolve();
   };

@@ -14,7 +14,6 @@ import React from "react";
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import getDimensionStyle from "../../utils/getDimensionStyle";
-import "./body.styl";
 
 /**
  * Provides typography styling for a block of text (a paragraph).
@@ -32,7 +31,7 @@ const Body = ({
   size = "S",
   isSerif,
   marginTop,
-  marginBottom
+  marginBottom,
 }) => {
   const style = {};
 
@@ -48,7 +47,7 @@ const Body = ({
     <p
       data-test-id={dataTestId}
       className={classNames("spectrum-Body", `spectrum-Body--size${size}`, {
-        "spectrum-Body--serif": isSerif
+        "spectrum-Body--serif": isSerif,
       })}
       style={style}
     >
@@ -65,5 +64,5 @@ Body.propTypes = {
   size: PropTypes.oneOf(["XXXL", "XXL", "XL", "L", "M", "S", "XS", "XXS"]),
   isSerif: PropTypes.bool,
   marginTop: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  marginBottom: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  marginBottom: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };

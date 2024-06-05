@@ -29,11 +29,12 @@ const normalizePath = (path = "/") => {
   return path.substring(0, end) || "/";
 };
 
-const isNonEmptyString = value => typeof value === "string" && value.length > 0;
+const isNonEmptyString = (value) =>
+  typeof value === "string" && value.length > 0;
 const startsWith = (str, prefix) => str.substr(0, prefix.length) === prefix;
 const includes = (arr, item) => arr.indexOf(item) !== -1;
 
-const parseSurface = surfaceString => {
+const parseSurface = (surfaceString) => {
   const matched = surfaceString.match(SURFACE_REGEX);
   return matched
     ? {
@@ -42,12 +43,12 @@ const parseSurface = surfaceString => {
           : "",
         authority: isNonEmptyString(matched[2]) ? matched[2].toLowerCase() : "",
         path: isNonEmptyString(matched[3]) ? normalizePath(matched[3]) : "/",
-        fragment: matched[4]
+        fragment: matched[4],
       }
     : null;
 };
 
-export const buildPageSurface = location => {
+export const buildPageSurface = (location) => {
   const host = location.host.toLowerCase();
   const path = location.pathname;
   return WEB + SURFACE_TYPE_DELIMITER + host + normalizePath(path);
@@ -58,7 +59,7 @@ const expandFragmentSurface = (surface, location) =>
     ? buildPageSurface(location) + surface
     : surface;
 
-export const validateSurface = surface => {
+export const validateSurface = (surface) => {
   const location = window.location;
   if (!surface) {
     return false;

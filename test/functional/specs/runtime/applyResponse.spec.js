@@ -27,22 +27,22 @@ const container = {
           {
             name: "alloy",
             edgeConfigId: "bc1a10e0-aee4-4e0e-ac5b-cdbb9abbec83:AditiTest",
-            thirdPartyCookiesEnabled: false
-          }
-        ]
-      }
-    }
+            thirdPartyCookiesEnabled: false,
+          },
+        ],
+      },
+    },
   },
   dataElements: {
     responseBody: {
       settings: {
-        path: "responseBody"
+        path: "responseBody",
       },
       cleanText: false,
       forceLowerCase: false,
       modulePath: "sandbox/javascriptVariable.js",
-      storageDuration: ""
-    }
+      storageDuration: "",
+    },
   },
   rules: [
     {
@@ -51,8 +51,8 @@ const container = {
       events: [
         {
           modulePath: "sandbox/click.js",
-          settings: {}
-        }
+          settings: {},
+        },
       ],
       actions: [
         {
@@ -60,33 +60,33 @@ const container = {
           settings: {
             instanceName: "alloy",
             responseBody: "%responseBody%",
-            renderDecisions: true
-          }
-        }
-      ]
-    }
+            renderDecisions: true,
+          },
+        },
+      ],
+    },
   ],
   property: {
     name: "Sandbox property",
     settings: {
       id: "PR12345",
       domains: ["adobe.com", "example.com"],
-      undefinedVarsReturnEmpty: false
-    }
+      undefinedVarsReturnEmpty: false,
+    },
   },
   company: {
-    orgId: "5BFE274A5F6980A50A495C08@AdobeOrg"
+    orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
   },
   environment: {
     id: "EN00000000000000000000000000000000",
-    stage: "development"
+    stage: "development",
   },
   buildInfo: {
     turbineVersion: "27.2.1",
     turbineBuildDate: "2022-05-27T22:57:44.929Z",
     buildDate: "2022-05-27T22:57:44.929Z",
-    environment: "development"
-  }
+    environment: "development",
+  },
 };
 
 const setupResponseBody = `
@@ -279,7 +279,7 @@ fixture("Apply response")
 test("Applies server response", async () => {
   await appendLaunchLibrary(container);
   await addHtmlToBody(
-    `<div id="personalization-container">Default Content</div>`
+    `<div id="personalization-container">Default Content</div>`,
   );
   // We trigger the applyResponse with a click because if we used pageTop the
   // personalization-container would not be in the DOM.

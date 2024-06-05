@@ -71,7 +71,7 @@ const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
 EdgeConfigurationSelectInputMethod.propTypes = {
   name: PropTypes.string.isRequired,
   initInfo: PropTypes.object.isRequired,
-  context: PropTypes.object
+  context: PropTypes.object,
 };
 
 export default EdgeConfigurationSelectInputMethod;

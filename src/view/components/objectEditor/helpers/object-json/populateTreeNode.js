@@ -33,7 +33,7 @@ const isFormStateValuePopulated = ({ value, items, populationStrategy }) => {
 
 const computePopulationAmount = ({
   formStateNode,
-  isAncestorUsingWholePopulationStrategy
+  isAncestorUsingWholePopulationStrategy,
 }) => {
   if (isAncestorUsingWholePopulationStrategy) {
     return BLANK;
@@ -52,7 +52,7 @@ export default ({
   isAncestorUsingWholePopulationStrategy,
   confirmTouchedAtCurrentOrDescendantNode,
   errors,
-  touched
+  touched,
 }) => {
   if (anyErrorsTouched(errors, touched)) {
     confirmTouchedAtCurrentOrDescendantNode();
@@ -60,11 +60,11 @@ export default ({
 
   treeNode.populationAmount = computePopulationAmount({
     formStateNode,
-    isAncestorUsingWholePopulationStrategy
+    isAncestorUsingWholePopulationStrategy,
   });
 
   treeNode.infoTip = computePopulationNote({
     formStateNode,
-    isAncestorUsingWholePopulationStrategy
+    isAncestorUsingWholePopulationStrategy,
   });
 };

@@ -24,7 +24,7 @@ import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
  */
 const validate = ({
   formStateNode,
-  confirmDataPopulatedAtCurrentOrDescendantNode = () => {}
+  confirmDataPopulatedAtCurrentOrDescendantNode = () => {},
 }) => {
   const { schema } = formStateNode;
 
@@ -38,9 +38,9 @@ const validate = ({
     // a single time. This is primarily for optimization but it's
     // also easier to reason about from the parent node's perspective.
     confirmDataPopulatedAtCurrentOrDescendantNode: once(
-      confirmDataPopulatedAtCurrentOrDescendantNode
+      confirmDataPopulatedAtCurrentOrDescendantNode,
     ),
-    validate
+    validate,
   });
 
   return errors;
@@ -48,6 +48,6 @@ const validate = ({
 
 // Avoid exposing all of validate's parameters since
 // they're only used internally for recursion.
-export default formStateNode => {
+export default (formStateNode) => {
   return validate({ formStateNode });
 };

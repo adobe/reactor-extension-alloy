@@ -24,22 +24,22 @@ const generateOptionsWithDataElement = (container, prefix, options) =>
   [...options, "DataElement"].reduce(
     (elements, option) => {
       elements[`${prefix}${option}Radio`] = container.radio(
-        `${prefix}${option}Radio`
+        `${prefix}${option}Radio`,
       );
       return elements;
     },
     {
       [`${prefix}DataElementField`]: container.textField(
-        `${prefix}DataElementField`
-      )
-    }
+        `${prefix}DataElementField`,
+      ),
+    },
   );
 
 const instanceNamePicker = spectrum.picker("instanceNamePicker");
 const identityMapField = spectrum.textField("identityMapField");
 const inputMethodFormRadio = spectrum.radio("inputMethodFormRadio");
 const inputMethodDataElementRadio = spectrum.radio(
-  "inputMethodDataElementRadio"
+  "inputMethodDataElementRadio",
 );
 const addConsentButton = spectrum.button("addConsentButton");
 const consentObjects = [];
@@ -57,9 +57,9 @@ for (let i = 0; i < 3; i += 1) {
     ...generateOptionsWithDataElement(container, "gdprApplies", ["Yes", "No"]),
     ...generateOptionsWithDataElement(container, "gdprContainsPersonalData", [
       "Yes",
-      "No"
+      "No",
     ]),
-    deleteConsentButton: container.button("deleteConsentButton")
+    deleteConsentButton: container.button("deleteConsentButton"),
   });
 }
 const dataElementField = spectrum.textField("dataElementField");
@@ -68,22 +68,22 @@ const mockExtensionSettings = {
   instances: [
     {
       name: "alloy1",
-      edgeConfigId: "PR123"
+      edgeConfigId: "PR123",
     },
     {
       name: "alloy2",
-      edgeConfigId: "PR456"
-    }
-  ]
+      edgeConfigId: "PR456",
+    },
+  ],
 };
 
 createExtensionViewFixture({
   title: "Set Consent View",
-  viewPath: "actions/setConsent.html"
+  viewPath: "actions/setConsent.html",
 });
 
 runCommonExtensionViewTests({
-  extensionSettings: mockExtensionSettings
+  extensionSettings: mockExtensionSettings,
 });
 
 test("initializes form fields with settings containing a static consent array", async () => {
@@ -99,9 +99,9 @@ test("initializes form fields with settings containing a static consent array", 
           version: "2.0",
           value: "1234abcd",
           gdprApplies: false,
-          gdprContainsPersonalData: true
+          gdprContainsPersonalData: true,
         },
-        { standard: "Adobe", version: "2.0", value: "%dataelement2%" }
+        { standard: "Adobe", version: "2.0", value: "%dataelement2%" },
       ],
       edgeConfigOverrides: {
         production: {
@@ -109,60 +109,60 @@ test("initializes form fields with settings containing a static consent array", 
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: "6336ff95ba16ca1c07b4c0db"
-              }
-            }
+                datasetId: "6336ff95ba16ca1c07b4c0db",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: ["unifiedjsqeonly2"]
+            reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
-            idSyncContainerId: 23512312
+            idSyncContainerId: 23512312,
           },
           com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-          }
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+          },
         },
         staging: {
           sandbox: "prod",
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: "6336ff95ba16ca1c07b4c0db"
-              }
-            }
+                datasetId: "6336ff95ba16ca1c07b4c0db",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: ["unifiedjsqeonly2"]
+            reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
-            idSyncContainerId: 23512312
+            idSyncContainerId: 23512312,
           },
           com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-          }
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+          },
         },
         development: {
           sandbox: "prod",
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: "6336ff95ba16ca1c07b4c0db"
-              }
-            }
+                datasetId: "6336ff95ba16ca1c07b4c0db",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: ["unifiedjsqeonly2"]
+            reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
-            idSyncContainerId: 23512312
+            idSyncContainerId: 23512312,
           },
           com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-          }
-        }
-      }
-    }
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+          },
+        },
+      },
+    },
   });
   await instanceNamePicker.expectSelectedOptionLabel("alloy2");
   await identityMapField.expectValue("%dataelement1%");
@@ -229,46 +229,46 @@ test("initializes form fields with settings containing a static consent array", 
   await overrideViewSelectors.envTabs.production.expectSelected();
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
 
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
 
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
 });
 
@@ -285,10 +285,10 @@ test("initializes form fields with settings containing data elements for parts",
           version: "2.0",
           value: "%data2%",
           gdprApplies: "%data3%",
-          gdprContainsPersonalData: "%data4%"
-        }
-      ]
-    }
+          gdprContainsPersonalData: "%data4%",
+        },
+      ],
+    },
   });
   await instanceNamePicker.expectSelectedOptionLabel("alloy2");
   await identityMapField.expectValue("%data0%");
@@ -332,7 +332,7 @@ test("initializes form fields with settings containing data elements for parts",
   await consentObjects[1].gdprContainsPersonalDataNoRadio.expectUnchecked();
   await consentObjects[1].gdprContainsPersonalDataDataElementRadio.expectChecked();
   await consentObjects[1].gdprContainsPersonalDataDataElementField.expectValue(
-    "%data4%"
+    "%data4%",
   );
 });
 
@@ -342,8 +342,8 @@ test("initializes form fields with settings containing data element for consent"
     settings: {
       instanceName: "alloy2",
       identityMap: "%data1%",
-      consent: "%data2%"
-    }
+      consent: "%data2%",
+    },
   });
   await instanceNamePicker.expectSelectedOptionLabel("alloy2");
   await identityMapField.expectValue("%data1%");
@@ -356,7 +356,7 @@ test("initializes form fields with settings containing data element for consent"
 
 test("initializes form fields with no settings", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await instanceNamePicker.expectSelectedOptionLabel("alloy1");
   await identityMapField.expectValue("");
@@ -418,45 +418,45 @@ test("initializes form fields with no settings", async () => {
   await overrideViewSelectors.envTabs.production.expectSelected();
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue("");
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    ""
+    "",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    ""
+    "",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    ""
+    "",
   );
 
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue("");
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    ""
+    "",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    ""
+    "",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    ""
+    "",
   );
 
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue("");
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    ""
+    "",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    ""
+    "",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    ""
+    "",
   );
 });
 
 test("returns minimal valid settings", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await addConsentButton.click();
   await consentObjects[1].standardPicker.selectOption("IAB TCF");
@@ -473,33 +473,33 @@ test("returns minimal valid settings", async () => {
       {
         standard: "Adobe",
         version: "1.0",
-        value: { general: "in" }
+        value: { general: "in" },
       },
       {
         standard: "IAB TCF",
         version: "2.1",
         value: "1234abcd",
         gdprApplies: true,
-        gdprContainsPersonalData: false
+        gdprContainsPersonalData: false,
       },
       {
         standard: "Adobe",
         version: "2.0",
-        value: "%dataelement2%"
-      }
+        value: "%dataelement2%",
+      },
     ],
     edgeConfigOverrides: {
       development: {
         sandbox: "prod",
-        datastreamIdInputMethod: "select"
-      }
-    }
+        datastreamIdInputMethod: "select",
+      },
+    },
   });
 });
 
 test("returns full valid settings", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await instanceNamePicker.selectOption("alloy2");
   await identityMapField.typeText("%data0%");
@@ -518,20 +518,20 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await overrideViewSelectors.addReportSuiteButton.click();
   await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
   await overrideViewSelectors.envTabs.staging.expectExists();
   await overrideViewSelectors.envTabs.staging.click();
@@ -539,20 +539,20 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await overrideViewSelectors.addReportSuiteButton.click();
   await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
   await overrideViewSelectors.envTabs.development.expectExists();
   await overrideViewSelectors.envTabs.development.click();
@@ -560,20 +560,20 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await overrideViewSelectors.addReportSuiteButton.click();
   await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
 
   await extensionViewController.expectIsValid();
@@ -586,82 +586,82 @@ test("returns full valid settings", async () => {
         version: "2.2",
         value: "a",
         gdprApplies: false,
-        gdprContainsPersonalData: true
+        gdprContainsPersonalData: true,
       },
       {
         standard: "Adobe",
         version: "1.0",
-        value: { general: "out" }
-      }
+        value: { general: "out" },
+      },
     ],
     edgeConfigOverrides: {
       production: {
         com_adobe_experience_platform: {
           datasets: {
             event: {
-              datasetId: "6336ff95ba16ca1c07b4c0db"
-            }
-          }
+              datasetId: "6336ff95ba16ca1c07b4c0db",
+            },
+          },
         },
         com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
         },
         com_adobe_identity: {
-          idSyncContainerId: 23512312
+          idSyncContainerId: 23512312,
         },
         com_adobe_target: {
-          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
         },
         sandbox: "prod",
-        datastreamId: "1234abcd"
+        datastreamId: "1234abcd",
       },
       staging: {
         com_adobe_experience_platform: {
           datasets: {
             event: {
-              datasetId: "6336ff95ba16ca1c07b4c0db"
-            }
-          }
+              datasetId: "6336ff95ba16ca1c07b4c0db",
+            },
+          },
         },
         com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
         },
         com_adobe_identity: {
-          idSyncContainerId: 23512312
+          idSyncContainerId: 23512312,
         },
         com_adobe_target: {
-          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
         },
         sandbox: "prod",
-        datastreamId: "1234abcd"
+        datastreamId: "1234abcd",
       },
       development: {
         com_adobe_experience_platform: {
           datasets: {
             event: {
-              datasetId: "6336ff95ba16ca1c07b4c0db"
-            }
-          }
+              datasetId: "6336ff95ba16ca1c07b4c0db",
+            },
+          },
         },
         com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
         },
         com_adobe_identity: {
-          idSyncContainerId: 23512312
+          idSyncContainerId: 23512312,
         },
         com_adobe_target: {
-          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
         },
         sandbox: "prod",
-        datastreamId: "1234abcd"
-      }
-    }
+        datastreamId: "1234abcd",
+      },
+    },
   });
 });
 
 test("returns valid settings for guided form data elements", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await consentObjects[0].generalDataElementRadio.click();
   await consentObjects[0].generalDataElementField.typeText("%data1%");
@@ -673,7 +673,7 @@ test("returns valid settings for guided form data elements", async () => {
   await consentObjects[1].gdprAppliesDataElementField.typeText("%data3%");
   await consentObjects[1].gdprContainsPersonalDataDataElementRadio.click();
   await consentObjects[1].gdprContainsPersonalDataDataElementField.typeText(
-    "%data4%"
+    "%data4%",
   );
 
   await extensionViewController.expectIsValid();
@@ -683,28 +683,28 @@ test("returns valid settings for guided form data elements", async () => {
       {
         standard: "Adobe",
         version: "1.0",
-        value: { general: "%data1%" }
+        value: { general: "%data1%" },
       },
       {
         standard: "IAB TCF",
         version: "2.3",
         value: "%data2%",
         gdprApplies: "%data3%",
-        gdprContainsPersonalData: "%data4%"
-      }
+        gdprContainsPersonalData: "%data4%",
+      },
     ],
     edgeConfigOverrides: {
       development: {
         sandbox: "prod",
-        datastreamIdInputMethod: "select"
-      }
-    }
+        datastreamIdInputMethod: "select",
+      },
+    },
   });
 });
 
 test("returns valid settings for data element", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await inputMethodDataElementRadio.click();
   await dataElementField.typeText("%data2%");
@@ -715,15 +715,15 @@ test("returns valid settings for data element", async () => {
     edgeConfigOverrides: {
       development: {
         sandbox: "prod",
-        datastreamIdInputMethod: "select"
-      }
-    }
+        datastreamIdInputMethod: "select",
+      },
+    },
   });
 });
 
 test("deletes consent objects", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await consentObjects[0].standardPicker.selectOption("IAB TCF");
   await consentObjects[0].iabVersionField.typeText("1", { replace: true });
@@ -746,7 +746,7 @@ test("deletes consent objects", async () => {
 
 test("shows errors for empty values", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await addConsentButton.click();
   await consentObjects[0].adobeVersionPicker.selectOption("2.0");
@@ -767,7 +767,7 @@ test("shows errors for empty values", async () => {
 
 test("shows errors for things that aren't data elements and does not show errors for hidden invalid fields", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await consentObjects[0].generalDataElementRadio.click();
   await consentObjects[0].generalDataElementField.typeText("notadataelement");
@@ -777,14 +777,14 @@ test("shows errors for things that aren't data elements and does not show errors
   await consentObjects[1].iabValueField.typeText("notadataelement");
   await consentObjects[1].gdprAppliesDataElementRadio.click();
   await consentObjects[1].gdprAppliesDataElementField.typeText(
-    "%data1%%data2%"
+    "%data1%%data2%",
   );
   // force a blur, otherwise the error message that shows up will push everything
   // down, which will change the next click target.
   await consentObjects[1].gdprAppliesDataElementRadio.click();
   await consentObjects[1].gdprContainsPersonalDataDataElementRadio.click();
   await consentObjects[1].gdprContainsPersonalDataDataElementField.typeText(
-    "%notadataelement"
+    "%notadataelement",
   );
   // force a blur
   await consentObjects[1].gdprContainsPersonalDataDataElementRadio.click();
@@ -812,7 +812,7 @@ test("shows errors for things that aren't data elements and does not show errors
   await consentObjects[1].gdprAppliesYesRadio.click();
   await consentObjects[1].gdprContainsPersonalDataYesRadio.click();
   await consentObjects[2].valueField.typeText("%dataelement%", {
-    replace: true
+    replace: true,
   });
   await extensionViewController.expectIsValid();
 });
@@ -824,19 +824,19 @@ test("remembers the initial data element value", async () => {
       {
         standard: "Adobe",
         version: "1.0",
-        value: { general: "%dataelement1%" }
-      }
+        value: { general: "%dataelement1%" },
+      },
     ],
     edgeConfigOverrides: {
       development: {
         sandbox: "prod",
-        datastreamIdInputMethod: "select"
-      }
-    }
+        datastreamIdInputMethod: "select",
+      },
+    },
   };
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
-    settings
+    settings,
   });
 
   await consentObjects[0].generalInRadio.click();
@@ -849,11 +849,11 @@ test("remembers the initial data element value", async () => {
 test("can show the consent object form when consent is initially a data element", async () => {
   const settings = {
     instanceName: "alloy",
-    consent: "%dataElement1%"
+    consent: "%dataElement1%",
   };
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
-    settings
+    settings,
   });
 
   await inputMethodFormRadio.click();
@@ -863,7 +863,7 @@ test("can show the consent object form when consent is initially a data element"
 test.requestHooks(
   sandboxesMocks.singleDefault,
   datastreamsMocks.single,
-  datastreamMocks.withConfigOverrides
+  datastreamMocks.withConfigOverrides,
 )("populates overrides dropdowns with Blackbird config data", async () => {
   await extensionViewController.init({
     extensionSettings: {
@@ -871,10 +871,10 @@ test.requestHooks(
         {
           name: "alloy",
           edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
-          sandbox: "prod"
-        }
-      ]
-    }
+          sandbox: "prod",
+        },
+      ],
+    },
   });
 
   await overrideViewSelectors.envTabs.production.click();
@@ -882,19 +882,19 @@ test.requestHooks(
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectExists();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.openMenu();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectMenuOptionLabels(
-    ["6335faf30f5a161c0b4b1444"]
+    ["6335faf30f5a161c0b4b1444"],
   );
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.selectMenuOption(
-    "6335faf30f5a161c0b4b1444"
+    "6335faf30f5a161c0b4b1444",
   );
 
   await overrideViewSelectors.comboBoxes.idSyncContainerOverride.expectExists();
   await overrideViewSelectors.comboBoxes.idSyncContainerOverride.openMenu();
   await overrideViewSelectors.comboBoxes.idSyncContainerOverride.expectMenuOptionLabels(
-    ["107756", "107757"]
+    ["107756", "107757"],
   );
   await overrideViewSelectors.comboBoxes.idSyncContainerOverride.selectMenuOption(
-    "107756"
+    "107756",
   );
 
   await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.expectExists();
@@ -902,20 +902,20 @@ test.requestHooks(
   await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.expectMenuOptionLabels(
     [
       "aba5431a-9f59-f816-7d73-8e40c8f4c4fd",
-      "65d186ff-be14-dfa0-75fa-546d93bebf91"
-    ]
+      "65d186ff-be14-dfa0-75fa-546d93bebf91",
+    ],
   );
   await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.selectMenuOption(
-    "aba5431a-9f59-f816-7d73-8e40c8f4c4fd"
+    "aba5431a-9f59-f816-7d73-8e40c8f4c4fd",
   );
 
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].expectExists();
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].openMenu();
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].expectMenuOptionLabels(
-    ["unifiedjsqeonly2", "unifiedjsqeonlylatest", "unifiedjsqeonlymobileweb"]
+    ["unifiedjsqeonly2", "unifiedjsqeonlylatest", "unifiedjsqeonlymobileweb"],
   );
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].selectMenuOption(
-    "unifiedjsqeonlylatest"
+    "unifiedjsqeonlylatest",
   );
 
   await extensionViewController.expectIsValid();

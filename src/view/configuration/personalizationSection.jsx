@@ -30,7 +30,7 @@ export const bridge = {
     prehidingStyle: "",
     targetMigrationEnabled: false,
     personalizationStorageEnabled: false,
-    autoCollectPropositionInteractions: "always"
+    autoCollectPropositionInteractions: "always",
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
@@ -50,8 +50,8 @@ export const bridge = {
         "prehidingStyle",
         "targetMigrationEnabled",
         "personalizationStorageEnabled",
-        "autoCollectPropositionInteractions"
-      ]
+        "autoCollectPropositionInteractions",
+      ],
     });
 
     return instanceValues;
@@ -67,18 +67,18 @@ export const bridge = {
         "prehidingStyle",
         "targetMigrationEnabled",
         "personalizationStorageEnabled",
-        "autoCollectPropositionInteractions"
-      ]
+        "autoCollectPropositionInteractions",
+      ],
     });
 
     if (instanceSettings.autoCollectPropositionInteractions) {
       instanceSettings.autoCollectPropositionInteractions = {
-        AJO: instanceValues.autoCollectPropositionInteractions
+        AJO: instanceValues.autoCollectPropositionInteractions,
       };
     }
 
     return instanceSettings;
-  }
+  },
 };
 
 const PersonalizationSection = ({ instanceFieldName }) => {
@@ -152,7 +152,7 @@ const PersonalizationSection = ({ instanceFieldName }) => {
 };
 
 PersonalizationSection.propTypes = {
-  instanceFieldName: PropTypes.string.isRequired
+  instanceFieldName: PropTypes.string.isRequired,
 };
 
 export default PersonalizationSection;

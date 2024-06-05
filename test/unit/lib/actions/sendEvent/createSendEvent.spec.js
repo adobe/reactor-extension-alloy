@@ -22,33 +22,33 @@ describe("Send Event", () => {
       .createSpy()
       .and.returnValue(Promise.resolve({ foo: "bar" }));
     const instanceManager = jasmine.createSpyObj("instanceManager", {
-      getInstance: instance
+      getInstance: instance,
     });
     const sendEventCallbackStorage = jasmine.createSpyObj(
       "sendEventCallbackStorage",
-      ["triggerEvent"]
+      ["triggerEvent"],
     );
     const action = createSendEvent({
       instanceManager,
       sendEventCallbackStorage,
-      getConfigOverrides
+      getConfigOverrides,
     });
     const dataLayer = {
       fruits: [
         {
           name: "banana",
-          calories: 105
+          calories: 105,
         },
         {
           name: "blueberry",
-          calories: 5
-        }
-      ]
+          calories: 5,
+        },
+      ],
     };
     const promiseReturnedFromAction = action({
       instanceName: "myinstance",
       renderDecisions: true,
-      xdm: dataLayer
+      xdm: dataLayer,
     });
 
     expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
@@ -59,14 +59,14 @@ describe("Send Event", () => {
         fruits: [
           {
             name: "banana",
-            calories: 105
+            calories: 105,
           },
           {
             name: "blueberry",
-            calories: 5
-          }
-        ]
-      }
+            calories: 5,
+          },
+        ],
+      },
     });
     // Ensure the XDM object was cloned
     const xdmOption = instance.calls.argsFor(0)[1].xdm;
@@ -75,13 +75,13 @@ describe("Send Event", () => {
 
     return promiseReturnedFromAction.then(() => {
       expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalledWith({
-        foo: "bar"
+        foo: "bar",
       });
     });
   });
   it("throws an error when no matching instance found", () => {
     const instanceManager = jasmine.createSpyObj("instanceManager", [
-      "getInstance"
+      "getInstance",
     ]);
     const action = createSendEvent({ instanceManager, getConfigOverrides });
 
@@ -90,13 +90,13 @@ describe("Send Event", () => {
         instanceName: "myinstance",
         renderDecisions: true,
         xdm: {
-          foo: "bar"
-        }
+          foo: "bar",
+        },
       });
     }).toThrow(
       new Error(
-        'Failed to send event for instance "myinstance". No matching instance was configured with this name.'
-      )
+        'Failed to send event for instance "myinstance". No matching instance was configured with this name.',
+      ),
     );
   });
 
@@ -105,35 +105,35 @@ describe("Send Event", () => {
       .createSpy()
       .and.returnValue(Promise.resolve({ foo: "bar" }));
     getConfigOverrides.and.returnValue({
-      test: "test"
+      test: "test",
     });
     const instanceManager = jasmine.createSpyObj("instanceManager", {
-      getInstance: instance
+      getInstance: instance,
     });
     const sendEventCallbackStorage = jasmine.createSpyObj(
       "sendEventCallbackStorage",
-      ["triggerEvent"]
+      ["triggerEvent"],
     );
     const action = createSendEvent({
       instanceManager,
       sendEventCallbackStorage,
-      getConfigOverrides
+      getConfigOverrides,
     });
     const promiseReturnedFromAction = action({
       instanceName: "myinstance",
       renderDecisions: true,
       edgeConfigOverrides: {
         development: {
-          test: "test"
-        }
-      }
+          test: "test",
+        },
+      },
     });
 
     expect(instance).toHaveBeenCalledWith("sendEvent", {
       renderDecisions: true,
       edgeConfigOverrides: {
-        test: "test"
-      }
+        test: "test",
+      },
     });
 
     return promiseReturnedFromAction;

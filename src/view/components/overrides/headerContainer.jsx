@@ -33,7 +33,7 @@ const HeaderContainer = ({ largeHeader = false, children, ...props }) => {
 
 HeaderContainer.propTypes = {
   largeHeader: PropTypes.bool,
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };
 
 export default HeaderContainer;

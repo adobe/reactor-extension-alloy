@@ -29,7 +29,7 @@ const CodeField = ({
   name,
   description,
   language,
-  placeholder
+  placeholder,
 }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] =
     useField(name);
@@ -38,7 +38,7 @@ const CodeField = ({
     setTouched(true);
 
     const options = {
-      code: value || placeholder || ""
+      code: value || placeholder || "",
     };
 
     if (language) {
@@ -80,7 +80,7 @@ CodeField.propTypes = {
   name: PropTypes.string.isRequired,
   description: PropTypes.node,
   language: PropTypes.string,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
 };
 
 export default CodeField;

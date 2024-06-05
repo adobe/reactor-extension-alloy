@@ -13,22 +13,22 @@ governing permissions and limitations under the License.
 import { t, ClientFunction } from "testcafe";
 import {
   createTestIdSelector,
-  createTestIdSelectorString
+  createTestIdSelectorString,
 } from "../dataTestIdSelectors";
 
 const xdmTree = createTestIdSelector("xdmTree");
 
-const getIsElementInViewport = selector => {
+const getIsElementInViewport = (selector) => {
   return ClientFunction(
     () => {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         const observer = new IntersectionObserver(
-          entries => {
+          (entries) => {
             resolve(entries[0].isIntersecting);
           },
           {
-            threshold: 1.0
-          }
+            threshold: 1.0,
+          },
         );
         // eslint-disable-next-line no-undef
         observer.observe(selector());
@@ -36,15 +36,15 @@ const getIsElementInViewport = selector => {
     },
     {
       dependencies: {
-        selector
-      }
-    }
+        selector,
+      },
+    },
   )();
 };
 
-const create = node => {
+const create = (node) => {
   const populationIndicator = node.find(
-    createTestIdSelectorString("populationAmountIndicator")
+    createTestIdSelectorString("populationAmountIndicator"),
   );
   const expansionToggle = node
     .parent(".ant-tree-treenode")
@@ -73,7 +73,7 @@ const create = node => {
       },
       expectBlank: async () => {
         await t.expect(populationIndicator.exists).notOk();
-      }
+      },
     },
     expectIsValid: async () => {
       await t.expect(node.hasClass("is-invalid")).notOk();
@@ -87,11 +87,11 @@ const create = node => {
     expectNotExists: async () => {
       await t.expect(node.exists).notOk();
     },
-    expectTitleEquals: async title => {
+    expectTitleEquals: async (title) => {
       await t
         .expect(
           node.find(createTestIdSelectorString("xdmTreeNodeTitleDisplayName"))
-            .innerText
+            .innerText,
         )
         .eql(title);
     },
@@ -101,19 +101,19 @@ const create = node => {
           .parent(".ant-tree-treenode")
           .nth(0)
           .nextSibling()
-          .find(createTestIdSelectorString("xdmTreeNodeTitle"))
+          .find(createTestIdSelectorString("xdmTreeNodeTitle")),
       );
-    }
+    },
   };
 };
 
 export default {
-  node: title => {
+  node: (title) => {
     const node = xdmTree
       .find(createTestIdSelectorString("xdmTreeNodeTitleDisplayName"))
       .withText(title)
       .parent(createTestIdSelectorString("xdmTreeNodeTitle"))
       .nth(0);
     return create(node);
-  }
+  },
 };

@@ -19,7 +19,7 @@ import {
   Picker,
   ActionButton,
   TooltipTrigger,
-  Tooltip
+  Tooltip,
 } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import { useField } from "formik";
@@ -31,14 +31,14 @@ import usePrevious from "../utils/usePrevious";
 import Alert from "./alert";
 import {
   PRODUCTION,
-  ENVIRONMENTS
+  ENVIRONMENTS,
 } from "../configuration/constants/environmentType";
 import FormikTextField from "./formikReactSpectrum3/formikTextField";
 import { capitialize } from "./overrides/utils";
 
 // eslint-disable-next-line no-underscore-dangle
-const getKey = datastream => datastream && datastream._system.id;
-const getLabel = datastream => {
+const getKey = (datastream) => datastream && datastream._system.id;
+const getLabel = (datastream) => {
   if (!datastream) {
     return undefined;
   }
@@ -58,7 +58,7 @@ const DatastreamSelector = ({
   label,
   environmentType,
   description,
-  fallbackToManualEntry
+  fallbackToManualEntry,
 }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] =
     useField(name);
@@ -72,7 +72,7 @@ const DatastreamSelector = ({
 
       const {
         company: { orgId },
-        tokens: { imsAccess }
+        tokens: { imsAccess },
       } = initInfo;
 
       const { results: datastreams } = await fetchConfigs({
@@ -80,11 +80,11 @@ const DatastreamSelector = ({
         imsAccess,
         signal,
         limit: 1000,
-        sandbox: selectedSandbox.name
+        sandbox: selectedSandbox.name,
       });
 
       return {
-        items: datastreams
+        items: datastreams,
       };
     },
     getKey,
@@ -93,7 +93,7 @@ const DatastreamSelector = ({
       : new Set(),
     initialFilterText: defaultSelectedDatastream
       ? getLabel(defaultSelectedDatastream)
-      : ""
+      : "",
   });
 
   useEffect(() => {
@@ -118,7 +118,7 @@ const DatastreamSelector = ({
         : " ",
     "aria-label": `${environmentType} datastream`,
     "data-test-id": `${environmentType}DatastreamField`,
-    UNSAFE_className: "CapitalizedLabel"
+    UNSAFE_className: "CapitalizedLabel",
   };
   const errorLoadingDatastreamsDescription = (
     <>
@@ -223,7 +223,7 @@ const DatastreamSelector = ({
           description={touched && error ? "" : description}
           errorMessage={touched && error ? error : undefined}
         >
-          {item => {
+          {(item) => {
             return <Item key={getKey(item)}>{getLabel(item)}</Item>;
           }}
         </Picker>
@@ -266,35 +266,35 @@ const DatastreamSelector = ({
 
 const datastreamShape = PropTypes.shape({
   _system: PropTypes.shape({
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
   }).isRequired,
   region: PropTypes.string,
   data: PropTypes.shape({
-    title: PropTypes.string.isRequired
-  })
+    title: PropTypes.string.isRequired,
+  }),
 });
 
 DatastreamSelector.propTypes = {
   defaultSelectedDatastream: datastreamShape,
   initInfo: PropTypes.shape({
     company: PropTypes.shape({
-      orgId: PropTypes.string.isRequired
+      orgId: PropTypes.string.isRequired,
     }).isRequired,
     tokens: PropTypes.shape({
-      imsAccess: PropTypes.string.isRequired
-    }).isRequired
+      imsAccess: PropTypes.string.isRequired,
+    }).isRequired,
   }),
   name: PropTypes.string.isRequired,
   label: PropTypes.string,
   selectedSandbox: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired
+    title: PropTypes.string.isRequired,
   }).isRequired,
   defaultSandboxOnly: PropTypes.bool,
   environmentType: PropTypes.oneOf(ENVIRONMENTS).isRequired,
   items: PropTypes.arrayOf(datastreamShape),
   description: PropTypes.string,
-  fallbackToManualEntry: PropTypes.bool
+  fallbackToManualEntry: PropTypes.bool,
 };
 
 export default DatastreamSelector;

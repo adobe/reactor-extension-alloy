@@ -11,19 +11,19 @@ governing permissions and limitations under the License.
 */
 const IS_NUMBER_REGEX = /^-?[0-9]+$/;
 
-const resolvePath = path => {
+const resolvePath = (path) => {
   return path
     .split(".")
-    .map(pathElement => {
+    .map((pathElement) => {
       if (IS_NUMBER_REGEX.test(pathElement)) {
         return parseInt(pathElement, 10);
       }
       return pathElement;
     })
-    .filter(pathElement => pathElement !== "");
+    .filter((pathElement) => pathElement !== "");
 };
 
-const toObject = mixed => {
+const toObject = (mixed) => {
   const obj = mixed || {};
   if (typeof obj !== "object") {
     return {};
@@ -31,7 +31,7 @@ const toObject = mixed => {
   return obj;
 };
 
-const toArray = mixed => {
+const toArray = (mixed) => {
   const array = mixed || [];
   if (!Array.isArray(array)) {
     return [];
@@ -47,7 +47,7 @@ const setValue = (parent, key, value) => {
   }
   return {
     ...parent,
-    [key]: value
+    [key]: value,
   };
 };
 
@@ -56,7 +56,7 @@ const deletePath = (parent, key) => {
     return [...parent.slice(0, key), ...parent.slice(key + 1)];
   }
   const returnObject = {
-    ...parent
+    ...parent,
   };
   delete returnObject[key];
   return returnObject;
@@ -80,11 +80,11 @@ const run = (parent, key, path, i, onLeafNode) => {
   return setValue(
     parent,
     key,
-    run(value, pathElement, path, i + 1, onLeafNode)
+    run(value, pathElement, path, i + 1, onLeafNode),
   );
 };
 
-const createOperation = onLeafNode => (mixed, pathString, value) => {
+const createOperation = (onLeafNode) => (mixed, pathString, value) => {
   return run(
     { value: mixed },
     "value",
@@ -92,7 +92,7 @@ const createOperation = onLeafNode => (mixed, pathString, value) => {
     0,
     (parent, key) => {
       return onLeafNode(parent, key, value);
-    }
+    },
   ).value;
 };
 

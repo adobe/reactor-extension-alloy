@@ -37,7 +37,7 @@ governing permissions and limitations under the License.
  * @param {boolean} isAction
  * @returns {object}
  */
-const createEdgeConfigOverridesSchema = isAction => {
+const createEdgeConfigOverridesSchema = (isAction) => {
   const configOverridesProps = {
     com_adobe_experience_platform: {
       type: "object",
@@ -49,16 +49,16 @@ const createEdgeConfigOverridesSchema = isAction => {
               type: "object",
               properties: {
                 datasetId: {
-                  type: "string"
-                }
+                  type: "string",
+                },
               },
-              required: ["datasetId"]
-            }
+              required: ["datasetId"],
+            },
           },
-          required: ["event"]
-        }
+          required: ["event"],
+        },
       },
-      required: ["datasets"]
+      required: ["datasets"],
     },
     com_adobe_analytics: {
       type: "object",
@@ -66,11 +66,11 @@ const createEdgeConfigOverridesSchema = isAction => {
         reportSuites: {
           type: "array",
           items: {
-            type: "string"
-          }
-        }
+            type: "string",
+          },
+        },
       },
-      required: ["reportSuites"]
+      required: ["reportSuites"],
     },
     com_adobe_identity: {
       type: "object",
@@ -78,40 +78,40 @@ const createEdgeConfigOverridesSchema = isAction => {
         idSyncContainerId: {
           anyOf: [
             {
-              type: "integer"
+              type: "integer",
             },
             {
-              type: "string"
-            }
-          ]
-        }
+              type: "string",
+            },
+          ],
+        },
       },
-      required: ["idSyncContainerId"]
+      required: ["idSyncContainerId"],
     },
     com_adobe_target: {
       type: "object",
       properties: {
         propertyToken: {
-          type: "string"
-        }
+          type: "string",
+        },
       },
-      required: ["propertyToken"]
-    }
+      required: ["propertyToken"],
+    },
   };
   const configOverridesWithDatastream = {
     ...configOverridesProps,
     sandbox: {
       type: "string",
-      minLength: 1
+      minLength: 1,
     },
     datastreamId: {
       type: "string",
-      minLength: 1
+      minLength: 1,
     },
     datastreamIdInputMethod: {
       type: "string",
-      enum: ["freeform", "select"]
-    }
+      enum: ["freeform", "select"],
+    },
   };
   return {
     type: "object",
@@ -121,24 +121,24 @@ const createEdgeConfigOverridesSchema = isAction => {
         type: "object",
         additionalProperties: false,
         properties: {
-          ...(isAction ? configOverridesWithDatastream : configOverridesProps)
-        }
+          ...(isAction ? configOverridesWithDatastream : configOverridesProps),
+        },
       },
       staging: {
         type: "object",
         additionalProperties: false,
         properties: {
-          ...(isAction ? configOverridesWithDatastream : configOverridesProps)
-        }
+          ...(isAction ? configOverridesWithDatastream : configOverridesProps),
+        },
       },
       production: {
         type: "object",
         additionalProperties: false,
         properties: {
-          ...(isAction ? configOverridesWithDatastream : configOverridesProps)
-        }
-      }
-    }
+          ...(isAction ? configOverridesWithDatastream : configOverridesProps),
+        },
+      },
+    },
   };
 };
 
@@ -148,33 +148,33 @@ const createEdgeConfigOverridesSchema = isAction => {
  * @param {boolean} isAction
  * @returns {{ type: "remove", propertyPath: string }[]}
  */
-const createEdgeConfigOverridesTransforms = isAction => {
+const createEdgeConfigOverridesTransforms = (isAction) => {
   const prefix = isAction ? "" : "instances[].";
   return [
     {
       type: "remove",
-      propertyPath: `${prefix}edgeConfigOverrides.development.sandbox`
+      propertyPath: `${prefix}edgeConfigOverrides.development.sandbox`,
     },
     {
       type: "remove",
-      propertyPath: `${prefix}edgeConfigOverrides.staging.sandbox`
+      propertyPath: `${prefix}edgeConfigOverrides.staging.sandbox`,
     },
     {
       type: "remove",
-      propertyPath: `${prefix}edgeConfigOverrides.production.sandbox`
+      propertyPath: `${prefix}edgeConfigOverrides.production.sandbox`,
     },
     {
       type: "remove",
-      propertyPath: `${prefix}edgeConfigOverrides.development.datastreamIdInputMethod`
+      propertyPath: `${prefix}edgeConfigOverrides.development.datastreamIdInputMethod`,
     },
     {
       type: "remove",
-      propertyPath: `${prefix}edgeConfigOverrides.staging.datastreamIdInputMethod`
+      propertyPath: `${prefix}edgeConfigOverrides.staging.datastreamIdInputMethod`,
     },
     {
       type: "remove",
-      propertyPath: `${prefix}edgeConfigOverrides.production.datastreamIdInputMethod`
-    }
+      propertyPath: `${prefix}edgeConfigOverrides.production.datastreamIdInputMethod`,
+    },
   ];
 };
 
@@ -199,7 +199,7 @@ const createExtensionManifest = ({ version }) => {
     description:
       "The Adobe Experience Platform Web SDK allows for streaming data into the platform, syncing identities, personalizing content, and more.",
     author: {
-      name: "Adobe"
+      name: "Adobe",
     },
     viewBasePath: "dist/view/",
     configuration: {
@@ -216,75 +216,75 @@ const createExtensionManifest = ({ version }) => {
               properties: {
                 name: {
                   type: "string",
-                  pattern: "\\D+"
+                  pattern: "\\D+",
                 },
                 edgeConfigId: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 stagingEdgeConfigId: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 developmentEdgeConfigId: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 sandbox: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 stagingSandbox: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 developmentSandbox: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 orgId: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 edgeDomain: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 edgeBasePath: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 defaultConsent: {
                   anyOf: [
                     {
                       type: "string",
-                      pattern: "^%[^%]+%$"
+                      pattern: "^%[^%]+%$",
                     },
                     {
                       type: "string",
-                      enum: ["in", "out", "pending"]
-                    }
-                  ]
+                      enum: ["in", "out", "pending"],
+                    },
+                  ],
                 },
                 idMigrationEnabled: {
-                  type: "boolean"
+                  type: "boolean",
                 },
                 thirdPartyCookiesEnabled: {
-                  type: "boolean"
+                  type: "boolean",
                 },
                 prehidingStyle: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 targetMigrationEnabled: {
-                  type: "boolean"
+                  type: "boolean",
                 },
                 clickCollectionEnabled: {
-                  type: "boolean"
+                  type: "boolean",
                 },
                 downloadLinkQualifier: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 context: {
                   type: "array",
@@ -295,69 +295,91 @@ const createExtensionManifest = ({ version }) => {
                       "device",
                       "environment",
                       "placeContext",
-                      "highEntropyUserAgentHints"
-                    ]
-                  }
+                      "highEntropyUserAgentHints",
+                    ],
+                  },
                 },
                 onBeforeEventSend: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 onBeforeLinkClickSend: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 edgeConfigOverrides: createEdgeConfigOverridesSchema(false),
+                streamingMedia: {
+                  type: "object",
+                  properties: {
+                    channel: {
+                      type: "string",
+                    },
+                    playerName: {
+                      type: "string",
+                    },
+                    appVersion: {
+                      type: "string",
+                    },
+                    mainPingInterval: {
+                      type: "integer",
+                    },
+                    adPingInterval: {
+                      type: "integer",
+                    },
+                  },
+                  required: ["channel", "playerName"],
+                  additionalProperties: false,
+                },
                 personalizationStorageEnabled: {
-                  type: "boolean"
+                  type: "boolean",
                 },
                 autoTrackPropositionInteractions: {
                   type: "object",
                   properties: {
                     AJO: {
                       type: "string",
-                      enum: ["always", "decoratedElementsOnly", "never"]
+                      enum: ["always", "decoratedElementsOnly", "never"],
                     }
                   },
                 }
               },
               required: ["edgeConfigId", "name"],
-              additionalProperties: false
-            }
-          }
+              additionalProperties: false,
+            },
+          },
         },
         required: ["instances"],
-        additionalProperties: false
+        additionalProperties: false,
       },
       transforms: [
         {
           type: "function",
           propertyPath: "instances[].onBeforeEventSend",
-          parameters: ["content"]
+          parameters: ["content"],
         },
         {
           type: "function",
           propertyPath: "instances[].onBeforeLinkClickSend",
-          parameters: ["content"]
+          parameters: ["content"],
         },
         {
           type: "remove",
-          propertyPath: "instances[].edgeConfigInputMethod"
+          propertyPath: "instances[].edgeConfigInputMethod",
         },
         {
           type: "remove",
-          propertyPath: "instances[].sandbox"
+          propertyPath: "instances[].sandbox",
         },
         {
           type: "remove",
-          propertyPath: "instances[].stagingSandbox"
+          propertyPath: "instances[].stagingSandbox",
         },
         {
           type: "remove",
-          propertyPath: "instances[].developmentSandbox"
+          propertyPath: "instances[].developmentSandbox",
         },
-        ...createEdgeConfigOverridesTransforms(false)
-      ]
+        ...createEdgeConfigOverridesTransforms(false),
+      ],
     },
     actions: [
       {
@@ -369,14 +391,14 @@ const createExtensionManifest = ({ version }) => {
           properties: {
             eventMergeId: {
               type: "string",
-              pattern: "^%[^%]+%$"
-            }
+              pattern: "^%[^%]+%$",
+            },
           },
           required: ["eventMergeId"],
-          additionalProperties: false
+          additionalProperties: false,
         },
         libPath: "dist/lib/actions/resetEventMergeId/index.js",
-        viewPath: "actions/resetEventMergeId.html"
+        viewPath: "actions/resetEventMergeId.html",
       },
       {
         displayName: "Send event",
@@ -386,29 +408,29 @@ const createExtensionManifest = ({ version }) => {
           type: "object",
           properties: {
             guidedEventsEnabled: {
-              type: "boolean"
+              type: "boolean",
             },
             guidedEvent: {
-              type: "string"
+              type: "string",
             },
             instanceName: {
               type: "string",
-              minLength: 1
+              minLength: 1,
             },
             renderDecisions: {
               type: "boolean",
-              minLength: 1
+              minLength: 1,
             },
             decisionScopes: {
               anyOf: [
                 {
-                  type: "array"
+                  type: "array",
                 },
                 {
                   type: "string",
-                  pattern: "^%[^%]+%$"
-                }
-              ]
+                  pattern: "^%[^%]+%$",
+                },
+              ],
             },
             personalization: {
               type: "object",
@@ -420,14 +442,14 @@ const createExtensionManifest = ({ version }) => {
                       minItems: 1,
                       items: {
                         type: "string",
-                        minLength: 1
-                      }
+                        minLength: 1,
+                      },
                     },
                     {
                       type: "string",
-                      pattern: "^%[^%]+%$"
-                    }
-                  ]
+                      pattern: "^%[^%]+%$",
+                    },
+                  ],
                 },
                 surfaces: {
                   anyOf: [
@@ -436,82 +458,82 @@ const createExtensionManifest = ({ version }) => {
                       minItems: 1,
                       items: {
                         type: "string",
-                        minLength: 1
-                      }
+                        minLength: 1,
+                      },
                     },
                     {
                       type: "string",
-                      pattern: "^%[^%]+%$"
-                    }
-                  ]
+                      pattern: "^%[^%]+%$",
+                    },
+                  ],
                 },
                 sendDisplayEvent: {
-                  type: "boolean"
+                  type: "boolean",
                 },
                 includeRenderedPropositions: {
-                  type: "boolean"
+                  type: "boolean",
                 },
                 defaultPersonalizationEnabled: {
-                  type: "boolean"
+                  type: "boolean",
                 },
                 decisionContext: {
                   anyOf: [
                     {
                       type: "string",
-                      pattern: "^%[^%]+%$"
+                      pattern: "^%[^%]+%$",
                     },
                     {
                       type: "object",
                       additionalProperties: {
-                        type: "string"
-                      }
-                    }
-                  ]
-                }
+                        type: "string",
+                      },
+                    },
+                  ],
+                },
               },
-              additionalProperties: false
+              additionalProperties: false,
             },
             xdm: {
               type: "string",
-              pattern: "^%[^%]+%$"
+              pattern: "^%[^%]+%$",
             },
             data: {
               type: "string",
-              pattern: "^%[^%]+%$"
+              pattern: "^%[^%]+%$",
             },
             type: {
               type: "string",
-              minLength: 1
+              minLength: 1,
             },
             mergeId: {
               type: "string",
-              minLength: 1
+              minLength: 1,
             },
             datasetId: {
               type: "string",
-              minLength: 1
+              minLength: 1,
             },
             documentUnloading: {
-              type: "boolean"
+              type: "boolean",
             },
-            edgeConfigOverrides: actionEdgeConfigOverridesSchema
+            edgeConfigOverrides: actionEdgeConfigOverridesSchema,
           },
           required: ["instanceName"],
-          additionalProperties: false
+          additionalProperties: false,
         },
         transforms: [
           {
             type: "remove",
-            propertyPath: "guidedEventsEnabled"
+            propertyPath: "guidedEventsEnabled",
           },
           {
             type: "remove",
-            propertyPath: "guidedEvent"
+            propertyPath: "guidedEvent",
           },
-          ...actionEdgeConfigOverridesTransforms
+          ...actionEdgeConfigOverridesTransforms,
         ],
         libPath: "dist/lib/actions/sendEvent/index.js",
-        viewPath: "actions/sendEvent.html"
+        viewPath: "actions/sendEvent.html",
       },
       {
         displayName: "Set consent",
@@ -522,11 +544,11 @@ const createExtensionManifest = ({ version }) => {
           properties: {
             instanceName: {
               type: "string",
-              minLength: 1
+              minLength: 1,
             },
             identityMap: {
               type: "string",
-              pattern: "^%[^%]+%$"
+              pattern: "^%[^%]+%$",
             },
             consent: {
               anyOf: [
@@ -540,10 +562,10 @@ const createExtensionManifest = ({ version }) => {
                         properties: {
                           standard: {
                             type: "string",
-                            enum: ["Adobe"]
+                            enum: ["Adobe"],
                           },
                           version: {
-                            type: "string"
+                            type: "string",
                           },
                           value: {
                             type: "object",
@@ -552,90 +574,90 @@ const createExtensionManifest = ({ version }) => {
                                 oneOf: [
                                   {
                                     type: "string",
-                                    enum: ["in", "out"]
+                                    enum: ["in", "out"],
                                   },
                                   {
                                     type: "string",
-                                    pattern: "^%[^%]+%$"
-                                  }
-                                ]
-                              }
-                            }
-                          }
+                                    pattern: "^%[^%]+%$",
+                                  },
+                                ],
+                              },
+                            },
+                          },
                         },
-                        additionalProperties: false
+                        additionalProperties: false,
                       },
                       {
                         type: "object",
                         properties: {
                           standard: {
                             type: "string",
-                            enum: ["Adobe"]
+                            enum: ["Adobe"],
                           },
                           version: {
-                            type: "string"
+                            type: "string",
                           },
                           value: {
                             type: "string",
-                            pattern: "^%[^%]+%$"
-                          }
-                        }
+                            pattern: "^%[^%]+%$",
+                          },
+                        },
                       },
                       {
                         type: "object",
                         properties: {
                           standard: {
                             type: "string",
-                            enum: ["IAB TCF"]
+                            enum: ["IAB TCF"],
                           },
                           version: {
-                            type: "string"
+                            type: "string",
                           },
                           value: {
-                            type: "string"
+                            type: "string",
                           },
                           gdprApplies: {
                             anyOf: [
                               {
-                                type: "boolean"
+                                type: "boolean",
                               },
                               {
                                 type: "string",
-                                pattern: "^%[^%]+%$"
-                              }
-                            ]
+                                pattern: "^%[^%]+%$",
+                              },
+                            ],
                           },
                           gdprContainsPersonalData: {
                             anyOf: [
                               {
-                                type: "boolean"
+                                type: "boolean",
                               },
                               {
                                 type: "string",
-                                pattern: "^%[^%]+%$"
-                              }
-                            ]
-                          }
+                                pattern: "^%[^%]+%$",
+                              },
+                            ],
+                          },
                         },
-                        additionalProperties: false
-                      }
-                    ]
-                  }
+                        additionalProperties: false,
+                      },
+                    ],
+                  },
                 },
                 {
                   type: "string",
-                  pattern: "^%[^%]+%$"
-                }
-              ]
+                  pattern: "^%[^%]+%$",
+                },
+              ],
             },
-            edgeConfigOverrides: actionEdgeConfigOverridesSchema
+            edgeConfigOverrides: actionEdgeConfigOverridesSchema,
           },
           required: ["instanceName", "consent"],
-          additionalProperties: false
+          additionalProperties: false,
         },
         transforms: [...actionEdgeConfigOverridesTransforms],
         libPath: "dist/lib/actions/setConsent/index.js",
-        viewPath: "actions/setConsent.html"
+        viewPath: "actions/setConsent.html",
       },
       {
         displayName: "Redirect with identity",
@@ -646,16 +668,16 @@ const createExtensionManifest = ({ version }) => {
           properties: {
             instanceName: {
               type: "string",
-              minLength: 1
+              minLength: 1,
             },
-            edgeConfigOverrides: actionEdgeConfigOverridesSchema
+            edgeConfigOverrides: actionEdgeConfigOverridesSchema,
           },
           required: ["instanceName"],
-          additionalProperties: false
+          additionalProperties: false,
         },
         transforms: [...actionEdgeConfigOverridesTransforms],
         libPath: "dist/lib/actions/redirectWithIdentity/index.js",
-        viewPath: "actions/redirectWithIdentity.html"
+        viewPath: "actions/redirectWithIdentity.html",
       },
       {
         displayName: "Apply response",
@@ -666,26 +688,26 @@ const createExtensionManifest = ({ version }) => {
           properties: {
             instanceName: {
               type: "string",
-              minLength: 1
+              minLength: 1,
             },
             renderDecisions: {
               type: "boolean",
-              minLength: 1
+              minLength: 1,
             },
             responseHeaders: {
               type: "string",
-              pattern: "^%[^%]+%$"
+              pattern: "^%[^%]+%$",
             },
             responseBody: {
               type: "string",
-              pattern: "^%[^%]+%$"
-            }
+              pattern: "^%[^%]+%$",
+            },
           },
           required: ["instanceName", "responseBody"],
-          additionalProperties: false
+          additionalProperties: false,
         },
         libPath: "dist/lib/actions/applyResponse/index.js",
-        viewPath: "actions/applyResponse.html"
+        viewPath: "actions/applyResponse.html",
       },
       {
         displayName: "Apply propositions",
@@ -696,17 +718,17 @@ const createExtensionManifest = ({ version }) => {
           properties: {
             instanceName: {
               type: "string",
-              minLength: 1
+              minLength: 1,
             },
             propositions: {
               type: "string",
-              pattern: "^%[^%]+%$"
+              pattern: "^%[^%]+%$",
             },
             metadata: {
               anyOf: [
                 {
                   type: "string",
-                  pattern: "^%[^%]+%$"
+                  pattern: "^%[^%]+%$",
                 },
                 {
                   type: "object",
@@ -715,26 +737,26 @@ const createExtensionManifest = ({ version }) => {
                     properties: {
                       selector: {
                         type: "string",
-                        minLength: 1
+                        minLength: 1,
                       },
                       actionType: {
                         type: "string",
-                        enum: ["setHtml", "replaceHtml", "appendHtml", "track"]
+                        enum: ["setHtml", "replaceHtml", "appendHtml", "collectInteractions"],
                       }
                     },
-                    required: ["selector", "actionType"]
-                  }
-                }
-              ]
+                    required: ["selector", "actionType"],
+                  },
+                },
+              ],
             },
             viewName: {
               type: "string",
-              minLength: 1
-            }
-          }
+              minLength: 1,
+            },
+          },
         },
         libPath: "dist/lib/actions/applyPropositions/index.js",
-        viewPath: "actions/applyPropositions.html"
+        viewPath: "actions/applyPropositions.html",
       },
       {
         displayName: "Update variable",
@@ -745,65 +767,117 @@ const createExtensionManifest = ({ version }) => {
           properties: {
             dataElementCacheId: {
               type: "string",
-              minLength: 1
+              minLength: 1,
             },
             dataElementId: {
               type: "string",
-              minLength: 1
+              minLength: 1,
             },
             schema: {
               type: "object",
               properties: {
                 id: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 version: {
                   type: "string",
-                  minLength: 1
-                }
+                  minLength: 1,
+                },
               },
               required: ["id", "version"],
-              additionalProperties: false
+              additionalProperties: false,
             },
             data: {
               anyOf: [
                 {
-                  type: "object"
+                  type: "object",
                 },
                 {
                   type: "string",
-                  minLength: 1
-                }
-              ]
+                  minLength: 1,
+                },
+              ],
             },
             transforms: {
-              type: "object"
+              type: "object",
             },
             customCode: {
               type: "string",
-              minLength: 1
-            }
+              minLength: 1,
+            },
           },
-          required: ["dataElementCacheId", "dataElementId"]
+          required: ["dataElementCacheId", "dataElementId"],
         },
         transforms: [
           {
             type: "remove",
-            propertyPath: "dataElementId"
+            propertyPath: "dataElementId",
           },
           {
             type: "remove",
-            propertyPath: "schema"
+            propertyPath: "schema",
           },
           {
             type: "function",
             propertyPath: "customCode",
-            parameters: ["content", "event"]
-          }
+            parameters: ["content", "event"],
+          },
         ],
         libPath: "dist/lib/actions/updateVariable/index.js",
-        viewPath: "actions/updateVariable.html"
+        viewPath: "actions/updateVariable.html",
+      },
+      {
+        displayName: "Send Media Event",
+        name: "send-media-event",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            instanceName: {
+              type: "string",
+              minLength: 1,
+            },
+            handleMediaSessionAutomatically: {
+              type: "boolean",
+            },
+            eventType: {
+              type: "string",
+              minLength: 1,
+            },
+            playerId: {
+              type: "string",
+              minLength: 1,
+            },
+            xdm: {
+              type: "object",
+            },
+          },
+          required: ["instanceName", "playerId"],
+        },
+        libPath: "dist/lib/actions/sendMediaEvent/index.js",
+        viewPath: "actions/sendStreamingMediaEvent.html",
+      },
+      {
+        displayName: "Get Media Analytics Tracker",
+        name: "get-media-tracker",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            instanceName: {
+              type: "string",
+              minLength: 1,
+            },
+            objectName: {
+              type: "string",
+              minLength: 1,
+            },
+          },
+          required: ["instanceName"],
+        },
+        libPath: "dist/lib/actions/getMediaAnalyticsTracker/index.js",
+        viewPath: "actions/createMediaTracker.html",
       },
       {
         displayName: "Evaluate rulesets",
@@ -813,10 +887,10 @@ const createExtensionManifest = ({ version }) => {
           type: "object",
           instanceName: {
             type: "string",
-            minLength: 1
+            minLength: 1,
           },
           renderDecisions: {
-            type: "boolean"
+            type: "boolean",
           },
           personalization: {
             type: "object",
@@ -825,35 +899,35 @@ const createExtensionManifest = ({ version }) => {
                 anyOf: [
                   {
                     type: "string",
-                    pattern: "^%[^%]+%$"
+                    pattern: "^%[^%]+%$",
                   },
                   {
                     type: "object",
                     additionalProperties: {
-                      type: "string"
-                    }
-                  }
-                ]
-              }
-            }
-          }
+                      type: "string",
+                    },
+                  },
+                ],
+              },
+            },
+          },
         },
         libPath: "dist/lib/actions/evaluateRulesets/index.js",
-        viewPath: "actions/evaluateRulesets.html"
-      }
+        viewPath: "actions/evaluateRulesets.html",
+      },
     ],
     events: [
       {
         name: "decisions-received",
         displayName: "Decisions received (DEPRECATED)",
         libPath: "dist/lib/events/decisionsReceived/index.js",
-        schema: {}
+        schema: {},
       },
       {
         name: "send-event-complete",
         displayName: "Send event complete",
         libPath: "dist/lib/events/sendEventComplete/index.js",
-        schema: {}
+        schema: {},
       },
       {
         name: "subscribe-ruleset-items",
@@ -865,7 +939,7 @@ const createExtensionManifest = ({ version }) => {
           type: "object",
           instanceName: {
             type: "string",
-            minLength: 1
+            minLength: 1,
           },
           surfaces: {
             anyOf: [
@@ -874,14 +948,14 @@ const createExtensionManifest = ({ version }) => {
                 minItems: 1,
                 items: {
                   type: "string",
-                  minLength: 1
-                }
+                  minLength: 1,
+                },
               },
               {
                 type: "string",
-                pattern: "^%[^%]+%$"
-              }
-            ]
+                pattern: "^%[^%]+%$",
+              },
+            ],
           },
           schemas: {
             anyOf: [
@@ -890,19 +964,76 @@ const createExtensionManifest = ({ version }) => {
                 minItems: 1,
                 items: {
                   type: "string",
-                  minLength: 1
-                }
+                  minLength: 1,
+                },
               },
               {
                 type: "string",
-                pattern: "^%[^%]+%$"
-              }
-            ]
-          }
-        }
-      }
+                pattern: "^%[^%]+%$",
+              },
+            ],
+          },
+        },
+      },
     ],
     dataElements: [
+      {
+        displayName: "Media: Quality of Experience data",
+        name: "qoe-details-data",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            bitrate: {
+              oneOf: [
+                {
+                  type: "integer",
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$",
+                },
+              ],
+            },
+            droppedFrames: {
+              oneOf: [
+                {
+                  type: "integer",
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$",
+                },
+              ],
+            },
+            framesPerSecond: {
+              oneOf: [
+                {
+                  type: "integer",
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$",
+                },
+              ],
+            },
+            timeToStart: {
+              oneOf: [
+                {
+                  type: "integer",
+                },
+                {
+                  type: "string",
+                  pattern: "^%[^%]+%$",
+                },
+              ],
+            },
+          },
+          additionalProperties: false,
+        },
+        libPath: "dist/lib/dataElements/qoeDetailsData/index.js",
+        viewPath: "dataElements/qoeDetailsDataElement.html",
+      },
       {
         displayName: "Event merge ID",
         name: "event-merge-id",
@@ -912,14 +1043,14 @@ const createExtensionManifest = ({ version }) => {
           properties: {
             cacheId: {
               type: "string",
-              minLength: 1
-            }
+              minLength: 1,
+            },
           },
           required: ["cacheId"],
-          additionalProperties: false
+          additionalProperties: false,
         },
         libPath: "dist/lib/dataElements/eventMergeId/index.js",
-        viewPath: "dataElements/eventMergeId.html"
+        viewPath: "dataElements/eventMergeId.html",
       },
       {
         displayName: "Identity map",
@@ -933,22 +1064,22 @@ const createExtensionManifest = ({ version }) => {
               type: "object",
               properties: {
                 id: {
-                  type: "string"
+                  type: "string",
                 },
                 authenticatedState: {
                   type: "string",
-                  enum: ["loggedOut", "authenticated", "ambiguous"]
+                  enum: ["loggedOut", "authenticated", "ambiguous"],
                 },
                 primary: {
-                  type: "boolean"
-                }
+                  type: "boolean",
+                },
               },
-              additionalProperties: false
-            }
-          }
+              additionalProperties: false,
+            },
+          },
         },
         libPath: "dist/lib/dataElements/identityMap/index.js",
-        viewPath: "dataElements/identityMap.html"
+        viewPath: "dataElements/identityMap.html",
       },
       {
         displayName: "XDM object",
@@ -962,42 +1093,42 @@ const createExtensionManifest = ({ version }) => {
               properties: {
                 name: {
                   type: "string",
-                  minLength: 1
-                }
+                  minLength: 1,
+                },
               },
               required: ["name"],
-              additionalProperties: false
+              additionalProperties: false,
             },
             schema: {
               type: "object",
               properties: {
                 id: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 version: {
                   type: "string",
-                  minLength: 1
-                }
+                  minLength: 1,
+                },
               },
               required: ["id", "version"],
-              additionalProperties: false
+              additionalProperties: false,
             },
             data: {
-              type: "object"
-            }
+              type: "object",
+            },
           },
           required: ["schema", "data"],
-          additionalProperties: false
+          additionalProperties: false,
         },
         transforms: [
           {
             type: "remove",
-            propertyPath: "schema"
-          }
+            propertyPath: "schema",
+          },
         ],
         libPath: "dist/lib/dataElements/xdmObject/index.js",
-        viewPath: "dataElements/xdmObject.html"
+        viewPath: "dataElements/xdmObject.html",
       },
       {
         displayName: "Variable",
@@ -1010,74 +1141,79 @@ const createExtensionManifest = ({ version }) => {
               properties: {
                 cacheId: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 sandbox: {
                   type: "object",
                   properties: {
                     name: {
                       type: "string",
-                      minLength: 1
-                    }
+                      minLength: 1,
+                    },
                   },
                   required: ["name"],
-                  additionalProperties: false
+                  additionalProperties: false,
                 },
                 schema: {
                   type: "object",
                   properties: {
                     id: {
                       type: "string",
-                      minLength: 1
+                      minLength: 1,
                     },
                     version: {
                       type: "string",
-                      minLength: 1
-                    }
+                      minLength: 1,
+                    },
                   },
                   required: ["id", "version"],
-                  additionalProperties: false
-                }
+                  additionalProperties: false,
+                },
               },
               required: ["cacheId", "sandbox", "schema"],
-              additionalProperties: false
+              additionalProperties: false,
             },
             {
               properties: {
                 cacheId: {
                   type: "string",
-                  minLength: 1
+                  minLength: 1,
                 },
                 solutions: {
                   type: "array",
                   minItems: 1,
                   items: {
-                    enum: ["analytics", "target", "audienceManager"]
+                    enum: [
+                      "analytics",
+                      "target",
+                      "audiencemanager",
+                      "audienceManager",
+                    ],
                   },
                   required: ["name"],
-                  additionalProperties: false
-                }
+                  additionalProperties: false,
+                },
               },
               required: ["cacheId", "solutions"],
-              additionalProperties: false
-            }
-          ]
+              additionalProperties: false,
+            },
+          ],
         },
         transforms: [
           {
             type: "remove",
-            propertyPath: "schema"
+            propertyPath: "schema",
           },
           {
             type: "remove",
-            propertyPath: "sandbox"
-          }
+            propertyPath: "sandbox",
+          },
         ],
         libPath: "dist/lib/dataElements/variable/index.js",
-        viewPath: "dataElements/variable.html"
-      }
+        viewPath: "dataElements/variable.html",
+      },
     ],
-    main: "dist/lib/instanceManager/index.js"
+    main: "dist/lib/instanceManager/index.js",
   };
 
   return extensionManifest;

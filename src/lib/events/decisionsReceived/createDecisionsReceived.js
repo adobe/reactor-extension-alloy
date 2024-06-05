@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 module.exports =
   ({ sendEventCallbackStorage }) =>
   (settings, trigger) => {
-    sendEventCallbackStorage.add(result => {
+    sendEventCallbackStorage.add((result) => {
       if (result.decisions) {
         trigger({ decisions: result.decisions });
       }

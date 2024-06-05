@@ -33,7 +33,7 @@ const IndicatorDescription = ({ indicator, children }) => {
 
 IndicatorDescription.propTypes = {
   indicator: PropTypes.node.isRequired,
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };
 
 export default IndicatorDescription;

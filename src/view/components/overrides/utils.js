@@ -15,7 +15,7 @@ governing permissions and limitations under the License.
  * @param {string} str
  * @returns {string}
  */
-export const capitialize = str => str.charAt(0).toUpperCase() + str.slice(1);
+export const capitialize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
  * The names of the different fields that can appear in the form. Used to pass
@@ -27,7 +27,7 @@ export const FIELD_NAMES = Object.freeze({
   targetPropertyTokenOverride: "targetPropertyTokenOverride",
   reportSuitesOverride: "reportSuitesOverride",
   datastreamId: "datastreamId",
-  sandbox: "sandbox"
+  sandbox: "sandbox",
 });
 
 /**
@@ -45,7 +45,7 @@ export const getCurrentInstanceSettings = ({ initInfo, instanceName }) => {
     const instances =
       initInfo.extensionSettings?.instances ?? initInfo.settings?.instances;
     const instanceSettings = instances.find(
-      instance => instance.name === instanceName
+      (instance) => instance.name === instanceName,
     );
     return instanceSettings;
   } catch (err) {
@@ -69,10 +69,10 @@ export const getCurrentInstanceSettings = ({ initInfo, instanceName }) => {
  */
 export const createIsItemInArray = (
   array,
-  { errorOnEmptyArray = true, errorOnEmptyItem = true } = {}
+  { errorOnEmptyArray = true, errorOnEmptyItem = true } = {},
 ) => {
   const items = new Set(array);
-  return item => {
+  return (item) => {
     if (items.size === 0 && !errorOnEmptyArray) {
       return true;
     }
@@ -90,7 +90,7 @@ export const dataElementRegex = /^([^%\n]*%[^%\n]+%)+[^%\n]*$/i;
  * @param {string} value
  * @returns {boolean}
  */
-export const isDataElement = value => dataElementRegex.test(value);
+export const isDataElement = (value) => dataElementRegex.test(value);
 
 /**
  * Creates a function that validates a given value. If it passes validation, it
@@ -101,7 +101,7 @@ export const isDataElement = value => dataElementRegex.test(value);
  * @param {boolean} appendValue If true, the value will be appended to the error message.
  * @returns {(value: T) => string | undefined}
  */
-export const createValidatorWithMessage = (validator, message) => value =>
+export const createValidatorWithMessage = (validator, message) => (value) =>
   validator(value) ? undefined : message.trim();
 
 /**
@@ -112,7 +112,7 @@ export const createValidatorWithMessage = (validator, message) => value =>
  */
 export const validateIsDataElement = createValidatorWithMessage(
   isDataElement,
-  "The value must contain one or more valid data elements."
+  "The value must contain one or more valid data elements.",
 );
 
 /**
@@ -129,7 +129,7 @@ export const validateIsDataElement = createValidatorWithMessage(
 export const createValidateItemIsInArray = (
   array,
   message,
-  options = { errorOnEmptyArray: false, errorOnEmptyItem: false }
+  options = { errorOnEmptyArray: false, errorOnEmptyItem: false },
 ) => createValidatorWithMessage(createIsItemInArray(array, options), message);
 
 /**
@@ -137,5 +137,5 @@ export const createValidateItemIsInArray = (
  * @param {(value: T) => string | undefined} validator
  * @returns
  */
-export const combineValidatorWithIsDataElement = validator => value =>
+export const combineValidatorWithIsDataElement = (validator) => (value) =>
   value?.includes("%") ? validateIsDataElement(value) : validator(value);

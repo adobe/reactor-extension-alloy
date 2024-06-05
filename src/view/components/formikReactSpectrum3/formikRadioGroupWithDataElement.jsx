@@ -20,13 +20,13 @@ import singleDataElementRegex from "../../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../../constants/validationErrorMessages";
 import FieldSubset from "../fieldSubset";
 
-export const createRadioGroupWithDataElementValidationSchema = name => {
+export const createRadioGroupWithDataElementValidationSchema = (name) => {
   return string().when([`${name}DataElement`], {
     is: ({ isDataElement } = {}) => isDataElement,
-    then: schema =>
+    then: (schema) =>
       schema
         .required(DATA_ELEMENT_REQUIRED)
-        .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+        .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
   });
 };
 
@@ -37,7 +37,7 @@ const FormikRadioGroupWithDataElement = ({
   dataTestIdPrefix = name,
   ...otherProps
 }) => {
-  const options = React.Children.map(children, child => {
+  const options = React.Children.map(children, (child) => {
     const { value } = child.props;
     return value;
   });
@@ -45,12 +45,12 @@ const FormikRadioGroupWithDataElement = ({
   const [
     { value: dataElementValue },
     { touched: dataElementTouched },
-    { setValue: dataElementSetValue, setTouched: dataElementSetTouched }
+    { setValue: dataElementSetValue, setTouched: dataElementSetTouched },
   ] = useField(`${name}DataElement`);
 
   const radioGroupRef = createRef();
 
-  const radioOnBlur = event => {
+  const radioOnBlur = (event) => {
     // If the target that will receive focus is not a child of the
     // radio group, we know the radio group has lost focus.
     if (
@@ -63,9 +63,9 @@ const FormikRadioGroupWithDataElement = ({
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for RadioGroup, so we wire up Formik's
   // onBlur to every radio.
-  const childrenWithOnBlur = React.Children.map(children, child => {
+  const childrenWithOnBlur = React.Children.map(children, (child) => {
     return React.cloneElement(child, {
-      onBlur: radioOnBlur
+      onBlur: radioOnBlur,
     });
   });
 
@@ -73,7 +73,7 @@ const FormikRadioGroupWithDataElement = ({
   let dataElementText;
   if (
     dataElementValue === undefined &&
-    options.some(option => option === value)
+    options.some((option) => option === value)
   ) {
     // We haven't ever called setValue so we don't have a dataElementValue yet,
     // but the value matches one of the options.
@@ -95,9 +95,9 @@ const FormikRadioGroupWithDataElement = ({
     dataElementSetValue(
       {
         isDataElement: newRadioValue === "dataElement",
-        dataElement: newDataElement
+        dataElement: newDataElement,
       },
-      false
+      false,
     );
     setValue(newRadioValue === "dataElement" ? newDataElement : newRadioValue);
   };
@@ -108,7 +108,7 @@ const FormikRadioGroupWithDataElement = ({
         {...otherProps}
         ref={radioGroupRef}
         value={radioValue}
-        onChange={newValue => {
+        onChange={(newValue) => {
           setValues(newValue, dataElementText);
         }}
       >
@@ -126,7 +126,7 @@ const FormikRadioGroupWithDataElement = ({
         <FieldSubset>
           <RawDataElementSelector
             adjustForLabel
-            onChange={newValue => {
+            onChange={(newValue) => {
               setValues("dataElement", newValue);
               dataElementSetTouched(true);
             }}
@@ -135,7 +135,7 @@ const FormikRadioGroupWithDataElement = ({
               label="Data element"
               value={dataElementText}
               data-test-id={`${dataTestIdPrefix}DataElementField`}
-              onChange={newValue => setValues("dataElement", newValue)}
+              onChange={(newValue) => setValues("dataElement", newValue)}
               onBlur={() => dataElementSetTouched(true)}
               description={dataElementDescription}
               validationState={
@@ -158,7 +158,7 @@ FormikRadioGroupWithDataElement.propTypes = {
   description: PropTypes.string,
   dataElementDescription: PropTypes.string,
   width: PropTypes.string,
-  dataTestIdPrefix: PropTypes.string
+  dataTestIdPrefix: PropTypes.string,
 };
 
 export default FormikRadioGroupWithDataElement;

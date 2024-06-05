@@ -24,7 +24,7 @@ const BetaNotice = ({ componentName }) => {
 };
 
 BetaNotice.propTypes = {
-  componentName: PropTypes.string.isRequired
+  componentName: PropTypes.string.isRequired,
 };
 
 export default BetaNotice;

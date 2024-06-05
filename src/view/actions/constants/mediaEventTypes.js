@@ -1,5 +1,5 @@
 /*
-Copyright 2024 Adobe. All rights reserved.
+Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,12 +14,12 @@ export default {
   "media.sessionStart": "Session start",
   "media.play": "Play",
   "media.bufferStart": "Buffer start",
-  "media.pauseStart": "Pause start",
+  "media.pauseStart": "Pause",
   "media.chapterStart": "Chapter start",
   "media.chapterSkip": "Chapter skip",
   "media.chapterComplete": "Chapter complete",
   "media.adStart": "Ad start",
-  "media.adSkip": "Sd skip",
+  "media.adSkip": "Ad skip",
   "media.adComplete": "Ad complete",
   "media.adBreakStart": "Ad break start",
   "media.adBreakComplete": "Ad break complete",
@@ -27,5 +27,5 @@ export default {
   "media.error": "Error",
   "media.sessionComplete": "Session complete",
   "media.sessionEnd": "Session end",
-  "media.statesUpdate": "States update"
+  "media.statesUpdate": "States update",
 };

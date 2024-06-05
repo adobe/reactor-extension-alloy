@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 import { useRef, useEffect } from "react";
 
-export default currentViewMethods => {
+export default (currentViewMethods) => {
   const viewMethodsRef = useRef();
   viewMethodsRef.current = currentViewMethods;
 
@@ -26,7 +26,7 @@ export default currentViewMethods => {
     window.extensionBridge.register({
       init(initInfo) {
         return viewMethodsRef.current.init({
-          initInfo
+          initInfo,
         });
       },
       getSettings() {
@@ -34,7 +34,7 @@ export default currentViewMethods => {
       },
       validate() {
         return viewMethodsRef.current.validate();
-      }
+      },
     });
   }, []);
 };

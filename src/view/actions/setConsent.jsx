@@ -21,7 +21,7 @@ import ExtensionView from "../components/extensionView";
 import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormikRadioGroupWithDataElement, {
-  createRadioGroupWithDataElementValidationSchema
+  createRadioGroupWithDataElementValidationSchema,
 } from "../components/formikReactSpectrum3/formikRadioGroupWithDataElement";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
@@ -48,7 +48,7 @@ const createBlankConsentObject = () => {
     value: "",
     iabValue: "",
     gdprApplies: true,
-    gdprContainsPersonalData: false
+    gdprContainsPersonalData: false,
   };
 };
 
@@ -58,15 +58,15 @@ const getInitialValues = ({ initInfo }) => {
     identityMap = "",
     consent,
     edgeConfigOverrides = overridesBridge.getInstanceDefaults()
-      .edgeConfigOverrides
+      .edgeConfigOverrides,
   } = initInfo.settings || {};
 
   const initialValues = {
     instanceName,
     identityMap,
     ...overridesBridge.getInitialInstanceValues({
-      instanceSettings: { edgeConfigOverrides }
-    })
+      instanceSettings: { edgeConfigOverrides },
+    }),
   };
 
   if (typeof consent === "string") {
@@ -120,7 +120,7 @@ const getSettings = ({ values }) => {
     values;
 
   const settings = {
-    instanceName
+    instanceName,
   };
 
   if (identityMap) {
@@ -128,7 +128,7 @@ const getSettings = ({ values }) => {
   }
 
   const { edgeConfigOverrides } = overridesBridge.getInstanceSettings({
-    instanceValues: values
+    instanceValues: values,
   });
 
   if (edgeConfigOverrides && Object.keys(edgeConfigOverrides).length > 0) {
@@ -145,14 +145,14 @@ const getSettings = ({ values }) => {
             standard: ADOBE.label,
             version: formikConsentObject.adobeVersion,
             value: {
-              general: formikConsentObject.general
-            }
+              general: formikConsentObject.general,
+            },
           });
         } else {
           memo.push({
             standard: ADOBE.label,
             version: formikConsentObject.adobeVersion,
-            value: formikConsentObject.value
+            value: formikConsentObject.value,
           });
         }
       } else if (formikConsentObject.standard === IAB_TCF.value) {
@@ -161,7 +161,8 @@ const getSettings = ({ values }) => {
           version: formikConsentObject.iabVersion,
           value: formikConsentObject.iabValue,
           gdprApplies: formikConsentObject.gdprApplies,
-          gdprContainsPersonalData: formikConsentObject.gdprContainsPersonalData
+          gdprContainsPersonalData:
+            formikConsentObject.gdprContainsPersonalData,
         });
       }
       return memo;
@@ -176,18 +177,18 @@ const validationSchema = object()
     instanceName: string().required(),
     identityMap: string().matches(
       singleDataElementRegex,
-      DATA_ELEMENT_REQUIRED
+      DATA_ELEMENT_REQUIRED,
     ),
     dataElement: mixed().when("inputMethod", {
       is: DATA_ELEMENT.value,
       then: () =>
         string()
           .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-          .required(DATA_ELEMENT_REQUIRED)
+          .required(DATA_ELEMENT_REQUIRED),
     }),
     consent: array().when("inputMethod", {
       is: FORM.value,
-      then: schema =>
+      then: (schema) =>
         schema.of(
           object().shape({
             standard: string().required("Please specify a standard."),
@@ -195,7 +196,7 @@ const validationSchema = object()
               is: (standard, adobeVersion) =>
                 standard === ADOBE.value && adobeVersion === "1.0",
               then: () =>
-                createRadioGroupWithDataElementValidationSchema("general")
+                createRadioGroupWithDataElementValidationSchema("general"),
             }),
             value: mixed().when(["standard", "adobeVersion"], {
               is: (standard, adobeVersion) =>
@@ -203,31 +204,31 @@ const validationSchema = object()
               then: () =>
                 string()
                   .required(DATA_ELEMENT_REQUIRED)
-                  .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+                  .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
             }),
             iabVersion: mixed().when("standard", {
               is: IAB_TCF.value,
-              then: () => string().required("Please specify a version.")
+              then: () => string().required("Please specify a version."),
             }),
             iabValue: mixed().when("standard", {
               is: IAB_TCF.value,
-              then: () => string().required("Please specify a value.")
+              then: () => string().required("Please specify a value."),
             }),
             gdprApplies: mixed().when("standard", {
               is: IAB_TCF.value,
               then: () =>
-                createRadioGroupWithDataElementValidationSchema("gdprApplies")
+                createRadioGroupWithDataElementValidationSchema("gdprApplies"),
             }),
             gdprContainsPersonalData: mixed().when("standard", {
               is: IAB_TCF.value,
               then: () =>
                 createRadioGroupWithDataElementValidationSchema(
-                  "gdprContainsPersonalData"
-                )
-            })
-          })
-        )
-    })
+                  "gdprContainsPersonalData",
+                ),
+            }),
+          }),
+        ),
+    }),
   })
   .concat(overridesBridge.formikStateValidationSchema);
 
@@ -242,7 +243,7 @@ const ConsentObject = ({ value, index }) => {
         items={[ADOBE, IAB_TCF]}
         width="size-5000"
       >
-        {item => <Item key={item.value}>{item.label}</Item>}
+        {(item) => <Item key={item.value}>{item.label}</Item>}
       </FormikPicker>
       {value.standard === ADOBE.value && (
         <FormikPicker
@@ -253,7 +254,7 @@ const ConsentObject = ({ value, index }) => {
           items={[VERSION_1_0, VERSION_2_0]}
           width="size-5000"
         >
-          {item => <Item key={item.value}>{item.label}</Item>}
+          {(item) => <Item key={item.value}>{item.label}</Item>}
         </FormikPicker>
       )}
       {value.standard === ADOBE.value &&
@@ -341,7 +342,7 @@ const ConsentObject = ({ value, index }) => {
 
 ConsentObject.propTypes = {
   value: PropTypes.object.isRequired,
-  index: PropTypes.number.isRequired
+  index: PropTypes.number.isRequired,
 };
 
 const SetConsent = () => {
@@ -353,7 +354,7 @@ const SetConsent = () => {
       render={({ initInfo, formikProps: { values } }) => {
         const { instanceName } = values;
         const instanceSettings = initInfo.extensionSettings.instances.find(
-          instance => instance.name === instanceName
+          (instance) => instance.name === instanceName,
         );
         const edgeConfigIds = getEdgeConfigIds(instanceSettings);
         const orgId = instanceSettings?.orgId ?? initInfo.company.orgId;
@@ -391,7 +392,7 @@ const SetConsent = () => {
             {values.inputMethod === FORM.value && (
               <FieldArray
                 name="consent"
-                render={arrayHelpers => (
+                render={(arrayHelpers) => (
                   <>
                     <Button
                       variant="primary"

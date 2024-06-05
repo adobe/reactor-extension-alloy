@@ -18,7 +18,7 @@ import DataElementSelector from "../dataElementSelector";
 /**
  * The form for editing a number or integer field.
  */
-const NumberOrIntegerEdit = props => {
+const NumberOrIntegerEdit = (props) => {
   const { fieldName } = props;
 
   return (
@@ -36,7 +36,7 @@ const NumberOrIntegerEdit = props => {
 };
 
 NumberOrIntegerEdit.propTypes = {
-  fieldName: PropTypes.string.isRequired
+  fieldName: PropTypes.string.isRequired,
 };
 
 export default NumberOrIntegerEdit;

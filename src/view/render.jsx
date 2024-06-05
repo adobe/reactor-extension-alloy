@@ -17,22 +17,24 @@ import { Provider, lightTheme } from "@adobe/react-spectrum";
 import ErrorBoundary from "./components/errorBoundary";
 import "./global.styl";
 import monitorForOriginatingErrors from "./utils/monitorForOriginatingErrors";
+import "@spectrum-css/tokens/dist/index.css";
+import "@spectrum-css/typography/dist/index.css";
 
 monitorForOriginatingErrors();
 
 const container = document.getElementById("root");
 const root = createRoot(container);
 
-export default View => {
+export default (View) => {
   root.render(
     <Provider
       theme={lightTheme}
       colorScheme="light"
-      UNSAFE_className="react-spectrum-provider"
+      UNSAFE_className="react-spectrum-provider spectrum spectrum--medium spectrum--light"
     >
       <ErrorBoundary>
         <View />
       </ErrorBoundary>
-    </Provider>
+    </Provider>,
   );
 };

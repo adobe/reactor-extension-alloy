@@ -19,53 +19,53 @@ describe("Event Merge ID", () => {
 
   beforeEach(() => {
     instanceManager = jasmine.createSpyObj("instanceManager", {
-      createEventMergeId: { eventMergeId: "randomEventMergeId" }
+      createEventMergeId: { eventMergeId: "randomEventMergeId" },
     });
     eventMergeIdCache = jasmine.createSpyObj("eventMergeIdCache", [
       "getByCacheId",
-      "set"
+      "set",
     ]);
     dataElement = createEventMergeId({
       instanceManager,
-      eventMergeIdCache
+      eventMergeIdCache,
     });
   });
 
   it("produces and caches event merge ID based on cache ID", () => {
     instanceManager.createEventMergeId.and.returnValues(
       { eventMergeId: "eventMergeId1" },
-      { eventMergeId: "eventMergeId2" }
+      { eventMergeId: "eventMergeId2" },
     );
     eventMergeIdCache.getByCacheId.and.returnValues(
       undefined,
       undefined,
       "eventMergeId1",
       // Simulate the event merge ID having being reset through the Reset Event Merge ID action.
-      "eventMergeId2Reset"
+      "eventMergeId2Reset",
     );
     const result1 = dataElement({
       instanceName: "myinstance",
-      cacheId: "cacheId1"
+      cacheId: "cacheId1",
     });
     const result2 = dataElement({
       instanceName: "myinstance",
-      cacheId: "cacheId2"
+      cacheId: "cacheId2",
     });
     const result3 = dataElement({
       instanceName: "myinstance",
-      cacheId: "cacheId1"
+      cacheId: "cacheId1",
     });
     const result4 = dataElement({
       instanceName: "myinstance",
-      cacheId: "cacheId2"
+      cacheId: "cacheId2",
     });
     expect(eventMergeIdCache.set).toHaveBeenCalledWith(
       "cacheId1",
-      "eventMergeId1"
+      "eventMergeId1",
     );
     expect(eventMergeIdCache.set).toHaveBeenCalledWith(
       "cacheId2",
-      "eventMergeId2"
+      "eventMergeId2",
     );
     expect(eventMergeIdCache.set).toHaveBeenCalledTimes(2);
     expect(result1).toBe("eventMergeId1");

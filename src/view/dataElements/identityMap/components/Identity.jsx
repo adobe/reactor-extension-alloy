@@ -22,7 +22,7 @@ import {
   Tabs,
   Text,
   View,
-  Well
+  Well,
 } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import useNewlyValidatedFormSubmission from "../../../utils/useNewlyValidatedFormSubmission";
@@ -45,13 +45,13 @@ const Identity = ({ context }) => {
 
   const [selectedTabKey, setSelectedTabKey] = useState("0");
 
-  useNewlyValidatedFormSubmission(errors => {
+  useNewlyValidatedFormSubmission((errors) => {
     // If the user just tried to save the configuration and there's
     // a validation error, make sure the first accordion item containing
     // an error is shown.
     if (errors && errors.identities) {
       const identityIndexContainingErrors = errors.identities.findIndex(
-        identity => identity
+        (identity) => identity,
       );
       setSelectedTabKey(String(identityIndexContainingErrors));
     }
@@ -60,7 +60,7 @@ const Identity = ({ context }) => {
   return (
     <FieldArray
       name="identities"
-      render={arrayHelpers => {
+      render={(arrayHelpers) => {
         return (
           <>
             <Flex alignItems="center">
@@ -107,7 +107,7 @@ const Identity = ({ context }) => {
                         <FieldArray
                           id={`identities.${index}.identifiers`}
                           name={`identities.${index}.identifiers`}
-                          render={identityArrayHelpers => {
+                          render={(identityArrayHelpers) => {
                             return (
                               <>
                                 <Flex
@@ -128,7 +128,7 @@ const Identity = ({ context }) => {
                                     variant="secondary"
                                     onPress={() => {
                                       identityArrayHelpers.push(
-                                        getDefaultIdentifier()
+                                        getDefaultIdentifier(),
                                       );
                                     }}
                                   >
@@ -179,7 +179,7 @@ const Identity = ({ context }) => {
                                             >
                                               Logged Out
                                             </Item>
-                                            {item => (
+                                            {(item) => (
                                               <Item key={item.value}>
                                                 {item.label}
                                               </Item>
@@ -201,7 +201,7 @@ const Identity = ({ context }) => {
                                             variant="secondary"
                                             onPress={() => {
                                               identityArrayHelpers.remove(
-                                                identifierIndex
+                                                identifierIndex,
                                               );
                                             }}
                                             marginTop="size-150"
@@ -211,7 +211,7 @@ const Identity = ({ context }) => {
                                           </Button>
                                         )}
                                       </Well>
-                                    )
+                                    ),
                                   )}
                                 </Flex>
                               </>
@@ -247,7 +247,7 @@ const Identity = ({ context }) => {
 };
 
 Identity.propTypes = {
-  context: PropTypes.object
+  context: PropTypes.object,
 };
 
 export default Identity;

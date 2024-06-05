@@ -20,32 +20,32 @@ const COMMAND = { autoPopulationSource: autoPopulationSource.COMMAND };
 // fields that are auto-populated as part of the "device" context
 const CONTEXT_DEVICE = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
-  contextKey: contextKey.DEVICE
+  contextKey: contextKey.DEVICE,
 };
 // fields that are auto-populated as part of the "environment" context
 const CONTEXT_ENVIRONMENT = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
-  contextKey: contextKey.ENVIRONMENT
+  contextKey: contextKey.ENVIRONMENT,
 };
 // fields that are auto-populated as part of the "placeContext" context
 const CONTEXT_PLACE_CONTEXT = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
-  contextKey: contextKey.PLACE_CONTEXT
+  contextKey: contextKey.PLACE_CONTEXT,
 };
 // fields that are auto-populated as part of the "web" context
 const CONTEXT_WEB = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
-  contextKey: contextKey.WEB
+  contextKey: contextKey.WEB,
 };
 // fields that are auto-populated as part of the "web" context
 const CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
-  contextKey: contextKey.HIGH_ENTROPY_USER_AGENT_HINTS
+  contextKey: contextKey.HIGH_ENTROPY_USER_AGENT_HINTS,
 };
 
 const CONTEXT_ENVIRONMENT_AND_HIGH_ENTROPY_USER_AGENT_HINTS = {
   autoPopulationSource: autoPopulationSource.CONTEXT,
-  contextKey: `${contextKey.ENVIRONMENT} or ${contextKey.HIGH_ENTROPY_USER_AGENT_HINTS}`
+  contextKey: `${contextKey.ENVIRONMENT} or ${contextKey.HIGH_ENTROPY_USER_AGENT_HINTS}`,
 };
 
 // These properties are applied to the form state in "getInitialFormState.js"
@@ -89,7 +89,7 @@ const defaultFormState = {
   "environment.browserDetails.userAgentClientHints.platformVersion":
     CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
   "environment.browserDetails.userAgentClientHints.wow64":
-    CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS
+    CONTEXT_HIGH_ENTROPY_USER_AGENT_HINTS,
 };
 
 // update variable action includes a top-level xdm key, so include those here

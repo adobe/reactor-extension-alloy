@@ -30,9 +30,9 @@ const FormikRadioGroup = ({
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for RadioGroup, so we wire up Formik's
   // onBlur to every radio.
-  const childrenWithOnBlur = React.Children.map(children, child => {
+  const childrenWithOnBlur = React.Children.map(children, (child) => {
     return React.cloneElement(child, {
-      onBlur: event => {
+      onBlur: (event) => {
         // If the target that will receive focus is not a child of the
         // radio group, we know the radio group has lost focus.
         if (
@@ -42,7 +42,7 @@ const FormikRadioGroup = ({
         ) {
           setTouched(true);
         }
-      }
+      },
     });
   });
   return (
@@ -54,7 +54,7 @@ const FormikRadioGroup = ({
         {...otherProps}
         ref={radioGroupRef}
         value={value}
-        onChange={currentValue => {
+        onChange={(currentValue) => {
           setValue(currentValue);
           if (onChange) {
             onChange(currentValue);
@@ -74,7 +74,7 @@ FormikRadioGroup.propTypes = {
   children: PropTypes.node.isRequired,
   description: PropTypes.string,
   width: PropTypes.string,
-  onChange: PropTypes.func
+  onChange: PropTypes.func,
 };
 
 export default FormikRadioGroup;

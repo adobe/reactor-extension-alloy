@@ -23,7 +23,7 @@ const EdgeConfigEnvironment = ({
   name,
   initInfo,
   environmentType,
-  context
+  context,
 }) => {
   const [{ value: sandboxName }] = useField(`${name}.sandbox`);
   const { current } = context;
@@ -32,7 +32,7 @@ const EdgeConfigEnvironment = ({
   const defaultSandboxOnly = sandboxes.length === 1;
 
   const selectedSandbox = sandboxes.find(
-    sandbox => sandbox.name === sandboxName
+    (sandbox) => sandbox.name === sandboxName,
   );
 
   const description = `Choose the ${
@@ -80,7 +80,7 @@ EdgeConfigEnvironment.propTypes = {
   name: PropTypes.string.isRequired,
   initInfo: PropTypes.object.isRequired,
   environmentType: PropTypes.string,
-  context: PropTypes.object.isRequired
+  context: PropTypes.object.isRequired,
 };
 
 export default EdgeConfigEnvironment;

@@ -19,17 +19,17 @@ export default async ({
   schemaId,
   schemaVersion,
   sandboxName,
-  signal
+  signal,
 }) => {
   const schemaMajorVersion = schemaVersion.split(".")[0];
   const path = `/data/foundation/schemaregistry/tenant/schemas/${encodeURIComponent(
-    schemaId
+    schemaId,
   )}`;
 
   const headers = {
     // request a summary response with title , $id , meta:altId , and version attributes
     Accept: `application/vnd.adobe.xed-full+json;version=${schemaMajorVersion}`,
-    "x-sandbox-name": sandboxName
+    "x-sandbox-name": sandboxName,
   };
 
   let parsedResponse;
@@ -39,7 +39,7 @@ export default async ({
       imsAccess,
       path,
       headers,
-      signal
+      signal,
     });
   } catch (e) {
     if (e.name === "AbortError") {
@@ -47,7 +47,7 @@ export default async ({
     }
 
     throw new UserReportableError("Failed to load schema.", {
-      originatingError: e
+      originatingError: e,
     });
   }
 

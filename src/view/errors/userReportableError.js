@@ -27,7 +27,7 @@ class UserReportableError extends Error {
         null,
         message,
         " ",
-        originatingError.message
+        originatingError.message,
       );
       additionalInfoUrl =
         additionalInfoUrl ?? originatingError.additionalInfoUrl;

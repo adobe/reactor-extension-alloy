@@ -28,14 +28,14 @@ const fetchNodeIdsForDepth = (formStateNode, depth) => {
     schema: { type },
     properties,
     items,
-    id
+    id,
   } = formStateNode;
   if (type === OBJECT && properties) {
     return Object.keys(properties).reduce(
       (nodeIds, key) => {
         return nodeIds.concat(fetchNodeIdsForDepth(properties[key], depth - 1));
       },
-      [id]
+      [id],
     );
   }
   if (type === ARRAY && items) {
@@ -43,7 +43,7 @@ const fetchNodeIdsForDepth = (formStateNode, depth) => {
       (nodeIds, item) => {
         return nodeIds.concat(fetchNodeIdsForDepth(item, depth - 1));
       },
-      [id]
+      [id],
     );
   }
   return [];
@@ -56,7 +56,7 @@ const Editor = ({
   previouslySavedSchemaInfo,
   initialExpandedDepth = 0,
   componentName,
-  verticalLayout = false
+  verticalLayout = false,
 }) => {
   const { values: formState } = useFormikContext();
   const [expandedNodeIdsInTree, setExpandedNodeIdsInTree] = useState(() => {
@@ -66,18 +66,18 @@ const Editor = ({
   const [nodeIdToScrollIntoViewInTree, setNodeIdToScrollIntoViewInTree] =
     useState();
 
-  const expandNodeAndAncestorsInTree = nodeId => {
+  const expandNodeAndAncestorsInTree = (nodeId) => {
     if (!nodeId) {
       return;
     }
     const {
       breadcrumb,
       formStateNode: {
-        schema: { type }
-      }
+        schema: { type },
+      },
     } = getNodeEditData({
       formState,
-      nodeId
+      nodeId,
     });
     if (type !== OBJECT && type !== ARRAY) {
       // don't add the nodeId of the last item in the breadcrumbs if it is a leaf node
@@ -122,7 +122,7 @@ const Editor = ({
           selectedNodeId={selectedNodeId}
           expandedNodeIds={expandedNodeIdsInTree}
           setExpandedNodeIds={setExpandedNodeIdsInTree}
-          onSelect={nodeId => {
+          onSelect={(nodeId) => {
             setSelectedNodeId(nodeId);
             expandNodeAndAncestorsInTree(nodeId);
           }}
@@ -141,7 +141,7 @@ const Editor = ({
       >
         {selectedNodeId ? (
           <NodeEdit
-            onNodeSelect={nodeId => {
+            onNodeSelect={(nodeId) => {
               setSelectedNodeId(nodeId);
               expandNodeAndAncestorsInTree(nodeId);
               setNodeIdToScrollIntoViewInTree(nodeId);
@@ -169,11 +169,11 @@ Editor.propTypes = {
   schema: PropTypes.object,
   previouslySavedSchemaInfo: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    version: PropTypes.string.isRequired
+    version: PropTypes.string.isRequired,
   }),
   initialExpandedDepth: PropTypes.number,
   componentName: PropTypes.string.isRequired,
-  verticalLayout: PropTypes.bool
+  verticalLayout: PropTypes.bool,
 };
 
 export default Editor;

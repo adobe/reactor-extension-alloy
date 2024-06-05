@@ -16,4 +16,4 @@ governing permissions and limitations under the License.
  */
 export const ADOBE_ANALYTICS = "analytics";
 export const ADOBE_TARGET = "target";
-export const ADOBE_AUDIENCE_MANAGER = "audienceManager";
+export const ADOBE_AUDIENCE_MANAGER = "audiencemanager";

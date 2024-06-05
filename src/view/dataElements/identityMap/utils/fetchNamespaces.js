@@ -15,7 +15,7 @@ import fetchFromPlatform from "../../../utils/fetchFromPlatform";
 export default async ({ orgId, imsAccess, sandbox }) => {
   let parsedResponse;
   const headers = {
-    "x-sandbox-name": sandbox
+    "x-sandbox-name": sandbox,
   };
 
   try {
@@ -23,7 +23,7 @@ export default async ({ orgId, imsAccess, sandbox }) => {
       orgId,
       imsAccess,
       path: "/data/core/idnamespace/identities",
-      headers
+      headers,
     });
   } catch (e) {
     // TODO: Should we be reporting an error instead?
