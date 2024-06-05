@@ -320,7 +320,7 @@ test.requestHooks(
   },
 );
 
-test.only.requestHooks(
+test.requestHooks(
   schemaMocks.basic,
   schemaMocks.other,
   dataElementsMocks.multiple,
