@@ -317,10 +317,6 @@ const createExtensionManifest = ({ version }) => {
                     AJO: {
                       type: "string",
                       enum: ["always", "decoratedElementsOnly", "never"]
-                    },
-                    TGT: {
-                      type: "string",
-                      enum: ["always", "decoratedElementsOnly", "never"]
                     }
                   },
                 }
