@@ -37,6 +37,7 @@ export default function textField({
   description,
   width = "size-5000",
   validationSchemaBase = string(),
+  ariaLabel = label,
   isDisabled = false,
 }) {
   let validationSchema = validationSchemaBase;
@@ -58,7 +59,7 @@ export default function textField({
             data-test-id={`${namePrefix}${name}TextField`}
             name={`${namePrefix}${name}`}
             label={hideLabel ? undefined : label}
-            aria-label={label}
+            aria-label={ariaLabel}
             isRequired={isRequired}
             description={description}
             width={width}

@@ -64,6 +64,7 @@ const applyPropositionsForm = form({}, [
           { value: "setHtml", label: "Set HTML" },
           { value: "replaceHtml", label: "Replace HTML" },
           { value: "appendHtml", label: "Append HTML" },
+          { value: "collectInteractions", label: "Collect interactions" },
         ],
         validationSchemaBase: string().required(
           "Please provide an action type.",
