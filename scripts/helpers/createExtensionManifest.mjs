@@ -282,6 +282,30 @@ const createExtensionManifest = ({ version }) => {
                 clickCollectionEnabled: {
                   type: "boolean",
                 },
+                clickCollection: {
+                  type: "object",
+                  properties: {
+                    internalLinkEnabled: {
+                      type: "boolean",
+                    },
+                    externalLinkEnabled: {
+                      type: "boolean",
+                    },
+                    downloadLinkEnabled: {
+                      type: "boolean",
+                    },
+                    useSessionStorage: {
+                      type: "boolean",
+                    },
+                    eventGroupingEnabled: {
+                      type: "boolean",
+                    },
+                    filterClickProperties: {
+                      type: "string",
+                      minLength: 1,
+                    },
+                  },
+                },
                 downloadLinkQualifier: {
                   type: "string",
                   minLength: 1,

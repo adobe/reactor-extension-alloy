@@ -27,6 +27,7 @@ import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfV
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import FormElementContainer from "../components/formElementContainer";
 import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
+import BetaBadge from "../components/betaBadge";
 
 const CONTEXT_GRANULARITY = {
   ALL: "all",
@@ -69,17 +70,27 @@ const contextOptions = [
 ];
 
 export const bridge = {
-  getInstanceDefaults: () => ({
-    onBeforeEventSend: "",
-    onBeforeLinkClickSend: "",
-    clickCollectionEnabled: true,
-    downloadLinkQualifier:
-      "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$",
-    contextGranularity: CONTEXT_GRANULARITY.ALL,
-    context: contextOptions
-      .filter((option) => option.default)
-      .map((option) => option.value),
-  }),
+  getInstanceDefaults: () => {
+    const defaults = {
+      onBeforeEventSend: "",
+      onBeforeLinkClickSend: "",
+      clickCollectionEnabled: true,
+      clickCollection: {
+        internalLinkEnabled: true,
+        externalLinkEnabled: true,
+        downloadLinkEnabled: true,
+        sessionStorageEnabled: false,
+        eventGroupingEnabled: false,
+      },
+      downloadLinkQualifier:
+        "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$",
+      contextGranularity: CONTEXT_GRANULARITY.ALL,
+      context: contextOptions
+        .filter((option) => option.default)
+        .map((option) => option.value),
+    };
+    return defaults;
+  },
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
 
@@ -91,6 +102,7 @@ export const bridge = {
         "onBeforeEventSend",
         "onBeforeLinkClickSend",
         "clickCollectionEnabled",
+        "clickCollection",
         "downloadLinkQualifier",
         "context",
       ],
@@ -109,21 +121,29 @@ export const bridge = {
       "onBeforeLinkClickSend",
       "clickCollectionEnabled",
     ];
-
     if (instanceValues.clickCollectionEnabled) {
       propertyKeysToCopy.push("downloadLinkQualifier");
+      propertyKeysToCopy.push("clickCollection");
     }
-
     copyPropertiesIfValueDifferentThanDefault({
       toObj: instanceSettings,
       fromObj: instanceValues,
       defaultsObj: bridge.getInstanceDefaults(),
       keys: propertyKeysToCopy,
     });
-
+    // Copy clickCollection settings if clickCollection is enabled
+    if (instanceValues.clickCollectionEnabled) {
+      instanceSettings.clickCollection = instanceValues.clickCollection;
+    }
     if (instanceValues.contextGranularity === CONTEXT_GRANULARITY.SPECIFIC) {
       instanceSettings.context = instanceValues.context;
     }
+    // if (
+    //   instanceValues.onBeforeLinkClickSend &&
+    //   instanceValues.clickCollection.filterClickProperties
+    // ) {
+    //   console.warn("Both onBeforeLinkClickSend and filterClickProperties are defined. onBeforeLinkClickSend is deprecated and will be ignored.");
+    // }
 
     return instanceSettings;
   },
@@ -179,6 +199,51 @@ const DataCollectionSection = ({ instanceFieldName }) => {
           </FormikCheckbox>
           {instanceValues.clickCollectionEnabled && (
             <FieldSubset>
+              <FormikCheckbox
+                data-test-id="internalLinkEnabledField"
+                name={`${instanceFieldName}.clickCollection.internalLinkEnabled`}
+                description="Collect data on link clicks within the current domain."
+                width="size-5000"
+              >
+                Internal links
+              </FormikCheckbox>
+              {instanceValues.clickCollection.internalLinkEnabled && (
+                <FieldSubset>
+                  <FormikCheckbox
+                    data-test-id="eventGroupingEnabledField"
+                    name={`${instanceFieldName}.clickCollection.eventGroupingEnabled`}
+                    description="Send link data with subsequent page view event instead of a separate event on the current page."
+                    width="size-5000"
+                  >
+                    Enable event grouping <BetaBadge />
+                  </FormikCheckbox>
+                  <FormikCheckbox
+                    data-test-id="sessionStorageEnabledField"
+                    name={`${instanceFieldName}.clickCollection.sessionStorageEnabled`}
+                    description="Use session storage to store click-related properties."
+                    width="size-5000"
+                  >
+                    Enable session storage <BetaBadge />
+                  </FormikCheckbox>
+                </FieldSubset>
+              )}
+              <FormikCheckbox
+                data-test-id="externalLinkEnabledField"
+                name={`${instanceFieldName}.clickCollection.externalLinkEnabled`}
+                description="Collect data on link clicks to external domains."
+                width="size-5000"
+              >
+                External links
+              </FormikCheckbox>
+              <FormikCheckbox
+                data-test-id="downloadLinkEnabledField"
+                name={`${instanceFieldName}.clickCollection.downloadLinkEnabled`}
+                description="Collect data on link clicks that qualify as downloads."
+                width="size-5000"
+              >
+                Download links
+              </FormikCheckbox>
+
               <Flex gap="size-100">
                 <FormikTextField
                   data-test-id="downloadLinkQualifierField"
@@ -211,16 +276,32 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                   defaultValue={instanceDefaults.downloadLinkQualifier}
                 />
               </Flex>
+
+              <Flex gap="size-100">
+                <CodeField
+                  data-test-id="filterClickPropertiesEditButton"
+                  label="Filter click properties"
+                  buttonLabelSuffix="filter click properties callback code"
+                  name={`${instanceFieldName}.clickCollection.filterClickProperties`}
+                  description="Callback function to evaluate and modify click-related properties before collection."
+                  language="javascript"
+                  placeholder={
+                    "// Use this custom code block to adjust or filter click data. You can use the following variables:\n// content.clickedElement: The DOM element that was clicked\n// content.pageName: The page name when the click happened\n// content.linkName: The name of the clicked link\n// content.linkRegion: The region of the clicked link\n// content.linkType: The type of link (typically exit, download, or other)\n// content.linkUrl: The destination URL of the clicked link\n// Return false to omit link data."
+                  }
+                  beta
+                />
+              </Flex>
+
               <Flex gap="size-100">
                 <CodeField
                   data-test-id="onBeforeLinkClickSendEditButton"
-                  label="On before link click send callback"
+                  label="On before link click send callback (deprecated, use filter click properties instead)"
                   buttonLabelSuffix="on before link click event send callback code"
                   name={`${instanceFieldName}.onBeforeLinkClickSend`}
-                  description='Callback function for modifying data before each link click event is sent to the server. A variable named "content" will be available for use within your custom code. Filter by "content.clickedElement" or modify "content.xdm" or "content.data" as needed to transform data before it is sent to the server. Return false if you want to cancel the link tracking for this element.'
+                  description="Callback function to modify the event payload when a link is clicked."
                   language="javascript"
                   placeholder={
-                    '// Filter by "content.clickedElement".\n// Modify content.xdm or content.data as necessary. There is no need to wrap the\n// code in a function or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";'
+                    "// Use this custom code block to adjust or filter the payload sent to Adobe. You can use the following variables:\n// content.clickedElement: The DOM element that was clicked\n// content.xdm: The XDM payload for the event\n// content.data: The data object payload for the event\n// Return false to abort sending data."
                   }
                 />
               </Flex>

@@ -22,6 +22,7 @@ import {
 import CodeIcon from "@spectrum-icons/workflow/Code";
 import FieldDescriptionAndError from "./fieldDescriptionAndError";
 import "./codePreview.styl";
+import BetaBadge from "./betaBadge";
 
 const CodePreview = ({
   "data-test-id": dataTestId,
@@ -32,6 +33,7 @@ const CodePreview = ({
   description,
   error,
   onPress,
+  beta,
 }) => {
   return (
     // To get this element to shrink to its contents, we had to use
@@ -42,6 +44,7 @@ const CodePreview = ({
     // textarea sizing when there is a label on it.
     <View position="relative" alignSelf="flex-start">
       <LabeledValue label={label} aria-label={ariaLabel} />
+      {beta && <BetaBadge />}
       <FieldDescriptionAndError description={description} error={error}>
         <TextArea
           width="size-5000"
@@ -73,6 +76,7 @@ CodePreview.propTypes = {
   description: PropTypes.node,
   error: PropTypes.string,
   onPress: PropTypes.func.isRequired,
+  beta: PropTypes.bool,
 };
 
 export default CodePreview;
