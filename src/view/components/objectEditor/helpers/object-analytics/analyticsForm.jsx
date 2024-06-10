@@ -30,7 +30,7 @@ const propItems = Array.from({ length: 75 }, (_, i) => ({
   label: `prop${i + 1}`,
   value: `prop${i + 1}`,
 }));
-const numberedEventItems = Array.from({ length: 250 }, (_, i) => ({
+const numberedEventItems = Array.from({ length: 1000 }, (_, i) => ({
   label: `event${i + 1}`,
   value: `event${i + 1}`,
 }));
