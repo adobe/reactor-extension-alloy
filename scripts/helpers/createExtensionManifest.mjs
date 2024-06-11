@@ -333,7 +333,7 @@ const createExtensionManifest = ({ version }) => {
                 personalizationStorageEnabled: {
                   type: "boolean",
                 },
-                autoTrackPropositionInteractions: {
+                autoCollectPropositionInteractions: {
                   type: "object",
                   properties: {
                     AJO: {
