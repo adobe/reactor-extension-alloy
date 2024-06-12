@@ -131,10 +131,6 @@ export const bridge = {
       defaultsObj: bridge.getInstanceDefaults(),
       keys: propertyKeysToCopy,
     });
-    // Copy clickCollection settings if clickCollection is enabled
-    if (instanceValues.clickCollectionEnabled) {
-      instanceSettings.clickCollection = instanceValues.clickCollection;
-    }
     if (instanceValues.contextGranularity === CONTEXT_GRANULARITY.SPECIFIC) {
       instanceSettings.context = instanceValues.context;
     }
