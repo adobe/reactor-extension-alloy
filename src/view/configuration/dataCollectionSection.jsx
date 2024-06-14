@@ -28,6 +28,7 @@ import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefault
 import FormElementContainer from "../components/formElementContainer";
 import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 import BetaBadge from "../components/betaBadge";
+import Alert from "../components/alert";
 
 const CONTEXT_GRANULARITY = {
   ALL: "all",
@@ -81,6 +82,7 @@ export const bridge = {
         downloadLinkEnabled: true,
         sessionStorageEnabled: false,
         eventGroupingEnabled: false,
+        filterClickProperties: "",
       },
       downloadLinkQualifier:
         "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$",
@@ -134,13 +136,6 @@ export const bridge = {
     if (instanceValues.contextGranularity === CONTEXT_GRANULARITY.SPECIFIC) {
       instanceSettings.context = instanceValues.context;
     }
-    // if (
-    //   instanceValues.onBeforeLinkClickSend &&
-    //   instanceValues.clickCollection.filterClickProperties
-    // ) {
-    //   console.warn("Both onBeforeLinkClickSend and filterClickProperties are defined. onBeforeLinkClickSend is deprecated and will be ignored.");
-    // }
-
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
@@ -287,7 +282,6 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                   beta
                 />
               </Flex>
-
               <Flex gap="size-100">
                 <CodeField
                   data-test-id="onBeforeLinkClickSendEditButton"
@@ -301,6 +295,15 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                   }
                 />
               </Flex>
+              {instanceValues.onBeforeLinkClickSend &&
+                instanceValues.clickCollection.filterClickProperties && (
+                  <Alert variant="notice" title="Warning">
+                    Both filter-click-properties and on-before-link-click-send
+                    callbacks have been defined. On-before-link-click-send has
+                    been deprecated and will not be used if
+                    filter-click-properties is available.
+                  </Alert>
+                )}
             </FieldSubset>
           )}
         </div>
