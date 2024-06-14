@@ -82,7 +82,7 @@ export const bridge = {
         downloadLinkEnabled: true,
         sessionStorageEnabled: false,
         eventGroupingEnabled: false,
-        filterClickProperties: "",
+        filterClickDetails: "",
       },
       downloadLinkQualifier:
         "\\.(exe|zip|wav|mp3|mov|mpg|avi|wmv|pdf|doc|docx|xls|xlsx|ppt|pptx)$",
@@ -270,10 +270,10 @@ const DataCollectionSection = ({ instanceFieldName }) => {
 
               <Flex gap="size-100">
                 <CodeField
-                  data-test-id="filterClickPropertiesEditButton"
+                  data-test-id="filterClickDetailsEditButton"
                   label="Filter click properties"
                   buttonLabelSuffix="filter click properties callback code"
-                  name={`${instanceFieldName}.clickCollection.filterClickProperties`}
+                  name={`${instanceFieldName}.clickCollection.filterClickDetails`}
                   description="Callback function to evaluate and modify click-related properties before collection."
                   language="javascript"
                   placeholder={
@@ -296,7 +296,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                 />
               </Flex>
               {instanceValues.onBeforeLinkClickSend &&
-                instanceValues.clickCollection.filterClickProperties && (
+                instanceValues.clickCollection.filterClickDetails && (
                   <Alert variant="notice" title="Warning">
                     Both filter-click-properties and on-before-link-click-send
                     callbacks have been defined. On-before-link-click-send has

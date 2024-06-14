@@ -445,7 +445,7 @@ test("returns full valid settings", async () => {
   await instances[1].idMigrationEnabled.click();
   await instances[1].thirdPartyCookiesEnabled.click();
   await instances[1].onBeforeEventSendEditButton.click();
-  await instances[1].filterClickPropertiesEditButton.click();
+  await instances[1].filterClickDetailsEditButton.click();
   await instances[1].onBeforeLinkClickSendEditButton.click();
   // Click on the field before clearing to get rid of the "..."
   await instances[1].downloadLinkQualifierField.click();
@@ -512,7 +512,7 @@ test("returns full valid settings", async () => {
           "// code in a function or return a value. For example:\n" +
           '// content.xdm.web.webPageDetails.name = "Checkout";',
         clickCollection: {
-          filterClickProperties:
+          filterClickDetails:
             "language=javascript;code=// Use this custom code block to adjust or filter click data. You can use the following variables:\n// content.clickedElement: The DOM element that was clicked\n// content.pageName: The page name when the click happened\n// content.linkName: The name of the clicked link\n// content.linkRegion: The region of the clicked link\n// content.linkType: The type of link (typically exit, download, or other)\n// content.linkUrl: The destination URL of the clicked link\n// Return false to omit link data.",
         },
         onBeforeLinkClickSend:

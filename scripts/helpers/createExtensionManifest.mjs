@@ -300,7 +300,7 @@ const createExtensionManifest = ({ version }) => {
                     eventGroupingEnabled: {
                       type: "boolean",
                     },
-                    filterClickProperties: {
+                    filterClickDetails: {
                       type: "string",
                       minLength: 1,
                     },

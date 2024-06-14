@@ -129,8 +129,8 @@ for (let i = 0; i < 3; i += 1) {
       "downloadLinkQualifierTestButton",
     ),
     onBeforeEventSendEditButton: spectrum.button("onBeforeEventSendEditButton"),
-    filterClickPropertiesEditButton: spectrum.button(
-      "filterClickPropertiesEditButton",
+    filterClickDetailsEditButton: spectrum.button(
+      "filterClickDetailsEditButton",
     ),
     onBeforeLinkClickSendEditButton: spectrum.button(
       "onBeforeLinkClickSendEditButton",
