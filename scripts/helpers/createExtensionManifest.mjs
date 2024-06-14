@@ -294,7 +294,7 @@ const createExtensionManifest = ({ version }) => {
                     downloadLinkEnabled: {
                       type: "boolean",
                     },
-                    useSessionStorage: {
+                    sessionStorageEnabled: {
                       type: "boolean",
                     },
                     eventGroupingEnabled: {
