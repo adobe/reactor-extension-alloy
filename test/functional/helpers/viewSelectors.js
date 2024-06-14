@@ -114,6 +114,11 @@ for (let i = 0; i < 3; i += 1) {
     clickCollectionEnabledField: spectrum.checkbox(
       "clickCollectionEnabledField",
     ),
+    internalLinkEnabledField: spectrum.checkbox("internalLinkEnabledField"),
+    eventGroupingEnabledField: spectrum.checkbox("eventGroupingEnabledField"),
+    sessionStorageEnabledField: spectrum.checkbox("sessionStorageEnabledField"),
+    externalLinkEnabledField: spectrum.checkbox("externalLinkEnabledField"),
+    downloadLinkEnabledField: spectrum.checkbox("downloadLinkEnabledField"),
     downloadLinkQualifierField: spectrum.textField(
       "downloadLinkQualifierField",
     ),
@@ -124,6 +129,9 @@ for (let i = 0; i < 3; i += 1) {
       "downloadLinkQualifierTestButton",
     ),
     onBeforeEventSendEditButton: spectrum.button("onBeforeEventSendEditButton"),
+    filterClickPropertiesEditButton: spectrum.button(
+      "filterClickPropertiesEditButton",
+    ),
     onBeforeLinkClickSendEditButton: spectrum.button(
       "onBeforeLinkClickSendEditButton",
     ),
