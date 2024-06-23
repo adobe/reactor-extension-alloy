@@ -111,12 +111,12 @@ for (let i = 0; i < 3; i += 1) {
     prehidingStyleEditButton: spectrum.button("prehidingStyleEditButton"),
     targetMigrationEnabled: spectrum.checkbox("targetMigrationEnabledField"),
 
-    clickCollectionEnabledField: spectrum.checkbox(
-      "clickCollectionEnabledField",
-    ),
     internalLinkEnabledField: spectrum.checkbox("internalLinkEnabledField"),
-    eventGroupingEnabledField: spectrum.checkbox("eventGroupingEnabledField"),
-    sessionStorageEnabledField: spectrum.checkbox("sessionStorageEnabledField"),
+    eventGrouping: {
+      noneField: spectrum.radio("eventGroupingNoneField"),
+      sessionStorageField: spectrum.radio("eventGroupingSessionStorageField"),
+      memoryField: spectrum.radio("eventGroupingMemoryField"),
+    },
     externalLinkEnabledField: spectrum.checkbox("externalLinkEnabledField"),
     downloadLinkEnabledField: spectrum.checkbox("downloadLinkEnabledField"),
     downloadLinkQualifierField: spectrum.textField(

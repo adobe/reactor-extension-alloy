@@ -35,6 +35,12 @@ const CONTEXT_GRANULARITY = {
   SPECIFIC: "specific",
 };
 
+const EVENT_GROUPING = {
+  NONE: "none",
+  SESSION_STORAGE: "sessionStorage",
+  MEMORY: "memory",
+};
+
 const contextOptions = [
   {
     label: "Web (information about the current page)",
@@ -70,6 +76,14 @@ const contextOptions = [
   },
 ];
 
+const clickCollectionIsEnabled = (instanceValues) => {
+  return (
+    instanceValues.clickCollection.internalLinkEnabled ||
+    instanceValues.clickCollection.externalLinkEnabled ||
+    instanceValues.clickCollection.downloadLinkEnabled
+  );
+};
+
 export const bridge = {
   getInstanceDefaults: () => {
     const defaults = {
@@ -90,29 +104,49 @@ export const bridge = {
       context: contextOptions
         .filter((option) => option.default)
         .map((option) => option.value),
+      eventGrouping: EVENT_GROUPING.NONE,
     };
     return defaults;
   },
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
 
+    const propertyKeysToCopy = [
+      "onBeforeEventSend",
+      "onBeforeLinkClickSend",
+      "clickCollectionEnabled",
+      "clickCollection",
+      "downloadLinkQualifier",
+      "context",
+    ];
+
     copyPropertiesWithDefaultFallback({
       toObj: instanceValues,
       fromObj: instanceSettings,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: [
-        "onBeforeEventSend",
-        "onBeforeLinkClickSend",
-        "clickCollectionEnabled",
-        "clickCollection",
-        "downloadLinkQualifier",
-        "context",
-      ],
+      keys: propertyKeysToCopy,
     });
+
+    if (instanceSettings.clickCollectionEnabled === false) {
+      instanceValues.clickCollection.internalLinkEnabled = false;
+      instanceValues.clickCollection.externalLinkEnabled = false;
+      instanceValues.clickCollection.downloadLinkEnabled = false;
+    }
 
     instanceValues.contextGranularity = instanceSettings.context
       ? CONTEXT_GRANULARITY.SPECIFIC
       : CONTEXT_GRANULARITY.ALL;
+
+    if (
+      instanceValues.clickCollection.eventGroupingEnabled &&
+      instanceValues.clickCollection.sessionStorageEnabled
+    ) {
+      instanceValues.eventGrouping = EVENT_GROUPING.SESSION_STORAGE;
+    } else if (instanceValues.clickCollection.eventGroupingEnabled) {
+      instanceValues.eventGrouping = EVENT_GROUPING.MEMORY;
+    } else {
+      instanceValues.eventGrouping = EVENT_GROUPING.NONE;
+    }
 
     return instanceValues;
   },
@@ -123,9 +157,22 @@ export const bridge = {
       "onBeforeLinkClickSend",
       "clickCollectionEnabled",
     ];
-    if (instanceValues.clickCollectionEnabled) {
+    if (clickCollectionIsEnabled(instanceValues)) {
+      instanceValues.clickCollectionEnabled = true;
       propertyKeysToCopy.push("downloadLinkQualifier");
       propertyKeysToCopy.push("clickCollection");
+      instanceValues.clickCollection.eventGroupingEnabled = false;
+      instanceValues.clickCollection.sessionStorageEnabled = false;
+      if (instanceValues.clickCollection.internalLinkEnabled) {
+        if (instanceValues.eventGrouping === EVENT_GROUPING.SESSION_STORAGE) {
+          instanceValues.clickCollection.eventGroupingEnabled = true;
+          instanceValues.clickCollection.sessionStorageEnabled = true;
+        } else if (instanceValues.eventGrouping === EVENT_GROUPING.MEMORY) {
+          instanceValues.clickCollection.eventGroupingEnabled = true;
+        }
+      }
+    } else {
+      instanceValues.clickCollectionEnabled = false;
     }
     copyPropertiesIfValueDifferentThanDefault({
       toObj: instanceSettings,
@@ -181,60 +228,66 @@ const DataCollectionSection = ({ instanceFieldName }) => {
         />
         <div>
           <FormikCheckbox
-            data-test-id="clickCollectionEnabledField"
-            name={`${instanceFieldName}.clickCollectionEnabled`}
-            description="Indicates whether data associated with clicks on navigational links, download links, or personalized content should be automatically collected."
+            data-test-id="internalLinkEnabledField"
+            name={`${instanceFieldName}.clickCollection.internalLinkEnabled`}
+            description="Collect data associated with clicks on links within the current domain."
             width="size-5000"
           >
-            Enable click data collection
+            Collect internal link clicks
           </FormikCheckbox>
-          {instanceValues.clickCollectionEnabled && (
+          {instanceValues.clickCollection.internalLinkEnabled && (
             <FieldSubset>
-              <FormikCheckbox
-                data-test-id="internalLinkEnabledField"
-                name={`${instanceFieldName}.clickCollection.internalLinkEnabled`}
-                description="Collect data on link clicks within the current domain."
-                width="size-5000"
+              <FormikRadioGroup
+                label="Event grouping options:"
+                name={`${instanceFieldName}.eventGrouping`}
               >
-                Internal links
-              </FormikCheckbox>
-              {instanceValues.clickCollection.internalLinkEnabled && (
-                <FieldSubset>
-                  <FormikCheckbox
-                    data-test-id="eventGroupingEnabledField"
-                    name={`${instanceFieldName}.clickCollection.eventGroupingEnabled`}
-                    description="Send link data with subsequent page view event instead of a separate event on the current page."
-                    width="size-5000"
-                  >
-                    Enable event grouping <BetaBadge />
-                  </FormikCheckbox>
-                  <FormikCheckbox
-                    data-test-id="sessionStorageEnabledField"
-                    name={`${instanceFieldName}.clickCollection.sessionStorageEnabled`}
-                    description="Use session storage to store click-related properties."
-                    width="size-5000"
-                  >
-                    Enable session storage <BetaBadge />
-                  </FormikCheckbox>
-                </FieldSubset>
-              )}
-              <FormikCheckbox
-                data-test-id="externalLinkEnabledField"
-                name={`${instanceFieldName}.clickCollection.externalLinkEnabled`}
-                description="Collect data on link clicks to external domains."
-                width="size-5000"
-              >
-                External links
-              </FormikCheckbox>
-              <FormikCheckbox
-                data-test-id="downloadLinkEnabledField"
-                name={`${instanceFieldName}.clickCollection.downloadLinkEnabled`}
-                description="Collect data on link clicks that qualify as downloads."
-                width="size-5000"
-              >
-                Download links
-              </FormikCheckbox>
-
+                <Radio
+                  data-test-id="eventGroupingNoneField"
+                  value={EVENT_GROUPING.NONE}
+                  width="size-5000"
+                >
+                  No event grouping: Internal link click events are sent
+                  immediately.
+                </Radio>
+                <Radio
+                  data-test-id="eventGroupingSessionStorageField"
+                  value={EVENT_GROUPING.SESSION_STORAGE}
+                  width="size-5000"
+                >
+                  Event grouping using session storage: Keep internal link click
+                  data in session storage until the next page view event
+                  (Recommended). <BetaBadge />
+                </Radio>
+                <Radio
+                  data-test-id="eventGroupingMemoryField"
+                  value={EVENT_GROUPING.MEMORY}
+                  width="size-5000"
+                >
+                  Event grouping using local object: Keep internal link click
+                  data in a local object until the next page view event.
+                  Applicable for single-page applications. <BetaBadge />
+                </Radio>
+              </FormikRadioGroup>
+            </FieldSubset>
+          )}
+          <FormikCheckbox
+            data-test-id="externalLinkEnabledField"
+            name={`${instanceFieldName}.clickCollection.externalLinkEnabled`}
+            description="Collect data associated with clicks on links to external domains."
+            width="size-5000"
+          >
+            Collect external link clicks
+          </FormikCheckbox>
+          <FormikCheckbox
+            data-test-id="downloadLinkEnabledField"
+            name={`${instanceFieldName}.clickCollection.downloadLinkEnabled`}
+            description="Collect data assocated with clicks on links that qualify as download links."
+            width="size-5000"
+          >
+            Collect download link clicks
+          </FormikCheckbox>
+          {instanceValues.clickCollection.downloadLinkEnabled && (
+            <FieldSubset>
               <Flex gap="size-100">
                 <FormikTextField
                   data-test-id="downloadLinkQualifierField"
@@ -267,21 +320,27 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                   defaultValue={instanceDefaults.downloadLinkQualifier}
                 />
               </Flex>
-
-              <Flex gap="size-100">
-                <CodeField
-                  data-test-id="filterClickDetailsEditButton"
-                  label="Filter click properties"
-                  buttonLabelSuffix="filter click properties callback code"
-                  name={`${instanceFieldName}.clickCollection.filterClickDetails`}
-                  description="Callback function to evaluate and modify click-related properties before collection."
-                  language="javascript"
-                  placeholder={
-                    "// Use this custom code block to adjust or filter click data. You can use the following variables:\n// content.clickedElement: The DOM element that was clicked\n// content.pageName: The page name when the click happened\n// content.linkName: The name of the clicked link\n// content.linkRegion: The region of the clicked link\n// content.linkType: The type of link (typically exit, download, or other)\n// content.linkUrl: The destination URL of the clicked link\n// Return false to omit link data."
-                  }
-                  beta
-                />
-              </Flex>
+            </FieldSubset>
+          )}
+          {clickCollectionIsEnabled(instanceValues) && (
+            <Flex gap="size-100">
+              <CodeField
+                data-test-id="filterClickDetailsEditButton"
+                label="Filter click properties"
+                buttonLabelSuffix="filter click properties callback code"
+                name={`${instanceFieldName}.clickCollection.filterClickDetails`}
+                description="Callback function to evaluate and modify click-related properties before collection."
+                language="javascript"
+                placeholder={
+                  "// Use this custom code block to adjust or filter click data. You can use the following variables:\n// content.clickedElement: The DOM element that was clicked\n// content.pageName: The page name when the click happened\n// content.linkName: The name of the clicked link\n// content.linkRegion: The region of the clicked link\n// content.linkType: The type of link (typically exit, download, or other)\n// content.linkUrl: The destination URL of the clicked link\n// Return false to omit link data."
+                }
+                beta
+              />
+            </Flex>
+          )}
+          {/* onBeforeLinkClickSend is deprecated so if it has not been defined we don't show it */}
+          {clickCollectionIsEnabled(instanceValues) &&
+            instanceValues.onBeforeLinkClickSend && (
               <Flex gap="size-100">
                 <CodeField
                   data-test-id="onBeforeLinkClickSendEditButton"
@@ -295,17 +354,16 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                   }
                 />
               </Flex>
-              {instanceValues.onBeforeLinkClickSend &&
-                instanceValues.clickCollection.filterClickDetails && (
-                  <Alert variant="notice" title="Warning">
-                    Both filter-click-properties and on-before-link-click-send
-                    callbacks have been defined. On-before-link-click-send has
-                    been deprecated and will not be used if
-                    filter-click-properties is available.
-                  </Alert>
-                )}
-            </FieldSubset>
-          )}
+            )}
+          {instanceValues.onBeforeLinkClickSend &&
+            instanceValues.clickCollection.filterClickDetails && (
+              <Alert variant="notice" title="Warning">
+                Both filter-click-properties and on-before-link-click-send
+                callbacks have been defined. On-before-link-click-send has been
+                deprecated and will not be used if filter-click-properties is
+                available.
+              </Alert>
+            )}
         </div>
         <div>
           <FormikRadioGroup
