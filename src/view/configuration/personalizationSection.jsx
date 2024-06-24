@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import copyToClipboard from "clipboard-copy";
 import React from "react";
 import PropTypes from "prop-types";
-import { Radio } from "@adobe/react-spectrum";
+import { Item, Text } from "@adobe/react-spectrum";
 import SectionHeader from "../components/sectionHeader";
 import CodeField from "../components/codeField";
 import CodePreview from "../components/codePreview";
@@ -23,23 +23,26 @@ import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefault
 import FormElementContainer from "../components/formElementContainer";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import BetaBadge from "../components/betaBadge";
-import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
+import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 
 export const bridge = {
   getInstanceDefaults: () => ({
     prehidingStyle: "",
     targetMigrationEnabled: false,
     personalizationStorageEnabled: false,
-    autoCollectPropositionInteractions: "always",
+    autoCollectPropositionInteractionsAJO: "always",
+    autoCollectPropositionInteractionsTGT: "never",
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
 
     if (instanceSettings.autoCollectPropositionInteractions?.AJO) {
-      instanceSettings.autoCollectPropositionInteractions =
+      instanceSettings.autoCollectPropositionInteractionsAJO =
         instanceSettings.autoCollectPropositionInteractions.AJO;
-    } else {
-      delete instanceSettings.autoCollectPropositionInteractions;
+    }
+    if (instanceSettings.autoCollectPropositionInteractions?.TGT) {
+      instanceSettings.autoCollectPropositionInteractionsTGT =
+        instanceSettings.autoCollectPropositionInteractions.TGT;
     }
 
     copyPropertiesWithDefaultFallback({
@@ -50,7 +53,8 @@ export const bridge = {
         "prehidingStyle",
         "targetMigrationEnabled",
         "personalizationStorageEnabled",
-        "autoCollectPropositionInteractions",
+        "autoCollectPropositionInteractionsAJO",
+        "autoCollectPropositionInteractionsTGT",
       ],
     });
 
@@ -67,18 +71,55 @@ export const bridge = {
         "prehidingStyle",
         "targetMigrationEnabled",
         "personalizationStorageEnabled",
-        "autoCollectPropositionInteractions",
+        "autoCollectPropositionInteractionsAJO",
+        "autoCollectPropositionInteractionsTGT",
       ],
     });
 
-    if (instanceSettings.autoCollectPropositionInteractions) {
-      instanceSettings.autoCollectPropositionInteractions = {
-        AJO: instanceValues.autoCollectPropositionInteractions,
-      };
+    const autoCollectPropositionInteractions = {};
+    if (instanceSettings.autoCollectPropositionInteractionsAJO) {
+      autoCollectPropositionInteractions.AJO =
+        instanceSettings.autoCollectPropositionInteractionsAJO;
+      delete instanceSettings.autoCollectPropositionInteractionsAJO;
+    }
+    if (instanceSettings.autoCollectPropositionInteractionsTGT) {
+      autoCollectPropositionInteractions.TGT =
+        instanceSettings.autoCollectPropositionInteractionsTGT;
+      delete instanceSettings.autoCollectPropositionInteractionsTGT;
+    }
+    if (Object.keys(autoCollectPropositionInteractions).length > 0) {
+      instanceSettings.autoCollectPropositionInteractions =
+        autoCollectPropositionInteractions;
     }
 
     return instanceSettings;
   },
+};
+
+const ClickCollectionPicker = (props) => {
+  return (
+    <FormikPicker {...props}>
+      <Item textValue="Always" key="always">
+        <Text>Always</Text>
+        <Text slot="description">
+          Collect all interactions with propositions.
+        </Text>
+      </Item>
+      <Item textValue="Decorated elements only" key="decoratedElementsOnly">
+        <Text>Decorated elements only</Text>
+        <Text slot="description">
+          Only collect interactions on elements with data-aep-click-label or
+          data-aep-click-token attributes.
+        </Text>
+      </Item>
+      <Item textValue="Never" key="never">
+        <Text>Never</Text>
+        <Text slot="description">
+          Do not collect interactions with propositions.
+        </Text>
+      </Item>
+    </FormikPicker>
+  );
 };
 
 const PersonalizationSection = ({ instanceFieldName }) => {
@@ -126,26 +167,20 @@ const PersonalizationSection = ({ instanceFieldName }) => {
         >
           Enable personalization storage <BetaBadge />
         </FormikCheckbox>
-        <FormikRadioGroup
-          name={`${instanceFieldName}.autoCollectPropositionInteractions`}
-          label="Automatically collect proposition interactions for Adobe Journey Optimizer"
-          description="This controls whether the Web SDK automatically tracks interactions with propositions from Adobe Journey Optimizer."
+        <ClickCollectionPicker
+          data-test-id="autoCollectPropositionInteractionsAJOPicker"
+          label="Auto click collection for Adobe Journey Optimizer"
+          name={`${instanceFieldName}.autoCollectPropositionInteractionsAJO`}
           width="size-5000"
-        >
-          <Radio value="always" data-test-id="alwaysOption">
-            Always - Collect all interactions with propositions.
-          </Radio>
-          <Radio
-            value="decoratedElementsOnly"
-            data-test-id="decoratedElementsOnlyOption"
-          >
-            Decorated elements only - Only collect interactions on elements with
-            data-aep-click-label or data-aep-click-token attributes.
-          </Radio>
-          <Radio value="never" data-test-id="neverOption">
-            Never - Do not collect interactions with propositions.
-          </Radio>
-        </FormikRadioGroup>
+          description="This setting determines when the Web SDK should automatically collect clicks on content returned from Adobe Journey Optimizer."
+        />
+        <ClickCollectionPicker
+          data-test-id="autoCollectPropositionInteractionsTGTPicker"
+          label="Auto click collection for Adobe Target"
+          name={`${instanceFieldName}.autoCollectPropositionInteractionsTGT`}
+          width="size-5000"
+          description="This setting determines when the Web SDK should automatically collect clicks on content returned from Adobe Target."
+        />
       </FormElementContainer>
     </>
   );

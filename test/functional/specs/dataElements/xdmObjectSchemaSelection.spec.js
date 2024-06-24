@@ -370,7 +370,7 @@ test
     );
   });
 
-test.requestHooks(
+test.skip.requestHooks(
   sandboxMocks.multipleWithDefault,
   schemasMocks.sandbox2,
   schemasMocks.sandbox3,

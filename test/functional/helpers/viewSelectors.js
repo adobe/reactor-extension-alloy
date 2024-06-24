@@ -110,7 +110,12 @@ for (let i = 0; i < 3; i += 1) {
     // testing prehiding style viewing/editing is limited.
     prehidingStyleEditButton: spectrum.button("prehidingStyleEditButton"),
     targetMigrationEnabled: spectrum.checkbox("targetMigrationEnabledField"),
-
+    autoCollectPropositionInteractionsAJOPicker: spectrum.picker(
+      "autoCollectPropositionInteractionsAJOPicker",
+    ),
+    autoCollectPropositionInteractionsTGTPicker: spectrum.picker(
+      "autoCollectPropositionInteractionsTGTPicker",
+    ),
     clickCollectionEnabledField: spectrum.checkbox(
       "clickCollectionEnabledField",
     ),
