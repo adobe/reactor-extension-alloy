@@ -157,7 +157,9 @@ test("initializes form fields with full settings", async () => {
   await instances[0].defaultConsent.dataElementField.expectNotExists();
   await instances[0].idMigrationEnabled.expectChecked();
   await instances[0].thirdPartyCookiesEnabled.expectChecked();
-  await instances[0].clickCollectionEnabledField.expectUnchecked();
+  await instances[0].internalLinkEnabledField.expectUnchecked();
+  await instances[0].externalLinkEnabledField.expectUnchecked();
+  await instances[0].downloadLinkEnabledField.expectUnchecked();
   await instances[0].contextGranularity.specificField.expectChecked();
   await instances[0].specificContext.webField.expectUnchecked();
   await instances[0].specificContext.deviceField.expectChecked();
@@ -242,7 +244,10 @@ test("initializes form fields with full settings", async () => {
   );
   await instances[1].idMigrationEnabled.expectUnchecked();
   await instances[1].thirdPartyCookiesEnabled.expectUnchecked();
-  await instances[1].clickCollectionEnabledField.expectChecked();
+  await instances[1].internalLinkEnabledField.expectChecked();
+  await instances[1].eventGrouping.noneField.expectChecked();
+  await instances[1].externalLinkEnabledField.expectChecked();
+  await instances[1].downloadLinkEnabledField.expectChecked();
   await instances[1].downloadLinkQualifierField.expectValue(
     defaultDownloadLinkQualifier,
   );
@@ -252,7 +257,7 @@ test("initializes form fields with full settings", async () => {
   await instances[1].specificContext.environmentField.expectUnchecked();
   await instances[1].specificContext.placeContextField.expectUnchecked();
   await instances[1].specificContext.highEntropyUserAgentHintsContextField.expectUnchecked();
-  await instances[0].targetMigrationEnabled.expectUnchecked();
+  await instances[1].targetMigrationEnabled.expectUnchecked();
 
   await instancesTabs.selectTab("alloy3");
 
@@ -261,7 +266,7 @@ test("initializes form fields with full settings", async () => {
   await instances[2].defaultConsent.pendingRadio.expectUnchecked();
   await instances[2].defaultConsent.dataElementRadio.expectUnchecked();
   await instances[2].defaultConsent.dataElementField.expectNotExists();
-  await instances[0].targetMigrationEnabled.expectUnchecked();
+  await instances[2].targetMigrationEnabled.expectUnchecked();
 });
 
 test("initializes form fields with minimal settings", async () => {
@@ -300,7 +305,10 @@ test("initializes form fields with minimal settings", async () => {
   await instances[0].defaultConsent.dataElementField.expectNotExists();
   await instances[0].idMigrationEnabled.expectChecked();
   await instances[0].thirdPartyCookiesEnabled.expectChecked();
-  await instances[0].clickCollectionEnabledField.expectChecked();
+  await instances[0].internalLinkEnabledField.expectChecked();
+  await instances[0].eventGrouping.noneField.expectChecked();
+  await instances[0].externalLinkEnabledField.expectChecked();
+  await instances[0].downloadLinkEnabledField.expectChecked();
   await instances[0].downloadLinkQualifierField.expectValue(
     defaultDownloadLinkQualifier,
   );
@@ -346,7 +354,10 @@ test.requestHooks(sandboxesMocks.singleDefault, datastreamsMocks.multiple)(
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
-    await instances[0].clickCollectionEnabledField.expectChecked();
+    await instances[0].internalLinkEnabledField.expectChecked();
+    await instances[0].eventGrouping.noneField.expectChecked();
+    await instances[0].externalLinkEnabledField.expectChecked();
+    await instances[0].downloadLinkEnabledField.expectChecked();
     await instances[0].downloadLinkQualifierField.expectValue(
       defaultDownloadLinkQualifier,
     );
@@ -451,8 +462,11 @@ test("returns full valid settings", async () => {
   );
   await instances[1].idMigrationEnabled.click();
   await instances[1].thirdPartyCookiesEnabled.click();
+  await instances[1].eventGrouping.sessionStorageField.click();
   await instances[1].onBeforeEventSendEditButton.click();
-  await instances[1].onBeforeLinkClickSendEditButton.click();
+  await instances[1].filterClickDetailsEditButton.click();
+  // onBeforeLinkClickSendEditButton no longer available in the UI if it has not been set
+  // await instances[1].onBeforeLinkClickSendEditButton.click();
   // Click on the field before clearing to get rid of the "..."
   await instances[1].downloadLinkQualifierField.click();
   await instances[1].downloadLinkQualifierField.clear();
@@ -521,11 +535,12 @@ test("returns full valid settings", async () => {
           "language=javascript;code=// Modify content.xdm or content.data as necessary. There is no need to wrap the\n" +
           "// code in a function or return a value. For example:\n" +
           '// content.xdm.web.webPageDetails.name = "Checkout";',
-        onBeforeLinkClickSend:
-          'language=javascript;code=// Filter by "content.clickedElement".\n' +
-          "// Modify content.xdm or content.data as necessary. There is no need to wrap the\n" +
-          "// code in a function or return a value. For example:\n" +
-          '// content.xdm.web.webPageDetails.name = "Checkout";',
+        clickCollection: {
+          filterClickDetails:
+            "language=javascript;code=// Use this custom code block to adjust or filter click data. You can use the following variables:\n// content.clickedElement: The DOM element that was clicked\n// content.pageName: The page name when the click happened\n// content.linkName: The name of the clicked link\n// content.linkRegion: The region of the clicked link\n// content.linkType: The type of link (typically exit, download, or other)\n// content.linkUrl: The destination URL of the clicked link\n// Return false to omit link data.",
+          sessionStorageEnabled: true,
+          eventGroupingEnabled: true,
+        },
         context: ["web", "device", "environment", "placeContext"],
         downloadLinkQualifier: "[]",
       },
@@ -885,7 +900,7 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
   });
 });
 
-test("does not save onBeforeEventSend and onBeforeLinkClickSend code if it matches placeholder", async () => {
+test("does not save onBeforeEventSend and filterClickDetails code if it matches placeholder", async () => {
   await extensionViewController.init(
     {},
     {
@@ -900,7 +915,7 @@ test("does not save onBeforeEventSend and onBeforeLinkClickSend code if it match
     "PR123",
   );
   await instances[0].onBeforeEventSendEditButton.click();
-  await instances[0].onBeforeLinkClickSendEditButton.click();
+  await instances[0].filterClickDetailsEditButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instances: [
@@ -951,7 +966,10 @@ test.requestHooks(
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].targetMigrationEnabled.expectUnchecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
-    await instances[0].clickCollectionEnabledField.expectChecked();
+    await instances[0].internalLinkEnabledField.expectChecked();
+    await instances[0].eventGrouping.noneField.expectChecked();
+    await instances[0].externalLinkEnabledField.expectChecked();
+    await instances[0].downloadLinkEnabledField.expectChecked();
     await instances[0].downloadLinkQualifierField.expectValue(
       defaultDownloadLinkQualifier,
     );
@@ -995,7 +1013,10 @@ test.requestHooks(
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].targetMigrationEnabled.expectUnchecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
-    await instances[0].clickCollectionEnabledField.expectChecked();
+    await instances[0].internalLinkEnabledField.expectChecked();
+    await instances[0].eventGrouping.noneField.expectChecked();
+    await instances[0].externalLinkEnabledField.expectChecked();
+    await instances[0].downloadLinkEnabledField.expectChecked();
     await instances[0].downloadLinkQualifierField.expectValue(
       defaultDownloadLinkQualifier,
     );
@@ -1068,8 +1089,9 @@ test.requestHooks(
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].targetMigrationEnabled.expectUnchecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
-    await instances[0].clickCollectionEnabledField.expectUnchecked();
-    await instances[0].contextGranularity.specificField.expectChecked();
+    await instances[0].internalLinkEnabledField.expectUnchecked();
+    await instances[0].externalLinkEnabledField.expectUnchecked();
+    await instances[0].downloadLinkEnabledField.expectUnchecked();
     await instances[0].specificContext.webField.expectUnchecked();
     await instances[0].specificContext.deviceField.expectChecked();
     await instances[0].specificContext.environmentField.expectUnchecked();
@@ -1137,7 +1159,9 @@ test.requestHooks(
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].targetMigrationEnabled.expectChecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
-    await instances[0].clickCollectionEnabledField.expectUnchecked();
+    await instances[0].internalLinkEnabledField.expectUnchecked();
+    await instances[0].externalLinkEnabledField.expectUnchecked();
+    await instances[0].downloadLinkEnabledField.expectUnchecked();
     await instances[0].contextGranularity.specificField.expectChecked();
     await instances[0].specificContext.webField.expectUnchecked();
     await instances[0].specificContext.deviceField.expectChecked();
@@ -1203,7 +1227,9 @@ test.requestHooks(
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].targetMigrationEnabled.expectUnchecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
-    await instances[0].clickCollectionEnabledField.expectUnchecked();
+    await instances[0].internalLinkEnabledField.expectUnchecked();
+    await instances[0].externalLinkEnabledField.expectUnchecked();
+    await instances[0].downloadLinkEnabledField.expectUnchecked();
     await instances[0].contextGranularity.specificField.expectChecked();
     await instances[0].specificContext.webField.expectUnchecked();
     await instances[0].specificContext.deviceField.expectChecked();
@@ -1256,7 +1282,9 @@ test.requestHooks(
   await instances[0].defaultConsent.dataElementField.expectNotExists();
   await instances[0].idMigrationEnabled.expectChecked();
   await instances[0].thirdPartyCookiesEnabled.expectChecked();
-  await instances[0].clickCollectionEnabledField.expectUnchecked();
+  await instances[0].internalLinkEnabledField.expectUnchecked();
+  await instances[0].externalLinkEnabledField.expectUnchecked();
+  await instances[0].downloadLinkEnabledField.expectUnchecked();
   await instances[0].contextGranularity.specificField.expectChecked();
   await instances[0].specificContext.webField.expectUnchecked();
   await instances[0].specificContext.deviceField.expectChecked();
@@ -1296,7 +1324,12 @@ test.requestHooks(sandboxesMocks.userRegionMissing, datastreamMocks.notExist)(
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].thirdPartyCookiesEnabled.expectChecked();
-    await instances[0].clickCollectionEnabledField.expectChecked();
+    await instances[0].internalLinkEnabledField.expectChecked();
+    await instances[0].eventGrouping.noneField.expectChecked();
+    await instances[0].externalLinkEnabledField.expectChecked();
+    await instances[0].downloadLinkEnabledField.expectChecked();
+    await instances[0].externalLinkEnabledField.expectChecked();
+    await instances[0].downloadLinkEnabledField.expectChecked();
     await instances[0].downloadLinkQualifierField.expectValue(
       defaultDownloadLinkQualifier,
     );

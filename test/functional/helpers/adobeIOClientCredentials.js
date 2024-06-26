@@ -41,7 +41,7 @@ if (clientSecret && (privateKeyPath || privateKeyContents)) {
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(
-      `Failed to read private key at ${privateKeyPath}. Please ensure the value provided in the ${PRIVATE_KEY_FILE_ENV_VAR_NAME} environment variable is correct.`,
+      `${e}\nFailed to read private key at ${privateKeyPath}. Please ensure the value provided in the ${PRIVATE_KEY_FILE_ENV_VAR_NAME} environment variable is correct.`,
     );
   }
 
