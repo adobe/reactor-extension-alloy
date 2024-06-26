@@ -18,7 +18,8 @@ import {
 
 const popoverMenuSelector = Selector('[role="listbox"]');
 const tabSelector = Selector('[role="tab"]');
-const menuItemCssSelector = '[role="option"]';
+const menuItemCssSelector = '[role="option"], [role="option"] span';
+const menuItemSimpleCssSelector = '[role="option"]';
 const invalidAttribute = "aria-invalid";
 const invalidCssSelector = '[class*="--invalid"]';
 // Sometimes TestCafe's click simulation doesn't match what
@@ -122,7 +123,7 @@ const createExpectNotHasRole = (selector, expectedRole) => () =>
 const createExpectMenuOptionLabels = (menuSelector) => async (labels) => {
   // wait for the menu to appear
   await menuSelector();
-  const menuItems = menuSelector.find(menuItemCssSelector);
+  const menuItems = menuSelector.find(menuItemSimpleCssSelector);
   for (let i = 0; i < labels.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
     await t

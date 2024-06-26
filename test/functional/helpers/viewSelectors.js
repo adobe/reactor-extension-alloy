@@ -110,7 +110,6 @@ for (let i = 0; i < 3; i += 1) {
     // testing prehiding style viewing/editing is limited.
     prehidingStyleEditButton: spectrum.button("prehidingStyleEditButton"),
     targetMigrationEnabled: spectrum.checkbox("targetMigrationEnabledField"),
-
     internalLinkEnabledField: spectrum.checkbox("internalLinkEnabledField"),
     eventGrouping: {
       noneField: spectrum.radio("eventGroupingNoneField"),
@@ -119,6 +118,12 @@ for (let i = 0; i < 3; i += 1) {
     },
     externalLinkEnabledField: spectrum.checkbox("externalLinkEnabledField"),
     downloadLinkEnabledField: spectrum.checkbox("downloadLinkEnabledField"),
+    autoCollectPropositionInteractionsAJOPicker: spectrum.picker(
+      "autoCollectPropositionInteractionsAJOPicker",
+    ),
+    autoCollectPropositionInteractionsTGTPicker: spectrum.picker(
+      "autoCollectPropositionInteractionsTGTPicker",
+    ),
     downloadLinkQualifierField: spectrum.textField(
       "downloadLinkQualifierField",
     ),

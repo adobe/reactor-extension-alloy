@@ -55,6 +55,10 @@ test("initializes form fields with full settings", async () => {
           context: ["device", "placeContext"],
           clickCollectionEnabled: false,
           targetMigrationEnabled: true,
+          autoCollectPropositionInteractions: {
+            AJO: "decoratedElementsOnly",
+            TGT: "always",
+          },
           edgeConfigOverrides: {
             development: {
               com_adobe_experience_platform: {
@@ -163,6 +167,12 @@ test("initializes form fields with full settings", async () => {
   await instances[0].specificContext.placeContextField.expectChecked();
   await instances[0].specificContext.highEntropyUserAgentHintsContextField.expectUnchecked();
   await instances[0].targetMigrationEnabled.expectChecked();
+  await instances[0].autoCollectPropositionInteractionsAJOPicker.expectText(
+    "Decorated elements only",
+  );
+  await instances[0].autoCollectPropositionInteractionsTGTPicker.expectText(
+    "Always",
+  );
 
   await instances[0].overrides.envTabs.development.expectSelected();
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
@@ -304,6 +314,12 @@ test("initializes form fields with minimal settings", async () => {
   );
   await instances[0].contextGranularity.allField.expectChecked();
   await instances[0].targetMigrationEnabled.expectUnchecked();
+  await instances[0].autoCollectPropositionInteractionsAJOPicker.expectText(
+    "Always",
+  );
+  await instances[0].autoCollectPropositionInteractionsTGTPicker.expectText(
+    "Never",
+  );
 });
 
 test.requestHooks(sandboxesMocks.singleDefault, datastreamsMocks.multiple)(
@@ -420,6 +436,12 @@ test("returns full valid settings", async () => {
   await instances[0].overrides.textFields.reportSuiteOverrides[1].typeText(
     "unifiedjsqeonly3",
   );
+  await instances[0].autoCollectPropositionInteractionsAJOPicker.selectOption(
+    "Decorated elements only",
+  );
+  await instances[0].autoCollectPropositionInteractionsTGTPicker.selectOption(
+    "Always",
+  );
 
   await addInstanceButton.click();
 
@@ -475,6 +497,10 @@ test("returns full valid settings", async () => {
         prehidingStyle:
           "language=css;code=/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/",
         targetMigrationEnabled: true,
+        autoCollectPropositionInteractions: {
+          AJO: "decoratedElementsOnly",
+          TGT: "always",
+        },
         edgeConfigOverrides: {
           development: {
             com_adobe_experience_platform: {
