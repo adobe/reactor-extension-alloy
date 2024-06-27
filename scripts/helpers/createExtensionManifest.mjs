@@ -387,6 +387,11 @@ const createExtensionManifest = ({ version }) => {
           parameters: ["content"],
         },
         {
+          type: "function",
+          propertyPath: "instances[].clickCollection.filterClickDetails",
+          parameters: ["content"],
+        },
+        {
           type: "remove",
           propertyPath: "instances[].edgeConfigInputMethod",
         },
