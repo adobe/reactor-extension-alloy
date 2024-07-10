@@ -10,56 +10,28 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-// This is a commonjs module instead of an ES6 module because it's also used by a node script
-// outside of TestCafe.
-const fs = require("fs");
-
 const CLIENT_SECRET_ENV_VAR_NAME = "EDGE_E2E_CLIENT_SECRET";
-const PRIVATE_KEY_FILE_ENV_VAR_NAME = "EDGE_E2E_PRIVATE_KEY_FILE";
-const PRIVATE_KEY_CONTENTS_ENV_VAR_NAME = "EDGE_E2E_PRIVATE_KEY_CONTENTS";
 const ORG_ID_ENV_VAR_NAME = "EDGE_E2E_ORG_ID";
-const TECHNICAL_ACCOUNT_ID_ENV_VAR_NAME = "EDGE_E2E_TECHNICAL_ACCOUNT_ID";
 const CLIENT_ID_ENV_VAR_NAME = "EDGE_E2E_CLIENT_ID";
 
 const clientSecret = process.env[CLIENT_SECRET_ENV_VAR_NAME];
-const privateKeyPath = process.env[PRIVATE_KEY_FILE_ENV_VAR_NAME];
-const privateKeyContents = process.env[PRIVATE_KEY_CONTENTS_ENV_VAR_NAME];
 const orgId =
   process.env[ORG_ID_ENV_VAR_NAME] || "5BFE274A5F6980A50A495C08@AdobeOrg";
-const technicalAccountId =
-  process.env[TECHNICAL_ACCOUNT_ID_ENV_VAR_NAME] ||
-  "52202EB9602F004D0A495F8C@techacct.adobe.com";
 const clientId =
   process.env[CLIENT_ID_ENV_VAR_NAME] || "0c1c7478c4994c69866b64c8341578ed";
 
 let credentials;
 
-if (clientSecret && (privateKeyPath || privateKeyContents)) {
-  let privateKey;
-  try {
-    privateKey = privateKeyContents || fs.readFileSync(privateKeyPath);
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(
-      `${e}\nFailed to read private key at ${privateKeyPath}. Please ensure the value provided in the ${PRIVATE_KEY_FILE_ENV_VAR_NAME} environment variable is correct.`,
-    );
-  }
-
-  if (privateKey) {
-    credentials = {
-      clientId,
-      technicalAccountId,
-      orgId,
-      clientSecret,
-      privateKey,
-      metaScopes: ["https://ims-na1.adobelogin.com/s/ent_dataservices_sdk"],
-      ims: "https://ims-na1.adobelogin.com",
-    };
-  }
+if (clientSecret) {
+  credentials = {
+    clientId,
+    clientSecret,
+    orgId,
+  };
 } else {
   // eslint-disable-next-line no-console
   console.error(
-    `One or more environment variables required to obtain an IMS token are not set. Please ensure that ${PRIVATE_KEY_FILE_ENV_VAR_NAME}, and ${CLIENT_SECRET_ENV_VAR_NAME} are set.`,
+    `Unable to obtain access. Please ensure that ${CLIENT_SECRET_ENV_VAR_NAME} is set.`,
   );
 }
 

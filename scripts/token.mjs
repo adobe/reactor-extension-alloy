@@ -14,13 +14,13 @@ governing permissions and limitations under the License.
 import { createRequire } from "module";
 
 const require = createRequire(import.meta.url);
-const auth = require("@adobe/jwt-auth");
 const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials");
+const getAdobeIOAccessToken = require("../test/functional/helpers/getAdobeIOAccessToken");
 
 if (adobeIOClientCredentials) {
   // eslint-disable-next-line no-console
   console.log("Org ID:", adobeIOClientCredentials.orgId);
-  const result = await auth(adobeIOClientCredentials);
+  const accessToken = await getAdobeIOAccessToken(adobeIOClientCredentials);
   // eslint-disable-next-line no-console
-  console.log("IMS Access Token:", result.access_token);
+  console.log("IMS Access Token:", accessToken);
 }
