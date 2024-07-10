@@ -1,8 +1,21 @@
-const fs = require("fs");
-const fetch = require("node-fetch");
+/*
+Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
 
-module.exports = (credentials) => {
-  const { clientId, clientSecret } = credentials;
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+const fs = require("fs");
+
+const auth = (...args) =>
+  // eslint-disable-next-line import/no-unresolved
+  import("@adobe/auth-token").then(({ auth: adobeAuth }) => adobeAuth(...args));
+
+module.exports = ({ clientId, clientSecret }) => {
   const tokenPath = ".token-cache.json";
 
   // Check if token is cached not expired
@@ -18,10 +31,9 @@ module.exports = (credentials) => {
   }
 
   // Fetch new token
-  const params = {
-    grant_type: "client_credentials",
-    client_id: clientId,
-    client_secret: clientSecret,
+  const options = {
+    clientId,
+    clientSecret,
     scope: [
       "reactor_approver",
       "reactor_publisher",
@@ -45,24 +57,10 @@ module.exports = (credentials) => {
     ].join(","),
   };
 
-  const formBody = Object.keys(params)
-    .map(
-      (key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`,
-    )
-    .join("&");
-
-  return fetch("https://ims-na1.adobelogin.com/ims/token/v3", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: formBody,
-  })
-    .then((response) => response.json())
-    .then((data) => {
+  return auth(options).then(
+    ({ access_token: accessToken, expires_in: expiresIn }) => {
       // Calculate expiry time (current time + expires_in seconds - 2 hour buffer)
-      const expiry = new Date().getTime() + (data.expires_in - 7200) * 1000;
-      const accessToken = data.access_token;
+      const expiry = new Date().getTime() + (expiresIn - 7200) * 1000;
       // Cache the token
       fs.writeFileSync(
         tokenPath,
@@ -70,5 +68,6 @@ module.exports = (credentials) => {
         "utf8",
       );
       return accessToken;
-    });
+    },
+  );
 };
