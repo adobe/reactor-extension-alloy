@@ -74,7 +74,6 @@
   },
   "devDependencies": {
     "@adobe/auth-token": "^1.0.0-beta.13",
-    "@adobe/jwt-auth": "^2.0.0",
     "@adobe/reactor-sandbox": "^12.5.0",
     "@adobe/reactor-turbine": "^27.5.0",
     "@adobe/reactor-turbine-schemas": "^10.5.0",
