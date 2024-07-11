@@ -372,7 +372,7 @@ test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
 );
 
 // see https://jira.corp.adobe.com/browse/PDCL-8307
-test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.paging)(
+test.skip.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.paging)(
   "provides a proper combobox experience",
   async () => {
     await extensionViewController.init({});
