@@ -55,7 +55,7 @@ const validate = async () => {
 
 export default {
   async init(additionalInitInfo = {}, sharedViewMethodMocks = {}) {
-    const accessToken = await getAdobeIOAccessToken();
+    const accessToken = await getAdobeIOAccessToken(credentials);
     const initInfo = {
       settings: null,
       extensionSettings: {},
