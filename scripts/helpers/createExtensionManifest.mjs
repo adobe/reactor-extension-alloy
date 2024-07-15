@@ -305,6 +305,7 @@ const createExtensionManifest = ({ version }) => {
                       minLength: 1,
                     },
                   },
+                  additionalProperties: false,
                 },
                 downloadLinkQualifier: {
                   type: "string",
@@ -363,9 +364,10 @@ const createExtensionManifest = ({ version }) => {
                     AJO: {
                       type: "string",
                       enum: ["always", "decoratedElementsOnly", "never"],
-                    }
+                    },
                   },
-                }
+                  additionalProperties: false,
+                },
               },
               required: ["edgeConfigId", "name"],
               additionalProperties: false,
@@ -770,8 +772,13 @@ const createExtensionManifest = ({ version }) => {
                       },
                       actionType: {
                         type: "string",
-                        enum: ["setHtml", "replaceHtml", "appendHtml", "collectInteractions"],
-                      }
+                        enum: [
+                          "setHtml",
+                          "replaceHtml",
+                          "appendHtml",
+                          "collectInteractions",
+                        ],
+                      },
                     },
                     required: ["selector", "actionType"],
                   },
