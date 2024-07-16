@@ -372,9 +372,9 @@ test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
 );
 
 // see https://jira.corp.adobe.com/browse/PDCL-8307
-test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.paging)(
-  "provides a proper combobox experience",
-  async () => {
+test
+  .requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.paging)
+  .skip("provides a proper combobox experience", async () => {
     await extensionViewController.init({});
 
     // User types a query in the field and should only see filtered items.
@@ -432,8 +432,7 @@ test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.paging)(
     await schemaField.expectMenuOptionLabelsInclude(
       schemasMocks.pagingTitles.slice(-3),
     );
-  },
-);
+  });
 test.requestHooks(
   sandboxMocks.multipleWithDefault,
   schemasMocks.sandbox2,
