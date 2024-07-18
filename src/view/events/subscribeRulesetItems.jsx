@@ -51,7 +51,7 @@ const subscribeRulesetItemsForm = form({}, [
       },
       {
         value: "https://ns.adobe.com/personalization/message/content-card",
-        label: "Content Card"
+        label: "Content Card",
       },
       {
         value: "https://ns.adobe.com/personalization/json-content-item",
