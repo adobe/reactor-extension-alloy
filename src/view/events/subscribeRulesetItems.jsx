@@ -50,6 +50,10 @@ const subscribeRulesetItemsForm = form({}, [
         label: "In app message"
       },
       {
+        value: "https://ns.adobe.com/personalization/message/content-card",
+        label: "Content Card"
+      },
+      {
         value: "https://ns.adobe.com/personalization/json-content-item",
         label: "JSON content item"
       },
