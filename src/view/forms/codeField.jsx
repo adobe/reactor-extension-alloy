@@ -33,12 +33,12 @@ export default function codeField({
   label,
   description,
   placeholder,
-  buttonLabelSuffix
+  buttonLabelSuffix,
 }) {
   let validationSchema = string();
   if (isRequired) {
     validationSchema = validationSchema.required(
-      `Please provide a ${label.toLowerCase()}.`
+      `Please provide a ${label.toLowerCase()}.`,
     );
   }
 
@@ -56,7 +56,7 @@ export default function codeField({
     />
   );
   Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
 
   return {
@@ -73,8 +73,8 @@ export default function codeField({
       return settings;
     },
     validationShape: {
-      [name]: validationSchema
+      [name]: validationSchema,
     },
-    Component
+    Component,
   };
 }

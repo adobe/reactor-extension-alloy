@@ -20,7 +20,7 @@ const manifestPath = await buildExtensionManifest();
 // eslint-disable-next-line no-console
 console.log(
   "\x1b[32m%s\x1b[0m",
-  `✅ Extension manifest written to ${manifestPath}`
+  `✅ Extension manifest written to ${manifestPath}`,
 );
 await build({ watch: true });
 // importing @adobe/reactor-sandbox requires that an extension.json file exists

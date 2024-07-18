@@ -24,7 +24,7 @@ import FormElementContainer from "../components/formElementContainer";
 
 export const bridge = {
   getInstanceDefaults: () => ({
-    edgeBasePath: "ee"
+    edgeBasePath: "ee",
   }),
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
@@ -33,7 +33,7 @@ export const bridge = {
       toObj: instanceValues,
       fromObj: instanceSettings,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["edgeBasePath"]
+      keys: ["edgeBasePath"],
     });
 
     return instanceValues;
@@ -45,14 +45,14 @@ export const bridge = {
       toObj: instanceSettings,
       fromObj: instanceValues,
       defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["edgeBasePath"]
+      keys: ["edgeBasePath"],
     });
 
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
-    edgeBasePath: string().required("Please specify an edge base path.")
-  })
+    edgeBasePath: string().required("Please specify an edge base path."),
+  }),
 };
 
 const AdvancedSection = ({ instanceFieldName }) => {
@@ -84,7 +84,7 @@ const AdvancedSection = ({ instanceFieldName }) => {
 };
 
 AdvancedSection.propTypes = {
-  instanceFieldName: PropTypes.string.isRequired
+  instanceFieldName: PropTypes.string.isRequired,
 };
 
 export default AdvancedSection;

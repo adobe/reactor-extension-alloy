@@ -12,17 +12,17 @@ governing permissions and limitations under the License.
 
 module.exports =
   ({ instanceManager, sendEventCallbackStorage }) =>
-  settings => {
+  (settings) => {
     const { instanceName, ...otherSettings } = settings;
     const instance = instanceManager.getInstance(instanceName);
 
     if (!instance) {
       throw new Error(
-        `Failed to apply response for instance "${instanceName}". No matching instance was configured with this name.`
+        `Failed to apply response for instance "${instanceName}". No matching instance was configured with this name.`,
       );
     }
 
-    return instance("applyResponse", otherSettings).then(result => {
+    return instance("applyResponse", otherSettings).then((result) => {
       sendEventCallbackStorage.triggerEvent(result);
     });
   };

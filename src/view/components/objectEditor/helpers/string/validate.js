@@ -14,7 +14,7 @@ import isFormStateValuePopulated from "../isFormStateValuePopulated";
 
 export default ({
   formStateNode,
-  confirmDataPopulatedAtCurrentOrDescendantNode
+  confirmDataPopulatedAtCurrentOrDescendantNode,
 }) => {
   const { value } = formStateNode;
 

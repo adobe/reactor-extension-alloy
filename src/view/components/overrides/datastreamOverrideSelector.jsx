@@ -14,7 +14,7 @@ import {
   Flex,
   Item,
   Radio,
-  useAsyncList
+  useAsyncList,
 } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
@@ -52,13 +52,13 @@ import OverrideInput from "./overrideInput";
  * @returns {string?}
  */
 // eslint-disable-next-line no-underscore-dangle
-const getKey = datastream => datastream?._system?.id;
+const getKey = (datastream) => datastream?._system?.id;
 /**
  * Get a human-readable identifier for a datastream.
  * @param {Datastream} datastream
  * @returns {string?}
  */
-const getLabel = datastream => {
+const getLabel = (datastream) => {
   if (!datastream) {
     return undefined;
   }
@@ -70,7 +70,7 @@ const getLabel = datastream => {
 
 const InputMethod = Object.freeze({
   SELECT: "select",
-  FREEFORM: "freeform"
+  FREEFORM: "freeform",
 });
 
 /**
@@ -103,12 +103,12 @@ const DatastreamOverrideSelector = ({
         imsAccess,
         limit,
         sandbox,
-        signal
+        signal,
       });
       return {
-        items: datastreams
+        items: datastreams,
       };
-    }
+    },
   });
   const [{ value }, , { setValue }] = useField(name);
   const inputMethodFieldName = `${name}InputMethod`;
@@ -116,10 +116,10 @@ const DatastreamOverrideSelector = ({
   const [
     { value: inputMethod },
     { touched: inputMethodTouched },
-    { setValue: setInputMethod }
+    { setValue: setInputMethod },
   ] = useField(inputMethodFieldName);
   const selectedDatastream = datastreamList.items.find(
-    item => getKey(item) === value
+    (item) => getKey(item) === value,
   );
   useEffect(() => {
     if (datastreamList.error) {
@@ -144,7 +144,7 @@ const DatastreamOverrideSelector = ({
     datastreamList.items.length,
     selectedDatastream,
     inputMethodTouched,
-    value
+    value,
   ]);
   const useManualEntry = inputMethod === InputMethod.FREEFORM;
   const inputMethodIsDisabled =
@@ -223,7 +223,7 @@ DatastreamOverrideSelector.propTypes = {
   name: PropTypes.string.isRequired,
   sandbox: PropTypes.string.isRequired,
   label: PropTypes.string,
-  limit: PropTypes.number
+  limit: PropTypes.number,
 };
 
 export default DatastreamOverrideSelector;

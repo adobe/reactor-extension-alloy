@@ -28,7 +28,7 @@ const NoSelectedNodeView = ({
   previouslySavedSchemaInfo,
   componentName,
   verticalLayout,
-  updateMode
+  updateMode,
 }) => {
   // The schema used when the data element was last saved is different
   // from the latest configured schema. Either the customer has since
@@ -101,11 +101,11 @@ NoSelectedNodeView.propTypes = {
   schema: PropTypes.object.isRequired,
   previouslySavedSchemaInfo: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    version: PropTypes.string.isRequired
+    version: PropTypes.string.isRequired,
   }),
   componentName: PropTypes.string.isRequired,
   verticalLayout: PropTypes.bool,
-  updateMode: PropTypes.bool
+  updateMode: PropTypes.bool,
 };
 
 export default NoSelectedNodeView;

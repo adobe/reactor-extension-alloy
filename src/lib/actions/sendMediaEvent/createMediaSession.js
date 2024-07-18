@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 module.exports =
   ({ instanceManager, mediaCollectionSessionStorage, satelliteApi }) =>
-  settings => {
+  (settings) => {
     const { instanceName, handleMediaSessionAutomatically, playerId, xdm } =
       settings;
     const instance = instanceManager.getInstance(instanceName);
@@ -41,7 +41,7 @@ module.exports =
         // eslint-disable-next-line no-underscore-dangle
         const playerDetails = {
           // eslint-disable-next-line no-underscore-dangle
-          playhead: window._satellite.getVar(playhead)
+          playhead: window._satellite.getVar(playhead),
         };
 
         if (qoeDataDetails) {
@@ -54,11 +54,11 @@ module.exports =
     }
 
     const sessionPromise = instance("createMediaSession", options)
-      .then(result => {
+      .then((result) => {
         const { sessionId } = result;
         return sessionId;
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error creating media session", error);
         throw error;
       });
@@ -69,8 +69,8 @@ module.exports =
         handleMediaSessionAutomatically,
         sessionPromise,
         playhead,
-        qoeDataDetails
-      }
+        qoeDataDetails,
+      },
     });
     return sessionPromise;
   };

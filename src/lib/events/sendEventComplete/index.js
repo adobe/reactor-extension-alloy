@@ -14,5 +14,5 @@ const { sendEventCallbackStorage } = require("../../index");
 const createSendEventComplete = require("./createSendEventComplete");
 
 module.exports = createSendEventComplete({
-  sendEventCallbackStorage
+  sendEventCallbackStorage,
 });

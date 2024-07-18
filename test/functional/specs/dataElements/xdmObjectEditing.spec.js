@@ -26,7 +26,7 @@ import spectrum from "../../helpers/spectrum";
 
 const schema = {
   id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-  version: "1.2"
+  version: "1.2",
 };
 
 const schemaField = spectrum.comboBox("schemaField");
@@ -42,7 +42,7 @@ const moveUnifiedjsqeonlyTreeNodeOutOfViewport = async () => {
 createExtensionViewFixture({
   title: "XDM Object Editing",
   viewPath: "dataElements/xdmObject.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
 });
 
 runCommonExtensionViewTests();
@@ -54,11 +54,11 @@ test("initializes form fields with individual object attribute values", async ()
       data: {
         _unifiedjsqeonly: {
           vendor: {
-            name: "Adobe"
-          }
-        }
-      }
-    }
+            name: "Adobe",
+          },
+        },
+      },
+    },
   });
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
@@ -78,9 +78,9 @@ test("allows user to provide individual object attribute values", async () => {
   await extensionViewController.expectSettingsToContainData({
     _unifiedjsqeonly: {
       vendor: {
-        name: "Adobe"
-      }
-    }
+        name: "Adobe",
+      },
+    },
   });
 });
 
@@ -95,8 +95,8 @@ test("allows user to provide whole object value", async () => {
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettingsToContainData({
     _unifiedjsqeonly: {
-      vendor: "%vendor%"
-    }
+      vendor: "%vendor%",
+    },
   });
 });
 
@@ -106,10 +106,10 @@ test("initializes form fields with whole object value", async () => {
       schema,
       data: {
         _unifiedjsqeonly: {
-          vendor: "%vendor%"
-        }
-      }
-    }
+          vendor: "%vendor%",
+        },
+      },
+    },
   });
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").click();
@@ -144,9 +144,9 @@ test("allows user to provide individual array items", async () => {
   await extensionViewController.expectSettingsToContainData({
     _unifiedjsqeonly: {
       vendor: {
-        industries: ["%industry%"]
-      }
-    }
+        industries: ["%industry%"],
+      },
+    },
   });
 });
 
@@ -157,11 +157,11 @@ test("initializes form fields with individual array items", async () => {
       data: {
         _unifiedjsqeonly: {
           vendor: {
-            industries: ["%industry%"]
-          }
-        }
-      }
-    }
+            industries: ["%industry%"],
+          },
+        },
+      },
+    },
   });
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
@@ -184,9 +184,9 @@ test("allows user to provide whole array value", async () => {
   await extensionViewController.expectSettingsToContainData({
     _unifiedjsqeonly: {
       vendor: {
-        industries: "%industries%"
-      }
-    }
+        industries: "%industries%",
+      },
+    },
   });
 });
 
@@ -197,11 +197,11 @@ test("initializes form fields with whole array value", async () => {
       data: {
         _unifiedjsqeonly: {
           vendor: {
-            industries: "%industries%"
-          }
-        }
-      }
-    }
+            industries: "%industries%",
+          },
+        },
+      },
+    },
   });
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
@@ -251,9 +251,9 @@ test("allows user to provide value for property with string type", async () => {
   await extensionViewController.expectSettingsToContainData({
     _unifiedjsqeonly: {
       vendor: {
-        name: "%name%"
-      }
-    }
+        name: "%name%",
+      },
+    },
   });
 });
 
@@ -264,11 +264,11 @@ test("initializes form fields with string value", async () => {
       data: {
         _unifiedjsqeonly: {
           vendor: {
-            name: "%name%"
-          }
-        }
-      }
-    }
+            name: "%name%",
+          },
+        },
+      },
+    },
   });
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
@@ -289,9 +289,9 @@ test("allows user to provide value for property with integer type", async () => 
   await extensionViewController.expectSettingsToContainData({
     _unifiedjsqeonly: {
       vendor: {
-        numEmployees: 123
-      }
-    }
+        numEmployees: 123,
+      },
+    },
   });
 });
 
@@ -302,11 +302,11 @@ test("initializes form fields with integer value", async () => {
       data: {
         _unifiedjsqeonly: {
           vendor: {
-            numEmployees: 123
-          }
-        }
-      }
-    }
+            numEmployees: 123,
+          },
+        },
+      },
+    },
   });
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
@@ -327,9 +327,9 @@ test("allows user to provide value for property with number type", async () => {
   await extensionViewController.expectSettingsToContainData({
     _unifiedjsqeonly: {
       vendor: {
-        revenue: 123.123
-      }
-    }
+        revenue: 123.123,
+      },
+    },
   });
 });
 
@@ -340,11 +340,11 @@ test("initializes form fields with number value", async () => {
       data: {
         _unifiedjsqeonly: {
           vendor: {
-            revenue: 123.123
-          }
-        }
-      }
-    }
+            revenue: 123.123,
+          },
+        },
+      },
+    },
   });
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
@@ -365,9 +365,9 @@ test("allows user to enter data element value for property with boolean type", a
   await extensionViewController.expectSettingsToContainData({
     _unifiedjsqeonly: {
       vendor: {
-        isLicensed: "%isLicensed%"
-      }
-    }
+        isLicensed: "%isLicensed%",
+      },
+    },
   });
 });
 
@@ -378,11 +378,11 @@ test("initializes form fields with boolean data element value", async () => {
       data: {
         _unifiedjsqeonly: {
           vendor: {
-            isLicensed: "%isLicensed%"
-          }
-        }
-      }
-    }
+            isLicensed: "%isLicensed%",
+          },
+        },
+      },
+    },
   });
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
@@ -404,9 +404,9 @@ test("allows user to select true constant value for property with boolean type",
   await extensionViewController.expectSettingsToContainData({
     _unifiedjsqeonly: {
       vendor: {
-        isLicensed: true
-      }
-    }
+        isLicensed: true,
+      },
+    },
   });
 });
 
@@ -417,11 +417,11 @@ test("initializes form fields with boolean constant value of true", async () => 
       data: {
         _unifiedjsqeonly: {
           vendor: {
-            isLicensed: true
-          }
-        }
-      }
-    }
+            isLicensed: true,
+          },
+        },
+      },
+    },
   });
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
@@ -443,9 +443,9 @@ test("allows user to select false constant value for property with boolean type"
   await extensionViewController.expectSettingsToContainData({
     _unifiedjsqeonly: {
       vendor: {
-        isLicensed: false
-      }
-    }
+        isLicensed: false,
+      },
+    },
   });
 });
 
@@ -456,11 +456,11 @@ test("initializes form fields with boolean constant value of false", async () =>
       data: {
         _unifiedjsqeonly: {
           vendor: {
-            isLicensed: false
-          }
-        }
-      }
-    }
+            isLicensed: false,
+          },
+        },
+      },
+    },
   });
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();

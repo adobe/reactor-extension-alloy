@@ -14,15 +14,15 @@ module.exports = ({
   instanceManager,
   trackMediaSession,
   mediaCollectionSessionStorage,
-  satelliteApi
+  satelliteApi,
 }) => {
-  return settings => {
-    const {instanceName, eventType, playerId, xdm} = settings;
+  return (settings) => {
+    const { instanceName, eventType, playerId, xdm } = settings;
     const instance = instanceManager.getInstance(instanceName);
 
     if (!instance) {
       throw new Error(
-        `Failed to send media event for instance "${instanceName}". No matching instance was configured with this name.`
+        `Failed to send media event for instance "${instanceName}". No matching instance was configured with this name.`,
       );
     }
 
@@ -30,35 +30,36 @@ module.exports = ({
       return trackMediaSession(settings);
     }
 
-    const sessionDetails = mediaCollectionSessionStorage.get({playerId});
+    const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
     if (!sessionDetails) {
+      // eslint-disable-next-line no-console
       console.warn(
-        `No media session found for player ID ${playerId}. Skipping media event ${eventType}. Make sure the session has started.`
+        `No media session found for player ID ${playerId}. Skipping media event ${eventType}. Make sure the session has started.`,
       );
       return Promise.resolve();
     }
-    return sessionDetails.sessionPromise.then(sessionID => {
+    return sessionDetails.sessionPromise.then((sessionID) => {
       if (
         eventType === "media.sessionEnd" ||
         eventType === "media.sessionComplete"
       ) {
-        mediaCollectionSessionStorage.remove({playerId});
+        mediaCollectionSessionStorage.remove({ playerId });
       }
 
       xdm.eventType = eventType;
 
-      const options = {xdm};
+      const options = { xdm };
 
       if (sessionDetails.handleMediaSessionAutomatically) {
         options.playerId = playerId;
       } else {
         xdm.mediaCollection.playhead = satelliteApi.getVar(
-          sessionDetails.playhead
+          sessionDetails.playhead,
         );
 
         if (sessionDetails.qoeDataDetails) {
           xdm.mediaCollection.qoeDataDetails = satelliteApi.getVar(
-            sessionDetails.qoeDataDetails
+            sessionDetails.qoeDataDetails,
           );
         }
 
@@ -67,5 +68,5 @@ module.exports = ({
 
       return instance("sendMediaEvent", options);
     });
-  }
+  };
 };

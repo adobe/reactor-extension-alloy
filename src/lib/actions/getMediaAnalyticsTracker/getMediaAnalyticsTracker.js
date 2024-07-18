@@ -12,17 +12,17 @@ governing permissions and limitations under the License.
 
 module.exports =
   ({ instanceManager, windowObject }) =>
-  settings => {
+  (settings) => {
     const { instanceName, objectName = "Media" } = settings;
     const instance = instanceManager.getInstance(instanceName);
 
     if (!instance) {
       throw new Error(
-        `Failed to get a Media Analytics Tracker for "${instanceName}". No matching instance was configured with this name.`
+        `Failed to get a Media Analytics Tracker for "${instanceName}". No matching instance was configured with this name.`,
       );
     }
 
-    return instance("getMediaAnalyticsTracker", {}).then(result => {
+    return instance("getMediaAnalyticsTracker", {}).then((result) => {
       windowObject[objectName] = result;
     });
   };

@@ -54,7 +54,7 @@ export default function comboBox({
   width = "size-5000",
   defaultValue = "",
   Component = FormikKeyedComboBox,
-  validationSchemaBase = string()
+  validationSchemaBase = string(),
 }) {
   let fieldSchema = validationSchemaBase;
   if (!allowsCustomValue) {
@@ -63,15 +63,15 @@ export default function comboBox({
       `Please choose a ${
         label ? label.toLowerCase() : "value"
       } from the list or specify a single data element.`,
-      value =>
+      (value) =>
         !value ||
-        items.find(item => item.value === value) ||
-        value.match(singleDataElementRegex)
+        items.find((item) => item.value === value) ||
+        value.match(singleDataElementRegex),
     );
   }
   if (isRequired) {
     fieldSchema = fieldSchema.required(
-      `Please choose a ${label ? label.toLowerCase() : "value"}.`
+      `Please choose a ${label ? label.toLowerCase() : "value"}.`,
     );
   }
 
@@ -95,10 +95,10 @@ export default function comboBox({
         width={width}
         items={items}
         allowsCustomValue={allowsCustomValue || dataElementSupported}
-        getKey={item => item.value}
-        getLabel={item => item.label}
+        getKey={(item) => item.value}
+        getLabel={(item) => item.label}
       >
-        {item => (
+        {(item) => (
           <Item key={item.value} data-test-id={item.value}>
             {item.label}
           </Item>
@@ -110,7 +110,7 @@ export default function comboBox({
     name: PropTypes.string.isRequired,
     label: PropTypes.string,
     description: PropTypes.string,
-    "aria-label": PropTypes.string
+    "aria-label": PropTypes.string,
   };
 
   const part = {
@@ -131,7 +131,7 @@ export default function comboBox({
       return settings;
     },
     validationShape: {
-      [name]: fieldSchema
+      [name]: fieldSchema,
     },
     Component: ({ namePrefix = "", hideLabel = false }) => {
       if (dataElementSupported) {
@@ -165,11 +165,11 @@ export default function comboBox({
           )}
         </>
       );
-    }
+    },
   };
   part.Component.propTypes = {
     namePrefix: PropTypes.string,
-    hideLabel: PropTypes.bool
+    hideLabel: PropTypes.bool,
   };
   return part;
 }

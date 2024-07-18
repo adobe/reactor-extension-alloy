@@ -16,7 +16,7 @@ import isIntegerLike from "../isIntegerLike";
 
 export default ({
   formStateNode,
-  confirmDataPopulatedAtCurrentOrDescendantNode
+  confirmDataPopulatedAtCurrentOrDescendantNode,
 }) => {
   const { value } = formStateNode;
 

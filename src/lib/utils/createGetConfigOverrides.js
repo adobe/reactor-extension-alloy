@@ -19,7 +19,7 @@ governing permissions and limitations under the License.
  * @param {"development" | "staging" | "production"} environmentName
  * @returns {EdgeConfigOverrides?}
  */
-const createGetConfigOverrides = environmentName => settings => {
+const createGetConfigOverrides = (environmentName) => (settings) => {
   const { edgeConfigOverrides } = settings;
   let computedConfigOverrides;
   if (!edgeConfigOverrides) {
@@ -47,8 +47,8 @@ const createGetConfigOverrides = environmentName => settings => {
   if (computedConfigOverrides.com_adobe_analytics?.reportSuites?.length > 0) {
     computedConfigOverrides.com_adobe_analytics.reportSuites =
       computedConfigOverrides.com_adobe_analytics.reportSuites
-        .flatMap(val => (val.includes(",") ? val.split(/,\s*/gi) : val))
-        .map(rsid => rsid.trim())
+        .flatMap((val) => (val.includes(",") ? val.split(/,\s*/gi) : val))
+        .map((rsid) => rsid.trim())
         .filter(Boolean);
   }
 
@@ -61,11 +61,11 @@ const createGetConfigOverrides = environmentName => settings => {
   ) {
     const parsedValue = parseInt(
       computedConfigOverrides.com_adobe_identity.idSyncContainerId.trim(),
-      10
+      10,
     );
     if (Number.isNaN(parsedValue)) {
       throw new Error(
-        `The ID sync container ID "${computedConfigOverrides.com_adobe_identity.idSyncContainerId}" is not a valid integer.`
+        `The ID sync container ID "${computedConfigOverrides.com_adobe_identity.idSyncContainerId}" is not a valid integer.`,
       );
     }
     computedConfigOverrides.com_adobe_identity.idSyncContainerId = parsedValue;

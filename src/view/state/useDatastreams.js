@@ -25,7 +25,7 @@ export default ({ orgId, imsAccess, sandbox, limit = 1000 }) => {
           orgId,
           imsAccess,
           sandbox,
-          limit
+          limit,
         });
         if (datastreams && datastreams.length) {
           setDatastreams(firstPageOfDatastreams);
@@ -44,6 +44,6 @@ export default ({ orgId, imsAccess, sandbox, limit = 1000 }) => {
   return {
     datastreams,
     loading,
-    error
+    error,
   };
 };

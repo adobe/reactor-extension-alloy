@@ -17,7 +17,7 @@ import singleDataElementRegex from "../../../../constants/singleDataElementRegex
 export default ({
   formStateNode,
   confirmDataPopulatedAtCurrentOrDescendantNode,
-  validate
+  validate,
 }) => {
   const { populationStrategy, value, items } = formStateNode;
 
@@ -33,24 +33,24 @@ export default ({
   }
 
   if (items) {
-    const itemErrors = items.map(itemFormStateNode => {
+    const itemErrors = items.map((itemFormStateNode) => {
       let itemIsPopulated = false;
       let itemError = validate({
         formStateNode: itemFormStateNode,
         confirmDataPopulatedAtCurrentOrDescendantNode() {
           itemIsPopulated = true;
           confirmDataPopulatedAtCurrentOrDescendantNode();
-        }
+        },
       });
       if (!itemIsPopulated && !itemError) {
         itemError = {
           value:
-            "Items within arrays must not be empty. Please populate or remove the item."
+            "Items within arrays must not be empty. Please populate or remove the item.",
         };
       }
       return itemError;
     });
-    if (itemErrors.filter(error => error).length) {
+    if (itemErrors.filter((error) => error).length) {
       return { items: itemErrors };
     }
   }

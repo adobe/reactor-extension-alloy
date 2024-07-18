@@ -21,7 +21,7 @@ governing permissions and limitations under the License.
  * ensure that errors we've foreseen and appropriately handled are not considered unhandled. We typically
  * only want the test to fail if there's something wrong with our code.
  */
-window.addEventListener("error", event => {
+window.addEventListener("error", (event) => {
   // UserReportableErrors are intended to be shown to the user within an error boundary.
   // Error boundaries, however, do not change the error from being considered unhandled to
   // handled. Because of this, the unhandled error would typically make TestCafe fail

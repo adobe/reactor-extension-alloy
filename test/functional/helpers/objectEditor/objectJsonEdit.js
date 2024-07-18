@@ -12,15 +12,15 @@ governing permissions and limitations under the License.
 
 import spectrum from "../spectrum";
 
-const jsonArrayField = (type, dataTestId) => index => {
+const jsonArrayField = (type, dataTestId) => (index) => {
   return spectrum[type](`${dataTestId}${index}`);
 };
 
 export const individualAttributesOption = spectrum.radio(
-  "partsPopulationStrategyField"
+  "partsPopulationStrategyField",
 );
 export const entireObjectOption = spectrum.radio(
-  "wholePopulationStrategyField"
+  "wholePopulationStrategyField",
 );
 
 export const key = jsonArrayField("textField", "keyField");

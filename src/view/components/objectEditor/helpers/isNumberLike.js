@@ -14,4 +14,4 @@ governing permissions and limitations under the License.
  * Returns whether the value is a number or a string that represents a number.
  * An empty string returns false.
  */
-export default value => value !== "" && !Number.isNaN(Number(value));
+export default (value) => value !== "" && !Number.isNaN(Number(value));

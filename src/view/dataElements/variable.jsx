@@ -17,10 +17,10 @@ import { Content, Radio } from "@adobe/react-spectrum";
 import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
 import XdmVariable, {
-  bridge as xdmVariableBridge
+  bridge as xdmVariableBridge,
 } from "./variable/components/xdmVariable";
 import DataVariable, {
-  bridge as dataVariableBridge
+  bridge as dataVariableBridge,
 } from "./variable/components/dataVariable";
 import render from "../render";
 import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
@@ -36,11 +36,11 @@ const getInitialValues =
       type: initInfo?.settings?.solutions ? DATA : XDM,
       ...(await xdmVariableBridge.getInitialValues({
         initInfo,
-        context: xdmVariableContext
+        context: xdmVariableContext,
       })),
       ...(await dataVariableBridge.getInitialValues({
-        initInfo
-      }))
+        initInfo,
+      })),
     };
     return initialValues;
   };
@@ -49,7 +49,7 @@ const getSettings = ({ values }) => {
   const settings = {
     cacheId: values.cacheId,
     ...xdmVariableBridge.getSettings({ values }),
-    ...dataVariableBridge.getSettings({ values })
+    ...dataVariableBridge.getSettings({ values }),
   };
 
   return settings;
@@ -57,7 +57,7 @@ const getSettings = ({ values }) => {
 
 const validateFormikState = ({ values }) => ({
   ...xdmVariableBridge.validateFormikState(values),
-  ...dataVariableBridge.validateFormikState(values)
+  ...dataVariableBridge.validateFormikState(values),
 });
 
 const Schema = ({ xdmVariableContext, initInfo }) => {
@@ -96,7 +96,7 @@ const Schema = ({ xdmVariableContext, initInfo }) => {
 };
 Schema.propTypes = {
   xdmVariableContext: PropTypes.object,
-  initInfo: PropTypes.object
+  initInfo: PropTypes.object,
 };
 
 const Variable = () => {

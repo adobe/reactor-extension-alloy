@@ -21,7 +21,7 @@ export default ({
   confirmTouchedAtCurrentOrDescendantNode,
   errors,
   touched,
-  getTreeNode
+  getTreeNode,
 }) => {
   const { items, populationStrategy } = formStateNode;
 
@@ -43,7 +43,7 @@ export default ({
           populationStrategy === WHOLE,
         notifyParentOfTouched: confirmTouchedAtCurrentOrDescendantNode,
         errors: errors && errors.items ? errors.items[index] : undefined,
-        touched: touched && touched.items ? touched.items[index] : undefined
+        touched: touched && touched.items ? touched.items[index] : undefined,
       });
       return childNode;
     });
@@ -52,10 +52,10 @@ export default ({
   treeNode.populationAmount = computePopulationAmount({
     formStateNode,
     isAncestorUsingWholePopulationStrategy,
-    childrenTreeNodes: treeNode.children
+    childrenTreeNodes: treeNode.children,
   });
   treeNode.infoTip = computePopulationNote({
     formStateNode,
-    isAncestorUsingWholePopulationStrategy
+    isAncestorUsingWholePopulationStrategy,
   });
 };

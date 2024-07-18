@@ -40,7 +40,7 @@ const initializeSandboxes = async ({
   initialValues,
   sandboxName,
   orgId,
-  imsAccess
+  imsAccess,
 }) => {
   const { results: sandboxes } = await fetchSandboxes({ orgId, imsAccess });
 
@@ -48,20 +48,20 @@ const initializeSandboxes = async ({
     throw new UserReportableError(
       "You do not have access to any sandboxes. Please contact your administrator to be assigned appropriate rights.",
       {
-        additionalInfoUrl: "https://adobe.ly/3gHkqLF"
-      }
+        additionalInfoUrl: "https://adobe.ly/3gHkqLF",
+      },
     );
   }
 
-  if (sandboxName && !sandboxes.find(s => s.name === sandboxName)) {
+  if (sandboxName && !sandboxes.find((s) => s.name === sandboxName)) {
     throw new UserReportableError(
-      "The sandbox used to build the XDM object no longer exists. You will need to re-create this data element using a schema from a different sandbox."
+      "The sandbox used to build the XDM object no longer exists. You will need to re-create this data element using a schema from a different sandbox.",
     );
   }
 
   if (!sandboxName) {
     let defaultSandbox;
-    defaultSandbox = sandboxes.find(sandbox => sandbox.isDefault);
+    defaultSandbox = sandboxes.find((sandbox) => sandbox.isDefault);
     if (!defaultSandbox && sandboxes.length === 1) {
       defaultSandbox = sandboxes[0];
     }
@@ -79,7 +79,7 @@ const initializeSelectedSchema = async ({
   schemaVersion,
   context,
   orgId,
-  imsAccess
+  imsAccess,
 }) => {
   try {
     const { sandboxName } = initialValues;
@@ -89,7 +89,7 @@ const initializeSelectedSchema = async ({
         imsAccess,
         schemaId,
         schemaVersion,
-        sandboxName
+        sandboxName,
       });
       const { $id, title, version } = schema;
       initialValues.selectedSchema = { $id, title, version };
@@ -98,7 +98,7 @@ const initializeSelectedSchema = async ({
     }
   } catch (e) {
     throw new UserReportableError(
-      "Could not find the schema selected previously. You will need to re-create this data element using a different schema."
+      "Could not find the schema selected previously. You will need to re-create this data element using a different schema.",
     );
   }
   initialValues.selectedSchema = null;
@@ -108,14 +108,14 @@ const initializeSchemas = async ({
   initialValues,
   context,
   orgId,
-  imsAccess
+  imsAccess,
 }) => {
   const { sandboxName } = initialValues;
   const { results: schemasFirstPage, nextPage: schemasFirstPageCursor } =
     await fetchSchemasMeta({
       orgId,
       imsAccess,
-      sandboxName
+      sandboxName,
     });
 
   if (schemasFirstPage.length === 1 && !schemasFirstPageCursor) {
@@ -127,7 +127,7 @@ const initializeSchemas = async ({
       imsAccess,
       schemaId: $id,
       schemaVersion: version,
-      sandboxName
+      sandboxName,
     });
     context.schema = schema;
   }
@@ -137,20 +137,20 @@ const initializeSchemas = async ({
 };
 
 const getInitialValues =
-  context =>
+  (context) =>
   async ({ initInfo }) => {
     const {
       company: { orgId },
-      tokens: { imsAccess }
+      tokens: { imsAccess },
     } = initInfo;
     const {
       sandbox: { name: sandboxName } = {},
       schema: { id: schemaId, version: schemaVersion } = {},
-      data = {}
+      data = {},
     } = initInfo.settings || {};
 
     const initialValues = {
-      sandboxName: sandboxName || ""
+      sandboxName: sandboxName || "",
     };
 
     // settings.sandbox may not exist because sandboxes were introduced sometime
@@ -170,19 +170,19 @@ const getInitialValues =
       schemaId,
       schemaVersion,
       orgId,
-      imsAccess
+      imsAccess,
     };
 
     await initializeSandboxes(args);
     await Promise.all([
       initializeSelectedSchema(args),
-      initializeSchemas(args)
+      initializeSchemas(args),
     ]);
 
     if (context.schema) {
       const initialFormState = getInitialFormState({
         schema: context.schema,
-        value: data
+        value: data,
       });
       Object.assign(initialValues, initialFormState);
     }
@@ -190,33 +190,33 @@ const getInitialValues =
   };
 
 const getSettings =
-  context =>
+  (context) =>
   ({ values }) => {
     const { sandboxName, selectedSchema } = values || {};
 
     return {
       sandbox: {
-        name: sandboxName
+        name: sandboxName,
       },
       schema: {
         id: selectedSchema?.$id,
-        version: selectedSchema?.version
+        version: selectedSchema?.version,
       },
       data: context.schema
         ? getValueFromFormState({
-            formStateNode: { ...values, schema: context.schema }
+            formStateNode: { ...values, schema: context.schema },
           }) || {}
-        : {}
+        : {},
     };
   };
 
 const formikStateValidationSchema = object().shape({
   sandboxName: string().required("Please select a sandbox."),
-  selectedSchema: object().nullable().required("Please select a schema.")
+  selectedSchema: object().nullable().required("Please select a schema."),
 });
 
 const validateFormikState =
-  context =>
+  (context) =>
   ({ values }) => {
     // We can't and don't need to do validation on the formik values
     // if the editor isn't even renderable. validateNonFormikState
@@ -230,7 +230,7 @@ const validateFormikState =
     return validate(values);
   };
 
-const validateNonFormikState = context => () => {
+const validateNonFormikState = (context) => () => {
   const { schema } = context;
   if (!schema) {
     context.showEditorNotReadyValidationError = true;
@@ -239,13 +239,13 @@ const validateNonFormikState = context => () => {
   return true;
 };
 
-const getSchemaKey = item => item && `${item.$id}_${item.version}`;
-const getSchemaLabel = item => item?.title;
+const getSchemaKey = (item) => item && `${item.$id}_${item.version}`;
+const getSchemaLabel = (item) => item?.title;
 
 const XdmObject = ({ initInfo, context, formikProps }) => {
   const {
     company: { orgId },
-    tokens: { imsAccess }
+    tokens: { imsAccess },
   } = initInfo;
   const settings = initInfo.settings || {};
   const { resetForm, values } = formikProps;
@@ -257,7 +257,7 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
     schema,
     // schemaWarning,
     schemasFirstPage,
-    schemasFirstPageCursor
+    schemasFirstPageCursor,
     // showEditorNotReadyValidationError
   } = context;
 
@@ -291,20 +291,20 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
         schemaId: selectedSchema.$id,
         schemaVersion: selectedSchema.version,
         sandboxName: selectedSandboxName,
-        signal
+        signal,
       });
       if (newSchema) {
         context.schema = newSchema;
         const initialFormState = getInitialFormState({
           schema: newSchema,
-          existingFormStateNode: values
+          existingFormStateNode: values,
         });
         resetForm({
           values: {
             ...initialFormState,
             selectedSchema,
-            sandboxName: selectedSandboxName
-          }
+            sandboxName: selectedSandboxName,
+          },
         });
         setHasSchema(true);
       }
@@ -323,7 +323,7 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
         sandboxName: selectedSandboxName,
         search: filterText,
         start: cursor,
-        signal
+        signal,
       }));
     } catch (e) {
       if (e.name !== "AbortError") {
@@ -335,7 +335,7 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
     }
     return {
       items: results,
-      cursor: nextPage
+      cursor: nextPage,
     };
   };
 
@@ -397,7 +397,7 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
 XdmObject.propTypes = {
   initInfo: PropTypes.object,
   formikProps: PropTypes.object,
-  context: PropTypes.object
+  context: PropTypes.object,
 };
 
 const XdmExtensionView = () => {

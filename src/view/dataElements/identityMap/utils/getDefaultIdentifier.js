@@ -16,6 +16,6 @@ export default () => {
   return {
     id: "",
     authenticatedState: AMBIGUOUS,
-    primary: false
+    primary: false,
   };
 };

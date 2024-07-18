@@ -16,5 +16,5 @@ const { sendEventCallbackStorage } = require("../../index");
 
 module.exports = createApplyResponse({
   instanceManager,
-  sendEventCallbackStorage
+  sendEventCallbackStorage,
 });

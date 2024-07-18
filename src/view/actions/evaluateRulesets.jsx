@@ -17,19 +17,19 @@ import simpleMap from "../forms/simpleMap";
 import notice from "../forms/notice";
 
 const wrapGetInitialValues =
-  getInitialValues =>
+  (getInitialValues) =>
   ({ initInfo }) => {
     const { personalization = {}, ...otherSettings } = initInfo.settings || {};
     return getInitialValues({
       initInfo: {
         ...initInfo,
-        settings: { ...personalization, ...otherSettings }
-      }
+        settings: { ...personalization, ...otherSettings },
+      },
     });
   };
 
 const wrapGetSettings =
-  getSettings =>
+  (getSettings) =>
   ({ values }) => {
     const { decisionContext, ...settings } = getSettings({ values });
     if (decisionContext) {
@@ -42,14 +42,14 @@ const wrapGetSettings =
 const evaluateRulesetsForm = form(
   {
     wrapGetInitialValues,
-    wrapGetSettings
+    wrapGetSettings,
   },
   [
     notice({
       title: "Evaluate rulesets action",
       description:
         "This action manually triggers ruleset evaluation. Rulesets are returned by Adobe Journey Optimizer to support features like in-browser messages.",
-      beta: true
+      beta: true,
     }),
     instancePicker({ name: "instanceName" }),
     checkbox({
@@ -57,7 +57,7 @@ const evaluateRulesetsForm = form(
       label: "Render visual personalization decisions",
       description:
         "Check this to render visual personalization decisions for the ruleset items that match.",
-      defaultValue: false
+      defaultValue: false,
     }),
     simpleMap({
       name: "decisionContext",
@@ -71,9 +71,9 @@ const evaluateRulesetsForm = form(
       keyLabelPlural: "Keys",
       keyDescription: "Enter the context key.",
       valueLabel: "Value",
-      valueDescription: "Enter the context value."
-    })
-  ]
+      valueDescription: "Enter the context value.",
+    }),
+  ],
 );
 
 renderForm(evaluateRulesetsForm);

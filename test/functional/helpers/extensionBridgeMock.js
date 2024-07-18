@@ -19,12 +19,12 @@ governing permissions and limitations under the License.
   const sharedViewMethodMocks = {
     openCodeEditor() {
       return Promise.resolve(
-        `Edited Code ${Math.round(Math.random() * 10000)}`
+        `Edited Code ${Math.round(Math.random() * 10000)}`,
       );
     },
     openRegexTester() {
       return Promise.resolve(
-        `Edited Regex ${Math.round(Math.random() * 10000)}`
+        `Edited Regex ${Math.round(Math.random() * 10000)}`,
       );
     },
     openDataElementSelector(options = {}) {
@@ -34,10 +34,10 @@ governing permissions and limitations under the License.
         value = `%${value}%`;
       }
       return value;
-    }
+    },
   };
 
-  const registeredExtensionMethodsPromise = new Promise(resolve => {
+  const registeredExtensionMethodsPromise = new Promise((resolve) => {
     window.extensionBridge = {
       register: resolve,
       openCodeEditor(...args) {
@@ -48,7 +48,7 @@ governing permissions and limitations under the License.
       },
       openDataElementSelector(...args) {
         return sharedViewMethodMocks.openDataElementSelector(...args);
-      }
+      },
     };
   });
 
@@ -65,21 +65,21 @@ governing permissions and limitations under the License.
    */
   window.initializeExtensionView = async ({
     initInfo,
-    sharedViewMethodMocks: _sharedViewMethodMocks
+    sharedViewMethodMocks: _sharedViewMethodMocks,
   }) => {
     Object.assign(sharedViewMethodMocks, _sharedViewMethodMocks);
     const registeredExtensionMethods = await registeredExtensionMethodsPromise;
     await registeredExtensionMethods.init(initInfo);
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const listener = () => {
         window.removeEventListener(
           "extension-reactor-alloy:rendered",
-          listener
+          listener,
         );
         resolve({
           getSettings: registeredExtensionMethods.getSettings,
-          validate: registeredExtensionMethods.validate
+          validate: registeredExtensionMethods.validate,
         });
       };
 

@@ -29,7 +29,7 @@ export const bridge = {
     name: "alloy",
     persistedName: undefined,
     orgId: initInfo.company.orgId,
-    edgeDomain: "edge.adobedc.net"
+    edgeDomain: "edge.adobedc.net",
   }),
   getInitialInstanceValues: ({ initInfo, instanceSettings }) => {
     const instanceValues = {};
@@ -38,7 +38,7 @@ export const bridge = {
       toObj: instanceValues,
       fromObj: instanceSettings,
       defaultsObj: bridge.getInstanceDefaults({ initInfo }),
-      keys: ["name", "orgId", "edgeDomain"]
+      keys: ["name", "orgId", "edgeDomain"],
     });
 
     instanceValues.persistedName = instanceValues.name;
@@ -48,7 +48,7 @@ export const bridge = {
   getInstanceSettings: ({ initInfo, instanceValues }) => {
     const { name } = instanceValues;
     const instanceSettings = {
-      name
+      name,
     };
 
     // Note that orgId isn't saved to the settings object if it's the same
@@ -61,7 +61,7 @@ export const bridge = {
       toObj: instanceSettings,
       fromObj: instanceValues,
       defaultsObj: bridge.getInstanceDefaults({ initInfo }),
-      keys: ["orgId", "edgeDomain"]
+      keys: ["orgId", "edgeDomain"],
     });
 
     return instanceSettings;
@@ -80,10 +80,10 @@ export const bridge = {
             "Please provide a name that does not conflict with a property already found on the window object.",
           test(value) {
             return !(value in window);
-          }
+          },
         }),
       orgId: string().required("Please specify an IMS organization ID."),
-      edgeDomain: string().required("Please specify an edge domain.")
+      edgeDomain: string().required("Please specify an edge domain."),
     })
     // TestCafe doesn't allow this to be an arrow function because of
     // how it scopes "this".
@@ -97,7 +97,7 @@ export const bridge = {
         instancePath,
         key: "name",
         message:
-          "Please provide a name unique from those used for other instances."
+          "Please provide a name unique from those used for other instances.",
       });
     })
     // TestCafe doesn't allow this to be an arrow function because of
@@ -112,9 +112,9 @@ export const bridge = {
         instancePath,
         key: "orgId",
         message:
-          "Please provide an IMS Organization ID unique from those used for other instances."
+          "Please provide an IMS Organization ID unique from those used for other instances.",
       });
-    })
+    }),
 };
 
 const BasicSection = ({ instanceFieldName, initInfo }) => {
@@ -190,7 +190,7 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
 
 BasicSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired,
-  initInfo: PropTypes.object.isRequired
+  initInfo: PropTypes.object.isRequired,
 };
 
 export default BasicSection;

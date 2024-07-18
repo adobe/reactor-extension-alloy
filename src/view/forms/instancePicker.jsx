@@ -37,7 +37,7 @@ export default function instancePicker({ name, onInstanceChange }) {
     },
     Component({ namePrefix = "", initInfo }) {
       const formikContext = useFormikContext();
-      const onChange = context => key => {
+      const onChange = (context) => (key) => {
         if (onInstanceChange) {
           onInstanceChange({ context, instanceName: key, initInfo });
         }
@@ -50,12 +50,12 @@ export default function instancePicker({ name, onInstanceChange }) {
           onChange={onChange(formikContext)}
         />
       );
-    }
+    },
   };
 
   form.Component.propTypes = {
     initInfo: PropTypes.object.isRequired,
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
   return form;
 }

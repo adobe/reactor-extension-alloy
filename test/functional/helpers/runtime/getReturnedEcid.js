@@ -12,13 +12,13 @@ governing permissions and limitations under the License.
 
 import getResponseBody from "./getResponseBody";
 
-export default request => {
+export default (request) => {
   const content = JSON.parse(getResponseBody(request));
   const payloads = content.handle
-    .filter(fragment => fragment.type === "identity:result")
-    .flatMap(fragment => fragment.payload);
+    .filter((fragment) => fragment.type === "identity:result")
+    .flatMap((fragment) => fragment.payload);
   const ecidPayload = payloads.filter(
-    payload => payload.namespace.code === "ECID"
+    (payload) => payload.namespace.code === "ECID",
   )[0];
 
   return ecidPayload.id;

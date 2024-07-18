@@ -19,7 +19,7 @@ const eventMergeIdField = spectrum.textField("eventMergeIdField");
 
 createExtensionViewFixture({
   title: "Reset Event Merge ID View",
-  viewPath: "actions/resetEventMergeId.html"
+  viewPath: "actions/resetEventMergeId.html",
 });
 
 runCommonExtensionViewTests();
@@ -27,8 +27,8 @@ runCommonExtensionViewTests();
 test("initializes form fields with settings", async () => {
   await extensionViewController.init({
     settings: {
-      eventMergeId: "%foo%"
-    }
+      eventMergeId: "%foo%",
+    },
   });
   await eventMergeIdField.expectValue("%foo%");
 });
@@ -39,7 +39,7 @@ test("returns valid settings", async () => {
   await eventMergeIdField.typeText("%foo%");
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    eventMergeId: "%foo%"
+    eventMergeId: "%foo%",
   });
 });
 

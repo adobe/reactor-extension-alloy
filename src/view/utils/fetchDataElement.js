@@ -18,20 +18,20 @@ const fetchDataElement = async ({ orgId, imsAccess, dataElementId }) => {
     parsedResponse = await fetchFromReactor({
       orgId,
       imsAccess,
-      path: `/data_elements/${dataElementId}`
+      path: `/data_elements/${dataElementId}`,
     });
   } catch (e) {
     if (e.name === "AbortError") {
       throw e;
     }
     throw new UserReportableError("Failed to load data element.", {
-      originatingError: e
+      originatingError: e,
     });
   }
 
   const {
     id,
-    attributes: { name, settings }
+    attributes: { name, settings },
   } = parsedResponse.parsedBody.data;
   return { id, name, settings: JSON.parse(settings) };
 };

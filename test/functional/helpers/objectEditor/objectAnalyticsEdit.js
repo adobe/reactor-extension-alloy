@@ -13,18 +13,18 @@ import spectrum from "../spectrum";
 
 const analyticsField = (type, dataTestId) => {
   return spectrum[type](
-    `properties.data.properties.__adobe.properties.analytics.${dataTestId}`
+    `properties.data.properties.__adobe.properties.analytics.${dataTestId}`,
   );
 };
-const analyticsArrayField = (type, name, dataTestId) => index => {
+const analyticsArrayField = (type, name, dataTestId) => (index) => {
   return spectrum[type](
-    `properties.data.properties.__adobe.properties.analytics.value.${name}.${index}.${dataTestId}`
+    `properties.data.properties.__adobe.properties.analytics.value.${name}.${index}.${dataTestId}`,
   );
 };
 
 export const individualAttributesOption = analyticsField(
   "radio",
-  "valuePartsOption"
+  "valuePartsOption",
 );
 export const entireObjectOption = analyticsField("radio", "valueWholeOption");
 export const jsonEditor = analyticsField("textArea", "valueWhole");
@@ -33,7 +33,7 @@ export const eVarAction = analyticsArrayField("picker", "evars", "actionField");
 export const eVarValue = analyticsArrayField(
   "textField",
   "evars",
-  "valueTextField"
+  "valueTextField",
 );
 export const eVarCopy = analyticsArrayField("comboBox", "evars", "copyField");
 export const eVarAddButton = analyticsField("button", "value.evarsAddButton");
@@ -43,7 +43,7 @@ export const propAction = analyticsArrayField("picker", "props", "actionField");
 export const propValue = analyticsArrayField(
   "textField",
   "props",
-  "valueTextField"
+  "valueTextField",
 );
 export const propCopy = analyticsArrayField("comboBox", "props", "copyField");
 export const propAddButton = analyticsField("button", "value.propsAddButton");
@@ -51,54 +51,54 @@ export const propAddButton = analyticsField("button", "value.propsAddButton");
 export const eventName = analyticsArrayField(
   "comboBox",
   "events",
-  "eventField"
+  "eventField",
 );
 export const eventId = analyticsArrayField(
   "textField",
   "events",
-  "idTextField"
+  "idTextField",
 );
 export const eventValue = analyticsArrayField(
   "textField",
   "events",
-  "valueTextField"
+  "valueTextField",
 );
 export const eventAddButton = analyticsField("button", "value.eventsAddButton");
 
 export const contextDataDataElementOption = analyticsField(
   "radio",
-  "value.contextDataDataElementOption"
+  "value.contextDataDataElementOption",
 );
 export const contextDataDataElementField = analyticsField(
   "textField",
-  "value.contextDataDataElementField"
+  "value.contextDataDataElementField",
 );
 export const contextDataKey = analyticsArrayField(
   "textField",
   "contextData",
-  "keyTextField"
+  "keyTextField",
 );
 export const contextDataValue = analyticsArrayField(
   "textField",
   "contextData",
-  "valueTextField"
+  "valueTextField",
 );
 export const contextDataAddButton = analyticsField(
   "button",
-  "value.contextDataAddButton"
+  "value.contextDataAddButton",
 );
 
 export const additionalPropertiesName = analyticsArrayField(
   "comboBox",
   "additionalProperties",
-  "propertyField"
+  "propertyField",
 );
 export const additionalPropertiesValue = analyticsArrayField(
   "textField",
   "additionalProperties",
-  "valueTextField"
+  "valueTextField",
 );
 export const additionalPropertiesAddButton = analyticsField(
   "button",
-  "value.additionalPropertiesAddButton"
+  "value.additionalPropertiesAddButton",
 );

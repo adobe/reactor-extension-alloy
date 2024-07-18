@@ -14,6 +14,6 @@ const createIdentityMap = require("./createIdentityMap");
 
 const identityMap = createIdentityMap({ logger: turbine.logger });
 
-module.exports = settings => {
+module.exports = (settings) => {
   return identityMap(settings);
 };

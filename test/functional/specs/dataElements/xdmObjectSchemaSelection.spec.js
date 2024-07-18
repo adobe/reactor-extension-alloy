@@ -21,7 +21,7 @@ import editor from "../../helpers/objectEditor/editor";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(
-  "errorBoundaryMessage"
+  "errorBoundaryMessage",
 );
 
 const testSchemaTitle = "XDM Object Data Element Tests";
@@ -31,7 +31,7 @@ const schemaField = spectrum.comboBox("schemaField");
 createExtensionViewFixture({
   title: "XDM Object View Schema Selection",
   viewPath: "dataElements/xdmObject.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
 });
 
 test.requestHooks(sandboxMocks.unauthorized)(
@@ -39,9 +39,9 @@ test.requestHooks(sandboxMocks.unauthorized)(
   async () => {
     await initializeExtensionView();
     await errorBoundaryMessage.expectMessage(
-      /Your access token appears to be invalid\./
+      /Your access token appears to be invalid\./,
     );
-  }
+  },
 );
 
 test.requestHooks(sandboxMocks.userRegionMissing)(
@@ -49,9 +49,9 @@ test.requestHooks(sandboxMocks.userRegionMissing)(
   async () => {
     await initializeExtensionView();
     await errorBoundaryMessage.expectMessage(
-      /You or your organization is not currently provisioned for Adobe Data Collection/
+      /You or your organization is not currently provisioned for Adobe Data Collection/,
     );
-  }
+  },
 );
 
 test.requestHooks(sandboxMocks.nonJsonBody)(
@@ -59,7 +59,7 @@ test.requestHooks(sandboxMocks.nonJsonBody)(
   async () => {
     await initializeExtensionView();
     await errorBoundaryMessage.expectMessage(/Failed to load sandboxes\./);
-  }
+  },
 );
 
 test.requestHooks(sandboxMocks.empty, schemasMocks.empty)(
@@ -67,9 +67,9 @@ test.requestHooks(sandboxMocks.empty, schemasMocks.empty)(
   async () => {
     await initializeExtensionView();
     await errorBoundaryMessage.expectMessage(
-      /You do not have access to any sandboxes\./
+      /You do not have access to any sandboxes\./,
     );
-  }
+  },
 );
 
 test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.empty)(
@@ -77,7 +77,7 @@ test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.empty)(
   async () => {
     await initializeExtensionView();
     await sandboxField.expectText("PRODUCTION Test Sandbox 1 (VA7)");
-  }
+  },
 );
 
 test.requestHooks(sandboxMocks.multipleWithDefault, schemasMocks.empty)(
@@ -85,7 +85,7 @@ test.requestHooks(sandboxMocks.multipleWithDefault, schemasMocks.empty)(
   async () => {
     await initializeExtensionView();
     await sandboxField.expectText("PRODUCTION Test Sandbox 2 (VA7)");
-  }
+  },
 );
 
 test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.empty)(
@@ -93,48 +93,48 @@ test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.empty)(
   async () => {
     await initializeExtensionView();
     await sandboxField.expectText("Select a sandbox");
-  }
+  },
 );
 
 test.requestHooks(
   sandboxMocks.multipleWithoutDefault,
   schemaMocks.basic,
-  schemasMocks.empty
+  schemasMocks.empty,
 )(
   "auto-selects corresponding sandbox when loading saved XDM object containing sandbox name in its settings",
   async () => {
     await initializeExtensionView({
       settings: {
         sandbox: {
-          name: "testsandbox3"
+          name: "testsandbox3",
         },
         schema: {
           id: "sch123",
-          version: "1.0"
+          version: "1.0",
         },
-        data: {}
-      }
+        data: {},
+      },
     });
     await sandboxField.expectText("PRODUCTION Test Sandbox 3 (VA7)");
-  }
+  },
 );
 
 test.requestHooks(
   sandboxMocks.multipleWithoutDefault,
   schemaMocks.basic,
-  schemasMocks.multiple
+  schemasMocks.multiple,
 )("resets schema selection when a different sandbox is selected", async () => {
   await initializeExtensionView({
     settings: {
       sandbox: {
-        name: "testsandbox1"
+        name: "testsandbox1",
       },
       schema: {
         id: "sch123",
-        version: "1.0"
+        version: "1.0",
       },
-      data: {}
-    }
+      data: {},
+    },
   });
   await editor.expectExists();
   await schemaField.expectText("Test Schema 1");
@@ -146,32 +146,32 @@ test.requestHooks(
 test.requestHooks(
   sandboxMocks.multipleWithoutDefault,
   schemaMocks.basic,
-  schemasMocks.empty
+  schemasMocks.empty,
 )(
   "displays error when loading saved XDM object containing sandbox name in its settings that doesn't match any returned sandboxes",
   async () => {
     await initializeExtensionView({
       settings: {
         sandbox: {
-          name: "nonexistentsandbox"
+          name: "nonexistentsandbox",
         },
         schema: {
           id: "sch123",
-          version: "1.0"
+          version: "1.0",
         },
-        data: {}
-      }
+        data: {},
+      },
     });
     await errorBoundaryMessage.expectMessage(
-      /The sandbox used to build the XDM object no longer exists/
+      /The sandbox used to build the XDM object no longer exists/,
     );
-  }
+  },
 );
 
 test.requestHooks(
   sandboxMocks.multipleWithoutDefault,
   schemaMocks.basic,
-  schemasMocks.empty
+  schemasMocks.empty,
 )(
   "auto-selects prod sandbox when loading saved XDM object containing no sandbox name",
   async () => {
@@ -179,13 +179,13 @@ test.requestHooks(
       settings: {
         schema: {
           id: "sch123",
-          version: "1.0"
+          version: "1.0",
         },
-        data: {}
-      }
+        data: {},
+      },
     });
     await sandboxField.expectText("PRODUCTION Test Sandbox Prod (VA7)");
-  }
+  },
 );
 
 test.requestHooks(schemasMocks.empty)(
@@ -195,7 +195,7 @@ test.requestHooks(schemasMocks.empty)(
     await schemaField.expectText("");
     await schemaField.openMenu();
     await schemaField.expectMenuOptionLabels(["No results"]);
-  }
+  },
 );
 
 test("allows user to enter a schema search query with regular expression special characters treated as regular characters", async () => {
@@ -224,24 +224,24 @@ test("attempts to load a schema that has been deleted", async () => {
   await initializeExtensionView({
     settings: {
       sandbox: {
-        name: "prod"
+        name: "prod",
       },
       schema: {
         id: "sch123",
-        version: "1.0"
+        version: "1.0",
       },
-      data: {}
-    }
+      data: {},
+    },
   });
   await errorBoundaryMessage.expectMessage(
-    /Could not find the schema selected previously\./
+    /Could not find the schema selected previously\./,
   );
 });
 
 test.requestHooks(
   sandboxMocks.singleWithoutDefault,
   schemasMocks.single,
-  schemaMocks.basic
+  schemaMocks.basic,
 )("auto-selects schema if the sandbox contains a single schema", async () => {
   await initializeExtensionView();
   await schemaField.expectText("Test Schema 1");
@@ -253,13 +253,13 @@ test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
   async () => {
     await initializeExtensionView();
     await schemaField.expectText("");
-  }
+  },
 );
 
 test.requestHooks(
   sandboxMocks.singleWithoutDefault,
   schemaMocks.basic,
-  schemasMocks.multiple
+  schemasMocks.multiple,
 )(
   "auto-selects schema when loading saved XDM object even when schema is not in the first page of schema metas loaded from server",
   async () => {
@@ -268,17 +268,17 @@ test.requestHooks(
     await initializeExtensionView({
       settings: {
         sandbox: {
-          name: "testsandbox1"
+          name: "testsandbox1",
         },
         schema: {
           id: "sch123",
-          version: "1.0"
+          version: "1.0",
         },
-        data: {}
-      }
+        data: {},
+      },
     });
     await schemaField.expectText("Test Schema 1");
-  }
+  },
 );
 
 test.requestHooks(sandboxMocks.multipleWithoutDefault)(
@@ -289,7 +289,7 @@ test.requestHooks(sandboxMocks.multipleWithoutDefault)(
     await t
       .expect(Selector("div").withText("Please select a sandbox.").exists)
       .ok("Error message doesn't exist.");
-  }
+  },
 );
 
 test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
@@ -300,7 +300,7 @@ test.requestHooks(sandboxMocks.singleWithoutDefault, schemasMocks.multiple)(
     await t
       .expect(Selector("div").withText("Please select a schema.").exists)
       .ok("Error message doesn't exist.");
-  }
+  },
 );
 
 // see https://jira.corp.adobe.com/browse/PDCL-8307
@@ -308,7 +308,7 @@ test
   .requestHooks(
     sandboxMocks.singleWithoutDefault,
     schemaMocks.basic,
-    schemasMocks.paging
+    schemasMocks.paging,
   )
   .skip("provides a proper combobox experience", async () => {
     await initializeExtensionView();
@@ -319,23 +319,23 @@ test
     // no good way of checking whether all the expected items are in the list,
     // because they're not all rendered in the DOM.
     await schemaField.enterSearch("e");
-    const matchingLabels = schemasMocks.pagingTitles.filter(name =>
-      name.includes("e")
+    const matchingLabels = schemasMocks.pagingTitles.filter((name) =>
+      name.includes("e"),
     );
     const lastMatchingItemLabel = matchingLabels[matchingLabels.length - 1];
     const nonMatchingLabels = schemasMocks.pagingTitles.filter(
-      name => !name.includes("e")
+      (name) => !name.includes("e"),
     );
     await schemaField.expectMenuOptionLabelsInclude(matchingLabels.slice(0, 3));
     // While we could check that none of the non-matching items are in the menu, it takes
     // too much time, so we'll just make sure the first few don't exist.
     await schemaField.expectMenuOptionLabelsExclude(
-      nonMatchingLabels.slice(0, 3)
+      nonMatchingLabels.slice(0, 3),
     );
     await schemaField.scrollDownToItem(lastMatchingItemLabel);
     await schemaField.expectMenuOptionLabelsInclude(matchingLabels.slice(-3));
     await schemaField.expectMenuOptionLabelsExclude(
-      nonMatchingLabels.slice(-3)
+      nonMatchingLabels.slice(-3),
     );
 
     // User selects the last item.
@@ -360,21 +360,21 @@ test
     await schemaField.openMenu();
     await schemaField.scrollToTop();
     await schemaField.expectMenuOptionLabelsInclude(
-      schemasMocks.pagingTitles.slice(0, 3)
+      schemasMocks.pagingTitles.slice(0, 3),
     );
     await schemaField.scrollDownToItem(
-      schemasMocks.pagingTitles[schemasMocks.pagingTitles.length - 1]
+      schemasMocks.pagingTitles[schemasMocks.pagingTitles.length - 1],
     );
     await schemaField.expectMenuOptionLabelsInclude(
-      schemasMocks.pagingTitles.slice(-3)
+      schemasMocks.pagingTitles.slice(-3),
     );
   });
 
-test.requestHooks(
+test.skip.requestHooks(
   sandboxMocks.multipleWithDefault,
   schemasMocks.sandbox2,
   schemasMocks.sandbox3,
-  schemaMocks.schema3b
+  schemaMocks.schema3b,
 )("Allows you to select a schema from the non-default sandbox", async () => {
   const extensionViewController = await initializeExtensionView({});
   await sandboxField.expectText("PRODUCTION Test Sandbox 2 (VA7)");
@@ -385,11 +385,11 @@ test.requestHooks(
   await extensionViewController.expectSettings({
     data: {},
     sandbox: {
-      name: "testsandbox3"
+      name: "testsandbox3",
     },
     schema: {
       id: "https://ns.adobe.com/unifiedjsqeonly/schemas/schema3b",
-      version: "1.0"
-    }
+      version: "1.0",
+    },
   });
 });

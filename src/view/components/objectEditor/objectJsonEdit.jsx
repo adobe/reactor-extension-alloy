@@ -23,7 +23,7 @@ import { PARTS, WHOLE } from "./constants/populationStrategy";
 import FormElementContainer from "../formElementContainer";
 import {
   addToEntityFromVariables,
-  addToVariablesFromEntity
+  addToVariablesFromEntity,
 } from "./helpers/entityVariablesConverter";
 
 const getEmptyItem = () => ({ key: "", value: "" });
@@ -51,7 +51,7 @@ const WholePopulationStrategyForm = ({ fieldName }) => {
 };
 
 WholePopulationStrategyForm.propTypes = {
-  fieldName: PropTypes.string.isRequired
+  fieldName: PropTypes.string.isRequired,
 };
 
 /**
@@ -61,12 +61,12 @@ WholePopulationStrategyForm.propTypes = {
 const PartsPopulationStrategyForm = ({ fieldName, items }) => (
   <FieldArray
     name={`${fieldName}.items`}
-    render={arrayHelpers => {
+    render={(arrayHelpers) => {
       return (
         <Well
           marginStart="size-300"
           UNSAFE_style={{
-            paddingTop: "var(--spectrum-global-dimension-size-100)"
+            paddingTop: "var(--spectrum-global-dimension-size-100)",
           }}
         >
           <Flex gap="size-100" direction="column" alignItems="start">
@@ -128,26 +128,26 @@ const PartsPopulationStrategyForm = ({ fieldName, items }) => (
 
 PartsPopulationStrategyForm.propTypes = {
   fieldName: PropTypes.string.isRequired,
-  items: PropTypes.arrayOf(PropTypes.object).isRequired
+  items: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 const updateJsonTextarea = ({
   setValue,
   formStateNode: {
     items,
-    schema: { expandPaths }
+    schema: { expandPaths },
   },
-  submitForm
+  submitForm,
 }) => {
   const nonEmptyItems = items.filter(
-    ({ key, value }) => key.trim() !== "" || value.trim() !== ""
+    ({ key, value }) => key.trim() !== "" || value.trim() !== "",
   );
   if (nonEmptyItems.length > 0) {
     if (!nonEmptyItems.some(({ key }) => key.trim() === "")) {
       const entity = JSON.stringify(
         addToEntityFromVariables({}, nonEmptyItems, { expandPaths }),
         null,
-        2
+        2,
       );
       setValue(entity).then(() => submitForm());
     } else {
@@ -162,18 +162,18 @@ const updateRows = ({
   setValue,
   formStateNode: {
     value,
-    schema: { expandPaths }
+    schema: { expandPaths },
   },
-  submitForm
+  submitForm,
 }) => {
   if (value !== "") {
     try {
       const parsedValue = JSON.parse(value);
-      if (Object.keys(parsedValue).some(key => key.trim() === "")) {
+      if (Object.keys(parsedValue).some((key) => key.trim() === "")) {
         throw new Error("Empty key found in JSON object.");
       }
       const variables = addToVariablesFromEntity([], JSON.parse(value), {
-        expandPaths
+        expandPaths,
       });
       setValue(variables).then(() => submitForm());
     } catch (e) {
@@ -187,7 +187,7 @@ const updateRows = ({
 /**
  * The form for editing a node that is an object that contains JSON.
  */
-const ObjectJsonEdit = props => {
+const ObjectJsonEdit = (props) => {
   const { submitForm } = useFormikContext();
   const { fieldName } = props;
   const [{ value: formStateNode }] = useField(fieldName);
@@ -198,14 +198,14 @@ const ObjectJsonEdit = props => {
     formStateNode;
 
   const strategyOnChange = useCallback(
-    currentValue => {
+    (currentValue) => {
       if (currentValue === WHOLE) {
         updateJsonTextarea({ setValue, formStateNode, submitForm });
       } else {
         updateRows({ setValue: setItemsValue, formStateNode, submitForm });
       }
     },
-    [formStateNode]
+    [formStateNode],
   );
 
   return (
@@ -235,7 +235,7 @@ const ObjectJsonEdit = props => {
 };
 
 ObjectJsonEdit.propTypes = {
-  fieldName: PropTypes.string.isRequired
+  fieldName: PropTypes.string.isRequired,
 };
 
 export default ObjectJsonEdit;

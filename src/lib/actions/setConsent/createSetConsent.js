@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 module.exports =
   ({ instanceManager, getConfigOverrides }) =>
-  settings => {
+  (settings) => {
     const { instanceName, identityMap, consent } = settings;
 
     const edgeConfigOverrides = getConfigOverrides(settings);
@@ -20,18 +20,18 @@ module.exports =
 
     if (!instance) {
       throw new Error(
-        `Failed to set consent for instance "${instanceName}". No matching instance was configured with this name.`
+        `Failed to set consent for instance "${instanceName}". No matching instance was configured with this name.`,
       );
     }
     if (identityMap) {
       return instance("setConsent", {
         identityMap,
         consent,
-        edgeConfigOverrides
+        edgeConfigOverrides,
       });
     }
     return instance("setConsent", {
       consent,
-      edgeConfigOverrides
+      edgeConfigOverrides,
     });
   };

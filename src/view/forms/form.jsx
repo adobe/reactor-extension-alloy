@@ -30,7 +30,7 @@ import FormElementContainer from "../components/formElementContainer";
  * "formikProps".
  */
 
-const Identity = x => x;
+const Identity = (x) => x;
 
 /**
  * This creates a composite form.
@@ -50,51 +50,53 @@ export default function Form(
   {
     wrapGetInitialValues = Identity,
     wrapGetSettings = Identity,
-    wrapValidationShape = Identity
+    wrapValidationShape = Identity,
   } = {},
-  children = []
+  children = [],
 ) {
   const part = {
     getInitialValues({ initInfo }) {
       const initialValues = children
-        .filter(child => child.getInitialValues)
+        .filter((child) => child.getInitialValues)
         .reduce((values, child) => {
           return {
             ...values,
-            ...child.getInitialValues({ initInfo })
+            ...child.getInitialValues({ initInfo }),
           };
         }, {});
       return initialValues;
     },
     getSettings({ values }) {
       return children
-        .filter(child => child.getSettings)
+        .filter((child) => child.getSettings)
         .reduce((settings, child) => {
           return {
             ...settings,
-            ...child.getSettings({ values })
+            ...child.getSettings({ values }),
           };
         }, {});
     },
     validationShape: children
       .filter(
         ({ validationShape, addToValidationShape }) =>
-          validationShape || addToValidationShape
+          validationShape || addToValidationShape,
       )
       .reduce((memo, { validationShape, addToValidationShape }) => {
         if (validationShape) {
           if (
-            Object.keys(memo).find(existingKey => validationShape[existingKey])
+            Object.keys(memo).find(
+              (existingKey) => validationShape[existingKey],
+            )
           ) {
             throw new Error(
               `Duplicate validation key (${Object.keys(memo).join(
-                ","
-              )}) versus (${Object.keys(validationShape).join(",")})`
+                ",",
+              )}) versus (${Object.keys(validationShape).join(",")})`,
             );
           }
           return {
             ...memo,
-            ...validationShape
+            ...validationShape,
           };
         }
         return addToValidationShape(memo);
@@ -111,13 +113,13 @@ export default function Form(
           })}
         </FormElementContainer>
       );
-    }
+    },
   };
   part.getInitialValues = wrapGetInitialValues(part.getInitialValues);
   part.getSettings = wrapGetSettings(part.getSettings);
   part.validationShape = wrapValidationShape(part.validationShape);
   part.Component.propTypes = {
-    horizontal: PropTypes.bool
+    horizontal: PropTypes.bool,
   };
   return part;
 }

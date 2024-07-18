@@ -22,7 +22,7 @@ import { useState } from "react";
 // If you pass a function then this hook will return the function wrapped with
 // a try catch that reports the async error. Otherwise this will return a function
 // that you can call with the error to display.
-const useReportAsyncError = func => {
+const useReportAsyncError = (func) => {
   const [, setState] = useState();
 
   if (func) {
@@ -44,7 +44,7 @@ const useReportAsyncError = func => {
     };
   }
 
-  return error => {
+  return (error) => {
     setState(() => {
       throw error;
     });

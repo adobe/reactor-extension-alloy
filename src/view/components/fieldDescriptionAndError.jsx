@@ -24,7 +24,7 @@ const FieldDescriptionAndError = ({
   error,
   messagePaddingTop,
   messagePaddingStart,
-  learnMoreLink
+  learnMoreLink,
 }) => {
   const child = React.Children.only(children);
   const width = child.props.width;
@@ -81,7 +81,7 @@ FieldDescriptionAndError.propTypes = {
   error: PropTypes.string,
   messagePaddingTop: PropTypes.string,
   messagePaddingStart: PropTypes.string,
-  learnMoreLink: PropTypes.object
+  learnMoreLink: PropTypes.object,
 };
 
 export default FieldDescriptionAndError;

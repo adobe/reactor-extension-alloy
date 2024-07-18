@@ -38,13 +38,13 @@ import {
   contextDataAddButton,
   additionalPropertiesName,
   additionalPropertiesValue,
-  additionalPropertiesAddButton
+  additionalPropertiesAddButton,
 } from "../../helpers/objectEditor/objectAnalyticsEdit";
 
 createExtensionViewFixture({
   title: "Update variable analytics editor",
   viewPath: "actions/updateVariable.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
 });
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -52,16 +52,16 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await extensionViewController.expectIsValid();
     await extensionViewController.expectSettings({
       data: {},
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -69,8 +69,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await eVarName(0).openMenu();
     await eVarName(0).selectMenuOption("eVar10");
@@ -127,26 +127,26 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
             events: "scAdd,event1:123=value1",
             contextData: {
               key1: "value1",
-              key2: "value2"
+              key2: "value2",
             },
             campaign: "mycampaign",
-            tnta: "mytnta"
-          }
-        }
+            tnta: "mytnta",
+          },
+        },
       },
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(
   dataElementsMocks.singleSolutions,
-  dataElementMocks.solutionsElement1
+  dataElementMocks.solutionsElement1,
 )("it fills in values", async () => {
   await extensionViewController.init({
     propertySettings: {
-      id: "PRabcd"
+      id: "PRabcd",
     },
     settings: {
       data: {
@@ -159,16 +159,16 @@ test.requestHooks(
             events: "scAdd,event1:123=value1",
             contextData: {
               key1: "value1",
-              key2: "value2"
+              key2: "value2",
             },
             campaign: "mycampaign",
-            tnta: "mytnta"
-          }
-        }
+            tnta: "mytnta",
+          },
+        },
       },
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
-    }
+      dataElementId: "SDE1",
+    },
   });
   await eVarName(0).expectText("eVar2");
   await eVarAction(0).expectText("Copy from");
@@ -202,8 +202,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await entireObjectOption.click();
     await jsonEditor.clear();
@@ -212,13 +212,13 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await extensionViewController.expectSettings({
       data: {
         __adobe: {
-          analytics: "%data element%"
-        }
+          analytics: "%data element%",
+        },
       },
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -226,8 +226,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await eVarName(0).openMenu();
     await eVarName(0).selectMenuOption("eVar10");
@@ -258,14 +258,14 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
             prop11: "%c11%other%element%",
             events: "event1:%id1%=%value1%",
             contextData: "%contextDataElement%",
-            channel: "%channel%"
-          }
-        }
+            channel: "%channel%",
+          },
+        },
       },
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -273,8 +273,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await entireObjectOption.click();
     await jsonEditor.clear();
@@ -284,14 +284,14 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
       data: {
         __adobe: {
           analytics: {
-            key1: "value1"
-          }
-        }
+            key1: "value1",
+          },
+        },
       },
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -299,8 +299,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await entireObjectOption.click();
     await jsonEditor.clear();
@@ -313,13 +313,13 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await extensionViewController.expectSettings({
       data: {
         __adobe: {
-          analytics: "%data element%"
-        }
+          analytics: "%data element%",
+        },
       },
       dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -327,8 +327,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await eVarValue(0).typeText("value10");
     await eVarAddButton.click();
@@ -359,5 +359,5 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await eventName(1).expectError();
     await contextDataKey(0).expectError();
     await additionalPropertiesName(0).expectError();
-  }
+  },
 );

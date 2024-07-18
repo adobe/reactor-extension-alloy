@@ -12,13 +12,13 @@ governing permissions and limitations under the License.
 
 module.exports =
   ({ instanceManager }) =>
-  settings => {
+  (settings) => {
     const { instanceName, ...options } = settings;
 
     const instance = instanceManager.getInstance(instanceName);
     if (!instance) {
       throw new Error(
-        `Failed to apply propositions for instance "${instanceName}". No instance was found with this name.`
+        `Failed to apply propositions for instance "${instanceName}". No instance was found with this name.`,
       );
     }
 

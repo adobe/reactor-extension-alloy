@@ -45,19 +45,19 @@ const DATA_ELEMENT = "dataElement";
  */
 export default function dataElementSection(
   { name, label, learnMoreUrl, dataElementDescription },
-  children = []
+  children = [],
 ) {
   const {
     getSettings: getChildrenSettings,
     getInitialValues: getChildrenInitialValues,
     validationShape: childrenValidationShape,
-    Component
+    Component,
   } = form({}, children);
   const buildDefaultValues = () =>
     getChildrenInitialValues({ initInfo: { settings: null } });
 
   const validationShape = {
-    [name]: object().shape({ ...childrenValidationShape })
+    [name]: object().shape({ ...childrenValidationShape }),
   };
   const formPart = {
     getInitialValues({ initInfo }) {
@@ -65,12 +65,12 @@ export default function dataElementSection(
       const initialValues = {
         [name]: buildDefaultValues(),
         [`${name}InputMethod`]: FORM,
-        [`${name}DataElement`]: ""
+        [`${name}DataElement`]: "",
       };
 
       if (typeof value === "object" && value !== null) {
         initialValues[name] = getChildrenInitialValues({
-          initInfo: { settings: value }
+          initInfo: { settings: value },
         });
         initialValues[`${name}InputMethod`] = FORM;
       }
@@ -96,7 +96,7 @@ export default function dataElementSection(
     validationShape,
     Component: ({ namePrefix = "", ...props }) => {
       const [{ value: inputMethod }] = useField(
-        `${namePrefix}${name}InputMethod`
+        `${namePrefix}${name}InputMethod`,
       );
 
       return (
@@ -136,10 +136,10 @@ export default function dataElementSection(
           )}
         </>
       );
-    }
+    },
   };
   formPart.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
   return formPart;
 }

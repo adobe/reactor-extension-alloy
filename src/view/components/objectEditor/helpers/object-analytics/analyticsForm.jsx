@@ -24,15 +24,15 @@ const DYNAMIC_VARIABLE_REGEX = /^D=[cv]\d+$/;
 
 const evarItems = Array.from({ length: 250 }, (_, i) => ({
   label: `eVar${i + 1}`,
-  value: `eVar${i + 1}`
+  value: `eVar${i + 1}`,
 }));
 const propItems = Array.from({ length: 75 }, (_, i) => ({
   label: `prop${i + 1}`,
-  value: `prop${i + 1}`
+  value: `prop${i + 1}`,
 }));
-const numberedEventItems = Array.from({ length: 250 }, (_, i) => ({
+const numberedEventItems = Array.from({ length: 1000 }, (_, i) => ({
   label: `event${i + 1}`,
-  value: `event${i + 1}`
+  value: `event${i + 1}`,
 }));
 const eventItems = [
   { label: "prodView: Product View", value: "prodView" },
@@ -42,7 +42,7 @@ const eventItems = [
   { label: "scOpen: Cart", value: "scOpen" },
   { label: "scRemove: Cart Removal", value: "scRemove" },
   { label: "scView: Cart View", value: "scView" },
-  ...numberedEventItems
+  ...numberedEventItems,
 ];
 const INVALID_ADDITIONAL_FIELDS_REGEX =
   /^(eVar\d+|prop\d+|event\d+|contextData)$/;
@@ -59,11 +59,11 @@ const additionalFieldsItems = [
   { label: "Referrer", value: "referrer" },
   { label: "Server", value: "server" },
   { label: "Transaction ID", value: "transactionID" },
-  { label: "Zip", value: "zip" }
+  { label: "Zip", value: "zip" },
 ];
 
 const wrapGetInitialValues =
-  getInitialValues =>
+  (getInitialValues) =>
   ({ initInfo }) => {
     const originalSettings = initInfo.settings || {};
     const settings = Object.keys(originalSettings).reduce(
@@ -88,15 +88,15 @@ const wrapGetInitialValues =
         }
         return memo;
       },
-      { evars: {}, props: {}, additionalProperties: {} }
+      { evars: {}, props: {}, additionalProperties: {} },
     );
     // Split the events string into an array of events and sort them.
     // Using this regex to handle commas inside of data element names.
     settings.events = Array.from(
-      (originalSettings.events || "").matchAll(/(%[^%]+%|[^%,]+)+/g)
+      (originalSettings.events || "").matchAll(/(%[^%]+%|[^%,]+)+/g),
     )
-      .map(match => match[0].trim())
-      .filter(match => match)
+      .map((match) => match[0].trim())
+      .filter((match) => match)
       .sort(eventCompareFunction)
       .reduce((memo, event) => {
         const [key, value = ""] = event.split("=");
@@ -124,7 +124,7 @@ const wrapGetInitialValues =
       settings.contextData = originalSettings.contextData;
     } else {
       settings.contextData = Object.keys(
-        originalSettings.contextData || {}
+        originalSettings.contextData || {},
       ).reduce((memo, key) => {
         memo[key] = { value: originalSettings.contextData[key] };
         return memo;
@@ -137,21 +137,21 @@ const wrapGetInitialValues =
     const initialValues = getInitialValues({
       initInfo: {
         ...initInfo,
-        settings
-      }
+        settings,
+      },
     });
     return initialValues;
   };
 
 const wrapGetSettings =
-  getSettings =>
+  (getSettings) =>
   ({ values }) => {
     const {
       evars = {},
       props = {},
       events = {},
       contextData = {},
-      additionalProperties = {}
+      additionalProperties = {},
     } = getSettings({ values });
     const flattenedEvars = Object.keys(evars)
       .sort(numberAwareCompareFunction)
@@ -178,14 +178,14 @@ const wrapGetSettings =
         return memo;
       }, {});
     const flattenedAdditionalProperties = Object.keys(
-      additionalProperties
+      additionalProperties,
     ).reduce((memo, key) => {
       memo[key] = additionalProperties[key].value || "";
       return memo;
     }, {});
     const eventString = Object.keys(events)
       .sort(eventCompareFunction)
-      .map(key => {
+      .map((key) => {
         const { id, value } = events[key];
         if (value && id) {
           return `${key}:${id}=${value}`;
@@ -202,7 +202,7 @@ const wrapGetSettings =
     const finalSettings = {
       ...flattenedAdditionalProperties,
       ...flattenedEvars,
-      ...flattenedProps
+      ...flattenedProps,
     };
     if (Object.keys(events).length > 0) {
       finalSettings.events = eventString;
@@ -236,39 +236,39 @@ const setOrCopyRow = (name, label, items, requiredMessage) => {
       items,
       width: "size-3000",
       label,
-      validationSchemaBase: string().required(requiredMessage)
+      validationSchemaBase: string().required(requiredMessage),
     }),
     comboBox({
       name: "action",
       dataElementSupported: false,
       items: [
         { label: "Set as", value: "set" },
-        { label: "Copy from", value: "copy" }
+        { label: "Copy from", value: "copy" },
       ],
       width: "size-2000",
       label: "Action",
       defaultValue: "set",
-      Component: FormikPicker
+      Component: FormikPicker,
     }),
     conditional(
       {
         args: "action",
-        condition: action => {
+        condition: (action) => {
           return action !== "copy";
-        }
+        },
       },
       [
         textField({
           name: "value",
           width: "size-3000",
-          label: "Value"
-        })
-      ]
+          label: "Value",
+        }),
+      ],
     ),
     conditional(
       {
         args: "action",
-        condition: action => action === "copy"
+        condition: (action) => action === "copy",
       },
       [
         comboBox({
@@ -278,17 +278,17 @@ const setOrCopyRow = (name, label, items, requiredMessage) => {
           width: "size-3000",
           label: "Value",
           fillDataElementIconSpace: true,
-          isRequired: true
-        })
-      ]
-    )
+          isRequired: true,
+        }),
+      ],
+    ),
   ];
 };
 
 const analyticsForm = form(
   {
     wrapGetInitialValues,
-    wrapGetSettings
+    wrapGetSettings,
   },
   [
     objectArray(
@@ -299,9 +299,9 @@ const analyticsForm = form(
         objectLabelPlural: "eVars",
         dataElementSupported: false,
         horizontal: true,
-        isRowEmpty: ({ evar, value }) => evar === "" && value === ""
+        isRowEmpty: ({ evar, value }) => evar === "" && value === "",
       },
-      setOrCopyRow("evar", "eVar", evarItems, "Please choose an eVar.")
+      setOrCopyRow("evar", "eVar", evarItems, "Please choose an eVar."),
     ),
     objectArray(
       {
@@ -311,9 +311,9 @@ const analyticsForm = form(
         objectLabelPlural: "Props",
         dataElementSupported: false,
         horizontal: true,
-        isRowEmpty: ({ prop, value }) => prop === "" && value === ""
+        isRowEmpty: ({ prop, value }) => prop === "" && value === "",
       },
-      setOrCopyRow("prop", "Prop", propItems, "Please choose a prop.")
+      setOrCopyRow("prop", "Prop", propItems, "Please choose a prop."),
     ),
     objectArray(
       {
@@ -325,7 +325,7 @@ const analyticsForm = form(
         horizontal: true,
         compareFunction: eventCompareFunction,
         isRowEmpty: ({ event, id, value }) =>
-          event === "" && value === "" && id === ""
+          event === "" && value === "" && id === "",
       },
       [
         comboBox({
@@ -334,19 +334,19 @@ const analyticsForm = form(
           items: eventItems,
           width: "size-3000",
           label: "Event",
-          validationSchemaBase: string().required("Please choose an event.")
+          validationSchemaBase: string().required("Please choose an event."),
         }),
         textField({
           name: "id",
           width: "size-2000",
-          label: "Event ID (optional)"
+          label: "Event ID (optional)",
         }),
         textField({
           name: "value",
           width: "size-3000",
-          label: "Event value (optional)"
-        })
-      ]
+          label: "Event value (optional)",
+        }),
+      ],
     ),
     objectArray(
       {
@@ -356,7 +356,7 @@ const analyticsForm = form(
         objectKey: "key",
         objectLabelPlural: "Context data values",
         horizontal: true,
-        isRowEmpty: ({ key, value }) => key === "" && value === ""
+        isRowEmpty: ({ key, value }) => key === "" && value === "",
       },
       [
         textField({
@@ -365,15 +365,15 @@ const analyticsForm = form(
           width: "size-3000",
           label: "Context data key",
           validationSchemaBase: string().required(
-            "Please provide a context data key."
-          )
+            "Please provide a context data key.",
+          ),
         }),
         textField({
           name: "value",
           width: "size-3000",
-          label: "Value"
-        })
-      ]
+          label: "Value",
+        }),
+      ],
     ),
     objectArray(
       {
@@ -384,7 +384,7 @@ const analyticsForm = form(
         dataElementSupported: false,
         horizontal: true,
         isRequired: true,
-        isRowEmpty: ({ property, value }) => property === "" && value === ""
+        isRowEmpty: ({ property, value }) => property === "" && value === "",
       },
       [
         comboBox({
@@ -398,25 +398,25 @@ const analyticsForm = form(
             .test(
               "is-valid-additional-property",
               "Please use the fields provided above for this property.",
-              value => !INVALID_ADDITIONAL_FIELDS_REGEX.test(value)
+              (value) => !INVALID_ADDITIONAL_FIELDS_REGEX.test(value),
             )
-            .required("Please choose an additional property.")
+            .required("Please choose an additional property."),
         }),
         textField({
           name: "value",
           width: "size-3000",
-          label: "Value"
-        })
-      ]
-    )
-  ]
+          label: "Value",
+        }),
+      ],
+    ),
+  ],
 );
 
 export default jsonOptionalEditor(
   {
     name: "value",
     optionName: "populationStrategy",
-    "aria-label": "Population strategy"
+    "aria-label": "Population strategy",
   },
-  [analyticsForm]
+  [analyticsForm],
 );

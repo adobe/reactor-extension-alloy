@@ -17,13 +17,15 @@ const { execSync } = require("child_process");
 
 const {
   dependencies: {
-    "@adobe/alloy": { version: currentVersion }
-  }
+    "@adobe/alloy": { version: currentVersion },
+  },
 } = JSON.parse(execSync("npm ls @adobe/alloy --json").toString());
 
 // fetch any releases greater than or equal to the current version, with the current major/minor/patch number.
 const npmView = JSON.parse(
-  execSync(`npm view @adobe/alloy@~${currentVersion} version --json`).toString()
+  execSync(
+    `npm view @adobe/alloy@~${currentVersion} version --json`,
+  ).toString(),
 );
 // npmView is either a single string or an array of strings
 // eslint-disable-next-line no-console

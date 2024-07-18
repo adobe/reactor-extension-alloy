@@ -18,7 +18,7 @@ import { Selector } from "testcafe";
  * @param {string} dataTestId The value of the data-test-id attribute.
  * @returns {string}
  */
-export const createTestIdSelectorString = dataTestId =>
+export const createTestIdSelectorString = (dataTestId) =>
   `[data-test-id='${dataTestId}']`;
 
 /**
@@ -27,5 +27,5 @@ export const createTestIdSelectorString = dataTestId =>
  * @param {string} dataTestId The value of the data-test-id attribute.
  * @returns {Selector}
  */
-export const createTestIdSelector = dataTestId =>
+export const createTestIdSelector = (dataTestId) =>
   Selector(createTestIdSelectorString(dataTestId));

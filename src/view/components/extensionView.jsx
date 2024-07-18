@@ -26,7 +26,7 @@ const ExtensionView = ({
   getSettings,
   validateFormikState,
   formikStateValidationSchema,
-  validateNonFormikState
+  validateNonFormikState,
 }) => {
   const reportAsyncError = useReportAsyncError();
   const [initInfo, setInitInfo] = useState();
@@ -36,7 +36,7 @@ const ExtensionView = ({
   const getInitialValuesPromiseRef = useRef();
   formikPropsRef.current = useFormik({
     onSubmit: () => {},
-    validate: values => {
+    validate: (values) => {
       let errors;
 
       // Formik swallows errors that occur during validation, but we want
@@ -47,7 +47,7 @@ const ExtensionView = ({
         }
       } catch (error) {
         reportAsyncError(
-          new Error("An error occurred while validating the view.")
+          new Error("An error occurred while validating the view."),
         );
       }
 
@@ -57,7 +57,7 @@ const ExtensionView = ({
       return (
         viewRegistrationRef.current?.formikStateValidationSchema ?? object()
       );
-    }
+    },
   });
 
   const myValidateFormikState = async () => {
@@ -107,7 +107,7 @@ const ExtensionView = ({
       try {
         return await viewRegistrationRef.current.getSettings({
           initInfo,
-          values: formikPropsRef.current.values
+          values: formikPropsRef.current.values,
         });
       } catch (e) {
         // This will update the UI to show that an error has occurred.
@@ -122,13 +122,13 @@ const ExtensionView = ({
       }
       const results = await Promise.all([
         myValidateFormikState(),
-        myValidateNonFormikState()
+        myValidateNonFormikState(),
       ]);
-      return results.every(result => result);
-    }
+      return results.every((result) => result);
+    },
   });
 
-  const registerImperativeFormApi = api => {
+  const registerImperativeFormApi = (api) => {
     viewRegistrationRef.current = viewRegistrationRef.current || {};
     viewRegistrationRef.current.getSettings = api.getSettings;
     viewRegistrationRef.current.validateFormikState = api.validateFormikState;
@@ -144,7 +144,7 @@ const ExtensionView = ({
         getSettings,
         validateFormikState,
         formikStateValidationSchema,
-        validateNonFormikState
+        validateNonFormikState,
       });
     }, []);
   }
@@ -156,7 +156,7 @@ const ExtensionView = ({
             const getInitialValuesPromise = getInitialValues({ initInfo });
             getInitialValuesPromiseRef.current = getInitialValuesPromise;
             formikPropsRef.current.resetForm({
-              values: await getInitialValuesPromise
+              values: await getInitialValuesPromise,
             });
             setCanRenderView(true);
             window.loaded = true;
@@ -191,7 +191,7 @@ const ExtensionView = ({
         {render({
           initInfo,
           formikProps: formikPropsRef.current,
-          registerImperativeFormApi
+          registerImperativeFormApi,
         })}
       </FormikProvider>
     </View>
@@ -204,7 +204,7 @@ ExtensionView.propTypes = {
   getSettings: PropTypes.func,
   validateFormikState: PropTypes.func,
   formikStateValidationSchema: PropTypes.object,
-  validateNonFormikState: PropTypes.func
+  validateNonFormikState: PropTypes.func,
 };
 
 export default ExtensionView;

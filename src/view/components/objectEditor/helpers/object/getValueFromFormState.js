@@ -28,14 +28,14 @@ export default ({ formStateNode, getValueFromFormState }) => {
     (memo, propertyName) => {
       const propertyFormStateNode = properties[propertyName];
       const propertyValue = getValueFromFormState({
-        formStateNode: propertyFormStateNode
+        formStateNode: propertyFormStateNode,
       });
       if (propertyValue !== undefined) {
         memo[propertyName] = propertyValue;
       }
       return memo;
     },
-    {}
+    {},
   );
 
   return Object.keys(computedValue).length ? computedValue : undefined;

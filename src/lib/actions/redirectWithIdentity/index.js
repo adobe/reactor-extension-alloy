@@ -20,5 +20,5 @@ module.exports = createRedirectWithIdentity({
   instanceManager,
   document,
   logger: turbine.logger,
-  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage)
+  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage),
 });

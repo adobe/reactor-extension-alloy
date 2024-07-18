@@ -16,7 +16,7 @@ import {
   NUMBER,
   OBJECT,
   OBJECT_JSON,
-  OBJECT_ANALYTICS
+  OBJECT_ANALYTICS,
 } from "../constants/schemaType";
 import arrayHelpers from "./array";
 import booleanHelpers from "./boolean";
@@ -27,7 +27,7 @@ import stringHelpers from "./string";
 import objectJsonHelpers from "./object-json";
 import objectAnalyticsHelpers from "./object-analytics";
 
-export default schemaType => {
+export default (schemaType) => {
   switch (schemaType) {
     case ARRAY:
       return arrayHelpers;

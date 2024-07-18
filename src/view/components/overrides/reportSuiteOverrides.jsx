@@ -41,7 +41,7 @@ const ReportSuitesOverride = ({
   items,
   primaryItem,
   validate,
-  useManualEntry
+  useManualEntry,
 }) => {
   const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
   const rsids = useFieldValue(fieldName);
@@ -49,7 +49,7 @@ const ReportSuitesOverride = ({
     "The IDs for the destination report suites in Adobe Analytics. The value must be a preconfigured override report suite (or a comma-separated list of report suites) from your datastream configuration and overrides the primary report suites.";
   if (primaryItem && primaryItem.length > 0) {
     reportSuiteDescription = `Overrides report suites: ${primaryItem
-      .map(v => `"${v}"`)
+      .map((v) => `"${v}"`)
       .join(", ")}. ${reportSuiteDescription}`;
   }
   return (
@@ -109,12 +109,12 @@ ReportSuitesOverride.propTypes = {
   items: PropTypes.arrayOf(
     PropTypes.shape({
       value: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired
-    })
+      label: PropTypes.string.isRequired,
+    }),
   ).isRequired,
   primaryItem: PropTypes.arrayOf(PropTypes.string).isRequired,
   validate: PropTypes.func.isRequired,
-  useManualEntry: PropTypes.bool.isRequired
+  useManualEntry: PropTypes.bool.isRequired,
 };
 
 export default ReportSuitesOverride;

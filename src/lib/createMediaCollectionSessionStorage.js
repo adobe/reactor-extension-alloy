@@ -24,6 +24,6 @@ module.exports = () => {
     },
     get({ playerId }) {
       return mediaCollectionSessionStorage[playerId];
-    }
+    },
   };
 };

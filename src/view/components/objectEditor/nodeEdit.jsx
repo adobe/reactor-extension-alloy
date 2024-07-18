@@ -23,7 +23,7 @@ import {
   NUMBER,
   OBJECT,
   OBJECT_JSON,
-  OBJECT_ANALYTICS
+  OBJECT_ANALYTICS,
 } from "./constants/schemaType";
 import ArrayEdit from "./arrayEdit";
 import BooleanEdit from "./booleanEdit";
@@ -39,7 +39,7 @@ import "./nodeEdit.styl";
 import FormikCheckbox from "../formikReactSpectrum3/formikCheckbox";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
-const getViewBySchemaType = schemaType => {
+const getViewBySchemaType = (schemaType) => {
   switch (schemaType) {
     case ARRAY:
       return ArrayEdit;
@@ -64,7 +64,7 @@ const getViewBySchemaType = schemaType => {
  * The form for editing a node in the XDM object. The form fields
  * that are shown depend on the node's type.
  */
-const NodeEdit = props => {
+const NodeEdit = (props) => {
   const { values: formState } = useFormikContext();
   const { onNodeSelect, selectedNodeId, verticalLayout = false } = props;
 
@@ -73,10 +73,10 @@ const NodeEdit = props => {
     fieldName,
     breadcrumb,
     displayName,
-    hasClearedAncestor
+    hasClearedAncestor,
   } = getNodeEditData({
     formState,
-    nodeId: selectedNodeId
+    nodeId: selectedNodeId,
   });
 
   const TypeSpecificNodeEdit = getViewBySchemaType(formStateNode.schema.type);
@@ -100,8 +100,8 @@ const NodeEdit = props => {
               // https://github.com/adobe/react-spectrum/issues/1979
             }
             {breadcrumb.length > 1 && (
-              <Breadcrumbs onAction={nodeId => onNodeSelect(nodeId)}>
-                {breadcrumb.map(item => (
+              <Breadcrumbs onAction={(nodeId) => onNodeSelect(nodeId)}>
+                {breadcrumb.map((item) => (
                   <Item key={item.nodeId}>{item.label}</Item>
                 ))}
               </Breadcrumbs>
@@ -158,7 +158,7 @@ const NodeEdit = props => {
 NodeEdit.propTypes = {
   onNodeSelect: PropTypes.func.isRequired,
   selectedNodeId: PropTypes.string.isRequired,
-  verticalLayout: PropTypes.bool
+  verticalLayout: PropTypes.bool,
 };
 
 export default NodeEdit;

@@ -17,7 +17,7 @@ export const addInstanceButton = spectrum.button("addInstanceButton");
 export const instancesTabs = spectrum.tabs();
 export const resourceUsageDialog = {
   cancelDeleteInstanceButton: spectrum.button("cancelDeleteInstanceButton"),
-  confirmDeleteInstanceButton: spectrum.button("confirmDeleteInstanceButton")
+  confirmDeleteInstanceButton: spectrum.button("confirmDeleteInstanceButton"),
 };
 
 const instances = [];
@@ -28,10 +28,10 @@ for (let i = 0; i < 3; i += 1) {
     nameChangeAlert: spectrum.alert("nameChangeAlert"),
     edgeConfig: {
       inputMethodSelectRadio: spectrum.radio(
-        "edgeConfigInputMethodSelectRadio"
+        "edgeConfigInputMethodSelectRadio",
       ),
       inputMethodFreeformRadio: spectrum.radio(
-        "edgeConfigInputMethodFreeformRadio"
+        "edgeConfigInputMethodFreeformRadio",
       ),
       inputMethodSelect: {
         fetchConfigsAlert: spectrum.alert("alertErrorFetchingConfigs"),
@@ -39,55 +39,55 @@ for (let i = 0; i < 3; i += 1) {
           datastreamField: spectrum.picker("productionDatastreamField"),
           sandboxField: spectrum.picker("productionSandboxField"),
           datastreamDisabledField: spectrum.textField(
-            "datastreamDisabledFieldproduction"
+            "datastreamDisabledFieldproduction",
           ),
           datastreamErrorFetchingAlert: spectrum.alert(
-            "productionErrorFetchingDatastreamsAlert"
-          )
+            "productionErrorFetchingDatastreamsAlert",
+          ),
         },
         staging: {
           datastreamField: spectrum.picker("stagingDatastreamField"),
-          sandboxField: spectrum.picker("stagingSandboxField")
+          sandboxField: spectrum.picker("stagingSandboxField"),
         },
         development: {
           datastreamField: spectrum.picker("developmentDatastreamField"),
-          sandboxField: spectrum.picker("developmentSandboxField")
-        }
+          sandboxField: spectrum.picker("developmentSandboxField"),
+        },
       },
       inputMethodFreeform: {
         productionEnvironmentField: spectrum.textField(
-          "productionEnvironmentTextfield"
+          "productionEnvironmentTextfield",
         ),
         stagingEnvironmentField: spectrum.textField(
-          "stagingEnvironmentTextfield"
+          "stagingEnvironmentTextfield",
         ),
         developmentEnvironmentField: spectrum.textField(
-          "developmentEnvironmentTextfield"
-        )
-      }
+          "developmentEnvironmentTextfield",
+        ),
+      },
     },
     edgeConfigInputMethodSelectFields: {
       edgeConfigComboBox: spectrum.comboBox("edgeConfigComboBox"),
       productionEnvironmentComboBox: spectrum.comboBox(
-        "productionEnvironmentComboBox"
+        "productionEnvironmentComboBox",
       ),
       stagingEnvironmentComboBox: spectrum.comboBox(
-        "stagingEnvironmentComboBox"
+        "stagingEnvironmentComboBox",
       ),
       developmentEnvironmentComboBox: spectrum.comboBox(
-        "developmentEnvironmentComboBox"
-      )
+        "developmentEnvironmentComboBox",
+      ),
     },
     edgeConfigInputMethodFreeformFields: {
       productionEnvironmentTextfield: spectrum.textField(
-        "productionEnvironmentTextfield"
+        "productionEnvironmentTextfield",
       ),
       stagingEnvironmentTextfield: spectrum.textField(
-        "stagingEnvironmentTextfield"
+        "stagingEnvironmentTextfield",
       ),
       developmentEnvironmentTextfield: spectrum.textField(
-        "developmentEnvironmentTextfield"
-      )
+        "developmentEnvironmentTextfield",
+      ),
     },
     orgIdField: spectrum.textField("orgIdField"),
     orgIdRestoreButton: spectrum.button("orgIdRestoreButton"),
@@ -100,36 +100,49 @@ for (let i = 0; i < 3; i += 1) {
       outRadio: spectrum.radio("defaultConsentOutRadio"),
       pendingRadio: spectrum.radio("defaultConsentPendingRadio"),
       dataElementRadio: spectrum.radio("defaultConsentDataElementRadio"),
-      dataElementField: spectrum.textField("defaultConsentDataElementField")
+      dataElementField: spectrum.textField("defaultConsentDataElementField"),
     },
     idMigrationEnabled: spectrum.checkbox("idMigrationEnabledField"),
     thirdPartyCookiesEnabled: spectrum.checkbox(
-      "thirdPartyCookiesEnabledField"
+      "thirdPartyCookiesEnabledField",
     ),
     // Due to limitations of the sandbox where tests are run,
     // testing prehiding style viewing/editing is limited.
     prehidingStyleEditButton: spectrum.button("prehidingStyleEditButton"),
     targetMigrationEnabled: spectrum.checkbox("targetMigrationEnabledField"),
-
-    clickCollectionEnabledField: spectrum.checkbox(
-      "clickCollectionEnabledField"
+    internalLinkEnabledField: spectrum.checkbox("internalLinkEnabledField"),
+    eventGrouping: {
+      noneField: spectrum.radio("eventGroupingNoneField"),
+      sessionStorageField: spectrum.radio("eventGroupingSessionStorageField"),
+      memoryField: spectrum.radio("eventGroupingMemoryField"),
+    },
+    externalLinkEnabledField: spectrum.checkbox("externalLinkEnabledField"),
+    downloadLinkEnabledField: spectrum.checkbox("downloadLinkEnabledField"),
+    autoCollectPropositionInteractionsAJOPicker: spectrum.picker(
+      "autoCollectPropositionInteractionsAJOPicker",
+    ),
+    autoCollectPropositionInteractionsTGTPicker: spectrum.picker(
+      "autoCollectPropositionInteractionsTGTPicker",
     ),
     downloadLinkQualifierField: spectrum.textField(
-      "downloadLinkQualifierField"
+      "downloadLinkQualifierField",
     ),
     downloadLinkQualifierRestoreButton: spectrum.button(
-      "downloadLinkQualifierRestoreButton"
+      "downloadLinkQualifierRestoreButton",
     ),
     downloadLinkQualifierTestButton: spectrum.button(
-      "downloadLinkQualifierTestButton"
+      "downloadLinkQualifierTestButton",
     ),
     onBeforeEventSendEditButton: spectrum.button("onBeforeEventSendEditButton"),
+    filterClickDetailsEditButton: spectrum.button(
+      "filterClickDetailsEditButton",
+    ),
     onBeforeLinkClickSendEditButton: spectrum.button(
-      "onBeforeLinkClickSendEditButton"
+      "onBeforeLinkClickSendEditButton",
     ),
     contextGranularity: {
       allField: spectrum.radio("contextGranularityAllField"),
-      specificField: spectrum.radio("contextGranularitySpecificField")
+      specificField: spectrum.radio("contextGranularitySpecificField"),
     },
     specificContext: {
       webField: spectrum.checkbox("contextWebField"),
@@ -137,8 +150,8 @@ for (let i = 0; i < 3; i += 1) {
       environmentField: spectrum.checkbox("contextEnvironmentField"),
       placeContextField: spectrum.checkbox("contextPlaceContextField"),
       highEntropyUserAgentHintsContextField: spectrum.checkbox(
-        "contextHighEntropyUserAgentHintsField"
-      )
+        "contextHighEntropyUserAgentHintsField",
+      ),
     },
     deleteButton: spectrum.button("deleteInstanceButton"),
     overrides: overrideWrappers,
@@ -147,10 +160,10 @@ for (let i = 0; i < 3; i += 1) {
       mediaPlayerNameField: spectrum.textField("mediaPlayerNameField"),
       mediaVersionField: spectrum.textField("mediaVersionField"),
       mediaMainPingIntervalField: spectrum.textField(
-        "mediaMainPingIntervalField"
+        "mediaMainPingIntervalField",
       ),
-      mediaAdPingIntervalField: spectrum.textField("mediaAdPingIntervalField")
-    }
+      mediaAdPingIntervalField: spectrum.textField("mediaAdPingIntervalField"),
+    },
   });
 }
 

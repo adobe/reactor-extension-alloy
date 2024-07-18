@@ -16,5 +16,5 @@ const createGetConfigOverrides = require("../../utils/createGetConfigOverrides")
 
 module.exports = createSetConsent({
   instanceManager,
-  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage)
+  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage),
 });

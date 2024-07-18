@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { number, object, string } from "yup";
+import { number, object, string, lazy } from "yup";
 import { useField } from "formik";
 import SectionHeader from "../components/sectionHeader";
 import FormElementContainer from "../components/formElementContainer";
@@ -20,29 +20,49 @@ import FormikTextField from "../components/formikReactSpectrum3/formikTextField"
 import FormikNumberField from "../components/formikReactSpectrum3/formikNumberField";
 import isNonEmptyString from "../utils/isNonEmptyString";
 
-const getDefaultSettings = () => {
-  return {
-    channel: "",
-    playerName: "",
-    appVersion: "",
-    adPingInterval: 10,
-    mainPingInterval: 10
-  };
-};
+const getDefaultSettings = () => ({
+  channel: "",
+  playerName: "",
+  appVersion: "",
+  adPingInterval: 10,
+  mainPingInterval: 10,
+});
+
 export const bridge = {
   getInstanceDefaults: () => ({
-    streamingMedia: getDefaultSettings()
+    streamingMedia: getDefaultSettings(),
   }),
+
   getInitialInstanceValues: ({ instanceSettings }) => {
     if (!instanceSettings.streamingMedia) {
-      instanceSettings.streamingMedia = getDefaultSettings();
+      return bridge.getInstanceDefaults();
     }
 
-    return instanceSettings;
+    const streamingMedia = Object.keys(getDefaultSettings()).reduce(
+      (acc, k) => {
+        if (instanceSettings.streamingMedia[k] !== undefined) {
+          acc[k] = instanceSettings.streamingMedia[k];
+        } else {
+          acc[k] = "";
+        }
+
+        return acc;
+      },
+      {},
+    );
+
+    return { streamingMedia };
   },
+
   getInstanceSettings: ({ instanceValues }) => {
     const instanceSettings = {};
     const { streamingMedia } = instanceValues;
+
+    ["appVersion", "adPingInterval", "mainPingInterval"].forEach((key) => {
+      if (!streamingMedia[key]) {
+        delete streamingMedia[key];
+      }
+    });
 
     if (streamingMedia.channel && streamingMedia.playerName) {
       instanceSettings.streamingMedia = streamingMedia;
@@ -53,48 +73,67 @@ export const bridge = {
     streamingMedia: object().shape(
       {
         channel: string().when("playerName", {
-          is: playerName => playerName,
-          then: schema =>
+          is: (playerName) => playerName,
+          then: (schema) =>
             schema.required(
-              "Please provide a channel name for streaming media."
-            )
+              "Please provide a channel name for streaming media.",
+            ),
         }),
         playerName: string().when("channel", {
-          is: channel => channel,
-          then: schema =>
-            schema.required("Please provide a player name for streaming media.")
+          is: (channel) => channel,
+          then: (schema) =>
+            schema.required(
+              "Please provide a player name for streaming media.",
+            ),
         }),
-        adPingInterval: number().when(["channel", "playerName"], {
-          is: (channel, playerName) => channel && playerName,
-          then: schema =>
-            schema
-              .min(1, "The Ad Ping Interval must be greater than 1 second.")
-              .max(10, "The Ad Ping Interval must be less than 10 seconds.")
-              .default(10)
-        }),
-        mainPingInterval: number().when(["channel", "playerName"], {
-          is: (channel, playerName) => channel && playerName,
-          then: schema =>
-            schema
-              .min(
-                10,
-                "The Main Ping Interval must be greater than 10 seconds."
-              )
-              .max(60, "The Main Ping Interval must be less than 60 seconds.")
-              .default(10)
-        })
+        adPingInterval: lazy((value) =>
+          /^\d+$/.exec(value)
+            ? number().when(["channel", "playerName"], {
+                is: (channel, playerName) => channel && playerName,
+                then: (schema) =>
+                  schema
+                    .min(
+                      1,
+                      "The Ad Ping Interval must be greater than 1 second.",
+                    )
+                    .max(
+                      10,
+                      "The Ad Ping Interval must be less than 10 seconds.",
+                    )
+                    .default(10),
+              })
+            : string(),
+        ),
+        mainPingInterval: lazy((value) =>
+          /^\d+$/.exec(value)
+            ? number().when(["channel", "playerName"], {
+                is: (channel, playerName) => channel && playerName,
+                then: (schema) =>
+                  schema
+                    .min(
+                      10,
+                      "The Main Ping Interval must be greater than 10 seconds.",
+                    )
+                    .max(
+                      60,
+                      "The Main Ping Interval must be less than 60 seconds.",
+                    )
+                    .default(10),
+              })
+            : string(),
+        ),
       },
-      ["channel", "playerName"]
-    )
-  })
+      ["channel", "playerName"],
+    ),
+  }),
 };
 
 const StreamingMediaSection = ({ instanceFieldName }) => {
   const [{ value: mediaChannel }] = useField(
-    `${instanceFieldName}.streamingMedia.channel`
+    `${instanceFieldName}.streamingMedia.channel`,
   );
   const [{ value: playerName }] = useField(
-    `${instanceFieldName}.streamingMedia.playerName`
+    `${instanceFieldName}.streamingMedia.playerName`,
   );
 
   const mediaRequiredFieldsProvided = () => {
@@ -153,7 +192,7 @@ const StreamingMediaSection = ({ instanceFieldName }) => {
 };
 
 StreamingMediaSection.propTypes = {
-  instanceFieldName: PropTypes.string.isRequired
+  instanceFieldName: PropTypes.string.isRequired,
 };
 
 export default StreamingMediaSection;

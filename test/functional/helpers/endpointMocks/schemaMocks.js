@@ -22,9 +22,9 @@ export const basic = RequestMock()
   .onRequestTo({
     url: SCHEMA_ENDPOINT_REGEX1,
     headers: {
-      "x-sandbox-name": "alloy-test"
+      "x-sandbox-name": "alloy-test",
     },
-    method: "GET"
+    method: "GET",
   })
   .respond(
     {
@@ -35,21 +35,21 @@ export const basic = RequestMock()
       properties: {
         testField: {
           title: "Test Field",
-          type: "string"
-        }
-      }
+          type: "string",
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const other = RequestMock()
   .onRequestTo({
     url: SCHEMA_ENDPOINT_REGEX2,
     headers: {
-      "x-sandbox-name": "alloy-test"
+      "x-sandbox-name": "alloy-test",
     },
-    method: "GET"
+    method: "GET",
   })
   .respond(
     {
@@ -60,25 +60,25 @@ export const other = RequestMock()
       properties: {
         testField: {
           title: "Test Field",
-          type: "string"
+          type: "string",
         },
         otherField: {
           title: "Other Field",
-          type: "string"
-        }
-      }
+          type: "string",
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const basicArray = RequestMock()
   .onRequestTo({
     url: SCHEMA_ENDPOINT_REGEX3,
     headers: {
-      "x-sandbox-name": "alloy-test"
+      "x-sandbox-name": "alloy-test",
     },
-    method: "GET"
+    method: "GET",
   })
   .respond(
     {
@@ -92,22 +92,22 @@ export const basicArray = RequestMock()
         properties: {
           testField: {
             title: "Test Field",
-            type: "string"
-          }
-        }
-      }
+            type: "string",
+          },
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const otherArray = RequestMock()
   .onRequestTo({
     url: SCHEMA_ENDPOINT_REGEX4,
     headers: {
-      "x-sandbox-name": "alloy-test"
+      "x-sandbox-name": "alloy-test",
     },
-    method: "GET"
+    method: "GET",
   })
   .respond(
     {
@@ -121,26 +121,26 @@ export const otherArray = RequestMock()
         properties: {
           testField: {
             title: "Test Field",
-            type: "string"
+            type: "string",
           },
           otherField: {
             title: "Other Field",
-            type: "string"
-          }
-        }
-      }
+            type: "string",
+          },
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const schema3b = RequestMock()
   .onRequestTo({
     url: /\/schemaregistry\/tenant\/schemas\/.*schema3b$/,
     headers: {
-      "x-sandbox-name": "testsandbox3"
+      "x-sandbox-name": "testsandbox3",
     },
-    method: "GET"
+    method: "GET",
   })
   .respond(
     {
@@ -151,10 +151,10 @@ export const schema3b = RequestMock()
       properties: {
         testField: {
           title: "Test Field",
-          type: "string"
-        }
-      }
+          type: "string",
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );

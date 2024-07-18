@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import { t } from "testcafe";
 import extensionViewController from "./helpers/extensionViewController";
 
-export default additionalInitInfo => {
+export default (additionalInitInfo) => {
   // This fails in saucelabs. Skipping for now.
   test.skip("loads Adobe Clean font", async () => {
     await extensionViewController.init(additionalInitInfo);

@@ -18,7 +18,7 @@ import { useReducer } from "react";
  * re-renders the component when state changes.
  */
 const useForceRender = () => {
-  return useReducer(x => x + 1, 0)[1];
+  return useReducer((x) => x + 1, 0)[1];
 };
 
 export default useForceRender;

@@ -37,9 +37,9 @@ process.env.THEME_LIGHTEST = true;
 
 const isProdEnv = process.env.NODE_ENV === "production";
 
-const toPromise = func => {
+const toPromise = (func) => {
   return new Promise((resolve, reject) => {
-    const callback = error => {
+    const callback = (error) => {
       if (error) {
         reject(error);
       } else {
@@ -51,8 +51,8 @@ const toPromise = func => {
 };
 
 const run = (command, options) => {
-  return toPromise(callback =>
-    spawn(command, options, { stdio: "inherit" }).on("exit", callback)
+  return toPromise((callback) =>
+    spawn(command, options, { stdio: "inherit" }).on("exit", callback),
   );
 };
 
@@ -74,7 +74,7 @@ export default (options = {}) => {
       distDir: viewOutDir,
       sourceMaps: !isProd,
       // shouldOptimize: false,
-      shouldScopeHoist: false
+      shouldScopeHoist: false,
       /* engines: [
         "last 2 Chrome versions",
         "last 2 Firefox versions",
@@ -86,13 +86,13 @@ export default (options = {}) => {
     additionalReporters: [
       {
         packageName: "@parcel/reporter-cli",
-        resolveFrom: viewOutDir
-      }
-    ]
+        resolveFrom: viewOutDir,
+      },
+    ],
   });
   let parcelPromise;
   if (watch) {
-    parcelPromise = new Promise(resolve => {
+    parcelPromise = new Promise((resolve) => {
       const subscription = bundler.watch(() => {
         resolve();
       });
@@ -114,7 +114,7 @@ export default (options = {}) => {
     libOutDir,
     "--ignore",
     alloyInFile,
-    "--presets=@babel/preset-env"
+    "--presets=@babel/preset-env",
   ]);
 
   if (watch) {
@@ -128,9 +128,9 @@ export default (options = {}) => {
         "--skip-initial-build",
         "--ignore",
         alloyInFile,
-        "--presets=@babel/preset-env"
+        "--presets=@babel/preset-env",
       ],
-      { stdio: "inherit" }
+      { stdio: "inherit" },
     );
     // cleanup this process on ctrl-c
     process.on("exit", () => {
@@ -151,14 +151,14 @@ export default (options = {}) => {
         alloyTempFile,
         "--out-dir",
         libOutDir,
-        "--presets=@babel/preset-env"
-      ])
+        "--presets=@babel/preset-env",
+      ]),
     )
     .finally(() =>
-      toPromise(async callback => {
+      toPromise(async (callback) => {
         await rimraf(tempDir);
         callback();
-      })
+      }),
     );
 
   return Promise.all([babelPromise, parcelPromise, alloyPromise]);

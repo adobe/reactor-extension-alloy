@@ -18,7 +18,7 @@ import {
   DEVELOPMENT,
   ENVIRONMENTS as OVERRIDE_ENVIRONMENTS,
   PRODUCTION,
-  STAGING
+  STAGING,
 } from "../../configuration/constants/environmentType";
 import FormElementContainer from "../formElementContainer";
 import SandboxSelector from "../sandboxSelector";
@@ -32,7 +32,7 @@ import {
   FIELD_NAMES,
   capitialize,
   combineValidatorWithIsDataElement,
-  createValidateItemIsInArray
+  createValidateItemIsInArray,
 } from "./utils";
 
 /**
@@ -66,7 +66,7 @@ const Overrides = ({
   instanceFieldName,
   edgeConfigIds,
   configOrgId,
-  hideFields = []
+  hideFields = [],
 }) => {
   const prefix = instanceFieldName
     ? `${instanceFieldName}.edgeConfigOverrides`
@@ -89,23 +89,23 @@ const Overrides = ({
       "com_adobe_experience_platform.datasets.event.datasetId",
       "com_adobe_identity.idSyncContainerId",
       "com_adobe_target.propertyToken",
-      "com_adobe_analytics.reportSuites"
+      "com_adobe_analytics.reportSuites",
     ]
       .filter(
-        field =>
+        (field) =>
           getIn(edgeConfigOverrides[source], field) !==
-          getIn(edgeConfigOverrides[destination], field)
+          getIn(edgeConfigOverrides[destination], field),
       )
-      .forEach(field => {
+      .forEach((field) => {
         formikContext.setFieldValue(
           `${prefix}.${destination}.${field}`,
           getIn(edgeConfigOverrides[source], field),
-          true
+          true,
         );
         formikContext.setFieldTouched(
           `${prefix}.${destination}.${field}`,
           true,
-          true
+          true,
         );
       });
   };
@@ -123,7 +123,7 @@ const Overrides = ({
       sandbox: edgeConfigOverrides.development?.datastreamId
         ? edgeConfigOverrides.development.sandbox
         : edgeConfigIds.developmentEnvironment.sandbox,
-      requestCache
+      requestCache,
     }),
     [STAGING]: useFetchConfig({
       authOrgId,
@@ -135,7 +135,7 @@ const Overrides = ({
       sandbox: edgeConfigOverrides.staging?.datastreamId
         ? edgeConfigOverrides.staging?.sandbox
         : edgeConfigIds.stagingEnvironment?.sandbox,
-      requestCache
+      requestCache,
     }),
     [PRODUCTION]: useFetchConfig({
       authOrgId,
@@ -147,8 +147,8 @@ const Overrides = ({
       sandbox: edgeConfigOverrides.production?.datastreamId
         ? edgeConfigOverrides.production.sandbox
         : edgeConfigIds.productionEnvironment.sandbox,
-      requestCache
-    })
+      requestCache,
+    }),
   };
 
   return (
@@ -159,14 +159,14 @@ const Overrides = ({
       <FormElementContainer>
         <Tabs aria-label="Datastream configuration overrides">
           <TabList>
-            {OVERRIDE_ENVIRONMENTS.map(env => (
+            {OVERRIDE_ENVIRONMENTS.map((env) => (
               <Item key={env} data-test-id={`${env}OverridesTab`}>
                 {capitialize(env)}
               </Item>
             ))}
           </TabList>
           <TabPanels>
-            {OVERRIDE_ENVIRONMENTS.map(env => {
+            {OVERRIDE_ENVIRONMENTS.map((env) => {
               const { result, isLoading, error } = edgeConfigs[env];
               const useManualEntry = !result || Boolean(error);
 
@@ -174,11 +174,11 @@ const Overrides = ({
 
               const primaryEventDataset =
                 result?.com_adobe_experience_platform?.datasets?.event?.find(
-                  ({ primary }) => primary
+                  ({ primary }) => primary,
                 )?.datasetId ?? "";
               const eventDatasetOptions =
                 result?.com_adobe_experience_platform?.datasets?.event?.filter(
-                  ({ primary }) => !primary
+                  ({ primary }) => !primary,
                 ) ?? [];
               let eventDatasetDescription =
                 "The ID for the destination event dataset in the Adobe Experience Platform.  The value must be a preconfigured secondary dataset from your datastream configuration.";
@@ -187,10 +187,10 @@ const Overrides = ({
               }
               const validateItemIsInDatasetsList = createValidateItemIsInArray(
                 eventDatasetOptions.map(({ datasetId }) => datasetId),
-                "The value must be one of the preconfigured datasets."
+                "The value must be one of the preconfigured datasets.",
               );
               const validateDatasetOption = combineValidatorWithIsDataElement(
-                validateItemIsInDatasetsList
+                validateItemIsInDatasetsList,
               );
 
               const primaryIdSyncContainer = `${
@@ -198,7 +198,7 @@ const Overrides = ({
               }`;
               const idSyncContainers =
                 result?.com_adobe_identity?.idSyncContainerId__additional?.map(
-                  value => ({ value, label: `${value}` })
+                  (value) => ({ value, label: `${value}` }),
                 ) ?? [];
               let idSyncContainerDescription =
                 "The ID for the destination third-party ID sync container in Adobe Audience Manager. The value must be a preconfigured secondary container from your datastream configuration and overrides the primary container.";
@@ -208,9 +208,9 @@ const Overrides = ({
               const validateItemIsInContainersList =
                 createValidateItemIsInArray(
                   idSyncContainers.map(({ label }) => label),
-                  "The value must be one of the preconfigured ID sync containers."
+                  "The value must be one of the preconfigured ID sync containers.",
                 );
-              const validateIdSyncContainerOption = value => {
+              const validateIdSyncContainerOption = (value) => {
                 if (typeof value === "string" && value?.includes("%")) {
                   // can only contain numbers and data elements
                   if (/^(\d*(%[^%\n]+%)+\d*)+$/.test(value)) {
@@ -243,7 +243,7 @@ const Overrides = ({
                 result?.com_adobe_target?.propertyToken ?? "";
               const propertyTokenOptions =
                 result?.com_adobe_target?.propertyToken__additional?.map(
-                  value => ({ value, label: value })
+                  (value) => ({ value, label: value }),
                 ) ?? [];
               let propertyTokenDescription =
                 "The token for the destination property in Adobe Target. The value must be a preconfigured property override from your datastream configuration and overrides the primary property.";
@@ -252,7 +252,7 @@ const Overrides = ({
               }
               const itemIsInPropertyTokenOptions = createValidateItemIsInArray(
                 propertyTokenOptions.map(({ value }) => value),
-                "The value must be one of the preconfigured property tokens."
+                "The value must be one of the preconfigured property tokens.",
               );
               const validatePropertyTokenOption =
                 combineValidatorWithIsDataElement(itemIsInPropertyTokenOptions);
@@ -264,11 +264,11 @@ const Overrides = ({
                 primaryReportSuites
                   .concat(result?.com_adobe_analytics?.reportSuites__additional)
                   .filter(Boolean)
-                  .map(value => ({ value, label: value })) ?? [];
+                  .map((value) => ({ value, label: value })) ?? [];
               const validateItemIsInReportSuiteOptions =
                 createValidateItemIsInArray(
                   reportSuiteOptions.map(({ value }) => value),
-                  "The value must be one of the preconfigured report suites."
+                  "The value must be one of the preconfigured report suites.",
                 );
               /**
                * @param {string} value
@@ -277,14 +277,14 @@ const Overrides = ({
               const validateReportSuiteOption = (value = "") =>
                 value
                   .split(",")
-                  .map(v => v.trim())
-                  .filter(v => Boolean(v))
+                  .map((v) => v.trim())
+                  .filter((v) => Boolean(v))
                   .map(
                     combineValidatorWithIsDataElement(
-                      validateItemIsInReportSuiteOptions
-                    )
+                      validateItemIsInReportSuiteOptions,
+                    ),
                   )
-                  .filter(v => Boolean(v))[0];
+                  .filter((v) => Boolean(v))[0];
               const sandboxFieldName = `${prefix}.${env}.${FIELD_NAMES.sandbox}`;
               const [{ value: sandbox }] = useField(sandboxFieldName);
 
@@ -338,7 +338,7 @@ const Overrides = ({
                       </OverrideInput>
                     )}
                     {!hideFieldsSet.has(
-                      FIELD_NAMES.idSyncContainerOverride
+                      FIELD_NAMES.idSyncContainerOverride,
                     ) && (
                       <OverrideInput
                         data-test-id={FIELD_NAMES.idSyncContainerOverride}
@@ -361,7 +361,7 @@ const Overrides = ({
                       </OverrideInput>
                     )}
                     {!hideFieldsSet.has(
-                      FIELD_NAMES.targetPropertyTokenOverride
+                      FIELD_NAMES.targetPropertyTokenOverride,
                     ) && (
                       <OverrideInput
                         data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
@@ -407,19 +407,19 @@ Overrides.propTypes = {
   edgeConfigIds: PropTypes.shape({
     developmentEnvironment: PropTypes.shape({
       datastreamId: PropTypes.string,
-      sandbox: PropTypes.string
+      sandbox: PropTypes.string,
     }),
     stagingEnvironment: PropTypes.shape({
       datastreamId: PropTypes.string,
-      sandbox: PropTypes.string
+      sandbox: PropTypes.string,
     }),
     productionEnvironment: PropTypes.shape({
       datastreamId: PropTypes.string,
-      sandbox: PropTypes.string
-    })
+      sandbox: PropTypes.string,
+    }),
   }).isRequired,
   configOrgId: PropTypes.string.isRequired,
-  hideFields: PropTypes.arrayOf(PropTypes.oneOf(Object.values(FIELD_NAMES)))
+  hideFields: PropTypes.arrayOf(PropTypes.oneOf(Object.values(FIELD_NAMES))),
 };
 
 export default Overrides;

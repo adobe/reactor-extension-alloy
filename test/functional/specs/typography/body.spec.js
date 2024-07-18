@@ -16,100 +16,100 @@ import createComponentFixture from "../../helpers/components/createComponentFixt
 import renderReactElement from "../../helpers/components/renderReactElement";
 
 createComponentFixture({
-  title: "Body component"
+  title: "Body component",
 });
 
 const scenarios = [
   {
     props: {
-      size: "XXXL"
+      size: "XXXL",
     },
     assertions: {
-      classNames: ["spectrum-Body--sizeXXXL"]
-    }
+      classNames: ["spectrum-Body--sizeXXXL"],
+    },
   },
   {
     props: {
-      size: "XXL"
+      size: "XXL",
     },
     assertions: {
-      classNames: ["spectrum-Body--sizeXXL"]
-    }
+      classNames: ["spectrum-Body--sizeXXL"],
+    },
   },
   {
     props: {
-      size: "XL"
+      size: "XL",
     },
     assertions: {
-      classNames: ["spectrum-Body--sizeXL"]
-    }
+      classNames: ["spectrum-Body--sizeXL"],
+    },
   },
   {
     props: {
-      size: "L"
+      size: "L",
     },
     assertions: {
-      classNames: ["spectrum-Body--sizeL"]
-    }
+      classNames: ["spectrum-Body--sizeL"],
+    },
   },
   {
     props: {
-      size: "M"
+      size: "M",
     },
     assertions: {
-      classNames: ["spectrum-Body--sizeM"]
-    }
+      classNames: ["spectrum-Body--sizeM"],
+    },
   },
   {
     props: {
-      size: "S"
+      size: "S",
     },
     assertions: {
-      classNames: ["spectrum-Body--sizeS"]
-    }
+      classNames: ["spectrum-Body--sizeS"],
+    },
   },
   {
     props: {
-      size: "XS"
+      size: "XS",
     },
     assertions: {
-      classNames: ["spectrum-Body--sizeXS"]
-    }
+      classNames: ["spectrum-Body--sizeXS"],
+    },
   },
   {
     props: {
-      size: "XXS"
+      size: "XXS",
     },
     assertions: {
-      classNames: ["spectrum-Body--sizeXXS"]
-    }
+      classNames: ["spectrum-Body--sizeXXS"],
+    },
   },
   {
     props: {
-      marginTop: "size-300"
+      marginTop: "size-300",
     },
     assertions: {
       classNames: ["spectrum-Body--sizeS"],
       style:
-        "margin-top: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);"
-    }
+        "margin-top: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);",
+    },
   },
   {
     props: {
-      marginBottom: "size-300"
+      marginBottom: "size-300",
     },
     assertions: {
       classNames: ["spectrum-Body--sizeS"],
       style:
-        "margin-bottom: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);"
-    }
+        "margin-bottom: var(--spectrum-global-dimension-size-300, var(--spectrum-alias-size-300);",
+    },
   },
   {
     props: {},
     assertions: {
-      classNames: ["spectrum-Body--sizeS"]
-    }
-  }
+      classNames: ["spectrum-Body--sizeS"],
+    },
+  },
 ];
 
 scenarios.forEach(({ props, assertions }) => {

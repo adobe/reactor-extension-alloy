@@ -34,7 +34,7 @@ EventEmitter.defaultMaxListeners = 30;
 
 const defaultSpecsPath = path.join(
   __dirname,
-  "../test/functional/**/*.spec.js"
+  "../test/functional/**/*.spec.js",
 );
 const {
   watch,
@@ -43,16 +43,16 @@ const {
   safari,
   edge,
   testName: testNameFilter,
-  specsPath = defaultSpecsPath
+  specsPath = defaultSpecsPath,
 } = argv;
 
 const componentFixturePath = path.join(
   __dirname,
-  "../test/functional/helpers/components/fixture.html"
+  "../test/functional/helpers/components/fixture.html",
 );
 const componentFixtureOutputDir = path.join(
   __dirname,
-  "../componentFixtureDist"
+  "../componentFixtureDist",
 );
 
 const buildComponentFixtures = async () => {
@@ -63,9 +63,9 @@ const buildComponentFixtures = async () => {
     mode: "development",
     defaultTargetOptions: {
       publicUrl: "./",
-      distDir: componentFixtureOutputDir
+      distDir: componentFixtureOutputDir,
     },
-    sourceMaps: true
+    sourceMaps: true,
   });
   return bundler.run();
 };
@@ -122,9 +122,9 @@ const buildComponentFixtures = async () => {
         console.log(
           chalk.yellowBright(
             `The test named ${chalk.bold(
-              fullTestName
-            )} will be skipped. It requires an Adobe I/O integration and no environment variables containing Adobe I/O integration details were found.`
-          )
+              fullTestName,
+            )} will be skipped. It requires an Adobe I/O integration and no environment variables containing Adobe I/O integration details were found.`,
+          ),
         );
         return false;
       }
@@ -140,7 +140,7 @@ const buildComponentFixtures = async () => {
       assertionTimeout: 7000,
       pageLoadTimeout: 8000,
       speed: 0.75,
-      stopOnFirstFail: false
+      stopOnFirstFail: false,
     });
   testcafe.close();
   process.exit(failedCount ? 1 : 0);

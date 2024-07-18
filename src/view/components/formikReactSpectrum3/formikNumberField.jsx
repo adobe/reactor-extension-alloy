@@ -27,14 +27,14 @@ import { useField } from "formik";
 const FormikNumberField = ({ name, width, validate, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
     name,
-    validate
+    validate,
   });
 
   return (
     <NumberField
       {...otherProps}
-      value={value}
-      onChange={val => {
+      value={value === "" ? null : value}
+      onChange={(val) => {
         setValue(val).then(() => {
           setTouched(true);
         });
@@ -52,7 +52,7 @@ const FormikNumberField = ({ name, width, validate, ...otherProps }) => {
 FormikNumberField.propTypes = {
   name: PropTypes.string.isRequired,
   width: PropTypes.string,
-  validate: PropTypes.func
+  validate: PropTypes.func,
 };
 
 export default FormikNumberField;

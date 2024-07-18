@@ -24,7 +24,7 @@ import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
 const getValueFromFormState = ({
   formStateNode,
   transforms,
-  isAncestorCleared = false
+  isAncestorCleared = false,
 }) => {
   const { schema, nodePath, transform } = formStateNode;
   const { clear } = transform || {};
@@ -40,9 +40,9 @@ const getValueFromFormState = ({
       return getValueFromFormState({
         formStateNode: subFormStateNode,
         transforms,
-        isAncestorCleared: clear || isAncestorCleared
+        isAncestorCleared: clear || isAncestorCleared,
       });
-    }
+    },
   });
 };
 

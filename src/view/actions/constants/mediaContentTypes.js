@@ -18,5 +18,5 @@ export default {
   radio: "Radio show",
   podcast: "Podcast",
   audiobook: "Audiobook",
-  song: "Song"
+  song: "Song",
 };

@@ -14,5 +14,5 @@ const createEvaluateRulesets = require("./createEvaluateRulesets");
 const instanceManager = require("../../instanceManager/index");
 
 module.exports = createEvaluateRulesets({
-  instanceManager
+  instanceManager,
 });

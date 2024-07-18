@@ -20,7 +20,7 @@ const usePagedComboBox = ({
   getKey,
   getLabel,
   firstPage,
-  firstPageCursor
+  firstPageCursor,
 }) => {
   // This state management has been attempted using useState and
   // useReducer, but it ended up complicating the implementation because
@@ -36,7 +36,7 @@ const usePagedComboBox = ({
   const itemsRef = useRef(firstPage || []);
   const selectedItemRef = useRef(defaultSelectedItem || null);
   const inputValueRef = useRef(
-    defaultSelectedItem ? getLabel(defaultSelectedItem) : ""
+    defaultSelectedItem ? getLabel(defaultSelectedItem) : "",
   );
   const loadingStateRef = useRef(IDLE);
   const filteredRef = useRef(false);
@@ -54,7 +54,7 @@ const usePagedComboBox = ({
       firstPage,
       firstPageCursor,
       loadItems,
-      setData: unfilteredSetData
+      setData: unfilteredSetData,
     });
     // if firstPage wasn't already loaded, go ahead and load it.
     if (!firstPage) {
@@ -76,7 +76,7 @@ const usePagedComboBox = ({
     };
     filteredLoaderRef.current = createPagedLoader({
       loadItems,
-      setData: filteredSetData
+      setData: filteredSetData,
     });
   } else {
     // We need to update the loadItems function because there may be
@@ -84,7 +84,7 @@ const usePagedComboBox = ({
     filteredLoaderRef.current.setLoadItems(loadItems);
   }
 
-  const getItem = key => {
+  const getItem = (key) => {
     // Sometimes getItem is called with a key that doesn't match an item in
     // itemsRef, but instead matches the currently selected item.
     // For example, if a user changes the filter text and then blurs off the ComboBox
@@ -98,7 +98,7 @@ const usePagedComboBox = ({
     if (selectedItemRef.current && getKey(selectedItemRef.current) === key) {
       return selectedItemRef.current;
     }
-    return itemsRef.current.find(item => key === getKey(item));
+    return itemsRef.current.find((item) => key === getKey(item));
   };
 
   return {
@@ -108,7 +108,7 @@ const usePagedComboBox = ({
       filteredRef.current = false;
       unfilteredLoaderRef.current.reload();
     },
-    onInputChange: inputText => {
+    onInputChange: (inputText) => {
       inputValueRef.current = inputText;
       if (inputText === "") {
         // if the whole input text is blanked out, show the saved unfiltered results.
@@ -119,14 +119,14 @@ const usePagedComboBox = ({
         filteredLoaderRef.current.filter(inputText, itemsRef.current);
       }
     },
-    onSelectionChange: key => {
+    onSelectionChange: (key) => {
       const newlySelectedItem = getItem(key);
       selectedItemRef.current = newlySelectedItem;
       inputValueRef.current = getLabel(newlySelectedItem);
       filteredRef.current = false;
       unfilteredLoaderRef.current.activate();
     },
-    onOpenChange: isOpen => {
+    onOpenChange: (isOpen) => {
       // When the menu opens there is nothing to change because we already have the
       // unfiltered items as the current state. However, when the menu closes and
       // we were in filtered mode, we need to reset back to unfiltered mode.
@@ -146,7 +146,7 @@ const usePagedComboBox = ({
     items: itemsRef.current,
     selectedItem: selectedItemRef.current,
     inputValue: inputValueRef.current,
-    loadingState: loadingStateRef.current
+    loadingState: loadingStateRef.current,
   };
 };
 

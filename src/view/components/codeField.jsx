@@ -29,9 +29,9 @@ const CodeField = ({
   name,
   description,
   language,
-  placeholder
+  placeholder,
+  beta,
 }) => {
-
   const [{ value }, { touched, error }, { setValue, setTouched }] =
     useField(name);
 
@@ -39,7 +39,7 @@ const CodeField = ({
     setTouched(true);
 
     const options = {
-      code: value || placeholder || ""
+      code: value || placeholder || "",
     };
 
     if (language) {
@@ -69,6 +69,7 @@ const CodeField = ({
       description={description}
       error={touched && error ? error : undefined}
       onPress={onPress}
+      beta={beta}
     />
   );
 };
@@ -80,8 +81,9 @@ CodeField.propTypes = {
   buttonLabelSuffix: PropTypes.string,
   name: PropTypes.string.isRequired,
   description: PropTypes.node,
+  beta: PropTypes.bool,
   language: PropTypes.string,
-  placeholder: PropTypes.string
+  placeholder: PropTypes.string,
 };
 
 export default CodeField;
