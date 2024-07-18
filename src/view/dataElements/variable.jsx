@@ -10,7 +10,6 @@ governing permissions and limitations under the License.
 */
 
 import React, { useRef } from "react";
-import { v4 as uuid } from "uuid";
 import PropTypes from "prop-types";
 import { useField } from "formik";
 import { Content, Radio } from "@adobe/react-spectrum";
@@ -29,10 +28,7 @@ import { XDM, DATA } from "./variable/constants/variableTypes";
 const getInitialValues =
   ({ xdmVariableContext }) =>
   async ({ initInfo }) => {
-    const { cacheId = uuid() } = initInfo.settings || {};
-
     const initialValues = {
-      cacheId,
       type: initInfo?.settings?.solutions ? DATA : XDM,
       ...(await xdmVariableBridge.getInitialValues({
         initInfo,
@@ -47,7 +43,6 @@ const getInitialValues =
 
 const getSettings = ({ values }) => {
   const settings = {
-    cacheId: values.cacheId,
     ...xdmVariableBridge.getSettings({ values }),
     ...dataVariableBridge.getSettings({ values }),
   };

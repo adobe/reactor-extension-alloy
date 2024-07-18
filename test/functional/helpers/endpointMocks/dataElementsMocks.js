@@ -25,7 +25,6 @@ const testDataVariable1 = {
     name: "Test data variable 1",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
       sandbox: {
         name: "prod",
       },
@@ -42,7 +41,6 @@ const testDataVariable2 = {
     name: "Test data variable 2",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       sandbox: {
         name: "prod",
       },
@@ -67,7 +65,6 @@ const testDataVariable3 = {
     name: "Test data variable 3",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1955",
       sandbox: {
         name: "prod",
       },
@@ -84,7 +81,6 @@ const testDataVariable4 = {
     name: "Test data variable 4",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1956",
       sandbox: {
         name: "prod",
       },
@@ -101,7 +97,6 @@ const testDataVariable5 = {
     name: "Test data variable 5",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1957",
       sandbox: {
         name: "prod",
       },
@@ -118,7 +113,6 @@ const testDataVariable6 = {
     name: "Test data variable 6",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1958",
       sandbox: {
         name: "prod",
       },
@@ -135,7 +129,6 @@ const testSolutionsVariable1 = {
     name: "Test solutions variable 1",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
       solutions: ["analytics", "target", "audiencemanager"],
     }),
   },
@@ -146,7 +139,6 @@ const testSolutionsVariable2 = {
     name: "Test solutions variable 2",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1960",
       solutions: ["target"],
     }),
   },
