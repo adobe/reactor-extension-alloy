@@ -963,36 +963,6 @@ const createExtensionManifest = ({ version }) => {
             ]
           }
         }
-      },
-      {
-        name: "subscribe-content-cards",
-        displayName: "Subscribe content cards",
-        libPath: "dist/lib/events/subscribeContentCards/index.js",
-        viewPath: "events/subscribeContentCards.html",
-        schema: {
-          $schema: "http://json-schema.org/draft-04/schema#",
-          type: "object",
-          instanceName: {
-            type: "string",
-            minLength: 1
-          },
-          surfaces: {
-            anyOf: [
-              {
-                type: "array",
-                minItems: 1,
-                items: {
-                  type: "string",
-                  minLength: 1
-                }
-              },
-              {
-                type: "string",
-                pattern: "^%[^%]+%$"
-              }
-            ]
-          }
-        }
       }
     ],
     dataElements: [
