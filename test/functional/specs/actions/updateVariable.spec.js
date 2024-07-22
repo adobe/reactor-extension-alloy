@@ -92,7 +92,6 @@ test.requestHooks(dataElementsMocks.multiple)(
     await xdmTree.node("xdm").expectExists();
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
@@ -127,7 +126,6 @@ test.requestHooks(dataElementsMocks.multiple)(
           },
         },
       },
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
@@ -152,7 +150,6 @@ test.requestHooks(dataElementsMocks.multiple)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
@@ -187,7 +184,6 @@ test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
         id: "PRabcd",
       },
       settings: {
-        dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
         dataElementId: "DE1",
         schema: {
           id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
@@ -208,7 +204,6 @@ test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
         id: "PRabcd",
       },
       settings: {
-        dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
         dataElementId: "DE1",
         schema: {
           id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
@@ -292,7 +287,6 @@ test.requestHooks(
           testField: "myvalue3",
         },
       ],
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1957",
       dataElementId: "DE5",
       schema: {
         id: "sch789",

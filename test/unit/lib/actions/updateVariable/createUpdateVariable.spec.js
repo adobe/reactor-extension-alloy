@@ -23,7 +23,7 @@ describe("Update variable", () => {
   });
 
   it("handles an empty update", () => {
-    updateVariable({ data: {}, dataElementCacheId: "a", transforms: {} });
+    updateVariable({ data: {}, dataElementId: "a", transforms: {} });
     expect(variableStore).toEqual({ a: {} });
   });
 
@@ -31,7 +31,7 @@ describe("Update variable", () => {
     variableStore.var1 = { a: 1, b: 2 };
     updateVariable({
       data: { a: 3, d: 4 },
-      dataElementCacheId: "var1",
+      dataElementId: "var1",
       transforms: {},
     });
     expect(variableStore).toEqual({ var1: { a: 3, b: 2, d: 4 } });
@@ -41,7 +41,7 @@ describe("Update variable", () => {
     variableStore.var1 = { a: 1 };
     updateVariable({
       data: { b: 2 },
-      dataElementCacheId: "var2",
+      dataElementId: "var2",
       transforms: {},
     });
     expect(variableStore).toEqual({ var1: { a: 1 }, var2: { b: 2 } });
@@ -51,7 +51,7 @@ describe("Update variable", () => {
     variableStore.var1 = { a: { b: { c: 3 } } };
     updateVariable({
       data: {},
-      dataElementCacheId: "var1",
+      dataElementId: "var1",
       transforms: { "a.b": { clear: true } },
     });
     expect(variableStore).toEqual({ var1: { a: {} } });
@@ -61,7 +61,7 @@ describe("Update variable", () => {
     variableStore.var1 = { a: { b: { c: 3 } }, e: 5 };
     updateVariable({
       data: { a: { b: { d: 4 } } },
-      dataElementCacheId: "var1",
+      dataElementId: "var1",
       transforms: { "a.b": { clear: true } },
     });
     expect(variableStore).toEqual({ var1: { a: { b: { d: 4 } }, e: 5 } });
@@ -70,7 +70,7 @@ describe("Update variable", () => {
     variableStore.var1 = { a: 1, b: 2, c: 3, d: [1, 2, 3] };
     updateVariable({
       data: {},
-      dataElementCacheId: "var1",
+      dataElementId: "var1",
       transforms: {
         a: { clear: true },
         c: { clear: true },
@@ -84,7 +84,7 @@ describe("Update variable", () => {
     variableStore.var1 = { a: 1 };
     updateVariable({
       data: {},
-      dataElementCacheId: "var1",
+      dataElementId: "var1",
       transforms: { "": { clear: true } },
     });
     expect(variableStore).toEqual({ var1: {} });
@@ -94,7 +94,7 @@ describe("Update variable", () => {
     variableStore.var1 = { a: 1 };
     updateVariable({
       data: { b: 2 },
-      dataElementCacheId: "var1",
+      dataElementId: "var1",
       transforms: { "": { clear: true } },
     });
     expect(variableStore).toEqual({ var1: { b: 2 } });

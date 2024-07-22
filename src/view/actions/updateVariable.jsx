@@ -207,9 +207,7 @@ const getSettings =
   (context) =>
   ({ values }) => {
     const { dataElement } = values;
-    const { id: dataElementId, settings } = dataElement || {};
-    const { cacheId: dataElementCacheId } = settings || {};
-
+    const { id: dataElementId } = dataElement || {};
     const transforms = {};
 
     const { xdm, data } =
@@ -229,7 +227,6 @@ const getSettings =
 
     const response = {
       dataElementId,
-      dataElementCacheId,
       data: xdm || data || {},
     };
 
@@ -414,12 +411,12 @@ const UpdateVariable = ({
           width="size-5000"
           isRequired
           loadItems={loadItems}
-          getKey={(item) => item?.settings?.cacheId}
+          getKey={(item) => item?.name}
           getLabel={(item) => item?.name}
           firstPage={dataElementsFirstPage}
           firstPageCursor={dataElementsFirstPageCursor}
         >
-          {(item) => <Item key={item.settings.cacheId}>{item.name}</Item>}
+          {(item) => <Item key={item.name}>{item.name}</Item>}
         </FormikPagedComboBox>
       )}
       {hasSchema && isSchemaMatched && (

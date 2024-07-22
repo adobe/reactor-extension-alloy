@@ -41,7 +41,6 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await extensionViewController.expectIsValid();
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
       dataElementId: "SDE1",
     });
   },
@@ -71,7 +70,6 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
           },
         },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
       dataElementId: "SDE1",
     });
   },
@@ -94,7 +92,6 @@ test.requestHooks(
           },
         },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
       dataElementId: "SDE1",
     },
   });
@@ -123,7 +120,6 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
           target: "%data element%",
         },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
       dataElementId: "SDE1",
     });
   },
@@ -153,7 +149,6 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
           },
         },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
       dataElementId: "SDE1",
     });
   },
@@ -180,7 +175,6 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
           },
         },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
       dataElementId: "SDE1",
     });
   },
@@ -209,7 +203,6 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
           target: "%data element%",
         },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
       dataElementId: "SDE1",
     });
   },

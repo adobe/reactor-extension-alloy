@@ -843,13 +843,9 @@ const createExtensionManifest = ({ version }) => {
               minLength: 1,
             },
           },
-          required: ["dataElementCacheId", "dataElementId"],
+          required: ["dataElementId"],
         },
         transforms: [
-          {
-            type: "remove",
-            propertyPath: "dataElementId",
-          },
           {
             type: "remove",
             propertyPath: "schema",
@@ -1206,7 +1202,7 @@ const createExtensionManifest = ({ version }) => {
                   additionalProperties: false,
                 },
               },
-              required: ["cacheId", "sandbox", "schema"],
+              required: ["sandbox", "schema"],
               additionalProperties: false,
             },
             {
@@ -1230,12 +1226,17 @@ const createExtensionManifest = ({ version }) => {
                   additionalProperties: false,
                 },
               },
-              required: ["cacheId", "solutions"],
+              required: ["solutions"],
               additionalProperties: false,
             },
           ],
         },
         transforms: [
+          {
+            type: "add",
+            propertyPath: "dataElementId",
+            reservedKey: "originId",
+          },
           {
             type: "remove",
             propertyPath: "schema",
