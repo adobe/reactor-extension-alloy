@@ -69,28 +69,6 @@ test.requestHooks(sandboxMocks.multipleWithoutDefault, schemaMocks.basic)(
   },
 );
 
-test.requestHooks(
-  sandboxMocks.multipleWithoutDefault,
-  schemaMocks.basic,
-  schemasMocks.multiple,
-)("uses the same cacheId", async () => {
-  await extensionViewController.init({
-    settings: {
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
-      sandbox: {
-        name: "testsandbox3",
-      },
-      schema: {
-        id: "sch123",
-        version: "1.0",
-      },
-    },
-  });
-  await sandboxField.expectText("PRODUCTION Test Sandbox 3 (VA7)");
-  const { cacheId } = await extensionViewController.getSettings();
-  await t.expect(cacheId).eql("7b2c068c-6c4c-44bd-b9ad-35a15b7c1953");
-});
-
 test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.multiple)(
   "returns full valid XDM settings",
   async () => {
@@ -99,14 +77,12 @@ test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.multiple)(
     await schemaField.openMenu();
     await schemaField.selectMenuOption("Test Schema 1");
     await extensionViewController.expectIsValid();
-    const { sandbox, schema, ...other } =
-      await extensionViewController.getSettings();
+    const { sandbox, schema } = await extensionViewController.getSettings();
     await t.expect(sandbox).contains({ name: "testsandbox3" });
     await t.expect(schema).contains({
       id: "https://ns.adobe.com/unifiedjsqeonly/schemas/sch123",
       version: "1.0",
     });
-    await t.expect(Object.keys(other)).eql(["cacheId"]);
   },
 );
 
@@ -117,9 +93,8 @@ test.requestHooks(sandboxMocks.multipleWithoutDefault, schemasMocks.multiple)(
     await variableTypeDataRadio.click();
     await analyticsCheckbox.click();
 
-    const { solutions, ...other } = await extensionViewController.getSettings();
+    const { solutions } = await extensionViewController.getSettings();
     await t.expect(solutions).contains("analytics");
-    await t.expect(Object.keys(other)).eql(["cacheId"]);
   },
 );
 
@@ -447,7 +422,6 @@ test.requestHooks(
   await schemaField.selectMenuOption("Test Schema 3B");
   await extensionViewController.expectIsValid();
   const settings = await extensionViewController.getSettings();
-  delete settings.cacheId;
   await t.expect(settings).eql({
     sandbox: {
       name: "testsandbox3",
