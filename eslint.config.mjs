@@ -53,7 +53,7 @@ export default [
     },
     rules: {
       "unused-imports/no-unused-imports": "error",
-      "unused-imports/no-unused-vars": "error",
+      "unused-imports/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
       "ban/ban": [
         "error",
         { name: ["describe", "only"], message: "don't focus tests" },
