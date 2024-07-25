@@ -43,7 +43,6 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
@@ -72,7 +71,6 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1960",
       dataElementId: "SDE2",
       transforms: {
         "__adobe.target": {
@@ -99,7 +97,6 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
@@ -130,7 +127,6 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1960",
       dataElementId: "SDE2",
       transforms: {
         "": {
@@ -151,7 +147,6 @@ test.requestHooks(
     },
     settings: {
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       transforms: {
         "_unifiedjsqeonly.vendor": {
@@ -177,7 +172,6 @@ test.requestHooks(
     },
     settings: {
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "SDE1",
       transforms: {
         "__adobe.target": {
@@ -203,7 +197,6 @@ test.requestHooks(
       },
       settings: {
         data: {},
-        dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
         dataElementId: "DE2",
         transforms: {
           "": {
@@ -231,7 +224,6 @@ test.requestHooks(
       },
       settings: {
         data: {},
-        dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
         dataElementId: "SDE1",
         transforms: {
           "": {
@@ -256,7 +248,6 @@ test.requestHooks(dataElementsMocks.multiple, dataElementMocks.element2)(
       },
       settings: {
         data: {},
-        dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
         dataElementId: "DE2",
         transforms: {
           "_unifiedjsqeonly.vendor": {

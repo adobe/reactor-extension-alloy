@@ -305,6 +305,7 @@ const createExtensionManifest = ({ version }) => {
                       minLength: 1,
                     },
                   },
+                  additionalProperties: false,
                 },
                 downloadLinkQualifier: {
                   type: "string",
@@ -363,9 +364,10 @@ const createExtensionManifest = ({ version }) => {
                     AJO: {
                       type: "string",
                       enum: ["always", "decoratedElementsOnly", "never"],
-                    }
+                    },
                   },
-                }
+                  additionalProperties: false,
+                },
               },
               required: ["edgeConfigId", "name"],
               additionalProperties: false,
@@ -770,8 +772,13 @@ const createExtensionManifest = ({ version }) => {
                       },
                       actionType: {
                         type: "string",
-                        enum: ["setHtml", "replaceHtml", "appendHtml", "collectInteractions"],
-                      }
+                        enum: [
+                          "setHtml",
+                          "replaceHtml",
+                          "appendHtml",
+                          "collectInteractions",
+                        ],
+                      },
                     },
                     required: ["selector", "actionType"],
                   },
@@ -836,13 +843,9 @@ const createExtensionManifest = ({ version }) => {
               minLength: 1,
             },
           },
-          required: ["dataElementCacheId", "dataElementId"],
+          required: ["dataElementId"],
         },
         transforms: [
-          {
-            type: "remove",
-            propertyPath: "dataElementId",
-          },
           {
             type: "remove",
             propertyPath: "schema",
@@ -1199,7 +1202,7 @@ const createExtensionManifest = ({ version }) => {
                   additionalProperties: false,
                 },
               },
-              required: ["cacheId", "sandbox", "schema"],
+              required: ["sandbox", "schema"],
               additionalProperties: false,
             },
             {
@@ -1223,12 +1226,17 @@ const createExtensionManifest = ({ version }) => {
                   additionalProperties: false,
                 },
               },
-              required: ["cacheId", "solutions"],
+              required: ["solutions"],
               additionalProperties: false,
             },
           ],
         },
         transforms: [
+          {
+            type: "add",
+            propertyPath: "dataElementId",
+            reservedKey: "originId",
+          },
           {
             type: "remove",
             propertyPath: "schema",

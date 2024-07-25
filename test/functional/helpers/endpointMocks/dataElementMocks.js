@@ -23,7 +23,6 @@ const testDataVariable1 = {
     name: "Test data variable 1",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
       sandbox: {
         name: "prod",
       },
@@ -40,7 +39,6 @@ const testDataVariable2 = {
     name: "Test data variable 2",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       sandbox: {
         name: "prod",
       },
@@ -57,7 +55,6 @@ const testSolutionsVariable1 = {
     name: "Test solutions variable 1",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
       solutions: ["analytics", "target", "audiencemanager"],
     }),
   },
