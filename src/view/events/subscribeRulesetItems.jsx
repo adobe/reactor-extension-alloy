@@ -62,10 +62,6 @@ const subscribeRulesetItemsForm = form({}, [
         label: "Measurement item",
       },
       {
-        value: "https://ns.adobe.com/personalization/message/feed-item",
-        label: "Message feed item",
-      },
-      {
         value: "https://ns.adobe.com/personalization/message/native-alert",
         label: "Native alert message",
       },
