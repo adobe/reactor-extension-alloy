@@ -907,6 +907,24 @@ const createExtensionManifest = ({ version }) => {
     ],
     events: [
       {
+        name: "monitor-triggered",
+        displayName: "Monitoring hook triggered",
+        libPath: "dist/lib/events/monitor/index.js",
+        viewPath: "events/triggerMonitor.html",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              minLength: 1
+            },
+          },
+          required: ["name"],
+          additionalProperties: false
+        }
+      },
+      {
         name: "decisions-received",
         displayName: "Decisions received (DEPRECATED)",
         libPath: "dist/lib/events/decisionsReceived/index.js",
