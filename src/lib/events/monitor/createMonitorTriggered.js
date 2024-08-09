@@ -12,10 +12,10 @@ governing permissions and limitations under the License.
 
 module.exports =
   ({ instanceManager }) =>
-    (settings, trigger) => {
-      instanceManager.addMonitor({
-        [settings.name]: (...args) => {
-          trigger(...args);
-        }
-      });
-    };
+  (settings, trigger) => {
+    instanceManager.addMonitor({
+      [settings.name]: (...args) => {
+        trigger(...args);
+      }
+    });
+  };

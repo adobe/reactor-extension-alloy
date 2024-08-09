@@ -27,7 +27,9 @@ export default solutions => ({
             const solutionKeyLower = solutionKey.toLowerCase();
             accumulator[solutionKeyLower] = {
               type:
-                solutionKeyLower === "analytics" ? OBJECT_ANALYTICS : OBJECT_JSON,
+                solutionKeyLower === "analytics"
+                  ? OBJECT_ANALYTICS
+                  : OBJECT_JSON,
               expandPaths: false,
               title: solutionsContext.find(
                 ([solution]) => solutionKeyLower === solution

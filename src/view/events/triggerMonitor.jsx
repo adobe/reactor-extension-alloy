@@ -15,40 +15,52 @@ import form from "../forms/form";
 import notice from "../forms/notice";
 import comboBox from "../forms/comboBox";
 
-const monitoringHooks = [{
-  value: "onInstanceCreated",
-  label: "onInstanceCreated"
-}, {
-  value: "onInstanceConfigured",
-  label: "onInstanceConfigured"
-},{
-  value: "onBeforeCommand",
-  label: "onBeforeCommand"
-},{
-  value: "onCommandResolved",
-  label: "onCommandResolved"
-},{
-  value: "onCommandRejected",
-  label: "onCommandRejected"
-},{
-  value: "onBeforeNetworkRequest",
-  label: "onBeforeNetworkRequest"
-},{
-  value: "onNetworkResponse",
-  label: "onNetworkResponse"
-},{
-  value: "onNetworkError",
-  label: "onNetworkError"
-},{
-  value: "onBeforeLog",
-  label: "onBeforeLog"
-},{
-  value: "onContentRendering",
-  label: "onContentRendering"
-},{
-  value: "onContentHiding",
-  label: "onContentHiding"
-}];
+const monitoringHooks = [
+  {
+    value: "onInstanceCreated",
+    label: "onInstanceCreated"
+  },
+  {
+    value: "onInstanceConfigured",
+    label: "onInstanceConfigured"
+  },
+  {
+    value: "onBeforeCommand",
+    label: "onBeforeCommand"
+  },
+  {
+    value: "onCommandResolved",
+    label: "onCommandResolved"
+  },
+  {
+    value: "onCommandRejected",
+    label: "onCommandRejected"
+  },
+  {
+    value: "onBeforeNetworkRequest",
+    label: "onBeforeNetworkRequest"
+  },
+  {
+    value: "onNetworkResponse",
+    label: "onNetworkResponse"
+  },
+  {
+    value: "onNetworkError",
+    label: "onNetworkError"
+  },
+  {
+    value: "onBeforeLog",
+    label: "onBeforeLog"
+  },
+  {
+    value: "onContentRendering",
+    label: "onContentRendering"
+  },
+  {
+    value: "onContentHiding",
+    label: "onContentHiding"
+  }
+];
 
 const triggerMonitorForm = form({}, [
   notice({
@@ -66,7 +78,7 @@ const triggerMonitorForm = form({}, [
       "Enter a data element that resolves to a string representing the Web SDK monitoring hook.",
     items: monitoringHooks,
     isRequired: true
-  }),
+  })
 ]);
 
 renderForm(triggerMonitorForm);

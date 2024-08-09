@@ -46,7 +46,7 @@ module.exports = ({
     onCommandRejected(...args) {
       calledMonitors.onCommandRejected ||= [];
       calledMonitors.onCommandRejected.push(args);
-    },
+    }
   });
 
   instancesSettings.forEach(
@@ -105,13 +105,13 @@ module.exports = ({
     },
     addMonitor(newMonitor) {
       window.__alloyMonitors.push(newMonitor);
-      Object.keys(calledMonitors).forEach((methodName) => {
-      calledMonitors[methodName].forEach((args) => {
-
-      if (newMonitor[methodName]) {
-        newMonitor[methodName](...args);
-      }});
+      Object.keys(calledMonitors).forEach(methodName => {
+        calledMonitors[methodName].forEach(args => {
+          if (newMonitor[methodName]) {
+            newMonitor[methodName](...args);
+          }
+        });
       });
-      },
+    }
   };
 };
