@@ -21,11 +21,11 @@ const satelliteApi = window._satellite;
 const trackMediaSession = createMediaSession({
   instanceManager,
   mediaCollectionSessionStorage,
-  satelliteApi
+  satelliteApi,
 });
 module.exports = createMediaEvent({
   instanceManager,
   trackMediaSession,
   mediaCollectionSessionStorage,
-  satelliteApi
+  satelliteApi,
 });

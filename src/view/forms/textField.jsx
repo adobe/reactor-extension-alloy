@@ -37,12 +37,13 @@ export default function textField({
   description,
   width = "size-5000",
   validationSchemaBase = string(),
-  isDisabled = false
+  ariaLabel = label,
+  isDisabled = false,
 }) {
   let validationSchema = validationSchemaBase;
   if (isRequired) {
     validationSchema = validationSchema.required(
-      `Please provide a ${label.toLowerCase()}.`
+      `Please provide a ${label.toLowerCase()}.`,
     );
   }
 
@@ -50,7 +51,7 @@ export default function textField({
   if (dataElementSupported) {
     const ComponentWithDataElement = ({
       namePrefix = "",
-      hideLabel = false
+      hideLabel = false,
     }) => {
       return (
         <DataElementSelector>
@@ -58,7 +59,7 @@ export default function textField({
             data-test-id={`${namePrefix}${name}TextField`}
             name={`${namePrefix}${name}`}
             label={hideLabel ? undefined : label}
-            aria-label={label}
+            aria-label={ariaLabel}
             isRequired={isRequired}
             description={description}
             width={width}
@@ -69,13 +70,13 @@ export default function textField({
     };
     ComponentWithDataElement.propTypes = {
       namePrefix: PropTypes.string,
-      hideLabel: PropTypes.bool
+      hideLabel: PropTypes.bool,
     };
     Component = ComponentWithDataElement;
   } else {
     const ComponentWithoutDataElement = ({
       namePrefix = "",
-      hideLabel = false
+      hideLabel = false,
     }) => {
       return (
         <FormikTextField
@@ -92,7 +93,7 @@ export default function textField({
     };
     ComponentWithoutDataElement.propTypes = {
       namePrefix: PropTypes.string,
-      hideLabel: PropTypes.bool
+      hideLabel: PropTypes.bool,
     };
     Component = ComponentWithoutDataElement;
   }
@@ -111,8 +112,8 @@ export default function textField({
       return settings;
     },
     validationShape: {
-      [name]: validationSchema
+      [name]: validationSchema,
     },
-    Component
+    Component,
   };
 }

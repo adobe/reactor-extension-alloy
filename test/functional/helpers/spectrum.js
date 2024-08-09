@@ -13,12 +13,13 @@ governing permissions and limitations under the License.
 import { Selector, t, ClientFunction } from "testcafe";
 import {
   createTestIdSelector,
-  createTestIdSelectorString
+  createTestIdSelectorString,
 } from "./dataTestIdSelectors";
 
 const popoverMenuSelector = Selector('[role="listbox"]');
 const tabSelector = Selector('[role="tab"]');
-const menuItemCssSelector = '[role="option"]';
+const menuItemCssSelector = '[role="option"], [role="option"] span';
+const menuItemSimpleCssSelector = '[role="option"]';
 const invalidAttribute = "aria-invalid";
 const invalidCssSelector = '[class*="--invalid"]';
 // Sometimes TestCafe's click simulation doesn't match what
@@ -26,7 +27,7 @@ const invalidCssSelector = '[class*="--invalid"]';
 // close a Picker, for example. Calling click directly on
 // the element seems to work better. Other Adobe teams have taken
 // a similar approach when using Cypress or React Testing Library
-const compatibleClick = async selector => {
+const compatibleClick = async (selector) => {
   await t.expect(selector.exists).ok();
   // Normally TestCafe will automatically scroll the target into view,
   // but since we are using a client function to perform the click
@@ -36,30 +37,30 @@ const compatibleClick = async selector => {
     const element = selector();
     element.click();
   }).with({
-    dependencies: { selector }
+    dependencies: { selector },
   })();
 };
 
-const createExpectError = selector => async () => {
+const createExpectError = (selector) => async () => {
   await t
     .expect(selector.getAttribute(invalidAttribute))
     .eql("true", "Expected field to have error when it did not");
 };
-const createExpectInvalidCssClass = selector => async () => {
+const createExpectInvalidCssClass = (selector) => async () => {
   await t.expect(selector.parent().find(invalidCssSelector).exists).ok();
 };
 
-const createExpectHidden = selector => async () => {
+const createExpectHidden = (selector) => async () => {
   await t.expect(selector.hasAttribute("hidden")).ok();
 };
 
-const createExpectNoError = selector => async () => {
+const createExpectNoError = (selector) => async () => {
   await t
     .expect(selector.getAttribute(invalidAttribute))
     .notEql("true", "Expected field to not have error when it did");
 };
 
-const createExpectValue = selector => async value => {
+const createExpectValue = (selector) => async (value) => {
   // We need to use the value attribute instead of property
   // because some react-spectrum components, like Select,
   // don't set the value property on the primary DOM element
@@ -67,13 +68,13 @@ const createExpectValue = selector => async value => {
   await t.expect(selector.getAttribute("value")).eql(value);
 };
 
-const createExpectText = selector => async text => {
+const createExpectText = (selector) => async (text) => {
   await t
     .expect(selector.withExactText(text).exists)
     .ok(`Text ${text} not found.`);
 };
 
-const createExpectMatch = selector => async value => {
+const createExpectMatch = (selector) => async (value) => {
   // We need to use the value attribute instead of property
   // because some react-spectrum components, like Select,
   // don't set the value property on the primary DOM element
@@ -81,32 +82,32 @@ const createExpectMatch = selector => async value => {
   await t.expect(selector.getAttribute("value")).match(value);
 };
 
-const createClick = selector => async () => {
+const createClick = (selector) => async () => {
   await t.expect(selector.exists).ok();
   await t.click(selector);
 };
 
-const createExpectChecked = selector => async () => {
+const createExpectChecked = (selector) => async () => {
   await t.expect(selector.checked).ok();
 };
 
-const createExpectUnchecked = selector => async () => {
+const createExpectUnchecked = (selector) => async () => {
   await t.expect(selector.checked).notOk();
 };
 
-const createExpectExists = selector => async () => {
+const createExpectExists = (selector) => async () => {
   await t.expect(selector.exists).ok();
 };
 
-const createExpectNotExists = selector => async () => {
+const createExpectNotExists = (selector) => async () => {
   await t.expect(selector.exists).notOk();
 };
 
-const createExpectEnabled = selector => async () => {
+const createExpectEnabled = (selector) => async () => {
   await t.expect(selector.hasAttribute("disabled")).notOk();
 };
 
-const createExpectDisabled = selector => async () => {
+const createExpectDisabled = (selector) => async () => {
   await t.expect(selector.hasAttribute("disabled")).ok();
 };
 
@@ -119,16 +120,16 @@ const createExpectNotHasRole = (selector, expectedRole) => () =>
 // The menu items are virtualized, meaning that any items that
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
-const createExpectMenuOptionLabels = menuSelector => async labels => {
+const createExpectMenuOptionLabels = (menuSelector) => async (labels) => {
   // wait for the menu to appear
   await menuSelector();
-  const menuItems = menuSelector.find(menuItemCssSelector);
+  const menuItems = menuSelector.find(menuItemSimpleCssSelector);
   for (let i = 0; i < labels.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
     await t
       .expect(menuItems.nth(i).withExactText(labels[i]).exists)
       .ok(
-        `Option with label ${labels[i]} does not exist when it is expected to exist. Be sure you've opened the menu first.`
+        `Option with label ${labels[i]} does not exist when it is expected to exist. Be sure you've opened the menu first.`,
       );
   }
   await t.expect(menuItems.count).eql(labels.length);
@@ -137,45 +138,47 @@ const createExpectMenuOptionLabels = menuSelector => async labels => {
 // The menu items are virtualized, meaning that any items that
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
-const createExpectMenuOptionsLabelsInclude = menuSelector => async labels => {
-  // wait for the menu to appear
-  await menuSelector();
-  const menuItems = menuSelector.find(menuItemCssSelector);
-  for (let i = 0; i < labels.length; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
-    await t
-      .expect(menuItems.withExactText(labels[i]).exists)
-      .ok(
-        `Option with label ${labels[i]} does not exist when it is expected to exist. Be sure you've opened the menu first.`
-      );
-  }
-};
+const createExpectMenuOptionsLabelsInclude =
+  (menuSelector) => async (labels) => {
+    // wait for the menu to appear
+    await menuSelector();
+    const menuItems = menuSelector.find(menuItemCssSelector);
+    for (let i = 0; i < labels.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      await t
+        .expect(menuItems.withExactText(labels[i]).exists)
+        .ok(
+          `Option with label ${labels[i]} does not exist when it is expected to exist. Be sure you've opened the menu first.`,
+        );
+    }
+  };
 
 // The menu items are virtualized, meaning that any items that
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items don't exist.
-const createExpectMenuOptionLabelsExclude = menuSelector => async labels => {
-  // wait for the menu to appear
-  await menuSelector();
-  const menuItems = menuSelector.find(menuItemCssSelector);
-  for (let i = 0; i < labels.length; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
-    await t
-      .expect(menuItems.withExactText(labels[i]).exists)
-      .notOk(
-        `Option with label ${labels[i]} exists when it is expected to not exist.`
-      );
-  }
-};
+const createExpectMenuOptionLabelsExclude =
+  (menuSelector) => async (labels) => {
+    // wait for the menu to appear
+    await menuSelector();
+    const menuItems = menuSelector.find(menuItemCssSelector);
+    for (let i = 0; i < labels.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      await t
+        .expect(menuItems.withExactText(labels[i]).exists)
+        .notOk(
+          `Option with label ${labels[i]} exists when it is expected to not exist.`,
+        );
+    }
+  };
 
-const createExpectTabSelected = selector => async () => {
+const createExpectTabSelected = (selector) => async () => {
   await t.expect(selector.getAttribute("aria-selected")).eql("true");
 };
 
 // The menu items are virtualized, meaning that any items that
 // are not visible to the user will not be found in the DOM by TestCafe.
 // You may need to scroll the menu to be able to assert that certain items exist.
-const createSelectMenuOption = menuSelector => async label => {
+const createSelectMenuOption = (menuSelector) => async (label) => {
   // wait for the menu to appear
   await menuSelector();
   const option = menuSelector.find(menuItemCssSelector).withExactText(label);
@@ -204,7 +207,7 @@ const componentWrappers = {
       expectText: createExpectValue(selector),
       async openMenu() {
         await t.click(
-          selector.parent().find("button[aria-haspopup='listbox']")
+          selector.parent().find("button[aria-haspopup='listbox']"),
         );
       },
       // If the user needs to manually open the menu before selecting an
@@ -248,9 +251,9 @@ const componentWrappers = {
         }
 
         throw new Error(
-          `Option with label ${label} does not exist while scrolling down when it is expected to exist.`
+          `Option with label ${label} does not exist while scrolling down when it is expected to exist.`,
         );
-      }
+      },
     };
   },
   picker(selector) {
@@ -306,9 +309,9 @@ const componentWrappers = {
         }
 
         throw new Error(
-          `Option with label ${label} does not exist while scrolling down when it is expected to exist.`
+          `Option with label ${label} does not exist while scrolling down when it is expected to exist.`,
         );
-      }
+      },
     };
   },
   textField(selector) {
@@ -328,7 +331,7 @@ const componentWrappers = {
       // are cleared to get rid of the "..." at the end.
       async click() {
         await t.click(selector);
-      }
+      },
     };
   },
   textArea(selector) {
@@ -343,7 +346,7 @@ const componentWrappers = {
       },
       async clear() {
         await t.selectText(selector).pressKey("delete");
-      }
+      },
     };
   },
   checkbox(selector) {
@@ -351,19 +354,19 @@ const componentWrappers = {
       expectError: createExpectError(selector),
       expectChecked: createExpectChecked(selector),
       expectUnchecked: createExpectUnchecked(selector),
-      click: createClick(selector)
+      click: createClick(selector),
     };
   },
   radio(selector) {
     return {
       expectChecked: createExpectChecked(selector),
       expectUnchecked: createExpectUnchecked(selector),
-      click: createClick(selector)
+      click: createClick(selector),
     };
   },
   button(selector) {
     return {
-      click: createClick(selector)
+      click: createClick(selector),
     };
   },
   illustratedMessage(selector) {
@@ -372,13 +375,13 @@ const componentWrappers = {
         await t
           .expect(selector.find("section").withText(message).exists)
           .ok(`Message ${message} not found.`);
-      }
+      },
     };
   },
   tab(selector) {
     return {
       click: createClick(selector),
-      expectSelected: createExpectTabSelected(selector)
+      expectSelected: createExpectTabSelected(selector),
     };
   },
   tabs() {
@@ -399,14 +402,14 @@ const componentWrappers = {
           await t
             .expect(tabSelector.nth(i).withExactText(labels[i]).exists)
             .ok(
-              `Tab with label ${labels[i]} does not exist when it is expected to exist.`
+              `Tab with label ${labels[i]} does not exist when it is expected to exist.`,
             );
         }
         await t.expect(tabSelector.count).eql(labels.length);
       },
       async selectTab(label) {
         await t.click(tabSelector.withExactText(label));
-      }
+      },
     };
   },
   dialog() {
@@ -426,13 +429,13 @@ const componentWrappers = {
         [key]: function containerComponent(childTestId) {
           return that[key].call(
             this,
-            selector.find(createTestIdSelectorString(childTestId))
+            selector.find(createTestIdSelectorString(childTestId)),
           );
-        }
+        },
       }),
-      {}
+      {},
     );
-  }
+  },
 };
 
 /**
@@ -440,17 +443,17 @@ const componentWrappers = {
  * @param {string|Selector} testIdOrSelector
  * @returns {Selector}
  */
-const selectorize = testIdOrSelector => {
+const selectorize = (testIdOrSelector) => {
   return typeof testIdOrSelector === "string"
     ? createTestIdSelector(testIdOrSelector)
     : testIdOrSelector;
 };
 
 // This adds certain properties to all component wrappers.
-Object.keys(componentWrappers).forEach(componentName => {
+Object.keys(componentWrappers).forEach((componentName) => {
   const componentWrapper = componentWrappers[componentName];
   componentWrappers[componentName] = function selectorizedComponent(
-    testIdOrSelector
+    testIdOrSelector,
   ) {
     const selector = selectorize(testIdOrSelector);
     return {
@@ -459,7 +462,7 @@ Object.keys(componentWrappers).forEach(componentName => {
       expectExists: createExpectExists(selector),
       expectNotExists: createExpectNotExists(selector),
       ...componentWrapper.call(this, selector),
-      selector
+      selector,
     };
   };
 });

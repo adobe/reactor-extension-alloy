@@ -28,7 +28,7 @@ const FillParentAndCenterChildren = ({ children }) => {
 };
 
 FillParentAndCenterChildren.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };
 
 export default FillParentAndCenterChildren;

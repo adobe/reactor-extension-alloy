@@ -15,4 +15,4 @@ governing permissions and limitations under the License.
  * @param {*} value
  * @returns {any}
  */
-module.exports = value => JSON.parse(JSON.stringify(value));
+module.exports = (value) => JSON.parse(JSON.stringify(value));

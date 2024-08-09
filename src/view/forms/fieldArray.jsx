@@ -32,7 +32,7 @@ const StringItem = ({
   description,
   error,
   touched,
-  isLast
+  isLast,
 }) => {
   return (
     <DataElementSelector>
@@ -57,7 +57,7 @@ StringItem.propTypes = {
   description: PropTypes.string,
   error: PropTypes.string,
   touched: PropTypes.bool,
-  isLast: PropTypes.bool
+  isLast: PropTypes.bool,
 };
 
 const ComboboxItem = ({
@@ -68,7 +68,7 @@ const ComboboxItem = ({
   error,
   touched,
   isLast,
-  items
+  items,
 }) => {
   return (
     <DataElementSelector>
@@ -83,11 +83,11 @@ const ComboboxItem = ({
         invalid={error && touched}
         touched={touched}
         items={items}
-        getKey={item => item.value}
-        getLabel={item => item.label}
+        getKey={(item) => item.value}
+        getLabel={(item) => item.label}
         allowsCustomValue
       >
-        {item => (
+        {(item) => (
           <Item key={item.value} data-test-id={item.value}>
             {item.label}
           </Item>
@@ -105,7 +105,7 @@ ComboboxItem.propTypes = {
   error: PropTypes.string,
   touched: PropTypes.bool,
   isLast: PropTypes.bool,
-  items: PropTypes.array
+  items: PropTypes.array,
 };
 
 /** @typedef {import("./form").Form} Form */
@@ -142,35 +142,35 @@ export default function fieldArray({
   description,
   dataElementDescription,
   validationSchema,
-  fieldItems
+  fieldItems,
 }) {
   const validationShape = {
-    [name]: array()
+    [name]: array(),
   };
   if (isRequired) {
     validationShape[name] = validationShape[name]
       .compact()
       .when(`${name}InputMethod`, {
         is: FORM,
-        then: schema =>
+        then: (schema) =>
           schema.min(
             1,
-            `Please provide at least one ${singularLabel.toLowerCase()}.`
-          )
+            `Please provide at least one ${singularLabel.toLowerCase()}.`,
+          ),
       });
   }
   if (validationSchema) {
     validationShape[name] = validationShape[name].when(`${name}InputMethod`, {
       is: FORM,
-      then: schema => schema.of(validationSchema)
+      then: (schema) => schema.of(validationSchema),
     });
   }
   validationShape[`${name}DataElement`] = string().when(`${name}InputMethod`, {
     is: DATA_ELEMENT,
-    then: schema =>
+    then: (schema) =>
       schema
         .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-        .required(DATA_ELEMENT_REQUIRED)
+        .required(DATA_ELEMENT_REQUIRED),
   });
 
   const FieldItem = fieldItems ? ComboboxItem : StringItem;
@@ -182,7 +182,7 @@ export default function fieldArray({
       const initialValues = {
         [name]: value,
         [`${name}InputMethod`]: FORM,
-        [`${name}DataElement`]: ""
+        [`${name}DataElement`]: "",
       };
 
       if (typeof value === "string") {
@@ -195,7 +195,7 @@ export default function fieldArray({
     getSettings({ values }) {
       const settings = {};
       if (values[`${name}InputMethod`] === FORM) {
-        const filteredValues = values[name].filter(value => value);
+        const filteredValues = values[name].filter((value) => value);
         if (filteredValues.length > 0) {
           settings[name] = filteredValues;
         }
@@ -207,12 +207,12 @@ export default function fieldArray({
     validationShape,
     Component: ({ namePrefix = "" }) => {
       const [{ value: inputMethod }] = useField(
-        `${namePrefix}${name}InputMethod`
+        `${namePrefix}${name}InputMethod`,
       );
       const [
         { value: items },
         { touched: itemsTouched, error: itemsError },
-        { setValue: setItems }
+        { setValue: setItems },
       ] = useField(`${namePrefix}${name}`);
 
       const error = typeof itemsError === "string" ? itemsError : undefined;
@@ -237,7 +237,7 @@ export default function fieldArray({
           {inputMethod === FORM && (
             <FieldArray
               name={name}
-              render={arrayHelpers => {
+              render={(arrayHelpers) => {
                 return (
                   <div>
                     <Flex direction="column" gap="size-100" alignItems="start">
@@ -261,7 +261,7 @@ export default function fieldArray({
                               onPress={() => {
                                 // using arrayHelpers.remove mangles the error message
                                 const newItems = items.filter(
-                                  (_, i) => i !== index
+                                  (_, i) => i !== index,
                                 );
                                 if (newItems.length === 0) {
                                   newItems.push("");
@@ -302,10 +302,10 @@ export default function fieldArray({
           )}
         </>
       );
-    }
+    },
   };
   part.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
   return part;
 }

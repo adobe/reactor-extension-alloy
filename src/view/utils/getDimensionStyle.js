@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
  * Given a React-Spectrum dimension value (e.g., "size-200", 16, "16px"),
  * returns a value that can be used as a CSS style value.
  */
-const getDimensionStyle = size => {
+const getDimensionStyle = (size) => {
   return typeof size === "string" && size.includes("size-")
     ? `var(--spectrum-global-dimension-${size}, var(--spectrum-alias-${size})`
     : size;

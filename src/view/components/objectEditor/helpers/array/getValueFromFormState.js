@@ -26,7 +26,7 @@ export default ({ formStateNode, getValueFromFormState }) => {
 
   const computedValue = items.reduce((memo, itemFormStateNode) => {
     const itemValue = getValueFromFormState({
-      formStateNode: itemFormStateNode
+      formStateNode: itemFormStateNode,
     });
     if (itemValue !== undefined) {
       memo.push(itemValue);

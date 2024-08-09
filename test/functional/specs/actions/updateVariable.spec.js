@@ -22,7 +22,7 @@ import stringEdit from "../../helpers/objectEditor/stringEdit";
 import arrayEdit from "../../helpers/objectEditor/arrayEdit";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(
-  "errorBoundaryMessage"
+  "errorBoundaryMessage",
 );
 const dataElementField = spectrum.comboBox("dataElementField");
 const clearField = spectrum.checkbox("clearField");
@@ -32,7 +32,7 @@ const schemaChangedNotice = spectrum.alert("schemaChangedNotice");
 createExtensionViewFixture({
   title: "Update variable action view",
   viewPath: "actions/updateVariable.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
 });
 
 runCommonExtensionViewTests();
@@ -42,11 +42,11 @@ test.requestHooks(dataElementsMocks.notFound)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await errorBoundaryMessage.expectMessage(/Failed to load data elements\./);
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.single)(
@@ -54,29 +54,29 @@ test.requestHooks(dataElementsMocks.single)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await dataElementField.expectText("Test data variable 1");
     await noDataElementsAlert.expectNotExists();
     await xdmTree.node("xdm").expectExists();
-  }
+  },
 );
 
 test.requestHooks(
   dataElementsMocks.noneWithNextPage,
-  dataElementsMocks.secondPageWithOne
+  dataElementsMocks.secondPageWithOne,
 )(
   "selects the variable when there are lots of data elements, but only one variable data element",
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await dataElementField.expectText("Test data variable 1");
     await xdmTree.node("xdm").expectExists();
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.multiple)(
@@ -84,22 +84,21 @@ test.requestHooks(dataElementsMocks.multiple)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await dataElementField.openMenu();
     await dataElementField.selectMenuOption("Test data variable 2");
     await xdmTree.node("xdm").expectExists();
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.4"
-      }
+        version: "1.4",
+      },
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.multiple)(
@@ -107,8 +106,8 @@ test.requestHooks(dataElementsMocks.multiple)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await dataElementField.openMenu();
     await dataElementField.selectMenuOption("Test data variable 2");
@@ -123,18 +122,17 @@ test.requestHooks(dataElementsMocks.multiple)(
       data: {
         _unifiedjsqeonly: {
           vendor: {
-            name: "name1"
-          }
-        }
+            name: "name1",
+          },
+        },
       },
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.4"
-      }
+        version: "1.4",
+      },
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.multiple)(
@@ -142,8 +140,8 @@ test.requestHooks(dataElementsMocks.multiple)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await dataElementField.openMenu();
     await dataElementField.selectMenuOption("Test data variable 2");
@@ -152,19 +150,18 @@ test.requestHooks(dataElementsMocks.multiple)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.4"
+        version: "1.4",
       },
       transforms: {
         "": {
-          clear: true
-        }
-      }
+          clear: true,
+        },
+      },
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.none)(
@@ -172,11 +169,11 @@ test.requestHooks(dataElementsMocks.none)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await noDataElementsAlert.expectExists();
-  }
+  },
 );
 
 test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
@@ -184,20 +181,19 @@ test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
+        id: "PRabcd",
       },
       settings: {
-        dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
         dataElementId: "DE1",
         schema: {
           id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-          version: "1.1"
+          version: "1.1",
         },
-        data: {}
-      }
+        data: {},
+      },
     });
     await schemaChangedNotice.expectExists();
-  }
+  },
 );
 
 test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
@@ -205,33 +201,32 @@ test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
+        id: "PRabcd",
       },
       settings: {
-        dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
         dataElementId: "DE1",
         schema: {
           id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-          version: "1.2"
+          version: "1.2",
         },
-        data: {}
-      }
+        data: {},
+      },
     });
     await schemaChangedNotice.expectNotExists();
-  }
+  },
 );
 
 test.requestHooks(
   schemaMocks.basic,
   schemaMocks.other,
-  dataElementsMocks.multiple
+  dataElementsMocks.multiple,
 )(
   "keeps data around when changing data elements and schema objects",
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await dataElementField.openMenu();
     await dataElementField.selectMenuOption("Test data variable 4");
@@ -250,20 +245,20 @@ test.requestHooks(
     await stringEdit.expectValue("myvalue1");
     await xdmTree.node("otherField").click();
     await stringEdit.expectValue("myvalue2");
-  }
+  },
 );
 
 test.requestHooks(
   schemaMocks.basicArray,
   schemaMocks.otherArray,
-  dataElementsMocks.multiple
+  dataElementsMocks.multiple,
 )(
   "keeps data around when changing data elements and schema arrays",
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await dataElementField.openMenu();
     await dataElementField.selectMenuOption("Test data variable 6");
@@ -286,18 +281,17 @@ test.requestHooks(
     await extensionViewController.expectSettings({
       data: [
         {
-          testField: "myvalue1"
+          testField: "myvalue1",
         },
         {
-          testField: "myvalue3"
-        }
+          testField: "myvalue3",
+        },
       ],
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1957",
       dataElementId: "DE5",
       schema: {
         id: "sch789",
-        version: "1.0"
-      }
+        version: "1.0",
+      },
     });
     await xdmTree.node("Item 1").toggleExpansion();
     await xdmTree.node("testField").click();
@@ -317,5 +311,25 @@ test.requestHooks(
     await stringEdit.expectValue("myvalue3");
     await xdmTree.node("otherField").click();
     await stringEdit.expectValue("myvalue4");
-  }
+  },
 );
+
+test.requestHooks(
+  schemaMocks.basic,
+  schemaMocks.other,
+  dataElementsMocks.multiple,
+)("allows you to search for data elements", async () => {
+  await extensionViewController.init({
+    propertySettings: {
+      id: "PRabcd",
+    },
+  });
+  await dataElementField.clear();
+  await dataElementField.enterSearch("4");
+  // Because we are using mocks we can't actually search for the data element.
+  // The mock will return the same data elements no matter what. This does make
+  // sure we don't get an error when searching.
+  await dataElementField.expectMenuOptionLabelsInclude([
+    "Test data variable 4",
+  ]);
+});

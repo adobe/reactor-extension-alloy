@@ -19,7 +19,7 @@ describe("createIdentityMap", () => {
   beforeEach(() => {
     logger = jasmine.createSpyObj("logger", ["log"]);
     identityMap = cleanseIdentityMap({
-      logger
+      logger,
     });
   });
 
@@ -29,53 +29,53 @@ describe("createIdentityMap", () => {
         {
           id: undefined,
           authenticatedState: "loggedOut",
-          primary: true
+          primary: true,
         },
         {
-          id: null
+          id: null,
         },
         {
-          id: true
+          id: true,
         },
         {
-          id: false
+          id: false,
         },
         {
-          id: {}
+          id: {},
         },
         {
-          id: ""
+          id: "",
         },
         {
-          id() {}
+          id() {},
         },
         {
-          id: "example@example.com"
-        }
+          id: "example@example.com",
+        },
       ],
       PHONE: [
         {
           id: undefined,
-          authenticatedState: "authenticated"
-        }
+          authenticatedState: "authenticated",
+        },
       ],
       AAID: [],
       CORE: [
         {
           id: "ABC123",
-          authenticatedState: "ambiguous"
-        }
-      ]
+          authenticatedState: "ambiguous",
+        },
+      ],
     };
     const result = identityMap(input);
 
     expect(result).toEqual({
       EMAIL: [
         {
-          id: "example@example.com"
-        }
+          id: "example@example.com",
+        },
       ],
-      CORE: [{ id: "ABC123", authenticatedState: "ambiguous" }]
+      CORE: [{ id: "ABC123", authenticatedState: "ambiguous" }],
     });
 
     const expectedLogArgsByCallIndex = [];
@@ -84,22 +84,22 @@ describe("createIdentityMap", () => {
       if (identifier.id !== "example@example.com") {
         expectedLogArgsByCallIndex.push([
           `The identifier at EMAIL[${i}] was removed from the identity map because its ID is not a populated string. Its ID value is:`,
-          identifier.id
+          identifier.id,
         ]);
       }
     });
 
     expectedLogArgsByCallIndex.push([
       "The identifier at PHONE[0] was removed from the identity map because its ID is not a populated string. Its ID value is:",
-      undefined
+      undefined,
     ]);
 
     expectedLogArgsByCallIndex.push([
-      "The PHONE namespace was removed from the identity map because it contains no identifiers."
+      "The PHONE namespace was removed from the identity map because it contains no identifiers.",
     ]);
 
     expectedLogArgsByCallIndex.push([
-      "The AAID namespace was removed from the identity map because it contains no identifiers."
+      "The AAID namespace was removed from the identity map because it contains no identifiers.",
     ]);
 
     expect(logger.log).toHaveBeenCalledTimes(10);

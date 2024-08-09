@@ -67,7 +67,7 @@ const ObjectEdit = ({ fieldName, verticalLayout = false }) => {
 
 ObjectEdit.propTypes = {
   fieldName: PropTypes.string.isRequired,
-  verticalLayout: PropTypes.bool
+  verticalLayout: PropTypes.bool,
 };
 
 export default ObjectEdit;

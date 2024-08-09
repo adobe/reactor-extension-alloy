@@ -13,5 +13,5 @@ governing permissions and limitations under the License.
 export default {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, content-type, content-range, pragma, if-match, if-modified-since, range, x-gw-ims-org-id, x-api-key, x-model-name, x-admin,ticketId, origin, accept, emailToNotify, x-products, x-auditor-ims-org-id,x-sandbox-name,x-sandbox-id,x-ups-search-version"
+    "authorization, content-type, content-range, pragma, if-match, if-modified-since, range, x-gw-ims-org-id, x-api-key, x-model-name, x-admin,ticketId, origin, accept, emailToNotify, x-products, x-auditor-ims-org-id,x-sandbox-name,x-sandbox-id,x-ups-search-version",
 };

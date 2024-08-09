@@ -39,7 +39,7 @@ function trimValue(value) {
   }
 
   // Object.keys() works on both objects and arrays
-  Object.keys(value).forEach(key => {
+  Object.keys(value).forEach((key) => {
     value[key] = trimValue(value[key]);
   });
   return value;

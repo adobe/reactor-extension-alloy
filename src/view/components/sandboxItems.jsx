@@ -26,7 +26,7 @@ import React from "react";
  * @param {string} item.type
  * @returns {JSX.Element}
  */
-const sandboxItems = item => {
+const sandboxItems = (item) => {
   const region = item.region ? ` (${item.region.toUpperCase()})` : "";
   const label = `${item.type.toUpperCase()} ${item.title}${region}`;
 

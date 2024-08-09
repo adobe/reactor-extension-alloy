@@ -23,13 +23,13 @@ const instanceNamePicker = spectrum.picker("instanceNamePicker");
 
 createExtensionViewFixture({
   title: "Redirect with identity",
-  viewPath: "actions/redirectWithIdentity.html"
+  viewPath: "actions/redirectWithIdentity.html",
 });
 
 runCommonExtensionViewTests();
 
 const extensionSettings = {
-  instances: [{ name: "alloy1" }, { name: "alloy2" }]
+  instances: [{ name: "alloy1" }, { name: "alloy2" }],
 };
 
 test("initializes form fields with settings", async () => {
@@ -41,108 +41,108 @@ test("initializes form fields with settings", async () => {
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: "6336ff95ba16ca1c07b4c0db"
-              }
-            }
+                datasetId: "6336ff95ba16ca1c07b4c0db",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: ["unifiedjsqeonly2"]
+            reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
-            idSyncContainerId: 23512312
+            idSyncContainerId: 23512312,
           },
           com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
           },
-          sandbox: "prod"
+          sandbox: "prod",
         },
         staging: {
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: "6336ff95ba16ca1c07b4c0db"
-              }
-            }
+                datasetId: "6336ff95ba16ca1c07b4c0db",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: ["unifiedjsqeonly2"]
+            reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
-            idSyncContainerId: 23512312
+            idSyncContainerId: 23512312,
           },
           com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
           },
-          sandbox: "prod"
+          sandbox: "prod",
         },
         development: {
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: "6336ff95ba16ca1c07b4c0db"
-              }
-            }
+                datasetId: "6336ff95ba16ca1c07b4c0db",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: ["unifiedjsqeonly2"]
+            reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
-            idSyncContainerId: 23512312
+            idSyncContainerId: 23512312,
           },
           com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
           },
-          sandbox: "prod"
-        }
-      }
+          sandbox: "prod",
+        },
+      },
     },
-    extensionSettings
+    extensionSettings,
   });
   await instanceNamePicker.expectSelectedOptionLabel("alloy2");
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
 
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
 
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
 });
 
@@ -157,20 +157,20 @@ test("returns valid settings", async () => {
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await overrideViewSelectors.addReportSuiteButton.click();
   await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
   await overrideViewSelectors.envTabs.staging.expectExists();
   await overrideViewSelectors.envTabs.staging.click();
@@ -178,20 +178,20 @@ test("returns valid settings", async () => {
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await overrideViewSelectors.addReportSuiteButton.click();
   await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
   await overrideViewSelectors.envTabs.development.expectExists();
   await overrideViewSelectors.envTabs.development.click();
@@ -199,20 +199,20 @@ test("returns valid settings", async () => {
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await overrideViewSelectors.addReportSuiteButton.click();
   await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
 
   await extensionViewController.expectIsValid();
@@ -223,63 +223,63 @@ test("returns valid settings", async () => {
         com_adobe_experience_platform: {
           datasets: {
             event: {
-              datasetId: "6336ff95ba16ca1c07b4c0db"
-            }
-          }
+              datasetId: "6336ff95ba16ca1c07b4c0db",
+            },
+          },
         },
         com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
         },
         com_adobe_identity: {
-          idSyncContainerId: 23512312
+          idSyncContainerId: 23512312,
         },
         com_adobe_target: {
-          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
         },
         sandbox: "prod",
-        datastreamId: "PR123"
+        datastreamId: "PR123",
       },
       staging: {
         com_adobe_experience_platform: {
           datasets: {
             event: {
-              datasetId: "6336ff95ba16ca1c07b4c0db"
-            }
-          }
+              datasetId: "6336ff95ba16ca1c07b4c0db",
+            },
+          },
         },
         com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
         },
         com_adobe_identity: {
-          idSyncContainerId: 23512312
+          idSyncContainerId: 23512312,
         },
         com_adobe_target: {
-          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
         },
         sandbox: "prod",
-        datastreamId: "PR123"
+        datastreamId: "PR123",
       },
       development: {
         com_adobe_experience_platform: {
           datasets: {
             event: {
-              datasetId: "6336ff95ba16ca1c07b4c0db"
-            }
-          }
+              datasetId: "6336ff95ba16ca1c07b4c0db",
+            },
+          },
         },
         com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
         },
         com_adobe_identity: {
-          idSyncContainerId: 23512312
+          idSyncContainerId: 23512312,
         },
         com_adobe_target: {
-          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
         },
         sandbox: "prod",
-        datastreamId: "PR123"
-      }
-    }
+        datastreamId: "PR123",
+      },
+    },
   });
 });
 
@@ -288,14 +288,14 @@ test("defaults to the first instance name", async () => {
   await instanceNamePicker.expectSelectedOptionLabel("alloy1");
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettingsToContain({
-    instanceName: "alloy1"
+    instanceName: "alloy1",
   });
 });
 
 test.requestHooks(
   sandboxesMocks.singleDefault,
   datastreamsMocks.single,
-  datastreamMocks.withConfigOverrides
+  datastreamMocks.withConfigOverrides,
 )("populates overrides dropdowns with Blackbird config data", async () => {
   await extensionViewController.init({
     extensionSettings: {
@@ -303,10 +303,10 @@ test.requestHooks(
         {
           name: "alloy",
           edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
-          sandbox: "prod"
-        }
-      ]
-    }
+          sandbox: "prod",
+        },
+      ],
+    },
   });
 
   await overrideViewSelectors.envTabs.production.click();
@@ -314,24 +314,24 @@ test.requestHooks(
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
   await overrideViewSelectors.datastreamIdDropdown.expectExists();
   await overrideViewSelectors.datastreamIdDropdown.selectOption(
-    "Test Config Overrides"
+    "Test Config Overrides",
   );
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectExists();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.openMenu();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectMenuOptionLabels(
-    ["6335faf30f5a161c0b4b1444"]
+    ["6335faf30f5a161c0b4b1444"],
   );
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.selectMenuOption(
-    "6335faf30f5a161c0b4b1444"
+    "6335faf30f5a161c0b4b1444",
   );
 
   await overrideViewSelectors.comboBoxes.idSyncContainerOverride.expectExists();
   await overrideViewSelectors.comboBoxes.idSyncContainerOverride.openMenu();
   await overrideViewSelectors.comboBoxes.idSyncContainerOverride.expectMenuOptionLabels(
-    ["107756", "107757"]
+    ["107756", "107757"],
   );
   await overrideViewSelectors.comboBoxes.idSyncContainerOverride.selectMenuOption(
-    "107756"
+    "107756",
   );
 
   await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.expectExists();
@@ -339,20 +339,20 @@ test.requestHooks(
   await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.expectMenuOptionLabels(
     [
       "aba5431a-9f59-f816-7d73-8e40c8f4c4fd",
-      "65d186ff-be14-dfa0-75fa-546d93bebf91"
-    ]
+      "65d186ff-be14-dfa0-75fa-546d93bebf91",
+    ],
   );
   await overrideViewSelectors.comboBoxes.targetPropertyTokenOverride.selectMenuOption(
-    "aba5431a-9f59-f816-7d73-8e40c8f4c4fd"
+    "aba5431a-9f59-f816-7d73-8e40c8f4c4fd",
   );
 
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].expectExists();
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].openMenu();
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].expectMenuOptionLabels(
-    ["unifiedjsqeonly2", "unifiedjsqeonlylatest", "unifiedjsqeonlymobileweb"]
+    ["unifiedjsqeonly2", "unifiedjsqeonlylatest", "unifiedjsqeonlymobileweb"],
   );
   await overrideViewSelectors.comboBoxes.reportSuiteOverrides[0].selectMenuOption(
-    "unifiedjsqeonlylatest"
+    "unifiedjsqeonlylatest",
   );
 
   await extensionViewController.expectIsValid();
@@ -369,20 +369,20 @@ test("can copy override settings between environments", async () => {
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.typeText(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.typeText(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].typeText(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await overrideViewSelectors.addReportSuiteButton.click();
   await overrideViewSelectors.textFields.reportSuiteOverrides[1].typeText(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
   await overrideViewSelectors.envTabs.staging.expectExists();
   await overrideViewSelectors.envTabs.staging.click();
@@ -390,19 +390,19 @@ test("can copy override settings between environments", async () => {
   await overrideViewSelectors.copyButtons.production.click();
   await overrideViewSelectors.datastreamIdFreeform.expectValue("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[1].expectValue(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
 
   await overrideViewSelectors.envTabs.development.expectExists();
@@ -411,19 +411,19 @@ test("can copy override settings between environments", async () => {
   await overrideViewSelectors.copyButtons.staging.click();
   await overrideViewSelectors.datastreamIdFreeform.expectValue("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
-    "6336ff95ba16ca1c07b4c0db"
+    "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "23512312"
+    "23512312",
   );
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "unifiedjsqeonly2"
+    "unifiedjsqeonly2",
   );
   await overrideViewSelectors.textFields.reportSuiteOverrides[1].expectValue(
-    "unifiedjsqeonly3"
+    "unifiedjsqeonly3",
   );
 
   await extensionViewController.expectIsValid();
@@ -434,62 +434,62 @@ test("can copy override settings between environments", async () => {
         com_adobe_experience_platform: {
           datasets: {
             event: {
-              datasetId: "6336ff95ba16ca1c07b4c0db"
-            }
-          }
+              datasetId: "6336ff95ba16ca1c07b4c0db",
+            },
+          },
         },
         com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
         },
         com_adobe_identity: {
-          idSyncContainerId: 23512312
+          idSyncContainerId: 23512312,
         },
         com_adobe_target: {
-          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
         },
         sandbox: "prod",
-        datastreamId: "PR123"
+        datastreamId: "PR123",
       },
       staging: {
         com_adobe_experience_platform: {
           datasets: {
             event: {
-              datasetId: "6336ff95ba16ca1c07b4c0db"
-            }
-          }
+              datasetId: "6336ff95ba16ca1c07b4c0db",
+            },
+          },
         },
         com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
         },
         com_adobe_identity: {
-          idSyncContainerId: 23512312
+          idSyncContainerId: 23512312,
         },
         com_adobe_target: {
-          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
         },
         sandbox: "prod",
-        datastreamId: "PR123"
+        datastreamId: "PR123",
       },
       development: {
         com_adobe_experience_platform: {
           datasets: {
             event: {
-              datasetId: "6336ff95ba16ca1c07b4c0db"
-            }
-          }
+              datasetId: "6336ff95ba16ca1c07b4c0db",
+            },
+          },
         },
         com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+          reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
         },
         com_adobe_identity: {
-          idSyncContainerId: 23512312
+          idSyncContainerId: 23512312,
         },
         com_adobe_target: {
-          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+          propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
         },
         sandbox: "prod",
-        datastreamId: "PR123"
-      }
-    }
+        datastreamId: "PR123",
+      },
+    },
   });
 });

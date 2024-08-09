@@ -16,7 +16,7 @@ const addToBreadcrumb = (breadcrumb, displayName, nodeId) => {
   if (displayName) {
     breadcrumb.unshift({
       label: displayName,
-      nodeId
+      nodeId,
     });
   }
 };
@@ -45,21 +45,21 @@ const getNodeEditData = ({
   candidateFieldName,
   candidatePropertyName,
   candidateDisplayName,
-  nodeIdToFind
+  nodeIdToFind,
 }) => {
   if (candidateFormStateNode.id === nodeIdToFind) {
     const breadcrumb = [];
     addToBreadcrumb(
       breadcrumb,
       candidatePropertyName,
-      candidateFormStateNode.id
+      candidateFormStateNode.id,
     );
     return {
       formStateNode: candidateFormStateNode,
       fieldName: candidateFieldName,
       breadcrumb,
       displayName: candidateDisplayName,
-      hasClearedAncestor: false
+      hasClearedAncestor: false,
     };
   }
 
@@ -79,14 +79,14 @@ const getNodeEditData = ({
           ? `${candidateFieldName}.properties.${propertyName}`
           : `properties.${propertyName}`,
         candidatePropertyName: propertyName,
-        candidateDisplayName: propertySchema.title || propertyName
+        candidateDisplayName: propertySchema.title || propertyName,
       });
 
       if (foundNodeHierarchyAndFieldName) {
         addToBreadcrumb(
           foundNodeHierarchyAndFieldName.breadcrumb,
           candidatePropertyName,
-          candidateFormStateNode.id
+          candidateFormStateNode.id,
         );
         if (candidateFormStateNode.transform.clear) {
           foundNodeHierarchyAndFieldName.hasClearedAncestor = true;
@@ -107,14 +107,14 @@ const getNodeEditData = ({
           ? `${candidateFieldName}.items.${i}`
           : `items.${i}`,
         candidatePropertyName: `Item ${i + 1}`,
-        candidateDisplayName: `Item ${i + 1}`
+        candidateDisplayName: `Item ${i + 1}`,
       });
 
       if (foundNodeHierarchyAndFieldName) {
         addToBreadcrumb(
           foundNodeHierarchyAndFieldName.breadcrumb,
           candidatePropertyName,
-          candidateFormStateNode.id
+          candidateFormStateNode.id,
         );
         if (candidateFormStateNode.transform.clear) {
           foundNodeHierarchyAndFieldName.hasClearedAncestor = true;
@@ -130,6 +130,6 @@ const getNodeEditData = ({
 export default ({ formState, nodeId }) => {
   return getNodeEditData({
     candidateFormStateNode: formState,
-    nodeIdToFind: nodeId
+    nodeIdToFind: nodeId,
   });
 };

@@ -20,12 +20,12 @@ const DataElementSelector = ({ children, augmentValue, tokenize }) => {
   // button if the field has a label so the button aligns
   // with the input box.
   const inputChild = React.Children.toArray(children).find(
-    child => child.props.name
+    (child) => child.props.name,
   );
 
   if (!inputChild) {
     throw new Error(
-      "DataElementSelector must wrap a component with its `name` prop set."
+      "DataElementSelector must wrap a component with its `name` prop set.",
     );
   }
 
@@ -49,7 +49,7 @@ const DataElementSelector = ({ children, augmentValue, tokenize }) => {
 DataElementSelector.propTypes = {
   children: PropTypes.node.isRequired,
   augmentValue: PropTypes.bool,
-  tokenize: PropTypes.bool
+  tokenize: PropTypes.bool,
 };
 
 export default DataElementSelector;

@@ -14,5 +14,5 @@ const { sendEventCallbackStorage } = require("../../index");
 const createDecisionsReceived = require("./createDecisionsReceived");
 
 module.exports = createDecisionsReceived({
-  sendEventCallbackStorage
+  sendEventCallbackStorage,
 });

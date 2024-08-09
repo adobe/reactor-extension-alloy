@@ -1,5 +1,5 @@
 /*
-Copyright 2023 Adobe. All rights reserved.
+Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -27,15 +27,17 @@ import { useField } from "formik";
 const FormikNumberField = ({ name, width, validate, ...otherProps }) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
     name,
-    validate
+    validate,
   });
 
   return (
     <NumberField
       {...otherProps}
-      value={value}
-      onChange={newValue => {
-        setValue(newValue);
+      value={value === "" ? null : value}
+      onChange={(val) => {
+        setValue(val).then(() => {
+          setTouched(true);
+        });
       }}
       onBlur={() => {
         setTouched(true);
@@ -50,7 +52,7 @@ const FormikNumberField = ({ name, width, validate, ...otherProps }) => {
 FormikNumberField.propTypes = {
   name: PropTypes.string.isRequired,
   width: PropTypes.string,
-  validate: PropTypes.func
+  validate: PropTypes.func,
 };
 
 export default FormikNumberField;

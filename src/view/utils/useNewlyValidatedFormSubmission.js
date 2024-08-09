@@ -21,7 +21,7 @@ import { useFormikContext } from "formik";
  * @param {Function} callback A function to call whenever the user
  * attempts to submit a formik form and validation completes.
  */
-export default callback => {
+export default (callback) => {
   const { submitCount, isSubmitting, errors } = useFormikContext();
   const previousProcessedSubmitCountRef = useRef(0);
   useEffect(() => {

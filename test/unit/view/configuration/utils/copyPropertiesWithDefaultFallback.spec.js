@@ -17,19 +17,19 @@ describe("copyPropertiesWithDefaultFallback", () => {
     const fromObj = {
       a: "foo",
       b: "bar",
-      c: ""
+      c: "",
     };
     const defaultsObj = {
       a: "",
       b: "",
-      c: ""
+      c: "",
     };
     const keys = ["a", "b"];
     copyPropertiesWithDefaultFallback({
       toObj,
       fromObj,
       defaultsObj,
-      keys
+      keys,
     });
     expect(Object.keys(toObj)).toEqual(keys);
   });
@@ -39,19 +39,19 @@ describe("copyPropertiesWithDefaultFallback", () => {
     const fromObj = {
       a: "",
       b: "bar",
-      c: ""
+      c: "",
     };
     const defaultsObj = {
       a: "",
       b: "",
-      c: ""
+      c: "",
     };
     const keys = ["a", "b"];
     copyPropertiesWithDefaultFallback({
       toObj,
       fromObj,
       defaultsObj,
-      keys
+      keys,
     });
     expect(toObj).toEqual({ a: "", b: "bar" });
   });
@@ -62,9 +62,9 @@ describe("copyPropertiesWithDefaultFallback", () => {
       a: "foo",
       c: {
         d: {
-          e: "baz"
-        }
-      }
+          e: "baz",
+        },
+      },
     };
     const defaultsObj = {
       a: "",
@@ -72,17 +72,17 @@ describe("copyPropertiesWithDefaultFallback", () => {
       c: {
         d: {
           e: "",
-          f: ""
+          f: "",
         },
-        g: ""
-      }
+        g: "",
+      },
     };
     const keys = ["a", "b", "c"];
     copyPropertiesWithDefaultFallback({
       toObj,
       fromObj,
       defaultsObj,
-      keys
+      keys,
     });
     expect(toObj).toEqual({
       a: "foo",
@@ -90,10 +90,10 @@ describe("copyPropertiesWithDefaultFallback", () => {
       c: {
         d: {
           e: "baz",
-          f: ""
+          f: "",
         },
-        g: ""
-      }
+        g: "",
+      },
     });
   });
 });

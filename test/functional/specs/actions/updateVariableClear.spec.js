@@ -23,7 +23,7 @@ const clearField = spectrum.checkbox("clearField");
 createExtensionViewFixture({
   title: "Update variable action view (Clear checkbox)",
   viewPath: "actions/updateVariable.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
 });
 
 test.requestHooks(dataElementsMocks.multipleBothTypes)(
@@ -31,8 +31,8 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await dataElementField.openMenu();
     await dataElementField.selectMenuOption("Test data variable 2");
@@ -43,19 +43,18 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.4"
+        version: "1.4",
       },
       transforms: {
         "_unifiedjsqeonly.vendor": {
-          clear: true
-        }
-      }
+          clear: true,
+        },
+      },
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.multipleBothTypes)(
@@ -63,8 +62,8 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await dataElementField.openMenu();
     await dataElementField.selectMenuOption("Test solutions variable 2");
@@ -72,15 +71,14 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1960",
       dataElementId: "SDE2",
       transforms: {
         "__adobe.target": {
-          clear: true
-        }
-      }
+          clear: true,
+        },
+      },
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.multipleBothTypes)(
@@ -88,8 +86,8 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await dataElementField.openMenu();
     await dataElementField.selectMenuOption("Test data variable 2");
@@ -99,19 +97,18 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.4"
+        version: "1.4",
       },
       transforms: {
         "": {
-          clear: true
-        }
-      }
+          clear: true,
+        },
+      },
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.multipleBothTypes)(
@@ -119,8 +116,8 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     await dataElementField.openMenu();
     await dataElementField.selectMenuOption("Test solutions variable 2");
@@ -130,35 +127,33 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
 
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1960",
       dataElementId: "SDE2",
       transforms: {
         "": {
-          clear: true
-        }
-      }
+          clear: true,
+        },
+      },
     });
-  }
+  },
 );
 
 test.requestHooks(
   dataElementsMocks.multipleBothTypes,
-  dataElementMocks.element2
+  dataElementMocks.element2,
 )("Allows a cleared element to be loaded for an XDM variable", async () => {
   await extensionViewController.init({
     propertySettings: {
-      id: "PRabcd"
+      id: "PRabcd",
     },
     settings: {
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "DE2",
       transforms: {
         "_unifiedjsqeonly.vendor": {
-          clear: true
-        }
-      }
-    }
+          clear: true,
+        },
+      },
+    },
   });
   await dataElementField.expectText("Test data variable 2");
   await xdmTree.node("xdm").expectExists();
@@ -169,22 +164,21 @@ test.requestHooks(
 
 test.requestHooks(
   dataElementsMocks.multipleBothTypes,
-  dataElementMocks.solutionsElement1
+  dataElementMocks.solutionsElement1,
 )("Allows a cleared element to be loaded for a DATA variable", async () => {
   await extensionViewController.init({
     propertySettings: {
-      id: "PRabcd"
+      id: "PRabcd",
     },
     settings: {
       data: {},
-      dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       dataElementId: "SDE1",
       transforms: {
         "__adobe.target": {
-          clear: true
-        }
-      }
-    }
+          clear: true,
+        },
+      },
+    },
   });
   await xdmTree.node("target").click();
   await dataElementField.expectText("Test solutions variable 1");
@@ -193,58 +187,56 @@ test.requestHooks(
 
 test.requestHooks(
   dataElementsMocks.multipleBothTypes,
-  dataElementMocks.element2
+  dataElementMocks.element2,
 )(
   "Allows the root cleared element to be loaded for XDM variables",
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
+        id: "PRabcd",
       },
       settings: {
         data: {},
-        dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
         dataElementId: "DE2",
         transforms: {
           "": {
-            clear: true
-          }
-        }
-      }
+            clear: true,
+          },
+        },
+      },
     });
     await dataElementField.expectText("Test data variable 2");
     await xdmTree.node("xdm").expectExists();
     await xdmTree.node("xdm").click();
     await clearField.expectChecked();
-  }
+  },
 );
 
 test.requestHooks(
   dataElementsMocks.multipleBothTypes,
-  dataElementMocks.solutionsElement1
+  dataElementMocks.solutionsElement1,
 )(
   "Allows the root cleared element to be loaded for DATA variables",
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
+        id: "PRabcd",
       },
       settings: {
         data: {},
-        dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
         dataElementId: "SDE1",
         transforms: {
           "": {
-            clear: true
-          }
-        }
-      }
+            clear: true,
+          },
+        },
+      },
     });
     await dataElementField.expectText("Test solutions variable 1");
     await xdmTree.node("data").expectExists();
     await xdmTree.node("data").click();
     await clearField.expectChecked();
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.multiple, dataElementMocks.element2)(
@@ -252,18 +244,17 @@ test.requestHooks(dataElementsMocks.multiple, dataElementMocks.element2)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
+        id: "PRabcd",
       },
       settings: {
         data: {},
-        dataElementCacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
         dataElementId: "DE2",
         transforms: {
           "_unifiedjsqeonly.vendor": {
-            clear: true
-          }
-        }
-      }
+            clear: true,
+          },
+        },
+      },
     });
     await dataElementField.expectText("Test data variable 2");
     await xdmTree.node("xdm").expectExists();
@@ -272,5 +263,5 @@ test.requestHooks(dataElementsMocks.multiple, dataElementMocks.element2)(
     await xdmTree.node("name").click();
     await clearField.expectChecked();
     await clearField.expectDisabled();
-  }
+  },
 );

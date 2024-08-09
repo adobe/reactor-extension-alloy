@@ -16,5 +16,5 @@ const { eventMergeIdCache } = require("../../index");
 
 module.exports = createEventMergeId({
   instanceManager,
-  eventMergeIdCache
+  eventMergeIdCache,
 });

@@ -61,7 +61,7 @@ const OverrideInput = ({
 OverrideInput.propTypes = {
   useManualEntry: PropTypes.bool.isRequired,
   children: PropTypes.func.isRequired,
-  allowsCustomValue: PropTypes.bool
+  allowsCustomValue: PropTypes.bool,
 };
 
 export default OverrideInput;

@@ -15,7 +15,7 @@ import PropTypes from "prop-types";
 
 const betaBadge = ({ isDisabled }) => {
   const styles = {
-    padding: "0"
+    padding: "0",
   };
   if (isDisabled) {
     styles.backgroundColor = "var(--spectrum-alias-text-color-disabled)";
@@ -29,7 +29,7 @@ const betaBadge = ({ isDisabled }) => {
 };
 
 betaBadge.propTypes = {
-  isDisabled: PropTypes.bool
+  isDisabled: PropTypes.bool,
 };
 
 export default betaBadge;

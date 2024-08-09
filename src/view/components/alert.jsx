@@ -27,7 +27,7 @@ const iconByVariant = {
   informative: InfoIcon,
   positive: CheckmarkCircle,
   notice: AlertIcon,
-  negative: AlertIcon
+  negative: AlertIcon,
 };
 
 const Alert = ({
@@ -60,12 +60,12 @@ Alert.propTypes = {
     "informative",
     "positive",
     "notice",
-    "negative"
+    "negative",
   ]),
   title: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired,
   width: PropTypes.string,
-  className: PropTypes.string
+  className: PropTypes.string,
 };
 
 export default Alert;

@@ -15,7 +15,7 @@ import numberAwareCompareFunction from "../../../utils/numberAwareCompareFunctio
 const pathSegmentRegex = /(.+?)([[.]|$)/;
 const arrayNotationRegex = /^\[(\d*)\]$/;
 
-const isNonNullObject = item => typeof item === "object" && item !== null;
+const isNonNullObject = (item) => typeof item === "object" && item !== null;
 
 const addVariablesFromEntity = (variables, prefix, value) => {
   if (Array.isArray(value)) {
@@ -38,17 +38,17 @@ const addVariablesFromEntity = (variables, prefix, value) => {
       addVariablesFromEntity(
         variables,
         `${prefix}[${indicateIndex ? index : ""}]`,
-        item
+        item,
       );
     });
   } else if (isNonNullObject(value)) {
-    Object.keys(value).forEach(key => {
+    Object.keys(value).forEach((key) => {
       addVariablesFromEntity(variables, `${prefix}.${key}`, value[key]);
     });
   } else if (value !== undefined && value !== null) {
     variables.push({
       key: prefix,
-      value
+      value,
     });
   }
 };
@@ -123,14 +123,14 @@ export const addToEntityFromVariables = (o, variables, { expandPaths }) => {
     }, {});
   }
 
-  variables.forEach(q => addToEntityFromVariable(o, q.key, q.value));
+  variables.forEach((q) => addToEntityFromVariable(o, q.key, q.value));
   return o;
 };
 
 export const addToVariablesFromEntity = (
   variables,
   entity,
-  { expandPaths }
+  { expandPaths },
 ) => {
   if (expandPaths === false) {
     return Object.keys(entity)
@@ -141,7 +141,7 @@ export const addToVariablesFromEntity = (
       }, []);
   }
 
-  Object.keys(entity).forEach(key => {
+  Object.keys(entity).forEach((key) => {
     addVariablesFromEntity(variables, key, entity[key]);
   });
 

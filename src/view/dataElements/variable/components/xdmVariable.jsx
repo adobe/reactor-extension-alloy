@@ -30,7 +30,7 @@ const initializeSandboxes = async ({
   context,
   settings: { sandbox: { name: sandbox } = {} },
   orgId,
-  imsAccess
+  imsAccess,
 }) => {
   const { results: sandboxes } = await fetchSandboxes({ orgId, imsAccess });
 
@@ -38,9 +38,9 @@ const initializeSandboxes = async ({
     throw new UserReportableError("You do not have access to any sandboxes.");
   }
 
-  if (sandbox && !sandboxes.find(s => s.name === sandbox)) {
+  if (sandbox && !sandboxes.find((s) => s.name === sandbox)) {
     throw new UserReportableError(
-      "Could not find the sandbox selected previously. Either you don't have access or the sandbox was deleted."
+      "Could not find the sandbox selected previously. Either you don't have access or the sandbox was deleted.",
     );
   }
   context.sandboxes = sandboxes;
@@ -59,10 +59,10 @@ const initializeSelectedSchema = async ({
   initialValues,
   settings: {
     sandbox: { name: sandbox } = {},
-    schema: { id: schemaId, version: schemaVersion } = {}
+    schema: { id: schemaId, version: schemaVersion } = {},
   },
   orgId,
-  imsAccess
+  imsAccess,
 }) => {
   if (schemaId && schemaVersion && sandbox) {
     const { $id, title, version } = await fetchSchema({
@@ -70,7 +70,7 @@ const initializeSelectedSchema = async ({
       imsAccess,
       schemaId,
       schemaVersion,
-      sandboxName: sandbox
+      sandboxName: sandbox,
     });
     initialValues.schema = { $id, title, version };
   } else {
@@ -83,14 +83,14 @@ const initializeSchemas = async ({
   settings: { schema: { id: schemaId } = {} },
   context,
   orgId,
-  imsAccess
+  imsAccess,
 }) => {
   if (initialValues.sandbox) {
     const { results: schemasFirstPage, nextPage: schemasFirstPageCursor } =
       await fetchSchemasMeta({
         orgId,
         imsAccess,
-        sandboxName: initialValues.sandbox
+        sandboxName: initialValues.sandbox,
       });
 
     context.schemasFirstPage = schemasFirstPage;
@@ -105,12 +105,12 @@ export const bridge = {
   async getInitialValues({ initInfo, context }) {
     const {
       company: { orgId },
-      tokens: { imsAccess }
+      tokens: { imsAccess },
     } = initInfo;
     const settings = initInfo.settings || {};
 
     const initialValues = {
-      sandbox: settings.sandbox?.name
+      sandbox: settings.sandbox?.name,
     };
 
     const args = {
@@ -118,13 +118,13 @@ export const bridge = {
       context,
       settings,
       orgId,
-      imsAccess
+      imsAccess,
     };
 
     await initializeSandboxes(args);
     await Promise.all([
       initializeSelectedSchema(args),
-      initializeSchemas(args)
+      initializeSchemas(args),
     ]);
 
     return initialValues;
@@ -140,8 +140,8 @@ export const bridge = {
       sandbox: { name: sandbox },
       schema: {
         id: schema?.$id,
-        version: schema?.version
-      }
+        version: schema?.version,
+      },
     };
   },
   validateFormikState: ({ type, sandbox, schema }) => {
@@ -160,19 +160,19 @@ export const bridge = {
     }
 
     return result;
-  }
+  },
 };
 
-const getKey = item => item && `${item.$id}_${item.version}`;
-const getLabel = item => item?.title;
+const getKey = (item) => item && `${item.$id}_${item.version}`;
+const getLabel = (item) => item?.title;
 
 const XdmVariable = ({
   context: { sandboxes, schemasFirstPage, schemasFirstPageCursor },
-  initInfo
+  initInfo,
 }) => {
   const {
     company: { orgId },
-    tokens: { imsAccess }
+    tokens: { imsAccess },
   } = initInfo;
   const reportAsyncError = useReportAsyncError();
 
@@ -188,7 +188,7 @@ const XdmVariable = ({
         sandboxName: sandbox,
         search: filterText,
         start: cursor,
-        signal
+        signal,
       }));
     } catch (e) {
       if (e.name !== "AbortError") {
@@ -200,7 +200,7 @@ const XdmVariable = ({
     }
     return {
       items: results,
-      cursor: nextPage
+      cursor: nextPage,
     };
   };
 
@@ -216,7 +216,7 @@ const XdmVariable = ({
           description="Choose a sandbox containing the schema you wish to use."
           placeholder="Select a sandbox"
         >
-          {item => {
+          {(item) => {
             const region = item.region ? ` (${item.region.toUpperCase()})` : "";
             const label = `${item.type.toUpperCase()} ${item.title}${region}`;
             return <Item key={item.name}>{label}</Item>;
@@ -244,7 +244,7 @@ const XdmVariable = ({
 
 XdmVariable.propTypes = {
   initInfo: PropTypes.object,
-  context: PropTypes.object
+  context: PropTypes.object,
 };
 
 export default XdmVariable;

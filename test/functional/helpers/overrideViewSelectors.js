@@ -15,50 +15,50 @@ const overrideViewSelectors = {
   envTabs: {
     production: spectrumWrappers.tab("productionOverridesTab"),
     staging: spectrumWrappers.tab("stagingOverridesTab"),
-    development: spectrumWrappers.tab("developmentOverridesTab")
+    development: spectrumWrappers.tab("developmentOverridesTab"),
   },
   textFields: {
     eventDatasetOverride: spectrumWrappers.textField("eventDatasetOverride"),
     idSyncContainerOverride: spectrumWrappers.textField(
-      "idSyncContainerOverride"
+      "idSyncContainerOverride",
     ),
     targetPropertyTokenOverride: spectrumWrappers.textField(
-      "targetPropertyTokenOverride"
+      "targetPropertyTokenOverride",
     ),
-    reportSuiteOverrides: [0, 1, 2].map(index =>
-      spectrumWrappers.textField(`reportSuitesOverride.${index}`)
-    )
+    reportSuiteOverrides: [0, 1, 2].map((index) =>
+      spectrumWrappers.textField(`reportSuitesOverride.${index}`),
+    ),
   },
   comboBoxes: {
     eventDatasetOverride: spectrumWrappers.comboBox("eventDatasetOverride"),
     idSyncContainerOverride: spectrumWrappers.comboBox(
-      "idSyncContainerOverride"
+      "idSyncContainerOverride",
     ),
     targetPropertyTokenOverride: spectrumWrappers.comboBox(
-      "targetPropertyTokenOverride"
+      "targetPropertyTokenOverride",
     ),
-    reportSuiteOverrides: [0, 1, 2].map(index =>
-      spectrumWrappers.comboBox(`reportSuitesOverride.${index}`)
-    )
+    reportSuiteOverrides: [0, 1, 2].map((index) =>
+      spectrumWrappers.comboBox(`reportSuitesOverride.${index}`),
+    ),
   },
   addReportSuiteButton: spectrumWrappers.button("addReportSuite"),
-  removeReportSuitesButtons: [0, 1, 2].map(index =>
-    spectrumWrappers.textField(`removeReportSuite.${index}`)
+  removeReportSuitesButtons: [0, 1, 2].map((index) =>
+    spectrumWrappers.textField(`removeReportSuite.${index}`),
   ),
   copyButtons: {
     production: spectrumWrappers.button("copyFromProductionButton"),
     staging: spectrumWrappers.button("copyFromStagingButton"),
-    development: spectrumWrappers.button("copyFromDevelopmentButton")
+    development: spectrumWrappers.button("copyFromDevelopmentButton"),
   },
   sandbox: spectrumWrappers.picker("sandbox"),
   datastreamInputMethod: {
     freeform: spectrumWrappers.radio(
-      "datastreamOverrideInputMethodFreeformRadio"
+      "datastreamOverrideInputMethodFreeformRadio",
     ),
-    select: spectrumWrappers.radio("datastreamOverrideInputMethodSelectRadio")
+    select: spectrumWrappers.radio("datastreamOverrideInputMethodSelectRadio"),
   },
   datastreamIdDropdown: spectrumWrappers.picker("datastreamId"),
-  datastreamIdFreeform: spectrumWrappers.textField("datastreamId")
+  datastreamIdFreeform: spectrumWrappers.textField("datastreamId"),
 };
 
 export default overrideViewSelectors;

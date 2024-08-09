@@ -9,12 +9,12 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const isNil = value => value == null;
-const isObject = value =>
+const isNil = (value) => value == null;
+const isObject = (value) =>
   !isNil(value) && !Array.isArray(value) && typeof value === "object";
 
 const deepAssignObject = (target, source) => {
-  Object.keys(source).forEach(key => {
+  Object.keys(source).forEach((key) => {
     if (isObject(target[key]) && isObject(source[key])) {
       deepAssignObject(target[key], source[key]);
       return;
@@ -39,7 +39,7 @@ export default (target, ...sources) => {
 
   const result = Object(target);
 
-  sources.forEach(source => deepAssignObject(result, Object(source)));
+  sources.forEach((source) => deepAssignObject(result, Object(source)));
 
   return result;
 };

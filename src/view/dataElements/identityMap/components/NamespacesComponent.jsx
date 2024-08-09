@@ -27,7 +27,7 @@ const getSelectedNamespace = (namespaces, selectedNamespaceCode) => {
 
   return found ? found.code : undefined;
 };
-const getNamespacesMissingDescription = link => {
+const getNamespacesMissingDescription = (link) => {
   return (
     <>
       The namespace you have entered is missing from one or more of your
@@ -46,7 +46,7 @@ const NamespacesComponent = ({ name, index, namespaces }) => {
 
   const isNamespacePartOfSandboxNamespaces = getSelectedNamespace(
     namespaces,
-    selectedNamespaceCode
+    selectedNamespaceCode,
   );
   const namespacesLearnMoreLink =
     "https://experienceleague.adobe.com/docs/experience-platform/identity/namespaces.html?lang=en";
@@ -67,7 +67,7 @@ const NamespacesComponent = ({ name, index, namespaces }) => {
           label="Namespace"
           allowsCustomValue
         >
-          {namespace => <Item key={namespace.code}>{namespace.code}</Item>}
+          {(namespace) => <Item key={namespace.code}>{namespace.code}</Item>}
         </FormikComboBox>
       ) : (
         <FormikTextField
@@ -88,7 +88,7 @@ const NamespacesComponent = ({ name, index, namespaces }) => {
 NamespacesComponent.propTypes = {
   name: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
-  namespaces: PropTypes.array
+  namespaces: PropTypes.array,
 };
 
 export default NamespacesComponent;

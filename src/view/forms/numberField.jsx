@@ -51,17 +51,17 @@ export default function numberField({
   isRequired = false,
   label,
   description,
-  dataElementDescription
+  dataElementDescription,
 }) {
   const validationShape = {
     [name]: number().typeError(
-      `Please provide the ${label.toLowerCase()} as a number.`
+      `Please provide the ${label.toLowerCase()} as a number.`,
     ),
     [`${name}DataElement`]: string().when(`${name}InputMethod`, {
       is: DATA_ELEMENT,
-      then: schema =>
-        schema.matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-    })
+      then: (schema) =>
+        schema.matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
+    }),
   };
 
   if (isRequired) {
@@ -70,20 +70,20 @@ export default function numberField({
       .typeError(`Please provide the ${label.toLowerCase()} as a number.`)
       .when(`${name}InputMethod`, {
         is: NUMBER,
-        then: schema =>
+        then: (schema) =>
           schema.required(
-            `Please provide the ${label.toLowerCase()} as a number.`
-          )
+            `Please provide the ${label.toLowerCase()} as a number.`,
+          ),
       });
     validationShape[`${name}DataElement`] = string().when(
       `${name}InputMethod`,
       {
         is: DATA_ELEMENT,
-        then: schema =>
+        then: (schema) =>
           schema
             .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-            .required(DATA_ELEMENT_REQUIRED)
-      }
+            .required(DATA_ELEMENT_REQUIRED),
+      },
     );
   }
   const part = {
@@ -93,7 +93,7 @@ export default function numberField({
       const initialValues = {
         [name]: value,
         [`${name}InputMethod`]: NUMBER,
-        [`${name}DataElement`]: ""
+        [`${name}DataElement`]: "",
       };
 
       if (typeof value === "string") {
@@ -120,7 +120,7 @@ export default function numberField({
     validationShape,
     Component: ({ namePrefix = "" }) => {
       const [{ value: inputMethod }] = useField(
-        `${namePrefix}${name}InputMethod`
+        `${namePrefix}${name}InputMethod`,
       );
 
       return (
@@ -151,6 +151,7 @@ export default function numberField({
               isRequired={isRequired}
               description={description}
               width="size-5000"
+              aria-label={`${label} number field`}
             />
           )}
           {inputMethod === DATA_ELEMENT && (
@@ -167,10 +168,10 @@ export default function numberField({
           )}
         </>
       );
-    }
+    },
   };
   part.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
   return part;
 }

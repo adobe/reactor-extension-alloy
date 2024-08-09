@@ -17,7 +17,7 @@ import { lightTheme, Provider } from "@adobe/react-spectrum";
 const container = document.getElementById("root");
 const root = createRoot(container);
 
-export default ComponentFixture => {
+export default (ComponentFixture) => {
   root.render(
     <Provider
       theme={lightTheme}
@@ -25,6 +25,6 @@ export default ComponentFixture => {
       UNSAFE_className="react-spectrum-provider"
     >
       <ComponentFixture />
-    </Provider>
+    </Provider>,
   );
 };

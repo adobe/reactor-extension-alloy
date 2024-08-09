@@ -23,32 +23,32 @@ const metadataFormOption = spectrum.radio("metadataFormOption");
 const metadataDataElementOption = spectrum.radio("metadataDataElementOption");
 const metadataDataElementField = spectrum.textField("metadataDataElementField");
 
-const metadata = [0, 1, 2].map(i => ({
+const metadata = [0, 1, 2].map((i) => ({
   scopeField: spectrum.textField(`metadata.${i}.scopeTextField`),
   selectorField: spectrum.textField(`metadata.${i}.selectorTextField`),
   actionType: spectrum.comboBox(`metadata.${i}.actionTypeField`),
-  removeButton: spectrum.button(`metadata${i}RemoveButton`)
+  removeButton: spectrum.button(`metadata${i}RemoveButton`),
 }));
 const metadataAddButton = spectrum.button("metadataAddButton");
 
 const mockExtensionSettings = {
   instances: [
     {
-      name: "alloy1"
+      name: "alloy1",
     },
     {
-      name: "alloy2"
-    }
-  ]
+      name: "alloy2",
+    },
+  ],
 };
 
 createExtensionViewFixture({
   title: "Apply propositions view",
-  viewPath: "actions/applyPropositions.html"
+  viewPath: "actions/applyPropositions.html",
 });
 
 runCommonExtensionViewTests({
-  extensionSettings: mockExtensionSettings
+  extensionSettings: mockExtensionSettings,
 });
 
 test("initializes form fields with full settings", async () => {
@@ -61,14 +61,14 @@ test("initializes form fields with full settings", async () => {
       metadata: {
         scope1: {
           selector: ".selector1",
-          actionType: "setHtml"
+          actionType: "setHtml",
         },
         scope2: {
           selector: ".selector2",
-          actionType: "appendHtml"
-        }
-      }
-    }
+          actionType: "appendHtml",
+        },
+      },
+    },
   });
   await instanceNameField.expectText("alloy2");
   await propositionsField.expectValue("%propositions%");
@@ -86,8 +86,8 @@ test("initializes form fields with minimal settings", async () => {
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy1",
-      propositions: "%mypropositions%"
-    }
+      propositions: "%mypropositions%",
+    },
   });
   await instanceNameField.expectText("alloy1");
   await propositionsField.expectValue("%mypropositions%");
@@ -99,7 +99,7 @@ test("initializes form fields with minimal settings", async () => {
 
 test("initializes form fields with no settings", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await instanceNameField.expectText("alloy1");
   await propositionsField.expectValue("");
@@ -113,20 +113,20 @@ test("returns minimal valid settings", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
     settings: {
-      propositions: "%myprops%"
-    }
+      propositions: "%myprops%",
+    },
   });
 
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
-    propositions: "%myprops%"
+    propositions: "%myprops%",
   });
 });
 
 test("returns full valid settings", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await instanceNameField.selectOption("alloy2");
   await propositionsField.typeText("%myprops%");
@@ -149,19 +149,19 @@ test("returns full valid settings", async () => {
     metadata: {
       scope1: {
         selector: ".selector1",
-        actionType: "setHtml"
+        actionType: "setHtml",
       },
       scope2: {
         selector: ".selector2",
-        actionType: "replaceHtml"
-      }
-    }
+        actionType: "replaceHtml",
+      },
+    },
   });
 });
 
 test("removes a scope", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await metadata[0].scopeField.typeText("scope1");
   await metadata[0].selectorField.typeText(".selector1");
@@ -181,15 +181,15 @@ test("removes a scope", async () => {
     metadata: {
       scope2: {
         selector: ".selector2",
-        actionType: "replaceHtml"
-      }
-    }
+        actionType: "replaceHtml",
+      },
+    },
   });
 });
 
 test("metadata is invalid if two scopes are the same", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await metadata[0].scopeField.typeText("scope1");
   await metadata[0].selectorField.typeText(".selector1");
@@ -207,7 +207,7 @@ test("metadata is invalid if two scopes are the same", async () => {
 
 test("metadata is invalid if selector or actionType is missing", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await metadata[0].scopeField.typeText("scope1");
   await extensionViewController.expectIsNotValid();
@@ -217,7 +217,7 @@ test("metadata is invalid if selector or actionType is missing", async () => {
 
 test("metadata is invalid if scope is missing", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await metadata[0].selectorField.typeText(".selector1");
   await metadata[0].actionType.openMenu();
@@ -228,7 +228,7 @@ test("metadata is invalid if scope is missing", async () => {
 
 test("shows error for propositions value that is not a data element", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await propositionsField.typeText("propositions");
   await extensionViewController.expectIsNotValid();
@@ -237,7 +237,7 @@ test("shows error for propositions value that is not a data element", async () =
 
 test("doesn't show error for viewName value that is not a data element", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await viewNameField.typeText("%dataelement");
   await extensionViewController.expectIsValid();
@@ -246,7 +246,7 @@ test("doesn't show error for viewName value that is not a data element", async (
 
 test("shows error for propositions value that is more than one data element", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await propositionsField.typeText("%a%%b%");
   await extensionViewController.expectIsNotValid();
@@ -258,8 +258,8 @@ test("initialized metadata to be a data element", async () => {
     extensionSettings: mockExtensionSettings,
     settings: {
       instanceName: "alloy1",
-      metadata: "%metadata1%"
-    }
+      metadata: "%metadata1%",
+    },
   });
   await metadataDataElementOption.expectChecked();
   await metadataFormOption.expectUnchecked();
@@ -269,14 +269,14 @@ test("initialized metadata to be a data element", async () => {
 
 test("returns metadata as a data element", async () => {
   await extensionViewController.init({
-    extensionSettings: mockExtensionSettings
+    extensionSettings: mockExtensionSettings,
   });
   await metadataDataElementOption.click();
   await metadataDataElementField.typeText("%metadata1%");
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
-    metadata: "%metadata1%"
+    metadata: "%metadata1%",
   });
 });
 

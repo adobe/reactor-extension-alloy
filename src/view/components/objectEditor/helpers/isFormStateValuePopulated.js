@@ -14,4 +14,4 @@ governing permissions and limitations under the License.
  * Returns whether a node's form state value has been populated. An empty string is the default,
  * so anything other than that indicates the user has populated the value.
  */
-export default value => value !== "";
+export default (value) => value !== "";

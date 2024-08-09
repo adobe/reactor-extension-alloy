@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import fetchSandboxes from "../../../utils/fetchSandboxes";
 import fetchNamespaces from "./fetchNamespaces";
 
-const isNotECID = namespace => {
+const isNotECID = (namespace) => {
   return namespace.code !== "ECID";
 };
 
@@ -21,31 +21,31 @@ const getNamespaces = async (initInfo, sandbox) => {
   const namespaces = await fetchNamespaces({
     orgId: initInfo.company.orgId,
     imsAccess: initInfo.tokens.imsAccess,
-    sandbox
+    sandbox,
   });
 
   return namespaces || [];
 };
 
-const getDefaultSandbox = sandboxes => {
-  return sandboxes.find(sandbox => sandbox.isDefault);
+const getDefaultSandbox = (sandboxes) => {
+  return sandboxes.find((sandbox) => sandbox.isDefault);
 };
 
-const getNamespacesForDefaultSandbox = initInfo => {
+const getNamespacesForDefaultSandbox = (initInfo) => {
   return fetchSandboxes({
     orgId: initInfo.company.orgId,
-    imsAccess: initInfo.tokens.imsAccess
+    imsAccess: initInfo.tokens.imsAccess,
   })
-    .then(result => {
+    .then((result) => {
       return getDefaultSandbox(result.results);
     })
-    .then(sandbox => getNamespaces(initInfo, sandbox.name));
+    .then((sandbox) => getNamespaces(initInfo, sandbox.name));
 };
 
 const dedupeBy = (arr, keyFunc) => {
   const set = new Set();
 
-  return arr.filter(e => {
+  return arr.filter((e) => {
     const key = keyFunc(e);
 
     if (set.has(key)) {
@@ -57,7 +57,7 @@ const dedupeBy = (arr, keyFunc) => {
     return true;
   });
 };
-const getExtensionSandboxes = initInfo => {
+const getExtensionSandboxes = (initInfo) => {
   const extensionSandboxes = new Set();
 
   const sandbox = initInfo?.extensionSettings?.instances[0]?.sandbox;
@@ -79,32 +79,32 @@ const getExtensionSandboxes = initInfo => {
   return [...extensionSandboxes];
 };
 
-const filterAndSortNamespaces = namespaces => {
+const filterAndSortNamespaces = (namespaces) => {
   return namespaces
     .filter(isNotECID)
     .sort((first, second) => first.code.localeCompare(second.code));
 };
 
-export const getNamespacesOptions = initInfo => {
+export const getNamespacesOptions = (initInfo) => {
   const extensionSandboxes = getExtensionSandboxes(initInfo);
 
   if (extensionSandboxes.length > 0) {
     return Promise.all(
-      extensionSandboxes.map(sandbox => getNamespaces(initInfo, sandbox))
+      extensionSandboxes.map((sandbox) => getNamespaces(initInfo, sandbox)),
     )
-      .then(results => {
-        const allNamespaces = results.flatMap(arr => arr);
+      .then((results) => {
+        const allNamespaces = results.flatMap((arr) => arr);
 
-        return dedupeBy(allNamespaces, e => e.code);
+        return dedupeBy(allNamespaces, (e) => e.code);
       })
-      .then(namespaces => {
+      .then((namespaces) => {
         return filterAndSortNamespaces(namespaces);
       })
       .catch(() => []);
   }
 
   return getNamespacesForDefaultSandbox(initInfo, extensionSandboxes)
-    .then(namespaces => {
+    .then((namespaces) => {
       return filterAndSortNamespaces(namespaces);
     })
     .catch(() => []);
@@ -112,6 +112,6 @@ export const getNamespacesOptions = initInfo => {
 
 export const findNamespace = (namespaces, namespaceCode) => {
   return namespaces.find(
-    namespace => namespace.code.toUpperCase() === namespaceCode.toUpperCase()
+    (namespace) => namespace.code.toUpperCase() === namespaceCode.toUpperCase(),
   );
 };

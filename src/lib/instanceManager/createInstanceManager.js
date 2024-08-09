@@ -17,7 +17,7 @@ module.exports = ({
   createEventMergeId,
   orgId,
   wrapOnBeforeEventSend,
-  getConfigOverrides
+  getConfigOverrides,
 }) => {
   const { instances: instancesSettings } = turbine.getExtensionSettings();
   const instanceByName = {};
@@ -46,7 +46,7 @@ module.exports = ({
     onCommandRejected(...args) {
       calledMonitors.onCommandRejected ||= [];
       calledMonitors.onCommandRejected.push(args);
-    }
+    },
   });
 
   instancesSettings.forEach(
@@ -79,12 +79,12 @@ module.exports = ({
         datastreamId: computedEdgeConfigId,
         debugEnabled: turbine.debugEnabled,
         orgId: options.orgId || orgId,
-        onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend)
+        onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend),
       });
-      turbine.onDebugChanged(enabled => {
+      turbine.onDebugChanged((enabled) => {
         instance("setDebug", { enabled });
       });
-    }
+    },
   );
 
   return {
@@ -105,13 +105,13 @@ module.exports = ({
     },
     addMonitor(newMonitor) {
       window.__alloyMonitors.push(newMonitor);
-      Object.keys(calledMonitors).forEach(methodName => {
-        calledMonitors[methodName].forEach(args => {
+      Object.keys(calledMonitors).forEach((methodName) => {
+        calledMonitors[methodName].forEach((args) => {
           if (newMonitor[methodName]) {
             newMonitor[methodName](...args);
           }
         });
       });
-    }
+    },
   };
 };

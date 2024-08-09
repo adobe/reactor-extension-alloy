@@ -24,12 +24,12 @@ const applyPropositionsForm = form({}, [
     name: "propositions",
     label: "Propositions",
     description:
-      'Provide a data element that resolves to an array of propositions to render. Enter "%event.propositions%" if this is an action of a Send event complete event.'
+      'Provide a data element that resolves to an array of propositions to render. Enter "%event.propositions%" if this is an action of a Send event complete event.',
   }),
   textField({
     name: "viewName",
     label: "View name",
-    description: "Provide a view to render the propositions for that view."
+    description: "Provide a view to render the propositions for that view.",
   }),
   objectArray(
     {
@@ -41,20 +41,20 @@ const applyPropositionsForm = form({}, [
       objectKey: "scope",
       objectLabelPlural: "Scopes",
       isRowEmpty: ({ scope, selector, actionType }) =>
-        scope === "" && selector === "" && actionType === ""
+        scope === "" && selector === "" && actionType === "",
     },
     [
       textField({
         name: "scope",
         label: "Scope",
         description: "Enter your scope",
-        validationSchemaBase: string().required("Please provide a scope.")
+        validationSchemaBase: string().required("Please provide a scope."),
       }),
       textField({
         name: "selector",
         label: "Selector",
         description: "Enter your selector",
-        validationSchemaBase: string().required("Please provide a selector.")
+        validationSchemaBase: string().required("Please provide a selector."),
       }),
       comboBox({
         name: "actionType",
@@ -63,14 +63,15 @@ const applyPropositionsForm = form({}, [
         items: [
           { value: "setHtml", label: "Set HTML" },
           { value: "replaceHtml", label: "Replace HTML" },
-          { value: "appendHtml", label: "Append HTML" }
+          { value: "appendHtml", label: "Append HTML" },
+          { value: "collectInteractions", label: "Collect interactions" },
         ],
         validationSchemaBase: string().required(
-          "Please provide an action type."
-        )
-      })
-    ]
-  )
+          "Please provide an action type.",
+        ),
+      }),
+    ],
+  ),
 ]);
 
 renderForm(applyPropositionsForm);

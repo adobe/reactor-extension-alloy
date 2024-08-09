@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 import { OBJECT_ANALYTICS, OBJECT_JSON } from "../constants/schemaType";
 import { solutionsContext } from "../../../dataElements/variable/components/dataVariable";
 
-export default solutions => ({
+export default (solutions) => ({
   type: "object",
   properties: {
     data: {
@@ -32,13 +32,13 @@ export default solutions => ({
                   : OBJECT_JSON,
               expandPaths: false,
               title: solutionsContext.find(
-                ([solution]) => solutionKeyLower === solution
-              )[1]
+                ([solution]) => solutionKeyLower === solution,
+              )[1],
             };
             return accumulator;
-          }, {})
-        }
-      }
-    }
-  }
+          }, {}),
+        },
+      },
+    },
+  },
 });

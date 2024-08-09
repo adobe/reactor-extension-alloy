@@ -40,10 +40,10 @@ export default {
   expectConstantFalseValue: async () => {
     await spectrum.radio("constantFalseField").expectChecked();
   },
-  enterDataElementValue: async text => {
+  enterDataElementValue: async (text) => {
     await spectrum.textField("dataElementValueField").typeText(text);
   },
-  expectDataElementValue: async label => {
+  expectDataElementValue: async (label) => {
     await spectrum.textField("dataElementValueField").expectValue(label);
-  }
+  },
 };

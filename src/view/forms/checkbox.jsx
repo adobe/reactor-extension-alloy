@@ -31,7 +31,7 @@ export default function checkbox({
   label,
   description,
   defaultValue = false,
-  beta
+  beta,
 }) {
   const part = {
     getInitialValues({ initInfo }) {
@@ -55,10 +55,10 @@ export default function checkbox({
         {label}
         {beta && <BetaBadge />}
       </FormikCheckbox>
-    )
+    ),
   };
   part.Component.propTypes = {
-    namePrefix: PropTypes.string
+    namePrefix: PropTypes.string,
   };
   return part;
 }

@@ -15,15 +15,15 @@ import renderForm from "../forms/renderForm";
 import numberField from "../forms/numberField";
 
 const wrapGetInitialValues =
-  getInitialValues =>
+  (getInitialValues) =>
   ({ initInfo }) => {
     return getInitialValues({
-      initInfo
+      initInfo,
     });
   };
 
 const wrapGetSettings =
-  getSettings =>
+  (getSettings) =>
   ({ values }) => {
     return getSettings({ values });
   };
@@ -35,27 +35,27 @@ const qoeDataDetailsForm = form({ wrapGetInitialValues, wrapGetSettings }, [
     description:
       "This value defaults to zero if you do not set it through the QoSObject. You set this value in milliseconds. " +
       "The value will be displayed in the time format (HH:MM:SS) in CJA Workspace and Reports & Analytics. " +
-      "In Data Feeds, Data Warehouse, and Reporting APIs the values will be displayed in seconds."
+      "In Data Feeds, Data Warehouse, and Reporting APIs the values will be displayed in seconds.",
   }),
   numberField({
     name: "droppedFrames",
     label: "Dropped frames (Int)",
     description:
       "The number of dropped frames (Int). This value is computed as a sum of " +
-      "all frames dropped during a playback session. "
+      "all frames dropped during a playback session. ",
   }),
   numberField({
     name: "framesPerSecond",
     label: "Frames per second",
     description:
-      "The current value of the stream frame-rate (in frames per second). "
+      "The current value of the stream frame-rate (in frames per second). ",
   }),
   numberField({
     name: "timeToStart",
     label: "Time to start (milliseconds)",
     description:
       "This value defaults to zero if you do not set it through the QoSObject. " +
-      "You set this value in milliseconds. The value will be displayed in the time format (HH:MM:SS) at reporting."
-  })
+      "You set this value in milliseconds. The value will be displayed in the time format (HH:MM:SS) at reporting.",
+  }),
 ]);
 renderForm(qoeDataDetailsForm);

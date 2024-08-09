@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import singleDataElementRegex from "../../../../constants/singleDataElementRegex";
 import { WHOLE } from "../../constants/populationStrategy";
 
-const checkKeyUniqueness = array => {
+const checkKeyUniqueness = (array) => {
   const valuesAlreadySeen = {};
 
   for (let i = 0; i < array.length; i += 1) {
@@ -37,16 +37,16 @@ export default ({ formStateNode }) => {
     if (value !== "" && !singleDataElementRegex.test(value)) {
       try {
         const parsedValue = JSON.parse(value);
-        if (Object.keys(parsedValue).some(key => key.trim() === "")) {
+        if (Object.keys(parsedValue).some((key) => key.trim() === "")) {
           return {
-            value: "Empty keys are not allowed."
+            value: "Empty keys are not allowed.",
           };
         }
       } catch ({ message = "" }) {
         return {
           value: `Please enter a valid JSON or a data element. ${
             message ? ` ${message}.` : ""
-          }`
+          }`,
         };
       }
     }
@@ -66,12 +66,12 @@ export default ({ formStateNode }) => {
 
   if (items.length > 1) {
     const [result, duplicatedValue, duplicatedIndex] = checkKeyUniqueness(
-      items.map(({ key }) => key)
+      items.map(({ key }) => key),
     );
 
     if (result === false) {
       errors.items[duplicatedIndex] = {
-        key: `The key "${duplicatedValue}" is already present.`
+        key: `The key "${duplicatedValue}" is already present.`,
       };
     }
   }

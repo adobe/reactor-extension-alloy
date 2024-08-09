@@ -21,7 +21,7 @@ const RawDataElementSelector = ({
   value,
   onChange,
   adjustForLabel,
-  tokenize = true
+  tokenize = true,
 }) => {
   // We have to vertically nudge down the data element selector
   // button if the field has a label so the button aligns
@@ -29,7 +29,7 @@ const RawDataElementSelector = ({
   const openDataElementSelector = () => {
     window.extensionBridge
       .openDataElementSelector({ tokenize })
-      .then(dataElement => {
+      .then((dataElement) => {
         // Maybe field value is an integer of 0 or something else falsy? That's
         // why we check for undefined instead of a plain falsy check.
         const previousValue = value === undefined ? "" : value;
@@ -62,11 +62,11 @@ RawDataElementSelector.propTypes = {
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number,
-    PropTypes.bool
+    PropTypes.bool,
   ]),
   onChange: PropTypes.func.isRequired,
   adjustForLabel: PropTypes.bool,
-  tokenize: PropTypes.bool
+  tokenize: PropTypes.bool,
 };
 
 export default RawDataElementSelector;

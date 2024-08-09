@@ -16,7 +16,7 @@ import isNumberLike from "../isNumberLike";
 
 export default ({
   formStateNode,
-  confirmDataPopulatedAtCurrentOrDescendantNode
+  confirmDataPopulatedAtCurrentOrDescendantNode,
 }) => {
   const { value } = formStateNode;
 

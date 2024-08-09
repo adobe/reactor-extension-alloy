@@ -19,15 +19,15 @@ describe("injectWrapOnBeforeEventSend", () => {
     xdm = {
       implementationDetails: {
         name: "myname",
-        version: "myversion"
+        version: "myversion",
       },
-      a: "1"
+      a: "1",
     };
     data = {
-      b: "2"
+      b: "2",
     };
     wrapOnBeforeEventSend = injectWrapOnBeforeEventSend({
-      version: "reactorversion"
+      version: "reactorversion",
     });
   });
 
@@ -37,17 +37,17 @@ describe("injectWrapOnBeforeEventSend", () => {
     expect(xdm).toEqual({
       implementationDetails: {
         name: "myname/reactor",
-        version: "myversion+reactorversion"
+        version: "myversion+reactorversion",
       },
-      a: "1"
+      a: "1",
     });
     expect(data).toEqual({
-      b: "2"
+      b: "2",
     });
   });
 
   it("works with a callback", () => {
-    const onBeforeEventSend = content => {
+    const onBeforeEventSend = (content) => {
       content.xdm.c = "3";
       delete content.xdm.a;
       content.data.d = "4";
@@ -58,19 +58,19 @@ describe("injectWrapOnBeforeEventSend", () => {
     expect(xdm).toEqual({
       implementationDetails: {
         name: "myname/reactor",
-        version: "myversion+reactorversion"
+        version: "myversion+reactorversion",
       },
-      c: "3"
+      c: "3",
     });
     expect(data).toEqual({
       b: "2",
-      d: "4"
+      d: "4",
     });
   });
 
   it("works when the callback throws an exception", () => {
     const myerror = new Error("myerror");
-    const onBeforeEventSend = content => {
+    const onBeforeEventSend = (content) => {
       content.xdm.c = "3";
       delete content.xdm.a;
       content.data.d = "4";
@@ -81,13 +81,13 @@ describe("injectWrapOnBeforeEventSend", () => {
     expect(xdm).toEqual({
       implementationDetails: {
         name: "myname/reactor",
-        version: "myversion+reactorversion"
+        version: "myversion+reactorversion",
       },
-      c: "3"
+      c: "3",
     });
     expect(data).toEqual({
       b: "2",
-      d: "4"
+      d: "4",
     });
   });
 });

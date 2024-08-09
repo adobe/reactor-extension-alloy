@@ -22,12 +22,12 @@ describe("Apply response", () => {
     instanceManager = jasmine.createSpyObj("instanceManger", ["getInstance"]);
     sendEventCallbackStorage = jasmine.createSpyObj(
       "sendEventCallbackStorage",
-      ["triggerEvent"]
+      ["triggerEvent"],
     );
     instance = jasmine.createSpy("instance");
     applyResponse = createApplyResponse({
       instanceManager,
-      sendEventCallbackStorage
+      sendEventCallbackStorage,
     });
   });
 
@@ -48,7 +48,7 @@ describe("Apply response", () => {
     instance.and.returnValue(Promise.resolve("myresult"));
     await applyResponse({ instanceName: "myinstance" });
     expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalledOnceWith(
-      "myresult"
+      "myresult",
     );
   });
 });

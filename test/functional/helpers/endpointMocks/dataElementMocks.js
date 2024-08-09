@@ -23,16 +23,15 @@ const testDataVariable1 = {
     name: "Test data variable 1",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
       sandbox: {
-        name: "prod"
+        name: "prod",
       },
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.2"
-      }
-    })
-  }
+        version: "1.2",
+      },
+    }),
+  },
 };
 const testDataVariable2 = {
   id: "DE2",
@@ -40,16 +39,15 @@ const testDataVariable2 = {
     name: "Test data variable 2",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       sandbox: {
-        name: "prod"
+        name: "prod",
       },
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.1"
-      }
-    })
-  }
+        version: "1.1",
+      },
+    }),
+  },
 };
 const testSolutionsVariable1 = {
   id: "SDE1",
@@ -57,10 +55,9 @@ const testSolutionsVariable1 = {
     name: "Test solutions variable 1",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      solutions: ["analytics", "target", "audiencemanager"]
-    })
-  }
+      solutions: ["analytics", "target", "audiencemanager"],
+    }),
+  },
 };
 
 export const element1 = RequestMock()

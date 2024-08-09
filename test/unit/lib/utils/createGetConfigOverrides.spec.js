@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 import createGetConfigOverrides from "../../../../src/lib/utils/createGetConfigOverrides";
 
 describe("createGetConfigOverrides", () => {
-  ["development", "staging", "production"].forEach(stage => {
+  ["development", "staging", "production"].forEach((stage) => {
     const createConfigOverrides = createGetConfigOverrides(stage);
     describe(`stage ${stage}`, () => {
       it("should return undefined when edgeConfigOverrides is undefined", () => {
@@ -29,18 +29,18 @@ describe("createGetConfigOverrides", () => {
                   reportSuites: [
                     "test1        ",
                     "test5,test2    ,    test333",
-                    "test4"
-                  ]
-                }
-              }
-            }
+                    "test4",
+                  ],
+                },
+              },
+            },
           },
-          stage
+          stage,
         );
         expect(result).toEqual({
           com_adobe_analytics: {
-            reportSuites: ["test1", "test5", "test2", "test333", "test4"]
-          }
+            reportSuites: ["test1", "test5", "test2", "test333", "test4"],
+          },
         });
       });
 
@@ -52,41 +52,41 @@ describe("createGetConfigOverrides", () => {
                 com_adobe_experience_platform: {
                   datasets: {
                     event: {
-                      datasetId: "6335faf30f5a161c0b4b1444"
-                    }
-                  }
+                      datasetId: "6335faf30f5a161c0b4b1444",
+                    },
+                  },
                 },
                 com_adobe_analytics: {
-                  reportSuites: ["unifiedjsqeonly2"]
+                  reportSuites: ["unifiedjsqeonly2"],
                 },
                 com_adobe_identity: {
-                  idSyncContainerId: 30793
+                  idSyncContainerId: 30793,
                 },
                 com_adobe_target: {
-                  propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
-                }
-              }
-            }
+                  propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+                },
+              },
+            },
           },
-          stage
+          stage,
         );
         expect(result).toEqual({
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: "6335faf30f5a161c0b4b1444"
-              }
-            }
+                datasetId: "6335faf30f5a161c0b4b1444",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: ["unifiedjsqeonly2"]
+            reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
-            idSyncContainerId: 30793
+            idSyncContainerId: 30793,
           },
           com_adobe_target: {
-            propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
-          }
+            propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+          },
         });
       });
 
@@ -96,17 +96,17 @@ describe("createGetConfigOverrides", () => {
             edgeConfigOverrides: {
               [stage]: {
                 com_adobe_identity: {
-                  idSyncContainerId: "30793"
-                }
-              }
-            }
+                  idSyncContainerId: "30793",
+                },
+              },
+            },
           },
-          stage
+          stage,
         );
         expect(result).toEqual({
           com_adobe_identity: {
-            idSyncContainerId: 30793
-          }
+            idSyncContainerId: 30793,
+          },
         });
 
         const result2 = createConfigOverrides(
@@ -114,17 +114,17 @@ describe("createGetConfigOverrides", () => {
             edgeConfigOverrides: {
               [stage]: {
                 com_adobe_identity: {
-                  idSyncContainerId: 30793
-                }
-              }
-            }
+                  idSyncContainerId: 30793,
+                },
+              },
+            },
           },
-          stage
+          stage,
         );
         expect(result2).toEqual({
           com_adobe_identity: {
-            idSyncContainerId: 30793
-          }
+            idSyncContainerId: 30793,
+          },
         });
       });
 
@@ -135,15 +135,15 @@ describe("createGetConfigOverrides", () => {
               edgeConfigOverrides: {
                 [stage]: {
                   com_adobe_identity: {
-                    idSyncContainerId: "not a number"
-                  }
-                }
-              }
+                    idSyncContainerId: "not a number",
+                  },
+                },
+              },
             },
-            stage
+            stage,
           );
         }).toThrowError(
-          `The ID sync container ID "not a number" is not a valid integer.`
+          `The ID sync container ID "not a number" is not a valid integer.`,
         );
       });
     });
@@ -156,38 +156,38 @@ describe("createGetConfigOverrides", () => {
         com_adobe_experience_platform: {
           datasets: {
             event: {
-              datasetId: "6335faf30f5a161c0b4b1444"
-            }
-          }
+              datasetId: "6335faf30f5a161c0b4b1444",
+            },
+          },
         },
         com_adobe_analytics: {
-          reportSuites: ["unifiedjsqeonly2"]
+          reportSuites: ["unifiedjsqeonly2"],
         },
         com_adobe_identity: {
-          idSyncContainerId: 30793
+          idSyncContainerId: 30793,
         },
         com_adobe_target: {
-          propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
-        }
-      }
+          propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+        },
+      },
     });
     expect(result).toEqual({
       com_adobe_experience_platform: {
         datasets: {
           event: {
-            datasetId: "6335faf30f5a161c0b4b1444"
-          }
-        }
+            datasetId: "6335faf30f5a161c0b4b1444",
+          },
+        },
       },
       com_adobe_analytics: {
-        reportSuites: ["unifiedjsqeonly2"]
+        reportSuites: ["unifiedjsqeonly2"],
       },
       com_adobe_identity: {
-        idSyncContainerId: 30793
+        idSyncContainerId: 30793,
       },
       com_adobe_target: {
-        propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
-      }
+        propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+      },
     });
   });
 });

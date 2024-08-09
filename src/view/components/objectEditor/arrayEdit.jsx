@@ -19,7 +19,7 @@ import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
 import DataElementSelector from "../dataElementSelector";
 import getInitialFormState, {
-  formStateNodePropTypes
+  formStateNodePropTypes,
 } from "./helpers/getInitialFormState";
 import { PARTS, WHOLE } from "./constants/populationStrategy";
 import { ARRAY, OBJECT } from "./constants/schemaType";
@@ -44,7 +44,7 @@ const WholePopulationStrategyForm = ({ fieldName }) => {
 };
 
 WholePopulationStrategyForm.propTypes = {
-  fieldName: PropTypes.string.isRequired
+  fieldName: PropTypes.string.isRequired,
 };
 
 /**
@@ -56,12 +56,12 @@ const PartsPopulationStrategyForm = ({
   schema,
   items,
   onNodeSelect,
-  updateMode
+  updateMode,
 }) => {
   return (
     <FieldArray
       name={`${fieldName}.items`}
-      render={arrayHelpers => {
+      render={(arrayHelpers) => {
         return (
           <Flex
             gap="size-200"
@@ -110,7 +110,7 @@ const PartsPopulationStrategyForm = ({
                 const itemFormStateNode = getInitialFormState({
                   schema: itemSchema,
                   value: defaultValue,
-                  updateMode
+                  updateMode,
                 });
                 arrayHelpers.push(itemFormStateNode);
               }}
@@ -130,13 +130,13 @@ PartsPopulationStrategyForm.propTypes = {
   schema: PropTypes.object.isRequired,
   items: PropTypes.arrayOf(formStateNodePropTypes).isRequired,
   onNodeSelect: PropTypes.func.isRequired,
-  updateMode: PropTypes.bool.isRequired
+  updateMode: PropTypes.bool.isRequired,
 };
 
 /**
  * The form for editing a node that is an array type.
  */
-const ArrayEdit = props => {
+const ArrayEdit = (props) => {
   const { fieldName, onNodeSelect } = props;
   const [{ value: formStateNode }] = useField(fieldName);
 
@@ -145,7 +145,7 @@ const ArrayEdit = props => {
     populationStrategy,
     schema,
     items,
-    updateMode
+    updateMode,
   } = formStateNode;
 
   return (
@@ -183,7 +183,7 @@ const ArrayEdit = props => {
 
 ArrayEdit.propTypes = {
   fieldName: PropTypes.string.isRequired,
-  onNodeSelect: PropTypes.func.isRequired
+  onNodeSelect: PropTypes.func.isRequired,
 };
 
 export default ArrayEdit;

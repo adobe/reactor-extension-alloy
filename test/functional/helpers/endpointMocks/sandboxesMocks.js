@@ -20,10 +20,10 @@ export const unauthorized = RequestMock()
   .respond(
     {
       error_code: "401013",
-      message: "Oauth token is not valid"
+      message: "Oauth token is not valid",
     },
     401,
-    responseHeaders
+    responseHeaders,
   );
 
 export const userRegionMissing = RequestMock()
@@ -31,10 +31,10 @@ export const userRegionMissing = RequestMock()
   .respond(
     {
       error_code: "403027",
-      message: "User region is missing"
+      message: "User region is missing",
     },
     403,
-    responseHeaders
+    responseHeaders,
   );
 
 export const nonJsonBody = RequestMock()
@@ -45,10 +45,10 @@ export const empty = RequestMock()
   .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: "GET" })
   .respond(
     {
-      sandboxes: []
+      sandboxes: [],
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const singleWithoutDefault = RequestMock()
@@ -62,12 +62,12 @@ export const singleWithoutDefault = RequestMock()
           type: "production",
           isDefault: false,
           region: "VA7",
-          state: "active"
-        }
-      ]
+          state: "active",
+        },
+      ],
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const multipleWithDefault = RequestMock()
@@ -81,7 +81,7 @@ export const multipleWithDefault = RequestMock()
           type: "production",
           isDefault: false,
           region: "VA7",
-          state: "active"
+          state: "active",
         },
         {
           name: "testsandbox2",
@@ -89,7 +89,7 @@ export const multipleWithDefault = RequestMock()
           type: "production",
           isDefault: true,
           region: "VA7",
-          state: "active"
+          state: "active",
         },
         {
           name: "testsandbox3",
@@ -97,7 +97,7 @@ export const multipleWithDefault = RequestMock()
           type: "production",
           isDefault: false,
           region: "VA7",
-          state: "active"
+          state: "active",
         },
         {
           name: "prod",
@@ -105,18 +105,18 @@ export const multipleWithDefault = RequestMock()
           type: "production",
           isDefault: false,
           region: "VA7",
-          state: "active"
-        }
-      ]
+          state: "active",
+        },
+      ],
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const longLasting = RequestMock()
   .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: "GET" })
   .respond(async (_, res) => {
-    await new Promise(r => {
+    await new Promise((r) => {
       setTimeout(r, 10000);
     });
 
@@ -128,9 +128,9 @@ export const longLasting = RequestMock()
           type: "production",
           isDefault: false,
           region: "VA7",
-          state: "active"
-        }
-      ]
+          state: "active",
+        },
+      ],
     });
   });
 
@@ -145,7 +145,7 @@ export const multipleWithoutDefault = RequestMock()
           type: "production",
           isDefault: false,
           region: "VA7",
-          state: "active"
+          state: "active",
         },
         {
           name: "testsandbox2",
@@ -153,7 +153,7 @@ export const multipleWithoutDefault = RequestMock()
           type: "production",
           isDefault: false,
           region: "VA7",
-          state: "active"
+          state: "active",
         },
         {
           name: "testsandbox3",
@@ -161,7 +161,7 @@ export const multipleWithoutDefault = RequestMock()
           type: "production",
           isDefault: false,
           region: "VA7",
-          state: "active"
+          state: "active",
         },
         {
           name: "prod",
@@ -169,12 +169,12 @@ export const multipleWithoutDefault = RequestMock()
           type: "production",
           isDefault: false,
           region: "VA7",
-          state: "active"
-        }
-      ]
+          state: "active",
+        },
+      ],
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 export const singleDefault = RequestMock()
   .onRequestTo({ url: SANDBOXES_ENDPOINT_REGEX, method: "GET" })
@@ -187,10 +187,10 @@ export const singleDefault = RequestMock()
           type: "production",
           isDefault: true,
           region: "VA7",
-          state: "active"
-        }
-      ]
+          state: "active",
+        },
+      ],
     },
     200,
-    responseHeaders
+    responseHeaders,
   );

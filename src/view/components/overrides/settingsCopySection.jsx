@@ -33,8 +33,8 @@ import { capitialize } from "./utils";
 const SettingsCopySection = ({ currentEnv, onPress }) => {
   return (
     <Flex direction="row" gap="size-100" wrap>
-      {OVERRIDE_ENVIRONMENTS.filter(source => source !== currentEnv).map(
-        source => (
+      {OVERRIDE_ENVIRONMENTS.filter((source) => source !== currentEnv).map(
+        (source) => (
           <ActionButton
             data-test-id={`copyFrom${capitialize(source)}Button`}
             key={source}
@@ -43,7 +43,7 @@ const SettingsCopySection = ({ currentEnv, onPress }) => {
           >
             Copy settings from {source}
           </ActionButton>
-        )
+        ),
       )}
     </Flex>
   );
@@ -51,7 +51,7 @@ const SettingsCopySection = ({ currentEnv, onPress }) => {
 
 SettingsCopySection.propTypes = {
   currentEnv: PropTypes.oneOf(OVERRIDE_ENVIRONMENTS).isRequired,
-  onPress: PropTypes.func.isRequired
+  onPress: PropTypes.func.isRequired,
 };
 
 export default SettingsCopySection;

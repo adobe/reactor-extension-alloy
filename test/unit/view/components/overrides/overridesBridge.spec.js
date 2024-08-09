@@ -16,7 +16,7 @@ describe("overridesBridge", () => {
   describe("getInstanceDefaults", () => {
     it("should return default values", () => {
       const edgeConfigOverrides = {};
-      ["production", "staging", "development"].forEach(env => {
+      ["production", "staging", "development"].forEach((env) => {
         edgeConfigOverrides[env] = {
           sandbox: "",
           datastreamId: "",
@@ -24,23 +24,23 @@ describe("overridesBridge", () => {
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: ""
-              }
-            }
+                datasetId: "",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: [""]
+            reportSuites: [""],
           },
           com_adobe_identity: {
-            idSyncContainerId: undefined
+            idSyncContainerId: undefined,
           },
           com_adobe_target: {
-            propertyToken: ""
-          }
+            propertyToken: "",
+          },
         };
       });
       expect(bridge.getInstanceDefaults()).toEqual({
-        edgeConfigOverrides
+        edgeConfigOverrides,
       });
     });
   });
@@ -54,7 +54,7 @@ describe("overridesBridge", () => {
           "device",
           "environment",
           "placeContext",
-          "highEntropyUserAgentHints"
+          "highEntropyUserAgentHints",
         ],
         sandbox: "prod",
         edgeDomain: "firstparty.alloyio.com",
@@ -67,21 +67,21 @@ describe("overridesBridge", () => {
           datastreamIdInputMethod: "freeform",
           development: {
             com_adobe_target: {
-              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-            }
-          }
+              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+            },
+          },
         },
         stagingEdgeConfigId: "140a1d7d-90ac-44d4-921e-6bb819da36b7:stage",
         targetMigrationEnabled: true,
         developmentEdgeConfigId: "140a1d7d-90ac-44d4-921e-6bb819da36b7:dev",
-        thirdPartyCookiesEnabled: false
+        thirdPartyCookiesEnabled: false,
       };
 
       const instanceValues = bridge.getInitialInstanceValues({
-        instanceSettings
+        instanceSettings,
       });
       const edgeConfigOverrides = {};
-      ["production", "staging", "development"].forEach(env => {
+      ["production", "staging", "development"].forEach((env) => {
         edgeConfigOverrides[env] = {
           sandbox: "",
           datastreamId: "",
@@ -89,26 +89,26 @@ describe("overridesBridge", () => {
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: ""
-              }
-            }
+                datasetId: "",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: [""]
+            reportSuites: [""],
           },
           com_adobe_identity: {
-            idSyncContainerId: undefined
+            idSyncContainerId: undefined,
           },
           com_adobe_target: {
             propertyToken:
               env === "development"
                 ? "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-                : ""
-          }
+                : "",
+          },
         };
       });
       expect(instanceValues).toEqual({
-        edgeConfigOverrides
+        edgeConfigOverrides,
       });
     });
 
@@ -120,7 +120,7 @@ describe("overridesBridge", () => {
           "device",
           "environment",
           "placeContext",
-          "highEntropyUserAgentHints"
+          "highEntropyUserAgentHints",
         ],
         sandbox: "prod",
         edgeDomain: "firstparty.alloyio.com",
@@ -132,33 +132,33 @@ describe("overridesBridge", () => {
         edgeConfigOverrides: {
           datastreamIdInputMethod: "freeform",
           com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
           },
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: "6335faf30f5a161c0b4b1444"
-              }
-            }
+                datasetId: "6335faf30f5a161c0b4b1444",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: ["unifiedjsqeonly2"]
+            reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
-            idSyncContainerId: 30793
-          }
+            idSyncContainerId: 30793,
+          },
         },
         stagingEdgeConfigId: "140a1d7d-90ac-44d4-921e-6bb819da36b7:stage",
         targetMigrationEnabled: true,
         developmentEdgeConfigId: "140a1d7d-90ac-44d4-921e-6bb819da36b7:dev",
-        thirdPartyCookiesEnabled: false
+        thirdPartyCookiesEnabled: false,
       };
 
       const instanceValues = bridge.getInitialInstanceValues({
-        instanceSettings
+        instanceSettings,
       });
       const edgeConfigOverrides = {};
-      ["production", "staging", "development"].forEach(env => {
+      ["production", "staging", "development"].forEach((env) => {
         edgeConfigOverrides[env] = {
           sandbox: "",
           datastreamId: "",
@@ -166,23 +166,23 @@ describe("overridesBridge", () => {
           com_adobe_experience_platform: {
             datasets: {
               event: {
-                datasetId: "6335faf30f5a161c0b4b1444"
-              }
-            }
+                datasetId: "6335faf30f5a161c0b4b1444",
+              },
+            },
           },
           com_adobe_analytics: {
-            reportSuites: ["unifiedjsqeonly2"]
+            reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
-            idSyncContainerId: "30793"
+            idSyncContainerId: "30793",
           },
           com_adobe_target: {
-            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-          }
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+          },
         };
       });
       expect(instanceValues).toEqual({
-        edgeConfigOverrides
+        edgeConfigOverrides,
       });
     });
   });
@@ -193,23 +193,23 @@ describe("overridesBridge", () => {
         edgeConfigOverrides: {
           development: {
             com_adobe_target: {
-              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-            }
-          }
-        }
+              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+            },
+          },
+        },
       };
 
       const instanceSettings = bridge.getInstanceSettings({
-        instanceValues
+        instanceValues,
       });
       expect(instanceSettings).toEqual({
         edgeConfigOverrides: {
           development: {
             com_adobe_target: {
-              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-            }
-          }
-        }
+              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+            },
+          },
+        },
       });
     });
 
@@ -218,52 +218,52 @@ describe("overridesBridge", () => {
         edgeConfigOverrides: {
           development: {
             com_adobe_target: {
-              propertyToken: "         01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+              propertyToken: "         01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
             },
             com_adobe_experience_platform: {
               datasets: {
                 event: {
-                  datasetId: "ase3aoiuoioasdklfjlk        "
-                }
-              }
+                  datasetId: "ase3aoiuoioasdklfjlk        ",
+                },
+              },
             },
             com_adobe_analytics: {
               reportSuites: [
                 "   unifiedjsqeonly2   ",
-                "     unifiedjsqeonly3      "
-              ]
+                "     unifiedjsqeonly3      ",
+              ],
             },
             com_adobe_identity: {
-              idSyncContainerId: 30793
-            }
-          }
-        }
+              idSyncContainerId: 30793,
+            },
+          },
+        },
       };
 
       const instanceSettings = bridge.getInstanceSettings({
-        instanceValues
+        instanceValues,
       });
       expect(instanceSettings).toEqual({
         edgeConfigOverrides: {
           development: {
             com_adobe_target: {
-              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
+              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
             },
             com_adobe_experience_platform: {
               datasets: {
                 event: {
-                  datasetId: "ase3aoiuoioasdklfjlk"
-                }
-              }
+                  datasetId: "ase3aoiuoioasdklfjlk",
+                },
+              },
             },
             com_adobe_analytics: {
-              reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
+              reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
             },
             com_adobe_identity: {
-              idSyncContainerId: 30793
-            }
-          }
-        }
+              idSyncContainerId: 30793,
+            },
+          },
+        },
       });
     });
 
@@ -272,23 +272,29 @@ describe("overridesBridge", () => {
         edgeConfigOverrides: {
           development: {
             com_adobe_analytics: {
-              reportSuites: ["", "unifiedjsqeonly2", "", "unifiedjsqeonly3", ""]
-            }
-          }
-        }
+              reportSuites: [
+                "",
+                "unifiedjsqeonly2",
+                "",
+                "unifiedjsqeonly3",
+                "",
+              ],
+            },
+          },
+        },
       };
 
       const instanceSettings = bridge.getInstanceSettings({
-        instanceValues
+        instanceValues,
       });
       expect(instanceSettings).toEqual({
         edgeConfigOverrides: {
           development: {
             com_adobe_analytics: {
-              reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"]
-            }
-          }
-        }
+              reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
+            },
+          },
+        },
       });
     });
 
@@ -297,49 +303,49 @@ describe("overridesBridge", () => {
         edgeConfigOverrides: {
           development: {
             com_adobe_target: {
-              propertyToken: "%Data Element 1%"
+              propertyToken: "%Data Element 1%",
             },
             com_adobe_experience_platform: {
               datasets: {
                 event: {
-                  datasetId: "%Data Element 2%"
-                }
-              }
+                  datasetId: "%Data Element 2%",
+                },
+              },
             },
             com_adobe_analytics: {
-              reportSuites: ["%Data Element 3%", "%Data Element 4%"]
+              reportSuites: ["%Data Element 3%", "%Data Element 4%"],
             },
             com_adobe_identity: {
-              idSyncContainerId: "%Data Element 5%"
-            }
-          }
-        }
+              idSyncContainerId: "%Data Element 5%",
+            },
+          },
+        },
       };
 
       const instanceSettings = bridge.getInstanceSettings({
-        instanceValues
+        instanceValues,
       });
       expect(instanceSettings).toEqual({
         edgeConfigOverrides: {
           development: {
             com_adobe_target: {
-              propertyToken: "%Data Element 1%"
+              propertyToken: "%Data Element 1%",
             },
             com_adobe_experience_platform: {
               datasets: {
                 event: {
-                  datasetId: "%Data Element 2%"
-                }
-              }
+                  datasetId: "%Data Element 2%",
+                },
+              },
             },
             com_adobe_analytics: {
-              reportSuites: ["%Data Element 3%", "%Data Element 4%"]
+              reportSuites: ["%Data Element 3%", "%Data Element 4%"],
             },
             com_adobe_identity: {
-              idSyncContainerId: "%Data Element 5%"
-            }
-          }
-        }
+              idSyncContainerId: "%Data Element 5%",
+            },
+          },
+        },
       });
     });
   });
@@ -353,7 +359,7 @@ describe("overridesBridge", () => {
     it("should validate the edge config overrides", () => {
       expect(() => {
         bridge.formikStateValidationSchema.validateSync({
-          ...bridge.getInstanceDefaults()
+          ...bridge.getInstanceDefaults(),
         });
         bridge.formikStateValidationSchema.validateSync({
           edgeConfigOverrides: {
@@ -361,21 +367,21 @@ describe("overridesBridge", () => {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
-                    datasetId: "6335faf30f5a161c0b4b1444"
-                  }
-                }
+                    datasetId: "6335faf30f5a161c0b4b1444",
+                  },
+                },
               },
               com_adobe_analytics: {
-                reportSuites: ["unifiedjsqeonly2"]
+                reportSuites: ["unifiedjsqeonly2"],
               },
               com_adobe_identity: {
-                idSyncContainerId: 30793
+                idSyncContainerId: 30793,
               },
               com_adobe_target: {
-                propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8"
-              }
-            }
-          }
+                propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+              },
+            },
+          },
         });
       }).not.toThrow();
     });
@@ -386,14 +392,14 @@ describe("overridesBridge", () => {
           edgeConfigOverrides: {
             development: {
               com_adobe_identity: {
-                idSyncContainerId: "30793"
-              }
-            }
-          }
+                idSyncContainerId: "30793",
+              },
+            },
+          },
         });
         expect(
           value.edgeConfigOverrides.development.com_adobe_identity
-            .idSyncContainerId
+            .idSyncContainerId,
         ).toBe(30793);
       }).not.toThrow();
     });
@@ -406,18 +412,18 @@ describe("overridesBridge", () => {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
-                    datasetId: "%Data Element 2%"
-                  }
-                }
+                    datasetId: "%Data Element 2%",
+                  },
+                },
               },
               com_adobe_analytics: {
-                reportSuites: ["%Data Element 3%", "%Data Element 4%"]
+                reportSuites: ["%Data Element 3%", "%Data Element 4%"],
               },
               com_adobe_identity: {
-                idSyncContainerId: "%Data Element 5%"
-              }
-            }
-          }
+                idSyncContainerId: "%Data Element 5%",
+              },
+            },
+          },
         });
       }).not.toThrow();
     });
@@ -430,18 +436,18 @@ describe("overridesBridge", () => {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
-                    datasetId: "%Data Element 2%"
-                  }
-                }
+                    datasetId: "%Data Element 2%",
+                  },
+                },
               },
               com_adobe_analytics: {
-                reportSuites: ["%Data Element 3%", "%Data Element 4%"]
+                reportSuites: ["%Data Element 3%", "%Data Element 4%"],
               },
               com_adobe_identity: {
-                idSyncContainerId: "1234%Data Element 5%333"
-              }
-            }
-          }
+                idSyncContainerId: "1234%Data Element 5%333",
+              },
+            },
+          },
         });
       }).not.toThrow();
     });
@@ -452,12 +458,12 @@ describe("overridesBridge", () => {
           edgeConfigOverrides: {
             development: {
               com_adobe_identity: {
-                idSyncContainerId: "not a number"
-              }
-            }
-          }
-        })
-      ).toThrowMatching(err => err.message.includes("Please"));
+                idSyncContainerId: "not a number",
+              },
+            },
+          },
+        }),
+      ).toThrowMatching((err) => err.message.includes("Please"));
     });
 
     it("rejects negative and non-integer idSyncContainerId", () => {
@@ -466,11 +472,11 @@ describe("overridesBridge", () => {
           edgeConfigOverrides: {
             development: {
               com_adobe_identity: {
-                idSyncContainerId: -1
-              }
-            }
-          }
-        })
+                idSyncContainerId: -1,
+              },
+            },
+          },
+        }),
       ).toThrow();
 
       expect(() =>
@@ -478,11 +484,11 @@ describe("overridesBridge", () => {
           edgeConfigOverrides: {
             development: {
               com_adobe_identity: {
-                idSyncContainerId: 1.1
-              }
-            }
-          }
-        })
+                idSyncContainerId: 1.1,
+              },
+            },
+          },
+        }),
       ).toThrow();
     });
 
@@ -494,22 +500,22 @@ describe("overridesBridge", () => {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
-                    datasetId: ""
-                  }
-                }
+                    datasetId: "",
+                  },
+                },
               },
               com_adobe_analytics: {
-                reportSuites: [""]
+                reportSuites: [""],
               },
               com_adobe_identity: {
-                idSyncContainerId: ""
+                idSyncContainerId: "",
               },
               com_adobe_target: {
-                propertyToken: ""
-              }
-            }
-          }
-        })
+                propertyToken: "",
+              },
+            },
+          },
+        }),
       ).not.toThrow();
     });
 
@@ -521,22 +527,22 @@ describe("overridesBridge", () => {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
-                    datasetId: null
-                  }
-                }
+                    datasetId: null,
+                  },
+                },
               },
               com_adobe_analytics: {
-                reportSuites: null
+                reportSuites: null,
               },
               com_adobe_identity: {
-                idSyncContainerId: null
+                idSyncContainerId: null,
               },
               com_adobe_target: {
-                propertyToken: null
-              }
-            }
-          }
-        })
+                propertyToken: null,
+              },
+            },
+          },
+        }),
       ).not.toThrow();
 
       expect(() =>
@@ -546,22 +552,22 @@ describe("overridesBridge", () => {
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
-                    datasetId: undefined
-                  }
-                }
+                    datasetId: undefined,
+                  },
+                },
               },
               com_adobe_analytics: {
-                reportSuites: undefined
+                reportSuites: undefined,
               },
               com_adobe_identity: {
-                idSyncContainerId: undefined
+                idSyncContainerId: undefined,
               },
               com_adobe_target: {
-                propertyToken: undefined
-              }
-            }
-          }
-        })
+                propertyToken: undefined,
+              },
+            },
+          },
+        }),
       ).not.toThrow();
     });
   });

@@ -1,3 +1,14 @@
+/*
+Copyright 2024 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
 import * as dataElementsMocks from "../../helpers/endpointMocks/dataElementsMocks";
 import * as dataElementMocks from "../../helpers/endpointMocks/dataElementMocks";
@@ -8,14 +19,14 @@ import {
   key,
   value,
   propertyAddButton,
-  jsonEditor
+  jsonEditor,
 } from "../../helpers/objectEditor/objectJsonEdit";
 import xdmTree from "../../helpers/objectEditor/xdmTree";
 
 createExtensionViewFixture({
   title: "Update variable key value editor",
   viewPath: "actions/updateVariable.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
 });
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -23,17 +34,16 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     xdmTree.node("target").click();
     await extensionViewController.expectIsValid();
     await extensionViewController.expectSettings({
       data: {},
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -41,8 +51,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     xdmTree.node("target").click();
     await key(0).typeText("key1");
@@ -56,36 +66,34 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
         __adobe: {
           target: {
             key1: "value1",
-            key2: "value2"
-          }
-        }
+            key2: "value2",
+          },
+        },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(
   dataElementsMocks.singleSolutions,
-  dataElementMocks.solutionsElement1
+  dataElementMocks.solutionsElement1,
 )("it fills in values", async () => {
   await extensionViewController.init({
     propertySettings: {
-      id: "PRabcd"
+      id: "PRabcd",
     },
     settings: {
       data: {
         __adobe: {
           target: {
             key1: "value1",
-            key2: "value2"
-          }
-        }
+            key2: "value2",
+          },
+        },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
-    }
+      dataElementId: "SDE1",
+    },
   });
   await key(0).expectValue("key1");
   await value(0).expectValue("value1");
@@ -98,8 +106,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     xdmTree.node("target").click();
     await entireObjectOption.click();
@@ -109,13 +117,12 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await extensionViewController.expectSettings({
       data: {
         __adobe: {
-          target: "%data element%"
-        }
+          target: "%data element%",
+        },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -123,8 +130,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     xdmTree.node("target").click();
     await key(0).typeText("key1");
@@ -138,14 +145,13 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
         __adobe: {
           target: {
             key1: "%value1%",
-            key2: "%value2%"
-          }
-        }
+            key2: "%value2%",
+          },
+        },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -153,8 +159,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     xdmTree.node("target").click();
     await entireObjectOption.click();
@@ -165,14 +171,13 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
       data: {
         __adobe: {
           target: {
-            key1: "value1"
-          }
-        }
+            key1: "value1",
+          },
+        },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -180,8 +185,8 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     xdmTree.node("target").click();
     await entireObjectOption.click();
@@ -195,13 +200,12 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
     await extensionViewController.expectSettings({
       data: {
         __adobe: {
-          target: "%data element%"
-        }
+          target: "%data element%",
+        },
       },
-      dataElementCacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      dataElementId: "SDE1"
+      dataElementId: "SDE1",
     });
-  }
+  },
 );
 
 test.requestHooks(dataElementsMocks.singleSolutions)(
@@ -209,12 +213,12 @@ test.requestHooks(dataElementsMocks.singleSolutions)(
   async () => {
     await extensionViewController.init({
       propertySettings: {
-        id: "PRabcd"
-      }
+        id: "PRabcd",
+      },
     });
     xdmTree.node("target").click();
     await value(0).typeText("value10");
     await extensionViewController.expectIsNotValid();
     await key(0).expectError();
-  }
+  },
 );

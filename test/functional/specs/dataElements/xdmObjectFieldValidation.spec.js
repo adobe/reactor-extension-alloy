@@ -21,7 +21,7 @@ import spectrum from "../../helpers/spectrum";
 createExtensionViewFixture({
   title: "XDM Object Validation",
   viewPath: "dataElements/xdmObject.html",
-  requiresAdobeIOIntegration: true
+  requiresAdobeIOIntegration: true,
 });
 
 const schemaField = spectrum.comboBox("schemaField");

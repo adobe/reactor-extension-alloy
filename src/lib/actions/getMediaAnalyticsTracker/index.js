@@ -17,5 +17,5 @@ const windowObject = window;
 
 module.exports = getMediaAnalyticsTracker({
   instanceManager,
-  windowObject
+  windowObject,
 });

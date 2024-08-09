@@ -18,5 +18,5 @@ const createGetConfigOverrides = require("../../utils/createGetConfigOverrides")
 module.exports = createSendEvent({
   instanceManager,
   sendEventCallbackStorage,
-  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage)
+  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage),
 });

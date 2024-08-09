@@ -25,16 +25,15 @@ const testDataVariable1 = {
     name: "Test data variable 1",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1953",
       sandbox: {
-        name: "prod"
+        name: "prod",
       },
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.2"
-      }
-    })
-  }
+        version: "1.2",
+      },
+    }),
+  },
 };
 const testDataVariable2 = {
   id: "DE2",
@@ -42,24 +41,23 @@ const testDataVariable2 = {
     name: "Test data variable 2",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c0687b2c068cc-6c4c-44bd-b9ad-35a15b7c1954",
       sandbox: {
-        name: "prod"
+        name: "prod",
       },
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.1"
-      }
-    })
-  }
+        version: "1.1",
+      },
+    }),
+  },
 };
 const otherDataElement1 = {
   id: "ODE1",
   attributes: {
     name: "Other data element 1",
     delegate_descriptor_id: "core::dataElements::constant",
-    settings: '{"value":"aaaa"}'
-  }
+    settings: '{"value":"aaaa"}',
+  },
 };
 const testDataVariable3 = {
   id: "DE3",
@@ -67,16 +65,15 @@ const testDataVariable3 = {
     name: "Test data variable 3",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1955",
       sandbox: {
-        name: "prod"
+        name: "prod",
       },
       schema: {
         id: "sch123",
-        version: "1.0"
-      }
-    })
-  }
+        version: "1.0",
+      },
+    }),
+  },
 };
 const testDataVariable4 = {
   id: "DE4",
@@ -84,16 +81,15 @@ const testDataVariable4 = {
     name: "Test data variable 4",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1956",
       sandbox: {
-        name: "prod"
+        name: "prod",
       },
       schema: {
         id: "sch456",
-        version: "1.0"
-      }
-    })
-  }
+        version: "1.0",
+      },
+    }),
+  },
 };
 const testDataVariable5 = {
   id: "DE5",
@@ -101,16 +97,15 @@ const testDataVariable5 = {
     name: "Test data variable 5",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1957",
       sandbox: {
-        name: "prod"
+        name: "prod",
       },
       schema: {
         id: "sch789",
-        version: "1.0"
-      }
-    })
-  }
+        version: "1.0",
+      },
+    }),
+  },
 };
 const testDataVariable6 = {
   id: "DE6",
@@ -118,16 +113,15 @@ const testDataVariable6 = {
     name: "Test data variable 6",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1958",
       sandbox: {
-        name: "prod"
+        name: "prod",
       },
       schema: {
         id: "sch10",
-        version: "1.0"
-      }
-    })
-  }
+        version: "1.0",
+      },
+    }),
+  },
 };
 const testSolutionsVariable1 = {
   id: "SDE1",
@@ -135,10 +129,9 @@ const testSolutionsVariable1 = {
     name: "Test solutions variable 1",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1959",
-      solutions: ["analytics", "target", "audiencemanager"]
-    })
-  }
+      solutions: ["analytics", "target", "audiencemanager"],
+    }),
+  },
 };
 const testSolutionsVariable2 = {
   id: "SDE2",
@@ -146,10 +139,9 @@ const testSolutionsVariable2 = {
     name: "Test solutions variable 2",
     delegate_descriptor_id: "adobe-alloy::dataElements::variable",
     settings: JSON.stringify({
-      cacheId: "7b2c068c-6c4c-44bd-b9ad-35a15b7c1960",
-      solutions: ["target"]
-    })
-  }
+      solutions: ["target"],
+    }),
+  },
 };
 
 export const notFound = RequestMock()
@@ -167,12 +159,12 @@ export const single = RequestMock()
           next_page: null,
           prev_page: null,
           total_pages: 1,
-          total_count: 2
-        }
-      }
+          total_count: 2,
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const none = RequestMock()
@@ -186,12 +178,12 @@ export const none = RequestMock()
           next_page: null,
           prev_page: null,
           total_pages: 1,
-          total_count: 1
-        }
-      }
+          total_count: 1,
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const noneWithNextPage = RequestMock()
@@ -202,12 +194,12 @@ export const noneWithNextPage = RequestMock()
       meta: {
         pagination: {
           current_page: 1,
-          next_page: 2
-        }
-      }
+          next_page: 2,
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const secondPageWithOne = RequestMock()
@@ -218,12 +210,12 @@ export const secondPageWithOne = RequestMock()
       meta: {
         pagination: {
           current_page: 2,
-          next_page: null
-        }
-      }
+          next_page: null,
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const multiple = RequestMock()
@@ -236,17 +228,17 @@ export const multiple = RequestMock()
         testDataVariable3,
         testDataVariable4,
         testDataVariable5,
-        testDataVariable6
+        testDataVariable6,
       ],
       meta: {
         pagination: {
           current_page: 1,
-          next_page: null
-        }
-      }
+          next_page: null,
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const singleSolutions = RequestMock()
@@ -260,12 +252,12 @@ export const singleSolutions = RequestMock()
           next_page: null,
           prev_page: null,
           total_pages: 1,
-          total_count: 2
-        }
-      }
+          total_count: 2,
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );
 
 export const multipleBothTypes = RequestMock()
@@ -276,15 +268,15 @@ export const multipleBothTypes = RequestMock()
         testSolutionsVariable1,
         testSolutionsVariable2,
         testDataVariable1,
-        testDataVariable2
+        testDataVariable2,
       ],
       meta: {
         pagination: {
           current_page: 1,
-          next_page: null
-        }
-      }
+          next_page: null,
+        },
+      },
     },
     200,
-    responseHeaders
+    responseHeaders,
   );

@@ -19,14 +19,14 @@ const FormExtensionView = ({
   getInitialValues,
   getSettings,
   validationSchema,
-  Component
+  Component,
 }) => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       formikStateValidationSchema={validationSchema}
-      render={props => <Component {...props} />}
+      render={(props) => <Component {...props} />}
     />
   );
 };
@@ -34,7 +34,7 @@ FormExtensionView.propTypes = {
   getInitialValues: PropTypes.func,
   getSettings: PropTypes.func,
   validationSchema: PropTypes.object,
-  Component: PropTypes.func
+  Component: PropTypes.func,
 };
 
 /** @typedef {import("./form").Form} Form */

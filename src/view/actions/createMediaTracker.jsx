@@ -22,7 +22,7 @@ const createMediaTrackerForm = form({}, [
     description:
       "This action exports the Media API to a window object, which is particularly useful for those transitioning " +
       "from the legacy Media JS SDK to the Web SDK. Please ensure that the Streaming Media section is properly " +
-      "configured for the instance in the configuration view before proceeding."
+      "configured for the instance in the configuration view before proceeding.",
   }),
   instancePicker({ name: "instanceName" }),
   textField({
@@ -30,8 +30,8 @@ const createMediaTrackerForm = form({}, [
     label: "Export the Media Legacy API to this window object",
     description:
       "Enter the object name where you want the Media API to be exported." +
-      " If none is provided by default it is going to be exported to 'window.Media'."
-  })
+      " If none is provided by default it is going to be exported to 'window.Media'.",
+  }),
 ]);
 
 renderForm(createMediaTrackerForm);
