@@ -82,7 +82,16 @@ describe("Instance Manager", () => {
     expect(mockWindow).toEqual({
       alloy1,
       alloy2,
-      __alloyNS: ["alloy1", "alloy2"]
+      __alloyNS: ["alloy1", "alloy2"],
+      __alloyMonitors: [
+        {
+          onInstanceCreated: jasmine.any(Function),
+          onInstanceConfigured: jasmine.any(Function),
+          onBeforeCommand: jasmine.any(Function),
+          onCommandResolved: jasmine.any(Function),
+          onCommandRejected: jasmine.any(Function)
+        }
+      ]
     });
   });
 
