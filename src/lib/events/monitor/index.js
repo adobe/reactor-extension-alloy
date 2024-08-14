@@ -14,5 +14,5 @@ const instanceManager = require("../../instanceManager/index");
 const createMonitorTriggered = require("./createMonitorTriggered");
 
 module.exports = createMonitorTriggered({
-  instanceManager
+  instanceManager,
 });

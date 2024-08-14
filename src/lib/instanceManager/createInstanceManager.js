@@ -36,16 +36,11 @@ module.exports = ({
       calledMonitors.onInstanceConfigured.push(args);
     },
     onBeforeCommand(...args) {
-      calledMonitors.onBeforeCommand ||= [];
-      calledMonitors.onBeforeCommand.push(args);
-    },
-    onCommandResolved(...args) {
-      calledMonitors.onCommandResolved ||= [];
-      calledMonitors.onCommandResolved.push(args);
-    },
-    onCommandRejected(...args) {
-      calledMonitors.onCommandRejected ||= [];
-      calledMonitors.onCommandRejected.push(args);
+      const { commandName } = args[0];
+      if (commandName === "configure") {
+        calledMonitors.onBeforeCommand ||= [];
+        calledMonitors.onBeforeCommand.push(args);
+      }
     },
   });
 
@@ -109,6 +104,7 @@ module.exports = ({
         calledMonitors[methodName].forEach((args) => {
           if (newMonitor[methodName]) {
             newMonitor[methodName](...args);
+            calledMonitors[methodName] = [];
           }
         });
       });

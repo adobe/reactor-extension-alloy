@@ -18,48 +18,48 @@ import comboBox from "../forms/comboBox";
 const monitoringHooks = [
   {
     value: "onInstanceCreated",
-    label: "onInstanceCreated"
+    label: "onInstanceCreated",
   },
   {
     value: "onInstanceConfigured",
-    label: "onInstanceConfigured"
+    label: "onInstanceConfigured",
   },
   {
     value: "onBeforeCommand",
-    label: "onBeforeCommand"
+    label: "onBeforeCommand",
   },
   {
     value: "onCommandResolved",
-    label: "onCommandResolved"
+    label: "onCommandResolved",
   },
   {
     value: "onCommandRejected",
-    label: "onCommandRejected"
+    label: "onCommandRejected",
   },
   {
     value: "onBeforeNetworkRequest",
-    label: "onBeforeNetworkRequest"
+    label: "onBeforeNetworkRequest",
   },
   {
     value: "onNetworkResponse",
-    label: "onNetworkResponse"
+    label: "onNetworkResponse",
   },
   {
     value: "onNetworkError",
-    label: "onNetworkError"
+    label: "onNetworkError",
   },
   {
     value: "onBeforeLog",
-    label: "onBeforeLog"
+    label: "onBeforeLog",
   },
   {
     value: "onContentRendering",
-    label: "onContentRendering"
+    label: "onContentRendering",
   },
   {
     value: "onContentHiding",
-    label: "onContentHiding"
-  }
+    label: "onContentHiding",
+  },
 ];
 
 const triggerMonitorForm = form({}, [
@@ -67,7 +67,7 @@ const triggerMonitorForm = form({}, [
     title: "Monitoring hooks",
     description:
       "This event will trigger the rule whenever the following Web SDK monitoring hook is triggered. Using this event, " +
-      "you can monitor the Web SDK's internal behavior and take action based on the monitoring hook payload that is triggered."
+      "you can monitor the Web SDK's internal behavior and take action based on the monitoring hook payload that is triggered.",
   }),
   comboBox({
     name: "name",
@@ -77,8 +77,8 @@ const triggerMonitorForm = form({}, [
     dataElementDescription:
       "Enter a data element that resolves to a string representing the Web SDK monitoring hook.",
     items: monitoringHooks,
-    isRequired: true
-  })
+    isRequired: true,
+  }),
 ]);
 
 renderForm(triggerMonitorForm);

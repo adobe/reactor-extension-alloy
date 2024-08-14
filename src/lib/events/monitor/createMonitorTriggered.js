@@ -16,6 +16,6 @@ module.exports =
     instanceManager.addMonitor({
       [settings.name]: (...args) => {
         trigger(...args);
-      }
+      },
     });
   };

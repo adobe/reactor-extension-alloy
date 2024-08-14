@@ -88,8 +88,6 @@ describe("Instance Manager", () => {
           onInstanceCreated: jasmine.any(Function),
           onInstanceConfigured: jasmine.any(Function),
           onBeforeCommand: jasmine.any(Function),
-          onCommandResolved: jasmine.any(Function),
-          onCommandRejected: jasmine.any(Function),
         },
       ],
     });

@@ -960,12 +960,12 @@ const createExtensionManifest = ({ version }) => {
           properties: {
             name: {
               type: "string",
-              minLength: 1
+              minLength: 1,
             },
           },
           required: ["name"],
-          additionalProperties: false
-        }
+          additionalProperties: false,
+        },
       },
       {
         name: "decisions-received",

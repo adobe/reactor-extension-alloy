@@ -113,7 +113,7 @@ const DatastreamSelector = ({
   const datastreamProps = {
     isRequired: defaultSandboxOnly && environmentType === PRODUCTION,
     label:
-      label ?? defaultSandboxOnly
+      (label ?? defaultSandboxOnly)
         ? `${capitialize(environmentType)} datastream`
         : " ",
     "aria-label": `${environmentType} datastream`,
