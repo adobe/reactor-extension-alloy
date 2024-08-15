@@ -50,16 +50,16 @@ const subscribeRulesetItemsForm = form({}, [
         label: "In app message",
       },
       {
+        value: "https://ns.adobe.com/personalization/message/content-card",
+        label: "Content Card",
+      },
+      {
         value: "https://ns.adobe.com/personalization/json-content-item",
         label: "JSON content item",
       },
       {
         value: "https://ns.adobe.com/personalization/measurement",
         label: "Measurement item",
-      },
-      {
-        value: "https://ns.adobe.com/personalization/message/feed-item",
-        label: "Message feed item",
       },
       {
         value: "https://ns.adobe.com/personalization/message/native-alert",

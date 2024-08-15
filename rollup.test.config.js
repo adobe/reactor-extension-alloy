@@ -30,6 +30,7 @@ if (argv.reporters && argv.reporters.split(",").includes("coverage")) {
 module.exports = {
   output: {
     format: "iife",
+    sourcemap: true,
   },
   plugins,
 };
