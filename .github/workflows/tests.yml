@@ -41,10 +41,10 @@ jobs:
       matrix:
         browsers:
           [
-            "test:functional:saucelabs:chrome",
-            "test:functional:saucelabs:firefox",
-            "test:functional:saucelabs:edge",
-            "test:functional:saucelabs:safari"
+            "saucelabs:chrome@123:Mac 13",
+            "saucelabs:firefox@123:Mac 13",
+            "saucelabs:MicrosoftEdge@121:Windows 11",
+            "saucelabs:safari@17:Mac 13"
           ]
     runs-on: ubuntu-latest
     steps:
@@ -62,7 +62,7 @@ jobs:
         run: npm run token
       - name: Run Functional Test
         timeout-minutes: 60
-        run: npm run ${{ matrix.browsers }}
+        run: testcafe --esm --concurrency 4 ${{ matrix.browsers }} test/functional/specs/**/*.spec.mjs
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}

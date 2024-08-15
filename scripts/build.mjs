@@ -12,19 +12,47 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import build from "./helpers/build.mjs";
+import buildAlloy from "./helpers/buildAlloy.mjs";
+import buildComponentFixtures from "./helpers/buildComponentFixtures.mjs";
 import buildExtensionManifest from "./helpers/buildExtensionManifest.mjs";
+import buildLib from "./helpers/buildLib.mjs";
+import buildView from "./helpers/buildView.mjs";
+import minimist from "minimist";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const inputDir = path.join(__dirname, "../src");
+const tempDir = path.join(__dirname, "../temp");
+const outputDir = path.join(__dirname, "../dist");
+
+const { components, watch } = minimist(process.argv.slice(2));
+const BUILDERS = {
+  alloy: buildAlloy,
+  componentfixtures: buildComponentFixtures,
+  manifest: buildExtensionManifest,
+  lib: buildLib,
+  view: buildView
+};
+const componentNames = Object.keys(BUILDERS);
+const promises = (components || "")
+  .split(",")
+  .filter(component => componentNames.includes(component.toLowerCase()))
+  .map(component => componentNames[componentNames.indexOf(component.toLowerCase())])
+  .reduce((acc, component) => {
+    acc.push(BUILDERS[component]({ watch, inputDir, outputDir, tempDir }));
+    return acc;
+  }, []);
+
+if (promises.length === 0) {
+  console.error("No valid components specified to build.");
+  process.exit(1);
+}
 
 try {
-  const resultPath = await buildExtensionManifest();
-  // eslint-disable-next-line no-console
-  console.log(
-    "\x1b[32m%s\x1b[0m",
-    `✅ Extension manifest written to ${resultPath}`,
-  );
-
-  await build();
-
+  await Promise.all(promises);
   process.exit(0);
 } catch (e) {
   console.error(e);

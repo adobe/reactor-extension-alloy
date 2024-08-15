@@ -113,6 +113,12 @@ const build = async () => {
   }
   const writePath = getDestination(env.npm_config_local_prefix);
   await write(writePath, manifest);
+
+  // eslint-disable-next-line no-console
+  console.log(
+    "\x1b[32m%s\x1b[0m",
+    `✅ Extension manifest written to ${writePath}`,
+  );
   return writePath;
 };
 
