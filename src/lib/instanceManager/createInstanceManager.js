@@ -101,12 +101,12 @@ module.exports = ({
     addMonitor(newMonitor) {
       window.__alloyMonitors.push(newMonitor);
       Object.keys(calledMonitors).forEach((methodName) => {
-        calledMonitors[methodName].forEach((args) => {
-          if (newMonitor[methodName]) {
+        if (newMonitor[methodName]) {
+          calledMonitors[methodName].forEach((args) => {
             newMonitor[methodName](...args);
-            calledMonitors[methodName] = [];
-          }
-        });
+          });
+          calledMonitors[methodName] = [];
+        }
       });
     },
   };
