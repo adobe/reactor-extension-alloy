@@ -11,11 +11,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { createRequire } from "module";
 import getAdobeIOAccessToken from "../test/functional/helpers/getAdobeIOAccessToken.mjs";
-
-const require = createRequire(import.meta.url);
-const adobeIOClientCredentials = require("../test/functional/helpers/adobeIOClientCredentials.mjs");
+import adobeIOClientCredentials from "../test/functional/helpers/adobeIOClientCredentials.mjs";
 
 if (adobeIOClientCredentials) {
   // eslint-disable-next-line no-console
