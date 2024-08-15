@@ -11,18 +11,18 @@ governing permissions and limitations under the License.
 */
 
 import { t } from "testcafe";
-import xdmTree from "../../helpers/objectEditor/xdmTree.mjs";
-import arrayEdit from "../../helpers/objectEditor/arrayEdit.mjs";
-import booleanEdit from "../../helpers/objectEditor/booleanEdit.mjs";
-import integerEdit from "../../helpers/objectEditor/integerEdit.mjs";
-import numberEdit from "../../helpers/objectEditor/numberEdit.mjs";
-import objectEdit from "../../helpers/objectEditor/objectEdit.mjs";
-import stringEdit from "../../helpers/objectEditor/stringEdit.mjs";
-import initializeExtensionView from "../../helpers/objectEditor/initializeExtensionView.mjs";
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import runCommonExtensionViewTests from "../../runCommonExtensionViewTests.mjs";
-import nodeEdit from "../../helpers/objectEditor/nodeEdit.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
+import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
+import arrayEdit from "../../../helpers/objectEditor/arrayEdit.mjs";
+import booleanEdit from "../../../helpers/objectEditor/booleanEdit.mjs";
+import integerEdit from "../../../helpers/objectEditor/integerEdit.mjs";
+import numberEdit from "../../../helpers/objectEditor/numberEdit.mjs";
+import objectEdit from "../../../helpers/objectEditor/objectEdit.mjs";
+import stringEdit from "../../../helpers/objectEditor/stringEdit.mjs";
+import initializeExtensionView from "../../../helpers/objectEditor/initializeExtensionView.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
+import nodeEdit from "../../../helpers/objectEditor/nodeEdit.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
 
 const schema = {
   id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",

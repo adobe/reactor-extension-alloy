@@ -10,18 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { t } from "testcafe";
-import extensionViewController from "../../helpers/extensionViewController.mjs";
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import {
   addInstanceButton,
   instancesTabs,
   resourceUsageDialog,
   instances,
-} from "../../helpers/viewSelectors.mjs";
-import runCommonExtensionViewTests from "../../runCommonExtensionViewTests.mjs";
-import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks.mjs";
-import * as datastreamsMocks from "../../helpers/endpointMocks/datastreamsMocks.mjs";
-import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks.mjs";
+} from "../../../helpers/viewSelectors.mjs";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
+import * as sandboxesMocks from "../../../helpers/endpointMocks/sandboxesMocks.mjs";
+import * as datastreamsMocks from "../../../helpers/endpointMocks/datastreamsMocks.mjs";
+import * as datastreamMocks from "../../../helpers/endpointMocks/datastreamMocks.mjs";
 
 createExtensionViewFixture({
   title: "Extension Configuration View",

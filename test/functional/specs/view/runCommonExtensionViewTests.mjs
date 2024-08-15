@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { t } from "testcafe";
-import extensionViewController from "./helpers/extensionViewController.mjs";
+import extensionViewController from "../../helpers/extensionViewController.mjs";
 
 export default (additionalInitInfo) => {
   // This fails in saucelabs. Skipping for now.

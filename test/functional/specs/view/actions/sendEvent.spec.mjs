@@ -10,15 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks.mjs";
-import * as datastreamsMocks from "../../helpers/endpointMocks/datastreamsMocks.mjs";
-import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks.mjs";
-import extensionViewController from "../../helpers/extensionViewController.mjs";
-import overrideViewSelectors from "../../helpers/overrideViewSelectors.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
-import testInstanceNameOptions from "../../helpers/testInstanceNameOptions.mjs";
-import runCommonExtensionViewTests from "../../runCommonExtensionViewTests.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import * as datastreamMocks from "../../../helpers/endpointMocks/datastreamMocks.mjs";
+import * as datastreamsMocks from "../../../helpers/endpointMocks/datastreamsMocks.mjs";
+import * as sandboxesMocks from "../../../helpers/endpointMocks/sandboxesMocks.mjs";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
+import overrideViewSelectors from "../../../helpers/overrideViewSelectors.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
+import testInstanceNameOptions from "../../../helpers/testInstanceNameOptions.mjs";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
 
 const instanceNameField = spectrum.picker("instanceNamePicker");
 const typeField = spectrum.comboBox("typeField");

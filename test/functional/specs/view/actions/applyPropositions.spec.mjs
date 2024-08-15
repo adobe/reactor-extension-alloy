@@ -10,11 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import extensionViewController from "../../helpers/extensionViewController.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
-import testInstanceNameOptions from "../../helpers/testInstanceNameOptions.mjs";
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import runCommonExtensionViewTests from "../../runCommonExtensionViewTests.mjs";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
+import testInstanceNameOptions from "../../../helpers/testInstanceNameOptions.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
 
 const instanceNameField = spectrum.picker("instanceNamePicker");
 const propositionsField = spectrum.textField("propositionsTextField");

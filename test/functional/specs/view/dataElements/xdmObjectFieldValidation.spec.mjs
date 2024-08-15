@@ -10,13 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import initializeExtensionView from "../../helpers/objectEditor/initializeExtensionView.mjs";
-import xdmTree from "../../helpers/objectEditor/xdmTree.mjs";
-import arrayEdit from "../../helpers/objectEditor/arrayEdit.mjs";
-import stringEdit from "../../helpers/objectEditor/stringEdit.mjs";
-import editor from "../../helpers/objectEditor/editor.mjs";
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
+import initializeExtensionView from "../../../helpers/objectEditor/initializeExtensionView.mjs";
+import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
+import arrayEdit from "../../../helpers/objectEditor/arrayEdit.mjs";
+import stringEdit from "../../../helpers/objectEditor/stringEdit.mjs";
+import editor from "../../../helpers/objectEditor/editor.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
 
 createExtensionViewFixture({
   title: "XDM Object Validation",

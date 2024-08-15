@@ -10,12 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import * as dataElementsMocks from "../../helpers/endpointMocks/dataElementsMocks.mjs";
-import * as dataElementMocks from "../../helpers/endpointMocks/dataElementMocks.mjs";
-import extensionViewController from "../../helpers/extensionViewController.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
-import xdmTree from "../../helpers/objectEditor/xdmTree.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import * as dataElementsMocks from "../../../helpers/endpointMocks/dataElementsMocks.mjs";
+import * as dataElementMocks from "../../../helpers/endpointMocks/dataElementMocks.mjs";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
+import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
 
 const dataElementField = spectrum.comboBox("dataElementField");
 const clearField = spectrum.checkbox("clearField");

@@ -10,14 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import extensionViewController from "../../helpers/extensionViewController.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import runCommonExtensionViewTests from "../../runCommonExtensionViewTests.mjs";
-import overrideViewSelectors from "../../helpers/overrideViewSelectors.mjs";
-import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks.mjs";
-import * as datastreamsMocks from "../../helpers/endpointMocks/datastreamsMocks.mjs";
-import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks.mjs";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
+import overrideViewSelectors from "../../../helpers/overrideViewSelectors.mjs";
+import * as sandboxesMocks from "../../../helpers/endpointMocks/sandboxesMocks.mjs";
+import * as datastreamsMocks from "../../../helpers/endpointMocks/datastreamsMocks.mjs";
+import * as datastreamMocks from "../../../helpers/endpointMocks/datastreamMocks.mjs";
 
 const instanceNamePicker = spectrum.picker("instanceNamePicker");
 

@@ -11,14 +11,14 @@ governing permissions and limitations under the License.
 */
 
 import { Selector, t } from "testcafe";
-import * as sandboxMocks from "../../helpers/endpointMocks/sandboxesMocks.mjs";
-import * as schemasMocks from "../../helpers/endpointMocks/schemasMocks.mjs";
-import * as schemaMocks from "../../helpers/endpointMocks/schemaMocks.mjs";
-import initializeExtensionView from "../../helpers/objectEditor/initializeExtensionView.mjs";
-import xdmTree from "../../helpers/objectEditor/xdmTree.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
-import editor from "../../helpers/objectEditor/editor.mjs";
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
+import * as sandboxMocks from "../../../helpers/endpointMocks/sandboxesMocks.mjs";
+import * as schemasMocks from "../../../helpers/endpointMocks/schemasMocks.mjs";
+import * as schemaMocks from "../../../helpers/endpointMocks/schemaMocks.mjs";
+import initializeExtensionView from "../../../helpers/objectEditor/initializeExtensionView.mjs";
+import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
+import editor from "../../../helpers/objectEditor/editor.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(
   "errorBoundaryMessage",

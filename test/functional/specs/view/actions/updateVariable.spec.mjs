@@ -10,16 +10,16 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import * as dataElementsMocks from "../../helpers/endpointMocks/dataElementsMocks.mjs";
-import * as dataElementMocks from "../../helpers/endpointMocks/dataElementMocks.mjs";
-import * as schemaMocks from "../../helpers/endpointMocks/schemaMocks.mjs";
-import extensionViewController from "../../helpers/extensionViewController.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
-import runCommonExtensionViewTests from "../../runCommonExtensionViewTests.mjs";
-import xdmTree from "../../helpers/objectEditor/xdmTree.mjs";
-import stringEdit from "../../helpers/objectEditor/stringEdit.mjs";
-import arrayEdit from "../../helpers/objectEditor/arrayEdit.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import * as dataElementsMocks from "../../../helpers/endpointMocks/dataElementsMocks.mjs";
+import * as dataElementMocks from "../../../helpers/endpointMocks/dataElementMocks.mjs";
+import * as schemaMocks from "../../../helpers/endpointMocks/schemaMocks.mjs";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
+import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
+import stringEdit from "../../../helpers/objectEditor/stringEdit.mjs";
+import arrayEdit from "../../../helpers/objectEditor/arrayEdit.mjs";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(
   "errorBoundaryMessage",

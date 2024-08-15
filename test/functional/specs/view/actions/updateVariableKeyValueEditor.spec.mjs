@@ -9,10 +9,10 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import * as dataElementsMocks from "../../helpers/endpointMocks/dataElementsMocks.mjs";
-import * as dataElementMocks from "../../helpers/endpointMocks/dataElementMocks.mjs";
-import extensionViewController from "../../helpers/extensionViewController.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import * as dataElementsMocks from "../../../helpers/endpointMocks/dataElementsMocks.mjs";
+import * as dataElementMocks from "../../../helpers/endpointMocks/dataElementMocks.mjs";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
 import {
   individualAttributesOption,
   entireObjectOption,
@@ -20,8 +20,8 @@ import {
   value,
   propertyAddButton,
   jsonEditor,
-} from "../../helpers/objectEditor/objectJsonEdit.mjs";
-import xdmTree from "../../helpers/objectEditor/xdmTree.mjs";
+} from "../../../helpers/objectEditor/objectJsonEdit.mjs";
+import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
 
 createExtensionViewFixture({
   title: "Update variable key value editor",

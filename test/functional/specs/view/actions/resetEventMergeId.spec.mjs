@@ -10,10 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import extensionViewController from "../../helpers/extensionViewController.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import runCommonExtensionViewTests from "../../runCommonExtensionViewTests.mjs";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
 
 const eventMergeIdField = spectrum.textField("eventMergeIdField");
 

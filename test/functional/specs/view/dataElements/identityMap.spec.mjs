@@ -11,12 +11,12 @@ governing permissions and limitations under the License.
 */
 
 import { t } from "testcafe";
-import extensionViewController from "../../helpers/extensionViewController.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
-import * as identityNamespaceMocks from "../../helpers/endpointMocks/identityNamespacesMocks.mjs";
-import * as sandboxMocks from "../../helpers/endpointMocks/sandboxesMocks.mjs";
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import runCommonExtensionViewTests from "../../runCommonExtensionViewTests.mjs";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
+import * as identityNamespaceMocks from "../../../helpers/endpointMocks/identityNamespacesMocks.mjs";
+import * as sandboxMocks from "../../../helpers/endpointMocks/sandboxesMocks.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
 
 const addIdentityButton = spectrum.button("addIdentityButton");
 const tabs = spectrum.tabs();

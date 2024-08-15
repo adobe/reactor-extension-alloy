@@ -10,13 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { t, Selector } from "testcafe";
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import * as sandboxMocks from "../../helpers/endpointMocks/sandboxesMocks.mjs";
-import * as schemasMocks from "../../helpers/endpointMocks/schemasMocks.mjs";
-import * as schemaMocks from "../../helpers/endpointMocks/schemaMocks.mjs";
-import extensionViewController from "../../helpers/extensionViewController.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
-import runCommonExtensionViewTests from "../../runCommonExtensionViewTests.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import * as sandboxMocks from "../../../helpers/endpointMocks/sandboxesMocks.mjs";
+import * as schemasMocks from "../../../helpers/endpointMocks/schemasMocks.mjs";
+import * as schemaMocks from "../../../helpers/endpointMocks/schemaMocks.mjs";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
 
 const errorBoundaryMessage = spectrum.illustratedMessage(
   "errorBoundaryMessage",

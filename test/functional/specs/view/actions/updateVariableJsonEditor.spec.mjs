@@ -10,13 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
-import * as dataElementsMocks from "../../helpers/endpointMocks/dataElementsMocks.mjs";
-import extensionViewController from "../../helpers/extensionViewController.mjs";
-import runCommonExtensionViewTests from "../../runCommonExtensionViewTests.mjs";
-import xdmTree from "../../helpers/objectEditor/xdmTree.mjs";
-import * as anEdit from "../../helpers/objectEditor/objectAnalyticsEdit.mjs";
-import * as jsonEdit from "../../helpers/objectEditor/objectJsonEdit.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
+import * as dataElementsMocks from "../../../helpers/endpointMocks/dataElementsMocks.mjs";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
+import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
+import * as anEdit from "../../../helpers/objectEditor/objectAnalyticsEdit.mjs";
+import * as jsonEdit from "../../../helpers/objectEditor/objectJsonEdit.mjs";
 
 createExtensionViewFixture({
   title: "Update variable action view",
