@@ -62,7 +62,7 @@ jobs:
         run: npm run token
       - name: Run Functional Test
         timeout-minutes: 60
-        run: npx testcafe --esm --concurrency 4 '${{ matrix.browsers }}' test/functional/specs/**/*.spec.mjs
+        run: npx testcafe --esm --concurrency 4 '${{ matrix.browsers }}' test/functional/specs
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
