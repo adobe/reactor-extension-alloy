@@ -1,11 +1,14 @@
 import path from "path";
 import run from "./run.mjs";
-import sandbox from "@adobe/reactor-sandbox";
+import fs from "fs";
 
 export default async ({ watch = false, inputDir, outputDir }) => {
 
-  // Runtime tests need a .sandbox file to run
-  await sandbox.init();
+  // Runtime tests need a .sandbox directory to run
+  const sandboxDir = path.join(outputDir, "../.sandbox");
+  if (!fs.existsSync(sandboxDir)) {
+    fs.mkdirSync(sandboxDir);
+  }
 
   const libInDir = path.join(inputDir, "lib");
   const libOutDir = path.join(outputDir, "lib");
