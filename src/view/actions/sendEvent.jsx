@@ -67,23 +67,21 @@ const xdmFieldDescription = (
 const wrapGetInitialValues =
   (getInitialValues) =>
   ({ initInfo }) => {
-    const {
-      personalization = {},
-      guidedEventsEnabled,
-      guidedEvent,
-      renderDecisions,
-    } = initInfo.settings || {};
-    const newSettings = { ...initInfo.settings };
+    const { personalization = {}, ...otherSettings } = initInfo.settings || {};
 
+    // Flatten personalization settings and use strings for data element booleans
     if (personalization.defaultPersonalizationEnabled === true) {
-      newSettings.personalization.defaultPersonalizationEnabled = "true";
+      personalization.defaultPersonalizationEnabled = "true";
     } else if (personalization.defaultPersonalizationEnabled === false) {
-      newSettings.personalization.defaultPersonalizationEnabled = "false";
+      personalization.defaultPersonalizationEnabled = "false";
     }
+    const newSettings = { ...personalization, ...otherSettings };
 
     // Handle backward compatability for making renderDecisions set to true
     // for FETCH guided events. Previously you could modify renderDecisions on
     // a FETCH guieded event.
+    const { guidedEventsEnabled, guidedEvent, renderDecisions } = newSettings;
+
     if (
       !renderDecisions &&
       guidedEventsEnabled &&
