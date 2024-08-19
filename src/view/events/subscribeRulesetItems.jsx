@@ -22,7 +22,6 @@ const subscribeRulesetItemsForm = form({}, [
     title: "Subscribe ruleset items",
     description:
       "This event will trigger the rule whenever there are ruleset items that have matched. This is a good place to add an action to render the ruleset items. You can use the data element `%event.propositions%` to access the propositions. Or within a custom code action it is available as `event.propositions`.",
-    beta: true,
   }),
   instancePicker({ name: "instanceName" }),
   fieldArray({

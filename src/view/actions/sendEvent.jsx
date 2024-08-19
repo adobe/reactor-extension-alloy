@@ -289,7 +289,6 @@ const decisionContext = simpleMap({
   keyDescription: "Enter the context key.",
   valueLabel: "Value",
   valueDescription: "Enter the context value.",
-  beta: true,
 });
 
 const configOverrideFields = configOverrides();
