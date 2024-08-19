@@ -105,7 +105,6 @@ module.exports = ({
           calledMonitors[methodName].forEach((args) => {
             newMonitor[methodName](...args);
           });
-          calledMonitors[methodName] = [];
         }
       });
     },
