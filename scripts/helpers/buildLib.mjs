@@ -1,6 +1,7 @@
 import path from "path";
 import run from "./run.mjs";
 import fs from "fs";
+import { spawn } from "child_process";
 
 export default async ({ watch = false, inputDir, outputDir }) => {
 
