@@ -67,16 +67,36 @@ const xdmFieldDescription = (
 const wrapGetInitialValues =
   (getInitialValues) =>
   ({ initInfo }) => {
-    const { personalization = {}, ...otherSettings } = initInfo.settings || {};
+    const {
+      personalization = {},
+      guidedEventsEnabled,
+      guidedEvent,
+      renderDecisions,
+    } = initInfo.settings || {};
+    const newSettings = { ...initInfo.settings };
+
     if (personalization.defaultPersonalizationEnabled === true) {
-      personalization.defaultPersonalizationEnabled = "true";
+      newSettings.personalization.defaultPersonalizationEnabled = "true";
     } else if (personalization.defaultPersonalizationEnabled === false) {
-      personalization.defaultPersonalizationEnabled = "false";
+      newSettings.personalization.defaultPersonalizationEnabled = "false";
     }
+
+    // Handle backward compatability for making renderDecisions set to true
+    // for FETCH guided events. Previously you could modify renderDecisions on
+    // a FETCH guieded event.
+    if (
+      !renderDecisions &&
+      guidedEventsEnabled &&
+      (guidedEvent === undefined || guidedEvent === FETCH)
+    ) {
+      newSettings.guidedEventsEnabled = false;
+      delete newSettings.guidedEvent;
+    }
+
     return getInitialValues({
       initInfo: {
         ...initInfo,
-        settings: { ...personalization, ...otherSettings },
+        settings: newSettings,
       },
     });
   };
@@ -228,6 +248,13 @@ const renderDecisionsField = checkbox({
   label: "Render visual personalization decisions",
   description: "Check this to render visual personalization decisions.",
   defaultValue: false,
+});
+
+const disabledRenderDecisionsField = disabledCheckbox({
+  name: "renderDecisions",
+  label: "Render visual personalization decisions",
+  description: "Check this to render visual personalization decisions.",
+  value: true,
 });
 
 const sendDisplayEventField = conditional(
@@ -385,7 +412,7 @@ const sendEventForm = form(
             section({ label: "Personalization" }, [
               decisionScopesField,
               surfacesField,
-              renderDecisionsField,
+              disabledRenderDecisionsField,
               sendDisplayEventUnchecked,
               defaultPersonalizationEnabledField,
               decisionContext,
