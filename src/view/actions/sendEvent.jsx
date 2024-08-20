@@ -186,7 +186,6 @@ const includeRenderedPropositionsField = checkbox({
   description:
     'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
   defaultValue: false,
-  beta: true,
 });
 
 const disabledIncludeRenderedPropositionsField = disabledCheckbox({
@@ -195,7 +194,6 @@ const disabledIncludeRenderedPropositionsField = disabledCheckbox({
   description:
     'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
   value: true,
-  beta: true,
 });
 
 const documentUnloadingField = checkbox({
@@ -267,7 +265,6 @@ const sendDisplayEventField = conditional(
       description:
         'Check this to send a display event after personalization is rendered. Uncheck this to include the display notifications in a subsequent event with the "include rendered propositions" checked.',
       defaultValue: true,
-      beta: true,
     }),
   ],
 );
@@ -278,7 +275,6 @@ const sendDisplayEventUnchecked = disabledCheckbox({
   description:
     'Check this to send a display event after personalization is rendered. Uncheck this to include the display notifications in a subsequent event with the "include rendered propositions" checked.',
   value: false,
-  beta: true,
 });
 
 const defaultPersonalizationEnabledField = radioGroup({
@@ -303,7 +299,6 @@ const defaultPersonalizationEnabledField = radioGroup({
         "Disabled - explicitly suppress the request for the page scope and default surface.",
     },
   ],
-  beta: true,
 });
 
 const decisionContext = simpleMap({
@@ -319,7 +314,6 @@ const decisionContext = simpleMap({
   keyDescription: "Enter the context key.",
   valueLabel: "Value",
   valueDescription: "Enter the context value.",
-  beta: true,
 });
 
 const configOverrideFields = configOverrides();
@@ -343,7 +337,6 @@ const sendEventForm = form(
       description:
         "Check this box to automatically fill in or hide certain fields to enable a particular use-case.",
       defaultValue: false,
-      beta: true,
     }),
     conditional(
       {
@@ -394,7 +387,6 @@ const sendEventForm = form(
                 "Collect analytics - record an event without getting personalization decisions. This is meant to be called late in the page load.",
             },
           ],
-          beta: true,
         }),
         conditional(
           {
