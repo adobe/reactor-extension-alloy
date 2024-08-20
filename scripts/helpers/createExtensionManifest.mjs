@@ -953,7 +953,7 @@ const createExtensionManifest = ({ version }) => {
         name: "monitor-triggered",
         displayName: "Monitoring hook triggered",
         libPath: "dist/lib/events/monitor/index.js",
-        viewPath: "events/triggerMonitor.html",
+        viewPath: "events/monitorTriggered.html",
         schema: {
           $schema: "http://json-schema.org/draft-04/schema#",
           type: "object",
