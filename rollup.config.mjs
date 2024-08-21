@@ -19,7 +19,6 @@ export default [
     output: [
       {
         file: "temp/alloy.js",
-        format: "esm",
       },
     ],
     plugins: [
@@ -29,10 +28,6 @@ export default [
       }),
       commonjs(),
     ],
-    external: [
-      "@adobe/reactor-load-script",
-      "@adobe/reactor-object-assign",
-      "@adobe/reactor-query-string",
-    ],
+    external: ["@adobe/reactor-query-string"],
   },
 ];
