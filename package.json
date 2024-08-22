@@ -77,7 +77,7 @@
     "@adobe/jwt-auth": "^2.0.0",
     "@adobe/reactor-sandbox": "^12.5.0",
     "@adobe/reactor-turbine": "^27.5.0",
-    "@adobe/reactor-turbine-schemas": "^10.6.0",
+    "@adobe/reactor-turbine-schemas": "^10.7.0",
     "@babel/cli": "^7.24.8",
     "@babel/core": "^7.24.9",
     "@babel/eslint-parser": "^7.24.8",
