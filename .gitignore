@@ -7,3 +7,4 @@ coverage
 .eslintcache
 .parcel-cache
 extension.json
+package-adobe-alloy-*.zip
