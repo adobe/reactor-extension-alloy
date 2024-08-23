@@ -11,8 +11,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-// npm run build:prod && npx @adobe/reactor-packager
-//
+
+/* eslint-disable no-console */
+
 import { spawn } from "child_process";
 import fs from "fs";
 import path, { dirname } from "path";
@@ -31,12 +32,16 @@ const execute = (command, options) => {
       .on("error", reject);
   });
 };
+try {
+  console.log("Run build process...");
+  await execute("npm", ["run", "build:prod"]);
 
-console.log("Run build process...");
-await execute("npm", ["run", "build:prod"]);
-
-console.log("Package the files");
-await execute("npx", ["@adobe/reactor-packager"]);
+  console.log("Package the files");
+  await execute("npx", ["@adobe/reactor-packager"]);
+} catch (e) {
+  console.log(e);
+  process.exit(1);
+}
 
 const extensonJsonContent = fs.readFileSync(`extension.json`, "utf8");
 const extensionDescriptor = JSON.parse(extensonJsonContent);
@@ -45,6 +50,13 @@ const packagePath = path.join(
   cwd,
   `package-${extensionDescriptor.name}-${extensionDescriptor.version}.zip`,
 );
+
+if (!fs.existsSync(packagePath)) {
+  console.log(
+    "The extension file was not found. Probably something wrong happened during build.",
+  );
+  process.exit(1);
+}
 
 const zip = new AdmZip(packagePath);
 
