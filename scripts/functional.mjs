@@ -70,23 +70,6 @@ const buildComponentFixtures = async () => {
   return bundler.run();
 };
 
-const getBrowserConfig = () => {
-  if (process.env.SAUCE_USERNAME && process.env.SAUCE_ACCESS_KEY) {
-    if (chrome) {
-      return { browsers: "saucelabs:chrome@latest:Mac 13", concurrency: 4 };
-    } else if (firefox) {
-      return { browsers: "saucelabs:firefox@latest:Mac 13", concurrency: 4 };
-    } else if (safari) {
-      return { browsers: "saucelabs:safari@latest:Mac 13", concurrency: 4 };
-    } else if (edge) {
-      return { browsers: "saucelabs:MicrosoftEdge@latest:Mac 13", concurrency: 4 };
-    }
-  }
-  
-  // Default to local Chrome if SauceLabs is not configured or no specific browser is selected
-  return { browsers: "chrome", concurrency: 1 };
-};
-
 (async () => {
   await build({ watch });
   await buildComponentFixtures();
@@ -101,7 +84,23 @@ const getBrowserConfig = () => {
     ? testcafe.createLiveModeRunner()
     : testcafe.createRunner();
 
-  const { browsers, concurrency } = getBrowserConfig();
+  let concurrency = 4;
+  let browsers;
+
+  if (chrome) {
+    browsers = "saucelabs:chrome@latest:macOS 13";
+  } else if (firefox) {
+    browsers = "saucelabs:firefox@latest:macOS 13";
+  } else if (safari) {
+    browsers = "saucelabs:safari@latest:macOS 13";
+  } else if (edge) {
+    browsers = "saucelabs:MicrosoftEdge@latest:Windows 11";
+  } else {
+    concurrency = 1;
+    browsers = "chrome";
+  }
+
+  console.log('Using browser configuration:', { browsers, concurrency });
 
   const failedCount = await runner
     .src(specsPath)
