@@ -71,17 +71,20 @@ const buildComponentFixtures = async () => {
 };
 
 const getBrowserConfig = () => {
-  if (chrome) {
-    return { browsers: "saucelabs:chrome@latest:Mac 13", concurrency: 4 };
-  } else if (firefox) {
-    return { browsers: "saucelabs:firefox@latest:Mac 13", concurrency: 4 };
-  } else if (safari) {
-    return { browsers: "saucelabs:safari@latest:Mac 13", concurrency: 4 };
-  } else if (edge) {
-    return { browsers: "saucelabs:MicrosoftEdge@latest:Mac 13", concurrency: 4 };
-  } else {
-    return { browsers: "chrome", concurrency: 1 };
+  if (process.env.SAUCE_USERNAME && process.env.SAUCE_ACCESS_KEY) {
+    if (chrome) {
+      return { browsers: "saucelabs:chrome@latest:Mac 13", concurrency: 4 };
+    } else if (firefox) {
+      return { browsers: "saucelabs:firefox@latest:Mac 13", concurrency: 4 };
+    } else if (safari) {
+      return { browsers: "saucelabs:safari@latest:Mac 13", concurrency: 4 };
+    } else if (edge) {
+      return { browsers: "saucelabs:MicrosoftEdge@latest:Mac 13", concurrency: 4 };
+    }
   }
+  
+  // Default to local Chrome if SauceLabs is not configured or no specific browser is selected
+  return { browsers: "chrome", concurrency: 1 };
 };
 
 (async () => {
