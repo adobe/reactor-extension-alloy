@@ -21,6 +21,7 @@ import { fileURLToPath } from "url";
 import createTestCafe from "testcafe";
 import build from "./helpers/build.mjs";
 import saveAndRestoreFile from "./helpers/saveAndRestoreFile.mjs";
+import { Configuration } from 'testcafe';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -71,6 +72,31 @@ const buildComponentFixtures = async () => {
 };
 
 const tunnelIdentifier = process.env.SAUCE_TUNNEL_IDENTIFIER || 'github-action-tunnel';
+
+let browserName;
+if (chrome) browserName = 'chrome';
+else if (firefox) browserName = 'firefox';
+else if (safari) browserName = 'safari';
+else browserName = 'chrome';
+
+const config = new Configuration();
+
+config.mergeOptions({
+  browsers: [`saucelabs:${browserName}@latest:macOS 13`],
+  src: [specsPath],
+  sauceLabsOptions: {
+    username: process.env.SAUCE_USERNAME,
+    accessKey: process.env.SAUCE_ACCESS_KEY,
+    tunnelIdentifier: tunnelIdentifier
+  },
+  skipJsErrors: true,
+  quarantineMode: true,
+  selectorTimeout: 50000,
+  assertionTimeout: 7000,
+  pageLoadTimeout: 8000,
+  speed: 0.75,
+  stopOnFirstFail: false
+});
 
 (async () => {
   await build({ watch });

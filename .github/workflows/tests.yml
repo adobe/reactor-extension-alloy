@@ -40,7 +40,7 @@ jobs:
   functional-test:
     name: "Functional Test"
     strategy:
-      max-parallel: 4
+      max-parallel: 3
       matrix:
         browsers:
           [
@@ -63,7 +63,9 @@ jobs:
         with:
           node-version: '20'
       - name: Install node packages
-        run: npm ci --legacy-peer-deps
+        run: |
+          npm ci --legacy-peer-deps
+          npm install testcafe-browser-provider-saucelabs@latest --save-dev
       - name: Build
         run: npm run build
       - name: Retrieve Token
