@@ -70,6 +70,20 @@ const buildComponentFixtures = async () => {
   return bundler.run();
 };
 
+const getBrowserConfig = () => {
+  if (chrome) {
+    return { browsers: "saucelabs:chrome@latest:Mac 13", concurrency: 4 };
+  } else if (firefox) {
+    return { browsers: "saucelabs:firefox@latest:Mac 13", concurrency: 4 };
+  } else if (safari) {
+    return { browsers: "saucelabs:safari@latest:Mac 13", concurrency: 4 };
+  } else if (edge) {
+    return { browsers: "saucelabs:MicrosoftEdge@latest:Mac 13", concurrency: 4 };
+  } else {
+    return { browsers: "chrome", concurrency: 1 };
+  }
+};
+
 (async () => {
   await build({ watch });
   await buildComponentFixtures();
@@ -84,25 +98,7 @@ const buildComponentFixtures = async () => {
     ? testcafe.createLiveModeRunner()
     : testcafe.createRunner();
 
-  let concurrency;
-  let browsers;
-
-  if (chrome) {
-    browsers = "saucelabs:Chrome@latest:macOS 13";
-    concurrency = 4;
-  } else if (firefox) {
-    browsers = "saucelabs:Firefox@latest:macOS 13";
-    concurrency = 4;
-  } else if (safari) {
-    browsers = "saucelabs:Safari@latest:macOS 13";
-    concurrency = 4;
-  } else if (edge) {
-    browsers = "saucelabs:MicrosoftEdge@latest:macOS 13";
-    concurrency = 4;
-  } else {
-    concurrency = 1;
-    browsers = "chrome";
-  }
+  const { browsers, concurrency } = getBrowserConfig();
 
   const failedCount = await runner
     .src(specsPath)
