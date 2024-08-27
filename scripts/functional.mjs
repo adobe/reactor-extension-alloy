@@ -90,21 +90,28 @@ const tunnelIdentifier = process.env.SAUCE_TUNNEL_IDENTIFIER || 'github-action-t
   let browsers;
 
   if (chrome) {
-    browsers = `saucelabs:chrome@latest:Mac 13?tunnelIdentifier=${tunnelIdentifier}`;
+    browsers = `saucelabs:Chrome@latest:macOS 11.00`;
     concurrency = 4;
   } else if (firefox) {
-    browsers = `saucelabs:firefox@latest:Mac 13?tunnelIdentifier=${tunnelIdentifier}`;
+    browsers = `saucelabs:Firefox@latest:macOS 11.00`;
     concurrency = 4;
   } else if (safari) {
-    browsers = `saucelabs:safari@latest:Mac 13?tunnelIdentifier=${tunnelIdentifier}`;
+    browsers = `saucelabs:Safari@latest:macOS 11.00`;
     concurrency = 4;
   } else if (edge) {
-    browsers = `saucelabs:MicrosoftEdge@latest:Windows 11?tunnelIdentifier=${tunnelIdentifier}`;
+    browsers = `saucelabs:MicrosoftEdge@latest:Windows 10`;
     concurrency = 4;
   } else {
     concurrency = 1;
     browsers = "chrome";
   }
+
+  // Add this configuration for Sauce Labs
+  const sauceLabsConfig = {
+    username: process.env.SAUCE_USERNAME,
+    accessKey: process.env.SAUCE_ACCESS_KEY,
+    tunnelIdentifier: tunnelIdentifier
+  };
 
   const failedCount = await runner
     .src(specsPath)
@@ -135,6 +142,7 @@ const tunnelIdentifier = process.env.SAUCE_TUNNEL_IDENTIFIER || 'github-action-t
     })
     .browsers(browsers)
     .concurrency(concurrency)
+    .sauceLabsOptions(sauceLabsConfig)
     .run({
       skipJsErrors: true,
       quarantineMode: true,
