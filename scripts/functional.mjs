@@ -89,14 +89,20 @@ const tunnelIdentifier = process.env.SAUCE_TUNNEL_IDENTIFIER || 'github-action-t
   let browsers;
   let concurrency = 4;
 
+  const sauceLabsConfig = {
+    username: process.env.SAUCE_USERNAME,
+    accessKey: process.env.SAUCE_ACCESS_KEY,
+    tunnelIdentifier: tunnelIdentifier
+  };
+
   if (chrome) {
-    browsers = 'saucelabs:Chrome@latest:macOS 10.15';
+    browsers = `saucelabs:Chrome@latest:Windows 10`;
   } else if (firefox) {
-    browsers = 'saucelabs:Firefox@latest:macOS 10.15';
+    browsers = `saucelabs:Firefox@latest:Windows 10`;
   } else if (safari) {
-    browsers = 'saucelabs:Safari@latest:macOS 10.15';
+    browsers = `saucelabs:Safari@latest:macOS 10.15`;
   } else if (edge) {
-    browsers = 'saucelabs:MicrosoftEdge@latest:Windows 10';
+    browsers = `saucelabs:MicrosoftEdge@latest:Windows 10`;
   } else {
     concurrency = 1;
     browsers = "chrome";
@@ -106,11 +112,6 @@ const tunnelIdentifier = process.env.SAUCE_TUNNEL_IDENTIFIER || 'github-action-t
     .src(specsPath)
     .browsers(browsers)
     .concurrency(concurrency)
-    .sauceLabsOptions({
-      username: process.env.SAUCE_USERNAME,
-      accessKey: process.env.SAUCE_ACCESS_KEY,
-      tunnelIdentifier: tunnelIdentifier
-    })
     .run({
       skipJsErrors: true,
       quarantineMode: true,
@@ -119,6 +120,7 @@ const tunnelIdentifier = process.env.SAUCE_TUNNEL_IDENTIFIER || 'github-action-t
       pageLoadTimeout: 8000,
       speed: 0.75,
       stopOnFirstFail: false,
+      sauceLabsOptions: sauceLabsConfig  // Add Sauce Labs options here
     });
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
