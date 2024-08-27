@@ -84,29 +84,25 @@ const buildComponentFixtures = async () => {
     ? testcafe.createLiveModeRunner()
     : testcafe.createRunner();
 
-  let concurrency = 4;
+  let concurrency;
   let browsers;
 
-  const sauceLabsConfig = {
-    username: process.env.SAUCE_USERNAME,
-    accessKey: process.env.SAUCE_ACCESS_KEY,
-    platformName: 'macOS 13',
-  };
-
   if (chrome) {
-    browsers = { providerName: 'saucelabs', browser: 'chrome', ...sauceLabsConfig };
+    browsers = "saucelabs:chrome@latest:macOS 13.00";
+    concurrency = 4;
   } else if (firefox) {
-    browsers = { providerName: 'saucelabs', browser: 'firefox', ...sauceLabsConfig };
+    browsers = "saucelabs:firefox@latest:macOS 13.00";
+    concurrency = 4;
   } else if (safari) {
-    browsers = { providerName: 'saucelabs', browser: 'safari', ...sauceLabsConfig };
+    browsers = "saucelabs:safari@latest:macOS 13.00";
+    concurrency = 4;
   } else if (edge) {
-    browsers = { providerName: 'saucelabs', browser: 'MicrosoftEdge', platformName: 'Windows 11' };
+    browsers = "saucelabs:MicrosoftEdge@121:Windows 11";
+    concurrency = 4;
   } else {
     concurrency = 1;
-    browsers = 'chrome';
+    browsers = "chrome";
   }
-
-  console.log('Using browser configuration:', JSON.stringify(browsers, null, 2));
 
   const failedCount = await runner
     .src(specsPath)
