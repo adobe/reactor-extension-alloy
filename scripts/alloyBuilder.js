@@ -16,7 +16,7 @@ governing permissions and limitations under the License.
 const path = require("path");
 const fs = require("fs");
 const { spawn } = require("child_process");
-const { Command, Option } = require("commander");
+const { Command, Option, InvalidOptionArgumentError } = require("commander");
 const babel = require("@babel/core");
 
 const execute = (command, options) => {
@@ -95,17 +95,34 @@ program
   .description("Tool for generating custom alloy build based on user input.");
 
 program.addOption(
-  new Option(
-    "-i, --inputFile <file>",
-    "the entry pint file for the build",
-  ).makeOptionMandatory(),
+  new Option("-i, --inputFile <file>", "the entry pint file for the build")
+    .makeOptionMandatory()
+    .argParser((value) => {
+      if (!fs.existsSync(path.join(process.cwd(), value))) {
+        throw new InvalidOptionArgumentError(
+          `Input file "${value}" doen not exist.`,
+        );
+      }
+
+      return value;
+    }),
 );
 
 program.addOption(
   new Option(
     "-o, --outputDir <dir>",
     "the output directory for the generated build",
-  ).default(process.cwd()),
+  )
+    .default(process.cwd())
+    .argParser((value) => {
+      if (!fs.existsSync(path.join(process.cwd(), value))) {
+        throw new InvalidOptionArgumentError(
+          `Output directory "${value}" is not a valid directory path.`,
+        );
+      }
+
+      return value;
+    }),
 );
 
 const alloyComponents = getAlloyComponents();
@@ -175,9 +192,9 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
 
     fs.writeFileSync(entryFile, output);
   } catch (e) {
-    fs.unlinkSync(entryFile);
-    console.error(e);
-    process.exit(1);
+    // fs.unlinkSync(entryFile);
+    // console.error(e);
+    // process.exit(1);
   }
 });
 
