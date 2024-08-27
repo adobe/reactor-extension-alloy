@@ -60,16 +60,48 @@ if (!fs.existsSync(packagePath)) {
 
 const zip = new AdmZip(packagePath);
 
-const packageJson = await fs.readFileSync(path.join(cwd, "package.tags.json"));
-zip.addFile("package.json", packageJson);
+const packageJson = JSON.parse(fs.readFileSync(`package.json`, "utf8"));
+const allDependencies = {
+  ...packageJson.dependencies,
+  ...packageJson.devDependencies,
+};
+const buildPackageJson = {
+  name: "reactor-extension-alloy",
+  version: "1.0.0",
+  author: {
+    name: "Adobe",
+    url: "http://adobe.com",
+    email: "reactor@adobe.com",
+  },
+  scripts: {
+    build: "node ./scripts/alloyBuilder.js -i ./alloy.js -o ./dist/lib",
+  },
+  license: "Apache-2.0",
+  description: "Tool for generating custom alloy build based on user input.",
+  dependencies: {
+    "@adobe/alloy": "",
+    "@babel/core": "",
+    "@rollup/plugin-commonjs": "",
+    "@rollup/plugin-node-resolve": "",
+    commander: "",
+    rollup: "",
+  },
+};
+buildPackageJson.dependencies = Object.keys(
+  buildPackageJson.dependencies,
+).reduce((acc, value) => {
+  acc[value] = allDependencies[value].replace("^", "");
+  return acc;
+}, {});
+zip.addFile("package.json", JSON.stringify(buildPackageJson, null, 2));
 
-const alloy = await fs.readFileSync(path.join(cwd, "src", "lib", "alloy.js"));
+const alloy = fs.readFileSync(path.join(cwd, "src", "lib", "alloy.js"));
 zip.addFile("alloy.js", alloy);
 
-const rollupConfig = await fs.readFileSync(path.join(cwd, "rollup.config.mjs"));
+const rollupConfig = fs.readFileSync(path.join(cwd, "rollup.config.mjs"));
 zip.addFile("rollup.config.mjs", rollupConfig);
 
-const buildScript = await fs.readFileSync(
+const buildScript = fs.readFileSync(
   path.join(cwd, "scripts", "alloyBuilder.js"),
 );
 zip.addFile("scripts/alloyBuilder.js", buildScript);
