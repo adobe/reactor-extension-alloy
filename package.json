@@ -34,7 +34,7 @@
     "test:functional:saucelabs:edge": "./scripts/functional.mjs --edge",
     "test:functional:watch": "./scripts/functional.mjs --watch",
     "test:functional:watch:debug": "echo \"open chrome://inspect in Chrome and click 'inspect'\" && node --inspect-brk ./scripts/functional.mjs --watch",
-    "test": "npm-run-all --parallel test:unit test:functional",
+    "test": "testcafe -b saucelabs",
     "token": "node scripts/token.mjs",
     "version": "./scripts/version.sh"
   },
