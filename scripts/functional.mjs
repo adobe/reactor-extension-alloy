@@ -88,10 +88,10 @@ const buildComponentFixtures = async () => {
   let browsers;
 
   if (chrome) {
-    browsers = "saucelabs:chrome@128:Windows 11";
+    browsers = "saucelabs:chrome@128:macOS 13";
     concurrency = 4;
   } else if (firefox) {
-    browsers = "saucelabs:firefox@129:Windows 11";
+    browsers = "saucelabs:firefox@129:macOS 13";
     concurrency = 4;
   } else if (safari) {
     browsers = "saucelabs:safari@17:macOS 13";
