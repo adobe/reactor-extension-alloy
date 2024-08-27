@@ -70,6 +70,8 @@ const buildComponentFixtures = async () => {
   return bundler.run();
 };
 
+const tunnelIdentifier = process.env.SAUCE_TUNNEL_IDENTIFIER || 'github-action-tunnel';
+
 (async () => {
   await build({ watch });
   await buildComponentFixtures();
@@ -84,21 +86,17 @@ const buildComponentFixtures = async () => {
     ? testcafe.createLiveModeRunner()
     : testcafe.createRunner();
 
-  let concurrency;
   let browsers;
+  let concurrency = 4;
 
   if (chrome) {
-    browsers = "saucelabs:chrome@128:macOS 13";
-    concurrency = 4;
+    browsers = 'saucelabs:Chrome@latest:macOS 10.15';
   } else if (firefox) {
-    browsers = "saucelabs:firefox@129:macOS 13";
-    concurrency = 4;
+    browsers = 'saucelabs:Firefox@latest:macOS 10.15';
   } else if (safari) {
-    browsers = "saucelabs:safari@17:macOS 13";
-    concurrency = 4;
+    browsers = 'saucelabs:Safari@latest:macOS 10.15';
   } else if (edge) {
-    browsers = "saucelabs:MicrosoftEdge@121:Windows 11";
-    concurrency = 4;
+    browsers = 'saucelabs:MicrosoftEdge@latest:Windows 10';
   } else {
     concurrency = 1;
     browsers = "chrome";
@@ -106,33 +104,13 @@ const buildComponentFixtures = async () => {
 
   const failedCount = await runner
     .src(specsPath)
-    .filter((testName, fixtureName, fixturePath, testMeta, fixtureMeta) => {
-      if (testNameFilter && testNameFilter !== testName) {
-        return false;
-      }
-      const requiresAdobeIOIntegration =
-        fixtureMeta.requiresAdobeIOIntegration ||
-        testMeta.requiresAdobeIOIntegration;
-
-      if (requiresAdobeIOIntegration && !adobeIOClientCredentials) {
-        // Using console.log instead of console.warn here because console.warn is an alias for console.error, which
-        // means it outputs to stderr and this isn't technically an error.
-        const fullTestName = `${fixtureName} ${testName}`;
-        // eslint-disable-next-line no-console
-        console.log(
-          chalk.yellowBright(
-            `The test named ${chalk.bold(
-              fullTestName,
-            )} will be skipped. It requires an Adobe I/O integration and no environment variables containing Adobe I/O integration details were found.`,
-          ),
-        );
-        return false;
-      }
-
-      return true;
-    })
     .browsers(browsers)
     .concurrency(concurrency)
+    .sauceLabsOptions({
+      username: process.env.SAUCE_USERNAME,
+      accessKey: process.env.SAUCE_ACCESS_KEY,
+      tunnelIdentifier: tunnelIdentifier
+    })
     .run({
       skipJsErrors: true,
       quarantineMode: true,
