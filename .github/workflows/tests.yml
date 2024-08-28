@@ -41,10 +41,9 @@ jobs:
       matrix:
         browsers:
           [
-            "saucelabs:chrome@123:Mac 13",
-            "saucelabs:firefox@123:Mac 13",
-            "saucelabs:MicrosoftEdge@121:Windows 11",
-            "saucelabs:safari@17:Mac 13"
+            "saucelabs:chrome@latest:macOS 13",
+            "saucelabs:firefox@latest:macOS 13",
+            "saucelabs:safari@latest:macOS 13"
           ]
     runs-on: ubuntu-latest
     steps:
