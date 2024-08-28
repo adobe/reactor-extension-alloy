@@ -27,7 +27,9 @@ npm:
     - read-cache
     - uuid
     - "@adobe/reactor-cookie"
+    - "@adobe/reactor-sandbox"
     - "@adobe/reactor-query-string"
+    - "@adobe/auth-token"
     - react
 suites:
   - name: "Safari"
