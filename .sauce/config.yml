@@ -3,9 +3,10 @@ kind: testcafe
 sauce:
   region: us-west-1
   sauceignore: .sauceignore
-  concurrency: 9
+  concurrency: 6
 defaults:
   timeout: 60m
+showConsoleLog: true
 metadata:
   name: Alloy Reactor Extension
 rootDir: ./
@@ -41,7 +42,7 @@ npm:
 suites:
   - name: "Safari"
     esm: true
-    headless: true
+    shard: concurrency
     browserName: "safari"
     browserVersion: "latest"
     src:
@@ -49,7 +50,7 @@ suites:
     platformName: "macOS 13"
   - name: "Firefox"
     esm: true
-    headless: true
+    shard: concurrency
     browserName: "firefox"
     browserVersion: "latest"
     src:
@@ -57,7 +58,7 @@ suites:
     platformName: "macOS 13"
   - name: "Chrome"
     esm: true
-    headless: true
+    shard: concurrency
     browserName: "chrome"
     browserVersion: "latest"
     src:

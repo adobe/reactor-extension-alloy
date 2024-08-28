@@ -13,25 +13,25 @@ env:
   REACTOR_IO_INTEGRATION_CLIENT_SECRET: ${{ secrets.REACTOR_IO_INTEGRATION_CLIENT_SECRET }}
 
 jobs:
-  # unit-test:
-  #   name: "Unit Test"
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Install dependencies
-  #       run: npm ci
-  #     - name: Build
-  #       run: npm run build
-  #     - uses: saucelabs/sauce-connect-action@v2
-  #       with:
-  #         username: ${{ secrets.SAUCE_USERNAME }}
-  #         accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
-  #     - name: Run Unit Test
-  #       run: npx karma start karma.saucelabs.conf.js --single-run
-  #       env:
-  #         BUILD_NUMBER: ${{ github.run_number }}
-  #         BUILD_ID: ${{ github.run_id }}
-  #         JOB_NUMBER: ${{ github.job }}
+  unit-test:
+    name: "Unit Test"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - uses: saucelabs/sauce-connect-action@v2
+        with:
+          username: ${{ secrets.SAUCE_USERNAME }}
+          accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
+      - name: Run Unit Test
+        run: npx karma start karma.saucelabs.conf.js --single-run
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          BUILD_ID: ${{ github.run_id }}
+          JOB_NUMBER: ${{ github.job }}
 
   functional-test:
     name: "Functional Test"
