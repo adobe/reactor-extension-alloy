@@ -4,7 +4,6 @@ sauce:
   region: us-west-1
   sauceignore: .sauceignore
   concurrency: 6
-  maxDuration: 3600
 metadata:
   name: Alloy Reactor Extension
 rootDir: ./
@@ -18,6 +17,8 @@ env:
   REACTOR_IO_INTEGRATION_CLIENT_SECRET: $REACTOR_IO_INTEGRATION_CLIENT_SECRET
 testcafe:
   version: 3.6.2
+  timeout:
+    maxDuration: 3600 
 nodeVersion: "22"
 speed: 1
 disablePageCaching: true
