@@ -3,7 +3,7 @@ kind: testcafe
 sauce:
   region: us-west-1
   sauceignore: .sauceignore
-  concurrency: 6
+  concurrency: 9
 defaults:
   timeout: 60m
 metadata:
@@ -13,6 +13,7 @@ env:
   NPM_PACKAGE_VERSION: $NPM_PACKAGE_VERSION
   SAUCE_USERNAME: $SAUCE_USERNAME
   SAUCE_ACCESS_KEY: $SAUCE_ACCESS_KEY
+  SAUCE_CLIENT_TIMEOUT: 300s
   EDGE_E2E_PRIVATE_KEY_CONTENTS: $EDGE_E2E_PRIVATE_KEY_CONTENTS
   EDGE_E2E_CLIENT_SECRET: $EDGE_E2E_CLIENT_SECRET
   REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS: $REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS
@@ -40,6 +41,7 @@ npm:
 suites:
   - name: "Safari"
     esm: true
+    headless: true
     browserName: "safari"
     browserVersion: "latest"
     src:
@@ -47,6 +49,7 @@ suites:
     platformName: "macOS 13"
   - name: "Firefox"
     esm: true
+    headless: true
     browserName: "firefox"
     browserVersion: "latest"
     src:
@@ -54,6 +57,7 @@ suites:
     platformName: "macOS 13"
   - name: "Chrome"
     esm: true
+    headless: true
     browserName: "chrome"
     browserVersion: "latest"
     src:
