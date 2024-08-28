@@ -90,13 +90,13 @@ const buildComponentFixtures = async () => {
   const tunnelIdentifier = process.env.SAUCE_TUNNEL_IDENTIFIER || `github-action-tunnel-${process.env.GITHUB_RUN_ID}`;
 
   if (chrome) {
-    browsers = `saucelabs:chrome@latest:mac 13`;
+    browsers = `saucelabs:chrome@122:mac 13`;
     concurrency = 4;
   } else if (firefox) {
-    browsers = `saucelabs:firefox@latest:mac 13`;
+    browsers = `saucelabs:firefox@123:mac 13`;
     concurrency = 4;
   } else if (safari) {
-    browsers = `saucelabs:safari@latest:mac 13`;
+    browsers = `saucelabs:safari@17:mac 13`;
     concurrency = 4;
   } else {
     concurrency = 1;
