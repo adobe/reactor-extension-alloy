@@ -20,6 +20,8 @@ nodeVersion: "22"
 speed: 1
 disablePageCaching: true
 timeZone: New_York
+pageRequestTimeout: 120000
+retryTestPages: true
 npm:
   dependencies:
     - parse-uri
