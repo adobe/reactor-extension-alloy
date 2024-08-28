@@ -35,7 +35,6 @@ jobs:
 
   functional-test:
     name: "Functional Test"
-    needs: unit-test
     strategy:
       max-parallel: 4
       matrix:
