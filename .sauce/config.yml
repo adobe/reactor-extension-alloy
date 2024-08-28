@@ -18,7 +18,6 @@ testcafe:
   version: 3.6.2
 nodeVersion: "22"
 speed: 1
-pageLoadTimeout: 3000
 disablePageCaching: true
 timeZone: New_York
 npm:
@@ -29,28 +28,23 @@ npm:
     - uuid
     - "@adobe/reactor-cookie"
     - "@adobe/reactor-query-string"
+    - react
 suites:
-
   - name: "Safari"
     browserName: "safari"
-    headless: true
     browserVersion: "latest"
     src:
-      - "test/functional/specs/**/*.js"
+      - "test/functional/specs/**/*.spec.mjs"
     platformName: "macOS 13"
-
   - name: "Firefox"
     browserName: "firefox"
-    headless: true
     browserVersion: "latest"
     src:
-      - "test/functional/specs/**/*.js"
-    platformName: "Windows 11"
-
+      - "test/functional/specs/**/*.spec.mjs"
+    platformName: "macOS 13"
   - name: "Chrome"
     browserName: "chrome"
-    headless: true
     browserVersion: "latest"
     src:
-      - "test/functional/specs/**/*.js"
-    platformName: "Windows 11"
+      - "test/functional/specs/**/*.spec.mjs"
+    platformName: "macOS 13"
