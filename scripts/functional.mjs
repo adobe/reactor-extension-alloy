@@ -73,35 +73,31 @@ const buildComponentFixtures = async () => {
 (async () => {
   await build({ watch });
   await buildComponentFixtures();
-  // Running the runtime tests requires us to re-write this file.
-  // This will save the file and restore it after the tests are complete.
   saveAndRestoreFile({ file: path.resolve(".sandbox", "container.js") });
   await sandbox.init();
 
   const testcafe = await createTestCafe();
+  const runner = watch ? testcafe.createLiveModeRunner() : testcafe.createRunner();
 
-  const runner = watch
-    ? testcafe.createLiveModeRunner()
-    : testcafe.createRunner();
-
-  let concurrency;
   let browsers;
+  const concurrency = 1; // Set concurrency to 1 for all cases
 
-  if (chrome) {
-    browsers = "saucelabs:chrome@dev:Mac 13";
-    concurrency = 4;
-  } else if (firefox) {
-    browsers = "saucelabs:firefox@dev:Mac 13";
-    concurrency = 4;
-  } else if (safari) {
-    browsers = "saucelabs:safari@17:Mac 13";
-    concurrency = 4;
-  } else if (edge) {
-    browsers = "saucelabs:microsoftedge@latest:Windows 10";
-    concurrency = 4;
-  } else {
-    concurrency = 1;
-    browsers = "chrome";
+  const sauceLabsBrowser = process.env.SAUCE_LABS_BROWSER || '';
+  switch (sauceLabsBrowser.toLowerCase()) {
+    case 'chrome':
+      browsers = "saucelabs:chrome@dev:Mac 13";
+      break;
+    case 'firefox':
+      browsers = "saucelabs:firefox@dev:Mac 13";
+      break;
+    case 'safari':
+      browsers = "saucelabs:safari@17:Mac 13";
+      break;
+    case 'edge':
+      browsers = "saucelabs:microsoftedge@latest:Windows 10";
+      break;
+    default:
+      browsers = "chrome"; // Local Chrome as fallback
   }
 
   const failedCount = await runner
@@ -144,6 +140,7 @@ const buildComponentFixtures = async () => {
       tunnelIdentifier: process.env.SAUCE_TUNNEL_IDENTIFIER,
       parentTunnel: process.env.SAUCE_TUNNEL_PARENT
     });
+
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
 })();
