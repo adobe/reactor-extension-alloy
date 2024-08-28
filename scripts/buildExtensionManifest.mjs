@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
 Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -15,12 +17,12 @@ import addAJVFormats from "ajv-formats";
 import { join, resolve } from "path";
 import { env } from "process";
 import prettier from "prettier";
-import createExtensionManifest from "./createExtensionManifest.mjs";
+import createExtensionManifest from "./helpers/createExtensionManifest.mjs";
 
 const extensionDescriptorSchema = JSON.parse(
   await readFile(
     new URL(
-      "../../node_modules/@adobe/reactor-turbine-schemas/schemas/extension-package-web.json",
+      "../node_modules/@adobe/reactor-turbine-schemas/schemas/extension-package-web.json",
       import.meta.url,
     ),
   ),
@@ -122,4 +124,4 @@ const build = async () => {
   return writePath;
 };
 
-export default build;
+build();
