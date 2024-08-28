@@ -29,6 +29,7 @@ npm:
     - "@adobe/reactor-cookie"
     - "@adobe/reactor-query-string"
     - react
+  args: --esm
 suites:
   - name: "Safari"
     browserName: "safari"
