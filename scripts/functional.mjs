@@ -89,13 +89,13 @@ const buildComponentFixtures = async () => {
   
     if (chrome) {
       browsers = "saucelabs:chrome@123:Mac 13";
-      concurrency = 1;
+      concurrency = 4;
     } else if (firefox) {
       browsers = "saucelabs:firefox@123:Mac 13";
-      concurrency = 1;
+      concurrency = 4;
     } else if (safari) {
       browsers = "saucelabs:safari@17:Mac 13";
-      concurrency = 1;
+      concurrency = 4;
     } else {
       concurrency = 1;
       browsers = "chrome";
