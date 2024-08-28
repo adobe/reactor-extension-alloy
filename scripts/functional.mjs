@@ -84,22 +84,22 @@ const buildComponentFixtures = async () => {
     ? testcafe.createLiveModeRunner()
     : testcafe.createRunner();
 
-  let concurrency;
-  let browsers;
-
-  if (chrome) {
-    browsers = "saucelabs:chrome@122:macOS 13";
-    concurrency = 4;
-  } else if (firefox) {
-    browsers = "saucelabs:firefox@123:macOS 13";
-    concurrency = 4;
-  } else if (safari) {
-    browsers = "saucelabs:safari@17:macOS 13";
-    concurrency = 4;
-  } else {
-    concurrency = 1;
-    browsers = "chrome";
-  }
+    let concurrency;
+    let browsers;
+  
+    if (chrome) {
+      browsers = "saucelabs:chrome@123:Mac 13";
+      concurrency = 4;
+    } else if (firefox) {
+      browsers = "saucelabs:firefox@123:Mac 13";
+      concurrency = 4;
+    } else if (safari) {
+      browsers = "saucelabs:safari@17:Mac 13";
+      concurrency = 4;
+    } else {
+      concurrency = 1;
+      browsers = "chrome";
+    }
 
   const failedCount = await runner
     .src(specsPath)
