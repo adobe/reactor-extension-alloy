@@ -82,22 +82,16 @@ const buildComponentFixtures = async () => {
   let browsers;
   const concurrency = 1; // Set concurrency to 1 for all cases
 
-  const sauceLabsBrowser = process.env.SAUCE_LABS_BROWSER || '';
-  switch (sauceLabsBrowser.toLowerCase()) {
-    case 'chrome':
-      browsers = "saucelabs:chrome@dev:Mac 13";
-      break;
-    case 'firefox':
-      browsers = "saucelabs:firefox@dev:Mac 13";
-      break;
-    case 'safari':
-      browsers = "saucelabs:safari@17:Mac 13";
-      break;
-    case 'edge':
-      browsers = "saucelabs:microsoftedge@latest:Windows 10";
-      break;
-    default:
-      browsers = "chrome"; // Local Chrome as fallback
+  if (chrome) {
+    browsers = "saucelabs:chrome@latest:Windows 10";
+  } else if (firefox) {
+    browsers = "saucelabs:firefox@latest:Windows 10";
+  } else if (safari) {
+    browsers = "saucelabs:safari@latest:macOS 10.15";
+  } else if (edge) {
+    browsers = "saucelabs:MicrosoftEdge@latest:Windows 10";
+  } else {
+    browsers = "chrome:headless"; // Local Chrome in headless mode as fallback
   }
 
   const failedCount = await runner
@@ -136,9 +130,7 @@ const buildComponentFixtures = async () => {
       assertionTimeout: 7000,
       pageLoadTimeout: 8000,
       speed: 0.75,
-      stopOnFirstFail: false,
-      tunnelIdentifier: process.env.SAUCE_TUNNEL_IDENTIFIER,
-      parentTunnel: process.env.SAUCE_TUNNEL_PARENT
+      stopOnFirstFail: false
     });
 
   testcafe.close();
