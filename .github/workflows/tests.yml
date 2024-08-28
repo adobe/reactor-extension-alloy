@@ -75,11 +75,12 @@ jobs:
         with:
           username: ${{ secrets.SAUCE_USERNAME }}
           accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
-          tunnelIdentifier: github-action-tunnel
+          tunnelIdentifier: github-action-tunnel-${{ github.run_id }}
           scVersion: 4.9.1
       - name: Run Functional Test
         timeout-minutes: 60
-        run: npm run ${{ matrix.browsers }}
+        run: |
+          npm run ${{ matrix.browsers }} -- --tunnel-identifier github-action-tunnel-${{ github.run_id }}
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
@@ -87,5 +88,4 @@ jobs:
           EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
           EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
           TESTCAFE_BROWSER_PROVIDER: 'saucelabs'
-          SAUCE_TUNNEL_IDENTIFIER: github-action-tunnel
-          SAUCE_TUNNEL_PARENT: ${{ github.run_id }}
+          SAUCE_TUNNEL_IDENTIFIER: github-action-tunnel-${{ github.run_id }}

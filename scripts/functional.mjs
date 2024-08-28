@@ -87,17 +87,19 @@ const buildComponentFixtures = async () => {
   let concurrency;
   let browsers;
 
+  const tunnelIdentifier = process.env.SAUCE_TUNNEL_IDENTIFIER || `github-action-tunnel-${process.env.GITHUB_RUN_ID}`;
+
   if (chrome) {
-    browsers = "saucelabs:chrome@123:mac 13";
+    browsers = `saucelabs:chrome@latest:macOS 13.00?tunnelIdentifier=${tunnelIdentifier}`;
     concurrency = 4;
   } else if (firefox) {
-    browsers = "saucelabs:firefox@123:mac 13";
+    browsers = `saucelabs:firefox@latest:macOS 13.00?tunnelIdentifier=${tunnelIdentifier}`;
     concurrency = 4;
   } else if (safari) {
-    browsers = "saucelabs:safari@17:mac 13";
+    browsers = `saucelabs:safari@latest:macOS 13.00?tunnelIdentifier=${tunnelIdentifier}`;
     concurrency = 4;
   } else if (edge) {
-    browsers = "saucelabs:MicrosoftEdge@121:Windows 11";
+    browsers = `saucelabs:MicrosoftEdge@latest:Windows 11?tunnelIdentifier=${tunnelIdentifier}`;
     concurrency = 4;
   } else {
     concurrency = 1;
@@ -141,7 +143,7 @@ const buildComponentFixtures = async () => {
       pageLoadTimeout: 8000,
       speed: 0.75,
       stopOnFirstFail: false,
-      tunnelIdentifier: process.env.SAUCE_TUNNEL_IDENTIFIER
+      tunnelIdentifier: tunnelIdentifier
     });
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
