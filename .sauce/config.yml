@@ -3,7 +3,7 @@ kind: testcafe
 sauce:
   region: us-west-1
   sauceignore: .sauceignore
-  concurrency: 3
+  concurrency: 6
 metadata:
   name: Alloy Reactor Extension
 rootDir: ./
@@ -18,7 +18,7 @@ env:
 testcafe:
   version: 3.6.2
 nodeVersion: "22"
-speed: 0.5
+speed: 1
 disablePageCaching: true
 timeZone: New_York
 pageRequestTimeout: 120000
