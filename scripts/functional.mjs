@@ -73,25 +73,35 @@ const buildComponentFixtures = async () => {
 (async () => {
   await build({ watch });
   await buildComponentFixtures();
+  // Running the runtime tests requires us to re-write this file.
+  // This will save the file and restore it after the tests are complete.
   saveAndRestoreFile({ file: path.resolve(".sandbox", "container.js") });
   await sandbox.init();
 
   const testcafe = await createTestCafe();
-  const runner = watch ? testcafe.createLiveModeRunner() : testcafe.createRunner();
 
+  const runner = watch
+    ? testcafe.createLiveModeRunner()
+    : testcafe.createRunner();
+
+  let concurrency;
   let browsers;
-  const concurrency = 1; // Set concurrency to 1 for all cases
 
   if (chrome) {
-    browsers = "saucelabs:chrome@latest:Windows 10";
+    browsers = "saucelabs:chrome@123:mac 13";
+    concurrency = 4;
   } else if (firefox) {
-    browsers = "saucelabs:firefox@latest:Windows 10";
+    browsers = "saucelabs:firefox@123:mac 13";
+    concurrency = 4;
   } else if (safari) {
-    browsers = "saucelabs:safari@latest:macOS 10.15";
+    browsers = "saucelabs:safari@17:mac 13";
+    concurrency = 4;
   } else if (edge) {
-    browsers = "saucelabs:MicrosoftEdge@latest:Windows 10";
+    browsers = "saucelabs:MicrosoftEdge@121:Windows 11";
+    concurrency = 4;
   } else {
-    browsers = "chrome:headless"; // Local Chrome in headless mode as fallback
+    concurrency = 1;
+    browsers = "chrome";
   }
 
   const failedCount = await runner
@@ -130,9 +140,8 @@ const buildComponentFixtures = async () => {
       assertionTimeout: 7000,
       pageLoadTimeout: 8000,
       speed: 0.75,
-      stopOnFirstFail: false
+      stopOnFirstFail: false,
     });
-
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
 })();
