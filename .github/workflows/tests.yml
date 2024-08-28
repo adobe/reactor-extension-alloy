@@ -36,15 +36,6 @@ jobs:
   functional-test:
     name: "Functional Test"
     needs: unit-test
-    strategy:
-      max-parallel: 4
-      matrix:
-        browsers:
-          [
-            "saucelabs:chrome@latest:macOS 13",
-            "saucelabs:firefox@latest:macOS 13",
-            "saucelabs:safari@latest:macOS 13"
-          ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -60,10 +51,13 @@ jobs:
       - name: Retrieve Token
         run: npm run token
       - name: Run Functional Test
-        timeout-minutes: 60
-        run: npx testcafe --esm --concurrency 4 '${{ matrix.browsers }}' test/functional/specs
+        uses: saucelabs/saucectl-run-action@v4.3.0
+        with:
+          config-file: .sauce/config.yml
         env:
           SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
           SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
           EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
           EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
+          REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS: ${{ secrets.REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS }}
+          REACTOR_IO_INTEGRATION_CLIENT_SECRET: ${{ secrets.REACTOR_IO_INTEGRATION_CLIENT_SECRET }}
