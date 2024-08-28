@@ -3,7 +3,7 @@ kind: testcafe
 sauce:
   region: us-west-1
   sauceignore: .sauceignore
-  concurrency: 3
+  concurrency: 10
 defaults:
   timeout: 60m
 showConsoleLog: true
@@ -42,7 +42,7 @@ npm:
 suites:
   - name: "Safari"
     esm: true
-    shard: concurrency
+    shard: specs
     browserName: "safari"
     browserVersion: "latest"
     src:
@@ -50,7 +50,7 @@ suites:
     platformName: "macOS 13"
   - name: "Firefox"
     esm: true
-    shard: concurrency
+    shard: specs
     browserName: "firefox"
     browserVersion: "latest"
     src:
@@ -58,7 +58,7 @@ suites:
     platformName: "macOS 13"
   - name: "Chrome"
     esm: true
-    shard: concurrency
+    shard: specs
     browserName: "chrome"
     browserVersion: "latest"
     src:
