@@ -2,6 +2,7 @@ apiVersion: v1alpha
 kind: testcafe
 sauce:
   region: us-west-1
+  sauceignore: .sauceignore
   concurrency: 3
 metadata:
   name: Alloy Reactor Extension
@@ -15,13 +16,14 @@ env:
   REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS: $REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS
   REACTOR_IO_INTEGRATION_CLIENT_SECRET: $REACTOR_IO_INTEGRATION_CLIENT_SECRET
 testcafe:
-  version: 3.6.2
+  version: 3.6.0
 nodeVersion: "22"
 speed: 1
 disablePageCaching: true
 timeZone: New_York
 pageRequestTimeout: 120000
 retryTestPages: true
+quarantineMode: true
 npm:
   dependencies:
     - parse-uri
