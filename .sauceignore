@@ -9,4 +9,3 @@
 .hgignore
 .npmrc
 *.gif
-node_modules/
