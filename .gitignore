@@ -8,3 +8,4 @@ coverage
 .parcel-cache
 .token-cache.json
 extension.json
+package-adobe-alloy-*.zip
