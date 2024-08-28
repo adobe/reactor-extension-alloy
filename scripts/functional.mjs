@@ -141,6 +141,7 @@ const buildComponentFixtures = async () => {
       pageLoadTimeout: 8000,
       speed: 0.75,
       stopOnFirstFail: false,
+      tunnelIdentifier: process.env.SAUCE_TUNNEL_IDENTIFIER
     });
   testcafe.close();
   process.exit(failedCount ? 1 : 0);

@@ -70,6 +70,12 @@ jobs:
         run: npm run build
       - name: Retrieve Token
         run: npm run token
+      - name: Start Sauce Connect
+        uses: saucelabs/sauce-connect-action@v2
+        with:
+          username: ${{ secrets.SAUCE_USERNAME }}
+          accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
+          tunnelIdentifier: github-action-tunnel
       - name: Run Functional Test
         timeout-minutes: 60
         run: npm run ${{ matrix.browsers }}
@@ -80,3 +86,5 @@ jobs:
           EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
           EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
           TESTCAFE_BROWSER_PROVIDER: 'saucelabs'
+          SAUCE_TUNNEL_IDENTIFIER: github-action-tunnel
+          SAUCE_TUNNEL_PARENT: ${{ github.run_id }}
