@@ -9,13 +9,15 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+
+/* eslint-disable no-underscore-dangle */
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
 
 describe("Instance Manager", () => {
   let instanceManager;
   let turbine;
   let mockWindow;
-  let createInstance;
+  let createCustomInstance;
   let createEventMergeId;
   let wrapOnBeforeEventSend;
   let onBeforeEventSend;
@@ -28,7 +30,7 @@ describe("Instance Manager", () => {
     instanceManager = createInstanceManager({
       turbine,
       window: mockWindow,
-      createInstance,
+      createCustomInstance,
       orgId: "ABC@AdobeOrg",
       createEventMergeId,
       wrapOnBeforeEventSend,
@@ -62,7 +64,7 @@ describe("Instance Manager", () => {
     getConfigOverrides = jasmine.createSpy("getConfigOverrides");
     alloy1 = jasmine.createSpy("alloy1");
     alloy2 = jasmine.createSpy("alloy2");
-    createInstance = jasmine.createSpy().and.callFake(({ name }) => {
+    createCustomInstance = jasmine.createSpy().and.callFake(({ name }) => {
       if (name === "alloy1") {
         return alloy1;
       }
@@ -94,7 +96,7 @@ describe("Instance Manager", () => {
   });
   it("adds a new monitor to the window.__alloyMonitors", () => {
     const monitor = {
-      "onInstanceCreated": jasmine.createSpy("onInstanceCreated")
+      onInstanceCreated: jasmine.createSpy("onInstanceCreated"),
     };
     build();
     expect(mockWindow).toEqual({
@@ -128,7 +130,6 @@ describe("Instance Manager", () => {
       ],
     });
   });
-
 
   it("configures an SDK instance for each configured instance", () => {
     build();

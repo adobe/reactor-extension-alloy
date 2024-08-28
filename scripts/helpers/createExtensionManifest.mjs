@@ -10,6 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import getAlloyComponents from "./getAlloyComponents.mjs";
+
+const createPreprocessingVariables = () =>
+  getAlloyComponents().map((n) => ({
+    key: `ALLOY_${n.toUpperCase()}`,
+    path: `modules.${n}`,
+    default: true,
+  }));
+
 /**
  * @typedef {object} ExtensionManifest
  * https://experienceleague.adobe.com/docs/experience-platform/tags/extension-dev/manifest.html?lang=en
@@ -371,6 +380,12 @@ const createExtensionManifest = ({ version }) => {
               },
               required: ["edgeConfigId", "name"],
               additionalProperties: false,
+            },
+          },
+          components: {
+            type: "object",
+            patternProperties: {
+              ".*": { type: "boolean" },
             },
           },
         },
@@ -1268,6 +1283,7 @@ const createExtensionManifest = ({ version }) => {
         viewPath: "dataElements/variable.html",
       },
     ],
+    preprocessingVariables: createPreprocessingVariables(),
     main: "dist/lib/instanceManager/index.js",
   };
 
