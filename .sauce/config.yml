@@ -4,6 +4,7 @@ sauce:
   region: us-west-1
   sauceignore: .sauceignore
   concurrency: 6
+  maxDuration: 3600
 metadata:
   name: Alloy Reactor Extension
 rootDir: ./
