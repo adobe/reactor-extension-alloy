@@ -88,16 +88,16 @@ const buildComponentFixtures = async () => {
   let browsers;
 
   if (chrome) {
-    browsers = "saucelabs:chrome@123:Mac 13";
+    browsers = "saucelabs:chrome@latest:Windows 10";
     concurrency = 4;
   } else if (firefox) {
-    browsers = "saucelabs:firefox@123:Mac 13";
+    browsers = "saucelabs:firefox@latest:Windows 10";
     concurrency = 4;
   } else if (safari) {
-    browsers = "saucelabs:safari@17:Mac 13";
+    browsers = "saucelabs:safari@latest:macOS 10.15";
     concurrency = 4;
   } else if (edge) {
-    browsers = "saucelabs:MicrosoftEdge@121:Windows 11";
+    browsers = "saucelabs:MicrosoftEdge@latest:Windows 10";
     concurrency = 4;
   } else {
     concurrency = 1;
@@ -141,6 +141,8 @@ const buildComponentFixtures = async () => {
       pageLoadTimeout: 8000,
       speed: 0.75,
       stopOnFirstFail: false,
+      tunnelIdentifier: process.env.SAUCE_TUNNEL_IDENTIFIER,
+      parentTunnel: process.env.SAUCE_TUNNEL_PARENT
     });
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
