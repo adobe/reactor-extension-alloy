@@ -16,9 +16,9 @@ env:
   REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS: $REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS
   REACTOR_IO_INTEGRATION_CLIENT_SECRET: $REACTOR_IO_INTEGRATION_CLIENT_SECRET
 testcafe:
-  version: 3.6.0
+  version: 3.6.2
 nodeVersion: "22"
-speed: 1
+speed: 0.5
 disablePageCaching: true
 timeZone: New_York
 pageRequestTimeout: 120000
