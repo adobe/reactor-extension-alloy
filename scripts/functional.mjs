@@ -87,8 +87,6 @@ const buildComponentFixtures = async () => {
   let concurrency;
   let browsers;
 
-  const tunnelIdentifier = process.env.SAUCE_TUNNEL_IDENTIFIER || `github-action-tunnel-${process.env.GITHUB_RUN_ID}`;
-
   if (chrome) {
     browsers = `saucelabs:chrome@122:mac 13`;
     concurrency = 4;
@@ -140,7 +138,6 @@ const buildComponentFixtures = async () => {
       pageLoadTimeout: 8000,
       speed: 0.75,
       stopOnFirstFail: false,
-      tunnelIdentifier: tunnelIdentifier
     });
   testcafe.close();
   process.exit(failedCount ? 1 : 0);
