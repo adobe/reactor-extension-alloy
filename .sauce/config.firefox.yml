@@ -9,7 +9,7 @@ defaults:
 showConsoleLog: true
 metadata:
   name: Alloy Reactor Extension - Firefox
-rootDir: ./test
+rootDir: ./
 env:
   NPM_PACKAGE_VERSION: $NPM_PACKAGE_VERSION
   SAUCE_USERNAME: $SAUCE_USERNAME
@@ -30,6 +30,7 @@ retryTestPages: false
 quarantineMode: false
 npm:
   dependencies:
+    - testcafe
     - "@adobe/reactor-cookie"
     - "@adobe/reactor-sandbox"
     - "@adobe/reactor-query-string"
@@ -40,8 +41,11 @@ npm:
     - js-cookie
     - read-cache
     - uuid
-    - match-requires
-    - requires-regex
+    - "@adobe/react-spectrum"
+    - formik
+    - yup
+    - classnames
+    - antd
 suites:
   - name: "Firefox"
     esm: true
