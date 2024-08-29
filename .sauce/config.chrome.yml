@@ -3,7 +3,7 @@ kind: testcafe
 sauce:
   region: us-west-1
   sauceignore: .sauceignore
-  concurrency: 5
+  concurrency: 1 
 defaults:
   timeout: 30m
 metadata:
@@ -21,16 +21,12 @@ env:
 testcafe:
   version: 3.6.2
 nodeVersion: "20"
-speed: 0.7
+speed: 1
 disablePageCaching: false
 timeZone: New_York
 pageRequestTimeout: 60000
 retryTestPages: false
 quarantineMode: false
-preExec:
-  - npm ci
-  - mkdir -p test/functional/dist
-  - cp -R dist/* test/functional/dist/
 npm:
   dependencies:
     - "@adobe/reactor-cookie"
@@ -49,7 +45,6 @@ suites:
     browserName: "chrome"
     browserVersion: "latest"
     src:
-      - "test/functional/dist/**/*"
       - "test/functional/specs/**/*.spec.mjs"
     platformName: "Windows 11"
     screenResolution: "1024x768"

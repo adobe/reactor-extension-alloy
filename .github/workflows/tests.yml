@@ -38,11 +38,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        id: npm-cache
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}-${{ secrets.NPM_CACHE_VERSION }}
       - name: Install dependencies
         run: npm ci
       - name: Build library
@@ -59,16 +54,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        browser: [chrome]
+        browser: [chrome, firefox, safari]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        id: npm-cache
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}-${{ secrets.NPM_CACHE_VERSION }}
-      - name: Install node packages
-        run: npm ci
       - name: Download build artifact
         uses: actions/download-artifact@v3
         with:
