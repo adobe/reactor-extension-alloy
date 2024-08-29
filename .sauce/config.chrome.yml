@@ -41,6 +41,7 @@ npm:
     - read-cache
     - uuid
     - match-requires
+    - requires-regex
 suites:
   - name: "Chrome"
     esm: true

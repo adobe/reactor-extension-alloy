@@ -37,6 +37,7 @@ node_modules/*
 !node_modules/read-cache
 !node_modules/uuid
 !node_modules/match-requires
+!node_modules/requires-regex
 
 # Include all dependencies of @adobe/reactor-sandbox
 !node_modules/@adobe/reactor-sandbox
