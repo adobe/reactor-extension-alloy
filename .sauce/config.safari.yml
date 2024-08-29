@@ -3,7 +3,7 @@ kind: testcafe
 sauce:
   region: us-west-1
   sauceignore: .sauceignore
-  concurrency: 1 
+  concurrency: 5 
 defaults:
   timeout: 30m
 metadata:
@@ -21,7 +21,7 @@ env:
 testcafe:
   version: 3.6.2
 nodeVersion: "20"
-speed: 1
+speed: 0.7
 disablePageCaching: false
 timeZone: New_York
 pageRequestTimeout: 60000
