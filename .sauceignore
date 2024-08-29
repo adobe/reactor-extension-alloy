@@ -22,3 +22,5 @@ node_modules/*
 !node_modules/yup
 !node_modules/classnames
 !node_modules/antd
+!node_modules/match-requires
+!node_modules/requires-regex
