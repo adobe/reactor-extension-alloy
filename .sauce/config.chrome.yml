@@ -48,5 +48,5 @@ suites:
     browserVersion: "latest"
     src:
       - "test/functional/specs/**/*.spec.mjs"
-    platformName: "macOS 13"
+    platformName: "Windows 11"
     screenResolution: "1024x768"
