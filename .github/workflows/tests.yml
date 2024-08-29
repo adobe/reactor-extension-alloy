@@ -62,8 +62,10 @@ jobs:
         with:
           name: dist
           path: dist/
-      - name: Install @adobe/auth-token
-        run: npm install @adobe/auth-token
+      - name: Install minimal dependencies
+        run: |
+          npm ci --only=prod
+          npm install @adobe/auth-token
       - name: Retrieve Token
         run: npm run token
       - name: Run Functional Test
