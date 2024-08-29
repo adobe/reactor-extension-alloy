@@ -1,0 +1,49 @@
+apiVersion: v1alpha
+kind: testcafe
+sauce:
+  region: us-west-1
+  sauceignore: .sauceignore
+  concurrency: 6
+defaults:
+  timeout: 60m
+showConsoleLog: true
+metadata:
+  name: Alloy Reactor Extension - Firefox
+rootDir: ./
+env:
+  NPM_PACKAGE_VERSION: $NPM_PACKAGE_VERSION
+  SAUCE_USERNAME: $SAUCE_USERNAME
+  SAUCE_ACCESS_KEY: $SAUCE_ACCESS_KEY
+  SAUCE_CLIENT_TIMEOUT: 300s
+  EDGE_E2E_PRIVATE_KEY_CONTENTS: $EDGE_E2E_PRIVATE_KEY_CONTENTS
+  EDGE_E2E_CLIENT_SECRET: $EDGE_E2E_CLIENT_SECRET
+  REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS: $REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS
+  REACTOR_IO_INTEGRATION_CLIENT_SECRET: $REACTOR_IO_INTEGRATION_CLIENT_SECRET
+testcafe:
+  version: 3.6.2
+nodeVersion: "22"
+speed: 1
+disablePageCaching: true
+timeZone: New_York
+pageRequestTimeout: 120000
+retryTestPages: true
+quarantineMode: true
+npm:
+  dependencies:
+    - parse-uri
+    - js-cookie
+    - read-cache
+    - uuid
+    - "@adobe/reactor-cookie"
+    - "@adobe/reactor-sandbox"
+    - "@adobe/reactor-query-string"
+    - "@adobe/auth-token"
+    - react
+suites:
+  - name: "Firefox"
+    esm: true
+    browserName: "firefox"
+    browserVersion: "latest"
+    src:
+      - "test/functional/specs/**/*.spec.mjs"
+    platformName: "macOS 13"
