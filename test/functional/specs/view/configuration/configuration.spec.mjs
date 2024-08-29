@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { t, Selector } from "testcafe";
+import { t } from "testcafe";
 import extensionViewController from "../../../helpers/extensionViewController.mjs";
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import {
@@ -23,6 +23,7 @@ import * as sandboxesMocks from "../../../helpers/endpointMocks/sandboxesMocks.m
 import * as datastreamsMocks from "../../../helpers/endpointMocks/datastreamsMocks.mjs";
 import * as datastreamMocks from "../../../helpers/endpointMocks/datastreamMocks.mjs";
 import spectrum from "../../helpers/spectrum.mjs";
+import { createTestIdSelector } from "../../helpers/dataTestIdSelectors.mjs";
 
 createExtensionViewFixture({
   title: "Extension Configuration View",
@@ -2458,10 +2459,10 @@ test("has disabled components added to components key with the false value", asy
   });
 
   await t
-    .expect(Selector("[data-test-id=personalizationComponentCheckbox]").checked)
+    .expect(createTestIdSelector("personalizationComponentCheckbox").checked)
     .eql(false);
 
   await t
-    .expect(Selector("[data-test-id=privacyComponentCheckbox]").checked)
+    .expect(createTestIdSelector("privacyComponentCheckbox").checked)
     .eql(true);
 });
