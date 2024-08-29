@@ -1,50 +1,11 @@
-# Ignore unnecessary directories
+# This file instructs saucectl to not package any files mentioned here.
 .git/
 .github/
+.DS_Store
+.hg/
 .vscode/
 .idea/
-coverage/
-dist/
-scripts/
-
-# Ignore unnecessary files
-.DS_Store
 .gitignore
+.hgignore
 .npmrc
-*.log
-*.gz
-*.zip
-*.tar
-*.tgz
-
-# Include only necessary directories and files
-!src/
-!test/functional/
-!.sauce/
-!package.json
-!package-lock.json
-!.testcaferc.js
-!sauceLabsCapabilities.json
-
-# Be selective about node_modules
-node_modules/*
-!node_modules/testcafe
-!node_modules/@adobe
-!node_modules/react
-!node_modules/react-dom
-!node_modules/parse-uri
-!node_modules/js-cookie
-!node_modules/read-cache
-!node_modules/uuid
-!node_modules/match-requires
-!node_modules/requires-regex
-
-# Include all dependencies of @adobe/reactor-sandbox
-!node_modules/@adobe/reactor-sandbox
-!node_modules/@adobe/reactor-sandbox/**/*
-
-# Exclude test files within node_modules
-node_modules/**/*.spec.js
-node_modules/**/*.test.js
-node_modules/**/__tests__/
-node_modules/**/__mocks__/
+*.gif
