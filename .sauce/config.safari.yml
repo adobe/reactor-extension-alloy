@@ -9,7 +9,7 @@ defaults:
 showConsoleLog: true
 metadata:
   name: Alloy Reactor Extension - Safari
-rootDir: ./
+rootDir: ./test
 env:
   NPM_PACKAGE_VERSION: $NPM_PACKAGE_VERSION
   SAUCE_USERNAME: $SAUCE_USERNAME
