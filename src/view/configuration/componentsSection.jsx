@@ -27,21 +27,19 @@ const webSdkComponents = Object.keys(webSdkComponentsExports).map((v) => ({
   label: camelCaseToTitleCase(v),
   value: v,
 }));
-
 export const bridge = {
-  getInitialValues: ({
-    initInfo: {
-      settings: { components = {} },
-    },
-  }) => ({
-    components: webSdkComponents.reduce((acc, { value }) => {
-      if (components[value] !== false) {
-        acc.push(value);
-      }
+  getInitialValues: ({ initInfo }) => {
+    const components = initInfo?.settings?.components || {};
+    return {
+      components: webSdkComponents.reduce((acc, { value }) => {
+        if (components[value] !== false) {
+          acc.push(value);
+        }
 
-      return acc;
-    }, []),
-  }),
+        return acc;
+      }, []),
+    };
+  },
   getSettings: ({ values: { components } }) => {
     const excludedComponents = webSdkComponents
       .map(({ value }) => value)
@@ -83,7 +81,7 @@ const ComponentsSection = () => {
           return (
             <Checkbox
               key={value}
-              data-test-id={value}
+              data-test-id={`${value}ComponentCheckbox`}
               value={value}
               width="size-5000"
             >
