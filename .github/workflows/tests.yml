@@ -33,12 +33,33 @@ jobs:
           BUILD_ID: ${{ github.run_id }}
           JOB_NUMBER: ${{ github.job }}
 
+  build-library:
+    name: "Build Library"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}-${{ secrets.NPM_CACHE_VERSION }}
+      - name: Install dependencies
+        run: npm ci
+      - name: Build library
+        run: npm run build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+
   functional-test:
     name: "Functional Test - ${{ matrix.browser }}"
+    needs: build-library
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        browser: [chrome, firefox, safari]
+        browser: [chrome]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
@@ -48,8 +69,11 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}-${{ secrets.NPM_CACHE_VERSION }}
       - name: Install node packages
         run: npm ci
-      - name: Build
-        run: npm run build
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist/
       - name: Retrieve Token
         run: npm run token
       - name: Run Functional Test

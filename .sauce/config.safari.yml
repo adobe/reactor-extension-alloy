@@ -20,7 +20,6 @@ env:
   REACTOR_IO_INTEGRATION_CLIENT_SECRET: $REACTOR_IO_INTEGRATION_CLIENT_SECRET
 testcafe:
   version: 3.6.2
-  ssl: true
 nodeVersion: "20"
 speed: 0.7
 disablePageCaching: false
