@@ -46,6 +46,7 @@ npm:
     - yup
     - classnames
     - antd
+    - match-requires
 suites:
   - name: "Firefox"
     esm: true
