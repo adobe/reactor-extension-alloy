@@ -6,7 +6,6 @@ sauce:
   concurrency: 1 
 defaults:
   timeout: 30m
-showConsoleLog: true
 metadata:
   name: Alloy Reactor Extension - Chrome
 rootDir: ./
@@ -21,7 +20,7 @@ env:
   REACTOR_IO_INTEGRATION_CLIENT_SECRET: $REACTOR_IO_INTEGRATION_CLIENT_SECRET
 testcafe:
   version: 3.6.2
-nodeVersion: "22"
+nodeVersion: "20"
 speed: 1
 disablePageCaching: false
 timeZone: New_York
@@ -30,7 +29,6 @@ retryTestPages: false
 quarantineMode: false
 npm:
   dependencies:
-    - testcafe
     - "@adobe/reactor-cookie"
     - "@adobe/reactor-sandbox"
     - "@adobe/reactor-query-string"
@@ -41,12 +39,6 @@ npm:
     - js-cookie
     - read-cache
     - uuid
-    - "@adobe/react-spectrum"
-    - formik
-    - yup
-    - classnames
-    - antd
-    - match-requires
 suites:
   - name: "Chrome"
     esm: true
