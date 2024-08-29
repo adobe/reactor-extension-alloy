@@ -49,4 +49,4 @@ suites:
     src:
       - "test/functional/specs/**/*.spec.mjs"
     platformName: "macOS 13"
-    screenResolution: "1920x1080"
+    screenResolution: "1024x768"
