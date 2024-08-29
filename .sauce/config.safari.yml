@@ -3,7 +3,6 @@ kind: testcafe
 sauce:
   region: us-west-1
   sauceignore: .sauceignore
-  concurrency: 6
 defaults:
   timeout: 60m
 showConsoleLog: true
