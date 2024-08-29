@@ -57,6 +57,10 @@ jobs:
         browser: [chrome, firefox, safari]
     steps:
       - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
       - name: Download build artifact
         uses: actions/download-artifact@v3
         with:
@@ -64,7 +68,7 @@ jobs:
           path: dist/
       - name: Install minimal dependencies
         run: |
-          npm ci --only=prod
+          npm ci --omit=dev --ignore-scripts
           npm install @adobe/auth-token
       - name: Retrieve Token
         run: npm run token
