@@ -30,15 +30,17 @@ retryTestPages: true
 quarantineMode: true
 npm:
   dependencies:
-    - parse-uri
-    - js-cookie
-    - read-cache
-    - uuid
     - "@adobe/reactor-cookie"
     - "@adobe/reactor-sandbox"
     - "@adobe/reactor-query-string"
     - "@adobe/auth-token"
     - react
+    - react-dom
+    - parse-uri
+    - js-cookie
+    - read-cache
+    - uuid
+    - match-requires
 suites:
   - name: "Chrome"
     esm: true
