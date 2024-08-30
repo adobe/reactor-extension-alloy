@@ -47,5 +47,4 @@ suites:
     browserVersion: "latest"
     src:
       - "test/functional/specs/**/*.spec.mjs"
-    platformName: "macOS 13"
-    screenResolution: "1024x768"
+    platformName: "macOS 14"
