@@ -22,10 +22,10 @@ testcafe:
   version: 3.6.2
 nodeVersion: "20"
 speed: 1
-disablePageCaching: false
+disablePageCaching: true
 timeZone: New_York
-retryTestPages: false
-quarantineMode: false
+retryTestPages: true
+quarantineMode: true
 npm:
   dependencies:
     - "@adobe/reactor-cookie"
