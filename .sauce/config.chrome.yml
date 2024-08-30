@@ -24,7 +24,7 @@ nodeVersion: "20"
 speed: 1
 disablePageCaching: false
 timeZone: New_York
-pageRequestTimeout: 60000
+pageRequestTimeout: 1000
 retryTestPages: false
 quarantineMode: false
 npm:
