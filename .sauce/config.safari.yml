@@ -47,4 +47,4 @@ suites:
     browserVersion: "latest"
     src:
       - "test/functional/specs/**/*.spec.mjs"
-    platformName: "macOS 14"
+    platformName: "macOS 12"
