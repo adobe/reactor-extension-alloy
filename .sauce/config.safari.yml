@@ -3,7 +3,7 @@ kind: testcafe
 sauce:
   region: us-west-1
   sauceignore: .sauceignore
-  concurrency: 5 
+  concurrency: 4 
 defaults:
   timeout: 30m
 metadata:
@@ -41,6 +41,7 @@ npm:
     - uuid
 suites:
   - name: "Safari"
+    shard: concurrency
     esm: true
     browserName: "safari"
     browserVersion: "latest"
