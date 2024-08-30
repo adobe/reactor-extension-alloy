@@ -33,43 +33,23 @@ jobs:
           BUILD_ID: ${{ github.run_id }}
           JOB_NUMBER: ${{ github.job }}
 
-  build-library:
-    name: "Build Library"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: npm ci
-      - name: Build library
-        run: npm run build
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: dist/
-
   functional-test:
     name: "Functional Test - ${{ matrix.browser }}"
-    needs: build-library
     runs-on: ubuntu-latest
     strategy:
       matrix:
         browser: [chrome, firefox, safari]
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/cache@v4
+        id: npm-cache
         with:
-          node-version: '20'
-      - name: Download build artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: dist/
-      - name: Install minimal dependencies
-        run: |
-          npm ci --omit=dev --ignore-scripts
-          npm install @adobe/auth-token
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}-${{ secrets.NPM_CACHE_VERSION }}
+      - name: Install node packages
+        run: npm ci
+      - name: Build
+        run: npm run build
       - name: Retrieve Token
         run: npm run token
       - name: Run Functional Test
