@@ -3,9 +3,9 @@ kind: testcafe
 sauce:
   region: us-west-1
   sauceignore: .sauceignore
-  concurrency: 2
+  concurrency: 1
 defaults:
-  timeout: 30m
+  timeout: 60m
 metadata:
   name: Alloy Reactor Extension - Chrome
 rootDir: ./
