@@ -3,7 +3,7 @@ kind: testcafe
 sauce:
   region: us-west-1
   sauceignore: .sauceignore
-  concurrency: 1
+  concurrency: 5
 defaults:
   timeout: 60m
 metadata:

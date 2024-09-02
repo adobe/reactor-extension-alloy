@@ -34,7 +34,8 @@ jobs:
           JOB_NUMBER: ${{ github.job }}
 
   functional-test:
-    name: "Functional Test - ${{ matrix.browser }}"
+    name: "Functional Test"
+    needs: unit-test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -52,7 +53,7 @@ jobs:
         run: npm run build
       - name: Retrieve Token
         run: npm run token
-      - name: Run Functional Test
+      - name: Run Functional Test - ${{ matrix.browser }}
         uses: saucelabs/saucectl-run-action@v4.3.0
         with:
           config-file: .sauce/config.${{ matrix.browser }}.yml
