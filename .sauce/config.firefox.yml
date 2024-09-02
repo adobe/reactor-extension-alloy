@@ -46,6 +46,6 @@ suites:
     browserName: "firefox"
     browserVersion: "latest"
     src:
-      - ${TEST_SUITE == 'view' && 'test/functional/specs/view/**/*.spec.mjs' || 'test/functional/specs/${TEST_SUITE}/*.spec.mjs'}
+      - "test/functional/specs/${TEST_SUITE}/**/*.spec.mjs"
     platformName: "Windows 11"
     screenResolution: "1024x768"

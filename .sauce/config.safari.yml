@@ -45,5 +45,5 @@ suites:
     browserName: "safari"
     browserVersion: "latest"
     src:
-      - ${TEST_SUITE == 'view' && 'test/functional/specs/view/**/*.spec.mjs' || 'test/functional/specs/${TEST_SUITE}/*.spec.mjs'}
+      - "test/functional/specs/${TEST_SUITE}/**/*.spec.mjs"
     platformName: "macOS 13"
