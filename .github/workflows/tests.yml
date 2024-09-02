@@ -34,11 +34,18 @@ jobs:
           JOB_NUMBER: ${{ github.job }}
 
   functional-test:
-    name: "Functional Test - ${{ matrix.browser }}"
-    runs-on: ubuntu-latest
+    name: "Functional Test - ${{ matrix.browser }} - ${{ matrix.suite }}"
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        browser: [chrome, firefox]
+        include:
+          - browser: chrome
+            os: ubuntu-latest
+          - browser: firefox
+            os: ubuntu-latest
+          - browser: safari
+            os: macos-latest
+        suite: [component, runtime, view]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
@@ -65,33 +72,4 @@ jobs:
           EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
           REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS: ${{ secrets.REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS }}
           REACTOR_IO_INTEGRATION_CLIENT_SECRET: ${{ secrets.REACTOR_IO_INTEGRATION_CLIENT_SECRET }}
-
-  functional-test-safari:
-    name: "Functional Test - Safari"
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
-        id: npm-cache
-        with:
-          path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}-${{ secrets.NPM_CACHE_VERSION }}
-      - name: Install node packages
-        run: npm ci
-      - name: Build
-        run: npm run build
-      - name: Retrieve Token
-        run: npm run token
-      - name: Run Functional Test
-        uses: saucelabs/saucectl-run-action@v4.3.0
-        with:
-          config-file: .sauce/config.safari.yml
-          sauceignore: .sauceignore
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-          EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
-          EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
-          REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS: ${{ secrets.REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS }}
-          REACTOR_IO_INTEGRATION_CLIENT_SECRET: ${{ secrets.REACTOR_IO_INTEGRATION_CLIENT_SECRET }}
+          TEST_SUITE: ${{ matrix.suite }}
