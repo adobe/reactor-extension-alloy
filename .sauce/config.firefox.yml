@@ -41,7 +41,6 @@ npm:
     - uuid
 suites:
   - name: "Component Tests"
-    shard: concurrency
     esm: true
     browserName: "firefox"
     browserVersion: "latest"
@@ -50,7 +49,6 @@ suites:
     platformName: "Windows 11"
 
   - name: "Runtime Tests"
-    shard: concurrency
     esm: true
     browserName: "firefox"
     browserVersion: "latest"
@@ -59,32 +57,25 @@ suites:
     platformName: "Windows 11"
 
   - name: "View Action Tests"
-    shard: concurrency
     esm: true
     browserName: "firefox"
     browserVersion: "latest"
     src:
       - "test/functional/specs/view/actions/**/*.spec.mjs"
-      - "test/functional/specs/view/runCommonExtensionViewTests.mjs"
     platformName: "Windows 11"
 
   - name: "View Configuration Tests"
-    shard: concurrency
     esm: true
     browserName: "firefox"
     browserVersion: "latest"
     src:
       - "test/functional/specs/view/configuration/**/*.spec.mjs"
-      - "test/functional/specs/view/runCommonExtensionViewTests.mjs"
     platformName: "Windows 11"
 
   - name: "View Data Elements Tests"
-    shard: concurrency
     esm: true
     browserName: "firefox"
     browserVersion: "latest"
     src:
       - "test/functional/specs/view/dataElements/**/*.spec.mjs"
-      - "test/functional/specs/view/runCommonExtensionViewTests.mjs"
     platformName: "Windows 11"
-    screenResolution: "1024x768"
