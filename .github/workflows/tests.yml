@@ -34,18 +34,11 @@ jobs:
           JOB_NUMBER: ${{ github.job }}
 
   functional-test:
-    name: "Functional Test - ${{ matrix.browser }} - ${{ matrix.suite }}"
-    runs-on: ${{ matrix.os }}
+    name: "Functional Test - ${{ matrix.browser }}"
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - browser: chrome
-            os: ubuntu-latest
-          - browser: firefox
-            os: ubuntu-latest
-          - browser: safari
-            os: macos-latest
-        suite: [component, runtime, view]
+        browser: [chrome, firefox, safari]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
@@ -72,4 +65,3 @@ jobs:
           EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
           REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS: ${{ secrets.REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS }}
           REACTOR_IO_INTEGRATION_CLIENT_SECRET: ${{ secrets.REACTOR_IO_INTEGRATION_CLIENT_SECRET }}
-          TEST_SUITE: ${{ matrix.suite }}

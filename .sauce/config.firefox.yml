@@ -7,7 +7,7 @@ sauce:
 defaults:
   timeout: 60m
 metadata:
-  name: Alloy Reactor Extension - Firefox - ${TEST_SUITE}
+  name: Alloy Reactor Extension - Firefox
 rootDir: ./
 env:
   NPM_PACKAGE_VERSION: $NPM_PACKAGE_VERSION
@@ -40,12 +40,51 @@ npm:
     - read-cache
     - uuid
 suites:
-  - name: "Firefox - ${TEST_SUITE}"
+  - name: "Component Tests"
     shard: concurrency
     esm: true
     browserName: "firefox"
     browserVersion: "latest"
     src:
-      - "test/functional/specs/${TEST_SUITE}/**/*.spec.mjs"
+      - "test/functional/specs/component/**/*.spec.mjs"
+    platformName: "Windows 11"
+
+  - name: "Runtime Tests"
+    shard: concurrency
+    esm: true
+    browserName: "firefox"
+    browserVersion: "latest"
+    src:
+      - "test/functional/specs/runtime/**/*.spec.mjs"
+    platformName: "Windows 11"
+
+  - name: "View Action Tests"
+    shard: concurrency
+    esm: true
+    browserName: "firefox"
+    browserVersion: "latest"
+    src:
+      - "test/functional/specs/view/actions/**/*.spec.mjs"
+      - "test/functional/specs/view/runCommonExtensionViewTests.mjs"
+    platformName: "Windows 11"
+
+  - name: "View Configuration Tests"
+    shard: concurrency
+    esm: true
+    browserName: "firefox"
+    browserVersion: "latest"
+    src:
+      - "test/functional/specs/view/configuration/**/*.spec.mjs"
+      - "test/functional/specs/view/runCommonExtensionViewTests.mjs"
+    platformName: "Windows 11"
+
+  - name: "View Data Elements Tests"
+    shard: concurrency
+    esm: true
+    browserName: "firefox"
+    browserVersion: "latest"
+    src:
+      - "test/functional/specs/view/dataElements/**/*.spec.mjs"
+      - "test/functional/specs/view/runCommonExtensionViewTests.mjs"
     platformName: "Windows 11"
     screenResolution: "1024x768"
