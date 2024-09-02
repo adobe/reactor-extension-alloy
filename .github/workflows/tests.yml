@@ -31,7 +31,7 @@ jobs:
   #       env:
   #         BUILD_NUMBER: ${{ github.run_number }}
   #         BUILD_ID: ${{ github.run_id }}
-          JOB_NUMBER: ${{ github.job }}
+          # JOB_NUMBER: ${{ github.job }}
 
   functional-test:
     name: "Functional Test"
