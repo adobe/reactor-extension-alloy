@@ -13,7 +13,7 @@ env:
   NPM_PACKAGE_VERSION: $NPM_PACKAGE_VERSION
   SAUCE_USERNAME: $SAUCE_USERNAME
   SAUCE_ACCESS_KEY: $SAUCE_ACCESS_KEY
-  SAUCE_CLIENT_TIMEOUT: 180s
+  SAUCE_CLIENT_TIMEOUT: 300s
   EDGE_E2E_PRIVATE_KEY_CONTENTS: $EDGE_E2E_PRIVATE_KEY_CONTENTS
   EDGE_E2E_CLIENT_SECRET: $EDGE_E2E_CLIENT_SECRET
   REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS: $REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS
@@ -22,10 +22,11 @@ testcafe:
   version: 3.6.2
 nodeVersion: "20"
 speed: 1
-disablePageCaching: true
+disablePageCaching: false
 timeZone: New_York
+pageRequestTimeout: 1000
 retryTestPages: true
-quarantineMode: true
+quarantineMode: false
 npm:
   dependencies:
     - "@adobe/reactor-cookie"
