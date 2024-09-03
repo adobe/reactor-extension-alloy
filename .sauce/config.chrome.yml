@@ -23,7 +23,7 @@ testcafe:
 nodeVersion: "20"
 speed: 1
 selectorTimeout: 2000
-disablePageCaching: true
+disablePageCaching: false
 timeZone: New_York
 pageRequestTimeout: 1000
 retryTestPages: true
