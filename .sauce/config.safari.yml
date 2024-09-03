@@ -28,6 +28,9 @@ timeZone: New_York
 pageRequestTimeout: 5000
 retryTestPages: true
 quarantineMode: false
+npm:
+  dependencies:
+    - "@adobe/auth-token"
 suites:
   - name: "Component Tests"
     esm: true
