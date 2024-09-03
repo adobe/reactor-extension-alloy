@@ -30,16 +30,11 @@ retryTestPages: true
 quarantineMode: false
 npm:
   dependencies:
-    - "@adobe/reactor-cookie"
-    - "@adobe/reactor-sandbox"
-    - "@adobe/reactor-query-string"
-    - "@adobe/auth-token"
-    - react
-    - react-dom
-    - parse-uri
-    - js-cookie
-    - read-cache
-    - uuid
+    "@adobe/reactor-sandbox": "^12.5.0"
+    "@adobe/auth-token": "^1.0.0-beta.13"
+    "react": "^18.3.1"
+    "react-dom": "^18.3.1"
+    "uuid": "^10.0.0"
 suites:
   - name: "Component Tests"
     esm: true
