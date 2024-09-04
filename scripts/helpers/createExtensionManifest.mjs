@@ -15,7 +15,7 @@ import getAlloyComponents from "./getAlloyComponents.mjs";
 const createPreprocessingVariables = () =>
   getAlloyComponents().map((n) => ({
     key: `ALLOY_${n.toUpperCase()}`,
-    path: `modules.${n}`,
+    path: `components.${n}`,
     default: true,
   }));
 
