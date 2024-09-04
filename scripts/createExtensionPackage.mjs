@@ -14,96 +14,166 @@ governing permissions and limitations under the License.
 
 /* eslint-disable no-console */
 
-import { spawn } from "child_process";
+import { spawnSync } from "child_process";
 import fs from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import AdmZip from "adm-zip";
+import { Command } from "commander";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const cwd = path.join(__dirname, "..");
 
-const execute = (command, options) => {
-  return new Promise((resolve, reject) => {
-    spawn(command, options, {
-      stdio: "inherit",
-    })
-      .on("exit", resolve)
-      .on("error", reject);
-  });
-};
-try {
-  console.log("Run build process...");
-  await execute("npm", ["run", "build:prod"]);
-
-  console.log("Package the files");
-  await execute("npx", ["@adobe/reactor-packager"]);
-} catch (e) {
-  console.log(e);
-  process.exit(1);
-}
-
-const extensonJsonContent = fs.readFileSync(`extension.json`, "utf8");
-const extensionDescriptor = JSON.parse(extensonJsonContent);
-
-const packagePath = path.join(
-  cwd,
-  `package-${extensionDescriptor.name}-${extensionDescriptor.version}.zip`,
-);
-
-if (!fs.existsSync(packagePath)) {
-  console.log(
-    "The extension file was not found. Probably something wrong happened during build.",
+const execute = (
+  command,
+  args,
+  { verbose, ...options } = { verbose: false },
+) => {
+  const r = spawnSync(
+    command,
+    args,
+    Object.assign(options, verbose ? { stdio: "inherit" } : {}),
   );
-  process.exit(1);
-}
 
-const zip = new AdmZip(packagePath);
-
-const packageJson = JSON.parse(fs.readFileSync(`package.json`, "utf8"));
-const allDependencies = {
-  ...packageJson.dependencies,
-  ...packageJson.devDependencies,
+  if (r.error) {
+    throw r.error;
+  }
 };
-const buildPackageJson = {
-  name: "reactor-extension-alloy",
-  version: "1.0.0",
-  author: {
-    name: "Adobe",
-    url: "http://adobe.com",
-    email: "reactor@adobe.com",
-  },
-  scripts: {
-    build: "node ./scripts/alloyBuilder.js -i ./alloy.js -o ./dist/lib",
-  },
-  license: "Apache-2.0",
-  description: "Tool for generating custom alloy build based on user input.",
-  dependencies: {
-    "@adobe/alloy": "",
-    "@babel/core": "",
-    "@rollup/plugin-commonjs": "",
-    "@rollup/plugin-node-resolve": "",
-    commander: "",
-    rollup: "",
-  },
+
+const getExtensionJson = () => {
+  const extensonJsonContent = fs.readFileSync(
+    path.join(cwd, "extension.json"),
+    "utf8",
+  );
+  return JSON.parse(extensonJsonContent);
 };
-buildPackageJson.dependencies = Object.keys(
-  buildPackageJson.dependencies,
-).reduce((acc, value) => {
-  acc[value] = allDependencies[value].replace("^", "");
-  return acc;
-}, {});
-zip.addFile("package.json", JSON.stringify(buildPackageJson, null, 2));
 
-const alloy = fs.readFileSync(path.join(cwd, "src", "lib", "alloy.js"));
-zip.addFile("alloy.js", alloy);
+const getExtensionPath = (extensionDescriptor) =>
+  path.join(
+    cwd,
+    `package-${extensionDescriptor.name}-${extensionDescriptor.version}.zip`,
+  );
 
-const rollupConfig = fs.readFileSync(path.join(cwd, "rollup.config.mjs"));
-zip.addFile("rollup.config.mjs", rollupConfig);
+const getPackageJson = () => {
+  console.log("Generating the package.json file...");
+  const alloyPackageJson = JSON.parse(
+    fs.readFileSync(path.join(cwd, "package.json"), "utf8"),
+  );
 
-const buildScript = fs.readFileSync(
-  path.join(cwd, "scripts", "alloyBuilder.js"),
-);
-zip.addFile("scripts/alloyBuilder.js", buildScript);
+  const allDependencies = {
+    ...alloyPackageJson.dependencies,
+    ...alloyPackageJson.devDependencies,
+  };
 
-zip.writeZip(packagePath);
+  const buildPackageJson = {
+    name: "reactor-extension-alloy",
+    version: "1.0.0",
+    author: {
+      name: "Adobe",
+      url: "http://adobe.com",
+      email: "reactor@adobe.com",
+    },
+    scripts: {
+      build: "node ./scripts/alloyBuilder.js -i ./alloy.js -o ./dist/lib",
+    },
+    license: "Apache-2.0",
+    description: "Tool for generating custom alloy build based on user input.",
+    dependencies: {
+      "@adobe/alloy": "",
+      "@babel/core": "",
+      "@rollup/plugin-commonjs": "",
+      "@rollup/plugin-node-resolve": "",
+      commander: "",
+      rollup: "",
+    },
+  };
+
+  buildPackageJson.dependencies = Object.keys(
+    buildPackageJson.dependencies,
+  ).reduce((acc, value) => {
+    acc[value] = allDependencies[value];
+    return acc;
+  }, {});
+
+  return buildPackageJson;
+};
+
+const getPackageLockJson = (packageJson) => {
+  console.log("Generating the package-lock.json file...");
+  if (!fs.existsSync(path.join(cwd, "temp"))) {
+    fs.mkdirSync(path.join(cwd, "temp"));
+  }
+
+  fs.writeFileSync(path.join(cwd, "temp", "package.json"), packageJson);
+
+  try {
+    console.log("Install dependencies (`npm i`)...");
+    execute("npm", ["i"], { cwd: path.join(cwd, "temp") });
+
+    const packageLockJson = fs.readFileSync(
+      path.join(cwd, "temp", "package-lock.json"),
+    );
+
+    fs.rmSync(path.join(cwd, "temp"), { recursive: true, force: true });
+
+    return packageLockJson;
+  } catch (e) {
+    fs.rmSync(path.join(cwd, "temp"), { recursive: true, force: true });
+    throw e;
+  }
+};
+
+const createExtensionPackage = ({ verbose }) => {
+  console.log("Running the build process (`npm run build:prod`)...");
+  execute("npm", ["run", "build:prod"], { verbose });
+
+  console.log(
+    "Generating the initial extension package...(`npx @adobe/reactor-packager`)",
+  );
+  execute("npx", ["@adobe/reactor-packager"], { verbose });
+
+  const extensionDescriptor = getExtensionJson();
+  const packagePath = getExtensionPath(extensionDescriptor);
+
+  if (!fs.existsSync(packagePath)) {
+    throw new Error(
+      "The extension file was not found. Probably something wrong happened during build.",
+    );
+  }
+
+  const packageJson = JSON.stringify(getPackageJson(), null, 2);
+  const packageLockJson = getPackageLockJson(packageJson);
+
+  const zip = new AdmZip(packagePath);
+  // Create archive package.
+  console.log("Appending the extra files to the package...");
+  zip.addFile("package.json", packageJson);
+  zip.addFile("package-lock.json", packageLockJson);
+
+  const alloy = fs.readFileSync(path.join(cwd, "src", "lib", "alloy.js"));
+  zip.addFile("alloy.js", alloy);
+
+  const rollupConfig = fs.readFileSync(path.join(cwd, "rollup.config.mjs"));
+  zip.addFile("rollup.config.mjs", rollupConfig);
+
+  const buildScript = fs.readFileSync(
+    path.join(cwd, "scripts", "alloyBuilder.js"),
+  );
+  zip.addFile("scripts/alloyBuilder.js", buildScript);
+
+  zip.writeZip(packagePath);
+  console.log("Done");
+};
+
+const program = new Command();
+
+program
+  .name("createExtensionPackage")
+  .description("Tool for generating the alloy extension package for Tags.");
+
+program.option("-v, --verbose", "verbose mode", false);
+
+program.action(createExtensionPackage);
+
+program.parse();
+process.exit(0);
