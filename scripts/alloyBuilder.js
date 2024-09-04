@@ -192,9 +192,9 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
 
     fs.writeFileSync(entryFile, output);
   } catch (e) {
-    // fs.unlinkSync(entryFile);
-    // console.error(e);
-    // process.exit(1);
+    fs.unlinkSync(entryFile);
+    console.error(e);
+    process.exit(1);
   }
 });
 
