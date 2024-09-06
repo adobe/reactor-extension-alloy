@@ -22,6 +22,28 @@ module.exports = ({
   const { instances: instancesSettings } = turbine.getExtensionSettings();
   const instanceByName = {};
 
+  const calledMonitors = {};
+
+  window.__alloyMonitors = window.__alloyMonitors || [];
+  // these are called before the monitors are added at runtime, we want to cache and trigger later
+  window.__alloyMonitors.push({
+    onInstanceCreated: (...args) => {
+      calledMonitors.onInstanceCreated ||= [];
+      calledMonitors.onInstanceCreated.push(args);
+    },
+    onInstanceConfigured: (...args) => {
+      calledMonitors.onInstanceConfigured ||= [];
+      calledMonitors.onInstanceConfigured.push(args);
+    },
+    onBeforeCommand(...args) {
+      const { commandName } = args[0];
+      if (commandName === "configure") {
+        calledMonitors.onBeforeCommand ||= [];
+        calledMonitors.onBeforeCommand.push(args);
+      }
+    },
+  });
+
   instancesSettings.forEach(
     ({
       name,
@@ -75,6 +97,16 @@ module.exports = ({
      */
     createEventMergeId() {
       return createEventMergeId();
+    },
+    addMonitor(newMonitor) {
+      window.__alloyMonitors.push(newMonitor);
+      Object.keys(calledMonitors).forEach((methodName) => {
+        if (newMonitor[methodName]) {
+          calledMonitors[methodName].forEach((args) => {
+            newMonitor[methodName](...args);
+          });
+        }
+      });
     },
   };
 };

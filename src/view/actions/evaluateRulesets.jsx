@@ -49,7 +49,6 @@ const evaluateRulesetsForm = form(
       title: "Evaluate rulesets action",
       description:
         "This action manually triggers ruleset evaluation. Rulesets are returned by Adobe Journey Optimizer to support features like in-browser messages.",
-      beta: true,
     }),
     instancePicker({ name: "instanceName" }),
     checkbox({

@@ -83,6 +83,49 @@ describe("Instance Manager", () => {
       alloy1,
       alloy2,
       __alloyNS: ["alloy1", "alloy2"],
+      __alloyMonitors: [
+        {
+          onInstanceCreated: jasmine.any(Function),
+          onInstanceConfigured: jasmine.any(Function),
+          onBeforeCommand: jasmine.any(Function),
+        },
+      ],
+    });
+  });
+  it("adds a new monitor to the window.__alloyMonitors", () => {
+    const monitor = {
+      onInstanceCreated: jasmine.createSpy("onInstanceCreated"),
+    };
+    build();
+    expect(mockWindow).toEqual({
+      alloy1,
+      alloy2,
+      __alloyNS: ["alloy1", "alloy2"],
+      __alloyMonitors: [
+        {
+          onInstanceCreated: jasmine.any(Function),
+          onInstanceConfigured: jasmine.any(Function),
+          onBeforeCommand: jasmine.any(Function),
+        },
+      ],
+    });
+    expect(mockWindow.__alloyMonitors.length).toEqual(1);
+    instanceManager.addMonitor(monitor);
+    expect(mockWindow.__alloyMonitors.length).toEqual(2);
+    expect(mockWindow).toEqual({
+      alloy1,
+      alloy2,
+      __alloyNS: ["alloy1", "alloy2"],
+      __alloyMonitors: [
+        {
+          onInstanceCreated: jasmine.any(Function),
+          onInstanceConfigured: jasmine.any(Function),
+          onBeforeCommand: jasmine.any(Function),
+        },
+        {
+          onInstanceCreated: jasmine.any(Function),
+        },
+      ],
     });
   });
 

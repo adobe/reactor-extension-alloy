@@ -53,7 +53,7 @@ export default [
     },
     rules: {
       "unused-imports/no-unused-imports": "error",
-      "unused-imports/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+      "unused-imports/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
       "ban/ban": [
         "error",
         { name: ["describe", "only"], message: "don't focus tests" },
@@ -104,7 +104,7 @@ export default [
       ],
       "no-underscore-dangle": [
         2,
-        { allow: ["_experience", "__dirname", "__filename"] },
+        { allow: ["_experience", "__dirname", "__filename", "__alloyMonitors"] },
       ],
       "react/jsx-props-no-spreading": "off",
       "react/function-component-definition": [
