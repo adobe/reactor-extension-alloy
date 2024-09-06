@@ -1,9 +1,9 @@
 module.exports = {
   skipJsErrors: true,
-  quarantineMode: true,
-  selectorTimeout: 50000,
-  assertionTimeout: 7000,
-  pageLoadTimeout: 8000,
+  quarantineMode: false,
+  selectorTimeout: 2000,
+  assertionTimeout: 5000,
+  pageLoadTimeout: 5000,
   speed: 1.0,
   stopOnFirstFail: false,
 };

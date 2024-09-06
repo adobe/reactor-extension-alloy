@@ -1,6 +1,11 @@
 {
     "extendedDebugging": false,
-    "capturePerformance": false,
+    "capturePerformance": true,
     "recordScreenshots": false,
-    "recordVideo": false
+    "recordVideo": false,
+    "videoUploadOnPass": false,
+    "idleTimeout": 180,
+    "maxDuration": 1800,
+    "commandTimeout": 300,
+    "tunnelIdentifier": "${SAUCE_TUNNEL_ID}"
 }
