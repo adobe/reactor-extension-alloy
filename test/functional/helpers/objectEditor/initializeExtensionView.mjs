@@ -41,5 +41,6 @@ export default async (additionalInitInfo) => {
       );
   };
   await extendedExtensionViewController.init(additionalInitInfo);
+  await t.wait(100);
   return extendedExtensionViewController;
 };
