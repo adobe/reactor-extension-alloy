@@ -9,7 +9,15 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { Flex, Item, TabList, TabPanels, Tabs } from "@adobe/react-spectrum";
+import {
+  Heading,
+  Flex,
+  Item,
+  TabList,
+  TabPanels,
+  Tabs,
+  View,
+} from "@adobe/react-spectrum";
 import { getIn, useField, useFormikContext } from "formik";
 import PropTypes from "prop-types";
 import React, { useRef } from "react";
@@ -34,6 +42,24 @@ import {
   combineValidatorWithIsDataElement,
   createValidateItemIsInArray,
 } from "./utils";
+
+/**
+ *
+ * @param {{ children: React.Element[], name: string, [k: string]: unknown }} param0
+ * @returns
+ */
+const ProductSubsection = ({ children, name, ...otherProps }) => (
+  <View {...otherProps}>
+    <Heading level={3} marginBottom="size-10">
+      {name}
+    </Heading>
+    {children}
+  </View>
+);
+ProductSubsection.propTypes = {
+  children: PropTypes.arrayOf(PropTypes.element).isRequired,
+  name: PropTypes.string,
+};
 
 /**
  * A section of a form that allows the user to override datastream configuration
@@ -317,78 +343,90 @@ const Overrides = ({
                         />
                       </>
                     )}
-                    {!hideFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
-                      <OverrideInput
-                        useManualEntry={
-                          useManualEntry || eventDatasetOptions.length === 0
-                        }
-                        defaultItems={eventDatasetOptions}
-                        data-test-id={FIELD_NAMES.eventDatasetOverride}
-                        label="Event dataset"
-                        description={eventDatasetDescription}
-                        width="size-5000"
-                        allowsCustomValue
-                        validate={validateDatasetOption}
-                        loadingState={isLoading}
-                        name={`${prefix}.${env}.com_adobe_experience_platform.datasets.event.datasetId`}
-                      >
-                        {({ datasetId }) => (
-                          <Item key={datasetId}>{datasetId}</Item>
-                        )}
-                      </OverrideInput>
+                    {!hideFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
+                      <ProductSubsection name="Adobe Analytics">
+                        <ReportSuitesOverride
+                          useManualEntry={useManualEntry}
+                          validate={validateReportSuiteOption}
+                          primaryItem={primaryReportSuites}
+                          items={reportSuiteOptions}
+                          prefix={`${prefix}.${env}`}
+                        />
+                      </ProductSubsection>
                     )}
                     {!hideFieldsSet.has(
                       FIELD_NAMES.idSyncContainerOverride,
                     ) && (
-                      <OverrideInput
-                        data-test-id={FIELD_NAMES.idSyncContainerOverride}
-                        label="Third-party ID sync container"
-                        useManualEntry={
-                          useManualEntry || idSyncContainers.length === 0
-                        }
-                        allowsCustomValue
-                        overrideType="third-party ID sync container"
-                        primaryItem={primaryIdSyncContainer}
-                        defaultItems={idSyncContainers}
-                        validate={validateIdSyncContainerOption}
-                        name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
-                        inputMode="numeric"
-                        width="size-5000"
-                        pattern={/\d+/}
-                        description={idSyncContainerDescription}
-                      >
-                        {({ value, label }) => <Item key={value}>{label}</Item>}
-                      </OverrideInput>
+                      <ProductSubsection name="Adobe Audience Manager">
+                        <OverrideInput
+                          data-test-id={FIELD_NAMES.idSyncContainerOverride}
+                          label="Third-party ID sync container"
+                          useManualEntry={
+                            useManualEntry || idSyncContainers.length === 0
+                          }
+                          allowsCustomValue
+                          overrideType="third-party ID sync container"
+                          primaryItem={primaryIdSyncContainer}
+                          defaultItems={idSyncContainers}
+                          validate={validateIdSyncContainerOption}
+                          name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
+                          inputMode="numeric"
+                          width="size-5000"
+                          pattern={/\d+/}
+                          description={idSyncContainerDescription}
+                        >
+                          {({ value, label }) => (
+                            <Item key={value}>{label}</Item>
+                          )}
+                        </OverrideInput>
+                      </ProductSubsection>
+                    )}
+                    {!hideFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
+                      <ProductSubsection name="Adobe Experience Platform">
+                        <OverrideInput
+                          useManualEntry={
+                            useManualEntry || eventDatasetOptions.length === 0
+                          }
+                          defaultItems={eventDatasetOptions}
+                          data-test-id={FIELD_NAMES.eventDatasetOverride}
+                          label="Event dataset"
+                          description={eventDatasetDescription}
+                          width="size-5000"
+                          allowsCustomValue
+                          validate={validateDatasetOption}
+                          loadingState={isLoading}
+                          name={`${prefix}.${env}.com_adobe_experience_platform.datasets.event.datasetId`}
+                        >
+                          {({ datasetId }) => (
+                            <Item key={datasetId}>{datasetId}</Item>
+                          )}
+                        </OverrideInput>
+                      </ProductSubsection>
                     )}
                     {!hideFieldsSet.has(
                       FIELD_NAMES.targetPropertyTokenOverride,
                     ) && (
-                      <OverrideInput
-                        data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
-                        label="Target property token"
-                        allowsCustomValue
-                        overrideType="property token"
-                        primaryItem={primaryPropertyToken}
-                        validate={validatePropertyTokenOption}
-                        defaultItems={propertyTokenOptions}
-                        useManualEntry={
-                          useManualEntry || propertyTokenOptions.length === 0
-                        }
-                        name={`${prefix}.${env}.com_adobe_target.propertyToken`}
-                        description={propertyTokenDescription}
-                        width="size-5000"
-                      >
-                        {({ value, label }) => <Item key={value}>{label}</Item>}
-                      </OverrideInput>
-                    )}
-                    {!hideFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
-                      <ReportSuitesOverride
-                        useManualEntry={useManualEntry}
-                        validate={validateReportSuiteOption}
-                        primaryItem={primaryReportSuites}
-                        items={reportSuiteOptions}
-                        prefix={`${prefix}.${env}`}
-                      />
+                      <ProductSubsection name="Adobe Target">
+                        <OverrideInput
+                          data-test-id={FIELD_NAMES.targetPropertyTokenOverride}
+                          label="Target property token"
+                          allowsCustomValue
+                          overrideType="property token"
+                          primaryItem={primaryPropertyToken}
+                          validate={validatePropertyTokenOption}
+                          defaultItems={propertyTokenOptions}
+                          useManualEntry={
+                            useManualEntry || propertyTokenOptions.length === 0
+                          }
+                          name={`${prefix}.${env}.com_adobe_target.propertyToken`}
+                          description={propertyTokenDescription}
+                          width="size-5000"
+                        >
+                          {({ value, label }) => (
+                            <Item key={value}>{label}</Item>
+                          )}
+                        </OverrideInput>
+                      </ProductSubsection>
                     )}
                   </Flex>
                 </Item>
