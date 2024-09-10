@@ -10,11 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { array, lazy, mixed, number, object, string } from "yup";
+import deepSet from "../../utils/deepSet";
+import deepGet from "../../utils/deepGet";
 import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/constants/environmentType";
 import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
 import trimValue from "../../utils/trimValues";
-import { dataElementRegex } from "./utils";
+import { containsDataElementsRegex } from "./utils";
 
 /**
  * @typedef {Object} EnvironmentConfigOverrideFormikState
@@ -62,6 +64,17 @@ import { dataElementRegex } from "./utils";
  * @property {EnvironmentConfigOverrideLaunchSettings} [production]
  */
 
+const overridesKeys = [
+  "com_adobe_experience_platform",
+  "com_adobe_experience_platform.com_adobe_edge_ode",
+  "com_adobe_experience_platform.com_adobe_edge_segmentation",
+  "com_adobe_experience_platform.com_adobe_edge_destinations",
+  "com_adobe_experience_platform.com_adobe_edge_ajo",
+  "com_adobe_analytics",
+  "com_adobe_target",
+  "com_adobe_audience_manager",
+  "com_adobe_launch_ssf",
+];
 export const bridge = {
   /**
    * Get the default formik state for the overrides form.
@@ -105,18 +118,12 @@ export const bridge = {
     const instanceValues = {};
 
     // copy settings from the pre-per-environment schema
-    const overridesKeys = [
-      "com_adobe_identity",
-      "com_adobe_target",
-      "com_adobe_analytics",
-      "com_adobe_experience_platform",
-    ];
-    const oldOverrides = overridesKeys.reduce((acc, key) => {
-      if (instanceSettings.edgeConfigOverrides?.[key]) {
-        acc[key] = instanceSettings.edgeConfigOverrides[key];
-      }
-      return acc;
-    }, {});
+    const oldOverrides = overridesKeys
+      .filter((key) => deepGet(instanceSettings, key))
+      .reduce((acc, key) => {
+        deepSet(acc, key, deepGet(instanceSettings.edgeConfigOverrides, key));
+        return acc;
+      }, {});
     if (Object.keys(oldOverrides).length > 0) {
       const overrideSettings = { ...oldOverrides };
       instanceSettings.edgeConfigOverrides = {};
@@ -175,7 +182,9 @@ export const bridge = {
       // number, unless it is a data element (/^%.+%$/gi)
       if (
         overrides.com_adobe_identity?.idSyncContainerId &&
-        !dataElementRegex.test(overrides.com_adobe_identity.idSyncContainerId)
+        !containsDataElementsRegex.test(
+          overrides.com_adobe_identity.idSyncContainerId,
+        )
       ) {
         overrides.com_adobe_identity.idSyncContainerId = parseInt(
           overrides.com_adobe_identity.idSyncContainerId,
@@ -257,7 +266,7 @@ export const bridge = {
                 typeof value === "string" &&
                 (value.includes("%") || value === "")
                   ? string()
-                      .matches(dataElementRegex, {
+                      .matches(containsDataElementsRegex, {
                         message: "Please enter a valid data element.",
                         excludeEmptyString: true,
                       })

@@ -39,7 +39,7 @@ import SettingsCopySection from "./settingsCopySection";
 import {
   FIELD_NAMES,
   capitialize,
-  combineValidatorWithIsDataElement,
+  combineValidatorWithContainsDataElements,
   createValidateItemIsInArray,
 } from "./utils";
 
@@ -215,9 +215,10 @@ const Overrides = ({
                 eventDatasetOptions.map(({ datasetId }) => datasetId),
                 "The value must be one of the preconfigured datasets.",
               );
-              const validateDatasetOption = combineValidatorWithIsDataElement(
-                validateItemIsInDatasetsList,
-              );
+              const validateDatasetOption =
+                combineValidatorWithContainsDataElements(
+                  validateItemIsInDatasetsList,
+                );
 
               const primaryIdSyncContainer = `${
                 result?.com_adobe_identity?.idSyncContainerId ?? ""
@@ -281,7 +282,9 @@ const Overrides = ({
                 "The value must be one of the preconfigured property tokens.",
               );
               const validatePropertyTokenOption =
-                combineValidatorWithIsDataElement(itemIsInPropertyTokenOptions);
+                combineValidatorWithContainsDataElements(
+                  itemIsInPropertyTokenOptions,
+                );
 
               /** @type {string[]} */
               const primaryReportSuites =
@@ -306,7 +309,7 @@ const Overrides = ({
                   .map((v) => v.trim())
                   .filter((v) => Boolean(v))
                   .map(
-                    combineValidatorWithIsDataElement(
+                    combineValidatorWithContainsDataElements(
                       validateItemIsInReportSuiteOptions,
                     ),
                   )

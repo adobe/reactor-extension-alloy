@@ -10,15 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import {
-  isDataElement,
+  containsDataElements,
   createValidatorWithMessage,
-  validateIsDataElement,
+  validateContainsDataElements,
   createValidateItemIsInArray,
-  combineValidatorWithIsDataElement,
+  combineValidatorWithContainsDataElements,
 } from "../../../../../src/view/components/overrides/utils";
 
 describe("overrides/utils.js", () => {
-  describe("isDataElement()", () => {
+  describe("containsDataElements()", () => {
     /**
      * [testName, testValue]
      * @type {[string, string][]}
@@ -43,7 +43,7 @@ describe("overrides/utils.js", () => {
       ],
     ].forEach(([testName, testValue]) => {
       it(testName, () => {
-        expect(isDataElement(testValue)).toBe(true);
+        expect(containsDataElements(testValue)).toBe(true);
       });
     });
   });
@@ -60,9 +60,9 @@ describe("overrides/utils.js", () => {
     });
   });
 
-  describe("validateIsDataElement()", () => {
+  describe("validateContainsDataElements()", () => {
     it("should return the message when the value is not a data element", () => {
-      expect(typeof validateIsDataElement("abc")).toBe("string");
+      expect(typeof validateContainsDataElements("abc")).toBe("string");
     });
   });
 
@@ -78,9 +78,9 @@ describe("overrides/utils.js", () => {
     });
   });
 
-  describe("combineValidatorWithIsDataElement()", () => {
+  describe("combineValidatorWithContainsDataElements()", () => {
     it("should validate data elements and the other validator", () => {
-      const combinedValidator = combineValidatorWithIsDataElement(
+      const combinedValidator = combineValidatorWithContainsDataElements(
         () => undefined,
       );
       expect(typeof combinedValidator("%my data element")).toBe("string");

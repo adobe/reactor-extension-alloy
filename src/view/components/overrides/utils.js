@@ -30,6 +30,11 @@ export const FIELD_NAMES = Object.freeze({
   sandbox: "sandbox",
 });
 
+export const ENABLED_FIELD_VALUES = Object.freeze({
+  enabled: "Enabled",
+  disabled: "Disabled",
+});
+
 /**
  * Given an instance name, returns the settings for that instance.
  * @param {Object} options
@@ -83,14 +88,15 @@ export const createIsItemInArray = (
   };
 };
 
-export const dataElementRegex = /^([^%\n]*%[^%\n]+%)+[^%\n]*$/i;
+export const containsDataElementsRegex = /^([^%\n]*%[^%\n]+%)+[^%\n]*$/i;
 
 /**
  * Returns whether or not the value is a data element expression
  * @param {string} value
  * @returns {boolean}
  */
-export const isDataElement = (value) => dataElementRegex.test(value);
+export const containsDataElements = (value) =>
+  containsDataElementsRegex.test(value);
 
 /**
  * Creates a function that validates a given value. If it passes validation, it
@@ -110,8 +116,8 @@ export const createValidatorWithMessage = (validator, message) => (value) =>
  * @param {string} value
  * @returns {string | undefined}
  */
-export const validateIsDataElement = createValidatorWithMessage(
-  isDataElement,
+export const validateContainsDataElements = createValidatorWithMessage(
+  containsDataElements,
   "The value must contain one or more valid data elements.",
 );
 
@@ -137,5 +143,8 @@ export const createValidateItemIsInArray = (
  * @param {(value: T) => string | undefined} validator
  * @returns
  */
-export const combineValidatorWithIsDataElement = (validator) => (value) =>
-  value?.includes("%") ? validateIsDataElement(value) : validator(value);
+export const combineValidatorWithContainsDataElements =
+  (validator) => (value) =>
+    value?.includes("%")
+      ? validateContainsDataElements(value)
+      : validator(value);
