@@ -463,7 +463,7 @@ describe("overridesBridge", () => {
             },
           },
         }),
-      ).toThrow(/Please/);
+      ).toThrowMatching((value) => /Please/.test(value?.message ?? value));
     });
 
     it("rejects negative and non-integer idSyncContainerId", () => {
