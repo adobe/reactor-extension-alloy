@@ -15,35 +15,102 @@ import {
   validateContainsDataElements,
   createValidateItemIsInArray,
   combineValidatorWithContainsDataElements,
+  isDataElement,
 } from "../../../../../src/view/components/overrides/utils";
 
 describe("overrides/utils.js", () => {
-  describe("containsDataElements()", () => {
+  describe("isDataElement", () => {
     /**
-     * [testName, testValue]
-     * @type {[string, string][]}
+     * [testName, testValue, expectedResult]
+     * @type {[string, string, boolean][]}
      */
     [
-      ["should validate data element", "%my data element%"],
+      ["should validate data element", "%my data element%", true],
+      [
+        "should validate data element with whitespace in front",
+        "    %my data element%",
+        true,
+      ],
+      [
+        "should validate data element with whitespace in back",
+        "%my data element%    ",
+        true,
+      ],
+      [
+        "should validate data element with whitespace in front and back",
+        "    %my data element%    ",
+        true,
+      ],
+      [
+        "should not validate multiple data elements",
+        "%my data element% %my other data element%",
+        false,
+      ],
+      ["should not validate empty string", "", false],
+      ["should not validate string without data element", "abc", false],
+      [
+        "should not validate data element with characters in front",
+        "asdf%my data element%",
+        false,
+      ],
+      [
+        "should not validate data element with characters in back",
+        "%my data element%asdf",
+        false,
+      ],
+      [
+        "should not validate data element with characters in front and back",
+        "asdf%my data element%asdf",
+        false,
+      ],
+    ].forEach(([testName, testValue, expectedResult]) => {
+      it(testName, () => {
+        expect(isDataElement(testValue)).toBe(expectedResult);
+      });
+    });
+  });
+  describe("containsDataElements()", () => {
+    /**
+     * [testName, testValue, expectedResult]
+     * @type {[string, string, boolean][]}
+     */
+    [
+      ["should validate data element", "%my data element%", true],
       [
         "should validate data elements with characters in front",
         "abc%my data element%",
+        true,
       ],
       [
         "should validate data elements with characters in back",
         "%my data element%abc",
+        true,
       ],
       [
         "should validate data elements with characters in front and back",
         "abc%my data element%abc",
+        true,
       ],
       [
         "should validate multiple data elements in the same string",
         "%my data element% %my other data element%%my third data element%%my fourth data element%",
+        true,
       ],
-    ].forEach(([testName, testValue]) => {
+      ["should not validate empty string", "", false],
+      ["should not validate string without data element", "abc", false],
+      [
+        "should not validate un-terminated data elements",
+        "%my data element",
+        false,
+      ],
+      [
+        "should not validate un-started data elements",
+        "my data element%",
+        false,
+      ],
+    ].forEach(([testName, testValue, expectedResult]) => {
       it(testName, () => {
-        expect(containsDataElements(testValue)).toBe(true);
+        expect(containsDataElements(testValue)).toBe(expectedResult);
       });
     });
   });
@@ -86,6 +153,27 @@ describe("overrides/utils.js", () => {
       expect(typeof combinedValidator("%my data element")).toBe("string");
       expect(combinedValidator("%my data element%")).toBe(undefined);
       expect(combinedValidator("abc")).toBe(undefined);
+    });
+
+    it("should support validating multiple data elements in a string", () => {
+      const combinedValidator = combineValidatorWithContainsDataElements(
+        () => undefined,
+        true,
+      );
+      expect(
+        combinedValidator("%my data element% %my other data element%"),
+      ).toBe(undefined);
+    });
+
+    it("should support validating a single data element in a string", () => {
+      const combinedValidator = combineValidatorWithContainsDataElements(
+        () => undefined,
+        false,
+      );
+      expect(
+        typeof combinedValidator("%my data element% %my other data element%"),
+      ).toBe("string");
+      expect(combinedValidator("%my data element%")).toBe(undefined);
     });
   });
 });

@@ -88,10 +88,19 @@ export const createIsItemInArray = (
   };
 };
 
+export const isDataElementRegex = /^\s*%[^%\n]+%\s*$/i;
 export const containsDataElementsRegex = /^([^%\n]*%[^%\n]+%)+[^%\n]*$/i;
 
 /**
- * Returns whether or not the value is a data element expression
+ * Returns whether or not the value is a valid data element expression.
+ * @param {string} value
+ * @returns {boolean}
+ */
+export const isDataElement = (value) => isDataElementRegex.test(value);
+
+/**
+ * Returns whether or not the value contains one or more valid data element
+ * expressions.
  * @param {string} value
  * @returns {boolean}
  */
@@ -111,7 +120,18 @@ export const createValidatorWithMessage = (validator, message) => (value) =>
   validator(value) ? undefined : message.trim();
 
 /**
- * Validate that a given item is a valid data element expression.
+ * Validate that a given item is a valid data element. If not, return an error
+ * message.
+ * @param {string} value
+ * @returns {string | undefined}
+ */
+export const validateIsDataElement = createValidatorWithMessage(
+  isDataElement,
+  "The value must be a valid data element.",
+);
+
+/**
+ * Validate that a given item contains at least one valid data element.
  * If not, return an error message.
  * @param {string} value
  * @returns {string | undefined}
@@ -141,10 +161,17 @@ export const createValidateItemIsInArray = (
 /**
  *
  * @param {(value: T) => string | undefined} validator
+ * @param {boolean} multiple
  * @returns
  */
 export const combineValidatorWithContainsDataElements =
-  (validator) => (value) =>
-    value?.includes("%")
-      ? validateContainsDataElements(value)
-      : validator(value);
+  (validator, multiple = true) =>
+  (value) => {
+    if (!value.includes("%")) {
+      return validator(value);
+    }
+    if (multiple) {
+      return validateContainsDataElements(value);
+    }
+    return validateIsDataElement(value);
+  };
