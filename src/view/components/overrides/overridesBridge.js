@@ -16,7 +16,11 @@ import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/const
 import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
 import trimValue from "../../utils/trimValues";
-import { containsDataElementsRegex } from "./utils";
+import {
+  containsDataElementsRegex,
+  ENABLED_FIELD_VALUES,
+  isDataElement,
+} from "./utils";
 
 /**
  * @typedef {Object} EnvironmentConfigOverrideFormikState
@@ -74,6 +78,7 @@ const overridesKeys = [
   "com_adobe_target",
   "com_adobe_audience_manager",
   "com_adobe_launch_ssf",
+  "com_adobe_identity",
 ];
 export const bridge = {
   /**
@@ -89,20 +94,41 @@ export const bridge = {
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
           com_adobe_experience_platform: {
+            enabled: ENABLED_FIELD_VALUES.enabled,
             datasets: {
               event: {
                 datasetId: "",
               },
             },
+            com_adobe_edge_ode: {
+              enabled: ENABLED_FIELD_VALUES.enabled,
+            },
+            com_adobe_edge_segmentation: {
+              enabled: ENABLED_FIELD_VALUES.enabled,
+            },
+            com_adobe_edge_destinations: {
+              enabled: ENABLED_FIELD_VALUES.enabled,
+            },
+            com_adobe_edge_ajo: {
+              enabled: ENABLED_FIELD_VALUES.enabled,
+            },
           },
           com_adobe_analytics: {
+            enabled: ENABLED_FIELD_VALUES.enabled,
             reportSuites: [""],
           },
           com_adobe_identity: {
             idSyncContainerId: undefined,
           },
           com_adobe_target: {
+            enabled: ENABLED_FIELD_VALUES.enabled,
             propertyToken: "",
+          },
+          com_adobe_audience_manager: {
+            enabled: ENABLED_FIELD_VALUES.enabled,
+          },
+          com_adobe_launch_ssf: {
+            enabled: ENABLED_FIELD_VALUES.enabled,
           },
         },
       }),
@@ -119,19 +145,40 @@ export const bridge = {
 
     // copy settings from the pre-per-environment schema
     const oldOverrides = overridesKeys
-      .filter((key) => deepGet(instanceSettings, key))
+      .filter((key) => deepGet(instanceSettings, `edgeConfigOverrides.${key}`))
       .reduce((acc, key) => {
-        deepSet(acc, key, deepGet(instanceSettings.edgeConfigOverrides, key));
+        deepSet(
+          acc,
+          key,
+          deepGet(instanceSettings, `edgeConfigOverrides.${key}`),
+        );
         return acc;
       }, {});
     if (Object.keys(oldOverrides).length > 0) {
       const overrideSettings = { ...oldOverrides };
       instanceSettings.edgeConfigOverrides = {};
       OVERRIDE_ENVIRONMENTS.forEach((env) => {
-        instanceSettings.edgeConfigOverrides[env] =
-          overrideSettings[env] ?? oldOverrides;
+        instanceSettings.edgeConfigOverrides[env] = structuredClone(
+          overrideSettings[env] ?? oldOverrides,
+        );
       });
     }
+    // convert the 'enabled' settings from true/false to enabled/disabled
+    OVERRIDE_ENVIRONMENTS.flatMap((env) =>
+      overridesKeys.flatMap(
+        (key) => `edgeConfigOverrides.${env}.${key}.enabled`,
+      ),
+    )
+      .filter((key) => deepGet(instanceSettings, key) !== undefined)
+      .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
+      .forEach((key) => {
+        const value = deepGet(instanceSettings, key);
+        deepSet(
+          instanceSettings,
+          key,
+          value ? ENABLED_FIELD_VALUES.enabled : ENABLED_FIELD_VALUES.disabled,
+        );
+      });
 
     copyPropertiesWithDefaultFallback({
       toObj: instanceValues,

@@ -22,20 +22,41 @@ describe("overridesBridge", () => {
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
           com_adobe_experience_platform: {
+            enabled: "Enabled",
             datasets: {
               event: {
                 datasetId: "",
               },
             },
+            com_adobe_edge_ode: {
+              enabled: "Enabled",
+            },
+            com_adobe_edge_segmentation: {
+              enabled: "Enabled",
+            },
+            com_adobe_edge_destinations: {
+              enabled: "Enabled",
+            },
+            com_adobe_edge_ajo: {
+              enabled: "Enabled",
+            },
           },
           com_adobe_analytics: {
+            enabled: "Enabled",
             reportSuites: [""],
           },
           com_adobe_identity: {
             idSyncContainerId: undefined,
           },
           com_adobe_target: {
+            enabled: "Enabled",
             propertyToken: "",
+          },
+          com_adobe_audience_manager: {
+            enabled: "Enabled",
+          },
+          com_adobe_launch_ssf: {
+            enabled: "Enabled",
           },
         };
       });
@@ -67,7 +88,15 @@ describe("overridesBridge", () => {
           datastreamIdInputMethod: "freeform",
           development: {
             com_adobe_target: {
+              enabled: false,
               propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+            },
+          },
+          staging: {
+            com_adobe_experience_platform: {
+              com_adobe_edge_ode: {
+                enabled: false,
+              },
             },
           },
         },
@@ -80,35 +109,56 @@ describe("overridesBridge", () => {
       const instanceValues = bridge.getInitialInstanceValues({
         instanceSettings,
       });
-      const edgeConfigOverrides = {};
+      const expectedEdgeConfigOverrides = {};
       ["production", "staging", "development"].forEach((env) => {
-        edgeConfigOverrides[env] = {
+        expectedEdgeConfigOverrides[env] = {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
           com_adobe_experience_platform: {
+            enabled: "Enabled",
             datasets: {
               event: {
                 datasetId: "",
               },
             },
+            com_adobe_edge_ode: {
+              enabled: env === "staging" ? "Disabled" : "Enabled",
+            },
+            com_adobe_edge_segmentation: {
+              enabled: "Enabled",
+            },
+            com_adobe_edge_destinations: {
+              enabled: "Enabled",
+            },
+            com_adobe_edge_ajo: {
+              enabled: "Enabled",
+            },
           },
           com_adobe_analytics: {
+            enabled: "Enabled",
             reportSuites: [""],
           },
           com_adobe_identity: {
             idSyncContainerId: undefined,
           },
           com_adobe_target: {
+            enabled: env === "development" ? "Disabled" : "Enabled",
             propertyToken:
               env === "development"
                 ? "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
                 : "",
           },
+          com_adobe_audience_manager: {
+            enabled: "Enabled",
+          },
+          com_adobe_launch_ssf: {
+            enabled: "Enabled",
+          },
         };
       });
       expect(instanceValues).toEqual({
-        edgeConfigOverrides,
+        edgeConfigOverrides: expectedEdgeConfigOverrides,
       });
     });
 
@@ -132,20 +182,41 @@ describe("overridesBridge", () => {
         edgeConfigOverrides: {
           datastreamIdInputMethod: "freeform",
           com_adobe_target: {
+            enabled: false,
             propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
           },
           com_adobe_experience_platform: {
+            enabled: false,
             datasets: {
               event: {
                 datasetId: "6335faf30f5a161c0b4b1444",
               },
             },
+            com_adobe_edge_ode: {
+              enabled: false,
+            },
+            com_adobe_edge_segmentation: {
+              enabled: false,
+            },
+            com_adobe_edge_destinations: {
+              enabled: false,
+            },
+            com_adobe_edge_ajo: {
+              enabled: false,
+            },
           },
           com_adobe_analytics: {
+            enabled: false,
             reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
             idSyncContainerId: 30793,
+          },
+          com_adobe_launch_ssf: {
+            enabled: false,
+          },
+          com_adobe_audience_manager: {
+            enabled: false,
           },
         },
         stagingEdgeConfigId: "140a1d7d-90ac-44d4-921e-6bb819da36b7:stage",
@@ -164,19 +235,40 @@ describe("overridesBridge", () => {
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
           com_adobe_experience_platform: {
+            enabled: "Disabled",
             datasets: {
               event: {
                 datasetId: "6335faf30f5a161c0b4b1444",
               },
             },
+            com_adobe_edge_ode: {
+              enabled: "Disabled",
+            },
+            com_adobe_edge_segmentation: {
+              enabled: "Disabled",
+            },
+            com_adobe_edge_destinations: {
+              enabled: "Disabled",
+            },
+            com_adobe_edge_ajo: {
+              enabled: "Disabled",
+            },
           },
           com_adobe_analytics: {
+            enabled: "Disabled",
             reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
             idSyncContainerId: "30793",
           },
+          com_adobe_launch_ssf: {
+            enabled: "Disabled",
+          },
+          com_adobe_audience_manager: {
+            enabled: "Disabled",
+          },
           com_adobe_target: {
+            enabled: "Disabled",
             propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
           },
         };
