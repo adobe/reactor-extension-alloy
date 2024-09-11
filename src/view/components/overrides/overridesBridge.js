@@ -17,6 +17,7 @@ import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
 import trimValue from "../../utils/trimValues";
 import {
+  containsDataElements,
   containsDataElementsRegex,
   ENABLED_FIELD_VALUES,
   isDataElement,
@@ -231,39 +232,47 @@ export const bridge = {
       keys: propertyKeysToCopy,
     });
 
-    OVERRIDE_ENVIRONMENTS.forEach((env) => {
-      /** @type {EnvironmentConfigOverrideLaunchSettings} */
-      const overrides = instanceSettings.edgeConfigOverrides?.[env];
-      if (!overrides || Object.keys(overrides).length === 0) {
-        return;
-      }
-      // Alloy, Konductor, and Blackbird expect the idSyncContainerID to be a
-      // number, unless it is a data element (/^%.+%$/gi)
-      if (
-        overrides.com_adobe_identity?.idSyncContainerId &&
-        !containsDataElementsRegex.test(
-          overrides.com_adobe_identity.idSyncContainerId,
-        )
-      ) {
-        overrides.com_adobe_identity.idSyncContainerId = parseInt(
-          overrides.com_adobe_identity.idSyncContainerId,
-          10,
+    const propertiesWithValues = OVERRIDE_ENVIRONMENTS.flatMap((env) =>
+      overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}`),
+    ).filter((key) => deepGet(instanceSettings, key) !== undefined);
+
+    // convert idSyncContainerId to a number if it is not a data element
+    propertiesWithValues
+      .map((key) => `${key}.idSyncContainerId`)
+      .filter((key) => deepGet(instanceSettings, key))
+      .filter((key) => !containsDataElements(deepGet(instanceSettings, key)))
+      .forEach((key) => {
+        const value = deepGet(instanceSettings, key);
+        deepSet(instanceSettings, key, parseInt(value, 10));
+      });
+
+    // filter out the blank report suites
+    propertiesWithValues
+      .map((key) => `${key}.reportSuites`)
+      .filter((key) => deepGet(instanceSettings, key))
+      .forEach((key) => {
+        const value = deepGet(instanceSettings, key);
+        deepSet(
+          instanceSettings,
+          key,
+          value.filter((rs) => rs !== ""),
         );
-      }
+      });
 
-      if (overrides.com_adobe_identity?.idSyncContainerId === "") {
-        delete overrides.com_adobe_identity;
-      }
+    // convert "Enabled"/"Disabled" to true/false
+    propertiesWithValues
+      .map((key) => `${key}.enabled`)
+      .filter((key) => deepGet(instanceSettings, key) !== undefined)
+      .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
+      .forEach((key) => {
+        const value = deepGet(instanceValues, key);
+        deepSet(instanceSettings, key, value === ENABLED_FIELD_VALUES.enabled);
+      });
 
-      // filter out the blank report suites
-      if (overrides.com_adobe_analytics?.reportSuites) {
-        overrides.com_adobe_analytics.reportSuites =
-          overrides.com_adobe_analytics.reportSuites.filter((rs) => rs !== "");
-      }
-    });
-
+    // Remove empty objects
     /** @type {{ edgeConfigOverrides: ConfigOverridesLaunchSettings }} */
     const trimmedInstanceSettings = trimValue(instanceSettings);
+    // Remove the edgeConfigOverrides object if it is empty or has only the default sandbox setting
     if (
       trimmedInstanceSettings?.edgeConfigOverrides?.development?.sandbox ===
         "prod" &&
@@ -276,6 +285,7 @@ export const bridge = {
       delete trimmedInstanceSettings.edgeConfigOverrides;
     }
 
+    // Remove an env if it is empty
     Object.keys(trimmedInstanceSettings?.edgeConfigOverrides || {}).forEach(
       (env) => {
         if (
@@ -287,6 +297,7 @@ export const bridge = {
       },
     );
 
+    // Remove the edgeConfigOverrides object if it is empty
     if (
       Object.keys(trimmedInstanceSettings?.edgeConfigOverrides || []).length ===
       0
