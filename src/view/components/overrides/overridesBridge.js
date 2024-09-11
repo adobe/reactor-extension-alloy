@@ -20,6 +20,7 @@ import {
   containsDataElementsRegex,
   ENABLED_FIELD_VALUES,
   isDataElement,
+  isDataElementRegex,
 } from "./utils";
 
 /**
@@ -67,6 +68,17 @@ import {
  * @property {EnvironmentConfigOverrideLaunchSettings} [staging]
  * @property {EnvironmentConfigOverrideLaunchSettings} [production]
  */
+
+const enabledOrDataElementValidator = lazy((value) =>
+  typeof value === "string" && (value.includes("%") || value === "")
+    ? string()
+        .matches(isDataElementRegex, {
+          message: "Please enter a valid data element.",
+          excludeEmptyString: true,
+        })
+        .nullable()
+    : mixed().oneOf(Object.values(ENABLED_FIELD_VALUES)).nullable(),
+);
 
 const overridesKeys = [
   "com_adobe_experience_platform",
@@ -296,6 +308,7 @@ export const bridge = {
               .nullable(),
             sandbox: string().nullable(),
             com_adobe_experience_platform: object({
+              enabled: enabledOrDataElementValidator,
               datasets: object({
                 event: object({
                   datasetId: string().nullable(),
@@ -304,8 +317,21 @@ export const bridge = {
                   datasetId: string().nullable(),
                 }),
               }),
+              com_adobe_edge_ode: object({
+                enabled: enabledOrDataElementValidator,
+              }),
+              com_adobe_edge_segmentation: object({
+                enabled: enabledOrDataElementValidator,
+              }),
+              com_adobe_edge_destinations: object({
+                enabled: enabledOrDataElementValidator,
+              }),
+              com_adobe_edge_ajo: object({
+                enabled: enabledOrDataElementValidator,
+              }),
             }),
             com_adobe_analytics: object({
+              enabled: enabledOrDataElementValidator,
               reportSuites: array(string()).nullable(),
             }),
             com_adobe_identity: object({
@@ -326,7 +352,14 @@ export const bridge = {
               ),
             }),
             com_adobe_target: object({
+              enabled: enabledOrDataElementValidator,
               propertyToken: string().nullable(),
+            }),
+            com_adobe_audience_manager: object({
+              enabled: enabledOrDataElementValidator,
+            }),
+            com_adobe_launch_ssf: object({
+              enabled: enabledOrDataElementValidator,
             }),
           }),
         }),
