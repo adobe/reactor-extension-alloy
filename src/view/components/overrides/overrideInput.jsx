@@ -59,8 +59,12 @@ const OverrideInput = ({
 };
 
 OverrideInput.propTypes = {
-  useManualEntry: PropTypes.bool.isRequired,
-  children: PropTypes.func.isRequired,
+  useManualEntry: PropTypes.bool,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+    PropTypes.func,
+  ]),
   allowsCustomValue: PropTypes.bool,
 };
 

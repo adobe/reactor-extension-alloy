@@ -17,6 +17,7 @@ import copyPropertiesIfValueDifferentThanDefault from "../../configuration/utils
 import copyPropertiesWithDefaultFallback from "../../configuration/utils/copyPropertiesWithDefaultFallback";
 import trimValue from "../../utils/trimValues";
 import {
+  overridesKeys,
   containsDataElements,
   containsDataElementsRegex,
   ENABLED_FIELD_VALUES,
@@ -81,18 +82,6 @@ const enabledOrDataElementValidator = lazy((value) =>
     : mixed().oneOf(Object.values(ENABLED_FIELD_VALUES)).nullable(),
 );
 
-const overridesKeys = [
-  "com_adobe_experience_platform",
-  "com_adobe_experience_platform.com_adobe_edge_ode",
-  "com_adobe_experience_platform.com_adobe_edge_segmentation",
-  "com_adobe_experience_platform.com_adobe_edge_destinations",
-  "com_adobe_experience_platform.com_adobe_edge_ajo",
-  "com_adobe_analytics",
-  "com_adobe_target",
-  "com_adobe_audience_manager",
-  "com_adobe_launch_ssf",
-  "com_adobe_identity",
-];
 export const bridge = {
   /**
    * Get the default formik state for the overrides form.

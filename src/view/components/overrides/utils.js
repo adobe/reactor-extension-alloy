@@ -10,6 +10,19 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+export const overridesKeys = Object.freeze([
+  "com_adobe_experience_platform",
+  "com_adobe_experience_platform.com_adobe_edge_ode",
+  "com_adobe_experience_platform.com_adobe_edge_segmentation",
+  "com_adobe_experience_platform.com_adobe_edge_destinations",
+  "com_adobe_experience_platform.com_adobe_edge_ajo",
+  "com_adobe_analytics",
+  "com_adobe_target",
+  "com_adobe_audience_manager",
+  "com_adobe_launch_ssf",
+  "com_adobe_identity",
+]);
+
 /**
  * Takes a string and returns the a new string with the first letter capitalized.
  * @param {string} str
@@ -22,6 +35,7 @@ export const capitialize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
  * to the `showFields` prop of the `Overrides` component.
  */
 export const FIELD_NAMES = Object.freeze({
+  analyticsEnabled: "analyticsEnabled",
   eventDatasetOverride: "eventDatasetOverride",
   idSyncContainerOverride: "idSyncContainerOverride",
   targetPropertyTokenOverride: "targetPropertyTokenOverride",
@@ -88,6 +102,8 @@ export const createIsItemInArray = (
   };
 };
 
+export const enabledDisabledOrDataElementRegex =
+  /^\s*(Enabled|Disabled|%[^%\n]+%)\s*$/i;
 export const isDataElementRegex = /^\s*%[^%\n]+%\s*$/i;
 export const containsDataElementsRegex = /^([^%\n]*%[^%\n]+%)+[^%\n]*$/i;
 

@@ -37,11 +37,15 @@ import OverrideInput from "./overrideInput";
 import ReportSuitesOverride from "./reportSuiteOverrides";
 import SettingsCopySection from "./settingsCopySection";
 import {
+  ENABLED_FIELD_VALUES,
   FIELD_NAMES,
   capitialize,
   combineValidatorWithContainsDataElements,
   createValidateItemIsInArray,
+  enabledDisabledOrDataElementRegex,
+  overridesKeys,
 } from "./utils";
+import deepGet from "../../utils/deepGet";
 
 /**
  *
@@ -57,7 +61,7 @@ const ProductSubsection = ({ children, name, ...otherProps }) => (
   </View>
 );
 ProductSubsection.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.element).isRequired,
+  children: PropTypes.node.isRequired,
   name: PropTypes.string,
 };
 
@@ -109,23 +113,16 @@ const Overrides = ({
    * @param {"production" | "staging" | "development"} destination
    */
   const onCopy = (source, destination) => {
-    [
-      FIELD_NAMES.sandbox,
-      "datastreamId",
-      "com_adobe_experience_platform.datasets.event.datasetId",
-      "com_adobe_identity.idSyncContainerId",
-      "com_adobe_target.propertyToken",
-      "com_adobe_analytics.reportSuites",
-    ]
+    [FIELD_NAMES.sandbox, "datastreamId", ...overridesKeys]
       .filter(
         (field) =>
-          getIn(edgeConfigOverrides[source], field) !==
-          getIn(edgeConfigOverrides[destination], field),
+          deepGet(edgeConfigOverrides[source], field) !==
+          deepGet(edgeConfigOverrides[destination], field),
       )
       .forEach((field) => {
         formikContext.setFieldValue(
           `${prefix}.${destination}.${field}`,
-          getIn(edgeConfigOverrides[source], field),
+          deepGet(edgeConfigOverrides[source], field),
           true,
         );
         formikContext.setFieldTouched(
@@ -197,6 +194,15 @@ const Overrides = ({
               const useManualEntry = !result || Boolean(error);
 
               const envEdgeConfigIds = edgeConfigIds[`${env}Environment`];
+
+              const validateEnabledDisabledOrDataElement =
+                combineValidatorWithContainsDataElements(
+                  createValidateItemIsInArray(
+                    Object.values(ENABLED_FIELD_VALUES),
+                    "The value must be either 'Enabled' or 'Disabled' or a single data element.",
+                  ),
+                  false,
+                );
 
               const primaryEventDataset =
                 result?.com_adobe_experience_platform?.datasets?.event?.find(
@@ -317,6 +323,15 @@ const Overrides = ({
               const sandboxFieldName = `${prefix}.${env}.${FIELD_NAMES.sandbox}`;
               const [{ value: sandbox }] = useField(sandboxFieldName);
 
+              const enabledAnalyticsFieldName = `${prefix}.${env}.com_adobe_analytics.enabled`;
+              const [{ value: enabled }] = useField(enabledAnalyticsFieldName);
+              console.debug(`${enabledAnalyticsFieldName}: ${enabled}`, {
+                valueFromSettings: getIn(
+                  { edgeConfigOverrides },
+                  enabledAnalyticsFieldName,
+                ),
+              });
+
               return (
                 <Item key={env}>
                   <Flex direction="column" gap="size-100">
@@ -348,6 +363,20 @@ const Overrides = ({
                     )}
                     {!hideFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
                       <ProductSubsection name="Adobe Analytics">
+                        <OverrideInput
+                          aria-label="Enable or disable Adobe Analytics"
+                          data-test-id={FIELD_NAMES.analyticsEnabled}
+                          allowsCustomValue
+                          validate={validateEnabledDisabledOrDataElement}
+                          name={`${prefix}.${env}.com_adobe_analytics.enabled`}
+                          width="size-5000"
+                          pattern={enabledDisabledOrDataElementRegex}
+                          description="Enable or disable the Adobe Analytics destination."
+                        >
+                          {Object.values(ENABLED_FIELD_VALUES).map((value) => (
+                            <Item key={value}>{value}</Item>
+                          ))}
+                        </OverrideInput>
                         <ReportSuitesOverride
                           useManualEntry={useManualEntry}
                           validate={validateReportSuiteOption}

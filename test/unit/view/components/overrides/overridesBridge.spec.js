@@ -277,6 +277,288 @@ describe("overridesBridge", () => {
         edgeConfigOverrides,
       });
     });
+
+    it("should convert from booleans to 'Enabled' and 'Disabled' ", () => {
+      const envs = ["production", "staging", "development"];
+      const enabledEdgeConfigOverrides = envs.reduce(
+        (acc, env) => ({
+          ...acc,
+          [env]: {
+            com_adobe_experience_platform: {
+              enabled: true,
+              com_adobe_edge_ode: {
+                enabled: true,
+              },
+              com_adobe_edge_segmentation: {
+                enabled: true,
+              },
+              com_adobe_edge_destinations: {
+                enabled: true,
+              },
+              com_adobe_edge_ajo: {
+                enabled: true,
+              },
+            },
+            com_adobe_analytics: {
+              enabled: true,
+            },
+            com_adobe_target: {
+              enabled: true,
+            },
+            com_adobe_audience_manager: {
+              enabled: true,
+            },
+            com_adobe_launch_ssf: {
+              enabled: true,
+            },
+          },
+        }),
+        {},
+      );
+      expect(
+        bridge.getInitialInstanceValues({
+          instanceSettings: {
+            edgeConfigOverrides: enabledEdgeConfigOverrides,
+          },
+        }),
+      ).toEqual({
+        edgeConfigOverrides: envs.reduce(
+          (acc, env) => ({
+            ...acc,
+            [env]: {
+              com_adobe_experience_platform: {
+                enabled: "Enabled",
+                com_adobe_edge_ode: {
+                  enabled: "Enabled",
+                },
+                com_adobe_edge_segmentation: {
+                  enabled: "Enabled",
+                },
+                com_adobe_edge_destinations: {
+                  enabled: "Enabled",
+                },
+                com_adobe_edge_ajo: {
+                  enabled: "Enabled",
+                },
+                datasets: {
+                  event: {
+                    datasetId: "",
+                  },
+                },
+              },
+              com_adobe_analytics: {
+                enabled: "Enabled",
+                reportSuites: [""],
+              },
+              com_adobe_target: {
+                enabled: "Enabled",
+                propertyToken: "",
+              },
+              com_adobe_audience_manager: {
+                enabled: "Enabled",
+              },
+              com_adobe_launch_ssf: {
+                enabled: "Enabled",
+              },
+              com_adobe_identity: {
+                idSyncContainerId: undefined,
+              },
+              datastreamId: "",
+              datastreamIdInputMethod: "freeform",
+              sandbox: "",
+            },
+          }),
+          {},
+        ),
+      });
+
+      const disabledEdgeConfigOverrides = envs.reduce(
+        (acc, env) => ({
+          ...acc,
+          [env]: {
+            com_adobe_experience_platform: {
+              enabled: false,
+              com_adobe_edge_ode: {
+                enabled: false,
+              },
+              com_adobe_edge_segmentation: {
+                enabled: false,
+              },
+              com_adobe_edge_destinations: {
+                enabled: false,
+              },
+              com_adobe_edge_ajo: {
+                enabled: false,
+              },
+            },
+            com_adobe_analytics: {
+              enabled: false,
+            },
+            com_adobe_target: {
+              enabled: false,
+            },
+            com_adobe_audience_manager: {
+              enabled: false,
+            },
+            com_adobe_launch_ssf: {
+              enabled: false,
+            },
+          },
+        }),
+        {},
+      );
+      expect(
+        bridge.getInitialInstanceValues({
+          instanceSettings: {
+            edgeConfigOverrides: disabledEdgeConfigOverrides,
+          },
+        }),
+      ).toEqual({
+        edgeConfigOverrides: envs.reduce(
+          (acc, env) => ({
+            ...acc,
+            [env]: {
+              com_adobe_experience_platform: {
+                enabled: "Disabled",
+                com_adobe_edge_ode: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_segmentation: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_destinations: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_ajo: {
+                  enabled: "Disabled",
+                },
+                datasets: {
+                  event: {
+                    datasetId: "",
+                  },
+                },
+              },
+              com_adobe_analytics: {
+                enabled: "Disabled",
+                reportSuites: [""],
+              },
+              com_adobe_target: {
+                enabled: "Disabled",
+                propertyToken: "",
+              },
+              com_adobe_audience_manager: {
+                enabled: "Disabled",
+              },
+              com_adobe_launch_ssf: {
+                enabled: "Disabled",
+              },
+              com_adobe_identity: {
+                idSyncContainerId: undefined,
+              },
+              datastreamId: "",
+              datastreamIdInputMethod: "freeform",
+              sandbox: "",
+            },
+          }),
+          {},
+        ),
+      });
+    });
+
+    it("should not convert data elements to Enabled/Disabled", () => {
+      const envs = ["production", "staging", "development"];
+      const dataElementEdgeConfigOverrides = envs.reduce(
+        (acc, env) => ({
+          ...acc,
+          [env]: {
+            com_adobe_experience_platform: {
+              enabled: "%Data element of enabledness%",
+              com_adobe_edge_ode: {
+                enabled: "%Data element of enabledness%",
+              },
+              com_adobe_edge_segmentation: {
+                enabled: "%Data element of enabledness%",
+              },
+              com_adobe_edge_destinations: {
+                enabled: "%Data element of enabledness%",
+              },
+              com_adobe_edge_ajo: {
+                enabled: "%Data element of enabledness%",
+              },
+            },
+            com_adobe_analytics: {
+              enabled: "%Data element of enabledness%",
+            },
+            com_adobe_target: {
+              enabled: "%Data element of enabledness%",
+            },
+            com_adobe_audience_manager: {
+              enabled: "%Data element of enabledness%",
+            },
+            com_adobe_launch_ssf: {
+              enabled: "%Data element of enabledness%",
+            },
+          },
+        }),
+        {},
+      );
+      expect(
+        bridge.getInitialInstanceValues({
+          instanceSettings: {
+            edgeConfigOverrides: dataElementEdgeConfigOverrides,
+          },
+        }),
+      ).toEqual({
+        edgeConfigOverrides: envs.reduce(
+          (acc, env) => ({
+            ...acc,
+            [env]: {
+              datastreamId: "",
+              datastreamIdInputMethod: "freeform",
+              sandbox: "",
+              com_adobe_experience_platform: {
+                enabled: "%Data element of enabledness%",
+                com_adobe_edge_ode: {
+                  enabled: "%Data element of enabledness%",
+                },
+                com_adobe_edge_segmentation: {
+                  enabled: "%Data element of enabledness%",
+                },
+                com_adobe_edge_destinations: {
+                  enabled: "%Data element of enabledness%",
+                },
+                com_adobe_edge_ajo: {
+                  enabled: "%Data element of enabledness%",
+                },
+                datasets: {
+                  event: {
+                    datasetId: "",
+                  },
+                },
+              },
+              com_adobe_analytics: {
+                enabled: "%Data element of enabledness%",
+                reportSuites: [""],
+              },
+              com_adobe_target: {
+                enabled: "%Data element of enabledness%",
+                propertyToken: "",
+              },
+              com_adobe_audience_manager: {
+                enabled: "%Data element of enabledness%",
+              },
+              com_adobe_launch_ssf: {
+                enabled: "%Data element of enabledness%",
+              },
+              com_adobe_identity: {
+                idSyncContainerId: undefined,
+              },
+            },
+          }),
+          {},
+        ),
+      });
+    });
   });
 
   describe("getInstanceSettings", () => {
