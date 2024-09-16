@@ -144,6 +144,7 @@ export const bridge = {
    */
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
+    const cleanedInstanceSettings = structuredClone(instanceSettings);
 
     // copy settings from the pre-per-environment schema
     const oldOverrides = overridesKeys
@@ -158,9 +159,9 @@ export const bridge = {
       }, {});
     if (Object.keys(oldOverrides).length > 0) {
       const overrideSettings = { ...oldOverrides };
-      instanceSettings.edgeConfigOverrides = {};
+      cleanedInstanceSettings.edgeConfigOverrides = {};
       OVERRIDE_ENVIRONMENTS.forEach((env) => {
-        instanceSettings.edgeConfigOverrides[env] = structuredClone(
+        cleanedInstanceSettings.edgeConfigOverrides[env] = structuredClone(
           overrideSettings[env] ?? oldOverrides,
         );
       });
@@ -176,7 +177,7 @@ export const bridge = {
       .forEach((key) => {
         const value = deepGet(instanceSettings, key);
         deepSet(
-          instanceSettings,
+          cleanedInstanceSettings,
           key,
           value ? ENABLED_FIELD_VALUES.enabled : ENABLED_FIELD_VALUES.disabled,
         );
@@ -184,7 +185,7 @@ export const bridge = {
 
     copyPropertiesWithDefaultFallback({
       toObj: instanceValues,
-      fromObj: instanceSettings,
+      fromObj: cleanedInstanceSettings,
       defaultsObj: bridge.getInstanceDefaults(),
       keys: ["edgeConfigOverrides"],
     });

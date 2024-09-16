@@ -18,7 +18,7 @@ import {
   Tabs,
   View,
 } from "@adobe/react-spectrum";
-import { getIn, useField, useFormikContext } from "formik";
+import { useField, useFormikContext } from "formik";
 import PropTypes from "prop-types";
 import React, { useRef } from "react";
 
@@ -322,15 +322,6 @@ const Overrides = ({
                   .filter((v) => Boolean(v))[0];
               const sandboxFieldName = `${prefix}.${env}.${FIELD_NAMES.sandbox}`;
               const [{ value: sandbox }] = useField(sandboxFieldName);
-
-              const enabledAnalyticsFieldName = `${prefix}.${env}.com_adobe_analytics.enabled`;
-              const [{ value: enabled }] = useField(enabledAnalyticsFieldName);
-              console.debug(`${enabledAnalyticsFieldName}: ${enabled}`, {
-                valueFromSettings: getIn(
-                  { edgeConfigOverrides },
-                  enabledAnalyticsFieldName,
-                ),
-              });
 
               return (
                 <Item key={env}>

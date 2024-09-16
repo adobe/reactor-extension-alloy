@@ -182,41 +182,20 @@ describe("overridesBridge", () => {
         edgeConfigOverrides: {
           datastreamIdInputMethod: "freeform",
           com_adobe_target: {
-            enabled: false,
             propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
           },
           com_adobe_experience_platform: {
-            enabled: false,
             datasets: {
               event: {
                 datasetId: "6335faf30f5a161c0b4b1444",
               },
             },
-            com_adobe_edge_ode: {
-              enabled: false,
-            },
-            com_adobe_edge_segmentation: {
-              enabled: false,
-            },
-            com_adobe_edge_destinations: {
-              enabled: false,
-            },
-            com_adobe_edge_ajo: {
-              enabled: false,
-            },
           },
           com_adobe_analytics: {
-            enabled: false,
             reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
             idSyncContainerId: 30793,
-          },
-          com_adobe_launch_ssf: {
-            enabled: false,
-          },
-          com_adobe_audience_manager: {
-            enabled: false,
           },
         },
         stagingEdgeConfigId: "140a1d7d-90ac-44d4-921e-6bb819da36b7:stage",
@@ -235,40 +214,40 @@ describe("overridesBridge", () => {
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
           com_adobe_experience_platform: {
-            enabled: "Disabled",
+            enabled: "Enabled",
             datasets: {
               event: {
                 datasetId: "6335faf30f5a161c0b4b1444",
               },
             },
             com_adobe_edge_ode: {
-              enabled: "Disabled",
+              enabled: "Enabled",
             },
             com_adobe_edge_segmentation: {
-              enabled: "Disabled",
+              enabled: "Enabled",
             },
             com_adobe_edge_destinations: {
-              enabled: "Disabled",
+              enabled: "Enabled",
             },
             com_adobe_edge_ajo: {
-              enabled: "Disabled",
+              enabled: "Enabled",
             },
           },
           com_adobe_analytics: {
-            enabled: "Disabled",
+            enabled: "Enabled",
             reportSuites: ["unifiedjsqeonly2"],
           },
           com_adobe_identity: {
             idSyncContainerId: "30793",
           },
           com_adobe_launch_ssf: {
-            enabled: "Disabled",
+            enabled: "Enabled",
           },
           com_adobe_audience_manager: {
-            enabled: "Disabled",
+            enabled: "Enabled",
           },
           com_adobe_target: {
-            enabled: "Disabled",
+            enabled: "Enabled",
             propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
           },
         };
