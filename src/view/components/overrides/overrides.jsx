@@ -614,6 +614,25 @@ const Overrides = ({
                         </OverrideInput>
                       </ProductSubsection>
                     )}
+                    {visibleFields.has(FIELD_NAMES.ssefEnabled) && (
+                      <ProductSubsection name="Adobe Server-Side Event Forwarding">
+                        <OverrideInput
+                          aria-label="Enable or disable Adobe Server-Side Event Forwarding"
+                          data-test-id={FIELD_NAMES.ssefEnabled}
+                          allowsCustomValue
+                          validate={validateEnabledDisabledOrDataElement}
+                          name={`${prefix}.${env}.com_adobe_launch_ssf.enabled`}
+                          width="size-5000"
+                          pattern={enabledDisabledOrDataElementRegex}
+                          isDisabled={!serviceStatus.com_adobe_edge_ajo}
+                          description="Enable or disable Adobe Server-Side Event Forwarding."
+                        >
+                          {Object.values(ENABLED_FIELD_VALUES).map((value) => (
+                            <Item key={value}>{value}</Item>
+                          ))}
+                        </OverrideInput>
+                      </ProductSubsection>
+                    )}
                     {(visibleFields.has(FIELD_NAMES.targetEnabled) ||
                       visibleFields.has(
                         FIELD_NAMES.targetPropertyTokenOverride,

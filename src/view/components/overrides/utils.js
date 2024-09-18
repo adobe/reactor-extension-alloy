@@ -47,6 +47,7 @@ export const FIELD_NAMES = Object.freeze({
   odeEnabled: "odeEnabled",
   reportSuitesOverride: "reportSuitesOverride",
   sandbox: "sandbox",
+  ssefEnabled: "ssefEnabled",
   targetEnabled: "targetEnabled",
   targetPropertyTokenOverride: "targetPropertyTokenOverride",
 });
