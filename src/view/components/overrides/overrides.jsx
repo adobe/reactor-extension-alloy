@@ -193,6 +193,43 @@ const Overrides = ({
               const { result, isLoading, error } = edgeConfigs[env];
               const useManualEntry = !result || Boolean(error);
 
+              // If a service is disabled in the datastream configuration, do not
+              // allow the user to override the configuration. If we do not know
+              // the datastream configuration, assume the service is enabled.
+              const serviceStatus = Object.freeze({
+                com_adobe_experience_platform:
+                  deepGet(result, "com_adobe_experience_platform.enabled") ??
+                  true,
+                com_adobe_edge_ode:
+                  deepGet(
+                    result,
+                    "com_adobe_experience_platform_ode.enabled",
+                  ) ?? true,
+                com_adobe_edge_segmentation:
+                  deepGet(
+                    result,
+                    "com_adobe_experience_platform_edge_segmentation.enabled",
+                  ) ?? true,
+                com_adobe_edge_destinations:
+                  deepGet(
+                    result,
+                    "com_adobe_experience_platform_edge_destinations.enabled",
+                  ) ?? true,
+                com_adobe_edge_ajo:
+                  deepGet(
+                    result,
+                    "com_adobe_experience_platform_ajo.enabled",
+                  ) ?? true,
+                com_adobe_analytics:
+                  deepGet(result, "com_adobe_analytics.enabled") ?? true,
+                com_adobe_target:
+                  deepGet(result, "com_adobe_target.enabled") ?? true,
+                com_adobe_audience_manager:
+                  deepGet(result, "com_adobe_audience_manager.enabled") ?? true,
+                com_adobe_launch_ssf:
+                  deepGet(result, "com_adobe_launch_ssf.enabled") ?? true,
+              });
+
               const envEdgeConfigIds = edgeConfigIds[`${env}Environment`];
 
               const validateEnabledDisabledOrDataElement =
@@ -362,6 +399,7 @@ const Overrides = ({
                           name={`${prefix}.${env}.com_adobe_analytics.enabled`}
                           width="size-5000"
                           pattern={enabledDisabledOrDataElementRegex}
+                          isDisabled={!serviceStatus.com_adobe_analytics}
                           description="Enable or disable the Adobe Analytics destination."
                         >
                           {Object.values(ENABLED_FIELD_VALUES).map((value) => (
@@ -372,6 +410,7 @@ const Overrides = ({
                           useManualEntry={useManualEntry}
                           validate={validateReportSuiteOption}
                           primaryItem={primaryReportSuites}
+                          isDisabled={!serviceStatus.com_adobe_analytics}
                           items={reportSuiteOptions}
                           prefix={`${prefix}.${env}`}
                         />
@@ -391,6 +430,7 @@ const Overrides = ({
                           overrideType="third-party ID sync container"
                           primaryItem={primaryIdSyncContainer}
                           defaultItems={idSyncContainers}
+                          isDisabled={!serviceStatus.com_adobe_audience_manager}
                           validate={validateIdSyncContainerOption}
                           name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
                           inputMode="numeric"
@@ -415,6 +455,9 @@ const Overrides = ({
                           label="Event dataset"
                           description={eventDatasetDescription}
                           width="size-5000"
+                          isDisabled={
+                            !serviceStatus.com_adobe_experience_platform
+                          }
                           allowsCustomValue
                           validate={validateDatasetOption}
                           loadingState={isLoading}
@@ -436,6 +479,7 @@ const Overrides = ({
                           allowsCustomValue
                           overrideType="property token"
                           primaryItem={primaryPropertyToken}
+                          isDisabled={!serviceStatus.com_adobe_target}
                           validate={validatePropertyTokenOption}
                           defaultItems={propertyTokenOptions}
                           useManualEntry={
