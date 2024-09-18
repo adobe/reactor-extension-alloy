@@ -393,31 +393,40 @@ const Overrides = ({
                         />
                       </>
                     )}
-                    {visibleFields.has(FIELD_NAMES.reportSuitesOverride) && (
+                    {(visibleFields.has(FIELD_NAMES.reportSuitesOverride) ||
+                      visibleFields.has(FIELD_NAMES.analyticsEnabled)) && (
                       <ProductSubsection name="Adobe Analytics">
-                        <OverrideInput
-                          aria-label="Enable or disable Adobe Analytics"
-                          data-test-id={FIELD_NAMES.analyticsEnabled}
-                          allowsCustomValue
-                          validate={validateEnabledDisabledOrDataElement}
-                          name={`${prefix}.${env}.com_adobe_analytics.enabled`}
-                          width="size-5000"
-                          pattern={enabledDisabledOrDataElementRegex}
-                          isDisabled={!serviceStatus.com_adobe_analytics}
-                          description="Enable or disable the Adobe Analytics destination."
-                        >
-                          {Object.values(ENABLED_FIELD_VALUES).map((value) => (
-                            <Item key={value}>{value}</Item>
-                          ))}
-                        </OverrideInput>
-                        <ReportSuitesOverride
-                          useManualEntry={useManualEntry}
-                          validate={validateReportSuiteOption}
-                          primaryItem={primaryReportSuites}
-                          isDisabled={!serviceStatus.com_adobe_analytics}
-                          items={reportSuiteOptions}
-                          prefix={`${prefix}.${env}`}
-                        />
+                        {visibleFields.has(FIELD_NAMES.analyticsEnabled) && (
+                          <OverrideInput
+                            aria-label="Enable or disable Adobe Analytics"
+                            data-test-id={FIELD_NAMES.analyticsEnabled}
+                            allowsCustomValue
+                            validate={validateEnabledDisabledOrDataElement}
+                            name={`${prefix}.${env}.com_adobe_analytics.enabled`}
+                            width="size-5000"
+                            pattern={enabledDisabledOrDataElementRegex}
+                            isDisabled={!serviceStatus.com_adobe_analytics}
+                            description="Enable or disable the Adobe Analytics destination."
+                          >
+                            {Object.values(ENABLED_FIELD_VALUES).map(
+                              (value) => (
+                                <Item key={value}>{value}</Item>
+                              ),
+                            )}
+                          </OverrideInput>
+                        )}
+                        {visibleFields.has(
+                          FIELD_NAMES.reportSuitesOverride,
+                        ) && (
+                          <ReportSuitesOverride
+                            useManualEntry={useManualEntry}
+                            validate={validateReportSuiteOption}
+                            primaryItem={primaryReportSuites}
+                            isDisabled={!serviceStatus.com_adobe_analytics}
+                            items={reportSuiteOptions}
+                            prefix={`${prefix}.${env}`}
+                          />
+                        )}
                       </ProductSubsection>
                     )}
                     {visibleFields.has(FIELD_NAMES.idSyncContainerOverride) && (
