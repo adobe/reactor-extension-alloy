@@ -94,7 +94,7 @@ describe("Instance Manager", () => {
   });
   it("adds a new monitor to the window.__alloyMonitors", () => {
     const monitor = {
-      "onInstanceCreated": jasmine.createSpy("onInstanceCreated")
+      onInstanceCreated: jasmine.createSpy("onInstanceCreated"),
     };
     build();
     expect(mockWindow).toEqual({
@@ -109,8 +109,10 @@ describe("Instance Manager", () => {
         },
       ],
     });
+    // eslint-disable-next-line no-underscore-dangle
     expect(mockWindow.__alloyMonitors.length).toEqual(1);
     instanceManager.addMonitor(monitor);
+    // eslint-disable-next-line no-underscore-dangle
     expect(mockWindow.__alloyMonitors.length).toEqual(2);
     expect(mockWindow).toEqual({
       alloy1,
@@ -128,7 +130,6 @@ describe("Instance Manager", () => {
       ],
     });
   });
-
 
   it("configures an SDK instance for each configured instance", () => {
     build();
