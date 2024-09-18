@@ -29,6 +29,7 @@ import { FIELD_NAMES } from "./utils";
  * display in the dropdown.
  * @param {string[]} props.primaryItem The list of report suites that are being
  * overridden.
+ * @param {boolean} [props.isDisabled=] Whether or not to disable the controls.
  * @param {(value: string) => string | undefined} props.validate A function that
  * returns undefined if the value is valid, or an error message if the value is
  * invalid.
@@ -42,6 +43,7 @@ const ReportSuitesOverride = ({
   primaryItem,
   validate,
   useManualEntry,
+  isDisabled,
 }) => {
   const fieldName = `${prefix}.com_adobe_analytics.reportSuites`;
   const rsids = useFieldValue(fieldName);
@@ -68,6 +70,7 @@ const ReportSuitesOverride = ({
                   primaryItem={primaryItem}
                   validate={validate}
                   defaultItems={items}
+                  isDisabled={isDisabled}
                   name={`${fieldName}.${index}`}
                   description={
                     index === rsids.length - 1 && reportSuiteDescription
@@ -79,7 +82,7 @@ const ReportSuitesOverride = ({
                 </OverrideInput>
                 <ActionButton
                   isQuiet
-                  isDisabled={rsids.length < 2}
+                  isDisabled={isDisabled || rsids.length < 2}
                   marginTop={index === 0 && "size-300"}
                   data-test-id={`removeReportSuite.${index}`}
                   aria-label={`Remove report suite #${index + 1}`}
@@ -94,6 +97,7 @@ const ReportSuitesOverride = ({
             data-test-id="addReportSuite"
             variant="secondary"
             onPress={() => push("")}
+            isDisabled={isDisabled}
             UNSAFE_style={{ maxWidth: "fit-content" }}
           >
             Add Report Suite
@@ -115,6 +119,7 @@ ReportSuitesOverride.propTypes = {
   primaryItem: PropTypes.arrayOf(PropTypes.string).isRequired,
   validate: PropTypes.func.isRequired,
   useManualEntry: PropTypes.bool.isRequired,
+  isDisabled: PropTypes.bool,
 };
 
 export default ReportSuitesOverride;
