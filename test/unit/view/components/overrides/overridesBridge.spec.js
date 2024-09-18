@@ -875,6 +875,8 @@ describe("overridesBridge", () => {
         bridge.formikStateValidationSchema.validateSync({
           ...bridge.getInstanceDefaults(),
         });
+      }).not.toThrow();
+      expect(() => {
         bridge.formikStateValidationSchema.validateSync({
           edgeConfigOverrides: {
             development: {
@@ -922,6 +924,120 @@ describe("overridesBridge", () => {
           },
         });
       }).not.toThrow();
+      expect(() => {
+        bridge.formikStateValidationSchema.validateSync({
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_experience_platform: {
+                enabled: "Disabled",
+                datasets: {
+                  event: {
+                    datasetId: "6335dd690894431c07237f2d",
+                  },
+                },
+                com_adobe_edge_ode: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_segmentation: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_destinations: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_ajo: {
+                  enabled: "Disabled",
+                },
+              },
+              com_adobe_analytics: {
+                enabled: "Disabled",
+                reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonlylatest"],
+              },
+              com_adobe_identity: {
+                idSyncContainerId: 105012,
+              },
+              com_adobe_target: {
+                enabled: "Disabled",
+                propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+              },
+              com_adobe_audience_manager: {
+                enabled: "Disabled",
+              },
+            },
+            staging: {
+              com_adobe_experience_platform: {
+                enabled: "Disabled",
+                datasets: {
+                  event: {
+                    datasetId: "6335dd690894431c07237f2d",
+                  },
+                },
+                com_adobe_edge_ode: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_segmentation: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_destinations: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_ajo: {
+                  enabled: "Disabled",
+                },
+              },
+              com_adobe_analytics: {
+                enabled: "Disabled",
+                reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonlylatest"],
+              },
+              com_adobe_identity: {
+                idSyncContainerId: 105012,
+              },
+              com_adobe_target: {
+                enabled: "Disabled",
+                propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+              },
+              com_adobe_audience_manager: {
+                enabled: "Disabled",
+              },
+            },
+            production: {
+              com_adobe_experience_platform: {
+                enabled: "Disabled",
+                datasets: {
+                  event: {
+                    datasetId: "6335dd690894431c07237f2d",
+                  },
+                },
+                com_adobe_edge_ode: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_segmentation: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_destinations: {
+                  enabled: "Disabled",
+                },
+                com_adobe_edge_ajo: {
+                  enabled: "Disabled",
+                },
+              },
+              com_adobe_analytics: {
+                enabled: "Disabled",
+                reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonlylatest"],
+              },
+              com_adobe_identity: {
+                idSyncContainerId: 105012,
+              },
+              com_adobe_target: {
+                enabled: "Disabled",
+                propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+              },
+              com_adobe_audience_manager: {
+                enabled: "Disabled",
+              },
+            },
+          },
+        });
+      }).not.toThrow();
     });
 
     it("should coerce the id sync container is a string", () => {
@@ -947,6 +1063,84 @@ describe("overridesBridge", () => {
         bridge.formikStateValidationSchema.validateSync({
           edgeConfigOverrides: {
             development: {
+              com_adobe_target: {
+                enabled: "%Data Element 0%",
+                propertyToken: "%Data Element 1%",
+              },
+              com_adobe_experience_platform: {
+                enabled: "%Data Element 0%",
+                datasets: {
+                  event: {
+                    datasetId: "%Data Element 2%",
+                  },
+                },
+                com_adobe_edge_ode: {
+                  enabled: "%Data Element 0%",
+                },
+                com_adobe_edge_segmentation: {
+                  enabled: "%Data Element 0%",
+                },
+                com_adobe_edge_destinations: {
+                  enabled: "%Data Element 0%",
+                },
+                com_adobe_edge_ajo: {
+                  enabled: "%Data Element 0%",
+                },
+              },
+              com_adobe_analytics: {
+                enabled: "%Data Element 0%",
+                reportSuites: ["%Data Element 3%", "%Data Element 4%"],
+              },
+              com_adobe_identity: {
+                idSyncContainerId: "%Data Element 5%",
+              },
+              com_adobe_audience_manager: {
+                enabled: "%Data Element 0%",
+              },
+              com_adobe_launch_ssf: {
+                enabled: "%Data Element 0%",
+              },
+            },
+            staging: {
+              com_adobe_target: {
+                enabled: "%Data Element 0%",
+                propertyToken: "%Data Element 1%",
+              },
+              com_adobe_experience_platform: {
+                enabled: "%Data Element 0%",
+                datasets: {
+                  event: {
+                    datasetId: "%Data Element 2%",
+                  },
+                },
+                com_adobe_edge_ode: {
+                  enabled: "%Data Element 0%",
+                },
+                com_adobe_edge_segmentation: {
+                  enabled: "%Data Element 0%",
+                },
+                com_adobe_edge_destinations: {
+                  enabled: "%Data Element 0%",
+                },
+                com_adobe_edge_ajo: {
+                  enabled: "%Data Element 0%",
+                },
+              },
+              com_adobe_analytics: {
+                enabled: "%Data Element 0%",
+                reportSuites: ["%Data Element 3%", "%Data Element 4%"],
+              },
+              com_adobe_identity: {
+                idSyncContainerId: "%Data Element 5%",
+              },
+              com_adobe_audience_manager: {
+                enabled: "%Data Element 0%",
+              },
+              com_adobe_launch_ssf: {
+                enabled: "%Data Element 0%",
+              },
+            },
+            production: {
               com_adobe_target: {
                 enabled: "%Data Element 0%",
                 propertyToken: "%Data Element 1%",
