@@ -101,7 +101,11 @@ const Overrides = ({
   const prefix = instanceFieldName
     ? `${instanceFieldName}.edgeConfigOverrides`
     : "edgeConfigOverrides";
-  const hideFieldsSet = new Set(hideFields);
+  const visibleFields = new Set(
+    Object.values(FIELD_NAMES).filter(
+      (fieldName) => !hideFields.includes(fieldName),
+    ),
+  );
 
   /** @type {{value: import("./overridesBridge").EnvironmentConfigOverrideFormikState}[] } */
   const [{ value: edgeConfigOverrides }] = useField(prefix);
@@ -364,7 +368,7 @@ const Overrides = ({
                 <Item key={env}>
                   <Flex direction="column" gap="size-100">
                     <SettingsCopySection currentEnv={env} onPress={onCopy} />
-                    {!hideFieldsSet.has(FIELD_NAMES.datastreamId) && (
+                    {visibleFields.has(FIELD_NAMES.datastreamId) && (
                       <>
                         <SandboxSelector
                           data-test-id={FIELD_NAMES.sandbox}
@@ -389,7 +393,7 @@ const Overrides = ({
                         />
                       </>
                     )}
-                    {!hideFieldsSet.has(FIELD_NAMES.reportSuitesOverride) && (
+                    {visibleFields.has(FIELD_NAMES.reportSuitesOverride) && (
                       <ProductSubsection name="Adobe Analytics">
                         <OverrideInput
                           aria-label="Enable or disable Adobe Analytics"
@@ -416,9 +420,7 @@ const Overrides = ({
                         />
                       </ProductSubsection>
                     )}
-                    {!hideFieldsSet.has(
-                      FIELD_NAMES.idSyncContainerOverride,
-                    ) && (
+                    {visibleFields.has(FIELD_NAMES.idSyncContainerOverride) && (
                       <ProductSubsection name="Adobe Audience Manager">
                         <OverrideInput
                           data-test-id={FIELD_NAMES.idSyncContainerOverride}
@@ -444,7 +446,7 @@ const Overrides = ({
                         </OverrideInput>
                       </ProductSubsection>
                     )}
-                    {!hideFieldsSet.has(FIELD_NAMES.eventDatasetOverride) && (
+                    {visibleFields.has(FIELD_NAMES.eventDatasetOverride) && (
                       <ProductSubsection name="Adobe Experience Platform">
                         <OverrideInput
                           useManualEntry={
@@ -469,7 +471,7 @@ const Overrides = ({
                         </OverrideInput>
                       </ProductSubsection>
                     )}
-                    {!hideFieldsSet.has(
+                    {visibleFields.has(
                       FIELD_NAMES.targetPropertyTokenOverride,
                     ) && (
                       <ProductSubsection name="Adobe Target">
