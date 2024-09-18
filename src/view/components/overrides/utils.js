@@ -36,11 +36,15 @@ export const capitialize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
  */
 export const FIELD_NAMES = Object.freeze({
   analyticsEnabled: "analyticsEnabled",
+  ajoEnabled: "ajoEnabled",
   audienceManagerEnabled: "audienceManagerEnabled",
   datastreamId: "datastreamId",
+  edgeDestinationsEnabled: "edgeDestinationsEnabled",
+  edgeSegmentationEnabled: "edgeSegmentationEnabled",
   eventDatasetOverride: "eventDatasetOverride",
   experiencePlatformEnabled: "experiencePlatformEnabled",
   idSyncContainerOverride: "idSyncContainerOverride",
+  odeEnabled: "odeEnabled",
   reportSuitesOverride: "reportSuitesOverride",
   sandbox: "sandbox",
   targetEnabled: "targetEnabled",
