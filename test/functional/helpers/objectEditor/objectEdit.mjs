@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /*
 Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -11,13 +10,22 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import getAdobeIOAccessToken from "../test/functional/helpers/getAdobeIOAccessToken.mjs";
-import adobeIOClientCredentials from "../test/functional/helpers/adobeIOClientCredentials.mjs";
+import spectrum from "../spectrum.mjs";
 
-if (adobeIOClientCredentials) {
-  // eslint-disable-next-line no-console
-  console.log("Org ID:", adobeIOClientCredentials.orgId);
-  const accessToken = await getAdobeIOAccessToken(adobeIOClientCredentials);
-  // eslint-disable-next-line no-console
-  console.log("IMS Access Token:", accessToken);
-}
+/**
+ * Provides methods for managing form fields when editing an object node.
+ */
+export default {
+  selectPartsPopulationStrategy: async () => {
+    await spectrum.radio("partsPopulationStrategyField").click();
+  },
+  selectWholePopulationStrategy: async () => {
+    await spectrum.radio("wholePopulationStrategyField").click();
+  },
+  enterValue: async (text) => {
+    await spectrum.textField("valueField").typeText(text);
+  },
+  expectValue: async (text) => {
+    await spectrum.textField("valueField").expectValue(text);
+  },
+};

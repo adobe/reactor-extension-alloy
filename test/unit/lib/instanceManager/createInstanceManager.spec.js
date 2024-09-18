@@ -94,7 +94,7 @@ describe("Instance Manager", () => {
   });
   it("adds a new monitor to the window.__alloyMonitors", () => {
     const monitor = {
-      "onInstanceCreated": jasmine.createSpy("onInstanceCreated")
+      onInstanceCreated: jasmine.createSpy("onInstanceCreated"),
     };
     build();
     expect(mockWindow).toEqual({
@@ -128,7 +128,6 @@ describe("Instance Manager", () => {
       ],
     });
   });
-
 
   it("configures an SDK instance for each configured instance", () => {
     build();

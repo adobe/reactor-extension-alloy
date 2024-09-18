@@ -1,6 +1,5 @@
-#!/usr/bin/env node
 /*
-Copyright 2020 Adobe. All rights reserved.
+Copyright 2021 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -11,13 +10,20 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import getAdobeIOAccessToken from "../test/functional/helpers/getAdobeIOAccessToken.mjs";
-import adobeIOClientCredentials from "../test/functional/helpers/adobeIOClientCredentials.mjs";
+import { t } from "testcafe";
+import { createTestIdSelector } from "../dataTestIdSelectors.mjs";
 
-if (adobeIOClientCredentials) {
-  // eslint-disable-next-line no-console
-  console.log("Org ID:", adobeIOClientCredentials.orgId);
-  const accessToken = await getAdobeIOAccessToken(adobeIOClientCredentials);
-  // eslint-disable-next-line no-console
-  console.log("IMS Access Token:", accessToken);
-}
+const editor = createTestIdSelector("editor");
+
+export default {
+  expectExists: async () => {
+    await t
+      .expect(editor.exists)
+      .ok("Editor exists when it is expected to not exist.");
+  },
+  expectNotExists: async () => {
+    await t
+      .expect(editor.exists)
+      .notOk("Editor does not exist when it is expected to exist.");
+  },
+};

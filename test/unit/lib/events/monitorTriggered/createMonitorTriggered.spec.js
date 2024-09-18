@@ -27,13 +27,11 @@ describe("Monitor triggered event", () => {
   });
 
   it("triggers the rule when monitor is triggered", () => {
-    monitorTriggered({name:"onBeforeLog"}, trigger);
+    monitorTriggered({ name: "onBeforeLog" }, trigger);
     expect(instanceManager.addMonitor).toHaveBeenCalledTimes(1);
     const callback = instanceManager.addMonitor.calls.argsFor(0)[0].onBeforeLog;
-    const data = {status: "success"};
+    const data = { status: "success" };
     callback({ data });
-    expect(trigger).toHaveBeenCalledWith(
-      { data }
-    );
+    expect(trigger).toHaveBeenCalledWith({ data });
   });
 });
