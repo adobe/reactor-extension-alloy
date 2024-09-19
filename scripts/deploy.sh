@@ -20,8 +20,8 @@ git push gh-origin HEAD:main --follow-tags
 npm run package
 
 npx @adobe/reactor-uploader@6.0.0-beta.15 package-adobe-alloy-${VERSION}.zip \
-  --auth.client-id=0c1c7478c4994c69866b64c8341578ed \
+  --auth.client-id=f401a5fe22184c91a85fd441a8aa2976 \
   --upload-timeout=300
 
 echo "Y" | npx @adobe/reactor-releaser@4.0.0-beta.8 \
-  --auth.client-id=0c1c7478c4994c69866b64c8341578ed
+  --auth.client-id=f401a5fe22184c91a85fd441a8aa2976
