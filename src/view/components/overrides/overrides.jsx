@@ -481,50 +481,15 @@ const Overrides = ({
                         </OverrideInput>
                       </ProductSubsection>
                     )}
-                    {visibleFields.has(FIELD_NAMES.ajoEnabled) && (
-                      <ProductSubsection name="Adobe Edge Destinations">
-                        <OverrideInput
-                          aria-label="Enable or disable Adobe Edge Destinations"
-                          data-test-id={FIELD_NAMES.edgeDestinationsEnabled}
-                          allowsCustomValue
-                          validate={validateEnabledDisabledOrDataElement}
-                          name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_destinations.enabled`}
-                          width="size-5000"
-                          pattern={enabledDisabledOrDataElementRegex}
-                          isDisabled={!serviceStatus.com_adobe_edge_ajo}
-                          description="Enable or disable Adobe Edge Destinations."
-                        >
-                          {Object.values(ENABLED_FIELD_VALUES).map((value) => (
-                            <Item key={value}>{value}</Item>
-                          ))}
-                        </OverrideInput>
-                      </ProductSubsection>
-                    )}
-                    {visibleFields.has(FIELD_NAMES.ajoEnabled) && (
-                      <ProductSubsection name="Adobe Edge Segmentation">
-                        <OverrideInput
-                          aria-label="Enable or disable Adobe Edge Segmentation"
-                          data-test-id={FIELD_NAMES.edgeSegmentationEnabled}
-                          allowsCustomValue
-                          validate={validateEnabledDisabledOrDataElement}
-                          name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_segmentation.enabled`}
-                          width="size-5000"
-                          pattern={enabledDisabledOrDataElementRegex}
-                          isDisabled={
-                            !serviceStatus.com_adobe_edge_segmentation
-                          }
-                          description="Enable or disable Adobe Edge Segmentation."
-                        >
-                          {Object.values(ENABLED_FIELD_VALUES).map((value) => (
-                            <Item key={value}>{value}</Item>
-                          ))}
-                        </OverrideInput>
-                      </ProductSubsection>
-                    )}
-                    {(visibleFields.has(FIELD_NAMES.eventDatasetOverride) ||
-                      visibleFields.has(
-                        FIELD_NAMES.experiencePlatformEnabled,
-                      )) && (
+
+                    {[
+                      FIELD_NAMES.eventDatasetOverride,
+                      FIELD_NAMES.experiencePlatformEnabled,
+                      FIELD_NAMES.ajoEnabled,
+                      FIELD_NAMES.odeEnabled,
+                      FIELD_NAMES.edgeDestinationsEnabled,
+                      FIELD_NAMES.edgeSegmentationEnabled,
+                    ].some((field) => visibleFields.has(field)) && (
                       <ProductSubsection name="Adobe Experience Platform">
                         {visibleFields.has(
                           FIELD_NAMES.experiencePlatformEnabled,
@@ -574,44 +539,90 @@ const Overrides = ({
                             )}
                           </OverrideInput>
                         )}
-                      </ProductSubsection>
-                    )}
-                    {visibleFields.has(FIELD_NAMES.ajoEnabled) && (
-                      <ProductSubsection name="Adobe Journey Optimizer">
-                        <OverrideInput
-                          aria-label="Enable or disable Adobe Journey Optimizer"
-                          data-test-id={FIELD_NAMES.analyticsEnabled}
-                          allowsCustomValue
-                          validate={validateEnabledDisabledOrDataElement}
-                          name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_ajo.enabled`}
-                          width="size-5000"
-                          pattern={enabledDisabledOrDataElementRegex}
-                          isDisabled={!serviceStatus.com_adobe_edge_ajo}
-                          description="Enable or disable the Adobe Journey Optimizer destination."
-                        >
-                          {Object.values(ENABLED_FIELD_VALUES).map((value) => (
-                            <Item key={value}>{value}</Item>
-                          ))}
-                        </OverrideInput>
-                      </ProductSubsection>
-                    )}
-                    {visibleFields.has(FIELD_NAMES.ajoEnabled) && (
-                      <ProductSubsection name="Adobe Offer Decisioning Engine">
-                        <OverrideInput
-                          aria-label="Enable or disable Adobe Offer Decisioning Engine"
-                          data-test-id={FIELD_NAMES.odeEnabled}
-                          allowsCustomValue
-                          validate={validateEnabledDisabledOrDataElement}
-                          name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_ode.enabled`}
-                          width="size-5000"
-                          pattern={enabledDisabledOrDataElementRegex}
-                          isDisabled={!serviceStatus.com_adobe_edge_ajo}
-                          description="Enable or disable Adobe Offer Decisioning Engine."
-                        >
-                          {Object.values(ENABLED_FIELD_VALUES).map((value) => (
-                            <Item key={value}>{value}</Item>
-                          ))}
-                        </OverrideInput>
+                        {visibleFields.has(FIELD_NAMES.odeEnabled) && (
+                          <OverrideInput
+                            aria-label="Enable or disable Adobe Offer Decisioning Engine"
+                            data-test-id={FIELD_NAMES.odeEnabled}
+                            allowsCustomValue
+                            label="Offer Decisioning"
+                            validate={validateEnabledDisabledOrDataElement}
+                            name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_ode.enabled`}
+                            width="size-5000"
+                            pattern={enabledDisabledOrDataElementRegex}
+                            isDisabled={!serviceStatus.com_adobe_edge_ode}
+                          >
+                            {Object.values(ENABLED_FIELD_VALUES).map(
+                              (value) => (
+                                <Item key={value}>{value}</Item>
+                              ),
+                            )}
+                          </OverrideInput>
+                        )}
+                        {visibleFields.has(
+                          FIELD_NAMES.edgeSegmentationEnabled,
+                        ) && (
+                          <OverrideInput
+                            aria-label="Enable or disable Adobe Edge Segmentation"
+                            data-test-id={FIELD_NAMES.edgeSegmentationEnabled}
+                            allowsCustomValue
+                            label="Edge Segmentation"
+                            validate={validateEnabledDisabledOrDataElement}
+                            name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_segmentation.enabled`}
+                            width="size-5000"
+                            pattern={enabledDisabledOrDataElementRegex}
+                            isDisabled={
+                              !serviceStatus.com_adobe_edge_segmentation
+                            }
+                          >
+                            {Object.values(ENABLED_FIELD_VALUES).map(
+                              (value) => (
+                                <Item key={value}>{value}</Item>
+                              ),
+                            )}
+                          </OverrideInput>
+                        )}
+                        {visibleFields.has(
+                          FIELD_NAMES.edgeDestinationsEnabled,
+                        ) && (
+                          <OverrideInput
+                            aria-label="Enable or disable Personalization Destinations"
+                            label="Personalization Destinations"
+                            data-test-id={FIELD_NAMES.edgeDestinationsEnabled}
+                            allowsCustomValue
+                            validate={validateEnabledDisabledOrDataElement}
+                            name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_destinations.enabled`}
+                            width="size-5000"
+                            pattern={enabledDisabledOrDataElementRegex}
+                            isDisabled={
+                              !serviceStatus.com_adobe_edge_destinations
+                            }
+                          >
+                            {Object.values(ENABLED_FIELD_VALUES).map(
+                              (value) => (
+                                <Item key={value}>{value}</Item>
+                              ),
+                            )}
+                          </OverrideInput>
+                        )}
+                        {visibleFields.has(FIELD_NAMES.ajoEnabled) && (
+                          <OverrideInput
+                            aria-label="Enable or disable Adobe Journey Optimizer"
+                            data-test-id={FIELD_NAMES.analyticsEnabled}
+                            label="Adobe Journey Optimizer"
+                            allowsCustomValue
+                            validate={validateEnabledDisabledOrDataElement}
+                            name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_ajo.enabled`}
+                            width="size-5000"
+                            pattern={enabledDisabledOrDataElementRegex}
+                            isDisabled={!serviceStatus.com_adobe_edge_ajo}
+                          >
+                            {Object.values(ENABLED_FIELD_VALUES).map(
+                              (value) => (
+                                <Item key={value}>{value}</Item>
+                              ),
+                            )}
+                          </OverrideInput>
+                        )}
                       </ProductSubsection>
                     )}
                     {visibleFields.has(FIELD_NAMES.ssefEnabled) && (
@@ -624,7 +635,7 @@ const Overrides = ({
                           name={`${prefix}.${env}.com_adobe_launch_ssf.enabled`}
                           width="size-5000"
                           pattern={enabledDisabledOrDataElementRegex}
-                          isDisabled={!serviceStatus.com_adobe_edge_ajo}
+                          isDisabled={!serviceStatus.com_adobe_launch_ssf}
                           description="Enable or disable Adobe Server-Side Event Forwarding."
                         >
                           {Object.values(ENABLED_FIELD_VALUES).map((value) => (
