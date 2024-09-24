@@ -181,10 +181,10 @@ const Overrides = ({
   return (
     <>
       <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides">
-        Datastream configuration overrides
+        Dynamic Datastream Configuration
       </SectionHeader>
       <FormElementContainer>
-        <Tabs aria-label="Datastream configuration overrides">
+        <Tabs aria-label="Dynamic Datastream Configuration environments">
           <TabList>
             {OVERRIDE_ENVIRONMENTS.map((env) => (
               <Item key={env} data-test-id={`${env}OverridesTab`}>
