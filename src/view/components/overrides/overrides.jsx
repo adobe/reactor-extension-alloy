@@ -200,39 +200,93 @@ const Overrides = ({
               // If a service is disabled in the datastream configuration, do not
               // allow the user to override the configuration. If we do not know
               // the datastream configuration, assume the service is enabled.
+              // Blackbird has a more flat key-value structure than the one that
+              // Konductor accepts, so we also need to map between them.
+              // This object is keyed using the Blackbird key.
+              /** @type {Readonly<Record<string, Readonly<{ fieldName: string, value: boolean }>>>} */
               const serviceStatus = Object.freeze({
-                com_adobe_experience_platform:
-                  deepGet(result, "com_adobe_experience_platform.enabled") ??
-                  true,
-                com_adobe_edge_ode:
-                  deepGet(
-                    result,
-                    "com_adobe_experience_platform_ode.enabled",
-                  ) ?? true,
-                com_adobe_edge_segmentation:
-                  deepGet(
-                    result,
-                    "com_adobe_experience_platform_edge_segmentation.enabled",
-                  ) ?? true,
-                com_adobe_edge_destinations:
-                  deepGet(
-                    result,
-                    "com_adobe_experience_platform_edge_destinations.enabled",
-                  ) ?? true,
-                com_adobe_edge_ajo:
-                  deepGet(
-                    result,
-                    "com_adobe_experience_platform_ajo.enabled",
-                  ) ?? true,
-                com_adobe_analytics:
-                  deepGet(result, "com_adobe_analytics.enabled") ?? true,
-                com_adobe_target:
-                  deepGet(result, "com_adobe_target.enabled") ?? true,
-                com_adobe_audience_manager:
-                  deepGet(result, "com_adobe_audience_manager.enabled") ?? true,
-                com_adobe_launch_ssf:
-                  deepGet(result, "com_adobe_launch_ssf.enabled") ?? true,
+                com_adobe_experience_platform: {
+                  fieldName: "com_adobe_experience_platform.enabled",
+                  value:
+                    deepGet(result, "com_adobe_experience_platform.enabled") ??
+                    true,
+                },
+                com_adobe_experience_platform_ode: {
+                  fieldName:
+                    "com_adobe_experience_platform.com_adobe_edge_ode.enabled",
+                  value:
+                    deepGet(
+                      result,
+                      "com_adobe_experience_platform_ode.enabled",
+                    ) ?? true,
+                },
+                com_adobe_experience_platform_edge_segmentation: {
+                  fieldName:
+                    "com_adobe_experience_platform.com_adobe_edge_segmentation.enabled",
+                  value:
+                    deepGet(
+                      result,
+                      "com_adobe_experience_platform_edge_segmentation.enabled",
+                    ) ?? true,
+                },
+
+                com_adobe_experience_platform_edge_destinations: {
+                  fieldName:
+                    "com_adobe_experience_platform.com_adobe_edge_destinations.enabled",
+                  value:
+                    deepGet(
+                      result,
+                      "com_adobe_experience_platform_edge_destinations.enabled",
+                    ) ?? true,
+                },
+                com_adobe_experience_platform_ajo: {
+                  fieldName:
+                    "com_adobe_experience_platform.com_adobe_edge_ajo.enabled",
+                  value:
+                    deepGet(
+                      result,
+                      "com_adobe_experience_platform_ajo.enabled",
+                    ) ?? true,
+                },
+                com_adobe_analytics: {
+                  fieldName: "com_adobe_analytics.enabled",
+                  value: deepGet(result, "com_adobe_analytics.enabled") ?? true,
+                },
+                com_adobe_target: {
+                  fieldName: "com_adobe_target.enabled",
+                  value: deepGet(result, "com_adobe_target.enabled") ?? true,
+                },
+                com_adobe_audience_manager: {
+                  fieldName: "com_adobe_audience_manager.enabled",
+                  value:
+                    deepGet(result, "com_adobe_audience_manager.enabled") ??
+                    true,
+                },
+                com_adobe_launch_ssf: {
+                  fieldName: "com_adobe_launch_ssf.enabled",
+                  value:
+                    deepGet(result, "com_adobe_launch_ssf.enabled") ?? true,
+                },
               });
+              // set the field value of all services that are disabled to "Disabled"
+              React.useEffect(() => {
+                Object.values(serviceStatus)
+                  .filter(({ value }) => !value)
+                  .filter(
+                    ({ fieldName }) =>
+                      deepGet(
+                        formikContext.values,
+                        `${prefix}.${env}.${fieldName}`,
+                      ) !== ENABLED_FIELD_VALUES.disabled,
+                  )
+                  .forEach(({ fieldName }) => {
+                    formikContext.setFieldValue(
+                      `${prefix}.${env}.${fieldName}`,
+                      ENABLED_FIELD_VALUES.disabled,
+                      false,
+                    );
+                  });
+              }, [serviceStatus, formikContext.values, prefix, env]);
 
               const envEdgeConfigIds = edgeConfigIds[`${env}Environment`];
 
@@ -405,7 +459,9 @@ const Overrides = ({
                             name={`${prefix}.${env}.com_adobe_analytics.enabled`}
                             width="size-5000"
                             pattern={enabledDisabledOrDataElementRegex}
-                            isDisabled={!serviceStatus.com_adobe_analytics}
+                            isDisabled={
+                              !serviceStatus.com_adobe_analytics.value
+                            }
                             description="Enable or disable the Adobe Analytics destination."
                           >
                             {Object.values(ENABLED_FIELD_VALUES).map(
@@ -446,7 +502,7 @@ const Overrides = ({
                             width="size-5000"
                             pattern={enabledDisabledOrDataElementRegex}
                             isDisabled={
-                              !serviceStatus.com_adobe_audience_manager
+                              !serviceStatus.com_adobe_audience_manager.value
                             }
                             description="Enable or disable the Adobe Audience Manager destination."
                           >
@@ -503,7 +559,7 @@ const Overrides = ({
                             width="size-5000"
                             pattern={enabledDisabledOrDataElementRegex}
                             isDisabled={
-                              !serviceStatus.com_adobe_experience_platform
+                              !serviceStatus.com_adobe_experience_platform.value
                             }
                             description="Enable or disable the Adobe Experience Platform destination."
                           >
@@ -549,7 +605,10 @@ const Overrides = ({
                             name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_ode.enabled`}
                             width="size-5000"
                             pattern={enabledDisabledOrDataElementRegex}
-                            isDisabled={!serviceStatus.com_adobe_edge_ode}
+                            isDisabled={
+                              !serviceStatus.com_adobe_experience_platform_ode
+                                .value
+                            }
                           >
                             {Object.values(ENABLED_FIELD_VALUES).map(
                               (value) => (
@@ -571,7 +630,9 @@ const Overrides = ({
                             width="size-5000"
                             pattern={enabledDisabledOrDataElementRegex}
                             isDisabled={
-                              !serviceStatus.com_adobe_edge_segmentation
+                              !serviceStatus
+                                .com_adobe_experience_platform_edge_segmentation
+                                .value
                             }
                           >
                             {Object.values(ENABLED_FIELD_VALUES).map(
@@ -594,7 +655,9 @@ const Overrides = ({
                             width="size-5000"
                             pattern={enabledDisabledOrDataElementRegex}
                             isDisabled={
-                              !serviceStatus.com_adobe_edge_destinations
+                              !serviceStatus
+                                .com_adobe_experience_platform_edge_destinations
+                                .value
                             }
                           >
                             {Object.values(ENABLED_FIELD_VALUES).map(
@@ -614,7 +677,10 @@ const Overrides = ({
                             name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_ajo.enabled`}
                             width="size-5000"
                             pattern={enabledDisabledOrDataElementRegex}
-                            isDisabled={!serviceStatus.com_adobe_edge_ajo}
+                            isDisabled={
+                              !serviceStatus.com_adobe_experience_platform_ajo
+                                .value
+                            }
                           >
                             {Object.values(ENABLED_FIELD_VALUES).map(
                               (value) => (
@@ -635,7 +701,7 @@ const Overrides = ({
                           name={`${prefix}.${env}.com_adobe_launch_ssf.enabled`}
                           width="size-5000"
                           pattern={enabledDisabledOrDataElementRegex}
-                          isDisabled={!serviceStatus.com_adobe_launch_ssf}
+                          isDisabled={!serviceStatus.com_adobe_launch_ssf.value}
                           description="Enable or disable Adobe Server-Side Event Forwarding."
                         >
                           {Object.values(ENABLED_FIELD_VALUES).map((value) => (
@@ -658,7 +724,7 @@ const Overrides = ({
                             name={`${prefix}.${env}.com_adobe_target.enabled`}
                             width="size-5000"
                             pattern={enabledDisabledOrDataElementRegex}
-                            isDisabled={!serviceStatus.com_adobe_target}
+                            isDisabled={!serviceStatus.com_adobe_target.value}
                             description="Enable or disable the Adobe Target destination."
                           >
                             {Object.values(ENABLED_FIELD_VALUES).map(

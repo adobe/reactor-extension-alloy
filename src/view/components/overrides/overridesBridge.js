@@ -249,6 +249,10 @@ export const bridge = {
         );
       });
 
+    // console.debug(
+    //   "[CARTER] overridesBridge.getInstanceSettings()",
+    //   structuredClone(instanceSettings),
+    // );
     // convert "Enabled"/"Disabled" to true/false
     propertiesWithValues
       .map((key) => `${key}.enabled`)
