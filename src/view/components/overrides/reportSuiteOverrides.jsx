@@ -64,6 +64,7 @@ const ReportSuitesOverride = ({
                 <OverrideInput
                   useManualEntry={useManualEntry || items.length === 0}
                   data-test-id={`${FIELD_NAMES.reportSuitesOverride}.${index}`}
+                  aria-label={`Report suite override #${index + 1}`}
                   label={index === 0 && "Report suites"}
                   allowsCustomValue
                   overrideType="report suites"
