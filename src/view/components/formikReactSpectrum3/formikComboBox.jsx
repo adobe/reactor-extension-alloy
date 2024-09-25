@@ -46,6 +46,7 @@ const FormikComboBox = ({
         setTouched(true);
       }}
       validationState={touched && error ? "invalid" : undefined}
+      name={name}
       width={width}
       errorMessage={error}
     />
