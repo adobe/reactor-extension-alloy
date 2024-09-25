@@ -19,12 +19,19 @@ import { useField } from "formik";
  * @param {object} params
  * @param {string} params.name
  * @param {string?} params.width
+ * @param {Function?} params.onBlur
  * @param {(value: T) => undefined | string} params.validate A function that will be called to validate
  * the value entered by the user. The function should return an error message if
  * the value is invalid, or null if the value is valid.
  * @returns {React.Element}
  */
-const FormikComboBox = ({ name, width, validate, ...otherProps }) => {
+const FormikComboBox = ({
+  name,
+  width,
+  validate,
+  onBlur = () => {},
+  ...otherProps
+}) => {
   const [{ value }, { touched, error }, { setValue, setTouched }] = useField({
     name,
     validate,
@@ -34,7 +41,8 @@ const FormikComboBox = ({ name, width, validate, ...otherProps }) => {
       {...otherProps}
       inputValue={value}
       onInputChange={setValue}
-      onBlur={() => {
+      onBlur={(...args) => {
+        onBlur(...args);
         setTouched(true);
       }}
       validationState={touched && error ? "invalid" : undefined}
@@ -46,6 +54,7 @@ const FormikComboBox = ({ name, width, validate, ...otherProps }) => {
 
 FormikComboBox.propTypes = {
   name: PropTypes.string.isRequired,
+  onBlur: PropTypes.func,
   validate: PropTypes.func,
   width: PropTypes.string,
 };
