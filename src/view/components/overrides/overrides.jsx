@@ -155,15 +155,9 @@ const Overrides = ({
       defaults,
       parentFieldName.replace(prefix, "edgeConfigOverrides"),
     );
-    console.log(`[CARTER] onDisable("${fieldName}")`, {
-      fieldDefaults,
-      parentFieldName,
-      parentValue: deepGet(formikContext.values, parentFieldName),
-    });
     fieldDefaults.enabled = ENABLED_FIELD_VALUES.disabled;
     formikContext.setFieldValue(parentFieldName, fieldDefaults, true);
     formikContext.setFieldTouched(parentFieldName, true, true);
-    // TODO: why are the nested fields not being set?
   };
 
   const requestCache = useRef({});

@@ -248,11 +248,6 @@ export const bridge = {
           value.filter((rs) => rs !== ""),
         );
       });
-
-    // console.debug(
-    //   "[CARTER] overridesBridge.getInstanceSettings()",
-    //   structuredClone(instanceSettings),
-    // );
     // convert "Enabled"/"Disabled" to true/false
     propertiesWithValues
       .map((key) => `${key}.enabled`)
