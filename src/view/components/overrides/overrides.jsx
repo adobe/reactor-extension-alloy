@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import {
-  Heading,
   Flex,
+  Heading,
   Item,
   TabList,
   TabPanels,
@@ -28,12 +28,14 @@ import {
   PRODUCTION,
   STAGING,
 } from "../../configuration/constants/environmentType";
+import deepGet from "../../utils/deepGet";
 import FormElementContainer from "../formElementContainer";
 import SandboxSelector from "../sandboxSelector";
 import SectionHeader from "../sectionHeader";
 import DatastreamOverrideSelector from "./datastreamOverrideSelector";
 import { useFetchConfig } from "./hooks";
 import OverrideInput from "./overrideInput";
+import { bridge } from "./overridesBridge";
 import ReportSuitesOverride from "./reportSuiteOverrides";
 import SettingsCopySection from "./settingsCopySection";
 import {
@@ -45,7 +47,8 @@ import {
   enabledDisabledOrDataElementRegex,
   overridesKeys,
 } from "./utils";
-import deepGet from "../../utils/deepGet";
+
+const defaults = Object.freeze(bridge.getInstanceDefaults());
 
 /**
  *
@@ -136,6 +139,32 @@ const Overrides = ({
         );
       });
   };
+  /**
+   * @param {FocusEvent} e
+   */
+  const onDisable = (e) => {
+    /** @type {HTMLInputElement} */
+    const target = e.target;
+    const newValue = target.value;
+    if (newValue !== ENABLED_FIELD_VALUES.disabled) {
+      return;
+    }
+    const fieldName = target.getAttribute("name");
+    const parentFieldName = fieldName.split(".").slice(0, -1).join(".");
+    const fieldDefaults = deepGet(
+      defaults,
+      parentFieldName.replace(prefix, "edgeConfigOverrides"),
+    );
+    console.log(`[CARTER] onDisable("${fieldName}")`, {
+      fieldDefaults,
+      parentFieldName,
+      parentValue: deepGet(formikContext.values, parentFieldName),
+    });
+    fieldDefaults.enabled = ENABLED_FIELD_VALUES.disabled;
+    formikContext.setFieldValue(parentFieldName, fieldDefaults, true);
+    formikContext.setFieldTouched(parentFieldName, true, true);
+    // TODO: why are the nested fields not being set?
+  };
 
   const requestCache = useRef({});
   const authOrgId = initInfo.company.orgId;
@@ -178,6 +207,19 @@ const Overrides = ({
     }),
   };
 
+  /**
+   * @param {string} prefixWithEnv
+   * @returns {(shortPropName: string) => boolean}
+   */
+  const createIsDisabled = (prefixWithEnv) => (shortPropName) => {
+    return (
+      deepGet(formikContext.values, `${prefixWithEnv}.${shortPropName}`) ===
+      ENABLED_FIELD_VALUES.disabled
+    );
+  };
+
+  console.count("Rendering <Overrides/>");
+
   return (
     <>
       <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides">
@@ -196,6 +238,8 @@ const Overrides = ({
             {OVERRIDE_ENVIRONMENTS.map((env) => {
               const { result, isLoading, error } = edgeConfigs[env];
               const useManualEntry = !result || Boolean(error);
+
+              const isDisabled = createIsDisabled(`${prefix}.${env}`);
 
               // If a service is disabled in the datastream configuration, do not
               // allow the user to override the configuration. If we do not know
@@ -463,6 +507,7 @@ const Overrides = ({
                               !serviceStatus.com_adobe_analytics.value
                             }
                             description="Enable or disable the Adobe Analytics destination."
+                            onBlur={onDisable}
                           >
                             {Object.values(ENABLED_FIELD_VALUES).map(
                               (value) => (
@@ -471,18 +516,17 @@ const Overrides = ({
                             )}
                           </OverrideInput>
                         )}
-                        {visibleFields.has(
-                          FIELD_NAMES.reportSuitesOverride,
-                        ) && (
-                          <ReportSuitesOverride
-                            useManualEntry={useManualEntry}
-                            validate={validateReportSuiteOption}
-                            primaryItem={primaryReportSuites}
-                            isDisabled={!serviceStatus.com_adobe_analytics}
-                            items={reportSuiteOptions}
-                            prefix={`${prefix}.${env}`}
-                          />
-                        )}
+                        {visibleFields.has(FIELD_NAMES.reportSuitesOverride) &&
+                          !isDisabled("com_adobe_analytics.enabled") && (
+                            <ReportSuitesOverride
+                              useManualEntry={useManualEntry}
+                              validate={validateReportSuiteOption}
+                              primaryItem={primaryReportSuites}
+                              isDisabled={!serviceStatus.com_adobe_analytics}
+                              items={reportSuiteOptions}
+                              prefix={`${prefix}.${env}`}
+                            />
+                          )}
                       </ProductSubsection>
                     )}
                     {(visibleFields.has(FIELD_NAMES.idSyncContainerOverride) ||
@@ -504,6 +548,7 @@ const Overrides = ({
                             isDisabled={
                               !serviceStatus.com_adobe_audience_manager.value
                             }
+                            onBlur={onDisable}
                             description="Enable or disable the Adobe Audience Manager destination."
                           >
                             {Object.values(ENABLED_FIELD_VALUES).map(
@@ -513,28 +558,35 @@ const Overrides = ({
                             )}
                           </OverrideInput>
                         )}
-                        <OverrideInput
-                          data-test-id={FIELD_NAMES.idSyncContainerOverride}
-                          label="Third-party ID sync container"
-                          useManualEntry={
-                            useManualEntry || idSyncContainers.length === 0
-                          }
-                          allowsCustomValue
-                          overrideType="third-party ID sync container"
-                          primaryItem={primaryIdSyncContainer}
-                          defaultItems={idSyncContainers}
-                          isDisabled={!serviceStatus.com_adobe_audience_manager}
-                          validate={validateIdSyncContainerOption}
-                          name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
-                          inputMode="numeric"
-                          width="size-5000"
-                          pattern={/\d+/}
-                          description={idSyncContainerDescription}
-                        >
-                          {({ value, label }) => (
-                            <Item key={value}>{label}</Item>
+                        {visibleFields.has(
+                          FIELD_NAMES.idSyncContainerOverride,
+                        ) &&
+                          !isDisabled("com_adobe_audience_manager.enabled") && (
+                            <OverrideInput
+                              data-test-id={FIELD_NAMES.idSyncContainerOverride}
+                              label="Third-party ID sync container"
+                              useManualEntry={
+                                useManualEntry || idSyncContainers.length === 0
+                              }
+                              allowsCustomValue
+                              overrideType="third-party ID sync container"
+                              primaryItem={primaryIdSyncContainer}
+                              defaultItems={idSyncContainers}
+                              isDisabled={
+                                !serviceStatus.com_adobe_audience_manager
+                              }
+                              validate={validateIdSyncContainerOption}
+                              name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
+                              inputMode="numeric"
+                              width="size-5000"
+                              pattern={/\d+/}
+                              description={idSyncContainerDescription}
+                            >
+                              {({ value, label }) => (
+                                <Item key={value}>{label}</Item>
+                              )}
+                            </OverrideInput>
                           )}
-                        </OverrideInput>
                       </ProductSubsection>
                     )}
 
@@ -561,6 +613,7 @@ const Overrides = ({
                             isDisabled={
                               !serviceStatus.com_adobe_experience_platform.value
                             }
+                            onBlur={onDisable}
                             description="Enable or disable the Adobe Experience Platform destination."
                           >
                             {Object.values(ENABLED_FIELD_VALUES).map(
@@ -570,125 +623,143 @@ const Overrides = ({
                             )}
                           </OverrideInput>
                         )}
-                        {visibleFields.has(
-                          FIELD_NAMES.eventDatasetOverride,
-                        ) && (
-                          <OverrideInput
-                            useManualEntry={
-                              useManualEntry || eventDatasetOptions.length === 0
-                            }
-                            defaultItems={eventDatasetOptions}
-                            data-test-id={FIELD_NAMES.eventDatasetOverride}
-                            label="Event dataset"
-                            description={eventDatasetDescription}
-                            width="size-5000"
-                            isDisabled={
-                              !serviceStatus.com_adobe_experience_platform
-                            }
-                            allowsCustomValue
-                            validate={validateDatasetOption}
-                            loadingState={isLoading}
-                            name={`${prefix}.${env}.com_adobe_experience_platform.datasets.event.datasetId`}
-                          >
-                            {({ datasetId }) => (
-                              <Item key={datasetId}>{datasetId}</Item>
-                            )}
-                          </OverrideInput>
-                        )}
-                        {visibleFields.has(FIELD_NAMES.odeEnabled) && (
-                          <OverrideInput
-                            aria-label="Enable or disable Adobe Offer Decisioning Engine"
-                            data-test-id={FIELD_NAMES.odeEnabled}
-                            allowsCustomValue
-                            label="Offer Decisioning"
-                            validate={validateEnabledDisabledOrDataElement}
-                            name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_ode.enabled`}
-                            width="size-5000"
-                            pattern={enabledDisabledOrDataElementRegex}
-                            isDisabled={
-                              !serviceStatus.com_adobe_experience_platform_ode
-                                .value
-                            }
-                          >
-                            {Object.values(ENABLED_FIELD_VALUES).map(
-                              (value) => (
-                                <Item key={value}>{value}</Item>
-                              ),
-                            )}
-                          </OverrideInput>
-                        )}
+                        {visibleFields.has(FIELD_NAMES.eventDatasetOverride) &&
+                          !isDisabled(
+                            "com_adobe_experience_platform.enabled",
+                          ) && (
+                            <OverrideInput
+                              useManualEntry={
+                                useManualEntry ||
+                                eventDatasetOptions.length === 0
+                              }
+                              defaultItems={eventDatasetOptions}
+                              data-test-id={FIELD_NAMES.eventDatasetOverride}
+                              label="Event dataset"
+                              description={eventDatasetDescription}
+                              width="size-5000"
+                              isDisabled={
+                                !serviceStatus.com_adobe_experience_platform
+                              }
+                              allowsCustomValue
+                              validate={validateDatasetOption}
+                              loadingState={isLoading}
+                              name={`${prefix}.${env}.com_adobe_experience_platform.datasets.event.datasetId`}
+                            >
+                              {({ datasetId }) => (
+                                <Item key={datasetId}>{datasetId}</Item>
+                              )}
+                            </OverrideInput>
+                          )}
+                        {visibleFields.has(FIELD_NAMES.odeEnabled) &&
+                          !isDisabled(
+                            "com_adobe_experience_platform.enabled",
+                          ) && (
+                            <OverrideInput
+                              aria-label="Enable or disable Adobe Offer Decisioning Engine"
+                              data-test-id={FIELD_NAMES.odeEnabled}
+                              allowsCustomValue
+                              label="Offer Decisioning"
+                              validate={validateEnabledDisabledOrDataElement}
+                              name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_ode.enabled`}
+                              width="size-5000"
+                              pattern={enabledDisabledOrDataElementRegex}
+                              onBlur={onDisable}
+                              isDisabled={
+                                !serviceStatus.com_adobe_experience_platform_ode
+                                  .value
+                              }
+                            >
+                              {Object.values(ENABLED_FIELD_VALUES).map(
+                                (value) => (
+                                  <Item key={value}>{value}</Item>
+                                ),
+                              )}
+                            </OverrideInput>
+                          )}
                         {visibleFields.has(
                           FIELD_NAMES.edgeSegmentationEnabled,
-                        ) && (
-                          <OverrideInput
-                            aria-label="Enable or disable Adobe Edge Segmentation"
-                            data-test-id={FIELD_NAMES.edgeSegmentationEnabled}
-                            allowsCustomValue
-                            label="Edge Segmentation"
-                            validate={validateEnabledDisabledOrDataElement}
-                            name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_segmentation.enabled`}
-                            width="size-5000"
-                            pattern={enabledDisabledOrDataElementRegex}
-                            isDisabled={
-                              !serviceStatus
-                                .com_adobe_experience_platform_edge_segmentation
-                                .value
-                            }
-                          >
-                            {Object.values(ENABLED_FIELD_VALUES).map(
-                              (value) => (
-                                <Item key={value}>{value}</Item>
-                              ),
-                            )}
-                          </OverrideInput>
-                        )}
+                        ) &&
+                          !isDisabled(
+                            "com_adobe_experience_platform.enabled",
+                          ) && (
+                            <OverrideInput
+                              aria-label="Enable or disable Adobe Edge Segmentation"
+                              data-test-id={FIELD_NAMES.edgeSegmentationEnabled}
+                              allowsCustomValue
+                              label="Edge Segmentation"
+                              validate={validateEnabledDisabledOrDataElement}
+                              name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_segmentation.enabled`}
+                              width="size-5000"
+                              pattern={enabledDisabledOrDataElementRegex}
+                              onBlur={onDisable}
+                              isDisabled={
+                                !serviceStatus
+                                  .com_adobe_experience_platform_edge_segmentation
+                                  .value
+                              }
+                            >
+                              {Object.values(ENABLED_FIELD_VALUES).map(
+                                (value) => (
+                                  <Item key={value}>{value}</Item>
+                                ),
+                              )}
+                            </OverrideInput>
+                          )}
                         {visibleFields.has(
                           FIELD_NAMES.edgeDestinationsEnabled,
-                        ) && (
-                          <OverrideInput
-                            aria-label="Enable or disable Personalization Destinations"
-                            label="Personalization Destinations"
-                            data-test-id={FIELD_NAMES.edgeDestinationsEnabled}
-                            allowsCustomValue
-                            validate={validateEnabledDisabledOrDataElement}
-                            name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_destinations.enabled`}
-                            width="size-5000"
-                            pattern={enabledDisabledOrDataElementRegex}
-                            isDisabled={
-                              !serviceStatus
-                                .com_adobe_experience_platform_edge_destinations
-                                .value
-                            }
-                          >
-                            {Object.values(ENABLED_FIELD_VALUES).map(
-                              (value) => (
-                                <Item key={value}>{value}</Item>
-                              ),
-                            )}
-                          </OverrideInput>
-                        )}
-                        {visibleFields.has(FIELD_NAMES.ajoEnabled) && (
-                          <OverrideInput
-                            aria-label="Enable or disable Adobe Journey Optimizer"
-                            data-test-id={FIELD_NAMES.analyticsEnabled}
-                            label="Adobe Journey Optimizer"
-                            allowsCustomValue
-                            validate={validateEnabledDisabledOrDataElement}
-                            name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_ajo.enabled`}
-                            width="size-5000"
-                            pattern={enabledDisabledOrDataElementRegex}
-                            isDisabled={
-                              !serviceStatus.com_adobe_experience_platform_ajo
-                                .value
-                            }
-                          >
-                            {Object.values(ENABLED_FIELD_VALUES).map(
-                              (value) => (
-                                <Item key={value}>{value}</Item>
-                              ),
-                            )}
-                          </OverrideInput>
-                        )}
+                        ) &&
+                          !isDisabled(
+                            "com_adobe_experience_platform.enabled",
+                          ) && (
+                            <OverrideInput
+                              aria-label="Enable or disable Personalization Destinations"
+                              label="Personalization Destinations"
+                              data-test-id={FIELD_NAMES.edgeDestinationsEnabled}
+                              allowsCustomValue
+                              validate={validateEnabledDisabledOrDataElement}
+                              name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_destinations.enabled`}
+                              width="size-5000"
+                              pattern={enabledDisabledOrDataElementRegex}
+                              onBlur={onDisable}
+                              isDisabled={
+                                !serviceStatus
+                                  .com_adobe_experience_platform_edge_destinations
+                                  .value
+                              }
+                            >
+                              {Object.values(ENABLED_FIELD_VALUES).map(
+                                (value) => (
+                                  <Item key={value}>{value}</Item>
+                                ),
+                              )}
+                            </OverrideInput>
+                          )}
+                        {visibleFields.has(FIELD_NAMES.ajoEnabled) &&
+                          !isDisabled(
+                            "com_adobe_experience_platform.enabled",
+                          ) && (
+                            <OverrideInput
+                              aria-label="Enable or disable Adobe Journey Optimizer"
+                              data-test-id={FIELD_NAMES.analyticsEnabled}
+                              label="Adobe Journey Optimizer"
+                              allowsCustomValue
+                              validate={validateEnabledDisabledOrDataElement}
+                              name={`${prefix}.${env}.com_adobe_experience_platform.com_adobe_edge_ajo.enabled`}
+                              width="size-5000"
+                              pattern={enabledDisabledOrDataElementRegex}
+                              onBlur={onDisable}
+                              isDisabled={
+                                !serviceStatus.com_adobe_experience_platform_ajo
+                                  .value
+                              }
+                            >
+                              {Object.values(ENABLED_FIELD_VALUES).map(
+                                (value) => (
+                                  <Item key={value}>{value}</Item>
+                                ),
+                              )}
+                            </OverrideInput>
+                          )}
                       </ProductSubsection>
                     )}
                     {visibleFields.has(FIELD_NAMES.ssefEnabled) && (
@@ -701,6 +772,7 @@ const Overrides = ({
                           name={`${prefix}.${env}.com_adobe_launch_ssf.enabled`}
                           width="size-5000"
                           pattern={enabledDisabledOrDataElementRegex}
+                          onBlur={onDisable}
                           isDisabled={!serviceStatus.com_adobe_launch_ssf.value}
                           description="Enable or disable Adobe Server-Side Event Forwarding."
                         >
@@ -724,6 +796,7 @@ const Overrides = ({
                             name={`${prefix}.${env}.com_adobe_target.enabled`}
                             width="size-5000"
                             pattern={enabledDisabledOrDataElementRegex}
+                            onBlur={onDisable}
                             isDisabled={!serviceStatus.com_adobe_target.value}
                             description="Enable or disable the Adobe Target destination."
                           >
@@ -736,31 +809,32 @@ const Overrides = ({
                         )}
                         {visibleFields.has(
                           FIELD_NAMES.targetPropertyTokenOverride,
-                        ) && (
-                          <OverrideInput
-                            data-test-id={
-                              FIELD_NAMES.targetPropertyTokenOverride
-                            }
-                            label="Target property token"
-                            allowsCustomValue
-                            overrideType="property token"
-                            primaryItem={primaryPropertyToken}
-                            isDisabled={!serviceStatus.com_adobe_target}
-                            validate={validatePropertyTokenOption}
-                            defaultItems={propertyTokenOptions}
-                            useManualEntry={
-                              useManualEntry ||
-                              propertyTokenOptions.length === 0
-                            }
-                            name={`${prefix}.${env}.com_adobe_target.propertyToken`}
-                            description={propertyTokenDescription}
-                            width="size-5000"
-                          >
-                            {({ value, label }) => (
-                              <Item key={value}>{label}</Item>
-                            )}
-                          </OverrideInput>
-                        )}
+                        ) &&
+                          !isDisabled("com_adobe_target.enabled") && (
+                            <OverrideInput
+                              data-test-id={
+                                FIELD_NAMES.targetPropertyTokenOverride
+                              }
+                              label="Target property token"
+                              allowsCustomValue
+                              overrideType="property token"
+                              primaryItem={primaryPropertyToken}
+                              isDisabled={!serviceStatus.com_adobe_target}
+                              validate={validatePropertyTokenOption}
+                              defaultItems={propertyTokenOptions}
+                              useManualEntry={
+                                useManualEntry ||
+                                propertyTokenOptions.length === 0
+                              }
+                              name={`${prefix}.${env}.com_adobe_target.propertyToken`}
+                              description={propertyTokenDescription}
+                              width="size-5000"
+                            >
+                              {({ value, label }) => (
+                                <Item key={value}>{label}</Item>
+                              )}
+                            </OverrideInput>
+                          )}
                       </ProductSubsection>
                     )}
                   </Flex>
