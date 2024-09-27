@@ -18,7 +18,7 @@ import {
   Tabs,
   View,
 } from "@adobe/react-spectrum";
-import { useField, useFormikContext } from "formik";
+import { useField } from "formik";
 import PropTypes from "prop-types";
 import React, { useRef } from "react";
 
@@ -28,12 +28,11 @@ import {
   PRODUCTION,
   STAGING,
 } from "../../configuration/constants/environmentType";
-import deepGet from "../../utils/deepGet";
 import FormElementContainer from "../formElementContainer";
 import SandboxSelector from "../sandboxSelector";
 import SectionHeader from "../sectionHeader";
 import DatastreamOverrideSelector from "./datastreamOverrideSelector";
-import { useFetchConfig } from "./hooks";
+import { useFetchConfig, useFormikContextWithOverrides } from "./hooks";
 import OverrideInput from "./overrideInput";
 import { bridge } from "./overridesBridge";
 import ReportSuitesOverride from "./reportSuiteOverrides";
@@ -45,8 +44,6 @@ import {
   combineValidatorWithContainsDataElements,
   createValidateItemIsInArray,
   enabledDisabledOrDataElementRegex,
-  overridesKeys,
-  getServiceStatus,
 } from "./utils";
 
 const defaults = Object.freeze(bridge.getInstanceDefaults());
@@ -113,53 +110,6 @@ const Overrides = ({
 
   /** @type {{value: import("./overridesBridge").EnvironmentConfigOverrideFormikState}[] } */
   const [{ value: edgeConfigOverrides }] = useField(prefix);
-  const formikContext = useFormikContext();
-  /**
-   * Import the settings from the destination to the source
-   *
-   * @param {"production" | "staging" | "development"} source
-   * @param {"production" | "staging" | "development"} destination
-   */
-  const onCopy = (source, destination) => {
-    [FIELD_NAMES.sandbox, "datastreamId", ...overridesKeys]
-      .filter(
-        (field) =>
-          deepGet(edgeConfigOverrides[source], field) !==
-          deepGet(edgeConfigOverrides[destination], field),
-      )
-      .forEach((field) => {
-        formikContext.setFieldValue(
-          `${prefix}.${destination}.${field}`,
-          deepGet(edgeConfigOverrides[source], field),
-          true,
-        );
-        formikContext.setFieldTouched(
-          `${prefix}.${destination}.${field}`,
-          true,
-          true,
-        );
-      });
-  };
-  /**
-   * @param {FocusEvent} e
-   */
-  const onDisable = (e) => {
-    /** @type {HTMLInputElement} */
-    const target = e.target;
-    const newValue = target.value;
-    if (newValue !== ENABLED_FIELD_VALUES.disabled) {
-      return;
-    }
-    const fieldName = target.getAttribute("name");
-    const parentFieldName = fieldName.split(".").slice(0, -1).join(".");
-    const fieldDefaults = deepGet(
-      defaults,
-      parentFieldName.replace(prefix, "edgeConfigOverrides"),
-    );
-    fieldDefaults.enabled = ENABLED_FIELD_VALUES.disabled;
-    formikContext.setFieldValue(parentFieldName, fieldDefaults, true);
-    formikContext.setFieldTouched(parentFieldName, true, true);
-  };
 
   const requestCache = useRef({});
   const authOrgId = initInfo.company.orgId;
@@ -202,16 +152,12 @@ const Overrides = ({
     }),
   };
 
-  /**
-   * @param {string} prefixWithEnv
-   * @returns {(shortPropName: string) => boolean}
-   */
-  const createIsDisabled = (prefixWithEnv) => (shortPropName) => {
-    return (
-      deepGet(formikContext.values, `${prefixWithEnv}.${shortPropName}`) ===
-      ENABLED_FIELD_VALUES.disabled
-    );
-  };
+  const { useServiceStatus, createIsDisabled, onCopy, onDisable } =
+    useFormikContextWithOverrides({
+      prefix,
+      edgeConfigOverrides,
+      defaults,
+    });
 
   return (
     <>
@@ -234,26 +180,7 @@ const Overrides = ({
 
               const isDisabled = createIsDisabled(`${prefix}.${env}`);
 
-              const serviceStatus = getServiceStatus(result);
-              // set the field value of all services that are disabled to "Disabled"
-              React.useEffect(() => {
-                Object.values(serviceStatus)
-                  .filter(({ value }) => !value)
-                  .filter(
-                    ({ fieldName }) =>
-                      deepGet(
-                        formikContext.values,
-                        `${prefix}.${env}.${fieldName}`,
-                      ) !== ENABLED_FIELD_VALUES.disabled,
-                  )
-                  .forEach(({ fieldName }) => {
-                    formikContext.setFieldValue(
-                      `${prefix}.${env}.${fieldName}`,
-                      ENABLED_FIELD_VALUES.disabled,
-                      false,
-                    );
-                  });
-              }, [serviceStatus, formikContext.values, prefix, env]);
+              const serviceStatus = useServiceStatus(env, result);
 
               const envEdgeConfigIds = edgeConfigIds[`${env}Environment`];
 

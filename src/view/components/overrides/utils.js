@@ -9,7 +9,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import deepGet from "../../utils/deepGet";
 
 export const overridesKeys = Object.freeze([
   "com_adobe_experience_platform",
@@ -200,67 +199,3 @@ export const combineValidatorWithContainsDataElements =
     }
     return validateIsDataElement(value);
   };
-
-/**
- * If a service is disabled in the datastream configuration, do not
- * allow the user to override the configuration. If we do not know
- * the datastream configuration, assume the service is enabled.
- * Blackbird has a more flat key-value structure than the one that
- * Konductor accepts, so we also need to map between them.
- * This object is keyed using the Blackbird key.
- * @param {Record<string, any>} apiResult
- * @returns {Readonly<Record<string, Readonly<{ fieldName: string, value: boolean }>>>}
- */
-export const getServiceStatus = (apiResult) =>
-  Object.freeze({
-    com_adobe_experience_platform: {
-      fieldName: "com_adobe_experience_platform.enabled",
-      value:
-        deepGet(apiResult, "com_adobe_experience_platform.enabled") ?? true,
-    },
-    com_adobe_experience_platform_ode: {
-      fieldName: "com_adobe_experience_platform.com_adobe_edge_ode.enabled",
-      value:
-        deepGet(apiResult, "com_adobe_experience_platform_ode.enabled") ?? true,
-    },
-    com_adobe_experience_platform_edge_segmentation: {
-      fieldName:
-        "com_adobe_experience_platform.com_adobe_edge_segmentation.enabled",
-      value:
-        deepGet(
-          apiResult,
-          "com_adobe_experience_platform_edge_segmentation.enabled",
-        ) ?? true,
-    },
-
-    com_adobe_experience_platform_edge_destinations: {
-      fieldName:
-        "com_adobe_experience_platform.com_adobe_edge_destinations.enabled",
-      value:
-        deepGet(
-          apiResult,
-          "com_adobe_experience_platform_edge_destinations.enabled",
-        ) ?? true,
-    },
-    com_adobe_experience_platform_ajo: {
-      fieldName: "com_adobe_experience_platform.com_adobe_edge_ajo.enabled",
-      value:
-        deepGet(apiResult, "com_adobe_experience_platform_ajo.enabled") ?? true,
-    },
-    com_adobe_analytics: {
-      fieldName: "com_adobe_analytics.enabled",
-      value: deepGet(apiResult, "com_adobe_analytics.enabled") ?? true,
-    },
-    com_adobe_target: {
-      fieldName: "com_adobe_target.enabled",
-      value: deepGet(apiResult, "com_adobe_target.enabled") ?? true,
-    },
-    com_adobe_audience_manager: {
-      fieldName: "com_adobe_audience_manager.enabled",
-      value: deepGet(apiResult, "com_adobe_audience_manager.enabled") ?? true,
-    },
-    com_adobe_launch_ssf: {
-      fieldName: "com_adobe_launch_ssf.enabled",
-      value: deepGet(apiResult, "com_adobe_launch_ssf.enabled") ?? true,
-    },
-  });
