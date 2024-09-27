@@ -46,6 +46,7 @@ import {
   createValidateItemIsInArray,
   enabledDisabledOrDataElementRegex,
   overridesKeys,
+  getServiceStatus,
 } from "./utils";
 
 const defaults = Object.freeze(bridge.getInstanceDefaults());
@@ -212,8 +213,6 @@ const Overrides = ({
     );
   };
 
-  console.count("Rendering <Overrides/>");
-
   return (
     <>
       <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides">
@@ -235,77 +234,7 @@ const Overrides = ({
 
               const isDisabled = createIsDisabled(`${prefix}.${env}`);
 
-              // If a service is disabled in the datastream configuration, do not
-              // allow the user to override the configuration. If we do not know
-              // the datastream configuration, assume the service is enabled.
-              // Blackbird has a more flat key-value structure than the one that
-              // Konductor accepts, so we also need to map between them.
-              // This object is keyed using the Blackbird key.
-              /** @type {Readonly<Record<string, Readonly<{ fieldName: string, value: boolean }>>>} */
-              const serviceStatus = Object.freeze({
-                com_adobe_experience_platform: {
-                  fieldName: "com_adobe_experience_platform.enabled",
-                  value:
-                    deepGet(result, "com_adobe_experience_platform.enabled") ??
-                    true,
-                },
-                com_adobe_experience_platform_ode: {
-                  fieldName:
-                    "com_adobe_experience_platform.com_adobe_edge_ode.enabled",
-                  value:
-                    deepGet(
-                      result,
-                      "com_adobe_experience_platform_ode.enabled",
-                    ) ?? true,
-                },
-                com_adobe_experience_platform_edge_segmentation: {
-                  fieldName:
-                    "com_adobe_experience_platform.com_adobe_edge_segmentation.enabled",
-                  value:
-                    deepGet(
-                      result,
-                      "com_adobe_experience_platform_edge_segmentation.enabled",
-                    ) ?? true,
-                },
-
-                com_adobe_experience_platform_edge_destinations: {
-                  fieldName:
-                    "com_adobe_experience_platform.com_adobe_edge_destinations.enabled",
-                  value:
-                    deepGet(
-                      result,
-                      "com_adobe_experience_platform_edge_destinations.enabled",
-                    ) ?? true,
-                },
-                com_adobe_experience_platform_ajo: {
-                  fieldName:
-                    "com_adobe_experience_platform.com_adobe_edge_ajo.enabled",
-                  value:
-                    deepGet(
-                      result,
-                      "com_adobe_experience_platform_ajo.enabled",
-                    ) ?? true,
-                },
-                com_adobe_analytics: {
-                  fieldName: "com_adobe_analytics.enabled",
-                  value: deepGet(result, "com_adobe_analytics.enabled") ?? true,
-                },
-                com_adobe_target: {
-                  fieldName: "com_adobe_target.enabled",
-                  value: deepGet(result, "com_adobe_target.enabled") ?? true,
-                },
-                com_adobe_audience_manager: {
-                  fieldName: "com_adobe_audience_manager.enabled",
-                  value:
-                    deepGet(result, "com_adobe_audience_manager.enabled") ??
-                    true,
-                },
-                com_adobe_launch_ssf: {
-                  fieldName: "com_adobe_launch_ssf.enabled",
-                  value:
-                    deepGet(result, "com_adobe_launch_ssf.enabled") ?? true,
-                },
-              });
+              const serviceStatus = getServiceStatus(result);
               // set the field value of all services that are disabled to "Disabled"
               React.useEffect(() => {
                 Object.values(serviceStatus)
