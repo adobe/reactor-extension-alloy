@@ -16,6 +16,9 @@ governing permissions and limitations under the License.
  * @returns {any | undefined} the value at the path, or undefined if the path does not exist
  */
 const deepGet = (obj, path) => {
+  if (!path) {
+    return obj;
+  }
   const keys = path.split(".");
   return keys.reduce((acc, key) => acc?.[key], obj);
 };

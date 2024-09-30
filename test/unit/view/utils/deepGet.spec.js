@@ -24,4 +24,14 @@ describe("deepGet", () => {
   it("should return undefined if the object is undefined", () => {
     expect(deepGet(undefined, "a.b.c")).toBe(undefined);
   });
+  it("should return the object if the path is empty", () => {
+    const obj = {
+      a: {
+        b: {
+          c: "value",
+        },
+      },
+    };
+    expect(deepGet(obj, "")).toBe(obj);
+  });
 });
