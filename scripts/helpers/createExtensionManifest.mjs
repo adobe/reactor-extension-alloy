@@ -50,6 +50,7 @@ const createEdgeConfigOverridesSchema = (isAction) => {
     ],
   };
   const configOverridesProps = {
+    enabled: enabledDisabledOrDataElement,
     com_adobe_experience_platform: {
       type: "object",
       properties: {

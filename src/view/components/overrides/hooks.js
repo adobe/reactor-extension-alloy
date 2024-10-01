@@ -207,7 +207,7 @@ export const useFormikContextWithOverrides = ({
    * @param {"production" | "staging" | "development"} destination
    */
   const onCopy = (source, destination) => {
-    [FIELD_NAMES.sandbox, "datastreamId", ...overridesKeys]
+    [FIELD_NAMES.sandbox, FIELD_NAMES.datastreamId, "enabled", ...overridesKeys]
       .filter(
         (field) =>
           deepGet(edgeConfigOverrides[source], field) !==

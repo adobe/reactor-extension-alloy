@@ -35,6 +35,7 @@ export const capitialize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
  * to the `showFields` prop of the `Overrides` component.
  */
 export const FIELD_NAMES = Object.freeze({
+  overridesEnabled: "overridesEnabled",
   analyticsEnabled: "analyticsEnabled",
   ajoEnabled: "ajoEnabled",
   audienceManagerEnabled: "audienceManagerEnabled",

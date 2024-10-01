@@ -40,9 +40,14 @@ const createGetConfigOverrides = (environmentName) => (settings) => {
     computedConfigOverrides = { ...edgeConfigOverrides[environmentName] };
   }
 
-  if (Object.keys(computedConfigOverrides).length === 0) {
+  if (
+    Object.keys(computedConfigOverrides).length === 0 ||
+    // explicit because `undefined` means 'enabled'
+    computedConfigOverrides.enabled === false
+  ) {
     return undefined;
   }
+  delete computedConfigOverrides.enabled;
 
   if (computedConfigOverrides.com_adobe_analytics?.reportSuites?.length > 0) {
     computedConfigOverrides.com_adobe_analytics.reportSuites =

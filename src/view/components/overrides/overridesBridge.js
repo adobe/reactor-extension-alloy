@@ -95,6 +95,7 @@ export const bridge = {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
+          enabled: ENABLED_FIELD_VALUES.enabled,
           com_adobe_experience_platform: {
             enabled: ENABLED_FIELD_VALUES.enabled,
             datasets: {
@@ -168,10 +169,13 @@ export const bridge = {
     }
     // convert the 'enabled' settings from true/false to enabled/disabled
     OVERRIDE_ENVIRONMENTS.flatMap((env) =>
-      overridesKeys.flatMap(
-        (key) => `edgeConfigOverrides.${env}.${key}.enabled`,
-      ),
+      overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}.enabled`),
     )
+      .concat(
+        OVERRIDE_ENVIRONMENTS.map(
+          (env) => `edgeConfigOverrides.${env}.enabled`,
+        ),
+      )
       .filter((key) => deepGet(instanceSettings, key) !== undefined)
       .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
       .forEach((key) => {
@@ -251,11 +255,26 @@ export const bridge = {
     // convert "Enabled"/"Disabled" to true/false
     propertiesWithValues
       .map((key) => `${key}.enabled`)
+      .concat(
+        OVERRIDE_ENVIRONMENTS.map(
+          (env) => `edgeConfigOverrides.${env}.enabled`,
+        ),
+      )
       .filter((key) => deepGet(instanceSettings, key) !== undefined)
       .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
       .forEach((key) => {
         const value = deepGet(instanceValues, key);
         deepSet(instanceSettings, key, value === ENABLED_FIELD_VALUES.enabled);
+      });
+
+    // Remove disabled envs
+    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}.enabled`)
+      .filter((key) => deepGet(instanceSettings, key) === false)
+      .forEach((key) => {
+        const env = key.split(".")[1];
+        instanceSettings.edgeConfigOverrides[env] = {
+          enabled: false,
+        };
       });
 
     // Remove empty objects
@@ -302,6 +321,7 @@ export const bridge = {
         (acc, env) => ({
           ...acc,
           [env]: object({
+            enabled: enabledOrDataElementValidator,
             datastreamId: string().nullable(),
             datastreamInputMethod: mixed()
               .oneOf(["freeform", "select"])

@@ -21,6 +21,7 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
+          enabled: "Enabled",
           com_adobe_experience_platform: {
             enabled: "Enabled",
             datasets: {
@@ -115,6 +116,7 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
+          enabled: "Enabled",
           com_adobe_experience_platform: {
             enabled: "Enabled",
             datasets: {
@@ -213,6 +215,7 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
+          enabled: "Enabled",
           com_adobe_experience_platform: {
             enabled: "Enabled",
             datasets: {
@@ -263,6 +266,7 @@ describe("overridesBridge", () => {
         (acc, env) => ({
           ...acc,
           [env]: {
+            enabled: true,
             com_adobe_experience_platform: {
               enabled: true,
               com_adobe_edge_ode: {
@@ -305,6 +309,7 @@ describe("overridesBridge", () => {
           (acc, env) => ({
             ...acc,
             [env]: {
+              enabled: "Enabled",
               com_adobe_experience_platform: {
                 enabled: "Enabled",
                 com_adobe_edge_ode: {
@@ -355,6 +360,7 @@ describe("overridesBridge", () => {
         (acc, env) => ({
           ...acc,
           [env]: {
+            enabled: true,
             com_adobe_experience_platform: {
               enabled: false,
               com_adobe_edge_ode: {
@@ -397,6 +403,7 @@ describe("overridesBridge", () => {
           (acc, env) => ({
             ...acc,
             [env]: {
+              enabled: "Enabled",
               com_adobe_experience_platform: {
                 enabled: "Disabled",
                 com_adobe_edge_ode: {
@@ -450,6 +457,7 @@ describe("overridesBridge", () => {
         (acc, env) => ({
           ...acc,
           [env]: {
+            enabled: "%Data element of enabledness%",
             com_adobe_experience_platform: {
               enabled: "%Data element of enabledness%",
               com_adobe_edge_ode: {
@@ -495,6 +503,7 @@ describe("overridesBridge", () => {
               datastreamId: "",
               datastreamIdInputMethod: "freeform",
               sandbox: "",
+              enabled: "%Data element of enabledness%",
               com_adobe_experience_platform: {
                 enabled: "%Data element of enabledness%",
                 com_adobe_edge_ode: {
@@ -538,6 +547,76 @@ describe("overridesBridge", () => {
         ),
       });
     });
+
+    it("should fill in with defaults if edgeConfigOverrides is disabled", () => {
+      const envs = ["production", "staging", "development"];
+      const enabledEdgeConfigOverrides = envs.reduce(
+        (acc, env) => ({
+          ...acc,
+          [env]: {
+            enabled: false,
+          },
+        }),
+        {},
+      );
+      expect(
+        bridge.getInitialInstanceValues({
+          instanceSettings: {
+            edgeConfigOverrides: enabledEdgeConfigOverrides,
+          },
+        }),
+      ).toEqual({
+        edgeConfigOverrides: envs.reduce(
+          (acc, env) => ({
+            ...acc,
+            [env]: {
+              enabled: "Disabled",
+              com_adobe_experience_platform: {
+                enabled: "Enabled",
+                com_adobe_edge_ode: {
+                  enabled: "Enabled",
+                },
+                com_adobe_edge_segmentation: {
+                  enabled: "Enabled",
+                },
+                com_adobe_edge_destinations: {
+                  enabled: "Enabled",
+                },
+                com_adobe_edge_ajo: {
+                  enabled: "Enabled",
+                },
+                datasets: {
+                  event: {
+                    datasetId: "",
+                  },
+                },
+              },
+              com_adobe_analytics: {
+                enabled: "Enabled",
+                reportSuites: [""],
+              },
+              com_adobe_target: {
+                enabled: "Enabled",
+                propertyToken: "",
+              },
+              com_adobe_audience_manager: {
+                enabled: "Enabled",
+              },
+              com_adobe_launch_ssf: {
+                enabled: "Enabled",
+              },
+              com_adobe_identity: {
+                idSyncContainerId: undefined,
+              },
+              datastreamId: "",
+              datastreamIdInputMethod: "freeform",
+              sandbox: "",
+            },
+          }),
+          {},
+        ),
+      });
+    });
   });
 
   describe("getInstanceSettings", () => {
@@ -548,6 +627,7 @@ describe("overridesBridge", () => {
             sandbox: "prod",
             datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
             datastreamIdInputMethod: "freeform",
+            enabled: "Enabled",
             com_adobe_experience_platform: {
               enabled: "Disabled",
               datasets: {
@@ -763,6 +843,7 @@ describe("overridesBridge", () => {
       const instanceValues = {
         edgeConfigOverrides: {
           development: {
+            enabled: "%Data Element 0%",
             com_adobe_target: {
               enabled: "%Data Element 0%",
               propertyToken: "%Data Element 1%",
@@ -810,6 +891,7 @@ describe("overridesBridge", () => {
       expect(instanceSettings).toEqual({
         edgeConfigOverrides: {
           development: {
+            enabled: "%Data Element 0%",
             com_adobe_target: {
               enabled: "%Data Element 0%",
               propertyToken: "%Data Element 1%",
@@ -862,6 +944,62 @@ describe("overridesBridge", () => {
       ).toEqual({});
       expect(bridge.getInstanceSettings({ instanceValues: {} })).toEqual({});
     });
+
+    it("should remove edgeConfigOverrides for an env if they are disabled", () => {
+      const instanceValues = {
+        edgeConfigOverrides: {
+          development: {
+            sandbox: "prod",
+            datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            datastreamIdInputMethod: "freeform",
+            enabled: "Disabled",
+            com_adobe_experience_platform: {
+              enabled: "Disabled",
+              datasets: {
+                event: {
+                  datasetId: "6335dd690894431c07237f2d",
+                },
+              },
+              com_adobe_edge_ode: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_segmentation: {
+                enabled: "Disabled",
+              },
+              com_adobe_edge_destinations: {
+                enabled: "Disabled",
+              },
+              com_adobe_edge_ajo: {
+                enabled: "Disabled",
+              },
+            },
+            com_adobe_analytics: {
+              enabled: "Disabled",
+              reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonlylatest"],
+            },
+            com_adobe_identity: {
+              idSyncContainerId: 105012,
+            },
+            com_adobe_target: {
+              enabled: "Disabled",
+              propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
+            },
+            com_adobe_audience_manager: {
+              enabled: "Disabled",
+            },
+            com_adobe_launch_ssf: {
+              enabled: "Disabled",
+            },
+          },
+        },
+      };
+      const instanceSettings = bridge.getInstanceSettings({
+        instanceValues,
+      });
+      expect(instanceSettings).toEqual({
+        edgeConfigOverrides: { development: { enabled: false } },
+      });
+    });
   });
 
   describe("formikStateValidationSchema", () => {
@@ -881,6 +1019,7 @@ describe("overridesBridge", () => {
           edgeConfigOverrides: {
             development: {
               sandbox: "prod",
+              enabled: "Enabled",
               datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
               datastreamIdInputMethod: "freeform",
               com_adobe_experience_platform: {
@@ -928,6 +1067,7 @@ describe("overridesBridge", () => {
         bridge.formikStateValidationSchema.validateSync({
           edgeConfigOverrides: {
             development: {
+              enabled: "Enabled",
               com_adobe_experience_platform: {
                 enabled: "Disabled",
                 datasets: {
@@ -964,6 +1104,7 @@ describe("overridesBridge", () => {
               },
             },
             staging: {
+              enabled: "Enabled",
               com_adobe_experience_platform: {
                 enabled: "Disabled",
                 datasets: {
@@ -1000,6 +1141,7 @@ describe("overridesBridge", () => {
               },
             },
             production: {
+              enabled: "Enabled",
               com_adobe_experience_platform: {
                 enabled: "Disabled",
                 datasets: {
