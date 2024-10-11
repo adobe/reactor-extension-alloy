@@ -21,6 +21,7 @@ import FormikRadioGroupWithDataElement, {
 import FormElementContainer from "../components/formElementContainer";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
+import { useField } from "formik";
 
 const CONSENT_LEVEL = {
   IN: "in",
@@ -44,15 +45,17 @@ export const bridge = {
 
     return instanceValues;
   },
-  getInstanceSettings: ({ instanceValues }) => {
+  getInstanceSettings: ({ instanceValues, components }) => {
     const instanceSettings = {};
 
-    copyPropertiesIfValueDifferentThanDefault({
-      toObj: instanceSettings,
-      fromObj: instanceValues,
-      defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["defaultConsent"],
-    });
+    if (instanceValues.privacy) {
+      copyPropertiesIfValueDifferentThanDefault({
+        toObj: instanceSettings,
+        fromObj: instanceValues,
+        defaultsObj: bridge.getInstanceDefaults(),
+        keys: ["defaultConsent"],
+      });
+    }
 
     return instanceSettings;
   },
@@ -63,6 +66,10 @@ export const bridge = {
 };
 
 const PrivacySection = ({ instanceFieldName }) => {
+  const [{ value: privacyComponentEnabled }] = useField("components.privacy");
+  if (!privacyComponentEnabled) {
+    return null;
+  }
   return (
     <>
       <SectionHeader learnMoreUrl="https://adobe.ly/2WSngEh">

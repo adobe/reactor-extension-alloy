@@ -54,41 +54,46 @@ export const bridge = {
     return { streamingMedia };
   },
 
-  getInstanceSettings: ({ instanceValues }) => {
+  getInstanceSettings: ({ instanceValues, components }) => {
     const instanceSettings = {};
-    const { streamingMedia } = instanceValues;
 
-    ["appVersion", "adPingInterval", "mainPingInterval"].forEach((key) => {
-      if (!streamingMedia[key]) {
-        delete streamingMedia[key];
+    if (components.streamingMedia) {
+      const { streamingMedia } = instanceValues;
+
+      ["appVersion", "adPingInterval", "mainPingInterval"].forEach((key) => {
+        if (!streamingMedia[key]) {
+          delete streamingMedia[key];
+        }
+      });
+
+      if (streamingMedia.channel && streamingMedia.playerName) {
+        instanceSettings.streamingMedia = streamingMedia;
       }
-    });
-
-    if (streamingMedia.channel && streamingMedia.playerName) {
-      instanceSettings.streamingMedia = streamingMedia;
     }
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
-    streamingMedia: object().shape(
-      {
-        channel: string().when("playerName", {
-          is: (playerName) => playerName,
-          then: (schema) =>
-            schema.required(
-              "Please provide a channel name for streaming media.",
-            ),
-        }),
-        playerName: string().when("channel", {
-          is: (channel) => channel,
-          then: (schema) =>
-            schema.required(
-              "Please provide a player name for streaming media.",
-            ),
-        }),
-        adPingInterval: lazy((value) =>
-          /^\d+$/.exec(value)
-            ? number().when(["channel", "playerName"], {
+    streamingMedia: object().when("$components.streamingMedia", {
+      is: true,
+      then: (schema) => schema.shape(
+        {
+          channel: string().when("playerName", {
+            is: (playerName) => playerName,
+            then: (schema) =>
+              schema.required(
+                "Please provide a channel name for streaming media.",
+              ),
+          }),
+          playerName: string().when("channel", {
+            is: (channel) => channel,
+            then: (schema) =>
+              schema.required(
+                "Please provide a player name for streaming media.",
+              ),
+          }),
+          adPingInterval: lazy((value) =>
+            /^\d+$/.exec(value)
+              ? number().when(["channel", "playerName"], {
                 is: (channel, playerName) => channel && playerName,
                 then: (schema) =>
                   schema
@@ -102,11 +107,11 @@ export const bridge = {
                     )
                     .default(10),
               })
-            : string(),
-        ),
-        mainPingInterval: lazy((value) =>
-          /^\d+$/.exec(value)
-            ? number().when(["channel", "playerName"], {
+              : string(),
+          ),
+          mainPingInterval: lazy((value) =>
+            /^\d+$/.exec(value)
+              ? number().when(["channel", "playerName"], {
                 is: (channel, playerName) => channel && playerName,
                 then: (schema) =>
                   schema
@@ -120,11 +125,12 @@ export const bridge = {
                     )
                     .default(10),
               })
-            : string(),
-        ),
-      },
-      ["channel", "playerName"],
-    ),
+              : string(),
+          ),
+        },
+        ["channel", "playerName"],
+      )
+    })
   }),
 };
 
@@ -135,6 +141,10 @@ const StreamingMediaSection = ({ instanceFieldName }) => {
   const [{ value: playerName }] = useField(
     `${instanceFieldName}.streamingMedia.playerName`,
   );
+  const [{ value: streaminMediaComponentEnabled }] = useField("components.streamingMedia");
+  if (!streaminMediaComponentEnabled) {
+    return null;
+  }
 
   const mediaRequiredFieldsProvided = () => {
     if (isNonEmptyString(mediaChannel) || isNonEmptyString(playerName)) {
