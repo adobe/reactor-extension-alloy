@@ -14,16 +14,20 @@ import React, { useState, useRef } from "react";
 import { object, array } from "yup";
 import { FieldArray, useField } from "formik";
 import {
+  ActionButton,
   Button,
   ButtonGroup,
   Content,
+  Checkbox,
   DialogTrigger,
   Dialog,
   Flex,
+  Form,
   Heading as HeadingSlot,
   Item,
   Divider,
   Text,
+  TextField,
   TabList,
   TabPanels,
   Tabs,
@@ -65,6 +69,7 @@ import StreamingMediaSection, {
 import ComponentsSection, {
   bridge as componentsBridge,
 } from "./componentsSection";
+import FullscreenModal from "../components/fullscreenModal";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -135,6 +140,7 @@ const getSettings = async ({ values, initInfo }) => {
         return getInstanceSettings({
           initInfo,
           instanceValues,
+          components: values.components,
         });
       }),
     ),
@@ -307,6 +313,7 @@ const Configuration = ({ initInfo, context }) => {
           );
         }}
       />
+      <Divider margin={0} size="M" />
       <ComponentsSection />
     </Flex>
   );

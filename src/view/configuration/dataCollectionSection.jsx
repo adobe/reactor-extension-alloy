@@ -150,29 +150,31 @@ export const bridge = {
 
     return instanceValues;
   },
-  getInstanceSettings: ({ instanceValues }) => {
+  getInstanceSettings: ({ instanceValues, components }) => {
     const instanceSettings = {};
     const propertyKeysToCopy = [
       "onBeforeEventSend",
-      "onBeforeLinkClickSend",
-      "clickCollectionEnabled",
+      "onBeforeLinkClickSend"
     ];
-    if (clickCollectionIsEnabled(instanceValues)) {
-      instanceValues.clickCollectionEnabled = true;
-      propertyKeysToCopy.push("downloadLinkQualifier");
-      propertyKeysToCopy.push("clickCollection");
-      instanceValues.clickCollection.eventGroupingEnabled = false;
-      instanceValues.clickCollection.sessionStorageEnabled = false;
-      if (instanceValues.clickCollection.internalLinkEnabled) {
-        if (instanceValues.eventGrouping === EVENT_GROUPING.SESSION_STORAGE) {
-          instanceValues.clickCollection.eventGroupingEnabled = true;
-          instanceValues.clickCollection.sessionStorageEnabled = true;
-        } else if (instanceValues.eventGrouping === EVENT_GROUPING.MEMORY) {
-          instanceValues.clickCollection.eventGroupingEnabled = true;
+    if (components.activityCollector) {
+      propertyKeysToCopy.push("clickCollectionEnabled");
+      if (clickCollectionIsEnabled(instanceValues)) {
+        instanceValues.clickCollectionEnabled = true;
+        propertyKeysToCopy.push("downloadLinkQualifier");
+        propertyKeysToCopy.push("clickCollection");
+        instanceValues.clickCollection.eventGroupingEnabled = false;
+        instanceValues.clickCollection.sessionStorageEnabled = false;
+        if (instanceValues.clickCollection.internalLinkEnabled) {
+          if (instanceValues.eventGrouping === EVENT_GROUPING.SESSION_STORAGE) {
+            instanceValues.clickCollection.eventGroupingEnabled = true;
+            instanceValues.clickCollection.sessionStorageEnabled = true;
+          } else if (instanceValues.eventGrouping === EVENT_GROUPING.MEMORY) {
+            instanceValues.clickCollection.eventGroupingEnabled = true;
+          }
         }
+      } else {
+        instanceValues.clickCollectionEnabled = false;
       }
-    } else {
-      instanceValues.clickCollectionEnabled = false;
     }
     copyPropertiesIfValueDifferentThanDefault({
       toObj: instanceSettings,
@@ -180,7 +182,7 @@ export const bridge = {
       defaultsObj: bridge.getInstanceDefaults(),
       keys: propertyKeysToCopy,
     });
-    if (instanceValues.contextGranularity === CONTEXT_GRANULARITY.SPECIFIC) {
+    if (components.context && instanceValues.contextGranularity === CONTEXT_GRANULARITY.SPECIFIC) {
       instanceSettings.context = instanceValues.context;
     }
     return instanceSettings;
@@ -208,6 +210,8 @@ const DataCollectionSection = ({ instanceFieldName }) => {
   const { setFieldValue } = useFormikContext();
   const [{ value: instanceValues }] = useField(instanceFieldName);
   const instanceDefaults = bridge.getInstanceDefaults();
+  const [{ value: activityCollectorEnabled }] = useField("components.activityCollector");
+  const [{ value: contextEnabled }] = useField("components.context");
 
   return (
     <>
@@ -226,7 +230,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
             '// Modify content.xdm or content.data as necessary. There is no need to wrap the\n// code in a function or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";'
           }
         />
-        <div>
+        {activityCollectorEnabled && (<div>
           <FormikCheckbox
             data-test-id="internalLinkEnabledField"
             name={`${instanceFieldName}.clickCollection.internalLinkEnabled`}
@@ -364,8 +368,8 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                 available.
               </Alert>
             )}
-        </div>
-        <div>
+        </div>)}
+        {contextEnabled && (<div>
           <FormikRadioGroup
             label="When sending event data, automatically include:"
             name={`${instanceFieldName}.contextGranularity`}
@@ -386,34 +390,34 @@ const DataCollectionSection = ({ instanceFieldName }) => {
 
           {instanceValues.contextGranularity ===
             CONTEXT_GRANULARITY.SPECIFIC && (
-            <FieldSubset>
-              <FormikCheckboxGroup
-                aria-label="Context data categories"
-                name={`${instanceFieldName}.context`}
-              >
-                {contextOptions.map((contextOption) => {
-                  return (
-                    <FieldDescriptionAndError
-                      description={contextOption.description}
-                      messagePaddingTop="size-0"
-                      messagePaddingStart="size-300"
-                      key={contextOption.value}
-                    >
-                      <Checkbox
+              <FieldSubset>
+                <FormikCheckboxGroup
+                  aria-label="Context data categories"
+                  name={`${instanceFieldName}.context`}
+                >
+                  {contextOptions.map((contextOption) => {
+                    return (
+                      <FieldDescriptionAndError
+                        description={contextOption.description}
+                        messagePaddingTop="size-0"
+                        messagePaddingStart="size-300"
                         key={contextOption.value}
-                        data-test-id={contextOption.testId}
-                        value={contextOption.value}
-                        width="size-5000"
                       >
-                        {contextOption.label}
-                      </Checkbox>
-                    </FieldDescriptionAndError>
-                  );
-                })}
-              </FormikCheckboxGroup>
-            </FieldSubset>
-          )}
-        </div>
+                        <Checkbox
+                          key={contextOption.value}
+                          data-test-id={contextOption.testId}
+                          value={contextOption.value}
+                          width="size-5000"
+                        >
+                          {contextOption.label}
+                        </Checkbox>
+                      </FieldDescriptionAndError>
+                    );
+                  })}
+                </FormikCheckboxGroup>
+              </FieldSubset>
+            )}
+        </div>)}
       </FormElementContainer>
     </>
   );
