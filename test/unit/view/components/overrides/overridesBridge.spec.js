@@ -13,10 +13,11 @@ governing permissions and limitations under the License.
 import { bridge } from "../../../../../src/view/components/overrides/overridesBridge.js";
 
 describe("overridesBridge", () => {
+  const envs = Object.freeze(["production", "staging", "development"]);
   describe("getInstanceDefaults", () => {
     it("should return default values", () => {
       const edgeConfigOverrides = {};
-      ["production", "staging", "development"].forEach((env) => {
+      envs.forEach((env) => {
         edgeConfigOverrides[env] = {
           sandbox: "",
           datastreamId: "",
@@ -111,7 +112,7 @@ describe("overridesBridge", () => {
         instanceSettings,
       });
       const expectedEdgeConfigOverrides = {};
-      ["production", "staging", "development"].forEach((env) => {
+      envs.forEach((env) => {
         expectedEdgeConfigOverrides[env] = {
           sandbox: "",
           datastreamId: "",
@@ -210,7 +211,7 @@ describe("overridesBridge", () => {
         instanceSettings,
       });
       const edgeConfigOverrides = {};
-      ["production", "staging", "development"].forEach((env) => {
+      envs.forEach((env) => {
         edgeConfigOverrides[env] = {
           sandbox: "",
           datastreamId: "",
@@ -261,7 +262,6 @@ describe("overridesBridge", () => {
     });
 
     it("should convert from booleans to 'Enabled' and 'Disabled' ", () => {
-      const envs = ["production", "staging", "development"];
       const enabledEdgeConfigOverrides = envs.reduce(
         (acc, env) => ({
           ...acc,
@@ -452,7 +452,6 @@ describe("overridesBridge", () => {
     });
 
     it("should not convert data elements to Enabled/Disabled", () => {
-      const envs = ["production", "staging", "development"];
       const dataElementEdgeConfigOverrides = envs.reduce(
         (acc, env) => ({
           ...acc,
@@ -549,7 +548,6 @@ describe("overridesBridge", () => {
     });
 
     it("should fill in with defaults if edgeConfigOverrides is disabled", () => {
-      const envs = ["production", "staging", "development"];
       const enabledEdgeConfigOverrides = envs.reduce(
         (acc, env) => ({
           ...acc,
