@@ -146,6 +146,35 @@ describe("createGetConfigOverrides", () => {
           `The ID sync container ID "not a number" is not a valid integer.`,
         );
       });
+
+      it("should return undefined when overrides are disabled for the given environment", () => {
+        const result = createConfigOverrides(
+          {
+            edgeConfigOverrides: {
+              [stage]: {
+                enabled: false,
+              },
+            },
+          },
+          stage,
+        );
+        expect(result).toBeUndefined();
+        // even if other stuff slips in
+        const result2 = createConfigOverrides(
+          {
+            edgeConfigOverrides: {
+              [stage]: {
+                enabled: false,
+                com_adobe_analytics: {
+                  reportSuites: ["unifiedjsqeonly2"],
+                },
+              },
+            },
+          },
+          stage,
+        );
+        expect(result2).toBeUndefined();
+      });
     });
   });
 
