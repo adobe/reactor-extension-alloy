@@ -55,7 +55,7 @@ export const FIELD_NAMES = Object.freeze({
 
 export const ENABLED_FIELD_VALUES = Object.freeze({
   enabled: "Enabled",
-  disabled: "Disabled",
+  disabled: "Match datastream configuration",
 });
 
 /**

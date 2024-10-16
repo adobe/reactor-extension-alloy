@@ -47,6 +47,11 @@ import {
 } from "./utils";
 
 const defaults = Object.freeze(bridge.getInstanceDefaults());
+const EnabledDisabledOptions = Object.freeze(
+  Object.entries(ENABLED_FIELD_VALUES).map(([key, label]) => (
+    <Item key={key}>{label}</Item>
+  )),
+);
 
 /**
  *
@@ -328,9 +333,7 @@ const Overrides = ({
                         description={`Enable or disable dynamic configuration for the ${env} environment.`}
                         onBlur={onDisable}
                       >
-                        {Object.values(ENABLED_FIELD_VALUES).map((value) => (
-                          <Item key={value}>{value}</Item>
-                        ))}
+                        {...EnabledDisabledOptions}
                       </OverrideInput>
                     )}
                     {!isDisabled("enabled") && (
@@ -380,11 +383,7 @@ const Overrides = ({
                                 description="Enable or disable the Adobe Analytics destination."
                                 onBlur={onDisable}
                               >
-                                {Object.values(ENABLED_FIELD_VALUES).map(
-                                  (value) => (
-                                    <Item key={value}>{value}</Item>
-                                  ),
-                                )}
+                                {...EnabledDisabledOptions}
                               </OverrideInput>
                             )}
                             {visibleFields.has(
@@ -431,11 +430,7 @@ const Overrides = ({
                                 onBlur={onDisable}
                                 description="Enable or disable the Adobe Audience Manager destination."
                               >
-                                {Object.values(ENABLED_FIELD_VALUES).map(
-                                  (value) => (
-                                    <Item key={value}>{value}</Item>
-                                  ),
-                                )}
+                                {...EnabledDisabledOptions}
                               </OverrideInput>
                             )}
                             {visibleFields.has(
@@ -504,11 +499,7 @@ const Overrides = ({
                                 onBlur={onDisable}
                                 description="Enable or disable the Adobe Experience Platform destination."
                               >
-                                {Object.values(ENABLED_FIELD_VALUES).map(
-                                  (value) => (
-                                    <Item key={value}>{value}</Item>
-                                  ),
-                                )}
+                                {...EnabledDisabledOptions}
                               </OverrideInput>
                             )}
                             {visibleFields.has(
@@ -563,11 +554,7 @@ const Overrides = ({
                                       .com_adobe_experience_platform_ode.value
                                   }
                                 >
-                                  {Object.values(ENABLED_FIELD_VALUES).map(
-                                    (value) => (
-                                      <Item key={value}>{value}</Item>
-                                    ),
-                                  )}
+                                  {...EnabledDisabledOptions}
                                 </OverrideInput>
                               )}
                             {visibleFields.has(
@@ -596,11 +583,7 @@ const Overrides = ({
                                       .value
                                   }
                                 >
-                                  {Object.values(ENABLED_FIELD_VALUES).map(
-                                    (value) => (
-                                      <Item key={value}>{value}</Item>
-                                    ),
-                                  )}
+                                  {...EnabledDisabledOptions}
                                 </OverrideInput>
                               )}
                             {visibleFields.has(
@@ -629,11 +612,7 @@ const Overrides = ({
                                       .value
                                   }
                                 >
-                                  {Object.values(ENABLED_FIELD_VALUES).map(
-                                    (value) => (
-                                      <Item key={value}>{value}</Item>
-                                    ),
-                                  )}
+                                  {...EnabledDisabledOptions}
                                 </OverrideInput>
                               )}
                             {visibleFields.has(FIELD_NAMES.ajoEnabled) &&
@@ -657,11 +636,7 @@ const Overrides = ({
                                       .com_adobe_experience_platform_ajo.value
                                   }
                                 >
-                                  {Object.values(ENABLED_FIELD_VALUES).map(
-                                    (value) => (
-                                      <Item key={value}>{value}</Item>
-                                    ),
-                                  )}
+                                  {...EnabledDisabledOptions}
                                 </OverrideInput>
                               )}
                           </ProductSubsection>
@@ -682,11 +657,7 @@ const Overrides = ({
                               }
                               description="Enable or disable Adobe Server-Side Event Forwarding."
                             >
-                              {Object.values(ENABLED_FIELD_VALUES).map(
-                                (value) => (
-                                  <Item key={value}>{value}</Item>
-                                ),
-                              )}
+                              {...EnabledDisabledOptions}
                             </OverrideInput>
                           </ProductSubsection>
                         )}
@@ -710,11 +681,7 @@ const Overrides = ({
                                 }
                                 description="Enable or disable the Adobe Target destination."
                               >
-                                {Object.values(ENABLED_FIELD_VALUES).map(
-                                  (value) => (
-                                    <Item key={value}>{value}</Item>
-                                  ),
-                                )}
+                                {...EnabledDisabledOptions}
                               </OverrideInput>
                             )}
                             {visibleFields.has(
