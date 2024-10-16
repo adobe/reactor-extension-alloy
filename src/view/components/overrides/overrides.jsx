@@ -10,8 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import {
+  Content,
   Flex,
   Heading,
+  InlineAlert,
   Item,
   TabList,
   TabPanels,
@@ -169,6 +171,14 @@ const Overrides = ({
       <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides">
         Dynamic Datastream Configuration
       </SectionHeader>
+      <InlineAlert width="size-5000">
+        <Heading>Server-side vs client-side</Heading>
+        <Content>
+          Enabling client-side dynamic datastream configurations for an
+          environment below will also override any server-side dynamic
+          datastream configurations and rules for that environment.
+        </Content>
+      </InlineAlert>
       <FormElementContainer>
         <Tabs aria-label="Dynamic Datastream Configuration environments">
           <TabList>
