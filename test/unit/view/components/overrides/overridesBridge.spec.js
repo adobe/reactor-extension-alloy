@@ -22,7 +22,7 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: "Enabled",
+          enabled: "Disabled",
           com_adobe_experience_platform: {
             enabled: "Enabled",
             datasets: {
@@ -89,16 +89,20 @@ describe("overridesBridge", () => {
         edgeConfigOverrides: {
           datastreamIdInputMethod: "freeform",
           development: {
+            enabled: true,
             com_adobe_target: {
               enabled: false,
-              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
             },
           },
           staging: {
+            enabled: true,
             com_adobe_experience_platform: {
               com_adobe_edge_ode: {
                 enabled: false,
               },
+            },
+            com_adobe_target: {
+              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
             },
           },
         },
@@ -111,9 +115,8 @@ describe("overridesBridge", () => {
       const instanceValues = bridge.getInitialInstanceValues({
         instanceSettings,
       });
-      const expectedEdgeConfigOverrides = {};
-      envs.forEach((env) => {
-        expectedEdgeConfigOverrides[env] = {
+      const expectedEdgeConfigOverrides = {
+        development: {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
@@ -126,7 +129,7 @@ describe("overridesBridge", () => {
               },
             },
             com_adobe_edge_ode: {
-              enabled: env === "staging" ? "Disabled" : "Enabled",
+              enabled: "Enabled",
             },
             com_adobe_edge_segmentation: {
               enabled: "Enabled",
@@ -146,11 +149,8 @@ describe("overridesBridge", () => {
             idSyncContainerId: undefined,
           },
           com_adobe_target: {
-            enabled: env === "development" ? "Disabled" : "Enabled",
-            propertyToken:
-              env === "development"
-                ? "01dbc634-07c1-d8f9-ca69-b489a5ac5e94"
-                : "",
+            enabled: "Disabled",
+            propertyToken: "",
           },
           com_adobe_audience_manager: {
             enabled: "Enabled",
@@ -158,8 +158,94 @@ describe("overridesBridge", () => {
           com_adobe_launch_ssf: {
             enabled: "Enabled",
           },
-        };
-      });
+        },
+        staging: {
+          sandbox: "",
+          datastreamId: "",
+          datastreamIdInputMethod: "freeform",
+          enabled: "Enabled",
+          com_adobe_experience_platform: {
+            enabled: "Enabled",
+            datasets: {
+              event: {
+                datasetId: "",
+              },
+            },
+            com_adobe_edge_ode: {
+              enabled: "Disabled",
+            },
+            com_adobe_edge_segmentation: {
+              enabled: "Enabled",
+            },
+            com_adobe_edge_destinations: {
+              enabled: "Enabled",
+            },
+            com_adobe_edge_ajo: {
+              enabled: "Enabled",
+            },
+          },
+          com_adobe_analytics: {
+            enabled: "Enabled",
+            reportSuites: [""],
+          },
+          com_adobe_identity: {
+            idSyncContainerId: undefined,
+          },
+          com_adobe_target: {
+            enabled: "Enabled",
+            propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+          },
+          com_adobe_audience_manager: {
+            enabled: "Enabled",
+          },
+          com_adobe_launch_ssf: {
+            enabled: "Enabled",
+          },
+        },
+        production: {
+          sandbox: "",
+          datastreamId: "",
+          datastreamIdInputMethod: "freeform",
+          enabled: "Disabled",
+          com_adobe_experience_platform: {
+            enabled: "Enabled",
+            datasets: {
+              event: {
+                datasetId: "",
+              },
+            },
+            com_adobe_edge_ode: {
+              enabled: "Enabled",
+            },
+            com_adobe_edge_segmentation: {
+              enabled: "Enabled",
+            },
+            com_adobe_edge_destinations: {
+              enabled: "Enabled",
+            },
+            com_adobe_edge_ajo: {
+              enabled: "Enabled",
+            },
+          },
+          com_adobe_analytics: {
+            enabled: "Enabled",
+            reportSuites: [""],
+          },
+          com_adobe_identity: {
+            idSyncContainerId: undefined,
+          },
+          com_adobe_target: {
+            enabled: "Enabled",
+            propertyToken: "",
+          },
+          com_adobe_audience_manager: {
+            enabled: "Enabled",
+          },
+          com_adobe_launch_ssf: {
+            enabled: "Enabled",
+          },
+        },
+      };
       expect(instanceValues).toEqual({
         edgeConfigOverrides: expectedEdgeConfigOverrides,
       });
@@ -258,6 +344,154 @@ describe("overridesBridge", () => {
       });
       expect(instanceValues).toEqual({
         edgeConfigOverrides,
+      });
+    });
+
+    it("should enable edgeConfigOverrides if there is no 'enabled' field but there are other overrides", () => {
+      const instanceSettings = {
+        edgeConfigOverrides: {
+          development: {
+            com_adobe_identity: {
+              idSyncContainerId: 123123,
+            },
+          },
+        },
+      };
+      const result = bridge.getInitialInstanceValues({
+        instanceSettings,
+      });
+      expect(result).toEqual({
+        edgeConfigOverrides: {
+          development: {
+            sandbox: "",
+            datastreamId: "",
+            datastreamIdInputMethod: "freeform",
+            enabled: "Enabled",
+            com_adobe_experience_platform: {
+              enabled: "Enabled",
+              datasets: {
+                event: {
+                  datasetId: "",
+                },
+              },
+              com_adobe_edge_ode: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_segmentation: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_destinations: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_ajo: {
+                enabled: "Enabled",
+              },
+            },
+            com_adobe_analytics: {
+              enabled: "Enabled",
+              reportSuites: [""],
+            },
+            com_adobe_identity: {
+              idSyncContainerId: "123123",
+            },
+            com_adobe_target: {
+              enabled: "Enabled",
+              propertyToken: "",
+            },
+            com_adobe_audience_manager: {
+              enabled: "Enabled",
+            },
+            com_adobe_launch_ssf: {
+              enabled: "Enabled",
+            },
+          },
+          staging: {
+            sandbox: "",
+            datastreamId: "",
+            datastreamIdInputMethod: "freeform",
+            enabled: "Disabled",
+            com_adobe_experience_platform: {
+              enabled: "Enabled",
+              datasets: {
+                event: {
+                  datasetId: "",
+                },
+              },
+              com_adobe_edge_ode: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_segmentation: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_destinations: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_ajo: {
+                enabled: "Enabled",
+              },
+            },
+            com_adobe_analytics: {
+              enabled: "Enabled",
+              reportSuites: [""],
+            },
+            com_adobe_identity: {
+              idSyncContainerId: undefined,
+            },
+            com_adobe_target: {
+              enabled: "Enabled",
+              propertyToken: "",
+            },
+            com_adobe_audience_manager: {
+              enabled: "Enabled",
+            },
+            com_adobe_launch_ssf: {
+              enabled: "Enabled",
+            },
+          },
+          production: {
+            sandbox: "",
+            datastreamId: "",
+            datastreamIdInputMethod: "freeform",
+            enabled: "Disabled",
+            com_adobe_experience_platform: {
+              enabled: "Enabled",
+              datasets: {
+                event: {
+                  datasetId: "",
+                },
+              },
+              com_adobe_edge_ode: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_segmentation: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_destinations: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_ajo: {
+                enabled: "Enabled",
+              },
+            },
+            com_adobe_analytics: {
+              enabled: "Enabled",
+              reportSuites: [""],
+            },
+            com_adobe_identity: {
+              idSyncContainerId: undefined,
+            },
+            com_adobe_target: {
+              enabled: "Enabled",
+              propertyToken: "",
+            },
+            com_adobe_audience_manager: {
+              enabled: "Enabled",
+            },
+            com_adobe_launch_ssf: {
+              enabled: "Enabled",
+            },
+          },
+        },
       });
     });
 
@@ -630,7 +864,7 @@ describe("overridesBridge", () => {
               enabled: "Disabled",
               datasets: {
                 event: {
-                  datasetId: "6335dd690894431c07237f2d",
+                  datasetId: "",
                 },
               },
               com_adobe_edge_ode: {
@@ -647,14 +881,14 @@ describe("overridesBridge", () => {
               },
             },
             com_adobe_analytics: {
-              enabled: "Disabled",
+              enabled: "Enabled",
               reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonlylatest"],
             },
             com_adobe_identity: {
               idSyncContainerId: 105012,
             },
             com_adobe_target: {
-              enabled: "Disabled",
+              enabled: "Enabled",
               propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
             },
             com_adobe_audience_manager: {
@@ -672,17 +906,15 @@ describe("overridesBridge", () => {
       });
 
       expect(instanceSettings).toEqual({
+        // don't expect enabled: true, as that is the default value (except for
+        // the top-level enabled field, which defaults to enabled: false)
         edgeConfigOverrides: {
           development: {
             sandbox: "prod",
             datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            enabled: true,
             com_adobe_experience_platform: {
               enabled: false,
-              datasets: {
-                event: {
-                  datasetId: "6335dd690894431c07237f2d",
-                },
-              },
               com_adobe_edge_segmentation: {
                 enabled: false,
               },
@@ -694,14 +926,12 @@ describe("overridesBridge", () => {
               },
             },
             com_adobe_analytics: {
-              enabled: false,
               reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonlylatest"],
             },
             com_adobe_identity: {
               idSyncContainerId: 105012,
             },
             com_adobe_target: {
-              enabled: false,
               propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
             },
             com_adobe_audience_manager: {
@@ -719,17 +949,12 @@ describe("overridesBridge", () => {
       const instanceValues = {
         edgeConfigOverrides: {
           development: {
+            enabled: "   Enabled   ",
             com_adobe_target: {
               enabled: "   Disabled   ",
-              propertyToken: "         01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
             },
             com_adobe_experience_platform: {
               enabled: "   Disabled   ",
-              datasets: {
-                event: {
-                  datasetId: "ase3aoiuoioasdklfjlk        ",
-                },
-              },
               com_adobe_edge_ode: {
                 enabled: "   Disabled   ",
               },
@@ -745,10 +970,6 @@ describe("overridesBridge", () => {
             },
             com_adobe_analytics: {
               enabled: "   Disabled   ",
-              reportSuites: [
-                "   unifiedjsqeonly2   ",
-                "     unifiedjsqeonly3      ",
-              ],
             },
             com_adobe_identity: {
               idSyncContainerId: 30793,
@@ -767,17 +988,12 @@ describe("overridesBridge", () => {
       expect(instanceSettings).toEqual({
         edgeConfigOverrides: {
           development: {
+            enabled: true,
             com_adobe_target: {
               enabled: false,
-              propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
             },
             com_adobe_experience_platform: {
               enabled: false,
-              datasets: {
-                event: {
-                  datasetId: "ase3aoiuoioasdklfjlk",
-                },
-              },
               com_adobe_edge_ode: {
                 enabled: false,
               },
@@ -793,7 +1009,6 @@ describe("overridesBridge", () => {
             },
             com_adobe_analytics: {
               enabled: false,
-              reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
             },
             com_adobe_identity: {
               idSyncContainerId: 30793,
@@ -810,6 +1025,7 @@ describe("overridesBridge", () => {
       const instanceValues = {
         edgeConfigOverrides: {
           development: {
+            enabled: "Enabled",
             com_adobe_analytics: {
               reportSuites: [
                 "",
@@ -829,6 +1045,7 @@ describe("overridesBridge", () => {
       expect(instanceSettings).toEqual({
         edgeConfigOverrides: {
           development: {
+            enabled: true,
             com_adobe_analytics: {
               reportSuites: ["unifiedjsqeonly2", "unifiedjsqeonly3"],
             },
@@ -989,13 +1206,61 @@ describe("overridesBridge", () => {
               enabled: "Disabled",
             },
           },
+          staging: {
+            sandbox: "prod",
+            datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            datastreamIdInputMethod: "freeform",
+            enabled: "Enabled",
+            com_adobe_experience_platform: {
+              enabled: "Disabled",
+            },
+            com_adobe_analytics: {
+              enabled: "Disabled",
+            },
+            com_adobe_identity: {
+              idSyncContainerId: 105012,
+            },
+            com_adobe_target: {
+              enabled: "Disabled",
+            },
+            com_adobe_audience_manager: {
+              enabled: "Disabled",
+            },
+            com_adobe_launch_ssf: {
+              enabled: "Disabled",
+            },
+          },
         },
       };
       const instanceSettings = bridge.getInstanceSettings({
         instanceValues,
       });
       expect(instanceSettings).toEqual({
-        edgeConfigOverrides: { development: { enabled: false } },
+        edgeConfigOverrides: {
+          staging: {
+            sandbox: "prod",
+            datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+            enabled: true,
+            com_adobe_experience_platform: {
+              enabled: false,
+            },
+            com_adobe_analytics: {
+              enabled: false,
+            },
+            com_adobe_identity: {
+              idSyncContainerId: 105012,
+            },
+            com_adobe_target: {
+              enabled: false,
+            },
+            com_adobe_audience_manager: {
+              enabled: false,
+            },
+            com_adobe_launch_ssf: {
+              enabled: false,
+            },
+          },
+        },
       });
     });
   });

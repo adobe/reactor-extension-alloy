@@ -24,6 +24,7 @@ import {
   isDataElement,
   isDataElementRegex,
 } from "./utils";
+import deepDelete from "../../utils/deepDelete";
 
 /**
  * @typedef {Object} EnvironmentConfigOverrideFormikState
@@ -95,7 +96,7 @@ export const bridge = {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: ENABLED_FIELD_VALUES.enabled,
+          enabled: ENABLED_FIELD_VALUES.disabled,
           com_adobe_experience_platform: {
             enabled: ENABLED_FIELD_VALUES.enabled,
             datasets: {
@@ -187,6 +188,25 @@ export const bridge = {
         );
       });
 
+    // if any of the environments have values, set the environment to enabled
+    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}`)
+      .filter((key) =>
+        overridesKeys
+          .map((override) => `${key}.${override}`)
+          .some((override) => deepGet(cleanedInstanceSettings, override)),
+      )
+      .filter(
+        (key) =>
+          !isDataElement(deepGet(cleanedInstanceSettings, `${key}.enabled`)),
+      )
+      .forEach((key) => {
+        deepSet(
+          cleanedInstanceSettings,
+          `${key}.enabled`,
+          ENABLED_FIELD_VALUES.enabled,
+        );
+      });
+
     copyPropertiesWithDefaultFallback({
       toObj: instanceValues,
       fromObj: cleanedInstanceSettings,
@@ -253,7 +273,9 @@ export const bridge = {
         );
       });
     // convert "Enabled"/"Disabled" to true/false
-    propertiesWithValues
+    OVERRIDE_ENVIRONMENTS.flatMap((env) =>
+      overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}`),
+    )
       .map((key) => `${key}.enabled`)
       .concat(
         OVERRIDE_ENVIRONMENTS.map(
@@ -264,17 +286,31 @@ export const bridge = {
       .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
       .forEach((key) => {
         const value = deepGet(instanceValues, key);
-        deepSet(instanceSettings, key, value === ENABLED_FIELD_VALUES.enabled);
+        deepSet(
+          instanceSettings,
+          key,
+          value.trim() === ENABLED_FIELD_VALUES.enabled,
+        );
       });
 
-    // Remove disabled envs
-    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}.enabled`)
-      .filter((key) => deepGet(instanceSettings, key) === false)
+    // remove disabled services and environments
+    OVERRIDE_ENVIRONMENTS.filter(
+      (key) =>
+        // false, but not undefined (which means enabled)
+        deepGet(instanceSettings, `${key}.enabled`) === false,
+    ).forEach((key) => {
+      deepDelete(instanceSettings, key);
+    });
+
+    // Remove disabled env
+    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}`)
+      .filter(
+        (key) =>
+          // undefined means default value aka disabled
+          deepGet(instanceSettings, `${key}.enabled`) === undefined,
+      )
       .forEach((key) => {
-        const env = key.split(".")[1];
-        instanceSettings.edgeConfigOverrides[env] = {
-          enabled: false,
-        };
+        deepDelete(instanceSettings, key);
       });
 
     // Remove empty objects
