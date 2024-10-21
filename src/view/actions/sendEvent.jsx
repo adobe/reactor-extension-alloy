@@ -361,7 +361,15 @@ const sendEventForm = form(
           decisionContext,
         ]),
         configOverrideFields,
-        datasetIdField,
+        // only display the deprecated datasetId field if there is an existing
+        // datasetId value from the past
+        conditional(
+          {
+            args: "datasetId",
+            condition: (datasetId) => datasetId !== "" && Boolean(datasetId),
+          },
+          [datasetIdField],
+        ),
       ],
     ),
     conditional(

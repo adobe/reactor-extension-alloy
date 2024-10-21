@@ -21,6 +21,7 @@ const RawDataElementSelector = ({
   value,
   onChange,
   adjustForLabel,
+  isDisabled,
   tokenize = true,
 }) => {
   // We have to vertically nudge down the data element selector
@@ -44,6 +45,7 @@ const RawDataElementSelector = ({
       {children}
       <ActionButton
         isQuiet
+        isDisabled={isDisabled}
         onPress={openDataElementSelector}
         aria-label="Select data element"
         marginTop={adjustForLabel ? "size-300" : 0}
@@ -67,6 +69,7 @@ RawDataElementSelector.propTypes = {
   onChange: PropTypes.func.isRequired,
   adjustForLabel: PropTypes.bool,
   tokenize: PropTypes.bool,
+  isDisabled: PropTypes.bool,
 };
 
 export default RawDataElementSelector;

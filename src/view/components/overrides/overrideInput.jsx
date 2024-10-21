@@ -36,22 +36,31 @@ import FormikTextField from "../formikReactSpectrum3/formikTextField";
 const OverrideInput = ({
   useManualEntry,
   children,
+  isDisabled,
   allowsCustomValue = false,
   ...otherProps
 }) => {
   if (useManualEntry) {
     return (
-      <DataElementSelector>
-        <FormikTextField {...otherProps} />
+      <DataElementSelector isDisabled={isDisabled}>
+        <FormikTextField isDisabled={isDisabled} {...otherProps} />
       </DataElementSelector>
     );
   }
   if (!allowsCustomValue) {
-    return <FormikPicker {...otherProps}>{children}</FormikPicker>;
+    return (
+      <FormikPicker isDisabled={isDisabled} {...otherProps}>
+        {children}
+      </FormikPicker>
+    );
   }
   return (
-    <DataElementSelector>
-      <FormikComboBox allowsCustomValue={allowsCustomValue} {...otherProps}>
+    <DataElementSelector isDisabled={isDisabled}>
+      <FormikComboBox
+        isDisabled={isDisabled}
+        allowsCustomValue={allowsCustomValue}
+        {...otherProps}
+      >
         {children}
       </FormikComboBox>
     </DataElementSelector>
@@ -59,9 +68,14 @@ const OverrideInput = ({
 };
 
 OverrideInput.propTypes = {
-  useManualEntry: PropTypes.bool.isRequired,
-  children: PropTypes.func.isRequired,
+  useManualEntry: PropTypes.bool,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+    PropTypes.func,
+  ]),
   allowsCustomValue: PropTypes.bool,
+  isDisabled: PropTypes.bool,
 };
 
 export default OverrideInput;
