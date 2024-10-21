@@ -24,6 +24,7 @@ import {
   isDataElement,
   isDataElementRegex,
 } from "./utils";
+import clone from "../../utils/clone";
 import deepDelete from "../../utils/deepDelete";
 
 /**
@@ -146,7 +147,7 @@ export const bridge = {
    */
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
-    const cleanedInstanceSettings = structuredClone(instanceSettings);
+    const cleanedInstanceSettings = clone(instanceSettings);
 
     // copy settings from the pre-per-environment schema
     const oldOverrides = overridesKeys
@@ -163,7 +164,7 @@ export const bridge = {
       const overrideSettings = { ...oldOverrides };
       cleanedInstanceSettings.edgeConfigOverrides = {};
       OVERRIDE_ENVIRONMENTS.forEach((env) => {
-        cleanedInstanceSettings.edgeConfigOverrides[env] = structuredClone(
+        cleanedInstanceSettings.edgeConfigOverrides[env] = clone(
           overrideSettings[env] ?? oldOverrides,
         );
       });
