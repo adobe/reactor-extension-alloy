@@ -15,5 +15,7 @@ governing permissions and limitations under the License.
  * @returns {T}
  */
 const clone = (value) =>
-  structuredClone ? structuredClone(value) : JSON.parse(JSON.stringify(value));
+  "structuredClone" in globalThis
+    ? structuredClone(value)
+    : JSON.parse(JSON.stringify(value));
 export default clone;
