@@ -19,6 +19,7 @@ import { createRequire } from "module";
 import EventEmitter from "node:events";
 import { fileURLToPath } from "url";
 import createTestCafe from "testcafe";
+import buildExtensionManifest from "./helpers/buildExtensionManifest.mjs";
 import build from "./helpers/build.mjs";
 import saveAndRestoreFile from "./helpers/saveAndRestoreFile.mjs";
 
@@ -71,6 +72,12 @@ const buildComponentFixtures = async () => {
 };
 
 (async () => {
+  const resultPath = await buildExtensionManifest();
+  // eslint-disable-next-line no-console
+  console.log(
+    "\x1b[32m%s\x1b[0m",
+    `✅ Extension manifest written to ${resultPath}`,
+  );
   await build({ watch });
   await buildComponentFixtures();
   // Running the runtime tests requires us to re-write this file.
