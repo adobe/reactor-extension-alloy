@@ -4,6 +4,7 @@ sauce:
   region: us-west-1
   sauceignore: .sauceignore
   concurrency: 5
+  retries: 3
 nodeVersion: lts
 defaults:
   timeout: 30m
@@ -30,11 +31,12 @@ retryTestPages: true
 quarantineMode: false
 npm:
   dependencies:
+    - react
+    - react-dom
+    - uuid
     - "@adobe/reactor-sandbox"
     - "@adobe/auth-token"
-    - "react"
-    - "react-dom"
-    - "uuid"
+
 suites:
   - name: "Component Tests"
     esm: true
