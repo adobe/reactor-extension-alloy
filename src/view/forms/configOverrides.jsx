@@ -20,7 +20,7 @@ import getEdgeConfigIds from "../utils/getEdgeConfigIds";
  * This creates a form field for edge config overrides.
  * @returns {Form} A config overrides form.
  */
-export default function configOverrides() {
+export default function configOverrides(hideFields) {
   const part = {
     getInitialValues({ initInfo }) {
       return overridesBridge.getInitialInstanceValues({
@@ -48,6 +48,7 @@ export default function configOverrides() {
           initInfo={initInfo}
           edgeConfigIds={edgeConfigIds}
           configOrgId={orgId}
+          hideFields={hideFields}
         />
       );
     },

@@ -11,13 +11,25 @@ governing permissions and limitations under the License.
 */
 
 module.exports =
-  ({ instanceManager, mediaCollectionSessionStorage, satelliteApi }) =>
+  ({
+    instanceManager,
+    mediaCollectionSessionStorage,
+    satelliteApi,
+    getConfigOverrides,
+  }) =>
   (settings) => {
-    const { instanceName, handleMediaSessionAutomatically, playerId, xdm } =
-      settings;
+    const {
+      instanceName,
+      handleMediaSessionAutomatically,
+      playerId,
+      xdm,
+      ...otherSettings
+    } = settings;
     const instance = instanceManager.getInstance(instanceName);
 
     const options = { xdm };
+    options.edgeConfigOverrides = getConfigOverrides(otherSettings);
+
     const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
 
     if (sessionDetails) {

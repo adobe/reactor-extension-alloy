@@ -14,6 +14,7 @@ const createMediaEvent = require("./createSendMediaEvent");
 const createMediaSession = require("./createMediaSession");
 const instanceManager = require("../../instanceManager/index");
 const { mediaCollectionSessionStorage } = require("../../index");
+const createGetConfigOverrides = require("../../utils/createGetConfigOverrides");
 
 // eslint-disable-next-line no-underscore-dangle
 const satelliteApi = window._satellite;
@@ -22,6 +23,7 @@ const trackMediaSession = createMediaSession({
   instanceManager,
   mediaCollectionSessionStorage,
   satelliteApi,
+  getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage),
 });
 module.exports = createMediaEvent({
   instanceManager,
