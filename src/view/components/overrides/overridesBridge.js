@@ -294,15 +294,6 @@ export const bridge = {
         );
       });
 
-    // remove disabled services and environments
-    OVERRIDE_ENVIRONMENTS.filter(
-      (key) =>
-        // false, but not undefined (which means enabled)
-        deepGet(instanceSettings, `${key}.enabled`) === false,
-    ).forEach((key) => {
-      deepDelete(instanceSettings, key);
-    });
-
     // Remove disabled env
     OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}`)
       .filter(
