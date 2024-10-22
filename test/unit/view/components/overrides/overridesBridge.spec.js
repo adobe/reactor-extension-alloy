@@ -15,6 +15,11 @@ const FIELD = Object.freeze({
   enabled: "Enabled",
   disabled: "Disabled",
 });
+const MATCH_FIELD = Object.freeze({
+  ...FIELD,
+  disabled: "Match datastream configuration",
+});
+
 const envs = Object.freeze(["production", "staging", "development"]);
 
 describe("overridesBridge", () => {
@@ -26,7 +31,7 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: FIELD.disabled,
+          enabled: MATCH_FIELD.disabled,
           com_adobe_experience_platform: {
             enabled: FIELD.enabled,
             datasets: {
@@ -124,7 +129,7 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: FIELD.enabled,
+          enabled: MATCH_FIELD.enabled,
           com_adobe_experience_platform: {
             enabled: FIELD.enabled,
             datasets: {
@@ -167,7 +172,7 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: FIELD.enabled,
+          enabled: MATCH_FIELD.enabled,
           com_adobe_experience_platform: {
             enabled: FIELD.enabled,
             datasets: {
@@ -210,7 +215,7 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: FIELD.disabled,
+          enabled: MATCH_FIELD.disabled,
           com_adobe_experience_platform: {
             enabled: FIELD.enabled,
             datasets: {
@@ -306,7 +311,7 @@ describe("overridesBridge", () => {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: FIELD.enabled,
+          enabled: MATCH_FIELD.enabled,
           com_adobe_experience_platform: {
             enabled: FIELD.enabled,
             datasets: {
@@ -370,7 +375,7 @@ describe("overridesBridge", () => {
             sandbox: "",
             datastreamId: "",
             datastreamIdInputMethod: "freeform",
-            enabled: FIELD.enabled,
+            enabled: MATCH_FIELD.enabled,
             com_adobe_experience_platform: {
               enabled: FIELD.enabled,
               datasets: {
@@ -413,7 +418,7 @@ describe("overridesBridge", () => {
             sandbox: "",
             datastreamId: "",
             datastreamIdInputMethod: "freeform",
-            enabled: FIELD.disabled,
+            enabled: MATCH_FIELD.disabled,
             com_adobe_experience_platform: {
               enabled: FIELD.enabled,
               datasets: {
@@ -456,7 +461,7 @@ describe("overridesBridge", () => {
             sandbox: "",
             datastreamId: "",
             datastreamIdInputMethod: "freeform",
-            enabled: FIELD.disabled,
+            enabled: MATCH_FIELD.disabled,
             com_adobe_experience_platform: {
               enabled: FIELD.enabled,
               datasets: {
@@ -547,7 +552,7 @@ describe("overridesBridge", () => {
           (acc, env) => ({
             ...acc,
             [env]: {
-              enabled: FIELD.enabled,
+              enabled: MATCH_FIELD.enabled,
               com_adobe_experience_platform: {
                 enabled: FIELD.enabled,
                 com_adobe_edge_ode: {
@@ -641,7 +646,7 @@ describe("overridesBridge", () => {
           (acc, env) => ({
             ...acc,
             [env]: {
-              enabled: FIELD.enabled,
+              enabled: MATCH_FIELD.enabled,
               com_adobe_experience_platform: {
                 enabled: FIELD.disabled,
                 com_adobe_edge_ode: {
@@ -806,7 +811,7 @@ describe("overridesBridge", () => {
           (acc, env) => ({
             ...acc,
             [env]: {
-              enabled: FIELD.disabled,
+              enabled: MATCH_FIELD.disabled,
               com_adobe_experience_platform: {
                 enabled: FIELD.enabled,
                 com_adobe_edge_ode: {
@@ -863,7 +868,7 @@ describe("overridesBridge", () => {
             sandbox: "prod",
             datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
             datastreamIdInputMethod: "freeform",
-            enabled: FIELD.enabled,
+            enabled: MATCH_FIELD.enabled,
             com_adobe_experience_platform: {
               enabled: FIELD.disabled,
               datasets: {
@@ -1171,7 +1176,7 @@ describe("overridesBridge", () => {
             sandbox: "prod",
             datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
             datastreamIdInputMethod: "freeform",
-            enabled: FIELD.disabled,
+            enabled: MATCH_FIELD.disabled,
             com_adobe_experience_platform: {
               enabled: FIELD.disabled,
               datasets: {
@@ -1286,7 +1291,7 @@ describe("overridesBridge", () => {
           edgeConfigOverrides: {
             development: {
               sandbox: "prod",
-              enabled: FIELD.enabled,
+              enabled: MATCH_FIELD.enabled,
               datastreamId: "aca8c786-4940-442f-ace5-7c4aba02118e",
               datastreamIdInputMethod: "freeform",
               com_adobe_experience_platform: {
@@ -1334,7 +1339,7 @@ describe("overridesBridge", () => {
         bridge.formikStateValidationSchema.validateSync({
           edgeConfigOverrides: {
             development: {
-              enabled: FIELD.enabled,
+              enabled: MATCH_FIELD.enabled,
               com_adobe_experience_platform: {
                 enabled: FIELD.disabled,
                 datasets: {
@@ -1371,7 +1376,7 @@ describe("overridesBridge", () => {
               },
             },
             staging: {
-              enabled: FIELD.enabled,
+              enabled: MATCH_FIELD.enabled,
               com_adobe_experience_platform: {
                 enabled: FIELD.disabled,
                 datasets: {
@@ -1408,7 +1413,7 @@ describe("overridesBridge", () => {
               },
             },
             production: {
-              enabled: FIELD.enabled,
+              enabled: MATCH_FIELD.enabled,
               com_adobe_experience_platform: {
                 enabled: FIELD.disabled,
                 datasets: {

@@ -58,6 +58,11 @@ export const ENABLED_FIELD_VALUES = Object.freeze({
   disabled: "Disabled",
 });
 
+export const ENABLED_MATCH_FIELD_VALUES = Object.freeze({
+  enabled: "Enabled",
+  disabled: "Match datastream configuration",
+});
+
 /**
  * Given an instance name, returns the settings for that instance.
  * @param {Object} options
@@ -113,6 +118,8 @@ export const createIsItemInArray = (
 
 export const enabledDisabledOrDataElementRegex =
   /^\s*(Enabled|Disabled|%[^%\n]+%)\s*$/i;
+export const enabledMatchOrDataElementRegex =
+  /^\s*(Enabled|Match datastream configuration|%[^%\n]+%)\s*$/i;
 export const isDataElementRegex = /^\s*%[^%\n]+%\s*$/i;
 export const containsDataElementsRegex = /^([^%\n]*%[^%\n]+%)+[^%\n]*$/i;
 

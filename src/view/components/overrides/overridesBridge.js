@@ -23,6 +23,7 @@ import {
   ENABLED_FIELD_VALUES,
   isDataElement,
   isDataElementRegex,
+  ENABLED_MATCH_FIELD_VALUES,
 } from "./utils";
 import clone from "../../utils/clone";
 import deepDelete from "../../utils/deepDelete";
@@ -83,6 +84,16 @@ const enabledOrDataElementValidator = lazy((value) =>
         .nullable()
     : mixed().oneOf(Object.values(ENABLED_FIELD_VALUES)).nullable(),
 );
+const enabledMatchOrDataElementValidator = lazy((value) =>
+  typeof value === "string" && (value.includes("%") || value === "")
+    ? string()
+        .matches(isDataElementRegex, {
+          message: "Please enter a valid data element.",
+          excludeEmptyString: true,
+        })
+        .nullable()
+    : mixed().oneOf(Object.values(ENABLED_MATCH_FIELD_VALUES)).nullable(),
+);
 
 export const bridge = {
   /**
@@ -97,7 +108,7 @@ export const bridge = {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: ENABLED_FIELD_VALUES.disabled,
+          enabled: ENABLED_MATCH_FIELD_VALUES.disabled,
           com_adobe_experience_platform: {
             enabled: ENABLED_FIELD_VALUES.enabled,
             datasets: {
@@ -173,11 +184,6 @@ export const bridge = {
     OVERRIDE_ENVIRONMENTS.flatMap((env) =>
       overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}.enabled`),
     )
-      .concat(
-        OVERRIDE_ENVIRONMENTS.map(
-          (env) => `edgeConfigOverrides.${env}.enabled`,
-        ),
-      )
       .filter((key) => deepGet(instanceSettings, key) !== undefined)
       .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
       .forEach((key) => {
@@ -186,6 +192,20 @@ export const bridge = {
           cleanedInstanceSettings,
           key,
           value ? ENABLED_FIELD_VALUES.enabled : ENABLED_FIELD_VALUES.disabled,
+        );
+      });
+    // convert the env-wide enabled/disabled from true/false to enabled/match datastream configuration
+    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}.enabled`)
+      .filter((key) => deepGet(instanceSettings, key) !== undefined)
+      .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
+      .forEach((key) => {
+        const value = deepGet(instanceSettings, key);
+        deepSet(
+          cleanedInstanceSettings,
+          key,
+          value
+            ? ENABLED_MATCH_FIELD_VALUES.enabled
+            : ENABLED_MATCH_FIELD_VALUES.disabled,
         );
       });
 
@@ -204,7 +224,7 @@ export const bridge = {
         deepSet(
           cleanedInstanceSettings,
           `${key}.enabled`,
-          ENABLED_FIELD_VALUES.enabled,
+          ENABLED_MATCH_FIELD_VALUES.enabled,
         );
       });
 
@@ -247,6 +267,17 @@ export const bridge = {
       keys: propertyKeysToCopy,
     });
 
+    // Remove disabled env
+    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}`)
+      .filter(
+        (key) =>
+          // undefined means default value aka disabled
+          deepGet(instanceSettings, `${key}.enabled`) === undefined,
+      )
+      .forEach((key) => {
+        deepDelete(instanceSettings, key);
+      });
+
     const propertiesWithValues = OVERRIDE_ENVIRONMENTS.flatMap((env) =>
       overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}`),
     ).filter((key) => deepGet(instanceSettings, key) !== undefined);
@@ -273,16 +304,12 @@ export const bridge = {
           value.filter((rs) => rs !== ""),
         );
       });
+
     // convert "Enabled"/"Disabled" to true/false
     OVERRIDE_ENVIRONMENTS.flatMap((env) =>
       overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}`),
     )
       .map((key) => `${key}.enabled`)
-      .concat(
-        OVERRIDE_ENVIRONMENTS.map(
-          (env) => `edgeConfigOverrides.${env}.enabled`,
-        ),
-      )
       .filter((key) => deepGet(instanceSettings, key) !== undefined)
       .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
       .forEach((key) => {
@@ -294,15 +321,17 @@ export const bridge = {
         );
       });
 
-    // Remove disabled env
-    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}`)
-      .filter(
-        (key) =>
-          // undefined means default value aka disabled
-          deepGet(instanceSettings, `${key}.enabled`) === undefined,
-      )
+    // convert env-wide "Enabled"/"Match Datastream Configuration" to true/false
+    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}.enabled`)
+      .filter((key) => deepGet(instanceSettings, key) !== undefined)
+      .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
       .forEach((key) => {
-        deepDelete(instanceSettings, key);
+        const value = deepGet(instanceValues, key);
+        deepSet(
+          instanceSettings,
+          key,
+          value.trim() === ENABLED_MATCH_FIELD_VALUES.enabled,
+        );
       });
 
     // Remove empty objects
@@ -349,7 +378,7 @@ export const bridge = {
         (acc, env) => ({
           ...acc,
           [env]: object({
-            enabled: enabledOrDataElementValidator,
+            enabled: enabledMatchOrDataElementValidator,
             datastreamId: string().nullable(),
             datastreamInputMethod: mixed()
               .oneOf(["freeform", "select"])

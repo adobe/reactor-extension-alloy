@@ -41,16 +41,23 @@ import ReportSuitesOverride from "./reportSuiteOverrides";
 import SettingsCopySection from "./settingsCopySection";
 import {
   ENABLED_FIELD_VALUES,
+  ENABLED_MATCH_FIELD_VALUES,
   FIELD_NAMES,
   capitialize,
   combineValidatorWithContainsDataElements,
   createValidateItemIsInArray,
   enabledDisabledOrDataElementRegex,
+  enabledMatchOrDataElementRegex,
 } from "./utils";
 
 const defaults = Object.freeze(bridge.getInstanceDefaults());
 const EnabledDisabledOptions = Object.freeze(
   Object.entries(ENABLED_FIELD_VALUES).map(([key, label]) => (
+    <Item key={key}>{label}</Item>
+  )),
+);
+const EnabledMatchOptions = Object.freeze(
+  Object.entries(ENABLED_MATCH_FIELD_VALUES).map(([key, label]) => (
     <Item key={key}>{label}</Item>
   )),
 );
@@ -207,6 +214,14 @@ const Overrides = ({
                   ),
                   false,
                 );
+              const validateEnabledMatchOrDataElement =
+                combineValidatorWithContainsDataElements(
+                  createValidateItemIsInArray(
+                    Object.values(ENABLED_MATCH_FIELD_VALUES),
+                    "The value must be either 'Enabled' or 'Match datastream configuration' or a single data element.",
+                  ),
+                  false,
+                );
 
               const primaryEventDataset =
                 result?.com_adobe_experience_platform?.datasets?.event?.find(
@@ -336,14 +351,14 @@ const Overrides = ({
                         aria-label="Enable or disable dynamic datastream configuration"
                         data-test-id={FIELD_NAMES.analyticsEnabled}
                         allowsCustomValue
-                        validate={validateEnabledDisabledOrDataElement}
+                        validate={validateEnabledMatchOrDataElement}
                         name={`${prefix}.${env}.enabled`}
                         width="size-5000"
-                        pattern={enabledDisabledOrDataElementRegex}
+                        pattern={enabledMatchOrDataElementRegex}
                         description={`Enable or disable dynamic configuration for the ${env} environment.`}
                         onBlur={onDisable}
                       >
-                        {...EnabledDisabledOptions}
+                        {...EnabledMatchOptions}
                       </OverrideInput>
                     )}
                     {!isDisabled("enabled") && (
