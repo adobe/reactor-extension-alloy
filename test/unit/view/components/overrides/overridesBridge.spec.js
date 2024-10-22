@@ -13,7 +13,7 @@ import { bridge } from "../../../../../src/view/components/overrides/overridesBr
 
 const FIELD = Object.freeze({
   enabled: "Enabled",
-  disabled: "Match datastream configuration",
+  disabled: "Disabled",
 });
 const envs = Object.freeze(["production", "staging", "development"]);
 
