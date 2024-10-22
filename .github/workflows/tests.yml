@@ -42,6 +42,10 @@ jobs:
         browser: [chrome, firefox, safari]
     steps:
       - uses: actions/checkout@v4
+      - name: Use Node.js from Sauce Labs config
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'  # Use the latest LTS version
       - uses: actions/cache@v4
         id: npm-cache
         with:
