@@ -39,7 +39,7 @@ suites:
   - name: "Component Tests"
     esm: true
     browserName: "chrome"
-    browserVersion: "latest"
+    browserVersion: "129"
     src:
       - "test/functional/specs/component/**/*.spec.mjs"
     platformName: "Windows 11"
@@ -47,7 +47,7 @@ suites:
   - name: "Runtime Tests"
     esm: true
     browserName: "chrome"
-    browserVersion: "latest"
+    browserVersion: "129"
     src:
       - "test/functional/specs/runtime/**/*.spec.mjs"
     platformName: "Windows 11"
@@ -55,7 +55,7 @@ suites:
   - name: "View Action Tests"
     esm: true
     browserName: "chrome"
-    browserVersion: "latest"
+    browserVersion: "129"
     src:
       - "test/functional/specs/view/actions/**/*.spec.mjs"
     platformName: "Windows 11"
@@ -63,7 +63,7 @@ suites:
   - name: "View Configuration Tests"
     esm: true
     browserName: "chrome"
-    browserVersion: "latest"
+    browserVersion: "129"
     src:
       - "test/functional/specs/view/configuration/**/*.spec.mjs"
     platformName: "Windows 11"
@@ -71,7 +71,7 @@ suites:
   - name: "View Data Elements Tests"
     esm: true
     browserName: "chrome"
-    browserVersion: "latest"
+    browserVersion: "129"
     src:
       - "test/functional/specs/view/dataElements/**/*.spec.mjs"
     platformName: "Windows 11"

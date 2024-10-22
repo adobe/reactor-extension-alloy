@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        browser: [safari]
+        browser: [chrome, firefox, safari]
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js from Sauce Labs config
