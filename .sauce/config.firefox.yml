@@ -4,6 +4,7 @@ sauce:
   region: us-west-1
   sauceignore: .sauceignore
   concurrency: 5
+nodeVersion: v20 
 defaults:
   timeout: 30m
 metadata:
