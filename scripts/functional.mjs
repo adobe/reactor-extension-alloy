@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+/* eslint-disable no-console */
 /*
 Copyright 2019 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -73,13 +73,11 @@ const buildComponentFixtures = async () => {
 
 (async () => {
   const resultPath = await buildExtensionManifest();
-  // eslint-disable-next-line no-console
-  console.log(
-    "\x1b[32m%s\x1b[0m",
-    `✅ Extension manifest written to ${resultPath}`,
-  );
+  console.log(chalk.green(`✅ Extension manifest written to ${resultPath}`));
   await build({ watch });
+  console.log(chalk.green("✅ Extension built successfully"));
   await buildComponentFixtures();
+  console.log(chalk.green("✅ Component fixtures built successfully"));
   // Running the runtime tests requires us to re-write this file.
   // This will save the file and restore it after the tests are complete.
   saveAndRestoreFile({ file: path.resolve(".sandbox", "container.js") });
