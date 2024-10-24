@@ -13,7 +13,12 @@ import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
 import fetchConfig from "../../configuration/utils/fetchConfig";
 import deepGet from "../../utils/deepGet";
-import { ENABLED_FIELD_VALUES, FIELD_NAMES, overridesKeys } from "./utils";
+import {
+  ENABLED_FIELD_VALUES,
+  ENABLED_MATCH_FIELD_VALUES,
+  FIELD_NAMES,
+  overridesKeys,
+} from "./utils";
 
 /**
  * A custom React hook that calls the `fetchConfig` function to get the Blackbird
@@ -175,7 +180,9 @@ export const useFormikContextWithOverrides = ({
   const createIsDisabled = (prefixWithEnv) => (shortPropName) => {
     return (
       deepGet(values, `${prefixWithEnv}.${shortPropName}`) ===
-      ENABLED_FIELD_VALUES.disabled
+        ENABLED_FIELD_VALUES.disabled ||
+      deepGet(values, `${prefixWithEnv}.${shortPropName}`) ===
+        ENABLED_MATCH_FIELD_VALUES.disabled
     );
   };
 
