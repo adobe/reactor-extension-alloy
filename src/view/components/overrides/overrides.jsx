@@ -349,7 +349,7 @@ const Overrides = ({
                     {visibleFields.has(FIELD_NAMES.overridesEnabled) && (
                       <OverrideInput
                         aria-label="Enable or disable dynamic datastream configuration"
-                        data-test-id={FIELD_NAMES.analyticsEnabled}
+                        data-test-id={FIELD_NAMES.overridesEnabled}
                         allowsCustomValue
                         validate={validateEnabledMatchOrDataElement}
                         name={`${prefix}.${env}.enabled`}

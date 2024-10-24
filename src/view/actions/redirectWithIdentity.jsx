@@ -23,8 +23,7 @@ import getEdgeConfigIds from "../utils/getEdgeConfigIds";
 const getInitialValues = ({ initInfo }) => {
   const {
     instanceName = initInfo.extensionSettings.instances[0].name,
-    edgeConfigOverrides = overridesBridge.getInstanceDefaults()
-      .edgeConfigOverrides,
+    edgeConfigOverrides,
   } = initInfo.settings ?? {};
 
   return {
