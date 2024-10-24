@@ -220,6 +220,7 @@ test("returns valid settings", async () => {
     instanceName: "alloy2",
     edgeConfigOverrides: {
       production: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -240,6 +241,7 @@ test("returns valid settings", async () => {
         datastreamId: "PR123",
       },
       staging: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -260,6 +262,7 @@ test("returns valid settings", async () => {
         datastreamId: "PR123",
       },
       development: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -431,6 +434,7 @@ test("can copy override settings between environments", async () => {
     instanceName: "alloy2",
     edgeConfigOverrides: {
       production: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -451,6 +455,7 @@ test("can copy override settings between environments", async () => {
         datastreamId: "PR123",
       },
       staging: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -471,6 +476,7 @@ test("can copy override settings between environments", async () => {
         datastreamId: "PR123",
       },
       development: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
