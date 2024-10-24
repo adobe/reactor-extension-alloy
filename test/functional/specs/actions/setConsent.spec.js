@@ -227,6 +227,7 @@ test("initializes form fields with settings containing a static consent array", 
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("Enabled");
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db",
@@ -243,6 +244,7 @@ test("initializes form fields with settings containing a static consent array", 
 
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("Enabled");
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -258,6 +260,7 @@ test("initializes form fields with settings containing a static consent array", 
 
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("Enabled");
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -416,42 +419,33 @@ test("initializes form fields with no settings", async () => {
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
-  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue("");
-  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "",
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText(
+    "Match datastream configuration",
   );
-  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "",
-  );
-  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "",
-  );
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectNotExists();
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectNotExists();
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectNotExists();
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectNotExists();
 
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
-  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue("");
-  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "",
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText(
+    "Match datastream configuration",
   );
-  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "",
-  );
-  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "",
-  );
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectNotExists();
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectNotExists();
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectNotExists();
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectNotExists();
 
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
-  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue("");
-  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "",
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText(
+    "Match datastream configuration",
   );
-  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "",
-  );
-  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "",
-  );
+  await overrideViewSelectors.textFields.eventDatasetOverride.expectNotExists();
+  await overrideViewSelectors.textFields.idSyncContainerOverride.expectNotExists();
+  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectNotExists();
+  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectNotExists();
 });
 
 test("returns minimal valid settings", async () => {
@@ -488,12 +482,6 @@ test("returns minimal valid settings", async () => {
         value: "%dataelement2%",
       },
     ],
-    edgeConfigOverrides: {
-      development: {
-        sandbox: "prod",
-        datastreamIdInputMethod: "select",
-      },
-    },
   });
 });
 
@@ -515,6 +503,8 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.envTabs.production.expectExists();
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
@@ -536,6 +526,8 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.envTabs.staging.expectExists();
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
@@ -557,6 +549,8 @@ test("returns full valid settings", async () => {
   await overrideViewSelectors.envTabs.development.expectExists();
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("1234abcd");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
@@ -596,6 +590,7 @@ test("returns full valid settings", async () => {
     ],
     edgeConfigOverrides: {
       production: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -616,6 +611,7 @@ test("returns full valid settings", async () => {
         datastreamId: "1234abcd",
       },
       staging: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -636,6 +632,7 @@ test("returns full valid settings", async () => {
         datastreamId: "1234abcd",
       },
       development: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -693,12 +690,6 @@ test("returns valid settings for guided form data elements", async () => {
         gdprContainsPersonalData: "%data4%",
       },
     ],
-    edgeConfigOverrides: {
-      development: {
-        sandbox: "prod",
-        datastreamIdInputMethod: "select",
-      },
-    },
   });
 });
 
@@ -712,12 +703,6 @@ test("returns valid settings for data element", async () => {
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
     consent: "%data2%",
-    edgeConfigOverrides: {
-      development: {
-        sandbox: "prod",
-        datastreamIdInputMethod: "select",
-      },
-    },
   });
 });
 
@@ -827,12 +812,6 @@ test("remembers the initial data element value", async () => {
         value: { general: "%dataelement1%" },
       },
     ],
-    edgeConfigOverrides: {
-      development: {
-        sandbox: "prod",
-        datastreamIdInputMethod: "select",
-      },
-    },
   };
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
@@ -879,6 +858,8 @@ test.requestHooks(
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectExists();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.openMenu();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectMenuOptionLabels(
