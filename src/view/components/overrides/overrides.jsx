@@ -646,7 +646,7 @@ const Overrides = ({
                               ) && (
                                 <OverrideInput
                                   aria-label="Enable or disable Adobe Journey Optimizer"
-                                  data-test-id={FIELD_NAMES.analyticsEnabled}
+                                  data-test-id={FIELD_NAMES.ajoEnabled}
                                   label="Adobe Journey Optimizer"
                                   allowsCustomValue
                                   validate={
