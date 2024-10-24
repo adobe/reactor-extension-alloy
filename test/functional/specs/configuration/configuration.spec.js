@@ -420,6 +420,8 @@ test("returns full valid settings", async () => {
   await instances[0].overrides.envTabs.staging.expectExists();
   await instances[0].overrides.envTabs.development.expectExists();
   await instances[0].overrides.envTabs.development.expectSelected();
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -503,6 +505,7 @@ test("returns full valid settings", async () => {
         },
         edgeConfigOverrides: {
           development: {
+            enabled: true,
             com_adobe_experience_platform: {
               datasets: {
                 event: {
@@ -589,6 +592,8 @@ test("returns full valid settings with maximal data elements", async () => {
   await instances[0].overrides.envTabs.staging.expectExists();
   await instances[0].overrides.envTabs.development.expectExists();
   await instances[0].overrides.envTabs.development.expectSelected();
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("%foo%");
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
     "%foo%",
   );
@@ -619,6 +624,7 @@ test("returns full valid settings with maximal data elements", async () => {
         targetMigrationEnabled: true,
         edgeConfigOverrides: {
           development: {
+            enabled: "%foo%",
             com_adobe_experience_platform: {
               datasets: {
                 event: {
@@ -1486,6 +1492,9 @@ test("is able to add and remove report suites from overrides", async () => {
 
   await instances[0].overrides.envTabs.development.expectSelected();
 
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
+
   await instances[0].overrides.textFields.reportSuiteOverrides[0].expectExists();
   await instances[0].overrides.textFields.reportSuiteOverrides[0].typeText(
     "test1",
@@ -1511,6 +1520,7 @@ test("is able to add and remove report suites from overrides", async () => {
         name: "alloy",
         edgeConfigOverrides: {
           development: {
+            enabled: true,
             com_adobe_analytics: {
               reportSuites: ["test1", "test3"],
             },
@@ -1529,6 +1539,8 @@ test("copies overrides from one environment to another", async () => {
   await instances[0].overrides.copyButtons.development.expectNotExists();
   await instances[0].overrides.copyButtons.staging.expectExists();
   await instances[0].overrides.copyButtons.production.expectExists();
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -1553,6 +1565,7 @@ test("copies overrides from one environment to another", async () => {
   await instances[0].overrides.copyButtons.development.expectExists();
   await instances[0].overrides.copyButtons.development.click();
 
+  await instances[0].overrides.comboBoxes.envEnabled.expectText("Enabled");
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -1575,6 +1588,7 @@ test("copies overrides from one environment to another", async () => {
   await instances[0].overrides.copyButtons.staging.expectExists();
   await instances[0].overrides.copyButtons.production.expectNotExists();
   await instances[0].overrides.copyButtons.staging.click();
+  await instances[0].overrides.comboBoxes.envEnabled.expectText("Enabled");
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -1613,6 +1627,8 @@ test.requestHooks(
     "Test Config Overrides",
   );
 
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
   await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
   await instances[0].overrides.comboBoxes.eventDatasetOverride.openMenu();
   await instances[0].overrides.comboBoxes.eventDatasetOverride.expectMenuOptionLabels(
@@ -1677,7 +1693,8 @@ test.requestHooks(
     await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.selectOption(
       "Test Config Overrides",
     );
-
+    await instances[0].overrides.comboBoxes.envEnabled.clear();
+    await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
     await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
     await instances[0].overrides.comboBoxes.eventDatasetOverride.enterSearch(
       "foo",
@@ -1747,7 +1764,8 @@ test.requestHooks(
   await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.selectOption(
     "Test Config Overrides",
   );
-
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
   await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
   await instances[0].overrides.comboBoxes.eventDatasetOverride.enterSearch(
     "%Alloy Data Element%",
@@ -1795,6 +1813,8 @@ test.requestHooks(
     );
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectExists();
+    await instances[0].overrides.comboBoxes.envEnabled.clear();
+    await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
     await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
     await instances[0].overrides.comboBoxes.eventDatasetOverride.expectIsComboBox();
     await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectExists();
@@ -1805,6 +1825,8 @@ test.requestHooks(
     await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectIsComboBox();
 
     await addInstanceButton.click();
+    await instances[1].overrides.comboBoxes.envEnabled.clear();
+    await instances[1].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
     await instances[1].overrides.textFields.eventDatasetOverride.expectExists();
     await instances[1].overrides.textFields.eventDatasetOverride.expectIsTextField();
     await instances[1].overrides.textFields.idSyncContainerOverride.expectExists();
@@ -1823,6 +1845,8 @@ test("allows the setting of overrides in only a single environment", async () =>
     "PR123",
   );
   await instances[0].overrides.envTabs.development.click();
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -1834,6 +1858,7 @@ test("allows the setting of overrides in only a single environment", async () =>
         name: "alloy",
         edgeConfigOverrides: {
           development: {
+            enabled: true,
             com_adobe_experience_platform: {
               datasets: {
                 event: {
