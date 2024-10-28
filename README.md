@@ -7,3 +7,4 @@ Adobe Experience Platform Web SDK is a client-side JavaScript library that allow
 For documentation on how to use the extension, please see the [user documentation](https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html).
 
 For documentation on how to contribute to the extension, please see the [developer documentation](https://github.com/adobe/reactor-extension-alloy/wiki).
+

@@ -6,4 +6,5 @@ coverage
 .sandbox
 .eslintcache
 .parcel-cache
+.token-cache.json
 extension.json

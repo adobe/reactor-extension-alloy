@@ -937,9 +937,11 @@ const createExtensionManifest = ({ version }) => {
             xdm: {
               type: "object",
             },
+            edgeConfigOverrides: actionEdgeConfigOverridesSchema,
           },
           required: ["instanceName", "playerId"],
         },
+        transforms: [...actionEdgeConfigOverridesTransforms],
         libPath: "dist/lib/actions/sendMediaEvent/index.js",
         viewPath: "actions/sendStreamingMediaEvent.html",
       },

@@ -27,6 +27,8 @@ import dataElement from "../forms/dataElement";
 import mediaStates from "./constants/mediaStates";
 import mediaContentTypes from "./constants/mediaContentTypes";
 import mediaShowTypes from "./constants/mediaShowTypes";
+import configOverrides from "../forms/configOverrides";
+import { FIELD_NAMES } from "../components/overrides/utils";
 
 const getSortedInputItems = (mapItems) => {
   return Object.keys(mapItems)
@@ -46,6 +48,7 @@ const wrapGetInitialValues =
       handleMediaSessionAutomatically = false,
       instanceName = initInfo.extensionSettings.instances[0].name,
       xdm = {},
+      edgeConfigOverrides,
     } = initInfo.settings || {};
 
     const { mediaCollection = {} } = xdm;
@@ -93,6 +96,7 @@ const wrapGetInitialValues =
           playerId,
           instanceName,
           handleMediaSessionAutomatically,
+          edgeConfigOverrides,
           playhead,
           qoeDataDetails,
           chapterDetails,
@@ -126,6 +130,7 @@ const wrapGetSettings =
       errorDetails,
       sessionDetails,
       customMetadata,
+      edgeConfigOverrides,
     } = getSettings({ values });
 
     const settings = {
@@ -133,6 +138,7 @@ const wrapGetSettings =
       instanceName,
       playerId,
       handleMediaSessionAutomatically,
+      edgeConfigOverrides,
     };
     const mediaCollection = {};
 
@@ -180,6 +186,13 @@ const wrapGetSettings =
 
     return settings;
   };
+
+const hideFields = [
+  FIELD_NAMES.sandbox,
+  FIELD_NAMES.idSyncContainerOverride,
+  FIELD_NAMES.targetPropertyTokenOverride,
+];
+const configOverrideFields = configOverrides(hideFields);
 
 const advertisingPodDetailsSection = dataElementSection(
   {
@@ -732,6 +745,7 @@ const eventBasedDetailFormConditionals = [
           "data element to provide this information.",
         tokenize: false,
       }),
+      configOverrideFields,
     ],
   ),
   conditional(
