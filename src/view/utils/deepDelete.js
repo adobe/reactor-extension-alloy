@@ -16,6 +16,9 @@ governing permissions and limitations under the License.
  * @returns {object} the object with the property removed
  */
 const deepDelete = (obj, path) => {
+  if (!path) {
+    return obj;
+  }
   const keys = path.split(".");
   const lastKey = keys.pop();
   const target = keys.reduce((acc, key) => acc?.[key], obj);
