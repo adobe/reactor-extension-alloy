@@ -320,6 +320,9 @@ test("initializes form fields with minimal settings", async () => {
   await instances[0].autoCollectPropositionInteractionsTGTPicker.expectText(
     "Never",
   );
+  await instances[0].overrides.comboBoxes.envEnabled.expectValue(
+    "Match datastream configuration",
+  );
 });
 
 test.requestHooks(sandboxesMocks.singleDefault, datastreamsMocks.multiple)(
@@ -1897,6 +1900,361 @@ test("allows the load of the view with overrides settings in only a single envir
   });
 
   await instances[0].overrides.envTabs.development.expectExists();
+});
+
+test("Migrates pre-enable/disable override settings successfully", async () => {
+  await extensionViewController.init({
+    settings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+          stagingEdgeConfigId: "PR123:stage",
+          developmentEdgeConfigId: "PR123:dev1",
+          orgId: "ORG456@OtherCompanyOrg",
+          edgeDomain: "testedge.com",
+          edgeBasePath: "ee-beta",
+          defaultConsent: "pending",
+          idMigrationEnabled: true,
+          thirdPartyCookiesEnabled: true,
+          prehidingStyle: "#container { display: none }",
+          context: ["device", "placeContext"],
+          clickCollectionEnabled: false,
+          targetMigrationEnabled: true,
+          autoCollectPropositionInteractions: {
+            AJO: "decoratedElementsOnly",
+            TGT: "always",
+          },
+          edgeConfigOverrides: {
+            development: {
+              com_adobe_experience_platform: {
+                datasets: {
+                  event: {
+                    datasetId: "6336ff95ba16ca1c07b4c0db",
+                  },
+                },
+              },
+              com_adobe_analytics: {
+                reportSuites: ["unifiedjsqeonly2"],
+              },
+              com_adobe_identity: {
+                idSyncContainerId: 23512312,
+              },
+              com_adobe_target: {
+                propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+              },
+            },
+            staging: {
+              com_adobe_experience_platform: {
+                datasets: {
+                  event: {
+                    datasetId: "6336ff95ba16ca1c07b4c0db",
+                  },
+                },
+              },
+              com_adobe_analytics: {
+                reportSuites: ["unifiedjsqeonly2"],
+              },
+              com_adobe_identity: {
+                idSyncContainerId: 23512312,
+              },
+              com_adobe_target: {
+                propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+              },
+            },
+            production: {
+              com_adobe_experience_platform: {
+                datasets: {
+                  event: {
+                    datasetId: "6336ff95ba16ca1c07b4c0db",
+                  },
+                },
+              },
+              com_adobe_analytics: {
+                reportSuites: ["unifiedjsqeonly2"],
+              },
+              com_adobe_identity: {
+                idSyncContainerId: 23512312,
+              },
+              com_adobe_target: {
+                propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+              },
+            },
+          },
+        },
+      ],
+    },
+  });
+
+  await instances[0].overrides.envTabs.development.expectSelected();
+  await instances[0].overrides.comboBoxes.envEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.experiencePlatformEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db",
+  );
+  await instances[0].overrides.comboBoxes.edgeSegmentationEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.comboBoxes.edgeDestinationsEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.comboBoxes.ajoEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.ssefEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.audienceManagerEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.textFields.idSyncContainerOverride.expectValue(
+    "23512312",
+  );
+  await instances[0].overrides.comboBoxes.targetEnabled.expectValue("Enabled");
+  await instances[0].overrides.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+  );
+  await instances[0].overrides.comboBoxes.analyticsEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2",
+  );
+
+  await instances[0].overrides.envTabs.staging.click();
+  await instances[0].overrides.envTabs.staging.expectSelected();
+  await instances[0].overrides.comboBoxes.envEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.experiencePlatformEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db",
+  );
+  await instances[0].overrides.comboBoxes.edgeSegmentationEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.comboBoxes.edgeDestinationsEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.comboBoxes.ajoEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.ssefEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.audienceManagerEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.textFields.idSyncContainerOverride.expectValue(
+    "23512312",
+  );
+  await instances[0].overrides.comboBoxes.targetEnabled.expectValue("Enabled");
+  await instances[0].overrides.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+  );
+  await instances[0].overrides.comboBoxes.analyticsEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2",
+  );
+
+  await instances[0].overrides.envTabs.production.click();
+  await instances[0].overrides.envTabs.production.expectSelected();
+  await instances[0].overrides.comboBoxes.envEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.experiencePlatformEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
+    "6336ff95ba16ca1c07b4c0db",
+  );
+  await instances[0].overrides.comboBoxes.edgeSegmentationEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.comboBoxes.edgeDestinationsEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.comboBoxes.ajoEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.ssefEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.audienceManagerEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.textFields.idSyncContainerOverride.expectValue(
+    "23512312",
+  );
+  await instances[0].overrides.comboBoxes.targetEnabled.expectValue("Enabled");
+  await instances[0].overrides.textFields.targetPropertyTokenOverride.expectValue(
+    "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
+  );
+  await instances[0].overrides.comboBoxes.analyticsEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.textFields.reportSuiteOverrides[0].expectValue(
+    "unifiedjsqeonly2",
+  );
+});
+
+test("hides overrides by default", async () => {
+  await extensionViewController.init({
+    settings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
+  });
+  await instances[0].overrides.comboBoxes.envEnabled.expectValue(
+    "Match datastream configuration",
+  );
+  await instances[0].overrides.textFields.eventDatasetOverride.expectNotExists();
+  await instances[0].overrides.textFields.idSyncContainerOverride.expectNotExists();
+  await instances[0].overrides.textFields.targetPropertyTokenOverride.expectNotExists();
+  await instances[0].overrides.textFields.reportSuiteOverrides[0].expectNotExists();
+});
+
+test("initializes override fields to 'disabled'", async () => {
+  await extensionViewController.init({
+    settings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+          edgeConfigOverrides: {
+            development: {
+              enabled: true,
+              com_adobe_experience_platform: {
+                enabled: true,
+                com_adobe_edge_ode: {
+                  enabled: false,
+                },
+                com_adobe_edge_segmentation: {
+                  enabled: false,
+                },
+                com_adobe_edge_destinations: {
+                  enabled: false,
+                },
+                com_adobe_edge_ajo: {
+                  enabled: false,
+                },
+              },
+              com_adobe_analytics: {
+                enabled: false,
+              },
+              com_adobe_target: {
+                enabled: false,
+              },
+              com_adobe_audience_manager: {
+                enabled: false,
+              },
+              com_adobe_launch_ssf: {
+                enabled: false,
+              },
+            },
+          },
+        },
+      ],
+    },
+  });
+
+  await instances[0].overrides.comboBoxes.envEnabled.expectText("Enabled");
+  await instances[0].overrides.comboBoxes.analyticsEnabled.expectText(
+    "Disabled",
+  );
+  await instances[0].overrides.comboBoxes.ajoEnabled.expectText("Disabled");
+  await instances[0].overrides.comboBoxes.audienceManagerEnabled.expectText(
+    "Disabled",
+  );
+  await instances[0].overrides.comboBoxes.edgeDestinationsEnabled.expectText(
+    "Disabled",
+  );
+  await instances[0].overrides.comboBoxes.edgeSegmentationEnabled.expectText(
+    "Disabled",
+  );
+
+  await instances[0].overrides.comboBoxes.experiencePlatformEnabled.expectText(
+    "Enabled",
+  );
+
+  await instances[0].overrides.comboBoxes.odeEnabled.expectText("Disabled");
+  await instances[0].overrides.comboBoxes.ssefEnabled.expectText("Disabled");
+  await instances[0].overrides.comboBoxes.targetEnabled.expectText("Disabled");
+});
+
+test("hides disabled overrides when service is disabled", async () => {
+  await extensionViewController.init({
+    settings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+          edgeConfigOverrides: {
+            development: {
+              enabled: true,
+            },
+          },
+        },
+      ],
+    },
+  });
+
+  await instances[0].overrides.comboBoxes.envEnabled.expectText("Enabled");
+
+  await instances[0].overrides.textFields.reportSuiteOverrides[0].expectExists();
+  await instances[0].overrides.comboBoxes.analyticsEnabled.clear();
+  await instances[0].overrides.comboBoxes.analyticsEnabled.enterSearch(
+    "Disabled",
+  );
+  await instances[0].overrides.textFields.reportSuiteOverrides[0].expectNotExists();
+
+  await instances[0].overrides.textFields.idSyncContainerOverride.expectExists();
+  await instances[0].overrides.comboBoxes.audienceManagerEnabled.clear();
+  await instances[0].overrides.comboBoxes.audienceManagerEnabled.enterSearch(
+    "Disabled",
+  );
+  await instances[0].overrides.textFields.idSyncContainerOverride.expectNotExists();
+
+  await instances[0].overrides.comboBoxes.edgeDestinationsEnabled.expectExists();
+  await instances[0].overrides.comboBoxes.edgeSegmentationEnabled.expectExists();
+  await instances[0].overrides.comboBoxes.odeEnabled.expectExists();
+  await instances[0].overrides.textFields.eventDatasetOverride.expectExists();
+  await instances[0].overrides.comboBoxes.ajoEnabled.expectExists();
+  await instances[0].overrides.comboBoxes.experiencePlatformEnabled.clear();
+  await instances[0].overrides.comboBoxes.experiencePlatformEnabled.enterSearch(
+    "Disabled",
+  );
+  await instances[0].overrides.comboBoxes.edgeDestinationsEnabled.expectNotExists();
+  await instances[0].overrides.comboBoxes.edgeSegmentationEnabled.expectNotExists();
+  await instances[0].overrides.comboBoxes.odeEnabled.expectNotExists();
+  await instances[0].overrides.textFields.eventDatasetOverride.expectNotExists();
+  await instances[0].overrides.comboBoxes.ajoEnabled.expectNotExists();
+
+  await instances[0].overrides.textFields.targetPropertyTokenOverride.expectExists();
+  await instances[0].overrides.comboBoxes.targetEnabled.clear();
+  await instances[0].overrides.comboBoxes.targetEnabled.enterSearch("Disabled");
+  await instances[0].overrides.textFields.targetPropertyTokenOverride.expectNotExists();
+
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettings({
+    instances: [
+      {
+        name: "alloy1",
+        edgeConfigId: "PR123",
+        edgeConfigOverrides: {
+          development: {
+            enabled: true,
+            com_adobe_experience_platform: {
+              enabled: false,
+            },
+            com_adobe_analytics: {
+              enabled: false,
+            },
+            com_adobe_target: {
+              enabled: false,
+            },
+            com_adobe_audience_manager: {
+              enabled: false,
+            },
+          },
+        },
+      },
+    ],
+  });
 });
 
 test("makes the media collection fields required if one is filled", async () => {

@@ -205,6 +205,8 @@ const componentWrappers = {
       // the element with our data-test-id, even though our true intention is to assert
       // the text in the textfield.
       expectText: createExpectValue(selector),
+      // expectValue matches other components, but is the same as expectText
+      expectValue: createExpectValue(selector),
       async openMenu() {
         await t.click(
           selector.parent().find("button[aria-haspopup='listbox']"),
