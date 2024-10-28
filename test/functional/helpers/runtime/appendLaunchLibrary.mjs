@@ -28,7 +28,9 @@ export default async (container) => {
   fs.writeFileSync(containerPath, text);
   const containerJS = getContainer();
 
-  const engineFileName = await import.meta.resolve("@adobe/reactor-turbine/dist/engine.js");
+  const engineFileName = await import.meta.resolve(
+    "@adobe/reactor-turbine/dist/engine.js",
+  );
   const turbine = fs.readFileSync(new URL(engineFileName));
 
   return appendScript(containerJS + turbine);
