@@ -182,8 +182,8 @@ const Overrides = ({
         <Heading>Server-side vs client-side</Heading>
         <Content>
           Enabling client-side datastream configuration overrides for an
-          environment below will also override any server-side dynamic
-          datastream configurations and rules for that environment.
+          environment below will override any server-side dynamic datastream
+          configurations and rules for that environment.
         </Content>
       </InlineAlert>
       <FormElementContainer>
