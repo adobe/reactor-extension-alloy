@@ -25,7 +25,6 @@ const typeField = spectrum.comboBox("typeField");
 const xdmField = spectrum.textField("xdmTextField");
 const dataField = spectrum.textField("dataTextField");
 const mergeIdField = spectrum.textField("mergeIdTextField");
-const datasetIdField = spectrum.textField("datasetIdTextField");
 const documentUnloadingField = spectrum.checkbox("documentUnloadingCheckbox");
 const renderDecisionsField = spectrum.checkbox("renderDecisionsCheckbox");
 const scopeDataElementField = spectrum.textField(
@@ -94,7 +93,6 @@ test("initializes form fields with full settings, when decision scopes is data e
         decisionScopes: "%myDecisionScope%",
         surfaces: "%mySurface%",
       },
-      datasetId: "%myDatasetId%",
       documentUnloading: true,
       renderDecisions: true,
       edgeConfigOverrides: {
@@ -166,7 +164,6 @@ test("initializes form fields with full settings, when decision scopes is data e
   await xdmField.expectValue("%myDataLayer%");
   await dataField.expectValue("%myData%");
   await mergeIdField.expectValue("%myMergeId%");
-  await datasetIdField.expectValue("%myDatasetId%");
   await documentUnloadingField.expectChecked();
   await renderDecisionsField.expectChecked();
   await scopesRadioGroup.dataElement.expectChecked();
@@ -178,6 +175,7 @@ test("initializes form fields with full settings, when decision scopes is data e
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("Enabled");
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
   await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
   await overrideViewSelectors.datastreamIdFreeform.expectValue(
@@ -198,6 +196,7 @@ test("initializes form fields with full settings, when decision scopes is data e
 
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("Enabled");
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
   await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
   await overrideViewSelectors.datastreamIdFreeform.expectValue(
@@ -218,6 +217,7 @@ test("initializes form fields with full settings, when decision scopes is data e
 
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("Enabled");
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
   await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
   await overrideViewSelectors.datastreamIdFreeform.expectValue(
@@ -298,7 +298,6 @@ test("initializes form fields with minimal settings", async () => {
   await dataField.expectValue("");
   await mergeIdField.expectValue("");
   await scopesRadioGroup.values.expectChecked();
-  await datasetIdField.expectValue("");
   await documentUnloadingField.expectUnchecked();
   await renderDecisionsField.expectUnchecked();
   await scopesRadioGroup.dataElement.expectUnchecked();
@@ -316,7 +315,6 @@ test("initializes form fields with no settings", async () => {
   await xdmField.expectValue("");
   await dataField.expectValue("");
   await mergeIdField.expectValue("");
-  await datasetIdField.expectValue("");
   await documentUnloadingField.expectUnchecked();
   await renderDecisionsField.expectUnchecked();
   await scopesRadioGroup.values.expectChecked();
@@ -325,15 +323,8 @@ test("initializes form fields with no settings", async () => {
   await surfacesRadioGroup.values.expectChecked();
   await surfacesRadioGroup.dataElement.expectUnchecked();
   await surfaceArrayValues[0].value.expectValue("");
-  await overrideViewSelectors.textFields.eventDatasetOverride.expectValue("");
-  await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
-    "",
-  );
-  await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
-    "",
-  );
-  await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
-    "",
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText(
+    "Match datastream configuration",
   );
 });
 
@@ -358,7 +349,6 @@ test("returns full valid settings with decision scopes as data element", async (
   await xdmField.typeText("%myDataLayer%");
   await dataField.typeText("%myData%");
   await mergeIdField.typeText("%myMergeId%");
-  await datasetIdField.typeText("%myDatasetId%");
   await documentUnloadingField.click();
   await renderDecisionsField.click();
   await scopesRadioGroup.dataElement.click();
@@ -370,6 +360,8 @@ test("returns full valid settings with decision scopes as data element", async (
   await overrideViewSelectors.envTabs.production.expectExists();
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
@@ -391,6 +383,8 @@ test("returns full valid settings with decision scopes as data element", async (
   await overrideViewSelectors.envTabs.staging.expectExists();
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
@@ -412,6 +406,8 @@ test("returns full valid settings with decision scopes as data element", async (
   await overrideViewSelectors.envTabs.development.expectExists();
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
@@ -437,7 +433,6 @@ test("returns full valid settings with decision scopes as data element", async (
     xdm: "%myDataLayer%",
     data: "%myData%",
     mergeId: "%myMergeId%",
-    datasetId: "%myDatasetId%",
     documentUnloading: true,
     renderDecisions: true,
     personalization: {
@@ -446,6 +441,7 @@ test("returns full valid settings with decision scopes as data element", async (
     },
     edgeConfigOverrides: {
       production: {
+        enabled: true,
         sandbox: "prod",
         datastreamId: "PR123",
         com_adobe_experience_platform: {
@@ -466,6 +462,7 @@ test("returns full valid settings with decision scopes as data element", async (
         },
       },
       staging: {
+        enabled: true,
         sandbox: "prod",
         datastreamId: "PR123",
         com_adobe_experience_platform: {
@@ -486,6 +483,7 @@ test("returns full valid settings with decision scopes as data element", async (
         },
       },
       development: {
+        enabled: true,
         sandbox: "prod",
         datastreamId: "PR123",
         com_adobe_experience_platform: {
@@ -535,12 +533,6 @@ test("returns decision scopes settings as an array", async () => {
     personalization: {
       decisionScopes: ["foo", "foo2"],
     },
-    edgeConfigOverrides: {
-      development: {
-        sandbox: "prod",
-        datastreamIdInputMethod: "select",
-      },
-    },
   });
 });
 
@@ -561,12 +553,6 @@ test("returns surfaces settings as an array", async () => {
     personalization: {
       surfaces: ["web://foo", "web://foo2"],
     },
-    edgeConfigOverrides: {
-      development: {
-        sandbox: "prod",
-        datastreamIdInputMethod: "select",
-      },
-    },
   });
 });
 
@@ -580,12 +566,6 @@ test("does not return decision scopes settings when provided with array of empty
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
-    edgeConfigOverrides: {
-      development: {
-        sandbox: "prod",
-        datastreamIdInputMethod: "select",
-      },
-    },
   });
 });
 
@@ -599,12 +579,6 @@ test("does not return surface settings when provided with array of empty strings
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
-    edgeConfigOverrides: {
-      development: {
-        sandbox: "prod",
-        datastreamIdInputMethod: "select",
-      },
-    },
   });
 });
 
@@ -692,6 +666,8 @@ test.requestHooks(
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectExists();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.openMenu();
   await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectMenuOptionLabels(
@@ -749,6 +725,8 @@ test("can type a datastream overrides", async () => {
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamInputMethod.freeform.expectChecked();
   await overrideViewSelectors.datastreamIdFreeform.typeText("1234");
@@ -789,6 +767,8 @@ test.requestHooks(
     });
 
     await instanceNameField.expectText("alloy1");
+    await overrideViewSelectors.comboBoxes.envEnabled.clear();
+    await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
     await overrideViewSelectors.sandbox.selectOption(
       "PRODUCTION Test Sandbox Prod (VA7)",
     );
@@ -797,6 +777,9 @@ test.requestHooks(
     await overrideViewSelectors.comboBoxes.eventDatasetOverride.expectIsComboBox();
 
     await instanceNameField.selectOption("alloy2");
+
+    await overrideViewSelectors.comboBoxes.envEnabled.clear();
+    await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
     await overrideViewSelectors.datastreamIdFreeform.expectExists();
     await overrideViewSelectors.datastreamIdFreeform.expectIsTextField();
     await overrideViewSelectors.textFields.eventDatasetOverride.expectIsTextField();

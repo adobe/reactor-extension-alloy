@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { lightTheme, Provider } from "@adobe/react-spectrum";
-import deserializeReactElement from "./deserializeReactElement";
+import deserializeReactElement from "./deserializeReactElement.mjs";
 import Heading from "../../../../src/view/components/typography/heading";
 import Body from "../../../../src/view/components/typography/body";
 

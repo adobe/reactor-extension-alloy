@@ -102,45 +102,63 @@ test("initializes form fields with settings", async () => {
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("Enabled");
+  await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.expectText(
+    "Enabled",
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
     "23512312",
   );
+  await overrideViewSelectors.comboBoxes.targetEnabled.expectText("Enabled");
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
     "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
+  await overrideViewSelectors.comboBoxes.analyticsEnabled.expectText("Enabled");
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
     "unifiedjsqeonly2",
   );
 
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("Enabled");
+  await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.expectText(
+    "Enabled",
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
     "23512312",
   );
+  await overrideViewSelectors.comboBoxes.targetEnabled.expectText("Enabled");
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
     "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
+  await overrideViewSelectors.comboBoxes.analyticsEnabled.expectText("Enabled");
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
     "unifiedjsqeonly2",
   );
 
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.expectText("Enabled");
+  await overrideViewSelectors.comboBoxes.experiencePlatformEnabled.expectText(
+    "Enabled",
+  );
   await overrideViewSelectors.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db",
   );
   await overrideViewSelectors.textFields.idSyncContainerOverride.expectValue(
     "23512312",
   );
+  await overrideViewSelectors.comboBoxes.targetEnabled.expectText("Enabled");
   await overrideViewSelectors.textFields.targetPropertyTokenOverride.expectValue(
     "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
   );
+  await overrideViewSelectors.comboBoxes.analyticsEnabled.expectText("Enabled");
   await overrideViewSelectors.textFields.reportSuiteOverrides[0].expectValue(
     "unifiedjsqeonly2",
   );
@@ -154,6 +172,8 @@ test("returns valid settings", async () => {
   await overrideViewSelectors.envTabs.production.expectExists();
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
@@ -175,6 +195,8 @@ test("returns valid settings", async () => {
   await overrideViewSelectors.envTabs.staging.expectExists();
   await overrideViewSelectors.envTabs.staging.click();
   await overrideViewSelectors.envTabs.staging.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
@@ -196,6 +218,8 @@ test("returns valid settings", async () => {
   await overrideViewSelectors.envTabs.development.expectExists();
   await overrideViewSelectors.envTabs.development.click();
   await overrideViewSelectors.envTabs.development.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
@@ -220,6 +244,7 @@ test("returns valid settings", async () => {
     instanceName: "alloy2",
     edgeConfigOverrides: {
       production: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -240,6 +265,7 @@ test("returns valid settings", async () => {
         datastreamId: "PR123",
       },
       staging: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -260,6 +286,7 @@ test("returns valid settings", async () => {
         datastreamId: "PR123",
       },
       development: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -311,6 +338,8 @@ test.requestHooks(
 
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.sandbox.expectText("PRODUCTION Prod (VA7)");
   await overrideViewSelectors.datastreamIdDropdown.expectExists();
   await overrideViewSelectors.datastreamIdDropdown.selectOption(
@@ -366,6 +395,8 @@ test("can copy override settings between environments", async () => {
   await overrideViewSelectors.envTabs.production.expectExists();
   await overrideViewSelectors.envTabs.production.click();
   await overrideViewSelectors.envTabs.production.expectSelected();
+  await overrideViewSelectors.comboBoxes.envEnabled.clear();
+  await overrideViewSelectors.comboBoxes.envEnabled.enterSearch("Enabled");
   await overrideViewSelectors.datastreamInputMethod.freeform.click();
   await overrideViewSelectors.datastreamIdFreeform.typeText("PR123");
   await overrideViewSelectors.textFields.eventDatasetOverride.typeText(
@@ -431,6 +462,7 @@ test("can copy override settings between environments", async () => {
     instanceName: "alloy2",
     edgeConfigOverrides: {
       production: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -451,6 +483,7 @@ test("can copy override settings between environments", async () => {
         datastreamId: "PR123",
       },
       staging: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {
@@ -471,6 +504,7 @@ test("can copy override settings between environments", async () => {
         datastreamId: "PR123",
       },
       development: {
+        enabled: true,
         com_adobe_experience_platform: {
           datasets: {
             event: {

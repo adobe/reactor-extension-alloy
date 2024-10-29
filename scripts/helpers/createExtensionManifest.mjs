@@ -38,10 +38,23 @@ governing permissions and limitations under the License.
  * @returns {object}
  */
 const createEdgeConfigOverridesSchema = (isAction) => {
+  const enabledDisabledOrDataElement = {
+    anyOf: [
+      {
+        type: "boolean",
+      },
+      {
+        type: "string",
+        pattern: "^%[^%]+%$",
+      },
+    ],
+  };
   const configOverridesProps = {
+    enabled: enabledDisabledOrDataElement,
     com_adobe_experience_platform: {
       type: "object",
       properties: {
+        enabled: enabledDisabledOrDataElement,
         datasets: {
           type: "object",
           properties: {
@@ -55,14 +68,41 @@ const createEdgeConfigOverridesSchema = (isAction) => {
               required: ["datasetId"],
             },
           },
-          required: ["event"],
+        },
+        com_adobe_edge_ode: {
+          type: "object",
+          properties: {
+            enabled: enabledDisabledOrDataElement,
+          },
+          required: ["enabled"],
+        },
+        com_adobe_edge_segmentation: {
+          type: "object",
+          properties: {
+            enabled: enabledDisabledOrDataElement,
+          },
+          required: ["enabled"],
+        },
+        com_adobe_edge_destinations: {
+          type: "object",
+          properties: {
+            enabled: enabledDisabledOrDataElement,
+          },
+          required: ["enabled"],
+        },
+        com_adobe_edge_ajo: {
+          type: "object",
+          properties: {
+            enabled: enabledDisabledOrDataElement,
+          },
+          required: ["enabled"],
         },
       },
-      required: ["datasets"],
     },
     com_adobe_analytics: {
       type: "object",
       properties: {
+        enabled: enabledDisabledOrDataElement,
         reportSuites: {
           type: "array",
           items: {
@@ -70,7 +110,6 @@ const createEdgeConfigOverridesSchema = (isAction) => {
           },
         },
       },
-      required: ["reportSuites"],
     },
     com_adobe_identity: {
       type: "object",
@@ -91,11 +130,25 @@ const createEdgeConfigOverridesSchema = (isAction) => {
     com_adobe_target: {
       type: "object",
       properties: {
+        enabled: enabledDisabledOrDataElement,
         propertyToken: {
           type: "string",
         },
       },
-      required: ["propertyToken"],
+    },
+    com_adobe_audience_manager: {
+      type: "object",
+      properties: {
+        enabled: enabledDisabledOrDataElement,
+      },
+      required: ["enabled"],
+    },
+    com_adobe_launch_ssf: {
+      type: "object",
+      properties: {
+        enabled: enabledDisabledOrDataElement,
+      },
+      required: ["enabled"],
     },
   };
   const configOverridesWithDatastream = {

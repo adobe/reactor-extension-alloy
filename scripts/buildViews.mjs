@@ -19,7 +19,7 @@ import { watch, inputDir, outputDir } from "./helpers/options.mjs";
 const viewEntries = path.join(inputDir, "view/**/*.html");
 const viewOutDir = path.join(outputDir, "view");
 
-const isProd = (process.env.NODE_ENV === "production");
+const isProd = process.env.NODE_ENV === "production";
 
 const bundler = new Parcel({
   entries: viewEntries,

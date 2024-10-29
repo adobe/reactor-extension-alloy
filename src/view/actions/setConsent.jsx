@@ -57,8 +57,7 @@ const getInitialValues = ({ initInfo }) => {
     instanceName = initInfo.extensionSettings.instances[0].name,
     identityMap = "",
     consent,
-    edgeConfigOverrides = overridesBridge.getInstanceDefaults()
-      .edgeConfigOverrides,
+    edgeConfigOverrides,
   } = initInfo.settings || {};
 
   const initialValues = {

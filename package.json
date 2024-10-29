@@ -37,7 +37,7 @@
     "test:functional:component": "npm run build:componentFixtures && testcafe --esm chrome test/functional/specs/component",
     "test:functional:runtime": "npm-run-all -p build:alloy build:lib && testcafe --esm chrome test/functional/specs/runtime",
     "test:functional:view": "npm-run-all -p build:extensionManifest build:views && testcafe --esm chrome test/functional/specs/view",
-    "test:functional:watch": "testcafe --esm --livechrome test/functional/specs/**/*.spec.mjs",
+    "test:functional:watch": "testcafe --esm --live chrome test/functional/specs/**/*.spec.mjs",
     "test": "npm run test:unit; npm run test:functional",
     "token": "node scripts/token.mjs",
     "version": "./scripts/version.sh"

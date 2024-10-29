@@ -15,7 +15,12 @@ import PropTypes from "prop-types";
 import { useField } from "formik";
 import RawDataElementSelector from "./rawDataElementSelector";
 
-const DataElementSelector = ({ children, augmentValue, tokenize }) => {
+const DataElementSelector = ({
+  children,
+  augmentValue,
+  tokenize,
+  isDisabled,
+}) => {
   // We have to vertically nudge down the data element selector
   // button if the field has a label so the button aligns
   // with the input box.
@@ -39,6 +44,7 @@ const DataElementSelector = ({ children, augmentValue, tokenize }) => {
       value={value}
       onChange={setValue}
       adjustForLabel={adjustForLabel}
+      isDisabled={isDisabled}
       tokenize={tokenize}
     >
       {children}
@@ -50,6 +56,7 @@ DataElementSelector.propTypes = {
   children: PropTypes.node.isRequired,
   augmentValue: PropTypes.bool,
   tokenize: PropTypes.bool,
+  isDisabled: PropTypes.bool,
 };
 
 export default DataElementSelector;

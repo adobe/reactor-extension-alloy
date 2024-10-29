@@ -109,8 +109,10 @@ describe("Instance Manager", () => {
         },
       ],
     });
+    // eslint-disable-next-line no-underscore-dangle
     expect(mockWindow.__alloyMonitors.length).toEqual(1);
     instanceManager.addMonitor(monitor);
+    // eslint-disable-next-line no-underscore-dangle
     expect(mockWindow.__alloyMonitors.length).toEqual(2);
     expect(mockWindow).toEqual({
       alloy1,

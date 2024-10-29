@@ -10,6 +10,19 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+export const overridesKeys = Object.freeze([
+  "com_adobe_experience_platform",
+  "com_adobe_experience_platform.com_adobe_edge_ode",
+  "com_adobe_experience_platform.com_adobe_edge_segmentation",
+  "com_adobe_experience_platform.com_adobe_edge_destinations",
+  "com_adobe_experience_platform.com_adobe_edge_ajo",
+  "com_adobe_analytics",
+  "com_adobe_target",
+  "com_adobe_audience_manager",
+  "com_adobe_launch_ssf",
+  "com_adobe_identity",
+]);
+
 /**
  * Takes a string and returns the a new string with the first letter capitalized.
  * @param {string} str
@@ -22,12 +35,32 @@ export const capitialize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
  * to the `showFields` prop of the `Overrides` component.
  */
 export const FIELD_NAMES = Object.freeze({
-  eventDatasetOverride: "eventDatasetOverride",
-  idSyncContainerOverride: "idSyncContainerOverride",
-  targetPropertyTokenOverride: "targetPropertyTokenOverride",
-  reportSuitesOverride: "reportSuitesOverride",
+  overridesEnabled: "overridesEnabled",
+  analyticsEnabled: "analyticsEnabled",
+  ajoEnabled: "ajoEnabled",
+  audienceManagerEnabled: "audienceManagerEnabled",
   datastreamId: "datastreamId",
+  edgeDestinationsEnabled: "edgeDestinationsEnabled",
+  edgeSegmentationEnabled: "edgeSegmentationEnabled",
+  eventDatasetOverride: "eventDatasetOverride",
+  experiencePlatformEnabled: "experiencePlatformEnabled",
+  idSyncContainerOverride: "idSyncContainerOverride",
+  odeEnabled: "odeEnabled",
+  reportSuitesOverride: "reportSuitesOverride",
   sandbox: "sandbox",
+  ssefEnabled: "ssefEnabled",
+  targetEnabled: "targetEnabled",
+  targetPropertyTokenOverride: "targetPropertyTokenOverride",
+});
+
+export const ENABLED_FIELD_VALUES = Object.freeze({
+  enabled: "Enabled",
+  disabled: "Disabled",
+});
+
+export const ENABLED_MATCH_FIELD_VALUES = Object.freeze({
+  enabled: "Enabled",
+  disabled: "Match datastream configuration",
 });
 
 /**
@@ -83,14 +116,28 @@ export const createIsItemInArray = (
   };
 };
 
-export const dataElementRegex = /^([^%\n]*%[^%\n]+%)+[^%\n]*$/i;
+export const enabledDisabledOrDataElementRegex =
+  /^\s*(Enabled|Disabled|%[^%\n]+%)\s*$/i;
+export const enabledMatchOrDataElementRegex =
+  /^\s*(Enabled|Match datastream configuration|%[^%\n]+%)\s*$/i;
+export const isDataElementRegex = /^\s*%[^%\n]+%\s*$/i;
+export const containsDataElementsRegex = /^([^%\n]*%[^%\n]+%)+[^%\n]*$/i;
 
 /**
- * Returns whether or not the value is a data element expression
+ * Returns whether or not the value is a valid data element expression.
  * @param {string} value
  * @returns {boolean}
  */
-export const isDataElement = (value) => dataElementRegex.test(value);
+export const isDataElement = (value) => isDataElementRegex.test(value);
+
+/**
+ * Returns whether or not the value contains one or more valid data element
+ * expressions.
+ * @param {string} value
+ * @returns {boolean}
+ */
+export const containsDataElements = (value) =>
+  containsDataElementsRegex.test(value);
 
 /**
  * Creates a function that validates a given value. If it passes validation, it
@@ -105,13 +152,24 @@ export const createValidatorWithMessage = (validator, message) => (value) =>
   validator(value) ? undefined : message.trim();
 
 /**
- * Validate that a given item is a valid data element expression.
- * If not, return an error message.
+ * Validate that a given item is a valid data element. If not, return an error
+ * message.
  * @param {string} value
  * @returns {string | undefined}
  */
 export const validateIsDataElement = createValidatorWithMessage(
   isDataElement,
+  "The value must be a valid data element.",
+);
+
+/**
+ * Validate that a given item contains at least one valid data element.
+ * If not, return an error message.
+ * @param {string} value
+ * @returns {string | undefined}
+ */
+export const validateContainsDataElements = createValidatorWithMessage(
+  containsDataElements,
   "The value must contain one or more valid data elements.",
 );
 
@@ -135,7 +193,17 @@ export const createValidateItemIsInArray = (
 /**
  *
  * @param {(value: T) => string | undefined} validator
+ * @param {boolean} multiple
  * @returns
  */
-export const combineValidatorWithIsDataElement = (validator) => (value) =>
-  value?.includes("%") ? validateIsDataElement(value) : validator(value);
+export const combineValidatorWithContainsDataElements =
+  (validator, multiple = true) =>
+  (value) => {
+    if (!value.includes("%")) {
+      return validator(value);
+    }
+    if (multiple) {
+      return validateContainsDataElements(value);
+    }
+    return validateIsDataElement(value);
+  };

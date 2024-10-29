@@ -35,7 +35,8 @@ new Parcel({
     distDir: componentFixtureOutputDir,
   },
   sourceMaps: true,
-}).run().then(() => {
-  console.log("Built component fixtures");
-});
-
+})
+  .run()
+  .then(() => {
+    console.log("Built component fixtures");
+  });

@@ -30,6 +30,22 @@ const overrideViewSelectors = {
     ),
   },
   comboBoxes: {
+    envEnabled: spectrumWrappers.comboBox("overridesEnabled"),
+    analyticsEnabled: spectrumWrappers.comboBox("analyticsEnabled"),
+    ajoEnabled: spectrumWrappers.comboBox("ajoEnabled"),
+    audienceManagerEnabled: spectrumWrappers.comboBox("audienceManagerEnabled"),
+    edgeDestinationsEnabled: spectrumWrappers.comboBox(
+      "edgeDestinationsEnabled",
+    ),
+    edgeSegmentationEnabled: spectrumWrappers.comboBox(
+      "edgeSegmentationEnabled",
+    ),
+    experiencePlatformEnabled: spectrumWrappers.comboBox(
+      "experiencePlatformEnabled",
+    ),
+    odeEnabled: spectrumWrappers.comboBox("odeEnabled"),
+    ssefEnabled: spectrumWrappers.comboBox("ssefEnabled"),
+    targetEnabled: spectrumWrappers.comboBox("targetEnabled"),
     eventDatasetOverride: spectrumWrappers.comboBox("eventDatasetOverride"),
     idSyncContainerOverride: spectrumWrappers.comboBox(
       "idSyncContainerOverride",
