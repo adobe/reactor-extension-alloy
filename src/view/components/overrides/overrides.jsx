@@ -181,7 +181,7 @@ const Overrides = ({
       <InlineAlert width="size-5000">
         <Heading>Server-side vs client-side</Heading>
         <Content>
-          Enabling client-side datastream configuration overrides for an
+          Setting any client-side datastream configuration overrides for an
           environment below will override any server-side dynamic datastream
           configurations and rules for that environment.
         </Content>
