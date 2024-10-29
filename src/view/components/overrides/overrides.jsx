@@ -596,7 +596,7 @@ const Overrides = ({
                             ) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
-                                serviceStatus.com_adobe_experience_platform_ode
+                                serviceStatus.com_adobe_experience_platform
                                   .value,
                               ) && (
                                 <OverrideInput
@@ -627,8 +627,7 @@ const Overrides = ({
                             ) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
-                                serviceStatus
-                                  .com_adobe_experience_platform_edge_segmentation
+                                serviceStatus.com_adobe_experience_platform
                                   .value,
                               ) && (
                                 <OverrideInput

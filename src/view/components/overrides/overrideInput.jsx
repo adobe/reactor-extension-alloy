@@ -9,6 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import { Picker, Item } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import React from "react";
 import DataElementSelector from "../dataElementSelector";
@@ -40,27 +41,26 @@ const OverrideInput = ({
   allowsCustomValue = false,
   ...otherProps
 }) => {
+  if (isDisabled) {
+    return (
+      <Picker selectedKey="Disabled" isDisabled {...otherProps}>
+        <Item key="Disabled">Disabled</Item>
+      </Picker>
+    );
+  }
   if (useManualEntry) {
     return (
-      <DataElementSelector isDisabled={isDisabled}>
-        <FormikTextField isDisabled={isDisabled} {...otherProps} />
+      <DataElementSelector>
+        <FormikTextField {...otherProps} />
       </DataElementSelector>
     );
   }
   if (!allowsCustomValue) {
-    return (
-      <FormikPicker isDisabled={isDisabled} {...otherProps}>
-        {children}
-      </FormikPicker>
-    );
+    return <FormikPicker {...otherProps}>{children}</FormikPicker>;
   }
   return (
-    <DataElementSelector isDisabled={isDisabled}>
-      <FormikComboBox
-        isDisabled={isDisabled}
-        allowsCustomValue={allowsCustomValue}
-        {...otherProps}
-      >
+    <DataElementSelector>
+      <FormikComboBox allowsCustomValue={allowsCustomValue} {...otherProps}>
         {children}
       </FormikComboBox>
     </DataElementSelector>
