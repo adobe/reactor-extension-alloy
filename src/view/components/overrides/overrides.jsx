@@ -176,7 +176,7 @@ const Overrides = ({
   return (
     <>
       <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides">
-        Datastream configuration overrides
+        Datastream Configuration Overrides
       </SectionHeader>
       <InlineAlert width="size-5000">
         <Heading>Server-side vs client-side</Heading>
