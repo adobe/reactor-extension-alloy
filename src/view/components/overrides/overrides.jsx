@@ -202,7 +202,7 @@ const Overrides = ({
 
               const isDisabled = createIsDisabled(`${prefix}.${env}`);
 
-              const serviceStatus = useServiceStatus(env, result);
+              const serviceStatus = useServiceStatus(result);
 
               const envEdgeConfigIds = edgeConfigIds[`${env}Environment`];
 
@@ -361,7 +361,7 @@ const Overrides = ({
                         {...EnabledMatchOptions}
                       </OverrideInput>
                     )}
-                    {!isDisabled("enabled") && (
+                    {!isDisabled("enabled", true) && (
                       <>
                         {visibleFields.has(FIELD_NAMES.datastreamId) && (
                           <>
@@ -414,7 +414,10 @@ const Overrides = ({
                             {visibleFields.has(
                               FIELD_NAMES.reportSuitesOverride,
                             ) &&
-                              !isDisabled("com_adobe_analytics.enabled") && (
+                              !isDisabled(
+                                "com_adobe_analytics.enabled",
+                                serviceStatus.com_adobe_analytics.value,
+                              ) && (
                                 <ReportSuitesOverride
                                   useManualEntry={useManualEntry}
                                   validate={validateReportSuiteOption}
@@ -463,6 +466,7 @@ const Overrides = ({
                             ) &&
                               !isDisabled(
                                 "com_adobe_audience_manager.enabled",
+                                serviceStatus.com_adobe_audience_manager.value,
                               ) && (
                                 <OverrideInput
                                   data-test-id={
@@ -532,6 +536,8 @@ const Overrides = ({
                             ) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
+                                serviceStatus.com_adobe_experience_platform
+                                  .value,
                               ) && (
                                 <OverrideInput
                                   useManualEntry={
@@ -547,6 +553,7 @@ const Overrides = ({
                                   width="size-5000"
                                   isDisabled={
                                     !serviceStatus.com_adobe_experience_platform
+                                      .value
                                   }
                                   allowsCustomValue
                                   validate={validateDatasetOption}
@@ -561,6 +568,8 @@ const Overrides = ({
                             {visibleFields.has(FIELD_NAMES.odeEnabled) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
+                                serviceStatus.com_adobe_experience_platform
+                                  .value,
                               ) && (
                                 <OverrideInput
                                   aria-label="Enable or disable Adobe Offer Decisioning Engine"
@@ -587,6 +596,8 @@ const Overrides = ({
                             ) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
+                                serviceStatus.com_adobe_experience_platform_ode
+                                  .value,
                               ) && (
                                 <OverrideInput
                                   aria-label="Enable or disable Adobe Edge Segmentation"
@@ -616,6 +627,9 @@ const Overrides = ({
                             ) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
+                                serviceStatus
+                                  .com_adobe_experience_platform_edge_segmentation
+                                  .value,
                               ) && (
                                 <OverrideInput
                                   aria-label="Enable or disable Personalization Destinations"
@@ -643,6 +657,9 @@ const Overrides = ({
                             {visibleFields.has(FIELD_NAMES.ajoEnabled) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
+                                serviceStatus
+                                  .com_adobe_experience_platform_edge_destinations
+                                  .value,
                               ) && (
                                 <OverrideInput
                                   aria-label="Enable or disable Adobe Journey Optimizer"
@@ -712,7 +729,10 @@ const Overrides = ({
                             {visibleFields.has(
                               FIELD_NAMES.targetPropertyTokenOverride,
                             ) &&
-                              !isDisabled("com_adobe_target.enabled") && (
+                              !isDisabled(
+                                "com_adobe_target.enabled",
+                                serviceStatus.com_adobe_target.value,
+                              ) && (
                                 <OverrideInput
                                   data-test-id={
                                     FIELD_NAMES.targetPropertyTokenOverride
