@@ -176,18 +176,18 @@ const Overrides = ({
   return (
     <>
       <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/web-sdk-extension-configuration.html?lang=en#datastream-configuration-overrides">
-        Dynamic Datastream Configuration
+        Datastream Configuration Overrides
       </SectionHeader>
       <InlineAlert width="size-5000">
         <Heading>Server-side vs client-side</Heading>
         <Content>
-          Enabling client-side dynamic datastream configurations for an
-          environment below will also override any server-side dynamic
-          datastream configurations and rules for that environment.
+          Setting any client-side datastream configuration overrides for an
+          environment below will override any server-side dynamic datastream
+          configurations and rules for that environment.
         </Content>
       </InlineAlert>
       <FormElementContainer>
-        <Tabs aria-label="Dynamic Datastream Configuration environments">
+        <Tabs aria-label="Datastream configuration overrides environments">
           <TabList>
             {OVERRIDE_ENVIRONMENTS.map((env) => (
               <Item key={env} data-test-id={`${env}OverridesTab`}>
@@ -348,14 +348,14 @@ const Overrides = ({
                     <SettingsCopySection currentEnv={env} onPress={onCopy} />
                     {visibleFields.has(FIELD_NAMES.overridesEnabled) && (
                       <OverrideInput
-                        aria-label="Enable or disable dynamic datastream configuration"
+                        aria-label="Enable or disable datastream configuration overrides"
                         data-test-id={FIELD_NAMES.overridesEnabled}
                         allowsCustomValue
                         validate={validateEnabledMatchOrDataElement}
                         name={`${prefix}.${env}.enabled`}
                         width="size-5000"
                         pattern={enabledMatchOrDataElementRegex}
-                        description={`Enable or disable dynamic configuration for the ${env} environment.`}
+                        description={`Enable or disable datastream configuration overrides for the ${env} environment.`}
                         onBlur={onDisable}
                       >
                         {...EnabledMatchOptions}
