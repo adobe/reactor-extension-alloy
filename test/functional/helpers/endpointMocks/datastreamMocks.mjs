@@ -105,7 +105,7 @@ export const withConfigOverrides = RequestMock()
             idSyncContainerId: 105012,
             idSyncContainerId__additional: [107756, 107757],
           },
-          com_adobe_audiencemanager: {
+          com_adobe_audience_manager: {
             enabled: true,
           },
           com_adobe_launch_ssf: {
