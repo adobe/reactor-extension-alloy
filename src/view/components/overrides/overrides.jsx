@@ -663,8 +663,7 @@ const Overrides = ({
                             {visibleFields.has(FIELD_NAMES.ajoEnabled) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
-                                serviceStatus
-                                  .com_adobe_experience_platform_edge_destinations
+                                serviceStatus.com_adobe_experience_platform
                                   .value,
                               ) && (
                                 <OverrideInput
