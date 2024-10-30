@@ -405,6 +405,7 @@ const Overrides = ({
                                 isDisabled={
                                   !serviceStatus.com_adobe_analytics.value
                                 }
+                                disabledDisplayValue="Disabled"
                                 description="Enable or disable the Adobe Analytics destination."
                                 onBlur={onDisable}
                               >
@@ -455,6 +456,7 @@ const Overrides = ({
                                   !serviceStatus.com_adobe_audience_manager
                                     .value
                                 }
+                                disabledDisplayValue="Disabled"
                                 onBlur={onDisable}
                                 description="Enable or disable the Adobe Audience Manager destination."
                               >
@@ -527,6 +529,7 @@ const Overrides = ({
                                     .value
                                 }
                                 onBlur={onDisable}
+                                disabledDisplayValue="Disabled"
                                 description="Enable or disable the Adobe Experience Platform destination."
                               >
                                 {...EnabledDisabledOptions}
@@ -588,6 +591,7 @@ const Overrides = ({
                                     !serviceStatus
                                       .com_adobe_experience_platform_ode.value
                                   }
+                                  disabledDisplayValue="Disabled"
                                 >
                                   {...EnabledDisabledOptions}
                                 </OverrideInput>
@@ -619,6 +623,7 @@ const Overrides = ({
                                       .com_adobe_experience_platform_edge_segmentation
                                       .value
                                   }
+                                  disabledDisplayValue="Disabled"
                                 >
                                   {...EnabledDisabledOptions}
                                 </OverrideInput>
@@ -650,6 +655,7 @@ const Overrides = ({
                                       .com_adobe_experience_platform_edge_destinations
                                       .value
                                   }
+                                  disabledDisplayValue="Disabled"
                                 >
                                   {...EnabledDisabledOptions}
                                 </OverrideInput>
@@ -677,6 +683,7 @@ const Overrides = ({
                                     !serviceStatus
                                       .com_adobe_experience_platform_ajo.value
                                   }
+                                  disabledDisplayValue="Disabled"
                                 >
                                   {...EnabledDisabledOptions}
                                 </OverrideInput>
@@ -697,6 +704,7 @@ const Overrides = ({
                               isDisabled={
                                 !serviceStatus.com_adobe_launch_ssf.value
                               }
+                              disabledDisplayValue="Disabled"
                               description="Enable or disable Adobe Server-Side Event Forwarding."
                             >
                               {...EnabledDisabledOptions}
@@ -721,6 +729,7 @@ const Overrides = ({
                                 isDisabled={
                                   !serviceStatus.com_adobe_target.value
                                 }
+                                disabledDisplayValue="Disabled"
                                 description="Enable or disable the Adobe Target destination."
                               >
                                 {...EnabledDisabledOptions}
