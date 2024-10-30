@@ -36,7 +36,8 @@ npm:
     - uuid
     - "@adobe/reactor-sandbox"
     - "@adobe/auth-token"
-    
+    - "@adobe/reactor-turbine"
+
 suites:
   - name: "Component Tests"
     esm: true
@@ -78,3 +79,4 @@ suites:
       - "test/functional/specs/view/dataElements/**/*.spec.mjs"
     platformName: "Windows 11"
     screenResolution: "1024x768"
+
