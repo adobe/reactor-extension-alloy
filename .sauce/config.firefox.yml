@@ -36,6 +36,7 @@ npm:
     - uuid
     - "@adobe/reactor-sandbox"
     - "@adobe/auth-token"
+    - "@adobe/reactor-turbine"
 
 suites:
   - name: "Component Tests"
@@ -77,5 +78,3 @@ suites:
     src:
       - "test/functional/specs/view/dataElements/**/*.spec.mjs"
     platformName: "Windows 11"
-
-
