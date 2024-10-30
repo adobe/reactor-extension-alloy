@@ -71,6 +71,18 @@ export const withConfigOverrides = RequestMock()
                 },
               ],
             },
+            com_adobe_edge_ode: {
+              enabled: true,
+            },
+            com_adobe_edge_segmentation: {
+              enabled: true,
+            },
+            com_adobe_edge_destinations: {
+              enabled: true,
+            },
+            com_adobe_edge_ajo: {
+              enabled: true,
+            },
           },
           com_adobe_analytics: {
             enabled: true,
@@ -92,6 +104,77 @@ export const withConfigOverrides = RequestMock()
             idSyncEnabled: true,
             idSyncContainerId: 105012,
             idSyncContainerId__additional: [107756, 107757],
+          },
+          com_adobe_audiencemanager: {
+            enabled: true,
+          },
+          com_adobe_launch_ssf: {
+            enabled: true,
+          },
+        },
+      },
+      orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
+      sandboxName: "prod",
+      _system: {
+        id: "aca8c786-4940-442f-ace5-7c4aba02118e",
+      },
+    },
+    200,
+    responseHeaders,
+  );
+
+export const withConfigOverridesAndDisabledServices = RequestMock()
+  .onRequestTo({ method: "get", url: configOverridesDatastream })
+  .respond(
+    {
+      data: {
+        title: "Test Config Overrides",
+        enabled: true,
+        settings: {
+          input: {},
+          com_adobe_experience_platform: {
+            enabled: false,
+          },
+          com_adobe_analytics: {
+            enabled: false,
+          },
+          com_adobe_target: {
+            enabled: false,
+          },
+          com_adobe_identity: {
+            idSyncEnabled: true,
+            idSyncContainerId: 105012,
+            idSyncContainerId__additional: [107756, 107757],
+          },
+          com_adobe_audiencemanager: {
+            enabled: false,
+          },
+          com_adobe_launch_ssf: {
+            enabled: false,
+          },
+        },
+      },
+      orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
+      sandboxName: "prod",
+      _system: {
+        id: "aca8c786-4940-442f-ace5-7c4aba02118e",
+      },
+    },
+    200,
+    responseHeaders,
+  );
+
+export const withConfigOverridesAndAbsentServices = RequestMock()
+  .onRequestTo({ method: "get", url: configOverridesDatastream })
+  .respond(
+    {
+      data: {
+        title: "Test Config Overrides",
+        enabled: true,
+        settings: {
+          input: {},
+          com_adobe_experience_platform: {
+            enabled: true,
           },
         },
       },

@@ -2257,6 +2257,140 @@ test("hides disabled overrides when service is disabled", async () => {
   });
 });
 
+
+test("enables all datastream override fields if there is no Blackbird config", async () => {
+  await extensionViewController.init();
+
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
+  await instances[0].overrides.comboBoxes.envEnabled.expectValue("Enabled");
+
+  await instances[0].overrides.comboBoxes.analyticsEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.comboBoxes.experiencePlatformEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.comboBoxes.ajoEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.audienceManagerEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.comboBoxes.edgeDestinationsEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.comboBoxes.edgeSegmentationEnabled.expectValue(
+    "Enabled",
+  );
+  await instances[0].overrides.comboBoxes.odeEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.ssefEnabled.expectValue("Enabled");
+  await instances[0].overrides.comboBoxes.targetEnabled.expectValue("Enabled");
+});
+
+test.requestHooks(
+  sandboxesMocks.singleDefault,
+  datastreamsMocks.single,
+  datastreamMocks.withConfigOverridesAndAbsentServices,
+)(
+  "disables overrides for services that are absent from the datastream config",
+  async () => {
+    await extensionViewController.init();
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.selectOption(
+      "Test Config Overrides",
+    );
+    await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.selectOption(
+      "Test Config Overrides",
+    );
+    await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.selectOption(
+      "Test Config Overrides",
+    );
+    await instances[0].overrides.comboBoxes.envEnabled.clear();
+    await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
+    await instances[0].overrides.comboBoxes.envEnabled.expectValue("Enabled");
+
+    await instances[0].overrides.comboBoxes.analyticsEnabled.expectDisabled();
+    await instances[0].overrides.comboBoxes.audienceManagerEnabled.expectDisabled();
+    await instances[0].overrides.comboBoxes.edgeDestinationsEnabled.expectDisabled();
+    await instances[0].overrides.comboBoxes.edgeSegmentationEnabled.expectDisabled();
+    await instances[0].overrides.comboBoxes.experiencePlatformEnabled.expectText(
+      "Enabled",
+    );
+    await instances[0].overrides.comboBoxes.ajoEnabled.expectDisabled();
+    await instances[0].overrides.comboBoxes.odeEnabled.expectDisabled();
+    await instances[0].overrides.comboBoxes.ssefEnabled.expectDisabled();
+    await instances[0].overrides.comboBoxes.targetEnabled.expectDisabled();
+    await extensionViewController.expectSettings({
+      instances: [
+        {
+          name: "alloy",
+          sandbox: "prod",
+          stagingSandbox: "prod",
+          developmentSandbox: "prod",
+          edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+          stagingEdgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+          developmentEdgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+
+          edgeConfigOverrides: {
+            development: {
+              enabled: true,
+            },
+          },
+        },
+      ],
+    });
+  },
+);
+
+test.requestHooks(
+  sandboxesMocks.singleDefault,
+  datastreamsMocks.single,
+  datastreamMocks.withConfigOverridesAndDisabledServices,
+)(
+  "disables overrides for services based on their datastream config",
+  async () => {
+    await extensionViewController.init();
+    await instances[0].edgeConfig.inputMethodSelectRadio.expectChecked();
+    await instances[0].edgeConfig.inputMethodFreeformRadio.expectUnchecked();
+    await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
+    await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.selectOption(
+      "Test Config Overrides",
+    );
+    await instances[0].edgeConfig.inputMethodSelect.staging.datastreamField.selectOption(
+      "Test Config Overrides",
+    );
+    await instances[0].edgeConfig.inputMethodSelect.development.datastreamField.selectOption(
+      "Test Config Overrides",
+    );
+    await instances[0].overrides.comboBoxes.envEnabled.clear();
+    await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
+    await instances[0].overrides.comboBoxes.envEnabled.expectValue("Enabled");
+
+    await instances[0].overrides.comboBoxes.analyticsEnabled.expectDisabled();
+    await instances[0].overrides.comboBoxes.experiencePlatformEnabled.expectDisabled();
+    await extensionViewController.expectSettings({
+      instances: [
+        {
+          name: "alloy",
+          sandbox: "prod",
+          stagingSandbox: "prod",
+          developmentSandbox: "prod",
+          edgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+          stagingEdgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+          developmentEdgeConfigId: "aca8c786-4940-442f-ace5-7c4aba02118e",
+
+          edgeConfigOverrides: {
+            development: {
+              enabled: true,
+            },
+          },
+        },
+      ],
+    });
+  },
+);
+
 test("makes the media collection fields required if one is filled", async () => {
   await extensionViewController.init();
   await instances[0].edgeConfig.inputMethodFreeformRadio.click();

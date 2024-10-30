@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { Picker, TextField, Item } from "@adobe/react-spectrum";
+import { Picker, Flex, TextField, Item } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import React from "react";
 import DataElementSelector from "../dataElementSelector";
@@ -24,17 +24,17 @@ const DisabledOverrideInput = ({
 }) => {
   if (useManualEntry) {
     return (
-      <TextField
-        {...otherProps}
-        UNSAFE_style={{ display: "block" }}
-        defaultValue={disabledDisplayValue}
-      />
+      <Flex>
+        <TextField {...otherProps} defaultValue={disabledDisplayValue} />
+      </Flex>
     );
   }
   return (
-    <Picker {...otherProps} selectedKey="Disabled">
-      <Item key="Disabled">{disabledDisplayValue}</Item>
-    </Picker>
+    <Flex>
+      <Picker {...otherProps} selectedKey="Disabled">
+        <Item key="Disabled">{disabledDisplayValue}</Item>
+      </Picker>
+    </Flex>
   );
 };
 /**
