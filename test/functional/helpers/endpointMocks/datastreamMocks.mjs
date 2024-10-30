@@ -150,3 +150,161 @@ export const forbidden = RequestMock()
     403,
     responseHeaders,
   );
+
+export const withUndefinedServices = RequestMock()
+  .onRequestTo({ url: DATASTREAM_ENDPOINT_REGEX, method: "GET" })
+  .respond(
+    {
+      data: {
+        title: "Undefined Services Datastream",
+        enabled: true,
+        settings: {
+          com_adobe_experience_platform: undefined,
+          com_adobe_analytics: undefined,
+          com_adobe_target: undefined,
+          com_adobe_audience_manager: undefined,
+          com_adobe_launch_ssf: undefined
+        }
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const withDisabledServices = RequestMock()
+  .onRequestTo({ url: DATASTREAM_ENDPOINT_REGEX, method: "GET" })
+  .respond(
+    {
+      data: {
+        title: "Disabled Services Datastream",
+        enabled: true,
+        settings: {
+          com_adobe_experience_platform: {
+            enabled: false,
+            com_adobe_edge_ode: {
+              enabled: false
+            },
+            com_adobe_edge_segmentation: {
+              enabled: false
+            },
+            com_adobe_edge_destinations: {
+              enabled: false
+            },
+            com_adobe_edge_ajo: {
+              enabled: false
+            }
+          },
+          com_adobe_analytics: {
+            enabled: false
+          },
+          com_adobe_target: {
+            enabled: false
+          },
+          com_adobe_audience_manager: {
+            enabled: false
+          },
+          com_adobe_launch_ssf: {
+            enabled: false
+          }
+        }
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const withAllServicesEnabled = RequestMock()
+  .onRequestTo({ url: DATASTREAM_ENDPOINT_REGEX, method: "GET" })
+  .respond(
+    {
+      data: {
+        title: "All Services Enabled Datastream",
+        enabled: true,
+        settings: {
+          com_adobe_experience_platform: {
+            enabled: true,
+            datasets: {
+              event: {
+                datasetId: "test-dataset"
+              }
+            },
+            com_adobe_edge_ode: {
+              enabled: true
+            },
+            com_adobe_edge_segmentation: {
+              enabled: true
+            },
+            com_adobe_edge_destinations: {
+              enabled: true
+            },
+            com_adobe_edge_ajo: {
+              enabled: true
+            }
+          },
+          com_adobe_analytics: {
+            enabled: true,
+            reportSuites: ["test-suite"]
+          },
+          com_adobe_target: {
+            enabled: true,
+            propertyToken: "test-token"
+          },
+          com_adobe_audience_manager: {
+            enabled: true,
+            idSyncContainerId: "test-container"
+          },
+          com_adobe_launch_ssf: {
+            enabled: true
+          }
+        }
+      }
+    },
+    200,
+    responseHeaders
+  );
+
+export const withMixedServiceStates = RequestMock()
+  .onRequestTo({ url: DATASTREAM_ENDPOINT_REGEX, method: "GET" })
+  .respond(
+    {
+      data: {
+        title: "Mixed Services States Datastream",
+        enabled: true,
+        settings: {
+          com_adobe_experience_platform: {
+            enabled: true,
+            datasets: {
+              event: {
+                datasetId: "test-dataset"
+              }
+            },
+            com_adobe_edge_ode: {
+              enabled: false
+            },
+            com_adobe_edge_segmentation: {
+              enabled: true
+            },
+            com_adobe_edge_destinations: {
+              enabled: false
+            },
+            com_adobe_edge_ajo: {
+              enabled: true
+            }
+          },
+          com_adobe_analytics: {
+            enabled: true,
+            reportSuites: ["test-suite"]
+          },
+          com_adobe_target: undefined,
+          com_adobe_audience_manager: {
+            enabled: false
+          },
+          com_adobe_launch_ssf: {
+            enabled: true
+          }
+        }
+      }
+    },
+    200,
+    responseHeaders
+  );
