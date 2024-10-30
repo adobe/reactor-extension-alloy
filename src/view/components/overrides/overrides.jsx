@@ -423,7 +423,7 @@ const Overrides = ({
                                   validate={validateReportSuiteOption}
                                   primaryItem={primaryReportSuites}
                                   isDisabled={
-                                    !serviceStatus.com_adobe_analytics
+                                    !serviceStatus.com_adobe_analytics.value
                                   }
                                   items={reportSuiteOptions}
                                   prefix={`${prefix}.${env}`}
@@ -483,6 +483,7 @@ const Overrides = ({
                                   defaultItems={idSyncContainers}
                                   isDisabled={
                                     !serviceStatus.com_adobe_audience_manager
+                                      .value
                                   }
                                   validate={validateIdSyncContainerOption}
                                   name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
@@ -709,7 +710,7 @@ const Overrides = ({
                           <ProductSubsection name="Adobe Target">
                             {visibleFields.has(FIELD_NAMES.targetEnabled) && (
                               <OverrideInput
-                                aria-label="Enable or disable Adobe Experience Platform"
+                                aria-label="Enable or disable the Adobe Target destination"
                                 data-test-id={FIELD_NAMES.targetEnabled}
                                 allowsCustomValue
                                 validate={validateEnabledDisabledOrDataElement}
@@ -740,7 +741,9 @@ const Overrides = ({
                                   allowsCustomValue
                                   overrideType="property token"
                                   primaryItem={primaryPropertyToken}
-                                  isDisabled={!serviceStatus.com_adobe_target}
+                                  isDisabled={
+                                    !serviceStatus.com_adobe_target.value
+                                  }
                                   validate={validatePropertyTokenOption}
                                   defaultItems={propertyTokenOptions}
                                   useManualEntry={
