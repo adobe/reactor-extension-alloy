@@ -256,6 +256,7 @@ const componentWrappers = {
           `Option with label ${label} does not exist while scrolling down when it is expected to exist.`,
         );
       },
+      expectDisabled: createExpectDisabled(selector),
     };
   },
   picker(selector) {

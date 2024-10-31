@@ -202,7 +202,7 @@ const Overrides = ({
 
               const isDisabled = createIsDisabled(`${prefix}.${env}`);
 
-              const serviceStatus = useServiceStatus(env, result);
+              const serviceStatus = useServiceStatus(result);
 
               const envEdgeConfigIds = edgeConfigIds[`${env}Environment`];
 
@@ -361,7 +361,7 @@ const Overrides = ({
                         {...EnabledMatchOptions}
                       </OverrideInput>
                     )}
-                    {!isDisabled("enabled") && (
+                    {!isDisabled("enabled", true) && (
                       <>
                         {visibleFields.has(FIELD_NAMES.datastreamId) && (
                           <>
@@ -405,6 +405,7 @@ const Overrides = ({
                                 isDisabled={
                                   !serviceStatus.com_adobe_analytics.value
                                 }
+                                disabledDisplayValue="Disabled"
                                 description="Enable or disable the Adobe Analytics destination."
                                 onBlur={onDisable}
                               >
@@ -414,13 +415,16 @@ const Overrides = ({
                             {visibleFields.has(
                               FIELD_NAMES.reportSuitesOverride,
                             ) &&
-                              !isDisabled("com_adobe_analytics.enabled") && (
+                              !isDisabled(
+                                "com_adobe_analytics.enabled",
+                                serviceStatus.com_adobe_analytics.value,
+                              ) && (
                                 <ReportSuitesOverride
                                   useManualEntry={useManualEntry}
                                   validate={validateReportSuiteOption}
                                   primaryItem={primaryReportSuites}
                                   isDisabled={
-                                    !serviceStatus.com_adobe_analytics
+                                    !serviceStatus.com_adobe_analytics.value
                                   }
                                   items={reportSuiteOptions}
                                   prefix={`${prefix}.${env}`}
@@ -452,6 +456,7 @@ const Overrides = ({
                                   !serviceStatus.com_adobe_audience_manager
                                     .value
                                 }
+                                disabledDisplayValue="Disabled"
                                 onBlur={onDisable}
                                 description="Enable or disable the Adobe Audience Manager destination."
                               >
@@ -463,6 +468,7 @@ const Overrides = ({
                             ) &&
                               !isDisabled(
                                 "com_adobe_audience_manager.enabled",
+                                serviceStatus.com_adobe_audience_manager.value,
                               ) && (
                                 <OverrideInput
                                   data-test-id={
@@ -479,6 +485,7 @@ const Overrides = ({
                                   defaultItems={idSyncContainers}
                                   isDisabled={
                                     !serviceStatus.com_adobe_audience_manager
+                                      .value
                                   }
                                   validate={validateIdSyncContainerOption}
                                   name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
@@ -522,6 +529,7 @@ const Overrides = ({
                                     .value
                                 }
                                 onBlur={onDisable}
+                                disabledDisplayValue="Disabled"
                                 description="Enable or disable the Adobe Experience Platform destination."
                               >
                                 {...EnabledDisabledOptions}
@@ -532,6 +540,8 @@ const Overrides = ({
                             ) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
+                                serviceStatus.com_adobe_experience_platform
+                                  .value,
                               ) && (
                                 <OverrideInput
                                   useManualEntry={
@@ -547,6 +557,7 @@ const Overrides = ({
                                   width="size-5000"
                                   isDisabled={
                                     !serviceStatus.com_adobe_experience_platform
+                                      .value
                                   }
                                   allowsCustomValue
                                   validate={validateDatasetOption}
@@ -561,6 +572,8 @@ const Overrides = ({
                             {visibleFields.has(FIELD_NAMES.odeEnabled) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
+                                serviceStatus.com_adobe_experience_platform
+                                  .value,
                               ) && (
                                 <OverrideInput
                                   aria-label="Enable or disable Adobe Offer Decisioning Engine"
@@ -578,6 +591,7 @@ const Overrides = ({
                                     !serviceStatus
                                       .com_adobe_experience_platform_ode.value
                                   }
+                                  disabledDisplayValue="Disabled"
                                 >
                                   {...EnabledDisabledOptions}
                                 </OverrideInput>
@@ -587,6 +601,8 @@ const Overrides = ({
                             ) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
+                                serviceStatus.com_adobe_experience_platform
+                                  .value,
                               ) && (
                                 <OverrideInput
                                   aria-label="Enable or disable Adobe Edge Segmentation"
@@ -607,6 +623,7 @@ const Overrides = ({
                                       .com_adobe_experience_platform_edge_segmentation
                                       .value
                                   }
+                                  disabledDisplayValue="Disabled"
                                 >
                                   {...EnabledDisabledOptions}
                                 </OverrideInput>
@@ -616,6 +633,8 @@ const Overrides = ({
                             ) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
+                                serviceStatus.com_adobe_experience_platform
+                                  .value,
                               ) && (
                                 <OverrideInput
                                   aria-label="Enable or disable Personalization Destinations"
@@ -636,6 +655,7 @@ const Overrides = ({
                                       .com_adobe_experience_platform_edge_destinations
                                       .value
                                   }
+                                  disabledDisplayValue="Disabled"
                                 >
                                   {...EnabledDisabledOptions}
                                 </OverrideInput>
@@ -643,6 +663,8 @@ const Overrides = ({
                             {visibleFields.has(FIELD_NAMES.ajoEnabled) &&
                               !isDisabled(
                                 "com_adobe_experience_platform.enabled",
+                                serviceStatus.com_adobe_experience_platform
+                                  .value,
                               ) && (
                                 <OverrideInput
                                   aria-label="Enable or disable Adobe Journey Optimizer"
@@ -660,6 +682,7 @@ const Overrides = ({
                                     !serviceStatus
                                       .com_adobe_experience_platform_ajo.value
                                   }
+                                  disabledDisplayValue="Disabled"
                                 >
                                   {...EnabledDisabledOptions}
                                 </OverrideInput>
@@ -680,6 +703,7 @@ const Overrides = ({
                               isDisabled={
                                 !serviceStatus.com_adobe_launch_ssf.value
                               }
+                              disabledDisplayValue="Disabled"
                               description="Enable or disable Adobe Server-Side Event Forwarding."
                             >
                               {...EnabledDisabledOptions}
@@ -693,7 +717,7 @@ const Overrides = ({
                           <ProductSubsection name="Adobe Target">
                             {visibleFields.has(FIELD_NAMES.targetEnabled) && (
                               <OverrideInput
-                                aria-label="Enable or disable Adobe Experience Platform"
+                                aria-label="Enable or disable the Adobe Target destination"
                                 data-test-id={FIELD_NAMES.targetEnabled}
                                 allowsCustomValue
                                 validate={validateEnabledDisabledOrDataElement}
@@ -704,6 +728,7 @@ const Overrides = ({
                                 isDisabled={
                                   !serviceStatus.com_adobe_target.value
                                 }
+                                disabledDisplayValue="Disabled"
                                 description="Enable or disable the Adobe Target destination."
                               >
                                 {...EnabledDisabledOptions}
@@ -712,7 +737,10 @@ const Overrides = ({
                             {visibleFields.has(
                               FIELD_NAMES.targetPropertyTokenOverride,
                             ) &&
-                              !isDisabled("com_adobe_target.enabled") && (
+                              !isDisabled(
+                                "com_adobe_target.enabled",
+                                serviceStatus.com_adobe_target.value,
+                              ) && (
                                 <OverrideInput
                                   data-test-id={
                                     FIELD_NAMES.targetPropertyTokenOverride
@@ -721,7 +749,9 @@ const Overrides = ({
                                   allowsCustomValue
                                   overrideType="property token"
                                   primaryItem={primaryPropertyToken}
-                                  isDisabled={!serviceStatus.com_adobe_target}
+                                  isDisabled={
+                                    !serviceStatus.com_adobe_target.value
+                                  }
                                   validate={validatePropertyTokenOption}
                                   defaultItems={propertyTokenOptions}
                                   useManualEntry={

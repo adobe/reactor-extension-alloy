@@ -87,60 +87,74 @@ export const useFetchConfig = ({
  * Blackbird has a more flat key-value structure than the one that
  * Konductor accepts, so we also need to map between them.
  * This object is keyed using the Blackbird key.
- * @param {Record<string, any>} apiResult
- * @returns {Readonly<Record<string, Readonly<{ fieldName: string, value: boolean }>>>}
+ * If there is not a defined API result (i.e., if we don't know the datastream ID,
+ * we don't have rights to read the datastream config, etc), we assume that the
+ * service is enabled.
+ * @param {Record<string, any> | undefined} apiResult
+ * @returns {Readonly<Record<string, Readonly<{ fieldName: string, value: boolean | undefined }>>>}
  */
 const getServiceStatus = (apiResult) =>
   Object.freeze({
     com_adobe_experience_platform: {
       fieldName: "com_adobe_experience_platform.enabled",
-      value:
-        deepGet(apiResult, "com_adobe_experience_platform.enabled") ?? true,
+      value: !apiResult
+        ? true
+        : deepGet(apiResult, "com_adobe_experience_platform.enabled"),
     },
     com_adobe_experience_platform_ode: {
       fieldName: "com_adobe_experience_platform.com_adobe_edge_ode.enabled",
-      value:
-        deepGet(apiResult, "com_adobe_experience_platform_ode.enabled") ?? true,
+      value: !apiResult
+        ? true
+        : deepGet(apiResult, "com_adobe_experience_platform_ode.enabled"),
     },
     com_adobe_experience_platform_edge_segmentation: {
       fieldName:
         "com_adobe_experience_platform.com_adobe_edge_segmentation.enabled",
-      value:
-        deepGet(
-          apiResult,
-          "com_adobe_experience_platform_edge_segmentation.enabled",
-        ) ?? true,
+      value: !apiResult
+        ? true
+        : deepGet(
+            apiResult,
+            "com_adobe_experience_platform_edge_segmentation.enabled",
+          ),
     },
 
     com_adobe_experience_platform_edge_destinations: {
       fieldName:
         "com_adobe_experience_platform.com_adobe_edge_destinations.enabled",
-      value:
-        deepGet(
-          apiResult,
-          "com_adobe_experience_platform_edge_destinations.enabled",
-        ) ?? true,
+      value: !apiResult
+        ? true
+        : deepGet(
+            apiResult,
+            "com_adobe_experience_platform_edge_destinations.enabled",
+          ),
     },
     com_adobe_experience_platform_ajo: {
       fieldName: "com_adobe_experience_platform.com_adobe_edge_ajo.enabled",
-      value:
-        deepGet(apiResult, "com_adobe_experience_platform_ajo.enabled") ?? true,
+      value: !apiResult
+        ? true
+        : deepGet(apiResult, "com_adobe_experience_platform_ajo.enabled"),
     },
     com_adobe_analytics: {
       fieldName: "com_adobe_analytics.enabled",
-      value: deepGet(apiResult, "com_adobe_analytics.enabled") ?? true,
+      value: !apiResult
+        ? true
+        : deepGet(apiResult, "com_adobe_analytics.enabled"),
     },
     com_adobe_target: {
       fieldName: "com_adobe_target.enabled",
-      value: deepGet(apiResult, "com_adobe_target.enabled") ?? true,
+      value: !apiResult ? true : deepGet(apiResult, "com_adobe_target.enabled"),
     },
     com_adobe_audience_manager: {
       fieldName: "com_adobe_audience_manager.enabled",
-      value: deepGet(apiResult, "com_adobe_audience_manager.enabled") ?? true,
+      value: !apiResult
+        ? true
+        : deepGet(apiResult, "com_adobe_audience_manager.enabled"),
     },
     com_adobe_launch_ssf: {
       fieldName: "com_adobe_launch_ssf.enabled",
-      value: deepGet(apiResult, "com_adobe_launch_ssf.enabled") ?? true,
+      value: !apiResult
+        ? true
+        : deepGet(apiResult, "com_adobe_launch_ssf.enabled"),
     },
   });
 
@@ -151,40 +165,24 @@ export const useFormikContextWithOverrides = ({
 }) => {
   const { values, setFieldValue, setFieldTouched } = useFormikContext();
 
-  const useServiceStatus = (env, apiResult) => {
+  const useServiceStatus = (apiResult) => {
     const serviceStatus = getServiceStatus(apiResult);
-    // set the field value of all services that are disabled to "Disabled"
-    useEffect(() => {
-      Object.values(serviceStatus)
-        .filter(({ value }) => !value)
-        .filter(
-          ({ fieldName }) =>
-            deepGet(values, `${prefix}.${env}.${fieldName}`) !==
-            ENABLED_FIELD_VALUES.disabled,
-        )
-        .forEach(({ fieldName }) => {
-          setFieldValue(
-            `${prefix}.${env}.${fieldName}`,
-            ENABLED_FIELD_VALUES.disabled,
-            false,
-          );
-        });
-    }, [serviceStatus, values, prefix, env]);
     return serviceStatus;
   };
 
   /**
    * @param {string} prefixWithEnv
-   * @returns {(shortPropName: string) => boolean}
+   * @returns {(shortPropName: string, serviceIsEnabled: boolean | undefined) => boolean}
    */
-  const createIsDisabled = (prefixWithEnv) => (shortPropName) => {
-    return (
-      deepGet(values, `${prefixWithEnv}.${shortPropName}`) ===
-        ENABLED_FIELD_VALUES.disabled ||
-      deepGet(values, `${prefixWithEnv}.${shortPropName}`) ===
-        ENABLED_MATCH_FIELD_VALUES.disabled
-    );
-  };
+  const createIsDisabled =
+    (prefixWithEnv) => (shortPropName, serviceIsEnabled) => {
+      const value = deepGet(values, `${prefixWithEnv}.${shortPropName}`);
+      return (
+        !serviceIsEnabled ||
+        value === ENABLED_FIELD_VALUES.disabled ||
+        value === ENABLED_MATCH_FIELD_VALUES.disabled
+      );
+    };
 
   /**
    * @param {FocusEvent} e

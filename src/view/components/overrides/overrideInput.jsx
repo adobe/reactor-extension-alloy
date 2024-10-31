@@ -9,6 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import { Picker, Flex, TextField, Item } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import React from "react";
 import DataElementSelector from "../dataElementSelector";
@@ -16,6 +17,26 @@ import FormikComboBox from "../formikReactSpectrum3/formikComboBox";
 import FormikPicker from "../formikReactSpectrum3/formikPicker";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
 
+const DisabledOverrideInput = ({
+  useManualEntry,
+  disabledDisplayValue = "",
+  ...otherProps
+}) => {
+  if (useManualEntry) {
+    return (
+      <Flex>
+        <TextField {...otherProps} defaultValue={disabledDisplayValue} />
+      </Flex>
+    );
+  }
+  return (
+    <Flex>
+      <Picker {...otherProps} selectedKey="Disabled">
+        <Item key="Disabled">{disabledDisplayValue}</Item>
+      </Picker>
+    </Flex>
+  );
+};
 /**
  * The OverrideInput component is a wrapper around either a FormikComboBox or
  * FormikTextField. It is used to allow the user to override a value that is
@@ -23,44 +44,41 @@ import FormikTextField from "../formikReactSpectrum3/formikTextField";
  * value that is being overridden.
  *
  * @param {Object} options
- * @param {string} options.name The name of the field in the formik form.
  * @param {boolean} options.useManualEntry If true, the component will be a text
  * field. If false, the component will be a combo box.
  * @param {Function} options.children A function that returns a React element
  * representing each option in the combo box.
+ * @param {string} options.disabledDisplayValue The value to display when the
+ * input is disabled.
  * @param {boolean} options.allowsCustomValue If true, the combo box will allow
  * the user to enter a custom value. If false, the combo box will only allow the
  * user to select from the options provided.
  * @returns {React.Element}
  */
-const OverrideInput = ({
-  useManualEntry,
-  children,
-  isDisabled,
-  allowsCustomValue = false,
-  ...otherProps
-}) => {
+const OverrideInput = (options) => {
+  const {
+    useManualEntry,
+    children,
+    isDisabled,
+    allowsCustomValue = false,
+    ...otherProps
+  } = options;
+  if (isDisabled) {
+    return <DisabledOverrideInput {...options} />;
+  }
   if (useManualEntry) {
     return (
-      <DataElementSelector isDisabled={isDisabled}>
-        <FormikTextField isDisabled={isDisabled} {...otherProps} />
+      <DataElementSelector>
+        <FormikTextField {...otherProps} />
       </DataElementSelector>
     );
   }
   if (!allowsCustomValue) {
-    return (
-      <FormikPicker isDisabled={isDisabled} {...otherProps}>
-        {children}
-      </FormikPicker>
-    );
+    return <FormikPicker {...otherProps}>{children}</FormikPicker>;
   }
   return (
-    <DataElementSelector isDisabled={isDisabled}>
-      <FormikComboBox
-        isDisabled={isDisabled}
-        allowsCustomValue={allowsCustomValue}
-        {...otherProps}
-      >
+    <DataElementSelector>
+      <FormikComboBox allowsCustomValue {...otherProps}>
         {children}
       </FormikComboBox>
     </DataElementSelector>
@@ -74,8 +92,9 @@ OverrideInput.propTypes = {
     PropTypes.node,
     PropTypes.func,
   ]),
+  disabledDisplayValue: PropTypes.string,
   allowsCustomValue: PropTypes.bool,
   isDisabled: PropTypes.bool,
 };
-
+DisabledOverrideInput.propTypes = OverrideInput.propTypes;
 export default OverrideInput;
