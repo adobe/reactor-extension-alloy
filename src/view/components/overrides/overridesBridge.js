@@ -227,6 +227,29 @@ export const bridge = {
           ENABLED_MATCH_FIELD_VALUES.enabled,
         );
       });
+    // do the same for datastream ID overrides
+    OVERRIDE_ENVIRONMENTS.filter((env) =>
+      deepGet(
+        cleanedInstanceSettings,
+        `edgeConfigOverrides.${env}.datastreamId`,
+      ),
+    )
+      .filter(
+        (env) =>
+          !isDataElement(
+            deepGet(
+              cleanedInstanceSettings,
+              `edgeConfigOverrides.${env}.enabled`,
+            ),
+          ),
+      )
+      .forEach((env) => {
+        deepSet(
+          cleanedInstanceSettings,
+          `edgeConfigOverrides.${env}.enabled`,
+          ENABLED_MATCH_FIELD_VALUES.enabled,
+        );
+      });
 
     copyPropertiesWithDefaultFallback({
       toObj: instanceValues,
