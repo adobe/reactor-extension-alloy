@@ -30,7 +30,7 @@ const testDataVariable1 = {
       },
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.2",
+        version: "1.5",
       },
     }),
   },

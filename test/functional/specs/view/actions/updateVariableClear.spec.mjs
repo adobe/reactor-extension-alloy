@@ -46,7 +46,7 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.4",
+        version: "1.5",
       },
       transforms: {
         "_unifiedjsqeonly.vendor": {
@@ -100,7 +100,7 @@ test.requestHooks(dataElementsMocks.multipleBothTypes)(
       dataElementId: "DE2",
       schema: {
         id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-        version: "1.4",
+        version: "1.5",
       },
       transforms: {
         "": {
