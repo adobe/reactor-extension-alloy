@@ -26,6 +26,7 @@ jobs:
         with:
           username: ${{ secrets.SAUCE_USERNAME }}
           accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
+          tunnelIdentifier: github-${{ github.run_id }}
       - name: Run Unit Test
         run: npx karma start karma.saucelabs.conf.js --single-run
         env:
