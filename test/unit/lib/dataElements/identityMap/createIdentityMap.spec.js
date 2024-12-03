@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import cleanseIdentityMap from "../../../../../src/lib/dataElements/identityMap/createIdentityMap";
 
 describe("createIdentityMap", () => {
@@ -18,7 +19,7 @@ describe("createIdentityMap", () => {
 
   beforeEach(() => {
     logger = {
-      log: jest.fn(),
+      log: vi.fn(),
     };
     identityMap = cleanseIdentityMap({
       logger,

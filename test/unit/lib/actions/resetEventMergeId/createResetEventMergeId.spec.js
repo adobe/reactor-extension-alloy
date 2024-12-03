@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createResetEventMergeId from "../../../../../src/lib/actions/resetEventMergeId/createResetEventMergeId";
 
 describe("createResetEventMergeId", () => {
@@ -18,7 +19,7 @@ describe("createResetEventMergeId", () => {
 
   beforeEach(() => {
     eventMergeIdCache = {
-      clearByEventMergeId: jest.fn(),
+      clearByEventMergeId: vi.fn(),
     };
     resetEventMergeId = createResetEventMergeId(eventMergeIdCache);
   });

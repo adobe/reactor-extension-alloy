@@ -10,22 +10,23 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createSendEvent from "../../../../../src/lib/actions/sendEvent/createSendEvent";
 
 describe("Send Event", () => {
   let getConfigOverrides;
 
   beforeEach(() => {
-    getConfigOverrides = jest.fn();
+    getConfigOverrides = vi.fn();
   });
 
   it("executes event command and notifies sendEventCallbackStorage", () => {
-    const instance = jest.fn().mockResolvedValue({ foo: "bar" });
+    const instance = vi.fn().mockResolvedValue({ foo: "bar" });
     const instanceManager = {
-      getInstance: jest.fn().mockReturnValue(instance),
+      getInstance: vi.fn().mockReturnValue(instance),
     };
     const sendEventCallbackStorage = {
-      triggerEvent: jest.fn(),
+      triggerEvent: vi.fn(),
     };
 
     const action = createSendEvent({
@@ -81,7 +82,7 @@ describe("Send Event", () => {
 
   it("throws an error when no matching instance found", () => {
     const instanceManager = {
-      getInstance: jest.fn(),
+      getInstance: vi.fn(),
     };
     const action = createSendEvent({ instanceManager, getConfigOverrides });
 
@@ -99,15 +100,15 @@ describe("Send Event", () => {
   });
 
   it("calls sendEvent with edgeConfigOverrides", () => {
-    const instance = jest.fn().mockResolvedValue({ foo: "bar" });
+    const instance = vi.fn().mockResolvedValue({ foo: "bar" });
     getConfigOverrides.mockReturnValue({
       test: "test",
     });
     const instanceManager = {
-      getInstance: jest.fn().mockReturnValue(instance),
+      getInstance: vi.fn().mockReturnValue(instance),
     };
     const sendEventCallbackStorage = {
-      triggerEvent: jest.fn(),
+      triggerEvent: vi.fn(),
     };
 
     const action = createSendEvent({

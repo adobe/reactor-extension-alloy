@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createRedirectWithIdentity from "../../../../../src/lib/actions/redirectWithIdentity/createRedirectWithIdentity";
 
 describe("createRedirectWithIdentity", () => {
@@ -23,23 +24,23 @@ describe("createRedirectWithIdentity", () => {
 
   beforeEach(() => {
     instanceManager = {
-      getInstance: jest.fn(),
+      getInstance: vi.fn(),
     };
-    instance = jest.fn();
+    instance = vi.fn();
     instanceManager.getInstance.mockReturnValue(instance);
     instance.mockResolvedValue({ url: "newurl" });
     document = { location: "originalLocation" };
-    getConfigOverrides = jest.fn();
+    getConfigOverrides = vi.fn();
     event = {
       nativeEvent: {
-        preventDefault: jest.fn(),
+        preventDefault: vi.fn(),
       },
       element: {
         href: "originalHref",
       },
     };
     logger = {
-      warn: jest.fn(),
+      warn: vi.fn(),
     };
 
     redirectWithIdentity = createRedirectWithIdentity({

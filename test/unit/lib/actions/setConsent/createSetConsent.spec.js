@@ -10,17 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import createSetConsent from "../../../../../src/lib/actions/setConsent/createSetConsent";
+import { describe, it, expect, vi } from "vitest";
+import createSetConsent from "@src/lib/actions/setConsent/createSetConsent";
 
 describe("Set Consent", () => {
   ["in", "out"].forEach((generalConsent) => {
     it(`executes setConsent command with "${generalConsent}" general consent`, () => {
       const promiseReturnedFromInstance = Promise.resolve();
-      const instance = jest.fn().mockReturnValue(promiseReturnedFromInstance);
+      const instance = vi.fn().mockReturnValue(promiseReturnedFromInstance);
       const instanceManager = {
-        getInstance: jest.fn().mockReturnValue(instance),
+        getInstance: vi.fn().mockReturnValue(instance),
       };
-      const getConfigOverrides = jest.fn();
+      const getConfigOverrides = vi.fn();
       const action = createSetConsent({ instanceManager, getConfigOverrides });
 
       const settings = {
@@ -63,9 +64,9 @@ describe("Set Consent", () => {
     [undefined, "undefined"],
   ].forEach(([identityMap, description]) => {
     it(`doesn't pass identityMap when it is ${description}`, () => {
-      const instance = jest.fn();
+      const instance = vi.fn();
       const instanceManager = { getInstance: () => instance };
-      const getConfigOverrides = jest.fn();
+      const getConfigOverrides = vi.fn();
       const action = createSetConsent({ instanceManager, getConfigOverrides });
 
       action({
@@ -99,9 +100,9 @@ describe("Set Consent", () => {
   });
 
   it("throws an error when no matching instance found", () => {
-    const getConfigOverrides = jest.fn();
+    const getConfigOverrides = vi.fn();
     const instanceManager = {
-      getInstance: jest.fn().mockReturnValue(undefined),
+      getInstance: vi.fn().mockReturnValue(undefined),
     };
     const action = createSetConsent({ instanceManager, getConfigOverrides });
 
@@ -125,7 +126,7 @@ describe("Set Consent", () => {
   });
 
   it("passes edgeConfigOverrides when it is defined", () => {
-    const instance = jest.fn();
+    const instance = vi.fn();
     const edgeConfigOverrides = {
       com_adobe_experience_platform: {
         datasets: {
@@ -144,7 +145,7 @@ describe("Set Consent", () => {
         propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
       },
     };
-    const getConfigOverrides = jest.fn().mockReturnValue(edgeConfigOverrides);
+    const getConfigOverrides = vi.fn().mockReturnValue(edgeConfigOverrides);
     const instanceManager = { getInstance: () => instance };
     const action = createSetConsent({ instanceManager, getConfigOverrides });
 

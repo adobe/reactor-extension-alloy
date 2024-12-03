@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createApplyResponse from "../../../../../src/lib/actions/applyResponse/createApplyResponse";
 
 describe("Apply response", () => {
@@ -20,12 +21,12 @@ describe("Apply response", () => {
 
   beforeEach(() => {
     instanceManager = {
-      getInstance: jest.fn(),
+      getInstance: vi.fn(),
     };
     sendEventCallbackStorage = {
-      triggerEvent: jest.fn(),
+      triggerEvent: vi.fn(),
     };
-    instance = jest.fn();
+    instance = vi.fn();
     applyResponse = createApplyResponse({
       instanceManager,
       sendEventCallbackStorage,

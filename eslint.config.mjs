@@ -35,6 +35,21 @@ export default [
     plugins: {
       "unused-imports": unusedImports,
     },
+    settings: {
+      "import/resolver": {
+        alias: {
+          map: [
+            ["@src", "./src"],
+            ["@test", "./test"]
+          ],
+          extensions: [".js", ".jsx", ".mjs"]
+        },
+        node: {
+          extensions: [".js", ".jsx", ".mjs"],
+          paths: [path.resolve(__dirname)]
+        }
+      }
+    },
     languageOptions: {
       parser: babelParser,
       parserOptions: {
@@ -46,9 +61,6 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
-        ...globals.jest,
-        fixture: true,
-        test: true,
         describe: true,
         it: true,
         expect: true,
@@ -56,7 +68,9 @@ export default [
         beforeEach: true,
         afterAll: true,
         afterEach: true,
-        jest: true
+        vi: true,
+        test: true,
+        fixture: true
       },
     },
     rules: {
@@ -83,12 +97,10 @@ export default [
           controlComponents: ["WrappedField"],
         },
       ],
-      // Has been deprecated in favor of label-has-associated-control
       "jsx-a11y/label-has-for": "off",
-      // Turning this off allows us to import devDependencies in our build tools.
-      // We enable the rule in src/.eslintrc.js since that's the only place we
-      // want to disallow importing extraneous dependencies.
-      "import/no-extraneous-dependencies": "off",
+      "import/no-extraneous-dependencies": ["error", {
+        "devDependencies": ["**/*.test.js", "**/*.spec.js", "**/vitest.config.js", "**/test/**/*"]
+      }],
       "prefer-destructuring": "off",
       "import/prefer-default-export": "off",
       "no-console": [
@@ -97,13 +109,6 @@ export default [
           allow: ["error"],
         },
       ],
-      // This rule typically shows an error if a Link component
-      // doesn't have an href. We use React-Spectrum's Link
-      // component, however, which doesn't have an href prop
-      // (Link expects a anchor element as a child). We have
-      // to provide an empty components array here to get around
-      // eslint complaining about this. eslint still checks
-      // anchor elements though.
       "jsx-a11y/anchor-is-valid": [
         "error",
         {
@@ -121,16 +126,26 @@ export default [
         2,
         { namedComponents: "arrow-function" },
       ],
-
       "import/no-named-as-default-member": "off",
       "import/no-named-as-default": "off",
+      "import/no-unresolved": ["error", {
+        "ignore": ["vitest", "vitest/config"]
+      }]
     },
   },
   {
     files: ["test/**/*.{js,jsx,mjs}"],
     languageOptions: {
       globals: {
-        ...globals.jest
+        describe: true,
+        it: true,
+        expect: true,
+        beforeAll: true,
+        beforeEach: true,
+        afterAll: true,
+        afterEach: true,
+        vi: true,
+        test: true
       }
     }
   },

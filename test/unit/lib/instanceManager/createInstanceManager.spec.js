@@ -9,7 +9,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
+
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import createInstanceManager from "@src/lib/instanceManager/createInstanceManager";
 
 describe("Instance Manager", () => {
   let instanceManager;
@@ -53,16 +55,16 @@ describe("Instance Manager", () => {
       ],
     };
     turbine = {
-      getExtensionSettings: jest.fn().mockReturnValue(extensionSettings),
-      onDebugChanged: jest.fn(),
+      getExtensionSettings: vi.fn().mockReturnValue(extensionSettings),
+      onDebugChanged: vi.fn(),
       environment: { stage: "production" },
       debugEnabled: false,
     };
     mockWindow = {};
-    getConfigOverrides = jest.fn();
-    alloy1 = jest.fn();
-    alloy2 = jest.fn();
-    createInstance = jest.fn().mockImplementation(({ name }) => {
+    getConfigOverrides = vi.fn();
+    alloy1 = vi.fn();
+    alloy2 = vi.fn();
+    createInstance = vi.fn().mockImplementation(({ name }) => {
       if (name === "alloy1") {
         return alloy1;
       }
@@ -71,8 +73,8 @@ describe("Instance Manager", () => {
       }
       return undefined;
     });
-    onBeforeEventSend = jest.fn();
-    wrapOnBeforeEventSend = jest.fn().mockReturnValue(onBeforeEventSend);
+    onBeforeEventSend = vi.fn();
+    wrapOnBeforeEventSend = vi.fn().mockReturnValue(onBeforeEventSend);
   });
 
   it("creates SDK instances", () => {
@@ -93,7 +95,7 @@ describe("Instance Manager", () => {
 
   it("adds a new monitor to the window.__alloyMonitors", () => {
     const monitor = {
-      onInstanceCreated: jest.fn(),
+      onInstanceCreated: vi.fn(),
     };
     build();
     expect(mockWindow).toEqual({
@@ -181,7 +183,7 @@ describe("Instance Manager", () => {
   });
 
   it("creates an event merge ID", () => {
-    createEventMergeId = jest.fn().mockReturnValue("randomEventMergeId");
+    createEventMergeId = vi.fn().mockReturnValue("randomEventMergeId");
     build();
     const eventMergeId = instanceManager.createEventMergeId();
     expect(eventMergeId).toBe("randomEventMergeId");

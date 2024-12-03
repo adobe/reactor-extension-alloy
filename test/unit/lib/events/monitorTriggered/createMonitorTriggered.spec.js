@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createMonitorTriggered from "../../../../../src/lib/events/monitor/createMonitorTriggered";
 
 describe("Monitor triggered event", () => {
@@ -18,9 +19,9 @@ describe("Monitor triggered event", () => {
   let instanceManager;
 
   beforeEach(() => {
-    trigger = jest.fn();
+    trigger = vi.fn();
     instanceManager = {
-      addMonitor: jest.fn(),
+      addMonitor: vi.fn(),
     };
 
     monitorTriggered = createMonitorTriggered({

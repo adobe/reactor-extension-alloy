@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createEventMergeId from "../../../../../src/lib/dataElements/eventMergeId/createEventMergeId";
 
 describe("Event Merge ID", () => {
@@ -19,13 +20,13 @@ describe("Event Merge ID", () => {
 
   beforeEach(() => {
     instanceManager = {
-      createEventMergeId: jest
+      createEventMergeId: vi
         .fn()
         .mockReturnValue({ eventMergeId: "randomEventMergeId" }),
     };
     eventMergeIdCache = {
-      getByCacheId: jest.fn(),
-      set: jest.fn(),
+      getByCacheId: vi.fn(),
+      set: vi.fn(),
     };
     dataElement = createEventMergeId({
       instanceManager,
