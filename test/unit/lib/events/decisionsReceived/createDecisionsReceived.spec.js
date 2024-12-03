@@ -18,11 +18,10 @@ describe("Decisions received event", () => {
   let decisionsReceived;
 
   beforeEach(() => {
-    trigger = jasmine.createSpy("trigger");
-    sendEventCallbackStorage = jasmine.createSpyObj(
-      "decisionsCallbackStorage",
-      ["add"],
-    );
+    trigger = jest.fn();
+    sendEventCallbackStorage = {
+      add: jest.fn(),
+    };
     decisionsReceived = createDecisionsReceived({
       sendEventCallbackStorage,
     });
@@ -31,9 +30,12 @@ describe("Decisions received event", () => {
   it("triggers the rule when decisions have been received", () => {
     decisionsReceived({}, trigger);
     expect(sendEventCallbackStorage.add).toHaveBeenCalledTimes(1);
-    const callback = sendEventCallbackStorage.add.calls.argsFor(0)[0];
+
+    // Get the callback that was passed to add
+    const callback = sendEventCallbackStorage.add.mock.calls[0][0];
     const decisions = [];
     callback({ decisions });
+
     expect(trigger).toHaveBeenCalledWith({
       decisions: [],
     });
@@ -42,8 +44,11 @@ describe("Decisions received event", () => {
   it("does not trigger the rule when decisions have not been received", () => {
     decisionsReceived({}, trigger);
     expect(sendEventCallbackStorage.add).toHaveBeenCalledTimes(1);
-    const callback = sendEventCallbackStorage.add.calls.argsFor(0)[0];
+
+    // Get the callback that was passed to add
+    const callback = sendEventCallbackStorage.add.mock.calls[0][0];
     callback({});
+
     expect(trigger).not.toHaveBeenCalled();
   });
 });

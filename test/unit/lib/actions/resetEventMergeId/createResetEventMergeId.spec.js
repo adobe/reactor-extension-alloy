@@ -17,14 +17,15 @@ describe("createResetEventMergeId", () => {
   let resetEventMergeId;
 
   beforeEach(() => {
-    eventMergeIdCache = jasmine.createSpyObj("eventMergeIdCache", [
-      "clearByEventMergeId",
-    ]);
+    eventMergeIdCache = {
+      clearByEventMergeId: jest.fn(),
+    };
     resetEventMergeId = createResetEventMergeId(eventMergeIdCache);
   });
 
   it("resets event merge ID", () => {
     resetEventMergeId({ eventMergeId: "foo" });
     expect(eventMergeIdCache.clearByEventMergeId).toHaveBeenCalledWith("foo");
+    expect(eventMergeIdCache.clearByEventMergeId).toHaveBeenCalledTimes(1);
   });
 });

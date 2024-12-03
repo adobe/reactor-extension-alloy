@@ -44,11 +44,19 @@ export default [
       },
       ecmaVersion: 2021,
       globals: {
-        ...globals.jasmine,
         ...globals.browser,
         ...globals.node,
+        ...globals.jest,
         fixture: true,
         test: true,
+        describe: true,
+        it: true,
+        expect: true,
+        beforeAll: true,
+        beforeEach: true,
+        afterAll: true,
+        afterEach: true,
+        jest: true
       },
     },
     rules: {
@@ -117,6 +125,14 @@ export default [
       "import/no-named-as-default-member": "off",
       "import/no-named-as-default": "off",
     },
+  },
+  {
+    files: ["test/**/*.{js,jsx,mjs}"],
+    languageOptions: {
+      globals: {
+        ...globals.jest
+      }
+    }
   },
   {
     files: ["src/**/*.{mjs,js,jsx}"],

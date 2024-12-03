@@ -1,0 +1,36 @@
+apiVersion: v1alpha
+kind: jest
+sauce:
+  region: us-west-1
+  concurrency: 2
+  metadata:
+    name: Alloy Reactor Extension Unit Tests
+    tags:
+      - unit
+      - alloy
+
+jest:
+  version: latest
+  configFile: jest.config.js
+  testMatch: ["test/unit/**/*.spec.js"]
+
+suites:
+  - name: "Chrome Unit Tests"
+    platformName: "Windows 11"
+    browserName: "chrome"
+    browserVersion: "latest"
+  - name: "Firefox Unit Tests"
+    platformName: "Windows 11"
+    browserName: "firefox"
+    browserVersion: "latest"
+  - name: "Safari Unit Tests"
+    platformName: "macOS 13"
+    browserName: "safari"
+    browserVersion: "latest"
+
+artifacts:
+  download:
+    when: always
+    match:
+      - "**/coverage/**"
+    directory: ./artifacts/ 

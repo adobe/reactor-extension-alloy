@@ -16,37 +16,80 @@ describe("Set Consent", () => {
   ["in", "out"].forEach((generalConsent) => {
     it(`executes setConsent command with "${generalConsent}" general consent`, () => {
       const promiseReturnedFromInstance = Promise.resolve();
-      const instance = jasmine
-        .createSpy()
-        .and.returnValue(promiseReturnedFromInstance);
-      const instanceManager = jasmine.createSpyObj("instanceManager", {
-        getInstance: instance,
-      });
-      const getConfigOverrides = jasmine.createSpy("getConfigOverrides");
+      const instance = jest.fn().mockReturnValue(promiseReturnedFromInstance);
+      const instanceManager = {
+        getInstance: jest.fn().mockReturnValue(instance),
+      };
+      const getConfigOverrides = jest.fn();
       const action = createSetConsent({ instanceManager, getConfigOverrides });
-      const promiseReturnedFromAction = action({
+
+      const settings = {
         instanceName: "myinstance",
-        identityMap: "%dataelement123%",
+        general: generalConsent,
         consent: [
           {
             standard: "Adobe",
-            version: "1.0",
-            value: { general: generalConsent },
+            version: "2.0",
+            value: {
+              general: generalConsent,
+            },
+          },
+        ],
+      };
+
+      const promiseReturnedFromAction = action(settings);
+
+      expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
+      expect(instance).toHaveBeenCalledWith("setConsent", {
+        consent: [
+          {
+            standard: "Adobe",
+            version: "2.0",
+            value: {
+              general: generalConsent,
+            },
           },
         ],
         edgeConfigOverrides: undefined,
       });
 
       expect(promiseReturnedFromAction).toBe(promiseReturnedFromInstance);
-      expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
-      expect(instance).toHaveBeenCalledWith("setConsent", {
-        identityMap: "%dataelement123%",
+    });
+  });
+
+  [
+    ["", "empty string"],
+    [null, "null"],
+    [undefined, "undefined"],
+  ].forEach(([identityMap, description]) => {
+    it(`doesn't pass identityMap when it is ${description}`, () => {
+      const instance = jest.fn();
+      const instanceManager = { getInstance: () => instance };
+      const getConfigOverrides = jest.fn();
+      const action = createSetConsent({ instanceManager, getConfigOverrides });
+
+      action({
+        instanceName: "myinstance",
+        general: "in",
+        identityMap,
         consent: [
           {
             standard: "Adobe",
-            version: "1.0",
+            version: "2.0",
             value: {
-              general: generalConsent,
+              general: "in",
+            },
+          },
+        ],
+      });
+
+      expect(instance).toHaveBeenCalledWith("setConsent", {
+        consent: [
+          {
+            standard: "Adobe",
+            version: "2.0",
+            value: {
+              general: "in",
             },
           },
         ],
@@ -55,48 +98,34 @@ describe("Set Consent", () => {
     });
   });
 
-  ["", null, undefined].forEach((identityMap) => {
-    it(`doesn't pass identityMap when it is ${JSON.stringify(
-      identityMap,
-    )}`, () => {
-      const instance = jasmine.createSpy();
-      const instanceManager = { getInstance: () => instance };
-      const getConfigOverrides = jasmine.createSpy("getConfigOverrides");
-      const action = createSetConsent({ instanceManager, getConfigOverrides });
-      action({
-        instanceName: "myinstance",
-        identityMap,
-        consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
-      });
-      expect(instance).toHaveBeenCalledWith("setConsent", {
-        consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
-        edgeConfigOverrides: undefined,
-      });
-    });
-  });
-
   it("throws an error when no matching instance found", () => {
-    const getConfigOverrides = jasmine.createSpy("getConfigOverrides");
-    const instanceManager = jasmine.createSpyObj("instanceManager", {
-      getInstance: undefined,
-    });
+    const getConfigOverrides = jest.fn();
+    const instanceManager = {
+      getInstance: jest.fn().mockReturnValue(undefined),
+    };
     const action = createSetConsent({ instanceManager, getConfigOverrides });
 
     expect(() => {
       action({
         instanceName: "myinstance",
-        purposes: "none",
+        general: "in",
+        consent: [
+          {
+            standard: "Adobe",
+            version: "2.0",
+            value: {
+              general: "in",
+            },
+          },
+        ],
       });
     }).toThrow(
-      new Error(
-        'Failed to set consent for instance "myinstance". No matching instance was configured with this name.',
-      ),
+      'Failed to set consent for instance "myinstance". No matching instance was configured with this name.',
     );
   });
 
-  // a test that checks the inclusion for the edgeConfigOverrides
   it("passes edgeConfigOverrides when it is defined", () => {
-    const instance = jasmine.createSpy();
+    const instance = jest.fn();
     const edgeConfigOverrides = {
       com_adobe_experience_platform: {
         datasets: {
@@ -115,18 +144,37 @@ describe("Set Consent", () => {
         propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
       },
     };
-    const getConfigOverrides = jasmine
-      .createSpy("getConfigOverrides")
-      .and.returnValue(edgeConfigOverrides);
+    const getConfigOverrides = jest.fn().mockReturnValue(edgeConfigOverrides);
     const instanceManager = { getInstance: () => instance };
     const action = createSetConsent({ instanceManager, getConfigOverrides });
+
     action({
       instanceName: "myinstance",
-      consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
-      edgeConfigOverrides,
+      general: "in",
+      consent: [
+        {
+          standard: "Adobe",
+          version: "2.0",
+          value: {
+            general: "in",
+          },
+        },
+      ],
+      edgeConfigOverrides: {
+        development: edgeConfigOverrides,
+      },
     });
+
     expect(instance).toHaveBeenCalledWith("setConsent", {
-      consent: [{ standard: "IAB TCF", version: "2.0", value: "1234abcd" }],
+      consent: [
+        {
+          standard: "Adobe",
+          version: "2.0",
+          value: {
+            general: "in",
+          },
+        },
+      ],
       edgeConfigOverrides: {
         com_adobe_experience_platform: {
           datasets: {

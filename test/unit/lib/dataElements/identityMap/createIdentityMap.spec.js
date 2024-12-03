@@ -17,7 +17,9 @@ describe("createIdentityMap", () => {
   let identityMap;
 
   beforeEach(() => {
-    logger = jasmine.createSpyObj("logger", ["log"]);
+    logger = {
+      log: jest.fn(),
+    };
     identityMap = cleanseIdentityMap({
       logger,
     });
@@ -110,6 +112,6 @@ describe("createIdentityMap", () => {
     // the removal of an identifier at index 1. This assertion helps ensure we don't implement
     // a reverse loop to slice identifiers off the identity map and inadvertently log the
     // removals in reverse order.
-    expect(logger.log.calls.allArgs()).toEqual(expectedLogArgsByCallIndex);
+    expect(logger.log.mock.calls).toEqual(expectedLogArgsByCallIndex);
   });
 });

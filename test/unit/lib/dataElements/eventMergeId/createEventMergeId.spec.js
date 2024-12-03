@@ -18,13 +18,15 @@ describe("Event Merge ID", () => {
   let dataElement;
 
   beforeEach(() => {
-    instanceManager = jasmine.createSpyObj("instanceManager", {
-      createEventMergeId: { eventMergeId: "randomEventMergeId" },
-    });
-    eventMergeIdCache = jasmine.createSpyObj("eventMergeIdCache", [
-      "getByCacheId",
-      "set",
-    ]);
+    instanceManager = {
+      createEventMergeId: jest
+        .fn()
+        .mockReturnValue({ eventMergeId: "randomEventMergeId" }),
+    };
+    eventMergeIdCache = {
+      getByCacheId: jest.fn(),
+      set: jest.fn(),
+    };
     dataElement = createEventMergeId({
       instanceManager,
       eventMergeIdCache,
@@ -32,17 +34,17 @@ describe("Event Merge ID", () => {
   });
 
   it("produces and caches event merge ID based on cache ID", () => {
-    instanceManager.createEventMergeId.and.returnValues(
-      { eventMergeId: "eventMergeId1" },
-      { eventMergeId: "eventMergeId2" },
-    );
-    eventMergeIdCache.getByCacheId.and.returnValues(
-      undefined,
-      undefined,
-      "eventMergeId1",
+    instanceManager.createEventMergeId
+      .mockReturnValueOnce({ eventMergeId: "eventMergeId1" })
+      .mockReturnValueOnce({ eventMergeId: "eventMergeId2" });
+
+    eventMergeIdCache.getByCacheId
+      .mockReturnValueOnce(undefined)
+      .mockReturnValueOnce(undefined)
+      .mockReturnValueOnce("eventMergeId1")
       // Simulate the event merge ID having being reset through the Reset Event Merge ID action.
-      "eventMergeId2Reset",
-    );
+      .mockReturnValueOnce("eventMergeId2Reset");
+
     const result1 = dataElement({
       instanceName: "myinstance",
       cacheId: "cacheId1",
@@ -59,6 +61,7 @@ describe("Event Merge ID", () => {
       instanceName: "myinstance",
       cacheId: "cacheId2",
     });
+
     expect(eventMergeIdCache.set).toHaveBeenCalledWith(
       "cacheId1",
       "eventMergeId1",

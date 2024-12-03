@@ -18,8 +18,10 @@ describe("Monitor triggered event", () => {
   let instanceManager;
 
   beforeEach(() => {
-    trigger = jasmine.createSpy("trigger");
-    instanceManager = jasmine.createSpyObj("instanceManager", ["addMonitor"]);
+    trigger = jest.fn();
+    instanceManager = {
+      addMonitor: jest.fn(),
+    };
 
     monitorTriggered = createMonitorTriggered({
       instanceManager,
@@ -29,9 +31,12 @@ describe("Monitor triggered event", () => {
   it("triggers the rule when monitor is triggered", () => {
     monitorTriggered({ name: "onBeforeLog" }, trigger);
     expect(instanceManager.addMonitor).toHaveBeenCalledTimes(1);
-    const callback = instanceManager.addMonitor.calls.argsFor(0)[0].onBeforeLog;
+
+    // Get the callback that was passed to addMonitor
+    const callback = instanceManager.addMonitor.mock.calls[0][0].onBeforeLog;
     const data = { status: "success" };
     callback({ data });
+
     expect(trigger).toHaveBeenCalledWith({ data });
   });
 });

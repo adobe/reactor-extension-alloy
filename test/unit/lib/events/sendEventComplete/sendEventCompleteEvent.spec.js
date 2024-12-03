@@ -15,10 +15,9 @@ import createSendEventComplete from "../../../../../src/lib/events/sendEventComp
 describe("SendEvent complete event", () => {
   it("should add a trigger in the callbackStorage", () => {
     const trigger = () => {};
-    const sendEventCallbackStorage = jasmine.createSpyObj(
-      "sendEventCallbackStorage",
-      ["add"],
-    );
+    const sendEventCallbackStorage = {
+      add: jest.fn(),
+    };
 
     const sendEventComplete = createSendEventComplete({
       sendEventCallbackStorage,
@@ -27,5 +26,6 @@ describe("SendEvent complete event", () => {
     sendEventComplete({}, trigger);
 
     expect(sendEventCallbackStorage.add).toHaveBeenCalledWith(trigger);
+    expect(sendEventCallbackStorage.add).toHaveBeenCalledTimes(1);
   });
 });
