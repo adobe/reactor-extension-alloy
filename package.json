@@ -78,7 +78,7 @@
   },
   "devDependencies": {
     "@adobe/auth-token": "^1.0.0",
-    "@adobe/reactor-sandbox": "^13.0.0",
+    "@adobe/reactor-sandbox": "^13.1.0",
     "@adobe/reactor-turbine": "^28.0.0",
     "@adobe/reactor-turbine-schemas": "^10.6.0",
     "@babel/cli": "^7.25.9",
