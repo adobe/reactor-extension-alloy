@@ -19,21 +19,33 @@ module.exports = (config) => {
       base: "SauceLabs",
       browserName: "chrome",
       browserVersion: "latest",
-      platform: "Windows 11",
+      platformName: "Windows 11",
+      "sauce:options": {
+        seleniumVersion: "4.12.1",
+        build: `GH #${process.env.BUILD_NUMBER} (${process.env.BUILD_ID})`,
+        screenResolution: "1920x1080",
+      },
     },
     sl_safariW3C: {
       base: "SauceLabs",
       browserName: "safari",
       browserVersion: "latest",
-      platform: "macOS 13",
+      platformName: "macOS 13",
+      "sauce:options": {
+        seleniumVersion: "4.12.1",
+        build: `GH #${process.env.BUILD_NUMBER} (${process.env.BUILD_ID})`,
+        screenResolution: "1920x1080",
+      },
     },
     sl_firefoxW3C: {
       base: "SauceLabs",
       browserName: "firefox",
-      platformName: "Windows 11",
       browserVersion: "latest",
+      platformName: "Windows 11",
       "sauce:options": {
-        geckodriverVersion: "0.34.0",
+        seleniumVersion: "4.12.1",
+        build: `GH #${process.env.BUILD_NUMBER} (${process.env.BUILD_ID})`,
+        screenResolution: "1920x1080",
       },
     },
   };
@@ -43,10 +55,16 @@ module.exports = (config) => {
     customLaunchers,
     concurrency: 10,
     colors: true,
+    captureTimeout: 300000,
+    browserDisconnectTimeout: 60000,
+    browserDisconnectTolerance: 3,
+    browserNoActivityTimeout: 300000,
     sauceLabs: {
-      screenResolution: "800x600",
-      build: `GH #${process.env.BUILD_NUMBER} (${process.env.BUILD_ID})`,
+      testName: "Alloy Reactor Extension Tests",
       tunnelIdentifier: `github-${process.env.GITHUB_RUN_ID}`,
+      connectOptions: {
+        noSslBumpDomains: "all",
+      },
     },
     plugins: [
       "karma-jasmine",
