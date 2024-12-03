@@ -60,17 +60,19 @@ const getTreeNode = ({
   errors,
   touched,
   isAncestorCleared = false,
+  showDisplayNames = false,
 }) => {
   const { id, schema, isAlwaysDisabled } = formStateNode;
+
+  const nodeDisplayName =
+    showDisplayNames && schema.title ? schema.title : displayName || schema.key;
 
   const treeNode = {
     key: id,
     id,
-    displayName,
+    displayName: nodeDisplayName,
     type: schema.type,
     disabled: isAlwaysDisabled || isAncestorUsingWholePopulationStrategy,
-    // The Tree component, when rendering a tree node, will pass the treeNode
-    // object into the component that renders the tree node, which is provided here.
     title: treeNodeComponent,
     clear: formStateNode.transform.clear && !isAncestorCleared,
   };
@@ -111,6 +113,7 @@ const getTreeNode = ({
       return getTreeNode({
         ...args,
         isAncestorCleared: formStateNode.transform.clear || isAncestorCleared,
+        showDisplayNames,
       });
     },
   });
@@ -134,7 +137,13 @@ const getTreeNode = ({
 
 // Avoid exposing all of getTreeNode's parameters since
 // they're only used internally for recursion.
-export default ({ treeNodeComponent, formState, errors, touched }) => {
+export default ({
+  treeNodeComponent,
+  formState,
+  errors,
+  touched,
+  showDisplayNames = false,
+}) => {
   return getTreeNode({
     formStateNode: formState,
     treeNodeComponent,
@@ -143,5 +152,6 @@ export default ({ treeNodeComponent, formState, errors, touched }) => {
     displayName: "",
     errors,
     touched,
+    showDisplayNames,
   });
 };

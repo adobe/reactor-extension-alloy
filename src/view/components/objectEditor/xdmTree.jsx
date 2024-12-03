@@ -56,6 +56,7 @@ const XdmTree = ({
   expandedNodeIds,
   setExpandedNodeIds,
   onSelect = () => {},
+  showDisplayNames = false,
 }) => {
   const { values: formState, errors, touched } = useFormikContext();
 
@@ -64,6 +65,7 @@ const XdmTree = ({
     formState,
     errors,
     touched,
+    showDisplayNames,
   });
 
   // Expand invalid items when the user attempts to submit the form by hitting
@@ -107,6 +109,7 @@ XdmTree.propTypes = {
   expandedNodeIds: PropTypes.arrayOf(PropTypes.string).isRequired,
   setExpandedNodeIds: PropTypes.func.isRequired,
   onSelect: PropTypes.func,
+  showDisplayNames: PropTypes.bool,
 };
 
 export default XdmTree;
