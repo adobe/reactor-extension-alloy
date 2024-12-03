@@ -10,14 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { t } from "testcafe";
+import { t, Selector } from "testcafe";
 import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
 import initializeExtensionView from "../../../helpers/objectEditor/initializeExtensionView.mjs";
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
-import spectrum from "../../../helpers/spectrum.mjs";
-
-const schemaField = spectrum.comboBox("schemaField");
-
 createExtensionViewFixture({
   title: "XDM Object Display Names",
   viewPath: "dataElements/xdmObject.html",
@@ -25,20 +21,44 @@ createExtensionViewFixture({
 });
 
 test("toggles between display names and field IDs", async () => {
-  const extensionViewController = await initializeExtensionView();
-  await schemaField.openMenu();
-  await schemaField.selectMenuOption("XDM Object Data Element Tests");
-  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
-  await xdmTree.node("vendor").toggleExpansion();
+  await initializeExtensionView({
+    settings: {
+      schema: {
+        id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
+        version: "1.5",
+      },
+      data: {
+        _unifiedjsqeonly: {
+          vendor: {
+            name: "Adobe"
+          }
+        }
+      }
+    }
+  });
 
-  // Initially should show field IDs (default)
-  await t.expect(xdmTree.node("name").exists).ok();
+  // Wait for schema to load and API responses
+  await t.wait(2000);
+
+  // Expand the path to the name field
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await t.wait(200);
+  await xdmTree.node("vendor").toggleExpansion();
+  await t.wait(200);
+
+  // Check if the node exists using direct selector
+  const nameNode = Selector('[data-test-id="xdmTreeNodeTitleDisplayName"]').withText('name');
+  await t.expect(await nameNode.exists).ok("Field ID 'name' should be visible");
 
   // Toggle to show display names
-  await xdmTree.enableDisplayNames();
-  await t.expect(xdmTree.node("Name").exists).ok();
+  await xdmTree.toggleDisplayNames();
+  await t.wait(200);
+
+  const displayNameNode = Selector('[data-test-id="xdmTreeNodeTitleDisplayName"]').withText('Name');
+  await t.expect(await displayNameNode.exists).ok("Display name 'Name' should be visible");
 
   // Toggle back to show field IDs
-  await xdmTree.enableDisplayNames();
-  await t.expect(xdmTree.node("name").exists).ok();
+  await xdmTree.toggleDisplayNames();
+  await t.wait(200);
+  await t.expect(await nameNode.exists).ok("Field ID 'name' should be visible again");
 }); 

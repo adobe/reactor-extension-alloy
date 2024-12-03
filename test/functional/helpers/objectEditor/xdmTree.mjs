@@ -120,7 +120,7 @@ export default {
 
     return create(titleSelector);
   },
-  enableDisplayNames: async () => {
+  toggleDisplayNames: async () => {
     await t.click(displayNamesSwitch);
   },
 };
