@@ -432,12 +432,9 @@ const Overrides = ({
                               )}
                           </ProductSubsection>
                         )}
-                        {(visibleFields.has(
-                          FIELD_NAMES.idSyncContainerOverride,
-                        ) ||
-                          visibleFields.has(
-                            FIELD_NAMES.audienceManagerEnabled,
-                          )) && (
+                        {visibleFields.has(
+                          FIELD_NAMES.audienceManagerEnabled,
+                        ) && (
                           <ProductSubsection name="Adobe Audience Manager">
                             {visibleFields.has(
                               FIELD_NAMES.audienceManagerEnabled,
@@ -463,45 +460,34 @@ const Overrides = ({
                                 {...EnabledDisabledOptions}
                               </OverrideInput>
                             )}
-                            {visibleFields.has(
-                              FIELD_NAMES.idSyncContainerOverride,
-                            ) &&
-                              !isDisabled(
-                                "com_adobe_audience_manager.enabled",
-                                serviceStatus.com_adobe_audience_manager.value,
-                              ) && (
-                                <OverrideInput
-                                  data-test-id={
-                                    FIELD_NAMES.idSyncContainerOverride
-                                  }
-                                  label="Third-party ID sync container"
-                                  useManualEntry={
-                                    useManualEntry ||
-                                    idSyncContainers.length === 0
-                                  }
-                                  allowsCustomValue
-                                  overrideType="third-party ID sync container"
-                                  primaryItem={primaryIdSyncContainer}
-                                  defaultItems={idSyncContainers}
-                                  isDisabled={
-                                    !serviceStatus.com_adobe_audience_manager
-                                      .value
-                                  }
-                                  validate={validateIdSyncContainerOption}
-                                  name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
-                                  inputMode="numeric"
-                                  width="size-5000"
-                                  pattern={/\d+/}
-                                  description={idSyncContainerDescription}
-                                >
-                                  {({ value, label }) => (
-                                    <Item key={value}>{label}</Item>
-                                  )}
-                                </OverrideInput>
-                              )}
                           </ProductSubsection>
                         )}
-
+                        {visibleFields.has(
+                          FIELD_NAMES.idSyncContainerOverride,
+                        ) && (
+                          <OverrideInput
+                            data-test-id={FIELD_NAMES.idSyncContainerOverride}
+                            label="Third-party ID sync container"
+                            useManualEntry={
+                              useManualEntry || idSyncContainers.length === 0
+                            }
+                            allowsCustomValue
+                            overrideType="third-party ID sync container"
+                            primaryItem={primaryIdSyncContainer}
+                            defaultItems={idSyncContainers}
+                            isDisabled={!serviceStatus.com_adobe_identity.value}
+                            validate={validateIdSyncContainerOption}
+                            name={`${prefix}.${env}.com_adobe_identity.idSyncContainerId`}
+                            inputMode="numeric"
+                            width="size-5000"
+                            pattern={/\d+/}
+                            description={idSyncContainerDescription}
+                          >
+                            {({ value, label }) => (
+                              <Item key={value}>{label}</Item>
+                            )}
+                          </OverrideInput>
+                        )}
                         {[
                           FIELD_NAMES.eventDatasetOverride,
                           FIELD_NAMES.experiencePlatformEnabled,
