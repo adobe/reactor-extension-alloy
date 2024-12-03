@@ -17,6 +17,7 @@ import {
 } from "../dataTestIdSelectors.mjs";
 
 const xdmTree = createTestIdSelector("xdmTree");
+const displayNamesSwitch = createTestIdSelector("displayNamesSwitch");
 
 const getIsElementInViewport = (selector) => {
   return ClientFunction(
@@ -111,11 +112,15 @@ const create = (node) => {
 
 export default {
   node: (title) => {
-    const node = xdmTree
+    const titleSelector = xdmTree
       .find(createTestIdSelectorString("xdmTreeNodeTitleDisplayName"))
-      .withText(title)
+      .withText(new RegExp(`^${title}$|^${title.toLowerCase()}$`, 'i'))
       .parent(createTestIdSelectorString("xdmTreeNodeTitle"))
       .nth(0);
-    return create(node);
+
+    return create(titleSelector);
+  },
+  enableDisplayNames: async () => {
+    await t.click(displayNamesSwitch);
   },
 };

@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { ProgressCircle, Flex } from "@adobe/react-spectrum";
+import { ProgressCircle, Flex, Switch } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import { object, string } from "yup";
 import FormElementContainer from "../components/formElementContainer";
@@ -251,18 +251,12 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
   const { resetForm, values } = formikProps;
   const reportAsyncError = useReportAsyncError();
 
-  const {
-    sandboxes,
-    // sandboxWarning,
-    schema,
-    // schemaWarning,
-    schemasFirstPage,
-    schemasFirstPageCursor,
-    // showEditorNotReadyValidationError
-  } = context;
+  const { sandboxes, schema, schemasFirstPage, schemasFirstPageCursor } =
+    context;
 
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [hasSchema, setHasSchema] = useState(schema != null);
+  const [showDisplayNames, setShowDisplayNames] = useState(false);
 
   const abortPreviousRequestsAndCreateSignal =
     useAbortPreviousRequestsAndCreateSignal();
@@ -355,6 +349,7 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
         schema={schema}
         previouslySavedSchemaInfo={settings && settings.schema}
         componentName="XDM object data element"
+        showDisplayNames={showDisplayNames}
       />
     );
   }
@@ -362,6 +357,15 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
   return (
     <div>
       <FormElementContainer>
+        <Flex alignItems="center" gap="size-100" marginBottom="size-200">
+          <Switch
+            isSelected={showDisplayNames}
+            onChange={setShowDisplayNames}
+            data-test-id="displayNamesSwitch"
+          >
+            Show display names for fields
+          </Switch>
+        </Flex>
         <FormikPicker
           label="Sandbox"
           name="sandboxName"

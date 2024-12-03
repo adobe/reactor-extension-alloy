@@ -120,6 +120,7 @@ test("allows user to provide individual array items", async () => {
   const extensionViewController = await initializeExtensionView();
   await schemaField.openMenu();
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.enableDisplayNames();
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
@@ -163,6 +164,7 @@ test("initializes form fields with individual array items", async () => {
       },
     },
   });
+  await xdmTree.enableDisplayNames();
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").toggleExpansion();
@@ -174,6 +176,7 @@ test("allows user to provide whole array value", async () => {
   const extensionViewController = await initializeExtensionView();
   await schemaField.openMenu();
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.enableDisplayNames();
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
@@ -203,6 +206,7 @@ test("initializes form fields with whole array value", async () => {
       },
     },
   });
+  await xdmTree.enableDisplayNames();
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
@@ -213,6 +217,7 @@ test("arrays using whole population strategy do not have children", async () => 
   await initializeExtensionView();
   await schemaField.openMenu();
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.enableDisplayNames();
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
@@ -227,6 +232,7 @@ test("arrays with a whole population strategy ancestor do not have children", as
   await initializeExtensionView();
   await schemaField.openMenu();
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.enableDisplayNames();
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("industries").click();
@@ -242,6 +248,7 @@ test("allows user to provide value for property with string type", async () => {
   const extensionViewController = await initializeExtensionView();
   await schemaField.openMenu();
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.enableDisplayNames();
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("name").click();
