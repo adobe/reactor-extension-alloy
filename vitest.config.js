@@ -14,7 +14,12 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      // This is needed to force JSX to be transformed in .js files
+      include: /\.(jsx?|tsx?)$/,
+    })
+  ],
   test: {
     environment: 'jsdom',
     setupFiles: ['./test/vitest/setup.js'],
@@ -25,12 +30,16 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       include: ['src/**/*.{js,jsx}'],
     },
-    css: true,
-    testTimeout: 15000,
-    pool: 'forks',
+    css: {
+      modules: {
+        classNameStrategy: 'non-scoped'
+      }
+    },
+    testTimeout: 30000,
+    pool: 'vmThreads',
     poolOptions: {
-      threads: {
-        singleThread: true
+      vmThreads: {
+        useAtomics: true
       }
     },
     sequence: {
@@ -41,5 +50,5 @@ export default defineConfig({
     loader: 'jsx',
     include: /\.[jt]sx?$/,
     exclude: [],
-  },
+  }
 });

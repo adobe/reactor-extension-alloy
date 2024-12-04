@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+/** @jsxRuntime classic */
+/** @jsx React.createElement */
 import { describe, test, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
@@ -117,8 +119,9 @@ const scenarios = [
 describe('Body Component', () => {
   scenarios.forEach(({ props, assertions }) => {
     test(`renders with props: ${JSON.stringify(props)}`, () => {
-      render(<Body {...props}>Test Body</Body>);
+      render(React.createElement(Body, props, 'Test Body'));
 
+      // Get element and run assertions
       const body = screen.getByText('Test Body');
       expect(body.tagName.toLowerCase()).toBe('p');
       

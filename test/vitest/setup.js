@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { expect, afterEach, vi } from 'vitest';
+import { expect, afterEach, beforeEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { configure } from '@testing-library/react';
@@ -18,66 +18,105 @@ import { configure } from '@testing-library/react';
 // Configure React Testing Library
 configure({
   asyncUtilTimeout: 2000,
-  eventWrapper: (cb) => {
-    let result;
-    act(() => {
-      result = cb();
-    });
-    return result;
-  },
+  testIdAttribute: 'data-test-id'
 });
 
 // Mock CSS modules
 vi.mock('**/*.css', () => {
   return {
-    default: {},
+    default: new Proxy({}, {
+      get: (_, prop) => prop
+    })
   };
 });
 
-// Mock React Spectrum theme imports
-vi.mock('@adobe/react-spectrum', async () => {
-  const actual = await vi.importActual('@adobe/react-spectrum');
+// Mock React Spectrum components and theme
+vi.mock('@adobe/react-spectrum', () => {
   return {
-    ...actual,
     Provider: ({ children }) => children,
+    Item: ({ children }) => children,
+    ActionButton: ({ children }) => children,
+    Button: ({ children }) => children,
+    Text: ({ children }) => children,
+    TextField: ({ children }) => children,
+    ComboBox: ({ children }) => children,
+    Picker: ({ children }) => children,
+    Radio: ({ children }) => children,
+    RadioGroup: ({ children }) => children,
+    Checkbox: ({ children }) => children,
+    TextArea: ({ children }) => children,
     lightTheme: {},
+    defaultTheme: {},
+    spectrum: {}
   };
 });
 
-// Setup global fetch mock
-global.fetch = vi.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve({}),
-  })
-);
+// Setup DOM environment for React
+beforeEach(() => {
+  // Create root element for React
+  const root = document.createElement('div');
+  root.id = 'root';
+  document.body.appendChild(root);
 
-// Setup global window properties needed for runtime tests
-global.window = {
-  ...global.window,
-  eval: (code) => {
-    // eslint-disable-next-line no-eval
-    return eval(code);
-  },
-  _satellite: {
-    container: {},
-    logger: {
-      log: () => {},
-      info: () => {},
-      warn: () => {},
-      error: () => {},
-    },
-  },
-  document: {
-    ...global.window.document,
-    location: {
-      href: '',
-    },
-  },
-};
+  // Create container for personalization content
+  const personalizationContainer = document.createElement('div');
+  personalizationContainer.id = 'personalization-container';
+  document.body.appendChild(personalizationContainer);
+
+  // Create container for test content
+  const testContainer = document.createElement('div');
+  testContainer.id = 'test-container';
+  document.body.appendChild(testContainer);
+
+  // Setup window mocks
+  if (!global.window._satellite) {
+    global.window._satellite = {
+      container: {},
+      logger: {
+        log: vi.fn(),
+        info: vi.fn(),
+        warn: vi.fn(),
+        error: vi.fn(),
+      },
+    };
+  }
+
+  // Setup getComputedStyle mock
+  const getPropertyValue = vi.fn().mockReturnValue('');
+  const computedStyle = { getPropertyValue };
+  global.window.getComputedStyle = vi.fn().mockReturnValue(computedStyle);
+
+  // Add missing window properties
+  if (!global.window.document.location) {
+    global.window.document.location = { href: '' };
+  }
+
+  // Setup global fetch mock
+  global.fetch = vi.fn(() =>
+    Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve({}),
+    })
+  );
+});
 
 // Clean up after each test
-afterEach(async () => {
-  await cleanup();
+afterEach(() => {
+  // Clean up React Testing Library
+  cleanup();
+
+  // Clean up mocks
   vi.clearAllMocks();
+  vi.restoreAllMocks();
+  
+  // Reset window mocks
+  if (global.window._satellite) {
+    global.window._satellite.logger.log.mockClear();
+    global.window._satellite.logger.info.mockClear();
+    global.window._satellite.logger.warn.mockClear();
+    global.window._satellite.logger.error.mockClear();
+  }
+
+  // Clean up DOM
+  document.body.innerHTML = '';
 }); 
