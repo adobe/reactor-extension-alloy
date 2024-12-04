@@ -14,6 +14,25 @@ import { expect, afterEach, beforeEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { configure } from '@testing-library/react';
+import { ReadableStream, WritableStream } from 'node:stream/web';
+
+// Polyfill TransformStream and related classes
+if (!global.TransformStream) {
+  global.TransformStream = class TransformStream {
+    constructor() {
+      this.readable = new ReadableStream();
+      this.writable = new WritableStream();
+    }
+  };
+}
+
+if (!global.ReadableStream) {
+  global.ReadableStream = ReadableStream;
+}
+
+if (!global.WritableStream) {
+  global.WritableStream = WritableStream;
+}
 
 // Configure React Testing Library
 configure({
@@ -29,6 +48,14 @@ vi.mock('**/*.css', () => {
     })
   };
 });
+
+// Mock React DOM client
+vi.mock('react-dom/client', () => ({
+  createRoot: vi.fn(() => ({
+    render: vi.fn(),
+    unmount: vi.fn()
+  }))
+}));
 
 // Mock React Spectrum components and theme
 vi.mock('@adobe/react-spectrum', () => {
@@ -53,20 +80,13 @@ vi.mock('@adobe/react-spectrum', () => {
 
 // Setup DOM environment for React
 beforeEach(() => {
-  // Create root element for React
-  const root = document.createElement('div');
-  root.id = 'root';
-  document.body.appendChild(root);
-
-  // Create container for personalization content
-  const personalizationContainer = document.createElement('div');
-  personalizationContainer.id = 'personalization-container';
-  document.body.appendChild(personalizationContainer);
-
-  // Create container for test content
-  const testContainer = document.createElement('div');
-  testContainer.id = 'test-container';
-  document.body.appendChild(testContainer);
+  // Create and append HTML structure
+  document.body.innerHTML = `
+    <div id="root"></div>
+    <div id="app"></div>
+    <div id="personalization-container"></div>
+    <div id="test-container"></div>
+  `;
 
   // Setup window mocks
   if (!global.window._satellite) {

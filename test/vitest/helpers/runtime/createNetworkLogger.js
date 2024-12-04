@@ -13,87 +13,127 @@ governing permissions and limitations under the License.
 import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
 
-const EDGE_ENDPOINT = /v1\/(interact|collect)\?configId=/;
-const DEFAULT_TIMEOUT = 10000; // 10 seconds
+const EDGE_ENDPOINT_REGEX = /edge\.adobedc\.net/;
 
-export default function createNetworkLogger() {
+const createRequestLogger = (endpoint = EDGE_ENDPOINT_REGEX) => {
   let requests = [];
-  let responses = [];
+  let isStarted = false;
+  let server = null;
 
-  const server = setupServer(
-    http.all('*', async ({ request }) => {
-      // Only track edge endpoint requests
-      if (EDGE_ENDPOINT.test(request.url)) {
-        requests.push(request);
-      }
-      const response = await HttpResponse.json({});
-      responses.push(response);
-      return response;
-    })
-  );
+  const start = () => {
+    if (!isStarted) {
+      console.log('Starting request logger...');
+      server = setupServer(
+        http.all('*', async ({ request }) => {
+          const url = new URL(request.url);
+          console.log('Intercepted request to:', url.toString());
+          
+          if (endpoint instanceof RegExp ? endpoint.test(url.toString()) : url.toString().includes(endpoint)) {
+            console.log('Request matches endpoint pattern');
+            
+            let requestBody;
+            try {
+              requestBody = await request.clone().json();
+              console.log('Request body:', JSON.stringify(requestBody, null, 2));
+            } catch (e) {
+              console.log('Failed to parse request body:', e);
+              requestBody = null;
+            }
+            
+            const requestHeaders = Object.fromEntries(request.headers.entries());
+            console.log('Request headers:', requestHeaders);
+            
+            const requestObj = {
+              url: url.toString(),
+              method: request.method,
+              headers: requestHeaders,
+              body: requestBody,
+              json: async () => requestBody
+            };
+            
+            requests.push(requestObj);
+            console.log('Added request to log. Total requests:', requests.length);
 
-  return {
-    start() {
-      server.listen();
-    },
-
-    stop() {
-      server.close();
-    },
-
-    reset() {
-      requests = [];
-      responses = [];
-      server.resetHandlers();
-    },
-
-    getRequests() {
-      return requests;
-    },
-
-    getResponses() {
-      return responses;
-    },
-
-    count() {
-      return requests.length;
-    },
-
-    async waitForRequest(predicate = () => true, timeout = DEFAULT_TIMEOUT) {
-      return new Promise((resolve, reject) => {
-        const timeoutId = setTimeout(() => {
-          reject(new Error(`Timed out waiting for request after ${timeout}ms`));
-        }, timeout);
-
-        const checkRequests = () => {
-          const request = requests.find(predicate);
-          if (request) {
-            clearTimeout(timeoutId);
-            resolve(request);
-          } else {
-            setTimeout(checkRequests, 100);
+            return HttpResponse.json({
+              handle: [{
+                type: "identity:result",
+                payload: [{
+                  id: "12581525282081748314129365414154872480",
+                  namespace: {
+                    code: "ECID"
+                  }
+                }]
+              }],
+              requestId: '1234567890',
+              state: {
+                entries: [],
+                metadata: {}
+              }
+            }, {
+              status: 200,
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
           }
-        };
-        checkRequests();
-      });
-    },
-
-    async waitForRequestCount(count, timeout = DEFAULT_TIMEOUT) {
-      return new Promise((resolve, reject) => {
-        const timeoutId = setTimeout(() => {
-          reject(new Error(`Timed out waiting for ${count} requests after ${timeout}ms`));
-        }, timeout);
-
-        const checkCount = () => {
-          if (requests.length >= count) {
-            clearTimeout(timeoutId);
-            resolve();
-          } else {
-            setTimeout(checkCount, 100);
-          }
-        };
-        checkCount();
-      });
+          
+          console.log('Request does not match endpoint pattern');
+          return null;
+        })
+      );
+      
+      server.listen({ onUnhandledRequest: 'bypass' });
+      isStarted = true;
+      console.log('Network logger started and listening');
     }
   };
-} 
+
+  const stop = () => {
+    if (isStarted && server) {
+      console.log('Stopping request logger...');
+      server.close();
+      isStarted = false;
+      server = null;
+    }
+  };
+
+  const clearLogs = () => {
+    console.log('Clearing request logger...');
+    requests = [];
+  };
+
+  const waitForRequestCount = (count, timeout = 10000) => {
+    console.log(`Waiting for ${count} requests...`);
+    return new Promise((resolve, reject) => {
+      const startTime = Date.now();
+      const intervalId = setInterval(() => {
+        const currentCount = requests.length;
+        console.log('Current request count:', currentCount, 'waiting for:', count);
+        
+        if (currentCount >= count) {
+          clearInterval(intervalId);
+          console.log('Request count reached');
+          resolve();
+        } else if (Date.now() - startTime > timeout) {
+          clearInterval(intervalId);
+          console.log('Request count wait timed out');
+          reject(new Error(`Timed out waiting for ${count} requests after ${timeout}ms`));
+        }
+      }, 100);
+    });
+  };
+
+  return {
+    start,
+    stop,
+    clearLogs,
+    waitForRequestCount,
+    edgeEndpointLogs: {
+      get requests() {
+        return requests;
+      }
+    }
+  };
+};
+
+export default createRequestLogger; 

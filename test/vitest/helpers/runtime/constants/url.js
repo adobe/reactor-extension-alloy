@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const baseUrl = `https://alloyio.com/functional-test`;
+const baseUrl = 'https://alloyio.com/functional-test';
 export const TEST_PAGE = `${baseUrl}/testPage.html`;
 
-const secondaryBaseUrl = `https://alloyio2.com/functional-test`;
+const secondaryBaseUrl = 'https://alloyio2.com/functional-test';
 export const SECONDARY_TEST_PAGE = `${secondaryBaseUrl}/testPage.html`;

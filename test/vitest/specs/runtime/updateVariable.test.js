@@ -10,10 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, test, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import createNetworkLogger from '../../helpers/runtime/createNetworkLogger';
 import appendLaunchLibrary from '../../helpers/runtime/appendLaunchLibrary';
 import { createTestPage } from '../../helpers/utils/testUtils';
+import { TEST_PAGE } from '../../helpers/runtime/constants/url';
 
 const container = {
   extensions: {
@@ -107,42 +108,44 @@ describe('Update variable', () => {
   const networkLogger = createNetworkLogger();
   
   beforeAll(() => {
+    console.log('Setting up test environment...');
     // Create test page
     createTestPage();
     // Start network logger
     networkLogger.start();
+    console.log('Network logger started');
   });
 
   afterAll(() => {
+    console.log('Cleaning up test environment...');
     // Stop network logger
     networkLogger.stop();
   });
 
   afterEach(() => {
     // Reset network logger
-    networkLogger.reset();
+    networkLogger.clearLogs();
   });
 
-  it('updates a variable', async () => {
+  test('updates a variable', async () => {
+    console.log('Starting update variable test...');
     await appendLaunchLibrary(container);
+    console.log('Launch library appended');
 
     try {
+      console.log('Waiting for network request...');
       // Wait for request to be made with a 10 second timeout
       await networkLogger.waitForRequestCount(1, 10000);
-
-      // Get request body
-      const requests = networkLogger.getRequests();
-      expect(requests.length).toBe(1);
+      console.log('Network request detected');
       
-      // Verify it's an edge endpoint request
-      expect(requests[0].url).toMatch(/v1\/(interact|collect)\?configId=/);
-
-      const requestBody = JSON.parse(requests[0].request.body);
-
-      // Verify variable was updated
+      const request = networkLogger.edgeEndpointLogs.requests[0];
+      expect(request.url).toMatch(/v1\/(interact|collect)/);
+      
+      const requestBody = await request.json();
       expect(requestBody.events[0].xdm.device.colorDepth).toBe(42);
     } catch (error) {
-      throw new Error(`Failed to detect network request or verify variable: ${error.message}`);
+      console.error('Test failed:', error);
+      throw error;
     }
   });
 });

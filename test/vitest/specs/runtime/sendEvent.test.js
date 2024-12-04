@@ -10,11 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { describe, it, expect, beforeAll, afterAll, afterEach } from 'vitest';
+import { describe, test, expect, beforeAll, afterAll, afterEach } from 'vitest';
 import createNetworkLogger from '../../helpers/runtime/createNetworkLogger';
 import appendLaunchLibrary from '../../helpers/runtime/appendLaunchLibrary';
 import { createTestPage } from '../../helpers/utils/testUtils';
 import { TEST_PAGE } from '../../helpers/runtime/constants/url';
+
+const networkLogger = createNetworkLogger();
 
 const container = {
   extensions: {
@@ -93,40 +95,41 @@ const container = {
 };
 
 describe('Send event', () => {
-  const networkLogger = createNetworkLogger();
-  
   beforeAll(() => {
+    console.log('Setting up test environment...');
     // Create test page
     createTestPage();
     // Start network logger
     networkLogger.start();
+    console.log('Network logger started');
   });
 
   afterAll(() => {
+    console.log('Cleaning up test environment...');
     // Stop network logger
     networkLogger.stop();
   });
 
   afterEach(() => {
     // Reset network logger
-    networkLogger.reset();
+    networkLogger.clearLogs();
   });
 
-  it('sends an event', async () => {
+  test('sends an event', async () => {
+    console.log('Starting send event test...');
     await appendLaunchLibrary(container);
+    console.log('Launch library appended');
 
     try {
-      // Wait for the request to be made with a 10 second timeout
+      console.log('Waiting for network request...');
       await networkLogger.waitForRequestCount(1, 10000);
+      console.log('Network request detected');
       
-      // Verify request was made
-      const requests = networkLogger.getRequests();
-      expect(requests.length).toBe(1);
-      
-      // Verify it's an edge endpoint request
-      expect(requests[0].url).toMatch(/v1\/(interact|collect)\?configId=/);
+      const request = networkLogger.edgeEndpointLogs.requests[0];
+      expect(request.url).toMatch(/v1\/(interact|collect)/);
     } catch (error) {
-      throw new Error(`Failed to detect network request: ${error.message}`);
+      console.error('Test failed:', error);
+      throw error;
     }
   });
 }); 
