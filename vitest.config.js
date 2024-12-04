@@ -10,45 +10,62 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
+import path from "path";
+
+const root = path.resolve(__dirname);
 
 export default defineConfig({
   plugins: [
     react({
-      // This is needed to force JSX to be transformed in .js files
-      include: /\.(jsx?|tsx?)$/,
-    })
+      babel: {
+        plugins: [
+          ["@babel/plugin-transform-react-jsx", { runtime: "automatic" }],
+        ],
+      },
+    }),
   ],
+  root,
+  resolve: {
+    alias: {
+      "@src": path.resolve(root, "src"),
+    },
+  },
   test: {
-    environment: 'jsdom',
-    setupFiles: ['./test/vitest/setup.js'],
+    environment: "jsdom",
+    setupFiles: [path.resolve(root, "test/vitest/setup.js")],
     globals: true,
-    include: ['test/vitest/specs/**/*.test.js'],
+    include: [
+      // Let the CLI pattern control which files to include
+      process.env.TEST_PATTERN || "test/unit/**/*.spec.js",
+    ],
+    exclude: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/functional/test.js",
+      "**/e2e/**",
+      "**/integration/**",
+    ],
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      include: ['src/**/*.{js,jsx}'],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      include: ["src/**/*.{js,jsx}"],
     },
     css: {
       modules: {
-        classNameStrategy: 'non-scoped'
-      }
+        classNameStrategy: "non-scoped",
+      },
     },
     testTimeout: 30000,
-    pool: 'vmThreads',
+    pool: "vmThreads",
     poolOptions: {
       vmThreads: {
-        useAtomics: true
-      }
+        useAtomics: true,
+      },
     },
     sequence: {
-      concurrent: false
-    }
+      concurrent: false,
+    },
   },
-  esbuild: {
-    loader: 'jsx',
-    include: /\.[jt]sx?$/,
-    exclude: [],
-  }
 });

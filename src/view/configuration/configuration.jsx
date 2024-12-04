@@ -326,4 +326,7 @@ const ConfigurationExtensionView = () => {
     />
   );
 };
+
+export default ConfigurationExtensionView;
+
 render(ConfigurationExtensionView);

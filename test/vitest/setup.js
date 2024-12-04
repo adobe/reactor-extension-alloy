@@ -10,11 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { expect, afterEach, beforeEach, vi } from 'vitest';
-import { cleanup } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { configure } from '@testing-library/react';
-import { ReadableStream, WritableStream } from 'node:stream/web';
+import { afterEach, beforeEach, vi } from "vitest";
+import { cleanup, configure } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import { ReadableStream, WritableStream } from "node:stream/web";
 
 // Polyfill TransformStream and related classes
 if (!global.TransformStream) {
@@ -37,28 +36,31 @@ if (!global.WritableStream) {
 // Configure React Testing Library
 configure({
   asyncUtilTimeout: 2000,
-  testIdAttribute: 'data-test-id'
+  testIdAttribute: "data-test-id",
 });
 
 // Mock CSS modules
-vi.mock('**/*.css', () => {
+vi.mock("**/*.css", () => {
   return {
-    default: new Proxy({}, {
-      get: (_, prop) => prop
-    })
+    default: new Proxy(
+      {},
+      {
+        get: (_, prop) => prop,
+      },
+    ),
   };
 });
 
 // Mock React DOM client
-vi.mock('react-dom/client', () => ({
+vi.mock("react-dom/client", () => ({
   createRoot: vi.fn(() => ({
     render: vi.fn(),
-    unmount: vi.fn()
-  }))
+    unmount: vi.fn(),
+  })),
 }));
 
 // Mock React Spectrum components and theme
-vi.mock('@adobe/react-spectrum', () => {
+vi.mock("@adobe/react-spectrum", () => {
   return {
     Provider: ({ children }) => children,
     Item: ({ children }) => children,
@@ -74,7 +76,7 @@ vi.mock('@adobe/react-spectrum', () => {
     TextArea: ({ children }) => children,
     lightTheme: {},
     defaultTheme: {},
-    spectrum: {}
+    spectrum: {},
   };
 });
 
@@ -101,14 +103,29 @@ beforeEach(() => {
     };
   }
 
+  // Setup extension bridge mock
+  global.window.extensionBridge = {
+    register: vi.fn(),
+    init: vi.fn(),
+    getSettings: vi.fn(),
+    validate: vi.fn(),
+  };
+
+  // Setup extension view promise mock
+  global.window.initializeExtensionViewPromise = Promise.resolve({
+    init: vi.fn().mockResolvedValue({}),
+    validate: vi.fn().mockResolvedValue(true),
+    getSettings: vi.fn().mockResolvedValue({}),
+  });
+
   // Setup getComputedStyle mock
-  const getPropertyValue = vi.fn().mockReturnValue('');
+  const getPropertyValue = vi.fn().mockReturnValue("");
   const computedStyle = { getPropertyValue };
   global.window.getComputedStyle = vi.fn().mockReturnValue(computedStyle);
 
   // Add missing window properties
   if (!global.window.document.location) {
-    global.window.document.location = { href: '' };
+    global.window.document.location = { href: "" };
   }
 
   // Setup global fetch mock
@@ -116,8 +133,14 @@ beforeEach(() => {
     Promise.resolve({
       ok: true,
       json: () => Promise.resolve({}),
-    })
+    }),
   );
+
+  // Mock Font API
+  global.document.fonts = {
+    check: vi.fn().mockReturnValue(true),
+    ready: Promise.resolve(),
+  };
 });
 
 // Clean up after each test
@@ -128,7 +151,7 @@ afterEach(() => {
   // Clean up mocks
   vi.clearAllMocks();
   vi.restoreAllMocks();
-  
+
   // Reset window mocks
   if (global.window._satellite) {
     global.window._satellite.logger.log.mockClear();
@@ -138,5 +161,5 @@ afterEach(() => {
   }
 
   // Clean up DOM
-  document.body.innerHTML = '';
-}); 
+  document.body.innerHTML = "";
+});

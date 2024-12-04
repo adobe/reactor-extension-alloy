@@ -10,8 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { vi } from 'vitest';
-import { mockExtensionBridge } from '../dom/reactTesting';
+import { vi } from "vitest";
+import { mockExtensionBridge } from "../components/mockExtensionBridge";
 
 /**
  * Initializes the extension view with the provided settings and schema.
@@ -19,7 +19,10 @@ import { mockExtensionBridge } from '../dom/reactTesting';
  * @param {Object} schema The XDM schema.
  * @returns {Promise<void>}
  */
-export default async function initializeExtensionView(settings = null, schema = null) {
+export default async function initializeExtensionView(
+  settings = null,
+  schema = null,
+) {
   const extensionBridge = mockExtensionBridge();
 
   // Mock the openCodeEditor method
@@ -29,7 +32,7 @@ export default async function initializeExtensionView(settings = null, schema = 
 
   // Mock the openDataElementSelector method
   extensionBridge.openDataElementSelector.mockImplementation(() => {
-    return Promise.resolve('%dataElement%');
+    return Promise.resolve("%dataElement%");
   });
 
   // Mock the init method
@@ -38,29 +41,31 @@ export default async function initializeExtensionView(settings = null, schema = 
       settings,
       schema,
       propertySettings: {
-        domains: ['example.com'],
+        domains: ["example.com"],
       },
       company: {
-        orgId: '5BFE274A5F6980A50A495C08@AdobeOrg',
+        orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
       },
       tokens: {
-        imsAccess: 'test-token',
+        imsAccess: "test-token",
       },
     });
   });
 
   // Initialize the extension view
-  window.initializeExtensionView = vi.fn().mockImplementation(({ initInfo }) => {
-    return Promise.resolve({
-      init: extensionBridge.init,
-      validate: vi.fn().mockResolvedValue(true),
-      getSettings: vi.fn().mockResolvedValue(initInfo.settings),
+  window.initializeExtensionView = vi
+    .fn()
+    .mockImplementation(({ initInfo }) => {
+      return Promise.resolve({
+        init: extensionBridge.init,
+        validate: vi.fn().mockResolvedValue(true),
+        getSettings: vi.fn().mockResolvedValue(initInfo.settings),
+      });
     });
-  });
 
   window.initializeExtensionViewPromise = window.initializeExtensionView({
-    initInfo: { settings }
+    initInfo: { settings },
   });
 
   return window.initializeExtensionViewPromise;
-} 
+}

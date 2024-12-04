@@ -10,171 +10,26 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { createHandler, createHandlers } from './setup';
+import { vi } from "vitest";
 
-const SANDBOXES_ENDPOINT_REGEX = /sandbox-management/;
+export const single = vi.fn().mockResolvedValue({
+  _embedded: {
+    sandboxes: [
+      {
+        name: "prod",
+        title: "Production",
+        state: "active",
+        type: "production",
+        region: "VA7",
+        isDefault: true,
+        eTag: "1",
+      },
+    ],
+  },
+});
 
-export const unauthorized = () => {
-  createHandlers([
-    createHandler('GET', SANDBOXES_ENDPOINT_REGEX, {
-      error_code: '401013',
-      message: 'Oauth token is not valid',
-    }, 401)
-  ]);
-};
-
-export const userRegionMissing = () => {
-  createHandlers([
-    createHandler('GET', SANDBOXES_ENDPOINT_REGEX, {
-      error_code: '403027',
-      message: 'User region is missing',
-    }, 403)
-  ]);
-};
-
-export const nonJsonBody = () => {
-  createHandlers([
-    createHandler('GET', SANDBOXES_ENDPOINT_REGEX, 'non-json body', 200)
-  ]);
-};
-
-export const empty = () => {
-  createHandlers([
-    createHandler('GET', SANDBOXES_ENDPOINT_REGEX, {
-      sandboxes: [],
-    })
-  ]);
-};
-
-export const singleWithoutDefault = () => {
-  createHandlers([
-    createHandler('GET', SANDBOXES_ENDPOINT_REGEX, {
-      sandboxes: [
-        {
-          name: 'testsandbox1',
-          title: 'Test Sandbox 1',
-          type: 'production',
-          isDefault: false,
-          region: 'VA7',
-          state: 'active',
-        },
-      ],
-    })
-  ]);
-};
-
-export const multipleWithDefault = () => {
-  createHandlers([
-    createHandler('GET', SANDBOXES_ENDPOINT_REGEX, {
-      sandboxes: [
-        {
-          name: 'testsandbox1',
-          title: 'Test Sandbox 1',
-          type: 'production',
-          isDefault: false,
-          region: 'VA7',
-          state: 'active',
-        },
-        {
-          name: 'testsandbox2',
-          title: 'Test Sandbox 2',
-          type: 'production',
-          isDefault: true,
-          region: 'VA7',
-          state: 'active',
-        },
-        {
-          name: 'testsandbox3',
-          title: 'Test Sandbox 3',
-          type: 'production',
-          isDefault: false,
-          region: 'VA7',
-          state: 'active',
-        },
-        {
-          name: 'prod',
-          title: 'Test Sandbox Prod',
-          type: 'production',
-          isDefault: false,
-          region: 'VA7',
-          state: 'active',
-        },
-      ],
-    })
-  ]);
-};
-
-export const longLasting = () => {
-  createHandlers([
-    createHandler('GET', SANDBOXES_ENDPOINT_REGEX, {
-      sandboxes: [
-        {
-          name: 'testsandbox1',
-          title: 'Test Sandbox 1',
-          type: 'production',
-          isDefault: false,
-          region: 'VA7',
-          state: 'active',
-        },
-      ],
-    }, 200, 10000)
-  ]);
-};
-
-export const multipleWithoutDefault = () => {
-  createHandlers([
-    createHandler('GET', SANDBOXES_ENDPOINT_REGEX, {
-      sandboxes: [
-        {
-          name: 'testsandbox1',
-          title: 'Test Sandbox 1',
-          type: 'production',
-          isDefault: false,
-          region: 'VA7',
-          state: 'active',
-        },
-        {
-          name: 'testsandbox2',
-          title: 'Test Sandbox 2',
-          type: 'production',
-          isDefault: false,
-          region: 'VA7',
-          state: 'active',
-        },
-        {
-          name: 'testsandbox3',
-          title: 'Test Sandbox 3',
-          type: 'production',
-          isDefault: false,
-          region: 'VA7',
-          state: 'active',
-        },
-        {
-          name: 'prod',
-          title: 'Test Sandbox Prod',
-          type: 'production',
-          isDefault: false,
-          region: 'VA7',
-          state: 'active',
-        },
-      ],
-    })
-  ]);
-};
-
-export const singleDefault = () => {
-  createHandlers([
-    createHandler('GET', SANDBOXES_ENDPOINT_REGEX, {
-      sandboxes: [
-        {
-          name: 'prod',
-          title: 'Prod',
-          type: 'production',
-          isDefault: true,
-          region: 'VA7',
-          state: 'active',
-        },
-      ],
-    })
-  ]);
-}; 
+export const empty = vi.fn().mockResolvedValue({
+  _embedded: {
+    sandboxes: [],
+  },
+});

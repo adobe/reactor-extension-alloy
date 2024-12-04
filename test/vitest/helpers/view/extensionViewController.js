@@ -26,13 +26,25 @@ export const getSettings = async () => {
  * @returns {Promise<void>}
  */
 export const init = async (additionalInitInfo = {}) => {
+  const initInfo = {
+    settings: null,
+    extensionSettings: {},
+    company: {
+      orgId: "TEST123@AdobeOrg",
+    },
+    tokens: { imsAccess: "test-token" },
+    ...additionalInitInfo,
+  };
+
   // Mock the extension view initialization for Vitest
   window.initializeExtensionViewPromise = Promise.resolve({
-    getSettings: () => Promise.resolve(additionalInitInfo),
-    init: () => Promise.resolve(),
+    init: vi.fn().mockResolvedValue(initInfo),
+    validate: vi.fn().mockResolvedValue(true),
+    getSettings: vi.fn().mockResolvedValue(initInfo.settings),
   });
 
   await window.initializeExtensionViewPromise;
+  return initInfo;
 };
 
 /**
@@ -48,5 +60,5 @@ export const validate = async () => {
 export default {
   getSettings,
   init,
-  validate
-}; 
+  validate,
+};
