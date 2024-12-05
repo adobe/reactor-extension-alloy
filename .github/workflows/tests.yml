@@ -26,14 +26,6 @@ jobs:
         
       - name: Run Unit Tests
         run: npm run test:unit
-        
-      - name: Upload Coverage Reports
-        if: always()
-        uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/lcov.info
-          fail_ci_if_error: true
 
   functional-test:
     name: "Functional Test"
