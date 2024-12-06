@@ -10,15 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, vi } from "vitest";
 import createSendEventComplete from "../../../../../src/lib/events/sendEventComplete/createSendEventComplete";
 
 describe("SendEvent complete event", () => {
   it("should add a trigger in the callbackStorage", () => {
     const trigger = () => {};
-    const sendEventCallbackStorage = jasmine.createSpyObj(
-      "sendEventCallbackStorage",
-      ["add"],
-    );
+    const sendEventCallbackStorage = {
+      add: vi.fn(),
+    };
 
     const sendEventComplete = createSendEventComplete({
       sendEventCallbackStorage,
@@ -27,5 +27,6 @@ describe("SendEvent complete event", () => {
     sendEventComplete({}, trigger);
 
     expect(sendEventCallbackStorage.add).toHaveBeenCalledWith(trigger);
+    expect(sendEventCallbackStorage.add).toHaveBeenCalledTimes(1);
   });
 });

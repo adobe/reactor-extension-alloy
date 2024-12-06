@@ -9,6 +9,8 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
 
 describe("Instance Manager", () => {
@@ -52,17 +54,17 @@ describe("Instance Manager", () => {
         },
       ],
     };
-    turbine = jasmine.createSpyObj({
-      getExtensionSettings: extensionSettings,
-      onDebugChanged: undefined,
+    turbine = {
+      getExtensionSettings: vi.fn().mockReturnValue(extensionSettings),
+      onDebugChanged: vi.fn(),
       environment: { stage: "production" },
-    });
-    turbine.debugEnabled = false;
+      debugEnabled: false,
+    };
     mockWindow = {};
-    getConfigOverrides = jasmine.createSpy("getConfigOverrides");
-    alloy1 = jasmine.createSpy("alloy1");
-    alloy2 = jasmine.createSpy("alloy2");
-    createInstance = jasmine.createSpy().and.callFake(({ name }) => {
+    getConfigOverrides = vi.fn();
+    alloy1 = vi.fn();
+    alloy2 = vi.fn();
+    createInstance = vi.fn().mockImplementation(({ name }) => {
       if (name === "alloy1") {
         return alloy1;
       }
@@ -71,10 +73,8 @@ describe("Instance Manager", () => {
       }
       return undefined;
     });
-    onBeforeEventSend = jasmine.createSpy();
-    wrapOnBeforeEventSend = jasmine
-      .createSpy()
-      .and.returnValue(onBeforeEventSend);
+    onBeforeEventSend = vi.fn();
+    wrapOnBeforeEventSend = vi.fn().mockReturnValue(onBeforeEventSend);
   });
 
   it("creates SDK instances", () => {
@@ -85,16 +85,17 @@ describe("Instance Manager", () => {
       __alloyNS: ["alloy1", "alloy2"],
       __alloyMonitors: [
         {
-          onInstanceCreated: jasmine.any(Function),
-          onInstanceConfigured: jasmine.any(Function),
-          onBeforeCommand: jasmine.any(Function),
+          onInstanceCreated: expect.any(Function),
+          onInstanceConfigured: expect.any(Function),
+          onBeforeCommand: expect.any(Function),
         },
       ],
     });
   });
+
   it("adds a new monitor to the window.__alloyMonitors", () => {
     const monitor = {
-      onInstanceCreated: jasmine.createSpy("onInstanceCreated"),
+      onInstanceCreated: vi.fn(),
     };
     build();
     expect(mockWindow).toEqual({
@@ -103,29 +104,27 @@ describe("Instance Manager", () => {
       __alloyNS: ["alloy1", "alloy2"],
       __alloyMonitors: [
         {
-          onInstanceCreated: jasmine.any(Function),
-          onInstanceConfigured: jasmine.any(Function),
-          onBeforeCommand: jasmine.any(Function),
+          onInstanceCreated: expect.any(Function),
+          onInstanceConfigured: expect.any(Function),
+          onBeforeCommand: expect.any(Function),
         },
       ],
     });
-    // eslint-disable-next-line no-underscore-dangle
-    expect(mockWindow.__alloyMonitors.length).toEqual(1);
+    expect(mockWindow.__alloyMonitors.length).toBe(1);
     instanceManager.addMonitor(monitor);
-    // eslint-disable-next-line no-underscore-dangle
-    expect(mockWindow.__alloyMonitors.length).toEqual(2);
+    expect(mockWindow.__alloyMonitors.length).toBe(2);
     expect(mockWindow).toEqual({
       alloy1,
       alloy2,
       __alloyNS: ["alloy1", "alloy2"],
       __alloyMonitors: [
         {
-          onInstanceCreated: jasmine.any(Function),
-          onInstanceConfigured: jasmine.any(Function),
-          onBeforeCommand: jasmine.any(Function),
+          onInstanceCreated: expect.any(Function),
+          onInstanceConfigured: expect.any(Function),
+          onBeforeCommand: expect.any(Function),
         },
         {
-          onInstanceCreated: jasmine.any(Function),
+          onInstanceCreated: expect.any(Function),
         },
       ],
     });
@@ -137,14 +136,14 @@ describe("Instance Manager", () => {
       datastreamId: "PR123",
       debugEnabled: false,
       orgId: "ABC@AdobeOrg",
-      onBeforeEventSend: jasmine.any(Function),
+      onBeforeEventSend: expect.any(Function),
       edgeConfigOverrides: undefined,
     });
     expect(alloy2).toHaveBeenCalledWith("configure", {
       datastreamId: "PR456",
       debugEnabled: false,
       orgId: "DIFFERENTORG@AdobeOrg",
-      onBeforeEventSend: jasmine.any(Function),
+      onBeforeEventSend: expect.any(Function),
       edgeConfigOverrides: undefined,
     });
   });
@@ -156,14 +155,14 @@ describe("Instance Manager", () => {
       datastreamId: "PR123",
       debugEnabled: true,
       orgId: "ABC@AdobeOrg",
-      onBeforeEventSend: jasmine.any(Function),
+      onBeforeEventSend: expect.any(Function),
       edgeConfigOverrides: undefined,
     });
   });
 
   it("toggles SDK debugging when Launch debugging is toggled", () => {
     const onDebugChangedCallbacks = [];
-    turbine.onDebugChanged.and.callFake((callback) => {
+    turbine.onDebugChanged.mockImplementation((callback) => {
       onDebugChangedCallbacks.push(callback);
     });
     build();
@@ -184,9 +183,7 @@ describe("Instance Manager", () => {
   });
 
   it("creates an event merge ID", () => {
-    createEventMergeId = jasmine
-      .createSpy()
-      .and.returnValue("randomEventMergeId");
+    createEventMergeId = vi.fn().mockReturnValue("randomEventMergeId");
     build();
     const eventMergeId = instanceManager.createEventMergeId();
     expect(eventMergeId).toBe("randomEventMergeId");
@@ -195,31 +192,31 @@ describe("Instance Manager", () => {
   it("handles a staging environment", () => {
     turbine.environment.stage = "staging";
     build();
-    expect(alloy1.calls.argsFor(0)[1].datastreamId).toEqual("PR123:stage");
-    expect(alloy2.calls.argsFor(0)[1].datastreamId).toEqual("PR456");
+    expect(alloy1.mock.calls[0][1].datastreamId).toBe("PR123:stage");
+    expect(alloy2.mock.calls[0][1].datastreamId).toBe("PR456");
   });
 
   it("handles a development environment", () => {
     turbine.environment.stage = "development";
     build();
-    expect(alloy1.calls.argsFor(0)[1].datastreamId).toEqual("PR123:dev");
-    expect(alloy2.calls.argsFor(0)[1].datastreamId).toEqual("PR456");
+    expect(alloy1.mock.calls[0][1].datastreamId).toBe("PR123:dev");
+    expect(alloy2.mock.calls[0][1].datastreamId).toBe("PR456");
   });
 
   it("wraps onBeforeEventSend", () => {
     build();
     const { onBeforeEventSend: configuredOnBeforeEventSend } =
-      alloy1.calls.argsFor(0)[1];
+      alloy1.mock.calls[0][1];
     expect(configuredOnBeforeEventSend).toBe(onBeforeEventSend);
   });
 
   it("handles config overrides", () => {
     turbine.environment.stage = "development";
-    getConfigOverrides.and.returnValue({
+    getConfigOverrides.mockReturnValue({
       com_adobe_target: { propertyToken: "development-property-token" },
     });
     build();
-    const { edgeConfigOverrides } = alloy1.calls.argsFor(0)[1];
+    const { edgeConfigOverrides } = alloy1.mock.calls[0][1];
     expect(edgeConfigOverrides).toEqual({
       com_adobe_target: { propertyToken: "development-property-token" },
     });

@@ -55,8 +55,11 @@ describe("numberAwareCompareFunction", () => {
   });
 
   it("handles non-strings", () => {
-    [undefined, null, 0, 42, { a: "foo" }, "foo"].sort(
-      numberAwareCompareFunction,
-    );
+    const values = [undefined, null, 0, 42, { a: "foo" }, "foo"];
+    const result = values.sort(numberAwareCompareFunction);
+    expect(result).toBeDefined();
+    expect(result).toHaveLength(values.length);
+    // Verify the function doesn't throw errors for non-string values
+    expect(() => values.sort(numberAwareCompareFunction)).not.toThrow();
   });
 });

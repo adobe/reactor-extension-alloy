@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createApplyResponse from "../../../../../src/lib/actions/applyResponse/createApplyResponse";
 
 describe("Apply response", () => {
@@ -19,12 +20,13 @@ describe("Apply response", () => {
   let applyResponse;
 
   beforeEach(() => {
-    instanceManager = jasmine.createSpyObj("instanceManger", ["getInstance"]);
-    sendEventCallbackStorage = jasmine.createSpyObj(
-      "sendEventCallbackStorage",
-      ["triggerEvent"],
-    );
-    instance = jasmine.createSpy("instance");
+    instanceManager = {
+      getInstance: vi.fn(),
+    };
+    sendEventCallbackStorage = {
+      triggerEvent: vi.fn(),
+    };
+    instance = vi.fn();
     applyResponse = createApplyResponse({
       instanceManager,
       sendEventCallbackStorage,
@@ -33,22 +35,25 @@ describe("Apply response", () => {
 
   it("throws an error if the instance isn't defined", () => {
     expect(() => applyResponse({ instanceName: "myinstance" })).toThrow();
-    expect(instanceManager.getInstance).toHaveBeenCalledOnceWith("myinstance");
+    expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
+    expect(instanceManager.getInstance).toHaveBeenCalledTimes(1);
   });
 
   it("calls applyResponse with settings", async () => {
-    instanceManager.getInstance.and.returnValue(instance);
-    instance.and.returnValue(Promise.resolve());
+    instanceManager.getInstance.mockReturnValue(instance);
+    instance.mockResolvedValue();
     await applyResponse({ instanceName: "myinstance", a: "1" });
-    expect(instance).toHaveBeenCalledOnceWith("applyResponse", { a: "1" });
+    expect(instance).toHaveBeenCalledWith("applyResponse", { a: "1" });
+    expect(instance).toHaveBeenCalledTimes(1);
   });
 
   it("triggers an event on the send event callback storage", async () => {
-    instanceManager.getInstance.and.returnValue(instance);
-    instance.and.returnValue(Promise.resolve("myresult"));
+    instanceManager.getInstance.mockReturnValue(instance);
+    instance.mockResolvedValue("myresult");
     await applyResponse({ instanceName: "myinstance" });
-    expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalledOnceWith(
+    expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalledWith(
       "myresult",
     );
+    expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalledTimes(1);
   });
 });

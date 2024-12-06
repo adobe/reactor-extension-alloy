@@ -18,6 +18,7 @@ import globals from "globals";
 import babelParser from "@babel/eslint-parser";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import unusedImports from "eslint-plugin-unused-imports";
+import vitestPlugin from "eslint-plugin-vitest";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +35,7 @@ export default [
     files: ["**/*.{mjs,js,jsx}"],
     plugins: {
       "unused-imports": unusedImports,
+      vitest: vitestPlugin,
     },
     languageOptions: {
       parser: babelParser,
@@ -44,11 +46,18 @@ export default [
       },
       ecmaVersion: 2021,
       globals: {
-        ...globals.jasmine,
         ...globals.browser,
         ...globals.node,
         fixture: true,
         test: true,
+        describe: true,
+        it: true,
+        expect: true,
+        beforeEach: true,
+        afterEach: true,
+        beforeAll: true,
+        afterAll: true,
+        vi: true,
       },
     },
     rules: {
@@ -116,6 +125,10 @@ export default [
 
       "import/no-named-as-default-member": "off",
       "import/no-named-as-default": "off",
+      "vitest/expect-expect": "error",
+      "vitest/no-disabled-tests": "warn",
+      "vitest/no-focused-tests": "error",
+      "vitest/no-identical-title": "error",
     },
   },
   {

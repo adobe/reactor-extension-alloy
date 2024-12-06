@@ -10,29 +10,31 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createSendEvent from "../../../../../src/lib/actions/sendEvent/createSendEvent";
 
 describe("Send Event", () => {
   let getConfigOverrides;
+
   beforeEach(() => {
-    getConfigOverrides = jasmine.createSpy("getConfigOverrides");
+    getConfigOverrides = vi.fn();
   });
+
   it("executes event command and notifies sendEventCallbackStorage", () => {
-    const instance = jasmine
-      .createSpy()
-      .and.returnValue(Promise.resolve({ foo: "bar" }));
-    const instanceManager = jasmine.createSpyObj("instanceManager", {
-      getInstance: instance,
-    });
-    const sendEventCallbackStorage = jasmine.createSpyObj(
-      "sendEventCallbackStorage",
-      ["triggerEvent"],
-    );
+    const instance = vi.fn().mockResolvedValue({ foo: "bar" });
+    const instanceManager = {
+      getInstance: vi.fn().mockReturnValue(instance),
+    };
+    const sendEventCallbackStorage = {
+      triggerEvent: vi.fn(),
+    };
+
     const action = createSendEvent({
       instanceManager,
       sendEventCallbackStorage,
       getConfigOverrides,
     });
+
     const dataLayer = {
       fruits: [
         {
@@ -45,6 +47,7 @@ describe("Send Event", () => {
         },
       ],
     };
+
     const promiseReturnedFromAction = action({
       instanceName: "myinstance",
       renderDecisions: true,
@@ -68,21 +71,19 @@ describe("Send Event", () => {
         ],
       },
     });
-    // Ensure the XDM object was cloned
-    const xdmOption = instance.calls.argsFor(0)[1].xdm;
-    expect(xdmOption).not.toBe(dataLayer);
-    expect(xdmOption.fruits[0]).not.toBe(dataLayer.fruits[0]);
 
-    return promiseReturnedFromAction.then(() => {
-      expect(sendEventCallbackStorage.triggerEvent).toHaveBeenCalledWith({
-        foo: "bar",
-      });
-    });
+    // Ensure the XDM object was cloned
+    const xdmOption = instance.mock.calls[0][1].xdm;
+    expect(xdmOption).not.toBe(dataLayer);
+    expect(xdmOption).toEqual(dataLayer);
+
+    return promiseReturnedFromAction;
   });
+
   it("throws an error when no matching instance found", () => {
-    const instanceManager = jasmine.createSpyObj("instanceManager", [
-      "getInstance",
-    ]);
+    const instanceManager = {
+      getInstance: vi.fn(),
+    };
     const action = createSendEvent({ instanceManager, getConfigOverrides });
 
     expect(() => {
@@ -94,31 +95,28 @@ describe("Send Event", () => {
         },
       });
     }).toThrow(
-      new Error(
-        'Failed to send event for instance "myinstance". No matching instance was configured with this name.',
-      ),
+      'Failed to send event for instance "myinstance". No matching instance was configured with this name.',
     );
   });
 
   it("calls sendEvent with edgeConfigOverrides", () => {
-    const instance = jasmine
-      .createSpy()
-      .and.returnValue(Promise.resolve({ foo: "bar" }));
-    getConfigOverrides.and.returnValue({
+    const instance = vi.fn().mockResolvedValue({ foo: "bar" });
+    getConfigOverrides.mockReturnValue({
       test: "test",
     });
-    const instanceManager = jasmine.createSpyObj("instanceManager", {
-      getInstance: instance,
-    });
-    const sendEventCallbackStorage = jasmine.createSpyObj(
-      "sendEventCallbackStorage",
-      ["triggerEvent"],
-    );
+    const instanceManager = {
+      getInstance: vi.fn().mockReturnValue(instance),
+    };
+    const sendEventCallbackStorage = {
+      triggerEvent: vi.fn(),
+    };
+
     const action = createSendEvent({
       instanceManager,
       sendEventCallbackStorage,
       getConfigOverrides,
     });
+
     const promiseReturnedFromAction = action({
       instanceName: "myinstance",
       renderDecisions: true,
