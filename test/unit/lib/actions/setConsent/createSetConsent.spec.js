@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { describe, it, expect, vi } from "vitest";
-import createSetConsent from "@src/lib/actions/setConsent/createSetConsent";
+import createSetConsent from "../../../../../src/lib/actions/setConsent/createSetConsent";
 
 describe("Set Consent", () => {
   ["in", "out"].forEach((generalConsent) => {

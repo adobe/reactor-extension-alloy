@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import createInstanceManager from "@src/lib/instanceManager/createInstanceManager";
+import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
 
 describe("Instance Manager", () => {
   let instanceManager;
