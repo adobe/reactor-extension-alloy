@@ -11,13 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import {
-  Checkbox,
-  InlineAlert,
-  Content,
-  Flex,
-  View,
-} from "@adobe/react-spectrum";
+import { InlineAlert, Content, Flex, View } from "@adobe/react-spectrum";
 import * as webSdkComponentsExports from "@adobe/alloy/libEs6/core/componentCreators";
 import Heading from "../components/typography/heading";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
@@ -25,57 +19,70 @@ import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 
 const componentProperties = {
   activityCollector: {
-    description: "This component enables automatic link collection and ActivityMap tracking."
+    description:
+      "This component enables automatic link collection and ActivityMap tracking.",
   },
   audiences: {
-    description: "This component supports Audience Manager integration including running URL and cookie destination and id syncs."
+    description:
+      "This component supports Audience Manager integration including running URL and cookie destination and id syncs.",
   },
   context: {
-    description: "This component enables the automatic collection of context data."
+    description:
+      "This component enables the automatic collection of context data.",
   },
   decisioningEngine: {
-    description: "This component enables Adobe Journey Optimizer on device decisioning. You must include this component if you are using the Evaluate rulesets action or the Subcribe ruleset items event."
+    description:
+      "This component enables Adobe Journey Optimizer on device decisioning. You must include this component if you are using the Evaluate rulesets action or the Subcribe ruleset items event.",
   },
   eventMerge: {
     deprecated: true,
-    description: "This component is deprecated. You must include this component if you are using the Event merge ID data element or Reset event merge ID action."
+    description:
+      "This component is deprecated. You must include this component if you are using the Event merge ID data element or Reset event merge ID action.",
   },
   legacyMediaAnalytics: {
     label: "Media Analytics Bridge",
-    description: "This component enables Edge streaming media using the media analytics interface. You must include this component if you are using the Get media analytics tracker action."
+    description:
+      "This component enables Edge streaming media using the media analytics interface. You must include this component if you are using the Get media analytics tracker action.",
   },
   machineLearning: {
     deprecated: true,
-    description: "This component is deprecated. Including this component add the machineLearning key to send event responses."
+    description:
+      "This component is deprecated. Including this component add the machineLearning key to send event responses.",
   },
   personalization: {
-    description: "This component enables Adobe Target and Adobe Journey Optimizer integrations."
+    description:
+      "This component enables Adobe Target and Adobe Journey Optimizer integrations.",
   },
   privacy: {
     label: "Consent",
-    description: "This component supports consent integrations. You must include this component if you are using the Set consent action."
+    description:
+      "This component supports consent integrations. You must include this component if you are using the Set consent action.",
   },
   streamingMedia: {
-    description: "This component enables Edge streaming media. You must include this component if you are using the Send media event action."
-  }
-}
-console.log(Object.keys(webSdkComponentsExports));
-const webSdkComponents = Object.keys(webSdkComponentsExports).map((v) => ({
-  label: camelCaseToTitleCase(v),
-  value: v,
-  ...(componentProperties[v] || {})
-})).sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
+    description:
+      "This component enables Edge streaming media. You must include this component if you are using the Send media event action.",
+  },
+};
+const webSdkComponents = Object.keys(webSdkComponentsExports)
+  .map((v) => ({
+    label: camelCaseToTitleCase(v),
+    value: v,
+    ...(componentProperties[v] || {}),
+  }))
+  .sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
 
 export const bridge = {
   getInitialValues: ({ initInfo }) => {
     const isNew = initInfo?.settings?.instances === undefined;
-    let components
+    let components;
     if (isNew) {
       // If this is a newly added extension, default to deprecated components being disabled.
-      components = webSdkComponents.filter(value => value.deprecated).reduce((acc, value) => {
-        acc[value.value] = false;
-        return acc;
-      }, {});
+      components = webSdkComponents
+        .filter((value) => value.deprecated)
+        .reduce((acc, value) => {
+          acc[value.value] = false;
+          return acc;
+        }, {});
     } else {
       components = initInfo?.settings?.components || {};
     }
@@ -84,14 +91,11 @@ export const bridge = {
       components: webSdkComponents.reduce((acc, { value }) => {
         acc[value] = components[value] !== false;
         return acc;
-      }, {})
+      }, {}),
     };
-    console.log(initialValues);
     return initialValues;
   },
   getSettings: ({ values: { components } }) => {
-    console.log(components);
-
     const excludedComponents = webSdkComponents
       .map(({ value }) => value)
       .filter((v) => !components[v])
@@ -137,7 +141,7 @@ const ComponentsSection = () => {
           </FormikCheckbox>
         );
       })}
-    </Flex >
+    </Flex>
   );
 };
 

@@ -13,7 +13,8 @@ governing permissions and limitations under the License.
 import { Radio } from "@adobe/react-spectrum";
 import React from "react";
 import PropTypes from "prop-types";
-import { object } from "yup";
+import { object, string } from "yup";
+import { useField } from "formik";
 import SectionHeader from "../components/sectionHeader";
 import FormikRadioGroupWithDataElement, {
   createRadioGroupWithDataElementValidationSchema,
@@ -21,7 +22,6 @@ import FormikRadioGroupWithDataElement, {
 import FormElementContainer from "../components/formElementContainer";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
-import { useField } from "formik";
 
 const CONSENT_LEVEL = {
   IN: "in",
@@ -48,7 +48,7 @@ export const bridge = {
   getInstanceSettings: ({ instanceValues, components }) => {
     const instanceSettings = {};
 
-    if (instanceValues.privacy) {
+    if (components.privacy) {
       copyPropertiesIfValueDifferentThanDefault({
         toObj: instanceSettings,
         fromObj: instanceValues,
@@ -60,8 +60,11 @@ export const bridge = {
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
-    defaultConsent:
-      createRadioGroupWithDataElementValidationSchema("defaultConsent"),
+    defaultConsent: string().when("$components.privacy", {
+      is: true,
+      then: () =>
+        createRadioGroupWithDataElementValidationSchema("defaultConsent"),
+    }),
   }),
 };
 
@@ -80,9 +83,7 @@ const PrivacySection = ({ instanceFieldName }) => {
           dataTestIdPrefix="defaultConsent"
           name={`${instanceFieldName}.defaultConsent`}
           label="Default consent (not persisted to user's profile)"
-          dataElementDescription={
-            'This data element should resolve to "in", "out", or "pending".'
-          }
+          dataElementDescription='This data element should resolve to "in", "out", or "pending".'
         >
           <Radio data-test-id="defaultConsentInRadio" value={CONSENT_LEVEL.IN}>
             In - Collect events that occur before the user provides consent
