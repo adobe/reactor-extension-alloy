@@ -9,6 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import React from "react";
 import { string } from "yup";
 import renderForm from "../forms/renderForm";
 import form from "../forms/form";
@@ -17,8 +18,16 @@ import textField from "../forms/textField";
 import objectArray from "../forms/objectArray";
 import dataElement from "../forms/dataElement";
 import comboBox from "../forms/comboBox";
+import ComponentDependencyAlert from "../components/componentDependencyAlert";
 
 const applyPropositionsForm = form({}, [
+  ({ initInfo }) => (
+    <ComponentDependencyAlert
+      initInfo={initInfo}
+      requiredComponent="personalization"
+      componentLabel="Personalization"
+    />
+  ),
   instancePicker({ name: "instanceName" }),
   dataElement({
     name: "propositions",
