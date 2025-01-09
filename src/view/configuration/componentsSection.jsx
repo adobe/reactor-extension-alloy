@@ -128,19 +128,21 @@ const ComponentsSection = () => {
         </InlineAlert>
       </View>
 
-      {webSdkComponents.map(({ label, value, description }) => {
-        return (
-          <FormikCheckbox
-            name={`components.${value}`}
-            data-test-id={`${value}ComponentCheckbox`}
-            width="size-5000"
-            description={description}
-            key={value}
-          >
-            {label}
-          </FormikCheckbox>
-        );
-      })}
+      <div>
+        {webSdkComponents.map(({ label, value, description }) => {
+          return (
+            <FormikCheckbox
+              name={`components.${value}`}
+              data-test-id={`${value}ComponentCheckbox`}
+              width="size-5000"
+              description={description}
+              key={value}
+            >
+              {label}
+            </FormikCheckbox>
+          );
+        })}
+      </div>
     </Flex>
   );
 };
