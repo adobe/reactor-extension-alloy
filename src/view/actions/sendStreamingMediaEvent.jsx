@@ -9,6 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import React from "react";
 import { string } from "yup";
 import { isEmptyArray } from "formik";
 import comboBox from "../forms/comboBox";
@@ -27,6 +28,7 @@ import dataElement from "../forms/dataElement";
 import mediaStates from "./constants/mediaStates";
 import mediaContentTypes from "./constants/mediaContentTypes";
 import mediaShowTypes from "./constants/mediaShowTypes";
+import ComponentDependencyAlert from "../components/componentDependencyAlert";
 
 const getSortedInputItems = (mapItems) => {
   return Object.keys(mapItems)
@@ -789,6 +791,13 @@ const sendEventForm = form(
     wrapGetSettings,
   },
   [
+    ({ initInfo }) => (
+      <ComponentDependencyAlert
+        initInfo={initInfo}
+        requiredComponent="streamingMedia"
+        componentLabel="Streaming Media"
+      />
+    ),
     instancePicker({ name: "instanceName", onInstanceChange }),
     comboBox({
       name: "eventType",
