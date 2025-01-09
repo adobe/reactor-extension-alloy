@@ -1849,7 +1849,7 @@ describe("overridesBridge", () => {
     });
 
     it("gives friendly errors", () => {
-      expect(() =>
+      try {
         bridge.formikStateValidationSchema.validateSync({
           edgeConfigOverrides: {
             development: {
@@ -1858,8 +1858,12 @@ describe("overridesBridge", () => {
               },
             },
           },
-        }),
-      ).toThrowMatching((value) => /Please/.test(value?.message ?? value));
+        });
+        // Should not reach here
+        throw new Error("Validation should have failed");
+      } catch (error) {
+        expect(error.message).toMatch(/Please/);
+      }
     });
 
     it("rejects negative and non-integer idSyncContainerId", () => {

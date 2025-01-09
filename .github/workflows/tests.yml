@@ -3,10 +3,6 @@ on:
   push:
   workflow_dispatch:
 env:
-  SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-  SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-  SAUCE_JOB: "Alloy Reactor Extension"
-  SAUCE_CAPABILITIES_OVERRIDES_PATH: "sauceLabsCapabilities.json"
   EDGE_E2E_PRIVATE_KEY_CONTENTS: ${{ secrets.EDGE_E2E_PRIVATE_KEY_CONTENTS }}
   EDGE_E2E_CLIENT_SECRET: ${{ secrets.EDGE_E2E_CLIENT_SECRET }}
   REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS: ${{ secrets.REACTOR_IO_INTEGRATION_PRIVATE_KEY_CONTENTS }}
@@ -18,20 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          
       - name: Install dependencies
         run: npm ci
-      - name: Build
-        run: npm run build
-      - uses: saucelabs/sauce-connect-action@v2
-        with:
-          username: ${{ secrets.SAUCE_USERNAME }}
-          accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
-      - name: Run Unit Test
-        run: npx karma start karma.saucelabs.conf.js --single-run
-        env:
-          BUILD_NUMBER: ${{ github.run_number }}
-          BUILD_ID: ${{ github.run_id }}
-          JOB_NUMBER: ${{ github.job }}
+        
+      - name: Run Unit Tests
+        run: npm run test:unit
 
   functional-test:
     name: "Functional Test"

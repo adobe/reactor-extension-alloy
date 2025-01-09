@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import cleanseIdentityMap from "../../../../../src/lib/dataElements/identityMap/createIdentityMap";
 
 describe("createIdentityMap", () => {
@@ -17,7 +18,9 @@ describe("createIdentityMap", () => {
   let identityMap;
 
   beforeEach(() => {
-    logger = jasmine.createSpyObj("logger", ["log"]);
+    logger = {
+      log: vi.fn(),
+    };
     identityMap = cleanseIdentityMap({
       logger,
     });
@@ -110,6 +113,6 @@ describe("createIdentityMap", () => {
     // the removal of an identifier at index 1. This assertion helps ensure we don't implement
     // a reverse loop to slice identifiers off the identity map and inadvertently log the
     // removals in reverse order.
-    expect(logger.log.calls.allArgs()).toEqual(expectedLogArgsByCallIndex);
+    expect(logger.log.mock.calls).toEqual(expectedLogArgsByCallIndex);
   });
 });
