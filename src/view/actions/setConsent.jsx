@@ -31,6 +31,7 @@ import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
 import Overrides, { bridge as overridesBridge } from "../components/overrides";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
+import ComponentDependencyAlert from "../components/componentDependencyAlert";
 
 const FORM = { value: "form", label: "Fill out a form" };
 const DATA_ELEMENT = { value: "dataElement", label: "Provide a data element" };
@@ -262,9 +263,7 @@ const ConsentObject = ({ value, index }) => {
             dataTestIdPrefix="general"
             name={`consent[${index}].general`}
             label="General consent"
-            dataElementDescription={
-              'This data element should resolve to "in" or "out".'
-            }
+            dataElementDescription='This data element should resolve to "in" or "out".'
           >
             <Radio data-test-id="generalInRadio" value="in">
               In
@@ -359,6 +358,11 @@ const SetConsent = () => {
         const orgId = instanceSettings?.orgId ?? initInfo.company.orgId;
         return (
           <FormElementContainer>
+            <ComponentDependencyAlert
+              initInfo={initInfo}
+              requiredComponent="privacy"
+              componentLabel="Consent"
+            />
             <InstanceNamePicker
               data-test-id="instanceNamePicker"
               name="instanceName"
