@@ -115,7 +115,6 @@ export const bridge = {
 const ComponentsSection = () => {
   return (
     <Flex gap="size-200" direction="column">
-      <Heading size="M">Components</Heading>
       <View width="size-6000">
         <InlineAlert variant="notice">
           <Heading>Warning</Heading>
