@@ -73,9 +73,7 @@ const PrivacySection = ({ instanceFieldName }) => {
           dataTestIdPrefix="defaultConsent"
           name={`${instanceFieldName}.defaultConsent`}
           label="Default consent (not persisted to user's profile)"
-          dataElementDescription={
-            'This data element should resolve to "in", "out", or "pending".'
-          }
+          dataElementDescription='This data element should resolve to "in", "out", or "pending".'
         >
           <Radio data-test-id="defaultConsentInRadio" value={CONSENT_LEVEL.IN}>
             In - Collect events that occur before the user provides consent

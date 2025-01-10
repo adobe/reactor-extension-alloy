@@ -262,9 +262,7 @@ const ConsentObject = ({ value, index }) => {
             dataTestIdPrefix="general"
             name={`consent[${index}].general`}
             label="General consent"
-            dataElementDescription={
-              'This data element should resolve to "in" or "out".'
-            }
+            dataElementDescription='This data element should resolve to "in" or "out".'
           >
             <Radio data-test-id="generalInRadio" value="in">
               In

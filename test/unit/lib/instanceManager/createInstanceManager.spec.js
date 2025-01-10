@@ -66,7 +66,7 @@ describe("Instance Manager", () => {
     getConfigOverrides = vi.fn();
     alloy1 = vi.fn();
     alloy2 = vi.fn();
-    createInstance = vi.fn().mockImplementation(({ name }) => {
+    createCustomInstance = vi.fn().mockImplementation(({ name }) => {
       if (name === "alloy1") {
         return alloy1;
       }
