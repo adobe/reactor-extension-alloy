@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import deepSet from "../../../../src/view/utils/deepSet";
 
 describe("deepSet", () => {

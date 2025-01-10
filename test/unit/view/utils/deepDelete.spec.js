@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import deepDelete from "../../../../src/view/utils/deepDelete";
 
 describe("deepDelete", () => {
