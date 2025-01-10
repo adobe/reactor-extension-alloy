@@ -10,22 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import form from "../forms/form";
 import instancePicker from "../forms/instancePicker";
 import textField from "../forms/textField";
 import renderForm from "../forms/renderForm";
 import notice from "../forms/notice";
-import ComponentDependencyAlert from "../components/componentDependencyAlert";
+import ExcludedComponentNotice from "../forms/excludedComponentNotice";
 
 const createMediaTrackerForm = form({}, [
-  ({ initInfo }) => (
-    <ComponentDependencyAlert
-      initInfo={initInfo}
-      requiredComponent="legacyMediaAnalytics"
-      componentLabel="Media Analytics Bridge"
-    />
-  ),
+  ExcludedComponentNotice({
+    requiredComponent: "legacyMediaAnalytics",
+    componentLabel: "Media Analytics Bridge",
+  }),
   notice({
     title: "Legacy Media Analytics",
     description:
