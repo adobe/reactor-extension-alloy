@@ -9,7 +9,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import React from "react";
 import { string } from "yup";
 import renderForm from "../forms/renderForm";
 import form from "../forms/form";
@@ -21,10 +20,9 @@ import comboBox from "../forms/comboBox";
 import ExcludedComponentNotice from "../forms/excludedComponentNotice";
 
 const applyPropositionsForm = form({}, [
- 
-  ExcludedComponentNotice ({ 
-    requiredComponent:"personalization",
-    componentLabel:"Personalization"
+  ExcludedComponentNotice({
+    requiredComponent: "personalization",
+    componentLabel: "Personalization",
   }),
   instancePicker({ name: "instanceName" }),
   dataElement({

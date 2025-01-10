@@ -31,7 +31,7 @@ import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
 import Overrides, { bridge as overridesBridge } from "../components/overrides";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
-import ComponentDependencyAlert from "../components/componentDependencyAlert";
+import ExcludedComponentNotice from "../forms/excludedComponentNotice";
 
 const FORM = { value: "form", label: "Fill out a form" };
 const DATA_ELEMENT = { value: "dataElement", label: "Provide a data element" };
@@ -358,8 +358,7 @@ const SetConsent = () => {
         const orgId = instanceSettings?.orgId ?? initInfo.company.orgId;
         return (
           <FormElementContainer>
-            <ComponentDependencyAlert
-              initInfo={initInfo}
+            <ExcludedComponentNotice
               requiredComponent="privacy"
               componentLabel="Consent"
             />
