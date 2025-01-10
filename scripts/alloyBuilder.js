@@ -95,7 +95,7 @@ program
   .description("Tool for generating custom alloy build based on user input.");
 
 program.addOption(
-  new Option("-i, --inputFile <file>", "the entry pint file for the build")
+  new Option("-i, --inputFile <file>", "the entry point file for the build")
     .makeOptionMandatory()
     .argParser((value) => {
       if (!fs.existsSync(path.join(process.cwd(), value))) {
