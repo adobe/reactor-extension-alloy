@@ -30,7 +30,7 @@ const componentProperties = {
     description:
       "This component enables the automatic collection of context data.",
   },
-  decisioningEngine: {
+  rulesEngine: {
     description:
       "This component enables Adobe Journey Optimizer on device decisioning. You must include this component if you are using the Evaluate rulesets action or the Subcribe ruleset items event.",
   },
@@ -39,22 +39,15 @@ const componentProperties = {
     description:
       "This component is deprecated. You must include this component if you are using the Event merge ID data element or Reset event merge ID action.",
   },
-  legacyMediaAnalytics: {
-    label: "Media Analytics Bridge",
+  mediaAnalyticsBridge: {
     description:
       "This component enables Edge streaming media using the media analytics interface. You must include this component if you are using the Get media analytics tracker action.",
-  },
-  machineLearning: {
-    deprecated: true,
-    description:
-      "This component is deprecated. Including this component add the machineLearning key to send event responses.",
   },
   personalization: {
     description:
       "This component enables Adobe Target and Adobe Journey Optimizer integrations.",
   },
-  privacy: {
-    label: "Consent",
+  consent: {
     description:
       "This component supports consent integrations. You must include this component if you are using the Set consent action.",
   },
@@ -117,12 +110,13 @@ const ComponentsSection = () => {
     <Flex gap="size-200" direction="column">
       <View width="size-6000">
         <InlineAlert variant="notice">
-          <Heading>Warning</Heading>
+          <Heading>Warning, advanced settings</Heading>
           <Content>
-            You can decrease the size of your Web SDK bundle by disabling
-            components that you are not using. Each time you change the list of
-            used components, please test your implementation thoroughly to
-            verify that all functionalities are working as expected.
+            Modifying settings here can break your implementation. You can
+            decrease the size of your Web SDK bundle by disabling components
+            that you are not using. Each time you change the list of used
+            components, please test your implementation thoroughly to verify
+            that all functionalities are working as expected.
           </Content>
         </InlineAlert>
       </View>

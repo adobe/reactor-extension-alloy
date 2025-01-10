@@ -54,7 +54,7 @@ export const bridge = {
   getInstanceSettings: ({ instanceValues, components }) => {
     const instanceSettings = {};
 
-    if (components.privacy) {
+    if (components.consent) {
       copyPropertiesIfValueDifferentThanDefault({
         toObj: instanceSettings,
         fromObj: instanceValues,
@@ -66,7 +66,7 @@ export const bridge = {
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
-    defaultConsent: string().when("$components.privacy", {
+    defaultConsent: string().when("$components.consent", {
       is: true,
       then: () =>
         createRadioGroupWithDataElementValidationSchema("defaultConsent"),
@@ -75,13 +75,13 @@ export const bridge = {
 };
 
 const PrivacySection = ({ instanceFieldName }) => {
-  const [{ value: privacyComponentEnabled }] = useField("components.privacy");
+  const [{ value: consentComponentEnabled }] = useField("components.consent");
   return (
     <>
       <SectionHeader learnMoreUrl="https://adobe.ly/2WSngEh">
         Consent
       </SectionHeader>
-      {privacyComponentEnabled ? (
+      {consentComponentEnabled ? (
         <FormElementContainer>
           <FormikRadioGroupWithDataElement
             dataTestIdPrefix="defaultConsent"

@@ -99,7 +99,7 @@ export const bridge = {
           autoCollectPropositionInteractions;
       }
 
-      if (!components.decisioningEngine) {
+      if (!components.rulesEngine) {
         delete instanceSettings.personalizationStorageEnabled;
       }
     }
@@ -137,9 +137,7 @@ const PersonalizationSection = ({ instanceFieldName }) => {
   const [{ value: personalizationComponentEnabled }] = useField(
     "components.personalization",
   );
-  const [{ value: decisioningEngineEnabled }] = useField(
-    "components.decisioningEngine",
-  );
+  const [{ value: rulesEngineEnabled }] = useField("components.rulesEngine");
 
   return (
     <>
@@ -178,7 +176,7 @@ const PersonalizationSection = ({ instanceFieldName }) => {
               copyToClipboard(prehidingSnippet);
             }}
           />
-          {decisioningEngineEnabled ? (
+          {rulesEngineEnabled ? (
             <FormikCheckbox
               data-test-id="personalizationStorageEnabledField"
               name={`${instanceFieldName}.personalizationStorageEnabled`}
@@ -190,10 +188,10 @@ const PersonalizationSection = ({ instanceFieldName }) => {
           ) : (
             <View width="size-6000">
               <InlineAlert variant="info">
-                <Heading>Decisioning Engine component disabled</Heading>
+                <Heading>Rules engine component disabled</Heading>
                 <Content>
-                  The Decisioning Engine custom build component is disabled.
-                  Enable it above to configure storage settings.
+                  The rules engine custom build component is disabled. Enable it
+                  above to configure personalization storage settings.
                 </Content>
               </InlineAlert>
             </View>
