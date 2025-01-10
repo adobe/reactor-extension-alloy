@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import deepGet from "../../../../src/view/utils/deepGet";
 
 describe("deepGet", () => {

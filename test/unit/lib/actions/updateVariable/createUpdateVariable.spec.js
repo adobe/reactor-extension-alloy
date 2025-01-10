@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach } from "vitest";
 import deepAssign from "../../../helpers/deepAssign";
 import createUpdateVariable from "../../../../../src/lib/actions/updateVariable/createUpdateVariable";
 
