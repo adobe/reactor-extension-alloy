@@ -57,6 +57,7 @@ const Editor = ({
   initialExpandedDepth = 0,
   componentName,
   verticalLayout = false,
+  showDisplayNames = false,
 }) => {
   const { values: formState } = useFormikContext();
   const [expandedNodeIdsInTree, setExpandedNodeIdsInTree] = useState(() => {
@@ -126,6 +127,7 @@ const Editor = ({
             setSelectedNodeId(nodeId);
             expandNodeAndAncestorsInTree(nodeId);
           }}
+          showDisplayNames={showDisplayNames}
         />
       </View>
       {
@@ -174,6 +176,7 @@ Editor.propTypes = {
   initialExpandedDepth: PropTypes.number,
   componentName: PropTypes.string.isRequired,
   verticalLayout: PropTypes.bool,
+  showDisplayNames: PropTypes.bool,
 };
 
 export default Editor;
