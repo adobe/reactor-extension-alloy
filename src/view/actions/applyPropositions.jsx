@@ -18,16 +18,14 @@ import textField from "../forms/textField";
 import objectArray from "../forms/objectArray";
 import dataElement from "../forms/dataElement";
 import comboBox from "../forms/comboBox";
-import ComponentDependencyAlert from "../components/componentDependencyAlert";
+import ExcludedComponentNotice from "../forms/excludedComponentNotice";
 
 const applyPropositionsForm = form({}, [
-  ({ initInfo }) => (
-    <ComponentDependencyAlert
-      initInfo={initInfo}
-      requiredComponent="personalization"
-      componentLabel="Personalization"
-    />
-  ),
+ 
+  ExcludedComponentNotice ({ 
+    requiredComponent:"personalization",
+    componentLabel:"Personalization"
+  }),
   instancePicker({ name: "instanceName" }),
   dataElement({
     name: "propositions",

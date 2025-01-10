@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { InlineAlert, Content } from "@adobe/react-spectrum";
+import { InlineAlert, Content, Heading } from "@adobe/react-spectrum";
 
 const ComponentDependencyAlert = ({
   initInfo,
@@ -28,6 +28,7 @@ const ComponentDependencyAlert = ({
 
   return (
     <InlineAlert variant="negative">
+      <Heading>Missing Component</Heading>
       <Content>
         This action requires the {componentLabel} component which is currently
         disabled in the extension configuration. Please enable it to use this
