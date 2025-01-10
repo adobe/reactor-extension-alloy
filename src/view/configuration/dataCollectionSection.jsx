@@ -13,7 +13,16 @@ governing permissions and limitations under the License.
 import React from "react";
 import { useField, useFormikContext } from "formik";
 import { object, string } from "yup";
-import { ActionButton, Checkbox, Flex, Radio } from "@adobe/react-spectrum";
+import {
+  ActionButton,
+  Checkbox,
+  Flex,
+  Radio,
+  View,
+  InlineAlert,
+  Content,
+  Heading,
+} from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import SectionHeader from "../components/sectionHeader";
 import CodeField from "../components/codeField";
@@ -237,7 +246,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
             '// Modify content.xdm or content.data as necessary. There is no need to wrap the\n// code in a function or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";'
           }
         />
-        {activityCollectorEnabled && (
+        {activityCollectorEnabled ? (
           <div>
             <FormikCheckbox
               data-test-id="internalLinkEnabledField"
@@ -378,8 +387,18 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                 </Alert>
               )}
           </div>
+        ) : (
+          <View width="size-6000">
+            <InlineAlert variant="info">
+              <Heading>Activity collector component disabled</Heading>
+              <Content>
+                The activity collector custom build component is disabled.
+                Enable it above to configure activity collector settings.
+              </Content>
+            </InlineAlert>
+          </View>
         )}
-        {contextEnabled && (
+        {contextEnabled ? (
           <div>
             <FormikRadioGroup
               label="When sending event data, automatically include:"
@@ -429,6 +448,16 @@ const DataCollectionSection = ({ instanceFieldName }) => {
               </FieldSubset>
             )}
           </div>
+        ) : (
+          <View width="size-6000">
+            <InlineAlert variant="info">
+              <Heading>Context component disabled</Heading>
+              <Content>
+                The context custom build component is disabled. Enable it above
+                to configure context settings.
+              </Content>
+            </InlineAlert>
+          </View>
         )}
       </FormElementContainer>
     </>

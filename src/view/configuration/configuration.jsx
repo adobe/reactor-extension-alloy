@@ -373,4 +373,5 @@ const ConfigurationExtensionView = () => {
     />
   );
 };
-render(ConfigurationExtensionView);
+// Do not include padding because the accordion already has padding.
+render(ConfigurationExtensionView, { noPadding: true });

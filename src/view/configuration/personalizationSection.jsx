@@ -13,7 +13,15 @@ governing permissions and limitations under the License.
 import copyToClipboard from "clipboard-copy";
 import React from "react";
 import PropTypes from "prop-types";
-import { Item, Text } from "@adobe/react-spectrum";
+import {
+  Content,
+  InlineAlert,
+  View,
+  Item,
+  Text,
+  Heading,
+} from "@adobe/react-spectrum";
+import { useField } from "formik";
 import SectionHeader from "../components/sectionHeader";
 import CodeField from "../components/codeField";
 import CodePreview from "../components/codePreview";
@@ -23,7 +31,6 @@ import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefault
 import FormElementContainer from "../components/formElementContainer";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
-import { useField } from "formik";
 
 export const bridge = {
   getInstanceDefaults: () => ({
@@ -127,56 +134,70 @@ const ClickCollectionPicker = (props) => {
 };
 
 const PersonalizationSection = ({ instanceFieldName }) => {
-  const [{ value: personalizationComponentEnabled }] = useField("components.personalization");
-  const [{ value: decisioningEngineEnabled }] = useField("components.decisioningEngine");
-  if (!personalizationComponentEnabled) {
-    return null;
-  }
+  const [{ value: personalizationComponentEnabled }] = useField(
+    "components.personalization",
+  );
+  const [{ value: decisioningEngineEnabled }] = useField(
+    "components.decisioningEngine",
+  );
+
   return (
     <>
       <SectionHeader learnMoreUrl="https://adobe.ly/3fYDkfh">
         Personalization
       </SectionHeader>
-      <FormElementContainer>
-        <FormikCheckbox
-          data-test-id="targetMigrationEnabledField"
-          name={`${instanceFieldName}.targetMigrationEnabled`}
-          description="Use this option to enable the Web SDK to read and write the legacy
-          mbox and mboxEdgeCluster cookies that are used by at.js 1.x or 2.x libraries. This helps you keep the visitor profile while moving from a page that uses the Web SDK to a page that uses the at.js 1.x or 2.x libraries and vice-versa."
-          width="size-5000"
-        >
-          Migrate Target from at.js to the Web SDK
-        </FormikCheckbox>
-        <CodeField
-          data-test-id="prehidingStyleEditButton"
-          label="Prehiding style"
-          buttonLabelSuffix="prehiding style"
-          name={`${instanceFieldName}.prehidingStyle`}
-          description="A CSS style definition that will be used to hide content areas of your web page while personalized content is being loaded from the server."
-          language="css"
-          placeholder={
-            "/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/"
-          }
-        />
-        <CodePreview
-          data-test-id="copyToClipboardPrehidingSnippetButton"
-          value={prehidingSnippet}
-          label="Prehiding snippet"
-          buttonLabel="Copy prehiding snippet to clipboard"
-          description="To avoid flicker from occurring while the Launch library is being loaded, place this prehiding snippet within the <head> tag of your HTML page."
-          onPress={() => {
-            copyToClipboard(prehidingSnippet);
-          }}
-        />
-        {decisioningEngineEnabled && (<>
+      {personalizationComponentEnabled ? (
+        <FormElementContainer>
           <FormikCheckbox
-            data-test-id="personalizationStorageEnabledField"
-            name={`${instanceFieldName}.personalizationStorageEnabled`}
-            description="Use this option to store personalization events in the browser's local storage. This allows the Web SDK to keep track of which experiences have been seen by the user across page loads."
+            data-test-id="targetMigrationEnabledField"
+            name={`${instanceFieldName}.targetMigrationEnabled`}
+            description="Use this option to enable the Web SDK to read and write the legacy
+            mbox and mboxEdgeCluster cookies that are used by at.js 1.x or 2.x libraries. This helps you keep the visitor profile while moving from a page that uses the Web SDK to a page that uses the at.js 1.x or 2.x libraries and vice-versa."
             width="size-5000"
           >
-            Enable personalization storage
+            Migrate Target from at.js to the Web SDK
           </FormikCheckbox>
+          <CodeField
+            data-test-id="prehidingStyleEditButton"
+            label="Prehiding style"
+            buttonLabelSuffix="prehiding style"
+            name={`${instanceFieldName}.prehidingStyle`}
+            description="A CSS style definition that will be used to hide content areas of your web page while personalized content is being loaded from the server."
+            language="css"
+            placeholder={
+              "/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/"
+            }
+          />
+          <CodePreview
+            data-test-id="copyToClipboardPrehidingSnippetButton"
+            value={prehidingSnippet}
+            label="Prehiding snippet"
+            buttonLabel="Copy prehiding snippet to clipboard"
+            description="To avoid flicker from occurring while the Launch library is being loaded, place this prehiding snippet within the <head> tag of your HTML page."
+            onPress={() => {
+              copyToClipboard(prehidingSnippet);
+            }}
+          />
+          {decisioningEngineEnabled ? (
+            <FormikCheckbox
+              data-test-id="personalizationStorageEnabledField"
+              name={`${instanceFieldName}.personalizationStorageEnabled`}
+              description="Use this option to store personalization events in the browser's local storage. This allows the Web SDK to keep track of which experiences have been seen by the user across page loads."
+              width="size-5000"
+            >
+              Enable personalization storage
+            </FormikCheckbox>
+          ) : (
+            <View width="size-6000">
+              <InlineAlert variant="info">
+                <Heading>Decisioning Engine component disabled</Heading>
+                <Content>
+                  The Decisioning Engine custom build component is disabled.
+                  Enable it above to configure storage settings.
+                </Content>
+              </InlineAlert>
+            </View>
+          )}
           <ClickCollectionPicker
             data-test-id="autoCollectPropositionInteractionsAJOPicker"
             label="Auto click collection for Adobe Journey Optimizer"
@@ -184,15 +205,25 @@ const PersonalizationSection = ({ instanceFieldName }) => {
             width="size-5000"
             description="This setting determines when the Web SDK should automatically collect clicks on content returned from Adobe Journey Optimizer."
           />
-        </>)}
-        <ClickCollectionPicker
-          data-test-id="autoCollectPropositionInteractionsTGTPicker"
-          label="Auto click collection for Adobe Target"
-          name={`${instanceFieldName}.autoCollectPropositionInteractionsTGT`}
-          width="size-5000"
-          description="This setting determines when the Web SDK should automatically collect clicks on content returned from Adobe Target."
-        />
-      </FormElementContainer>
+          <ClickCollectionPicker
+            data-test-id="autoCollectPropositionInteractionsTGTPicker"
+            label="Auto click collection for Adobe Target"
+            name={`${instanceFieldName}.autoCollectPropositionInteractionsTGT`}
+            width="size-5000"
+            description="This setting determines when the Web SDK should automatically collect clicks on content returned from Adobe Target."
+          />
+        </FormElementContainer>
+      ) : (
+        <View width="size-6000">
+          <InlineAlert variant="info">
+            <Heading>Personalization component disabled</Heading>
+            <Content>
+              The personalization custom build component is disabled. Enable it
+              above to configure personalization settings.
+            </Content>
+          </InlineAlert>
+        </View>
+      )}
     </>
   );
 };

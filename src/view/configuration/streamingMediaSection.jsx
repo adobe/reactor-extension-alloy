@@ -14,6 +14,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { number, object, string, lazy } from "yup";
 import { useField } from "formik";
+import { InlineAlert, View, Heading, Content } from "@adobe/react-spectrum";
 import SectionHeader from "../components/sectionHeader";
 import FormElementContainer from "../components/formElementContainer";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
@@ -155,9 +156,6 @@ const StreamingMediaSection = ({ instanceFieldName }) => {
   const [{ value: streamingMediaComponentEnabled }] = useField(
     "components.streamingMedia",
   );
-  if (!streamingMediaComponentEnabled) {
-    return null;
-  }
 
   const mediaRequiredFieldsProvided = () => {
     if (isNonEmptyString(mediaChannel) || isNonEmptyString(playerName)) {
@@ -167,49 +165,61 @@ const StreamingMediaSection = ({ instanceFieldName }) => {
   };
   return (
     <>
-      <SectionHeader>Streaming Media</SectionHeader>
-      <FormElementContainer>
-        <FormikTextField
-          data-test-id="mediaChannelField"
-          label="Channel"
-          name={`${instanceFieldName}.streamingMedia.channel`}
-          description="Distribution station/channels or where the content is played. Any string value is accepted here."
-          width="size-5000"
-          isRequired={mediaRequiredFieldsProvided()}
-        />
-        <FormikTextField
-          data-test-id="mediaPlayerNameField"
-          label="Player Name"
-          name={`${instanceFieldName}.streamingMedia.playerName`}
-          description="The streaming media player name that will be used in every media session."
-          width="size-5000"
-          isRequired={mediaRequiredFieldsProvided()}
-        />
-        <FormikTextField
-          data-test-id="mediaVersionField"
-          label="Application version"
-          name={`${instanceFieldName}.streamingMedia.appVersion`}
-          description="The SDK version used by the player. This could have any custom value that makes sense for your player."
-          width="size-5000"
-          isDisabled={!mediaRequiredFieldsProvided()}
-        />
-        <FormikNumberField
-          data-test-id="mediaMainPingIntervalField"
-          label="Main ping interval"
-          name={`${instanceFieldName}.streamingMedia.mainPingInterval`}
-          description="The ping interval frequency (in seconds) for main content."
-          width="size-5000"
-          isDisabled={!mediaRequiredFieldsProvided()}
-        />
-        <FormikNumberField
-          data-test-id="mediaAdPingIntervalField"
-          label="Ad ping interval"
-          name={`${instanceFieldName}.streamingMedia.adPingInterval`}
-          description="The ping interval frequency (in seconds) for ad content."
-          width="size-5000"
-          isDisabled={!mediaRequiredFieldsProvided()}
-        />
-      </FormElementContainer>
+      <SectionHeader>Streaming media</SectionHeader>
+      {streamingMediaComponentEnabled ? (
+        <FormElementContainer>
+          <FormikTextField
+            data-test-id="mediaChannelField"
+            label="Channel"
+            name={`${instanceFieldName}.streamingMedia.channel`}
+            description="Distribution station/channels or where the content is played. Any string value is accepted here."
+            width="size-5000"
+            isRequired={mediaRequiredFieldsProvided()}
+          />
+          <FormikTextField
+            data-test-id="mediaPlayerNameField"
+            label="Player Name"
+            name={`${instanceFieldName}.streamingMedia.playerName`}
+            description="The streaming media player name that will be used in every media session."
+            width="size-5000"
+            isRequired={mediaRequiredFieldsProvided()}
+          />
+          <FormikTextField
+            data-test-id="mediaVersionField"
+            label="Application version"
+            name={`${instanceFieldName}.streamingMedia.appVersion`}
+            description="The SDK version used by the player. This could have any custom value that makes sense for your player."
+            width="size-5000"
+            isDisabled={!mediaRequiredFieldsProvided()}
+          />
+          <FormikNumberField
+            data-test-id="mediaMainPingIntervalField"
+            label="Main ping interval"
+            name={`${instanceFieldName}.streamingMedia.mainPingInterval`}
+            description="The ping interval frequency (in seconds) for main content."
+            width="size-5000"
+            isDisabled={!mediaRequiredFieldsProvided()}
+          />
+          <FormikNumberField
+            data-test-id="mediaAdPingIntervalField"
+            label="Ad ping interval"
+            name={`${instanceFieldName}.streamingMedia.adPingInterval`}
+            description="The ping interval frequency (in seconds) for ad content."
+            width="size-5000"
+            isDisabled={!mediaRequiredFieldsProvided()}
+          />
+        </FormElementContainer>
+      ) : (
+        <View width="size-6000">
+          <InlineAlert variant="info">
+            <Heading>Streaming media component disabled</Heading>
+            <Content>
+              The streaming media custom build component is disabled. Enable it
+              above to configure streaming media settings.
+            </Content>
+          </InlineAlert>
+        </View>
+      )}
     </>
   );
 };
