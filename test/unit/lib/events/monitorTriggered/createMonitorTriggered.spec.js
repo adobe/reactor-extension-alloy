@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createMonitorTriggered from "../../../../../src/lib/events/monitor/createMonitorTriggered";
 
 describe("Monitor triggered event", () => {
@@ -18,8 +19,10 @@ describe("Monitor triggered event", () => {
   let instanceManager;
 
   beforeEach(() => {
-    trigger = jasmine.createSpy("trigger");
-    instanceManager = jasmine.createSpyObj("instanceManager", ["addMonitor"]);
+    trigger = vi.fn();
+    instanceManager = {
+      addMonitor: vi.fn(),
+    };
 
     monitorTriggered = createMonitorTriggered({
       instanceManager,
@@ -29,9 +32,12 @@ describe("Monitor triggered event", () => {
   it("triggers the rule when monitor is triggered", () => {
     monitorTriggered({ name: "onBeforeLog" }, trigger);
     expect(instanceManager.addMonitor).toHaveBeenCalledTimes(1);
-    const callback = instanceManager.addMonitor.calls.argsFor(0)[0].onBeforeLog;
+
+    // Get the callback that was passed to addMonitor
+    const callback = instanceManager.addMonitor.mock.calls[0][0].onBeforeLog;
     const data = { status: "success" };
     callback({ data });
+
     expect(trigger).toHaveBeenCalledWith({ data });
   });
 });

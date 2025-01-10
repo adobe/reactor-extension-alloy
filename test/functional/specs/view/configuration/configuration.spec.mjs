@@ -2207,7 +2207,8 @@ test("hides disabled overrides when service is disabled", async () => {
   await instances[0].overrides.comboBoxes.audienceManagerEnabled.enterSearch(
     "Disabled",
   );
-  await instances[0].overrides.textFields.idSyncContainerOverride.expectNotExists();
+  // Audience Manager and ID Sync Container ID are separate.
+  await instances[0].overrides.textFields.idSyncContainerOverride.expectExists();
 
   await instances[0].overrides.comboBoxes.edgeDestinationsEnabled.expectExists();
   await instances[0].overrides.comboBoxes.edgeSegmentationEnabled.expectExists();
@@ -2256,7 +2257,6 @@ test("hides disabled overrides when service is disabled", async () => {
     ],
   });
 });
-
 
 test("enables all datastream override fields if there is no Blackbird config", async () => {
   await extensionViewController.init();

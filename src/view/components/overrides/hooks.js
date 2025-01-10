@@ -117,7 +117,12 @@ const getServiceStatus = (apiResult) =>
             "com_adobe_experience_platform_edge_segmentation.enabled",
           ),
     },
-
+    // This value is not configurable via datastream config overrides.
+    com_adobe_identity: {
+      value: !apiResult
+        ? true
+        : deepGet(apiResult, "com_adobe_identity.idSyncEnabled"),
+    },
     com_adobe_experience_platform_edge_destinations: {
       fieldName:
         "com_adobe_experience_platform.com_adobe_edge_destinations.enabled",

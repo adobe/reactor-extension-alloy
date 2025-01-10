@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createRedirectWithIdentity from "../../../../../src/lib/actions/redirectWithIdentity/createRedirectWithIdentity";
 
 describe("createRedirectWithIdentity", () => {
@@ -22,21 +23,25 @@ describe("createRedirectWithIdentity", () => {
   let getConfigOverrides;
 
   beforeEach(() => {
-    instanceManager = jasmine.createSpyObj("instanceManager", ["getInstance"]);
-    instance = jasmine.createSpy("instance");
-    instanceManager.getInstance.and.returnValue(instance);
-    instance.and.returnValue(Promise.resolve({ url: "newurl" }));
+    instanceManager = {
+      getInstance: vi.fn(),
+    };
+    instance = vi.fn();
+    instanceManager.getInstance.mockReturnValue(instance);
+    instance.mockResolvedValue({ url: "newurl" });
     document = { location: "originalLocation" };
-    getConfigOverrides = jasmine.createSpy("getConfigOverrides");
+    getConfigOverrides = vi.fn();
     event = {
       nativeEvent: {
-        preventDefault: jasmine.createSpy("preventDefault"),
+        preventDefault: vi.fn(),
       },
       element: {
         href: "originalHref",
       },
     };
-    logger = jasmine.createSpyObj("logger", ["warn"]);
+    logger = {
+      warn: vi.fn(),
+    };
 
     redirectWithIdentity = createRedirectWithIdentity({
       instanceManager,
@@ -47,63 +52,57 @@ describe("createRedirectWithIdentity", () => {
   });
 
   it("returns resolved promise when instance isn't found", async () => {
-    instanceManager.getInstance.and.returnValue(undefined);
-    await expectAsync(
-      redirectWithIdentity({ instanceName: "myinstance" }, event),
-    ).toBeResolvedTo(undefined);
-    expect(instanceManager.getInstance).toHaveBeenCalledOnceWith("myinstance");
+    instanceManager.getInstance.mockReturnValue(undefined);
+    const returnValue = await redirectWithIdentity(
+      { instanceName: "myinstance" },
+      event,
+    );
+    expect(returnValue).toBeUndefined();
+    expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
     expect(document.location).toEqual("originalLocation");
     expect(event.nativeEvent.preventDefault).not.toHaveBeenCalled();
     expect(logger.warn).toHaveBeenCalled();
   });
 
   it("doesn't redirect when there is no nativeEvent", async () => {
-    await expectAsync(redirectWithIdentity({ instanceName: "myinstance" }, {}));
+    await redirectWithIdentity({ instanceName: "myinstance" }, {});
     expect(document.location).toEqual("originalLocation");
     expect(logger.warn).toHaveBeenCalled();
   });
 
   it("doesn't redirect when there is no target on the nativeEvent", async () => {
-    await expectAsync(
-      redirectWithIdentity(
-        { instanceName: "myinstance" },
-        {
-          nativeEvent: {
-            preventDefault: event.nativeEvent.preventDefault,
-          },
-        },
-      ),
-    ).toBeResolvedTo(undefined);
+    await redirectWithIdentity(
+      { instanceName: "myinstance" },
+      {
+        nativeEvent: {},
+      },
+    );
     expect(document.location).toEqual("originalLocation");
     expect(logger.warn).toHaveBeenCalled();
   });
 
-  it("doesn't call preventDefault when it isn't defined", async () => {
-    await expectAsync(
-      redirectWithIdentity(
-        { instanceName: "myinstance" },
-        {
-          nativeEvent: {},
-          element: {
-            href: "originalHref",
-          },
+  it("proceeds with redirect when preventDefault isn't defined", async () => {
+    await redirectWithIdentity(
+      { instanceName: "myinstance" },
+      {
+        nativeEvent: {},
+        element: {
+          href: "originalHref",
         },
-      ),
+      },
     );
-    expect(document.location).toEqual("newurl");
+    expect(document.location).toBe("newurl");
     expect(logger.warn).not.toHaveBeenCalled();
-  });
-
-  it("redirects", async () => {
-    await expectAsync(
-      redirectWithIdentity({ instanceName: "myinstance" }, event),
-    );
-    expect(event.nativeEvent.preventDefault).toHaveBeenCalledOnceWith();
-    expect(instance).toHaveBeenCalledOnceWith("appendIdentityToUrl", {
+    expect(instance).toHaveBeenCalledWith("appendIdentityToUrl", {
       url: "originalHref",
       edgeConfigOverrides: undefined,
     });
-    expect(document.location).toEqual("newurl");
+  });
+
+  it("redirects", async () => {
+    await redirectWithIdentity({ instanceName: "myinstance" }, event);
+    expect(event.nativeEvent.preventDefault).toHaveBeenCalledTimes(1);
+    expect(document.location).toBe("newurl");
   });
 
   it("redirects with edge config overrides", async () => {
@@ -125,17 +124,17 @@ describe("createRedirectWithIdentity", () => {
         propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
       },
     };
-    getConfigOverrides.and.returnValue(developmentEdgeConfigOverrides);
-    await expectAsync(
-      redirectWithIdentity(
-        {
-          instanceName: "myinstance",
-          edgeConfigOverrides: developmentEdgeConfigOverrides,
+    getConfigOverrides.mockReturnValue(developmentEdgeConfigOverrides);
+    await redirectWithIdentity(
+      {
+        instanceName: "myinstance",
+        edgeConfigOverrides: {
+          development: developmentEdgeConfigOverrides,
         },
-        event,
-      ),
+      },
+      event,
     );
-    expect(instance).toHaveBeenCalledOnceWith("appendIdentityToUrl", {
+    expect(instance).toHaveBeenCalledWith("appendIdentityToUrl", {
       url: "originalHref",
       edgeConfigOverrides: developmentEdgeConfigOverrides,
     });
