@@ -11,39 +11,87 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import {
-  Checkbox,
-  InlineAlert,
-  Content,
-  Flex,
-  View,
-} from "@adobe/react-spectrum";
+import { InlineAlert, Content, Flex, View } from "@adobe/react-spectrum";
 import * as webSdkComponentsExports from "@adobe/alloy/libEs6/core/componentCreators";
 import Heading from "../components/typography/heading";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
-import FormikCheckboxGroup from "../components/formikReactSpectrum3/formikCheckboxGroup";
+import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 
-const webSdkComponents = Object.keys(webSdkComponentsExports).map((v) => ({
-  label: camelCaseToTitleCase(v),
-  value: v,
-}));
+const componentProperties = {
+  activityCollector: {
+    description:
+      "This component enables automatic link collection and ActivityMap tracking.",
+  },
+  audiences: {
+    description:
+      "This component supports Audience Manager integration including running URL and cookie destination and id syncs.",
+  },
+  context: {
+    description:
+      "This component enables the automatic collection of context data.",
+  },
+  rulesEngine: {
+    description:
+      "This component enables Adobe Journey Optimizer on device decisioning. You must include this component if you are using the Evaluate rulesets action or the Subcribe ruleset items event.",
+  },
+  eventMerge: {
+    deprecated: true,
+    description:
+      "This component is deprecated. You must include this component if you are using the Event merge ID data element or Reset event merge ID action.",
+  },
+  mediaAnalyticsBridge: {
+    description:
+      "This component enables Edge streaming media using the media analytics interface. You must include this component if you are using the Get media analytics tracker action.",
+  },
+  personalization: {
+    description:
+      "This component enables Adobe Target and Adobe Journey Optimizer integrations.",
+  },
+  consent: {
+    description:
+      "This component supports consent integrations. You must include this component if you are using the Set consent action.",
+  },
+  streamingMedia: {
+    description:
+      "This component enables Edge streaming media. You must include this component if you are using the Send media event action.",
+  },
+};
+const webSdkComponents = Object.keys(webSdkComponentsExports)
+  .map((v) => ({
+    label: camelCaseToTitleCase(v),
+    value: v,
+    ...(componentProperties[v] || {}),
+  }))
+  .sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
+
 export const bridge = {
   getInitialValues: ({ initInfo }) => {
-    const components = initInfo?.settings?.components || {};
-    return {
-      components: webSdkComponents.reduce((acc, { value }) => {
-        if (components[value] !== false) {
-          acc.push(value);
-        }
+    const isNew = initInfo?.settings?.instances === undefined;
+    let components;
+    if (isNew) {
+      // If this is a newly added extension, default to deprecated components being disabled.
+      components = webSdkComponents
+        .filter((value) => value.deprecated)
+        .reduce((acc, value) => {
+          acc[value.value] = false;
+          return acc;
+        }, {});
+    } else {
+      components = initInfo?.settings?.components || {};
+    }
 
+    const initialValues = {
+      components: webSdkComponents.reduce((acc, { value }) => {
+        acc[value] = components[value] !== false;
         return acc;
-      }, []),
+      }, {}),
     };
+    return initialValues;
   },
   getSettings: ({ values: { components } }) => {
     const excludedComponents = webSdkComponents
       .map(({ value }) => value)
-      .filter((v) => !components.includes(v))
+      .filter((v) => !components[v])
       .reduce((acc, v) => {
         acc[v] = false;
         return acc;
@@ -60,36 +108,34 @@ export const bridge = {
 const ComponentsSection = () => {
   return (
     <Flex gap="size-200" direction="column">
-      <Heading size="M">Components</Heading>
       <View width="size-6000">
         <InlineAlert variant="notice">
-          <Heading>Warning</Heading>
+          <Heading>Warning, advanced settings</Heading>
           <Content>
-            You can decrease the size of your Web SDK bundle by disabling
-            components that you are not using. Each time you change the list of
-            used components, please test your implementation thoroughly to
-            verify that all functionalities are working as expected.
+            Modifying settings here can break your implementation. You can
+            decrease the size of your Web SDK bundle by disabling components
+            that you are not using. Each time you change the list of used
+            components, please test your implementation thoroughly to verify
+            that all functionalities are working as expected.
           </Content>
         </InlineAlert>
       </View>
-      <FormikCheckboxGroup
-        aria-label="Context data categories"
-        name="components"
-        orientation="horizontal"
-      >
-        {webSdkComponents.map(({ label, value }) => {
+
+      <div>
+        {webSdkComponents.map(({ label, value, description }) => {
           return (
-            <Checkbox
-              key={value}
+            <FormikCheckbox
+              name={`components.${value}`}
               data-test-id={`${value}ComponentCheckbox`}
-              value={value}
               width="size-5000"
+              description={description}
+              key={value}
             >
               {label}
-            </Checkbox>
+            </FormikCheckbox>
           );
         })}
-      </FormikCheckboxGroup>
+      </div>
     </Flex>
   );
 };

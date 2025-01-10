@@ -15,6 +15,9 @@ export default (camelCase) => {
     return "";
   }
 
-  const result = camelCase.replace(/([A-Z])/g, " $1");
+  const result = camelCase.replace(
+    /([A-Z])/g,
+    (_, p1) => ` ${p1.toLowerCase()}`,
+  );
   return result.charAt(0).toUpperCase() + result.slice(1);
 };
