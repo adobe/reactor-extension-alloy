@@ -35,8 +35,15 @@ const execute = (
     Object.assign(options, verbose ? { stdio: "inherit" } : {}),
   );
 
-  if (r.error) {
-    throw r.error;
+  if (r.status !== 0) {
+    if (r.stderr) {
+      const error = r.stderr.toString().trim();
+      throw new Error(error);
+    } else {
+      throw new Error(
+        `An error occurred while executing the command: ${command}.`,
+      );
+    }
   }
 };
 
