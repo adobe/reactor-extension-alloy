@@ -29,6 +29,21 @@ const execute = (command, options) => {
   });
 };
 
+const getBrowserListFromRcFile = () => {
+  const lastPath = ["./src/lib/.browserslistrc", ".browserslistrc"].reduce(
+    (acc, curr) => {
+      if (fs.existsSync(`${__dirname}/../${curr}`)) {
+        acc = curr;
+      }
+
+      return acc;
+    },
+  );
+
+  const data = fs.readFileSync(`${__dirname}/../${lastPath}`, "utf-8");
+  return data.split("\n").filter((line) => line.trim() !== "");
+};
+
 const entryPointGeneratorBabelPlugin = (t, includedModules) => ({
   visitor: {
     VariableDeclarator(babelPath) {
@@ -178,12 +193,7 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
           "@babel/preset-env",
           {
             targets: {
-              browsers: [
-                "last 2 Chrome versions",
-                "last 2 Firefox versions",
-                "last 2 Safari versions",
-                "last 2 Edge versions",
-              ],
+              browsers: getBrowserListFromRcFile(),
             },
           },
         ],

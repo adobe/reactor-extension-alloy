@@ -74,7 +74,7 @@ const getPackageJson = () => {
       email: "reactor@adobe.com",
     },
     scripts: {
-      build: "node ./scripts/alloyBuilder.js -i ./alloy.js -o ./dist/lib",
+      build: "node ./scripts/buildAlloy.js -i ./alloy.js -o ./dist/lib",
     },
     license: "Apache-2.0",
     description: "Tool for generating custom alloy build based on user input.",
@@ -124,8 +124,11 @@ const getPackageLockJson = (packageJson) => {
 };
 
 const createExtensionPackage = ({ verbose }) => {
-  console.log("Running the build process (`npm run build:prod`)...");
-  execute("npm", ["run", "build:prod"], { verbose });
+  console.log("Running the clean process (`npm run clean`)...");
+  execute("npm", ["run", "clean"], { verbose });
+
+  console.log("Running the build process (`npm run build`)...");
+  execute("npm", ["run", "build"], { verbose });
 
   console.log(
     "Generating the initial extension package...(`npx @adobe/reactor-packager`)",
@@ -156,10 +159,15 @@ const createExtensionPackage = ({ verbose }) => {
   const rollupConfig = fs.readFileSync(path.join(cwd, "rollup.config.mjs"));
   zip.addFile("rollup.config.mjs", rollupConfig);
 
-  const buildScript = fs.readFileSync(
-    path.join(cwd, "scripts", "alloyBuilder.js"),
+  const browsersListRc = fs.readFileSync(
+    path.join(cwd, "src", "lib", ".browserslistrc"),
   );
-  zip.addFile("scripts/alloyBuilder.js", buildScript);
+  zip.addFile(".browserslistrc", browsersListRc);
+
+  const buildScript = fs.readFileSync(
+    path.join(cwd, "scripts", "buildAlloy.js"),
+  );
+  zip.addFile("scripts/buildAlloy.js", buildScript);
 
   zip.writeZip(packagePath);
   console.log("Done");
