@@ -25,12 +25,14 @@ monitorForOriginatingErrors();
 const container = document.getElementById("root");
 const root = createRoot(container);
 
-export default (View) => {
+export default (View, { noPadding = false } = {}) => {
+  const paddingClass = noPadding ? "" : " with-padding";
+
   root.render(
     <Provider
       theme={lightTheme}
       colorScheme="light"
-      UNSAFE_className="react-spectrum-provider spectrum spectrum--medium spectrum--light"
+      UNSAFE_className={`react-spectrum-provider spectrum spectrum--medium spectrum--light${paddingClass}`}
     >
       <ErrorBoundary>
         <View />

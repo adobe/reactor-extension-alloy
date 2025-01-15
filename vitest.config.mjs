@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/dist/config.js";
+import { defineConfig } from "vitest/dist/config";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -40,4 +40,5 @@ export default defineConfig({
       web: [/\.[jt]sx?$/],
     },
   },
-}); 
+});
+
