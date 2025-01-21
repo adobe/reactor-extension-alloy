@@ -30,9 +30,8 @@ const ComponentDependencyAlert = ({
     <InlineAlert variant="negative">
       <Heading>Missing Component</Heading>
       <Content>
-        This action requires the {componentLabel} component which is currently
-        disabled in the extension configuration. Please enable it to use this
-        action.
+        If you do not enable the {componentLabel} component in the extension
+        configuration, this will not work.
       </Content>
     </InlineAlert>
   );

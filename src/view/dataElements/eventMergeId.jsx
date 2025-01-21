@@ -17,6 +17,7 @@ import render from "../render";
 import ExtensionView from "../components/extensionView";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 import Body from "../components/typography/body";
+import ComponentDependencyAlert from "../components/componentDependencyAlert";
 
 const getInitialValues = ({ initInfo }) => {
   const { cacheId = uuid() } = initInfo.settings || {};
@@ -35,8 +36,13 @@ const EventMergeId = () => {
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
-      render={() => (
+      render={({ initInfo }) => (
         <FillParentAndCenterChildren>
+          <ComponentDependencyAlert
+            initInfo={initInfo}
+            requiredComponent="eventMerge"
+            componentLabel="Event Merge"
+          />
           <Alert
             variant="informative"
             title="Event merge ID caching"

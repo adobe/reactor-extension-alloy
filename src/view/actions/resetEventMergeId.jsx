@@ -19,6 +19,7 @@ import singleDataElementRegex from "../constants/singleDataElementRegex";
 import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
 import FormElementContainer from "../components/formElementContainer";
 import DataElementSelector from "../components/dataElementSelector";
+import ComponentDependencyAlert from "../components/componentDependencyAlert";
 
 const getInitialValues = ({ initInfo }) => {
   const { eventMergeId = "" } = initInfo.settings || {};
@@ -43,8 +44,13 @@ const ResetEventMergeId = () => {
       getInitialValues={getInitialValues}
       getSettings={getSettings}
       formikStateValidationSchema={validationSchema}
-      render={() => (
+      render={({ initInfo }) => (
         <FormElementContainer>
+          <ComponentDependencyAlert
+            initInfo={initInfo}
+            requiredComponent="eventMerge"
+            componentLabel="Event Merge"
+          />
           <DataElementSelector>
             <FormikTextField
               data-test-id="eventMergeIdField"

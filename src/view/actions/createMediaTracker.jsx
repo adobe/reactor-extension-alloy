@@ -15,11 +15,11 @@ import instancePicker from "../forms/instancePicker";
 import textField from "../forms/textField";
 import renderForm from "../forms/renderForm";
 import notice from "../forms/notice";
-import ExcludedComponentNotice from "../forms/excludedComponentNotice";
+import excludedComponentNotice from "../forms/excludedComponentNotice";
 
 const createMediaTrackerForm = form({}, [
-  ExcludedComponentNotice({
-    requiredComponent: "legacyMediaAnalytics",
+  excludedComponentNotice({
+    requiredComponent: "mediaAnalyticsBridge",
     componentLabel: "Media Analytics Bridge",
   }),
   notice({

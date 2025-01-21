@@ -15,7 +15,7 @@ import instancePicker from "../forms/instancePicker";
 import checkbox from "../forms/checkbox";
 import simpleMap from "../forms/simpleMap";
 import notice from "../forms/notice";
-import ExcludedComponentNotice from "../forms/excludedComponentNotice";
+import excludedComponentNotice from "../forms/excludedComponentNotice";
 
 const wrapGetInitialValues =
   (getInitialValues) =>
@@ -46,8 +46,8 @@ const evaluateRulesetsForm = form(
     wrapGetSettings,
   },
   [
-    ExcludedComponentNotice({
-      requiredComponent: "decisioningEngine",
+    excludedComponentNotice({
+      requiredComponent: "rulesEngine",
       componentLabel: "Rules Engine",
     }),
     notice({
