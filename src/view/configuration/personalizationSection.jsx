@@ -23,7 +23,6 @@ import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefault
 import FormElementContainer from "../components/formElementContainer";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
-import { useField } from "formik";
 
 export const bridge = {
   getInstanceDefaults: () => ({
@@ -60,42 +59,38 @@ export const bridge = {
 
     return instanceValues;
   },
-  getInstanceSettings: ({ instanceValues, components }) => {
+  getInstanceSettings: ({ instanceValues }) => {
     const instanceSettings = {};
-    if (components.personalization) {
-      copyPropertiesIfValueDifferentThanDefault({
-        toObj: instanceSettings,
-        fromObj: instanceValues,
-        defaultsObj: bridge.getInstanceDefaults(),
-        keys: [
-          "prehidingStyle",
-          "targetMigrationEnabled",
-          "personalizationStorageEnabled",
-          "autoCollectPropositionInteractionsAJO",
-          "autoCollectPropositionInteractionsTGT",
-        ],
-      });
 
-      const autoCollectPropositionInteractions = {};
-      if (instanceSettings.autoCollectPropositionInteractionsAJO) {
-        autoCollectPropositionInteractions.AJO =
-          instanceSettings.autoCollectPropositionInteractionsAJO;
-        delete instanceSettings.autoCollectPropositionInteractionsAJO;
-      }
-      if (instanceSettings.autoCollectPropositionInteractionsTGT) {
-        autoCollectPropositionInteractions.TGT =
-          instanceSettings.autoCollectPropositionInteractionsTGT;
-        delete instanceSettings.autoCollectPropositionInteractionsTGT;
-      }
-      if (Object.keys(autoCollectPropositionInteractions).length > 0) {
-        instanceSettings.autoCollectPropositionInteractions =
-          autoCollectPropositionInteractions;
-      }
+    copyPropertiesIfValueDifferentThanDefault({
+      toObj: instanceSettings,
+      fromObj: instanceValues,
+      defaultsObj: bridge.getInstanceDefaults(),
+      keys: [
+        "prehidingStyle",
+        "targetMigrationEnabled",
+        "personalizationStorageEnabled",
+        "autoCollectPropositionInteractionsAJO",
+        "autoCollectPropositionInteractionsTGT",
+      ],
+    });
 
-      if (!components.decisioningEngine) {
-        delete instanceSettings.personalizationStorageEnabled;
-      }
+    const autoCollectPropositionInteractions = {};
+    if (instanceSettings.autoCollectPropositionInteractionsAJO) {
+      autoCollectPropositionInteractions.AJO =
+        instanceSettings.autoCollectPropositionInteractionsAJO;
+      delete instanceSettings.autoCollectPropositionInteractionsAJO;
     }
+    if (instanceSettings.autoCollectPropositionInteractionsTGT) {
+      autoCollectPropositionInteractions.TGT =
+        instanceSettings.autoCollectPropositionInteractionsTGT;
+      delete instanceSettings.autoCollectPropositionInteractionsTGT;
+    }
+    if (Object.keys(autoCollectPropositionInteractions).length > 0) {
+      instanceSettings.autoCollectPropositionInteractions =
+        autoCollectPropositionInteractions;
+    }
+
     return instanceSettings;
   },
 };
@@ -127,11 +122,6 @@ const ClickCollectionPicker = (props) => {
 };
 
 const PersonalizationSection = ({ instanceFieldName }) => {
-  const [{ value: personalizationComponentEnabled }] = useField("components.personalization");
-  const [{ value: decisioningEngineEnabled }] = useField("components.decisioningEngine");
-  if (!personalizationComponentEnabled) {
-    return null;
-  }
   return (
     <>
       <SectionHeader learnMoreUrl="https://adobe.ly/3fYDkfh">
@@ -168,23 +158,21 @@ const PersonalizationSection = ({ instanceFieldName }) => {
             copyToClipboard(prehidingSnippet);
           }}
         />
-        {decisioningEngineEnabled && (<>
-          <FormikCheckbox
-            data-test-id="personalizationStorageEnabledField"
-            name={`${instanceFieldName}.personalizationStorageEnabled`}
-            description="Use this option to store personalization events in the browser's local storage. This allows the Web SDK to keep track of which experiences have been seen by the user across page loads."
-            width="size-5000"
-          >
-            Enable personalization storage
-          </FormikCheckbox>
-          <ClickCollectionPicker
-            data-test-id="autoCollectPropositionInteractionsAJOPicker"
-            label="Auto click collection for Adobe Journey Optimizer"
-            name={`${instanceFieldName}.autoCollectPropositionInteractionsAJO`}
-            width="size-5000"
-            description="This setting determines when the Web SDK should automatically collect clicks on content returned from Adobe Journey Optimizer."
-          />
-        </>)}
+        <FormikCheckbox
+          data-test-id="personalizationStorageEnabledField"
+          name={`${instanceFieldName}.personalizationStorageEnabled`}
+          description="Use this option to store personalization events in the browser's local storage. This allows the Web SDK to keep track of which experiences have been seen by the user across page loads."
+          width="size-5000"
+        >
+          Enable personalization storage
+        </FormikCheckbox>
+        <ClickCollectionPicker
+          data-test-id="autoCollectPropositionInteractionsAJOPicker"
+          label="Auto click collection for Adobe Journey Optimizer"
+          name={`${instanceFieldName}.autoCollectPropositionInteractionsAJO`}
+          width="size-5000"
+          description="This setting determines when the Web SDK should automatically collect clicks on content returned from Adobe Journey Optimizer."
+        />
         <ClickCollectionPicker
           data-test-id="autoCollectPropositionInteractionsTGTPicker"
           label="Auto click collection for Adobe Target"

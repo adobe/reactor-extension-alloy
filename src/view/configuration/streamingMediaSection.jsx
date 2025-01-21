@@ -50,98 +50,81 @@ export const bridge = {
       },
       {},
     );
+
     return { streamingMedia };
   },
 
-  getInstanceSettings: ({ instanceValues, components }) => {
+  getInstanceSettings: ({ instanceValues }) => {
     const instanceSettings = {};
+    const { streamingMedia } = instanceValues;
 
-    if (components.streamingMedia) {
-      const {
-        streamingMedia: {
-          channel,
-          playerName,
-          appVersion,
-          adPingInterval,
-          mainPingInterval,
-        },
-      } = instanceValues;
-      const streamingMedia = { channel, playerName };
-      if (appVersion !== "") {
-        streamingMedia.appVersion = appVersion;
+    ["appVersion", "adPingInterval", "mainPingInterval"].forEach((key) => {
+      if (!streamingMedia[key]) {
+        delete streamingMedia[key];
       }
-      if (adPingInterval !== 10) {
-        streamingMedia.adPingInterval = adPingInterval;
-      }
-      if (mainPingInterval !== 10) {
-        streamingMedia.mainPingInterval = mainPingInterval;
-      }
-      if (channel && playerName) {
-        instanceSettings.streamingMedia = streamingMedia;
-      }
+    });
+
+    if (streamingMedia.channel && streamingMedia.playerName) {
+      instanceSettings.streamingMedia = streamingMedia;
     }
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
-    streamingMedia: object().when("$components.streamingMedia", {
-      is: true,
-      then: (mediaSchema) =>
-        mediaSchema.shape(
-          {
-            channel: string().when("playerName", {
-              is: (playerName) => playerName,
-              then: (schema) =>
-                schema.required(
-                  "Please provide a channel name for streaming media.",
-                ),
-            }),
-            playerName: string().when("channel", {
-              is: (channel) => channel,
-              then: (schema) =>
-                schema.required(
-                  "Please provide a player name for streaming media.",
-                ),
-            }),
-            adPingInterval: lazy((value) =>
-              /^\d+$/.exec(value)
-                ? number().when(["channel", "playerName"], {
-                    is: (channel, playerName) => channel && playerName,
-                    then: (schema) =>
-                      schema
-                        .min(
-                          1,
-                          "The Ad Ping Interval must be greater than 1 second.",
-                        )
-                        .max(
-                          10,
-                          "The Ad Ping Interval must be less than 10 seconds.",
-                        )
-                        .default(10),
-                  })
-                : string(),
+    streamingMedia: object().shape(
+      {
+        channel: string().when("playerName", {
+          is: (playerName) => playerName,
+          then: (schema) =>
+            schema.required(
+              "Please provide a channel name for streaming media.",
             ),
-            mainPingInterval: lazy((value) =>
-              /^\d+$/.exec(value)
-                ? number().when(["channel", "playerName"], {
-                    is: (channel, playerName) => channel && playerName,
-                    then: (schema) =>
-                      schema
-                        .min(
-                          10,
-                          "The Main Ping Interval must be greater than 10 seconds.",
-                        )
-                        .max(
-                          60,
-                          "The Main Ping Interval must be less than 60 seconds.",
-                        )
-                        .default(10),
-                  })
-                : string(),
+        }),
+        playerName: string().when("channel", {
+          is: (channel) => channel,
+          then: (schema) =>
+            schema.required(
+              "Please provide a player name for streaming media.",
             ),
-          },
-          ["channel", "playerName"],
+        }),
+        adPingInterval: lazy((value) =>
+          /^\d+$/.exec(value)
+            ? number().when(["channel", "playerName"], {
+                is: (channel, playerName) => channel && playerName,
+                then: (schema) =>
+                  schema
+                    .min(
+                      1,
+                      "The Ad Ping Interval must be greater than 1 second.",
+                    )
+                    .max(
+                      10,
+                      "The Ad Ping Interval must be less than 10 seconds.",
+                    )
+                    .default(10),
+              })
+            : string(),
         ),
-    }),
+        mainPingInterval: lazy((value) =>
+          /^\d+$/.exec(value)
+            ? number().when(["channel", "playerName"], {
+                is: (channel, playerName) => channel && playerName,
+                then: (schema) =>
+                  schema
+                    .min(
+                      10,
+                      "The Main Ping Interval must be greater than 10 seconds.",
+                    )
+                    .max(
+                      60,
+                      "The Main Ping Interval must be less than 60 seconds.",
+                    )
+                    .default(10),
+              })
+            : string(),
+        ),
+      },
+      ["channel", "playerName"],
+    ),
   }),
 };
 
@@ -152,12 +135,6 @@ const StreamingMediaSection = ({ instanceFieldName }) => {
   const [{ value: playerName }] = useField(
     `${instanceFieldName}.streamingMedia.playerName`,
   );
-  const [{ value: streamingMediaComponentEnabled }] = useField(
-    "components.streamingMedia",
-  );
-  if (!streamingMediaComponentEnabled) {
-    return null;
-  }
 
   const mediaRequiredFieldsProvided = () => {
     if (isNonEmptyString(mediaChannel) || isNonEmptyString(playerName)) {

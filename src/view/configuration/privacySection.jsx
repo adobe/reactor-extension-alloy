@@ -13,8 +13,7 @@ governing permissions and limitations under the License.
 import { Radio } from "@adobe/react-spectrum";
 import React from "react";
 import PropTypes from "prop-types";
-import { object, string } from "yup";
-import { useField } from "formik";
+import { object } from "yup";
 import SectionHeader from "../components/sectionHeader";
 import FormikRadioGroupWithDataElement, {
   createRadioGroupWithDataElementValidationSchema,
@@ -45,34 +44,25 @@ export const bridge = {
 
     return instanceValues;
   },
-  getInstanceSettings: ({ instanceValues, components }) => {
+  getInstanceSettings: ({ instanceValues }) => {
     const instanceSettings = {};
 
-    if (components.privacy) {
-      copyPropertiesIfValueDifferentThanDefault({
-        toObj: instanceSettings,
-        fromObj: instanceValues,
-        defaultsObj: bridge.getInstanceDefaults(),
-        keys: ["defaultConsent"],
-      });
-    }
+    copyPropertiesIfValueDifferentThanDefault({
+      toObj: instanceSettings,
+      fromObj: instanceValues,
+      defaultsObj: bridge.getInstanceDefaults(),
+      keys: ["defaultConsent"],
+    });
 
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
-    defaultConsent: string().when("$components.privacy", {
-      is: true,
-      then: () =>
-        createRadioGroupWithDataElementValidationSchema("defaultConsent"),
-    }),
+    defaultConsent:
+      createRadioGroupWithDataElementValidationSchema("defaultConsent"),
   }),
 };
 
 const PrivacySection = ({ instanceFieldName }) => {
-  const [{ value: privacyComponentEnabled }] = useField("components.privacy");
-  if (!privacyComponentEnabled) {
-    return null;
-  }
   return (
     <>
       <SectionHeader learnMoreUrl="https://adobe.ly/2WSngEh">
@@ -83,7 +73,9 @@ const PrivacySection = ({ instanceFieldName }) => {
           dataTestIdPrefix="defaultConsent"
           name={`${instanceFieldName}.defaultConsent`}
           label="Default consent (not persisted to user's profile)"
-          dataElementDescription='This data element should resolve to "in", "out", or "pending".'
+          dataElementDescription={
+            'This data element should resolve to "in", "out", or "pending".'
+          }
         >
           <Radio data-test-id="defaultConsentInRadio" value={CONSENT_LEVEL.IN}>
             In - Collect events that occur before the user provides consent

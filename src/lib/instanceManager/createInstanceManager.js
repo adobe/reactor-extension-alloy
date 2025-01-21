@@ -13,8 +13,7 @@ governing permissions and limitations under the License.
 module.exports = ({
   turbine,
   window,
-  createCustomInstance,
-  components,
+  createInstance,
   createEventMergeId,
   orgId,
   wrapOnBeforeEventSend,
@@ -54,7 +53,7 @@ module.exports = ({
       onBeforeEventSend,
       ...options
     }) => {
-      const instance = createCustomInstance({ name, components });
+      const instance = createInstance({ name });
       window[name] = instance;
       if (!window.__alloyNS) {
         window.__alloyNS = [];

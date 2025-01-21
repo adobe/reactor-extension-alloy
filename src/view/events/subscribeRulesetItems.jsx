@@ -16,13 +16,8 @@ import instancePicker from "../forms/instancePicker";
 import fieldArray from "../forms/fieldArray";
 import { validateSurface } from "../utils/surfaceUtils";
 import notice from "../forms/notice";
-import excludedComponentNotice from "../forms/excludedComponentNotice";
 
 const subscribeRulesetItemsForm = form({}, [
-  excludedComponentNotice({
-    requiredComponent: "rulesEngine",
-    componentLabel: "Rules Engine",
-  }),
   notice({
     title: "Subscribe ruleset items",
     description:

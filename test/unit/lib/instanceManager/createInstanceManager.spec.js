@@ -10,14 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable no-underscore-dangle */
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
 
 describe("Instance Manager", () => {
   let instanceManager;
   let turbine;
   let mockWindow;
-  let createCustomInstance;
+  let createInstance;
   let createEventMergeId;
   let wrapOnBeforeEventSend;
   let onBeforeEventSend;
@@ -30,7 +30,7 @@ describe("Instance Manager", () => {
     instanceManager = createInstanceManager({
       turbine,
       window: mockWindow,
-      createCustomInstance,
+      createInstance,
       orgId: "ABC@AdobeOrg",
       createEventMergeId,
       wrapOnBeforeEventSend,
@@ -61,10 +61,10 @@ describe("Instance Manager", () => {
       debugEnabled: false,
     };
     mockWindow = {};
-    getConfigOverrides = jasmine.createSpy("getConfigOverrides");
-    alloy1 = jasmine.createSpy("alloy1");
-    alloy2 = jasmine.createSpy("alloy2");
-    createCustomInstance = jasmine.createSpy().and.callFake(({ name }) => {
+    getConfigOverrides = vi.fn();
+    alloy1 = vi.fn();
+    alloy2 = vi.fn();
+    createInstance = vi.fn().mockImplementation(({ name }) => {
       if (name === "alloy1") {
         return alloy1;
       }
@@ -95,7 +95,7 @@ describe("Instance Manager", () => {
 
   it("adds a new monitor to the window.__alloyMonitors", () => {
     const monitor = {
-      onInstanceCreated: jasmine.createSpy("onInstanceCreated"),
+      onInstanceCreated: vi.fn(),
     };
     build();
     expect(mockWindow).toEqual({

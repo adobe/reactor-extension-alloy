@@ -9,14 +9,11 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+// eslint-disable-next-line import/no-named-export
+export { createInstance } from "@adobe/alloy";
 
-import {
-  components as optionalComponents,
-  createCustomInstance,
-} from "@adobe/alloy";
-
-const components = optionalComponents;
-
-export { createCustomInstance, components };
+// eslint-disable-next-line import/no-named-export
 export { default as createEventMergeId } from "@adobe/alloy/libEs6/components/EventMerge/createEventMergeId";
+
+// eslint-disable-next-line import/no-named-export
 export { default as deepAssign } from "@adobe/alloy/libEs6/utils/deepAssign";

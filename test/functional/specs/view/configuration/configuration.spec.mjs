@@ -10,20 +10,18 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import { t } from "testcafe";
-import extensionViewController from "../../helpers/extensionViewController";
-import createExtensionViewFixture from "../../helpers/createExtensionViewFixture";
+import extensionViewController from "../../../helpers/extensionViewController.mjs";
+import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import {
   addInstanceButton,
   instancesTabs,
   resourceUsageDialog,
   instances,
-} from "../../helpers/viewSelectors";
-import runCommonExtensionViewTests from "../../runCommonExtensionViewTests";
-import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks";
-import * as datastreamsMocks from "../../helpers/endpointMocks/datastreamsMocks";
-import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks";
-import spectrum from "../../helpers/spectrum";
-import { createTestIdSelector } from "../../helpers/dataTestIdSelectors";
+} from "../../../helpers/viewSelectors.mjs";
+import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
+import * as sandboxesMocks from "../../../helpers/endpointMocks/sandboxesMocks.mjs";
+import * as datastreamsMocks from "../../../helpers/endpointMocks/datastreamsMocks.mjs";
+import * as datastreamMocks from "../../../helpers/endpointMocks/datastreamMocks.mjs";
 
 createExtensionViewFixture({
   title: "Extension Configuration View",
@@ -2421,48 +2419,4 @@ test("makes the media collection fields required if one is filled", async () => 
       },
     ],
   });
-});
-
-test("has all components enabled by default", async () => {
-  await extensionViewController.init();
-  const settings = extensionViewController.getSettings();
-
-  await t.expect(settings.components).notOk("components list is null");
-});
-
-test("has disabled components added to components key with the false value", async () => {
-  await extensionViewController.init();
-
-  await spectrum.checkbox("privacyComponentCheckbox").click();
-  await spectrum.checkbox("personalizationComponentCheckbox").click();
-
-  const settings = await extensionViewController.getSettings();
-
-  await t.expect(settings.components).contains({
-    personalization: false,
-    privacy: false,
-  });
-});
-
-test("has disabled components added to components key with the false value", async () => {
-  await extensionViewController.init({
-    settings: {
-      components: {
-        personalization: false,
-      },
-      instances: [
-        {
-          name: "alloy",
-        },
-      ],
-    },
-  });
-
-  await t
-    .expect(createTestIdSelector("personalizationComponentCheckbox").checked)
-    .eql(false);
-
-  await t
-    .expect(createTestIdSelector("privacyComponentCheckbox").checked)
-    .eql(true);
 });

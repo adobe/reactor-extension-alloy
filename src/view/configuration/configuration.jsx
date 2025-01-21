@@ -62,9 +62,6 @@ import { FIELD_NAMES } from "../components/overrides/utils";
 import StreamingMediaSection, {
   bridge as mediaBridge,
 } from "./streamingMediaSection";
-import ComponentsSection, {
-  bridge as componentsBridge,
-} from "./componentsSection";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -122,20 +119,17 @@ const getInitialValues = async ({ initInfo, context }) => {
   }
 
   return {
-    ...componentsBridge.getInitialValues({ initInfo }),
     instances: instancesInitialValues,
   };
 };
 
 const getSettings = async ({ values, initInfo }) => {
   return {
-    ...componentsBridge.getSettings({ values, initInfo }),
     instances: await Promise.all(
       values.instances.map((instanceValues) => {
         return getInstanceSettings({
           initInfo,
           instanceValues,
-          components: values.components,
         });
       }),
     ),
@@ -169,7 +163,7 @@ const Configuration = ({ initInfo, context }) => {
   });
 
   return (
-    <Flex direction="column" gap="size-50">
+    <div>
       <FieldArray
         name="instances"
         render={(arrayHelpers) => {
@@ -308,9 +302,7 @@ const Configuration = ({ initInfo, context }) => {
           );
         }}
       />
-      <Divider margin={0} size="M" />
-      <ComponentsSection />
-    </Flex>
+    </div>
   );
 };
 
