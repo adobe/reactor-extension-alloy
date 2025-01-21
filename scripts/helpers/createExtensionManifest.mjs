@@ -418,6 +418,10 @@ const createExtensionManifest = ({ version }) => {
                       type: "string",
                       enum: ["always", "decoratedElementsOnly", "never"],
                     },
+                    TGT: {
+                      type: "string",
+                      enum: ["always", "decoratedElementsOnly", "never"],
+                    },
                   },
                   additionalProperties: false,
                 },
