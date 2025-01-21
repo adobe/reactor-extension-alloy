@@ -29,7 +29,7 @@ import mediaContentTypes from "./constants/mediaContentTypes";
 import mediaShowTypes from "./constants/mediaShowTypes";
 import configOverrides from "../forms/configOverrides";
 import { FIELD_NAMES } from "../components/overrides/utils";
-import ExcludedComponentNotice from "../forms/excludedComponentNotice";
+import excludedComponentNotice from "../forms/excludedComponentNotice";
 
 const getSortedInputItems = (mapItems) => {
   return Object.keys(mapItems)
@@ -804,7 +804,7 @@ const sendEventForm = form(
     wrapGetSettings,
   },
   [
-    ExcludedComponentNotice({
+    excludedComponentNotice({
       requiredComponent: "streamingMedia",
       componentLabel: "Streaming Media",
     }),
