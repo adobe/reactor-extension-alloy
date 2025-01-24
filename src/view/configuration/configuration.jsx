@@ -28,13 +28,16 @@ import {
   TabPanels,
   Tabs,
   View,
+  Accordion,
+  Disclosure,
+  DisclosureTitle,
+  DisclosurePanel,
 } from "@adobe/react-spectrum";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import PropTypes from "prop-types";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
-import Heading from "../components/typography/heading";
 import BasicSection, { bridge as basicSectionBridge } from "./basicSection";
 import EdgeConfigurationsSection, {
   bridge as edgeConfigurationsSectionBridge,
@@ -62,6 +65,9 @@ import { FIELD_NAMES } from "../components/overrides/utils";
 import StreamingMediaSection, {
   bridge as mediaBridge,
 } from "./streamingMediaSection";
+import ComponentsSection, {
+  bridge as componentsBridge,
+} from "./componentsSection";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -119,17 +125,20 @@ const getInitialValues = async ({ initInfo, context }) => {
   }
 
   return {
+    ...componentsBridge.getInitialValues({ initInfo }),
     instances: instancesInitialValues,
   };
 };
 
 const getSettings = async ({ values, initInfo }) => {
   return {
+    ...componentsBridge.getSettings({ values, initInfo }),
     instances: await Promise.all(
       values.instances.map((instanceValues) => {
         return getInstanceSettings({
           initInfo,
           instanceValues,
+          components: values.components,
         });
       }),
     ),
@@ -146,7 +155,7 @@ const validationSchema = object().shape({
   ),
 });
 
-const Configuration = ({ initInfo, context }) => {
+const InstancesSection = ({ initInfo, context }) => {
   const [{ value: instances }] = useField("instances");
   const [selectedTabKey, setSelectedTabKey] = useState("0");
 
@@ -161,16 +170,14 @@ const Configuration = ({ initInfo, context }) => {
       setSelectedTabKey(String(instanceIndexContainingErrors));
     }
   });
-
   return (
-    <div>
+    <Flex direction="column" gap="size-50">
       <FieldArray
         name="instances"
         render={(arrayHelpers) => {
           return (
             <div>
               <Flex alignItems="center">
-                <Heading size="M">SDK instances</Heading>
                 <Button
                   data-test-id="addInstanceButton"
                   variant="secondary"
@@ -183,7 +190,9 @@ const Configuration = ({ initInfo, context }) => {
                     arrayHelpers.push(newInstance);
                     setSelectedTabKey(String(instances.length));
                   }}
-                  marginStart="auto"
+                  position="absolute"
+                  top="12px"
+                  right="16px"
                 >
                   Add instance
                 </Button>
@@ -302,7 +311,45 @@ const Configuration = ({ initInfo, context }) => {
           );
         }}
       />
-    </div>
+    </Flex>
+  );
+};
+
+InstancesSection.propTypes = {
+  initInfo: PropTypes.object.isRequired,
+  context: PropTypes.object.isRequired,
+};
+
+const Configuration = ({ initInfo, context }) => {
+  const [expandedKeys, setExpandedKeys] = useState(["instances"]);
+
+  useNewlyValidatedFormSubmission((errors) => {
+    if (errors) {
+      ["components", "instances"].filter((key) => {
+        return !!errors[key] || expandedKeys.includes(key);
+      });
+    }
+  });
+
+  return (
+    <Accordion
+      expandedKeys={expandedKeys}
+      onExpandedChange={setExpandedKeys}
+      allowsMultipleExpanded
+    >
+      <Disclosure id="components">
+        <DisclosureTitle>Custom build components</DisclosureTitle>
+        <DisclosurePanel>
+          <ComponentsSection />
+        </DisclosurePanel>
+      </Disclosure>
+      <Disclosure id="instances">
+        <DisclosureTitle>SDK instances</DisclosureTitle>
+        <DisclosurePanel>
+          <InstancesSection initInfo={initInfo} context={context} />
+        </DisclosurePanel>
+      </Disclosure>
+    </Accordion>
   );
 };
 
@@ -326,4 +373,5 @@ const ConfigurationExtensionView = () => {
     />
   );
 };
-render(ConfigurationExtensionView);
+// Do not include padding because the accordion already has padding.
+render(ConfigurationExtensionView, { noPadding: true });

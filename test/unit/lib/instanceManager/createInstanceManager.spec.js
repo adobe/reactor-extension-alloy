@@ -11,13 +11,15 @@ governing permissions and limitations under the License.
 */
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
+
+/* eslint-disable no-underscore-dangle */
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
 
 describe("Instance Manager", () => {
   let instanceManager;
   let turbine;
   let mockWindow;
-  let createInstance;
+  let createCustomInstance;
   let createEventMergeId;
   let wrapOnBeforeEventSend;
   let onBeforeEventSend;
@@ -30,7 +32,7 @@ describe("Instance Manager", () => {
     instanceManager = createInstanceManager({
       turbine,
       window: mockWindow,
-      createInstance,
+      createCustomInstance,
       orgId: "ABC@AdobeOrg",
       createEventMergeId,
       wrapOnBeforeEventSend,
@@ -64,7 +66,7 @@ describe("Instance Manager", () => {
     getConfigOverrides = vi.fn();
     alloy1 = vi.fn();
     alloy2 = vi.fn();
-    createInstance = vi.fn().mockImplementation(({ name }) => {
+    createCustomInstance = vi.fn().mockImplementation(({ name }) => {
       if (name === "alloy1") {
         return alloy1;
       }
