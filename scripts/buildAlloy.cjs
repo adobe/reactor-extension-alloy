@@ -30,18 +30,11 @@ const execute = (command, options) => {
 };
 
 const getBrowserListFromRcFile = () => {
-  const lastPath = ["./src/lib/.browserslistrc", ".browserslistrc"].reduce(
-    (acc, curr) => {
-      if (fs.existsSync(`${__dirname}/../${curr}`)) {
-        acc = curr;
-      }
-
-      return acc;
-    },
+  const babelConfigFile = "babel.config.json";
+  const babelData = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "..", babelConfigFile), "utf-8"),
   );
-
-  const data = fs.readFileSync(`${__dirname}/../${lastPath}`, "utf-8");
-  return data.split("\n").filter((line) => line.trim() !== "");
+  return babelData.env.libraryModules.presets[0][1].targets.browsers;
 };
 
 const entryPointGeneratorBabelPlugin = (t, includedModules) => ({

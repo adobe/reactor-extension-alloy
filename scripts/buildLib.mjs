@@ -35,7 +35,7 @@ run("babel", [
   libOutDir,
   "--ignore",
   alloyInFile,
-  "--presets=@babel/preset-env",
+  "--env-name=libraryModules",
 ]);
 
 if (watch) {
@@ -45,11 +45,11 @@ if (watch) {
       libInDir,
       "--out-dir",
       libOutDir,
-      "--watch",
       "--skip-initial-build",
       "--ignore",
       alloyInFile,
-      "--presets=@babel/preset-env",
+      "--env-name=libraryModules",
+      "--watch",
     ],
     { stdio: "inherit" },
   );

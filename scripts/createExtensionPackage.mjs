@@ -166,10 +166,8 @@ const createExtensionPackage = ({ verbose }) => {
   const rollupConfig = fs.readFileSync(path.join(cwd, "rollup.config.mjs"));
   zip.addFile("rollup.config.mjs", rollupConfig);
 
-  const browsersListRc = fs.readFileSync(
-    path.join(cwd, "src", "lib", ".browserslistrc"),
-  );
-  zip.addFile(".browserslistrc", browsersListRc);
+  const babelJsonFile = fs.readFileSync(path.join(cwd, "babel.config.json"));
+  zip.addFile("babel.config.json", babelJsonFile);
 
   const buildScript = fs.readFileSync(
     path.join(cwd, "scripts", "buildAlloy.cjs"),
