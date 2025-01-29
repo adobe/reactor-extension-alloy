@@ -172,7 +172,7 @@ const createExtensionPackage = ({ verbose }) => {
   zip.addFile(".browserslistrc", browsersListRc);
 
   const buildScript = fs.readFileSync(
-    path.join(cwd, "scripts", "buildAlloy.js"),
+    path.join(cwd, "scripts", "buildAlloy.cjs"),
   );
   zip.addFile("scripts/buildAlloy.js", buildScript);
 
