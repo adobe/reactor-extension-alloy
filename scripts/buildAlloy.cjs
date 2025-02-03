@@ -29,14 +29,6 @@ const execute = (command, options) => {
   });
 };
 
-const getBrowserListFromRcFile = () => {
-  const babelConfigFile = "babel.config.json";
-  const babelData = JSON.parse(
-    fs.readFileSync(path.join(__dirname, "..", babelConfigFile), "utf-8"),
-  );
-  return babelData.env.libraryModules.presets[0][1].targets.browsers;
-};
-
 const entryPointGeneratorBabelPlugin = (t, includedModules) => ({
   visitor: {
     VariableDeclarator(babelPath) {
@@ -181,16 +173,7 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
     ]);
 
     const output = babel.transformFileSync(entryFile, {
-      presets: [
-        [
-          "@babel/preset-env",
-          {
-            targets: {
-              browsers: getBrowserListFromRcFile(),
-            },
-          },
-        ],
-      ],
+      presets: [["@babel/preset-env"]],
     }).code;
 
     fs.writeFileSync(entryFile, output);
