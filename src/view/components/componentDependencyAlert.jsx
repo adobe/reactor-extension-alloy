@@ -27,7 +27,7 @@ const ComponentDependencyAlert = ({
   }
 
   return (
-    <InlineAlert variant="negative">
+    <InlineAlert variant="negative" width="size-5000">
       <Heading>Missing Component</Heading>
       <Content>
         If you do not enable the {componentLabel} component in the extension
