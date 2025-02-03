@@ -88,6 +88,7 @@ const getPackageJson = () => {
     dependencies: {
       "@adobe/alloy": "",
       "@babel/core": "",
+      "@babel/preset-env": "",
       "@rollup/plugin-commonjs": "",
       "@rollup/plugin-node-resolve": "",
       commander: "",
@@ -166,10 +167,8 @@ const createExtensionPackage = ({ verbose }) => {
   const rollupConfig = fs.readFileSync(path.join(cwd, "rollup.config.mjs"));
   zip.addFile("rollup.config.mjs", rollupConfig);
 
-  const browsersListRc = fs.readFileSync(
-    path.join(cwd, "src", "lib", ".browserslistrc"),
-  );
-  zip.addFile(".browserslistrc", browsersListRc);
+  const browsersListRcFile = fs.readFileSync(path.join(cwd, ".browserslistrc"));
+  zip.addFile(".browserslistrc", browsersListRcFile);
 
   const buildScript = fs.readFileSync(
     path.join(cwd, "scripts", "buildAlloy.cjs"),
