@@ -10,10 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { Radio } from "@adobe/react-spectrum";
+import {
+  Radio,
+  View,
+  InlineAlert,
+  Heading,
+  Content,
+} from "@adobe/react-spectrum";
 import React from "react";
 import PropTypes from "prop-types";
-import { object } from "yup";
+import { object, string } from "yup";
+import { useField } from "formik";
 import SectionHeader from "../components/sectionHeader";
 import FormikRadioGroupWithDataElement, {
   createRadioGroupWithDataElementValidationSchema,
@@ -44,59 +51,78 @@ export const bridge = {
 
     return instanceValues;
   },
-  getInstanceSettings: ({ instanceValues }) => {
+  getInstanceSettings: ({ instanceValues, components }) => {
     const instanceSettings = {};
 
-    copyPropertiesIfValueDifferentThanDefault({
-      toObj: instanceSettings,
-      fromObj: instanceValues,
-      defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["defaultConsent"],
-    });
+    if (components.consent) {
+      copyPropertiesIfValueDifferentThanDefault({
+        toObj: instanceSettings,
+        fromObj: instanceValues,
+        defaultsObj: bridge.getInstanceDefaults(),
+        keys: ["defaultConsent"],
+      });
+    }
 
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
-    defaultConsent:
-      createRadioGroupWithDataElementValidationSchema("defaultConsent"),
+    defaultConsent: string().when("$components.consent", {
+      is: true,
+      then: () =>
+        createRadioGroupWithDataElementValidationSchema("defaultConsent"),
+    }),
   }),
 };
 
 const PrivacySection = ({ instanceFieldName }) => {
+  const [{ value: consentComponentEnabled }] = useField("components.consent");
   return (
     <>
       <SectionHeader learnMoreUrl="https://adobe.ly/2WSngEh">
-        Privacy
+        Consent
       </SectionHeader>
-      <FormElementContainer>
-        <FormikRadioGroupWithDataElement
-          dataTestIdPrefix="defaultConsent"
-          name={`${instanceFieldName}.defaultConsent`}
-          label="Default consent (not persisted to user's profile)"
-          dataElementDescription={
-            'This data element should resolve to "in", "out", or "pending".'
-          }
-        >
-          <Radio data-test-id="defaultConsentInRadio" value={CONSENT_LEVEL.IN}>
-            In - Collect events that occur before the user provides consent
-            preferences.
-          </Radio>
-          <Radio
-            data-test-id="defaultConsentOutRadio"
-            value={CONSENT_LEVEL.OUT}
+      {consentComponentEnabled ? (
+        <FormElementContainer>
+          <FormikRadioGroupWithDataElement
+            dataTestIdPrefix="defaultConsent"
+            name={`${instanceFieldName}.defaultConsent`}
+            label="Default consent (not persisted to user's profile)"
+            dataElementDescription='This data element should resolve to "in", "out", or "pending".'
           >
-            Out - Drop events that occur before the user provides consent
-            preferences.
-          </Radio>
-          <Radio
-            data-test-id="defaultConsentPendingRadio"
-            value={CONSENT_LEVEL.PENDING}
-          >
-            Pending - Queue events that occur before the user provides consent
-            preferences.
-          </Radio>
-        </FormikRadioGroupWithDataElement>
-      </FormElementContainer>
+            <Radio
+              data-test-id="defaultConsentInRadio"
+              value={CONSENT_LEVEL.IN}
+            >
+              In - Collect events that occur before the user provides consent
+              preferences.
+            </Radio>
+            <Radio
+              data-test-id="defaultConsentOutRadio"
+              value={CONSENT_LEVEL.OUT}
+            >
+              Out - Drop events that occur before the user provides consent
+              preferences.
+            </Radio>
+            <Radio
+              data-test-id="defaultConsentPendingRadio"
+              value={CONSENT_LEVEL.PENDING}
+            >
+              Pending - Queue events that occur before the user provides consent
+              preferences.
+            </Radio>
+          </FormikRadioGroupWithDataElement>
+        </FormElementContainer>
+      ) : (
+        <View width="size-6000">
+          <InlineAlert variant="info">
+            <Heading>Consent component disabled</Heading>
+            <Content>
+              The consent custom build component is disabled. Enable it above to
+              configure consent settings.
+            </Content>
+          </InlineAlert>
+        </View>
+      )}
     </>
   );
 };

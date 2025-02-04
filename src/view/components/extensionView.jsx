@@ -45,7 +45,7 @@ const ExtensionView = ({
         if (viewRegistrationRef.current?.validateFormikState) {
           errors = viewRegistrationRef.current.validateFormikState({ values });
         }
-      } catch (error) {
+      } catch {
         reportAsyncError(
           new Error("An error occurred while validating the view."),
         );
@@ -70,15 +70,23 @@ const ExtensionView = ({
 
     // The docs say that the promise submitForm returns
     // will be rejected if there are errors, but that is not the case.
-    // Therefore, after the promise is resolved, we pull formikProps.errors
-    // (which were set during submitForm()) to see if the form is valid.
+    // Therefore, after the promise is resolved, we manually validate
+    // to see if the form is valid.
     // https://github.com/jaredpalmer/formik/issues/1580
     formikPropsRef.current.setSubmitting(false);
 
-    // Since React18, errors are not up to date on the formikPropsRef.current object.
-    // We collect the errors by running imperative validateForm() method.
-    const errors = await formikPropsRef.current.validateForm();
-    return Object.keys(errors).length === 0;
+    try {
+      // Setting context to the values so you can use "$..." in when conditions
+      const validationSchema =
+        viewRegistrationRef.current?.formikStateValidationSchema ?? object();
+      await validationSchema.validate(formikPropsRef.current.values, {
+        abortEarly: false,
+        context: formikPropsRef.current.values,
+      });
+      return true;
+    } catch {
+      return false;
+    }
   };
 
   const myValidateNonFormikState = async () => {

@@ -10,5 +10,14 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-// Add fetch polyfill for tests
-import "whatwg-fetch";
+export default (camelCase) => {
+  if (typeof camelCase !== "string") {
+    return "";
+  }
+
+  const result = camelCase.replace(
+    /([A-Z])/g,
+    (_, p1) => ` ${p1.toLowerCase()}`,
+  );
+  return result.charAt(0).toUpperCase() + result.slice(1);
+};

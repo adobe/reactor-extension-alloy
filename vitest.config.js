@@ -9,12 +9,17 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-module.exports = {
-  skipJsErrors: true,
-  quarantineMode: false,
-  selectorTimeout: 2000,
-  assertionTimeout: 5000,
-  pageLoadTimeout: 5000,
-  speed: 1.0,
-  stopOnFirstFail: false,
-};
+// eslint-disable-next-line import/no-unresolved
+import { defineProject } from "vitest/config";
+
+export default defineProject({
+  test: {
+    name: "unit-tests",
+    include: ["test/unit/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+    isolate: false,
+    environment: "jsdom",
+    coverage: {
+      include: ["src/**/*"],
+    },
+  },
+});

@@ -32,7 +32,7 @@ export default [
   ...compat.extends("airbnb", "plugin:testcafe/recommended"),
   ...compat.plugins("ban", "testcafe"),
   {
-    files: ["**/*.{mjs,js,jsx}"],
+    files: ["**/*.{mjs,cjs,js,jsx}"],
     plugins: {
       "unused-imports": unusedImports,
       vitest: vitestPlugin,
@@ -132,7 +132,7 @@ export default [
     },
   },
   {
-    files: ["src/**/*.{mjs,js,jsx}"],
+    files: ["src/**/*.{mjs,cjs,js,jsx}"],
     languageOptions: {
       globals: {
         _satellite: "readonly",
@@ -153,7 +153,6 @@ export default [
       "no-var": "off",
       "func-names": "off",
       "import/no-default-export": 2,
-      "import/no-named-export": 2,
       "no-underscore-dangle": [
         "error",
         { allow: ["__alloyNS", "__alloyMonitors"] },
