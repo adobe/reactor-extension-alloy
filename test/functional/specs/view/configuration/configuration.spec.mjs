@@ -22,8 +22,8 @@ import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
 import * as sandboxesMocks from "../../../helpers/endpointMocks/sandboxesMocks.mjs";
 import * as datastreamsMocks from "../../../helpers/endpointMocks/datastreamsMocks.mjs";
 import * as datastreamMocks from "../../../helpers/endpointMocks/datastreamMocks.mjs";
-import spectrum from "../../helpers/spectrum.mjs";
-import { createTestIdSelector } from "../../helpers/dataTestIdSelectors.mjs";
+import spectrum from "../../../helpers/spectrum.mjs";
+import { createTestIdSelector } from "../../../helpers/dataTestIdSelectors.mjs";
 
 createExtensionViewFixture({
   title: "Extension Configuration View",
