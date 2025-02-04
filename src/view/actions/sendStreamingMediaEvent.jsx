@@ -13,7 +13,6 @@ import { string } from "yup";
 import { isEmptyArray } from "formik";
 import comboBox from "../forms/comboBox";
 import instancePicker from "../forms/instancePicker";
-import form from "../forms/form";
 import conditional from "../forms/conditional";
 import renderForm from "../forms/renderForm";
 import textField from "../forms/textField";
@@ -29,7 +28,7 @@ import mediaContentTypes from "./constants/mediaContentTypes";
 import mediaShowTypes from "./constants/mediaShowTypes";
 import configOverrides from "../forms/configOverrides";
 import { FIELD_NAMES } from "../components/overrides/utils";
-import excludedComponentNotice from "../forms/excludedComponentNotice";
+import requiredComponent from "../forms/requiredComponent";
 
 const getSortedInputItems = (mapItems) => {
   return Object.keys(mapItems)
@@ -798,16 +797,14 @@ const onInstanceChange = ({ context, instanceName, initInfo }) => {
   );
 };
 
-const sendEventForm = form(
+const sendEventForm = requiredComponent(
   {
     wrapGetInitialValues,
     wrapGetSettings,
+    requiredComponent: "streamingMedia",
+    componentLabel: "Streaming Media",
   },
   [
-    excludedComponentNotice({
-      requiredComponent: "streamingMedia",
-      componentLabel: "Streaming Media",
-    }),
     instancePicker({ name: "instanceName", onInstanceChange }),
     comboBox({
       name: "eventType",
