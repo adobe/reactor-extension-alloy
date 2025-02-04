@@ -45,7 +45,7 @@ const ExtensionView = ({
         if (viewRegistrationRef.current?.validateFormikState) {
           errors = viewRegistrationRef.current.validateFormikState({ values });
         }
-      } catch (error) {
+      } catch {
         reportAsyncError(
           new Error("An error occurred while validating the view."),
         );
@@ -84,7 +84,7 @@ const ExtensionView = ({
         context: formikPropsRef.current.values,
       });
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   };
