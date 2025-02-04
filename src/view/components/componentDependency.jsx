@@ -14,33 +14,55 @@ import React from "react";
 import PropTypes from "prop-types";
 import { InlineAlert, Content, Heading } from "@adobe/react-spectrum";
 
-const ComponentDependencyAlert = ({
+const ComponentDependency = ({
   initInfo,
   requiredComponent,
   componentLabel,
+  children,
 }) => {
   const components = initInfo?.extensionSettings?.components || {};
   const isComponentDisabled = components[requiredComponent] === false;
+  const isNew = initInfo?.settings == null;
 
   if (!isComponentDisabled) {
-    return null;
+    return children;
   }
 
+  if (isNew) {
+    // This is returned when the component is disabled and the item is new. We want
+    // to only show the error.
+    return (
+      <InlineAlert variant="negative">
+        <Heading>Missing Component</Heading>
+        <Content>
+          To use this please enable the {componentLabel} component in the
+          extension configuration.
+        </Content>
+      </InlineAlert>
+    );
+  }
+
+  // This is returned with the component is diabled and the item is existing. We want
+  // to still show the form, but with a warning.
   return (
-    <InlineAlert variant="negative" width="size-5000">
-      <Heading>Missing Component</Heading>
-      <Content>
-        If you do not enable the {componentLabel} component in the extension
-        configuration, this will not work.
-      </Content>
-    </InlineAlert>
+    <>
+      <InlineAlert variant="negative" width="size-5000">
+        <Heading>Missing Component</Heading>
+        <Content>
+          If you do not enable the {componentLabel} component in the extension
+          configuration, this will not work.
+        </Content>
+      </InlineAlert>
+      {children}
+    </>
   );
 };
 
-ComponentDependencyAlert.propTypes = {
+ComponentDependency.propTypes = {
   initInfo: PropTypes.object.isRequired,
   requiredComponent: PropTypes.string.isRequired,
   componentLabel: PropTypes.string.isRequired,
+  children: PropTypes.node,
 };
 
-export default ComponentDependencyAlert;
+export default ComponentDependency;

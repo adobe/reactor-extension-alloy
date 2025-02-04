@@ -11,8 +11,9 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import ComponentDependencyAlert from "../components/componentDependencyAlert";
-
+import PropTypes from "prop-types";
+import ComponentDependency from "../components/componentDependency";
+import form from "./form";
 
 /** @typedef {import("./form").Form} Form */
 /**
@@ -23,17 +24,45 @@ import ComponentDependencyAlert from "../components/componentDependencyAlert";
  * @param {boolean} [options.beta] - Whether or not this is a beta feature.
  * @returns {Form} A notice form element.
  */
-export default function notice({ requiredComponent, componentLabel }) {
+const RequiredComponent = (
+  { requiredComponent, componentLabel, ...formOptions },
+  children = [],
+) => {
+  const {
+    getInitialValues,
+    getSettings,
+    validationShape,
+    Component: ChildComponent,
+  } = form(formOptions, children);
 
-  return {
-    Component: ({initInfo}) => {
-      return (
-        <ComponentDependencyAlert
+  const Component = (props) => {
+    const { initInfo } = props;
+    return (
+      <ComponentDependency
         initInfo={initInfo}
         requiredComponent={requiredComponent}
         componentLabel={componentLabel}
-      />
-      );
-    },
+      >
+        <ChildComponent {...props} />
+      </ComponentDependency>
+    );
   };
-}
+
+  Component.propTypes = {
+    initInfo: PropTypes.object.isRequired,
+  };
+
+  return {
+    getInitialValues,
+    getSettings,
+    validationShape,
+    Component,
+  };
+};
+
+RequiredComponent.propTypes = {
+  requiredComponent: PropTypes.string.isRequired,
+  componentLabel: PropTypes.string.isRequired,
+};
+
+export default RequiredComponent;
