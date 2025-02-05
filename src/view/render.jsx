@@ -17,7 +17,7 @@ import { Provider, lightTheme } from "@adobe/react-spectrum";
 import ErrorBoundary from "./components/errorBoundary";
 import "./global.styl";
 import monitorForOriginatingErrors from "./utils/monitorForOriginatingErrors";
-import "@spectrum-css/tokens/dist/index.css";
+import "@spectrum-css/tokens/dist/css/index.css";
 import "@spectrum-css/typography/dist/index.css";
 
 monitorForOriginatingErrors();
