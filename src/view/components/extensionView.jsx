@@ -14,7 +14,7 @@ import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 
 import { useFormik, FormikProvider } from "formik";
-import { object } from "yup";
+import { object, ValidationError } from "yup";
 import { ProgressCircle, View } from "@adobe/react-spectrum";
 import useExtensionBridge from "../utils/useExtensionBridge";
 import useReportAsyncError from "../utils/useReportAsyncError";
@@ -45,7 +45,8 @@ const ExtensionView = ({
         if (viewRegistrationRef.current?.validateFormikState) {
           errors = viewRegistrationRef.current.validateFormikState({ values });
         }
-      } catch {
+      } catch (e) {
+        console.error(e);
         reportAsyncError(
           new Error("An error occurred while validating the view."),
         );
@@ -66,25 +67,46 @@ const ExtensionView = ({
       return false;
     }
 
-    await formikPropsRef.current.submitForm();
-
-    // The docs say that the promise submitForm returns
-    // will be rejected if there are errors, but that is not the case.
-    // Therefore, after the promise is resolved, we manually validate
-    // to see if the form is valid.
-    // https://github.com/jaredpalmer/formik/issues/1580
-    formikPropsRef.current.setSubmitting(false);
-
     try {
+      await formikPropsRef.current.submitForm();
+
+      // The docs say that the promise submitForm returns
+      // will be rejected if there are errors, but that is not the case.
+      // Therefore, after the promise is resolved, we manually validate
+      // to see if the form is valid.
+      // https://github.com/jaredpalmer/formik/issues/1580
+      formikPropsRef.current.setSubmitting(false);
+
       // Setting context to the values so you can use "$..." in when conditions
       const validationSchema =
         viewRegistrationRef.current?.formikStateValidationSchema ?? object();
+      console.debug("[CARTER] extensionView.jsx myValidateFormikState", {
+        errors: await formikPropsRef.current.validateForm(),
+        values: formikPropsRef.current.values,
+        validationSchema:
+          viewRegistrationRef.current?.formikStateValidationSchema,
+      });
       await validationSchema.validate(formikPropsRef.current.values, {
         abortEarly: false,
         context: formikPropsRef.current.values,
       });
       return true;
-    } catch {
+    } catch (e) {
+      if (e instanceof ValidationError) {
+        const innerErrors = e.inner.map(
+          (innerError) =>
+            `path="${innerError.path}" has ${innerError.name}: ${innerError.message}`,
+        );
+        console.error(
+          `[CARTER] extensionView.jsx myValidateFormikState: ${e.inner.length} inner errors: ${e.message}\n${innerErrors.join("\n")}`,
+          e.inner,
+        );
+      } else {
+        console.error(
+          `[CARTER] extensionView.jsx myValidateFormikState: ${e.message}`,
+          e,
+        );
+      }
       return false;
     }
   };

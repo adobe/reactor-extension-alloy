@@ -27,10 +27,10 @@ export default function dataElement({
   let fieldSchema = string();
 
   if (tokenize) {
-    // TODO: Accept the empty string as a valid data element
-    fieldSchema = fieldSchema
-      .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-      .transform((value) => (value === "" ? undefined : value));
+    fieldSchema = fieldSchema.matches(
+      singleDataElementRegex,
+      DATA_ELEMENT_REQUIRED,
+    );
   }
 
   if (isRequired) {
