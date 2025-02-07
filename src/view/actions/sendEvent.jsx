@@ -66,83 +66,83 @@ const xdmFieldDescription = (
 
 const wrapGetInitialValues =
   (getInitialValues) =>
-  ({ initInfo }) => {
-    const { personalization = {}, ...otherSettings } = initInfo.settings || {};
+    ({ initInfo }) => {
+      const { personalization = {}, ...otherSettings } = initInfo.settings || {};
 
-    // Flatten personalization settings and use strings for data element booleans
-    if (personalization.defaultPersonalizationEnabled === true) {
-      personalization.defaultPersonalizationEnabled = "true";
-    } else if (personalization.defaultPersonalizationEnabled === false) {
-      personalization.defaultPersonalizationEnabled = "false";
-    }
-    const newSettings = { ...personalization, ...otherSettings };
+      // Flatten personalization settings and use strings for data element booleans
+      if (personalization.defaultPersonalizationEnabled === true) {
+        personalization.defaultPersonalizationEnabled = "true";
+      } else if (personalization.defaultPersonalizationEnabled === false) {
+        personalization.defaultPersonalizationEnabled = "false";
+      }
+      const newSettings = { ...personalization, ...otherSettings };
 
-    // Handle backward compatability for making renderDecisions set to true
-    // for FETCH guided events. Previously you could modify renderDecisions on
-    // a FETCH guieded event.
-    const { guidedEventsEnabled, guidedEvent, renderDecisions } = newSettings;
+      // Handle backward compatability for making renderDecisions set to true
+      // for FETCH guided events. Previously you could modify renderDecisions on
+      // a FETCH guieded event.
+      const { guidedEventsEnabled, guidedEvent, renderDecisions } = newSettings;
 
-    if (
-      !renderDecisions &&
-      guidedEventsEnabled &&
-      (guidedEvent === undefined || guidedEvent === FETCH)
-    ) {
-      newSettings.guidedEventsEnabled = false;
-      delete newSettings.guidedEvent;
-    }
+      if (
+        !renderDecisions &&
+        guidedEventsEnabled &&
+        (guidedEvent === undefined || guidedEvent === FETCH)
+      ) {
+        newSettings.guidedEventsEnabled = false;
+        delete newSettings.guidedEvent;
+      }
 
-    return getInitialValues({
-      initInfo: {
-        ...initInfo,
-        settings: newSettings,
-      },
-    });
-  };
+      return getInitialValues({
+        initInfo: {
+          ...initInfo,
+          settings: newSettings,
+        },
+      });
+    };
 
 const wrapGetSettings =
   (getSettings) =>
-  ({ values }) => {
-    const {
-      decisionScopes,
-      surfaces,
-      sendDisplayEvent,
-      includeRenderedPropositions,
-      defaultPersonalizationEnabled,
-      decisionContext,
-      ...settings
-    } = getSettings({ values });
-    if (
-      decisionScopes ||
-      surfaces ||
-      sendDisplayEvent === false ||
-      includeRenderedPropositions ||
-      defaultPersonalizationEnabled ||
-      decisionContext
-    ) {
-      settings.personalization = {};
-    }
-    if (decisionScopes) {
-      settings.personalization.decisionScopes = decisionScopes;
-    }
-    if (surfaces) {
-      settings.personalization.surfaces = surfaces;
-    }
-    if (sendDisplayEvent === false) {
-      settings.personalization.sendDisplayEvent = sendDisplayEvent;
-    }
-    if (includeRenderedPropositions) {
-      settings.personalization.includeRenderedPropositions =
-        includeRenderedPropositions;
-    }
-    if (defaultPersonalizationEnabled) {
-      settings.personalization.defaultPersonalizationEnabled =
-        defaultPersonalizationEnabled === "true";
-    }
-    if (decisionContext) {
-      settings.personalization.decisionContext = decisionContext;
-    }
-    return settings;
-  };
+    ({ values }) => {
+      const {
+        decisionScopes,
+        surfaces,
+        sendDisplayEvent,
+        includeRenderedPropositions,
+        defaultPersonalizationEnabled,
+        decisionContext,
+        ...settings
+      } = getSettings({ values });
+      if (
+        decisionScopes ||
+        surfaces ||
+        sendDisplayEvent === false ||
+        includeRenderedPropositions ||
+        defaultPersonalizationEnabled ||
+        decisionContext
+      ) {
+        settings.personalization = {};
+      }
+      if (decisionScopes) {
+        settings.personalization.decisionScopes = decisionScopes;
+      }
+      if (surfaces) {
+        settings.personalization.surfaces = surfaces;
+      }
+      if (sendDisplayEvent === false) {
+        settings.personalization.sendDisplayEvent = sendDisplayEvent;
+      }
+      if (includeRenderedPropositions) {
+        settings.personalization.includeRenderedPropositions =
+          includeRenderedPropositions;
+      }
+      if (defaultPersonalizationEnabled) {
+        settings.personalization.defaultPersonalizationEnabled =
+          defaultPersonalizationEnabled === "true";
+      }
+      if (decisionContext) {
+        settings.personalization.decisionContext = decisionContext;
+      }
+      return settings;
+    };
 
 const eventTypeField = comboBox({
   name: "type",
@@ -180,13 +180,18 @@ const dataField = dataElement({
     "Provide a data element which returns an object to send as data.",
 });
 
-const includeRenderedPropositionsField = checkbox({
-  name: "includeRenderedPropositions",
-  label: "Include rendered propositions",
-  description:
-    'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
-  defaultValue: false,
-});
+const includeRenderedPropositionsField = requiredComponent({
+  requiredComponent: "personalization",
+  componentLabel: "Personalization"
+}, [
+  checkbox({
+    name: "includeRenderedPropositions",
+    label: "Include rendered propositions",
+    description:
+      'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
+    defaultValue: false,
+  })
+]);
 
 const disabledIncludeRenderedPropositionsField = disabledCheckbox({
   name: "includeRenderedPropositions",
@@ -203,12 +208,17 @@ const documentUnloadingField = checkbox({
     "Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored.",
 });
 
-const mergeIdField = dataElement({
-  name: "mergeId",
-  label: "Merge ID (Deprecated)",
-  description:
-    "Provide an identifier used to merge multiple events. This will populate the `eventMergeId` XDM field. This field has been deprecated because it is not supported by Adobe Experience Platform.",
-});
+const mergeIdField = requiredComponent({
+  requiredComponent: "eventMerge",
+  componentLabel: "Event merge"
+}, [
+  dataElement({
+    name: "mergeId",
+    label: "Merge ID (Deprecated)",
+    description:
+      "Provide an identifier used to merge multiple events. This will populate the `eventMergeId` XDM field. This field has been deprecated because it is not supported by Adobe Experience Platform.",
+  })
+]);
 
 const decisionScopesField = fieldArray({
   name: "decisionScopes",

@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import ComponentDependency from "../components/componentDependency";
+import ComponentDependency from "../components/requiredComponent";
 import form from "./form";
 
 /** @typedef {import("./form").Form} Form */
@@ -25,9 +25,19 @@ import form from "./form";
  * @returns {Form} A notice form element.
  */
 const RequiredComponent = (
-  { requiredComponent, componentLabel, ...formOptions },
+  { requiredComponent, title, whole = false, ...formOptions },
   children = [],
 ) => {
+
+  const wrapGetInitialValues = wrapped => ({ initInfo }) => {
+    const initialValues = wrapped({ initInfo });
+    if (whole) {
+      const isNew = initInfo?.settings == null;
+      initialValues.isNew = isNew;
+    }
+    return initialValues;
+  };
+
   const {
     getInitialValues,
     getSettings,
