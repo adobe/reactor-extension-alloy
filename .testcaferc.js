@@ -16,6 +16,4 @@ module.exports = {
   assertionTimeout: 5000,
   pageLoadTimeout: 5000,
   speed: 1.0,
-  // TODO: Remove before merging
-  stopOnFirstFail: true,
 };
