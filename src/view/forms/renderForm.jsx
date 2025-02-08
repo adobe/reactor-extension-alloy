@@ -18,14 +18,14 @@ import render from "../render";
 const FormExtensionView = ({
   getInitialValues,
   getSettings,
-  validationSchema,
+  getValidationSchema,
   Component,
 }) => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
-      formikStateValidationSchema={validationSchema}
+      getFormikStateValidationSchema={getValidationSchema}
       render={(props) => <Component {...props} />}
     />
   );
@@ -33,7 +33,7 @@ const FormExtensionView = ({
 FormExtensionView.propTypes = {
   getInitialValues: PropTypes.func,
   getSettings: PropTypes.func,
-  validationSchema: PropTypes.object,
+  getValidationSchema: PropTypes.object,
   Component: PropTypes.func,
 };
 
@@ -42,7 +42,10 @@ FormExtensionView.propTypes = {
  * Render a form
  * @param {Form} form - The form to render.
  */
-export default ({ validationShape, ...formPart }) => {
-  formPart.validationSchema = object().shape(validationShape);
+export default ({ getValidationShape, ...formPart }) => {
+  formPart.getValidationSchema = ({ initInfo }) => {
+    const shape = getValidationShape({ initInfo, existingValidationShape: {} });
+    return object().shape(shape);
+  };
   render(() => <FormExtensionView {...formPart} />);
 };

@@ -10,11 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 import renderForm from "../forms/renderForm";
-import form from "../forms/form";
 import instancePicker from "../forms/instancePicker";
 import checkbox from "../forms/checkbox";
 import simpleMap from "../forms/simpleMap";
 import notice from "../forms/notice";
+import requiredComponent from "../forms/requiredComponent";
 
 const wrapGetInitialValues =
   (getInitialValues) =>
@@ -39,8 +39,11 @@ const wrapGetSettings =
     return settings;
   };
 
-const evaluateRulesetsForm = form(
+const evaluateRulesetsForm = requiredComponent(
   {
+    requiredComponent: "rulesEngine",
+    title: "the Evaluate rulesets action",
+    whole: true,
     wrapGetInitialValues,
     wrapGetSettings,
   },

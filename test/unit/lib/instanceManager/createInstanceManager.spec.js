@@ -12,7 +12,6 @@ governing permissions and limitations under the License.
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-/* eslint-disable no-underscore-dangle */
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
 
 describe("Instance Manager", () => {

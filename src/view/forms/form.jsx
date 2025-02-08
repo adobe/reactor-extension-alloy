@@ -21,10 +21,11 @@ import FormElementContainer from "../components/formElementContainer";
  * into an object of Adobe Tags settings.
  * @property {object} [validationShape] - An object containing Formik fields as
  * keys and Yup validation schemas as values.
- * @property {Function} [addToValidationShape] - A function that takes an existing
+ * @property {Function} [getValidationShape] - A function that takes an existing
  * validation shape and returns a new validation shape. This is useful if you need to
  * modify an existing validator for the same field. Only use one of "validationShape"
- * or "addToValidationShape". *
+ * or "getValidationShape". If you use both, "validationShape" will be ignored. Also,
+ * initInfo is passed to getValidationShape.
  * @property {Function} [Component] - The react component to render. This
  * component will be passes the props "namePrefix", "initInfo", and
  * "formikProps".
@@ -50,7 +51,7 @@ export default function Form(
   {
     wrapGetInitialValues = Identity,
     wrapGetSettings = Identity,
-    wrapValidationShape = Identity,
+    wrapGetValidationShape = Identity,
   } = {},
   children = [],
 ) {
@@ -76,31 +77,39 @@ export default function Form(
           };
         }, {});
     },
-    validationShape: children
-      .filter(
-        ({ validationShape, addToValidationShape }) =>
-          validationShape || addToValidationShape,
-      )
-      .reduce((memo, { validationShape, addToValidationShape }) => {
-        if (validationShape) {
-          if (
-            Object.keys(memo).find(
-              (existingKey) => validationShape[existingKey],
-            )
-          ) {
-            throw new Error(
-              `Duplicate validation key (${Object.keys(memo).join(
-                ",",
-              )}) versus (${Object.keys(validationShape).join(",")})`,
-            );
-          }
-          return {
-            ...memo,
-            ...validationShape,
-          };
-        }
-        return addToValidationShape(memo);
-      }, {}),
+    getValidationShape({ initInfo, existingValidationShape }) {
+      return children
+        .filter(
+          ({ validationShape, getValidationShape }) =>
+            validationShape || getValidationShape,
+        )
+        .reduce(
+          (memo, { validationShape, getValidationShape }) => {
+            if (validationShape) {
+              if (
+                Object.keys(memo).find(
+                  (existingKey) => validationShape[existingKey],
+                )
+              ) {
+                throw new Error(
+                  `Duplicate validation key (${Object.keys(memo).join(
+                    ",",
+                  )}) versus (${Object.keys(validationShape).join(",")})`,
+                );
+              }
+              return {
+                ...memo,
+                ...validationShape,
+              };
+            }
+            return getValidationShape({
+              initInfo,
+              existingValidationShape: memo,
+            });
+          },
+          { ...existingValidationShape },
+        );
+    },
     Component(props) {
       const { horizontal } = props;
       return (
@@ -117,7 +126,7 @@ export default function Form(
   };
   part.getInitialValues = wrapGetInitialValues(part.getInitialValues);
   part.getSettings = wrapGetSettings(part.getSettings);
-  part.validationShape = wrapValidationShape(part.validationShape);
+  part.getValidationShape = wrapGetValidationShape(part.getValidationShape);
   part.Component.propTypes = {
     horizontal: PropTypes.bool,
   };
