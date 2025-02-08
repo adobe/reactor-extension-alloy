@@ -20,6 +20,7 @@ const RequiredComponent = ({
   requiredComponent,
   title,
   whole = false,
+  deprecated = false,
   children,
 }) => {
   const components = initInfo?.extensionSettings?.components || {};
@@ -41,49 +42,54 @@ const RequiredComponent = ({
         <InlineAlert variant="negative" width="size-5000">
           <Heading>Custom build component disabled</Heading>
           <Content>
-            You cannot create this {title} because a custom build component is disabled on this property.
-            To create this {title}, first enabled the {componentLabel} component in the
-            custom build section of the Web SDK extension configuration.
+            You cannot create {title} because a custom build component is
+            disabled on this property. To create this, first enabled the{" "}
+            {componentLabel} component in the custom build section of the Web
+            SDK extension configuration.
           </Content>
         </InlineAlert>
       );
-    } else {
-
-      // This is returned when the component is diabled and the item is existing. We want
-      // to still show the form, but with a warning.
-      return (
-        <>
-          <InlineAlert variant="notice" width="size-5000">
-            <Heading>Custom build component disabled</Heading>
-            <Content>
-              Warning, this {title} will not function correctly because a custom build component is disabled on this property.
-              To fix this, enable the {componentLabel} component in the custom build
-              section of the Web SDK extension configuration.
-            </Content>
-          </InlineAlert>
-          {children}
-        </>
-      );
     }
-  } else {
+    // This is returned when the component is diabled and the item is existing. We want
+    // to still show the form, but with a warning.
+    return (
+      <>
+        <InlineAlert variant="notice" width="size-5000">
+          <Heading>Custom build component disabled</Heading>
+          <Content>
+            Warning, {title} will not function correctly because a custom build
+            component is disabled on this property. To fix this, first enable
+            the {componentLabel} component in the custom build section of the
+            Web SDK extension configuration.
+          </Content>
+        </InlineAlert>
+        {children}
+      </>
+    );
+  }
+  if (!deprecated) {
     return (
       <InlineAlert width="size-5000">
         <Heading>Custom build component disabled</Heading>
         <Content>
-          This part of the configuration is hidden because a custom build component is disabled on this property.
-          To set {title}, enable the {componentLabel} component in the
-          custom build section of the Web SDK extension configuration.
+          This part of the configuration is hidden because a custom build
+          component is disabled on this property. To set {title}, enable the{" "}
+          {componentLabel} component in the custom build section of the Web SDK
+          extension configuration.
         </Content>
       </InlineAlert>
     );
   }
+
+  return null;
 };
 
 RequiredComponent.propTypes = {
   initInfo: PropTypes.object.isRequired,
   requiredComponent: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   whole: PropTypes.bool,
+  deprecated: PropTypes.bool,
   children: PropTypes.node,
 };
 

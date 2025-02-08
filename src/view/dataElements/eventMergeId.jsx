@@ -18,7 +18,7 @@ import render from "../render";
 import ExtensionView from "../components/extensionView";
 import FillParentAndCenterChildren from "../components/fillParentAndCenterChildren";
 import Body from "../components/typography/body";
-import ComponentDependency from "../components/componentDependency";
+import RequiredComponent from "../components/requiredComponent";
 
 const getInitialValues = ({ initInfo }) => {
   const { cacheId = uuid() } = initInfo.settings || {};
@@ -39,10 +39,10 @@ const EventMergeId = ({ initInfo }) => {
       getSettings={getSettings}
       render={() => (
         <FillParentAndCenterChildren>
-          <ComponentDependency
+          <RequiredComponent
             initInfo={initInfo}
             requiredComponent="eventMerge"
-            componentLabel="Event Merge"
+            title="the event merge ID data element"
           >
             <Alert
               variant="informative"
@@ -58,7 +58,7 @@ const EventMergeId = ({ initInfo }) => {
             <Body size="L" marginTop="size-200">
               No configuration necessary.
             </Body>
-          </ComponentDependency>
+          </RequiredComponent>
         </FillParentAndCenterChildren>
       )}
     />

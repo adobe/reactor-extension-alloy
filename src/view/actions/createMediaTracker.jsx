@@ -19,7 +19,8 @@ import requiredComponent from "../forms/requiredComponent";
 const createMediaTrackerForm = requiredComponent(
   {
     requiredComponent: "mediaAnalyticsBridge",
-    componentLabel: "Media Analytics Bridge",
+    title: "the Create media tracker action",
+    whole: true,
   },
   [
     notice({

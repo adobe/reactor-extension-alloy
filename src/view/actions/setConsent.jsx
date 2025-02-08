@@ -31,7 +31,8 @@ import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
 import Overrides, { bridge as overridesBridge } from "../components/overrides";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
-import ComponentDependency from "../components/componentDependency";
+import RequiredComponent from "../components/requiredComponent";
+import getRequiredComponentSchema from "../configuration/utils/getRequiredComponentSchema";
 
 const FORM = { value: "form", label: "Fill out a form" };
 const DATA_ELEMENT = { value: "dataElement", label: "Provide a data element" };
@@ -172,65 +173,69 @@ const getSettings = ({ values }) => {
   return settings;
 };
 
-const validationSchema = object()
-  .shape({
-    instanceName: string().required(),
-    identityMap: string().matches(
-      singleDataElementRegex,
-      DATA_ELEMENT_REQUIRED,
-    ),
-    dataElement: mixed().when("inputMethod", {
-      is: DATA_ELEMENT.value,
-      then: () =>
-        string()
-          .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-          .required(DATA_ELEMENT_REQUIRED),
-    }),
-    consent: array().when("inputMethod", {
-      is: FORM.value,
-      then: (schema) =>
-        schema.of(
-          object().shape({
-            standard: string().required("Please specify a standard."),
-            general: mixed().when(["standard", "adobeVersion"], {
-              is: (standard, adobeVersion) =>
-                standard === ADOBE.value && adobeVersion === "1.0",
-              then: () =>
-                createRadioGroupWithDataElementValidationSchema("general"),
+const getValidationSchema = getRequiredComponentSchema("consent", () => {
+  return object()
+    .shape({
+      instanceName: string().required(),
+      identityMap: string().matches(
+        singleDataElementRegex,
+        DATA_ELEMENT_REQUIRED,
+      ),
+      dataElement: mixed().when("inputMethod", {
+        is: DATA_ELEMENT.value,
+        then: () =>
+          string()
+            .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+            .required(DATA_ELEMENT_REQUIRED),
+      }),
+      consent: array().when("inputMethod", {
+        is: FORM.value,
+        then: (schema) =>
+          schema.of(
+            object().shape({
+              standard: string().required("Please specify a standard."),
+              general: mixed().when(["standard", "adobeVersion"], {
+                is: (standard, adobeVersion) =>
+                  standard === ADOBE.value && adobeVersion === "1.0",
+                then: () =>
+                  createRadioGroupWithDataElementValidationSchema("general"),
+              }),
+              value: mixed().when(["standard", "adobeVersion"], {
+                is: (standard, adobeVersion) =>
+                  standard === ADOBE.value && adobeVersion !== "1.0",
+                then: () =>
+                  string()
+                    .required(DATA_ELEMENT_REQUIRED)
+                    .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
+              }),
+              iabVersion: mixed().when("standard", {
+                is: IAB_TCF.value,
+                then: () => string().required("Please specify a version."),
+              }),
+              iabValue: mixed().when("standard", {
+                is: IAB_TCF.value,
+                then: () => string().required("Please specify a value."),
+              }),
+              gdprApplies: mixed().when("standard", {
+                is: IAB_TCF.value,
+                then: () =>
+                  createRadioGroupWithDataElementValidationSchema(
+                    "gdprApplies",
+                  ),
+              }),
+              gdprContainsPersonalData: mixed().when("standard", {
+                is: IAB_TCF.value,
+                then: () =>
+                  createRadioGroupWithDataElementValidationSchema(
+                    "gdprContainsPersonalData",
+                  ),
+              }),
             }),
-            value: mixed().when(["standard", "adobeVersion"], {
-              is: (standard, adobeVersion) =>
-                standard === ADOBE.value && adobeVersion !== "1.0",
-              then: () =>
-                string()
-                  .required(DATA_ELEMENT_REQUIRED)
-                  .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
-            }),
-            iabVersion: mixed().when("standard", {
-              is: IAB_TCF.value,
-              then: () => string().required("Please specify a version."),
-            }),
-            iabValue: mixed().when("standard", {
-              is: IAB_TCF.value,
-              then: () => string().required("Please specify a value."),
-            }),
-            gdprApplies: mixed().when("standard", {
-              is: IAB_TCF.value,
-              then: () =>
-                createRadioGroupWithDataElementValidationSchema("gdprApplies"),
-            }),
-            gdprContainsPersonalData: mixed().when("standard", {
-              is: IAB_TCF.value,
-              then: () =>
-                createRadioGroupWithDataElementValidationSchema(
-                  "gdprContainsPersonalData",
-                ),
-            }),
-          }),
-        ),
-    }),
-  })
-  .concat(overridesBridge.formikStateValidationSchema);
+          ),
+      }),
+    })
+    .concat(overridesBridge.formikStateValidationSchema);
+});
 
 const ConsentObject = ({ value, index }) => {
   return (
@@ -348,7 +353,7 @@ const SetConsent = () => {
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
-      formikStateValidationSchema={validationSchema}
+      getFormikStateValidationSchema={getValidationSchema}
       render={({ initInfo, formikProps: { values } }) => {
         const { instanceName } = values;
         const instanceSettings = initInfo.extensionSettings.instances.find(
@@ -358,10 +363,11 @@ const SetConsent = () => {
         const orgId = instanceSettings?.orgId ?? initInfo.company.orgId;
         return (
           <FormElementContainer>
-            <ComponentDependency
+            <RequiredComponent
               initInfo={initInfo}
               requiredComponent="consent"
-              componentLabel="Consent"
+              title="the Set consent action"
+              whole
             >
               <InstanceNamePicker
                 data-test-id="instanceNamePicker"
@@ -453,7 +459,7 @@ const SetConsent = () => {
                 edgeConfigIds={edgeConfigIds}
                 configOrgId={orgId}
               />
-            </ComponentDependency>
+            </RequiredComponent>
           </FormElementContainer>
         );
       }}

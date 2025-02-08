@@ -802,7 +802,8 @@ const sendEventForm = requiredComponent(
     wrapGetInitialValues,
     wrapGetSettings,
     requiredComponent: "streamingMedia",
-    componentLabel: "Streaming Media",
+    title: "the Send streaming media event action",
+    whole: true,
   },
   [
     instancePicker({ name: "instanceName", onInstanceChange }),

@@ -42,7 +42,8 @@ const wrapGetSettings =
 const evaluateRulesetsForm = requiredComponent(
   {
     requiredComponent: "rulesEngine",
-    componentLabel: "Rules Engine",
+    title: "the Evaluate rulesets action",
+    whole: true,
     wrapGetInitialValues,
     wrapGetSettings,
   },

@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
+import { mixed } from "yup";
 import ComponentDependency from "../components/requiredComponent";
 import form from "./form";
 
@@ -25,25 +26,46 @@ import form from "./form";
  * @returns {Form} A notice form element.
  */
 const RequiredComponent = (
-  { requiredComponent, title, whole = false, ...formOptions },
+  {
+    requiredComponent,
+    title,
+    whole = false,
+    deprecated = false,
+    ...formOptions
+  },
   children = [],
 ) => {
-
-  const wrapGetInitialValues = wrapped => ({ initInfo }) => {
-    const initialValues = wrapped({ initInfo });
-    if (whole) {
+  const wrapGetValidationShape =
+    (wrapped) =>
+    ({ initInfo, existingValidationShape }) => {
+      const components = initInfo?.extensionSettings?.components || {};
+      const isComponentDisabled = components[requiredComponent] === false;
       const isNew = initInfo?.settings == null;
-      initialValues.isNew = isNew;
-    }
-    return initialValues;
-  };
+
+      if (isComponentDisabled && isNew && whole) {
+        return {
+          requiredComponent: mixed().test(
+            "requiredComponent",
+            `The ${requiredComponent} component is disabled.`,
+            () => false,
+          ),
+        };
+      }
+
+      if (isComponentDisabled && !whole) {
+        // No need for any validation because the child form will never be shown
+        return {};
+      }
+
+      return wrapped({ initInfo, existingValidationShape });
+    };
 
   const {
     getInitialValues,
     getSettings,
-    validationShape,
+    getValidationShape,
     Component: ChildComponent,
-  } = form(formOptions, children);
+  } = form({ ...formOptions, wrapGetValidationShape }, children);
 
   const Component = (props) => {
     const { initInfo } = props;
@@ -51,7 +73,9 @@ const RequiredComponent = (
       <ComponentDependency
         initInfo={initInfo}
         requiredComponent={requiredComponent}
-        componentLabel={componentLabel}
+        title={title}
+        whole={whole}
+        deprecated={deprecated}
       >
         <ChildComponent {...props} />
       </ComponentDependency>
@@ -65,14 +89,16 @@ const RequiredComponent = (
   return {
     getInitialValues,
     getSettings,
-    validationShape,
+    getValidationShape,
     Component,
   };
 };
 
 RequiredComponent.propTypes = {
   requiredComponent: PropTypes.string.isRequired,
-  componentLabel: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  whole: PropTypes.bool,
+  deprecated: PropTypes.bool,
 };
 
 export default RequiredComponent;

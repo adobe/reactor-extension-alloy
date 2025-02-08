@@ -10,62 +10,25 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
-import { object, string } from "yup";
-import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
-import render from "../render";
-import ExtensionView from "../components/extensionView";
-import singleDataElementRegex from "../constants/singleDataElementRegex";
-import { DATA_ELEMENT_REQUIRED } from "../constants/validationErrorMessages";
-import FormElementContainer from "../components/formElementContainer";
-import DataElementSelector from "../components/dataElementSelector";
-import ComponentDependency from "../components/componentDependency";
+import renderForm from "../forms/renderForm";
+import requiredComponent from "../forms/requiredComponent";
+import dataElement from "../forms/dataElement";
 
-const getInitialValues = ({ initInfo }) => {
-  const { eventMergeId = "" } = initInfo.settings || {};
-  return {
-    eventMergeId,
-  };
-};
+const resetEventMergeIdForm = requiredComponent(
+  {
+    requiredComponent: "eventMerge",
+    title: "the Reset event merge ID action",
+    whole: true,
+  },
+  [
+    dataElement({
+      name: "eventMergeId",
+      label: "Event merge ID",
+      description:
+        "Please specify the data element that represents the event merge ID you would like to reset.",
+      isRequired: true,
+    }),
+  ],
+);
 
-const getSettings = ({ values }) => {
-  return values;
-};
-
-const validationSchema = object().shape({
-  eventMergeId: string()
-    .required(DATA_ELEMENT_REQUIRED)
-    .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
-});
-
-const ResetEventMergeId = () => {
-  return (
-    <ExtensionView
-      getInitialValues={getInitialValues}
-      getSettings={getSettings}
-      formikStateValidationSchema={validationSchema}
-      render={({ initInfo }) => (
-        <FormElementContainer>
-          <ComponentDependency
-            initInfo={initInfo}
-            requiredComponent="eventMerge"
-            componentLabel="Event Merge"
-          >
-            <DataElementSelector>
-              <FormikTextField
-                data-test-id="eventMergeIdField"
-                name="eventMergeId"
-                label="Event merge ID"
-                description="Please specify the data element that represents the event merge ID you would like to reset."
-                width="size-5000"
-                isRequired
-              />
-            </DataElementSelector>
-          </ComponentDependency>
-        </FormElementContainer>
-      )}
-    />
-  );
-};
-
-render(ResetEventMergeId);
+renderForm(resetEventMergeIdForm);

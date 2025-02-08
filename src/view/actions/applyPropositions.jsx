@@ -21,7 +21,8 @@ import requiredComponent from "../forms/requiredComponent";
 const applyPropositionsForm = requiredComponent(
   {
     requiredComponent: "personalization",
-    componentLabel: "Personalization",
+    title: "the Apply proposition action",
+    whole: true,
   },
   [
     instancePicker({ name: "instanceName" }),
