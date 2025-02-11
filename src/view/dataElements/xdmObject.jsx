@@ -96,7 +96,7 @@ const initializeSelectedSchema = async ({
       context.schema = schema;
       return;
     }
-  } catch (e) {
+  } catch {
     throw new UserReportableError(
       "Could not find the schema selected previously. You will need to re-create this data element using a different schema.",
     );

@@ -338,7 +338,9 @@ const Configuration = ({ initInfo, context }) => {
       allowsMultipleExpanded
     >
       <Disclosure id="components">
-        <DisclosureTitle>Custom build components</DisclosureTitle>
+        <DisclosureTitle data-test-id="custom-build-heading">
+          Custom build components
+        </DisclosureTitle>
         <DisclosurePanel>
           <ComponentsSection />
         </DisclosurePanel>

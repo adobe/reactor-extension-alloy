@@ -176,7 +176,7 @@ const updateRows = ({
         expandPaths,
       });
       setValue(variables).then(() => submitForm());
-    } catch (e) {
+    } catch {
       setValue([{ key: "", value: "" }]).then(() => submitForm());
     }
   } else {

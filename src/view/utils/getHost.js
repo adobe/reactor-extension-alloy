@@ -32,7 +32,7 @@ const getHost = ({ imsAccess, productionHost, stagingHost }) => {
     environment = imsAccess
       ? JSON.parse(atob(tokenParts[1])).as
       : IMS_HOST_PREFIX_PROD;
-  } catch (e) {
+  } catch {
     // catches json parsing issues
     // NOTE: this token is unlikely to work anyway
     environment = IMS_HOST_PREFIX_PROD;

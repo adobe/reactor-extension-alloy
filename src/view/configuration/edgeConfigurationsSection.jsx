@@ -309,7 +309,7 @@ const getSelectInputMethodStateForNewInstance = async ({
         orgId,
         imsAccess,
       }));
-    } catch (error) {
+    } catch {
       context.current.fetchSandboxError = true;
     }
   }
@@ -332,10 +332,10 @@ const getSelectInputMethodStateForNewInstance = async ({
         limit: 1000,
         sandbox: firstPageOfSandboxes[0].name,
       }));
-    } catch (error) {
+    } catch {
       context.current.fetchConfigsError = true;
     }
-    // eslint-disable-next-line prefer-const
+
     context.current.datastreams = firstPageOfDatastreams;
 
     selectInputMethodState.productionEnvironment.sandbox =
@@ -441,7 +441,7 @@ export const bridge = {
           instanceValues.edgeConfigInputMethod = INPUT_METHOD.SELECT;
           isSuccessfullyPopulatedForSelectInputMethod = true;
         }
-      } catch (e) {
+      } catch {
         instanceValues.edgeConfigInputMethod = INPUT_METHOD.FREEFORM;
       }
     }
@@ -459,7 +459,7 @@ export const bridge = {
             imsAccess,
             context,
           });
-      } catch (error) {
+      } catch {
         // do nothing we will fall back to free form
       }
       instanceValues.edgeConfigFreeformInputMethod =

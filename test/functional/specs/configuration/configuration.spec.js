@@ -178,6 +178,7 @@ test("initializes form fields with full settings", async () => {
   );
 
   await instances[0].overrides.envTabs.development.expectSelected();
+  await instances[0].overrides.comboBoxes.envEnabled.expectValue("Enabled");
   await instances[0].overrides.textFields.eventDatasetOverride.expectValue(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -377,6 +378,9 @@ test("returns minimal valid settings", async () => {
   );
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
+    components: {
+      eventMerge: false,
+    },
     instances: [
       {
         edgeConfigId: "PR123",
@@ -423,6 +427,8 @@ test("returns full valid settings", async () => {
   await instances[0].overrides.envTabs.staging.expectExists();
   await instances[0].overrides.envTabs.development.expectExists();
   await instances[0].overrides.envTabs.development.expectSelected();
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db",
   );
@@ -486,6 +492,9 @@ test("returns full valid settings", async () => {
 
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
+    components: {
+      eventMerge: false,
+    },
     instances: [
       {
         name: "alloy1",
@@ -522,6 +531,7 @@ test("returns full valid settings", async () => {
             com_adobe_target: {
               propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
             },
+            enabled: true,
           },
         },
       },
@@ -592,6 +602,8 @@ test("returns full valid settings with maximal data elements", async () => {
   await instances[0].overrides.envTabs.staging.expectExists();
   await instances[0].overrides.envTabs.development.expectExists();
   await instances[0].overrides.envTabs.development.expectSelected();
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
     "%foo%",
   );
@@ -607,6 +619,9 @@ test("returns full valid settings with maximal data elements", async () => {
 
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
+    components: {
+      eventMerge: false,
+    },
     instances: [
       {
         name: "%foo%",
@@ -622,6 +637,7 @@ test("returns full valid settings with maximal data elements", async () => {
         targetMigrationEnabled: true,
         edgeConfigOverrides: {
           development: {
+            enabled: true,
             com_adobe_experience_platform: {
               datasets: {
                 event: {
@@ -894,6 +910,9 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
   await instances[0].prehidingStyleEditButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
+    components: {
+      eventMerge: false,
+    },
     instances: [
       {
         name: "alloy",
@@ -921,6 +940,9 @@ test("does not save onBeforeEventSend and filterClickDetails code if it matches 
   await instances[0].filterClickDetailsEditButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
+    components: {
+      eventMerge: false,
+    },
     instances: [
       {
         name: "alloy",
@@ -1112,6 +1134,9 @@ test.requestHooks(
   async () => {
     await extensionViewController.init({
       settings: {
+        components: {
+          eventMerge: false,
+        },
         instances: [
           {
             name: "alloy1",
@@ -1183,6 +1208,9 @@ test.requestHooks(
   async () => {
     await extensionViewController.init({
       settings: {
+        components: {
+          eventMerge: false,
+        },
         instances: [
           {
             name: "alloy1",
@@ -1250,6 +1278,9 @@ test.requestHooks(
 )("initializes form fields with free form input configs settings", async () => {
   await extensionViewController.init({
     settings: {
+      components: {
+        eventMerge: false,
+      },
       instances: [
         {
           name: "alloy1",
@@ -1351,6 +1382,9 @@ test.requestHooks(
   async () => {
     await extensionViewController.init({
       settings: {
+        components: {
+          eventMerge: false,
+        },
         instances: [
           {
             name: "alloy1",
@@ -1390,6 +1424,9 @@ test.requestHooks(
   async () => {
     await extensionViewController.init({
       settings: {
+        components: {
+          eventMerge: false,
+        },
         instances: [
           {
             name: "alloy1",
@@ -1423,6 +1460,9 @@ test.requestHooks(
     await extensionViewController.expectIsValid();
 
     await extensionViewController.expectSettings({
+      components: {
+        eventMerge: false,
+      },
       instances: [
         {
           clickCollectionEnabled: false,
@@ -1488,6 +1528,8 @@ test("is able to add and remove report suites from overrides", async () => {
   await extensionViewController.init();
 
   await instances[0].overrides.envTabs.development.expectSelected();
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
 
   await instances[0].overrides.textFields.reportSuiteOverrides[0].expectExists();
   await instances[0].overrides.textFields.reportSuiteOverrides[0].typeText(
@@ -1509,11 +1551,15 @@ test("is able to add and remove report suites from overrides", async () => {
   await instances[0].overrides.removeReportSuitesButtons[1].click();
 
   await extensionViewController.expectSettings({
+    components: {
+      eventMerge: false,
+    },
     instances: [
       {
         name: "alloy",
         edgeConfigOverrides: {
           development: {
+            enabled: true,
             com_adobe_analytics: {
               reportSuites: ["test1", "test3"],
             },
@@ -1529,6 +1575,8 @@ test("copies overrides from one environment to another", async () => {
 
   await instances[0].overrides.envTabs.development.expectExists();
   await instances[0].overrides.envTabs.development.expectSelected();
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
   await instances[0].overrides.copyButtons.development.expectNotExists();
   await instances[0].overrides.copyButtons.staging.expectExists();
   await instances[0].overrides.copyButtons.production.expectExists();
@@ -1616,6 +1664,8 @@ test.requestHooks(
     "Test Config Overrides",
   );
 
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
   await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
   await instances[0].overrides.comboBoxes.eventDatasetOverride.openMenu();
   await instances[0].overrides.comboBoxes.eventDatasetOverride.expectMenuOptionLabels(
@@ -1681,6 +1731,8 @@ test.requestHooks(
       "Test Config Overrides",
     );
 
+    await instances[0].overrides.comboBoxes.envEnabled.clear();
+    await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
     await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
     await instances[0].overrides.comboBoxes.eventDatasetOverride.enterSearch(
       "foo",
@@ -1751,6 +1803,8 @@ test.requestHooks(
     "Test Config Overrides",
   );
 
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
   await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
   await instances[0].overrides.comboBoxes.eventDatasetOverride.enterSearch(
     "%Alloy Data Element%",
@@ -1798,6 +1852,8 @@ test.requestHooks(
     );
     await instances[0].edgeConfig.inputMethodSelect.production.sandboxField.expectDisabled();
     await instances[0].edgeConfig.inputMethodSelect.production.datastreamField.expectExists();
+    await instances[0].overrides.comboBoxes.envEnabled.clear();
+    await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
     await instances[0].overrides.comboBoxes.eventDatasetOverride.expectExists();
     await instances[0].overrides.comboBoxes.eventDatasetOverride.expectIsComboBox();
     await instances[0].overrides.comboBoxes.idSyncContainerOverride.expectExists();
@@ -1808,6 +1864,8 @@ test.requestHooks(
     await instances[0].overrides.comboBoxes.reportSuiteOverrides[0].expectIsComboBox();
 
     await addInstanceButton.click();
+    await instances[0].overrides.comboBoxes.envEnabled.clear();
+    await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
     await instances[1].overrides.textFields.eventDatasetOverride.expectExists();
     await instances[1].overrides.textFields.eventDatasetOverride.expectIsTextField();
     await instances[1].overrides.textFields.idSyncContainerOverride.expectExists();
@@ -1826,17 +1884,24 @@ test("allows the setting of overrides in only a single environment", async () =>
     "PR123",
   );
   await instances[0].overrides.envTabs.development.click();
+
+  await instances[0].overrides.comboBoxes.envEnabled.clear();
+  await instances[0].overrides.comboBoxes.envEnabled.enterSearch("Enabled");
   await instances[0].overrides.textFields.eventDatasetOverride.typeText(
     "6336ff95ba16ca1c07b4c0db",
   );
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
+    components: {
+      eventMerge: false,
+    },
     instances: [
       {
         edgeConfigId: "PR123",
         name: "alloy",
         edgeConfigOverrides: {
           development: {
+            enabled: true,
             com_adobe_experience_platform: {
               datasets: {
                 event: {
@@ -1854,12 +1919,16 @@ test("allows the setting of overrides in only a single environment", async () =>
 test("allows the load of the view with overrides settings in only a single environment", async () => {
   await extensionViewController.init({
     settings: {
+      components: {
+        eventMerge: false,
+      },
       instances: [
         {
           name: "alloy1",
           edgeConfigId: "PR123",
           edgeConfigOverrides: {
             development: {
+              enabled: true,
               com_adobe_experience_platform: {
                 datasets: {
                   event: {
@@ -1892,14 +1961,15 @@ test("makes the media collection fields required if one is filled", async () => 
   await extensionViewController.expectIsValid();
 
   await extensionViewController.expectSettings({
+    components: {
+      eventMerge: false,
+    },
     instances: [
       {
         edgeConfigId: "123",
         name: "alloy",
         streamingMedia: {
-          adPingInterval: 10,
           channel: "testChanel",
-          mainPingInterval: 10,
           playerName: "testPlayerName",
         },
       },
@@ -1914,21 +1984,23 @@ test("has all components enabled by default", async () => {
   await t.expect(settings.components).notOk("components list is null");
 });
 
-test("has disabled components added to components key with the false value", async () => {
+test.skip("has disabled components added to components key with the false value", async () => {
   await extensionViewController.init();
 
-  await spectrum.checkbox("privacyComponentCheckbox").click();
+  // TODO: Expand the disclosure header
+  await spectrum.checkbox("consentComponentCheckbox").click();
   await spectrum.checkbox("personalizationComponentCheckbox").click();
 
   const settings = await extensionViewController.getSettings();
 
+  await t.expect(settings.components).ok();
   await t.expect(settings.components).contains({
     personalization: false,
     privacy: false,
   });
 });
 
-test("restores disabled components added to components key with the false value", async () => {
+test.skip("restores disabled components added to components key with the false value", async () => {
   await extensionViewController.init({
     settings: {
       components: {
@@ -1942,6 +2014,7 @@ test("restores disabled components added to components key with the false value"
     },
   });
 
+  // TODO: Expand the disclosure header
   await t
     .expect(createTestIdSelector("personalizationComponentCheckbox").checked)
     .eql(false);

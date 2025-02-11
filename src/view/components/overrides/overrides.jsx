@@ -285,7 +285,7 @@ const Overrides = ({
                   if (value.includes(".")) {
                     return "The value must whole number.";
                   }
-                } catch (e) {
+                } catch {
                   return "The value must positive, whole number.";
                 }
                 return validateItemIsInContainersList(value);

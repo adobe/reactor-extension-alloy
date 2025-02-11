@@ -45,7 +45,8 @@ const ExtensionView = ({
         if (viewRegistrationRef.current?.validateFormikState) {
           errors = viewRegistrationRef.current.validateFormikState({ values });
         }
-      } catch (error) {
+      } catch (e) {
+        console.error(e);
         reportAsyncError(
           new Error("An error occurred while validating the view."),
         );
@@ -66,16 +67,16 @@ const ExtensionView = ({
       return false;
     }
 
-    await formikPropsRef.current.submitForm();
-
-    // The docs say that the promise submitForm returns
-    // will be rejected if there are errors, but that is not the case.
-    // Therefore, after the promise is resolved, we manually validate
-    // to see if the form is valid.
-    // https://github.com/jaredpalmer/formik/issues/1580
-    formikPropsRef.current.setSubmitting(false);
-
     try {
+      await formikPropsRef.current.submitForm();
+
+      // The docs say that the promise submitForm returns
+      // will be rejected if there are errors, but that is not the case.
+      // Therefore, after the promise is resolved, we manually validate
+      // to see if the form is valid.
+      // https://github.com/jaredpalmer/formik/issues/1580
+      formikPropsRef.current.setSubmitting(false);
+
       // Setting context to the values so you can use "$..." in when conditions
       const validationSchema =
         viewRegistrationRef.current?.formikStateValidationSchema ?? object();
@@ -83,8 +84,10 @@ const ExtensionView = ({
         abortEarly: false,
         context: formikPropsRef.current.values,
       });
-      return true;
-    } catch (error) {
+      // validate the formik state
+      const formikErrors = await formikPropsRef.current.validateForm();
+      return Object.keys(formikErrors).length === 0;
+    } catch {
       return false;
     }
   };

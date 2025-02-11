@@ -31,7 +31,6 @@ export default (a, b) => {
   let bNumber;
   let comparison;
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     ({ value: aMatch } = aIter.next());
     ({ value: bMatch } = bIter.next());
