@@ -14,7 +14,7 @@ import React, { useState, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 
 import { useFormik, FormikProvider } from "formik";
-import { object, ValidationError } from "yup";
+import { object } from "yup";
 import { ProgressCircle, View } from "@adobe/react-spectrum";
 import useExtensionBridge from "../utils/useExtensionBridge";
 import useReportAsyncError from "../utils/useReportAsyncError";
@@ -80,33 +80,14 @@ const ExtensionView = ({
       // Setting context to the values so you can use "$..." in when conditions
       const validationSchema =
         viewRegistrationRef.current?.formikStateValidationSchema ?? object();
-      console.debug("[CARTER] extensionView.jsx myValidateFormikState", {
-        errors: await formikPropsRef.current.validateForm(),
-        values: formikPropsRef.current.values,
-        validationSchema:
-          viewRegistrationRef.current?.formikStateValidationSchema,
-      });
       await validationSchema.validate(formikPropsRef.current.values, {
         abortEarly: false,
         context: formikPropsRef.current.values,
       });
-      return true;
-    } catch (e) {
-      if (e instanceof ValidationError) {
-        const innerErrors = e.inner.map(
-          (innerError) =>
-            `path="${innerError.path}" has ${innerError.name}: ${innerError.message}`,
-        );
-        console.error(
-          `[CARTER] extensionView.jsx myValidateFormikState: ${e.inner.length} inner errors: ${e.message}\n${innerErrors.join("\n")}`,
-          e.inner,
-        );
-      } else {
-        console.error(
-          `[CARTER] extensionView.jsx myValidateFormikState: ${e.message}`,
-          e,
-        );
-      }
+      // validate the formik state
+      const formikErrors = await formikPropsRef.current.validateForm();
+      return Object.keys(formikErrors).length === 0;
+    } catch {
       return false;
     }
   };
