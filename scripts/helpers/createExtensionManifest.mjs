@@ -145,7 +145,7 @@ const createEdgeConfigOverridesSchema = (isAction) => {
         },
       },
     },
-    com_adobe_audience_manager: {
+    com_adobe_audiencemanager: {
       type: "object",
       properties: {
         enabled: enabledDisabledOrDataElement,

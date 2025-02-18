@@ -140,7 +140,7 @@ export const bridge = {
             enabled: ENABLED_FIELD_VALUES.enabled,
             propertyToken: "",
           },
-          com_adobe_audience_manager: {
+          com_adobe_audiencemanager: {
             enabled: ENABLED_FIELD_VALUES.enabled,
           },
           com_adobe_launch_ssf: {
@@ -455,7 +455,7 @@ export const bridge = {
               enabled: enabledOrDataElementValidator,
               propertyToken: string().nullable(),
             }),
-            com_adobe_audience_manager: object({
+            com_adobe_audiencemanager: object({
               enabled: enabledOrDataElementValidator,
             }),
             com_adobe_launch_ssf: object({

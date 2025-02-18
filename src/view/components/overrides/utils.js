@@ -18,7 +18,7 @@ export const overridesKeys = Object.freeze([
   "com_adobe_experience_platform.com_adobe_edge_ajo",
   "com_adobe_analytics",
   "com_adobe_target",
-  "com_adobe_audience_manager",
+  "com_adobe_audiencemanager",
   "com_adobe_launch_ssf",
   "com_adobe_identity",
 ]);

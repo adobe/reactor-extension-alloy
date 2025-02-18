@@ -446,11 +446,11 @@ const Overrides = ({
                                 }
                                 allowsCustomValue
                                 validate={validateEnabledDisabledOrDataElement}
-                                name={`${prefix}.${env}.com_adobe_audience_manager.enabled`}
+                                name={`${prefix}.${env}.com_adobe_audiencemanager.enabled`}
                                 width="size-5000"
                                 pattern={enabledDisabledOrDataElementRegex}
                                 isDisabled={
-                                  !serviceStatus.com_adobe_audience_manager
+                                  !serviceStatus.com_adobe_audiencemanager
                                     .value
                                 }
                                 disabledDisplayValue="Disabled"

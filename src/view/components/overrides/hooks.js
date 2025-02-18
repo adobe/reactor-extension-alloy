@@ -149,11 +149,11 @@ const getServiceStatus = (apiResult) =>
       fieldName: "com_adobe_target.enabled",
       value: !apiResult ? true : deepGet(apiResult, "com_adobe_target.enabled"),
     },
-    com_adobe_audience_manager: {
-      fieldName: "com_adobe_audience_manager.enabled",
+    com_adobe_audiencemanager: {
+      fieldName: "com_adobe_audiencemanager.enabled",
       value: !apiResult
         ? true
-        : deepGet(apiResult, "com_adobe_audience_manager.enabled"),
+        : deepGet(apiResult, "com_adobe_audiencemanager.enabled"),
     },
     com_adobe_launch_ssf: {
       fieldName: "com_adobe_launch_ssf.enabled",
