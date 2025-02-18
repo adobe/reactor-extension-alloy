@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 module.exports =
-  ({ instanceManager, document, logger, getConfigOverrides }) =>
+  ({ instanceManager, window, logger, getConfigOverrides }) =>
   (settings, event) => {
     const { instanceName } = settings;
     const instance = instanceManager.getInstance(instanceName);
@@ -42,11 +42,12 @@ module.exports =
 
     const url = event.element.href;
     const edgeConfigOverrides = getConfigOverrides(settings);
+    const target = event.element.target || "_self";
 
     return instance("appendIdentityToUrl", {
       url,
       edgeConfigOverrides,
     }).then(({ url: newLocation }) => {
-      document.location = newLocation;
+      window.open(newLocation, target);
     });
   };

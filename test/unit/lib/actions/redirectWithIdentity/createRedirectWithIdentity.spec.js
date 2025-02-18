@@ -16,7 +16,7 @@ import createRedirectWithIdentity from "../../../../../src/lib/actions/redirectW
 describe("createRedirectWithIdentity", () => {
   let instanceManager;
   let instance;
-  let document;
+  let window;
   let redirectWithIdentity;
   let event;
   let logger;
@@ -29,7 +29,7 @@ describe("createRedirectWithIdentity", () => {
     instance = vi.fn();
     instanceManager.getInstance.mockReturnValue(instance);
     instance.mockResolvedValue({ url: "newurl" });
-    document = { location: "originalLocation" };
+    window = { open: vi.fn() };
     getConfigOverrides = vi.fn();
     event = {
       nativeEvent: {
@@ -45,7 +45,7 @@ describe("createRedirectWithIdentity", () => {
 
     redirectWithIdentity = createRedirectWithIdentity({
       instanceManager,
-      document,
+      window,
       logger,
       getConfigOverrides,
     });
@@ -59,14 +59,14 @@ describe("createRedirectWithIdentity", () => {
     );
     expect(returnValue).toBeUndefined();
     expect(instanceManager.getInstance).toHaveBeenCalledWith("myinstance");
-    expect(document.location).toEqual("originalLocation");
+    expect(window.open).not.toHaveBeenCalled();
     expect(event.nativeEvent.preventDefault).not.toHaveBeenCalled();
     expect(logger.warn).toHaveBeenCalled();
   });
 
   it("doesn't redirect when there is no nativeEvent", async () => {
     await redirectWithIdentity({ instanceName: "myinstance" }, {});
-    expect(document.location).toEqual("originalLocation");
+    expect(window.open).not.toHaveBeenCalled();
     expect(logger.warn).toHaveBeenCalled();
   });
 
@@ -77,7 +77,7 @@ describe("createRedirectWithIdentity", () => {
         nativeEvent: {},
       },
     );
-    expect(document.location).toEqual("originalLocation");
+    expect(window.open).not.toHaveBeenCalled();
     expect(logger.warn).toHaveBeenCalled();
   });
 
@@ -91,7 +91,7 @@ describe("createRedirectWithIdentity", () => {
         },
       },
     );
-    expect(document.location).toBe("newurl");
+    expect(window.open).toHaveBeenCalledWith("newurl", "_self");
     expect(logger.warn).not.toHaveBeenCalled();
     expect(instance).toHaveBeenCalledWith("appendIdentityToUrl", {
       url: "originalHref",
@@ -102,7 +102,13 @@ describe("createRedirectWithIdentity", () => {
   it("redirects", async () => {
     await redirectWithIdentity({ instanceName: "myinstance" }, event);
     expect(event.nativeEvent.preventDefault).toHaveBeenCalledTimes(1);
-    expect(document.location).toBe("newurl");
+    expect(window.open).toHaveBeenCalledWith("newurl", "_self");
+  });
+
+  it("redirects with target", async () => {
+    event.element.target = "_blank";
+    await redirectWithIdentity({ instanceName: "myinstance" }, event);
+    expect(window.open).toHaveBeenCalledWith("newurl", "_blank");
   });
 
   it("redirects with edge config overrides", async () => {
