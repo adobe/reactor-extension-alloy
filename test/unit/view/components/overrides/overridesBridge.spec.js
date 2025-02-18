@@ -261,7 +261,80 @@ describe("overridesBridge", () => {
       });
     });
 
-    it("should copy old settings to new settings", () => {
+    it("should migrate from com_adobe_audience_manager to com_adobe_audiencemanager", () => {
+      const instanceSettings = {
+        edgeConfigOverrides: {
+          development: {
+            com_adobe_audience_manager: {
+              enabled: false,
+            },
+          },
+          staging: {
+            com_adobe_audience_manager: {
+              enabled: false,
+            },
+          },
+          production: {
+            com_adobe_audience_manager: {
+              enabled: false,
+            },
+          },
+        },
+      };
+      const result = bridge.getInitialInstanceValues({
+        instanceSettings,
+      });
+      const expected = envs.reduce((acc, env) => {
+        acc[env] = {
+          sandbox: "",
+          datastreamId: "",
+          datastreamIdInputMethod: "freeform",
+          enabled: MATCH_FIELD.enabled,
+          com_adobe_audiencemanager: {
+            enabled: FIELD.disabled,
+          },
+          com_adobe_experience_platform: {
+            enabled: FIELD.enabled,
+            datasets: {
+              event: {
+                datasetId: "",
+              },
+            },
+            com_adobe_edge_ode: {
+              enabled: FIELD.enabled,
+            },
+            com_adobe_edge_segmentation: {
+              enabled: FIELD.enabled,
+            },
+            com_adobe_edge_destinations: {
+              enabled: FIELD.enabled,
+            },
+            com_adobe_edge_ajo: {
+              enabled: FIELD.enabled,
+            },
+          },
+          com_adobe_analytics: {
+            enabled: FIELD.enabled,
+            reportSuites: [""],
+          },
+          com_adobe_identity: {
+            idSyncContainerId: undefined,
+          },
+          com_adobe_target: {
+            enabled: FIELD.enabled,
+            propertyToken: "",
+          },
+          com_adobe_launch_ssf: {
+            enabled: FIELD.enabled,
+          },
+        };
+        return acc;
+      }, {});
+
+      expect(result).toEqual({ edgeConfigOverrides: expected });
+    });
+
+    it("should copy environment-unaware settings to environment-aware settings", () => {
       const instanceSettings = {
         name: "alloy",
         context: [
