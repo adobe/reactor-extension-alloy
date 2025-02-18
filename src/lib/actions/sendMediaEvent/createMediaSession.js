@@ -50,14 +50,12 @@ module.exports =
       options.playerId = playerId;
 
       options.getPlayerDetails = () => {
-        // eslint-disable-next-line no-underscore-dangle
         const playerDetails = {
           // eslint-disable-next-line no-underscore-dangle
           playhead: window._satellite.getVar(playhead),
         };
 
         if (qoeDataDetails) {
-          // eslint-disable-next-line no-underscore-dangle
           playerDetails.qoeDataDetails = satelliteApi.getVar(qoeDataDetails);
         }
 
