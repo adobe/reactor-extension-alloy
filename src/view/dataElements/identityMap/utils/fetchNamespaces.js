@@ -25,7 +25,7 @@ export default async ({ orgId, imsAccess, sandbox }) => {
       path: "/data/core/idnamespace/identities",
       headers,
     });
-  } catch (e) {
+  } catch {
     // TODO: Should we be reporting an error instead?
     return [];
   }

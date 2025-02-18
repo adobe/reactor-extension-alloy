@@ -107,8 +107,8 @@ export default function jsonOptionalEditor(
         } else {
           try {
             settings[name] = JSON.parse(values[`${name}Whole`]);
-          } catch (e) {
-            // eslint-disable-next-line no-empty
+          } catch {
+            // do nothing
           }
         }
       } else if (values[name] !== "") {

@@ -66,7 +66,6 @@ const fetchConfigs = async ({
   } = parsedResponse;
 
   return {
-    // eslint-disable-next-line no-underscore-dangle
     results: _embedded?.records ?? [],
     // parsedBody.page won't exist if there were 0 results
     nextPage: _links && _links.next ? _links.next.href : null,
