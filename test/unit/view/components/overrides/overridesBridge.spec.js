@@ -64,7 +64,7 @@ describe("overridesBridge", () => {
             enabled: FIELD.enabled,
             propertyToken: "",
           },
-          com_adobe_audience_manager: {
+          com_adobe_audiencemanager: {
             enabled: FIELD.enabled,
           },
           com_adobe_launch_ssf: {
@@ -162,7 +162,7 @@ describe("overridesBridge", () => {
             enabled: FIELD.disabled,
             propertyToken: "",
           },
-          com_adobe_audience_manager: {
+          com_adobe_audiencemanager: {
             enabled: FIELD.enabled,
           },
           com_adobe_launch_ssf: {
@@ -205,7 +205,7 @@ describe("overridesBridge", () => {
             enabled: FIELD.enabled,
             propertyToken: "01dbc634-07c1-d8f9-ca69-b489a5ac5e94",
           },
-          com_adobe_audience_manager: {
+          com_adobe_audiencemanager: {
             enabled: FIELD.enabled,
           },
           com_adobe_launch_ssf: {
@@ -248,7 +248,7 @@ describe("overridesBridge", () => {
             enabled: FIELD.enabled,
             propertyToken: "",
           },
-          com_adobe_audience_manager: {
+          com_adobe_audiencemanager: {
             enabled: FIELD.enabled,
           },
           com_adobe_launch_ssf: {
@@ -261,7 +261,80 @@ describe("overridesBridge", () => {
       });
     });
 
-    it("should copy old settings to new settings", () => {
+    it("should migrate from com_adobe_audience_manager to com_adobe_audiencemanager", () => {
+      const instanceSettings = {
+        edgeConfigOverrides: {
+          development: {
+            com_adobe_audience_manager: {
+              enabled: false,
+            },
+          },
+          staging: {
+            com_adobe_audience_manager: {
+              enabled: false,
+            },
+          },
+          production: {
+            com_adobe_audience_manager: {
+              enabled: false,
+            },
+          },
+        },
+      };
+      const result = bridge.getInitialInstanceValues({
+        instanceSettings,
+      });
+      const expected = envs.reduce((acc, env) => {
+        acc[env] = {
+          sandbox: "",
+          datastreamId: "",
+          datastreamIdInputMethod: "freeform",
+          enabled: MATCH_FIELD.enabled,
+          com_adobe_audiencemanager: {
+            enabled: FIELD.disabled,
+          },
+          com_adobe_experience_platform: {
+            enabled: FIELD.enabled,
+            datasets: {
+              event: {
+                datasetId: "",
+              },
+            },
+            com_adobe_edge_ode: {
+              enabled: FIELD.enabled,
+            },
+            com_adobe_edge_segmentation: {
+              enabled: FIELD.enabled,
+            },
+            com_adobe_edge_destinations: {
+              enabled: FIELD.enabled,
+            },
+            com_adobe_edge_ajo: {
+              enabled: FIELD.enabled,
+            },
+          },
+          com_adobe_analytics: {
+            enabled: FIELD.enabled,
+            reportSuites: [""],
+          },
+          com_adobe_identity: {
+            idSyncContainerId: undefined,
+          },
+          com_adobe_target: {
+            enabled: FIELD.enabled,
+            propertyToken: "",
+          },
+          com_adobe_launch_ssf: {
+            enabled: FIELD.enabled,
+          },
+        };
+        return acc;
+      }, {});
+
+      expect(result).toEqual({ edgeConfigOverrides: expected });
+    });
+
+    it("should copy environment-unaware settings to environment-aware settings", () => {
       const instanceSettings = {
         name: "alloy",
         context: [
@@ -343,7 +416,7 @@ describe("overridesBridge", () => {
           com_adobe_launch_ssf: {
             enabled: FIELD.enabled,
           },
-          com_adobe_audience_manager: {
+          com_adobe_audiencemanager: {
             enabled: FIELD.enabled,
           },
           com_adobe_target: {
@@ -408,7 +481,7 @@ describe("overridesBridge", () => {
               enabled: FIELD.enabled,
               propertyToken: "",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: FIELD.enabled,
             },
             com_adobe_launch_ssf: {
@@ -451,7 +524,7 @@ describe("overridesBridge", () => {
               enabled: FIELD.enabled,
               propertyToken: "",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: FIELD.enabled,
             },
             com_adobe_launch_ssf: {
@@ -494,7 +567,7 @@ describe("overridesBridge", () => {
               enabled: FIELD.enabled,
               propertyToken: "",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: FIELD.enabled,
             },
             com_adobe_launch_ssf: {
@@ -554,7 +627,7 @@ describe("overridesBridge", () => {
               enabled: FIELD.enabled,
               propertyToken: "",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: FIELD.enabled,
             },
             com_adobe_launch_ssf: {
@@ -597,7 +670,7 @@ describe("overridesBridge", () => {
               enabled: FIELD.enabled,
               propertyToken: "",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: FIELD.enabled,
             },
             com_adobe_launch_ssf: {
@@ -640,7 +713,7 @@ describe("overridesBridge", () => {
               enabled: FIELD.enabled,
               propertyToken: "",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: FIELD.enabled,
             },
             com_adobe_launch_ssf: {
@@ -678,7 +751,7 @@ describe("overridesBridge", () => {
             com_adobe_target: {
               enabled: true,
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: true,
             },
             com_adobe_launch_ssf: {
@@ -728,7 +801,7 @@ describe("overridesBridge", () => {
                 enabled: FIELD.enabled,
                 propertyToken: "",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: FIELD.enabled,
               },
               com_adobe_launch_ssf: {
@@ -772,7 +845,7 @@ describe("overridesBridge", () => {
             com_adobe_target: {
               enabled: false,
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: false,
             },
             com_adobe_launch_ssf: {
@@ -822,7 +895,7 @@ describe("overridesBridge", () => {
                 enabled: FIELD.disabled,
                 propertyToken: "",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: FIELD.disabled,
               },
               com_adobe_launch_ssf: {
@@ -868,7 +941,7 @@ describe("overridesBridge", () => {
             com_adobe_target: {
               enabled: "%Data element of enabledness%",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: "%Data element of enabledness%",
             },
             com_adobe_launch_ssf: {
@@ -921,7 +994,7 @@ describe("overridesBridge", () => {
                 enabled: "%Data element of enabledness%",
                 propertyToken: "",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: "%Data element of enabledness%",
               },
               com_adobe_launch_ssf: {
@@ -987,7 +1060,7 @@ describe("overridesBridge", () => {
                 enabled: FIELD.enabled,
                 propertyToken: "",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: FIELD.enabled,
               },
               com_adobe_launch_ssf: {
@@ -1047,7 +1120,7 @@ describe("overridesBridge", () => {
               enabled: FIELD.enabled,
               propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: FIELD.disabled,
             },
             com_adobe_launch_ssf: {
@@ -1090,7 +1163,7 @@ describe("overridesBridge", () => {
             com_adobe_target: {
               propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: false,
             },
             com_adobe_launch_ssf: {
@@ -1130,7 +1203,7 @@ describe("overridesBridge", () => {
             com_adobe_identity: {
               idSyncContainerId: 30793,
             },
-            com_adobe_audience_manager: {},
+            com_adobe_audiencemanager: {},
             com_adobe_launch_ssf: {
               enabled: "   Disabled   ",
             },
@@ -1246,7 +1319,7 @@ describe("overridesBridge", () => {
             com_adobe_identity: {
               idSyncContainerId: "%Data Element 5%",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: "%Data Element 0%",
             },
             com_adobe_launch_ssf: {
@@ -1294,7 +1367,7 @@ describe("overridesBridge", () => {
             com_adobe_identity: {
               idSyncContainerId: "%Data Element 5%",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: "%Data Element 0%",
             },
             com_adobe_launch_ssf: {
@@ -1355,7 +1428,7 @@ describe("overridesBridge", () => {
               enabled: FIELD.disabled,
               propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: FIELD.disabled,
             },
             com_adobe_launch_ssf: {
@@ -1379,7 +1452,7 @@ describe("overridesBridge", () => {
             com_adobe_target: {
               enabled: FIELD.disabled,
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: FIELD.disabled,
             },
             com_adobe_launch_ssf: {
@@ -1409,7 +1482,7 @@ describe("overridesBridge", () => {
             com_adobe_target: {
               enabled: false,
             },
-            com_adobe_audience_manager: {
+            com_adobe_audiencemanager: {
               enabled: false,
             },
             com_adobe_launch_ssf: {
@@ -1472,7 +1545,7 @@ describe("overridesBridge", () => {
                 enabled: FIELD.disabled,
                 propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: FIELD.disabled,
               },
               com_adobe_launch_ssf: {
@@ -1518,7 +1591,7 @@ describe("overridesBridge", () => {
                 enabled: FIELD.disabled,
                 propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: FIELD.disabled,
               },
             },
@@ -1555,7 +1628,7 @@ describe("overridesBridge", () => {
                 enabled: FIELD.disabled,
                 propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: FIELD.disabled,
               },
             },
@@ -1592,7 +1665,7 @@ describe("overridesBridge", () => {
                 enabled: FIELD.disabled,
                 propertyToken: "a15d008c-5ec0-cabd-7fc7-ab54d56f01e8",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: FIELD.disabled,
               },
             },
@@ -1655,7 +1728,7 @@ describe("overridesBridge", () => {
               com_adobe_identity: {
                 idSyncContainerId: "%Data Element 5%",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: "%Data Element 0%",
               },
               com_adobe_launch_ssf: {
@@ -1694,7 +1767,7 @@ describe("overridesBridge", () => {
               com_adobe_identity: {
                 idSyncContainerId: "%Data Element 5%",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: "%Data Element 0%",
               },
               com_adobe_launch_ssf: {
@@ -1733,7 +1806,7 @@ describe("overridesBridge", () => {
               com_adobe_identity: {
                 idSyncContainerId: "%Data Element 5%",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: "%Data Element 0%",
               },
               com_adobe_launch_ssf: {
@@ -1785,7 +1858,7 @@ describe("overridesBridge", () => {
               com_adobe_identity: {
                 idSyncContainerId: "were%Data Element 5%rrerer",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: "%Data Element 0%",
               },
               com_adobe_launch_ssf: {
@@ -1837,7 +1910,7 @@ describe("overridesBridge", () => {
               com_adobe_identity: {
                 idSyncContainerId: "were%Data Element 5%rrerer",
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: "%Data Element 0%",
               },
               com_adobe_launch_ssf: {
@@ -1954,7 +2027,7 @@ describe("overridesBridge", () => {
               com_adobe_target: {
                 propertyToken: null,
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: null,
               },
               com_adobe_launch_ssf: {
@@ -1998,7 +2071,7 @@ describe("overridesBridge", () => {
               com_adobe_target: {
                 propertyToken: undefined,
               },
-              com_adobe_audience_manager: {
+              com_adobe_audiencemanager: {
                 enabled: undefined,
               },
               com_adobe_launch_ssf: {

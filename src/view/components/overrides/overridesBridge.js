@@ -95,6 +95,58 @@ const enabledMatchOrDataElementValidator = lazy((value) =>
     : mixed().oneOf(Object.values(ENABLED_MATCH_FIELD_VALUES)).nullable(),
 );
 
+/**
+ * Convert older versions of settings to newer versions of settings.
+ * @type {((instanceValues: { edgeConfigOverrides: ConfigOverridesLaunchSettings }) => { edgeConfigOverrides: ConfigOverridesLaunchSettings })[]}
+ */
+const migrations = [
+  /**
+   * Convert the environment-unaware settings into environment-aware settings.
+   */
+  (instanceValues) => {
+    const oldOverrides = overridesKeys
+      .filter((key) => deepGet(instanceValues, `edgeConfigOverrides.${key}`))
+      .reduce((acc, key) => {
+        deepSet(
+          acc,
+          key,
+          deepGet(instanceValues, `edgeConfigOverrides.${key}`),
+        );
+        return acc;
+      }, {});
+    if (Object.keys(oldOverrides).length > 0) {
+      const overrideSettings = { ...oldOverrides };
+      instanceValues.edgeConfigOverrides = {};
+      OVERRIDE_ENVIRONMENTS.forEach((env) => {
+        instanceValues.edgeConfigOverrides[env] = clone(
+          overrideSettings[env] ?? oldOverrides,
+        );
+      });
+    }
+    return instanceValues;
+  },
+  /**
+   * Convert the com_adobe_audience_manager to com_adobe_audiencemanager.
+   */
+  (instanceValues) => {
+    const oldProductName = "com_adobe_audience_manager";
+    OVERRIDE_ENVIRONMENTS.map(
+      (env) => `edgeConfigOverrides.${env}.${oldProductName}`,
+    )
+      .filter((key) => deepGet(instanceValues, key) !== undefined)
+      .forEach((oldKey) => {
+        const value = deepGet(instanceValues, oldKey);
+        const newKey = oldKey.replace(
+          oldProductName,
+          "com_adobe_audiencemanager",
+        );
+        deepSet(instanceValues, newKey, value);
+        deepSet(instanceValues, oldKey, undefined);
+      });
+    return instanceValues;
+  },
+];
+
 export const bridge = {
   /**
    * Get the default formik state for the overrides form.
@@ -140,7 +192,7 @@ export const bridge = {
             enabled: ENABLED_FIELD_VALUES.enabled,
             propertyToken: "",
           },
-          com_adobe_audience_manager: {
+          com_adobe_audiencemanager: {
             enabled: ENABLED_FIELD_VALUES.enabled,
           },
           com_adobe_launch_ssf: {
@@ -158,36 +210,19 @@ export const bridge = {
    */
   getInitialInstanceValues: ({ instanceSettings }) => {
     const instanceValues = {};
-    const cleanedInstanceSettings = clone(instanceSettings);
+    const cleanedInstanceSettings = migrations.reduce(
+      (acc, migration) => migration(acc),
+      clone(instanceSettings),
+    );
 
-    // copy settings from the pre-per-environment schema
-    const oldOverrides = overridesKeys
-      .filter((key) => deepGet(instanceSettings, `edgeConfigOverrides.${key}`))
-      .reduce((acc, key) => {
-        deepSet(
-          acc,
-          key,
-          deepGet(instanceSettings, `edgeConfigOverrides.${key}`),
-        );
-        return acc;
-      }, {});
-    if (Object.keys(oldOverrides).length > 0) {
-      const overrideSettings = { ...oldOverrides };
-      cleanedInstanceSettings.edgeConfigOverrides = {};
-      OVERRIDE_ENVIRONMENTS.forEach((env) => {
-        cleanedInstanceSettings.edgeConfigOverrides[env] = clone(
-          overrideSettings[env] ?? oldOverrides,
-        );
-      });
-    }
     // convert the 'enabled' settings from true/false to enabled/disabled
     OVERRIDE_ENVIRONMENTS.flatMap((env) =>
       overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}.enabled`),
     )
-      .filter((key) => deepGet(instanceSettings, key) !== undefined)
-      .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
+      .filter((key) => deepGet(cleanedInstanceSettings, key) !== undefined)
+      .filter((key) => !isDataElement(deepGet(cleanedInstanceSettings, key)))
       .forEach((key) => {
-        const value = deepGet(instanceSettings, key);
+        const value = deepGet(cleanedInstanceSettings, key);
         deepSet(
           cleanedInstanceSettings,
           key,
@@ -196,10 +231,10 @@ export const bridge = {
       });
     // convert the env-wide enabled/disabled from true/false to enabled/match datastream configuration
     OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}.enabled`)
-      .filter((key) => deepGet(instanceSettings, key) !== undefined)
-      .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
+      .filter((key) => deepGet(cleanedInstanceSettings, key) !== undefined)
+      .filter((key) => !isDataElement(deepGet(cleanedInstanceSettings, key)))
       .forEach((key) => {
-        const value = deepGet(instanceSettings, key);
+        const value = deepGet(cleanedInstanceSettings, key);
         deepSet(
           cleanedInstanceSettings,
           key,
@@ -455,7 +490,7 @@ export const bridge = {
               enabled: enabledOrDataElementValidator,
               propertyToken: string().nullable(),
             }),
-            com_adobe_audience_manager: object({
+            com_adobe_audiencemanager: object({
               enabled: enabledOrDataElementValidator,
             }),
             com_adobe_launch_ssf: object({
