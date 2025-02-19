@@ -209,8 +209,7 @@ export const bridge = {
             message: "Please provide a valid regular expression.",
             test(value) {
               try {
-                RegExp(value);
-                return true;
+                return RegExp(value) !== null;
               } catch {
                 return false;
               }

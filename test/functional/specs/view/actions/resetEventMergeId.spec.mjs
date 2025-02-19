@@ -15,7 +15,7 @@ import spectrum from "../../../helpers/spectrum.mjs";
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
 
-const eventMergeIdField = spectrum.textField("eventMergeIdField");
+const eventMergeIdField = spectrum.textField("eventMergeIdTextField");
 
 createExtensionViewFixture({
   title: "Reset Event Merge ID View",

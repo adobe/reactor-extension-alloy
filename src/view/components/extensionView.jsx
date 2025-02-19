@@ -95,14 +95,16 @@ const ExtensionView = ({
       // https://github.com/jaredpalmer/formik/issues/1580
       formikPropsRef.current.setSubmitting(false);
 
+      // validate the formik state
+      const formikErrors = await formikPropsRef.current.validateForm();
+
       // Setting context to the values so you can use "$..." in when conditions
       const validationSchema = getValidationSchema();
       await validationSchema.validate(formikPropsRef.current.values, {
         abortEarly: false,
         context: formikPropsRef.current.values,
       });
-      // validate the formik state
-      const formikErrors = await formikPropsRef.current.validateForm();
+
       return Object.keys(formikErrors).length === 0;
     } catch {
       return false;
