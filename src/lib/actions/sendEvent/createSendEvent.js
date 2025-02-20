@@ -10,10 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const clone = require("../../utils/clone");
+import clone from "../../utils/clone";
 
-module.exports =
-  ({ instanceManager, sendEventCallbackStorage, getConfigOverrides }) =>
+export default ({
+    instanceManager,
+    sendEventCallbackStorage,
+    getConfigOverrides,
+  }) =>
   (settings) => {
     const { instanceName, ...sendEventSettings } = settings;
     sendEventSettings.edgeConfigOverrides =

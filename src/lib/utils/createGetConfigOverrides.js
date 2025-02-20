@@ -78,4 +78,4 @@ const createGetConfigOverrides = (environmentName) => (settings) => {
   return computedConfigOverrides;
 };
 
-module.exports = createGetConfigOverrides;
+export default createGetConfigOverrides;
