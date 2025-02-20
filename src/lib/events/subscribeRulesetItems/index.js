@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createSubscribeRulesetItems = require("./createSubscribeRulesetItems");
-const instanceManager = require("../../instanceManager/index");
+import createSubscribeRulesetItems from "./createSubscribeRulesetItems";
+import instanceManager from "../../instanceManager/index";
 
-module.exports = createSubscribeRulesetItems({ instanceManager });
+export default createSubscribeRulesetItems({ instanceManager });

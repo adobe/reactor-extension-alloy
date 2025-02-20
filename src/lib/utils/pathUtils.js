@@ -9,6 +9,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+
+/* eslint-disable no-underscore-dangle */
+
 const IS_NUMBER_REGEX = /^-?[0-9]+$/;
 
 const resolvePath = (path) => {
@@ -96,5 +99,6 @@ const createOperation = (onLeafNode) => (mixed, pathString, value) => {
   ).value;
 };
 
-exports.setValue = createOperation(setValue);
-exports.deletePath = createOperation(deletePath);
+const _setValue = createOperation(setValue);
+const _deletePath = createOperation(deletePath);
+export { _deletePath as deletePath, _setValue as setValue };

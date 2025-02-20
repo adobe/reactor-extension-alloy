@@ -11,4 +11,4 @@ governing permissions and limitations under the License.
 
 // This is just a store of variables indexed by their cacheId
 
-module.exports = () => ({});
+export default () => ({});

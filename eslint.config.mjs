@@ -41,6 +41,7 @@ export default [
   },
   {
     files: ["**/*.{mjs,cjs,js,jsx}"],
+    ignores: ["src/lib/runAlloy.js", "dist"],
     plugins: {
       "unused-imports": unusedImports,
       vitest: vitestPlugin,

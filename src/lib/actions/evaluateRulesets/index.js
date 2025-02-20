@@ -10,9 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createEvaluateRulesets = require("./createEvaluateRulesets");
-const instanceManager = require("../../instanceManager/index");
+import createEvaluateRulesets from "./createEvaluateRulesets";
+import instanceManager from "../../instanceManager/index";
 
-module.exports = createEvaluateRulesets({
+export default createEvaluateRulesets({
   instanceManager,
 });
