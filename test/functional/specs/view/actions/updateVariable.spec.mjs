@@ -196,18 +196,18 @@ test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
   },
 );
 
-test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
+test.requestHooks(dataElementMocks.element3, dataElementsMocks.multiple, schemaMocks.basic)(
   "doesn't show warning when the schema version is the same",
-  async () => {
+  async (t) => {
     await extensionViewController.init({
       propertySettings: {
         id: "PRabcd",
       },
       settings: {
-        dataElementId: "DE1",
+        dataElementId: "DE3",
         schema: {
-          id: "https://ns.adobe.com/unifiedjsqeonly/schemas/8f9fc4c28403e4428bbe7b97436322c44a71680349dfd489",
-          version: "1.2",
+          id: "sch123",
+          version: "1.0",
         },
         data: {},
       },
