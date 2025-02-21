@@ -10,11 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createEventMergeId = require("./createEventMergeId");
-const instanceManager = require("../../instanceManager/index");
-const { eventMergeIdCache } = require("../../index");
+import createEventMergeId from "./createEventMergeId";
+import instanceManager from "../../instanceManager/index";
+import { eventMergeIdCache } from "../../index";
 
-module.exports = createEventMergeId({
+export default createEventMergeId({
   instanceManager,
   eventMergeIdCache,
 });
