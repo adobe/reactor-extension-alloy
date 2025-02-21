@@ -26,6 +26,13 @@ export default class ErrorBoundary extends Component {
     return { error };
   }
 
+  componentDidUpdate(_, { error: prevError }) {
+    const { error } = this.state;
+    if (error && prevError !== error) {
+      window.dispatchEvent(new Event("extension-reactor-alloy:rendered"));
+    }
+  }
+
   render() {
     const { error } = this.state;
     const { children } = this.props;
