@@ -15,6 +15,7 @@ import responseHeaders from "./responseHeaders.mjs";
 
 const DATA_ELEMENT_1_REGEX = /data_elements\/DE1/;
 const DATA_ELEMENT_2_REGEX = /data_elements\/DE2/;
+const DATA_ELEMENT_3_REGEX = /data_elements\/DE3/;
 const DATA_SOLUTIONS_ELEMENT_1_REGEX = /data_elements\/SDE1/;
 
 const testDataVariable1 = {
@@ -49,6 +50,23 @@ const testDataVariable2 = {
     }),
   },
 };
+
+const testDataVariable3 = {
+  id: "DE3",
+  attributes: {
+    name: "Test data variable 3",
+    delegate_descriptor_id: "adobe-alloy::dataElements::variable",
+    settings: JSON.stringify({
+      sandbox: {
+        name: "prod",
+      },
+      schema: {
+        id: "sch123",
+        version: "1.0",
+      },
+    }),
+  },
+};
 const testSolutionsVariable1 = {
   id: "SDE1",
   attributes: {
@@ -67,6 +85,10 @@ export const element1 = RequestMock()
 export const element2 = RequestMock()
   .onRequestTo({ url: DATA_ELEMENT_2_REGEX, method: "GET" })
   .respond({ data: testDataVariable2 }, 200, responseHeaders);
+
+export const element3 = RequestMock()
+  .onRequestTo({ url: DATA_ELEMENT_3_REGEX, method: "GET" })
+  .respond({ data: testDataVariable3 }, 200, responseHeaders);
 
 export const solutionsElement1 = RequestMock()
   .onRequestTo({ url: DATA_SOLUTIONS_ELEMENT_1_REGEX, method: "GET" })

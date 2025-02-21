@@ -72,6 +72,8 @@ export default {
           initInfo,
           sharedViewMethodMocks,
         });
+        // This promise will resolve when the extension view is rendered.
+        return window.initializeExtensionViewPromise;
       },
       {
         dependencies: {
