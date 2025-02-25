@@ -67,8 +67,7 @@ const ExtensionView = ({
         if (viewRegistrationRef.current?.validateFormikState) {
           errors = viewRegistrationRef.current.validateFormikState({ values });
         }
-      } catch (e) {
-        console.error(e);
+      } catch {
         reportAsyncError(
           new Error("An error occurred while validating the view."),
         );
@@ -76,7 +75,7 @@ const ExtensionView = ({
 
       return errors;
     },
-    validationSchema: getValidationSchema,
+    validationSchema: getValidationSchema(),
   });
 
   const myValidateFormikState = async () => {
@@ -95,9 +94,6 @@ const ExtensionView = ({
       // https://github.com/jaredpalmer/formik/issues/1580
       formikPropsRef.current.setSubmitting(false);
 
-      // validate the formik state
-      const formikErrors = await formikPropsRef.current.validateForm();
-
       // Setting context to the values so you can use "$..." in when conditions
       const validationSchema = getValidationSchema();
       await validationSchema.validate(formikPropsRef.current.values, {
@@ -105,6 +101,8 @@ const ExtensionView = ({
         context: formikPropsRef.current.values,
       });
 
+      // validate the formik state
+      const formikErrors = await formikPropsRef.current.validateForm();
       return Object.keys(formikErrors).length === 0;
     } catch {
       return false;

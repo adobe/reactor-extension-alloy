@@ -39,7 +39,11 @@ const RequiredComponent = ({
       // This is returned when the component is disabled and the item is new. We want
       // to only show the error.
       return (
-        <InlineAlert variant="negative" width="size-5000">
+        <InlineAlert
+          variant="negative"
+          width="size-5000"
+          data-test-id="requiredComponentError"
+        >
           <Heading>Custom build component disabled</Heading>
           <Content>
             You cannot create {title} because a custom build component is
@@ -54,7 +58,11 @@ const RequiredComponent = ({
     // to still show the form, but with a warning.
     return (
       <>
-        <InlineAlert variant="notice" width="size-5000">
+        <InlineAlert
+          variant="notice"
+          width="size-5000"
+          data-test-id="requiredComponentWarning"
+        >
           <Heading>Custom build component disabled</Heading>
           <Content>
             Warning, {title} will not function correctly because a custom build

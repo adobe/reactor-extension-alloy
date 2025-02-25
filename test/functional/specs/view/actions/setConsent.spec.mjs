@@ -19,6 +19,7 @@ import overrideViewSelectors from "../../../helpers/overrideViewSelectors.mjs";
 import * as sandboxesMocks from "../../../helpers/endpointMocks/sandboxesMocks.mjs";
 import * as datastreamsMocks from "../../../helpers/endpointMocks/datastreamsMocks.mjs";
 import * as datastreamMocks from "../../../helpers/endpointMocks/datastreamMocks.mjs";
+import runCustomBuildTests from "../../runCustomBuildTests.mjs";
 
 const generateOptionsWithDataElement = (container, prefix, options) =>
   [...options, "DataElement"].reduce(
@@ -84,6 +85,14 @@ createExtensionViewFixture({
 
 runCommonExtensionViewTests({
   extensionSettings: mockExtensionSettings,
+});
+
+runCustomBuildTests({
+  requiredComponent: "consent",
+  minimumValidSettings: {
+    instanceName: "alloy",
+    consent: "%myconsent%",
+  },
 });
 
 test("initializes form fields with settings containing a static consent array", async () => {

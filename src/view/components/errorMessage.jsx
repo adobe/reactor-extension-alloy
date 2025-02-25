@@ -14,8 +14,15 @@ import { Content, Heading, IllustratedMessage } from "@adobe/react-spectrum";
 import Error from "@spectrum-icons/illustrations/Error";
 import PropTypes from "prop-types";
 import FillParentAndCenterChildren from "./fillParentAndCenterChildren";
+import useExtensionBridge from "../utils/useExtensionBridge";
 
 const ErrorMessage = ({ children, dataTestId }) => {
+  useExtensionBridge({
+    init: () => ({}),
+    getSettings: () => ({}),
+    validate: () => false,
+  });
+
   return (
     <FillParentAndCenterChildren>
       <IllustratedMessage data-test-id={dataTestId}>

@@ -52,7 +52,7 @@ export default function jsonOptionalEditor(
   const {
     getInitialValues: getChildrenInitialValues,
     getSettings: getChildrenSettings,
-    validationShape: childrenValidationShape,
+    getValidationShape: childrenGetValidationShape,
     Component: ChildrenComponent,
   } = form({}, children);
 
@@ -80,7 +80,9 @@ export default function jsonOptionalEditor(
         },
       ),
   });
-  validationShape[name] = object().shape(childrenValidationShape);
+  validationShape[name] = object().shape(
+    childrenGetValidationShape({ initInfo: {}, existingValidationShape: {} }),
+  );
 
   const formPart = {
     getInitialValues({ initInfo }) {

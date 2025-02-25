@@ -15,6 +15,7 @@ import spectrum from "../../../helpers/spectrum.mjs";
 import testInstanceNameOptions from "../../../helpers/testInstanceNameOptions.mjs";
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
+import runCustomBuildTests from "../../runCustomBuildTests.mjs";
 
 const instanceNameField = spectrum.picker("instanceNamePicker");
 const propositionsField = spectrum.textField("propositionsTextField");
@@ -49,6 +50,13 @@ createExtensionViewFixture({
 
 runCommonExtensionViewTests({
   extensionSettings: mockExtensionSettings,
+});
+
+runCustomBuildTests({
+  requiredComponent: "personalization",
+  minimumValidSettings: {
+    propositions: "%myprops%",
+  },
 });
 
 test("initializes form fields with full settings", async () => {

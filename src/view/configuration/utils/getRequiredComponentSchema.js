@@ -15,8 +15,9 @@ export default (requiredComponent, getValidationSchema) =>
   ({ initInfo }) => {
     const components = initInfo?.extensionSettings?.components || {};
     const isComponentDisabled = components[requiredComponent] === false;
+    const settings = initInfo?.settings;
 
-    if (isComponentDisabled) {
+    if (isComponentDisabled && !settings) {
       return object().shape({
         requiredComponent: mixed().test(
           "requiredComponent",
