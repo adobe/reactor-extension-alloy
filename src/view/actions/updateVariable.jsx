@@ -177,6 +177,9 @@ const getInitialValues =
         });
       } catch {
         // Ignore the error and let the user select the data element.
+        // We null out the schema because in the sandbox init can be called multiple times.
+        context.schema = null;
+        context.dataElementId = null;
       }
     }
     if (
