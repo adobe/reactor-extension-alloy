@@ -235,10 +235,55 @@ test.requestHooks(
     await xdmTree.node("otherField").click();
     await stringEdit.enterValue("myvalue2");
     await dataElementField.openMenu();
+
     await dataElementField.selectMenuOption("Test data variable 3");
     await xdmTree.node("testField").click();
     await stringEdit.expectValue("myvalue1");
     await xdmTree.node("otherField").expectNotExists();
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 4");
+    await xdmTree.node("testField").click();
+    await stringEdit.expectValue("myvalue1");
+    await xdmTree.node("otherField").click();
+    await stringEdit.expectValue("myvalue2");
+
+    extensionViewController.expectSettings({
+      data: {
+        testField: "myvalue1",
+        otherField: "myvalue2",
+      },
+      dataElementId: "DE4",
+      schema: {
+        id: "sch456",
+        version: "1.0",
+      },
+    });
+  },
+);
+
+test.requestHooks(
+  schemaMocks.basic,
+  schemaMocks.other,
+  dataElementsMocks.multiple,
+)(
+  "keeps data around when data element is no longer found.",
+  async (t) => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd",
+      },
+      settings: {
+        dataElementId: "not_found",
+        schema: {
+          id: "sch456",
+          version: "1.0",
+        },
+        data: {
+          testField: "myvalue1",
+          otherField: "myvalue2",
+        },
+      },
+    });
     await dataElementField.openMenu();
     await dataElementField.selectMenuOption("Test data variable 4");
     await xdmTree.node("testField").click();

@@ -47,6 +47,7 @@ import {
   ADOBE_AUDIENCE_MANAGER,
   ADOBE_TARGET,
 } from "../constants/solutions";
+import deepAssign from "../utils/deepAssign";
 
 const isDataVariable = (data) => data?.settings?.solutions?.length > 0;
 
@@ -60,6 +61,14 @@ const getInitialFormStateFromDataElement = async ({
   existingFormStateNode,
   signal,
 }) => {
+  let value;
+  if (context.originalData) {
+    value = structuredClone(context.originalData);
+    deepAssign(value, data);
+  } else {
+    value = data;
+  }
+
   if (
     dataElement.settings &&
     dataElement.settings.schema &&
@@ -96,7 +105,7 @@ const getInitialFormStateFromDataElement = async ({
       context.dataElementId = dataElement.id;
       return getInitialFormState({
         schema: newSchema,
-        value: data,
+        value,
         updateMode: true,
         transforms,
         existingFormStateNode,
@@ -117,7 +126,7 @@ const getInitialFormStateFromDataElement = async ({
     }
     return getInitialFormState({
       schema,
-      value: data,
+      value,
       updateMode: true,
       transforms,
       existingFormStateNode,
@@ -163,13 +172,22 @@ const getInitialValues =
 
     let dataElement;
     if (dataElementId) {
-      dataElement = await fetchDataElement({
-        orgId,
-        imsAccess,
-        dataElementId,
-      });
-      context.previouslySavedSchemaInfo = previouslySavedSchemaInfo;
-    } else if (
+      try {
+        context.previouslySavedSchemaInfo = previouslySavedSchemaInfo;
+        dataElement = await fetchDataElement({
+          orgId,
+          imsAccess,
+          dataElementId,
+        });
+      } catch {
+        // Ignore the error and let the user select the data element.
+        // We null out the schema because in the sandbox init can be called multiple times.
+        context.schema = null;
+        context.dataElementId = null;
+      }
+    }
+    if (
+      !dataElement &&
       dataElementsFirstPage.length === 1 &&
       dataElementsFirstPageCursor === null
     ) {
@@ -177,6 +195,8 @@ const getInitialValues =
     }
 
     initialValues.dataElement = dataElement;
+
+    context.originalData = { xdm: data, data };
 
     if (dataElement) {
       const prefix = isDataVariable(dataElement) ? "data" : "xdm";
