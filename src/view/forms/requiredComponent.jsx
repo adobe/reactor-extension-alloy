@@ -20,9 +20,12 @@ import form from "./form";
 /**
  * This create a notice as part of a form
  * @param {object} options - Options for the notice
+ * @param {string} options.requiredComponent - The name of the required component (camelCase)
  * @param {string} options.title - The title of the notice
- * @param {string} options.description - The description of the notice
- * @param {boolean} [options.beta] - Whether or not this is a beta feature.
+ * @param {boolean} [options.whole] - Is this notice for the whole form? If so, this will disable creating new items and show slightly different alerts.
+ * @param {boolean} [options.deprecated] - Whether or not this is a deprecated component.
+ * @param {boolean} [options.formOptions] - Options to pass to the children form.
+ * @param {Form[]} children - The children to show and hide based on the required component.
  * @returns {Form} A notice form element.
  */
 const RequiredComponent = (

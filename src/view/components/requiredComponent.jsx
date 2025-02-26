@@ -15,6 +15,19 @@ import PropTypes from "prop-types";
 import { InlineAlert, Content, Heading } from "@adobe/react-spectrum";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
 
+/**
+ * A component that will render children if the required component is enabled.
+ * If the component is disabled, it will render an error message.
+ *
+ * @param {object} props The component props.
+ * @param {object} props.initInfo The init info object.
+ * @param {string} props.requiredComponent The named of the required component. (camelCased)
+ * @param {string} props.title The title of the component.
+ * @param {boolean} props.whole Is the component required for this whole form? If so, do not allow the form to create new items.
+ * @param {boolean} props.deprecated Whether the component is deprecated.
+ * @param {React.ReactNode} props.children The children to render.
+ * @returns {React.ReactNode} The rendered component.
+ */
 const RequiredComponent = ({
   initInfo,
   requiredComponent,
