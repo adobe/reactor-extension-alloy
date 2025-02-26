@@ -55,7 +55,7 @@
     ]
   },
   "dependencies": {
-    "@adobe/alloy": "^2.25.0",
+    "@adobe/alloy": "^2.26.0-beta.0",
     "@adobe/react-spectrum": "^3.39.0",
     "@react-stately/data": "^3.12.1",
     "@spectrum-css/tokens": "^16.0.1",
