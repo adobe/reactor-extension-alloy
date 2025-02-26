@@ -50,15 +50,12 @@ export default function dataElementSection(
   const {
     getSettings: getChildrenSettings,
     getInitialValues: getChildrenInitialValues,
-    validationShape: childrenValidationShape,
+    getValidationShape: getChildrenValidationShape,
     Component,
   } = form({}, children);
   const buildDefaultValues = () =>
     getChildrenInitialValues({ initInfo: { settings: null } });
 
-  const validationShape = {
-    [name]: object().shape({ ...childrenValidationShape }),
-  };
   const formPart = {
     getInitialValues({ initInfo }) {
       const { [name]: value } = initInfo.settings || {};
@@ -93,7 +90,17 @@ export default function dataElementSection(
       }
       return settings;
     },
-    validationShape,
+    getValidationShape({ initInfo, existingValidationShape }) {
+      return {
+        ...existingValidationShape,
+        [name]: object().shape({
+          ...getChildrenValidationShape({
+            initInfo,
+            existingValidationShape: {},
+          }),
+        }),
+      };
+    },
     Component: ({ namePrefix = "", ...props }) => {
       const [{ value: inputMethod }] = useField(
         `${namePrefix}${name}InputMethod`,

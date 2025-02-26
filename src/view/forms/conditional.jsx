@@ -31,7 +31,7 @@ import form from "./form";
  */
 export default function conditional({ args, condition }, children) {
   const argsArray = Array.isArray(args) ? args : [args];
-  const { getInitialValues, getSettings, validationShape, Component } = form(
+  const { getInitialValues, getSettings, getValidationShape, Component } = form(
     {},
     children,
   );
@@ -47,7 +47,11 @@ export default function conditional({ args, condition }, children) {
       }
       return getSettings({ values });
     },
-    addToValidationShape(existingValidationShape) {
+    getValidationShape({ initInfo, existingValidationShape }) {
+      const validationShape = getValidationShape({
+        initInfo,
+        existingValidationShape: {},
+      });
       return Object.keys(validationShape).reduce(
         (memo, key) => {
           const existingValidation = memo[key];

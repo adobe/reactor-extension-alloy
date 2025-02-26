@@ -23,7 +23,7 @@ import form from "./form";
  * @returns {Form} A section header form.
  */
 export default function section({ label, learnMoreUrl }, children = []) {
-  const { getInitialValues, getSettings, validationShape, Component } = form(
+  const { getInitialValues, getSettings, getValidationShape, Component } = form(
     {},
     children,
   );
@@ -31,7 +31,7 @@ export default function section({ label, learnMoreUrl }, children = []) {
   return {
     getInitialValues,
     getSettings,
-    validationShape,
+    getValidationShape,
     Component: (props) => (
       <>
         <SectionHeader learnMoreUrl={learnMoreUrl}>{label}</SectionHeader>

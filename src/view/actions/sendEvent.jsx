@@ -26,6 +26,7 @@ import conditional from "../forms/conditional";
 import disabledCheckbox from "../forms/disabledCheckbox";
 import configOverrides from "../forms/configOverrides";
 import simpleMap from "../forms/simpleMap";
+import requiredComponent from "../forms/requiredComponent";
 
 import eventTypes from "./constants/eventTypes";
 
@@ -180,13 +181,21 @@ const dataField = dataElement({
     "Provide a data element which returns an object to send as data.",
 });
 
-const includeRenderedPropositionsField = checkbox({
-  name: "includeRenderedPropositions",
-  label: "Include rendered propositions",
-  description:
-    'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
-  defaultValue: false,
-});
+const includeRenderedPropositionsField = requiredComponent(
+  {
+    requiredComponent: "personalization",
+    title: "the include rendered propositions option",
+  },
+  [
+    checkbox({
+      name: "includeRenderedPropositions",
+      label: "Include rendered propositions",
+      description:
+        'Check this to use this event as a display event, including the propositions that rendered when "automatically send a display event" was unchecked. This will populate the `_experience.decisioning` XDM field with information about rendered personalization.',
+      defaultValue: false,
+    }),
+  ],
+);
 
 const disabledIncludeRenderedPropositionsField = disabledCheckbox({
   name: "includeRenderedPropositions",
@@ -203,12 +212,20 @@ const documentUnloadingField = checkbox({
     "Check this to ensure the event will reach the server even if the user is navigating away from the current document (page). Any response from the server will be ignored.",
 });
 
-const mergeIdField = dataElement({
-  name: "mergeId",
-  label: "Merge ID (Deprecated)",
-  description:
-    "Provide an identifier used to merge multiple events. This will populate the `eventMergeId` XDM field. This field has been deprecated because it is not supported by Adobe Experience Platform.",
-});
+const mergeIdField = requiredComponent(
+  {
+    requiredComponent: "eventMerge",
+    deprecated: true,
+  },
+  [
+    dataElement({
+      name: "mergeId",
+      label: "Merge ID (Deprecated)",
+      description:
+        "Provide an identifier used to merge multiple events. This will populate the `eventMergeId` XDM field. This field has been deprecated because it is not supported by Adobe Experience Platform.",
+    }),
+  ],
+);
 
 const decisionScopesField = fieldArray({
   name: "decisionScopes",
@@ -301,20 +318,28 @@ const defaultPersonalizationEnabledField = radioGroup({
   ],
 });
 
-const decisionContext = simpleMap({
-  name: "decisionContext",
-  label: "Decision context",
-  singularLabel: "Context item",
-  description:
-    "Provide the keys and values that the rulesets will use to determine which experience to deliver.",
-  dataElementDescription:
-    "Provide a data element that resolves to a map of key/value pairs.",
-  keyLabel: "Key",
-  keyLabelPlural: "Keys",
-  keyDescription: "Enter the context key.",
-  valueLabel: "Value",
-  valueDescription: "Enter the context value.",
-});
+const decisionContext = requiredComponent(
+  {
+    requiredComponent: "rulesEngine",
+    title: "the decision context",
+  },
+  [
+    simpleMap({
+      name: "decisionContext",
+      label: "Decision context",
+      singularLabel: "Context item",
+      description:
+        "Provide the keys and values that the rulesets will use to determine which experience to deliver.",
+      dataElementDescription:
+        "Provide a data element that resolves to a map of key/value pairs.",
+      keyLabel: "Key",
+      keyLabelPlural: "Keys",
+      keyDescription: "Enter the context key.",
+      valueLabel: "Value",
+      valueDescription: "Enter the context value.",
+    }),
+  ],
+);
 
 const configOverrideFields = configOverrides();
 const datasetIdField = textField({
@@ -353,12 +378,20 @@ const sendEventForm = form(
           mergeIdField,
         ]),
         section({ label: "Personalization" }, [
-          decisionScopesField,
-          surfacesField,
-          renderDecisionsField,
-          sendDisplayEventField,
-          defaultPersonalizationEnabledField,
-          decisionContext,
+          requiredComponent(
+            {
+              requiredComponent: "personalization",
+              title: "the personalization section in the send event action",
+            },
+            [
+              decisionScopesField,
+              surfacesField,
+              renderDecisionsField,
+              sendDisplayEventField,
+              defaultPersonalizationEnabledField,
+              decisionContext,
+            ],
+          ),
         ]),
         configOverrideFields,
         // only display the deprecated datasetId field if there is an existing
@@ -408,12 +441,20 @@ const sendEventForm = form(
               dataField,
             ]),
             section({ label: "Personalization" }, [
-              decisionScopesField,
-              surfacesField,
-              disabledRenderDecisionsField,
-              sendDisplayEventUnchecked,
-              defaultPersonalizationEnabledField,
-              decisionContext,
+              requiredComponent(
+                {
+                  requiredComponent: "personalization",
+                  title: "the personalization section in the send event action",
+                },
+                [
+                  decisionScopesField,
+                  surfacesField,
+                  disabledRenderDecisionsField,
+                  sendDisplayEventUnchecked,
+                  defaultPersonalizationEnabledField,
+                  decisionContext,
+                ],
+              ),
             ]),
             configOverrideFields,
           ],
