@@ -61,9 +61,13 @@ const getInitialFormStateFromDataElement = async ({
   existingFormStateNode,
   signal,
 }) => {
-  const value = {};
-  deepAssign(value, context.originalData);
-  deepAssign(value, data);
+  let value;
+  if (context.originalData) {
+    value = structuredClone(context.originalData);
+    deepAssign(value, data);
+  } else {
+    value = data;
+  }
 
   if (
     dataElement.settings &&
