@@ -32,7 +32,7 @@ export default (View, { noPadding = false } = {}) => {
     <Provider
       theme={lightTheme}
       colorScheme="light"
-      UNSAFE_className={`react-spectrum-provider spectrum spectrum--medium spectrum--light${paddingClass}`}
+      UNSAFE_className={`react-spectrum-provider spectrum spectrum--medium spectrum--light${paddingClass} bg-gray-50`}
     >
       <ErrorBoundary>
         <View />
