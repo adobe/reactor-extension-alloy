@@ -152,6 +152,14 @@ const createEdgeConfigOverridesSchema = (isAction) => {
       },
       required: ["enabled"],
     },
+    // deprecated and a typo for com_adobe_audiencemanager, but required for backwards compatibility and upgrades
+    com_adobe_audience_manager: {
+      type: "object",
+      properties: {
+        enabled: enabledDisabledOrDataElement,
+      },
+      required: ["enabled"],
+    },
     com_adobe_launch_ssf: {
       type: "object",
       properties: {
