@@ -44,6 +44,21 @@ body,
   min-height: var(--spectrum-global-dimension-size-4600) !important
 }
 
-.react-spectrum-provider.bg-gray-50 {
+.react-spectrum-provider.legacy-gray {
   background-color: var(--spectrum-gray-50) !important;
+
+  [class*="spectrum-Textfield-input"],
+  [class*="spectrum-BaseButton"]:not([class*="--quiet"]),
+   {
+    background-color: var(--spectrum-gray-25) !important;
+    &[disabled], &[aria-disabled="true"] {
+      background-color: var(--spectrum-gray-100) !important;
+    }
+  }
+
+  [class*="spectrum-Checkbox"] [class*="spectrum-Checkbox-box"]::before,
+  [class*="spectrum-Radio-button"]::before,
+  {
+    background-color: var(--spectrum-gray-25) !important;
+  }
 }
