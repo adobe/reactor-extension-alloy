@@ -26,10 +26,6 @@ const componentProperties = {
     description:
       "This component supports Audience Manager integration including running URL and cookie destination and id syncs.",
   },
-  context: {
-    description:
-      "This component enables the automatic collection of context data.",
-  },
   rulesEngine: {
     description:
       "This component enables Adobe Journey Optimizer on device decisioning. You must include this component if you are using the Evaluate rulesets action or the Subcribe ruleset items event.",
