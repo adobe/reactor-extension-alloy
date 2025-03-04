@@ -227,7 +227,6 @@ const DataCollectionSection = ({ instanceFieldName }) => {
   const [{ value: activityCollectorEnabled }] = useField(
     "components.activityCollector",
   );
-  const [{ value: contextEnabled }] = useField("components.context");
 
   return (
     <>
@@ -398,67 +397,55 @@ const DataCollectionSection = ({ instanceFieldName }) => {
             </InlineAlert>
           </View>
         )}
-        {contextEnabled ? (
-          <div>
-            <FormikRadioGroup
-              label="When sending event data, automatically include:"
-              name={`${instanceFieldName}.contextGranularity`}
+        <div>
+          <FormikRadioGroup
+            label="When sending event data, automatically include:"
+            name={`${instanceFieldName}.contextGranularity`}
+          >
+            <Radio
+              data-test-id="contextGranularityAllField"
+              value={CONTEXT_GRANULARITY.ALL}
             >
-              <Radio
-                data-test-id="contextGranularityAllField"
-                value={CONTEXT_GRANULARITY.ALL}
-              >
-                All default context information
-              </Radio>
-              <Radio
-                data-test-id="contextGranularitySpecificField"
-                value={CONTEXT_GRANULARITY.SPECIFIC}
-              >
-                Specific context information
-              </Radio>
-            </FormikRadioGroup>
+              All default context information
+            </Radio>
+            <Radio
+              data-test-id="contextGranularitySpecificField"
+              value={CONTEXT_GRANULARITY.SPECIFIC}
+            >
+              Specific context information
+            </Radio>
+          </FormikRadioGroup>
 
-            {instanceValues.contextGranularity ===
-              CONTEXT_GRANULARITY.SPECIFIC && (
-              <FieldSubset>
-                <FormikCheckboxGroup
-                  aria-label="Context data categories"
-                  name={`${instanceFieldName}.context`}
-                >
-                  {contextOptions.map((contextOption) => {
-                    return (
-                      <FieldDescriptionAndError
-                        description={contextOption.description}
-                        messagePaddingTop="size-0"
-                        messagePaddingStart="size-300"
+          {instanceValues.contextGranularity ===
+            CONTEXT_GRANULARITY.SPECIFIC && (
+            <FieldSubset>
+              <FormikCheckboxGroup
+                aria-label="Context data categories"
+                name={`${instanceFieldName}.context`}
+              >
+                {contextOptions.map((contextOption) => {
+                  return (
+                    <FieldDescriptionAndError
+                      description={contextOption.description}
+                      messagePaddingTop="size-0"
+                      messagePaddingStart="size-300"
+                      key={contextOption.value}
+                    >
+                      <Checkbox
                         key={contextOption.value}
+                        data-test-id={contextOption.testId}
+                        value={contextOption.value}
+                        width="size-5000"
                       >
-                        <Checkbox
-                          key={contextOption.value}
-                          data-test-id={contextOption.testId}
-                          value={contextOption.value}
-                          width="size-5000"
-                        >
-                          {contextOption.label}
-                        </Checkbox>
-                      </FieldDescriptionAndError>
-                    );
-                  })}
-                </FormikCheckboxGroup>
-              </FieldSubset>
-            )}
-          </div>
-        ) : (
-          <View width="size-6000">
-            <InlineAlert variant="info">
-              <Heading>Context component disabled</Heading>
-              <Content>
-                The context custom build component is disabled. Enable it above
-                to configure context settings.
-              </Content>
-            </InlineAlert>
-          </View>
-        )}
+                        {contextOption.label}
+                      </Checkbox>
+                    </FieldDescriptionAndError>
+                  );
+                })}
+              </FormikCheckboxGroup>
+            </FieldSubset>
+          )}
+        </div>
       </FormElementContainer>
     </>
   );
