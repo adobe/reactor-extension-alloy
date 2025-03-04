@@ -321,13 +321,16 @@ InstancesSection.propTypes = {
 };
 
 const Configuration = ({ initInfo, context }) => {
-  const [expandedKeys, setExpandedKeys] = useState(["instances"]);
+  const [expandedKeys, setExpandedKeys] = useState(new Set(["instances"]));
 
   useNewlyValidatedFormSubmission((errors) => {
     if (errors) {
-      ["components", "instances"].filter((key) => {
-        return !!errors[key] || expandedKeys.includes(key);
-      });
+      const alreadyOpenOrErrorKeys = ["components", "instances"].filter(
+        (key) => {
+          return !!errors[key] || expandedKeys.has(key);
+        },
+      );
+      setExpandedKeys(new Set(alreadyOpenOrErrorKeys));
     }
   });
 
