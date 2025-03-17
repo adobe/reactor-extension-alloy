@@ -129,9 +129,10 @@ const ExtensionView = ({
       setInitInfo(_initInfo);
     },
     async getSettings() {
-      if (!viewRegistrationRef.current) {
+      if (!viewRegistrationRef.current || !formikPropsRef?.current?.values) {
         return {};
       }
+
       try {
         return await viewRegistrationRef.current.getSettings({
           initInfo,
