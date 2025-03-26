@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { InlineAlert, Content, Flex, View } from "@adobe/react-spectrum";
+import { InlineAlert, Content, Flex } from "@adobe/react-spectrum";
 import * as webSdkComponentsExports from "@adobe/alloy/libEs6/core/componentCreators";
 import Heading from "../components/typography/heading";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";

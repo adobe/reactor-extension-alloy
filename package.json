@@ -58,8 +58,6 @@
     "@adobe/alloy": "^2.26.0",
     "@adobe/react-spectrum": "^3.39.0",
     "@react-stately/data": "^3.12.1",
-    "@spectrum-css/tokens": "^16.0.1",
-    "@spectrum-css/typography": "^8.1.0",
     "@spectrum-icons/illustrations": "^3.6.18",
     "@spectrum-icons/workflow": "^4.2.17",
     "antd": "^5.24.1",
