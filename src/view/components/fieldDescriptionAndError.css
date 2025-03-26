@@ -1,9 +1,9 @@
 .FieldDescriptionAndError-description,
 .FieldDescriptionAndError-error {
-  // These styles were largely copied from React-Spectrum's labeling of fields,
-  // since the description and error look very similar.
+  /* These styles were largely copied from React-Spectrum's labeling of fields,
+  since the description and error look very similar. */
   box-sizing: border-box;
-  color: var(--spectrum-alias-label-text-color,var(--spectrum-global-color-gray-700))
+  color: var(--spectrum-alias-label-text-color,var(--spectrum-global-color-gray-700));
   padding-top: var(--spectrum-global-dimension-size-50);
   padding-bottom: var(--spectrum-global-dimension-size-50);
 

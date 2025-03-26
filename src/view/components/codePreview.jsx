@@ -21,7 +21,7 @@ import {
 } from "@adobe/react-spectrum";
 import CodeIcon from "@spectrum-icons/workflow/Code";
 import FieldDescriptionAndError from "./fieldDescriptionAndError";
-import "./codePreview.styl";
+import "./codePreview.css";
 import BetaBadge from "./betaBadge";
 
 const CodePreview = ({

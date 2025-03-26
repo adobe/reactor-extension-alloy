@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import "./fieldDescriptionAndError.styl";
+import "./fieldDescriptionAndError.css";
 import { Flex, Link, View } from "@adobe/react-spectrum";
 
 // This is intended as a temporary solution until descriptions and errors

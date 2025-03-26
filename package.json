@@ -133,7 +133,6 @@
     "rollup": "^4.34.8",
     "rollup-plugin-istanbul": "^5.0.0",
     "staged-git-files": "^1.3.0",
-    "stylus": "^0.64.0",
     "testcafe": "^3.7.2",
     "testcafe-browser-provider-saucelabs": "^3.0.0",
     "vitest": "^3.0.6",

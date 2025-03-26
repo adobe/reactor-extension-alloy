@@ -35,7 +35,7 @@ import ObjectEdit from "./objectEdit";
 import StringEdit from "./stringEdit";
 import Heading from "../typography/heading";
 import { ALWAYS, NONE } from "./constants/autoPopulationSource";
-import "./nodeEdit.styl";
+import "./nodeEdit.css";
 import FormikCheckbox from "../formikReactSpectrum3/formikCheckbox";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 

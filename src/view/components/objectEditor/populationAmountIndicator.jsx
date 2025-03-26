@@ -13,7 +13,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
 import { FULL, PARTIAL, EMPTY, BLANK } from "./constants/populationAmount";
-import "./populationAmountIndictor.styl";
+import "./populationAmountIndictor.css";
 
 const PopulationAmountIndicator = ({ className, populationAmount }) => {
   return populationAmount && populationAmount !== BLANK ? (
