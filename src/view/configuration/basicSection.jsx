@@ -13,11 +13,10 @@ governing permissions and limitations under the License.
 import React from "react";
 import { useField } from "formik";
 import { object, string } from "yup";
-import { Flex } from "@adobe/react-spectrum";
+import { Flex, InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
-import Alert from "../components/alert";
 import RestoreDefaultValueButton from "../components/restoreDefaultValueButton";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
@@ -135,17 +134,19 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
       </DataElementSelector>
       {instanceValues.persistedName &&
       instanceValues.name !== instanceValues.persistedName ? (
-        <Alert
+        <InlineAlert
           data-test-id="nameChangeAlert"
-          title="Potential problems due to name change"
           variant="notice"
           width="size-5000"
         >
-          Any rule components or data elements using this instance will no
-          longer function as expected when running on your website. We recommend
-          removing or updating those resources before publishing your next
-          library.
-        </Alert>
+          <Heading size="XXS">Potential problems due to name change</Heading>
+          <Content>
+            Any rule components or data elements using this instance will no
+            longer function as expected when running on your website. We
+            recommend removing or updating those resources before publishing
+            your next library.
+          </Content>
+        </InlineAlert>
       ) : null}
       <Flex>
         <DataElementSelector>

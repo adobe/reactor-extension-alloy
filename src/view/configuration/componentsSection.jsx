@@ -104,18 +104,16 @@ export const bridge = {
 const ComponentsSection = () => {
   return (
     <Flex gap="size-200" direction="column">
-      <View width="size-6000">
-        <InlineAlert variant="notice">
-          <Heading>Warning, advanced settings</Heading>
-          <Content>
-            Modifying settings here can break your implementation. You can
-            decrease the size of your Web SDK bundle by disabling components
-            that you are not using. Each time you change the list of used
-            components, please test your implementation thoroughly to verify
-            that all functionalities are working as expected.
-          </Content>
-        </InlineAlert>
-      </View>
+      <InlineAlert variant="notice" width="size-6000">
+        <Heading>Warning, advanced settings</Heading>
+        <Content>
+          Modifying settings here can break your implementation. You can
+          decrease the size of your Web SDK bundle by disabling components that
+          you are not using. Each time you change the list of used components,
+          please test your implementation thoroughly to verify that all
+          functionalities are working as expected.
+        </Content>
+      </InlineAlert>
 
       <div>
         {webSdkComponents.map(({ label, value, description }) => {

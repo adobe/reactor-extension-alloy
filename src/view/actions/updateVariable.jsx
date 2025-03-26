@@ -19,6 +19,8 @@ import {
   Heading,
   Divider,
   Text,
+  InlineAlert,
+  Content,
 } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
@@ -35,7 +37,6 @@ import FormikPagedComboBox from "../components/formikReactSpectrum3/formikPagedC
 import useReportAsyncError from "../utils/useReportAsyncError";
 import fetchDataElement from "../utils/fetchDataElement";
 import useChanged from "../utils/useChanged";
-import Alert from "../components/alert";
 import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRequestsAndCreateSignal";
 import generateSchemaFromSolutions from "../components/objectEditor/helpers/generateSchemaFromSolutions";
 import validate from "../components/objectEditor/helpers/validate";
@@ -417,10 +418,17 @@ const UpdateVariable = ({
   return (
     <FormElementContainer direction="column">
       {dataElementsFirstPage.length === 0 && (
-        <Alert variant="negative" title="Error" data-test-id="noDataElements">
-          No `variable` type data elements are available. Create a variable type
-          data element first.
-        </Alert>
+        <InlineAlert
+          variant="negative"
+          data-test-id="noDataElements"
+          width="size-5000"
+        >
+          <Heading size="XXS">Error</Heading>
+          <Content>
+            No `variable` type data elements are available. Create a variable
+            type data element first.
+          </Content>
+        </InlineAlert>
       )}
       {dataElementsFirstPage.length > 0 && (
         <FormikPagedComboBox

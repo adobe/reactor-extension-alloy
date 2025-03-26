@@ -20,6 +20,9 @@ import {
   ActionButton,
   TooltipTrigger,
   Tooltip,
+  InlineAlert,
+  Heading,
+  Content,
 } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import { useField } from "formik";
@@ -28,7 +31,6 @@ import Delete from "@spectrum-icons/workflow/Delete";
 import copyToClipboard from "clipboard-copy";
 import fetchConfigs from "../configuration/utils/fetchConfigs";
 import usePrevious from "../utils/usePrevious";
-import Alert from "./alert";
 import {
   PRODUCTION,
   ENVIRONMENTS,
@@ -170,38 +172,42 @@ const DatastreamSelector = ({
       );
     }
     return (
-      <Alert
+      <InlineAlert
         data-test-id={`${environmentType}ErrorFetchingDatastreamsAlert`}
-        variant={environmentType === PRODUCTION ? "negative" : "informative"}
-        title={`Error fetching datastreams for ${selectedSandbox.name} sandbox`}
+        variant={environmentType === PRODUCTION ? "negative" : "info"}
         width="size-5000"
         marginTop="size-100"
       >
-        {errorMessage}
-      </Alert>
+        <Heading size="XXS">
+          Error fetching datastreams for {selectedSandbox.name} sandbox
+        </Heading>
+        <Content>{errorMessage}</Content>
+      </InlineAlert>
     );
   }
 
   if (!datastreamList.isLoading && !datastreamList.items.length) {
     return (
-      <Alert
-        variant={environmentType === PRODUCTION ? "negative" : "informative"}
-        title="No datastreams"
+      <InlineAlert
+        variant={environmentType === PRODUCTION ? "negative" : "info"}
         width="size-5000"
         marginTop="size-100"
       >
-        No datastreams exist for the selected sandbox. See{" "}
-        <Link>
-          <a
-            href="https://adobe.ly/3dt95he"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Configuring a datastream
-          </a>
-        </Link>{" "}
-        for more information.
-      </Alert>
+        <Heading size="XXS">No datastreams</Heading>
+        <Content>
+          No datastreams exist for the selected sandbox. See{" "}
+          <Link>
+            <a
+              href="https://adobe.ly/3dt95he"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Configuring a datastream
+            </a>
+          </Link>{" "}
+          for more information.
+        </Content>
+      </InlineAlert>
     );
   }
   return (

@@ -12,14 +12,17 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import Alert from "./alert";
+import { InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 
 const BetaNotice = ({ componentName }) => {
   return (
-    <Alert variant="notice" title="Beta feature">
-      This {componentName} is a beta feature while the development team gathers
-      feedback. Future versions may contain breaking changes.
-    </Alert>
+    <InlineAlert variant="notice" width="size-5000">
+      <Heading size="XXS">Beta feature</Heading>
+      <Content>
+        This {componentName} is a beta feature while the development team
+        gathers feedback. Future versions may contain breaking changes.
+      </Content>
+    </InlineAlert>
   );
 };
 
