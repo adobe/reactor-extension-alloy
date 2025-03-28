@@ -190,10 +190,7 @@ export const bridge = {
       defaultsObj: bridge.getInstanceDefaults(),
       keys: propertyKeysToCopy,
     });
-    if (
-      components.context &&
-      instanceValues.contextGranularity === CONTEXT_GRANULARITY.SPECIFIC
-    ) {
+    if (instanceValues.contextGranularity === CONTEXT_GRANULARITY.SPECIFIC) {
       instanceSettings.context = instanceValues.context;
     }
     return instanceSettings;

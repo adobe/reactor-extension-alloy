@@ -30,11 +30,11 @@ test("toggles between display names and field IDs", async () => {
       data: {
         _unifiedjsqeonly: {
           vendor: {
-            name: "Adobe"
-          }
-        }
-      }
-    }
+            name: "Adobe",
+          },
+        },
+      },
+    },
   });
 
   // Wait for schema to load and API responses
@@ -47,18 +47,26 @@ test("toggles between display names and field IDs", async () => {
   await t.wait(200);
 
   // Check if the node exists using direct selector
-  const nameNode = Selector('[data-test-id="xdmTreeNodeTitleDisplayName"]').withText('name');
+  const nameNode = Selector(
+    '[data-test-id="xdmTreeNodeTitleDisplayName"]',
+  ).withText("name");
   await t.expect(await nameNode.exists).ok("Field ID 'name' should be visible");
 
   // Toggle to show display names
   await xdmTree.toggleDisplayNames();
   await t.wait(200);
 
-  const displayNameNode = Selector('[data-test-id="xdmTreeNodeTitleDisplayName"]').withText('Name');
-  await t.expect(await displayNameNode.exists).ok("Display name 'Name' should be visible");
+  const displayNameNode = Selector(
+    '[data-test-id="xdmTreeNodeTitleDisplayName"]',
+  ).withText("Name");
+  await t
+    .expect(await displayNameNode.exists)
+    .ok("Display name 'Name' should be visible");
 
   // Toggle back to show field IDs
   await xdmTree.toggleDisplayNames();
   await t.wait(200);
-  await t.expect(await nameNode.exists).ok("Field ID 'name' should be visible again");
-}); 
+  await t
+    .expect(await nameNode.exists)
+    .ok("Field ID 'name' should be visible again");
+});

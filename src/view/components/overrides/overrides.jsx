@@ -450,8 +450,7 @@ const Overrides = ({
                                 width="size-5000"
                                 pattern={enabledDisabledOrDataElementRegex}
                                 isDisabled={
-                                  !serviceStatus.com_adobe_audiencemanager
-                                    .value
+                                  !serviceStatus.com_adobe_audiencemanager.value
                                 }
                                 disabledDisplayValue="Disabled"
                                 onBlur={onDisable}

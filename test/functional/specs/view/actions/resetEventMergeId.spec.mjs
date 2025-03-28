@@ -24,7 +24,10 @@ createExtensionViewFixture({
 });
 
 runCommonExtensionViewTests();
-runCustomBuildTests({ requiredComponent: "eventMerge", minimumValidSettings: { eventMergeId: "%foo%" } });
+runCustomBuildTests({
+  requiredComponent: "eventMerge",
+  minimumValidSettings: { eventMergeId: "%foo%" },
+});
 
 test("initializes form fields with settings", async () => {
   await extensionViewController.init({

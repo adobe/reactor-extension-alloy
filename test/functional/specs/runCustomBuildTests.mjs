@@ -16,14 +16,13 @@ const warning = spectrum.alert("requiredComponentWarning");
 const error = spectrum.alert("requiredComponentError");
 
 export default ({ requiredComponent, minimumValidSettings }) => {
-
   test("prevents you from creating when the required component is excluded", async () => {
     await extensionViewController.init({
       extensionSettings: {
         instances: [{ name: "alloy" }],
-        components: { [requiredComponent]: false }
+        components: { [requiredComponent]: false },
       },
-      settings: null
+      settings: null,
     });
 
     await error.expectExists();
@@ -36,9 +35,9 @@ export default ({ requiredComponent, minimumValidSettings }) => {
     await extensionViewController.init({
       extensionSettings: {
         instances: [{ name: "alloy" }],
-        components: { [requiredComponent]: false }
+        components: { [requiredComponent]: false },
       },
-      settings: minimumValidSettings
+      settings: minimumValidSettings,
     });
 
     await error.expectNotExists();
@@ -48,13 +47,12 @@ export default ({ requiredComponent, minimumValidSettings }) => {
   });
 
   test("shows no alerts when the required component is included", async () => {
-
     await extensionViewController.init({
       extensionSettings: {
         instances: [{ name: "alloy" }],
-        components: { [requiredComponent]: true }
+        components: { [requiredComponent]: true },
       },
-      settings: minimumValidSettings
+      settings: minimumValidSettings,
     });
 
     await error.expectNotExists();
