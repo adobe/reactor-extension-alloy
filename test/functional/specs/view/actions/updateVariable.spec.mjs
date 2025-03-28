@@ -196,25 +196,26 @@ test.requestHooks(dataElementMocks.element1, dataElementsMocks.multiple)(
   },
 );
 
-test.requestHooks(dataElementMocks.element3, dataElementsMocks.multiple, schemaMocks.basic)(
-  "doesn't show warning when the schema version is the same",
-  async (t) => {
-    await extensionViewController.init({
-      propertySettings: {
-        id: "PRabcd",
+test.requestHooks(
+  dataElementMocks.element3,
+  dataElementsMocks.multiple,
+  schemaMocks.basic,
+)("doesn't show warning when the schema version is the same", async (t) => {
+  await extensionViewController.init({
+    propertySettings: {
+      id: "PRabcd",
+    },
+    settings: {
+      dataElementId: "DE3",
+      schema: {
+        id: "sch123",
+        version: "1.0",
       },
-      settings: {
-        dataElementId: "DE3",
-        schema: {
-          id: "sch123",
-          version: "1.0",
-        },
-        data: {},
-      },
-    });
-    await schemaChangedNotice.expectNotExists();
-  },
-);
+      data: {},
+    },
+  });
+  await schemaChangedNotice.expectNotExists();
+});
 
 test.requestHooks(
   schemaMocks.basic,
@@ -265,33 +266,30 @@ test.requestHooks(
   schemaMocks.basic,
   schemaMocks.other,
   dataElementsMocks.multiple,
-)(
-  "keeps data around when data element is no longer found.",
-  async (t) => {
-    await extensionViewController.init({
-      propertySettings: {
-        id: "PRabcd",
+)("keeps data around when data element is no longer found.", async (t) => {
+  await extensionViewController.init({
+    propertySettings: {
+      id: "PRabcd",
+    },
+    settings: {
+      dataElementId: "not_found",
+      schema: {
+        id: "sch456",
+        version: "1.0",
       },
-      settings: {
-        dataElementId: "not_found",
-        schema: {
-          id: "sch456",
-          version: "1.0",
-        },
-        data: {
-          testField: "myvalue1",
-          otherField: "myvalue2",
-        },
+      data: {
+        testField: "myvalue1",
+        otherField: "myvalue2",
       },
-    });
-    await dataElementField.openMenu();
-    await dataElementField.selectMenuOption("Test data variable 4");
-    await xdmTree.node("testField").click();
-    await stringEdit.expectValue("myvalue1");
-    await xdmTree.node("otherField").click();
-    await stringEdit.expectValue("myvalue2");
-  },
-);
+    },
+  });
+  await dataElementField.openMenu();
+  await dataElementField.selectMenuOption("Test data variable 4");
+  await xdmTree.node("testField").click();
+  await stringEdit.expectValue("myvalue1");
+  await xdmTree.node("otherField").click();
+  await stringEdit.expectValue("myvalue2");
+});
 
 test.requestHooks(
   schemaMocks.basicArray,

@@ -114,7 +114,7 @@ export default {
   node: (title) => {
     const titleSelector = xdmTree
       .find(createTestIdSelectorString("xdmTreeNodeTitleDisplayName"))
-      .withText(new RegExp(`^${title}$|^${title.toLowerCase()}$`, 'i'))
+      .withText(new RegExp(`^${title}$|^${title.toLowerCase()}$`, "i"))
       .parent(createTestIdSelectorString("xdmTreeNodeTitle"))
       .nth(0);
 
