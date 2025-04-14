@@ -10,9 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createApplyPropositions = require("./createApplyPropositions");
-const instanceManager = require("../../instanceManager/index");
+import createApplyPropositions from "./createApplyPropositions";
+import instanceManager from "../../instanceManager/index";
 
-module.exports = createApplyPropositions({
+export default createApplyPropositions({
   instanceManager,
 });

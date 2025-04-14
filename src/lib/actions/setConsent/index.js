@@ -10,11 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createSetConsent = require("./createSetConsent");
-const instanceManager = require("../../instanceManager/index");
-const createGetConfigOverrides = require("../../utils/createGetConfigOverrides");
+import createSetConsent from "./createSetConsent";
+import instanceManager from "../../instanceManager/index";
+import createGetConfigOverrides from "../../utils/createGetConfigOverrides";
 
-module.exports = createSetConsent({
+export default createSetConsent({
   instanceManager,
   getConfigOverrides: createGetConfigOverrides(turbine.environment?.stage),
 });

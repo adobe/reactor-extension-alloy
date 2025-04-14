@@ -10,9 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { sendEventCallbackStorage } = require("../../index");
-const createDecisionsReceived = require("./createDecisionsReceived");
+import { sendEventCallbackStorage } from "../../index";
+import createDecisionsReceived from "./createDecisionsReceived";
 
-module.exports = createDecisionsReceived({
+export default createDecisionsReceived({
   sendEventCallbackStorage,
 });
