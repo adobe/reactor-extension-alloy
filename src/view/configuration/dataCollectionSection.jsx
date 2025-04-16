@@ -37,7 +37,6 @@ import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefault
 import FormElementContainer from "../components/formElementContainer";
 import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 import BetaBadge from "../components/betaBadge";
-import Alert from "../components/alert";
 
 const CONTEXT_GRANULARITY = {
   ALL: "all",
@@ -375,12 +374,15 @@ const DataCollectionSection = ({ instanceFieldName }) => {
               )}
             {instanceValues.onBeforeLinkClickSend &&
               instanceValues.clickCollection.filterClickDetails && (
-                <Alert variant="notice" title="Warning">
-                  Both filter-click-properties and on-before-link-click-send
-                  callbacks have been defined. On-before-link-click-send has
-                  been deprecated and will not be used if
-                  filter-click-properties is available.
-                </Alert>
+                <InlineAlert variant="notice">
+                  <Heading size="XXS">Warning</Heading>
+                  <Content>
+                    Both filter-click-properties and on-before-link-click-send
+                    callbacks have been defined. On-before-link-click-send has
+                    been deprecated and will not be used if
+                    filter-click-properties is available.
+                  </Content>
+                </InlineAlert>
               )}
           </div>
         ) : (

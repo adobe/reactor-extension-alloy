@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import "./fieldDescriptionAndError.styl";
+import "./fieldDescriptionAndError.css";
 import { Flex, Link, View } from "@adobe/react-spectrum";
 
 // This is intended as a temporary solution until descriptions and errors
@@ -28,7 +28,6 @@ const FieldDescriptionAndError = ({
 }) => {
   const child = React.Children.only(children);
   const width = child.props.width;
-  const isDisabled = child.props.isDisabled;
 
   let className;
   let message;
@@ -48,16 +47,14 @@ const FieldDescriptionAndError = ({
   const widthStyle = width
     ? `var(--spectrum-global-dimension-${width}, var(--spectrum-alias-${width}))`
     : `var(--spectrum-field-default-width)`;
-  const colorStyle = isDisabled
-    ? "var(--spectrum-alias-text-color-disabled)"
-    : "";
+
   return (
     <Flex direction="column" UNSAFE_style={{ width: widthStyle }}>
       {children}
       {message && (
         <View
           UNSAFE_className={className}
-          UNSAFE_style={{ width: widthStyle, color: colorStyle }}
+          UNSAFE_style={{ width: widthStyle }}
           paddingTop={messagePaddingTop}
           paddingStart={messagePaddingStart}
         >

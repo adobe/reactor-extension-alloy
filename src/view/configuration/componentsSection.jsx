@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { InlineAlert, Content, Flex, View } from "@adobe/react-spectrum";
+import { InlineAlert, Content, Flex } from "@adobe/react-spectrum";
 import * as webSdkComponentsExports from "@adobe/alloy/libEs6/core/componentCreators";
 import Heading from "../components/typography/heading";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
@@ -104,18 +104,16 @@ export const bridge = {
 const ComponentsSection = () => {
   return (
     <Flex gap="size-200" direction="column">
-      <View width="size-6000">
-        <InlineAlert variant="notice">
-          <Heading>Warning, advanced settings</Heading>
-          <Content>
-            Modifying settings here can break your implementation. You can
-            decrease the size of your Web SDK bundle by disabling components
-            that you are not using. Each time you change the list of used
-            components, please test your implementation thoroughly to verify
-            that all functionalities are working as expected.
-          </Content>
-        </InlineAlert>
-      </View>
+      <InlineAlert variant="notice" width="size-6000">
+        <Heading>Warning, advanced settings</Heading>
+        <Content>
+          Modifying settings here can break your implementation. You can
+          decrease the size of your Web SDK bundle by disabling components that
+          you are not using. Each time you change the list of used components,
+          please test your implementation thoroughly to verify that all
+          functionalities are working as expected.
+        </Content>
+      </InlineAlert>
 
       <div>
         {webSdkComponents.map(({ label, value, description }) => {

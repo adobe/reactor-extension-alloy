@@ -29,7 +29,7 @@ import useNewlyValidatedFormSubmission from "../../utils/useNewlyValidatedFormSu
 // by setting Tree's motion prop to null. This isn't currently a documented prop:
 // https://github.com/ant-design/ant-design/blob/832aa81c821b7b5750673b5aacafa39c9978b09c/components/tree/Tree.tsx#L200-L203
 import "antd/lib/tree/style/index";
-import "./xdmTree.styl";
+import "./xdmTree.css";
 
 export const scrollNodeIntoView = (nodeId) => {
   if (nodeId) {

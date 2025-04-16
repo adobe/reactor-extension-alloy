@@ -12,10 +12,15 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Flex, View } from "@adobe/react-spectrum";
+import {
+  Flex,
+  View,
+  InlineAlert,
+  Heading,
+  Content,
+} from "@adobe/react-spectrum";
 import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
 import Delete from "@spectrum-icons/workflow/Delete";
-import Alert from "../alert";
 import PopulationAmountIndicator from "./populationAmountIndicator";
 import { EMPTY, PARTIAL, FULL } from "./constants/populationAmount";
 import IndicatorDescription from "./indicatorDescription";
@@ -43,15 +48,19 @@ const NoSelectedNodeView = ({
     <div>
       {isSchemaMismatched && (
         <View marginBottom="size-100">
-          <Alert
+          <InlineAlert
             variant="notice"
-            title="Schema changed"
             data-test-id="schemaChangedNotice"
+            width="size-5000"
           >
-            The XDM schema has changed since this {componentName} was last
-            saved. After the next save, any fields that no longer exist on the
-            XDM schema will also no longer be included on this {componentName}.
-          </Alert>
+            <Heading size="XXS">Schema changed</Heading>
+            <Content>
+              The XDM schema has changed since this {componentName} was last
+              saved. After the next save, any fields that no longer exist on the
+              XDM schema will also no longer be included on this {componentName}
+              .
+            </Content>
+          </InlineAlert>
         </View>
       )}
       <div>
