@@ -12,27 +12,48 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
+import { Flex, Item } from "@adobe/react-spectrum";
+import { object, string, lazy, mixed } from "yup";
 import SectionHeader from "../components/sectionHeader";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import FormElementContainer from "../components/formElementContainer";
+import DataElementSelector from "../components/dataElementSelector";
+import FormikComboBox from "../components/formikReactSpectrum3/formikComboBox";
+import SINGLE_DATA_ELEMENT_REGEX from "../constants/singleDataElementRegex";
+
+const ENABLED = "Enabled";
+const DISABLED = "Disabled";
 
 export const bridge = {
   getInstanceDefaults: () => ({
     idMigrationEnabled: true,
-    thirdPartyCookiesEnabled: true,
+    thirdPartyCookiesEnabled: ENABLED,
   }),
-  getInitialInstanceValues: ({ instanceSettings }) => {
+  getInitialInstanceValues: ({
+    instanceSettings: { idMigrationEnabled, thirdPartyCookiesEnabled },
+  }) => {
     const instanceValues = {};
+
+    const copyFrom = { idMigrationEnabled, thirdPartyCookiesEnabled };
+    if (
+      thirdPartyCookiesEnabled != null &&
+      typeof thirdPartyCookiesEnabled === "boolean"
+    ) {
+      copyFrom.thirdPartyCookiesEnabled = thirdPartyCookiesEnabled
+        ? ENABLED
+        : DISABLED;
+    }
 
     copyPropertiesWithDefaultFallback({
       toObj: instanceValues,
-      fromObj: instanceSettings,
+      fromObj: copyFrom,
       defaultsObj: bridge.getInstanceDefaults(),
       keys: ["idMigrationEnabled", "thirdPartyCookiesEnabled"],
     });
-
+    console.log("copyFrom", copyFrom);
+    console.log("instanceValues", instanceValues);
     return instanceValues;
   },
   getInstanceSettings: ({ instanceValues }) => {
@@ -45,8 +66,30 @@ export const bridge = {
       keys: ["idMigrationEnabled", "thirdPartyCookiesEnabled"],
     });
 
+    if (instanceSettings.thirdPartyCookiesEnabled === ENABLED) {
+      instanceSettings.thirdPartyCookiesEnabled = true;
+    } else if (instanceSettings.thirdPartyCookiesEnabled === DISABLED) {
+      instanceSettings.thirdPartyCookiesEnabled = false;
+    }
     return instanceSettings;
   },
+  instanceValidationSchema: object().shape({
+    thirdPartyCookiesEnabled: lazy((value) =>
+      typeof value === "string" && value.includes("%")
+        ? string()
+            .matches(SINGLE_DATA_ELEMENT_REGEX, {
+              message: "Please enter a valid data element.",
+              excludeEmptyString: true,
+            })
+            .nullable()
+        : mixed()
+            .oneOf(
+              [ENABLED, DISABLED],
+              "Please choose a value or specify a data element.",
+            )
+            .required("Please choose a value or specify a data element."),
+    ),
+  }),
 };
 
 const IdentitySection = ({ instanceFieldName }) => {
@@ -64,14 +107,22 @@ const IdentitySection = ({ instanceFieldName }) => {
         >
           Migrate ECID from VisitorAPI to the web SDK
         </FormikCheckbox>
-        <FormikCheckbox
-          data-test-id="thirdPartyCookiesEnabledField"
-          name={`${instanceFieldName}.thirdPartyCookiesEnabled`}
-          description="Enables the setting of Adobe third-party cookies. The SDK has the ability to persist the visitor ID in a third-party context to enable the same visitor ID to be used across site. This is useful if you have multiple sites or you want to share data with partners; however, sometimes this is not desired for privacy reasons."
-          width="size-5000"
-        >
-          Use third-party cookies
-        </FormikCheckbox>
+        <Flex direction="row" gap="size-250">
+          <DataElementSelector>
+            <FormikComboBox
+              data-test-id="thirdPartyCookiesEnabledField"
+              label="Use third-party cookies"
+              name={`${instanceFieldName}.thirdPartyCookiesEnabled`}
+              description="Enables the setting of Adobe third-party cookies. The SDK has the ability to persist the visitor ID in a third-party context to enable the same visitor ID to be used across site. This is useful if you have multiple sites or you want to share data with partners; however, sometimes this is not desired for privacy reasons. If provided as a data element, the data element should resolve to a boolean value."
+              width="size-5000"
+              isRequired
+              allowsCustomValue
+            >
+              <Item key={ENABLED}>{ENABLED}</Item>
+              <Item key={DISABLED}>{DISABLED}</Item>
+            </FormikComboBox>
+          </DataElementSelector>
+        </Flex>
       </FormElementContainer>
     </>
   );
