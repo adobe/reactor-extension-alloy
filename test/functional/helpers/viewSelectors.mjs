@@ -103,7 +103,7 @@ for (let i = 0; i < 3; i += 1) {
       dataElementField: spectrum.textField("defaultConsentDataElementField"),
     },
     idMigrationEnabled: spectrum.checkbox("idMigrationEnabledField"),
-    thirdPartyCookiesEnabled: spectrum.checkbox(
+    thirdPartyCookiesEnabled: spectrum.comboBox(
       "thirdPartyCookiesEnabledField",
     ),
     // Due to limitations of the sandbox where tests are run,

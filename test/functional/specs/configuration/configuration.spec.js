@@ -133,6 +133,7 @@ test("initializes form fields with full settings", async () => {
           name: "alloy3",
           edgeConfigId: "PR789",
           defaultConsent: "out",
+          thirdPartyCookiesEnabled: "%dataelement789%",
         },
       ],
     },
@@ -159,7 +160,7 @@ test("initializes form fields with full settings", async () => {
   await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
   await instances[0].defaultConsent.dataElementField.expectNotExists();
   await instances[0].idMigrationEnabled.expectChecked();
-  await instances[0].thirdPartyCookiesEnabled.expectChecked();
+  await instances[0].thirdPartyCookiesEnabled.expectText("Enabled");
   await instances[0].internalLinkEnabledField.expectUnchecked();
   await instances[0].externalLinkEnabledField.expectUnchecked();
   await instances[0].downloadLinkEnabledField.expectUnchecked();
@@ -247,7 +248,7 @@ test("initializes form fields with full settings", async () => {
     "%dataelement123%",
   );
   await instances[1].idMigrationEnabled.expectUnchecked();
-  await instances[1].thirdPartyCookiesEnabled.expectUnchecked();
+  await instances[1].thirdPartyCookiesEnabled.expectText("Disabled");
   await instances[1].internalLinkEnabledField.expectChecked();
   await instances[1].eventGrouping.noneField.expectChecked();
   await instances[1].externalLinkEnabledField.expectChecked();
@@ -271,6 +272,7 @@ test("initializes form fields with full settings", async () => {
   await instances[2].defaultConsent.dataElementRadio.expectUnchecked();
   await instances[2].defaultConsent.dataElementField.expectNotExists();
   await instances[2].targetMigrationEnabled.expectUnchecked();
+  await instances[2].thirdPartyCookiesEnabled.expectText("%dataelement789%");
 });
 
 test("initializes form fields with minimal settings", async () => {
@@ -308,7 +310,7 @@ test("initializes form fields with minimal settings", async () => {
   await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
   await instances[0].defaultConsent.dataElementField.expectNotExists();
   await instances[0].idMigrationEnabled.expectChecked();
-  await instances[0].thirdPartyCookiesEnabled.expectChecked();
+  await instances[0].thirdPartyCookiesEnabled.expectText("Enabled");
   await instances[0].internalLinkEnabledField.expectChecked();
   await instances[0].eventGrouping.noneField.expectChecked();
   await instances[0].externalLinkEnabledField.expectChecked();
@@ -357,7 +359,7 @@ test.requestHooks(sandboxesMocks.singleDefault, datastreamsMocks.multiple)(
     await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
-    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectText("Enabled");
     await instances[0].internalLinkEnabledField.expectChecked();
     await instances[0].eventGrouping.noneField.expectChecked();
     await instances[0].externalLinkEnabledField.expectChecked();
@@ -419,7 +421,8 @@ test("returns full valid settings", async () => {
   await instances[0].edgeBasePathField.typeText("-alpha");
   await instances[0].defaultConsent.outRadio.click();
   await instances[0].idMigrationEnabled.click();
-  await instances[0].thirdPartyCookiesEnabled.click();
+  await instances[0].thirdPartyCookiesEnabled.openMenu();
+  await instances[0].thirdPartyCookiesEnabled.selectMenuOption("Disabled");
   await instances[0].prehidingStyleEditButton.click();
   await instances[0].targetMigrationEnabled.click();
 
@@ -470,7 +473,8 @@ test("returns full valid settings", async () => {
     "%dataelement123%",
   );
   await instances[1].idMigrationEnabled.click();
-  await instances[1].thirdPartyCookiesEnabled.click();
+  await instances[1].thirdPartyCookiesEnabled.clear();
+  await instances[1].thirdPartyCookiesEnabled.enterSearch("%dataelement789%");
   await instances[1].eventGrouping.sessionStorageField.click();
   await instances[1].onBeforeEventSendEditButton.click();
   await instances[1].filterClickDetailsEditButton.click();
@@ -543,7 +547,7 @@ test("returns full valid settings", async () => {
         orgId: "5BFE274A5F6980A50A495C08@AdobeOrg2",
         defaultConsent: "%dataelement123%",
         idMigrationEnabled: false,
-        thirdPartyCookiesEnabled: false,
+        thirdPartyCookiesEnabled: "%dataelement789%",
         onBeforeEventSend:
           "language=javascript;code=// Modify content.xdm or content.data as necessary. There is no need to wrap the\n" +
           "// code in a function or return a value. For example:\n" +
@@ -595,7 +599,8 @@ test("returns full valid settings with maximal data elements", async () => {
 
   await instances[0].defaultConsent.outRadio.click();
   await instances[0].idMigrationEnabled.click();
-  await instances[0].thirdPartyCookiesEnabled.click();
+  await instances[0].thirdPartyCookiesEnabled.clear();
+  await instances[0].thirdPartyCookiesEnabled.enterSearch("%foo%");
   await instances[0].targetMigrationEnabled.click();
 
   await instances[0].overrides.envTabs.production.expectExists();
@@ -633,7 +638,7 @@ test("returns full valid settings with maximal data elements", async () => {
         edgeBasePath: `%foo%`,
         defaultConsent: "out",
         idMigrationEnabled: false,
-        thirdPartyCookiesEnabled: false,
+        thirdPartyCookiesEnabled: "%foo%",
         targetMigrationEnabled: true,
         edgeConfigOverrides: {
           development: {
@@ -669,12 +674,15 @@ test.requestHooks(sandboxesMocks.empty)(
     await instances[0].orgIdField.clear();
     await instances[0].edgeDomainField.clear();
     await instances[0].edgeBasePathField.clear();
+    await instances[0].thirdPartyCookiesEnabled.clear();
+
     await extensionViewController.expectIsNotValid();
     await instances[0].nameField.expectError();
     await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.expectError();
     await instances[0].orgIdField.expectError();
     await instances[0].edgeDomainField.expectError();
     await instances[0].edgeBasePathField.expectError();
+    await instances[0].thirdPartyCookiesEnabled.expectError();
   },
 );
 
@@ -821,6 +829,24 @@ test("shows error for invalid download link qualifier", async () => {
   await instances[0].downloadLinkQualifierField.typeText("[");
   await extensionViewController.expectIsNotValid();
   await instances[0].downloadLinkQualifierField.expectError();
+});
+
+test("shows error for invalid third party cookies enabled value", async () => {
+  await extensionViewController.init();
+  await instances[0].thirdPartyCookiesEnabled.clear();
+  await instances[0].thirdPartyCookiesEnabled.enterSearch("foo");
+  await extensionViewController.expectIsNotValid();
+  await instances[0].thirdPartyCookiesEnabled.expectError();
+
+  await instances[0].thirdPartyCookiesEnabled.clear();
+  await instances[0].thirdPartyCookiesEnabled.enterSearch("%foo%%bar%");
+  await extensionViewController.expectIsNotValid();
+  await instances[0].thirdPartyCookiesEnabled.expectError();
+
+  await instances[0].thirdPartyCookiesEnabled.clear();
+  await instances[0].thirdPartyCookiesEnabled.enterSearch("%foo%");
+  await extensionViewController.expectIsNotValid();
+  await instances[0].thirdPartyCookiesEnabled.expectNoError();
 });
 
 test("restores default IMS org ID value when restore button is clicked", async () => {
@@ -990,7 +1016,7 @@ test.requestHooks(
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].targetMigrationEnabled.expectUnchecked();
-    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectText("Enabled");
     await instances[0].internalLinkEnabledField.expectChecked();
     await instances[0].eventGrouping.noneField.expectChecked();
     await instances[0].externalLinkEnabledField.expectChecked();
@@ -1037,7 +1063,7 @@ test.requestHooks(
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].targetMigrationEnabled.expectUnchecked();
-    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectText("Enabled");
     await instances[0].internalLinkEnabledField.expectChecked();
     await instances[0].eventGrouping.noneField.expectChecked();
     await instances[0].externalLinkEnabledField.expectChecked();
@@ -1113,7 +1139,7 @@ test.requestHooks(
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].targetMigrationEnabled.expectUnchecked();
-    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectText("Enabled");
     await instances[0].internalLinkEnabledField.expectUnchecked();
     await instances[0].externalLinkEnabledField.expectUnchecked();
     await instances[0].downloadLinkEnabledField.expectUnchecked();
@@ -1186,7 +1212,7 @@ test.requestHooks(
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].targetMigrationEnabled.expectChecked();
-    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectText("Enabled");
     await instances[0].internalLinkEnabledField.expectUnchecked();
     await instances[0].externalLinkEnabledField.expectUnchecked();
     await instances[0].downloadLinkEnabledField.expectUnchecked();
@@ -1257,7 +1283,7 @@ test.requestHooks(
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
     await instances[0].targetMigrationEnabled.expectUnchecked();
-    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectText("Enabled");
     await instances[0].internalLinkEnabledField.expectUnchecked();
     await instances[0].externalLinkEnabledField.expectUnchecked();
     await instances[0].downloadLinkEnabledField.expectUnchecked();
@@ -1315,7 +1341,7 @@ test.requestHooks(
   await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
   await instances[0].defaultConsent.dataElementField.expectNotExists();
   await instances[0].idMigrationEnabled.expectChecked();
-  await instances[0].thirdPartyCookiesEnabled.expectChecked();
+  await instances[0].thirdPartyCookiesEnabled.expectText("Enabled");
   await instances[0].internalLinkEnabledField.expectUnchecked();
   await instances[0].externalLinkEnabledField.expectUnchecked();
   await instances[0].downloadLinkEnabledField.expectUnchecked();
@@ -1357,7 +1383,7 @@ test.requestHooks(sandboxesMocks.userRegionMissing, datastreamMocks.notExist)(
     await instances[0].defaultConsent.dataElementRadio.expectUnchecked();
     await instances[0].defaultConsent.dataElementField.expectNotExists();
     await instances[0].idMigrationEnabled.expectChecked();
-    await instances[0].thirdPartyCookiesEnabled.expectChecked();
+    await instances[0].thirdPartyCookiesEnabled.expectText("Enabled");
     await instances[0].internalLinkEnabledField.expectChecked();
     await instances[0].eventGrouping.noneField.expectChecked();
     await instances[0].externalLinkEnabledField.expectChecked();

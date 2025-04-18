@@ -340,7 +340,15 @@ const createExtensionManifest = ({ version }) => {
                   type: "boolean",
                 },
                 thirdPartyCookiesEnabled: {
-                  type: "boolean",
+                  anyOf: [
+                    {
+                      type: "string",
+                      pattern: "^%[^%]+%$",
+                    },
+                    {
+                      type: "boolean",
+                    }
+                  ]
                 },
                 prehidingStyle: {
                   type: "string",
