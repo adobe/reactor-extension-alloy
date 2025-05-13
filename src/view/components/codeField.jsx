@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import { useField } from "formik";
 import PropTypes from "prop-types";
+import { ActionButton, Flex, Text } from "@adobe/react-spectrum";
 import CodePreview from "./codePreview";
 
 /**
@@ -60,17 +61,29 @@ const CodeField = ({
   };
 
   return (
-    <CodePreview
-      data-test-id={dataTestId}
-      value={value}
-      label={label}
-      aria-label={ariaLabel}
-      buttonLabel={`${value ? "Edit" : "Provide"} ${buttonLabelSuffix}`}
-      description={description}
-      error={touched && error ? error : undefined}
-      onPress={onPress}
-      beta={beta}
-    />
+    <Flex direction="row" gap="size-250">
+      <CodePreview
+        data-test-id={dataTestId}
+        value={value}
+        label={label}
+        aria-label={ariaLabel}
+        buttonLabel={`${value ? "Edit" : "Provide"} ${buttonLabelSuffix}`}
+        description={description}
+        error={touched && error ? error : undefined}
+        onPress={onPress}
+        beta={beta}
+      />
+      <ActionButton
+        data-test-id={`${dataTestId}-clearButton`}
+        onPress={() => {
+          setValue("");
+        }}
+        marginTop={23}
+        isDisabled={!value}
+      >
+        <Text>Clear</Text>
+      </ActionButton>
+    </Flex>
   );
 };
 
