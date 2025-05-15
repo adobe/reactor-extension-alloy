@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
+import { useField } from "formik";
 import SectionHeader from "../components/sectionHeader";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
@@ -35,21 +36,29 @@ export const bridge = {
 
     return instanceValues;
   },
-  getInstanceSettings: ({ instanceValues }) => {
+  getInstanceSettings: ({ instanceValues, components }) => {
     const instanceSettings = {};
 
-    copyPropertiesIfValueDifferentThanDefault({
-      toObj: instanceSettings,
-      fromObj: instanceValues,
-      defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["id5Enabled", "rampIdEnabled"],
-    });
+    if (components.advertising) {
+      copyPropertiesIfValueDifferentThanDefault({
+        toObj: instanceSettings,
+        fromObj: instanceValues,
+        defaultsObj: bridge.getInstanceDefaults(),
+        keys: ["id5Enabled", "rampIdEnabled"],
+      });
+    }
 
     return instanceSettings;
   },
 };
 
 const AdvertisingSection = ({ instanceFieldName }) => {
+  const [{ value: advertisingComponentEnabled }] = useField("components.advertising");
+  
+  if (!advertisingComponentEnabled) {
+    return null;
+  }
+
   return (
     <>
       <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html">
