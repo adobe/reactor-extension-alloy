@@ -35,14 +35,13 @@ const CodePreview = ({
   onPress,
   beta,
 }) => {
+  const classNames = ["CodePreview-textArea"];
+  if (error) {
+    classNames.push("CodePreview-textArea--invalid");
+  }
+
   return (
-    // To get this element to shrink to its contents, we had to use
-    // alignSelf="flex-start" because this is currently a child of
-    // a flex container (flex items are stretched by default).
-    // Also, we use a labeledValue element instead of putting the
-    // label on the textarea because there is a bug in react-spectrum
-    // textarea sizing when there is a label on it.
-    <View position="relative" alignSelf="flex-start">
+    <View position="relative" UNSAFE_style={{ width: "fit-content" }}>
       <LabeledValue label={label} aria-label={ariaLabel} />
       {beta && <BetaBadge />}
       <FieldDescriptionAndError description={description} error={error}>
@@ -52,7 +51,8 @@ const CodePreview = ({
           height="size-1600"
           value={value}
           isDisabled
-          UNSAFE_className="CodePreview-textArea"
+          UNSAFE_className={classNames.join(" ")}
+          validationState={error ? "invalid" : "valid"}
         />
       </FieldDescriptionAndError>
       <ActionButton
