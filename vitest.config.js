@@ -20,6 +20,7 @@ export default defineProject({
     environment: "jsdom",
     coverage: {
       include: ["src/**/*"],
+      reporter: ["lcov", "html", "text"],
     },
   },
 });
