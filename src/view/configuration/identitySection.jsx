@@ -52,8 +52,6 @@ export const bridge = {
       defaultsObj: bridge.getInstanceDefaults(),
       keys: ["idMigrationEnabled", "thirdPartyCookiesEnabled"],
     });
-    console.log("copyFrom", copyFrom);
-    console.log("instanceValues", instanceValues);
     return instanceValues;
   },
   getInstanceSettings: ({ instanceValues }) => {

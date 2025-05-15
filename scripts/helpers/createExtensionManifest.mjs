@@ -39,6 +39,18 @@ const createPreprocessingVariables = () =>
  * @typedef {Pick<ExtensionManifest, "version">} ExtensionManifestConfiguration
  */
 
+const enabledDisabledOrDataElement = {
+  anyOf: [
+    {
+      type: "boolean",
+    },
+    {
+      type: "string",
+      pattern: "^%[^%]+%$",
+    },
+  ],
+};
+
 /**
  * Create a slice of a JSON schema used to describe the edge overrides
  * configuration.
@@ -47,17 +59,7 @@ const createPreprocessingVariables = () =>
  * @returns {object}
  */
 const createEdgeConfigOverridesSchema = (isAction) => {
-  const enabledDisabledOrDataElement = {
-    anyOf: [
-      {
-        type: "boolean",
-      },
-      {
-        type: "string",
-        pattern: "^%[^%]+%$",
-      },
-    ],
-  };
+
   const configOverridesProps = {
     enabled: enabledDisabledOrDataElement,
     com_adobe_experience_platform: {
@@ -339,17 +341,7 @@ const createExtensionManifest = ({ version }) => {
                 idMigrationEnabled: {
                   type: "boolean",
                 },
-                thirdPartyCookiesEnabled: {
-                  anyOf: [
-                    {
-                      type: "string",
-                      pattern: "^%[^%]+%$",
-                    },
-                    {
-                      type: "boolean",
-                    }
-                  ]
-                },
+                thirdPartyCookiesEnabled: enabledDisabledOrDataElement,
                 prehidingStyle: {
                   type: "string",
                   minLength: 1,
