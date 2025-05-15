@@ -10,11 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createApplyResponse = require("./createApplyResponse");
-const instanceManager = require("../../instanceManager/index");
-const { sendEventCallbackStorage } = require("../../index");
+import createApplyResponse from "./createApplyResponse";
+import instanceManager from "../../instanceManager/index";
+import { sendEventCallbackStorage } from "../../index";
 
-module.exports = createApplyResponse({
+export default createApplyResponse({
   instanceManager,
   sendEventCallbackStorage,
 });
