@@ -249,7 +249,7 @@ export const bridge = {
         then: (schema) =>
           schema.oneOf(
             [""],
-            "Event grouping cannot be used when the onBeforeLinkClickSend callback is specified. Transfer your code to filterClickDetails or turn off event grouping.",
+            "Event grouping cannot be used when the onBeforeLinkClickSend callback is specified. Use filterClickDetails instead or turn off event grouping.",
           ),
       },
     ),
@@ -268,7 +268,9 @@ const DataCollectionSection = ({ instanceFieldName }) => {
   const [, , { setTouched }] = useField(
     `${instanceFieldName}.onBeforeLinkClickSend`,
   );
-  useEffect(() => setTouched(true), []);
+  useEffect(() => {
+    setTouched(true);
+  }, []);
 
   return (
     <>
@@ -408,8 +410,8 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                 </Flex>
               )}
             {clickCollectionIsEnabled(instanceValues) &&
-              instanceValues.linkCallbackType ===
-                LINK_CALLBACK.FILTER_CLICK_DETAILS && (
+              instanceValues.linkCallbackType !==
+                LINK_CALLBACK.ON_BEFORE_LINK_CLICK_SEND && (
                 <Flex gap="size-100">
                   <CodeField
                     data-test-id="filterClickDetailsEditButton"

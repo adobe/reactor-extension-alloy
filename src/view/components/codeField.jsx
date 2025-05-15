@@ -61,7 +61,7 @@ const CodeField = ({
   };
 
   return (
-    <Flex direction="row" gap="size-250">
+    <Flex direction="row" gap="size-100">
       <CodePreview
         data-test-id={dataTestId}
         value={value}
@@ -73,16 +73,17 @@ const CodeField = ({
         onPress={onPress}
         beta={beta}
       />
-      <ActionButton
-        data-test-id={`${dataTestId}-clearButton`}
-        onPress={() => {
-          setValue("");
-        }}
-        marginTop={23}
-        isDisabled={!value}
-      >
-        <Text>Clear</Text>
-      </ActionButton>
+      {value && (
+        <ActionButton
+          data-test-id={`${dataTestId}-clearButton`}
+          onPress={() => {
+            setValue("");
+          }}
+          marginTop={23}
+        >
+          <Text>Clear</Text>
+        </ActionButton>
+      )}
     </Flex>
   );
 };

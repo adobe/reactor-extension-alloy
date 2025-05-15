@@ -17,6 +17,10 @@ governing permissions and limitations under the License.
   overflow: hidden !important;
 }
 
+.CodePreview-textArea--invalid textarea:disabled {
+  border-color: var(--spectrum-textfield-border-color-error, var(--spectrum-semantic-negative-color-default));
+}
+
 .CodePreview-openEditorButton {
   position: absolute !important;
   /* The TextArea component has been given a specific
@@ -32,7 +36,9 @@ governing permissions and limitations under the License.
 /* This is a workaround for a react-spectrum bug */
 /* https://github.com/adobe/react-spectrum/issues/2475 */
 .CodePreview-textArea {
-  > div, .spectrum-Field-field--multiline {
+
+  &>div,
+  & .spectrum-Field-field--multiline {
     flex: 1 1 auto !important;
   }
 }

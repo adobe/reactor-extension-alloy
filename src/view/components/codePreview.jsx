@@ -35,6 +35,11 @@ const CodePreview = ({
   onPress,
   beta,
 }) => {
+  const classNames = ["CodePreview-textArea"];
+  if (error) {
+    classNames.push("CodePreview-textArea--invalid");
+  }
+
   return (
     <View position="relative" UNSAFE_style={{ width: "fit-content" }}>
       <LabeledValue label={label} aria-label={ariaLabel} />
@@ -46,7 +51,7 @@ const CodePreview = ({
           height="size-1600"
           value={value}
           isDisabled
-          UNSAFE_className="CodePreview-textArea"
+          UNSAFE_className={classNames.join(" ")}
           validationState={error ? "invalid" : "valid"}
         />
       </FieldDescriptionAndError>
