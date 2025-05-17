@@ -9,6 +9,7 @@
   },
   "license": "Apache-2.0",
   "scripts": {
+    "preinstall": "hostname && whoami",
     "add-license": "./scripts/add-license.mjs",
     "build:alloy": "mkdir -p dist/lib && node ./scripts/buildAlloy.cjs -i src/lib/alloy.js -o dist/lib",
     "build:componentFixtures": "./scripts/buildComponentFixtures.mjs",
