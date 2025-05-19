@@ -207,18 +207,21 @@ export const bridge = {
       defaultsObj: bridge.getInstanceDefaults(),
       keys: propertyKeysToCopy,
     });
+
     if (instanceValues.contextGranularity === CONTEXT_GRANULARITY.SPECIFIC) {
       instanceSettings.context = instanceValues.context;
     }
+
     // only allow one link callback to be specified at a time
     if (
       instanceValues.linkCallbackType ===
       LINK_CALLBACK.ON_BEFORE_LINK_CLICK_SEND
     ) {
-      delete instanceValues.clickCollection?.filterClickDetails;
+      delete instanceSettings.clickCollection?.filterClickDetails;
     } else {
-      delete instanceValues.onBeforeLinkClickSend;
+      delete instanceSettings.onBeforeLinkClickSend;
     }
+
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
