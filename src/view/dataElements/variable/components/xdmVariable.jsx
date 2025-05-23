@@ -110,7 +110,7 @@ export const bridge = {
     const settings = initInfo.settings || {};
 
     const initialValues = {
-      sandbox: settings.sandbox?.name,
+      sandbox: settings.sandbox?.name || "",
     };
 
     const args = {
@@ -222,21 +222,24 @@ const XdmVariable = ({
             return <Item key={item.name}>{label}</Item>;
           }}
         </FormikPicker>
-        <FormikPagedComboBox
-          data-test-id="schemaField"
-          name="schema"
-          label="Schema"
-          width="size-5000"
-          description="Choose an XDM schema for this variable."
-          loadItems={loadItems}
-          getKey={getKey}
-          getLabel={getLabel}
-          dependencies={[sandbox]}
-          firstPage={schemasFirstPage}
-          firstPageCursor={schemasFirstPageCursor}
-          alertTitle="No schemas found"
-          alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
-        />
+
+        {sandbox && (
+          <FormikPagedComboBox
+            data-test-id="schemaField"
+            name="schema"
+            label="Schema"
+            width="size-5000"
+            description="Choose an XDM schema for this variable."
+            loadItems={loadItems}
+            getKey={getKey}
+            getLabel={getLabel}
+            dependencies={[sandbox]}
+            firstPage={schemasFirstPage}
+            firstPageCursor={schemasFirstPageCursor}
+            alertTitle="No schemas found"
+            alertDescription="No schemas were found in this sandbox. Please add a schema first or choose a sandbox with at least one schema."
+          />
+        )}
       </FormElementContainer>
     </FieldSubset>
   );
