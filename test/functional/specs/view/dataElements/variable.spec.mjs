@@ -57,6 +57,18 @@ test.requestHooks(
   await schemaField.expectText("Test Schema 1");
 });
 
+test.requestHooks(sandboxMocks.multipleWithoutDefault)(
+  "initializes the form when no default sandbox is set",
+  async () => {
+    await extensionViewController.init({
+      settings: null,
+    });
+
+    await t.wait(1000);
+    await t.expect(Selector("body").innerText).notContains("An error occurred");
+  },
+);
+
 test.requestHooks(sandboxMocks.multipleWithoutDefault, schemaMocks.basic)(
   "initializes form fields with full data settings",
   async () => {
