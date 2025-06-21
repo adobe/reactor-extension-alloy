@@ -10,11 +10,11 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createRedirectWithIdentity = require("./createRedirectWithIdentity");
-const instanceManager = require("../../instanceManager/index");
-const createGetConfigOverrides = require("../../utils/createGetConfigOverrides");
+import createRedirectWithIdentity from "./createRedirectWithIdentity";
+import instanceManager from "../../instanceManager/index";
+import createGetConfigOverrides from "../../utils/createGetConfigOverrides";
 
-module.exports = createRedirectWithIdentity({
+export default createRedirectWithIdentity({
   instanceManager,
   window,
   logger: turbine.logger,

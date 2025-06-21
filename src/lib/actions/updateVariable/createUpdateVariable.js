@@ -10,10 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { deletePath } = require("../../utils/pathUtils");
+import { deletePath } from "../../utils/pathUtils";
 
-module.exports =
-  ({ variableStore, deepAssign }) =>
+export default ({ variableStore, deepAssign }) =>
   ({ data, dataElementId, transforms, customCode }, event) => {
     const existingValue = Object.keys(transforms || {}).reduce((memo, path) => {
       const { clear } = transforms[path];
