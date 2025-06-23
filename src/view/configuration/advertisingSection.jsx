@@ -13,23 +13,39 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { useField } from "formik";
+import { Flex, Item } from "@adobe/react-spectrum";
 import SectionHeader from "../components/sectionHeader";
-import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import FormElementContainer from "../components/formElementContainer";
+import DataElementSelector from "../components/dataElementSelector";
+import FormikComboBox from "../components/formikReactSpectrum3/formikComboBox";
+import SINGLE_DATA_ELEMENT_REGEX from "../constants/singleDataElementRegex";
+import { object, lazy, string, mixed } from "yup";
+
+const ENABLED = "Enabled";
+const DISABLED = "Disabled";
 
 export const bridge = {
   getInstanceDefaults: () => ({
-    id5Enabled: false,
-    rampIdEnabled: false,
+    id5Enabled: DISABLED,
+    rampIdEnabled: DISABLED,
   }),
-  getInitialInstanceValues: ({ instanceSettings }) => {
+  getInitialInstanceValues: ({ instanceSettings: { id5Enabled, rampIdEnabled } }) => {
     const instanceValues = {};
+
+    const copyFrom = { id5Enabled, rampIdEnabled }; 
+
+    if (id5Enabled != null && typeof id5Enabled === "boolean") {
+      copyFrom.id5Enabled = id5Enabled ? ENABLED : DISABLED;
+    }
+    if (rampIdEnabled != null && typeof rampIdEnabled === "boolean") {
+      copyFrom.rampIdEnabled = rampIdEnabled ? ENABLED : DISABLED;
+    }
 
     copyPropertiesWithDefaultFallback({
       toObj: instanceValues,
-      fromObj: instanceSettings,
+      fromObj: copyFrom,
       defaultsObj: bridge.getInstanceDefaults(),
       keys: ["id5Enabled", "rampIdEnabled"],
     });
@@ -46,15 +62,61 @@ export const bridge = {
         defaultsObj: bridge.getInstanceDefaults(),
         keys: ["id5Enabled", "rampIdEnabled"],
       });
+
+      if (instanceSettings.id5Enabled === ENABLED) {
+        instanceSettings.id5Enabled = true;
+      } else if (instanceSettings.id5Enabled === DISABLED) {
+        instanceSettings.id5Enabled = false;
+      }
+
+      if (instanceSettings.rampIdEnabled === ENABLED) {
+        instanceSettings.rampIdEnabled = true;
+      } else if (instanceSettings.rampIdEnabled === DISABLED) {
+        instanceSettings.rampIdEnabled = false;
+      }
     }
 
     return instanceSettings;
   },
+  instanceValidationSchema: object().shape({
+    id5Enabled: lazy((value) =>
+      typeof value === "string" && value.includes("%")
+        ? string()
+            .matches(SINGLE_DATA_ELEMENT_REGEX, {
+              message: "Please enter a valid data element.",
+              excludeEmptyString: true,
+            })
+            .nullable()
+        : mixed()
+            .oneOf(
+              [ENABLED, DISABLED],
+              "Please choose a value or specify a data element.",
+            )
+            .required("Please choose a value or specify a data element."),
+    ),
+    rampIdEnabled: lazy((value) =>
+      typeof value === "string" && value.includes("%")
+        ? string()
+            .matches(SINGLE_DATA_ELEMENT_REGEX, {
+              message: "Please enter a valid data element.",
+              excludeEmptyString: true,
+            })
+            .nullable()
+        : mixed()
+            .oneOf(
+              [ENABLED, DISABLED],
+              "Please choose a value or specify a data element.",
+            )
+            .required("Please choose a value or specify a data element."),
+    ),
+  }),
 };
 
 const AdvertisingSection = ({ instanceFieldName }) => {
-  const [{ value: advertisingComponentEnabled }] = useField("components.advertising");
-  
+  const [{ value: advertisingComponentEnabled }] = useField(
+    "components.advertising",
+  );
+
   if (!advertisingComponentEnabled) {
     return null;
   }
@@ -65,22 +127,38 @@ const AdvertisingSection = ({ instanceFieldName }) => {
         Advertising
       </SectionHeader>
       <FormElementContainer>
-        <FormikCheckbox
-          data-test-id="id5EnabledField"
-          name={`${instanceFieldName}.id5Enabled`}
-          description="Enables ID5 integration for advertising identity resolution."
-          width="size-5000"
-        >
-          Enable ID5
-        </FormikCheckbox>
-        <FormikCheckbox
-          data-test-id="rampIdEnabledField"
-          name={`${instanceFieldName}.rampIdEnabled`}
-          description="Enables RampID integration for cross-device identity resolution and advertising use cases."
-          width="size-5000"
-        >
-          Enable RampID
-        </FormikCheckbox>
+        <Flex direction="row" gap="size-250">
+          <DataElementSelector>
+            <FormikComboBox
+              data-test-id="id5EnabledField"
+              label="Enable ID5"
+              name={`${instanceFieldName}.id5Enabled`}
+              description="Enables ID5 integration for advertising identity resolution."
+              width="size-5000"
+              isRequired
+              allowsCustomValue
+            >
+              <Item key={ENABLED}>{ENABLED}</Item>
+              <Item key={DISABLED}>{DISABLED}</Item>
+            </FormikComboBox>
+          </DataElementSelector>
+        </Flex>
+        <Flex direction="row" gap="size-250">
+          <DataElementSelector>
+            <FormikComboBox
+              data-test-id="rampIdEnabledField"
+              label="Enable RampID"
+              name={`${instanceFieldName}.rampIdEnabled`}
+              description="Enables RampID integration for cross-device identity resolution and advertising use cases."
+              width="size-5000"
+              isRequired
+              allowsCustomValue
+            >
+              <Item key={ENABLED}>{ENABLED}</Item>
+              <Item key={DISABLED}>{DISABLED}</Item>
+            </FormikComboBox>
+          </DataElementSelector>
+        </Flex>
       </FormElementContainer>
     </>
   );
@@ -90,4 +168,4 @@ AdvertisingSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired,
 };
 
-export default AdvertisingSection; 
+export default AdvertisingSection;
