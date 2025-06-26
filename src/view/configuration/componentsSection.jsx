@@ -23,7 +23,6 @@ const componentProperties = {
       "This component enables automatic link collection and ActivityMap tracking.",
   },
   advertising: {
-    deprecated: true,
     description:
       "This component enables Adobe Advertising Cloud integration. You must include this component if you are using the Send Ad conversion action.",
   },

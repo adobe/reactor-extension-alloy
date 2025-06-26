@@ -342,6 +342,8 @@ const createExtensionManifest = ({ version }) => {
                   type: "boolean",
                 },
                 thirdPartyCookiesEnabled: enabledDisabledOrDataElement,
+                id5Enabled: enabledDisabledOrDataElement,
+                rampIdEnabled: enabledDisabledOrDataElement,
                 prehidingStyle: {
                   type: "string",
                   minLength: 1,
