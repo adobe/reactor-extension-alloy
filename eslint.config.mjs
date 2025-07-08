@@ -27,10 +27,16 @@ const compat = new FlatCompat({
   baseDirectory: __dirname,
 });
 
+/**
+ * @type {import("eslint").Linter.Config[]}
+ */
 export default [
   js.configs.recommended,
   ...compat.extends("airbnb", "plugin:testcafe/recommended"),
   ...compat.plugins("ban", "testcafe"),
+  {
+    ignores: ["dist/**", "src/lib/runAlloy.js"],
+  },
   {
     files: ["**/*.{mjs,cjs,js,jsx}"],
     plugins: {
