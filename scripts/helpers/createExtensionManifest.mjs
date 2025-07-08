@@ -59,7 +59,6 @@ const enabledDisabledOrDataElement = {
  * @returns {object}
  */
 const createEdgeConfigOverridesSchema = (isAction) => {
-
   const configOverridesProps = {
     enabled: enabledDisabledOrDataElement,
     com_adobe_experience_platform: {
