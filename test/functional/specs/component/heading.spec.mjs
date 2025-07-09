@@ -9,8 +9,6 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
-import React from "react";
 import { t, Selector } from "testcafe";
 import createComponentFixture from "../../helpers/components/createComponentFixture.mjs";
 import renderReactElement from "../../helpers/components/renderReactElement.mjs";
@@ -152,9 +150,15 @@ const scenarios = [
 
 scenarios.forEach(({ props, assertions }) => {
   test(`renders with props: ${JSON.stringify(props)}`, async () => {
-    await renderReactElement(
-      React.createElement("Heading", props, "Test Heading"),
-    );
+    const element = {
+      type: "Heading",
+      props: {
+        ...props,
+        children: "Test Heading",
+      },
+      key: null,
+    };
+    await renderReactElement(element);
     const selector = Selector(assertions.tagName);
     await t.expect(selector.textContent).eql("Test Heading");
     await t
