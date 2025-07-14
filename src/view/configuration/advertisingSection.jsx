@@ -72,15 +72,15 @@ export const bridge = {
         keys: ["id5Enabled", "rampIdEnabled"],
       });
 
-      if (instanceSettings.id5Enabled === ENABLED) {
+      if ([ENABLED, true, "true"].includes(instanceSettings.id5Enabled)) {
         instanceSettings.id5Enabled = true;
-      } else if (instanceSettings.id5Enabled === DISABLED) {
+      } else if ([DISABLED, false, "false"].includes(instanceSettings.id5Enabled)) {
         instanceSettings.id5Enabled = false;
       }
 
-      if (instanceSettings.rampIdEnabled === ENABLED) {
+      if ([ENABLED, true, "true"].includes(instanceSettings.rampIdEnabled)) {
         instanceSettings.rampIdEnabled = true;
-      } else if (instanceSettings.rampIdEnabled === DISABLED) {
+      } else if ([DISABLED, false, "false"].includes(instanceSettings.rampIdEnabled)) {
         instanceSettings.rampIdEnabled = false;
       }
     }
