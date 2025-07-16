@@ -72,7 +72,7 @@ export const bridge = {
     if (isNew) {
       // If this is a newly added extension, default to deprecated components being disabled.
       components = webSdkComponents
-        .filter((value) => value.deprecated)
+        .filter((value) => value.deprecated || value.excludedByDefault)
         .reduce((acc, value) => {
           acc[value.value] = false;
           return acc;
