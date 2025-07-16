@@ -382,6 +382,7 @@ test("returns minimal valid settings", async () => {
   await extensionViewController.expectSettings({
     components: {
       eventMerge: false,
+      advertising: false,
     },
     instances: [
       {
@@ -498,6 +499,7 @@ test("returns full valid settings", async () => {
   await extensionViewController.expectSettings({
     components: {
       eventMerge: false,
+      advertising: false,
     },
     instances: [
       {
@@ -626,6 +628,7 @@ test("returns full valid settings with maximal data elements", async () => {
   await extensionViewController.expectSettings({
     components: {
       eventMerge: false,
+      advertising: false,
     },
     instances: [
       {
@@ -938,6 +941,7 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
   await extensionViewController.expectSettings({
     components: {
       eventMerge: false,
+      advertising: false,
     },
     instances: [
       {
@@ -968,6 +972,7 @@ test("does not save onBeforeEventSend and filterClickDetails code if it matches 
   await extensionViewController.expectSettings({
     components: {
       eventMerge: false,
+      advertising: false,
     },
     instances: [
       {
