@@ -236,6 +236,9 @@ const InstancesSection = ({ initInfo, context }) => {
                         <IdentitySection
                           instanceFieldName={instanceFieldName}
                         />
+                        <AdvertisingSection
+                          instanceFieldName={instanceFieldName}
+                        />
                         <PersonalizationSection
                           instanceFieldName={instanceFieldName}
                         />
