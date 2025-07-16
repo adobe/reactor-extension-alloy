@@ -22,6 +22,11 @@ const componentProperties = {
     description:
       "This component enables automatic link collection and ActivityMap tracking.",
   },
+  advertising: {
+    excludedByDefault: true,
+    description:
+      "This component enables Adobe Advertising Cloud integration. You must include this component if you are using the Send Ad conversion action.",
+  },
   audiences: {
     description:
       "This component supports Audience Manager integration including running URL and cookie destination and id syncs.",
