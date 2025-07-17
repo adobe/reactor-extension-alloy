@@ -49,6 +49,13 @@ const createGetConfigOverrides = (environmentName) => (settings) => {
   }
   delete computedConfigOverrides.enabled;
 
+  // delete every child `enabled: true` key-value pair—it's the same as undefined
+  Object.keys(computedConfigOverrides).forEach((key) => {
+    if (computedConfigOverrides[key]?.enabled === true) {
+      delete computedConfigOverrides[key].enabled;
+    }
+  });
+
   if (computedConfigOverrides.com_adobe_analytics?.reportSuites?.length > 0) {
     computedConfigOverrides.com_adobe_analytics.reportSuites =
       computedConfigOverrides.com_adobe_analytics.reportSuites
