@@ -22,6 +22,11 @@ const componentProperties = {
     description:
       "This component enables automatic link collection and ActivityMap tracking.",
   },
+  advertising: {
+    excludedByDefault: true,
+    description:
+      "This component enables Adobe Advertising Cloud integration. You must include this component if you are using the Send Ad conversion action.",
+  },
   audiences: {
     description:
       "This component supports Audience Manager integration including running URL and cookie destination and id syncs.",
@@ -67,7 +72,7 @@ export const bridge = {
     if (isNew) {
       // If this is a newly added extension, default to deprecated components being disabled.
       components = webSdkComponents
-        .filter((value) => value.deprecated)
+        .filter((value) => value.deprecated || value.excludedByDefault)
         .reduce((acc, value) => {
           acc[value.value] = false;
           return acc;
