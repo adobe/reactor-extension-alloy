@@ -64,6 +64,8 @@ const createGetConfigOverrides = (environmentName) => (settings) => {
         .filter(Boolean);
   }
 
+  // accepted input is a string that is either an integer or an empty string
+  // output is either an integer or undefined
   if (
     computedConfigOverrides.com_adobe_identity?.idSyncContainerId !==
       undefined &&
@@ -71,17 +73,25 @@ const createGetConfigOverrides = (environmentName) => (settings) => {
     typeof computedConfigOverrides.com_adobe_identity?.idSyncContainerId ===
       "string"
   ) {
-    const parsedValue = parseInt(
-      computedConfigOverrides.com_adobe_identity.idSyncContainerId.trim(),
-      10,
-    );
-    if (Number.isNaN(parsedValue)) {
-      throw new Error(
-        `The ID sync container ID "${computedConfigOverrides.com_adobe_identity.idSyncContainerId}" is not a valid integer.`,
+    if (
+      computedConfigOverrides.com_adobe_identity.idSyncContainerId.trim() === ""
+    ) {
+      delete computedConfigOverrides.com_adobe_identity.idSyncContainerId;
+    } else {
+      const parsedValue = parseInt(
+        computedConfigOverrides.com_adobe_identity.idSyncContainerId.trim(),
+        10,
       );
+      if (Number.isNaN(parsedValue)) {
+        throw new Error(
+          `The ID sync container ID "${computedConfigOverrides.com_adobe_identity.idSyncContainerId}" is not a valid integer.`,
+        );
+      }
+      computedConfigOverrides.com_adobe_identity.idSyncContainerId =
+        parsedValue;
     }
-    computedConfigOverrides.com_adobe_identity.idSyncContainerId = parsedValue;
   }
+  // alloy handles filtering out other empty strings and empty objects
   return computedConfigOverrides;
 };
 
