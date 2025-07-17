@@ -24,8 +24,7 @@ const componentProperties = {
   },
   advertising: {
     excludedByDefault: true,
-    description:
-      "This component enables Adobe Advertising Cloud integration. You must include this component if you are using the Send Ad conversion action.",
+    description: "This component enables Adobe Advertising integration.",
   },
   audiences: {
     description:

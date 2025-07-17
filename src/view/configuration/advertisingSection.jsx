@@ -18,19 +18,16 @@ import {
   Flex,
   Heading,
   InlineAlert,
-  Item,
   View,
 } from "@adobe/react-spectrum";
+import { object, lazy, string, array } from "yup";
 import SectionHeader from "../components/sectionHeader";
-import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
-import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 import FormElementContainer from "../components/formElementContainer";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FormikListView from "../components/formikReactSpectrum3/formikListView";
 import fetchAdvertisers from "../utils/fetchAdvertisers";
 import SINGLE_DATA_ELEMENT_REGEX from "../constants/singleDataElementRegex";
-import { object, lazy, string, array } from "yup";
 
 const getDefaultSettings = () => ({
   advertiserIds: [],
@@ -47,18 +44,15 @@ export const bridge = {
       return bridge.getInstanceDefaults();
     }
 
-    const advertising = Object.keys(getDefaultSettings()).reduce(
-      (acc, k) => {
-        if (instanceSettings.advertising[k] !== undefined) {
-          acc[k] = instanceSettings.advertising[k];
-        } else {
-          acc[k] = getDefaultSettings()[k];
-        }
+    const advertising = Object.keys(getDefaultSettings()).reduce((acc, k) => {
+      if (instanceSettings.advertising[k] !== undefined) {
+        acc[k] = instanceSettings.advertising[k];
+      } else {
+        acc[k] = getDefaultSettings()[k];
+      }
 
-        return acc;
-      },
-      {},
-    );
+      return acc;
+    }, {});
     return { advertising };
   },
   getInstanceSettings: ({ instanceValues, components }) => {
@@ -175,7 +169,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
   return (
     <>
       <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html">
-        AdobeAdvertising
+        Adobe Advertising
       </SectionHeader>
       {advertisingComponentEnabled ? (
         <FormElementContainer>
@@ -208,7 +202,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                 data-test-id="id5PartnerIdField"
                 label="ID5 Partner ID"
                 name={`${instanceFieldName}.advertising.id5PartnerId`}
-                description="Enter the ID5 Partner ID for advertising identity resolution."
+                description="Enter the ID5 Partner ID."
                 width="size-5000"
                 allowsCustomValue
               />
@@ -220,7 +214,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                 data-test-id="rampIdJSPathField"
                 label="RampID JS Path"
                 name={`${instanceFieldName}.advertising.rampIdJSPath`}
-                description="Enter the RampID JavaScript path for cross-device identity resolution and advertising use cases."
+                description="Enter the RampID JavaScript (ats.js) path."
                 width="size-5000"
                 allowsCustomValue
               />

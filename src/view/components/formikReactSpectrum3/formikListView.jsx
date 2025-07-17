@@ -12,7 +12,14 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { ListView, Item, IllustratedMessage, Content, Heading, View } from "@adobe/react-spectrum";
+import {
+  ListView,
+  Item,
+  IllustratedMessage,
+  Content,
+  Heading,
+  View,
+} from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 
@@ -55,7 +62,12 @@ const FormikListView = ({
   });
 
   // Ensure value is always an array and convert to strings for ListView
-  const selectedKeys = value ? (Array.isArray(value) ? value.map(id => String(id)) : [String(value)]) : [];
+  let selectedKeys = [];
+  if (value) {
+    selectedKeys = Array.isArray(value)
+      ? value.map((id) => String(id))
+      : [String(value)];
+  }
 
   const renderEmptyState = () => (
     <IllustratedMessage>
@@ -79,7 +91,7 @@ const FormikListView = ({
       aria-label={label || "Select items"}
       selectedKeys={selectedKeys}
       onSelectionChange={(keys) => {
-        setValue(Array.from(keys).map(id => String(id)));
+        setValue(Array.from(keys).map((id) => String(id)));
       }}
       onBlur={(...args) => {
         onBlur(...args);
@@ -106,10 +118,14 @@ const FormikListView = ({
           UNSAFE_style={{
             display: "block",
             marginBottom: "var(--spectrum-global-dimension-size-50)",
-            color: "var(--spectrum-alias-label-text-color, var(--spectrum-global-color-gray-700))",
-            fontSize: "var(--spectrum-alias-item-text-size-m, var(--spectrum-global-dimension-font-size-100))",
-            fontWeight: "var(--spectrum-alias-body-text-font-weight, var(--spectrum-global-font-weight-regular))",
-            lineHeight: "var(--spectrum-alias-component-text-line-height, var(--spectrum-global-font-line-height-small))",
+            color:
+              "var(--spectrum-alias-label-text-color, var(--spectrum-global-color-gray-700))",
+            fontSize:
+              "var(--spectrum-alias-item-text-size-m, var(--spectrum-global-dimension-font-size-100))",
+            fontWeight:
+              "var(--spectrum-alias-body-text-font-weight, var(--spectrum-global-font-weight-regular))",
+            lineHeight:
+              "var(--spectrum-alias-component-text-line-height, var(--spectrum-global-font-line-height-small))",
           }}
           elementType="label"
           htmlFor={name}
@@ -142,4 +158,4 @@ FormikListView.propTypes = {
   isDisabled: PropTypes.bool,
 };
 
-export default FormikListView; 
+export default FormikListView;

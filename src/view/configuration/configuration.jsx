@@ -236,10 +236,6 @@ const InstancesSection = ({ initInfo, context }) => {
                         <IdentitySection
                           instanceFieldName={instanceFieldName}
                         />
-                        <AdvertisingSection
-                          instanceFieldName={instanceFieldName}
-                          initInfo={initInfo}
-                        />
                         <PersonalizationSection
                           instanceFieldName={instanceFieldName}
                         />
@@ -248,6 +244,10 @@ const InstancesSection = ({ initInfo, context }) => {
                         />
                         <StreamingMediaSection
                           instanceFieldName={instanceFieldName}
+                        />
+                        <AdvertisingSection
+                          instanceFieldName={instanceFieldName}
+                          initInfo={initInfo}
                         />
                         <OverridesSection
                           initInfo={initInfo}
