@@ -27,7 +27,7 @@ export default (() => {
       "node_modules",
       "@adobe",
       "alloy",
-      "libEs6",
+      "src",
       "core",
       "componentCreators.js",
     ),
