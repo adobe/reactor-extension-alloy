@@ -424,6 +424,24 @@ const createExtensionManifest = ({ version }) => {
                   required: ["channel", "playerName"],
                   additionalProperties: false,
                 },
+                advertising: {
+                  type: "object",
+                  properties: {
+                    advertiserIds: {
+                      type: "array",
+                      items: {
+                        type: "string",
+                      },
+                    },
+                    id5PartnerId: {
+                      type: "string",
+                    },
+                    rampIdJSPath: {
+                      type: "string",
+                    },
+                  },
+                  additionalProperties: false,
+                },
                 personalizationStorageEnabled: {
                   type: "boolean",
                 },
