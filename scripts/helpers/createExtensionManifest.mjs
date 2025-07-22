@@ -427,10 +427,18 @@ const createExtensionManifest = ({ version }) => {
                 advertising: {
                   type: "object",
                   properties: {
-                    advertiserIds: {
+                    advertiserSettings: {
                       type: "array",
                       items: {
-                        type: "string",
+                        type: "object",
+                        properties: {
+                          advertiserId: {
+                            type: "string",
+                          },
+                          enabled: enabledDisabledOrDataElement,
+                        },
+                        required: ["advertiserId", "enabled"],
+                        additionalProperties: false,
                       },
                     },
                     id5PartnerId: {

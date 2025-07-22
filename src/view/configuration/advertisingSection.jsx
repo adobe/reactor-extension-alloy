@@ -12,33 +12,99 @@ governing permissions and limitations under the License.
 
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useField } from "formik";
+import { useField, FieldArray } from "formik";
 import {
   Content,
   Flex,
   Heading,
   InlineAlert,
   View,
+  Button,
+  ActionButton,
+  Item,
 } from "@adobe/react-spectrum";
-import { object, lazy, string, array } from "yup";
+import Delete from "@spectrum-icons/workflow/Delete";
+import { object, lazy, string, array, mixed } from "yup";
 import SectionHeader from "../components/sectionHeader";
 import FormElementContainer from "../components/formElementContainer";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
-import FormikListView from "../components/formikReactSpectrum3/formikListView";
+import FormikKeyedComboBox from "../components/formikReactSpectrum3/formikKeyedComboBox";
+import FormikComboBox from "../components/formikReactSpectrum3/formikComboBox";
 import fetchAdvertisers from "../utils/fetchAdvertisers";
 import SINGLE_DATA_ELEMENT_REGEX from "../constants/singleDataElementRegex";
 
+const ENABLED = "Enabled";
+const DISABLED = "Disabled";
+
+/**
+ * Returns the default settings for the advertising section
+ */
 const getDefaultSettings = () => ({
-  advertiserIds: [],
+  advertiserSettings: [],
   id5PartnerId: "",
   rampIdJSPath: "",
 });
 
+/**
+ * Validates that advertiser IDs are unique within the advertiser settings array.
+ * Skips validation for data elements (strings containing %).
+ * Only checks against previous items to avoid self-comparison.
+ *
+ * @param {Object} settingObject - The advertiser setting object being validated
+ * @param {Object} context - Yup validation context containing parent array and path
+ * @returns {boolean} - True if valid, throws error if duplicate found
+ */
+const validateNoDuplicateAdvertisers = (settingObject, context) => {
+  const { parent } = context;
+
+  if (!settingObject || !settingObject.advertiserId || !Array.isArray(parent)) {
+    return true;
+  }
+
+  // Only validate if it's not a data element (contains %)
+  if (
+    typeof settingObject.advertiserId === "string" &&
+    settingObject.advertiserId.includes("%")
+  ) {
+    return true;
+  }
+
+  // Get all advertiser settings from the parent array
+  const allSettings = [...parent];
+  const currentIndex = allSettings.indexOf(settingObject);
+  const otherSettings = allSettings.slice(0, currentIndex);
+
+  // Check if any previous setting has the same advertiser ID
+  const hasDuplicate = otherSettings.some(
+    (setting) =>
+      setting.advertiserId &&
+      setting.advertiserId.trim() !== "" &&
+      setting.advertiserId === settingObject.advertiserId,
+  );
+
+  if (hasDuplicate) {
+    throw context.createError({
+      path: `${context.path}.advertiserId`,
+      message: "Duplicate advertiser not allowed.",
+    });
+  }
+
+  return true;
+};
+
 export const bridge = {
+  /**
+   * Returns the default values for a new advertising instance
+   */
   getInstanceDefaults: () => ({
     advertising: getDefaultSettings(),
   }),
+
+  /**
+   * Converts stored instance settings into form values for the UI
+   * Transforms boolean enabled values to "Enabled"/"Disabled" strings
+   */
   getInitialInstanceValues: ({ instanceSettings }) => {
     if (!instanceSettings.advertising) {
       return bridge.getInstanceDefaults();
@@ -53,20 +119,75 @@ export const bridge = {
 
       return acc;
     }, {});
+
+    // Ensure advertiserSettings is always an array
+    if (!Array.isArray(advertising.advertiserSettings)) {
+      advertising.advertiserSettings = [];
+    }
+
+    // Convert boolean enabled values to ENABLED/DISABLED strings for UI display
+    advertising.advertiserSettings = advertising.advertiserSettings.map(
+      (setting) => {
+        let enabled = setting.enabled;
+
+        if (typeof setting.enabled === "boolean") {
+          enabled = setting.enabled ? ENABLED : DISABLED;
+        }
+        // Keep strings (including data elements) unchanged
+
+        return {
+          ...setting,
+          enabled,
+        };
+      },
+    );
+
     return { advertising };
   },
+
+  /**
+   * Converts form values into instance settings to be saved
+   * Transforms "Enabled"/"Disabled" strings back to boolean values
+   * Only includes enabled advertising component settings
+   */
   getInstanceSettings: ({ instanceValues, components }) => {
     const instanceSettings = {};
 
     if (components.advertising) {
       const {
-        advertising: { advertiserIds, id5PartnerId, rampIdJSPath },
+        advertising: { advertiserSettings, id5PartnerId, rampIdJSPath },
       } = instanceValues;
       const advertising = {};
 
-      if (advertiserIds && advertiserIds.length > 0) {
-        advertising.advertiserIds = advertiserIds;
+      if (advertiserSettings && advertiserSettings.length > 0) {
+        // Filter to only advertisers with valid IDs and convert UI strings to booleans
+        const validAdvertiserSettings = advertiserSettings
+          .filter(
+            (setting) =>
+              setting.advertiserId && setting.advertiserId.trim() !== "",
+          )
+          .map((setting) => {
+            let enabled = setting.enabled;
+
+            // Convert UI strings back to boolean values for storage
+            if (setting.enabled === ENABLED) {
+              enabled = true;
+            } else if (setting.enabled === DISABLED) {
+              enabled = false;
+            }
+            // Keep data elements unchanged
+
+            return {
+              ...setting,
+              enabled,
+            };
+          });
+
+        if (validAdvertiserSettings.length > 0) {
+          advertising.advertiserSettings = validAdvertiserSettings;
+        }
       }
+
       if (id5PartnerId !== "") {
         advertising.id5PartnerId = id5PartnerId;
       }
@@ -81,12 +202,48 @@ export const bridge = {
 
     return instanceSettings;
   },
+
+  /**
+   * Yup validation schema for advertising section
+   * Validates advertiser settings, ID5 Partner ID, and RampID JS Path
+   */
   instanceValidationSchema: object().shape({
     advertising: object().when("$components.advertising", {
       is: true,
       then: (schema) =>
         schema.shape({
-          advertiserIds: array().of(string()).nullable(),
+          advertiserSettings: array()
+            .of(
+              object()
+                .shape({
+                  advertiserId: string().required(
+                    "Please select an advertiser.",
+                  ),
+                  enabled: lazy((value) =>
+                    typeof value === "string" && value.includes("%")
+                      ? string()
+                          .matches(SINGLE_DATA_ELEMENT_REGEX, {
+                            message: "Please enter a valid data element.",
+                            excludeEmptyString: true,
+                          })
+                          .nullable()
+                      : mixed()
+                          .oneOf(
+                            [ENABLED, DISABLED],
+                            "Please choose a value or specify a data element.",
+                          )
+                          .required(
+                            "Please choose a value or specify a data element.",
+                          ),
+                  ),
+                })
+                .test(
+                  "no-duplicate-advertiser",
+                  "Duplicate advertiser not allowed.",
+                  validateNoDuplicateAdvertisers,
+                ),
+            )
+            .nullable(),
           id5PartnerId: lazy((value) =>
             typeof value === "string" && value.includes("%")
               ? string()
@@ -117,10 +274,14 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
   const [{ value: advertisingComponentEnabled }] = useField(
     "components.advertising",
   );
+  const [{ value: advertiserSettings }] = useField(
+    `${instanceFieldName}.advertising.advertiserSettings`,
+  );
   const [advertisers, setAdvertisers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Fetch advertisers from Adobe Advertising API when component is enabled
   useEffect(() => {
     const fetchAdvertisersData = async () => {
       if (!advertisingComponentEnabled || !initInfo) return;
@@ -142,6 +303,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
 
         const advertisersList =
           response?.items || response?.data || response || [];
+
         setAdvertisers(advertisersList);
       } catch (e) {
         console.error("Failed to fetch advertisers:", e);
@@ -180,20 +342,109 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                 <Content>{error}</Content>
               </InlineAlert>
             ) : (
-              <FormikListView
-                data-test-id="advertiserIdsField"
-                label="Advertisers"
-                description="Select one or more advertisers for targeting."
-                name={`${instanceFieldName}.advertising.advertiserIds`}
-                width="size-5000"
-                height="size-3000"
-                items={advertisers}
-                getKey={(advertiser) => advertiser.advertiser_id}
-                getLabel={(advertiser) => advertiser.advertiser_name}
-                loadingState={loading ? "loading" : "idle"}
-                isDisabled={loading || !!error}
-                overflowMode="wrap"
-              />
+              <div>
+                <Heading size="S" marginBottom="size-100">
+                  Advertisers
+                </Heading>
+                <FieldArray
+                  name={`${instanceFieldName}.advertising.advertiserSettings`}
+                  render={(arrayHelpers) => {
+                    return (
+                      <div>
+                        <Flex direction="column" gap="size-100">
+                          {advertiserSettings.map((setting, index) => {
+                            return (
+                              <Flex
+                                key={index}
+                                alignItems="start"
+                                gap="size-100"
+                              >
+                                {/* Advertiser Dropdown */}
+                                <FormikKeyedComboBox
+                                  data-test-id={`advertiser${index}Field`}
+                                  name={`${instanceFieldName}.advertising.advertiserSettings.${index}.advertiserId`}
+                                  width="size-4000"
+                                  aria-label={`Advertiser ${index + 1}`}
+                                  marginTop="size-0"
+                                  items={advertisers}
+                                  getKey={(advertiser) =>
+                                    advertiser.advertiser_id
+                                  }
+                                  getLabel={(advertiser) =>
+                                    advertiser.advertiser_name
+                                  }
+                                  isDisabled={loading || !!error}
+                                  isRequired
+                                  allowsCustomValue={false}
+                                  placeholder={
+                                    loading
+                                      ? "Loading advertisers..."
+                                      : "Select an advertiser"
+                                  }
+                                >
+                                  {(advertiser) => (
+                                    <Item
+                                      key={advertiser.advertiser_id}
+                                      data-test-id={advertiser.advertiser_id}
+                                    >
+                                      {advertiser.advertiser_name}
+                                    </Item>
+                                  )}
+                                </FormikKeyedComboBox>
+
+                                {/* Status Dropdown - Supports Data Elements */}
+                                <DataElementSelector>
+                                  <FormikComboBox
+                                    data-test-id={`advertiserEnabled${index}Field`}
+                                    name={`${instanceFieldName}.advertising.advertiserSettings.${index}.enabled`}
+                                    width="size-2000"
+                                    aria-label={`Advertiser ${index + 1} status`}
+                                    marginTop="size-0"
+                                    isRequired
+                                    allowsCustomValue
+                                    placeholder="Select status"
+                                  >
+                                    <Item key={ENABLED}>{ENABLED}</Item>
+                                    <Item key={DISABLED}>{DISABLED}</Item>
+                                  </FormikComboBox>
+                                </DataElementSelector>
+
+                                {/* Delete Button */}
+                                <ActionButton
+                                  data-test-id={`deleteAdvertiser${index}Button`}
+                                  isQuiet
+                                  variant="secondary"
+                                  onPress={() => {
+                                    arrayHelpers.remove(index);
+                                  }}
+                                  aria-label="Remove advertiser"
+                                >
+                                  <Delete />
+                                </ActionButton>
+                              </Flex>
+                            );
+                          })}
+                        </Flex>
+
+                        {/* Add Button */}
+                        <Button
+                          variant="secondary"
+                          data-test-id="addAdvertiserButton"
+                          marginTop="size-100"
+                          onPress={() => {
+                            arrayHelpers.push({
+                              advertiserId: "",
+                              enabled: ENABLED,
+                            });
+                          }}
+                        >
+                          Add advertiser
+                        </Button>
+                      </div>
+                    );
+                  }}
+                />
+              </div>
             )}
           </Flex>
           <Flex direction="row" gap="size-250">
