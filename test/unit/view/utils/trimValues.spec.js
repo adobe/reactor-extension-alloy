@@ -24,6 +24,59 @@ describe("trimValues", () => {
     [null, null, "null"],
     [undefined, undefined, "undefined"],
     [NaN, NaN, "NaN"],
+    ["", undefined, "empty string"],
+    [{ test: "" }, undefined, "empty string in object"],
+    [["", "test"], ["test"], "empty string in array"],
+    [
+      { test: ["", "test"] },
+      { test: ["test"] },
+      "empty string in nested array",
+    ],
+    [{}, undefined, "empty object"],
+    [[], undefined, "empty array"],
+    [{ test: {} }, undefined, "empty object in object"],
+    [{ test: [] }, undefined, "empty array in object"],
+    [{ test: [""] }, undefined, "empty string in array in object"],
+    [
+      { test: ["", "test"] },
+      { test: ["test"] },
+      "empty string in array in object",
+    ],
+    [
+      { test: { a: true, b: {} } },
+      { test: { a: true } },
+      "empty object in object",
+    ],
+    [
+      { test: { a: true, b: [] } },
+      { test: { a: true } },
+      "empty array in object",
+    ],
+    [
+      { test: { a: true, b: [""] } },
+      { test: { a: true } },
+      "empty string in array in object",
+    ],
+    [
+      { test: { a: true, b: ["", "test"] } },
+      { test: { a: true, b: ["test"] } },
+      "empty string in array in object",
+    ],
+    [
+      { test: { a: true, b: {} } },
+      { test: { a: true } },
+      "empty object in object",
+    ],
+    [
+      { test: { a: true, b: [] } },
+      { test: { a: true } },
+      "empty array in object",
+    ],
+    [
+      { test: { a: true, b: [""] } },
+      { test: { a: true } },
+      "empty string in array in object",
+    ],
   ].forEach(([value, expected, description]) => {
     let testTitle = "should trim";
     if (description) {

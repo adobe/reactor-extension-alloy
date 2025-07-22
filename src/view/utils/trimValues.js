@@ -20,28 +20,42 @@ governing permissions and limitations under the License.
  * If the value is an object, the object will be recursed through and returned
  * with all whitespace trimmed from each value.
  *
+ * If the resulting string is empty, the value will be undefined.
+ * If the resulting object is empty, the value will be undefined.
+ * If the resulting array is empty, the value will be undefined.
+ *
  * This is a function statement instead of an arrow function so that it can be
  * recursively called.
  * @param {T} value
- * @returns {T}
+ * @returns {T | undefined}
  */
 function trimValue(value) {
   if (
     value == null ||
-    !value ||
     (typeof value !== "object" && typeof value !== "string")
   ) {
     return value;
   }
 
   if (typeof value === "string") {
-    return value.trim();
+    return value.trim() || undefined;
   }
 
-  // Object.keys() works on both objects and arrays
+  if (Array.isArray(value)) {
+    const trimmedArray = value
+      .map(trimValue)
+      .filter((item) => item !== undefined);
+    return trimmedArray.length === 0 ? undefined : trimmedArray;
+  }
+
   Object.keys(value).forEach((key) => {
-    value[key] = trimValue(value[key]);
+    const trimmedValue = trimValue(value[key]);
+    if (trimmedValue === undefined) {
+      delete value[key];
+    } else {
+      value[key] = trimmedValue;
+    }
   });
-  return value;
+  return Object.keys(value).length === 0 ? undefined : value;
 }
 module.exports = trimValue;

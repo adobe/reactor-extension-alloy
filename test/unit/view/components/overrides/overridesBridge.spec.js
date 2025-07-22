@@ -1283,6 +1283,149 @@ describe("overridesBridge", () => {
       });
     });
 
+    it("should exclude empty fields", () => {
+      const instanceValues = {
+        edgeConfigOverrides: {
+          development: {
+            sandbox: "",
+            datastreamId: "",
+            datastreamIdInputMethod: "freeform",
+            enabled: "Enabled",
+            com_adobe_experience_platform: {
+              enabled: "Enabled",
+              datasets: {
+                event: {
+                  datasetId: "",
+                },
+              },
+              com_adobe_edge_ode: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_segmentation: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_destinations: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_ajo: {
+                enabled: "Enabled",
+              },
+            },
+            com_adobe_analytics: {
+              enabled: "Enabled",
+              reportSuites: [""],
+            },
+            com_adobe_identity: {
+              idSyncContainerId: "",
+            },
+            com_adobe_target: {
+              enabled: "Enabled",
+              propertyToken: "",
+            },
+            com_adobe_audiencemanager: {
+              enabled: "Enabled",
+            },
+            com_adobe_launch_ssf: {
+              enabled: "Enabled",
+            },
+          },
+          staging: {
+            sandbox: "",
+            datastreamId: "",
+            datastreamIdInputMethod: "freeform",
+            enabled: "Match datastream configuration",
+            com_adobe_experience_platform: {
+              enabled: "Enabled",
+              datasets: {
+                event: {
+                  datasetId: "",
+                },
+              },
+              com_adobe_edge_ode: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_segmentation: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_destinations: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_ajo: {
+                enabled: "Enabled",
+              },
+            },
+            com_adobe_analytics: {
+              enabled: "Enabled",
+              reportSuites: [""],
+            },
+            com_adobe_identity: {},
+            com_adobe_target: {
+              enabled: "Enabled",
+              propertyToken: "",
+            },
+            com_adobe_audiencemanager: {
+              enabled: "Enabled",
+            },
+            com_adobe_launch_ssf: {
+              enabled: "Enabled",
+            },
+          },
+          production: {
+            sandbox: "",
+            datastreamId: "",
+            datastreamIdInputMethod: "freeform",
+            enabled: "Match datastream configuration",
+            com_adobe_experience_platform: {
+              enabled: "Enabled",
+              datasets: {
+                event: {
+                  datasetId: "",
+                },
+              },
+              com_adobe_edge_ode: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_segmentation: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_destinations: {
+                enabled: "Enabled",
+              },
+              com_adobe_edge_ajo: {
+                enabled: "Enabled",
+              },
+            },
+            com_adobe_analytics: {
+              enabled: "Enabled",
+              reportSuites: [""],
+            },
+            com_adobe_identity: {},
+            com_adobe_target: {
+              enabled: "Enabled",
+              propertyToken: "",
+            },
+            com_adobe_audiencemanager: {
+              enabled: "Enabled",
+            },
+            com_adobe_launch_ssf: {
+              enabled: "Enabled",
+            },
+          },
+        },
+      };
+
+      const instanceSettings = bridge.getInstanceSettings({
+        instanceValues,
+      });
+      expect(instanceSettings).toEqual({
+        edgeConfigOverrides: {
+          development: {
+            enabled: true,
+          },
+        },
+      });
+    });
+
     it("should allow for data elements", () => {
       const instanceValues = {
         edgeConfigOverrides: {
