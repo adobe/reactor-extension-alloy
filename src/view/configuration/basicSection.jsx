@@ -12,11 +12,12 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import { useField } from "formik";
-import { object, string } from "yup";
+import { object, string, boolean } from "yup";
 import { Flex, InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
+import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import RestoreDefaultValueButton from "../components/restoreDefaultValueButton";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
@@ -29,6 +30,7 @@ export const bridge = {
     persistedName: undefined,
     orgId: initInfo.company.orgId,
     edgeDomain: "edge.adobedc.net",
+    useExistingAlloy: false,
   }),
   getInitialInstanceValues: ({ initInfo, instanceSettings }) => {
     const instanceValues = {};
@@ -37,7 +39,7 @@ export const bridge = {
       toObj: instanceValues,
       fromObj: instanceSettings,
       defaultsObj: bridge.getInstanceDefaults({ initInfo }),
-      keys: ["name", "orgId", "edgeDomain"],
+      keys: ["name", "orgId", "edgeDomain", "useExistingAlloy"],
     });
 
     instanceValues.persistedName = instanceValues.name;
@@ -60,7 +62,7 @@ export const bridge = {
       toObj: instanceSettings,
       fromObj: instanceValues,
       defaultsObj: bridge.getInstanceDefaults({ initInfo }),
-      keys: ["orgId", "edgeDomain"],
+      keys: ["orgId", "edgeDomain", "useExistingAlloy"],
     });
 
     return instanceSettings;
@@ -81,8 +83,16 @@ export const bridge = {
             return !(value in window);
           },
         }),
-      orgId: string().required("Please specify an IMS organization ID."),
-      edgeDomain: string().required("Please specify an edge domain."),
+      orgId: string().when("useExistingAlloy", {
+        is: false,
+        then: (schema) =>
+          schema.required("Please specify an IMS organization ID."),
+      }),
+      edgeDomain: string().when("useExistingAlloy", {
+        is: false,
+        then: (schema) => schema.required("Please specify an edge domain."),
+      }),
+      useExistingAlloy: boolean(),
     })
     // TestCafe doesn't allow this to be an arrow function because of
     // how it scopes "this".
@@ -122,6 +132,14 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
 
   return (
     <FormElementContainer>
+      <FormikCheckbox
+        data-test-id="useExistingAlloyField"
+        name={`${instanceFieldName}.useExistingAlloy`}
+        description="Check this box if alloy.js is already loaded on your site."
+        width="size-5000"
+      >
+        Use existing alloy.js instance
+      </FormikCheckbox>
       <DataElementSelector>
         <FormikTextField
           data-test-id="nameField"
@@ -148,43 +166,47 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
           </Content>
         </InlineAlert>
       ) : null}
-      <Flex>
-        <DataElementSelector>
-          <FormikTextField
-            data-test-id="orgIdField"
-            label="IMS organization ID"
-            name={`${instanceFieldName}.orgId`}
-            description="Your assigned Experience Cloud organization ID."
-            isRequired
-            width="size-5000"
-          />
-        </DataElementSelector>
-        <RestoreDefaultValueButton
-          data-test-id="orgIdRestoreButton"
-          name={`${instanceFieldName}.orgId`}
-          defaultValue={instanceDefaults.orgId}
-        />
-      </Flex>
-      <Flex>
-        <DataElementSelector>
-          <FormikTextField
-            data-test-id="edgeDomainField"
-            label="Edge domain"
-            name={`${instanceFieldName}.edgeDomain`}
-            description="The domain that will be used to interact with
+      {!instanceValues.useExistingAlloy && (
+        <>
+          <Flex>
+            <DataElementSelector>
+              <FormikTextField
+                data-test-id="orgIdField"
+                label="IMS organization ID"
+                name={`${instanceFieldName}.orgId`}
+                description="Your assigned Experience Cloud organization ID."
+                isRequired
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <RestoreDefaultValueButton
+              data-test-id="orgIdRestoreButton"
+              name={`${instanceFieldName}.orgId`}
+              defaultValue={instanceDefaults.orgId}
+            />
+          </Flex>
+          <Flex>
+            <DataElementSelector>
+              <FormikTextField
+                data-test-id="edgeDomainField"
+                label="Edge domain"
+                name={`${instanceFieldName}.edgeDomain`}
+                description="The domain that will be used to interact with
                         Adobe services. Update this setting if you have
                         mapped one of your first-party domains (using
                         CNAME) to an Adobe-provisioned domain."
-            isRequired
-            width="size-5000"
-          />
-        </DataElementSelector>
-        <RestoreDefaultValueButton
-          data-test-id="edgeDomainRestoreButton"
-          name={`${instanceFieldName}.edgeDomain`}
-          defaultValue={instanceDefaults.edgeDomain}
-        />
-      </Flex>
+                isRequired
+                width="size-5000"
+              />
+            </DataElementSelector>
+            <RestoreDefaultValueButton
+              data-test-id="edgeDomainRestoreButton"
+              name={`${instanceFieldName}.edgeDomain`}
+              defaultValue={instanceDefaults.edgeDomain}
+            />
+          </Flex>
+        </>
+      )}
     </FormElementContainer>
   );
 };

@@ -262,7 +262,7 @@ const createExtensionManifest = ({ version }) => {
   const extensionManifest = {
     version,
     displayName: "Adobe Experience Platform Web SDK",
-    name: "adobe-alloy",
+    name: "adobe-alloy-eds",
     iconPath: "resources/images/icon.svg",
     exchangeUrl:
       "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
@@ -288,6 +288,9 @@ const createExtensionManifest = ({ version }) => {
                 name: {
                   type: "string",
                   pattern: "\\D+",
+                },
+                useExistingAlloy: {
+                  type: "boolean",
                 },
                 edgeConfigId: {
                   type: "string",
@@ -442,14 +445,40 @@ const createExtensionManifest = ({ version }) => {
                   additionalProperties: false,
                 },
               },
-              required: ["edgeConfigId", "name"],
               additionalProperties: false,
+              oneOf: [
+                {
+                  // If useExistingAlloy is true, only name is required.
+                  properties: {
+                    useExistingAlloy: {
+                      const: true,
+                    },
+                  },
+                  required: ["name"],
+                },
+                {
+                  // If useExistingAlloy is false or not defined,
+                  // then edgeConfigId is also required.
+                  properties: {
+                    useExistingAlloy: {
+                      const: false,
+                    },
+                  },
+                  required: ["name", "edgeConfigId"],
+                },
+              ],
             },
           },
           components: {
             type: "object",
             patternProperties: {
               ".*": { type: "boolean" },
+            },
+          },
+          hostedLibFiles: {
+            type: "array",
+            items: {
+              type: "string",
             },
           },
         },

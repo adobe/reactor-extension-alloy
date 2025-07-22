@@ -52,8 +52,26 @@ module.exports = ({
       stagingEdgeConfigId,
       developmentEdgeConfigId,
       onBeforeEventSend,
+      useExistingAlloy,
       ...options
     }) => {
+      if (useExistingAlloy) {
+        if (typeof window[name] === "function") {
+          instanceByName[name] = window[name];
+          if (!window.__alloyNS) {
+            window.__alloyNS = [];
+          }
+          if (window.__alloyNS.indexOf(name) === -1) {
+            window.__alloyNS.push(name);
+          }
+        } else {
+          turbine.logger.warn(
+            `Alloy instance "${name}" not found on window. Please ensure it is loaded before the Launch library.`,
+          );
+        }
+        return;
+      }
+
       const instance = createCustomInstance({ name, components });
       window[name] = instance;
       if (!window.__alloyNS) {
