@@ -279,6 +279,9 @@ const createExtensionManifest = ({ version }) => {
         $schema: "http://json-schema.org/draft-04/schema#",
         type: "object",
         properties: {
+          shouldBuildAlloy: {
+            type: "boolean",
+          },
           instances: {
             type: "array",
             minItems: 1,
@@ -473,12 +476,6 @@ const createExtensionManifest = ({ version }) => {
             type: "object",
             patternProperties: {
               ".*": { type: "boolean" },
-            },
-          },
-          hostedLibFiles: {
-            type: "array",
-            items: {
-              type: "string",
             },
           },
         },
@@ -1378,7 +1375,14 @@ const createExtensionManifest = ({ version }) => {
         viewPath: "dataElements/variable.html",
       },
     ],
-    preprocessingVariables: createPreprocessingVariables(),
+    preprocessingVariables: [
+      ...createPreprocessingVariables(),
+      {
+        key: "SHOULD_BUILD_ALLOY",
+        path: "shouldBuildAlloy",
+        default: true,
+      },
+    ],
     main: "dist/lib/instanceManager/index.js",
   };
 

@@ -95,6 +95,18 @@ program
   .description("Tool for generating custom alloy build based on user input.");
 
 program.addOption(
+  new Option("--shouldBuildAlloy <bool>", "should build alloy")
+    .env("SHOULD_BUILD_ALLOY")
+    .default(true, "true")
+    .argParser((val) => {
+      if (val === "0" || val === "false") {
+        return false;
+      }
+      return true;
+    }),
+);
+
+program.addOption(
   new Option("-i, --inputFile <file>", "the entry point file for the build")
     .makeOptionMandatory()
     .argParser((value) => {
@@ -142,46 +154,52 @@ alloyComponents.forEach((component) => {
   );
 });
 
-program.action(async ({ inputFile, outputDir, ...modules }) => {
-  const includedModules = Object.entries(modules).reduce(
-    (acc, [key, value]) => {
-      if (value === true) {
-        acc.push(key);
-      }
+program.action(
+  async ({ inputFile, outputDir, shouldBuildAlloy, ...modules }) => {
+    if (!shouldBuildAlloy) {
+      console.log("shouldBuildAlloy is false, skipping custom alloy build.");
+      return;
+    }
+    const includedModules = Object.entries(modules).reduce(
+      (acc, [key, value]) => {
+        if (value === true) {
+          acc.push(key);
+        }
 
-      return acc;
-    },
-    [],
-  );
+        return acc;
+      },
+      [],
+    );
 
-  let entryFile;
-  try {
-    entryFile = addAlloyModulesToEntryFile({
-      inputFile,
-      outputDir,
-      includedModules,
-    });
+    let entryFile;
+    try {
+      entryFile = addAlloyModulesToEntryFile({
+        inputFile,
+        outputDir,
+        includedModules,
+      });
 
-    await execute("npx", [
-      "rollup",
-      "-c",
-      path.join(__dirname, "../rollup.config.mjs"),
-      "-i",
-      entryFile,
-      "-o",
-      entryFile,
-    ]);
+      await execute("npx", [
+        "rollup",
+        "-c",
+        path.join(__dirname, "../rollup.config.mjs"),
+        "-i",
+        entryFile,
+        "-o",
+        entryFile,
+      ]);
 
-    const output = babel.transformFileSync(entryFile, {
-      presets: [["@babel/preset-env"]],
-    }).code;
+      const output = babel.transformFileSync(entryFile, {
+        presets: [["@babel/preset-env"]],
+      }).code;
 
-    fs.writeFileSync(entryFile, output);
-  } catch (e) {
-    fs.unlinkSync(entryFile);
-    console.error(e);
-    process.exit(1);
-  }
-});
+      fs.writeFileSync(entryFile, output);
+    } catch (e) {
+      fs.unlinkSync(entryFile);
+      console.error(e);
+      process.exit(1);
+    }
+  },
+);
 
 program.parse();

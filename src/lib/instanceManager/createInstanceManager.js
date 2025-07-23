@@ -10,12 +10,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const { poll } = require("../utils/poll");
+
 module.exports = ({
   turbine,
   window,
   createCustomInstance,
   components,
-  createEventMergeId,
   orgId,
   wrapOnBeforeEventSend,
   getConfigOverrides,
@@ -56,19 +57,55 @@ module.exports = ({
       ...options
     }) => {
       if (useExistingAlloy) {
-        if (typeof window[name] === "function") {
-          instanceByName[name] = window[name];
-          if (!window.__alloyNS) {
-            window.__alloyNS = [];
+        let realInstancePromise;
+
+        const getRealInstance = async () => {
+          try {
+            await poll(() => typeof window[name] === "function");
+            // eslint-disable-next-line no-unused-vars, unused-imports/no-unused-vars
+          } catch (err) {
+            turbine.logger.warn(
+              `Alloy instance "${name}" not found on window after 1000ms. Make sure the instance is loaded before the Launch library.`,
+            );
+            return undefined;
           }
-          if (window.__alloyNS.indexOf(name) === -1) {
-            window.__alloyNS.push(name);
+
+          const instance = window[name];
+          let configured = false;
+          // getLibraryInfo only resolves after the instance is configured.
+          instance("getLibraryInfo").then(() => {
+            configured = true;
+          });
+
+          try {
+            await poll(() => configured);
+            // eslint-disable-next-line no-unused-vars, unused-imports/no-unused-vars
+          } catch (err) {
+            turbine.logger.warn(
+              `Alloy instance "${name}" was not configured after 1000ms. Make sure the instance is configured before loading the Launch library.`,
+            );
+            return undefined;
           }
-        } else {
-          turbine.logger.warn(
-            `Alloy instance "${name}" not found on window. Please ensure it is loaded before the Launch library.`,
-          );
-        }
+
+          // Latching: Overwrite the proxy in the map with the real instance.
+          instanceByName[name] = instance;
+          return instance;
+        };
+
+        const proxy = (...args) => {
+          if (!realInstancePromise) {
+            realInstancePromise = getRealInstance();
+          }
+
+          return realInstancePromise.then((instance) => {
+            if (instance) {
+              return instance(...args);
+            }
+            return undefined;
+          });
+        };
+
+        instanceByName[name] = proxy;
         return;
       }
 
@@ -109,13 +146,6 @@ module.exports = ({
      */
     getInstance(name) {
       return instanceByName[name];
-    },
-    /**
-     * Synchronously creates an event merge ID.
-     * @returns {string}
-     */
-    createEventMergeId() {
-      return createEventMergeId();
     },
     addMonitor(newMonitor) {
       window.__alloyMonitors.push(newMonitor);

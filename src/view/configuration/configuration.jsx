@@ -124,8 +124,14 @@ const getInitialValues = async ({ initInfo, context }) => {
 };
 
 const getSettings = async ({ values, initInfo }) => {
+  const { instances } = values;
+  const shouldBuildAlloy = !instances.every(
+    (instance) => instance.useExistingAlloy,
+  );
+
   const settings = {
     ...componentsBridge.getSettings({ values, initInfo }),
+    shouldBuildAlloy,
     instances: await Promise.all(
       values.instances.map((instanceValues) => {
         return getInstanceSettings({

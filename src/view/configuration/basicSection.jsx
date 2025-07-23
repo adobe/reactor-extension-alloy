@@ -135,7 +135,7 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
       <FormikCheckbox
         data-test-id="useExistingAlloyField"
         name={`${instanceFieldName}.useExistingAlloy`}
-        description="Check this box if alloy.js is already loaded on your site."
+        description="Check this box if alloy.js is already loaded on your site for this instance, and you want to use it for rules and data elements."
         width="size-5000"
       >
         Use existing alloy.js instance
