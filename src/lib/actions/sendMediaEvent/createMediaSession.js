@@ -17,7 +17,7 @@ module.exports =
     satelliteApi,
     getConfigOverrides,
   }) =>
-  (settings) => {
+  (settings, event) => {
     const {
       instanceName,
       handleMediaSessionAutomatically,
@@ -26,6 +26,10 @@ module.exports =
       ...otherSettings
     } = settings;
     const instance = instanceManager.getInstance(instanceName);
+
+    event.mediaPlayer = {
+      id: playerId,
+    };
 
     const options = { xdm };
     options.edgeConfigOverrides = getConfigOverrides(otherSettings);
@@ -36,27 +40,27 @@ module.exports =
       return Promise.resolve();
     }
     const { playhead, qoeDataDetails } = xdm.mediaCollection;
-    // eslint-disable-next-line no-underscore-dangle
-    const playheadVar = window._satellite.getVar(playhead);
+    const playheadVar = satelliteApi.getVar(playhead, event);
     xdm.mediaCollection.playhead = playheadVar;
 
     if (qoeDataDetails) {
-      // eslint-disable-next-line no-underscore-dangle
-      const qoeDataDetailsVar = window._satellite.getVar(qoeDataDetails);
+      const qoeDataDetailsVar = satelliteApi.getVar(qoeDataDetails, event);
       xdm.mediaCollection.qoeDataDetails = qoeDataDetailsVar;
     }
 
     if (handleMediaSessionAutomatically) {
       options.playerId = playerId;
 
-      options.getPlayerDetails = () => {
-        const playerDetails = {
-          // eslint-disable-next-line no-underscore-dangle
-          playhead: window._satellite.getVar(playhead),
+      options.getPlayerDetails = ({playerId}) => {
+        event.mediaPlayer = {
+          id: playerId,
+        };
+         const playerDetails = {
+          playhead: satelliteApi.getVar(playhead, event),
         };
 
         if (qoeDataDetails) {
-          playerDetails.qoeDataDetails = satelliteApi.getVar(qoeDataDetails);
+          playerDetails.qoeDataDetails = satelliteApi.getVar(qoeDataDetails, event);
         }
 
         return playerDetails;

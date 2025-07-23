@@ -15,8 +15,9 @@ module.exports = ({
   trackMediaSession,
   mediaCollectionSessionStorage,
   satelliteApi,
+  logger
 }) => {
-  return (settings) => {
+  return (settings, event) => {
     const { instanceName, eventType, playerId, xdm } = settings;
     const instance = instanceManager.getInstance(instanceName);
 
@@ -26,8 +27,15 @@ module.exports = ({
       );
     }
 
+    if (!event || !event.element) {
+      logger.warn(
+        `Media element not found when running "Send Media Event". This action is meant to be used with a Media event.`,
+      );
+      return Promise.resolve();
+    }
+
     if (eventType === "media.sessionStart") {
-      return trackMediaSession(settings);
+      return trackMediaSession(settings, event);
     }
 
     const sessionDetails = mediaCollectionSessionStorage.get({ playerId });
@@ -50,17 +58,15 @@ module.exports = ({
 
       const options = { xdm };
 
+      event.mediaPlayer = { id: playerId };
+
       if (sessionDetails.handleMediaSessionAutomatically) {
         options.playerId = playerId;
       } else {
-        xdm.mediaCollection.playhead = satelliteApi.getVar(
-          sessionDetails.playhead,
-        );
+        xdm.mediaCollection.playhead = satelliteApi.getVar(sessionDetails.playhead, event);
 
         if (sessionDetails.qoeDataDetails) {
-          xdm.mediaCollection.qoeDataDetails = satelliteApi.getVar(
-            sessionDetails.qoeDataDetails,
-          );
+          xdm.mediaCollection.qoeDataDetails = satelliteApi.getVar(sessionDetails.qoeDataDetails, event);
         }
 
         xdm.mediaCollection.sessionID = sessionID;
