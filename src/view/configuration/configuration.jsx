@@ -125,8 +125,8 @@ const getInitialValues = async ({ initInfo, context }) => {
 
 const getSettings = async ({ values, initInfo }) => {
   const { instances } = values;
-  const shouldBuildAlloy = !instances.every(
-    (instance) => instance.useExistingAlloy,
+  const shouldBuildAlloy = instances.some(
+    (instance) => !instance.useExistingAlloy,
   );
 
   const settings = {
