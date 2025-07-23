@@ -56,10 +56,14 @@ module.exports = ({
       useExistingAlloy,
       ...options
     }) => {
+      // If the instance is using a self-hosted alloy.js instance, we need to verify that the
+      // instance is properly loaded and configured.
       if (useExistingAlloy) {
         let realInstancePromise;
 
+        // Polling for the real instance asynchronously.
         const getRealInstance = async () => {
+          // Verify that the instance is loaded.
           try {
             await poll(() => typeof window[name] === "function");
             // eslint-disable-next-line no-unused-vars, unused-imports/no-unused-vars
@@ -70,6 +74,7 @@ module.exports = ({
             return undefined;
           }
 
+          // Verify that the instance is also configured.
           const instance = window[name];
           let configured = false;
           // getLibraryInfo only resolves after the instance is configured.
@@ -92,6 +97,7 @@ module.exports = ({
           return instance;
         };
 
+        // Use a proxy instance to wait for the real instance to be loaded and configured.
         const proxy = (...args) => {
           if (!realInstancePromise) {
             realInstancePromise = getRealInstance();
