@@ -24,6 +24,7 @@ describe("Instance Manager", () => {
   let onBeforeEventSend;
   let alloy1;
   let alloy2;
+  let alloy3;
   let extensionSettings;
   let getConfigOverrides;
 
@@ -71,6 +72,9 @@ describe("Instance Manager", () => {
       }
       if (name === "alloy2") {
         return alloy2;
+      }
+      if (name === "alloy3") {
+        return alloy3;
       }
       return undefined;
     });
@@ -220,6 +224,55 @@ describe("Instance Manager", () => {
     const { edgeConfigOverrides } = alloy1.mock.calls[0][1];
     expect(edgeConfigOverrides).toEqual({
       com_adobe_target: { propertyToken: "development-property-token" },
+    });
+  });
+
+  describe("when useExistingAlloy is true", () => {
+    beforeEach(() => {
+      alloy3 = vi.fn();
+      extensionSettings.instances.push({
+        name: "alloy3",
+        useExistingAlloy: true,
+      });
+      mockWindow.alloy3 = alloy3;
+      turbine.logger = {
+        warn: vi.fn(),
+      };
+    });
+
+    it("uses the existing instance", () => {
+      build();
+      expect(createCustomInstance).toHaveBeenCalledTimes(2);
+      expect(alloy1).toHaveBeenCalled();
+      expect(alloy2).toHaveBeenCalled();
+      expect(alloy3).not.toHaveBeenCalled();
+      const instance = instanceManager.getInstance("alloy3");
+      expect(instance).toBe(alloy3);
+    });
+
+    it("logs a warning if the instance does not exist", () => {
+      delete mockWindow.alloy3;
+      build();
+      expect(turbine.logger.warn).toHaveBeenCalledWith(
+        'Alloy instance "alloy3" not found on window. Please ensure it is loaded before the Launch library.',
+      );
+      const instance = instanceManager.getInstance("alloy3");
+      expect(instance).toBeUndefined();
+    });
+
+    it("creates a new instance if useExistingAlloy is false", () => {
+      extensionSettings.instances[2].useExistingAlloy = false;
+      build();
+      expect(createCustomInstance).toHaveBeenCalledTimes(3);
+      expect(alloy3).toHaveBeenCalledWith("configure", {
+        datastreamId: undefined,
+        debugEnabled: false,
+        orgId: "ABC@AdobeOrg",
+        onBeforeEventSend: expect.any(Function),
+        edgeConfigOverrides: undefined,
+      });
+      const instance = instanceManager.getInstance("alloy3");
+      expect(instance).toBe(alloy3);
     });
   });
 });
