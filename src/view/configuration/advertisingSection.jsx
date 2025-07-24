@@ -277,9 +277,15 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
   const [{ value: advertiserSettings }] = useField(
     `${instanceFieldName}.advertising.advertiserSettings`,
   );
+  const [{ value: instances }] = useField("instances");
   const [advertisers, setAdvertisers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Extract instance index from instanceFieldName (e.g., "instances.0" -> 0)
+  const instanceIndex = parseInt(instanceFieldName.split('.')[1], 10);
+  const isFirstInstance = instanceIndex === 0;
+  const hasMultipleInstances = instances && instances.length > 1;
 
   // Fetch advertisers from Adobe Advertising API when component is enabled
   useEffect(() => {
@@ -328,12 +334,28 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
     </View>
   );
 
+  const multiInstanceView = (
+    <View width="size-6000">
+      <InlineAlert variant="info">
+        <Heading>Adobe Advertising available in first instance only</Heading>
+        <Content>
+          Adobe Advertising configuration is only available in the first instance.
+          To configure Adobe Advertising settings, please use the first instance.
+        </Content>
+      </InlineAlert>
+    </View>
+  );
+
   return (
     <>
       <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html">
         Adobe Advertising
       </SectionHeader>
-      {advertisingComponentEnabled ? (
+      {!advertisingComponentEnabled ? (
+        disabledView
+      ) : hasMultipleInstances && !isFirstInstance ? (
+        multiInstanceView
+      ) : (
         <FormElementContainer>
           <Flex direction="column" gap="size-250">
             {error ? (
@@ -472,8 +494,6 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
             </DataElementSelector>
           </Flex>
         </FormElementContainer>
-      ) : (
-        disabledView
       )}
     </>
   );
