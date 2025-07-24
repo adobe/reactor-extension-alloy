@@ -82,7 +82,8 @@ const wrapGetInitialValues =
     }
 
     // Handle advertising data settings
-    let handleAdvertisingData = advertising.handleAdvertisingData || "disabled";
+    const handleAdvertisingData =
+      advertising.handleAdvertisingData || "disabled";
 
     const newSettings = {
       ...personalization,
@@ -127,7 +128,12 @@ const wrapGetSettings =
     } = getSettings({ values });
 
     // Access handleAdvertisingData directly from values since getSettings doesn't extract it
-    const handleAdvertisingData = values.handleAdvertisingData;
+    let handleAdvertisingData = values.handleAdvertisingData;
+
+    // If data element is selected, get the actual data element value
+    if (handleAdvertisingData === "dataElement") {
+      handleAdvertisingData = values.handleAdvertisingDataDataElement;
+    }
 
     if (
       decisionScopes ||
@@ -344,7 +350,9 @@ const defaultPersonalizationEnabledField = radioGroup({
 const advertisingDataField = radioGroup({
   name: "handleAdvertisingData",
   label: "Request default Advertising data",
-  dataElementSupported: false,
+  dataElementSupported: true,
+  dataElementDescription:
+    "Provide a data element that resolves to one of the following values: 'auto', 'wait', or 'disabled'.",
   defaultValue: "disabled",
   items: [
     {
