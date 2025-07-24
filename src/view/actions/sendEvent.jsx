@@ -451,7 +451,15 @@ const sendEventForm = form(
             learnMoreUrl:
               "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
           },
-          [advertisingDataField],
+          [
+            requiredComponent(
+              {
+                requiredComponent: "advertising",
+                title: "the advertising section in the send event action",
+              },
+              [advertisingDataField],
+            ),
+          ],
         ),
         configOverrideFields,
         // only display the deprecated datasetId field if there is an existing
@@ -522,7 +530,15 @@ const sendEventForm = form(
                 learnMoreUrl:
                   "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
               },
-              [advertisingDataField],
+              [
+                requiredComponent(
+                  {
+                    requiredComponent: "advertising",
+                    title: "the advertising section in the send event action",
+                  },
+                  [advertisingDataField],
+                ),
+              ],
             ),
             configOverrideFields,
           ],
@@ -545,7 +561,15 @@ const sendEventForm = form(
                 learnMoreUrl:
                   "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
               },
-              [advertisingDataField],
+              [
+                requiredComponent(
+                  {
+                    requiredComponent: "advertising",
+                    title: "the advertising section in the send event action",
+                  },
+                  [advertisingDataField],
+                ),
+              ],
             ),
             configOverrideFields,
           ],
