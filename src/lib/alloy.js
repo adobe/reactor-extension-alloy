@@ -18,5 +18,5 @@ import {
 const components = optionalComponents;
 
 export { createCustomInstance, components };
-export { default as createEventMergeId } from "@adobe/alloy/libEs6/components/EventMerge/createEventMergeId";
-export { default as deepAssign } from "@adobe/alloy/libEs6/utils/deepAssign";
+// eslint-disable-next-line import/no-unresolved -- eslint doesn't support subpath node_module exports, see https://github.com/import-js/eslint-plugin-import/issues/1810
+export { createEventMergeId, deepAssign } from "@adobe/alloy/utils";
