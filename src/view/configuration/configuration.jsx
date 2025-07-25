@@ -15,15 +15,8 @@ import { object, array } from "yup";
 import { FieldArray, useField } from "formik";
 import {
   Button,
-  ButtonGroup,
-  Content,
-  DialogTrigger,
-  Dialog,
   Flex,
-  Heading as HeadingSlot,
   Item,
-  Divider,
-  Text,
   TabList,
   TabPanels,
   Tabs,
@@ -131,8 +124,14 @@ const getInitialValues = async ({ initInfo, context }) => {
 };
 
 const getSettings = async ({ values, initInfo }) => {
-  return {
+  const { instances } = values;
+  const shouldBuildAlloy = instances.some(
+    (instance) => !instance.useExistingAlloy,
+  );
+
+  const settings = {
     ...componentsBridge.getSettings({ values, initInfo }),
+    shouldBuildAlloy,
     instances: await Promise.all(
       values.instances.map((instanceValues) => {
         return getInstanceSettings({
@@ -143,6 +142,12 @@ const getSettings = async ({ values, initInfo }) => {
       }),
     ),
   };
+
+  if (values.instances.some((instance) => instance.useExistingAlloy)) {
+    settings.hostedLibFiles = [];
+  }
+
+  return settings;
 };
 
 const validationSchema = object().shape({
@@ -222,91 +227,67 @@ const InstancesSection = ({ initInfo, context }) => {
                           instanceFieldName={instanceFieldName}
                           initInfo={initInfo}
                         />
-                        <EdgeConfigurationsSection
-                          instanceFieldName={instanceFieldName}
-                          instanceIndex={index}
-                          initInfo={initInfo}
-                          context={context}
-                        />
-                        <PrivacySection instanceFieldName={instanceFieldName} />
-                        <IdentitySection
-                          instanceFieldName={instanceFieldName}
-                        />
-                        <PersonalizationSection
-                          instanceFieldName={instanceFieldName}
-                        />
-                        <DataCollectionSection
-                          instanceFieldName={instanceFieldName}
-                        />
-                        <StreamingMediaSection
-                          instanceFieldName={instanceFieldName}
-                        />
-                        <OverridesSection
-                          initInfo={initInfo}
-                          instanceFieldName={instanceFieldName}
-                          edgeConfigIds={edgeConfigIds}
-                          configOrgId={instance.orgId}
-                          hideFields={[FIELD_NAMES.datastreamId]}
-                        />
-                        <AdvancedSection
-                          instanceFieldName={instanceFieldName}
-                        />
-                        {instances.length > 1 && (
-                          <View marginTop="size-300">
-                            <DialogTrigger>
-                              <Button
-                                data-test-id="deleteInstanceButton"
-                                icon={<DeleteIcon />}
-                                variant="secondary"
-                                disabled={instances.length === 1}
-                              >
-                                Delete instance
-                              </Button>
-                              {(close) => (
-                                <Dialog data-test-id="resourceUsageDialog">
-                                  <HeadingSlot>Resource Usage</HeadingSlot>
-                                  <Divider />
-                                  <Content>
-                                    <Text>
-                                      Any rule components or data elements using
-                                      this instance will no longer function as
-                                      expected when running on your website. We
-                                      recommend removing these resources or
-                                      switching them to use a different instance
-                                      before publishing your next library. Would
-                                      you like to proceed?
-                                    </Text>
-                                  </Content>
-                                  <ButtonGroup>
-                                    <Button
-                                      data-test-id="cancelDeleteInstanceButton"
-                                      variant="secondary"
-                                      onPress={close}
-                                    >
-                                      Cancel
-                                    </Button>
-                                    <Button
-                                      data-test-id="confirmDeleteInstanceButton"
-                                      variant="cta"
-                                      onPress={() => {
-                                        arrayHelpers.remove(index);
-                                        setSelectedTabKey(String(index));
-                                      }}
-                                      autoFocus
-                                    >
-                                      Delete
-                                    </Button>
-                                  </ButtonGroup>
-                                </Dialog>
-                              )}
-                            </DialogTrigger>
-                          </View>
+                        {!instance.useExistingAlloy && (
+                          <>
+                            <EdgeConfigurationsSection
+                              instanceFieldName={instanceFieldName}
+                              instanceIndex={index}
+                              initInfo={initInfo}
+                              context={context}
+                            />
+                            <PrivacySection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <IdentitySection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <PersonalizationSection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <DataCollectionSection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <StreamingMediaSection
+                              instanceFieldName={instanceFieldName}
+                            />
+                            <OverridesSection
+                              initInfo={initInfo}
+                              instanceFieldName={instanceFieldName}
+                              edgeConfigIds={edgeConfigIds}
+                              configOrgId={instance.orgId}
+                              hideFields={[FIELD_NAMES.datastreamId]}
+                            />
+                            <AdvancedSection
+                              instanceFieldName={instanceFieldName}
+                            />
+                          </>
                         )}
                       </Item>
                     );
                   })}
                 </TabPanels>
               </Tabs>
+              {instances.length > 1 && (
+                <View marginTop="size-300">
+                  <Button
+                    data-test-id="deleteInstanceButton"
+                    variant="negative"
+                    onPress={() => {
+                      arrayHelpers.remove(Number(selectedTabKey));
+
+                      const newSelectedTabKey = Math.max(
+                        0,
+                        Number(selectedTabKey) - 1,
+                      ).toString();
+
+                      setSelectedTabKey(newSelectedTabKey);
+                    }}
+                    icon={<DeleteIcon />}
+                  >
+                    Delete instance
+                  </Button>
+                </View>
+              )}
             </div>
           );
         }}

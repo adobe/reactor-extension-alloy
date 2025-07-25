@@ -279,6 +279,9 @@ const createExtensionManifest = ({ version }) => {
         $schema: "http://json-schema.org/draft-04/schema#",
         type: "object",
         properties: {
+          shouldBuildAlloy: {
+            type: "boolean",
+          },
           instances: {
             type: "array",
             minItems: 1,
@@ -288,6 +291,9 @@ const createExtensionManifest = ({ version }) => {
                 name: {
                   type: "string",
                   pattern: "\\D+",
+                },
+                useExistingAlloy: {
+                  type: "boolean",
                 },
                 edgeConfigId: {
                   type: "string",
@@ -442,8 +448,28 @@ const createExtensionManifest = ({ version }) => {
                   additionalProperties: false,
                 },
               },
-              required: ["edgeConfigId", "name"],
               additionalProperties: false,
+              oneOf: [
+                {
+                  // If useExistingAlloy is true, only name is required.
+                  properties: {
+                    useExistingAlloy: {
+                      const: true,
+                    },
+                  },
+                  required: ["name"],
+                },
+                {
+                  // If useExistingAlloy is false or not defined,
+                  // then edgeConfigId is also required.
+                  properties: {
+                    useExistingAlloy: {
+                      const: false,
+                    },
+                  },
+                  required: ["name", "edgeConfigId"],
+                },
+              ],
             },
           },
           components: {
@@ -1349,7 +1375,14 @@ const createExtensionManifest = ({ version }) => {
         viewPath: "dataElements/variable.html",
       },
     ],
-    preprocessingVariables: createPreprocessingVariables(),
+    preprocessingVariables: [
+      ...createPreprocessingVariables(),
+      {
+        key: "SHOULD_BUILD_ALLOY",
+        path: "shouldBuildAlloy",
+        default: true,
+      },
+    ],
     main: "dist/lib/instanceManager/index.js",
   };
 
