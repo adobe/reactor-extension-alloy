@@ -15,7 +15,7 @@
     "build:extensionManifest": "./scripts/buildExtensionManifest.mjs",
     "build:lib": "./scripts/buildLib.mjs",
     "build:views": "./scripts/buildViews.mjs",
-    "build": "conc --pad-prefix --kill-others-on-fail --names \"alloy,fixtures,manifest,lib,views\" \"npm run build:alloy\" \"npm run build:componentFixtures\" \"npm run build:extensionManifest\" \"npm run build:lib\" \"npm run build:views\"",
+    "build": "conc --pad-prefix --names \"alloy,fixtures,manifest,lib,views\" \"npm run build:alloy\" \"npm run build:componentFixtures\" \"npm run build:extensionManifest\" \"npm run build:lib\" \"npm run build:views\"",
     "watch:lib": "./scripts/buildLib.mjs --watch",
     "watch:views": "./scripts/buildViews.mjs --watch",
     "watch": "conc --pad-prefix --names \"alloy,fixtures,manifest,lib,views\" \"npm run build:alloy\" \"npm run build:componentFixtures\" \"npm run build:extensionManifest\" \"npm run watch:lib\" \"npm run watch:views\"",
