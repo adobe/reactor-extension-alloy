@@ -282,6 +282,17 @@ const createExtensionManifest = ({ version }) => {
           shouldBuildAlloy: {
             type: "boolean",
           },
+          libraryCode: {
+            type: "object",
+            properties: {
+              type: {
+                type: "string",
+                enum: ["managed", "preinstalled"],
+              },
+            },
+            required: ["type"],
+            additionalProperties: false,
+          },
           instances: {
             type: "array",
             minItems: 1,
@@ -291,9 +302,6 @@ const createExtensionManifest = ({ version }) => {
                 name: {
                   type: "string",
                   pattern: "\\D+",
-                },
-                useExistingAlloy: {
-                  type: "boolean",
                 },
                 edgeConfigId: {
                   type: "string",
@@ -449,27 +457,7 @@ const createExtensionManifest = ({ version }) => {
                 },
               },
               additionalProperties: false,
-              oneOf: [
-                {
-                  // If useExistingAlloy is true, only name is required.
-                  properties: {
-                    useExistingAlloy: {
-                      const: true,
-                    },
-                  },
-                  required: ["name"],
-                },
-                {
-                  // If useExistingAlloy is false or not defined,
-                  // then edgeConfigId is also required.
-                  properties: {
-                    useExistingAlloy: {
-                      const: false,
-                    },
-                  },
-                  required: ["name", "edgeConfigId"],
-                },
-              ],
+              required: ["name"],
             },
           },
           components: {

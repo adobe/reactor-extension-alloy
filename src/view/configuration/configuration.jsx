@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState, useRef } from "react";
-import { object, array } from "yup";
 import { FieldArray, useField } from "formik";
 import {
   Button,
@@ -25,12 +24,14 @@ import {
   Disclosure,
   DisclosureTitle,
   DisclosurePanel,
+  Radio,
 } from "@adobe/react-spectrum";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import PropTypes from "prop-types";
 import render from "../render";
 import ExtensionView from "../components/extensionView";
 import useNewlyValidatedFormSubmission from "../utils/useNewlyValidatedFormSubmission";
+import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGroup";
 import BasicSection, { bridge as basicSectionBridge } from "./basicSection";
 import EdgeConfigurationsSection, {
   bridge as edgeConfigurationsSectionBridge,
@@ -120,18 +121,18 @@ const getInitialValues = async ({ initInfo, context }) => {
   return {
     ...componentsBridge.getInitialValues({ initInfo }),
     instances: instancesInitialValues,
+    libraryCode: initInfo.settings?.libraryCode || { type: "managed" },
   };
 };
 
 const getSettings = async ({ values, initInfo }) => {
-  const { instances } = values;
-  const shouldBuildAlloy = instances.some(
-    (instance) => !instance.useExistingAlloy,
-  );
+  const isPreinstalled = values.libraryCode?.type === "preinstalled";
+  const shouldBuildAlloy = !isPreinstalled;
 
   const settings = {
     ...componentsBridge.getSettings({ values, initInfo }),
     shouldBuildAlloy,
+    libraryCode: values.libraryCode,
     instances: await Promise.all(
       values.instances.map((instanceValues) => {
         return getInstanceSettings({
@@ -143,24 +144,53 @@ const getSettings = async ({ values, initInfo }) => {
     ),
   };
 
-  if (values.instances.some((instance) => instance.useExistingAlloy)) {
-    settings.hostedLibFiles = [];
-  }
-
   return settings;
 };
 
-const validationSchema = object().shape({
-  instances: array().of(
-    sectionBridges.reduce((instanceSchema, bridge) => {
-      return bridge.instanceValidationSchema
-        ? instanceSchema.concat(bridge.instanceValidationSchema)
-        : instanceSchema;
-    }, object()),
-  ),
-});
+/*
+// Unused - keeping for potential future use
+const createValidationSchema = (isPreinstalled = false) => {
+  if (isPreinstalled) {
+    // For preinstalled mode, only validate libraryCode and instance names
+    return object().shape({
+      libraryCode: object().shape({
+        type: string().oneOf(["managed", "preinstalled"]).required(),
+      }),
+      instances: array().of(
+        object().shape({
+          name: string()
+            .required("Please specify a name.")
+            .matches(/\D+/, "Please provide a non-numeric name.")
+            .test({
+              name: "notWindowPropertyName",
+              message:
+                "Please provide a name that does not conflict with a property already found on the window object.",
+              test(value) {
+                return !(value in window);
+              },
+            }),
+        }),
+      ),
+    });
+  }
 
-const InstancesSection = ({ initInfo, context }) => {
+  // For managed mode, use full validation
+  return object().shape({
+    libraryCode: object().shape({
+      type: string().oneOf(["managed", "preinstalled"]).required(),
+    }),
+    instances: array().of(
+      sectionBridges.reduce((instanceSchema, bridge) => {
+        return bridge.instanceValidationSchema
+          ? instanceSchema.concat(bridge.instanceValidationSchema)
+          : instanceSchema;
+      }, object()),
+    ),
+  });
+};
+*/
+
+const InstancesSection = ({ initInfo, context, isPreinstalled }) => {
   const [{ value: instances }] = useField("instances");
   const [selectedTabKey, setSelectedTabKey] = useState("0");
 
@@ -226,8 +256,9 @@ const InstancesSection = ({ initInfo, context }) => {
                         <BasicSection
                           instanceFieldName={instanceFieldName}
                           initInfo={initInfo}
+                          isPreinstalled={isPreinstalled}
                         />
-                        {!instance.useExistingAlloy && (
+                        {!isPreinstalled && (
                           <>
                             <EdgeConfigurationsSection
                               instanceFieldName={instanceFieldName}
@@ -299,10 +330,12 @@ const InstancesSection = ({ initInfo, context }) => {
 InstancesSection.propTypes = {
   initInfo: PropTypes.object.isRequired,
   context: PropTypes.object.isRequired,
+  isPreinstalled: PropTypes.bool.isRequired,
 };
 
 const Configuration = ({ initInfo, context }) => {
   const [expandedKeys, setExpandedKeys] = useState(new Set(["instances"]));
+  const [{ value: libraryCode }] = useField("libraryCode");
 
   useNewlyValidatedFormSubmission((errors) => {
     if (errors) {
@@ -315,27 +348,51 @@ const Configuration = ({ initInfo, context }) => {
     }
   });
 
+  const isPreinstalled = libraryCode?.type === "preinstalled";
+
   return (
-    <Accordion
-      expandedKeys={expandedKeys}
-      onExpandedChange={setExpandedKeys}
-      allowsMultipleExpanded
-    >
-      <Disclosure id="components">
-        <DisclosureTitle data-test-id="custom-build-heading">
-          Custom build components
-        </DisclosureTitle>
-        <DisclosurePanel>
-          <ComponentsSection />
-        </DisclosurePanel>
-      </Disclosure>
-      <Disclosure id="instances">
-        <DisclosureTitle>SDK instances</DisclosureTitle>
-        <DisclosurePanel>
-          <InstancesSection initInfo={initInfo} context={context} />
-        </DisclosurePanel>
-      </Disclosure>
-    </Accordion>
+    <Flex direction="column" gap="size-200">
+      <View marginStart="size-200">
+        <FormikRadioGroup
+          data-test-id="libraryCodeField"
+          name="libraryCode.type"
+          label="Alloy library configuration"
+          description="Choose how the Alloy library should be loaded"
+          orientation="horizontal"
+        >
+          <Radio value="managed">Managed by Launch (default)</Radio>
+          <Radio value="preinstalled">
+            Use existing alloy.js instance (self-hosted)
+          </Radio>
+        </FormikRadioGroup>
+      </View>
+      <Accordion
+        expandedKeys={expandedKeys}
+        onExpandedChange={setExpandedKeys}
+        allowsMultipleExpanded
+      >
+        {!isPreinstalled && (
+          <Disclosure id="components">
+            <DisclosureTitle data-test-id="custom-build-heading">
+              Custom build components
+            </DisclosureTitle>
+            <DisclosurePanel>
+              <ComponentsSection />
+            </DisclosurePanel>
+          </Disclosure>
+        )}
+        <Disclosure id="instances">
+          <DisclosureTitle>SDK instances</DisclosureTitle>
+          <DisclosurePanel>
+            <InstancesSection
+              initInfo={initInfo}
+              context={context}
+              isPreinstalled={isPreinstalled}
+            />
+          </DisclosurePanel>
+        </Disclosure>
+      </Accordion>
+    </Flex>
   );
 };
 
@@ -346,13 +403,87 @@ Configuration.propTypes = {
 
 const ConfigurationExtensionView = () => {
   const context = useRef();
+
+  const validateFormikState = ({ values }) => {
+    const { libraryCode, instances } = values || {};
+    const isPreinstalled = libraryCode?.type === "preinstalled";
+
+    // For preinstalled mode, no validation needed
+    if (isPreinstalled) {
+      return {};
+    }
+
+    // For managed mode, manually check required fields
+    const errors = {};
+
+    if (instances && instances.length > 0) {
+      errors.instances = [];
+
+      instances.forEach((instance, index) => {
+        const instanceErrors = {};
+
+        // Check orgId
+        if (!instance.orgId || instance.orgId.trim() === "") {
+          instanceErrors.orgId = "Please specify an IMS Organization ID.";
+        }
+
+        // Check edgeDomain
+        if (!instance.edgeDomain || instance.edgeDomain.trim() === "") {
+          instanceErrors.edgeDomain = "Please specify an edge domain.";
+        }
+
+        // Check datastream (complex nested structure)
+        let datastreamError = null;
+        if (instance.edgeConfigInputMethod === "select") {
+          const datastreamId =
+            instance.edgeConfigSelectInputMethod?.productionEnvironment
+              ?.datastreamId;
+          if (!datastreamId || datastreamId.trim() === "") {
+            datastreamError = "Please specify a datastream.";
+            // Need to set the error on the correct nested path
+            if (!instanceErrors.edgeConfigSelectInputMethod) {
+              instanceErrors.edgeConfigSelectInputMethod = {};
+            }
+            if (
+              !instanceErrors.edgeConfigSelectInputMethod.productionEnvironment
+            ) {
+              instanceErrors.edgeConfigSelectInputMethod.productionEnvironment =
+                {};
+            }
+            instanceErrors.edgeConfigSelectInputMethod.productionEnvironment.datastreamId =
+              datastreamError;
+          }
+        } else {
+          const edgeConfigId =
+            instance.edgeConfigFreeformInputMethod?.edgeConfigId;
+          if (!edgeConfigId || edgeConfigId.trim() === "") {
+            datastreamError = "Please specify a datastream.";
+            // Need to set the error on the correct nested path
+            if (!instanceErrors.edgeConfigFreeformInputMethod) {
+              instanceErrors.edgeConfigFreeformInputMethod = {};
+            }
+            instanceErrors.edgeConfigFreeformInputMethod.edgeConfigId =
+              datastreamError;
+          }
+        }
+
+        // Only add instanceErrors if there are actual errors
+        if (Object.keys(instanceErrors).length > 0) {
+          errors.instances[index] = instanceErrors;
+        }
+      });
+    }
+
+    return errors;
+  };
+
   return (
     <ExtensionView
       getInitialValues={({ initInfo }) =>
         getInitialValues({ initInfo, context })
       }
       getSettings={getSettings}
-      formikStateValidationSchema={validationSchema}
+      validateFormikState={validateFormikState}
       render={({ initInfo }) => {
         return <Configuration initInfo={initInfo} context={context} />;
       }}

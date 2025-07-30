@@ -12,12 +12,11 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import { useField } from "formik";
-import { object, string, boolean } from "yup";
+import { object, string } from "yup";
 import { Flex, InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import DataElementSelector from "../components/dataElementSelector";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
-import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import RestoreDefaultValueButton from "../components/restoreDefaultValueButton";
 import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
 import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
@@ -30,7 +29,6 @@ export const bridge = {
     persistedName: undefined,
     orgId: initInfo.company.orgId,
     edgeDomain: "edge.adobedc.net",
-    useExistingAlloy: false,
   }),
   getInitialInstanceValues: ({ initInfo, instanceSettings }) => {
     const instanceValues = {};
@@ -39,7 +37,7 @@ export const bridge = {
       toObj: instanceValues,
       fromObj: instanceSettings,
       defaultsObj: bridge.getInstanceDefaults({ initInfo }),
-      keys: ["name", "orgId", "edgeDomain", "useExistingAlloy"],
+      keys: ["name", "orgId", "edgeDomain"],
     });
 
     instanceValues.persistedName = instanceValues.name;
@@ -48,52 +46,36 @@ export const bridge = {
   },
   getInstanceSettings: ({ initInfo, instanceValues }) => {
     const { name } = instanceValues;
-    const instanceSettings = {
-      name,
-    };
 
-    // Note that orgId isn't saved to the settings object if it's the same
-    // as the default, even though an orgId is required by the Alloy library.
-    // This is doable because if no orgId is saved to the settings object, the library
-    // portion of the extension will use the orgId listed on the Launch library (the Launch
-    // library exposes it to extensions at runtime), which will match the default
-    // org ID here.
+    const instanceSettings = { name };
+
     copyPropertiesIfValueDifferentThanDefault({
       toObj: instanceSettings,
       fromObj: instanceValues,
       defaultsObj: bridge.getInstanceDefaults({ initInfo }),
-      keys: ["orgId", "edgeDomain", "useExistingAlloy"],
+      keys: ["orgId", "edgeDomain"],
     });
 
     return instanceSettings;
   },
-  instanceValidationSchema: object()
-    .shape({
-      name: string()
-        .required("Please specify a name.")
-        // Under strict mode, setting window["123"], where the key is all
-        // digits, throws a "Failed to set an indexed property on 'Window'" error.
-        // This regex ensure there's at least one non-digit.
-        .matches(/\D+/, "Please provide a non-numeric name.")
-        .test({
-          name: "notWindowPropertyName",
-          message:
-            "Please provide a name that does not conflict with a property already found on the window object.",
-          test(value) {
-            return !(value in window);
-          },
-        }),
-      orgId: string().when("useExistingAlloy", {
-        is: false,
-        then: (schema) =>
-          schema.required("Please specify an IMS organization ID."),
+  instanceValidationSchema: object({
+    name: string()
+      .required("Please specify a name.")
+      // Under strict mode, setting window["123"], where the key is all
+      // digits, throws a "Failed to set an indexed property on 'Window'" error.
+      // This regex ensure there's at least one non-digit.
+      .matches(/\D+/, "Please provide a non-numeric name.")
+      .test({
+        name: "notWindowPropertyName",
+        message:
+          "Please provide a name that does not conflict with a property already found on the window object.",
+        test(value) {
+          return !(value in window);
+        },
       }),
-      edgeDomain: string().when("useExistingAlloy", {
-        is: false,
-        then: (schema) => schema.required("Please specify an edge domain."),
-      }),
-      useExistingAlloy: boolean(),
-    })
+    orgId: string().required("Please specify an IMS Organization ID."),
+    edgeDomain: string().required("Please specify an edge domain."),
+  })
     // TestCafe doesn't allow this to be an arrow function because of
     // how it scopes "this".
     // eslint-disable-next-line func-names
@@ -126,20 +108,12 @@ export const bridge = {
     }),
 };
 
-const BasicSection = ({ instanceFieldName, initInfo }) => {
+const BasicSection = ({ instanceFieldName, initInfo, isPreinstalled }) => {
   const [{ value: instanceValues }] = useField(instanceFieldName);
   const instanceDefaults = bridge.getInstanceDefaults({ initInfo });
 
   return (
     <FormElementContainer>
-      <FormikCheckbox
-        data-test-id="useExistingAlloyField"
-        name={`${instanceFieldName}.useExistingAlloy`}
-        description="Check this box if alloy.js is already loaded on your site for this instance, and you want to use it for rules and data elements."
-        width="size-5000"
-      >
-        Use existing alloy.js instance
-      </FormikCheckbox>
       <DataElementSelector>
         <FormikTextField
           data-test-id="nameField"
@@ -166,7 +140,7 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
           </Content>
         </InlineAlert>
       ) : null}
-      {!instanceValues.useExistingAlloy && (
+      {!isPreinstalled && (
         <>
           <Flex>
             <DataElementSelector>
@@ -214,6 +188,7 @@ const BasicSection = ({ instanceFieldName, initInfo }) => {
 BasicSection.propTypes = {
   instanceFieldName: PropTypes.string.isRequired,
   initInfo: PropTypes.object.isRequired,
+  isPreinstalled: PropTypes.bool.isRequired,
 };
 
 export default BasicSection;
