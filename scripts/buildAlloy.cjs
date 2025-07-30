@@ -73,7 +73,7 @@ const addAlloyModulesToEntryFile = ({
 const getAlloyComponents = (() => {
   const components = [];
   const filePath = path.resolve(
-    `${__dirname}/../node_modules/@adobe/alloy/src/core/componentCreators.js`,
+    `${__dirname}/../node_modules/@adobe/alloy/libEs6/core/componentCreators.js`,
   );
   const code = fs.readFileSync(filePath, "utf-8");
 
