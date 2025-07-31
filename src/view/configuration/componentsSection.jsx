@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import { InlineAlert, Content, Flex } from "@adobe/react-spectrum";
-import { components as webSdkComponentsExports } from "@adobe/alloy";
+import * as webSdkComponentsExports from "@adobe/alloy/libEs6/core/componentCreators";
 import Heading from "../components/typography/heading";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
