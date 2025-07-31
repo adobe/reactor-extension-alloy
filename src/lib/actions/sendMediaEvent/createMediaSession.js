@@ -51,16 +51,19 @@ module.exports =
     if (handleMediaSessionAutomatically) {
       options.playerId = playerId;
 
-      options.getPlayerDetails = ({playerId}) => {
+      options.getPlayerDetails = ({ playerId: id }) => {
         event.mediaPlayer = {
-          id: playerId,
+          id,
         };
-         const playerDetails = {
+        const playerDetails = {
           playhead: satelliteApi.getVar(playhead, event),
         };
 
         if (qoeDataDetails) {
-          playerDetails.qoeDataDetails = satelliteApi.getVar(qoeDataDetails, event);
+          playerDetails.qoeDataDetails = satelliteApi.getVar(
+            qoeDataDetails,
+            event,
+          );
         }
 
         return playerDetails;
