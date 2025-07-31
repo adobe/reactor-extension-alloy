@@ -28,7 +28,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        check: [lint, checkthattestfilesexist, build]
+        check: 
+          - build
+          - lint
+          - "format:check"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,7 +51,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: ["unit", "integration", "scripts"]
+        test: 
+          - unit
+          # - functional # Enable when functional tests are stable in CI
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

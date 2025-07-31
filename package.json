@@ -21,6 +21,7 @@
     "watch": "conc --pad-prefix --names \"alloy,fixtures,manifest,lib,views\" \"npm run build:alloy\" \"npm run build:componentFixtures\" \"npm run build:extensionManifest\" \"npm run watch:lib\" \"npm run watch:views\"",
     "clean": "rimraf dist extension.json package-adobe-alloy*.zip",
     "dev": "npm run build && conc --pad-prefix --names \"watch,sandbox\" \"npm run watch\" \"npm run sandbox\"",
+    "format:check": "prettier --check \"*.{js,jsx,html,mjs,cjs}\" \"{src,test,scripts}/**/*.{js,jsx,html,mjs,cjs}\"",
     "format": "prettier --write \"*.{js,jsx,html,mjs,cjs}\" \"{src,test,scripts}/**/*.{js,jsx,html,mjs,cjs}\"",
     "lint": "eslint \"*.{js,jsx}\" \"{src,test,scripts}/**/*.{js,jsx}\" --cache --fix",
     "package": "NODE_ENV=production ./scripts/createExtensionPackage.mjs",
