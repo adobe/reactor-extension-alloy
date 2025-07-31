@@ -33,6 +33,7 @@ import FormikKeyedComboBox from "../components/formikReactSpectrum3/formikKeyedC
 import FormikComboBox from "../components/formikReactSpectrum3/formikComboBox";
 import fetchAdvertisers from "../utils/fetchAdvertisers";
 import SINGLE_DATA_ELEMENT_REGEX from "../constants/singleDataElementRegex";
+import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
 
 const ENABLED = "Enabled";
 const DISABLED = "Disabled";
@@ -110,15 +111,13 @@ export const bridge = {
       return bridge.getInstanceDefaults();
     }
 
-    const advertising = Object.keys(getDefaultSettings()).reduce((acc, k) => {
-      if (instanceSettings.advertising[k] !== undefined) {
-        acc[k] = instanceSettings.advertising[k];
-      } else {
-        acc[k] = getDefaultSettings()[k];
-      }
-
-      return acc;
-    }, {});
+    const advertising = {};
+    copyPropertiesWithDefaultFallback({
+      toObj: advertising,
+      fromObj: instanceSettings.advertising || {},
+      defaultsObj: getDefaultSettings(),
+      keys: Object.keys(getDefaultSettings()),
+    });
 
     // Ensure advertiserSettings is always an array
     if (!Array.isArray(advertising.advertiserSettings)) {
@@ -283,7 +282,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
   const [error, setError] = useState(null);
 
   // Extract instance index from instanceFieldName (e.g., "instances.0" -> 0)
-  const instanceIndex = parseInt(instanceFieldName.split('.')[1], 10);
+  const instanceIndex = parseInt(instanceFieldName.split(".")[1], 10);
   const isFirstInstance = instanceIndex === 0;
   const hasMultipleInstances = instances && instances.length > 1;
 
@@ -313,7 +312,9 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
         setAdvertisers(advertisersList);
       } catch (e) {
         console.error("Failed to fetch advertisers:", e);
-        setError(e?.message || "Failed to load advertisers");
+        setError(
+          "Unable to retrieve advertiser data. Please contact your system administrator for assistance.",
+        );
       } finally {
         setLoading(false);
       }
@@ -339,162 +340,196 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
       <InlineAlert variant="info">
         <Heading>Adobe Advertising available in first instance only</Heading>
         <Content>
-          Adobe Advertising configuration is only available in the first instance.
-          To configure Adobe Advertising settings, please use the first instance.
+          Adobe Advertising configuration is only available in the first
+          instance. To configure Adobe Advertising settings, please use the
+          first instance.
         </Content>
       </InlineAlert>
     </View>
   );
+
+  const noAdvertisersView = (
+    <InlineAlert variant="info">
+      <Heading>No DSP Advertiser Found</Heading>
+      <Content>
+        <ul>
+          <li>
+            To configure SSC attribution, please proceed to the next step.
+          </li>
+          <li>
+            To configure DSP attribution, please contact your DSP account
+            administrator.
+          </li>
+        </ul>
+      </Content>
+    </InlineAlert>
+  );
+
+  const failedAdvertisersView = (
+    <InlineAlert variant="negative">
+      <Heading>
+        Failed to load advertisers (Applicable only to DSP Users)
+      </Heading>
+      <Content>{error}</Content>
+    </InlineAlert>
+  );
+
+  const getAdvertisersContent = () => {
+    if (error) {
+      return failedAdvertisersView;
+    }
+
+    if (!loading && advertisers.length === 0) {
+      return noAdvertisersView;
+    }
+
+    return (
+      <div>
+        <Heading size="S" marginBottom="size-100">
+          Advertisers
+        </Heading>
+        <FieldArray
+          name={`${instanceFieldName}.advertising.advertiserSettings`}
+          render={(arrayHelpers) => {
+            return (
+              <div>
+                <Flex direction="column" gap="size-100">
+                  {advertiserSettings.map((setting, index) => {
+                    return (
+                      <Flex key={index} alignItems="start" gap="size-100">
+                        {/* Advertiser Dropdown */}
+                        <FormikKeyedComboBox
+                          data-test-id={`advertiser${index}Field`}
+                          name={`${instanceFieldName}.advertising.advertiserSettings.${index}.advertiserId`}
+                          width="size-4000"
+                          aria-label={`Advertiser ${index + 1}`}
+                          marginTop="size-0"
+                          items={advertisers}
+                          getKey={(advertiser) => advertiser.advertiser_id}
+                          getLabel={(advertiser) => advertiser.advertiser_name}
+                          isDisabled={loading || !!error}
+                          isRequired
+                          allowsCustomValue={false}
+                          placeholder={
+                            loading
+                              ? "Loading advertisers..."
+                              : "Select an advertiser"
+                          }
+                        >
+                          {(advertiser) => (
+                            <Item
+                              key={advertiser.advertiser_id}
+                              data-test-id={advertiser.advertiser_id}
+                            >
+                              {advertiser.advertiser_name}
+                            </Item>
+                          )}
+                        </FormikKeyedComboBox>
+
+                        {/* Status Dropdown - Supports Data Elements */}
+                        <DataElementSelector>
+                          <FormikComboBox
+                            data-test-id={`advertiserEnabled${index}Field`}
+                            name={`${instanceFieldName}.advertising.advertiserSettings.${index}.enabled`}
+                            width="size-2000"
+                            aria-label={`Advertiser ${index + 1} status`}
+                            marginTop="size-0"
+                            isRequired
+                            allowsCustomValue
+                            placeholder="Select status"
+                          >
+                            <Item key={ENABLED}>{ENABLED}</Item>
+                            <Item key={DISABLED}>{DISABLED}</Item>
+                          </FormikComboBox>
+                        </DataElementSelector>
+
+                        {/* Delete Button */}
+                        <ActionButton
+                          data-test-id={`deleteAdvertiser${index}Button`}
+                          isQuiet
+                          variant="secondary"
+                          onPress={() => {
+                            arrayHelpers.remove(index);
+                          }}
+                          aria-label="Remove advertiser"
+                        >
+                          <Delete />
+                        </ActionButton>
+                      </Flex>
+                    );
+                  })}
+                </Flex>
+
+                {/* Add Button */}
+                <Button
+                  variant="secondary"
+                  data-test-id="addAdvertiserButton"
+                  marginTop="size-100"
+                  onPress={() => {
+                    arrayHelpers.push({
+                      advertiserId: "",
+                      enabled: ENABLED,
+                    });
+                  }}
+                >
+                  Add advertiser
+                </Button>
+              </div>
+            );
+          }}
+        />
+      </div>
+    );
+  };
+
+  const renderContent = () => {
+    if (!advertisingComponentEnabled) {
+      return disabledView;
+    }
+
+    if (hasMultipleInstances && !isFirstInstance) {
+      return multiInstanceView;
+    }
+
+    return (
+      <FormElementContainer>
+        <Flex direction="column" width="size-6000">
+          {getAdvertisersContent()}
+        </Flex>
+        <Flex direction="row" gap="size-250">
+          <DataElementSelector>
+            <FormikTextField
+              data-test-id="id5PartnerIdField"
+              label="ID5 Partner ID"
+              name={`${instanceFieldName}.advertising.id5PartnerId`}
+              description="Enter the ID5 Partner ID."
+              width="size-5000"
+              allowsCustomValue
+            />
+          </DataElementSelector>
+        </Flex>
+        <Flex direction="row" gap="size-250">
+          <DataElementSelector>
+            <FormikTextField
+              data-test-id="rampIdJSPathField"
+              label="RampID JS Path"
+              name={`${instanceFieldName}.advertising.rampIdJSPath`}
+              description="Enter the RampID JavaScript (ats.js) path."
+              width="size-5000"
+              allowsCustomValue
+            />
+          </DataElementSelector>
+        </Flex>
+      </FormElementContainer>
+    );
+  };
 
   return (
     <>
       <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html">
         Adobe Advertising
       </SectionHeader>
-      {!advertisingComponentEnabled ? (
-        disabledView
-      ) : hasMultipleInstances && !isFirstInstance ? (
-        multiInstanceView
-      ) : (
-        <FormElementContainer>
-          <Flex direction="column" gap="size-250">
-            {error ? (
-              <InlineAlert variant="negative">
-                <Heading>Failed to load advertisers</Heading>
-                <Content>{error}</Content>
-              </InlineAlert>
-            ) : (
-              <div>
-                <Heading size="S" marginBottom="size-100">
-                  Advertisers
-                </Heading>
-                <FieldArray
-                  name={`${instanceFieldName}.advertising.advertiserSettings`}
-                  render={(arrayHelpers) => {
-                    return (
-                      <div>
-                        <Flex direction="column" gap="size-100">
-                          {advertiserSettings.map((setting, index) => {
-                            return (
-                              <Flex
-                                key={index}
-                                alignItems="start"
-                                gap="size-100"
-                              >
-                                {/* Advertiser Dropdown */}
-                                <FormikKeyedComboBox
-                                  data-test-id={`advertiser${index}Field`}
-                                  name={`${instanceFieldName}.advertising.advertiserSettings.${index}.advertiserId`}
-                                  width="size-4000"
-                                  aria-label={`Advertiser ${index + 1}`}
-                                  marginTop="size-0"
-                                  items={advertisers}
-                                  getKey={(advertiser) =>
-                                    advertiser.advertiser_id
-                                  }
-                                  getLabel={(advertiser) =>
-                                    advertiser.advertiser_name
-                                  }
-                                  isDisabled={loading || !!error}
-                                  isRequired
-                                  allowsCustomValue={false}
-                                  placeholder={
-                                    loading
-                                      ? "Loading advertisers..."
-                                      : "Select an advertiser"
-                                  }
-                                >
-                                  {(advertiser) => (
-                                    <Item
-                                      key={advertiser.advertiser_id}
-                                      data-test-id={advertiser.advertiser_id}
-                                    >
-                                      {advertiser.advertiser_name}
-                                    </Item>
-                                  )}
-                                </FormikKeyedComboBox>
-
-                                {/* Status Dropdown - Supports Data Elements */}
-                                <DataElementSelector>
-                                  <FormikComboBox
-                                    data-test-id={`advertiserEnabled${index}Field`}
-                                    name={`${instanceFieldName}.advertising.advertiserSettings.${index}.enabled`}
-                                    width="size-2000"
-                                    aria-label={`Advertiser ${index + 1} status`}
-                                    marginTop="size-0"
-                                    isRequired
-                                    allowsCustomValue
-                                    placeholder="Select status"
-                                  >
-                                    <Item key={ENABLED}>{ENABLED}</Item>
-                                    <Item key={DISABLED}>{DISABLED}</Item>
-                                  </FormikComboBox>
-                                </DataElementSelector>
-
-                                {/* Delete Button */}
-                                <ActionButton
-                                  data-test-id={`deleteAdvertiser${index}Button`}
-                                  isQuiet
-                                  variant="secondary"
-                                  onPress={() => {
-                                    arrayHelpers.remove(index);
-                                  }}
-                                  aria-label="Remove advertiser"
-                                >
-                                  <Delete />
-                                </ActionButton>
-                              </Flex>
-                            );
-                          })}
-                        </Flex>
-
-                        {/* Add Button */}
-                        <Button
-                          variant="secondary"
-                          data-test-id="addAdvertiserButton"
-                          marginTop="size-100"
-                          onPress={() => {
-                            arrayHelpers.push({
-                              advertiserId: "",
-                              enabled: ENABLED,
-                            });
-                          }}
-                        >
-                          Add advertiser
-                        </Button>
-                      </div>
-                    );
-                  }}
-                />
-              </div>
-            )}
-          </Flex>
-          <Flex direction="row" gap="size-250">
-            <DataElementSelector>
-              <FormikTextField
-                data-test-id="id5PartnerIdField"
-                label="ID5 Partner ID"
-                name={`${instanceFieldName}.advertising.id5PartnerId`}
-                description="Enter the ID5 Partner ID."
-                width="size-5000"
-                allowsCustomValue
-              />
-            </DataElementSelector>
-          </Flex>
-          <Flex direction="row" gap="size-250">
-            <DataElementSelector>
-              <FormikTextField
-                data-test-id="rampIdJSPathField"
-                label="RampID JS Path"
-                name={`${instanceFieldName}.advertising.rampIdJSPath`}
-                description="Enter the RampID JavaScript (ats.js) path."
-                width="size-5000"
-                allowsCustomValue
-              />
-            </DataElementSelector>
-          </Flex>
-        </FormElementContainer>
-      )}
+      {renderContent()}
     </>
   );
 };

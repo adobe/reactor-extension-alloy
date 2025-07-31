@@ -24,7 +24,8 @@ const componentProperties = {
   },
   advertising: {
     excludedByDefault: true,
-    description: "This component enables Adobe Advertising integration with CJA.",
+    description:
+      "This component enables Adobe Advertising integration with CJA.",
   },
   audiences: {
     description:
