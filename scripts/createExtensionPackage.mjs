@@ -81,7 +81,7 @@ const getPackageJson = () => {
       email: "reactor@adobe.com",
     },
     scripts: {
-      build: "node ./scripts/buildAlloy.js -i ./alloy.js -o ./dist/lib",
+      build: "[[ \"$ALLOY_IS_MANAGED\" == \"false\" ]] && node ./scripts/buildEmptyAlloy.js -o ./dist/lib || node ./scripts/buildAlloy.js -i ./alloy.js -o ./dist/lib",
     },
     license: "Apache-2.0",
     description: "Tool for generating custom alloy build based on user input.",
@@ -174,6 +174,11 @@ const createExtensionPackage = ({ verbose }) => {
     path.join(cwd, "scripts", "buildAlloy.cjs"),
   );
   zip.addFile("scripts/buildAlloy.js", buildScript);
+
+  const buildEmptyScript = fs.readFileSync(
+    path.join(cwd, "scripts", "buildEmptyAlloy.cjs"),
+  );
+  zip.addFile("scripts/buildEmptyAlloy.js", buildEmptyScript);
 
   zip.writeZip(packagePath);
   console.log("Done");

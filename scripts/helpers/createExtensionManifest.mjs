@@ -12,12 +12,20 @@ governing permissions and limitations under the License.
 
 import getAlloyComponents from "./getAlloyComponents.mjs";
 
-const createPreprocessingVariables = () =>
-  getAlloyComponents().map((n) => ({
+const createPreprocessingVariables = () => [
+  // Alloy component variables
+  ...getAlloyComponents().map((n) => ({
     key: `ALLOY_${n.toUpperCase()}`,
     path: `components.${n}`,
     default: true,
-  }));
+  })),
+  // Library loading mode variable (true if managed, false if preinstalled)
+  {
+    key: "ALLOY_IS_MANAGED",
+    path: "libraryCode.managed",
+    default: true,
+  },
+];
 
 /**
  * @typedef {object} ExtensionManifest
@@ -262,7 +270,7 @@ const createExtensionManifest = ({ version }) => {
   const extensionManifest = {
     version,
     displayName: "Adobe Experience Platform Web SDK",
-    name: "adobe-alloy",
+    name: "adobe-alloy-eds",
     iconPath: "resources/images/icon.svg",
     exchangeUrl:
       "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
@@ -288,6 +296,9 @@ const createExtensionManifest = ({ version }) => {
               type: {
                 type: "string",
                 enum: ["managed", "preinstalled"],
+              },
+              managed: {
+                type: "boolean",
               },
             },
             required: ["type"],
@@ -1363,14 +1374,7 @@ const createExtensionManifest = ({ version }) => {
         viewPath: "dataElements/variable.html",
       },
     ],
-    preprocessingVariables: [
-      ...createPreprocessingVariables(),
-      {
-        key: "SHOULD_BUILD_ALLOY",
-        path: "shouldBuildAlloy",
-        default: true,
-      },
-    ],
+    preprocessingVariables: [...createPreprocessingVariables()],
     main: "dist/lib/instanceManager/index.js",
   };
 

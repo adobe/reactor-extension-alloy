@@ -46,9 +46,16 @@ export const bridge = {
   },
   getInstanceSettings: ({ initInfo, instanceValues }) => {
     const { name } = instanceValues;
+    const instanceSettings = {
+      name,
+    };
 
-    const instanceSettings = { name };
-
+    // Note that orgId isn't saved to the settings object if it's the same
+    // as the default, even though an orgId is required by the Alloy library.
+    // This is doable because if no orgId is saved to the settings object, the library
+    // portion of the extension will use the orgId listed on the Launch library (the Launch
+    // library exposes it to extensions at runtime), which will match the default
+    // org ID here.
     copyPropertiesIfValueDifferentThanDefault({
       toObj: instanceSettings,
       fromObj: instanceValues,
