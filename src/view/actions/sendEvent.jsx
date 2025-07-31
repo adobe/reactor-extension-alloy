@@ -37,6 +37,13 @@ import { validateSurface } from "../utils/surfaceUtils";
 const FETCH = "fetch";
 const COLLECT = "collect";
 
+// Advertising data handling options
+const ADVERTISING_DATA = Object.freeze({
+  AUTOMATIC: "auto",
+  WAIT: "wait",
+  DISABLED: "disabled",
+});
+
 const xdmFieldDescription = (
   <>
     Provide a data element which returns an object matching your XDM schema. You
@@ -82,8 +89,7 @@ const wrapGetInitialValues =
     }
 
     // Handle advertising data settings
-    const handleAdvertisingData =
-      advertising.handleAdvertisingData || "disabled";
+    const handleAdvertisingData = advertising.handleAdvertisingData;
 
     const newSettings = {
       ...personalization,
@@ -116,24 +122,23 @@ const wrapGetInitialValues =
 const wrapGetSettings =
   (getSettings) =>
   ({ values }) => {
-    const {
-      decisionScopes,
-      surfaces,
-      sendDisplayEvent,
-      includeRenderedPropositions,
-      defaultPersonalizationEnabled,
-      decisionContext,
-      handleAdvertisingData: _handleAdvertisingData, // destructure to exclude from ...settings
-      ...settings
-    } = getSettings({ values });
+      const {
+    decisionScopes,
+    surfaces,
+    sendDisplayEvent,
+    includeRenderedPropositions,
+    defaultPersonalizationEnabled,
+    decisionContext,
+    ...settings
+  } = getSettings({ values });
 
-    // Access handleAdvertisingData directly from values since getSettings doesn't extract it
-    let handleAdvertisingData = values.handleAdvertisingData;
+  // Access handleAdvertisingData directly from values since getSettings doesn't extract it
+  let handleAdvertisingData = values.handleAdvertisingData;
 
-    // If data element is selected, get the actual data element value
-    if (handleAdvertisingData === "dataElement") {
-      handleAdvertisingData = values.handleAdvertisingDataDataElement;
-    }
+  // If data element is selected, get the actual data element value
+  if (handleAdvertisingData === "dataElement") {
+    handleAdvertisingData = values.handleAdvertisingDataDataElement;
+  }
 
     if (
       decisionScopes ||
@@ -167,9 +172,11 @@ const wrapGetSettings =
     }
 
     // Handle advertising data settings
-    settings.advertising = {
-      handleAdvertisingData,
-    };
+    if (handleAdvertisingData) {
+      settings.advertising = {
+        handleAdvertisingData,
+      };
+    }
 
     return settings;
   };
@@ -353,18 +360,18 @@ const advertisingDataField = radioGroup({
   dataElementSupported: true,
   dataElementDescription:
     "Provide a data element that resolves to one of the following values: 'auto', 'wait', or 'disabled'.",
-  defaultValue: "disabled",
+  defaultValue: ADVERTISING_DATA.DISABLED,
   items: [
     {
-      value: "auto",
+      value: ADVERTISING_DATA.AUTOMATIC,
       label: "Automatic - include advertising data.",
     },
     {
-      value: "wait",
+      value: ADVERTISING_DATA.WAIT,
       label: "Wait - block this call until advertising data is resolved",
     },
     {
-      value: "disabled",
+      value: ADVERTISING_DATA.DISABLED,
       label: "Disabled - don't include advertising data.",
     },
   ],
