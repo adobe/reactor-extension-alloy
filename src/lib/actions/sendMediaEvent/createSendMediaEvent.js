@@ -15,7 +15,7 @@ module.exports = ({
   trackMediaSession,
   mediaCollectionSessionStorage,
   satelliteApi,
-  logger
+  logger,
 }) => {
   return (settings, event) => {
     const { instanceName, eventType, playerId, xdm } = settings;
@@ -63,10 +63,16 @@ module.exports = ({
       if (sessionDetails.handleMediaSessionAutomatically) {
         options.playerId = playerId;
       } else {
-        xdm.mediaCollection.playhead = satelliteApi.getVar(sessionDetails.playhead, event);
+        xdm.mediaCollection.playhead = satelliteApi.getVar(
+          sessionDetails.playhead,
+          event,
+        );
 
         if (sessionDetails.qoeDataDetails) {
-          xdm.mediaCollection.qoeDataDetails = satelliteApi.getVar(sessionDetails.qoeDataDetails, event);
+          xdm.mediaCollection.qoeDataDetails = satelliteApi.getVar(
+            sessionDetails.qoeDataDetails,
+            event,
+          );
         }
 
         xdm.mediaCollection.sessionID = sessionID;
