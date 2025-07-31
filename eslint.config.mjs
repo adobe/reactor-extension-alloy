@@ -132,7 +132,7 @@ export default [
       "import/no-named-as-default-member": "off",
       "import/no-named-as-default": "off",
       "vitest/expect-expect": "error",
-      "vitest/no-disabled-tests": "warn",
+      "vitest/no-disabled-tests": "off",
       "vitest/no-focused-tests": "error",
       "vitest/no-identical-title": "error",
     },
