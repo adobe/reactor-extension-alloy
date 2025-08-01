@@ -65,24 +65,25 @@ export const bridge = {
 
     return instanceSettings;
   },
-  instanceValidationSchema: object({
-    name: string()
-      .required("Please specify a name.")
-      // Under strict mode, setting window["123"], where the key is all
-      // digits, throws a "Failed to set an indexed property on 'Window'" error.
-      // This regex ensure there's at least one non-digit.
-      .matches(/\D+/, "Please provide a non-numeric name.")
-      .test({
-        name: "notWindowPropertyName",
-        message:
-          "Please provide a name that does not conflict with a property already found on the window object.",
-        test(value) {
-          return !(value in window);
-        },
-      }),
-    orgId: string().required("Please specify an IMS Organization ID."),
-    edgeDomain: string().required("Please specify an edge domain."),
-  })
+  instanceValidationSchema: object()
+    .shape({
+      name: string()
+        .required("Please specify a name.")
+        // Under strict mode, setting window["123"], where the key is all
+        // digits, throws a "Failed to set an indexed property on 'Window'" error.
+        // This regex ensure there's at least one non-digit.
+        .matches(/\D+/, "Please provide a non-numeric name.")
+        .test({
+          name: "notWindowPropertyName",
+          message:
+            "Please provide a name that does not conflict with a property already found on the window object.",
+          test(value) {
+            return !(value in window);
+          },
+        }),
+      orgId: string().required("Please specify an IMS organization ID."),
+      edgeDomain: string().required("Please specify an edge domain."),
+    })
     // TestCafe doesn't allow this to be an arrow function because of
     // how it scopes "this".
     // eslint-disable-next-line func-names
