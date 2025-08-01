@@ -167,7 +167,7 @@ const getInitialValues = async ({ initInfo, context }) => {
 };
 
 const getSettings = async ({ values, initInfo }) => {
-  const settings = {
+  return {
     ...componentsBridge.getSettings({ values, initInfo }),
     libraryCode: values.libraryCode,
     instances: await Promise.all(
@@ -180,8 +180,6 @@ const getSettings = async ({ values, initInfo }) => {
       }),
     ),
   };
-
-  return settings;
 };
 
 const InstancesSection = ({ initInfo, context, isPreinstalled }) => {
