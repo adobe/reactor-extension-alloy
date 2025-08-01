@@ -19,11 +19,11 @@ const createPreprocessingVariables = () => [
     path: `components.${n}`,
     default: true,
   })),
-  // Library loading mode variable (true if managed, false if preinstalled)
+  // Library loading mode variable (string: "managed" or "preinstalled")
   {
-    key: "ALLOY_IS_MANAGED",
-    path: "libraryCode.managed",
-    default: true,
+    key: "ALLOY_LIBRARY_TYPE",
+    path: "libraryCode.type",
+    default: "managed",
   },
 ];
 
@@ -270,7 +270,7 @@ const createExtensionManifest = ({ version }) => {
   const extensionManifest = {
     version,
     displayName: "Adobe Experience Platform Web SDK",
-    name: "adobe-alloy-eds",
+    name: "adobe-alloy",
     iconPath: "resources/images/icon.svg",
     exchangeUrl:
       "https://exchange.adobe.com/experiencecloud.details.106387.aep-web-sdk.html",
@@ -296,9 +296,6 @@ const createExtensionManifest = ({ version }) => {
               type: {
                 type: "string",
                 enum: ["managed", "preinstalled"],
-              },
-              managed: {
-                type: "boolean",
               },
             },
             required: ["type"],

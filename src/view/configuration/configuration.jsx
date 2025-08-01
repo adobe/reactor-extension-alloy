@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React, { useState, useRef } from "react";
-import { FieldArray, useField, useFormikContext } from "formik";
+import { FieldArray, useField } from "formik";
 import {
   Button,
   Flex,
@@ -121,10 +121,7 @@ const getInitialValues = async ({ initInfo, context }) => {
   return {
     ...componentsBridge.getInitialValues({ initInfo }),
     instances: instancesInitialValues,
-    libraryCode: initInfo.settings?.libraryCode || {
-      type: "managed",
-      managed: true,
-    },
+    libraryCode: initInfo.settings?.libraryCode || { type: "managed" },
   };
 };
 
@@ -295,7 +292,6 @@ InstancesSection.propTypes = {
 const Configuration = ({ initInfo, context }) => {
   const [expandedKeys, setExpandedKeys] = useState(new Set(["instances"]));
   const [{ value: libraryCode }] = useField("libraryCode");
-  const { setFieldValue } = useFormikContext();
 
   useNewlyValidatedFormSubmission((errors) => {
     if (errors) {
@@ -319,10 +315,6 @@ const Configuration = ({ initInfo, context }) => {
           label="Alloy library configuration"
           description="Choose how the Alloy library should be loaded"
           orientation="horizontal"
-          onChange={(value) => {
-            // Sync the managed boolean field with the type selection
-            setFieldValue("libraryCode.managed", value === "managed");
-          }}
         >
           <Radio value="managed">Managed by Launch (default)</Radio>
           <Radio value="preinstalled">

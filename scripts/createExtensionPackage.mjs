@@ -81,7 +81,7 @@ const getPackageJson = () => {
       email: "reactor@adobe.com",
     },
     scripts: {
-      build: "[[ \"$ALLOY_IS_MANAGED\" == \"false\" ]] && node ./scripts/buildEmptyAlloy.js -o ./dist/lib || node ./scripts/buildAlloy.js -i ./alloy.js -o ./dist/lib",
+      build: "[[ \"$ALLOY_LIBRARY_TYPE\" == \"preinstalled\" ]] && node ./scripts/buildEmptyAlloy.js -o ./dist/lib || node ./scripts/buildAlloy.js -i ./alloy.js -o ./dist/lib",
     },
     license: "Apache-2.0",
     description: "Tool for generating custom alloy build based on user input.",
