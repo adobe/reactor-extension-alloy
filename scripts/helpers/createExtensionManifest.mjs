@@ -461,8 +461,8 @@ const createExtensionManifest = ({ version }) => {
                   additionalProperties: false,
                 },
               },
-              additionalProperties: false,
               required: ["name"],
+              additionalProperties: false,
             },
           },
           components: {
