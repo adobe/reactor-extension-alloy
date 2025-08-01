@@ -17,6 +17,7 @@ module.exports = ({
   window,
   createCustomInstance,
   components,
+  createEventMergeId,
   orgId,
   wrapOnBeforeEventSend,
   getConfigOverrides,
@@ -152,6 +153,13 @@ module.exports = ({
      */
     getInstance(name) {
       return instanceByName[name];
+    },
+    /**
+     * Synchronously creates an event merge ID.
+     * @returns {string}
+     */
+    createEventMergeId() {
+      return createEventMergeId();
     },
     addMonitor(newMonitor) {
       window.__alloyMonitors.push(newMonitor);
