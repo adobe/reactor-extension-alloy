@@ -11,7 +11,8 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import { readFile, writeFile } from "fs/promises";
+import extensionDescriptorSchema from "@adobe/reactor-turbine-schemas/schemas/extension-package-web.json" with { type: "json" };
+import { writeFile } from "fs/promises";
 import Ajv from "ajv-draft-04";
 import addAJVFormats from "ajv-formats";
 import { join, resolve } from "path";
@@ -19,24 +20,16 @@ import { env } from "process";
 import prettier from "prettier";
 import createExtensionManifest from "./helpers/createExtensionManifest.mjs";
 
-const extensionDescriptorSchema = JSON.parse(
-  await readFile(
-    new URL(
-      "../node_modules/@adobe/reactor-turbine-schemas/schemas/extension-package-web.json",
-      import.meta.url,
-    ),
-  ),
-);
-
 // Patch the schema to allow string defaults for preprocessing variables
 // The original schema only allows boolean defaults, but Launch runtime supports strings
-if (extensionDescriptorSchema.definitions?.preprocessingVariable?.properties?.default) {
-  extensionDescriptorSchema.definitions.preprocessingVariable.properties.default = {
-    oneOf: [
-      { type: "boolean" },
-      { type: "string" }
-    ]
-  };
+if (
+  extensionDescriptorSchema.definitions?.preprocessingVariable?.properties
+    ?.default
+) {
+  extensionDescriptorSchema.definitions.preprocessingVariable.properties.default =
+    {
+      oneOf: [{ type: "boolean" }, { type: "string" }],
+    };
 }
 
 /**
