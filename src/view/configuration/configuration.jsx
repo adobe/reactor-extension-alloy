@@ -126,11 +126,8 @@ const getInitialValues = async ({ initInfo, context }) => {
 };
 
 const getSettings = async ({ values, initInfo }) => {
-  const isPreinstalled = values.libraryCode?.type === "preinstalled";
-
   const settings = {
     ...componentsBridge.getSettings({ values, initInfo }),
-    shouldBuildAlloy: !isPreinstalled,
     libraryCode: values.libraryCode,
     instances: await Promise.all(
       values.instances.map((instanceValues) => {

@@ -287,9 +287,6 @@ const createExtensionManifest = ({ version }) => {
         $schema: "http://json-schema.org/draft-04/schema#",
         type: "object",
         properties: {
-          shouldBuildAlloy: {
-            type: "boolean",
-          },
           libraryCode: {
             type: "object",
             properties: {
@@ -1371,7 +1368,7 @@ const createExtensionManifest = ({ version }) => {
         viewPath: "dataElements/variable.html",
       },
     ],
-    preprocessingVariables: [...createPreprocessingVariables()],
+    preprocessingVariables: createPreprocessingVariables(),
     main: "dist/lib/instanceManager/index.js",
   };
 
