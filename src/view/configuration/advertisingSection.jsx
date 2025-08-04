@@ -22,6 +22,7 @@ import {
   Button,
   ActionButton,
   Item,
+  Text,
 } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import { object, lazy, string, array, mixed } from "yup";
@@ -42,7 +43,13 @@ const DISABLED = "Disabled";
  * Returns the default settings for the advertising section
  */
 const getDefaultSettings = () => ({
-  advertiserSettings: [],
+  dspEnabled: DISABLED,
+  advertiserSettings: [
+    {
+      advertiserId: "",
+      enabled: ENABLED,
+    },
+  ],
   id5PartnerId: "",
   rampIdJSPath: "",
 });
@@ -119,9 +126,19 @@ export const bridge = {
       keys: Object.keys(getDefaultSettings()),
     });
 
-    // Ensure advertiserSettings is always an array
+    // Ensure advertiserSettings is always an array with at least one row
     if (!Array.isArray(advertising.advertiserSettings)) {
       advertising.advertiserSettings = [];
+    }
+
+    // Ensure there's always at least one advertiser row
+    if (advertising.advertiserSettings.length === 0) {
+      advertising.advertiserSettings = [
+        {
+          advertiserId: "",
+          enabled: ENABLED,
+        },
+      ];
     }
 
     // Convert boolean enabled values to ENABLED/DISABLED strings for UI display
@@ -141,6 +158,11 @@ export const bridge = {
       },
     );
 
+    // Convert boolean dspEnabled to ENABLED/DISABLED string for UI display
+    if (typeof advertising.dspEnabled === "boolean") {
+      advertising.dspEnabled = advertising.dspEnabled ? ENABLED : DISABLED;
+    }
+
     return { advertising };
   },
 
@@ -154,9 +176,26 @@ export const bridge = {
 
     if (components.advertising) {
       const {
-        advertising: { advertiserSettings, id5PartnerId, rampIdJSPath },
+        advertising: {
+          dspEnabled,
+          advertiserSettings,
+          id5PartnerId,
+          rampIdJSPath,
+        },
       } = instanceValues;
       const advertising = {};
+
+      // Handle DSP enabled conversion from UI string to boolean
+      if (dspEnabled !== undefined) {
+        if (dspEnabled === ENABLED) {
+          advertising.dspEnabled = true;
+        } else if (dspEnabled === DISABLED) {
+          advertising.dspEnabled = false;
+        } else {
+          // Keep data elements unchanged
+          advertising.dspEnabled = dspEnabled;
+        }
+      }
 
       if (advertiserSettings && advertiserSettings.length > 0) {
         // Filter to only advertisers with valid IDs and convert UI strings to booleans
@@ -211,6 +250,21 @@ export const bridge = {
       is: true,
       then: (schema) =>
         schema.shape({
+          dspEnabled: lazy((value) =>
+            typeof value === "string" && value.includes("%")
+              ? string()
+                  .matches(SINGLE_DATA_ELEMENT_REGEX, {
+                    message: "Please enter a valid data element.",
+                    excludeEmptyString: true,
+                  })
+                  .nullable()
+              : mixed()
+                  .oneOf(
+                    [ENABLED, DISABLED],
+                    "Please choose a value or specify a data element.",
+                  )
+                  .required("Please choose a value or specify a data element."),
+          ),
           advertiserSettings: array()
             .of(
               object()
@@ -272,6 +326,9 @@ export const bridge = {
 const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
   const [{ value: advertisingComponentEnabled }] = useField(
     "components.advertising",
+  );
+  const [{ value: dspEnabled }] = useField(
+    `${instanceFieldName}.advertising.dspEnabled`,
   );
   const [{ value: advertiserSettings }] = useField(
     `${instanceFieldName}.advertising.advertiserSettings`,
@@ -349,28 +406,23 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
   );
 
   const noAdvertisersView = (
-    <InlineAlert variant="info">
+    <InlineAlert variant="negative">
       <Heading>No DSP Advertiser Found</Heading>
       <Content>
-        <ul>
-          <li>
-            To configure SSC attribution, please proceed to the next step.
-          </li>
-          <li>
-            To configure DSP attribution, please contact your DSP account
-            administrator.
-          </li>
-        </ul>
+        No advertiser was found corresponding to this IMS org in Adobe
+        Advertising DSP. Please connect with your DSP account manager to add
+        advertiser to this IMS org in the DSP.
       </Content>
     </InlineAlert>
   );
 
   const failedAdvertisersView = (
     <InlineAlert variant="negative">
-      <Heading>
-        Failed to load advertisers (Applicable only to DSP Users)
-      </Heading>
-      <Content>{error}</Content>
+      <Heading>Failed to load DSP advertiser data</Heading>
+      <Content>
+        Unable to retrieve advertiser data from DSP. Please try after some time.
+        Please contact your DSP account manager if the issue persists.
+      </Content>
     </InlineAlert>
   );
 
@@ -396,7 +448,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                 <Flex direction="column" gap="size-100">
                   {advertiserSettings.map((setting, index) => {
                     return (
-                      <Flex key={index} alignItems="start" gap="size-100">
+                      <Flex key={index} alignItems="start">
                         {/* Advertiser Dropdown */}
                         <FormikKeyedComboBox
                           data-test-id={`advertiser${index}Field`}
@@ -404,6 +456,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                           width="size-4000"
                           aria-label={`Advertiser ${index + 1}`}
                           marginTop="size-0"
+                          marginEnd="size-200"
                           items={advertisers}
                           getKey={(advertiser) => advertiser.advertiser_id}
                           getLabel={(advertiser) => advertiser.advertiser_name}
@@ -427,7 +480,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                         </FormikKeyedComboBox>
 
                         {/* Status Dropdown - Supports Data Elements */}
-                        <DataElementSelector>
+                        <DataElementSelector marginEnd="size-100">
                           <FormikComboBox
                             data-test-id={`advertiserEnabled${index}Field`}
                             name={`${instanceFieldName}.advertising.advertiserSettings.${index}.enabled`}
@@ -443,11 +496,12 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                           </FormikComboBox>
                         </DataElementSelector>
 
-                        {/* Delete Button */}
+                        {/* Delete Button - Disabled when only 1 advertiser */}
                         <ActionButton
                           data-test-id={`deleteAdvertiser${index}Button`}
                           isQuiet
                           variant="secondary"
+                          isDisabled={advertiserSettings.length <= 1}
                           onPress={() => {
                             arrayHelpers.remove(index);
                           }}
@@ -493,33 +547,70 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
 
     return (
       <FormElementContainer>
-        <Flex direction="column" width="size-6000">
-          {getAdvertisersContent()}
-        </Flex>
+        {/* Helper text for SSC users */}
+        <Text marginBottom="size-200">
+          <strong>Note:</strong> No further action required for SSC
+          configuration.
+        </Text>
+
+        {/* DSP Enable/Disable Field */}
         <Flex direction="row" gap="size-250">
           <DataElementSelector>
-            <FormikTextField
-              data-test-id="id5PartnerIdField"
-              label="ID5 Partner ID"
-              name={`${instanceFieldName}.advertising.id5PartnerId`}
-              description="Enter the ID5 Partner ID."
+            <FormikComboBox
+              data-test-id="dspEnabledField"
+              label="Adobe Advertising DSP"
+              name={`${instanceFieldName}.advertising.dspEnabled`}
+              description="Enable or disable DSP (Demand Side Platform) functionality."
               width="size-5000"
+              isRequired
               allowsCustomValue
-            />
+              placeholder="Select status"
+            >
+              <Item key={ENABLED}>{ENABLED}</Item>
+              <Item key={DISABLED}>{DISABLED}</Item>
+            </FormikComboBox>
           </DataElementSelector>
         </Flex>
-        <Flex direction="row" gap="size-250">
-          <DataElementSelector>
-            <FormikTextField
-              data-test-id="rampIdJSPathField"
-              label="RampID JS Path"
-              name={`${instanceFieldName}.advertising.rampIdJSPath`}
-              description="Enter the RampID JavaScript (ats.js) path."
-              width="size-5000"
-              allowsCustomValue
-            />
-          </DataElementSelector>
-        </Flex>
+
+        {/* Conditional content based on DSP enabled status */}
+        {(dspEnabled === ENABLED ||
+          (typeof dspEnabled === "string" && dspEnabled.includes("%"))) && (
+          <>
+            <Flex direction="column" width="size-6000">
+              {getAdvertisersContent()}
+            </Flex>
+
+            {/* ID5 and RampID fields - shown only when DSP is enabled AND advertisers are available */}
+            {!loading && advertisers.length > 0 && !error && (
+              <>
+                <Flex direction="row" gap="size-250">
+                  <DataElementSelector>
+                    <FormikTextField
+                      data-test-id="id5PartnerIdField"
+                      label="ID5 Partner ID (optional)"
+                      name={`${instanceFieldName}.advertising.id5PartnerId`}
+                      description="Enter the ID5 Partner ID."
+                      width="size-5000"
+                      allowsCustomValue
+                    />
+                  </DataElementSelector>
+                </Flex>
+                <Flex direction="row" gap="size-250">
+                  <DataElementSelector>
+                    <FormikTextField
+                      data-test-id="rampIdJSPathField"
+                      label="RampID JS Path (optional)"
+                      name={`${instanceFieldName}.advertising.rampIdJSPath`}
+                      description="Enter the RampID JavaScript (ats.js) path."
+                      width="size-5000"
+                      allowsCustomValue
+                    />
+                  </DataElementSelector>
+                </Flex>
+              </>
+            )}
+          </>
+        )}
       </FormElementContainer>
     );
   };
