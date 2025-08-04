@@ -53,7 +53,7 @@ jobs:
       matrix:
         test: 
           - unit
-          # - functional # Enable when functional tests are stable in CI
+          - functional # Enable when functional tests are stable in CI
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
