@@ -49,7 +49,7 @@ const getDefaultSettings = () => ({
       advertiserId: "",
       enabled: ENABLED,
     },
-  ],
+  ], // Always include one advertiser row by default for better UX
   id5PartnerId: "",
   rampIdJSPath: "",
 });
@@ -66,7 +66,12 @@ const getDefaultSettings = () => ({
 const validateNoDuplicateAdvertisers = (settingObject, context) => {
   const { parent } = context;
 
-  if (!settingObject || !settingObject.advertiserId || !Array.isArray(parent)) {
+  if (
+    !settingObject ||
+    !settingObject.advertiserId ||
+    settingObject.advertiserId.trim() === "" ||
+    !Array.isArray(parent)
+  ) {
     return true;
   }
 
@@ -131,7 +136,8 @@ export const bridge = {
       advertising.advertiserSettings = [];
     }
 
-    // Ensure there's always at least one advertiser row
+    // Always ensure there's at least one advertiser row for better UX
+    // (Fields will be shown but validation is conditional based on DSP status)
     if (advertising.advertiserSettings.length === 0) {
       advertising.advertiserSettings = [
         {
@@ -243,7 +249,8 @@ export const bridge = {
 
   /**
    * Yup validation schema for advertising section
-   * Validates advertiser settings, ID5 Partner ID, and RampID JS Path
+   * Validates DSP enabled status and conditionally validates advertiser settings,
+   * ID5 Partner ID, and RampID JS Path only when DSP is enabled or uses data elements
    */
   instanceValidationSchema: object().shape({
     advertising: object().when("$components.advertising", {
@@ -265,58 +272,101 @@ export const bridge = {
                   )
                   .required("Please choose a value or specify a data element."),
           ),
-          advertiserSettings: array()
-            .of(
-              object()
-                .shape({
-                  advertiserId: string().required(
-                    "Please select an advertiser.",
-                  ),
-                  enabled: lazy((value) =>
-                    typeof value === "string" && value.includes("%")
-                      ? string()
-                          .matches(SINGLE_DATA_ELEMENT_REGEX, {
-                            message: "Please enter a valid data element.",
-                            excludeEmptyString: true,
-                          })
-                          .nullable()
-                      : mixed()
-                          .oneOf(
-                            [ENABLED, DISABLED],
-                            "Please choose a value or specify a data element.",
-                          )
-                          .required(
-                            "Please choose a value or specify a data element.",
-                          ),
-                  ),
-                })
-                .test(
-                  "no-duplicate-advertiser",
-                  "Duplicate advertiser not allowed.",
-                  validateNoDuplicateAdvertisers,
-                ),
-            )
-            .nullable(),
-          id5PartnerId: lazy((value) =>
-            typeof value === "string" && value.includes("%")
-              ? string()
-                  .matches(SINGLE_DATA_ELEMENT_REGEX, {
-                    message: "Please enter a valid data element.",
-                    excludeEmptyString: true,
-                  })
-                  .nullable()
-              : string().nullable(),
-          ),
-          rampIdJSPath: lazy((value) =>
-            typeof value === "string" && value.includes("%")
-              ? string()
-                  .matches(SINGLE_DATA_ELEMENT_REGEX, {
-                    message: "Please enter a valid data element.",
-                    excludeEmptyString: true,
-                  })
-                  .nullable()
-              : string().nullable(),
-          ),
+          advertiserSettings: array().when("dspEnabled", {
+            is: (dspEnabled) =>
+              dspEnabled === ENABLED ||
+              (typeof dspEnabled === "string" && dspEnabled.includes("%")),
+            then: (arraySchema) =>
+              arraySchema
+                .of(
+                  object()
+                    .shape({
+                      advertiserId: string().required(
+                        "Please select an advertiser.",
+                      ),
+                      enabled: lazy((value) =>
+                        typeof value === "string" && value.includes("%")
+                          ? string()
+                              .matches(SINGLE_DATA_ELEMENT_REGEX, {
+                                message: "Please enter a valid data element.",
+                                excludeEmptyString: true,
+                              })
+                              .nullable()
+                          : mixed()
+                              .oneOf(
+                                [ENABLED, DISABLED],
+                                "Please choose a value or specify a data element.",
+                              )
+                              .required(
+                                "Please choose a value or specify a data element.",
+                              ),
+                      ),
+                    })
+                    .test(
+                      "no-duplicate-advertiser",
+                      "Duplicate advertiser not allowed.",
+                      validateNoDuplicateAdvertisers,
+                    ),
+                )
+                .nullable(),
+            otherwise: (arraySchema) =>
+              arraySchema
+                .of(
+                  object().shape({
+                    advertiserId: string().nullable(),
+                    enabled: lazy((value) =>
+                      typeof value === "string" && value.includes("%")
+                        ? string()
+                            .matches(SINGLE_DATA_ELEMENT_REGEX, {
+                              message: "Please enter a valid data element.",
+                              excludeEmptyString: true,
+                            })
+                            .nullable()
+                        : mixed()
+                            .oneOf(
+                              [ENABLED, DISABLED],
+                              "Please choose a value or specify a data element.",
+                            )
+                            .nullable(),
+                    ),
+                  }),
+                )
+                .nullable(),
+          }),
+          id5PartnerId: string().when("dspEnabled", {
+            is: (dspEnabled) =>
+              dspEnabled === ENABLED ||
+              (typeof dspEnabled === "string" && dspEnabled.includes("%")),
+            then: () =>
+              lazy((value) =>
+                typeof value === "string" && value.includes("%")
+                  ? string()
+                      .matches(SINGLE_DATA_ELEMENT_REGEX, {
+                        message: "Please enter a valid data element.",
+                        excludeEmptyString: true,
+                      })
+                      .nullable()
+                  : string().nullable(),
+              ),
+            otherwise: (stringSchema) => stringSchema.nullable().notRequired(),
+          }),
+          rampIdJSPath: string().when("dspEnabled", {
+            is: (dspEnabled) =>
+              dspEnabled === ENABLED ||
+              (typeof dspEnabled === "string" && dspEnabled.includes("%")),
+            then: () =>
+              lazy((value) =>
+                typeof value === "string" && value.includes("%")
+                  ? string()
+                      .matches(SINGLE_DATA_ELEMENT_REGEX, {
+                        message: "Please enter a valid data element.",
+                        excludeEmptyString: true,
+                      })
+                      .nullable()
+                  : string().nullable(),
+              ),
+            otherwise: (stringSchema) => stringSchema.nullable().notRequired(),
+          }),
         }),
       otherwise: (schema) => schema.nullable().strip(),
     }),
@@ -334,6 +384,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
     `${instanceFieldName}.advertising.advertiserSettings`,
   );
   const [{ value: instances }] = useField("instances");
+
   const [advertisers, setAdvertisers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

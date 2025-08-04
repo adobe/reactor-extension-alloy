@@ -427,6 +427,7 @@ const createExtensionManifest = ({ version }) => {
                 advertising: {
                   type: "object",
                   properties: {
+                    dspEnabled: enabledDisabledOrDataElement,
                     advertiserSettings: {
                       type: "array",
                       items: {
