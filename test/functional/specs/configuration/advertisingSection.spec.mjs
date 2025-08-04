@@ -37,6 +37,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
             name: "alloy1",
             edgeConfigId: "PR123",
             advertising: {
+              dspEnabled: "Enabled",
               advertiserSettings: [],
               id5PartnerId: "",
               rampIdJSPath: "",
@@ -47,10 +48,11 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
     });
 
     // Verify the advertising section elements are visible
+    await instances[0].advertising.dspEnabledField.expectExists();
     await instances[0].advertising.addAdvertiserButton.expectExists();
     await instances[0].advertising.id5PartnerIdField.expectExists();
     await instances[0].advertising.rampIdJSPathField.expectExists();
-  }
+  },
 );
 
 test.requestHooks(advertisersMocks.multipleAdvertisers)(
@@ -66,6 +68,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
             name: "alloy1",
             edgeConfigId: "PR123",
             advertising: {
+              dspEnabled: "Enabled",
               advertiserSettings: [],
               id5PartnerId: "",
               rampIdJSPath: "",
@@ -75,47 +78,49 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
       },
     });
 
-    // Add first advertiser
-    await instances[0].advertising.addAdvertiserButton.click();
+    // Default advertiser row should already exist
     await instances[0].advertising.advertiser0Field.expectExists();
     await instances[0].advertising.advertiserEnabled0Field.expectExists();
     await instances[0].advertising.deleteAdvertiser0Button.expectExists();
 
-    // Select an advertiser
+    // Select an advertiser for the default row
     await instances[0].advertising.advertiser0Field.openMenu();
     await instances[0].advertising.advertiser0Field.selectMenuOption(
-      "Test Advertiser 1"
+      "Test Advertiser 1",
     );
 
-    // Set status to Disabled  
+    // Set status to Disabled
     await instances[0].advertising.advertiserEnabled0Field.openMenu();
     await instances[0].advertising.advertiserEnabled0Field.selectMenuOption(
-      "Disabled"
+      "Disabled",
     );
 
     // Add second advertiser
     await instances[0].advertising.addAdvertiserButton.click();
     await instances[0].advertising.advertiser1Field.expectExists();
-    
+
     // Select second advertiser
     await instances[0].advertising.advertiser1Field.openMenu();
     await instances[0].advertising.advertiser1Field.selectMenuOption(
-      "Test Advertiser 2"
+      "Test Advertiser 2",
     );
 
     // Verify settings are saved correctly
     const settings = extensionViewController.getSettings();
-    await t.expect(settings.instances[0].advertising.advertiserSettings).eql([
-      {
-        advertiserId: "12345",
-        enabled: false,
-      },
-      {
-        advertiserId: "67890", 
-        enabled: true,
-      },
-    ]);
-  }
+    await t.expect(settings.instances[0].advertising).eql({
+      dspEnabled: true,
+      advertiserSettings: [
+        {
+          advertiserId: "12345",
+          enabled: false,
+        },
+        {
+          advertiserId: "67890",
+          enabled: true,
+        },
+      ],
+    });
+  },
 );
 
 test.requestHooks(advertisersMocks.multipleAdvertisers)(
@@ -131,6 +136,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
             name: "alloy1",
             edgeConfigId: "PR123",
             advertising: {
+              dspEnabled: "Enabled",
               advertiserSettings: [
                 {
                   advertiserId: "12345",
@@ -159,7 +165,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
     // Verify only second advertiser remains and becomes first
     await instances[0].advertising.advertiser0Field.expectValue("67890");
     await instances[0].advertising.advertiser1Field.expectNotExists();
-  }
+  },
 );
 
 test.requestHooks(advertisersMocks.multipleAdvertisers)(
@@ -175,6 +181,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
             name: "alloy1",
             edgeConfigId: "PR123",
             advertising: {
+              dspEnabled: "Enabled",
               advertiserSettings: [],
               id5PartnerId: "",
               rampIdJSPath: "",
@@ -184,27 +191,31 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
       },
     });
 
-    // Add advertiser
-    await instances[0].advertising.addAdvertiserButton.click();
+    // Use default advertiser row that already exists
 
     // Select advertiser
     await instances[0].advertising.advertiser0Field.openMenu();
     await instances[0].advertising.advertiser0Field.selectMenuOption(
-      "Test Advertiser 1"
+      "Test Advertiser 1",
     );
 
     // Enter data element for status
     await instances[0].advertising.advertiserEnabled0Field.typeText(
-      "%dataElement123%"
+      "%dataElement123%",
     );
 
     // Verify settings include data element
     const settings = extensionViewController.getSettings();
-    await t.expect(settings.instances[0].advertising.advertiserSettings[0]).eql({
-      advertiserId: "12345",
-      enabled: "%dataElement123%",
+    await t.expect(settings.instances[0].advertising).eql({
+      dspEnabled: true,
+      advertiserSettings: [
+        {
+          advertiserId: "12345",
+          enabled: "%dataElement123%",
+        },
+      ],
     });
-  }
+  },
 );
 
 test.requestHooks(advertisersMocks.multipleAdvertisers)(
@@ -220,6 +231,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
             name: "alloy1",
             edgeConfigId: "PR123",
             advertising: {
+              dspEnabled: "Enabled",
               advertiserSettings: [],
               id5PartnerId: "",
               rampIdJSPath: "",
@@ -234,16 +246,17 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
 
     // Enter RampID JS Path
     await instances[0].advertising.rampIdJSPathField.typeText(
-      "https://cdn.ramp.com/ats.js"
+      "https://cdn.ramp.com/ats.js",
     );
 
     // Verify settings are saved
     const settings = extensionViewController.getSettings();
-    await t.expect(settings.instances[0].advertising.id5PartnerId).eql("12345");
-    await t.expect(settings.instances[0].advertising.rampIdJSPath).eql(
-      "https://cdn.ramp.com/ats.js"
-    );
-  }
+    await t.expect(settings.instances[0].advertising).eql({
+      dspEnabled: true,
+      id5PartnerId: "12345",
+      rampIdJSPath: "https://cdn.ramp.com/ats.js",
+    });
+  },
 );
 
 test.requestHooks(advertisersMocks.multipleAdvertisers)(
@@ -259,6 +272,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
             name: "alloy1",
             edgeConfigId: "PR123",
             advertising: {
+              dspEnabled: "Enabled",
               advertiserSettings: [],
               id5PartnerId: "",
               rampIdJSPath: "",
@@ -274,17 +288,16 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
 
     // Verify data elements are saved
     const settings = extensionViewController.getSettings();
-    await t.expect(settings.instances[0].advertising.id5PartnerId).eql(
-      "%partnerId%"
-    );
-    await t.expect(settings.instances[0].advertising.rampIdJSPath).eql(
-      "%rampPath%"
-    );
-  }
+    await t.expect(settings.instances[0].advertising).eql({
+      dspEnabled: true,
+      id5PartnerId: "%partnerId%",
+      rampIdJSPath: "%rampPath%",
+    });
+  },
 );
 
 test.requestHooks(advertisersMocks.noAdvertisers)(
-  "shows no advertisers message when list is empty",
+  "shows no advertisers message when list is empty and DSP is enabled",
   async () => {
     await extensionViewController.init({
       settings: {
@@ -296,6 +309,7 @@ test.requestHooks(advertisersMocks.noAdvertisers)(
             name: "alloy1",
             edgeConfigId: "PR123",
             advertising: {
+              dspEnabled: "Enabled",
               advertiserSettings: [],
               id5PartnerId: "",
               rampIdJSPath: "",
@@ -305,19 +319,19 @@ test.requestHooks(advertisersMocks.noAdvertisers)(
       },
     });
 
-    // Verify no advertisers message is shown
+    // Verify no DSP advertiser message is shown
     await spectrum.alert().expectExists();
     await t
       .expect(spectrum.alert().find('[data-testid="heading"]').innerText)
-      .contains("No advertisers available");
+      .contains("No DSP Advertiser Found");
 
     // Verify add advertiser button is not shown when no advertisers available
     await instances[0].advertising.addAdvertiserButton.expectNotExists();
-  }
+  },
 );
 
 test.requestHooks(advertisersMocks.unauthorized)(
-  "shows error message when API call fails",
+  "shows error message when API call fails and DSP is enabled",
   async () => {
     await extensionViewController.init({
       settings: {
@@ -329,6 +343,7 @@ test.requestHooks(advertisersMocks.unauthorized)(
             name: "alloy1",
             edgeConfigId: "PR123",
             advertising: {
+              dspEnabled: "Enabled",
               advertiserSettings: [],
               id5PartnerId: "",
               rampIdJSPath: "",
@@ -342,42 +357,39 @@ test.requestHooks(advertisersMocks.unauthorized)(
     await spectrum.alert().expectExists();
     await t
       .expect(spectrum.alert().find('[data-testid="heading"]').innerText)
-      .contains("Failed to load advertisers");
+      .contains("Failed to load DSP advertiser data");
 
     // Verify add advertiser button is not shown when there's an error
     await instances[0].advertising.addAdvertiserButton.expectNotExists();
-  }
+  },
 );
 
-test(
-  "hides advertising section when component is disabled",
-  async () => {
-    await extensionViewController.init({
-      settings: {
-        components: {
-          advertising: false,
-        },
-        instances: [
-          {
-            name: "alloy1",
-            edgeConfigId: "PR123",
-          },
-        ],
+test("hides advertising section when component is disabled", async () => {
+  await extensionViewController.init({
+    settings: {
+      components: {
+        advertising: false,
       },
-    });
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
+  });
 
-    // Verify advertising section shows disabled message
-    await spectrum.alert().expectExists();
-    await t
-      .expect(spectrum.alert().find('[data-testid="heading"]').innerText)
-      .contains("Adobe Advertising component disabled");
+  // Verify advertising section shows disabled message
+  await spectrum.alert().expectExists();
+  await t
+    .expect(spectrum.alert().find('[data-testid="heading"]').innerText)
+    .contains("Adobe Advertising component disabled");
 
-    // Verify advertising controls are not shown
-    await instances[0].advertising.addAdvertiserButton.expectNotExists();
-    await instances[0].advertising.id5PartnerIdField.expectNotExists();
-    await instances[0].advertising.rampIdJSPathField.expectNotExists();
-  }
-);
+  // Verify advertising controls are not shown
+  await instances[0].advertising.addAdvertiserButton.expectNotExists();
+  await instances[0].advertising.id5PartnerIdField.expectNotExists();
+  await instances[0].advertising.rampIdJSPathField.expectNotExists();
+});
 
 test.requestHooks(advertisersMocks.multipleAdvertisers)(
   "shows multi-instance message in non-first instances",
@@ -392,6 +404,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
             name: "alloy1",
             edgeConfigId: "PR123",
             advertising: {
+              dspEnabled: "Enabled",
               advertiserSettings: [],
               id5PartnerId: "",
               rampIdJSPath: "",
@@ -416,7 +429,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
 
     // Verify advertising controls are not shown in second instance
     await instances[1].advertising.addAdvertiserButton.expectNotExists();
-  }
+  },
 );
 
 test.requestHooks(advertisersMocks.multipleAdvertisers)(
@@ -432,6 +445,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
             name: "alloy1",
             edgeConfigId: "PR123",
             advertising: {
+              dspEnabled: "Enabled",
               advertiserSettings: [],
               id5PartnerId: "",
               rampIdJSPath: "",
@@ -441,18 +455,17 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
       },
     });
 
-    // Add first advertiser
-    await instances[0].advertising.addAdvertiserButton.click();
+    // Use default advertiser row for first advertiser
     await instances[0].advertising.advertiser0Field.openMenu();
     await instances[0].advertising.advertiser0Field.selectMenuOption(
-      "Test Advertiser 1"
+      "Test Advertiser 1",
     );
 
-    // Add second advertiser  
+    // Add second advertiser
     await instances[0].advertising.addAdvertiserButton.click();
     await instances[0].advertising.advertiser1Field.openMenu();
     await instances[0].advertising.advertiser1Field.selectMenuOption(
-      "Test Advertiser 1"
+      "Test Advertiser 1",
     ); // Same advertiser
 
     // Verify validation error is shown
@@ -460,7 +473,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
     await t
       .expect(spectrum.alert().find('[data-testid="content"]').innerText)
       .contains("Duplicate advertiser not allowed");
-  }
+  },
 );
 
 test.requestHooks(advertisersMocks.multipleAdvertisers)(
@@ -476,6 +489,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
             name: "alloy1",
             edgeConfigId: "PR123",
             advertising: {
+              dspEnabled: "Enabled",
               advertiserSettings: [
                 {
                   advertiserId: "12345",
@@ -496,15 +510,353 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
 
     // Verify advertisers are loaded
     await instances[0].advertising.advertiser0Field.expectValue("12345");
-    await instances[0].advertising.advertiserEnabled0Field.expectText("Enabled");
-    
+    await instances[0].advertising.advertiserEnabled0Field.expectText(
+      "Enabled",
+    );
+
     await instances[0].advertising.advertiser1Field.expectValue("67890");
-    await instances[0].advertising.advertiserEnabled1Field.expectText("Disabled");
+    await instances[0].advertising.advertiserEnabled1Field.expectText(
+      "Disabled",
+    );
 
     // Verify other fields are loaded
     await instances[0].advertising.id5PartnerIdField.expectValue("partner123");
     await instances[0].advertising.rampIdJSPathField.expectValue(
-      "https://example.com/ats.js"
+      "https://example.com/ats.js",
     );
-  }
+  },
+);
+
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "hides advertiser content when DSP is disabled",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+            advertising: {
+              dspEnabled: "Disabled",
+              advertiserSettings: [],
+              id5PartnerId: "",
+              rampIdJSPath: "",
+            },
+          },
+        ],
+      },
+    });
+
+    // Verify DSP enabled field exists
+    await instances[0].advertising.dspEnabledField.expectExists();
+    await instances[0].advertising.dspEnabledField.expectText("Disabled");
+
+    // Verify advertiser content is hidden when DSP is disabled
+    await instances[0].advertising.addAdvertiserButton.expectNotExists();
+    await instances[0].advertising.id5PartnerIdField.expectNotExists();
+    await instances[0].advertising.rampIdJSPathField.expectNotExists();
+  },
+);
+
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "shows advertiser content when DSP is enabled",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+            advertising: {
+              dspEnabled: "Enabled",
+              advertiserSettings: [],
+              id5PartnerId: "",
+              rampIdJSPath: "",
+            },
+          },
+        ],
+      },
+    });
+
+    // Verify DSP enabled field shows Enabled
+    await instances[0].advertising.dspEnabledField.expectText("Enabled");
+
+    // Verify advertiser content is shown when DSP is enabled
+    await instances[0].advertising.addAdvertiserButton.expectExists();
+    await instances[0].advertising.id5PartnerIdField.expectExists();
+    await instances[0].advertising.rampIdJSPathField.expectExists();
+  },
+);
+
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "supports data elements for DSP enabled field",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+            advertising: {
+              dspEnabled: "%dataElement%",
+              advertiserSettings: [],
+              id5PartnerId: "",
+              rampIdJSPath: "",
+            },
+          },
+        ],
+      },
+    });
+
+    // Verify DSP enabled field shows data element
+    await instances[0].advertising.dspEnabledField.expectValue("%dataElement%");
+
+    // Verify advertiser content is shown when DSP uses data element
+    await instances[0].advertising.addAdvertiserButton.expectExists();
+    await instances[0].advertising.id5PartnerIdField.expectExists();
+    await instances[0].advertising.rampIdJSPathField.expectExists();
+
+    // Verify settings are saved with data element
+    const settings = extensionViewController.getSettings();
+    await t
+      .expect(settings.instances[0].advertising.dspEnabled)
+      .eql("%dataElement%");
+  },
+);
+
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "allows changing DSP enabled status",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+            advertising: {
+              dspEnabled: "Disabled",
+              advertiserSettings: [],
+              id5PartnerId: "",
+              rampIdJSPath: "",
+            },
+          },
+        ],
+      },
+    });
+
+    // Change DSP to Enabled
+    await instances[0].advertising.dspEnabledField.openMenu();
+    await instances[0].advertising.dspEnabledField.selectMenuOption("Enabled");
+
+    // Verify advertiser content appears
+    await instances[0].advertising.addAdvertiserButton.expectExists();
+
+    // Change DSP to data element
+    await instances[0].advertising.dspEnabledField.typeText("%dspDataElement%");
+
+    // Verify settings are saved correctly
+    const settings = extensionViewController.getSettings();
+    await t
+      .expect(settings.instances[0].advertising.dspEnabled)
+      .eql("%dspDataElement%");
+  },
+);
+
+// Validation Tests - Critical Missing Coverage
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "validates advertiser ID is required when DSP is enabled",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+            advertising: {
+              dspEnabled: "Enabled",
+              advertiserSettings: [],
+              id5PartnerId: "",
+              rampIdJSPath: "",
+            },
+          },
+        ],
+      },
+    });
+
+    // Try to save without selecting an advertiser (default row has empty advertiserId)
+    await extensionViewController.expectIsNotValid();
+
+    // Verify validation error message appears
+    await spectrum.alert().expectExists();
+    await t
+      .expect(spectrum.alert().find('[data-testid="content"]').innerText)
+      .contains("Please select an advertiser");
+  },
+);
+
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "allows saving empty advertiser when DSP is disabled",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+            advertising: {
+              dspEnabled: "Disabled",
+              advertiserSettings: [],
+              id5PartnerId: "",
+              rampIdJSPath: "",
+            },
+          },
+        ],
+      },
+    });
+
+    // Form should be valid even with empty advertiser when DSP is disabled
+    await extensionViewController.expectIsValid();
+
+    // Verify settings can be saved without advertiser data
+    const settings = extensionViewController.getSettings();
+    await t.expect(settings.instances[0].advertising).eql({
+      dspEnabled: false,
+    });
+  },
+);
+
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "validates advertiser ID is required when DSP uses data element",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+            advertising: {
+              dspEnabled: "%dspElement%",
+              advertiserSettings: [],
+              id5PartnerId: "",
+              rampIdJSPath: "",
+            },
+          },
+        ],
+      },
+    });
+
+    // Should require advertiser when DSP uses data element
+    await extensionViewController.expectIsNotValid();
+
+    // Verify validation error message appears
+    await spectrum.alert().expectExists();
+    await t
+      .expect(spectrum.alert().find('[data-testid="content"]').innerText)
+      .contains("Please select an advertiser");
+  },
+);
+
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "validates DSP enabled field accepts valid data elements",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+            advertising: {
+              dspEnabled: "Enabled",
+              advertiserSettings: [],
+              id5PartnerId: "",
+              rampIdJSPath: "",
+            },
+          },
+        ],
+      },
+    });
+
+    // Enter invalid data element format
+    await instances[0].advertising.dspEnabledField.typeText(
+      "invalidDataElement",
+    );
+
+    // Should show validation error
+    await extensionViewController.expectIsNotValid();
+
+    // Enter valid data element
+    await instances[0].advertising.dspEnabledField.clearText();
+    await instances[0].advertising.dspEnabledField.typeText("%validElement%");
+
+    // Should be valid now
+    await extensionViewController.expectIsValid();
+  },
+);
+
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "validates conditional validation for ID5 and RampID fields",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+            advertising: {
+              dspEnabled: "Disabled",
+              advertiserSettings: [],
+              id5PartnerId: "invalid data element format",
+              rampIdJSPath: "another invalid format",
+            },
+          },
+        ],
+      },
+    });
+
+    // Even with invalid formats, form should be valid when DSP is disabled
+    await extensionViewController.expectIsValid();
+
+    // Now enable DSP
+    await instances[0].advertising.dspEnabledField.openMenu();
+    await instances[0].advertising.dspEnabledField.selectMenuOption("Enabled");
+
+    // Select an advertiser to pass advertiser validation
+    await instances[0].advertising.advertiser0Field.openMenu();
+    await instances[0].advertising.advertiser0Field.selectMenuOption(
+      "Test Advertiser 1",
+    );
+
+    // Now the invalid data element formats should cause validation errors
+    await instances[0].advertising.id5PartnerIdField.typeText(
+      "%invalid format%",
+    );
+    await extensionViewController.expectIsNotValid();
+  },
 );

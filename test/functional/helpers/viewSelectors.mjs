@@ -165,6 +165,7 @@ for (let i = 0; i < 3; i += 1) {
       mediaAdPingIntervalField: spectrum.textField("mediaAdPingIntervalField"),
     },
     advertising: {
+      dspEnabledField: spectrum.comboBox("dspEnabledField"),
       addAdvertiserButton: spectrum.button("addAdvertiserButton"),
       advertiser0Field: spectrum.comboBox("advertiser0Field"),
       advertiser1Field: spectrum.comboBox("advertiser1Field"),

@@ -13,15 +13,17 @@ governing permissions and limitations under the License.
 import { RequestMock } from "testcafe";
 import responseHeaders from "./responseHeaders.mjs";
 
-const ADVERTISERS_ENDPOINT_REGEX_PROD = /api\.tubemogul\.com\/v1\/provisioning\/advertisers/;
-const ADVERTISERS_ENDPOINT_REGEX_STAGING = /api-uat\.tubemogul\.com\/v1\/provisioning\/advertisers/;
+const ADVERTISERS_ENDPOINT_REGEX_PROD =
+  /api\.tubemogul\.com\/v1\/provisioning\/advertisers/;
+const ADVERTISERS_ENDPOINT_REGEX_STAGING =
+  /api-uat\.tubemogul\.com\/v1\/provisioning\/advertisers/;
 
 export const multipleAdvertisers = RequestMock()
   .onRequestTo(
     async (request) =>
       (ADVERTISERS_ENDPOINT_REGEX_PROD.test(request.url) ||
         ADVERTISERS_ENDPOINT_REGEX_STAGING.test(request.url)) &&
-      request.method === "get"
+      request.method === "get",
   )
   .respond(
     {
@@ -33,7 +35,7 @@ export const multipleAdvertisers = RequestMock()
         },
         {
           advertiser_id: "67890",
-          advertiser_name: "Test Advertiser 2", 
+          advertiser_name: "Test Advertiser 2",
           enabled: true,
         },
         {
@@ -53,7 +55,7 @@ export const singleAdvertiser = RequestMock()
     async (request) =>
       (ADVERTISERS_ENDPOINT_REGEX_PROD.test(request.url) ||
         ADVERTISERS_ENDPOINT_REGEX_STAGING.test(request.url)) &&
-      request.method === "get"
+      request.method === "get",
   )
   .respond(
     {
@@ -75,7 +77,7 @@ export const noAdvertisers = RequestMock()
     async (request) =>
       (ADVERTISERS_ENDPOINT_REGEX_PROD.test(request.url) ||
         ADVERTISERS_ENDPOINT_REGEX_STAGING.test(request.url)) &&
-      request.method === "get"
+      request.method === "get",
   )
   .respond(
     {
@@ -91,7 +93,7 @@ export const unauthorized = RequestMock()
     async (request) =>
       (ADVERTISERS_ENDPOINT_REGEX_PROD.test(request.url) ||
         ADVERTISERS_ENDPOINT_REGEX_STAGING.test(request.url)) &&
-      request.method === "get"
+      request.method === "get",
   )
   .respond(
     {
@@ -107,7 +109,7 @@ export const serverError = RequestMock()
     async (request) =>
       (ADVERTISERS_ENDPOINT_REGEX_PROD.test(request.url) ||
         ADVERTISERS_ENDPOINT_REGEX_STAGING.test(request.url)) &&
-      request.method === "get"
+      request.method === "get",
   )
   .respond(
     {
@@ -123,6 +125,6 @@ export const networkError = RequestMock()
     async (request) =>
       (ADVERTISERS_ENDPOINT_REGEX_PROD.test(request.url) ||
         ADVERTISERS_ENDPOINT_REGEX_STAGING.test(request.url)) &&
-      request.method === "get"
+      request.method === "get",
   )
   .respond(null, 503);
