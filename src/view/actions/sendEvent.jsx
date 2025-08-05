@@ -33,6 +33,7 @@ import eventTypes from "./constants/eventTypes";
 import renderForm from "../forms/renderForm";
 import textField from "../forms/textField";
 import { validateSurface } from "../utils/surfaceUtils";
+import copyPropertiesIfValueDifferentThanDefault from "../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 
 const FETCH = "fetch";
 const COLLECT = "collect";
@@ -42,6 +43,11 @@ const ADVERTISING_DATA = Object.freeze({
   AUTOMATIC: "auto",
   WAIT: "wait",
   DISABLED: "disabled",
+});
+
+// Default advertising settings
+const DEFAULT_ADVERTISING_SETTINGS = Object.freeze({
+  handleAdvertisingData: ADVERTISING_DATA.DISABLED,
 });
 
 const xdmFieldDescription = (
@@ -88,8 +94,10 @@ const wrapGetInitialValues =
       personalization.defaultPersonalizationEnabled = "false";
     }
 
-    // Handle advertising data settings
-    const handleAdvertisingData = advertising.handleAdvertisingData;
+    // Handle advertising data settings - extract for form use but don't add to root level
+    const handleAdvertisingData =
+      advertising.handleAdvertisingData ||
+      DEFAULT_ADVERTISING_SETTINGS.handleAdvertisingData;
 
     const newSettings = {
       ...personalization,
@@ -122,23 +130,25 @@ const wrapGetInitialValues =
 const wrapGetSettings =
   (getSettings) =>
   ({ values }) => {
-      const {
-    decisionScopes,
-    surfaces,
-    sendDisplayEvent,
-    includeRenderedPropositions,
-    defaultPersonalizationEnabled,
-    decisionContext,
-    ...settings
-  } = getSettings({ values });
+    const {
+      decisionScopes,
+      surfaces,
+      sendDisplayEvent,
+      includeRenderedPropositions,
+      defaultPersonalizationEnabled,
+      decisionContext,
+      handleAdvertisingData: extractedHandleAdvertisingData,
+      ...settings
+    } = getSettings({ values });
 
-  // Access handleAdvertisingData directly from values since getSettings doesn't extract it
-  let handleAdvertisingData = values.handleAdvertisingData;
+    // Use the extracted value or get from values if not in getSettings result
+    let handleAdvertisingData =
+      extractedHandleAdvertisingData || values.handleAdvertisingData;
 
-  // If data element is selected, get the actual data element value
-  if (handleAdvertisingData === "dataElement") {
-    handleAdvertisingData = values.handleAdvertisingDataDataElement;
-  }
+    // If data element is selected, get the actual data element value
+    if (handleAdvertisingData === "dataElement") {
+      handleAdvertisingData = values.handleAdvertisingDataDataElement;
+    }
 
     if (
       decisionScopes ||
@@ -171,11 +181,17 @@ const wrapGetSettings =
       settings.personalization.decisionContext = decisionContext;
     }
 
-    // Handle advertising data settings
-    if (handleAdvertisingData) {
-      settings.advertising = {
-        handleAdvertisingData,
-      };
+    // Handle advertising data settings - only include if different from default
+    const advertisingSettings = {};
+    copyPropertiesIfValueDifferentThanDefault({
+      toObj: advertisingSettings,
+      fromObj: { handleAdvertisingData },
+      defaultsObj: DEFAULT_ADVERTISING_SETTINGS,
+      keys: ["handleAdvertisingData"],
+    });
+
+    if (Object.keys(advertisingSettings).length > 0) {
+      settings.advertising = advertisingSettings;
     }
 
     return settings;
@@ -360,7 +376,7 @@ const advertisingDataField = radioGroup({
   dataElementSupported: true,
   dataElementDescription:
     "Provide a data element that resolves to one of the following values: 'auto', 'wait', or 'disabled'.",
-  defaultValue: ADVERTISING_DATA.DISABLED,
+  defaultValue: DEFAULT_ADVERTISING_SETTINGS.handleAdvertisingData,
   items: [
     {
       value: ADVERTISING_DATA.AUTOMATIC,
