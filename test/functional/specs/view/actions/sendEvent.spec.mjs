@@ -45,7 +45,9 @@ const advertisingDataRadioGroup = {
   disabled: spectrum.radio("handleAdvertisingDataDisabledOption"),
   dataElement: spectrum.radio("handleAdvertisingDataDataElementOption"),
 };
-const advertisingDataElementField = spectrum.textField("handleAdvertisingDataDataElementField");
+const advertisingDataElementField = spectrum.textField(
+  "handleAdvertisingDataDataElementField",
+);
 const addDecisionScopeButton = spectrum.button("decisionScopesAddButton");
 const addSurfaceButton = spectrum.button("surfacesAddButton");
 const scopeArrayValues = [];
@@ -810,7 +812,7 @@ test("does not include advertising settings when handleAdvertisingData is disabl
   });
   // Keep default disabled selection
   await advertisingDataRadioGroup.disabled.expectChecked();
-  
+
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
@@ -821,10 +823,10 @@ test("includes advertising settings when handleAdvertisingData is set to automat
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
   });
-  
+
   await advertisingDataRadioGroup.automatic.click();
   await advertisingDataRadioGroup.automatic.expectChecked();
-  
+
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
@@ -838,10 +840,10 @@ test("includes advertising settings when handleAdvertisingData is set to wait", 
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
   });
-  
+
   await advertisingDataRadioGroup.wait.click();
   await advertisingDataRadioGroup.wait.expectChecked();
-  
+
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
@@ -855,11 +857,11 @@ test("includes advertising settings when using data element", async () => {
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
   });
-  
+
   await advertisingDataRadioGroup.dataElement.click();
   await advertisingDataRadioGroup.dataElement.expectChecked();
   await advertisingDataElementField.typeText("%myAdvertisingData%");
-  
+
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
@@ -879,7 +881,7 @@ test("initializes form with existing advertising settings - automatic", async ()
       },
     },
   });
-  
+
   await advertisingDataRadioGroup.automatic.expectChecked();
   await advertisingDataRadioGroup.disabled.expectUnchecked();
   await advertisingDataRadioGroup.wait.expectUnchecked();
@@ -896,7 +898,7 @@ test("initializes form with existing advertising settings - wait", async () => {
       },
     },
   });
-  
+
   await advertisingDataRadioGroup.wait.expectChecked();
   await advertisingDataRadioGroup.disabled.expectUnchecked();
   await advertisingDataRadioGroup.automatic.expectUnchecked();
@@ -913,7 +915,7 @@ test("initializes form with existing advertising settings - data element", async
       },
     },
   });
-  
+
   await advertisingDataRadioGroup.dataElement.expectChecked();
   await advertisingDataElementField.expectValue("%myAdvertisingData%");
   await advertisingDataRadioGroup.disabled.expectUnchecked();
@@ -925,15 +927,15 @@ test("does not include advertising when switching back to disabled", async () =>
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
   });
-  
+
   // First set to automatic
   await advertisingDataRadioGroup.automatic.click();
   await advertisingDataRadioGroup.automatic.expectChecked();
-  
+
   // Then switch back to disabled
   await advertisingDataRadioGroup.disabled.click();
   await advertisingDataRadioGroup.disabled.expectChecked();
-  
+
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
@@ -944,10 +946,10 @@ test("shows error for advertising data element value that is not a data element"
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
   });
-  
+
   await advertisingDataRadioGroup.dataElement.click();
   await advertisingDataElementField.typeText("notADataElement");
-  
+
   await extensionViewController.expectIsNotValid();
   await advertisingDataElementField.expectError();
 });
@@ -956,12 +958,12 @@ test("allows advertising settings with other personalization settings", async ()
   await extensionViewController.init({
     extensionSettings: mockExtensionSettings,
   });
-  
+
   await advertisingDataRadioGroup.automatic.click();
   await renderDecisionsField.click();
   await scopesRadioGroup.dataElement.click();
   await scopeDataElementField.typeText("%myScopes%");
-  
+
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     instanceName: "alloy1",
