@@ -40,10 +40,10 @@ const surfacesRadioGroup = {
   values: spectrum.radio("surfacesFormOption"),
 };
 const advertisingDataRadioGroup = {
-  automatic: spectrum.radio("handleAdvertisingDataAutomaticOption"),
-  wait: spectrum.radio("handleAdvertisingDataWaitOption"),
-  disabled: spectrum.radio("handleAdvertisingDataDisabledOption"),
-  dataElement: spectrum.radio("handleAdvertisingDataDataElementOption"),
+  automatic: spectrum.radio("handleAdvertisingDataautoOption"),
+  wait: spectrum.radio("handleAdvertisingDatawaitOption"),
+  disabled: spectrum.radio("handleAdvertisingDatadisabledOption"),
+  dataElement: spectrum.radio("handleAdvertisingDataDataElement"),
 };
 const advertisingDataElementField = spectrum.textField(
   "handleAdvertisingDataDataElementField",
