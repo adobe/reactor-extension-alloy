@@ -653,6 +653,24 @@ const createExtensionManifest = ({ version }) => {
             documentUnloading: {
               type: "boolean",
             },
+            advertising: {
+              type: "object",
+              properties: {
+                handleAdvertisingData: {
+                  anyOf: [
+                    {
+                      type: "string",
+                      enum: ["auto", "wait", "disabled"],
+                    },
+                    {
+                      type: "string",
+                      pattern: "^%[^%]+%$",
+                    },
+                  ],
+                },
+              },
+              additionalProperties: false,
+            },
             edgeConfigOverrides: actionEdgeConfigOverridesSchema,
           },
           required: ["instanceName"],
