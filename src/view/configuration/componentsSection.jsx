@@ -16,6 +16,7 @@ import * as webSdkComponentsExports from "@adobe/alloy/libEs6/core/componentCrea
 import Heading from "../components/typography/heading";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
+import BetaBadge from "../components/betaBadge";
 
 const componentProperties = {
   activityCollector: {
@@ -24,6 +25,7 @@ const componentProperties = {
   },
   advertising: {
     excludedByDefault: true,
+    beta: true,
     description:
       "This component enables Adobe Advertising integration with CJA.",
   },
@@ -121,7 +123,7 @@ const ComponentsSection = () => {
       </InlineAlert>
 
       <div>
-        {webSdkComponents.map(({ label, value, description }) => {
+        {webSdkComponents.map(({ label, value, description, beta }) => {
           return (
             <FormikCheckbox
               name={`components.${value}`}
@@ -131,6 +133,7 @@ const ComponentsSection = () => {
               key={value}
             >
               {label}
+              {beta && <BetaBadge />}
             </FormikCheckbox>
           );
         })}

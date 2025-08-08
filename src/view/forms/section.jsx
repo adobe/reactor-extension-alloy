@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 import React from "react";
 import SectionHeader from "../components/sectionHeader";
+import BetaBadge from "../components/betaBadge";
 import form from "./form";
 
 /** @typedef {import("./form").Form} Form */
@@ -19,10 +20,11 @@ import form from "./form";
  * @param {object} options - Options for the section header.
  * @param {string} options.label - The heading to use for the field.
  * @param {string} [options.learnMoreUrl] - The url to use for the learn more link.
+ * @param {boolean} [options.beta] - Whether to show a beta badge.
  * @param {Form[]} [children] - The children forms to include in the section.
  * @returns {Form} A section header form.
  */
-export default function section({ label, learnMoreUrl }, children = []) {
+export default function section({ label, learnMoreUrl, beta }, children = []) {
   const { getInitialValues, getSettings, getValidationShape, Component } = form(
     {},
     children,
@@ -34,7 +36,10 @@ export default function section({ label, learnMoreUrl }, children = []) {
     getValidationShape,
     Component: (props) => (
       <>
-        <SectionHeader learnMoreUrl={learnMoreUrl}>{label}</SectionHeader>
+        <SectionHeader learnMoreUrl={learnMoreUrl}>
+          {label}
+          {beta && <BetaBadge />}
+        </SectionHeader>
         <Component {...props} />
       </>
     ),

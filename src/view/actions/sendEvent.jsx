@@ -471,6 +471,7 @@ const sendEventForm = form(
         section(
           {
             label: "Advertising",
+            beta: true,
             learnMoreUrl:
               "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
           },
@@ -550,6 +551,7 @@ const sendEventForm = form(
             section(
               {
                 label: "Advertising",
+                beta: true,
                 learnMoreUrl:
                   "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
               },
@@ -581,6 +583,7 @@ const sendEventForm = form(
             section(
               {
                 label: "Advertising",
+                beta: true,
                 learnMoreUrl:
                   "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
               },
