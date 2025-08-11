@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 /* eslint-disable vitest/expect-expect */
-import { t } from "testcafe";
+import { t, Selector } from "testcafe";
 import extensionViewController from "../../helpers/extensionViewController.mjs";
 import createExtensionViewFixture from "../../helpers/createExtensionViewFixture.mjs";
 import {
@@ -23,6 +23,7 @@ import runCommonExtensionViewTests from "../view/runCommonExtensionViewTests.mjs
 import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks.mjs";
 import * as datastreamsMocks from "../../helpers/endpointMocks/datastreamsMocks.mjs";
 import * as datastreamMocks from "../../helpers/endpointMocks/datastreamMocks.mjs";
+import * as advertisersMocks from "../../helpers/endpointMocks/advertisersMocks.mjs";
 import spectrum from "../../helpers/spectrum.mjs";
 import { createTestIdSelector } from "../../helpers/dataTestIdSelectors.mjs";
 
@@ -382,6 +383,7 @@ test("returns minimal valid settings", async () => {
   await extensionViewController.expectSettings({
     components: {
       eventMerge: false,
+      advertising: false,
     },
     instances: [
       {
@@ -498,6 +500,7 @@ test("returns full valid settings", async () => {
   await extensionViewController.expectSettings({
     components: {
       eventMerge: false,
+      advertising: false,
     },
     instances: [
       {
@@ -626,6 +629,7 @@ test("returns full valid settings with maximal data elements", async () => {
   await extensionViewController.expectSettings({
     components: {
       eventMerge: false,
+      advertising: false,
     },
     instances: [
       {
@@ -938,6 +942,7 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
   await extensionViewController.expectSettings({
     components: {
       eventMerge: false,
+      advertising: false,
     },
     instances: [
       {
@@ -968,6 +973,7 @@ test("does not save onBeforeEventSend and filterClickDetails code if it matches 
   await extensionViewController.expectSettings({
     components: {
       eventMerge: false,
+      advertising: false,
     },
     instances: [
       {
@@ -1451,6 +1457,7 @@ test.requestHooks(
     await extensionViewController.init({
       settings: {
         components: {
+          advertising: false,
           eventMerge: false,
         },
         instances: [
@@ -1487,6 +1494,7 @@ test.requestHooks(
 
     await extensionViewController.expectSettings({
       components: {
+        advertising: false,
         eventMerge: false,
       },
       instances: [
@@ -1578,6 +1586,7 @@ test("is able to add and remove report suites from overrides", async () => {
 
   await extensionViewController.expectSettings({
     components: {
+      advertising: false,
       eventMerge: false,
     },
     instances: [
@@ -1919,6 +1928,7 @@ test("allows the setting of overrides in only a single environment", async () =>
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
     components: {
+      advertising: false,
       eventMerge: false,
     },
     instances: [
@@ -1988,6 +1998,7 @@ test("makes the media collection fields required if one is filled", async () => 
 
   await extensionViewController.expectSettings({
     components: {
+      advertising: false,
       eventMerge: false,
     },
     instances: [
@@ -2049,3 +2060,397 @@ test.skip("restores disabled components added to components key with the false v
     .expect(createTestIdSelector("privacyComponentCheckbox").checked)
     .eql(true);
 });
+
+// Advertising Section Tests
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "shows advertising section when component is enabled",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+            advertising: {
+              dspEnabled: "Enabled",
+              advertiserSettings: [],
+              id5PartnerId: "",
+              rampIdJSPath: "",
+            },
+          },
+        ],
+      },
+    });
+
+    // Verify the advertising section elements are visible
+    await instances[0].advertising.dspEnabledField.expectExists();
+    await instances[0].advertising.addAdvertiserButton.expectExists();
+    await instances[0].advertising.id5PartnerIdField.expectExists();
+    await instances[0].advertising.rampIdJSPathField.expectExists();
+  },
+);
+
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "allows SSC users to enable advertising with minimal configuration",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+          },
+        ],
+      },
+    });
+
+    // Verify dspEnabled field exists and is set to "Disabled"
+    await instances[0].advertising.dspEnabledField.expectExists();
+    await instances[0].advertising.dspEnabledField.expectValue("Disabled");
+
+    // Verify other advertising elements are hidden for SSC users
+    await instances[0].advertising.addAdvertiserButton.expectNotExists();
+    await instances[0].advertising.id5PartnerIdField.expectNotExists();
+    await instances[0].advertising.rampIdJSPathField.expectNotExists();
+
+    // Verify the configuration settings structure and values
+    await extensionViewController.expectSettings({
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+          advertising: {
+            dspEnabled: false,
+          },
+        },
+      ],
+    });
+
+    // Verify that the configuration is valid for SSC users
+    await extensionViewController.expectIsValid();
+  },
+);
+
+test.requestHooks(advertisersMocks.noAdvertisers)(
+  "shows error alert when no advertisers are found and hides all DSP fields",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+          },
+        ],
+      },
+    });
+
+    // Step 1: Verify initial state - dspEnabled is disabled, all elements hidden
+    await instances[0].advertising.dspEnabledField.expectExists();
+    await instances[0].advertising.dspEnabledField.expectValue("Disabled");
+    await instances[0].advertising.addAdvertiserButton.expectNotExists();
+    await instances[0].advertising.id5PartnerIdField.expectNotExists();
+    await instances[0].advertising.rampIdJSPathField.expectNotExists();
+
+    // Step 2: User enables DSP (which will trigger the API call and show the error)
+    await instances[0].advertising.dspEnabledField.openMenu();
+    await instances[0].advertising.dspEnabledField.selectMenuOption("Enabled");
+
+    // Step 3: Verify the "No DSP Advertiser Found" alert appears
+    const alertSelector = Selector('[role="alert"]').withText(
+      "No DSP Advertiser Found",
+    );
+    await t.expect(alertSelector.exists).ok();
+    await t
+      .expect(
+        alertSelector.find("h3").withText("No DSP Advertiser Found").exists,
+      )
+      .ok();
+    await t
+      .expect(
+        alertSelector
+          .find("section")
+          .withText(
+            "No advertiser was found corresponding to this IMS org in Adobe Advertising DSP. Please connect with your DSP account manager to add advertiser to this IMS org in the DSP.",
+          ).exists,
+      )
+      .ok();
+
+    // Step 4: Verify all DSP-related UI fields remain hidden
+    await instances[0].advertising.addAdvertiserButton.expectNotExists();
+    await instances[0].advertising.id5PartnerIdField.expectNotExists();
+    await instances[0].advertising.rampIdJSPathField.expectNotExists();
+    await instances[0].advertising.advertiser0Field.expectNotExists();
+    await instances[0].advertising.advertiserEnabled0Field.expectNotExists();
+
+    // Step 5: Verify form is invalid
+    await extensionViewController.expectIsNotValid();
+  },
+);
+
+test.requestHooks(advertisersMocks.unauthorized)(
+  "shows error alert when advertiser API fails due to permissions and hides all DSP fields",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+          },
+        ],
+      },
+    });
+
+    // Step 1: Verify initial state - dspEnabled is disabled, all elements hidden
+    await instances[0].advertising.dspEnabledField.expectExists();
+    await instances[0].advertising.dspEnabledField.expectValue("Disabled");
+    await instances[0].advertising.addAdvertiserButton.expectNotExists();
+    await instances[0].advertising.id5PartnerIdField.expectNotExists();
+    await instances[0].advertising.rampIdJSPathField.expectNotExists();
+
+    // Step 2: User enables DSP (which will trigger the API call and show the error)
+    await instances[0].advertising.dspEnabledField.openMenu();
+    await instances[0].advertising.dspEnabledField.selectMenuOption("Enabled");
+
+    // Step 3: Verify the "Failed to load DSP advertiser data" alert appears
+    const alertSelector = Selector('[role="alert"]').withText(
+      "Failed to load DSP advertiser data",
+    );
+    await t.expect(alertSelector.exists).ok();
+    await t
+      .expect(
+        alertSelector.find("h3").withText("Failed to load DSP advertiser data")
+          .exists,
+      )
+      .ok();
+    await t
+      .expect(
+        alertSelector
+          .find("section")
+          .withText(
+            "Unable to retrieve advertiser data from DSP. Please try after some time. Please contact your DSP account manager if the issue persists.",
+          ).exists,
+      )
+      .ok();
+
+    // Step 4: Verify all DSP-related UI fields remain hidden
+    await instances[0].advertising.addAdvertiserButton.expectNotExists();
+    await instances[0].advertising.id5PartnerIdField.expectNotExists();
+    await instances[0].advertising.rampIdJSPathField.expectNotExists();
+    await instances[0].advertising.advertiser0Field.expectNotExists();
+    await instances[0].advertising.advertiserEnabled0Field.expectNotExists();
+
+    // Step 5: Verify form is invalid
+    await extensionViewController.expectIsNotValid();
+  },
+);
+
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "properly loads prefilled advertising configuration in edit mode and allows changes",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+            advertising: {
+              dspEnabled: true,
+              advertiserSettings: [
+                {
+                  advertiserId: "12345",
+                  enabled: true,
+                },
+                {
+                  advertiserId: "67890",
+                  enabled: false,
+                },
+              ],
+              id5PartnerId: "original-id5-12345",
+              rampIdJSPath: "https://original.example.com/ramp.js",
+            },
+          },
+        ],
+      },
+    });
+
+    // Step 1: Verify DSP is enabled and all fields are visible
+    await instances[0].advertising.dspEnabledField.expectExists();
+    await instances[0].advertising.dspEnabledField.expectValue("Enabled");
+    await instances[0].advertising.addAdvertiserButton.expectExists();
+    await instances[0].advertising.id5PartnerIdField.expectExists();
+    await instances[0].advertising.rampIdJSPathField.expectExists();
+
+    // Step 2: Verify prefilled advertiser settings are loaded correctly
+    await instances[0].advertising.advertiser0Field.expectExists();
+    await instances[0].advertising.advertiser0Field.expectValue(
+      "Test Advertiser 1",
+    ); // Should match advertiser_id "12345"
+    await instances[0].advertising.advertiserEnabled0Field.expectExists();
+    await instances[0].advertising.advertiserEnabled0Field.expectValue(
+      "Enabled",
+    );
+
+    await instances[0].advertising.advertiser1Field.expectExists();
+    await instances[0].advertising.advertiser1Field.expectValue(
+      "Test Advertiser 2",
+    ); // Should match advertiser_id "67890"
+    await instances[0].advertising.advertiserEnabled1Field.expectExists();
+    await instances[0].advertising.advertiserEnabled1Field.expectValue(
+      "Disabled",
+    );
+
+    // Step 3: Verify prefilled text fields
+    await instances[0].advertising.id5PartnerIdField.expectValue(
+      "original-id5-12345",
+    );
+    await instances[0].advertising.rampIdJSPathField.expectValue(
+      "https://original.example.com/ramp.js",
+    );
+
+    // Step 4: Make changes to test edit functionality
+    // Change first advertiser to disabled
+    await instances[0].advertising.advertiserEnabled0Field.openMenu();
+    await instances[0].advertising.advertiserEnabled0Field.selectMenuOption(
+      "Disabled",
+    );
+
+    // Change second advertiser to enabled
+    await instances[0].advertising.advertiserEnabled1Field.openMenu();
+    await instances[0].advertising.advertiserEnabled1Field.selectMenuOption(
+      "Enabled",
+    );
+
+    // Update text fields
+    await instances[0].advertising.id5PartnerIdField.clear();
+    await instances[0].advertising.id5PartnerIdField.typeText(
+      "updated-id5-67890",
+    );
+
+    await instances[0].advertising.rampIdJSPathField.clear();
+    await instances[0].advertising.rampIdJSPathField.typeText(
+      "https://updated.example.com/ramp.js",
+    );
+
+    // Step 5: Verify the updated settings reflect the changes
+    await extensionViewController.expectSettings({
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+          advertising: {
+            dspEnabled: true,
+            advertiserSettings: [
+              {
+                advertiserId: "12345",
+                enabled: false, // Changed from true to false
+              },
+              {
+                advertiserId: "67890",
+                enabled: true, // Changed from false to true
+              },
+            ],
+            id5PartnerId: "updated-id5-67890", // Updated value
+            rampIdJSPath: "https://updated.example.com/ramp.js", // Updated value
+          },
+        },
+      ],
+    });
+
+    // Step 6: Verify form is still valid after changes
+    await extensionViewController.expectIsValid();
+  },
+);
+
+test.requestHooks(advertisersMocks.multipleAdvertisers)(
+  "allows DSP users to configure advertising with full functionality",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        components: {
+          advertising: true,
+        },
+        instances: [
+          {
+            name: "alloy1",
+            edgeConfigId: "PR123",
+          },
+        ],
+      },
+    });
+
+    // Step 1: Verify initial state - dspEnabled is disabled, all elements hidden
+    await instances[0].advertising.dspEnabledField.expectExists();
+    await instances[0].advertising.dspEnabledField.expectValue("Disabled");
+    await instances[0].advertising.addAdvertiserButton.expectNotExists();
+    await instances[0].advertising.id5PartnerIdField.expectNotExists();
+    await instances[0].advertising.rampIdJSPathField.expectNotExists();
+
+    // Step 2: User enables DSP
+    await instances[0].advertising.dspEnabledField.openMenu();
+    await instances[0].advertising.dspEnabledField.selectMenuOption("Enabled");
+
+    // Step 3: Verify all UI elements become visible after enabling DSP
+    await instances[0].advertising.addAdvertiserButton.expectExists();
+    await instances[0].advertising.id5PartnerIdField.expectExists();
+    await instances[0].advertising.rampIdJSPathField.expectExists();
+
+    // Step 4: Verify one advertiser row is visible by default
+    await instances[0].advertising.advertiser0Field.expectExists();
+    await instances[0].advertising.advertiserEnabled0Field.expectExists();
+
+    // Step 5: User selects an advertiser from dropdown
+    await instances[0].advertising.advertiser0Field.openMenu();
+    await instances[0].advertising.advertiser0Field.selectMenuOption(
+      "Test Advertiser 1",
+    );
+
+    // Step 7: User enters text in id5 field
+    await instances[0].advertising.id5PartnerIdField.typeText("testId5");
+
+    // Step 8: User enters text in rampId field
+    await instances[0].advertising.rampIdJSPathField.typeText(
+      "https://example.com/ramp.js",
+    );
+
+    // Step 9: Verify settings object contains all the configured values
+    await extensionViewController.expectSettings({
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+          advertising: {
+            dspEnabled: true,
+            advertiserSettings: [
+              {
+                advertiserId: "12345", // This matches the advertiser_id from the mock
+                enabled: true,
+              },
+            ],
+            id5PartnerId: "testId5",
+            rampIdJSPath: "https://example.com/ramp.js",
+          },
+        },
+      ],
+    });
+
+    // Step 10: Verify form is valid
+    await extensionViewController.expectIsValid();
+  },
+);

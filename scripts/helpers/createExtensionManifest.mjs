@@ -424,6 +424,33 @@ const createExtensionManifest = ({ version }) => {
                   required: ["channel", "playerName"],
                   additionalProperties: false,
                 },
+                advertising: {
+                  type: "object",
+                  properties: {
+                    dspEnabled: enabledDisabledOrDataElement,
+                    advertiserSettings: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          advertiserId: {
+                            type: "string",
+                          },
+                          enabled: enabledDisabledOrDataElement,
+                        },
+                        required: ["advertiserId", "enabled"],
+                        additionalProperties: false,
+                      },
+                    },
+                    id5PartnerId: {
+                      type: "string",
+                    },
+                    rampIdJSPath: {
+                      type: "string",
+                    },
+                  },
+                  additionalProperties: false,
+                },
                 personalizationStorageEnabled: {
                   type: "boolean",
                 },
@@ -625,6 +652,24 @@ const createExtensionManifest = ({ version }) => {
             },
             documentUnloading: {
               type: "boolean",
+            },
+            advertising: {
+              type: "object",
+              properties: {
+                handleAdvertisingData: {
+                  anyOf: [
+                    {
+                      type: "string",
+                      enum: ["auto", "wait", "disabled"],
+                    },
+                    {
+                      type: "string",
+                      pattern: "^%[^%]+%$",
+                    },
+                  ],
+                },
+              },
+              additionalProperties: false,
             },
             edgeConfigOverrides: actionEdgeConfigOverridesSchema,
           },

@@ -48,6 +48,9 @@ import PrivacySection, {
 import IdentitySection, {
   bridge as identitySectionBridge,
 } from "./identitySection";
+import AdvertisingSection, {
+  bridge as advertisingSectionBridge,
+} from "./advertisingSection";
 import PersonalizationSection, {
   bridge as personalizationSectionBridge,
 } from "./personalizationSection";
@@ -74,6 +77,7 @@ const sectionBridges = [
   edgeConfigurationsSectionBridge,
   privacySectionBridge,
   identitySectionBridge,
+  advertisingSectionBridge,
   personalizationSectionBridge,
   dataCollectionSectionBridge,
   overridesBridge,
@@ -240,6 +244,10 @@ const InstancesSection = ({ initInfo, context }) => {
                         />
                         <StreamingMediaSection
                           instanceFieldName={instanceFieldName}
+                        />
+                        <AdvertisingSection
+                          instanceFieldName={instanceFieldName}
+                          initInfo={initInfo}
                         />
                         <OverridesSection
                           initInfo={initInfo}

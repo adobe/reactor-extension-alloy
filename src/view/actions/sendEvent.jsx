@@ -33,9 +33,22 @@ import eventTypes from "./constants/eventTypes";
 import renderForm from "../forms/renderForm";
 import textField from "../forms/textField";
 import { validateSurface } from "../utils/surfaceUtils";
+import copyPropertiesIfValueDifferentThanDefault from "../configuration/utils/copyPropertiesIfValueDifferentThanDefault";
 
 const FETCH = "fetch";
 const COLLECT = "collect";
+
+// Advertising data handling options
+const ADVERTISING_DATA = Object.freeze({
+  AUTOMATIC: "auto",
+  WAIT: "wait",
+  DISABLED: "disabled",
+});
+
+// Default advertising settings
+const DEFAULT_ADVERTISING_SETTINGS = Object.freeze({
+  handleAdvertisingData: ADVERTISING_DATA.DISABLED,
+});
 
 const xdmFieldDescription = (
   <>
@@ -68,7 +81,11 @@ const xdmFieldDescription = (
 const wrapGetInitialValues =
   (getInitialValues) =>
   ({ initInfo }) => {
-    const { personalization = {}, ...otherSettings } = initInfo.settings || {};
+    const {
+      personalization = {},
+      advertising = {},
+      ...otherSettings
+    } = initInfo.settings || {};
 
     // Flatten personalization settings and use strings for data element booleans
     if (personalization.defaultPersonalizationEnabled === true) {
@@ -76,7 +93,17 @@ const wrapGetInitialValues =
     } else if (personalization.defaultPersonalizationEnabled === false) {
       personalization.defaultPersonalizationEnabled = "false";
     }
-    const newSettings = { ...personalization, ...otherSettings };
+
+    // Handle advertising data settings - extract for form use but don't add to root level
+    const handleAdvertisingData =
+      advertising.handleAdvertisingData ||
+      DEFAULT_ADVERTISING_SETTINGS.handleAdvertisingData;
+
+    const newSettings = {
+      ...personalization,
+      ...otherSettings,
+      handleAdvertisingData,
+    };
 
     // Handle backward compatability for making renderDecisions set to true
     // for FETCH guided events. Previously you could modify renderDecisions on
@@ -110,8 +137,19 @@ const wrapGetSettings =
       includeRenderedPropositions,
       defaultPersonalizationEnabled,
       decisionContext,
+      handleAdvertisingData: extractedHandleAdvertisingData,
       ...settings
     } = getSettings({ values });
+
+    // Use the extracted value or get from values if not in getSettings result
+    let handleAdvertisingData =
+      extractedHandleAdvertisingData || values.handleAdvertisingData;
+
+    // If data element is selected, get the actual data element value
+    if (handleAdvertisingData === "dataElement") {
+      handleAdvertisingData = values.handleAdvertisingDataDataElement;
+    }
+
     if (
       decisionScopes ||
       surfaces ||
@@ -142,6 +180,20 @@ const wrapGetSettings =
     if (decisionContext) {
       settings.personalization.decisionContext = decisionContext;
     }
+
+    // Handle advertising data settings - only include if different from default
+    const advertisingSettings = {};
+    copyPropertiesIfValueDifferentThanDefault({
+      toObj: advertisingSettings,
+      fromObj: { handleAdvertisingData },
+      defaultsObj: DEFAULT_ADVERTISING_SETTINGS,
+      keys: ["handleAdvertisingData"],
+    });
+
+    if (Object.keys(advertisingSettings).length > 0) {
+      settings.advertising = advertisingSettings;
+    }
+
     return settings;
   };
 
@@ -318,6 +370,29 @@ const defaultPersonalizationEnabledField = radioGroup({
   ],
 });
 
+const advertisingDataField = radioGroup({
+  name: "handleAdvertisingData",
+  label: "Request default Advertising data",
+  dataElementSupported: true,
+  dataElementDescription:
+    "Provide a data element that resolves to one of the following values: 'auto', 'wait', or 'disabled'.",
+  defaultValue: DEFAULT_ADVERTISING_SETTINGS.handleAdvertisingData,
+  items: [
+    {
+      value: ADVERTISING_DATA.AUTOMATIC,
+      label: "Automatic - include advertising data.",
+    },
+    {
+      value: ADVERTISING_DATA.WAIT,
+      label: "Wait - block this call until advertising data is resolved",
+    },
+    {
+      value: ADVERTISING_DATA.DISABLED,
+      label: "Disabled - don't include advertising data.",
+    },
+  ],
+});
+
 const decisionContext = requiredComponent(
   {
     requiredComponent: "rulesEngine",
@@ -393,6 +468,23 @@ const sendEventForm = form(
             ],
           ),
         ]),
+        section(
+          {
+            label: "Advertising",
+            beta: true,
+            learnMoreUrl:
+              "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
+          },
+          [
+            requiredComponent(
+              {
+                requiredComponent: "advertising",
+                title: "the advertising section in the send event action",
+              },
+              [advertisingDataField],
+            ),
+          ],
+        ),
         configOverrideFields,
         // only display the deprecated datasetId field if there is an existing
         // datasetId value from the past
@@ -456,6 +548,23 @@ const sendEventForm = form(
                 ],
               ),
             ]),
+            section(
+              {
+                label: "Advertising",
+                beta: true,
+                learnMoreUrl:
+                  "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
+              },
+              [
+                requiredComponent(
+                  {
+                    requiredComponent: "advertising",
+                    title: "the advertising section in the send event action",
+                  },
+                  [advertisingDataField],
+                ),
+              ],
+            ),
             configOverrideFields,
           ],
         ),
@@ -471,6 +580,23 @@ const sendEventForm = form(
               dataField,
               disabledIncludeRenderedPropositionsField,
             ]),
+            section(
+              {
+                label: "Advertising",
+                beta: true,
+                learnMoreUrl:
+                  "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
+              },
+              [
+                requiredComponent(
+                  {
+                    requiredComponent: "advertising",
+                    title: "the advertising section in the send event action",
+                  },
+                  [advertisingDataField],
+                ),
+              ],
+            ),
             configOverrideFields,
           ],
         ),

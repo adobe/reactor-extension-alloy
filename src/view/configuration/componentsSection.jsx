@@ -16,11 +16,18 @@ import * as webSdkComponentsExports from "@adobe/alloy/libEs6/core/componentCrea
 import Heading from "../components/typography/heading";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
+import BetaBadge from "../components/betaBadge";
 
 const componentProperties = {
   activityCollector: {
     description:
       "This component enables automatic link collection and ActivityMap tracking.",
+  },
+  advertising: {
+    excludedByDefault: true,
+    beta: true,
+    description:
+      "This component enables Adobe Advertising integration with CJA.",
   },
   audiences: {
     description:
@@ -67,7 +74,7 @@ export const bridge = {
     if (isNew) {
       // If this is a newly added extension, default to deprecated components being disabled.
       components = webSdkComponents
-        .filter((value) => value.deprecated)
+        .filter((value) => value.deprecated || value.excludedByDefault)
         .reduce((acc, value) => {
           acc[value.value] = false;
           return acc;
@@ -116,7 +123,7 @@ const ComponentsSection = () => {
       </InlineAlert>
 
       <div>
-        {webSdkComponents.map(({ label, value, description }) => {
+        {webSdkComponents.map(({ label, value, description, beta }) => {
           return (
             <FormikCheckbox
               name={`components.${value}`}
@@ -126,6 +133,7 @@ const ComponentsSection = () => {
               key={value}
             >
               {label}
+              {beta && <BetaBadge />}
             </FormikCheckbox>
           );
         })}
