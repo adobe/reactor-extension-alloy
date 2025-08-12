@@ -338,13 +338,19 @@ export const bridge = {
 
     const propertiesWithValues = OVERRIDE_ENVIRONMENTS.flatMap((env) =>
       overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}`),
-    ).filter((key) => deepGet(instanceSettings, key) !== undefined);
+    ).filter((key) => {
+      const value = deepGet(instanceSettings, key);
+      return value !== undefined && value !== "";
+    });
 
     // convert idSyncContainerId to a number if it is not a data element
     propertiesWithValues
       .map((key) => `${key}.idSyncContainerId`)
       .filter((key) => deepGet(instanceSettings, key))
-      .filter((key) => !containsDataElements(deepGet(instanceSettings, key)))
+      .filter((key) => {
+        const value = deepGet(instanceSettings, key);
+        return !containsDataElements(value) && value !== "";
+      })
       .forEach((key) => {
         const value = deepGet(instanceSettings, key);
         deepSet(instanceSettings, key, parseInt(value, 10));
@@ -392,7 +398,7 @@ export const bridge = {
         );
       });
 
-    // Remove empty objects
+    // Remove empty strings, objects, and arrays
     /** @type {{ edgeConfigOverrides: ConfigOverridesLaunchSettings }} */
     const trimmedInstanceSettings = trimValue(instanceSettings);
     // Remove the edgeConfigOverrides object if it is empty or has only the default sandbox setting
@@ -422,13 +428,13 @@ export const bridge = {
 
     // Remove the edgeConfigOverrides object if it is empty
     if (
-      Object.keys(trimmedInstanceSettings?.edgeConfigOverrides || []).length ===
-      0
+      trimmedInstanceSettings?.edgeConfigOverrides &&
+      Object.keys(trimmedInstanceSettings?.edgeConfigOverrides).length === 0
     ) {
       delete trimmedInstanceSettings.edgeConfigOverrides;
     }
 
-    return trimmedInstanceSettings;
+    return trimmedInstanceSettings ?? {};
   },
   formikStateValidationSchema: object({
     edgeConfigOverrides: object(

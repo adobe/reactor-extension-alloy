@@ -16,7 +16,7 @@ import { Flex } from "@adobe/react-spectrum";
 import AlertIcon from "@spectrum-icons/workflow/Alert";
 import InfoIcon from "@spectrum-icons/workflow/Info";
 import CheckmarkCircle from "@spectrum-icons/workflow/CheckmarkCircle";
-import "./alert.styl";
+import "./alert.css";
 import PropTypes from "prop-types";
 import Heading from "./typography/heading";
 

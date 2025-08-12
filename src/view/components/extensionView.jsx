@@ -26,6 +26,7 @@ const ExtensionView = ({
   getSettings,
   validateFormikState,
   formikStateValidationSchema,
+  getFormikStateValidationSchema,
   validateNonFormikState,
 }) => {
   const reportAsyncError = useReportAsyncError();
@@ -34,6 +35,27 @@ const ExtensionView = ({
   const viewRegistrationRef = useRef();
   const formikPropsRef = useRef();
   const getInitialValuesPromiseRef = useRef();
+
+  const getValidationSchema = () => {
+    const {
+      getFormikStateValidationSchema: getSchema,
+      formikStateValidationSchema: schema,
+    } = viewRegistrationRef.current ?? {};
+
+    if (schema) {
+      return schema;
+    }
+    if (getSchema && initInfo) {
+      try {
+        const newSchema = getSchema({ initInfo });
+        viewRegistrationRef.current.formikStateValidationSchema = newSchema;
+      } catch (e) {
+        reportAsyncError(e);
+      }
+    }
+    return object();
+  };
+
   formikPropsRef.current = useFormik({
     onSubmit: () => {},
     validate: (values) => {
@@ -45,8 +67,7 @@ const ExtensionView = ({
         if (viewRegistrationRef.current?.validateFormikState) {
           errors = viewRegistrationRef.current.validateFormikState({ values });
         }
-      } catch (e) {
-        console.error(e);
+      } catch {
         reportAsyncError(
           new Error("An error occurred while validating the view."),
         );
@@ -54,11 +75,7 @@ const ExtensionView = ({
 
       return errors;
     },
-    validationSchema: () => {
-      return (
-        viewRegistrationRef.current?.formikStateValidationSchema ?? object()
-      );
-    },
+    validationSchema: getValidationSchema(),
   });
 
   const myValidateFormikState = async () => {
@@ -78,12 +95,12 @@ const ExtensionView = ({
       formikPropsRef.current.setSubmitting(false);
 
       // Setting context to the values so you can use "$..." in when conditions
-      const validationSchema =
-        viewRegistrationRef.current?.formikStateValidationSchema ?? object();
+      const validationSchema = getValidationSchema();
       await validationSchema.validate(formikPropsRef.current.values, {
         abortEarly: false,
         context: formikPropsRef.current.values,
       });
+
       // validate the formik state
       const formikErrors = await formikPropsRef.current.validateForm();
       return Object.keys(formikErrors).length === 0;
@@ -112,9 +129,10 @@ const ExtensionView = ({
       setInitInfo(_initInfo);
     },
     async getSettings() {
-      if (!viewRegistrationRef.current) {
+      if (!viewRegistrationRef.current || !formikPropsRef?.current?.values) {
         return {};
       }
+
       try {
         return await viewRegistrationRef.current.getSettings({
           initInfo,
@@ -145,6 +163,8 @@ const ExtensionView = ({
     viewRegistrationRef.current.validateFormikState = api.validateFormikState;
     viewRegistrationRef.current.formikStateValidationSchema =
       api.formikStateValidationSchema;
+    viewRegistrationRef.current.getFormikStateValidationSchema =
+      api.getFormikStateValidationSchema;
     viewRegistrationRef.current.validateNonFormikState =
       api.validateNonFormikState;
   };
@@ -155,6 +175,7 @@ const ExtensionView = ({
         getSettings,
         validateFormikState,
         formikStateValidationSchema,
+        getFormikStateValidationSchema,
         validateNonFormikState,
       });
     }, []);
@@ -215,6 +236,7 @@ ExtensionView.propTypes = {
   getSettings: PropTypes.func,
   validateFormikState: PropTypes.func,
   formikStateValidationSchema: PropTypes.object,
+  getFormikStateValidationSchema: PropTypes.func,
   validateNonFormikState: PropTypes.func,
 };
 

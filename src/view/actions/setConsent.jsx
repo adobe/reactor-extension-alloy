@@ -31,6 +31,8 @@ import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
 import Overrides, { bridge as overridesBridge } from "../components/overrides";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
+import RequiredComponent from "../components/requiredComponent";
+import getRequiredComponentSchema from "../configuration/utils/getRequiredComponentSchema";
 
 const FORM = { value: "form", label: "Fill out a form" };
 const DATA_ELEMENT = { value: "dataElement", label: "Provide a data element" };
@@ -171,65 +173,69 @@ const getSettings = ({ values }) => {
   return settings;
 };
 
-const validationSchema = object()
-  .shape({
-    instanceName: string().required(),
-    identityMap: string().matches(
-      singleDataElementRegex,
-      DATA_ELEMENT_REQUIRED,
-    ),
-    dataElement: mixed().when("inputMethod", {
-      is: DATA_ELEMENT.value,
-      then: () =>
-        string()
-          .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-          .required(DATA_ELEMENT_REQUIRED),
-    }),
-    consent: array().when("inputMethod", {
-      is: FORM.value,
-      then: (schema) =>
-        schema.of(
-          object().shape({
-            standard: string().required("Please specify a standard."),
-            general: mixed().when(["standard", "adobeVersion"], {
-              is: (standard, adobeVersion) =>
-                standard === ADOBE.value && adobeVersion === "1.0",
-              then: () =>
-                createRadioGroupWithDataElementValidationSchema("general"),
+const getValidationSchema = getRequiredComponentSchema("consent", () => {
+  return object()
+    .shape({
+      instanceName: string().required(),
+      identityMap: string().matches(
+        singleDataElementRegex,
+        DATA_ELEMENT_REQUIRED,
+      ),
+      dataElement: mixed().when("inputMethod", {
+        is: DATA_ELEMENT.value,
+        then: () =>
+          string()
+            .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+            .required(DATA_ELEMENT_REQUIRED),
+      }),
+      consent: array().when("inputMethod", {
+        is: FORM.value,
+        then: (schema) =>
+          schema.of(
+            object().shape({
+              standard: string().required("Please specify a standard."),
+              general: mixed().when(["standard", "adobeVersion"], {
+                is: (standard, adobeVersion) =>
+                  standard === ADOBE.value && adobeVersion === "1.0",
+                then: () =>
+                  createRadioGroupWithDataElementValidationSchema("general"),
+              }),
+              value: mixed().when(["standard", "adobeVersion"], {
+                is: (standard, adobeVersion) =>
+                  standard === ADOBE.value && adobeVersion !== "1.0",
+                then: () =>
+                  string()
+                    .required(DATA_ELEMENT_REQUIRED)
+                    .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
+              }),
+              iabVersion: mixed().when("standard", {
+                is: IAB_TCF.value,
+                then: () => string().required("Please specify a version."),
+              }),
+              iabValue: mixed().when("standard", {
+                is: IAB_TCF.value,
+                then: () => string().required("Please specify a value."),
+              }),
+              gdprApplies: mixed().when("standard", {
+                is: IAB_TCF.value,
+                then: () =>
+                  createRadioGroupWithDataElementValidationSchema(
+                    "gdprApplies",
+                  ),
+              }),
+              gdprContainsPersonalData: mixed().when("standard", {
+                is: IAB_TCF.value,
+                then: () =>
+                  createRadioGroupWithDataElementValidationSchema(
+                    "gdprContainsPersonalData",
+                  ),
+              }),
             }),
-            value: mixed().when(["standard", "adobeVersion"], {
-              is: (standard, adobeVersion) =>
-                standard === ADOBE.value && adobeVersion !== "1.0",
-              then: () =>
-                string()
-                  .required(DATA_ELEMENT_REQUIRED)
-                  .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED),
-            }),
-            iabVersion: mixed().when("standard", {
-              is: IAB_TCF.value,
-              then: () => string().required("Please specify a version."),
-            }),
-            iabValue: mixed().when("standard", {
-              is: IAB_TCF.value,
-              then: () => string().required("Please specify a value."),
-            }),
-            gdprApplies: mixed().when("standard", {
-              is: IAB_TCF.value,
-              then: () =>
-                createRadioGroupWithDataElementValidationSchema("gdprApplies"),
-            }),
-            gdprContainsPersonalData: mixed().when("standard", {
-              is: IAB_TCF.value,
-              then: () =>
-                createRadioGroupWithDataElementValidationSchema(
-                  "gdprContainsPersonalData",
-                ),
-            }),
-          }),
-        ),
-    }),
-  })
-  .concat(overridesBridge.formikStateValidationSchema);
+          ),
+      }),
+    })
+    .concat(overridesBridge.formikStateValidationSchema);
+});
 
 const ConsentObject = ({ value, index }) => {
   return (
@@ -347,7 +353,7 @@ const SetConsent = () => {
     <ExtensionView
       getInitialValues={getInitialValues}
       getSettings={getSettings}
-      formikStateValidationSchema={validationSchema}
+      getFormikStateValidationSchema={getValidationSchema}
       render={({ initInfo, formikProps: { values } }) => {
         const { instanceName } = values;
         const instanceSettings = initInfo.extensionSettings.instances.find(
@@ -357,96 +363,103 @@ const SetConsent = () => {
         const orgId = instanceSettings?.orgId ?? initInfo.company.orgId;
         return (
           <FormElementContainer>
-            <InstanceNamePicker
-              data-test-id="instanceNamePicker"
-              name="instanceName"
+            <RequiredComponent
               initInfo={initInfo}
-            />
-            <DataElementSelector>
-              <FormikTextField
-                data-test-id="identityMapField"
-                name="identityMap"
-                label="Identity map"
-                description="Provide a data element which returns a custom identity map object as part of the setConsent command."
-                width="size-5000"
-              />
-            </DataElementSelector>
-            <FormikRadioGroup
-              name="inputMethod"
-              orientation="horizontal"
-              label="Consent information"
+              requiredComponent="consent"
+              title="the Set consent action"
+              whole
             >
-              <Radio data-test-id="inputMethodFormRadio" value={FORM.value}>
-                {FORM.label}
-              </Radio>
-              <Radio
-                data-test-id="inputMethodDataElementRadio"
-                value={DATA_ELEMENT.value}
-              >
-                {DATA_ELEMENT.label}
-              </Radio>
-            </FormikRadioGroup>
-            {values.inputMethod === FORM.value && (
-              <FieldArray
-                name="consent"
-                render={(arrayHelpers) => (
-                  <>
-                    <Button
-                      variant="primary"
-                      data-test-id="addConsentButton"
-                      onPress={() => {
-                        arrayHelpers.push(createBlankConsentObject());
-                      }}
-                      marginStart="auto"
-                    >
-                      Add consent object
-                    </Button>
-                    <Flex direction="column" gap="size-250">
-                      {values.consent.map((value, index) => (
-                        <Well
-                          data-test-id={`consentObject${index}`}
-                          key={`consentObject${index}`}
-                        >
-                          <FormElementContainer>
-                            <ConsentObject value={value} index={index} />
-                            {values.consent.length > 1 && (
-                              <Button
-                                variant="secondary"
-                                onPress={() => {
-                                  arrayHelpers.remove(index);
-                                }}
-                                aria-label="Delete"
-                                data-test-id="deleteConsentButton"
-                                alignSelf="flex-start"
-                              >
-                                <Delete />
-                                <Text>Delete consent object</Text>
-                              </Button>
-                            )}
-                          </FormElementContainer>
-                        </Well>
-                      ))}
-                    </Flex>
-                  </>
-                )}
+              <InstanceNamePicker
+                data-test-id="instanceNamePicker"
+                name="instanceName"
+                initInfo={initInfo}
               />
-            )}
-            {values.inputMethod === DATA_ELEMENT.value && (
               <DataElementSelector>
                 <FormikTextField
-                  data-test-id="dataElementField"
-                  label="Data element"
-                  name="dataElement"
-                  isRequired
+                  data-test-id="identityMapField"
+                  name="identityMap"
+                  label="Identity map"
+                  description="Provide a data element which returns a custom identity map object as part of the setConsent command."
                   width="size-5000"
                 />
               </DataElementSelector>
-            )}
-            <Overrides
-              initInfo={initInfo}
-              edgeConfigIds={edgeConfigIds}
-              configOrgId={orgId}
-            />
+              <FormikRadioGroup
+                name="inputMethod"
+                orientation="horizontal"
+                label="Consent information"
+              >
+                <Radio data-test-id="inputMethodFormRadio" value={FORM.value}>
+                  {FORM.label}
+                </Radio>
+                <Radio
+                  data-test-id="inputMethodDataElementRadio"
+                  value={DATA_ELEMENT.value}
+                >
+                  {DATA_ELEMENT.label}
+                </Radio>
+              </FormikRadioGroup>
+              {values.inputMethod === FORM.value && (
+                <FieldArray
+                  name="consent"
+                  render={(arrayHelpers) => (
+                    <>
+                      <Button
+                        variant="primary"
+                        data-test-id="addConsentButton"
+                        onPress={() => {
+                          arrayHelpers.push(createBlankConsentObject());
+                        }}
+                        marginStart="auto"
+                      >
+                        Add consent object
+                      </Button>
+                      <Flex direction="column" gap="size-250">
+                        {values.consent.map((value, index) => (
+                          <Well
+                            data-test-id={`consentObject${index}`}
+                            key={`consentObject${index}`}
+                          >
+                            <FormElementContainer>
+                              <ConsentObject value={value} index={index} />
+                              {values.consent.length > 1 && (
+                                <Button
+                                  variant="secondary"
+                                  onPress={() => {
+                                    arrayHelpers.remove(index);
+                                  }}
+                                  aria-label="Delete"
+                                  data-test-id="deleteConsentButton"
+                                  alignSelf="flex-start"
+                                >
+                                  <Delete />
+                                  <Text>Delete consent object</Text>
+                                </Button>
+                              )}
+                            </FormElementContainer>
+                          </Well>
+                        ))}
+                      </Flex>
+                    </>
+                  )}
+                />
+              )}
+              {values.inputMethod === DATA_ELEMENT.value && (
+                <DataElementSelector>
+                  <FormikTextField
+                    data-test-id="dataElementField"
+                    label="Data element"
+                    name="dataElement"
+                    isRequired
+                    width="size-5000"
+                  />
+                </DataElementSelector>
+              )}
+              <Overrides
+                initInfo={initInfo}
+                edgeConfigIds={edgeConfigIds}
+                configOrgId={orgId}
+              />
+            </RequiredComponent>
           </FormElementContainer>
         );
       }}

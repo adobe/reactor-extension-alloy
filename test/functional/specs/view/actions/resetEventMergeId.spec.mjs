@@ -14,8 +14,9 @@ import extensionViewController from "../../../helpers/extensionViewController.mj
 import spectrum from "../../../helpers/spectrum.mjs";
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import runCommonExtensionViewTests from "../runCommonExtensionViewTests.mjs";
+import runCustomBuildTests from "../../runCustomBuildTests.mjs";
 
-const eventMergeIdField = spectrum.textField("eventMergeIdField");
+const eventMergeIdField = spectrum.textField("eventMergeIdTextField");
 
 createExtensionViewFixture({
   title: "Reset Event Merge ID View",
@@ -23,6 +24,10 @@ createExtensionViewFixture({
 });
 
 runCommonExtensionViewTests();
+runCustomBuildTests({
+  requiredComponent: "eventMerge",
+  minimumValidSettings: { eventMergeId: "%foo%" },
+});
 
 test("initializes form fields with settings", async () => {
   await extensionViewController.init({

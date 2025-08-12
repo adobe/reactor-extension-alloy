@@ -103,7 +103,7 @@ for (let i = 0; i < 3; i += 1) {
       dataElementField: spectrum.textField("defaultConsentDataElementField"),
     },
     idMigrationEnabled: spectrum.checkbox("idMigrationEnabledField"),
-    thirdPartyCookiesEnabled: spectrum.checkbox(
+    thirdPartyCookiesEnabled: spectrum.comboBox(
       "thirdPartyCookiesEnabledField",
     ),
     // Due to limitations of the sandbox where tests are run,
@@ -163,6 +163,21 @@ for (let i = 0; i < 3; i += 1) {
         "mediaMainPingIntervalField",
       ),
       mediaAdPingIntervalField: spectrum.textField("mediaAdPingIntervalField"),
+    },
+    advertising: {
+      dspEnabledField: spectrum.comboBox("dspEnabledField"),
+      addAdvertiserButton: spectrum.button("addAdvertiserButton"),
+      advertiser0Field: spectrum.comboBox("advertiser0Field"),
+      advertiser1Field: spectrum.comboBox("advertiser1Field"),
+      advertiser2Field: spectrum.comboBox("advertiser2Field"),
+      advertiserEnabled0Field: spectrum.comboBox("advertiserEnabled0Field"),
+      advertiserEnabled1Field: spectrum.comboBox("advertiserEnabled1Field"),
+      advertiserEnabled2Field: spectrum.comboBox("advertiserEnabled2Field"),
+      deleteAdvertiser0Button: spectrum.button("deleteAdvertiser0Button"),
+      deleteAdvertiser1Button: spectrum.button("deleteAdvertiser1Button"),
+      deleteAdvertiser2Button: spectrum.button("deleteAdvertiser2Button"),
+      id5PartnerIdField: spectrum.textField("id5PartnerIdField"),
+      rampIdJSPathField: spectrum.textField("rampIdJSPathField"),
     },
   });
 }

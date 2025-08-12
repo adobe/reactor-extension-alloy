@@ -15,7 +15,7 @@ import { useField } from "formik";
 
 import DatastreamSelector from "../components/datastreamSelector";
 import { PRODUCTION } from "./constants/environmentType";
-import "./style.styl";
+import "./style.css";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import sandboxItems from "../components/sandboxItems";
 

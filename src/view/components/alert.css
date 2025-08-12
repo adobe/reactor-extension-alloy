@@ -23,8 +23,8 @@
 .Alert-description {
   color: var(--spectrum-alias-label-text-color, var(--spectrum-global-color-gray-700));
 
-  // Paragraph elements (and possibly other elements?) will add block margin
-  // on the top and bottom, which provides too much spacing.
+  /* Paragraph elements (and possibly other elements?) will add block margin
+  on the top and bottom, which provides too much spacing. */
   > :first-child {
     margin-block-start: 0;
   }

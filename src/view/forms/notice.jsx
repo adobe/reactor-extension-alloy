@@ -11,8 +11,8 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
+import { InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import BetaBadge from "../components/betaBadge";
-import Alert from "../components/alert";
 
 /** @typedef {import("./form").Form} Form */
 /**
@@ -24,19 +24,15 @@ import Alert from "../components/alert";
  * @returns {Form} A notice form element.
  */
 export default function notice({ title, description, beta }) {
-  const titleElement = (
-    <>
-      {title}
-      {beta && <BetaBadge />}
-    </>
-  );
-
   return {
     Component: () => {
       return (
-        <Alert variant="informative" title={titleElement} width="size-5000">
-          {description}
-        </Alert>
+        <InlineAlert variant="info" width="size-5000">
+          <Heading size="XXS">
+            {title} {beta && <BetaBadge />}
+          </Heading>
+          <Content>{description}</Content>
+        </InlineAlert>
       );
     },
   };

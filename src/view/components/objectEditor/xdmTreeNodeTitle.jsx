@@ -17,7 +17,7 @@ import AlertIcon from "@spectrum-icons/workflow/Alert";
 import AsteriskIcon from "@spectrum-icons/workflow/Asterisk";
 import Delete from "@spectrum-icons/workflow/Delete";
 import PopulationAmountIndicator from "./populationAmountIndicator";
-import "./xdmTreeNodeTitle.styl";
+import "./xdmTreeNodeTitle.css";
 import { EMPTY, FULL, PARTIAL, BLANK } from "./constants/populationAmount";
 
 const XdmTreeNodeTitle = (props) => {

@@ -28,6 +28,7 @@ const trackMediaSession = createMediaSession({
 module.exports = createMediaEvent({
   instanceManager,
   trackMediaSession,
+  logger: turbine.logger,
   mediaCollectionSessionStorage,
   satelliteApi,
 });

@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useField, useFormikContext } from "formik";
 import { object, string } from "yup";
 import {
@@ -37,7 +37,6 @@ import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefault
 import FormElementContainer from "../components/formElementContainer";
 import FieldDescriptionAndError from "../components/fieldDescriptionAndError";
 import BetaBadge from "../components/betaBadge";
-import Alert from "../components/alert";
 
 const CONTEXT_GRANULARITY = {
   ALL: "all",
@@ -49,6 +48,18 @@ const EVENT_GROUPING = {
   SESSION_STORAGE: "sessionStorage",
   MEMORY: "memory",
 };
+
+const LINK_CALLBACK = {
+  ON_BEFORE_LINK_CLICK_SEND: "onBeforeLinkClickSend",
+  FILTER_CLICK_DETAILS: "filterClickDetails",
+};
+
+const FILTER_CLICK_DETAILS_PLACEHOLDER =
+  "// Use this custom code block to adjust or filter click data. You can use the following variables:\n// content.clickedElement: The DOM element that was clicked\n// content.pageName: The page name when the click happened\n// content.linkName: The name of the clicked link\n// content.linkRegion: The region of the clicked link\n// content.linkType: The type of link (typically exit, download, or other)\n// content.linkUrl: The destination URL of the clicked link\n// Return false to omit link data.";
+const ON_BEFORE_EVENT_SEND_PLACEHOLDER =
+  '// Modify content.xdm or content.data as necessary. There is no need to wrap the\n// code in a function or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";';
+const ON_BEFORE_LINK_CLICK_SEND_PLACEHOLDER =
+  "// Use this custom code block to adjust or filter the payload sent to Adobe. You can use the following variables:\n// content.clickedElement: The DOM element that was clicked\n// content.xdm: The XDM payload for the event\n// content.data: The data object payload for the event\n// Return false to abort sending data.";
 
 const contextOptions = [
   {
@@ -156,6 +167,12 @@ export const bridge = {
     } else {
       instanceValues.eventGrouping = EVENT_GROUPING.NONE;
     }
+    if (instanceValues.onBeforeLinkClickSend) {
+      instanceValues.onBeforeLinkClickSendInitiallySpecified = true;
+      instanceValues.linkCallbackType = "onBeforeLinkClickSend";
+    } else {
+      instanceValues.linkCallbackType = "filterClickDetails";
+    }
 
     return instanceValues;
   },
@@ -190,12 +207,21 @@ export const bridge = {
       defaultsObj: bridge.getInstanceDefaults(),
       keys: propertyKeysToCopy,
     });
-    if (
-      components.context &&
-      instanceValues.contextGranularity === CONTEXT_GRANULARITY.SPECIFIC
-    ) {
+
+    if (instanceValues.contextGranularity === CONTEXT_GRANULARITY.SPECIFIC) {
       instanceSettings.context = instanceValues.context;
     }
+
+    // only allow one link callback to be specified at a time
+    if (
+      instanceValues.linkCallbackType ===
+      LINK_CALLBACK.ON_BEFORE_LINK_CLICK_SEND
+    ) {
+      delete instanceSettings.clickCollection?.filterClickDetails;
+    } else {
+      delete instanceSettings.onBeforeLinkClickSend;
+    }
+
     return instanceSettings;
   },
   instanceValidationSchema: object().shape({
@@ -217,6 +243,19 @@ export const bridge = {
           }),
       },
     ),
+    onBeforeLinkClickSend: string().when(
+      ["eventGrouping", "linkCallbackType"],
+      {
+        is: (eventGrouping, linkCallbackType) =>
+          eventGrouping !== EVENT_GROUPING.NONE &&
+          linkCallbackType === LINK_CALLBACK.ON_BEFORE_LINK_CLICK_SEND,
+        then: (schema) =>
+          schema.oneOf(
+            [""],
+            "Event grouping cannot be used when the onBeforeLinkClickSend callback is specified. Use filterClickDetails instead or turn off event grouping.",
+          ),
+      },
+    ),
   }),
 };
 
@@ -227,7 +266,14 @@ const DataCollectionSection = ({ instanceFieldName }) => {
   const [{ value: activityCollectorEnabled }] = useField(
     "components.activityCollector",
   );
-  const [{ value: contextEnabled }] = useField("components.context");
+  // Always mark the onBeforeLinkClickSend field to be touched so it will show errors immediately when
+  // event grouping is used.
+  const [, , { setTouched }] = useField(
+    `${instanceFieldName}.onBeforeLinkClickSend`,
+  );
+  useEffect(() => {
+    setTouched(true);
+  }, []);
 
   return (
     <>
@@ -242,9 +288,7 @@ const DataCollectionSection = ({ instanceFieldName }) => {
           name={`${instanceFieldName}.onBeforeEventSend`}
           description='Callback function for modifying data before each event is sent to the server. A variable named "content" will be available for use within your custom code. Modify "content.xdm" as needed to transform data before it is sent to the server.'
           language="javascript"
-          placeholder={
-            '// Modify content.xdm or content.data as necessary. There is no need to wrap the\n// code in a function or return a value. For example:\n// content.xdm.web.webPageDetails.name = "Checkout";'
-          }
+          placeholder={ON_BEFORE_EVENT_SEND_PLACEHOLDER}
         />
         {activityCollectorEnabled ? (
           <div>
@@ -344,47 +388,59 @@ const DataCollectionSection = ({ instanceFieldName }) => {
                 </Flex>
               </FieldSubset>
             )}
-            {clickCollectionIsEnabled(instanceValues) && (
-              <Flex gap="size-100">
-                <CodeField
-                  data-test-id="filterClickDetailsEditButton"
-                  label="Filter click properties"
-                  buttonLabelSuffix="filter click properties callback code"
-                  name={`${instanceFieldName}.clickCollection.filterClickDetails`}
-                  description="Callback function to evaluate and modify click-related properties before collection."
-                  language="javascript"
-                  placeholder={
-                    "// Use this custom code block to adjust or filter click data. You can use the following variables:\n// content.clickedElement: The DOM element that was clicked\n// content.pageName: The page name when the click happened\n// content.linkName: The name of the clicked link\n// content.linkRegion: The region of the clicked link\n// content.linkType: The type of link (typically exit, download, or other)\n// content.linkUrl: The destination URL of the clicked link\n// Return false to omit link data."
-                  }
-                  beta
-                />
-              </Flex>
-            )}
-            {/* onBeforeLinkClickSend is deprecated so if it has not been defined we don't show it */}
             {clickCollectionIsEnabled(instanceValues) &&
-              instanceValues.onBeforeLinkClickSend && (
+              instanceValues.onBeforeLinkClickSendInitiallySpecified && (
+                <Flex gap="size-100">
+                  <FormikRadioGroup
+                    label="Link callback type"
+                    name={`${instanceFieldName}.linkCallbackType`}
+                  >
+                    <Radio
+                      data-test-id="linkCallbackFilterClickDetails"
+                      value={LINK_CALLBACK.FILTER_CLICK_DETAILS}
+                      width="size-5000"
+                    >
+                      filterClickDetails
+                    </Radio>
+                    <Radio
+                      data-test-id="linkCallbackOnBeforeLinkClickSend"
+                      value={LINK_CALLBACK.ON_BEFORE_LINK_CLICK_SEND}
+                      width="size-5000"
+                    >
+                      onBeforeLinkClickSend (deprecated)
+                    </Radio>
+                  </FormikRadioGroup>
+                </Flex>
+              )}
+            {clickCollectionIsEnabled(instanceValues) &&
+              instanceValues.linkCallbackType !==
+                LINK_CALLBACK.ON_BEFORE_LINK_CLICK_SEND && (
+                <Flex gap="size-100">
+                  <CodeField
+                    data-test-id="filterClickDetailsEditButton"
+                    label="Filter click details"
+                    buttonLabelSuffix="filter click details callback code"
+                    name={`${instanceFieldName}.clickCollection.filterClickDetails`}
+                    description="Callback function to evaluate and modify click-related details before collection."
+                    language="javascript"
+                    placeholder={FILTER_CLICK_DETAILS_PLACEHOLDER}
+                  />
+                </Flex>
+              )}
+            {clickCollectionIsEnabled(instanceValues) &&
+              instanceValues.linkCallbackType ===
+                LINK_CALLBACK.ON_BEFORE_LINK_CLICK_SEND && (
                 <Flex gap="size-100">
                   <CodeField
                     data-test-id="onBeforeLinkClickSendEditButton"
-                    label="On before link click send callback (deprecated, use filter click properties instead)"
+                    label="On before link click send callback (deprecated, use filter click details instead)"
                     buttonLabelSuffix="on before link click event send callback code"
                     name={`${instanceFieldName}.onBeforeLinkClickSend`}
                     description="Callback function to modify the event payload when a link is clicked."
                     language="javascript"
-                    placeholder={
-                      "// Use this custom code block to adjust or filter the payload sent to Adobe. You can use the following variables:\n// content.clickedElement: The DOM element that was clicked\n// content.xdm: The XDM payload for the event\n// content.data: The data object payload for the event\n// Return false to abort sending data."
-                    }
+                    placeholder={ON_BEFORE_LINK_CLICK_SEND_PLACEHOLDER}
                   />
                 </Flex>
-              )}
-            {instanceValues.onBeforeLinkClickSend &&
-              instanceValues.clickCollection.filterClickDetails && (
-                <Alert variant="notice" title="Warning">
-                  Both filter-click-properties and on-before-link-click-send
-                  callbacks have been defined. On-before-link-click-send has
-                  been deprecated and will not be used if
-                  filter-click-properties is available.
-                </Alert>
               )}
           </div>
         ) : (
@@ -398,67 +454,55 @@ const DataCollectionSection = ({ instanceFieldName }) => {
             </InlineAlert>
           </View>
         )}
-        {contextEnabled ? (
-          <div>
-            <FormikRadioGroup
-              label="When sending event data, automatically include:"
-              name={`${instanceFieldName}.contextGranularity`}
+        <div>
+          <FormikRadioGroup
+            label="When sending event data, automatically include:"
+            name={`${instanceFieldName}.contextGranularity`}
+          >
+            <Radio
+              data-test-id="contextGranularityAllField"
+              value={CONTEXT_GRANULARITY.ALL}
             >
-              <Radio
-                data-test-id="contextGranularityAllField"
-                value={CONTEXT_GRANULARITY.ALL}
-              >
-                All default context information
-              </Radio>
-              <Radio
-                data-test-id="contextGranularitySpecificField"
-                value={CONTEXT_GRANULARITY.SPECIFIC}
-              >
-                Specific context information
-              </Radio>
-            </FormikRadioGroup>
+              All default context information
+            </Radio>
+            <Radio
+              data-test-id="contextGranularitySpecificField"
+              value={CONTEXT_GRANULARITY.SPECIFIC}
+            >
+              Specific context information
+            </Radio>
+          </FormikRadioGroup>
 
-            {instanceValues.contextGranularity ===
-              CONTEXT_GRANULARITY.SPECIFIC && (
-              <FieldSubset>
-                <FormikCheckboxGroup
-                  aria-label="Context data categories"
-                  name={`${instanceFieldName}.context`}
-                >
-                  {contextOptions.map((contextOption) => {
-                    return (
-                      <FieldDescriptionAndError
-                        description={contextOption.description}
-                        messagePaddingTop="size-0"
-                        messagePaddingStart="size-300"
+          {instanceValues.contextGranularity ===
+            CONTEXT_GRANULARITY.SPECIFIC && (
+            <FieldSubset>
+              <FormikCheckboxGroup
+                aria-label="Context data categories"
+                name={`${instanceFieldName}.context`}
+              >
+                {contextOptions.map((contextOption) => {
+                  return (
+                    <FieldDescriptionAndError
+                      description={contextOption.description}
+                      messagePaddingTop="size-0"
+                      messagePaddingStart="size-300"
+                      key={contextOption.value}
+                    >
+                      <Checkbox
                         key={contextOption.value}
+                        data-test-id={contextOption.testId}
+                        value={contextOption.value}
+                        width="size-5000"
                       >
-                        <Checkbox
-                          key={contextOption.value}
-                          data-test-id={contextOption.testId}
-                          value={contextOption.value}
-                          width="size-5000"
-                        >
-                          {contextOption.label}
-                        </Checkbox>
-                      </FieldDescriptionAndError>
-                    );
-                  })}
-                </FormikCheckboxGroup>
-              </FieldSubset>
-            )}
-          </div>
-        ) : (
-          <View width="size-6000">
-            <InlineAlert variant="info">
-              <Heading>Context component disabled</Heading>
-              <Content>
-                The context custom build component is disabled. Enable it above
-                to configure context settings.
-              </Content>
-            </InlineAlert>
-          </View>
-        )}
+                        {contextOption.label}
+                      </Checkbox>
+                    </FieldDescriptionAndError>
+                  );
+                })}
+              </FormikCheckboxGroup>
+            </FieldSubset>
+          )}
+        </div>
       </FormElementContainer>
     </>
   );

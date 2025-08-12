@@ -148,6 +148,41 @@ describe("createGetConfigOverrides", () => {
         );
       });
 
+      it("should delete/ignore empty strings, like those that result from data elements", () => {
+        const result = createConfigOverrides(
+          {
+            edgeConfigOverrides: {
+              [stage]: {
+                com_adobe_identity: {
+                  idSyncContainerId: "",
+                },
+              },
+            },
+          },
+          stage,
+        );
+        expect(result).toEqual({
+          com_adobe_identity: {},
+        });
+      });
+
+      it("should delete the enabled: true key-value pairs for services", () => {
+        const result = createConfigOverrides(
+          {
+            edgeConfigOverrides: {
+              [stage]: {
+                enabled: true,
+                com_adobe_identity: {
+                  enabled: true,
+                },
+              },
+            },
+          },
+          stage,
+        );
+        expect(result).toEqual({ com_adobe_identity: {} });
+      });
+
       it("should return undefined when overrides are disabled for the given environment", () => {
         const result = createConfigOverrides(
           {

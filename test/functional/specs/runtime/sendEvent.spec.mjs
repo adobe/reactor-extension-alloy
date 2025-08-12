@@ -22,6 +22,7 @@ const container = {
     "adobe-alloy": {
       displayName: "Adobe Experience Platform Web SDK",
       settings: {
+        debugEnabled: true,
         instances: [
           {
             name: "alloy",
@@ -103,4 +104,78 @@ test("Sends an event", async () => {
   // assertion mechanism, so it will wait for the request to be
   // made or a timeout is reached.
   await t.expect(networkLogger.edgeEndpointLogs.count(() => true)).eql(1);
+});
+
+test("Sends an event with empty strings as data element in the config overrides", async () => {
+  const containerWithConfigOverrides = structuredClone(container);
+  containerWithConfigOverrides.extensions[
+    "adobe-alloy"
+  ].settings.instances[0].edgeConfigOverrides = {
+    development: {
+      enabled: true,
+      com_adobe_identity: {
+        idSyncContainerId: "%emptyString%",
+      },
+    },
+  };
+  containerWithConfigOverrides.dataElements.emptyString = {
+    settings: {
+      path: "emptyString",
+    },
+    cleanText: false,
+    defaultValue: "",
+    forceLowerCase: false,
+    modulePath: "sandbox/javascriptVariable.js",
+    storageDuration: "",
+  };
+  await appendLaunchLibrary(containerWithConfigOverrides);
+  // The requestLogger.count method uses TestCafe's smart query
+  // assertion mechanism, so it will wait for the request to be
+  // made or a timeout is reached.
+  await t.expect(networkLogger.edgeEndpointLogs.count(() => true)).eql(1);
+  const [request] = networkLogger.edgeEndpointLogs.requests;
+  const body = JSON.parse(request.request.body);
+  await t
+    .expect(body.meta?.com_adobe_identity?.idSyncContainerId)
+    .eql(undefined);
+});
+
+test("Sends an event with a data element to enable/disable a service via overrides", async () => {
+  const containerWithConfigOverrides = structuredClone(container);
+  containerWithConfigOverrides.extensions[
+    "adobe-alloy"
+  ].settings.instances[0].edgeConfigOverrides = {
+    development: {
+      enabled: true,
+      com_adobe_identity: {
+        enabled: "%enableIdentity%",
+      },
+    },
+  };
+  containerWithConfigOverrides.dataElements.enableIdentity = {
+    settings: {
+      path: "enableIdentity",
+    },
+    cleanText: false,
+    defaultValue: true,
+    forceLowerCase: false,
+    modulePath: "sandbox/javascriptVariable.js",
+    storageDuration: "",
+  };
+  await appendLaunchLibrary(containerWithConfigOverrides);
+  // The requestLogger.count method uses TestCafe's smart query
+  // assertion mechanism, so it will wait for the request to be
+  // made or a timeout is reached.
+  await t.expect(networkLogger.edgeEndpointLogs.count(() => true)).eql(1);
+  const [request] = networkLogger.edgeEndpointLogs.requests;
+  await t.expect(request.response.statusCode).eql(200);
+  // "true" should be deleted from the response body
+  const requestBody = JSON.parse(request.request.body);
+  await t.expect(requestBody.meta?.com_adobe_identity?.enabled).eql(undefined);
+  let responseBody = request.response.body;
+  if (responseBody.type === "Buffer") {
+    responseBody = Buffer.from(responseBody.data).toString("utf-8");
+  }
+  const body = JSON.parse(responseBody);
+  await t.expect(body.meta?.com_adobe_identity?.enabled).eql(undefined);
 });

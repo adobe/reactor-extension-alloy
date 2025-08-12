@@ -15,10 +15,8 @@ import { createRoot } from "react-dom/client";
 
 import { Provider, lightTheme } from "@adobe/react-spectrum";
 import ErrorBoundary from "./components/errorBoundary";
-import "./global.styl";
+import "./global.css";
 import monitorForOriginatingErrors from "./utils/monitorForOriginatingErrors";
-import "@spectrum-css/tokens/dist/css/index.css";
-import "@spectrum-css/typography/dist/index.css";
 
 monitorForOriginatingErrors();
 
@@ -32,7 +30,7 @@ export default (View, { noPadding = false } = {}) => {
     <Provider
       theme={lightTheme}
       colorScheme="light"
-      UNSAFE_className={`react-spectrum-provider spectrum spectrum--medium spectrum--light${paddingClass}`}
+      UNSAFE_className={`react-spectrum-provider spectrum spectrum--medium spectrum--light${paddingClass} spectrum-accessibility-overrides`}
     >
       <ErrorBoundary>
         <View />

@@ -15,6 +15,8 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { RequestMock } from "testcafe";
 
+const WEB_SERVER_PORT = process.env.WEB_SERVER_PORT || 4000;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -41,7 +43,7 @@ const createExtensionViewFixture = ({
   only = false,
 }) => {
   let fixt = (only ? fixture.only : fixture)(title)
-    .page(path.join(__dirname, "../../../dist/view", viewPath))
+    .page(`http://localhost:${WEB_SERVER_PORT}/${viewPath}`)
     .requestHooks(extensionBridgeRequestMock, ...requestHooks)
     .clientScripts(preventSpecificErrorsFromFailingTestsPath);
 

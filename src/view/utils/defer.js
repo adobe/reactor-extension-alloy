@@ -10,25 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import renderForm from "../forms/renderForm";
-import requiredComponent from "../forms/requiredComponent";
-import dataElement from "../forms/dataElement";
+/**
+ * A simple utility for managing a promise's state outside of
+ * the promise's "executor" (the function passed into the constructor).
+ */
+export default () => {
+  const deferred = {};
 
-const resetEventMergeIdForm = requiredComponent(
-  {
-    requiredComponent: "eventMerge",
-    title: "the Reset event merge ID action",
-    whole: true,
-  },
-  [
-    dataElement({
-      name: "eventMergeId",
-      label: "Event merge ID",
-      description:
-        "Please specify the data element that represents the event merge ID you would like to reset.",
-      isRequired: true,
-    }),
-  ],
-);
+  deferred.promise = new Promise((resolve, reject) => {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
 
-renderForm(resetEventMergeIdForm);
+  return deferred;
+};

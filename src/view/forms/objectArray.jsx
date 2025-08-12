@@ -101,79 +101,12 @@ export default function objectArray(
   const {
     getInitialValues: getItemInitialValues,
     getSettings: getItemSettings,
-    validationShape: itemValidationShape,
+    getValidationShape: getItemValidationShape,
     Component: ItemComponent,
   } = form({}, children);
 
   const buildDefaultItem = () =>
     getItemInitialValues({ initInfo: { settings: null } });
-
-  let itemSchema = object().shape(itemValidationShape);
-
-  if (objectKey) {
-    itemSchema = itemSchema
-      .test(
-        "unique",
-        `Duplicate ${lowerInitialLetters(objectLabelPlural)} are not allowed`,
-        (value, context) => {
-          if (!value || !value[objectKey]) {
-            return true;
-          }
-
-          const { path, parent } = context;
-          const items = [...parent];
-          const currentIndex = items.indexOf(value);
-          const previousItems = items.slice(0, currentIndex);
-
-          if (
-            previousItems.some((item) => item[objectKey] === value[objectKey])
-          ) {
-            throw context.createError({
-              path: `${path}.${objectKey}`,
-              message: `Duplicate ${lowerInitialLetters(
-                objectLabelPlural,
-              )} are not allowed`,
-            });
-          }
-
-          return true;
-        },
-      )
-      .test(
-        "key-required-when-values-present",
-        `Please provide a ${lowerInitialLetters(singularLabel)}.`,
-        (value, context) => {
-          if (
-            value[objectKey] === undefined &&
-            Object.keys(value).length !== 0
-          ) {
-            throw context.createError({
-              path: `${context.path}.${objectKey}`,
-              message: `Please provide a ${lowerInitialLetters(singularLabel)}.`,
-            });
-          }
-          return true;
-        },
-      );
-  }
-
-  const validationShape = {};
-  validationShape[name] = array()
-    .compact(
-      (item) => Object.keys(getItemSettings({ values: item })).length === 0,
-    )
-    .when(`${name}InputMethod`, {
-      is: FORM,
-      then: (schema) => schema.of(itemSchema),
-    });
-
-  validationShape[`${name}DataElement`] = string().when(`${name}InputMethod`, {
-    is: DATA_ELEMENT,
-    then: (schema) =>
-      schema
-        .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
-        .required(DATA_ELEMENT_REQUIRED),
-  });
 
   const formPart = {
     getInitialValues({ initInfo }) {
@@ -234,7 +167,85 @@ export default function objectArray(
       }
       return settings;
     },
-    validationShape,
+    getValidationShape({ initInfo, existingValidationShape }) {
+      let itemSchema = object().shape(
+        getItemValidationShape({ initInfo, existingValidationShape: {} }),
+      );
+
+      if (objectKey) {
+        itemSchema = itemSchema
+          .test(
+            "unique",
+            `Duplicate ${lowerInitialLetters(objectLabelPlural)} are not allowed`,
+            (value, context) => {
+              if (!value || !value[objectKey]) {
+                return true;
+              }
+
+              const { path, parent } = context;
+              const items = [...parent];
+              const currentIndex = items.indexOf(value);
+              const previousItems = items.slice(0, currentIndex);
+
+              if (
+                previousItems.some(
+                  (item) => item[objectKey] === value[objectKey],
+                )
+              ) {
+                throw context.createError({
+                  path: `${path}.${objectKey}`,
+                  message: `Duplicate ${lowerInitialLetters(
+                    objectLabelPlural,
+                  )} are not allowed`,
+                });
+              }
+
+              return true;
+            },
+          )
+          .test(
+            "key-required-when-values-present",
+            `Please provide a ${lowerInitialLetters(singularLabel)}.`,
+            (value, context) => {
+              if (
+                value[objectKey] === undefined &&
+                Object.keys(value).length !== 0
+              ) {
+                throw context.createError({
+                  path: `${context.path}.${objectKey}`,
+                  message: `Please provide a ${lowerInitialLetters(singularLabel)}.`,
+                });
+              }
+              return true;
+            },
+          );
+      }
+
+      const validationShape = {};
+      validationShape[name] = array()
+        .compact(
+          (item) => Object.keys(getItemSettings({ values: item })).length === 0,
+        )
+        .when(`${name}InputMethod`, {
+          is: FORM,
+          then: (schema) => schema.of(itemSchema),
+        });
+
+      validationShape[`${name}DataElement`] = string().when(
+        `${name}InputMethod`,
+        {
+          is: DATA_ELEMENT,
+          then: (schema) =>
+            schema
+              .matches(singleDataElementRegex, DATA_ELEMENT_REQUIRED)
+              .required(DATA_ELEMENT_REQUIRED),
+        },
+      );
+      return {
+        ...existingValidationShape,
+        ...validationShape,
+      };
+    },
     Component: ({ namePrefix = "", ...props }) => {
       const [{ value: inputMethod }] = useField(
         `${namePrefix}${name}InputMethod`,

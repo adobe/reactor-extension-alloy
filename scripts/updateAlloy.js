@@ -37,5 +37,5 @@ const newestVersion = Array.isArray(npmView)
 if (currentVersion !== newestVersion) {
   // eslint-disable-next-line no-console
   console.log(`Updating @adobe/alloy dependency to ${newestVersion}.`);
-  execSync(`npm install @adobe/alloy@${newestVersion}`);
+  execSync(`npm install --save-exact @adobe/alloy@${newestVersion}`);
 }

@@ -39,6 +39,18 @@ const createPreprocessingVariables = () =>
  * @typedef {Pick<ExtensionManifest, "version">} ExtensionManifestConfiguration
  */
 
+const enabledDisabledOrDataElement = {
+  anyOf: [
+    {
+      type: "boolean",
+    },
+    {
+      type: "string",
+      pattern: "^%[^%]+%$",
+    },
+  ],
+};
+
 /**
  * Create a slice of a JSON schema used to describe the edge overrides
  * configuration.
@@ -47,17 +59,6 @@ const createPreprocessingVariables = () =>
  * @returns {object}
  */
 const createEdgeConfigOverridesSchema = (isAction) => {
-  const enabledDisabledOrDataElement = {
-    anyOf: [
-      {
-        type: "boolean",
-      },
-      {
-        type: "string",
-        pattern: "^%[^%]+%$",
-      },
-    ],
-  };
   const configOverridesProps = {
     enabled: enabledDisabledOrDataElement,
     com_adobe_experience_platform: {
@@ -146,6 +147,14 @@ const createEdgeConfigOverridesSchema = (isAction) => {
       },
     },
     com_adobe_audiencemanager: {
+      type: "object",
+      properties: {
+        enabled: enabledDisabledOrDataElement,
+      },
+      required: ["enabled"],
+    },
+    // deprecated and a typo for com_adobe_audiencemanager, but required for backwards compatibility and upgrades
+    com_adobe_audience_manager: {
       type: "object",
       properties: {
         enabled: enabledDisabledOrDataElement,
@@ -331,9 +340,7 @@ const createExtensionManifest = ({ version }) => {
                 idMigrationEnabled: {
                   type: "boolean",
                 },
-                thirdPartyCookiesEnabled: {
-                  type: "boolean",
-                },
+                thirdPartyCookiesEnabled: enabledDisabledOrDataElement,
                 prehidingStyle: {
                   type: "string",
                   minLength: 1,
@@ -415,6 +422,33 @@ const createExtensionManifest = ({ version }) => {
                     },
                   },
                   required: ["channel", "playerName"],
+                  additionalProperties: false,
+                },
+                advertising: {
+                  type: "object",
+                  properties: {
+                    dspEnabled: enabledDisabledOrDataElement,
+                    advertiserSettings: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          advertiserId: {
+                            type: "string",
+                          },
+                          enabled: enabledDisabledOrDataElement,
+                        },
+                        required: ["advertiserId", "enabled"],
+                        additionalProperties: false,
+                      },
+                    },
+                    id5PartnerId: {
+                      type: "string",
+                    },
+                    rampIdJSPath: {
+                      type: "string",
+                    },
+                  },
                   additionalProperties: false,
                 },
                 personalizationStorageEnabled: {
@@ -618,6 +652,24 @@ const createExtensionManifest = ({ version }) => {
             },
             documentUnloading: {
               type: "boolean",
+            },
+            advertising: {
+              type: "object",
+              properties: {
+                handleAdvertisingData: {
+                  anyOf: [
+                    {
+                      type: "string",
+                      enum: ["auto", "wait", "disabled"],
+                    },
+                    {
+                      type: "string",
+                      pattern: "^%[^%]+%$",
+                    },
+                  ],
+                },
+              },
+              additionalProperties: false,
             },
             edgeConfigOverrides: actionEdgeConfigOverridesSchema,
           },
