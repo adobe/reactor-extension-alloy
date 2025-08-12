@@ -54,12 +54,11 @@ const initializeSandboxes = async ({
   }
 
   if (sandboxName && !sandboxes.find((s) => s.name === sandboxName)) {
-    throw new UserReportableError(
-      "The sandbox used to build the XDM object no longer exists. You will need to re-create this data element using a schema from a different sandbox.",
-    );
+    // Previously used sandbox no longer exists; clear it so the user can select a new one
+    initialValues.sandboxName = "";
   }
 
-  if (!sandboxName) {
+  if (!initialValues.sandboxName) {
     let defaultSandbox;
     defaultSandbox = sandboxes.find((sandbox) => sandbox.isDefault);
     if (!defaultSandbox && sandboxes.length === 1) {
@@ -97,9 +96,10 @@ const initializeSelectedSchema = async ({
       return;
     }
   } catch {
-    throw new UserReportableError(
-      "Could not find the schema selected previously. You will need to re-create this data element using a different schema.",
-    );
+    // Previously selected schema cannot be found; clear it so the user can choose a new one
+    initialValues.selectedSchema = null;
+    context.schema = null;
+    return;
   }
   initialValues.selectedSchema = null;
 };
@@ -289,10 +289,19 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
       });
       if (newSchema) {
         context.schema = newSchema;
-        const initialFormState = getInitialFormState({
-          schema: newSchema,
-          existingFormStateNode: values,
-        });
+        // If there is no existing editor state (first-time schema selection),
+        // initialize from previously saved settings.data. Otherwise, merge with existing form state.
+        const initialFormState = getInitialFormState(
+          values && values.schema
+            ? {
+                schema: newSchema,
+                existingFormStateNode: values,
+              }
+            : {
+                schema: newSchema,
+                value: settings?.data,
+              },
+        );
         resetForm({
           values: {
             ...initialFormState,

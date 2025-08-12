@@ -39,13 +39,12 @@ const initializeSandboxes = async ({
   }
 
   if (sandbox && !sandboxes.find((s) => s.name === sandbox)) {
-    throw new UserReportableError(
-      "Could not find the sandbox selected previously. Either you don't have access or the sandbox was deleted.",
-    );
+    // Previously selected sandbox not found; clear so the user can select a new one
+    initialValues.sandbox = "";
   }
   context.sandboxes = sandboxes;
   // Auto select a sandbox in some cases
-  if (!sandbox) {
+  if (!initialValues.sandbox) {
     const defaultSandbox =
       (sandboxes.length === 1 && sandboxes[0]) ||
       sandboxes.find(({ isDefault }) => isDefault);
@@ -65,17 +64,23 @@ const initializeSelectedSchema = async ({
   imsAccess,
 }) => {
   if (schemaId && schemaVersion && sandbox) {
-    const { $id, title, version } = await fetchSchema({
-      orgId,
-      imsAccess,
-      schemaId,
-      schemaVersion,
-      sandboxName: sandbox,
-    });
-    initialValues.schema = { $id, title, version };
-  } else {
-    initialValues.schema = null;
+    try {
+      const { $id, title, version } = await fetchSchema({
+        orgId,
+        imsAccess,
+        schemaId,
+        schemaVersion,
+        sandboxName: sandbox,
+      });
+      initialValues.schema = { $id, title, version };
+      return;
+    } catch {
+      // Previously selected schema not found; allow user to pick a new one
+      initialValues.schema = null;
+      return;
+    }
   }
+  initialValues.schema = null;
 };
 
 const initializeSchemas = async ({
