@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { Item } from "@adobe/react-spectrum";
+import { Item, InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 import UserReportableError from "../../../errors/userReportableError";
@@ -41,6 +41,7 @@ const initializeSandboxes = async ({
   if (sandbox && !sandboxes.find((s) => s.name === sandbox)) {
     // Previously selected sandbox not found; clear so the user can select a new one
     initialValues.sandbox = "";
+    context.missingSavedSandbox = true;
   }
   context.sandboxes = sandboxes;
   // Auto select a sandbox in some cases
@@ -62,6 +63,7 @@ const initializeSelectedSchema = async ({
   },
   orgId,
   imsAccess,
+  context,
 }) => {
   if (schemaId && schemaVersion && sandbox) {
     try {
@@ -77,6 +79,7 @@ const initializeSelectedSchema = async ({
     } catch {
       // Previously selected schema not found; allow user to pick a new one
       initialValues.schema = null;
+      context.missingSavedSchema = true;
       return;
     }
   }
@@ -172,7 +175,13 @@ const getKey = (item) => item && `${item.$id}_${item.version}`;
 const getLabel = (item) => item?.title;
 
 const XdmVariable = ({
-  context: { sandboxes, schemasFirstPage, schemasFirstPageCursor },
+  context: {
+    sandboxes,
+    schemasFirstPage,
+    schemasFirstPageCursor,
+    missingSavedSandbox,
+    missingSavedSchema,
+  },
   initInfo,
 }) => {
   const {
@@ -212,6 +221,21 @@ const XdmVariable = ({
   return (
     <FieldSubset>
       <FormElementContainer>
+        {(missingSavedSandbox || missingSavedSchema) && (
+          <InlineAlert
+            variant="notice"
+            width="size-5000"
+            marginBottom="size-200"
+            data-test-id="schemaMissingAlert"
+          >
+            <Heading size="XXS">Saved configuration not found</Heading>
+            <Content>
+              Could not retrieve the previously saved sandbox or schema. You can
+              cancel to keep this data element configured as before, or choose a
+              new sandbox and schema.
+            </Content>
+          </InlineAlert>
+        )}
         <FormikPicker
           data-test-id="sandboxField"
           name="sandbox"

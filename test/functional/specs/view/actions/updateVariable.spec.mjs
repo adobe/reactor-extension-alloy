@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
 import * as dataElementsMocks from "../../../helpers/endpointMocks/dataElementsMocks.mjs";
 import * as dataElementMocks from "../../../helpers/endpointMocks/dataElementMocks.mjs";
+import * as schemasMocks from "../../../helpers/endpointMocks/schemasMocks.mjs";
 import * as schemaMocks from "../../../helpers/endpointMocks/schemaMocks.mjs";
 import extensionViewController from "../../../helpers/extensionViewController.mjs";
 import spectrum from "../../../helpers/spectrum.mjs";
@@ -28,6 +29,9 @@ const dataElementField = spectrum.comboBox("dataElementField");
 const clearField = spectrum.checkbox("clearField");
 const noDataElementsAlert = spectrum.alert("noDataElements");
 const schemaChangedNotice = spectrum.alert("schemaChangedNotice");
+const dataElementSchemaMissingAlert = spectrum.alert(
+  "dataElementSchemaMissingAlert",
+);
 
 createExtensionViewFixture({
   title: "Update variable action view",
@@ -216,6 +220,79 @@ test.requestHooks(
   });
   await schemaChangedNotice.expectNotExists();
 });
+
+test.requestHooks(
+  dataElementMocks.element3,
+  dataElementsMocks.multiple,
+  schemasMocks.multiple,
+)(
+  "shows info message when selected data element's schema cannot be loaded",
+  async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd",
+      },
+      // No schemaMocks to satisfy fetchSchema; this causes schema fetch to fail per our view logic
+    });
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 3");
+    await dataElementSchemaMissingAlert.expectExists();
+  },
+);
+
+test.requestHooks(
+  dataElementMocks.element3,
+  dataElementsMocks.multiple,
+  schemasMocks.multiple,
+)(
+  "shows info message when initialized with data element whose schema cannot be loaded",
+  async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd",
+      },
+      settings: {
+        dataElementId: "DE3",
+        schema: {
+          id: "sch123",
+          version: "1.0",
+        },
+        data: {},
+      },
+    });
+    await dataElementSchemaMissingAlert.expectExists();
+  },
+);
+
+test.requestHooks(
+  dataElementsMocks.multiple,
+  schemaMocks.basic,
+  schemasMocks.multiple,
+)(
+  "alert disappears when selecting element with readable schema, and reappears when selecting one without",
+  async () => {
+    await extensionViewController.init({
+      propertySettings: {
+        id: "PRabcd",
+      },
+    });
+
+    // First, pick the one that cannot load schema
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 4");
+    await dataElementSchemaMissingAlert.expectExists();
+
+    // Now pick an element with a loadable schema (DE1/DE2)
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 1");
+    await dataElementSchemaMissingAlert.expectNotExists();
+
+    // And then pick the problematic one again; alert should show
+    await dataElementField.openMenu();
+    await dataElementField.selectMenuOption("Test data variable 4");
+    await dataElementSchemaMissingAlert.expectExists();
+  },
+);
 
 test.requestHooks(
   schemaMocks.basic,

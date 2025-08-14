@@ -11,11 +11,13 @@ governing permissions and limitations under the License.
 */
 
 import { Selector, t } from "testcafe";
+import * as sandboxesMocks from "../../../helpers/endpointMocks/sandboxesMocks.mjs";
 import * as sandboxMocks from "../../../helpers/endpointMocks/sandboxesMocks.mjs";
 import * as schemasMocks from "../../../helpers/endpointMocks/schemasMocks.mjs";
 import * as schemaMocks from "../../../helpers/endpointMocks/schemaMocks.mjs";
 import initializeExtensionView from "../../../helpers/objectEditor/initializeExtensionView.mjs";
 import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
+import stringEdit from "../../../helpers/objectEditor/stringEdit.mjs";
 import spectrum from "../../../helpers/spectrum.mjs";
 import editor from "../../../helpers/objectEditor/editor.mjs";
 import createExtensionViewFixture from "../../../helpers/createExtensionViewFixture.mjs";
@@ -27,6 +29,7 @@ const errorBoundaryMessage = spectrum.illustratedMessage(
 const testSchemaTitle = "XDM Object Data Element Tests";
 const sandboxField = spectrum.picker("sandboxField");
 const schemaField = spectrum.comboBox("schemaField");
+const schemaMissingAlert = spectrum.alert("schemaMissingAlert");
 
 createExtensionViewFixture({
   title: "XDM Object View Schema Selection",
@@ -162,9 +165,7 @@ test.requestHooks(
         data: {},
       },
     });
-    await errorBoundaryMessage.expectMessage(
-      /The sandbox used to build the XDM object no longer exists/,
-    );
+    await schemaMissingAlert.expectExists();
   },
 );
 
@@ -233,9 +234,7 @@ test("attempts to load a schema that has been deleted", async () => {
       data: {},
     },
   });
-  await errorBoundaryMessage.expectMessage(
-    /Could not find the schema selected previously\./,
-  );
+  await schemaMissingAlert.expectExists();
 });
 
 test.requestHooks(
@@ -326,3 +325,41 @@ test.requestHooks(
     },
   });
 });
+
+test.requestHooks(
+  sandboxesMocks.multipleWithoutDefault,
+  schemaMocks.basic,
+  schemasMocks.multiple,
+)(
+  "allows selecting sandbox and schema and preserves previously saved data",
+  async () => {
+    await initializeExtensionView({
+      settings: {
+        sandbox: {
+          name: "nonexistentsandbox",
+        },
+        schema: {
+          id: "sch123",
+          version: "1.0",
+        },
+        data: {
+          testField: "%prefilled%",
+        },
+      },
+    });
+
+    // Inline notice should be shown, but UI should allow selection
+    await t
+      .expect(Selector("div").withText("Saved configuration not found").exists)
+      .ok();
+
+    // Select a valid sandbox and schema
+    await sandboxField.selectOption("PRODUCTION Test Sandbox 3 (VA7)");
+    await schemaField.openMenu();
+    await schemaField.selectMenuOption("Test Schema 1");
+
+    // Editor should render; ensure previously saved value is present
+    await xdmTree.node("testField").click();
+    await stringEdit.expectValue("%prefilled%");
+  },
+);

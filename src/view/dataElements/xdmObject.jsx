@@ -12,7 +12,14 @@ governing permissions and limitations under the License.
 
 import React, { useRef, useState } from "react";
 import PropTypes from "prop-types";
-import { ProgressCircle, Flex, Switch } from "@adobe/react-spectrum";
+import {
+  ProgressCircle,
+  Flex,
+  Switch,
+  InlineAlert,
+  Heading,
+  Content,
+} from "@adobe/react-spectrum";
 import { useField } from "formik";
 import { object, string } from "yup";
 import FormElementContainer from "../components/formElementContainer";
@@ -56,6 +63,7 @@ const initializeSandboxes = async ({
   if (sandboxName && !sandboxes.find((s) => s.name === sandboxName)) {
     // Previously used sandbox no longer exists; clear it so the user can select a new one
     initialValues.sandboxName = "";
+    context.missingSavedSandbox = true;
   }
 
   if (!initialValues.sandboxName) {
@@ -99,6 +107,7 @@ const initializeSelectedSchema = async ({
     // Previously selected schema cannot be found; clear it so the user can choose a new one
     initialValues.selectedSchema = null;
     context.schema = null;
+    context.missingSavedSchema = true;
     return;
   }
   initialValues.selectedSchema = null;
@@ -270,6 +279,8 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
     context.schema = null;
     setSelectedNodeId(null);
     setSelectedSchema(null);
+    context.missingSavedSandbox = false;
+    context.missingSavedSchema = false;
   }, [selectedSandboxName]);
 
   useChanged(() => {
@@ -289,8 +300,6 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
       });
       if (newSchema) {
         context.schema = newSchema;
-        // If there is no existing editor state (first-time schema selection),
-        // initialize from previously saved settings.data. Otherwise, merge with existing form state.
         const initialFormState = getInitialFormState(
           values && values.schema
             ? {
@@ -314,6 +323,8 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
     }
 
     setNewSchema();
+    context.missingSavedSandbox = false;
+    context.missingSavedSchema = false;
   }, [selectedSchema?.$id]);
 
   const loadSchemas = async ({ filterText, cursor, signal }) => {
@@ -375,6 +386,21 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
             Show display names for fields
           </Switch>
         </Flex>
+        {(context.missingSavedSandbox || context.missingSavedSchema) && (
+          <InlineAlert
+            variant="notice"
+            width="size-5000"
+            marginBottom="size-200"
+            data-test-id="schemaMissingAlert"
+          >
+            <Heading size="XXS">Saved configuration not found</Heading>
+            <Content>
+              Could not retrieve the previously saved sandbox or schema. You can
+              cancel to keep this data element configured as before, or choose a
+              new sandbox and schema.
+            </Content>
+          </InlineAlert>
+        )}
         <FormikPicker
           label="Sandbox"
           name="sandboxName"

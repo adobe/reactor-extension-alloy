@@ -88,12 +88,16 @@ const getInitialFormStateFromDataElement = async ({
         sandboxName: dataElement.settings.sandbox.name,
         signal,
       });
-    } catch (e) {
-      if (e.name !== "AbortError") {
-        throw e;
-      }
+    } catch {
+      context.schemaLoadFailed = true;
+      // If schema cannot be fetched (e.g., missing or access issue),
+      // allow the user to continue and select a different data element by bailing out gracefully.
+      return {};
     }
     if (!signal || !signal.aborted) {
+      if (!schema) {
+        return {};
+      }
       const newSchema = {
         type: "object",
         properties: {
@@ -104,6 +108,7 @@ const getInitialFormStateFromDataElement = async ({
       };
       context.schema = newSchema;
       context.dataElementId = dataElement.id;
+      context.schemaLoadFailed = false;
       return getInitialFormState({
         schema: newSchema,
         value,
@@ -362,6 +367,7 @@ const UpdateVariable = ({
       async function reloadDataElement() {
         setHasSchema(false);
         setSelectedNodeId(null);
+        context.schemaLoadFailed = false;
 
         if (dataElement) {
           const transforms = {};
@@ -447,6 +453,21 @@ const UpdateVariable = ({
           {(item) => <Item key={item.name}>{item.name}</Item>}
         </FormikPagedComboBox>
       )}
+      {context.schemaLoadFailed && dataElement && (
+        <InlineAlert
+          variant="info"
+          data-test-id="dataElementSchemaMissingAlert"
+          width="size-5000"
+        >
+          <Heading size="XXS">
+            The schema associated with this data element could not be loaded.
+          </Heading>
+          <Content>
+            Either choose a new data element or update the selected data element
+            with a valid schema.
+          </Content>
+        </InlineAlert>
+      )}
       {hasSchema && isSchemaMatched && (
         <>
           <Heading size="M" margin="0">
@@ -508,11 +529,13 @@ const UpdateVariable = ({
           />
         </>
       )}
-      {!(hasSchema && isSchemaMatched) && dataElement && (
-        <Flex alignItems="center" justifyContent="center" height="size-2000">
-          <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
-        </Flex>
-      )}
+      {!(hasSchema && isSchemaMatched) &&
+        dataElement &&
+        !context.schemaLoadFailed && (
+          <Flex alignItems="center" justifyContent="center" height="size-2000">
+            <ProgressCircle size="L" aria-label="Loading..." isIndeterminate />
+          </Flex>
+        )}
     </FormElementContainer>
   );
 };
