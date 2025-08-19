@@ -22,6 +22,7 @@ import {
   Button,
   ActionButton,
   Item,
+  LabeledValue,
   Text,
 } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
@@ -489,7 +490,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
 
     return (
       <div>
-        <Text marginBottom="size-100">Advertisers</Text>
+        <LabeledValue label="Advertisers" />
         <FieldArray
           name={`${instanceFieldName}.advertising.advertiserSettings`}
           render={(arrayHelpers) => {
