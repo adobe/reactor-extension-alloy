@@ -1088,7 +1088,19 @@ const createExtensionManifest = ({ version }) => {
         name: "send-push-subscription",
         displayName: "Send push subscription",
         libPath: "dist/lib/actions/sendPushSubscription/index.js",
-        schema: {},
+        viewPath: "actions/sendPushSubscription.html",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            instanceName: {
+              type: "string",
+              minLength: 1,
+            },
+          },
+          additionalProperties: false,
+          required: ["instanceName"],
+        },
       },
     ],
     events: [
