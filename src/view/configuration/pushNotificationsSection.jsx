@@ -1,0 +1,132 @@
+/*
+Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+import React from "react";
+import PropTypes from "prop-types";
+import { object, string } from "yup";
+import { useField } from "formik";
+import { View, InlineAlert, Content } from "@adobe/react-spectrum";
+import SectionHeader from "../components/sectionHeader";
+import FormElementContainer from "../components/formElementContainer";
+import DataElementSelector from "../components/dataElementSelector";
+import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
+import Heading from "../components/typography/heading";
+import BetaBadge from "../components/betaBadge";
+import copyPropertiesWithDefaultFallback from "./utils/copyPropertiesWithDefaultFallback";
+import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfValueDifferentThanDefault";
+
+const getDefaultSettings = () => ({
+  vapidPublicKey: "",
+});
+
+export const bridge = {
+  getInstanceDefaults: () => ({
+    pushNotifications: getDefaultSettings(),
+  }),
+
+  getInitialInstanceValues: ({ instanceSettings }) => {
+    const pushNotifications = {};
+    copyPropertiesWithDefaultFallback({
+      toObj: pushNotifications,
+      fromObj: instanceSettings.pushNotifications || {},
+      defaultsObj: getDefaultSettings(),
+      keys: ["vapidPublicKey"],
+    });
+
+    return { pushNotifications };
+  },
+
+  getInstanceSettings: ({ instanceValues }) => {
+    const instanceSettings = {};
+
+    if (instanceValues.pushNotifications) {
+      const { pushNotifications } = instanceValues;
+      const pushNotificationsSettings = {};
+
+      copyPropertiesIfValueDifferentThanDefault({
+        toObj: pushNotificationsSettings,
+        fromObj: pushNotifications,
+        defaultsObj: getDefaultSettings(),
+        keys: ["vapidPublicKey"],
+      });
+
+      if (Object.keys(pushNotificationsSettings).length > 0) {
+        instanceSettings.pushNotifications = pushNotificationsSettings;
+      }
+    }
+
+    return instanceSettings;
+  },
+
+  instanceValidationSchema: object().shape({
+    pushNotifications: object().when("$components.pushNotifications", {
+      is: true,
+      then: (schema) =>
+        schema.shape({
+          vapidPublicKey: string().required(
+            "Please provide a VAPID public key for push notification authentication.",
+          ),
+        }),
+    }),
+  }),
+};
+
+const PushNotificationsSection = ({ instanceFieldName }) => {
+  const [{ value: pushNotificationsComponentEnabled }] = useField(
+    "components.pushNotifications",
+  );
+
+  if (!pushNotificationsComponentEnabled) {
+    return (
+      <>
+        <SectionHeader>
+          Push Notifications <BetaBadge />
+        </SectionHeader>
+        <View width="size-6000">
+          <InlineAlert variant="info">
+            <Heading>Push Notifications component disabled</Heading>
+            <Content>
+              The Push Notifications custom build component is disabled. Enable
+              it above to configure push notification settings.
+            </Content>
+          </InlineAlert>
+        </View>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <SectionHeader>
+        Push Notifications <BetaBadge />
+      </SectionHeader>
+      <FormElementContainer>
+        <DataElementSelector>
+          <FormikTextField
+            data-test-id="vapidPublicKeyField"
+            label="VAPID Public Key"
+            name={`${instanceFieldName}.pushNotifications.vapidPublicKey`}
+            description="The VAPID public key for push notification authentication."
+            width="size-5000"
+            isRequired
+          />
+        </DataElementSelector>
+      </FormElementContainer>
+    </>
+  );
+};
+
+PushNotificationsSection.propTypes = {
+  instanceFieldName: PropTypes.string.isRequired,
+};
+
+export default PushNotificationsSection;

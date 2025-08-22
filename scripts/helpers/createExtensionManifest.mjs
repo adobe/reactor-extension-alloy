@@ -451,6 +451,17 @@ const createExtensionManifest = ({ version }) => {
                   },
                   additionalProperties: false,
                 },
+                pushNotifications: {
+                  type: "object",
+                  properties: {
+                    vapidPublicKey: {
+                      type: "string",
+                      minLength: 1,
+                    },
+                  },
+                  required: ["vapidPublicKey"],
+                  additionalProperties: false,
+                },
                 personalizationStorageEnabled: {
                   type: "boolean",
                 },
