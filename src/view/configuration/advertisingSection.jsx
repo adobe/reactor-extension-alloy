@@ -22,6 +22,7 @@ import {
   Button,
   ActionButton,
   Item,
+  LabeledValue,
   Text,
 } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
@@ -489,9 +490,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
 
     return (
       <div>
-        <Heading size="S" marginBottom="size-100">
-          Advertisers
-        </Heading>
+        <LabeledValue label="Advertisers" />
         <FieldArray
           name={`${instanceFieldName}.advertising.advertiserSettings`}
           render={(arrayHelpers) => {
@@ -601,8 +600,11 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
       <FormElementContainer>
         {/* Helper text for SSC users */}
         <Text marginBottom="size-200">
-          <strong>Note:</strong> No further action required for SSC
-          configuration.
+          <strong>Note:</strong> Clickthrough measurement setup does not require
+          additional configurations and is complete. Search, Social, and
+          Commerce clients have no further action required. Demand-side Platform
+          (DSP) users would need to configure Advertisers in the next step to
+          enable view-through conversion measurement.
         </Text>
 
         {/* DSP Enable/Disable Field */}
@@ -639,9 +641,9 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                   <DataElementSelector>
                     <FormikTextField
                       data-test-id="id5PartnerIdField"
-                      label="ID5 Partner ID (optional)"
+                      label="ID5 partner ID (optional)"
                       name={`${instanceFieldName}.advertising.id5PartnerId`}
-                      description="Enter the ID5 Partner ID."
+                      description="Enter the ID5 partner ID."
                       width="size-5000"
                       allowsCustomValue
                     />
@@ -651,7 +653,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
                   <DataElementSelector>
                     <FormikTextField
                       data-test-id="rampIdJSPathField"
-                      label="RampID JS Path (optional)"
+                      label="RampID JavaScript path (optional)"
                       name={`${instanceFieldName}.advertising.rampIdJSPath`}
                       description="Enter the RampID JavaScript (ats.js) path."
                       width="size-5000"

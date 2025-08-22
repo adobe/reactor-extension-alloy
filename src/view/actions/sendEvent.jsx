@@ -380,15 +380,18 @@ const advertisingDataField = radioGroup({
   items: [
     {
       value: ADVERTISING_DATA.AUTOMATIC,
-      label: "Automatic - include advertising data.",
+      label:
+        "Automatic - allows advertising data to be used for measuring ad attribution on the current send event.",
     },
     {
       value: ADVERTISING_DATA.WAIT,
-      label: "Wait - block this call until advertising data is resolved",
+      label:
+        "Wait - delays the execution of this call until the advertising data has been successfully retrieved and resolved, ensuring accurate attribution measurement before proceeding.",
     },
     {
       value: ADVERTISING_DATA.DISABLED,
-      label: "Disabled - don't include advertising data.",
+      label:
+        "Disabled - excludes advertising data from the request, preventing its use for attribution measurement or any related tracking.",
     },
   ],
 });
