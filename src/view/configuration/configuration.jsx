@@ -71,6 +71,9 @@ import StreamingMediaSection, {
 import ComponentsSection, {
   bridge as componentsBridge,
 } from "./componentsSection";
+import PushNotificationsSection, {
+  bridge as pushNotificationsBridge,
+} from "./pushNotificationsSection";
 
 const sectionBridges = [
   basicSectionBridge,
@@ -83,6 +86,7 @@ const sectionBridges = [
   overridesBridge,
   advancedSectionBridge,
   mediaBridge,
+  pushNotificationsBridge,
 ];
 
 /**
@@ -243,6 +247,9 @@ const InstancesSection = ({ initInfo, context }) => {
                           instanceFieldName={instanceFieldName}
                         />
                         <StreamingMediaSection
+                          instanceFieldName={instanceFieldName}
+                        />
+                        <PushNotificationsSection
                           instanceFieldName={instanceFieldName}
                         />
                         <AdvertisingSection
