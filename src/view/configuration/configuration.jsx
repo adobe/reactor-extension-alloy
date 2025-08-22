@@ -355,15 +355,13 @@ const Configuration = ({ initInfo, context }) => {
       onExpandedChange={setExpandedKeys}
       allowsMultipleExpanded
     >
-      <Disclosure id="components">
-        <DisclosureTitle data-test-id="custom-build-heading">
-          Custom build components
-        </DisclosureTitle>
+      <Disclosure id="components" data-test-id="customBuildHeading">
+        <DisclosureTitle>Custom build components</DisclosureTitle>
         <DisclosurePanel>
           <ComponentsSection />
         </DisclosurePanel>
       </Disclosure>
-      <Disclosure id="instances">
+      <Disclosure id="instances" data-test-id="instancesHeading">
         <DisclosureTitle>SDK instances</DisclosureTitle>
         <DisclosurePanel>
           <InstancesSection initInfo={initInfo} context={context} />

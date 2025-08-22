@@ -20,6 +20,11 @@ export const resourceUsageDialog = {
   confirmDeleteInstanceButton: spectrum.button("confirmDeleteInstanceButton"),
 };
 
+export const components = {
+  heading: spectrum.button("customBuildHeading"),
+  pushNotifications: spectrum.checkbox("pushNotificationsComponentCheckbox"),
+};
+
 const instances = [];
 
 for (let i = 0; i < 3; i += 1) {
@@ -163,6 +168,9 @@ for (let i = 0; i < 3; i += 1) {
         "mediaMainPingIntervalField",
       ),
       mediaAdPingIntervalField: spectrum.textField("mediaAdPingIntervalField"),
+    },
+    pushNotifications: {
+      vapidPublicKeyField: spectrum.textField("vapidPublicKeyField"),
     },
     advertising: {
       dspEnabledField: spectrum.comboBox("dspEnabledField"),

@@ -18,6 +18,7 @@ import {
   instancesTabs,
   resourceUsageDialog,
   instances,
+  components,
 } from "../../helpers/viewSelectors.mjs";
 import runCommonExtensionViewTests from "../view/runCommonExtensionViewTests.mjs";
 import * as sandboxesMocks from "../../helpers/endpointMocks/sandboxesMocks.mjs";
@@ -32,6 +33,12 @@ createExtensionViewFixture({
   viewPath: "configuration/configuration.html",
   requiresAdobeIOIntegration: true,
 });
+
+const defaultDisabledComponents = {
+  eventMerge: false,
+  advertising: false,
+  pushNotifications: false,
+};
 
 runCommonExtensionViewTests();
 
@@ -381,10 +388,7 @@ test("returns minimal valid settings", async () => {
   );
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    components: {
-      eventMerge: false,
-      advertising: false,
-    },
+    components: defaultDisabledComponents,
     instances: [
       {
         edgeConfigId: "PR123",
@@ -498,10 +502,7 @@ test("returns full valid settings", async () => {
 
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    components: {
-      eventMerge: false,
-      advertising: false,
-    },
+    components: defaultDisabledComponents,
     instances: [
       {
         name: "alloy1",
@@ -627,10 +628,7 @@ test("returns full valid settings with maximal data elements", async () => {
 
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    components: {
-      eventMerge: false,
-      advertising: false,
-    },
+    components: defaultDisabledComponents,
     instances: [
       {
         name: "%foo%",
@@ -940,10 +938,7 @@ test("does not save prehidingStyle code if it matches placeholder", async () => 
   await instances[0].prehidingStyleEditButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    components: {
-      eventMerge: false,
-      advertising: false,
-    },
+    components: defaultDisabledComponents,
     instances: [
       {
         name: "alloy",
@@ -971,10 +966,7 @@ test("does not save onBeforeEventSend and filterClickDetails code if it matches 
   await instances[0].filterClickDetailsEditButton.click();
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    components: {
-      eventMerge: false,
-      advertising: false,
-    },
+    components: defaultDisabledComponents,
     instances: [
       {
         name: "alloy",
@@ -1414,9 +1406,7 @@ test.requestHooks(
   async () => {
     await extensionViewController.init({
       settings: {
-        components: {
-          eventMerge: false,
-        },
+        components: defaultDisabledComponents,
         instances: [
           {
             name: "alloy1",
@@ -1456,10 +1446,7 @@ test.requestHooks(
   async () => {
     await extensionViewController.init({
       settings: {
-        components: {
-          advertising: false,
-          eventMerge: false,
-        },
+        components: defaultDisabledComponents,
         instances: [
           {
             name: "alloy1",
@@ -1493,10 +1480,7 @@ test.requestHooks(
     await extensionViewController.expectIsValid();
 
     await extensionViewController.expectSettings({
-      components: {
-        advertising: false,
-        eventMerge: false,
-      },
+      components: defaultDisabledComponents,
       instances: [
         {
           clickCollectionEnabled: false,
@@ -1585,10 +1569,7 @@ test("is able to add and remove report suites from overrides", async () => {
   await instances[0].overrides.removeReportSuitesButtons[1].click();
 
   await extensionViewController.expectSettings({
-    components: {
-      advertising: false,
-      eventMerge: false,
-    },
+    components: defaultDisabledComponents,
     instances: [
       {
         name: "alloy",
@@ -1927,10 +1908,7 @@ test("allows the setting of overrides in only a single environment", async () =>
   );
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettings({
-    components: {
-      advertising: false,
-      eventMerge: false,
-    },
+    components: defaultDisabledComponents,
     instances: [
       {
         edgeConfigId: "PR123",
@@ -1997,10 +1975,7 @@ test("makes the media collection fields required if one is filled", async () => 
   await extensionViewController.expectIsValid();
 
   await extensionViewController.expectSettings({
-    components: {
-      advertising: false,
-      eventMerge: false,
-    },
+    components: defaultDisabledComponents,
     instances: [
       {
         edgeConfigId: "123",
@@ -2099,6 +2074,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
     await extensionViewController.init({
       settings: {
         components: {
+          ...defaultDisabledComponents,
           advertising: true,
         },
         instances: [
@@ -2119,6 +2095,9 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
     await instances[0].advertising.id5PartnerIdField.expectNotExists();
     await instances[0].advertising.rampIdJSPathField.expectNotExists();
 
+    const c = structuredClone(defaultDisabledComponents);
+    delete c.advertising;
+
     // Verify the configuration settings structure and values
     await extensionViewController.expectSettings({
       instances: [
@@ -2130,6 +2109,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
           },
         },
       ],
+      components: c,
     });
 
     // Verify that the configuration is valid for SSC users
@@ -2264,6 +2244,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
     await extensionViewController.init({
       settings: {
         components: {
+          ...defaultDisabledComponents,
           advertising: true,
         },
         instances: [
@@ -2348,6 +2329,9 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
       "https://updated.example.com/ramp.js",
     );
 
+    const c = structuredClone(defaultDisabledComponents);
+    delete c.advertising;
+
     // Step 5: Verify the updated settings reflect the changes
     await extensionViewController.expectSettings({
       instances: [
@@ -2371,6 +2355,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
           },
         },
       ],
+      components: c,
     });
 
     // Step 6: Verify form is still valid after changes
@@ -2384,6 +2369,7 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
     await extensionViewController.init({
       settings: {
         components: {
+          ...defaultDisabledComponents,
           advertising: true,
         },
         instances: [
@@ -2429,6 +2415,9 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
       "https://example.com/ramp.js",
     );
 
+    const c = structuredClone(defaultDisabledComponents);
+    delete c.advertising;
+
     // Step 9: Verify settings object contains all the configured values
     await extensionViewController.expectSettings({
       instances: [
@@ -2448,9 +2437,177 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
           },
         },
       ],
+
+      components: c,
     });
 
     // Step 10: Verify form is valid
     await extensionViewController.expectIsValid();
   },
 );
+
+test("initializes form fields with push notifications settings", async () => {
+  await extensionViewController.init({
+    settings: {
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+          pushNotifications: {
+            vapidPublicKey: "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+          },
+        },
+      ],
+      components: {
+        pushNotifications: true,
+      },
+    },
+  });
+
+  await instances[0].pushNotifications.vapidPublicKeyField.expectValue(
+    "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+  );
+});
+
+test("returns push notifications settings when component is enabled", async () => {
+  await extensionViewController.init();
+  await components.heading.click();
+  await components.pushNotifications.click();
+  await instances[0].pushNotifications.vapidPublicKeyField.typeText(
+    "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+  );
+
+  await extensionViewController.expectSettings({
+    instances: [
+      {
+        name: "alloy",
+        pushNotifications: {
+          vapidPublicKey: "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+        },
+      },
+    ],
+    components: {
+      advertising: false,
+      eventMerge: false,
+    },
+  });
+});
+
+test("does not return push notifications settings when component is disabled", async () => {
+  await extensionViewController.init({
+    settings: {
+      instances: [
+        {
+          name: "alloy",
+          edgeConfigId: "PR123",
+          pushNotifications: {
+            vapidPublicKey: "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+          },
+        },
+      ],
+      components: {
+        ...defaultDisabledComponents,
+        pushNotifications: true,
+      },
+    },
+  });
+
+  await components.heading.click();
+  await components.pushNotifications.click();
+
+  await extensionViewController.expectSettings({
+    instances: [
+      {
+        name: "alloy",
+        edgeConfigId: "PR123",
+      },
+    ],
+    components: defaultDisabledComponents,
+  });
+});
+
+test("validates push notifications section when push notifications component is enabled", async () => {
+  await extensionViewController.init();
+
+  await instances[0].edgeConfig.inputMethodFreeformRadio.click();
+  await instances[0].edgeConfig.inputMethodFreeform.productionEnvironmentField.typeText(
+    "PR123",
+  );
+
+  await extensionViewController.expectIsValid();
+
+  await components.heading.click();
+  await components.pushNotifications.click();
+
+  await extensionViewController.expectIsNotValid();
+
+  await instances[0].pushNotifications.vapidPublicKeyField.typeText(
+    "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+  );
+
+  await extensionViewController.expectIsValid();
+});
+
+test("does not validate push notification section when push notifications component is disabled", async () => {
+  await extensionViewController.init({
+    settings: {
+      instances: [
+        {
+          name: "alloy",
+          edgeConfigId: "PR123",
+          pushNotifications: {
+            vapidPublicKey: "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+          },
+        },
+      ],
+      components: {
+        ...defaultDisabledComponents,
+        pushNotifications: true,
+      },
+    },
+  });
+
+  await extensionViewController.expectIsValid();
+
+  await instances[0].pushNotifications.vapidPublicKeyField.clear();
+
+  await extensionViewController.expectIsNotValid();
+
+  await components.heading.click();
+  await components.pushNotifications.click();
+
+  await extensionViewController.expectIsValid();
+});
+
+test("does not emit push notifications settings when push notifications component is disabled", async () => {
+  await extensionViewController.init({
+    settings: {
+      instances: [
+        {
+          name: "alloy",
+          edgeConfigId: "PR123",
+          pushNotifications: {
+            vapidPublicKey: "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+          },
+        },
+      ],
+      components: {
+        ...defaultDisabledComponents,
+        pushNotifications: true,
+      },
+    },
+  });
+
+  await components.heading.click();
+  await components.pushNotifications.click();
+
+  await extensionViewController.expectSettings({
+    instances: [
+      {
+        name: "alloy",
+        edgeConfigId: "PR123",
+      },
+    ],
+    components: defaultDisabledComponents,
+  });
+});
