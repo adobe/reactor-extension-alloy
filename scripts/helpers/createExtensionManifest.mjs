@@ -1084,6 +1084,12 @@ const createExtensionManifest = ({ version }) => {
         libPath: "dist/lib/actions/evaluateRulesets/index.js",
         viewPath: "actions/evaluateRulesets.html",
       },
+      {
+        name: "send-push-subscription",
+        displayName: "Send push subscription",
+        libPath: "dist/lib/actions/sendPushSubscription/index.js",
+        schema: {},
+      },
     ],
     events: [
       {

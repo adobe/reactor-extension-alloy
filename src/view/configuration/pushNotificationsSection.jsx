@@ -45,10 +45,10 @@ export const bridge = {
     return { pushNotifications };
   },
 
-  getInstanceSettings: ({ instanceValues }) => {
+  getInstanceSettings: ({ instanceValues, components }) => {
     const instanceSettings = {};
 
-    if (instanceValues.pushNotifications) {
+    if (components.pushNotifications && instanceValues.pushNotifications) {
       const { pushNotifications } = instanceValues;
       const pushNotificationsSettings = {};
 
