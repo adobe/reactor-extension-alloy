@@ -600,11 +600,11 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
       <FormElementContainer>
         {/* Helper text for SSC users */}
         <Text marginBottom="size-200">
-          <strong>Note:</strong> Clickthrough measurement setup does not require
-          additional configurations and is complete. Search, Social, and
-          Commerce clients have no further action required. Demand-side Platform
-          (DSP) users would need to configure Advertisers in the next step to
-          enable view-through conversion measurement.
+          <strong>Note:</strong> No advertising configuration is necessary to
+          enable click-through measurement. Search, Social, and Commerce clients
+          have no further action required; however, Demand-side Platform (DSP)
+          users need to configure advertisers below to measure view-through
+          conversions.
         </Text>
 
         {/* DSP Enable/Disable Field */}
