@@ -28,6 +28,7 @@ const noSchemasAlert = spectrum.alert("schemaFieldAlert");
 const variableTypeDataRadio = spectrum.radio("dataRadioButton");
 const analyticsCheckbox = spectrum.checkbox("analyticsCheckbox");
 const targetCheckbox = spectrum.checkbox("targetCheckbox");
+const schemaMissingAlert = spectrum.alert("schemaMissingAlert");
 
 createExtensionViewFixture({
   title: "Variable Data Element View",
@@ -210,9 +211,7 @@ test.requestHooks(
         },
       },
     });
-    await errorBoundaryMessage.expectMessage(
-      /Could not find the sandbox selected previously/,
-    );
+    await schemaMissingAlert.expectExists();
   },
 );
 
@@ -244,20 +243,23 @@ test("allows user to enter schema search query that renders no results", async (
   await schemaField.expectMenuOptionLabels(["No results"]);
 });
 
-test("attempts to load a schema that has been deleted", async () => {
-  await extensionViewController.init({
-    settings: {
-      sandbox: {
-        name: "prod",
+test.requestHooks(sandboxMocks.multipleWithoutDefault)(
+  "attempts to load a schema that has been deleted",
+  async () => {
+    await extensionViewController.init({
+      settings: {
+        sandbox: {
+          name: "prod",
+        },
+        schema: {
+          id: "sch123",
+          version: "1.0",
+        },
       },
-      schema: {
-        id: "sch123",
-        version: "1.0",
-      },
-    },
-  });
-  await errorBoundaryMessage.expectMessage(/Failed to load schema/);
-});
+    });
+    await schemaMissingAlert.expectExists();
+  },
+);
 
 test.requestHooks(
   sandboxMocks.singleWithoutDefault,
