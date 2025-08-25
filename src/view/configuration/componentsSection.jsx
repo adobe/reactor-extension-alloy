@@ -65,7 +65,6 @@ const componentProperties = {
   },
 };
 const webSdkComponents = Object.keys(webSdkComponentsExports)
-  .concat("pushNotifications")
   .map((v) => ({
     label: camelCaseToTitleCase(v),
     value: v,
