@@ -33,7 +33,7 @@ const getSettings = ({ values }) => {
   return settings;
 };
 
-const RedirectWithIdentity = () => {
+const SendPushSubscription = () => {
   return (
     <ExtensionView
       getInitialValues={getInitialValues}
@@ -52,4 +52,4 @@ const RedirectWithIdentity = () => {
   );
 };
 
-render(RedirectWithIdentity);
+render(SendPushSubscription);
