@@ -451,6 +451,17 @@ const createExtensionManifest = ({ version }) => {
                   },
                   additionalProperties: false,
                 },
+                pushNotifications: {
+                  type: "object",
+                  properties: {
+                    vapidPublicKey: {
+                      type: "string",
+                      minLength: 1,
+                    },
+                  },
+                  required: ["vapidPublicKey"],
+                  additionalProperties: false,
+                },
                 personalizationStorageEnabled: {
                   type: "boolean",
                 },
@@ -1072,6 +1083,24 @@ const createExtensionManifest = ({ version }) => {
         },
         libPath: "dist/lib/actions/evaluateRulesets/index.js",
         viewPath: "actions/evaluateRulesets.html",
+      },
+      {
+        name: "send-push-subscription",
+        displayName: "Send push subscription",
+        libPath: "dist/lib/actions/sendPushSubscription/index.js",
+        viewPath: "actions/sendPushSubscription.html",
+        schema: {
+          $schema: "http://json-schema.org/draft-04/schema#",
+          type: "object",
+          properties: {
+            instanceName: {
+              type: "string",
+              minLength: 1,
+            },
+          },
+          additionalProperties: false,
+          required: ["instanceName"],
+        },
       },
     ],
     events: [

@@ -58,6 +58,11 @@ const componentProperties = {
     description:
       "This component enables Edge streaming media. You must include this component if you are using the Send media event action.",
   },
+  pushNotifications: {
+    excludedByDefault: true,
+    beta: true,
+    description: "This component enables web push notifications for AJO.",
+  },
 };
 const webSdkComponents = Object.keys(webSdkComponentsExports)
   .map((v) => ({
