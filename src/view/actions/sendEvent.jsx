@@ -381,17 +381,17 @@ const advertisingDataField = radioGroup({
     {
       value: ADVERTISING_DATA.AUTOMATIC,
       label:
-        "Automatic - allows advertising data to be used for measuring ad attribution on the current send event.",
+        "Automatic - any advertising data available at the time of this event will be automatically added to XDM.",
     },
     {
       value: ADVERTISING_DATA.WAIT,
       label:
-        "Wait - delays the execution of this call until the advertising data has been successfully retrieved and resolved, ensuring accurate attribution measurement before proceeding.",
+        "Wait - delay the execution of this call until the advertising data has been retrieved and resolved. Then, add the data to XDM.",
     },
     {
       value: ADVERTISING_DATA.DISABLED,
       label:
-        "Disabled - excludes advertising data from the request, preventing its use for attribution measurement or any related tracking.",
+        "Disabled - do not add advertising data to XDM. Use this for any requests that are not intended for Customer Journey Analytics or Adobe Analytics",
     },
   ],
 });
