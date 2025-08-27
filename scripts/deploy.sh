@@ -13,8 +13,16 @@ git remote add gh-origin git@github.com:${GITHUB_REPOSITORY}.git
 
 git pull origin main
 
-npm version $VERSION --no-commit-hooks -m "[skip ci] $VERSION"
+# update alloy version in package-lock.json
+if ! git diff --quiet -- package-lock.json; then
+  git add package-lock.json
+  git commit -m "[skip ci] update alloy version in package-lock.json"
+else
+  echo "No alloy update found; skipping commit."
+fi
 
+# tag this build
+npm version $VERSION --no-commit-hooks -m "[skip ci] $VERSION"
 git push gh-origin HEAD:main --follow-tags
 
 npm run package
