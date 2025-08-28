@@ -12,11 +12,22 @@ governing permissions and limitations under the License.
 
 import getAlloyComponents from "./getAlloyComponents.mjs";
 
+const ORIGINAL_DEFAULT_COMPONENTS = new Set([
+  "activityCollector",
+  "audiences",
+  "consent",
+  "eventMerge",
+  "mediaAnalyticsBridge",
+  "personalization",
+  "rulesEngine",
+  "streamingMedia",
+]);
+
 const createPreprocessingVariables = () =>
   getAlloyComponents().map((n) => ({
     key: `ALLOY_${n.toUpperCase()}`,
     path: `components.${n}`,
-    default: true,
+    default: ORIGINAL_DEFAULT_COMPONENTS.has(n),
   }));
 
 /**
@@ -486,6 +497,13 @@ const createExtensionManifest = ({ version }) => {
           },
           components: {
             type: "object",
+            properties: {
+              version: {
+                type: "integer",
+                enum: [1, 2],
+              },
+            },
+            required: ["version"],
             patternProperties: {
               ".*": { type: "boolean" },
             },
