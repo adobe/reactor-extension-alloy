@@ -23,7 +23,7 @@ const createPreprocessingVariables = () => [
   {
     key: "ALLOY_LIBRARY_TYPE",
     path: "libraryCode.type",
-    default: "managed",
+    default: false,
   },
 ];
 
