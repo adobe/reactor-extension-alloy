@@ -128,7 +128,7 @@ const createValidationSchema = () => {
       type: string().required(),
     }),
     instances: array().of(
-      object().when("$parent.libraryCode.type", {
+      object().when("$libraryCode.type", {
         is: "preinstalled",
         then: () => preinstalledInstanceSchema,
         otherwise: () => fullInstanceSchema,
