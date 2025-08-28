@@ -63,12 +63,25 @@ const RequiredComponent = (
       return wrapped({ initInfo, existingValidationShape });
     };
 
+  const wrapGetSettings =
+    (wrapped) =>
+    ({ values }) => {
+      const { components = {} } = values || {};
+      if (!components[requiredComponent]) {
+        return {};
+      }
+      return wrapped({ values });
+    };
+
   const {
     getInitialValues,
     getSettings,
     getValidationShape,
     Component: ChildComponent,
-  } = form({ ...formOptions, wrapGetValidationShape }, children);
+  } = form(
+    { ...formOptions, wrapGetValidationShape, wrapGetSettings },
+    children,
+  );
 
   const Component = (props) => {
     const { initInfo } = props;
