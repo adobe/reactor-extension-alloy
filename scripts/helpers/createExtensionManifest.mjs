@@ -497,13 +497,6 @@ const createExtensionManifest = ({ version }) => {
           },
           components: {
             type: "object",
-            properties: {
-              version: {
-                type: "integer",
-                enum: [1, 2],
-              },
-            },
-            required: ["version"],
             patternProperties: {
               ".*": { type: "boolean" },
             },
