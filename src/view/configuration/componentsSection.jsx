@@ -68,7 +68,7 @@ const webSdkComponents = Object.keys(webSdkComponentsExports)
   .map((v) => ({
     label: camelCaseToTitleCase(v),
     value: v,
-    ...(componentProperties[v] || {}),
+    ...(componentProperties[v] || { excludedByDefault: true }),
   }))
   .sort((a, b) => a.label.localeCompare(b.label, undefined, { numeric: true }));
 
@@ -89,27 +89,26 @@ export const bridge = {
     }
 
     const initialValues = {
-      components: webSdkComponents.reduce((acc, { value }) => {
-        acc[value] = components[value] !== false;
-        return acc;
-      }, {}),
+      components: webSdkComponents.reduce(
+        (acc, { value, excludedByDefault }) => {
+          if (components[value] === undefined) {
+            // If the component is not set, use true for the original set of components, false for new components.
+            acc[value] = !excludedByDefault;
+          } else {
+            // If the component is already set, use the value from the settings
+            acc[value] = components[value];
+          }
+
+          return acc;
+        },
+        {},
+      ),
     };
     return initialValues;
   },
   getSettings: ({ values: { components } }) => {
-    const excludedComponents = webSdkComponents
-      .map(({ value }) => value)
-      .filter((v) => !components[v])
-      .reduce((acc, v) => {
-        acc[v] = false;
-        return acc;
-      }, {});
-
-    if (Object.keys(excludedComponents).length > 0) {
-      return { components: excludedComponents };
-    }
-
-    return {};
+    // return all values regardless of whether they are set or not
+    return { components };
   },
 };
 
