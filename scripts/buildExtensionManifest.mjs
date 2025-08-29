@@ -28,18 +28,6 @@ const extensionDescriptorSchema = JSON.parse(
   ),
 );
 
-// Patch the schema to allow string defaults for preprocessing variables
-// The original schema only allows boolean defaults, but Launch runtime supports strings
-if (
-  extensionDescriptorSchema.definitions?.preprocessingVariable?.properties
-    ?.default
-) {
-  extensionDescriptorSchema.definitions.preprocessingVariable.properties.default =
-    {
-      oneOf: [{ type: "boolean" }, { type: "string" }],
-    };
-}
-
 /**
  * Get the variable options for the manifest.
  * @param {Object} environment
