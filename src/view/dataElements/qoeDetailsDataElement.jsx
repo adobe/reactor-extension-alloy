@@ -22,13 +22,7 @@ const wrapGetInitialValues =
     });
   };
 
-const wrapGetSettings =
-  (getSettings) =>
-  ({ values }) => {
-    return getSettings({ values });
-  };
-
-const qoeDataDetailsForm = form({ wrapGetInitialValues, wrapGetSettings }, [
+const qoeDataDetailsForm = form({ wrapGetInitialValues }, [
   numberField({
     name: "bitrate",
     label: "Average bitrate (in kbps)",

@@ -17,6 +17,8 @@ import Heading from "../components/typography/heading";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";
 import BetaBadge from "../components/betaBadge";
+import componentDefault from "../utils/componentDefault.mjs";
+import valueOrDefault from "../utils/valueOrDefault";
 
 const componentProperties = {
   activityCollector: {
@@ -24,7 +26,6 @@ const componentProperties = {
       "This component enables automatic link collection and ActivityMap tracking.",
   },
   advertising: {
-    excludedByDefault: true,
     beta: true,
     description:
       "This component enables Adobe Advertising integration with CJA.",
@@ -59,7 +60,6 @@ const componentProperties = {
       "This component enables Edge streaming media. You must include this component if you are using the Send media event action.",
   },
   pushNotifications: {
-    excludedByDefault: true,
     beta: true,
     description: "This component enables web push notifications for AJO.",
   },
@@ -79,7 +79,7 @@ export const bridge = {
     if (isNew) {
       // If this is a newly added extension, default to deprecated components being disabled.
       components = webSdkComponents
-        .filter((value) => value.deprecated || value.excludedByDefault)
+        .filter((value) => value.deprecated || componentDefault(value))
         .reduce((acc, value) => {
           acc[value.value] = false;
           return acc;
@@ -90,23 +90,23 @@ export const bridge = {
 
     const initialValues = {
       components: webSdkComponents.reduce((acc, { value }) => {
-        acc[value] = components[value] !== false;
+        acc[value] = valueOrDefault(components[value], componentDefault(value));
         return acc;
       }, {}),
     };
     return initialValues;
   },
   getSettings: ({ values: { components } }) => {
-    const excludedComponents = webSdkComponents
+    const nonDefaultComponents = webSdkComponents
       .map(({ value }) => value)
-      .filter((v) => !components[v])
+      .filter((v) => components[v] !== componentDefault(v))
       .reduce((acc, v) => {
-        acc[v] = false;
+        acc[v] = components[v];
         return acc;
       }, {});
 
-    if (Object.keys(excludedComponents).length > 0) {
-      return { components: excludedComponents };
+    if (Object.keys(nonDefaultComponents).length > 0) {
+      return { components: nonDefaultComponents };
     }
 
     return {};

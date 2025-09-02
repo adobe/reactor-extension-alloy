@@ -11,12 +11,13 @@ governing permissions and limitations under the License.
 */
 
 import getAlloyComponents from "./getAlloyComponents.mjs";
+import componentDefault from "../../src/view/utils/componentDefault.mjs";
 
 const createPreprocessingVariables = () =>
   getAlloyComponents().map((n) => ({
     key: `ALLOY_${n.toUpperCase()}`,
     path: `components.${n}`,
-    default: true,
+    default: componentDefault(n),
   }));
 
 /**
