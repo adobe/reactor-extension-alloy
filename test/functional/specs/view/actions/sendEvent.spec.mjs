@@ -78,6 +78,9 @@ const mockExtensionSettings = {
       edgeConfigId: "PR456",
     },
   ],
+  components: {
+    advertising: true
+  }
 };
 
 createExtensionViewFixture({

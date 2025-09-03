@@ -42,20 +42,15 @@ const RequiredComponent = (
 ) => {
   let componentEnabled = false;
 
-  const wrapGetInitialValues =
+  const wrapGetValidationShape =
     (wrapped) =>
-    ({ initInfo }) => {
+    ({ initInfo, existingValidationShape }) => {
       const { components = {} } = initInfo?.extensionSettings || {};
       componentEnabled = valueOrDefault(
         components[requiredComponent],
         componentDefault(requiredComponent),
       );
-      return wrapped({ initInfo });
-    };
 
-  const wrapGetValidationShape =
-    (wrapped) =>
-    ({ initInfo, existingValidationShape }) => {
       const isNew = initInfo?.settings == null;
 
       if (!componentEnabled && isNew && whole) {
@@ -92,7 +87,6 @@ const RequiredComponent = (
   } = form(
     {
       ...formOptions,
-      wrapGetInitialValues,
       wrapGetSettings,
       wrapGetValidationShape,
     },
