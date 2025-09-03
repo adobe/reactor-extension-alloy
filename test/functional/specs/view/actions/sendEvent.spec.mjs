@@ -79,8 +79,8 @@ const mockExtensionSettings = {
     },
   ],
   components: {
-    advertising: true
-  }
+    advertising: true,
+  },
 };
 
 createExtensionViewFixture({
