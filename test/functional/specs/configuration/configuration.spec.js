@@ -36,8 +36,6 @@ createExtensionViewFixture({
 
 const defaultDisabledComponents = {
   eventMerge: false,
-  advertising: false,
-  pushNotifications: false,
 };
 
 runCommonExtensionViewTests();
@@ -2095,9 +2093,6 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
     await instances[0].advertising.id5PartnerIdField.expectNotExists();
     await instances[0].advertising.rampIdJSPathField.expectNotExists();
 
-    const c = structuredClone(defaultDisabledComponents);
-    delete c.advertising;
-
     // Verify the configuration settings structure and values
     await extensionViewController.expectSettings({
       instances: [
@@ -2109,7 +2104,10 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
           },
         },
       ],
-      components: c,
+      components: {
+        ...defaultDisabledComponents,
+        advertising: true,
+      },
     });
 
     // Verify that the configuration is valid for SSC users
@@ -2329,9 +2327,6 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
       "https://updated.example.com/ramp.js",
     );
 
-    const c = structuredClone(defaultDisabledComponents);
-    delete c.advertising;
-
     // Step 5: Verify the updated settings reflect the changes
     await extensionViewController.expectSettings({
       instances: [
@@ -2355,7 +2350,10 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
           },
         },
       ],
-      components: c,
+      components: {
+        ...defaultDisabledComponents,
+        advertising: true,
+      },
     });
 
     // Step 6: Verify form is still valid after changes
@@ -2415,9 +2413,6 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
       "https://example.com/ramp.js",
     );
 
-    const c = structuredClone(defaultDisabledComponents);
-    delete c.advertising;
-
     // Step 9: Verify settings object contains all the configured values
     await extensionViewController.expectSettings({
       instances: [
@@ -2438,7 +2433,10 @@ test.requestHooks(advertisersMocks.multipleAdvertisers)(
         },
       ],
 
-      components: c,
+      components: {
+        ...defaultDisabledComponents,
+        advertising: true,
+      },
     });
 
     // Step 10: Verify form is valid
@@ -2487,8 +2485,8 @@ test("returns push notifications settings when component is enabled", async () =
       },
     ],
     components: {
-      advertising: false,
-      eventMerge: false,
+      ...defaultDisabledComponents,
+      pushNotifications: true,
     },
   });
 });
@@ -2609,5 +2607,63 @@ test("does not emit push notifications settings when push notifications componen
       },
     ],
     components: defaultDisabledComponents,
+  });
+});
+
+// Ensure new components are not included by default when creating a new configuration
+// and also not added during an upgrade of an existing configuration.
+
+test("does not include new components when creating a new configuration", async () => {
+  await extensionViewController.init();
+
+  await components.heading.click();
+  await spectrum
+    .checkbox("pushNotificationsComponentCheckbox")
+    .expectUnchecked();
+  await spectrum.checkbox("advertisingComponentCheckbox").expectUnchecked();
+
+  await extensionViewController.expectSettings({
+    components: {
+      ...defaultDisabledComponents,
+    },
+    instances: [
+      {
+        name: "alloy",
+      },
+    ],
+  });
+});
+
+test("does not include new components when upgrading existing configuration", async () => {
+  await extensionViewController.init({
+    settings: {
+      components: {
+        eventMerge: false,
+      },
+      instances: [
+        {
+          name: "alloy1",
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
+  });
+
+  await components.heading.click();
+  await spectrum
+    .checkbox("pushNotificationsComponentCheckbox")
+    .expectUnchecked();
+  await spectrum.checkbox("advertisingComponentCheckbox").expectUnchecked();
+
+  await extensionViewController.expectSettings({
+    components: {
+      ...defaultDisabledComponents,
+    },
+    instances: [
+      {
+        name: "alloy1",
+        edgeConfigId: "PR123",
+      },
+    ],
   });
 });

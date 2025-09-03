@@ -15,6 +15,8 @@ import PropTypes from "prop-types";
 import { mixed } from "yup";
 import ComponentDependency from "../components/requiredComponent";
 import form from "./form";
+import componentDefault from "../utils/componentDefault.mjs";
+import valueOrDefault from "../utils/valueOrDefault";
 
 /** @typedef {import("./form").Form} Form */
 /**
@@ -38,15 +40,22 @@ const RequiredComponent = (
   },
   children = [],
 ) => {
+  let componentEnabled = false;
+
   const wrapGetValidationShape =
     (wrapped) =>
     ({ initInfo, existingValidationShape }) => {
-      const components = initInfo?.extensionSettings?.components || {};
-      const isComponentDisabled = components[requiredComponent] === false;
+      const { components = {} } = initInfo?.extensionSettings || {};
+      componentEnabled = valueOrDefault(
+        components[requiredComponent],
+        componentDefault(requiredComponent),
+      );
+
       const isNew = initInfo?.settings == null;
 
-      if (isComponentDisabled && isNew && whole) {
+      if (!componentEnabled && isNew && whole) {
         return {
+          ...existingValidationShape,
           requiredComponent: mixed().test(
             "requiredComponent",
             `The ${requiredComponent} component is disabled.`,
@@ -55,20 +64,34 @@ const RequiredComponent = (
         };
       }
 
-      if (isComponentDisabled && !whole) {
-        // No need for any validation because the child form will never be shown
-        return {};
+      if (!componentEnabled && !whole) {
+        // No need for any new validation because the child form will never be shown
+        return existingValidationShape;
       }
 
       return wrapped({ initInfo, existingValidationShape });
     };
+
+  const wrapGetSettings = (wrapped) => (params) => {
+    if (!componentEnabled) {
+      return {};
+    }
+    return wrapped(params);
+  };
 
   const {
     getInitialValues,
     getSettings,
     getValidationShape,
     Component: ChildComponent,
-  } = form({ ...formOptions, wrapGetValidationShape }, children);
+  } = form(
+    {
+      ...formOptions,
+      wrapGetSettings,
+      wrapGetValidationShape,
+    },
+    children,
+  );
 
   const Component = (props) => {
     const { initInfo } = props;
