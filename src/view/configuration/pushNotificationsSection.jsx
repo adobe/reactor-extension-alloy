@@ -26,6 +26,7 @@ import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfV
 
 const getDefaultSettings = () => ({
   vapidPublicKey: "",
+  appId: "",
 });
 
 export const bridge = {
@@ -39,7 +40,7 @@ export const bridge = {
       toObj: pushNotifications,
       fromObj: instanceSettings.pushNotifications || {},
       defaultsObj: getDefaultSettings(),
-      keys: ["vapidPublicKey"],
+      keys: ["vapidPublicKey", "appId"],
     });
 
     return { pushNotifications };
@@ -56,7 +57,7 @@ export const bridge = {
         toObj: pushNotificationsSettings,
         fromObj: pushNotifications,
         defaultsObj: getDefaultSettings(),
-        keys: ["vapidPublicKey"],
+        keys: ["vapidPublicKey", "appId"],
       });
 
       if (Object.keys(pushNotificationsSettings).length > 0) {
@@ -74,6 +75,9 @@ export const bridge = {
         schema.shape({
           vapidPublicKey: string().required(
             "Please provide a VAPID public key for push notification authentication.",
+          ),
+          appId: string().required(
+            "Please provide an Application ID for push notification identification.",
           ),
         }),
     }),
@@ -116,6 +120,18 @@ const PushNotificationsSection = ({ instanceFieldName }) => {
             label="VAPID Public Key"
             name={`${instanceFieldName}.pushNotifications.vapidPublicKey`}
             description="The VAPID public key for push notification authentication."
+            width="size-5000"
+            isRequired
+          />
+        </DataElementSelector>
+      </FormElementContainer>
+      <FormElementContainer>
+        <DataElementSelector>
+          <FormikTextField
+            data-test-id="appIdField"
+            label="Application ID"
+            name={`${instanceFieldName}.pushNotifications.appId`}
+            description="The App ID for push notification identification."
             width="size-5000"
             isRequired
           />
