@@ -172,6 +172,7 @@ for (let i = 0; i < 3; i += 1) {
     pushNotifications: {
       vapidPublicKeyField: spectrum.textField("vapidPublicKeyField"),
       appIdField: spectrum.textField("appIdField"),
+      trackingDatasetIdField: spectrum.textField("trackingDatasetIdField"),
     },
     advertising: {
       dspEnabledField: spectrum.comboBox("dspEnabledField"),
