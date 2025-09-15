@@ -11,13 +11,15 @@ governing permissions and limitations under the License.
 */
 
 // This file will be used by Tags in order to generate a custom Alloy build based on user options.
-// Tags doesn't support ES6 modules, so we need to use CommonJS modules here.
-
-const path = require("path");
-const fs = require("fs");
-const { spawn } = require("child_process");
-const { Command, Option, InvalidOptionArgumentError } = require("commander");
-const babel = require("@babel/core");
+// Tags doesn't support ES6 modules, so we need to compile to CommonJS modules here.
+import componentDefault from "../src/view/utils/componentDefault.mjs";
+import path, { dirname } from "path";
+import fs from "fs";
+import { spawn } from "child_process";
+import { Command, Option, InvalidOptionArgumentError } from "commander";
+import babel from "@babel/core";
+import { fileURLToPath } from "url";
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const execute = (command, options) => {
   return new Promise((resolve, reject) => {
@@ -128,10 +130,11 @@ program.addOption(
 const alloyComponents = getAlloyComponents();
 
 alloyComponents.forEach((component) => {
+  const isDefault = componentDefault(component);
   program.addOption(
     new Option(`--${component} <bool>`, `enable ${component} module`)
       .env(`ALLOY_${component.toUpperCase()}`)
-      .default(true, "true")
+      .default(isDefault, new Boolean(isDefault).toString())
       .argParser((val) => {
         if (val === "0" || val === "false") {
           return false;
@@ -153,6 +156,8 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
     },
     [],
   );
+
+  console.log("Generating build with modules: ", includedModules.join(", "));
 
   let entryFile;
   try {
