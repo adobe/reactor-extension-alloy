@@ -476,7 +476,7 @@ const sendEventForm = form(
             label: "Advertising",
             beta: true,
             learnMoreUrl:
-              "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
+              "https://experienceleague.adobe.com/en/docs/experience-platform/tags/extensions/client/web-sdk/action-types#advertising",
           },
           [
             requiredComponent(
@@ -556,7 +556,7 @@ const sendEventForm = form(
                 label: "Advertising",
                 beta: true,
                 learnMoreUrl:
-                  "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
+                  "https://experienceleague.adobe.com/en/docs/experience-platform/tags/extensions/client/web-sdk/action-types#advertising",
               },
               [
                 requiredComponent(
@@ -588,7 +588,7 @@ const sendEventForm = form(
                 label: "Advertising",
                 beta: true,
                 learnMoreUrl:
-                  "https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html",
+                  "https://experienceleague.adobe.com/en/docs/experience-platform/tags/extensions/client/web-sdk/action-types#advertising",
               },
               [
                 requiredComponent(
