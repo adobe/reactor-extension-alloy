@@ -94,22 +94,17 @@ const initializeSchemas = async ({
   imsAccess,
 }) => {
   if (initialValues.sandbox) {
-    try {
-      const { results: schemasFirstPage, nextPage: schemasFirstPageCursor } =
-        await fetchSchemasMeta({
-          orgId,
-          imsAccess,
-          sandboxName: initialValues.sandbox,
-        });
+    const { results: schemasFirstPage, nextPage: schemasFirstPageCursor } =
+      await fetchSchemasMeta({
+        orgId,
+        imsAccess,
+        sandboxName: initialValues.sandbox,
+      });
 
-      context.schemasFirstPage = schemasFirstPage;
-      context.schemasFirstPageCursor = schemasFirstPageCursor;
-      if (!schemaId && schemasFirstPage.length === 1) {
-        initialValues.schema = schemasFirstPage[0];
-      }
-    } catch {
-      context.schemasFirstPage = [];
-      context.schemasFirstPageCursor = null;
+    context.schemasFirstPage = schemasFirstPage;
+    context.schemasFirstPageCursor = schemasFirstPageCursor;
+    if (!schemaId && schemasFirstPage.length === 1) {
+      initialValues.schema = schemasFirstPage[0];
     }
   }
 };
