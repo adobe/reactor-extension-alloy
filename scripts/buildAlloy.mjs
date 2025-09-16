@@ -12,13 +12,14 @@ governing permissions and limitations under the License.
 
 // This file will be used by Tags in order to generate a custom Alloy build based on user options.
 // Tags doesn't support ES6 modules, so we need to compile to CommonJS modules here.
-import componentDefault from "../src/view/utils/componentDefault.mjs";
 import path, { dirname } from "path";
 import fs from "fs";
 import { spawn } from "child_process";
 import { Command, Option, InvalidOptionArgumentError } from "commander";
 import babel from "@babel/core";
 import { fileURLToPath } from "url";
+import componentDefault from "../src/view/utils/componentDefault.mjs";
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const execute = (command, options) => {

@@ -81,7 +81,7 @@ const getPackageJson = () => {
       email: "reactor@adobe.com",
     },
     scripts: {
-      build: "node ./scripts/buildAlloy.js -i ./alloy.js -o ./dist/lib",
+      build: "node ./scripts/buildAlloy.mjs -i ./alloy.js -o ./dist/lib",
     },
     license: "Apache-2.0",
     description: "Tool for generating custom alloy build based on user input.",
@@ -174,6 +174,11 @@ const createExtensionPackage = ({ verbose }) => {
     path.join(cwd, "scripts", "buildAlloy.mjs"),
   );
   zip.addFile("scripts/buildAlloy.mjs", buildScript);
+
+  const componentDefaultFile = fs.readFileSync(
+    path.join(cwd, "src", "view", "utils", "componentDefault.mjs"),
+  );
+  zip.addFile("src/view/utils/componentDefault.mjs", componentDefaultFile);
 
   zip.writeZip(packagePath);
   console.log("Done");
