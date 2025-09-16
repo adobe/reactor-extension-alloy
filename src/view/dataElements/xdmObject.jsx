@@ -27,7 +27,6 @@ import ExtensionView from "../components/extensionView";
 import validate from "../components/objectEditor/helpers/validate";
 import render from "../render";
 import Editor from "../components/objectEditor/editor";
-import useReportAsyncError from "../utils/useReportAsyncError";
 import useChanged from "../utils/useChanged";
 import FormikPicker from "../components/formikReactSpectrum3/formikPicker";
 import FormikPagedComboBox from "../components/formikReactSpectrum3/formikPagedComboBox";
@@ -120,12 +119,19 @@ const initializeSchemas = async ({
   imsAccess,
 }) => {
   const { sandboxName } = initialValues;
-  const { results: schemasFirstPage, nextPage: schemasFirstPageCursor } =
-    await fetchSchemasMeta({
-      orgId,
-      imsAccess,
-      sandboxName,
-    });
+  let schemasFirstPage;
+  let schemasFirstPageCursor;
+  try {
+    ({ results: schemasFirstPage, nextPage: schemasFirstPageCursor } =
+      await fetchSchemasMeta({
+        orgId,
+        imsAccess,
+        sandboxName,
+      }));
+  } catch {
+    schemasFirstPage = [];
+    schemasFirstPageCursor = null;
+  }
 
   if (schemasFirstPage.length === 1 && !schemasFirstPageCursor) {
     const { $id, title, version } = schemasFirstPage[0];
@@ -258,7 +264,6 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
   } = initInfo;
   const settings = initInfo.settings || {};
   const { resetForm, values } = formikProps;
-  const reportAsyncError = useReportAsyncError();
 
   const { sandboxes, schema, schemasFirstPage, schemasFirstPageCursor } =
     context;
@@ -340,12 +345,13 @@ const XdmObject = ({ initInfo, context, formikProps }) => {
         signal,
       }));
     } catch (e) {
-      if (e.name !== "AbortError") {
-        reportAsyncError(e);
+      if (e.name === "AbortError") {
+        // usePagedComboBox expects us to throw an error
+        // if we can't produce a valid return object.
+        throw e;
       }
-      // usePagedComboBox expects us to throw an error
-      // if we can't produce a valid return object.
-      throw e;
+      results = [];
+      nextPage = null;
     }
     return {
       items: results,
