@@ -2453,6 +2453,8 @@ test("initializes form fields with push notifications settings", async () => {
           edgeConfigId: "PR123",
           pushNotifications: {
             vapidPublicKey: "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+            appId: "com.example.app",
+            trackingDatasetId: "6336ff95ba16ca1c07b4c0db",
           },
         },
       ],
@@ -2465,6 +2467,12 @@ test("initializes form fields with push notifications settings", async () => {
   await instances[0].pushNotifications.vapidPublicKeyField.expectValue(
     "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
   );
+  await instances[0].pushNotifications.appIdField.expectValue(
+    "com.example.app",
+  );
+  await instances[0].pushNotifications.trackingDatasetIdField.expectValue(
+    "6336ff95ba16ca1c07b4c0db",
+  );
 });
 
 test("returns push notifications settings when component is enabled", async () => {
@@ -2474,6 +2482,10 @@ test("returns push notifications settings when component is enabled", async () =
   await instances[0].pushNotifications.vapidPublicKeyField.typeText(
     "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
   );
+  await instances[0].pushNotifications.appIdField.typeText("com.example.app");
+  await instances[0].pushNotifications.trackingDatasetIdField.typeText(
+    "6336ff95ba16ca1c07b4c0db",
+  );
 
   await extensionViewController.expectSettings({
     instances: [
@@ -2481,6 +2493,8 @@ test("returns push notifications settings when component is enabled", async () =
         name: "alloy",
         pushNotifications: {
           vapidPublicKey: "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+          appId: "com.example.app",
+          trackingDatasetId: "6336ff95ba16ca1c07b4c0db",
         },
       },
     ],
@@ -2500,6 +2514,8 @@ test("does not return push notifications settings when component is disabled", a
           edgeConfigId: "PR123",
           pushNotifications: {
             vapidPublicKey: "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+            appId: "com.example.app",
+            trackingDatasetId: "6336ff95ba16ca1c07b4c0db",
           },
         },
       ],
@@ -2542,6 +2558,10 @@ test("validates push notifications section when push notifications component is 
   await instances[0].pushNotifications.vapidPublicKeyField.typeText(
     "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
   );
+  await instances[0].pushNotifications.appIdField.typeText("com.example.app");
+  await instances[0].pushNotifications.trackingDatasetIdField.typeText(
+    "6336ff95ba16ca1c07b4c0db",
+  );
 
   await extensionViewController.expectIsValid();
 });
@@ -2555,6 +2575,8 @@ test("does not validate push notification section when push notifications compon
           edgeConfigId: "PR123",
           pushNotifications: {
             vapidPublicKey: "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+            appId: "com.example.app",
+            trackingDatasetId: "6336ff95ba16ca1c07b4c0db",
           },
         },
       ],
@@ -2586,6 +2608,8 @@ test("does not emit push notifications settings when push notifications componen
           edgeConfigId: "PR123",
           pushNotifications: {
             vapidPublicKey: "BGZ1FW_KBGu3XDCA5S_Z_b3X6zIpCd4OlOdKgr_OLJ4_",
+            appId: "com.example.app",
+            trackingDatasetId: "6336ff95ba16ca1c07b4c0db",
           },
         },
       ],
