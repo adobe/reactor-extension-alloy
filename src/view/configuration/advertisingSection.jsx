@@ -671,7 +671,7 @@ const AdvertisingSection = ({ instanceFieldName, initInfo }) => {
 
   return (
     <>
-      <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/docs/experience-platform/destinations/catalog/advertising/overview.html">
+      <SectionHeader learnMoreUrl="https://experienceleague.adobe.com/en/docs/experience-platform/tags/extensions/client/web-sdk/web-sdk-extension-configuration#general">
         Adobe Advertising <BetaBadge />
       </SectionHeader>
       {renderContent()}
