@@ -141,7 +141,7 @@ const createExtensionPackage = ({ verbose }) => {
   console.log(
     "Generating the initial extension package...(`npx @adobe/reactor-packager`)",
   );
-  execute("npx", ["@adobe/reactor-packager"], { verbose });
+  execute("npx", ["@adobe/reactor-packager@latest"], { verbose });
 
   const extensionDescriptor = getExtensionJson();
   const packagePath = getExtensionPath(extensionDescriptor);
@@ -171,9 +171,9 @@ const createExtensionPackage = ({ verbose }) => {
   zip.addFile(".browserslistrc", browsersListRcFile);
 
   const buildScript = fs.readFileSync(
-    path.join(cwd, "scripts", "buildAlloy.cjs"),
+    path.join(cwd, "scripts", "buildAlloy.mjs"),
   );
-  zip.addFile("scripts/buildAlloy.js", buildScript);
+  zip.addFile("scripts/buildAlloy.mjs", buildScript);
 
   zip.writeZip(packagePath);
   console.log("Done");
