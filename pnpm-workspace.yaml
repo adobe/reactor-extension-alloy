@@ -17,3 +17,5 @@ onlyBuiltDependencies:
 overrides:
   "eslint": "^9.35.0"
   "strip-comments": "^2.0.1"
+packages:
+  - scripts/helpers/parcel-transformer-extension-name

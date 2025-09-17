@@ -118,7 +118,7 @@
     "minimist": "^1.2.8",
     "mockvisitor": "file:test/functional/runtime/mockVisitor",
     "parcel": "^2.15.4",
-    "parcel-transformer-extension-name": "file:scripts/helpers/parcel-transformer-extension-name",
+    "parcel-transformer-extension-name": "workspace:parcel-transformer-extension-name",
     "prettier": "^3.6.2",
     "puppeteer": "^24.20.0",
     "rimraf": "^6.0.1",
