@@ -28,9 +28,13 @@ jobs:
     if: ${{ contains(github.event.inputs.version, '-') == false }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: latest
+          version: 10
+      - name: Set up Node.js version
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
       - uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.ALLOY_BOT_GITHUB_SSH_PRIVATE_KEY }}
@@ -49,9 +53,13 @@ jobs:
     if: ${{ contains(github.event.inputs.version, '-') }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
         with:
-          node-version: latest
+          version: 10
+      - name: Set up Node.js version
+        uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
       - uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.ALLOY_BOT_GITHUB_SSH_PRIVATE_KEY }}

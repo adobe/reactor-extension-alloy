@@ -9,3 +9,4 @@ coverage
 .token-cache.json
 extension.json
 package-adobe-alloy-*.zip
+benchmark*

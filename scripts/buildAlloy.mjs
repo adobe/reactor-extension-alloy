@@ -168,7 +168,8 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
       includedModules,
     });
 
-    await execute("npx", [
+    await execute("pnpm", [
+      "exec",
       "rollup",
       "-c",
       path.join(__dirname, "../rollup.config.mjs"),
