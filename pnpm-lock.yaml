@@ -97,9 +97,15 @@ importers:
       '@eslint/js':
         specifier: ^9.35.0
         version: 9.35.0
+      '@parcel/config-default':
+        specifier: ^2.15.4
+        version: 2.15.4(@parcel/core@2.15.4(@swc/helpers@0.5.17))(@swc/helpers@0.5.17)
       '@parcel/core':
         specifier: ^2.15.4
         version: 2.15.4(@swc/helpers@0.5.17)
+      '@parcel/reporter-cli':
+        specifier: ^2.15.4
+        version: 2.15.4(@parcel/core@2.15.4(@swc/helpers@0.5.17))
       '@playwright/test':
         specifier: ^1.55.0
         version: 1.55.0
@@ -8086,7 +8092,7 @@ snapshots:
       react-json-view: 1.21.3(@types/react@19.1.13)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       react-redux: 7.2.9(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       react-router-dom: 5.3.4(react@17.0.2)
-      react-router-last-location: 2.0.1(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-router-dom@5.3.4(react@19.1.1))(react@17.0.2)
+      react-router-last-location: 2.0.1(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-router-dom@5.3.4(react@17.0.2))(react@17.0.2)
       react-split: 2.0.14(react@17.0.2)
       semver-diff: 3.1.1
     transitivePeerDependencies:
@@ -20585,7 +20591,7 @@ snapshots:
       tiny-invariant: 1.3.3
       tiny-warning: 1.0.3
 
-  react-router-last-location@2.0.1(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-router-dom@5.3.4(react@19.1.1))(react@17.0.2):
+  react-router-last-location@2.0.1(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-router-dom@5.3.4(react@17.0.2))(react@17.0.2):
     dependencies:
       prop-types: 15.8.1
       react: 17.0.2

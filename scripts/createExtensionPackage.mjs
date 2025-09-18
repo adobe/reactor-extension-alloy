@@ -115,8 +115,9 @@ const getPackageLockJson = (packageJson) => {
   fs.writeFileSync(path.join(cwd, "temp", "package.json"), packageJson);
 
   try {
-    console.log("Install dependencies (`pnpm i`)...");
-    execute("pnpm", ["i"], { cwd: path.join(cwd, "temp") });
+    // Because this will be run by forgebuilder, use npm instead of pnpm
+    console.log("Install dependencies (`npm i`)...");
+    execute("npm", ["i"], { cwd: path.join(cwd, "temp") });
 
     const packageLockJson = fs.readFileSync(
       path.join(cwd, "temp", "package-lock.json"),
@@ -141,7 +142,7 @@ const createExtensionPackage = ({ verbose }) => {
   console.log(
     "Generating the initial extension package...(`npx @adobe/reactor-packager`)",
   );
-  execute("npx", ["@adobe/reactor-packager"], { verbose });
+  execute("pnpx", ["@adobe/reactor-packager"], { verbose });
 
   const extensionDescriptor = getExtensionJson();
   const packagePath = getExtensionPath(extensionDescriptor);
