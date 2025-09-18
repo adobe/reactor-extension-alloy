@@ -23,7 +23,7 @@ const {
 
 // fetch any releases greater than or equal to the current version, with the current major/minor/patch number.
 const npmView = JSON.parse(
-  execSync(`ppm view @adobe/alloy@~${currentVersion} version --json`),
+  execSync(`pnpm view @adobe/alloy@~${currentVersion} version --json`),
 );
 // npmView is either a single string or an array of strings
 // eslint-disable-next-line no-console

@@ -8,7 +8,6 @@ on:
 jobs:
   quality-gate:
     name: "Quality checks"
-    needs: setup
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -30,7 +29,7 @@ jobs:
       - run: pnpm run ${{ matrix.check }}
   tests:
     name: "Tests"
-    needs: [setup, quality-gate]
+    needs: quality-gate
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
