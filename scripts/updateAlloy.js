@@ -10,7 +10,7 @@
 // 2.5.0-beta.4 => 2.6.0-beta.0
 // 2.5.0 => 2.6.0-beta.0
 
-// We do this instead of npm update so that we are explicit about
+// We do this instead of pnpm update so that we are explicit about
 // the exact version number required in package.json.
 
 const { execSync } = require("child_process");
@@ -19,13 +19,11 @@ const {
   dependencies: {
     "@adobe/alloy": { version: currentVersion },
   },
-} = JSON.parse(execSync("npm ls @adobe/alloy --json").toString());
+} = JSON.parse(execSync("pnpm ls @adobe/alloy --json"))[0];
 
 // fetch any releases greater than or equal to the current version, with the current major/minor/patch number.
 const npmView = JSON.parse(
-  execSync(
-    `npm view @adobe/alloy@~${currentVersion} version --json`,
-  ).toString(),
+  execSync(`ppm view @adobe/alloy@~${currentVersion} version --json`),
 );
 // npmView is either a single string or an array of strings
 // eslint-disable-next-line no-console
@@ -37,5 +35,5 @@ const newestVersion = Array.isArray(npmView)
 if (currentVersion !== newestVersion) {
   // eslint-disable-next-line no-console
   console.log(`Updating @adobe/alloy dependency to ${newestVersion}.`);
-  execSync(`npm install --save-exact @adobe/alloy@${newestVersion}`);
+  execSync(`pnpm add --save-exact @adobe/alloy@${newestVersion}`);
 }

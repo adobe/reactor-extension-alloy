@@ -115,8 +115,8 @@ const getPackageLockJson = (packageJson) => {
   fs.writeFileSync(path.join(cwd, "temp", "package.json"), packageJson);
 
   try {
-    console.log("Install dependencies (`npm i`)...");
-    execute("npm", ["i"], { cwd: path.join(cwd, "temp") });
+    console.log("Install dependencies (`pnpm i`)...");
+    execute("pnpm", ["i"], { cwd: path.join(cwd, "temp") });
 
     const packageLockJson = fs.readFileSync(
       path.join(cwd, "temp", "package-lock.json"),
@@ -132,11 +132,11 @@ const getPackageLockJson = (packageJson) => {
 };
 
 const createExtensionPackage = ({ verbose }) => {
-  console.log("Running the clean process (`npm run clean`)...");
-  execute("npm", ["run", "clean"], { verbose });
+  console.log("Running the clean process (`pnpm run clean`)...");
+  execute("pnpm", ["run", "clean"], { verbose });
 
-  console.log("Running the build process (`npm run build`)...");
-  execute("npm", ["run", "build"], { verbose });
+  console.log("Running the build process (`pnpm run build`)...");
+  execute("pnpm", ["run", "build"], { verbose });
 
   console.log(
     "Generating the initial extension package...(`npx @adobe/reactor-packager`)",
