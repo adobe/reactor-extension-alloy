@@ -26,6 +26,8 @@ import copyPropertiesIfValueDifferentThanDefault from "./utils/copyPropertiesIfV
 
 const getDefaultSettings = () => ({
   vapidPublicKey: "",
+  appId: "",
+  trackingDatasetId: "",
 });
 
 export const bridge = {
@@ -39,7 +41,7 @@ export const bridge = {
       toObj: pushNotifications,
       fromObj: instanceSettings.pushNotifications || {},
       defaultsObj: getDefaultSettings(),
-      keys: ["vapidPublicKey"],
+      keys: ["vapidPublicKey", "appId", "trackingDatasetId"],
     });
 
     return { pushNotifications };
@@ -56,7 +58,7 @@ export const bridge = {
         toObj: pushNotificationsSettings,
         fromObj: pushNotifications,
         defaultsObj: getDefaultSettings(),
-        keys: ["vapidPublicKey"],
+        keys: ["vapidPublicKey", "appId", "trackingDatasetId"],
       });
 
       if (Object.keys(pushNotificationsSettings).length > 0) {
@@ -74,6 +76,12 @@ export const bridge = {
         schema.shape({
           vapidPublicKey: string().required(
             "Please provide a VAPID public key for push notification authentication.",
+          ),
+          appId: string().required(
+            "Please provide an Application ID for push notification identification.",
+          ),
+          trackingDatasetId: string().required(
+            "Please provide a Tracking Dataset ID for push notification analytics.",
           ),
         }),
     }),
@@ -116,6 +124,30 @@ const PushNotificationsSection = ({ instanceFieldName }) => {
             label="VAPID Public Key"
             name={`${instanceFieldName}.pushNotifications.vapidPublicKey`}
             description="The VAPID public key for push notification authentication."
+            width="size-5000"
+            isRequired
+          />
+        </DataElementSelector>
+      </FormElementContainer>
+      <FormElementContainer>
+        <DataElementSelector>
+          <FormikTextField
+            data-test-id="appIdField"
+            label="Application ID"
+            name={`${instanceFieldName}.pushNotifications.appId`}
+            description="The App ID for push notification identification."
+            width="size-5000"
+            isRequired
+          />
+        </DataElementSelector>
+      </FormElementContainer>
+      <FormElementContainer>
+        <DataElementSelector>
+          <FormikTextField
+            data-test-id="trackingDatasetIdField"
+            label="Tracking Dataset ID"
+            name={`${instanceFieldName}.pushNotifications.trackingDatasetId`}
+            description="The Dataset ID for push notification tracking and analytics."
             width="size-5000"
             isRequired
           />
