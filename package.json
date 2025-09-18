@@ -116,7 +116,6 @@
     "jsdom": "^26.1.0",
     "lint-staged": "^16.1.6",
     "minimist": "^1.2.8",
-    "mockvisitor": "file:test/functional/runtime/mockVisitor",
     "parcel": "^2.15.4",
     "parcel-transformer-extension-name": "workspace:parcel-transformer-extension-name",
     "prettier": "^3.6.2",
