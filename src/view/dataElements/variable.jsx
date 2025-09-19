@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
 import { useField } from "formik";
-import { Content, Radio } from "@adobe/react-spectrum";
+import { Content, Link, Radio } from "@adobe/react-spectrum";
 import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
 import XdmVariable, {
@@ -66,7 +66,17 @@ const Schema = ({ xdmVariableContext, initInfo }) => {
         properties using Web SDK update variable actions. You can reference the
         variable data element just like any other data element. For example,
         inside of a send event action you can specify this data element as the
-        value for XDM.
+        value for XDM.{" "}
+        <Link>
+          <a
+            href="https://experienceleague.adobe.com/docs/experience-platform/edge/identity/id-sharing.html#tags-extension"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn more about the Variable data element type
+          </a>
+        </Link>
+        .
       </Content>
       <FormikRadioGroup
         label="Choose the property you want to populate"
