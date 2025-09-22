@@ -168,7 +168,7 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
       includedModules,
     });
 
-    await execute("pnpm", [
+    await execute("npm", [
       "exec",
       "rollup",
       "-c",
