@@ -459,8 +459,16 @@ const createExtensionManifest = ({ version }) => {
                       type: "string",
                       minLength: 1,
                     },
+                    appId: {
+                      type: "string",
+                      minLength: 1,
+                    },
+                    trackingDatasetId: {
+                      type: "string",
+                      minLength: 1,
+                    },
                   },
-                  required: ["vapidPublicKey"],
+                  required: ["vapidPublicKey", "trackingDatasetId", "appId"],
                   additionalProperties: false,
                 },
                 personalizationStorageEnabled: {
