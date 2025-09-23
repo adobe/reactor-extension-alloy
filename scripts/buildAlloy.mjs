@@ -170,6 +170,7 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
 
     await execute("npm", [
       "exec",
+      "--",
       "rollup",
       "-c",
       path.join(__dirname, "../rollup.config.mjs"),
