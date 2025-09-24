@@ -32,10 +32,8 @@ const getNamespacesMissingDescription = (link) => {
     <>
       The namespace you have entered is missing from one or more of your
       sandboxes. Make sure to create this namespace by following{" "}
-      <Link>
-        <a href={link} target="_blank" rel="noopener noreferrer">
-          the guide.
-        </a>
+      <Link href={link} target="_blank" rel="noopener noreferrer">
+        the guide.
       </Link>
     </>
   );

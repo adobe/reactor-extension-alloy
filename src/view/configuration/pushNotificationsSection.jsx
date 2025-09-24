@@ -14,7 +14,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { object, string } from "yup";
 import { useField } from "formik";
-import { View, InlineAlert, Content } from "@adobe/react-spectrum";
+import { View, InlineAlert, Content, Link } from "@adobe/react-spectrum";
 import SectionHeader from "../components/sectionHeader";
 import FormElementContainer from "../components/formElementContainer";
 import DataElementSelector from "../components/dataElementSelector";
@@ -117,6 +117,19 @@ const PushNotificationsSection = ({ instanceFieldName }) => {
       <SectionHeader>
         Push Notifications <BetaBadge />
       </SectionHeader>
+      <Content width="size-5000" marginBottom="size-200">
+        Push notifications require a service worker to function when your site
+        isn&lsquo;t actively open. The service worker runs in the background and
+        handles incoming notifications. See the documentation for{" "}
+        <Link
+          href="https://experienceleague.adobe.com/en/docs/experience-platform/web-sdk/commands/configure/pushnotifications#install-the-service-worker-javascript"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          installing the service worker JavaScript
+        </Link>
+        .
+      </Content>
       <FormElementContainer>
         <DataElementSelector>
           <FormikTextField

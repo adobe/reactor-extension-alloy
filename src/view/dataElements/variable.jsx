@@ -67,14 +67,12 @@ const Schema = ({ xdmVariableContext, initInfo }) => {
         variable data element just like any other data element. For example,
         inside of a send event action you can specify this data element as the
         value for XDM.{" "}
-        <Link>
-          <a
-            href="https://experienceleague.adobe.com/docs/experience-platform/edge/identity/id-sharing.html#tags-extension"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn more about the Variable data element type
-          </a>
+        <Link
+          href="https://experienceleague.adobe.com/docs/experience-platform/edge/identity/id-sharing.html#tags-extension"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn more about the Variable data element type
         </Link>
         .
       </Content>

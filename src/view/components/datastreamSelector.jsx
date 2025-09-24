@@ -125,14 +125,12 @@ const DatastreamSelector = ({
   const errorLoadingDatastreamsDescription = (
     <>
       {`You do not have enough permissions to fetch the ${selectedSandbox.title} sandbox configurations. See the documentation for `}
-      <Link>
-        <a
-          href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          data collection permission management
-        </a>
+      <Link
+        href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        data collection permission management
       </Link>{" "}
       for more information.
     </>
@@ -196,14 +194,12 @@ const DatastreamSelector = ({
         <Heading size="XXS">No datastreams</Heading>
         <Content>
           No datastreams exist for the selected sandbox. See{" "}
-          <Link>
-            <a
-              href="https://adobe.ly/3dt95he"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Configuring a datastream
-            </a>
+          <Link
+            href="https://adobe.ly/3dt95he"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Configuring a datastream
           </Link>{" "}
           for more information.
         </Content>
