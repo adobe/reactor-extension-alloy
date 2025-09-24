@@ -645,7 +645,7 @@ const EdgeConfigurationsSection = ({
       <FormElementContainer>
         <Content>
           <Link
-            href="https://experience.adobe.com/#/@unifiedjslab/sname:prod/data-collection/scramjet/new"
+            href="https://experience.adobe.com/#/data-collection/scramjet/new"
             target="_blank"
             rel="noopener noreferrer"
           >
