@@ -60,10 +60,12 @@ const FieldDescriptionAndError = ({
         >
           {message}
           {learnMoreLink && (
-            <Link>
-              <a href={learnMoreLink} target="_blank" rel="noopener noreferrer">
-                Learn more
-              </a>
+            <Link
+              href={learnMoreLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn more
             </Link>
           )}
         </View>

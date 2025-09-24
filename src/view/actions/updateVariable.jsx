@@ -446,14 +446,12 @@ const UpdateVariable = ({
       )}
       {dataElementsFirstPage.length > 0 && (
         <>
-          <Link>
-            <a
-              href="https://experienceleague.adobe.com/en/docs/experience-platform/tags/extensions/client/web-sdk/action-types#update-variable"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn more about the Update Variable action
-            </a>
+          <Link
+            href="https://experienceleague.adobe.com/en/docs/experience-platform/tags/extensions/client/web-sdk/action-types#update-variable"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Learn more about the Update Variable action
           </Link>
           <FormikPagedComboBox
             data-test-id="dataElementField"

@@ -33,14 +33,12 @@ const EdgeConfigurationSelectInputMethod = ({ name, initInfo, context }) => {
         </Heading>
         <Content>
           See the documentation for{" "}
-          <Link>
-            <a
-              href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              data collection permission management
-            </a>
+          <Link
+            href="https://experienceleague.adobe.com/docs/experience-platform/collection/permissions.html"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            data collection permission management
           </Link>{" "}
           for more information.
         </Content>

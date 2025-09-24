@@ -54,25 +54,21 @@ const xdmFieldDescription = (
   <>
     Provide a data element which returns an object matching your XDM schema. You
     may want to use the{" "}
-    <Link>
-      <a
-        href="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/data-element-types.html?lang=en#xdm-object"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        XDM Object
-      </a>
+    <Link
+      href="https://experienceleague.adobe.com/docs/experience-platform/edge/extension/data-element-types.html?lang=en#xdm-object"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      XDM Object
     </Link>{" "}
     data element type to build this object. You can also combine objects using
     the{" "}
-    <Link>
-      <a
-        href="https://experienceleague.adobe.com/docs/experience-platform/tags/extensions/adobe/core/overview.html?lang=en#merged-objects"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Merged Objects
-      </a>
+    <Link
+      href="https://experienceleague.adobe.com/docs/experience-platform/tags/extensions/adobe/core/overview.html?lang=en#merged-objects"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Merged Objects
     </Link>{" "}
     data element type from the Core extension.
   </>

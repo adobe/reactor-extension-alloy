@@ -47,14 +47,12 @@ export default class ErrorBoundary extends Component {
             <span>
               {" "}
               Click{" "}
-              <Link>
-                <a
-                  href={error.additionalInfoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  here
-                </a>
+              <Link
+                href={error.additionalInfoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                here
               </Link>{" "}
               for more information.
             </span>
