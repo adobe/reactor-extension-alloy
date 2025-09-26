@@ -11,7 +11,13 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-import { Item, InlineAlert, Heading, Content } from "@adobe/react-spectrum";
+import {
+  Item,
+  InlineAlert,
+  Heading,
+  Content,
+  Link,
+} from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
 import UserReportableError from "../../../errors/userReportableError";
@@ -221,6 +227,16 @@ const XdmVariable = ({
   return (
     <FieldSubset>
       <FormElementContainer>
+        <Content>
+          <Link
+            href="https://experience.adobe.com/#/data-collection/platform/workflow/schema-create"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Create a schema first,
+          </Link>{" "}
+          or choose an existing one below.
+        </Content>
         {(missingSavedSandbox || missingSavedSchema) && (
           <InlineAlert
             variant="notice"

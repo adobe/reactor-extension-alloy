@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Radio } from "@adobe/react-spectrum";
+import { Radio, Link, Content } from "@adobe/react-spectrum";
 import { object, string } from "yup";
 import { useField } from "formik";
 import SectionHeader from "../components/sectionHeader";
@@ -643,6 +643,16 @@ const EdgeConfigurationsSection = ({
         Datastreams
       </SectionHeader>
       <FormElementContainer>
+        <Content>
+          <Link
+            href="https://experience.adobe.com/#/data-collection/scramjet/new"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Create a datastream first,
+          </Link>{" "}
+          or choose an existing one below.
+        </Content>
         {
           // Each instance must have a unique org ID. Typically, the first instance will have
           // the org ID that matches the Launch user's active org ID.
