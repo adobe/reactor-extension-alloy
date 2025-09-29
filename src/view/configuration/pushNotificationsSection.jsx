@@ -75,13 +75,11 @@ export const bridge = {
       then: (schema) =>
         schema.shape({
           vapidPublicKey: string().required(
-            "Please provide a VAPID public key for push notification authentication.",
+            "Please provide a VAPID public key.",
           ),
-          appId: string().required(
-            "Please provide an Application ID for push notification identification.",
-          ),
+          appId: string().required("Please provide an Application ID."),
           trackingDatasetId: string().required(
-            "Please provide a Tracking Dataset ID for push notification analytics.",
+            "Please provide a Tracking Dataset ID.",
           ),
         }),
     }),
