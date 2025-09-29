@@ -127,6 +127,7 @@
     "rimraf": "^6.0.1",
     "rollup": "^4.50.1",
     "rollup-plugin-istanbul": "^5.0.0",
+    "serve": "^14.2.5",
     "staged-git-files": "^1.3.0",
     "testcafe": "^3.7.2",
     "testcafe-browser-provider-playwright": "^1.1.0",

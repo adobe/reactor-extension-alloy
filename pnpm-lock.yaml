@@ -217,6 +217,9 @@ importers:
       rollup-plugin-istanbul:
         specifier: ^5.0.0
         version: 5.0.0(rollup@4.50.2)
+      serve:
+        specifier: ^14.2.5
+        version: 14.2.5
       staged-git-files:
         specifier: ^1.3.0
         version: 1.3.0
