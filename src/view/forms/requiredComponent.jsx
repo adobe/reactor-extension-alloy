@@ -76,7 +76,9 @@ const RequiredComponent = (
     if (!componentEnabled) {
       return {};
     }
-    return wrapped(params);
+    return formOptions.wrapGetSettings
+      ? formOptions.wrapGetSettings(wrapped)(params)
+      : wrapped(params);
   };
 
   const {

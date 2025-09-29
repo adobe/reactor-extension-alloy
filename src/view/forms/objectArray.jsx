@@ -87,6 +87,7 @@ export default function objectArray(
   {
     name,
     label,
+    ariaLabel,
     singularLabel,
     dataElementDescription,
     objectKey,
@@ -261,6 +262,7 @@ export default function objectArray(
               name={`${namePrefix}${name}InputMethod`}
               orientation="horizontal"
               label={label}
+              aria-label={ariaLabel}
             >
               <Radio
                 data-test-id={`${namePrefix}${name}FormOption`}
