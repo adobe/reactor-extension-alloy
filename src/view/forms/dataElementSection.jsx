@@ -112,6 +112,7 @@ export default function dataElementSection(
           <FormikRadioGroup
             name={`${namePrefix}${name}InputMethod`}
             orientation="horizontal"
+            aria-label="Select the input method"
           >
             <Radio data-test-id={`${namePrefix}${name}FormOption`} value={FORM}>
               Enter values manually

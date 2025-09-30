@@ -237,6 +237,7 @@ const customMetadataSection = section(
     objectArray(
       {
         name: "customMetadata",
+        ariaLabel: "Custom metadata",
         singularLabel: "Custom Metadata",
         dataElementDescription:
           "Provide a data element that resolves to an array of objects with properties 'name' and 'value'.",
