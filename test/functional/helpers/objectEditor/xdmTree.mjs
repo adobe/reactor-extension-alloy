@@ -19,6 +19,15 @@ import {
 const xdmTree = createTestIdSelector("xdmTree");
 const displayNamesSwitch = createTestIdSelector("displayNamesSwitch");
 
+const escapeRegex = (value) => value.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&");
+const buildTitlePattern = (title) => {
+  const normalized = escapeRegex(title.trim()).replace(
+    /\s+/g,
+    "[\\s\\u200B-\\u200D\\uFEFF]*",
+  );
+  return new RegExp(`^${normalized}$`, "i");
+};
+
 const getIsElementInViewport = (selector) => {
   return ClientFunction(
     () => {
@@ -114,7 +123,7 @@ export default {
   node: (title) => {
     const titleSelector = xdmTree
       .find(createTestIdSelectorString("xdmTreeNodeTitleDisplayName"))
-      .withText(new RegExp(`^${title}$|^${title.toLowerCase()}$`, "i"))
+      .withText(buildTitlePattern(title))
       .parent(createTestIdSelectorString("xdmTreeNodeTitle"))
       .nth(0);
 
