@@ -70,7 +70,9 @@ test("allows user to provide individual object attribute values", async () => {
   const extensionViewController = await initializeExtensionView();
   await schemaField.openMenu();
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("_unifiedjsqeonly").expectExists();
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await xdmTree.node("vendor").expectExists();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("name").click();
   await stringEdit.enterValue("Adobe");
@@ -359,6 +361,7 @@ test("allows user to enter data element value for property with boolean type", a
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("isLicensed").click();
+  await booleanEdit.selectDataElementInputMethod();
   await booleanEdit.enterDataElementValue("%isLicensed%");
 
   await extensionViewController.expectIsValid();

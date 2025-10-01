@@ -180,7 +180,7 @@ const createExpectTabSelected = (selector) => async () => {
 // You may need to scroll the menu to be able to assert that certain items exist.
 const createSelectMenuOption = (menuSelector) => async (label) => {
   // wait for the menu to appear
-  await menuSelector();
+  await t.expect(menuSelector.exists).ok();
   const option = menuSelector.find(menuItemCssSelector).withExactText(label);
   await t.click(option);
 };

@@ -62,12 +62,14 @@ const create = (node) => {
     .find(".ant-tree-switcher");
   return {
     click: async () => {
+      await t.expect(node.exists).ok();
       await t.click(node);
     },
     toggleExpansion: async () => {
+      await t.expect(expansionToggle.exists).ok();
       await t.click(expansionToggle);
       // wait for animation to finish
-      await t.wait(100);
+      await t.wait(300);
     },
     expectInViewport: async () => {
       const isElementInViewport = await getIsElementInViewport(node);
