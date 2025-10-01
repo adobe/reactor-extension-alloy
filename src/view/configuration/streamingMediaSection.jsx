@@ -39,18 +39,17 @@ export const bridge = {
       return bridge.getInstanceDefaults();
     }
 
-    const streamingMedia = Object.keys(getDefaultSettings()).reduce(
-      (acc, k) => {
-        if (instanceSettings.streamingMedia[k] !== undefined) {
-          acc[k] = instanceSettings.streamingMedia[k];
-        } else {
-          acc[k] = "";
-        }
+    const defaultSettings = getDefaultSettings();
+    const streamingMedia = Object.keys(defaultSettings).reduce((acc, k) => {
+      if (instanceSettings.streamingMedia[k] !== undefined) {
+        acc[k] = instanceSettings.streamingMedia[k];
+      } else {
+        acc[k] = defaultSettings[k] || "";
+      }
 
-        return acc;
-      },
-      {},
-    );
+      return acc;
+    }, {});
+
     return { streamingMedia };
   },
 
@@ -67,16 +66,20 @@ export const bridge = {
           mainPingInterval,
         },
       } = instanceValues;
+
       const streamingMedia = { channel, playerName };
       if (appVersion !== "") {
         streamingMedia.appVersion = appVersion;
       }
+
       if (adPingInterval !== 10) {
         streamingMedia.adPingInterval = adPingInterval;
       }
+
       if (mainPingInterval !== 10) {
         streamingMedia.mainPingInterval = mainPingInterval;
       }
+
       if (channel && playerName) {
         instanceSettings.streamingMedia = streamingMedia;
       }
