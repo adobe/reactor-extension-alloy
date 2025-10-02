@@ -13,6 +13,7 @@ governing permissions and limitations under the License.
 import { t } from "testcafe";
 import createNetworkLogger from "../../helpers/runtime/createNetworkLogger.mjs";
 import appendLaunchLibrary from "../../helpers/runtime/appendLaunchLibrary.mjs";
+import getResponseBody from "../../helpers/runtime/getResponseBody.mjs";
 import { TEST_PAGE } from "../../helpers/runtime/constants/url.mjs";
 
 const networkLogger = createNetworkLogger();
@@ -172,10 +173,6 @@ test("Sends an event with a data element to enable/disable a service via overrid
   // "true" should be deleted from the response body
   const requestBody = JSON.parse(request.request.body);
   await t.expect(requestBody.meta?.com_adobe_identity?.enabled).eql(undefined);
-  let responseBody = request.response.body;
-  if (responseBody.type === "Buffer") {
-    responseBody = Buffer.from(responseBody.data).toString("utf-8");
-  }
-  const body = JSON.parse(responseBody);
+  const body = JSON.parse(getResponseBody(request));
   await t.expect(body.meta?.com_adobe_identity?.enabled).eql(undefined);
 });
