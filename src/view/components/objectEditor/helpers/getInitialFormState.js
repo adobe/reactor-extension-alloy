@@ -139,11 +139,12 @@ export default ({
   updateMode = false,
   transforms = {},
   existingFormStateNode,
+  nodePath = "",
 }) => {
   return getInitialFormStateNode({
     schema,
     value,
-    nodePath: "",
+    nodePath,
     updateMode,
     transforms,
     existingFormStateNode,
