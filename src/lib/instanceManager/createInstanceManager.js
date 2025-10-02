@@ -55,6 +55,10 @@ module.exports = ({
       ...options
     }) => {
       const instance = createCustomInstance({ name, components });
+      var queue;
+      if (window[name]) {
+        queue = window[name].q;
+      }
       window[name] = instance;
       if (!window.__alloyNS) {
         window.__alloyNS = [];
@@ -80,6 +84,10 @@ module.exports = ({
       turbine.onDebugChanged((enabled) => {
         instance("setDebug", { enabled });
       });
+      if (queue) {
+        queue.push = instance;
+        queue.forEach(instance);
+      }
     },
   );
 
