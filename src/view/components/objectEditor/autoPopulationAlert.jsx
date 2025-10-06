@@ -23,7 +23,11 @@ const AutoPopulationAlert = ({ formStateNode }) => {
   const { autoPopulationSource, contextKey, schema } = formStateNode;
 
   return (
-    <InlineAlert variant="info" width="size-5000">
+    <InlineAlert
+      data-test-id="autoPopulationAlert"
+      variant="info"
+      width="size-5000"
+    >
       <Heading size="XXS">Auto-populated field</Heading>
       <Content>
         {autoPopulationSource === ALWAYS && (
