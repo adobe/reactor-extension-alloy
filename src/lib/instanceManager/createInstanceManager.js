@@ -55,10 +55,7 @@ module.exports = ({
       ...options
     }) => {
       const instance = createCustomInstance({ name, components });
-      var queue;
-      if (window[name]) {
-        queue = window[name].q;
-      }
+      const queue = window[name]?.q || [];
       window[name] = instance;
       if (!window.__alloyNS) {
         window.__alloyNS = [];
@@ -74,6 +71,7 @@ module.exports = ({
 
       options.edgeConfigOverrides = getConfigOverrides(options);
 
+      delete options.sandbox; // FOR LOCAL TESTING, do not commit
       instance("configure", {
         ...options,
         datastreamId: computedEdgeConfigId,
@@ -84,10 +82,12 @@ module.exports = ({
       turbine.onDebugChanged((enabled) => {
         instance("setDebug", { enabled });
       });
-      if (queue) {
-        queue.push = instance;
-        queue.forEach(instance);
-      }
+
+      queue.forEach(([resolve, reject, args]) => {
+        instance(...args)
+          .then(resolve)
+          .catch(reject);
+      });
     },
   );
 

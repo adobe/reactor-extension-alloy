@@ -222,4 +222,81 @@ describe("Instance Manager", () => {
       com_adobe_target: { propertyToken: "development-property-token" },
     });
   });
+
+  it("flushes queued commands after configuration", async () => {
+    const resolvedValue1 = { result: "success1" };
+    const resolvedValue2 = { result: "success2" };
+    const resolve1 = vi.fn();
+    const resolve2 = vi.fn();
+    const reject1 = vi.fn();
+    const reject2 = vi.fn();
+
+    mockWindow.alloy1 = {
+      q: [
+        [resolve1, reject1, ["sendEvent", { xdm: { test: 1 } }]],
+        [resolve2, reject2, ["getIdentity"]],
+      ],
+    };
+
+    alloy1
+      .mockResolvedValueOnce(undefined)
+      .mockResolvedValueOnce(resolvedValue1)
+      .mockResolvedValueOnce(resolvedValue2);
+
+    build();
+
+    expect(alloy1).toHaveBeenCalledWith("configure", expect.any(Object));
+    expect(alloy1).toHaveBeenCalledWith("sendEvent", { xdm: { test: 1 } });
+    expect(alloy1).toHaveBeenCalledWith("getIdentity");
+
+    await vi.waitFor(() => {
+      expect(resolve1).toHaveBeenCalledWith(resolvedValue1);
+      expect(resolve2).toHaveBeenCalledWith(resolvedValue2);
+    });
+
+    expect(reject1).not.toHaveBeenCalled();
+    expect(reject2).not.toHaveBeenCalled();
+  });
+
+  it("handles errors in queued commands", async () => {
+    const error = new Error("Command failed");
+    const resolve1 = vi.fn();
+    const reject1 = vi.fn();
+
+    mockWindow.alloy1 = {
+      q: [[resolve1, reject1, ["sendEvent", { xdm: { test: 1 } }]]],
+    };
+
+    alloy1.mockResolvedValueOnce(undefined).mockRejectedValueOnce(error);
+
+    build();
+
+    await vi.waitFor(() => {
+      expect(reject1).toHaveBeenCalledWith(error);
+    });
+
+    expect(resolve1).not.toHaveBeenCalled();
+  });
+
+  it("handles empty queue when no commands were queued", () => {
+    mockWindow.alloy1 = {
+      q: [],
+    };
+
+    alloy1.mockResolvedValueOnce(undefined);
+
+    build();
+
+    expect(alloy1).toHaveBeenCalledWith("configure", expect.any(Object));
+    expect(alloy1).toHaveBeenCalledTimes(1);
+  });
+
+  it("handles missing queue when window[name] does not exist", () => {
+    alloy1.mockResolvedValueOnce(undefined);
+
+    build();
+
+    expect(alloy1).toHaveBeenCalledWith("configure", expect.any(Object));
+    expect(alloy1).toHaveBeenCalledTimes(1);
+  });
 });
