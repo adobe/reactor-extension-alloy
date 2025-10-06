@@ -71,7 +71,6 @@ module.exports = ({
 
       options.edgeConfigOverrides = getConfigOverrides(options);
 
-      delete options.sandbox; // FOR LOCAL TESTING, do not commit
       instance("configure", {
         ...options,
         datastreamId: computedEdgeConfigId,
