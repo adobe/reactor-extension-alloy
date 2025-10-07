@@ -107,10 +107,15 @@ const PartsPopulationStrategyForm = ({
                   defaultValue = "";
                 }
 
+                const itemNodePath = fieldName
+                  ? `${fieldName}.items.${items.length}`
+                  : `items.${items.length}`;
+
                 const itemFormStateNode = getInitialFormState({
                   schema: itemSchema,
                   value: defaultValue,
                   updateMode,
+                  nodePath: itemNodePath,
                 });
                 arrayHelpers.push(itemFormStateNode);
               }}
