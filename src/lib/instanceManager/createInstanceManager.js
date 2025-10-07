@@ -55,13 +55,9 @@ module.exports = ({
       ...options
     }) => {
       const instance = createCustomInstance({ name, components });
-      const queue = window[name]?.q || [];
-      window[name] = instance;
       if (!window.__alloyNS) {
         window.__alloyNS = [];
       }
-      window.__alloyNS.push(name);
-      instanceByName[name] = instance;
       const environment = turbine.environment && turbine.environment.stage;
 
       const computedEdgeConfigId =
@@ -82,11 +78,20 @@ module.exports = ({
         instance("setDebug", { enabled });
       });
 
-      queue.forEach(([resolve, reject, args]) => {
-        instance(...args)
-          .then(resolve)
-          .catch(reject);
-      });
+      if (window[name] && window[name].q) {
+        const instanceFunction = ([resolve, reject, args]) => {
+          instance(...args)
+            .then(resolve)
+            .catch(reject);
+        };
+        const queue = window[name].q;
+        queue.push = instanceFunction;
+        queue.forEach(instanceFunction);
+      } else {
+        window.__alloyNS.push(name);
+        window[name] = instance;
+      }
+      instanceByName[name] = instance;
     },
   );
 
