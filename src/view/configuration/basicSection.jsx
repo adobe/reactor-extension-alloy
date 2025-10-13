@@ -28,7 +28,9 @@ export const bridge = {
     name: "alloy",
     persistedName: undefined,
     orgId: initInfo.company.orgId,
-    edgeDomain: "edge.adobedc.net",
+    edgeDomain: initInfo.company.tenantId
+      ? `${initInfo.company.tenantId}.data.adobedc.net`
+      : "edge.adobedc.net",
   }),
   getInitialInstanceValues: ({ initInfo, instanceSettings }) => {
     const instanceValues = {};
