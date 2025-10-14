@@ -13,7 +13,14 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { useFormikContext } from "formik";
-import { Breadcrumbs, Checkbox, Flex, Item, View } from "@adobe/react-spectrum";
+import {
+  Breadcrumbs,
+  Checkbox,
+  Flex,
+  Item,
+  View,
+  Text,
+} from "@adobe/react-spectrum";
 import getNodeEditData from "./helpers/getNodeEditData";
 import AutoPopulationAlert from "./autoPopulationAlert";
 import {
@@ -110,6 +117,21 @@ const NodeEdit = (props) => {
           <Heading data-test-id="heading" size="S">
             {displayName}
           </Heading>
+          <Text>{formStateNode.schema.description}</Text>
+          {"meta:enum" in formStateNode.schema && (
+            <View>
+              <Text>Valid values:</Text>
+              <ul>
+                {Object.entries(formStateNode.schema["meta:enum"]).map(
+                  ([value, description]) => (
+                    <li key={value}>
+                      <strong>{value}</strong>: {description}
+                    </li>
+                  ),
+                )}
+              </ul>
+            </View>
+          )}
         </>
       )}
       {formStateNode.autoPopulationSource !== NONE && (
@@ -142,7 +164,7 @@ const NodeEdit = (props) => {
             <FormikCheckbox
               data-test-id="clearField"
               name={`${fieldName}.transform.clear`}
-              description="Checking this box will cause this field to be deleted before setting any values. Fields that are cleared appear with a delet icon in the tree."
+              description="Checking this box will cause this field to be deleted before setting any values. Fields that are cleared appear with a delete icon in the tree."
               width="size-5000"
               isDisabled={hasClearedAncestor}
             >
