@@ -14,6 +14,7 @@ import { t } from "testcafe";
 import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
 import arrayEdit from "../../../helpers/objectEditor/arrayEdit.mjs";
 import booleanEdit from "../../../helpers/objectEditor/booleanEdit.mjs";
+import enumEdit from "../../../helpers/objectEditor/enumEdit.mjs";
 import integerEdit from "../../../helpers/objectEditor/integerEdit.mjs";
 import numberEdit from "../../../helpers/objectEditor/numberEdit.mjs";
 import objectEdit from "../../../helpers/objectEditor/objectEdit.mjs";
@@ -361,7 +362,6 @@ test("allows user to enter data element value for property with boolean type", a
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("isLicensed").click();
-  await booleanEdit.selectDataElementInputMethod();
   await booleanEdit.enterDataElementValue("%isLicensed%");
 
   await extensionViewController.expectIsValid();
@@ -400,7 +400,6 @@ test("allows user to select true constant value for property with boolean type",
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("isLicensed").click();
-  await booleanEdit.selectConstantInputMethod();
   await booleanEdit.selectConstantTrueValueField();
 
   await extensionViewController.expectIsValid();
@@ -439,7 +438,6 @@ test("allows user to select false constant value for property with boolean type"
   await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
   await xdmTree.node("vendor").toggleExpansion();
   await xdmTree.node("isLicensed").click();
-  await booleanEdit.selectConstantInputMethod();
   await booleanEdit.selectConstantFalseValueField();
 
   await extensionViewController.expectIsValid();
@@ -471,18 +469,68 @@ test("initializes form fields with boolean constant value of false", async () =>
   await booleanEdit.expectConstantFalseValue();
 });
 
-test("allows user to select no constant value for property with boolean type", async () => {
+test("allows user to select enum value for property with enum type", async () => {
   const extensionViewController = await initializeExtensionView();
   await schemaField.openMenu();
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
-  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
-  await xdmTree.node("vendor").toggleExpansion();
-  await xdmTree.node("isLicensed").click();
-  await booleanEdit.selectConstantInputMethod();
-  await booleanEdit.selectConstantNoValueField();
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("type").click();
+  await enumEdit.selectEnumValue("browser");
 
   await extensionViewController.expectIsValid();
-  await extensionViewController.expectSettingsToContainData({});
+  await extensionViewController.expectSettingsToContainData({
+    environment: {
+      type: "browser",
+    },
+  });
+});
+
+test("initializes form fields with enum value", async () => {
+  await initializeExtensionView({
+    settings: {
+      schema,
+      data: {
+        environment: {
+          type: "application",
+        },
+      },
+    },
+  });
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("type").click();
+  await enumEdit.expectEnumValue("application");
+});
+
+test("allows user to enter custom value for property with enum type", async () => {
+  const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("type").click();
+  await enumEdit.enterCustomValue("%customType%");
+
+  await extensionViewController.expectIsValid();
+  await extensionViewController.expectSettingsToContainData({
+    environment: {
+      type: "%customType%",
+    },
+  });
+});
+
+test("initializes form fields with custom enum value", async () => {
+  await initializeExtensionView({
+    settings: {
+      schema,
+      data: {
+        environment: {
+          type: "%customType%",
+        },
+      },
+    },
+  });
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("type").click();
+  await enumEdit.expectValue("%customType%");
 });
 
 test("disables auto-populated fields", async () => {

@@ -19,7 +19,7 @@ import DataElementSelector from "../dataElementSelector";
  * The form for editing a number or integer field.
  */
 const NumberOrIntegerEdit = (props) => {
-  const { fieldName } = props;
+  const { displayName, fieldName, description } = props;
 
   return (
     <div>
@@ -27,8 +27,9 @@ const NumberOrIntegerEdit = (props) => {
         <FormikTextField
           data-test-id="valueField"
           name={`${fieldName}.value`}
-          label="Value"
+          label={displayName}
           width="size-5000"
+          description={description}
         />
       </DataElementSelector>
     </div>
@@ -36,7 +37,9 @@ const NumberOrIntegerEdit = (props) => {
 };
 
 NumberOrIntegerEdit.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  description: PropTypes.string,
 };
 
 export default NumberOrIntegerEdit;

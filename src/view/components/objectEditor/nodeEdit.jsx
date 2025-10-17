@@ -13,14 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { useFormikContext } from "formik";
-import {
-  Breadcrumbs,
-  Checkbox,
-  Flex,
-  Item,
-  View,
-  Text,
-} from "@adobe/react-spectrum";
+import { Breadcrumbs, Checkbox, Flex, Item, View } from "@adobe/react-spectrum";
 import getNodeEditData from "./helpers/getNodeEditData";
 import AutoPopulationAlert from "./autoPopulationAlert";
 import {
@@ -31,6 +24,7 @@ import {
   OBJECT,
   OBJECT_JSON,
   OBJECT_ANALYTICS,
+  ENUM,
 } from "./constants/schemaType";
 import ArrayEdit from "./arrayEdit";
 import BooleanEdit from "./booleanEdit";
@@ -39,8 +33,8 @@ import ObjectJsonEdit from "./objectJsonEdit";
 import ObjectAnalyticsEdit from "./objectAnalyticsEdit";
 import NumberEdit from "./numberEdit";
 import ObjectEdit from "./objectEdit";
+import EnumEdit from "./enumEdit";
 import StringEdit from "./stringEdit";
-import Heading from "../typography/heading";
 import { ALWAYS, NONE } from "./constants/autoPopulationSource";
 import "./nodeEdit.css";
 import FormikCheckbox from "../formikReactSpectrum3/formikCheckbox";
@@ -62,6 +56,8 @@ const getViewBySchemaType = (schemaType) => {
       return ObjectJsonEdit;
     case OBJECT_ANALYTICS:
       return ObjectAnalyticsEdit;
+    case ENUM:
+      return EnumEdit;
     default:
       return StringEdit;
   }
@@ -86,7 +82,11 @@ const NodeEdit = (props) => {
     nodeId: selectedNodeId,
   });
 
-  const TypeSpecificNodeEdit = getViewBySchemaType(formStateNode.schema.type);
+  console.log("schema", formStateNode.schema);
+
+  const TypeSpecificNodeEdit = getViewBySchemaType(
+    formStateNode.schema["meta:enum"] ? ENUM : formStateNode.schema.type,
+  );
 
   return (
     <Flex
@@ -96,43 +96,20 @@ const NodeEdit = (props) => {
       direction="column"
     >
       {!verticalLayout && (
-        <>
-          <View
-            data-test-id="breadcrumb"
-            UNSAFE_className="NodeEdit-breadcrumbs"
-          >
-            {
-              // There's currently a known error that occurs when Breadcrumbs
-              // is unmounted, but it doesn't seem to affect the UX.
-              // https://github.com/adobe/react-spectrum/issues/1979
-            }
-            {breadcrumb.length > 1 && (
-              <Breadcrumbs onAction={(nodeId) => onNodeSelect(nodeId)}>
-                {breadcrumb.map((item) => (
-                  <Item key={item.nodeId}>{item.label}</Item>
-                ))}
-              </Breadcrumbs>
-            )}
-          </View>
-          <Heading data-test-id="heading" size="S">
-            {displayName}
-          </Heading>
-          <Text>{formStateNode.schema.description}</Text>
-          {"meta:enum" in formStateNode.schema && (
-            <View>
-              <Text>Valid values:</Text>
-              <ul>
-                {Object.entries(formStateNode.schema["meta:enum"]).map(
-                  ([value, description]) => (
-                    <li key={value}>
-                      <strong>{value}</strong>: {description}
-                    </li>
-                  ),
-                )}
-              </ul>
-            </View>
+        <View data-test-id="breadcrumb" UNSAFE_className="NodeEdit-breadcrumbs">
+          {
+            // There's currently a known error that occurs when Breadcrumbs
+            // is unmounted, but it doesn't seem to affect the UX.
+            // https://github.com/adobe/react-spectrum/issues/1979
+          }
+          {breadcrumb.length > 1 && (
+            <Breadcrumbs onAction={(nodeId) => onNodeSelect(nodeId)}>
+              {breadcrumb.map((item) => (
+                <Item key={item.nodeId}>{item.label}</Item>
+              ))}
+            </Breadcrumbs>
           )}
-        </>
+        </View>
       )}
       {formStateNode.autoPopulationSource !== NONE && (
         <AutoPopulationAlert formStateNode={formStateNode} />
@@ -140,9 +117,14 @@ const NodeEdit = (props) => {
       {formStateNode.autoPopulationSource !== ALWAYS && (
         <>
           <TypeSpecificNodeEdit
+            displayName={displayName}
             fieldName={fieldName}
             onNodeSelect={onNodeSelect}
             verticalLayout={verticalLayout}
+            validValues={Object.entries(
+              formStateNode.schema["meta:enum"] || {},
+            ).map(([key, value]) => ({ value: key, label: value }))}
+            description={formStateNode.schema.description}
           />
           {formStateNode.updateMode && hasClearedAncestor && (
             <FieldDescriptionAndError

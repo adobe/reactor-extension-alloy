@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Radio } from "@adobe/react-spectrum";
+import { Radio, Text } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
@@ -23,7 +23,12 @@ import FormElementContainer from "../formElementContainer";
 /**
  * The form for editing a node that is an object type.
  */
-const ObjectEdit = ({ fieldName, verticalLayout = false }) => {
+const ObjectEdit = ({
+  displayName,
+  fieldName,
+  verticalLayout = false,
+  description,
+}) => {
   const [{ value: formStateNode }] = useField(fieldName);
 
   const { isPartsPopulationStrategySupported, populationStrategy } =
@@ -31,6 +36,7 @@ const ObjectEdit = ({ fieldName, verticalLayout = false }) => {
 
   return (
     <FormElementContainer>
+      <Text>{description}</Text>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
           label="Population strategy"
@@ -50,7 +56,7 @@ const ObjectEdit = ({ fieldName, verticalLayout = false }) => {
           <FormikTextField
             data-test-id="valueField"
             name={`${fieldName}.value`}
-            label="Data element"
+            label={displayName}
             description="This data element should resolve to an object."
             width="size-5000"
           />
@@ -66,8 +72,10 @@ const ObjectEdit = ({ fieldName, verticalLayout = false }) => {
 };
 
 ObjectEdit.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   verticalLayout: PropTypes.bool,
+  description: PropTypes.string,
 };
 
 export default ObjectEdit;

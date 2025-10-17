@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
-
+import { ENUM } from "../constants/schemaType";
 /**
  * The model representing a node on the XDM tree.
  * @typedef {Object} TreeNode
@@ -71,7 +71,7 @@ const getTreeNode = ({
     key: id,
     id,
     displayName: nodeDisplayName,
-    type: schema.type,
+    type: schema["meta:enum"] ? ENUM : schema.type,
     disabled: isAlwaysDisabled || isAncestorUsingWholePopulationStrategy,
     title: treeNodeComponent,
     clear: formStateNode.transform.clear && !isAncestorCleared,

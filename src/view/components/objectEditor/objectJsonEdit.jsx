@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import { FieldArray, useField, useFormikContext } from "formik";
-import { Radio, ActionButton, Well, Flex } from "@adobe/react-spectrum";
+import { Radio, ActionButton, Well, Flex, Text } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
 import FormikTextArea from "../formikReactSpectrum3/formikTextArea";
@@ -32,11 +32,12 @@ const getEmptyItem = () => ({ key: "", value: "" });
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
  */
-const WholePopulationStrategyForm = ({ fieldName }) => {
+const WholePopulationStrategyForm = ({ displayName, fieldName }) => {
   return (
     <DataElementSelector>
       <FormikTextArea
         data-test-id="valueField"
+        label={displayName}
         name={`${fieldName}.value`}
         aria-label="Value"
         description={
@@ -51,6 +52,7 @@ const WholePopulationStrategyForm = ({ fieldName }) => {
 };
 
 WholePopulationStrategyForm.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
 };
 
@@ -189,7 +191,7 @@ const updateRows = ({
  */
 const ObjectJsonEdit = (props) => {
   const { submitForm } = useFormikContext();
-  const { fieldName } = props;
+  const { displayName, fieldName, description } = props;
   const [{ value: formStateNode }] = useField(fieldName);
   const [, , { setValue }] = useField(`${fieldName}.value`);
   const [, , { setValue: setItemsValue }] = useField(`${fieldName}.items`);
@@ -210,6 +212,7 @@ const ObjectJsonEdit = (props) => {
 
   return (
     <FormElementContainer>
+      <Text>{description}</Text>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
           aria-label="Population strategy"
@@ -226,7 +229,10 @@ const ObjectJsonEdit = (props) => {
         </FormikRadioGroup>
       )}
       {populationStrategy === WHOLE ? (
-        <WholePopulationStrategyForm fieldName={fieldName} />
+        <WholePopulationStrategyForm
+          displayName={displayName}
+          fieldName={fieldName}
+        />
       ) : (
         <PartsPopulationStrategyForm fieldName={fieldName} items={items} />
       )}
@@ -235,7 +241,9 @@ const ObjectJsonEdit = (props) => {
 };
 
 ObjectJsonEdit.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  description: PropTypes.string,
 };
 
 export default ObjectJsonEdit;
