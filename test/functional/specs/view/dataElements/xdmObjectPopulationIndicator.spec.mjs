@@ -136,7 +136,6 @@ test("show correct population amount for arrays", async () => {
     title: "boolean true",
     field: "isLicensed",
     async set() {
-      await booleanEdit.selectConstantInputMethod();
       await booleanEdit.selectConstantTrueValueField();
     },
   },
@@ -144,7 +143,6 @@ test("show correct population amount for arrays", async () => {
     title: "boolean false",
     field: "isLicensed",
     async set() {
-      await booleanEdit.selectConstantInputMethod();
       await booleanEdit.selectConstantFalseValueField();
     },
   },
@@ -172,7 +170,5 @@ test("shows empty population indicator for booleans with No Value selected", asy
   await xdmTree.node("isLicensed").click();
   const isLicensedPop = xdmTree.node("isLicensed").populationIndicator;
   await isLicensedPop.expectEmpty();
-  await booleanEdit.selectConstantInputMethod();
-  await booleanEdit.selectConstantNoValueField();
   await isLicensedPop.expectEmpty();
 });

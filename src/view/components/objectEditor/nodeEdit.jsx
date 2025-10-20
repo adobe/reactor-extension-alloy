@@ -24,6 +24,7 @@ import {
   OBJECT,
   OBJECT_JSON,
   OBJECT_ANALYTICS,
+  ENUM,
 } from "./constants/schemaType";
 import ArrayEdit from "./arrayEdit";
 import BooleanEdit from "./booleanEdit";
@@ -32,8 +33,8 @@ import ObjectJsonEdit from "./objectJsonEdit";
 import ObjectAnalyticsEdit from "./objectAnalyticsEdit";
 import NumberEdit from "./numberEdit";
 import ObjectEdit from "./objectEdit";
+import EnumEdit from "./enumEdit";
 import StringEdit from "./stringEdit";
-import Heading from "../typography/heading";
 import { ALWAYS, NONE } from "./constants/autoPopulationSource";
 import "./nodeEdit.css";
 import FormikCheckbox from "../formikReactSpectrum3/formikCheckbox";
@@ -55,6 +56,8 @@ const getViewBySchemaType = (schemaType) => {
       return ObjectJsonEdit;
     case OBJECT_ANALYTICS:
       return ObjectAnalyticsEdit;
+    case ENUM:
+      return EnumEdit;
     default:
       return StringEdit;
   }
@@ -79,7 +82,25 @@ const NodeEdit = (props) => {
     nodeId: selectedNodeId,
   });
 
-  const TypeSpecificNodeEdit = getViewBySchemaType(formStateNode.schema.type);
+  const schemaType = formStateNode.schema.enum
+    ? ENUM
+    : formStateNode.schema.type;
+
+  const TypeSpecificNodeEdit = getViewBySchemaType(schemaType);
+
+  const typeSpecificNodeEditProps = {
+    displayName,
+    fieldName,
+    onNodeSelect,
+    verticalLayout,
+    description: formStateNode.schema.description,
+  };
+
+  if (formStateNode.schema["meta:enum"]) {
+    typeSpecificNodeEditProps.possibleValues = Object.entries(
+      formStateNode.schema["meta:enum"] || {},
+    ).map(([key, value]) => ({ value: key, label: value }));
+  }
 
   return (
     <Flex
@@ -89,39 +110,27 @@ const NodeEdit = (props) => {
       direction="column"
     >
       {!verticalLayout && (
-        <>
-          <View
-            data-test-id="breadcrumb"
-            UNSAFE_className="NodeEdit-breadcrumbs"
-          >
-            {
-              // There's currently a known error that occurs when Breadcrumbs
-              // is unmounted, but it doesn't seem to affect the UX.
-              // https://github.com/adobe/react-spectrum/issues/1979
-            }
-            {breadcrumb.length > 1 && (
-              <Breadcrumbs onAction={(nodeId) => onNodeSelect(nodeId)}>
-                {breadcrumb.map((item) => (
-                  <Item key={item.nodeId}>{item.label}</Item>
-                ))}
-              </Breadcrumbs>
-            )}
-          </View>
-          <Heading data-test-id="heading" size="S">
-            {displayName}
-          </Heading>
-        </>
+        <View data-test-id="breadcrumb" UNSAFE_className="NodeEdit-breadcrumbs">
+          {
+            // There's currently a known error that occurs when Breadcrumbs
+            // is unmounted, but it doesn't seem to affect the UX.
+            // https://github.com/adobe/react-spectrum/issues/1979
+          }
+          {breadcrumb.length > 1 && (
+            <Breadcrumbs onAction={(nodeId) => onNodeSelect(nodeId)}>
+              {breadcrumb.map((item) => (
+                <Item key={item.nodeId}>{item.label}</Item>
+              ))}
+            </Breadcrumbs>
+          )}
+        </View>
       )}
       {formStateNode.autoPopulationSource !== NONE && (
         <AutoPopulationAlert formStateNode={formStateNode} />
       )}
       {formStateNode.autoPopulationSource !== ALWAYS && (
         <>
-          <TypeSpecificNodeEdit
-            fieldName={fieldName}
-            onNodeSelect={onNodeSelect}
-            verticalLayout={verticalLayout}
-          />
+          <TypeSpecificNodeEdit {...typeSpecificNodeEditProps} />
           {formStateNode.updateMode && hasClearedAncestor && (
             <FieldDescriptionAndError
               description="Checking this box will cause this field to be deleted before setting any values. A field further up in the object is already cleared. Fields that are cleared appear with a delete icon in the tree."
@@ -142,7 +151,7 @@ const NodeEdit = (props) => {
             <FormikCheckbox
               data-test-id="clearField"
               name={`${fieldName}.transform.clear`}
-              description="Checking this box will cause this field to be deleted before setting any values. Fields that are cleared appear with a delet icon in the tree."
+              description="Checking this box will cause this field to be deleted before setting any values. Fields that are cleared appear with a delete icon in the tree."
               width="size-5000"
               isDisabled={hasClearedAncestor}
             >

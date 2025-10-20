@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { FieldArray, useField } from "formik";
-import { Radio, Button, ActionButton, Flex } from "@adobe/react-spectrum";
+import { Radio, Button, ActionButton, Flex, Text } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
@@ -29,13 +29,13 @@ import FormElementContainer from "../formElementContainer";
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
  */
-const WholePopulationStrategyForm = ({ fieldName }) => {
+const WholePopulationStrategyForm = ({ displayName, fieldName }) => {
   return (
     <DataElementSelector>
       <FormikTextField
         data-test-id="valueField"
         name={`${fieldName}.value`}
-        label="Data element"
+        label={displayName}
         description="This data element should resolve to an array."
         width="size-5000"
       />
@@ -44,6 +44,7 @@ const WholePopulationStrategyForm = ({ fieldName }) => {
 };
 
 WholePopulationStrategyForm.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
 };
 
@@ -142,7 +143,7 @@ PartsPopulationStrategyForm.propTypes = {
  * The form for editing a node that is an array type.
  */
 const ArrayEdit = (props) => {
-  const { fieldName, onNodeSelect } = props;
+  const { displayName, fieldName, onNodeSelect, description } = props;
   const [{ value: formStateNode }] = useField(fieldName);
 
   const {
@@ -155,6 +156,7 @@ const ArrayEdit = (props) => {
 
   return (
     <FormElementContainer>
+      <Text>{description}</Text>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
           label="Population strategy"
@@ -171,7 +173,10 @@ const ArrayEdit = (props) => {
       )}
       <div>
         {populationStrategy === WHOLE ? (
-          <WholePopulationStrategyForm fieldName={fieldName} />
+          <WholePopulationStrategyForm
+            displayName={displayName}
+            fieldName={fieldName}
+          />
         ) : (
           <PartsPopulationStrategyForm
             fieldName={fieldName}
@@ -187,8 +192,10 @@ const ArrayEdit = (props) => {
 };
 
 ArrayEdit.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   onNodeSelect: PropTypes.func.isRequired,
+  description: PropTypes.string,
 };
 
 export default ArrayEdit;
