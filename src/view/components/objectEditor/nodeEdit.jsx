@@ -82,11 +82,24 @@ const NodeEdit = (props) => {
     nodeId: selectedNodeId,
   });
 
-  console.log("schema", formStateNode.schema);
+  const schemaType = formStateNode.schema["meta:enum"]
+    ? ENUM
+    : formStateNode.schema.type;
+  const TypeSpecificNodeEdit = getViewBySchemaType(schemaType);
 
-  const TypeSpecificNodeEdit = getViewBySchemaType(
-    formStateNode.schema["meta:enum"] ? ENUM : formStateNode.schema.type,
-  );
+  const typeSpecificNodeEditProps = {
+    displayName,
+    fieldName,
+    onNodeSelect,
+    verticalLayout,
+    description: formStateNode.schema.description,
+  };
+
+  if (schemaType === ENUM) {
+    typeSpecificNodeEditProps.validValues = Object.entries(
+      formStateNode.schema["meta:enum"] || {},
+    ).map(([key, value]) => ({ value: key, label: value }));
+  }
 
   return (
     <Flex
@@ -116,16 +129,7 @@ const NodeEdit = (props) => {
       )}
       {formStateNode.autoPopulationSource !== ALWAYS && (
         <>
-          <TypeSpecificNodeEdit
-            displayName={displayName}
-            fieldName={fieldName}
-            onNodeSelect={onNodeSelect}
-            verticalLayout={verticalLayout}
-            validValues={Object.entries(
-              formStateNode.schema["meta:enum"] || {},
-            ).map(([key, value]) => ({ value: key, label: value }))}
-            description={formStateNode.schema.description}
-          />
+          <TypeSpecificNodeEdit {...typeSpecificNodeEditProps} />
           {formStateNode.updateMode && hasClearedAncestor && (
             <FieldDescriptionAndError
               description="Checking this box will cause this field to be deleted before setting any values. A field further up in the object is already cleared. Fields that are cleared appear with a delete icon in the tree."

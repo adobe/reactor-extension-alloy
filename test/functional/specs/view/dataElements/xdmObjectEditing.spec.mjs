@@ -475,7 +475,7 @@ test("allows user to select enum value for property with enum type", async () =>
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("environment").toggleExpansion();
   await xdmTree.node("type").click();
-  await enumEdit.selectEnumValue("browser");
+  await enumEdit.selectEnumValue("Browser");
 
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettingsToContainData({
@@ -498,7 +498,7 @@ test("initializes form fields with enum value", async () => {
   });
   await xdmTree.node("environment").toggleExpansion();
   await xdmTree.node("type").click();
-  await enumEdit.expectEnumValue("application");
+  await enumEdit.expectEnumValue("Application");
 });
 
 test("allows user to enter custom value for property with enum type", async () => {
