@@ -15,13 +15,12 @@ import PropTypes from "prop-types";
 import { Item } from "@adobe/react-spectrum";
 import FormikKeyedComboBox from "../formikReactSpectrum3/formikKeyedComboBox";
 import DataElementSelector from "../dataElementSelector";
-import appendSentence from "./helpers/appendSentence";
 
 /**
- * The form for editing an enum field.
+ * The form for editing a node that is a string type with an enum property.
  */
 const EnumEdit = (props) => {
-  const { displayName, fieldName, description, validValues } = props;
+  const { displayName, fieldName, description, possibleValues } = props;
 
   return (
     <div>
@@ -31,14 +30,11 @@ const EnumEdit = (props) => {
           label={displayName}
           name={`${fieldName}.value`}
           width="size-5000"
-          items={validValues}
+          items={possibleValues}
           getKey={(item) => item.value}
           getLabel={(item) => item.label}
           allowsCustomValue
-          description={appendSentence(
-            description,
-            "Custom values are supported.",
-          )}
+          description={description}
         >
           {(item) => (
             <Item key={item.value} data-test-id={item.value}>
@@ -55,7 +51,7 @@ EnumEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   description: PropTypes.string,
-  validValues: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string))
+  possibleValues: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string))
     .isRequired,
 };
 

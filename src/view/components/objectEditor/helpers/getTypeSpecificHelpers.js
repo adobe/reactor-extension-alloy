@@ -17,6 +17,7 @@ import {
   OBJECT,
   OBJECT_JSON,
   OBJECT_ANALYTICS,
+  ENUM,
 } from "../constants/schemaType";
 import arrayHelpers from "./array";
 import booleanHelpers from "./boolean";
@@ -26,6 +27,7 @@ import objectHelpers from "./object";
 import stringHelpers from "./string";
 import objectJsonHelpers from "./object-json";
 import objectAnalyticsHelpers from "./object-analytics";
+import enumHelpers from "./enum";
 
 export default (schemaType) => {
   switch (schemaType) {
@@ -43,6 +45,8 @@ export default (schemaType) => {
       return objectJsonHelpers;
     case OBJECT_ANALYTICS:
       return objectAnalyticsHelpers;
+    case ENUM:
+      return enumHelpers;
     default:
       return stringHelpers;
   }

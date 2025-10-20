@@ -71,7 +71,7 @@ const getTreeNode = ({
     key: id,
     id,
     displayName: nodeDisplayName,
-    type: schema["meta:enum"] ? ENUM : schema.type,
+    type: schema.enum ? ENUM : schema.type,
     disabled: isAlwaysDisabled || isAncestorUsingWholePopulationStrategy,
     title: treeNodeComponent,
     clear: formStateNode.transform.clear && !isAncestorCleared,
@@ -101,7 +101,7 @@ const getTreeNode = ({
     confirmTouchedAtCurrentOrDescendantNode();
   }
 
-  getTypeSpecificHelpers(schema.type).populateTreeNode({
+  getTypeSpecificHelpers(schema.enum ? ENUM : schema.type).populateTreeNode({
     treeNode,
     formStateNode,
     treeNodeComponent,

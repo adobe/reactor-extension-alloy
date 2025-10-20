@@ -33,4 +33,3 @@ export default {
     await spectrum.comboBox("valueField").expectValue(value);
   },
 };
-

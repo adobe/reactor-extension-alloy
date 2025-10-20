@@ -82,9 +82,10 @@ const NodeEdit = (props) => {
     nodeId: selectedNodeId,
   });
 
-  const schemaType = formStateNode.schema["meta:enum"]
+  const schemaType = formStateNode.schema.enum
     ? ENUM
     : formStateNode.schema.type;
+
   const TypeSpecificNodeEdit = getViewBySchemaType(schemaType);
 
   const typeSpecificNodeEditProps = {
@@ -95,8 +96,8 @@ const NodeEdit = (props) => {
     description: formStateNode.schema.description,
   };
 
-  if (schemaType === ENUM) {
-    typeSpecificNodeEditProps.validValues = Object.entries(
+  if (formStateNode.schema["meta:enum"]) {
+    typeSpecificNodeEditProps.possibleValues = Object.entries(
       formStateNode.schema["meta:enum"] || {},
     ).map(([key, value]) => ({ value: key, label: value }));
   }
