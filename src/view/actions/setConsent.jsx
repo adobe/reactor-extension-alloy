@@ -29,7 +29,7 @@ import FormikRadioGroup from "../components/formikReactSpectrum3/formikRadioGrou
 import DataElementSelector from "../components/dataElementSelector";
 import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
-import Overrides, { bridge as overridesBridge } from "../components/overrides";
+import Overrides, { actionBridge as overridesBridge } from "../components/overrides";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
 import RequiredComponent from "../components/requiredComponent";
 import getRequiredComponentSchema from "../configuration/utils/getRequiredComponentSchema";

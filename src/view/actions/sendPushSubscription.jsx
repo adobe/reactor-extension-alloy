@@ -9,47 +9,12 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+import serviceOverride from "../forms/serviceOverride";
+import renderForm from "../forms/renderForm";
+import form from "../forms/form";
 
-import React from "react";
-import render from "../render";
-import ExtensionView from "../components/extensionView";
-import FormElementContainer from "../components/formElementContainer";
-import InstanceNamePicker from "../components/instanceNamePicker";
-
-const getInitialValues = ({ initInfo }) => {
-  const { instanceName = initInfo.extensionSettings.instances[0].name } =
-    initInfo.settings ?? {};
-
-  return {
-    instanceName,
-  };
-};
-
-const getSettings = ({ values }) => {
-  const settings = {
-    instanceName: values.instanceName,
-  };
-
-  return settings;
-};
-
-const SendPushSubscription = () => {
-  return (
-    <ExtensionView
-      getInitialValues={getInitialValues}
-      getSettings={getSettings}
-      render={({ initInfo }) => (
-        <FormElementContainer>
-          <InstanceNamePicker
-            data-test-id="instanceNamePicker"
-            name="instanceName"
-            initInfo={initInfo}
-            disabledDescription="Only one instance was configured for this extension so no configuration is required for this action."
-          />
-        </FormElementContainer>
-      )}
-    />
-  );
-};
-
-render(SendPushSubscription);
+renderForm(form({ wrapGetInitialValues: (getInitialValues) => async (params) => {
+  const initialValues = await getInitialValues(params);
+  console.log("sendPushSubscription getInitialValues", params, initialValues);
+  return initialValues;
+},}, serviceOverride({isExtension: false})));

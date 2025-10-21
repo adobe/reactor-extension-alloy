@@ -16,7 +16,7 @@ import render from "../render";
 import ExtensionView from "../components/extensionView";
 import FormElementContainer from "../components/formElementContainer";
 import InstanceNamePicker from "../components/instanceNamePicker";
-import Overrides, { bridge as overridesBridge } from "../components/overrides";
+import Overrides, { actionBridge as overridesBridge } from "../components/overrides";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
 
 const getInitialValues = ({ initInfo }) => {

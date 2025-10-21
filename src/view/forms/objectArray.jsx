@@ -109,7 +109,7 @@ export default function objectArray(
     getItemInitialValues({ initInfo: { settings: null } });
 
   const formPart = {
-    getInitialValues({ initInfo }) {
+    async getInitialValues({ initInfo }) {
       const { [name]: value } = initInfo.settings || {};
 
       let transformedValue = value;
@@ -122,8 +122,10 @@ export default function objectArray(
           }, []);
       }
       if (transformedValue && Array.isArray(transformedValue)) {
-        transformedValue = transformedValue.map((item) =>
-          getItemInitialValues({ initInfo: { settings: item } }),
+        transformedValue = await Promise.all(
+          transformedValue.map((item) =>
+            getItemInitialValues({ initInfo: { settings: item } }),
+          ),
         );
       } else {
         transformedValue = [buildDefaultItem()];

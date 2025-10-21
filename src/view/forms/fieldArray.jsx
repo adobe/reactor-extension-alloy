@@ -108,6 +108,43 @@ ComboboxItem.propTypes = {
   items: PropTypes.array,
 };
 
+const DynamicComboboxItem = ({
+  namePrefix,
+  name,
+  index,
+  description,
+  error,
+  touched,
+  isLast,
+  loadItems,
+}) => {
+  return (
+    <DataElementSelector>
+      <FormikPagedComboBox
+        data-test-id={`${namePrefix}${name}${index}Field`}
+        aria-label={`Item ${index + 1}`}
+        name={`${namePrefix}${name}.${index}`}
+        width="size-5000"
+        marginTop="size-0"
+        description={isLast ? description : undefined}
+        error={isLast ? error : undefined}
+        invalid={error && touched}
+        touched={touched}
+        loadItems={loadItems}
+        getKey={(item) => item.value}
+        getLabel={(item) => item.label}
+
+      >
+        {(item) => (
+          <Item key={item.value} data-test-id={item.value}>
+            {item.label}
+          </Item>
+        )}
+      </FormikPagedComboBox>
+    </DataElementSelector>
+  );
+};
+
 /** @typedef {import("./form").Form} Form */
 /**
  * This creates a form that just supports an array of strings. Any fields not
@@ -236,7 +273,7 @@ export default function fieldArray({
           </FormikRadioGroup>
           {inputMethod === FORM && (
             <FieldArray
-              name={name}
+              name={`${namePrefix}${name}`}
               render={(arrayHelpers) => {
                 return (
                   <div>

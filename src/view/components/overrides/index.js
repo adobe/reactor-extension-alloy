@@ -11,6 +11,6 @@ governing permissions and limitations under the License.
 */
 import Overrides from "./overrides";
 
-export { bridge } from "./overridesBridge";
+export { extensionBridge, actionBridge } from "./overridesBridge";
 
 export default Overrides;

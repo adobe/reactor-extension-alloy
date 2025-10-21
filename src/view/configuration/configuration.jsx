@@ -58,7 +58,7 @@ import DataCollectionSection, {
   bridge as dataCollectionSectionBridge,
 } from "./dataCollectionSection";
 import OverridesSection, {
-  bridge as overridesBridge,
+  extensionBridge as overridesBridge,
 } from "../components/overrides";
 import AdvancedSection, {
   bridge as advancedSectionBridge,
@@ -262,6 +262,7 @@ const InstancesSection = ({ initInfo, context }) => {
                           edgeConfigIds={edgeConfigIds}
                           configOrgId={instance.orgId}
                           hideFields={[FIELD_NAMES.datastreamId]}
+                          isExtensionConfig={true}
                         />
                         <AdvancedSection
                           instanceFieldName={instanceFieldName}

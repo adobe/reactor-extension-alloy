@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import React from "react";
+import React, { useRef } from "react";
 import { object } from "yup";
 import PropTypes from "prop-types";
 import ExtensionView from "../components/extensionView";
@@ -21,12 +21,15 @@ const FormExtensionView = ({
   getValidationSchema,
   Component,
 }) => {
+
+  const context = useRef({}).current;
+
   return (
     <ExtensionView
-      getInitialValues={getInitialValues}
-      getSettings={getSettings}
-      getFormikStateValidationSchema={getValidationSchema}
-      render={(props) => <Component {...props} />}
+      getInitialValues={params => getInitialValues({ ...params, context })}
+      getSettings={params => getSettings({ ...params, context })}
+      getFormikStateValidationSchema={params => getValidationSchema({ ...params, context })}
+      render={(props) => <Component {...props} context={context} />}
     />
   );
 };

@@ -36,12 +36,13 @@ import SectionHeader from "../sectionHeader";
 import DatastreamOverrideSelector from "./datastreamOverrideSelector";
 import { useFetchConfig, useFormikContextWithOverrides } from "./hooks";
 import OverrideInput from "./overrideInput";
-import { bridge } from "./overridesBridge";
+import { extensionBridge, actionBridge } from "./overridesBridge";
 import ReportSuitesOverride from "./reportSuiteOverrides";
 import SettingsCopySection from "./settingsCopySection";
 import {
-  ENABLED_FIELD_VALUES,
-  ENABLED_MATCH_FIELD_VALUES,
+  SERVICE_OVERRIDE_FIELD_VALUES,
+  EXTENSION_OVERRIDE_FIELD_VALUES,
+  ACTION_OVERRIDE_FIELD_VALUES,
   FIELD_NAMES,
   capitialize,
   combineValidatorWithContainsDataElements,
@@ -50,17 +51,8 @@ import {
   enabledMatchOrDataElementRegex,
 } from "./utils";
 
-const defaults = Object.freeze(bridge.getInstanceDefaults());
-const EnabledDisabledOptions = Object.freeze(
-  Object.entries(ENABLED_FIELD_VALUES).map(([key, label]) => (
-    <Item key={key}>{label}</Item>
-  )),
-);
-const EnabledMatchOptions = Object.freeze(
-  Object.entries(ENABLED_MATCH_FIELD_VALUES).map(([key, label]) => (
-    <Item key={key}>{label}</Item>
-  )),
-);
+
+
 
 /**
  *
@@ -112,7 +104,32 @@ const Overrides = ({
   edgeConfigIds,
   configOrgId,
   hideFields = [],
+  isExtensionConfig = false,
 }) => {
+  const bridge = isExtensionConfig ? extensionBridge : actionBridge;
+  const defaults = Object.freeze(bridge.getInstanceDefaults());
+
+  const serviceOverrideEntries = isExtensionConfig
+    ? Object.entries(SERVICE_OVERRIDE_FIELD_VALUES)
+    : Object.entries(SERVICE_OVERRIDE_FIELD_VALUES).filter(
+        ([key]) => key !== "config",
+      );
+  const ServiceOverrideOptions = Object.freeze(
+    serviceOverrideEntries.map(([key, label]) => (
+      <Item key={key}>{label}</Item>
+    )),
+  );
+
+  const envOverrideEntries = isExtensionConfig
+    ? Object.entries(EXTENSION_OVERRIDE_FIELD_VALUES)
+    : Object.entries(ACTION_OVERRIDE_FIELD_VALUES);
+  const EnvOverrideOptions = Object.freeze(
+    envOverrideEntries.map(([key, label]) => (
+      <Item key={key}>{label}</Item>
+    )),
+  );
+
+
   const prefix = instanceFieldName
     ? `${instanceFieldName}.edgeConfigOverrides`
     : "edgeConfigOverrides";
@@ -209,16 +226,16 @@ const Overrides = ({
               const validateEnabledDisabledOrDataElement =
                 combineValidatorWithContainsDataElements(
                   createValidateItemIsInArray(
-                    Object.values(ENABLED_FIELD_VALUES),
-                    "The value must be either 'Enabled' or 'Disabled' or a single data element.",
+                    serviceOverrideEntries.map(([_, label]) => label),
+                    "The value must be either 'Enabled' or 'Disabled' or a single data element.", // TODO: update this message
                   ),
                   false,
                 );
               const validateEnabledMatchOrDataElement =
                 combineValidatorWithContainsDataElements(
                   createValidateItemIsInArray(
-                    Object.values(ENABLED_MATCH_FIELD_VALUES),
-                    "The value must be either 'Enabled' or 'Match datastream configuration' or a single data element.",
+                    envOverrideEntries.map(([_, label]) => label),
+                    "The value must be either 'Enabled' or 'Match datastream configuration' or a single data element.", // TODO: update this message
                   ),
                   false,
                 );
@@ -358,7 +375,7 @@ const Overrides = ({
                         description={`Enable or disable datastream configuration overrides for the ${env} environment.`}
                         onBlur={onDisable}
                       >
-                        {...EnabledMatchOptions}
+                        {...EnvOverrideOptions}
                       </OverrideInput>
                     )}
                     {!isDisabled("enabled", true) && (
@@ -409,7 +426,7 @@ const Overrides = ({
                                 description="Enable or disable the Adobe Analytics destination."
                                 onBlur={onDisable}
                               >
-                                {...EnabledDisabledOptions}
+                                {...ServiceOverrideOptions}
                               </OverrideInput>
                             )}
                             {visibleFields.has(
@@ -456,7 +473,7 @@ const Overrides = ({
                                 onBlur={onDisable}
                                 description="Enable or disable the Adobe Audience Manager destination."
                               >
-                                {...EnabledDisabledOptions}
+                                {...ServiceOverrideOptions}
                               </OverrideInput>
                             )}
                           </ProductSubsection>
@@ -517,7 +534,7 @@ const Overrides = ({
                                 disabledDisplayValue="Disabled"
                                 description="Enable or disable the Adobe Experience Platform destination."
                               >
-                                {...EnabledDisabledOptions}
+                                {...ServiceOverrideOptions}
                               </OverrideInput>
                             )}
                             {visibleFields.has(
@@ -578,7 +595,7 @@ const Overrides = ({
                                   }
                                   disabledDisplayValue="Disabled"
                                 >
-                                  {...EnabledDisabledOptions}
+                                  {...ServiceOverrideOptions}
                                 </OverrideInput>
                               )}
                             {visibleFields.has(
@@ -610,7 +627,7 @@ const Overrides = ({
                                   }
                                   disabledDisplayValue="Disabled"
                                 >
-                                  {...EnabledDisabledOptions}
+                                  {...ServiceOverrideOptions}
                                 </OverrideInput>
                               )}
                             {visibleFields.has(
@@ -642,7 +659,7 @@ const Overrides = ({
                                   }
                                   disabledDisplayValue="Disabled"
                                 >
-                                  {...EnabledDisabledOptions}
+                                  {...ServiceOverrideOptions}
                                 </OverrideInput>
                               )}
                             {visibleFields.has(FIELD_NAMES.ajoEnabled) &&
@@ -669,7 +686,7 @@ const Overrides = ({
                                   }
                                   disabledDisplayValue="Disabled"
                                 >
-                                  {...EnabledDisabledOptions}
+                                  {...ServiceOverrideOptions}
                                 </OverrideInput>
                               )}
                           </ProductSubsection>
@@ -691,7 +708,7 @@ const Overrides = ({
                               disabledDisplayValue="Disabled"
                               description="Enable or disable Adobe Server-Side Event Forwarding."
                             >
-                              {...EnabledDisabledOptions}
+                              {...ServiceOverrideOptions}
                             </OverrideInput>
                           </ProductSubsection>
                         )}
@@ -716,7 +733,7 @@ const Overrides = ({
                                 disabledDisplayValue="Disabled"
                                 description="Enable or disable the Adobe Target destination."
                               >
-                                {...EnabledDisabledOptions}
+                                {...ServiceOverrideOptions}
                               </OverrideInput>
                             )}
                             {visibleFields.has(

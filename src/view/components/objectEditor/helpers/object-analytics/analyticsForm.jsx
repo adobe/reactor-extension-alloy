@@ -134,13 +134,12 @@ const wrapGetInitialValues =
       }
     }
 
-    const initialValues = getInitialValues({
+    return getInitialValues({
       initInfo: {
         ...initInfo,
         settings,
       },
     });
-    return initialValues;
   };
 
 const wrapGetSettings = (getSettings) => (params) => {

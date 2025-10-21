@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import { reach } from "yup";
 import PropTypes from "prop-types";
-import Overrides, { bridge as overridesBridge } from "../components/overrides";
+import Overrides, { actionBridge as overridesBridge } from "../components/overrides";
 import getEdgeConfigIds from "../utils/getEdgeConfigIds";
 
 /** @typedef {import("./form").Form} Form */

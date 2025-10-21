@@ -20,10 +20,11 @@ import {
   overridesKeys,
   containsDataElements,
   containsDataElementsRegex,
-  ENABLED_FIELD_VALUES,
+  SERVICE_OVERRIDE_FIELD_VALUES,
   isDataElement,
   isDataElementRegex,
-  ENABLED_MATCH_FIELD_VALUES,
+  EXTENSION_OVERRIDE_FIELD_VALUES,
+  ACTION_OVERRIDE_FIELD_VALUES,
 } from "./utils";
 import clone from "../../utils/clone";
 import deepDelete from "../../utils/deepDelete";
@@ -82,7 +83,7 @@ const enabledOrDataElementValidator = lazy((value) =>
           excludeEmptyString: true,
         })
         .nullable()
-    : mixed().oneOf(Object.values(ENABLED_FIELD_VALUES)).nullable(),
+    : mixed().oneOf(Object.values(SERVICE_OVERRIDE_FIELD_VALUES)).nullable(),
 );
 const enabledMatchOrDataElementValidator = lazy((value) =>
   typeof value === "string" && (value.includes("%") || value === "")
@@ -147,12 +148,15 @@ const migrations = [
   },
 ];
 
-export const bridge = {
+const createBridge = (isExtensionConfig) => {
+  const ENV_OVERRIDE_FIELD_VALUES = isExtensionConfig ? EXTENSION_OVERRIDE_FIELD_VALUES : ACTION_OVERRIDE_FIELD_VALUES;
+  const DEFAULT_SERVICE_OVERRIDE = isExtensionConfig ? SERVICE_OVERRIDE_FIELD_VALUES.enabled : SERVICE_OVERRIDE_FIELD_VALUES.config;
+
   /**
    * Get the default formik state for the overrides form.
    * @returns {ConfigOverridesFormikState}
    */
-  getInstanceDefaults: () => ({
+  const getInstanceDefaults = () => ({
     edgeConfigOverrides: OVERRIDE_ENVIRONMENTS.reduce(
       (acc, env) => ({
         ...acc,
@@ -160,352 +164,326 @@ export const bridge = {
           sandbox: "",
           datastreamId: "",
           datastreamIdInputMethod: "freeform",
-          enabled: ENABLED_MATCH_FIELD_VALUES.disabled,
+          enabled: ENV_OVERRIDE_FIELD_VALUES.disabled,
           com_adobe_experience_platform: {
-            enabled: ENABLED_FIELD_VALUES.enabled,
+            enabled: DEFAULT_SERVICE_OVERRIDE,
             datasets: {
               event: {
                 datasetId: "",
               },
             },
             com_adobe_edge_ode: {
-              enabled: ENABLED_FIELD_VALUES.enabled,
+              enabled: DEFAULT_SERVICE_OVERRIDE,
             },
             com_adobe_edge_segmentation: {
-              enabled: ENABLED_FIELD_VALUES.enabled,
+              enabled: DEFAULT_SERVICE_OVERRIDE,
             },
             com_adobe_edge_destinations: {
-              enabled: ENABLED_FIELD_VALUES.enabled,
+              enabled: DEFAULT_SERVICE_OVERRIDE,
             },
             com_adobe_edge_ajo: {
-              enabled: ENABLED_FIELD_VALUES.enabled,
+              enabled: DEFAULT_SERVICE_OVERRIDE,
             },
           },
           com_adobe_analytics: {
-            enabled: ENABLED_FIELD_VALUES.enabled,
+            enabled: DEFAULT_SERVICE_OVERRIDE,
             reportSuites: [""],
           },
           com_adobe_identity: {
             idSyncContainerId: undefined,
           },
           com_adobe_target: {
-            enabled: ENABLED_FIELD_VALUES.enabled,
+            enabled: DEFAULT_SERVICE_OVERRIDE,
             propertyToken: "",
           },
           com_adobe_audiencemanager: {
-            enabled: ENABLED_FIELD_VALUES.enabled,
+            enabled: DEFAULT_SERVICE_OVERRIDE,
           },
           com_adobe_launch_ssf: {
-            enabled: ENABLED_FIELD_VALUES.enabled,
+            enabled: DEFAULT_SERVICE_OVERRIDE,
           },
         },
       }),
       {},
     ),
-  }),
-  /**
-   * Converts the saved Launch instance settings to the formik state.
-   * @param {{ edgeConfigOverrides: ConfigOverridesLaunchSettings }} params
-   * @returns {ConfigOverridesFormikState}
-   */
-  getInitialInstanceValues: ({ instanceSettings }) => {
-    const instanceValues = {};
-    const cleanedInstanceSettings = migrations.reduce(
-      (acc, migration) => migration(acc),
-      clone(instanceSettings),
-    );
+  });
 
-    // convert the 'enabled' settings from true/false to enabled/disabled
-    OVERRIDE_ENVIRONMENTS.flatMap((env) =>
-      overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}.enabled`),
-    )
-      .filter((key) => deepGet(cleanedInstanceSettings, key) !== undefined)
-      .filter((key) => !isDataElement(deepGet(cleanedInstanceSettings, key)))
-      .forEach((key) => {
-        const value = deepGet(cleanedInstanceSettings, key);
-        deepSet(
-          cleanedInstanceSettings,
-          key,
-          value ? ENABLED_FIELD_VALUES.enabled : ENABLED_FIELD_VALUES.disabled,
-        );
-      });
-    // convert the env-wide enabled/disabled from true/false to enabled/match datastream configuration
-    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}.enabled`)
-      .filter((key) => deepGet(cleanedInstanceSettings, key) !== undefined)
-      .filter((key) => !isDataElement(deepGet(cleanedInstanceSettings, key)))
-      .forEach((key) => {
-        const value = deepGet(cleanedInstanceSettings, key);
-        deepSet(
-          cleanedInstanceSettings,
-          key,
-          value
-            ? ENABLED_MATCH_FIELD_VALUES.enabled
-            : ENABLED_MATCH_FIELD_VALUES.disabled,
-        );
-      });
+  return {
+    getInstanceDefaults,
+    /**
+     * Converts the saved Launch instance settings to the formik state.
+     * @param {{ edgeConfigOverrides: ConfigOverridesLaunchSettings }} params
+     * @returns {ConfigOverridesFormikState}
+     */
+    getInitialInstanceValues: ({ instanceSettings }) => {
+      const instanceValues = {};
+      const cleanedInstanceSettings = migrations.reduce(
+        (acc, migration) => migration(acc),
+        clone(instanceSettings),
+      );
 
-    // if any of the environments have values, set the environment to enabled
-    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}`)
-      .filter((key) =>
-        overridesKeys
-          .map((override) => `${key}.${override}`)
-          .some((override) => deepGet(cleanedInstanceSettings, override)),
+      // convert the 'enabled' settings from true/false to enabled/disabled
+      OVERRIDE_ENVIRONMENTS.flatMap((env) =>
+        overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}`),
       )
-      .filter(
-        (key) =>
-          !isDataElement(deepGet(cleanedInstanceSettings, `${key}.enabled`)),
-      )
-      .forEach((key) => {
-        deepSet(
+        .forEach((key) => {
+          const value = deepGet(cleanedInstanceSettings, key);
+          if (value.enabled === false) {
+            deepSet(cleanedInstanceSettings, key, ENV_OVERRIDE_FIELD_VALUES.disabled);
+          } else if (!isDataElement(value.enabled)) {
+            deepSet(cleanedInstanceSettings, key, ENV_OVERRIDE_FIELD_VALUES.enabled);
+          }
+        });
+      // convert the env-wide enabled/disabled from true/false to enabled/match datastream configuration
+      OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}.enabled`)
+        .filter((key) => deepGet(cleanedInstanceSettings, key) !== undefined)
+        .filter((key) => !isDataElement(deepGet(cleanedInstanceSettings, key)))
+        .forEach((key) => {
+          const value = deepGet(cleanedInstanceSettings, key);
+          deepSet(
+            cleanedInstanceSettings,
+            key,
+            value
+              ? ENV_OVERRIDE_FIELD_VALUES.enabled
+              : ENV_OVERRIDE_FIELD_VALUES.disabled,
+          );
+        });
+
+      // if any of the environments have values, set the environment to enabled
+      OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}`)
+        .filter((envKey) =>
+          overridesKeys
+            .map((override) => `${envKey}.${override}.enabled`)
+            .some((serviceKey) => {
+              const value = deepGet(cleanedInstanceSettings, serviceKey);
+              return isDataElement(value) || value !== DEFAULT_SERVICE_OVERRIDE;
+            })
+        )
+        .forEach((envKey) => {
+          deepSet(
+            cleanedInstanceSettings,
+            `${envKey}.enabled`,
+            ENV_OVERRIDE_FIELD_VALUES.enabled,
+          );
+        });
+      // do the same for datastream ID overrides
+      OVERRIDE_ENVIRONMENTS.filter((env) =>
+        deepGet(
           cleanedInstanceSettings,
-          `${key}.enabled`,
-          ENABLED_MATCH_FIELD_VALUES.enabled,
-        );
-      });
-    // do the same for datastream ID overrides
-    OVERRIDE_ENVIRONMENTS.filter((env) =>
-      deepGet(
-        cleanedInstanceSettings,
-        `edgeConfigOverrides.${env}.datastreamId`,
-      ),
-    )
-      .filter(
-        (env) =>
-          !isDataElement(
-            deepGet(
-              cleanedInstanceSettings,
-              `edgeConfigOverrides.${env}.enabled`,
-            ),
-          ),
+          `edgeConfigOverrides.${env}.datastreamId`,
+        ),
       )
-      .forEach((env) => {
-        deepSet(
-          cleanedInstanceSettings,
-          `edgeConfigOverrides.${env}.enabled`,
-          ENABLED_MATCH_FIELD_VALUES.enabled,
-        );
-      });
-
-    copyPropertiesWithDefaultFallback({
-      toObj: instanceValues,
-      fromObj: cleanedInstanceSettings,
-      defaultsObj: bridge.getInstanceDefaults(),
-      keys: ["edgeConfigOverrides"],
-    });
-
-    OVERRIDE_ENVIRONMENTS.forEach((env) => {
-      if (
-        instanceValues.edgeConfigOverrides?.[env]?.com_adobe_identity
-          ?.idSyncContainerId
-      ) {
-        // Launch UI components expect this to be a string
-        instanceValues.edgeConfigOverrides[
-          env
-        ].com_adobe_identity.idSyncContainerId =
-          `${instanceValues.edgeConfigOverrides[env].com_adobe_identity.idSyncContainerId}`;
-      }
-    });
-
-    return instanceValues;
-  },
-  /**
-   * Converts the formik state to the Launch instance settings.
-   * @param {{ instanceValues: { edgeConfigOverrides: ConfigOverridesFormikState }}} params
-   * @returns {{ edgeConfigOverrides: ConfigOverridesLaunchSettings }}
-   */
-  getInstanceSettings: ({ instanceValues }) => {
-    /** @type {{ edgeConfigOverrides?: ConfigOverridesLaunchSettings }} */
-    const instanceSettings = {};
-    const propertyKeysToCopy = ["edgeConfigOverrides"];
-
-    copyPropertiesIfValueDifferentThanDefault({
-      toObj: instanceSettings,
-      fromObj: instanceValues,
-      defaultsObj: bridge.getInstanceDefaults(),
-      keys: propertyKeysToCopy,
-    });
-
-    // Remove disabled env
-    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}`)
-      .filter(
-        (key) =>
-          // undefined means default value aka disabled
-          deepGet(instanceSettings, `${key}.enabled`) === undefined,
-      )
-      .forEach((key) => {
-        deepDelete(instanceSettings, key);
-      });
-
-    const propertiesWithValues = OVERRIDE_ENVIRONMENTS.flatMap((env) =>
-      overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}`),
-    ).filter((key) => {
-      const value = deepGet(instanceSettings, key);
-      return value !== undefined && value !== "";
-    });
-
-    // convert idSyncContainerId to a number if it is not a data element
-    propertiesWithValues
-      .map((key) => `${key}.idSyncContainerId`)
-      .filter((key) => deepGet(instanceSettings, key))
-      .filter((key) => {
-        const value = deepGet(instanceSettings, key);
-        return !containsDataElements(value) && value !== "";
-      })
-      .forEach((key) => {
-        const value = deepGet(instanceSettings, key);
-        deepSet(instanceSettings, key, parseInt(value, 10));
-      });
-
-    // filter out the blank report suites
-    propertiesWithValues
-      .map((key) => `${key}.reportSuites`)
-      .filter((key) => deepGet(instanceSettings, key))
-      .forEach((key) => {
-        const value = deepGet(instanceSettings, key);
-        deepSet(
-          instanceSettings,
-          key,
-          value.filter((rs) => rs !== ""),
-        );
-      });
-
-    // convert "Enabled"/"Disabled" to true/false
-    OVERRIDE_ENVIRONMENTS.flatMap((env) =>
-      overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}`),
-    )
-      .map((key) => `${key}.enabled`)
-      .filter((key) => deepGet(instanceSettings, key) !== undefined)
-      .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
-      .forEach((key) => {
-        const value = deepGet(instanceValues, key);
-        deepSet(
-          instanceSettings,
-          key,
-          value.trim() === ENABLED_FIELD_VALUES.enabled,
-        );
-      });
-
-    // convert env-wide "Enabled"/"Match Datastream Configuration" to true/false
-    OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}.enabled`)
-      .filter((key) => deepGet(instanceSettings, key) !== undefined)
-      .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
-      .forEach((key) => {
-        const value = deepGet(instanceValues, key);
-        deepSet(
-          instanceSettings,
-          key,
-          value.trim() === ENABLED_MATCH_FIELD_VALUES.enabled,
-        );
-      });
-
-    // Remove empty strings, objects, and arrays
-    /** @type {{ edgeConfigOverrides: ConfigOverridesLaunchSettings }} */
-    const trimmedInstanceSettings = trimValue(instanceSettings);
-    // Remove the edgeConfigOverrides object if it is empty or has only the default sandbox setting
-    if (
-      trimmedInstanceSettings?.edgeConfigOverrides?.development?.sandbox ===
-        "prod" &&
-      Object.keys(trimmedInstanceSettings?.edgeConfigOverrides || {}).length ===
-        1 &&
-      Object.keys(
-        trimmedInstanceSettings?.edgeConfigOverrides?.development || {},
-      ).length === 1
-    ) {
-      delete trimmedInstanceSettings.edgeConfigOverrides;
-    }
-
-    // Remove an env if it is empty
-    Object.keys(trimmedInstanceSettings?.edgeConfigOverrides || {}).forEach(
-      (env) => {
-        if (
-          Object.keys(trimmedInstanceSettings?.edgeConfigOverrides[env] || {})
-            .length === 0
-        ) {
-          delete trimmedInstanceSettings.edgeConfigOverrides[env];
-        }
-      },
-    );
-
-    // Remove the edgeConfigOverrides object if it is empty
-    if (
-      trimmedInstanceSettings?.edgeConfigOverrides &&
-      Object.keys(trimmedInstanceSettings?.edgeConfigOverrides).length === 0
-    ) {
-      delete trimmedInstanceSettings.edgeConfigOverrides;
-    }
-
-    return trimmedInstanceSettings ?? {};
-  },
-  formikStateValidationSchema: object({
-    edgeConfigOverrides: object(
-      OVERRIDE_ENVIRONMENTS.reduce(
-        (acc, env) => ({
-          ...acc,
-          [env]: object({
-            enabled: enabledMatchOrDataElementValidator,
-            datastreamId: string().nullable(),
-            datastreamInputMethod: mixed()
-              .oneOf(["freeform", "select"])
-              .nullable(),
-            sandbox: string().nullable(),
-            com_adobe_experience_platform: object({
-              enabled: enabledOrDataElementValidator,
-              datasets: object({
-                event: object({
-                  datasetId: string().nullable(),
-                }),
-                profile: object({
-                  datasetId: string().nullable(),
-                }),
-              }),
-              com_adobe_edge_ode: object({
-                enabled: enabledOrDataElementValidator,
-              }),
-              com_adobe_edge_segmentation: object({
-                enabled: enabledOrDataElementValidator,
-              }),
-              com_adobe_edge_destinations: object({
-                enabled: enabledOrDataElementValidator,
-              }),
-              com_adobe_edge_ajo: object({
-                enabled: enabledOrDataElementValidator,
-              }),
-            }),
-            com_adobe_analytics: object({
-              enabled: enabledOrDataElementValidator,
-              reportSuites: array(string()).nullable(),
-            }),
-            com_adobe_identity: object({
-              idSyncContainerId: lazy((value) =>
-                typeof value === "string" &&
-                (value.includes("%") || value === "")
-                  ? string()
-                      .matches(containsDataElementsRegex, {
-                        message: "Please enter a valid data element.",
-                        excludeEmptyString: true,
-                      })
-                      .nullable()
-                  : number()
-                      .typeError("Please enter a number.")
-                      .positive("Please enter a positive number.")
-                      .integer("Please enter a whole number.")
-                      .nullable(),
+        .filter(
+          (env) =>
+            !isDataElement(
+              deepGet(
+                cleanedInstanceSettings,
+                `edgeConfigOverrides.${env}.enabled`,
               ),
-            }),
-            com_adobe_target: object({
-              enabled: enabledOrDataElementValidator,
-              propertyToken: string().nullable(),
-            }),
-            com_adobe_audiencemanager: object({
-              enabled: enabledOrDataElementValidator,
-            }),
-            com_adobe_launch_ssf: object({
-              enabled: enabledOrDataElementValidator,
+            ),
+        )
+        .forEach((env) => {
+          deepSet(
+            cleanedInstanceSettings,
+            `edgeConfigOverrides.${env}.enabled`,
+            ENV_OVERRIDE_FIELD_VALUES.enabled,
+          );
+        });
+
+      copyPropertiesWithDefaultFallback({
+        toObj: instanceValues,
+        fromObj: cleanedInstanceSettings,
+        defaultsObj: getInstanceDefaults(),
+        keys: ["edgeConfigOverrides"],
+      });
+
+      OVERRIDE_ENVIRONMENTS.forEach((env) => {
+        if (
+          instanceValues.edgeConfigOverrides?.[env]?.com_adobe_identity
+            ?.idSyncContainerId
+        ) {
+          // Launch UI components expect this to be a string
+          instanceValues.edgeConfigOverrides[
+            env
+          ].com_adobe_identity.idSyncContainerId =
+            `${instanceValues.edgeConfigOverrides[env].com_adobe_identity.idSyncContainerId}`;
+        }
+      });
+
+      return instanceValues;
+    },
+    /**
+     * Converts the formik state to the Launch instance settings.
+     * @param {{ instanceValues: { edgeConfigOverrides: ConfigOverridesFormikState }}} params
+     * @returns {{ edgeConfigOverrides: ConfigOverridesLaunchSettings }}
+     */
+    getInstanceSettings: ({ instanceValues }) => {
+      /** @type {{ edgeConfigOverrides?: ConfigOverridesLaunchSettings }} */
+      const instanceSettings = {};
+      const propertyKeysToCopy = ["edgeConfigOverrides"];
+      const instanceDefaults = getInstanceDefaults();
+
+      // filter out the blank report suites
+      OVERRIDE_ENVIRONMENTS.flatMap((env) => `edgeConfigOverrides.${env}.com_adobe_analytics.reportSuites`)
+        .filter((reportSuiteKey) => deepGet(instanceValues, reportSuiteKey))
+        .forEach((reportSuiteKey) => {
+          const value1 = deepGet(instanceValues, reportSuiteKey);
+          const value2 = value1.filter((rs) => rs !== "");
+          // if there are no report suites, set it to one blank report suite so it matches the default
+          const value3 = value2.length === 0 ? [""] : value2;
+          deepSet(
+            instanceSettings,
+            reportSuiteKey,
+            value3,
+          );
+        });
+
+      // When the enabled field is set to the "config" value, update that whole service object to the default.
+      // That way, the copyPropertiesIfValueDifferentThanDefault will empty the service object.
+      // When the enabled field is set to the "disabled" value, update that whole service object to the default, but with
+      // just the enabled field set. (For extension configuration, this IS the same value as the default.)
+      OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}`)
+        .map((envKey) => `edgeConfigOverrides.${envKey}.com_adobe_analytics.enabled`)
+        .forEach((serviceKey) => {
+          const enabledValue = trimValue(deepGet(instanceValues, `${serviceKey}.enabled`));
+          if (enabledValue !== SERVICE_OVERRIDE_FIELD_VALUES.disabled) {
+            const defaultValue = deepGet(instanceDefaults, serviceKey);
+            deepSet(instanceSettings, serviceKey, defaultValue);
+          }
+          deepSet(instanceSettings, `${serviceKey}.enabled`, enabledValue);
+        });
+
+      copyPropertiesIfValueDifferentThanDefault({
+        toObj: instanceSettings,
+        fromObj: instanceValues,
+        defaultsObj: instanceDefaults,
+        keys: propertyKeysToCopy,
+      });
+
+      // get all the serviceKeys that are not the default values
+      const nonDefaultServiceKeys = OVERRIDE_ENVIRONMENTS.flatMap((env) =>
+        overridesKeys.map((key) => `edgeConfigOverrides.${env}.${key}`),
+      ).filter((serviceKey) => {
+        const value = deepGet(instanceSettings, serviceKey);
+        return value !== undefined && value !== "";
+      });
+
+      // convert idSyncContainerId to a number if it is not a data element
+      nonDefaultServiceKeys
+        .map((serviceKey) => `${serviceKey}.idSyncContainerId`)
+        .filter((serviceKey) => deepGet(instanceSettings, serviceKey))
+        .filter((serviceKey) => {
+          const value = deepGet(instanceSettings, serviceKey);
+          return !containsDataElements(value) && value !== "";
+        })
+        .forEach((serviceKey) => {
+          const value = deepGet(instanceSettings, serviceKey);
+          deepSet(instanceSettings, serviceKey, parseInt(value, 10));
+        });
+
+      // convert service override values
+      nonDefaultServiceKeys
+        .map((serviceKey) => `${serviceKey}.enabled`)
+        .filter((enabledKey) => deepGet(instanceSettings, enabledKey) !== undefined)
+        .forEach((enabledKey) => {
+          const value = deepGet(instanceSettings, enabledKey);
+          if (value.trim() === SERVICE_OVERRIDE_FIELD_VALUES.enabled) {
+            deepDelete(instanceSettings, enabledKey);
+          } else if (value.trim() === SERVICE_OVERRIDE_FIELD_VALUES.disabled) {
+            deepSet(instanceSettings, enabledKey, false);
+          }
+        });
+
+      // convert env-wide "Enabled"/"Match Datastream Configuration" to true/false
+      OVERRIDE_ENVIRONMENTS.map((env) => `edgeConfigOverrides.${env}.enabled`)
+      .filter((key) => deepGet(instanceSettings, key) !== undefined)
+      .filter((key) => !isDataElement(deepGet(instanceSettings, key)))
+        .forEach((key) => {
+          deepSet(
+            instanceSettings,
+            key,
+            true, // If this was disabled, it would already have been removed
+          );
+        });
+
+      // Return nothing if there is nothing different from the defaults
+      return Object.keys(instanceSettings).length > 0 ? instanceSettings : undefined;
+    },
+    formikStateValidationSchema: object({
+      edgeConfigOverrides: object(
+        OVERRIDE_ENVIRONMENTS.reduce(
+          (acc, env) => ({
+            ...acc,
+            [env]: object({
+              enabled: enabledMatchOrDataElementValidator,
+              datastreamId: string().nullable(),
+              datastreamInputMethod: mixed()
+                .oneOf(["freeform", "select"])
+                .nullable(),
+              sandbox: string().nullable(),
+              com_adobe_experience_platform: object({
+                enabled: enabledOrDataElementValidator,
+                datasets: object({
+                  event: object({
+                    datasetId: string().nullable(),
+                  }),
+                  profile: object({
+                    datasetId: string().nullable(),
+                  }),
+                }),
+                com_adobe_edge_ode: object({
+                  enabled: enabledOrDataElementValidator,
+                }),
+                com_adobe_edge_segmentation: object({
+                  enabled: enabledOrDataElementValidator,
+                }),
+                com_adobe_edge_destinations: object({
+                  enabled: enabledOrDataElementValidator,
+                }),
+                com_adobe_edge_ajo: object({
+                  enabled: enabledOrDataElementValidator,
+                }),
+              }),
+              com_adobe_analytics: object({
+                enabled: enabledOrDataElementValidator,
+                reportSuites: array(string()).nullable(),
+              }),
+              com_adobe_identity: object({
+                idSyncContainerId: lazy((value) =>
+                  typeof value === "string" &&
+                  (value.includes("%") || value === "")
+                    ? string()
+                        .matches(containsDataElementsRegex, {
+                          message: "Please enter a valid data element.",
+                          excludeEmptyString: true,
+                        })
+                        .nullable()
+                    : number()
+                        .typeError("Please enter a number.")
+                        .positive("Please enter a positive number.")
+                        .integer("Please enter a whole number.")
+                        .nullable(),
+                ),
+              }),
+              com_adobe_target: object({
+                enabled: enabledOrDataElementValidator,
+                propertyToken: string().nullable(),
+              }),
+              com_adobe_audiencemanager: object({
+                enabled: enabledOrDataElementValidator,
+              }),
+              com_adobe_launch_ssf: object({
+                enabled: enabledOrDataElementValidator,
+              }),
             }),
           }),
-        }),
-        {},
+          {},
+        ),
       ),
-    ),
-  }),
+    }),
+  };
 };
+
+
+export const actionBridge = createBridge(false);
+export const extensionBridge = createBridge(true);

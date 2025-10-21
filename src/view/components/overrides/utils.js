@@ -53,14 +53,58 @@ export const FIELD_NAMES = Object.freeze({
   targetPropertyTokenOverride: "targetPropertyTokenOverride",
 });
 
-export const ENABLED_FIELD_VALUES = Object.freeze({
-  enabled: "Enabled",
-  disabled: "Disabled",
+export const SERVICE_OVERRIDE_FIELD_VALUES = Object.freeze({
+  config: "Use overrides from Web SDK extension configuration", // service level object is undefined
+  enabled: "Match datastream configuration",                    // service level object is {}, or includes relevant fields other than enabled.
+  disabled: "Disabled",                                         // enabled field is false
 });
 
-export const ENABLED_MATCH_FIELD_VALUES = Object.freeze({
-  enabled: "Enabled",
+/*
+
+Extension config:
+
+disabled option:
+{
+  enabled: false // no other fields
+}
+
+enabled option: (Match datastream configuration)
+{
+  otherField: "value"
+}
+
+enabled option: (Match datastream configuration with no extra fields)
+-undefined
+
+Action config:
+
+disabled option:
+{
+  enabled: false // no other fields
+}
+
+enabled option: (Match datastream configuration)
+{
+  otherField: "value"
+}
+
+enabled option: (Match datastream configuration with no extra fields)
+{
+}
+
+config option: (Use overrides from Web SDK extension configuration) - no extra fields allowed
+-undefined
+
+*/
+
+export const EXTENSION_OVERRIDE_FIELD_VALUES = Object.freeze({
+  enabled: "Specify client overrides",
   disabled: "Match datastream configuration",
+});
+
+export const ACTION_OVERRIDE_FIELD_VALUES = Object.freeze({
+  enabled: "Specify client overrides",
+  disabled: "Match overrides from Web SDK extension configuration",
 });
 
 /**
@@ -197,8 +241,7 @@ export const createValidateItemIsInArray = (
  * @returns
  */
 export const combineValidatorWithContainsDataElements =
-  (validator, multiple = true) =>
-  (value) => {
+  (validator, multiple = true) => (value) => {
     if (!value.includes("%")) {
       return validator(value);
     }
@@ -206,4 +249,7 @@ export const combineValidatorWithContainsDataElements =
       return validateContainsDataElements(value);
     }
     return validateIsDataElement(value);
-  };
+};
+
+
+

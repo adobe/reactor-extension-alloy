@@ -14,8 +14,9 @@ import { useEffect, useState } from "react";
 import fetchConfig from "../../configuration/utils/fetchConfig";
 import deepGet from "../../utils/deepGet";
 import {
-  ENABLED_FIELD_VALUES,
-  ENABLED_MATCH_FIELD_VALUES,
+  SERVICE_OVERRIDE_FIELD_VALUES,
+  EXTENSION_OVERRIDE_FIELD_VALUES,
+  ACTION_OVERRIDE_FIELD_VALUES,
   FIELD_NAMES,
   overridesKeys,
 } from "./utils";
@@ -184,8 +185,9 @@ export const useFormikContextWithOverrides = ({
       const value = deepGet(values, `${prefixWithEnv}.${shortPropName}`);
       return (
         !serviceIsEnabled ||
-        value === ENABLED_FIELD_VALUES.disabled ||
-        value === ENABLED_MATCH_FIELD_VALUES.disabled
+        value === SERVICE_OVERRIDE_FIELD_VALUES.disabled ||
+        value === EXTENSION_OVERRIDE_FIELD_VALUES.disabled ||
+        value === ACTION_OVERRIDE_FIELD_VALUES.disabled
       );
     };
 
@@ -196,7 +198,7 @@ export const useFormikContextWithOverrides = ({
     /** @type {HTMLInputElement} */
     const target = e.target;
     const newValue = target.value;
-    if (newValue !== ENABLED_FIELD_VALUES.disabled) {
+    if (newValue !== SERVICE_OVERRIDE_FIELD_VALUES.disabled) {
       return;
     }
     const fieldName = target.getAttribute("name");
@@ -205,7 +207,7 @@ export const useFormikContextWithOverrides = ({
       defaults,
       parentFieldName.replace(prefix, "edgeConfigOverrides"),
     );
-    fieldDefaults.enabled = ENABLED_FIELD_VALUES.disabled;
+    fieldDefaults.enabled = SERVICE_OVERRIDE_FIELD_VALUES.disabled;
     setFieldValue(parentFieldName, fieldDefaults, true);
     setFieldTouched(parentFieldName, true, true);
   };

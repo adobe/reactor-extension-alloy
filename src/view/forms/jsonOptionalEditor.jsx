@@ -85,7 +85,7 @@ export default function jsonOptionalEditor(
   );
 
   const formPart = {
-    getInitialValues({ initInfo }) {
+    async getInitialValues({ initInfo }) {
       const value = initInfo.settings || {};
       const initialValues = {
         [`${name}Whole`]: "",
@@ -96,7 +96,7 @@ export default function jsonOptionalEditor(
         initialValues[optionName] = WHOLE;
       }
 
-      initialValues[name] = getChildrenInitialValues({
+      initialValues[name] = await getChildrenInitialValues({
         initInfo: { settings: value },
       });
       return initialValues;

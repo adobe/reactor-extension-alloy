@@ -37,7 +37,7 @@ const fetchConfig = async ({
     if (e.name === "AbortError") {
       throw e;
     }
-
+    console.error("Failed to load datastream.", e);
     throw new UserReportableError("Failed to load datastream.", {
       originatingError: e,
     });

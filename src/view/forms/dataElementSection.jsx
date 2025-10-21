@@ -57,7 +57,7 @@ export default function dataElementSection(
     getChildrenInitialValues({ initInfo: { settings: null } });
 
   const formPart = {
-    getInitialValues({ initInfo }) {
+    async getInitialValues({ initInfo }) {
       const { [name]: value } = initInfo.settings || {};
       const initialValues = {
         [name]: buildDefaultValues(),
@@ -66,7 +66,7 @@ export default function dataElementSection(
       };
 
       if (typeof value === "object" && value !== null) {
-        initialValues[name] = getChildrenInitialValues({
+        initialValues[name] = await getChildrenInitialValues({
           initInfo: { settings: value },
         });
         initialValues[`${name}InputMethod`] = FORM;

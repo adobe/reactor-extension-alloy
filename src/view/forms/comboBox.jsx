@@ -55,25 +55,9 @@ export default function comboBox({
   defaultValue = "",
   Component = FormikKeyedComboBox,
   validationSchemaBase = string(),
+  isDisabled = false,
 }) {
-  let fieldSchema = validationSchemaBase;
-  if (!allowsCustomValue) {
-    fieldSchema = fieldSchema.test(
-      name,
-      `Please choose a ${
-        label ? label.toLowerCase() : "value"
-      } from the list or specify a single data element.`,
-      (value) =>
-        !value ||
-        items.find((item) => item.value === value) ||
-        value.match(singleDataElementRegex),
-    );
-  }
-  if (isRequired) {
-    fieldSchema = fieldSchema.required(
-      `Please choose a ${label ? label.toLowerCase() : "value"}.`,
-    );
-  }
+
 
   // DataElementSelector looks for name and label to do its calculations, so we have to have them here.
   const InnerComponent = ({
@@ -97,6 +81,7 @@ export default function comboBox({
         allowsCustomValue={allowsCustomValue || dataElementSupported}
         getKey={(item) => item.value}
         getLabel={(item) => item.label}
+        isDisabled={isDisabled}
       >
         {(item) => (
           <Item key={item.value} data-test-id={item.value}>
@@ -113,25 +98,52 @@ export default function comboBox({
     "aria-label": PropTypes.string,
   };
 
+  const getItems = context => {
+    if (typeof items === "function") {
+      return items(context);
+    }
+    return items;
+  }
+
   const part = {
-    getInitialValues({ initInfo }) {
+    getInitialValues({ initInfo, context }) {
       const { [name]: value = defaultValue } = initInfo.settings || {};
-      const item = items.find(({ value: v }) => v === value);
-      return { [name]: item ? item.value : value };
+      const item = getItems(context).find(({ value: v }) => v === value);
+      const result = { [name]: item ? item.value : value };
+      console.log("getInitialValues", result);
+      return result;
     },
-    getSettings({ values }) {
+    getSettings({ values, context }) {
       const settings = {};
       if (
         values[name] !== defaultValue &&
         (defaultValue !== "" || values[name] !== undefined)
       ) {
-        const item = items.find(({ label: l }) => l === values[name]);
+        const item = getItems(context).find(({ label: l }) => l === values[name]);
         settings[name] = item ? item.value : values[name];
       }
       return settings;
     },
-    validationShape: {
-      [name]: fieldSchema,
+    getValidationShape: ({ context }) => {
+      let fieldSchema = validationSchemaBase;
+      if (!allowsCustomValue) {
+        fieldSchema = fieldSchema.test(
+          name,
+          `Please choose a ${
+            label ? label.toLowerCase() : "value"
+          } from the list or specify a single data element.`,
+          (value) =>
+            !value ||
+            getItems(context).find((item) => item.value === value) ||
+            value.match(singleDataElementRegex),
+        );
+      }
+      if (isRequired) {
+        fieldSchema = fieldSchema.required(
+          `Please choose a ${label ? label.toLowerCase() : "value"}.`,
+        );
+      }
+      return { [name]: fieldSchema };
     },
     Component: ({ namePrefix = "", hideLabel = false }) => {
       if (dataElementSupported) {

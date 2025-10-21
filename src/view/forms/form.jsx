@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import FormElementContainer from "../components/formElementContainer";
+import deepAssign from "../utils/deepAssign";
 
 /**
  * @typedef {object} Form
@@ -52,32 +53,33 @@ export default function Form(
     wrapGetInitialValues = Identity,
     wrapGetSettings = Identity,
     wrapGetValidationShape = Identity,
+    horizontal = false,
   } = {},
   children = [],
 ) {
   const part = {
-    getInitialValues({ initInfo }) {
-      const initialValues = children
-        .filter((child) => child.getInitialValues)
-        .reduce((values, child) => {
-          return {
-            ...values,
-            ...child.getInitialValues({ initInfo }),
-          };
+    async getInitialValues(params) {
+      const initialValuePromises = children
+        .filter(child => child.getInitialValues)
+        .map(child => child.getInitialValues(params));
+
+      return (await Promise.all(initialValuePromises))
+        .reduce((acc, values) => {
+          deepAssign(acc, values);
+          return acc;
         }, {});
-      return initialValues;
     },
-    getSettings({ values }) {
+    getSettings(params) {
       return children
         .filter((child) => child.getSettings)
         .reduce((settings, child) => {
           return {
             ...settings,
-            ...child.getSettings({ values }),
+            ...child.getSettings(params),
           };
         }, {});
     },
-    getValidationShape({ initInfo, existingValidationShape }) {
+    getValidationShape({ initInfo, existingValidationShape, ...params }) {
       return children
         .filter(
           ({ validationShape, getValidationShape }) =>
@@ -105,15 +107,16 @@ export default function Form(
             return getValidationShape({
               initInfo,
               existingValidationShape: memo,
+              ...params,
             });
           },
           { ...existingValidationShape },
         );
     },
     Component(props) {
-      const { horizontal } = props;
+      const { horizontal: horizontalProp } = props;
       return (
-        <FormElementContainer direction={horizontal ? "row" : "column"}>
+        <FormElementContainer direction={horizontalProp || horizontal ? "row" : "column"}>
           {children.map(({ Component }, index) => {
             if (Component) {
               return <Component key={`${index}`} {...props} />;
