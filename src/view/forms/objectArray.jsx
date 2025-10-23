@@ -103,13 +103,14 @@ export default function objectArray(
     getSettings: getItemSettings,
     getValidationShape: getItemValidationShape,
     Component: ItemComponent,
+    ...innerParts
   } = form({}, children);
 
   const buildDefaultItem = () =>
     getItemInitialValues({ initInfo: { settings: null } });
 
   const formPart = {
-    async getInitialValues({ initInfo }) {
+    getInitialValues({ initInfo }) {
       const { [name]: value } = initInfo.settings || {};
 
       let transformedValue = value;
@@ -122,10 +123,8 @@ export default function objectArray(
           }, []);
       }
       if (transformedValue && Array.isArray(transformedValue)) {
-        transformedValue = await Promise.all(
-          transformedValue.map((item) =>
-            getItemInitialValues({ initInfo: { settings: item } }),
-          ),
+        transformedValue = transformedValue.map((item) =>
+          getItemInitialValues({ initInfo: { settings: item } }),
         );
       } else {
         transformedValue = [buildDefaultItem()];
@@ -376,6 +375,7 @@ export default function objectArray(
         </ObjectArrayContainer>
       );
     },
+    ...innerParts,
   };
   formPart.Component.propTypes = {
     namePrefix: PropTypes.string,

@@ -13,8 +13,8 @@ import serviceOverride from "../forms/serviceOverride";
 import renderForm from "../forms/renderForm";
 import form from "../forms/form";
 
-renderForm(form({ wrapGetInitialValues: (getInitialValues) => async (params) => {
-  const initialValues = await getInitialValues(params);
+renderForm(form({ wrapGetInitialValues: (getInitialValues) => params => {
+  const initialValues = getInitialValues(params);
   console.log("sendPushSubscription getInitialValues", params, initialValues);
   return initialValues;
 },}, serviceOverride({isExtension: false})));

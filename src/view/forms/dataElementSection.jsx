@@ -52,12 +52,13 @@ export default function dataElementSection(
     getInitialValues: getChildrenInitialValues,
     getValidationShape: getChildrenValidationShape,
     Component,
+    ...innerParts
   } = form({}, children);
   const buildDefaultValues = () =>
     getChildrenInitialValues({ initInfo: { settings: null } });
 
   const formPart = {
-    async getInitialValues({ initInfo }) {
+    getInitialValues({ initInfo }) {
       const { [name]: value } = initInfo.settings || {};
       const initialValues = {
         [name]: buildDefaultValues(),
@@ -66,7 +67,7 @@ export default function dataElementSection(
       };
 
       if (typeof value === "object" && value !== null) {
-        initialValues[name] = await getChildrenInitialValues({
+        initialValues[name] = getChildrenInitialValues({
           initInfo: { settings: value },
         });
         initialValues[`${name}InputMethod`] = FORM;
@@ -144,6 +145,7 @@ export default function dataElementSection(
         </>
       );
     },
+    ...innerParts,
   };
   formPart.Component.propTypes = {
     namePrefix: PropTypes.string,

@@ -28,23 +28,31 @@ const updateContext = (context, settings) => {
     eventDatasets: [],
   };
 
+  if (settings.com_adobe_analytics?.reportSuites) {
+    context.com_adobe_analytics.reportSuites.push(...settings.com_adobe_analytics.reportSuites);
+  }
   if (settings.com_adobe_analytics?.reportSuites__additional) {
-    context.com_adobe_analytics.reportSuites = settings.com_adobe_analytics.reportSuites__additional;
+    context.com_adobe_analytics.reportSuites.push(...settings.com_adobe_analytics.reportSuites__additional);
   }
 
+  if (settings.com_adobe_target?.propertyToken) {
+    context.com_adobe_target.propertyTokens.push(settings.com_adobe_target.propertyToken);
+  }
   if (settings.com_adobe_target?.propertyToken__additional) {
-    context.com_adobe_target.propertyTokens = settings.com_adobe_target.propertyToken__additional;
+    context.com_adobe_target.propertyTokens.push(...settings.com_adobe_target.propertyToken__additional);
   }
 
+  if (settings.com_adobe_identity?.idSyncContainerId) {
+    context.com_adobe_identity.idSyncContainerIds.push(settings.com_adobe_identity.idSyncContainerId);
+  }
   if (settings.com_adobe_identity?.idSyncContainerId__additional) {
-    context.com_adobe_identity.idSyncContainerIds = settings.com_adobe_identity.idSyncContainerId__additional;
+    context.com_adobe_identity.idSyncContainerIds.push(...settings.com_adobe_identity.idSyncContainerId__additional);
   }
 
   if (settings.com_adobe_experience_platform?.datasets?.event) {
-    const additionalDatasets = settings.com_adobe_experience_platform.datasets.event
-      .filter(dataset => dataset.primary === false)
-      .map(dataset => dataset.datasetId);
-    context.com_adobe_experience_platform.eventDatasets = additionalDatasets;
+    context.com_adobe_experience_platform.eventDatasets =
+      settings.com_adobe_experience_platform.datasets.event
+        .map(dataset => dataset.datasetId);
   }
 }
 
@@ -272,12 +280,12 @@ export const getActionDependencies = (env) => {
     `edgeConfigOverrides.${env}.sandbox`,
   ];
 }
-export const runFromAction = (env, requestCache) => async ({ initInfo, values: [instanceName, edgeConfigId, sandbox], context, signal}) => {
+export const runFromAction = (env, requestCache) => async ({ initInfo, dependencies: [instanceName, edgeConfigId, sandbox], context, signal}) => {
 
   context.edgeConfigOverrides ||= {};
   context.edgeConfigOverrides[env] ||= {};
 
-  console.log("runFromAction", initInfo);
+  console.log("runFromAction", initInfo, instanceName, edgeConfigId, sandbox);
 
   const extensionInstance = (initInfo.extensionSettings?.instances || []).find(instance => instance.name === instanceName);
   const instanceOrgId = extensionInstance?.orgId;
@@ -327,7 +335,7 @@ export const getConfigurationDependencies = (env) => {
   return dependencies;
 };
 
-export const runFromConfiguration = (env, requestCache) => async ({ initInfo, values: [imsOrgId, ...edgeConfigIds], context, signal}) => {
+export const runFromConfiguration = (env, requestCache) => async ({ initInfo, dependencies: [imsOrgId, ...edgeConfigIds], context, signal}) => {
 
   context.edgeConfigOverrides ||= {};
   context.edgeConfigOverrides[env] ||= {};

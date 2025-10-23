@@ -298,7 +298,7 @@ export default ({isExtension = false}) => {
 
   const contexts = ENVIRONMENTS.map(env => {
     return withContext({
-      fetchContext: runFrom(env, requestCache),
+      updateContext: runFrom(env, requestCache),
       dependencies: getDependencies(env),
     });
   });

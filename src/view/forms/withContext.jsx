@@ -9,52 +9,40 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import deepAssign from "../utils/deepAssign";
-import useForceRender from "../utils/useForceRender";
-import { useFormikContext } from "formik";
 import { useField } from "formik";
-import { useEffect } from "react";
+import useChanged from "../utils/useChanged";
 import useAbortPreviousRequestsAndCreateSignal from "../utils/useAbortPreviousRequestsAndCreateSignal";
-import form from "./form";
 
 export default function withContext({
-  fetchContext,
+  updateContext,
   dependencies,
-  ...otherArgs
-}, children) {
-  const { getInitialValues, getSettings, getValidationShape, Component } = form(
-    otherArgs,
-    children,
-  );
+}) {
 
   const parts = {
-    getInitialValues: async ({ initInfo, context }) => {
-      const initialValues = await getInitialValues({ initInfo, context });
-      const values = dependencies.map(name => initialValues?.[name]);
-      deepAssign(initialValues, await fetchContext({ signal: null, values, initInfo, context }));
-      console.log("withContext getInitialValues", initialValues, context);
-      return initialValues;
+    initializeContext: async ({ initInfo, context, values }) => {
+      const dependencyValues = dependencies.map(name => {
+        const parts = name.split(".");
+        return parts.reduce((acc, part) => {
+          return acc?.[part];
+        }, values);
+      });
+      console.log("initializeContext", values, dependencies, dependencyValues);
+      await updateContext({ signal: null, dependencies: dependencyValues, initInfo, context });
+      console.log("initializeContext done", context);
     },
-    getSettings,
-    getValidationShape,
-    Component: ({ namePrefix = "", initInfo, context, ...otherArgs }) => {
-      const formikContext = useFormikContext();
+    Component: ({ namePrefix = "", initInfo, context, forceRender }) => {
       const dependencyValues = dependencies.map(name => {
         const [{ value }] = useField(`${namePrefix}${name}`);
         return value;
       });
       const abortPreviousRequestsAndCreateSignal = useAbortPreviousRequestsAndCreateSignal();
 
-      const forceRender = useForceRender();
-      useEffect(() => {
-        const fetch = async () => {
+      useChanged(() => {
+        const run = async () => {
           const signal = abortPreviousRequestsAndCreateSignal();
 
           try {
-            const values = await fetchContext({ signal, values: dependencyValues, initInfo, context });
-            Object.keys(values).forEach(key => {
-              formikContext.setFieldValue(`${namePrefix}${key}`, values[key]);
-            })
+            await updateContext({ signal, values: dependencyValues, initInfo, context });
             forceRender();
           } catch (error) {
             if (error.name === "AbortError") {
@@ -63,10 +51,10 @@ export default function withContext({
             throw error;
           }
         }
-        fetch();
+        run();
       }, dependencyValues);
 
-      return <Component namePrefix={namePrefix} context={context} {...otherArgs} />;
+      return null;
     }
 
   };

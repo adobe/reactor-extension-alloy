@@ -80,10 +80,8 @@ const RequiredComponent = (
   };
 
   const {
-    getInitialValues,
-    getSettings,
-    getValidationShape,
     Component: ChildComponent,
+    ...innerParts
   } = form(
     {
       ...formOptions,
@@ -113,10 +111,8 @@ const RequiredComponent = (
   };
 
   return {
-    getInitialValues,
-    getSettings,
-    getValidationShape,
     Component,
+    ...innerParts,
   };
 };
 

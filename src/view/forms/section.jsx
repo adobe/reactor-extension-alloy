@@ -25,15 +25,12 @@ import form from "./form";
  * @returns {Form} A section header form.
  */
 export default function section({ label, learnMoreUrl, beta }, children = []) {
-  const { getInitialValues, getSettings, getValidationShape, Component } = form(
+  const { Component, ...innerParts } = form(
     {},
     children,
   );
 
   return {
-    getInitialValues,
-    getSettings,
-    getValidationShape,
     Component: (props) => (
       <>
         <SectionHeader learnMoreUrl={learnMoreUrl}>
@@ -43,5 +40,6 @@ export default function section({ label, learnMoreUrl, beta }, children = []) {
         <Component {...props} />
       </>
     ),
+    ...innerParts,
   };
 }

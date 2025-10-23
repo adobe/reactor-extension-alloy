@@ -54,6 +54,7 @@ export default function jsonOptionalEditor(
     getSettings: getChildrenSettings,
     getValidationShape: childrenGetValidationShape,
     Component: ChildrenComponent,
+    ...innerParts
   } = form({}, children);
 
   const validationShape = {};
@@ -85,7 +86,7 @@ export default function jsonOptionalEditor(
   );
 
   const formPart = {
-    async getInitialValues({ initInfo }) {
+    getInitialValues({ initInfo }) {
       const value = initInfo.settings || {};
       const initialValues = {
         [`${name}Whole`]: "",
@@ -96,7 +97,7 @@ export default function jsonOptionalEditor(
         initialValues[optionName] = WHOLE;
       }
 
-      initialValues[name] = await getChildrenInitialValues({
+      initialValues[name] = getChildrenInitialValues({
         initInfo: { settings: value },
       });
       return initialValues;
@@ -218,6 +219,7 @@ export default function jsonOptionalEditor(
         </FormElementContainer>
       );
     },
+    ...innerParts,
   };
 
   formPart.Component.propTypes = {

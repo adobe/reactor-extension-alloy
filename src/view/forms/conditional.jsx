@@ -31,7 +31,7 @@ import form from "./form";
  */
 export default function conditional({ args, condition }, children) {
   const argsArray = Array.isArray(args) ? args : [args];
-  const { getInitialValues, getSettings, getValidationShape, Component } = form(
+  const { getSettings, getValidationShape, Component, ...innerParts } = form(
     {},
     children,
   );
@@ -39,7 +39,7 @@ export default function conditional({ args, condition }, children) {
   const parts = {
     // getInitialValues should run regardless of the condition so that the
     // default formik state can be set up.
-    getInitialValues,
+    ...innerParts,
     getSettings({ values }) {
       const conditionalArgValues = argsArray.map((arg) => values[arg]);
       if (!condition(...conditionalArgValues)) {

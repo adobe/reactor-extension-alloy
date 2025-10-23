@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import FormElementContainer from "../components/formElementContainer";
-import deepAssign from "../utils/deepAssign";
+import useForceRender from "../utils/useForceRender";
 
 /**
  * @typedef {object} Form
@@ -51,23 +51,29 @@ const Identity = (x) => x;
 export default function Form(
   {
     wrapGetInitialValues = Identity,
+    wrapInitializeContext = Identity,
     wrapGetSettings = Identity,
     wrapGetValidationShape = Identity,
-    horizontal = false,
   } = {},
   children = [],
 ) {
   const part = {
-    async getInitialValues(params) {
-      const initialValuePromises = children
-        .filter(child => child.getInitialValues)
-        .map(child => child.getInitialValues(params));
-
-      return (await Promise.all(initialValuePromises))
-        .reduce((acc, values) => {
-          deepAssign(acc, values);
-          return acc;
+    getInitialValues(params) {
+      const initialValues = children
+        .filter((child) => child.getInitialValues)
+        .reduce((values, child) => {
+          return {
+            ...values,
+            ...child.getInitialValues(params),
+          };
         }, {});
+      console.log("getInitialValues", initialValues, new Error().stack);
+      return initialValues;
+    },
+    async initializeContext(params) {
+      return Promise.all(children
+        .filter((child) => child.initializeContext)
+        .map((child) => child.initializeContext(params)));
     },
     getSettings(params) {
       return children
@@ -79,7 +85,7 @@ export default function Form(
           };
         }, {});
     },
-    getValidationShape({ initInfo, existingValidationShape, ...params }) {
+    getValidationShape({ existingValidationShape, ...params }) {
       return children
         .filter(
           ({ validationShape, getValidationShape }) =>
@@ -105,7 +111,6 @@ export default function Form(
               };
             }
             return getValidationShape({
-              initInfo,
               existingValidationShape: memo,
               ...params,
             });
@@ -114,12 +119,13 @@ export default function Form(
         );
     },
     Component(props) {
-      const { horizontal: horizontalProp } = props;
+      const forceRender = useForceRender();
+      const { horizontal } = props;
       return (
-        <FormElementContainer direction={horizontalProp || horizontal ? "row" : "column"}>
+        <FormElementContainer direction={horizontal ? "row" : "column"}>
           {children.map(({ Component }, index) => {
             if (Component) {
-              return <Component key={`${index}`} {...props} />;
+              return <Component key={`${index}`} {...props} forceRender={forceRender} />;
             }
             return null;
           })}
@@ -128,6 +134,7 @@ export default function Form(
     },
   };
   part.getInitialValues = wrapGetInitialValues(part.getInitialValues);
+  part.initializeContext = wrapInitializeContext(part.initializeContext);
   part.getSettings = wrapGetSettings(part.getSettings);
   part.getValidationShape = wrapGetValidationShape(part.getValidationShape);
   part.Component.propTypes = {

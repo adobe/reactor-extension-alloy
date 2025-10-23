@@ -17,6 +17,7 @@ import render from "../render";
 
 const FormExtensionView = ({
   getInitialValues,
+  initializeContext,
   getSettings,
   getValidationSchema,
   Component,
@@ -26,7 +27,11 @@ const FormExtensionView = ({
 
   return (
     <ExtensionView
-      getInitialValues={params => getInitialValues({ ...params, context })}
+      getInitialValues={async (params) => {
+        const values = getInitialValues(params)
+        await initializeContext({ ...params, values, context })
+        return values;
+      }}
       getSettings={params => getSettings({ ...params, context })}
       getFormikStateValidationSchema={params => getValidationSchema({ ...params, context })}
       render={(props) => <Component {...props} context={context} />}
@@ -35,6 +40,7 @@ const FormExtensionView = ({
 };
 FormExtensionView.propTypes = {
   getInitialValues: PropTypes.func,
+  getContext: PropTypes.func,
   getSettings: PropTypes.func,
   getValidationSchema: PropTypes.object,
   Component: PropTypes.func,

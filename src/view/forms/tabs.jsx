@@ -32,15 +32,12 @@ import { Tabs, TabList, TabPanels, Item } from "@adobe/react-spectrum";
 export default function tabs({label, tabLabels, ...formOptions}, children) {
   // we don't need the Component part of the subForm because we're using the
   // TabPanels component to render the subForm's Component.
-  const { getInitialValues, getSettings, getValidationShape } =
-    form(formOptions, children);
+  const innerParts = form(formOptions, children);
 
   const parts = {
     // getInitialValues should run regardless of the condition so that the
     // default formik state can be set up.
-    getInitialValues,
-    getSettings,
-    getValidationShape,
+    ...innerParts,
     Component: (props) => {
       return (
         <Tabs aria-label={label}>

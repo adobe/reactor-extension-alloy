@@ -25,16 +25,16 @@ import { Well, LabeledValue, View } from "@adobe/react-spectrum";
  * @returns {Form} A form that renders a nested object.
  */
 export default function nestedObject({ name, label = "", ...formOptions }, children) {
-  const { getInitialValues, getSettings, getValidationShape, Component } = form(
+  const { getInitialValues, getSettings, getValidationShape, Component, ...innerParts } = form(
     formOptions,
     children,
   );
 
   const parts = {
-    async getInitialValues({ initInfo, context }) {
+    getInitialValues({ initInfo, context }) {
       const settings = initInfo.settings?.[name];
       const nestedContext = context?.[name];
-      return { [name]: await getInitialValues({ initInfo: { ...initInfo, settings }, context: nestedContext }) };
+      return { [name]: getInitialValues({ initInfo: { ...initInfo, settings }, context: nestedContext }) };
     },
     getSettings({ values, context }) {
       const settings = getSettings({ values: values[name], context: context?.[name] });
@@ -66,6 +66,7 @@ export default function nestedObject({ name, label = "", ...formOptions }, child
         return <Component {...props} namePrefix={`${namePrefix}${name}.`} />;
       }
     },
+    ...innerParts,
   };
   parts.Component.propTypes = {
     namePrefix: PropTypes.string,
