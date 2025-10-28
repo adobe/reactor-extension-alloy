@@ -23,7 +23,7 @@ const IntegerEdit = (props) => {
 
   return (
     <div>
-      <DataElementSelector>
+      <DataElementSelector clearable>
         <FormikTextField
           data-test-id="valueField"
           name={`${fieldName}.value`}

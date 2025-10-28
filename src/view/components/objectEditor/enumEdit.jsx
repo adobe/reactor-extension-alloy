@@ -24,7 +24,7 @@ const EnumEdit = (props) => {
 
   return (
     <div>
-      <DataElementSelector>
+      <DataElementSelector clearable>
         <FormikKeyedComboBox
           data-test-id="valueField"
           label={displayName}

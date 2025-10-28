@@ -52,7 +52,7 @@ const ObjectEdit = ({
         </FormikRadioGroup>
       )}
       {populationStrategy === WHOLE ? (
-        <DataElementSelector>
+        <DataElementSelector clearable>
           <FormikTextField
             data-test-id="valueField"
             name={`${fieldName}.value`}

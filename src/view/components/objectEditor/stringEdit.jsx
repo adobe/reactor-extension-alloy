@@ -23,7 +23,7 @@ const StringEdit = (props) => {
 
   return (
     <div>
-      <DataElementSelector>
+      <DataElementSelector clearable>
         {possibleValues ? (
           <FormikKeyedComboBox
             data-test-id="valueField"

@@ -28,7 +28,7 @@ const BooleanEdit = (props) => {
   ];
 
   return (
-    <DataElementSelector>
+    <DataElementSelector clearable>
       <FormikKeyedComboBox
         data-test-id="valueField"
         label={displayName}

@@ -34,7 +34,7 @@ const getEmptyItem = () => ({ key: "", value: "" });
  */
 const WholePopulationStrategyForm = ({ displayName, fieldName }) => {
   return (
-    <DataElementSelector>
+    <DataElementSelector clearable>
       <FormikTextArea
         data-test-id="valueField"
         label={displayName}
@@ -83,7 +83,7 @@ const PartsPopulationStrategyForm = ({ fieldName, items }) => (
                     width="size-3000"
                   />
 
-                  <DataElementSelector>
+                  <DataElementSelector clearable>
                     <FormikTextField
                       data-test-id={`valueField${index}`}
                       name={`${fieldName}.items.${index}.value`}

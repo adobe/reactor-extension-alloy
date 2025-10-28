@@ -31,7 +31,7 @@ import FormElementContainer from "../formElementContainer";
  */
 const WholePopulationStrategyForm = ({ displayName, fieldName }) => {
   return (
-    <DataElementSelector>
+    <DataElementSelector clearable>
       <FormikTextField
         data-test-id="valueField"
         name={`${fieldName}.value`}
