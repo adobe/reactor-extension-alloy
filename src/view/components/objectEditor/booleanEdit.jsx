@@ -15,6 +15,7 @@ import PropTypes from "prop-types";
 import { Item } from "@adobe/react-spectrum";
 import FormikKeyedComboBox from "../formikReactSpectrum3/formikKeyedComboBox";
 import DataElementSelector from "../dataElementSelector";
+import appendSentence from "./helpers/appendSentence";
 
 /**
  * The form for editing a boolean field.
@@ -38,7 +39,10 @@ const BooleanEdit = (props) => {
         getKey={(item) => item.value}
         getLabel={(item) => item.label}
         allowsCustomValue
-        description={description}
+        description={appendSentence(
+          description,
+          "Data element should resolve to true or false.",
+        )}
       >
         {(item) => (
           <Item key={item.value} data-test-id={item.value}>

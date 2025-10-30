@@ -12,7 +12,6 @@ governing permissions and limitations under the License.
 
 import once from "once";
 import getTypeSpecificHelpers from "./getTypeSpecificHelpers";
-import { ENUM } from "../constants/schemaType";
 
 /**
  * Validates the user's XDM input.
@@ -32,9 +31,7 @@ const validate = ({
   if (!schema) {
     return {};
   }
-  const errors = getTypeSpecificHelpers(
-    schema.enum ? ENUM : schema.type,
-  ).validate({
+  const errors = getTypeSpecificHelpers(schema).validate({
     formStateNode,
     // By using "once", we ensure that the parent is notified that
     // data is populated at the current or descendant node at most

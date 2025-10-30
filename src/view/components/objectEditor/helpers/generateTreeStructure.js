@@ -101,7 +101,7 @@ const getTreeNode = ({
     confirmTouchedAtCurrentOrDescendantNode();
   }
 
-  getTypeSpecificHelpers(schema.enum ? ENUM : schema.type).populateTreeNode({
+  getTypeSpecificHelpers(schema).populateTreeNode({
     treeNode,
     formStateNode,
     treeNodeComponent,

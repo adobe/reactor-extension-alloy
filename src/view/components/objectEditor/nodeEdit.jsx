@@ -16,52 +16,11 @@ import { useFormikContext } from "formik";
 import { Breadcrumbs, Checkbox, Flex, Item, View } from "@adobe/react-spectrum";
 import getNodeEditData from "./helpers/getNodeEditData";
 import AutoPopulationAlert from "./autoPopulationAlert";
-import {
-  ARRAY,
-  BOOLEAN,
-  INTEGER,
-  NUMBER,
-  OBJECT,
-  OBJECT_JSON,
-  OBJECT_ANALYTICS,
-  ENUM,
-} from "./constants/schemaType";
-import ArrayEdit from "./arrayEdit";
-import BooleanEdit from "./booleanEdit";
-import IntegerEdit from "./integerEdit";
-import ObjectJsonEdit from "./objectJsonEdit";
-import ObjectAnalyticsEdit from "./objectAnalyticsEdit";
-import NumberEdit from "./numberEdit";
-import ObjectEdit from "./objectEdit";
-import EnumEdit from "./enumEdit";
-import StringEdit from "./stringEdit";
 import { ALWAYS, NONE } from "./constants/autoPopulationSource";
 import "./nodeEdit.css";
 import FormikCheckbox from "../formikReactSpectrum3/formikCheckbox";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
-
-const getViewBySchemaType = (schemaType) => {
-  switch (schemaType) {
-    case ARRAY:
-      return ArrayEdit;
-    case BOOLEAN:
-      return BooleanEdit;
-    case INTEGER:
-      return IntegerEdit;
-    case NUMBER:
-      return NumberEdit;
-    case OBJECT:
-      return ObjectEdit;
-    case OBJECT_JSON:
-      return ObjectJsonEdit;
-    case OBJECT_ANALYTICS:
-      return ObjectAnalyticsEdit;
-    case ENUM:
-      return EnumEdit;
-    default:
-      return StringEdit;
-  }
-};
+import getTypeSpecificView from "./helpers/getTypeSpecificView";
 
 /**
  * The form for editing a node in the XDM object. The form fields
@@ -82,11 +41,7 @@ const NodeEdit = (props) => {
     nodeId: selectedNodeId,
   });
 
-  const schemaType = formStateNode.schema.enum
-    ? ENUM
-    : formStateNode.schema.type;
-
-  const TypeSpecificNodeEdit = getViewBySchemaType(schemaType);
+  const TypeSpecificNodeEdit = getTypeSpecificView(formStateNode.schema);
 
   const typeSpecificNodeEditProps = {
     displayName,
