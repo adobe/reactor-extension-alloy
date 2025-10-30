@@ -1,5 +1,5 @@
 /*
-Copyright 2023 Adobe. All rights reserved.
+Copyright 2025 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,6 +9,16 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+
+import EnumEdit from "../enumEdit";
+import ArrayEdit from "../arrayEdit";
+import BooleanEdit from "../booleanEdit";
+import IntegerEdit from "../integerEdit";
+import NumberEdit from "../numberEdit";
+import ObjectEdit from "../objectEdit";
+import ObjectJsonEdit from "../objectJsonEdit";
+import ObjectAnalyticsEdit from "../objectAnalyticsEdit";
+import StringEdit from "../stringEdit";
 import {
   ARRAY,
   BOOLEAN,
@@ -18,36 +28,27 @@ import {
   OBJECT_JSON,
   OBJECT_ANALYTICS,
 } from "../constants/schemaType";
-import arrayHelpers from "./array";
-import booleanHelpers from "./boolean";
-import integerHelpers from "./integer";
-import numberHelpers from "./number";
-import objectHelpers from "./object";
-import stringHelpers from "./string";
-import objectJsonHelpers from "./object-json";
-import objectAnalyticsHelpers from "./object-analytics";
-import enumHelpers from "./enum";
 
 export default (schema) => {
   if (schema.enum) {
-    return enumHelpers;
+    return EnumEdit;
   }
   switch (schema.type) {
     case ARRAY:
-      return arrayHelpers;
+      return ArrayEdit;
     case BOOLEAN:
-      return booleanHelpers;
+      return BooleanEdit;
     case INTEGER:
-      return integerHelpers;
+      return IntegerEdit;
     case NUMBER:
-      return numberHelpers;
+      return NumberEdit;
     case OBJECT:
-      return objectHelpers;
+      return ObjectEdit;
     case OBJECT_JSON:
-      return objectJsonHelpers;
+      return ObjectJsonEdit;
     case OBJECT_ANALYTICS:
-      return objectAnalyticsHelpers;
+      return ObjectAnalyticsEdit;
     default:
-      return stringHelpers;
+      return StringEdit;
   }
 };

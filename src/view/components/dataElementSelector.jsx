@@ -20,6 +20,7 @@ const DataElementSelector = ({
   augmentValue,
   tokenize,
   isDisabled,
+  clearable,
 }) => {
   // We have to vertically nudge down the data element selector
   // button if the field has a label so the button aligns
@@ -46,6 +47,7 @@ const DataElementSelector = ({
       adjustForLabel={adjustForLabel}
       isDisabled={isDisabled}
       tokenize={tokenize}
+      clearable={clearable}
     >
       {children}
     </RawDataElementSelector>
@@ -57,6 +59,7 @@ DataElementSelector.propTypes = {
   augmentValue: PropTypes.bool,
   tokenize: PropTypes.bool,
   isDisabled: PropTypes.bool,
+  clearable: PropTypes.bool,
 };
 
 export default DataElementSelector;

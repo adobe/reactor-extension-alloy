@@ -1,5 +1,5 @@
 /*
-Copyright 2020 Adobe. All rights reserved.
+Copyright 2025 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -17,18 +17,19 @@ export default ({
   formStateNode,
   confirmDataPopulatedAtCurrentOrDescendantNode,
 }) => {
-  const { value } = formStateNode;
+  const { value, schema } = formStateNode;
 
   if (isFormStateValuePopulated(value)) {
-    if (
-      !singleDataElementRegex.test(value) &&
-      value !== "true" &&
-      value !== "false"
-    ) {
-      return { value: "Value must be True, False, or a data element." };
-    }
-
     confirmDataPopulatedAtCurrentOrDescendantNode();
+
+    if (!singleDataElementRegex.test(value)) {
+      const validValues = schema.enum || [];
+      if (validValues.length > 0 && !validValues.includes(value)) {
+        return {
+          value: "Value must be a data element or one of the listed values.",
+        };
+      }
+    }
   }
 
   return undefined;

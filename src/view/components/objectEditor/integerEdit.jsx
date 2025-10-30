@@ -14,21 +14,26 @@ import React from "react";
 import PropTypes from "prop-types";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
 import DataElementSelector from "../dataElementSelector";
+import appendSentence from "./helpers/appendSentence";
 
 /**
  * The form for editing a number or integer field.
  */
 const IntegerEdit = (props) => {
-  const { fieldName } = props;
+  const { displayName, fieldName, description } = props;
 
   return (
     <div>
-      <DataElementSelector>
+      <DataElementSelector clearable>
         <FormikTextField
           data-test-id="valueField"
           name={`${fieldName}.value`}
-          label="Value"
+          label={displayName}
           width="size-5000"
+          description={appendSentence(
+            description,
+            "Data element should resolve to an integer.",
+          )}
         />
       </DataElementSelector>
     </div>
@@ -36,7 +41,9 @@ const IntegerEdit = (props) => {
 };
 
 IntegerEdit.propTypes = {
+  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  description: PropTypes.string,
 };
 
 export default IntegerEdit;
