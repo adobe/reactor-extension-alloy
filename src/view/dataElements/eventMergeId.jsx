@@ -11,8 +11,8 @@ governing permissions and limitations under the License.
 */
 
 import React from "react";
-// eslint-disable-next-line import/no-unresolved
-import { v4 as uuid } from "uuid";
+
+import { v4 as uuid } from "uuid/dist/index";
 import PropTypes from "prop-types";
 import { InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import render from "../render";
