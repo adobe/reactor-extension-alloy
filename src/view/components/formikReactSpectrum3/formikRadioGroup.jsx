@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { createRef } from "react";
+import { createRef, Children, cloneElement, Fragment } from "react";
 import PropTypes from "prop-types";
 import { RadioGroup } from "@adobe/react-spectrum";
 import { useField } from "formik";
@@ -35,15 +35,15 @@ const FormikRadioGroup = ({
     if (!child) {
       return child;
     }
-    if (child?.type === React.Fragment) {
-      return React.cloneElement(
+    if (child?.type === Fragment) {
+      return cloneElement(
         child,
         {},
-        React.Children.map(child.props.children, cloneWithOnBlur),
+        Children.map(child.props.children, cloneWithOnBlur),
       );
     }
 
-    return React.cloneElement(child, {
+    return cloneElement(child, {
       /** @type {(event: React.FocusEvent<HTMLInputElement>) => void} */
       onBlur: (event) => {
         // If the target that will receive focus is not a child of the
@@ -58,7 +58,7 @@ const FormikRadioGroup = ({
       },
     });
   };
-  const childrenWithOnBlur = React.Children.map(children, cloneWithOnBlur);
+  const childrenWithOnBlur = Children.map(children, cloneWithOnBlur);
   return (
     <FieldDescriptionAndError
       description={description}

@@ -19,6 +19,7 @@ import babelParser from "@babel/eslint-parser";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import unusedImports from "eslint-plugin-unused-imports";
 import vitestPlugin from "eslint-plugin-vitest";
+import react from "eslint-plugin-react";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -146,6 +147,13 @@ export default [
     },
     rules: {
       "import/no-extraneous-dependencies": "error",
+    },
+  },
+  {
+    files: ["src/view/**/*.{js,jsx}", "test/functional/**/*.{js,jsx}"],
+    rules: {
+      ...react.configs.recommended.rules,
+      ...react.configs["jsx-runtime"].rules,
     },
   },
   {

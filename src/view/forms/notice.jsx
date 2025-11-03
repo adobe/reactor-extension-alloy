@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import { InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import BetaBadge from "../components/betaBadge";
 
