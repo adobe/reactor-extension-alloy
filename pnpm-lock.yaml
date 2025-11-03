@@ -13,8 +13,8 @@ importers:
   .:
     dependencies:
       '@adobe/alloy':
-        specifier: 2.30.1-beta.2
-        version: 2.30.1-beta.2(@types/babel__core@7.20.5)(@types/node@24.5.0)(picomatch@4.0.3)(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(terser@5.44.0)(yaml@2.8.1))
+        specifier: 2.30.1-beta.6
+        version: 2.30.1-beta.6(@types/babel__core@7.20.5)(@types/node@24.5.0)(picomatch@4.0.3)(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(terser@5.44.0)(yaml@2.8.1))
       '@adobe/react-spectrum':
         specifier: ^3.45.0
         version: 3.45.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -247,8 +247,8 @@ packages:
   '@adobe/aep-rules-engine@3.1.1':
     resolution: {integrity: sha512-YeFDDSEM4wjwTNM4drKTIbYvfSdYS3DmeOgb1SxZfSXTcVg8vdxcd5blE2wKO42Qa4KUJK+ziK7ABvbHoO7T8Q==}
 
-  '@adobe/alloy@2.30.1-beta.2':
-    resolution: {integrity: sha512-t0aQFGsBMaqXkX374eSVlg7QlqWqHrOPrXDJT93WbFP7IZp+GPbtgtuWf0COSZ0dUizJPFTIsmnuKJJFVTxUpA==}
+  '@adobe/alloy@2.30.1-beta.6':
+    resolution: {integrity: sha512-KbZcGMdcmS5ygoOSMtZlpyOgBii1YJu4xAIE4SXEcetmpuB/uM5yN4fBpQLEftq9iiH+u7iMqtSdzrXmdihZhA==}
     hasBin: true
 
   '@adobe/auth-token@1.0.1':
@@ -3504,15 +3504,6 @@ packages:
     peerDependenciesMeta:
       '@types/babel__core':
         optional: true
-      rollup:
-        optional: true
-
-  '@rollup/plugin-commonjs@28.0.9':
-    resolution: {integrity: sha512-PIR4/OHZ79romx0BVVll/PkwWpJ7e5lsqFa3gFfcrFPWwLXLV39JVUzQV9RKjWerE7B845Hqjj9VYlQeieZ2dA==}
-    engines: {node: '>=16.0.0 || 14 >= 14.17'}
-    peerDependencies:
-      rollup: ^2.68.0||^3.0.0||^4.0.0
-    peerDependenciesMeta:
       rollup:
         optional: true
 
@@ -7953,10 +7944,6 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
-  uuid@11.1.0:
-    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
-    hasBin: true
-
   uuid@13.0.0:
     resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
     hasBin: true
@@ -8231,7 +8218,7 @@ snapshots:
       - supports-color
       - vitest
 
-  '@adobe/alloy@2.30.1-beta.2(@types/babel__core@7.20.5)(@types/node@24.5.0)(picomatch@4.0.3)(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(terser@5.44.0)(yaml@2.8.1))':
+  '@adobe/alloy@2.30.1-beta.6(@types/babel__core@7.20.5)(@types/node@24.5.0)(picomatch@4.0.3)(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(terser@5.44.0)(yaml@2.8.1))':
     dependencies:
       '@adobe/aep-rules-engine': 3.1.1(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(terser@5.44.0)(yaml@2.8.1))
       '@adobe/reactor-query-string': 2.0.0
@@ -8240,14 +8227,14 @@ snapshots:
       '@babel/preset-env': 7.28.5(@babel/core@7.28.5)
       '@inquirer/prompts': 7.9.0(@types/node@24.5.0)
       '@rollup/plugin-babel': 6.1.0(@babel/core@7.28.5)(@types/babel__core@7.20.5)(rollup@4.52.5)
-      '@rollup/plugin-commonjs': 28.0.9(rollup@4.52.5)
+      '@rollup/plugin-commonjs': 29.0.0(rollup@4.52.5)
       '@rollup/plugin-node-resolve': 16.0.3(rollup@4.52.5)
       '@rollup/plugin-terser': 0.4.4(rollup@4.52.5)
       commander: 14.0.2
       js-cookie: 3.0.5
       rollup: 4.52.5
       rollup-plugin-license: 3.6.0(picomatch@4.0.3)(rollup@4.52.5)
-      uuid: 11.1.0
+      uuid: 13.0.0
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu': 4.52.5
     transitivePeerDependencies:
@@ -17451,18 +17438,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@rollup/plugin-commonjs@28.0.9(rollup@4.52.5)':
-    dependencies:
-      '@rollup/pluginutils': 5.3.0(rollup@4.52.5)
-      commondir: 1.0.1
-      estree-walker: 2.0.2
-      fdir: 6.5.0(picomatch@4.0.3)
-      is-reference: 1.2.1
-      magic-string: 0.30.19
-      picomatch: 4.0.3
-    optionalDependencies:
-      rollup: 4.52.5
-
   '@rollup/plugin-commonjs@29.0.0(rollup@4.52.5)':
     dependencies:
       '@rollup/pluginutils': 5.3.0(rollup@4.52.5)
@@ -22960,8 +22935,6 @@ snapshots:
   utility-types@3.11.0: {}
 
   utils-merge@1.0.1: {}
-
-  uuid@11.1.0: {}
 
   uuid@13.0.0: {}
 
