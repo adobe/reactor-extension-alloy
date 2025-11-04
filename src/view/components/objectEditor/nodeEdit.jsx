@@ -13,7 +13,17 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import { useFormikContext } from "formik";
-import { Breadcrumbs, Checkbox, Flex, Item, View } from "@adobe/react-spectrum";
+import {
+  Breadcrumbs,
+  Checkbox,
+  Content,
+  ContextualHelp,
+  Heading,
+  Item,
+  Flex,
+  Text,
+  View,
+} from "@adobe/react-spectrum";
 import getNodeEditData from "./helpers/getNodeEditData";
 import AutoPopulationAlert from "./autoPopulationAlert";
 import { ALWAYS, NONE } from "./constants/autoPopulationSource";
@@ -48,7 +58,6 @@ const NodeEdit = (props) => {
     fieldName,
     onNodeSelect,
     verticalLayout,
-    description: formStateNode.schema.description,
   };
 
   if (formStateNode.schema["meta:enum"]) {
@@ -73,8 +82,25 @@ const NodeEdit = (props) => {
           }
           {breadcrumb.length > 1 && (
             <Breadcrumbs onAction={(nodeId) => onNodeSelect(nodeId)}>
-              {breadcrumb.map((item) => (
-                <Item key={item.nodeId}>{item.label}</Item>
+              {breadcrumb.map((item, index) => (
+                <Item key={item.nodeId}>
+                  {item.label}
+                  {
+                    // The ContextualHelp for the node is added to the last item
+                    // because trying to place it next to the Breadcrumbs component
+                    // results in the Breadcrumbs component being unable to judge the
+                    // width of its container and truncating inconsistently.
+                  }
+                  {index === breadcrumb.length - 1 &&
+                    formStateNode.schema.description && (
+                      <ContextualHelp variant="info" marginTop="size-100">
+                        <Heading>{formStateNode.schema.title}</Heading>
+                        <Content>
+                          <Text>{formStateNode.schema.description}</Text>
+                        </Content>
+                      </ContextualHelp>
+                    )}
+                </Item>
               ))}
             </Breadcrumbs>
           )}

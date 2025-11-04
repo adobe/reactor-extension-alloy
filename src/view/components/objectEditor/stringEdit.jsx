@@ -16,10 +16,9 @@ import { Item } from "@adobe/react-spectrum";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
 import FormikKeyedComboBox from "../formikReactSpectrum3/formikKeyedComboBox";
 import DataElementSelector from "../dataElementSelector";
-import appendSentence from "./helpers/appendSentence";
 
 const StringEdit = (props) => {
-  const { displayName, fieldName, description, possibleValues } = props;
+  const { displayName, fieldName, possibleValues } = props;
 
   return (
     <div>
@@ -34,10 +33,7 @@ const StringEdit = (props) => {
             getKey={(item) => item.value}
             getLabel={(item) => item.label}
             allowsCustomValue
-            description={appendSentence(
-              description,
-              "Custom values are supported.",
-            )}
+            description="Begin typing or open the menu to see suggested values. Custom values are allowed."
           >
             {(item) => (
               <Item key={item.value} data-test-id={item.value}>
@@ -51,7 +47,6 @@ const StringEdit = (props) => {
             name={`${fieldName}.value`}
             label={displayName}
             width="size-5000"
-            description={description}
           />
         )}
       </DataElementSelector>
@@ -62,7 +57,6 @@ const StringEdit = (props) => {
 StringEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
-  description: PropTypes.string,
   possibleValues: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)),
 };
 

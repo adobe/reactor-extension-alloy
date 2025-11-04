@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import React from "react";
 import PropTypes from "prop-types";
-import { Radio, Text } from "@adobe/react-spectrum";
+import { Radio } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
@@ -23,12 +23,7 @@ import FormElementContainer from "../formElementContainer";
 /**
  * The form for editing a node that is an object type.
  */
-const ObjectEdit = ({
-  displayName,
-  fieldName,
-  verticalLayout = false,
-  description,
-}) => {
+const ObjectEdit = ({ displayName, fieldName, verticalLayout = false }) => {
   const [{ value: formStateNode }] = useField(fieldName);
 
   const { isPartsPopulationStrategySupported, populationStrategy } =
@@ -36,7 +31,6 @@ const ObjectEdit = ({
 
   return (
     <FormElementContainer>
-      <Text>{description}</Text>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
           label="Population strategy"
@@ -75,7 +69,6 @@ ObjectEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   verticalLayout: PropTypes.bool,
-  description: PropTypes.string,
 };
 
 export default ObjectEdit;

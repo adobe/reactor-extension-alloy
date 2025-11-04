@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 import React, { useCallback } from "react";
 import PropTypes from "prop-types";
 import { FieldArray, useField, useFormikContext } from "formik";
-import { Radio, ActionButton, Well, Flex, Text } from "@adobe/react-spectrum";
+import { Radio, ActionButton, Well, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
 import FormikTextArea from "../formikReactSpectrum3/formikTextArea";
@@ -191,7 +191,7 @@ const updateRows = ({
  */
 const ObjectJsonEdit = (props) => {
   const { submitForm } = useFormikContext();
-  const { displayName, fieldName, description } = props;
+  const { displayName, fieldName } = props;
   const [{ value: formStateNode }] = useField(fieldName);
   const [, , { setValue }] = useField(`${fieldName}.value`);
   const [, , { setValue: setItemsValue }] = useField(`${fieldName}.items`);
@@ -212,7 +212,6 @@ const ObjectJsonEdit = (props) => {
 
   return (
     <FormElementContainer>
-      <Text>{description}</Text>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
           aria-label="Population strategy"
@@ -243,7 +242,6 @@ const ObjectJsonEdit = (props) => {
 ObjectJsonEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
-  description: PropTypes.string,
 };
 
 export default ObjectJsonEdit;

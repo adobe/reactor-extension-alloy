@@ -11,19 +11,16 @@ governing permissions and limitations under the License.
 */
 import React from "react";
 import PropTypes from "prop-types";
-import { Text } from "@adobe/react-spectrum";
 import analyticsForm from "./helpers/object-analytics/analyticsForm";
 
-const ObjectAnalyticsEdit = ({ fieldName, description, ...otherProps }) => {
+const ObjectAnalyticsEdit = ({ fieldName, ...otherProps }) => {
   return (
     <div>
-      <Text>{description}</Text>
       <analyticsForm.Component namePrefix={`${fieldName}.`} {...otherProps} />
     </div>
   );
 };
 ObjectAnalyticsEdit.propTypes = {
   fieldName: PropTypes.string.isRequired,
-  description: PropTypes.string,
 };
 export default ObjectAnalyticsEdit;
