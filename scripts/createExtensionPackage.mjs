@@ -176,10 +176,10 @@ const createExtensionPackage = ({ verbose }) => {
   );
   zip.addFile("scripts/buildAlloy.mjs", buildScript);
 
-  const componentDefaultFile = fs.readFileSync(
-    path.join(cwd, "src", "view", "utils", "componentDefault.mjs"),
+  const alloyComponents = fs.readFileSync(
+    path.join(cwd, "src", "view", "utils", "alloyComponents.mjs"),
   );
-  zip.addFile("src/view/utils/componentDefault.mjs", componentDefaultFile);
+  zip.addFile("src/view/utils/alloyComponents.mjs", alloyComponents);
 
   zip.writeZip(packagePath);
   console.log("Done");

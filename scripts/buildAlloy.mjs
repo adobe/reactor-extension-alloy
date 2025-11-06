@@ -18,7 +18,9 @@ import { spawn } from "child_process";
 import { Command, Option, InvalidOptionArgumentError } from "commander";
 import babel from "@babel/core";
 import { fileURLToPath } from "url";
-import componentDefault from "../src/view/utils/componentDefault.mjs";
+import alloyComponents, {
+  isDefaultComponent,
+} from "../src/view/utils/alloyComponents.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -73,24 +75,6 @@ const addAlloyModulesToEntryFile = ({
   return outputPath;
 };
 
-const getAlloyComponents = (() => {
-  const components = [];
-  const filePath = path.resolve(
-    `${__dirname}/../node_modules/@adobe/alloy/libEs6/core/componentCreators.js`,
-  );
-  const code = fs.readFileSync(filePath, "utf-8");
-
-  babel.traverse(babel.parse(code), {
-    Identifier(p) {
-      if (p.node.name !== "default") {
-        components.push(p.node.name);
-      }
-    },
-  });
-
-  return () => components;
-})();
-
 const program = new Command();
 
 program
@@ -128,14 +112,12 @@ program.addOption(
     }),
 );
 
-const alloyComponents = getAlloyComponents();
-
-alloyComponents.forEach((component) => {
-  const isDefault = componentDefault(component);
+Object.keys(alloyComponents).forEach((component) => {
+  const isDefault = isDefaultComponent(component);
   program.addOption(
     new Option(`--${component} <bool>`, `enable ${component} module`)
       .env(`ALLOY_${component.toUpperCase()}`)
-      .default(isDefault, new Boolean(isDefault).toString())
+      .default(isDefault, Boolean(isDefault).toString())
       .argParser((val) => {
         if (val === "0" || val === "false") {
           return false;
@@ -158,6 +140,7 @@ program.action(async ({ inputFile, outputDir, ...modules }) => {
     [],
   );
 
+  // eslint-disable-next-line no-console
   console.log("Generating build with modules: ", includedModules.join(", "));
 
   let entryFile;
