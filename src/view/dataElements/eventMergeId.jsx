@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { v4 as uuid } from "uuid/dist/index";
 import PropTypes from "prop-types";
 import { InlineAlert, Heading, Content } from "@adobe/react-spectrum";
 import render from "../render";
@@ -20,7 +19,7 @@ import Body from "../components/typography/body";
 import RequiredComponent from "../components/requiredComponent";
 
 const getInitialValues = ({ initInfo }) => {
-  const { cacheId = uuid() } = initInfo.settings || {};
+  const { cacheId = crypto.randomUUID() } = initInfo.settings || {};
 
   return {
     cacheId,
