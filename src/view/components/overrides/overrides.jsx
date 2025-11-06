@@ -22,7 +22,7 @@ import {
 } from "@adobe/react-spectrum";
 import { useField } from "formik";
 import PropTypes from "prop-types";
-import React, { useRef } from "react";
+import { useRef } from "react";
 
 import {
   DEVELOPMENT,

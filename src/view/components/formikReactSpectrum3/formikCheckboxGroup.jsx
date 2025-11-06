@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { createRef } from "react";
+import { createRef, cloneElement, Children } from "react";
 import PropTypes from "prop-types";
 import { CheckboxGroup } from "@adobe/react-spectrum";
 import { useField } from "formik";
@@ -29,8 +29,8 @@ const FormikCheckboxGroup = ({
   // Not entirely sure this is the right approach, but there's
   // no onBlur prop for FormikCheckboxGroup, so we wire up Formik's
   // onBlur to every checkbox.
-  const childrenWithOnBlur = React.Children.map(children, (child) => {
-    return React.cloneElement(child, {
+  const childrenWithOnBlur = Children.map(children, (child) => {
+    return cloneElement(child, {
       onBlur: (event) => {
         // If the target that will receive focus is not a child of the
         // checkbox group, we know the checkbox group has lost focus.

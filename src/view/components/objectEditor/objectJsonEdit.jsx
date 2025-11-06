@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import PropTypes from "prop-types";
 import { FieldArray, useField, useFormikContext } from "formik";
 import { Radio, ActionButton, Well, Flex } from "@adobe/react-spectrum";

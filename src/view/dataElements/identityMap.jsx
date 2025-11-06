@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { array, boolean, object, string } from "yup";
 import render from "../render";
 import ExtensionView from "../components/extensionView";

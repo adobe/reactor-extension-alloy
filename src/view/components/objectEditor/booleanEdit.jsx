@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { useField } from "formik";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Radio, RadioGroup } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
 import FormElementContainer from "../formElementContainer";

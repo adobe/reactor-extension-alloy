@@ -10,8 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
-
 import { v4 as uuid } from "uuid/dist/index";
 import PropTypes from "prop-types";
 import { InlineAlert, Heading, Content } from "@adobe/react-spectrum";

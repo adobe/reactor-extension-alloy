@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import { object, string } from "yup";
 import FormikTextField from "../components/formikReactSpectrum3/formikTextField";
 import FormikCheckbox from "../components/formikReactSpectrum3/formikCheckbox";

@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
+import { useRef } from "react";
 import PropTypes from "prop-types";
 import { ComboBox } from "@adobe/react-spectrum";
 import { useField } from "formik";
@@ -27,8 +27,8 @@ const FormikKeyedComboBox = ({
   const [{ value }, { touched, error }, { setValue, setTouched }] =
     useField(name);
   const forceRender = useForceRender();
-  const isFilteringRef = React.useRef(false);
-  const itemsRef = React.useRef(items);
+  const isFilteringRef = useRef(false);
+  const itemsRef = useRef(items);
 
   let text;
   if (isFilteringRef.current) {

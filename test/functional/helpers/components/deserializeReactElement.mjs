@@ -10,9 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* eslint-disable react/destructuring-assignment,react/prop-types */
-
-import React from "react";
+import { createElement } from "react";
 
 const isCustomElement = (type) => {
   return /[A-Z]/.test(type.charAt(0));
@@ -59,7 +57,7 @@ const deserialize = (element, components) => {
       : props.children,
   };
 
-  return React.createElement(newType, newProps);
+  return createElement(newType, newProps);
 };
 
 /**

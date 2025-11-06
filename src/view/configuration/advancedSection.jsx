@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 import { Flex } from "@adobe/react-spectrum";
-import React from "react";
 import { object, string } from "yup";
 import PropTypes from "prop-types";
 import SectionHeader from "../components/sectionHeader";
