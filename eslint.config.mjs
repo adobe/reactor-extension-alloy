@@ -20,6 +20,7 @@ import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended"
 import unusedImports from "eslint-plugin-unused-imports";
 import vitestPlugin from "eslint-plugin-vitest";
 import react from "eslint-plugin-react";
+import testingLibrary from "eslint-plugin-testing-library";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -176,6 +177,10 @@ export default [
         { allow: ["__alloyNS", "__alloyMonitors"] },
       ],
     },
+  },
+  {
+    files: ["test/integration/**/*.{js,jsx}"],
+    ...testingLibrary.configs["flat/react"],
   },
 
   eslintPluginPrettierRecommended,

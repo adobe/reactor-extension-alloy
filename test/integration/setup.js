@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+// eslint-disable-next-line testing-library/no-manual-cleanup -- Vitest requires manual cleanup
 import { cleanup } from "@testing-library/react";
 import { afterEach, expect } from "vitest";
 import * as matchers from "@testing-library/jest-dom/matchers";
