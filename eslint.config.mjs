@@ -150,7 +150,11 @@ export default [
     },
   },
   {
-    files: ["src/view/**/*.{js,jsx}", "test/functional/**/*.{js,jsx}"],
+    files: [
+      "src/view/**/*.{js,jsx}",
+      "test/functional/**/*.{js,jsx}",
+      "test/integration/**/*.{js,jsx}",
+    ],
     rules: {
       ...react.configs.recommended.rules,
       ...react.configs["jsx-runtime"].rules,

@@ -9,8 +9,11 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-// eslint-disable-next-line import/no-unresolved
+
+/* eslint-disable import/no-unresolved */
+
 import { defineProject } from "vitest/config";
+import react from "@vitejs/plugin-react";
 
 export default defineProject({
   test: {
@@ -22,6 +25,22 @@ export default defineProject({
           include: ["test/unit/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
           isolate: false,
           environment: "jsdom",
+        },
+      },
+      {
+        extends: false,
+        plugins: [
+          react({
+            jsxRuntime: "automatic", // This enables automatic JSX
+          }),
+        ],
+
+        test: {
+          name: "integration",
+          include: ["test/integration/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+          isolate: false,
+          environment: "jsdom",
+          setupFiles: ["test/integration/setup.js"],
         },
       },
     ],
