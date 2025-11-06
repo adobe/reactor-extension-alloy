@@ -14,10 +14,17 @@ import { defineProject } from "vitest/config";
 
 export default defineProject({
   test: {
-    name: "unit-tests",
-    include: ["test/unit/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
-    isolate: false,
-    environment: "jsdom",
+    projects: [
+      {
+        extends: false,
+        test: {
+          name: "unit",
+          include: ["test/unit/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+          isolate: false,
+          environment: "jsdom",
+        },
+      },
+    ],
     coverage: {
       include: ["src/**/*"],
       reporter: ["lcov", "html", "text"],
