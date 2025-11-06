@@ -10,14 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import getAlloyComponents from "./getAlloyComponents.mjs";
-import componentDefault from "../../src/view/utils/componentDefault.mjs";
+import alloyComponents, {
+  isDefaultComponent,
+} from "../../src/view/utils/alloyComponents.mjs";
 
 const createPreprocessingVariables = () =>
-  getAlloyComponents().map((n) => ({
+  Object.keys(alloyComponents).map((n) => ({
     key: `ALLOY_${n.toUpperCase()}`,
     path: `components.${n}`,
-    default: componentDefault(n),
+    default: isDefaultComponent(n),
   }));
 
 /**

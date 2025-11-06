@@ -15,7 +15,8 @@ import PropTypes from "prop-types";
 import { mixed } from "yup";
 import ComponentDependency from "../components/requiredComponent";
 import form from "./form";
-import componentDefault from "../utils/componentDefault.mjs";
+import { isDefaultComponent } from "../utils/alloyComponents.mjs";
+
 import valueOrDefault from "../utils/valueOrDefault";
 
 /** @typedef {import("./form").Form} Form */
@@ -48,7 +49,7 @@ const RequiredComponent = (
       const { components = {} } = initInfo?.extensionSettings || {};
       componentEnabled = valueOrDefault(
         components[requiredComponent],
-        componentDefault(requiredComponent),
+        isDefaultComponent(requiredComponent),
       );
 
       const isNew = initInfo?.settings == null;
