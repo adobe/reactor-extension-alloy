@@ -92,12 +92,14 @@ const NodeEdit = (props) => {
                   }
                   {index === breadcrumb.length - 1 &&
                     formStateNode.schema.description && (
-                      <ContextualHelp variant="info" marginTop="size-100">
-                        <Heading>{formStateNode.schema.title}</Heading>
-                        <Content>
-                          <Text>{formStateNode.schema.description}</Text>
-                        </Content>
-                      </ContextualHelp>
+                      <View UNSAFE_className="NodeEdit-contextualHelp">
+                        <ContextualHelp variant="info">
+                          <Heading>{formStateNode.schema.title}</Heading>
+                          <Content>
+                            <Text>{formStateNode.schema.description}</Text>
+                          </Content>
+                        </ContextualHelp>
+                      </View>
                     )}
                 </Item>
               ))}
