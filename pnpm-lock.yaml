@@ -14,7 +14,7 @@ importers:
     dependencies:
       '@adobe/alloy':
         specifier: 2.30.1-beta.9
-        version: 2.30.1-beta.9(@types/babel__core@7.20.5)(@types/node@24.5.0)(picomatch@4.0.3)(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))
+        version: 2.30.1-beta.9(@types/babel__core@7.20.5)(@types/node@24.5.0)(picomatch@4.0.3)(vitest@4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))
       '@adobe/react-spectrum':
         specifier: ^3.45.0
         version: 3.45.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -129,7 +129,7 @@ importers:
         version: 5.1.0(vite@7.1.5(@types/node@24.5.0)(lightningcss@1.30.1)(terser@5.44.0)(yaml@2.8.1))
       '@vitest/coverage-v8':
         specifier: ^4.0.6
-        version: 4.0.6(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))
+        version: 4.0.6(vitest@4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))
       adm-zip:
         specifier: ^0.5.16
         version: 0.5.16
@@ -189,16 +189,16 @@ importers:
         version: 4.3.0(eslint@9.35.0)
       eslint-plugin-vitest:
         specifier: ^0.5.4
-        version: 0.5.4(eslint@9.35.0)(typescript@4.7.4)(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))
+        version: 0.5.4(eslint@9.35.0)(typescript@4.7.4)(vitest@4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))
       globals:
         specifier: ^16.5.0
         version: 16.5.0
+      happy-dom:
+        specifier: ^20.0.10
+        version: 20.0.10
       husky:
         specifier: ^9.1.7
         version: 9.1.7
-      jsdom:
-        specifier: ^27.1.0
-        version: 27.1.0
       lint-staged:
         specifier: ^16.2.6
         version: 16.2.6
@@ -243,7 +243,7 @@ importers:
         version: 1.1.0(playwright@1.56.1)
       vitest:
         specifier: ^4.0.6
-        version: 4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1)
+        version: 4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1)
 
   scripts/helpers/parcel-transformer-extension-name:
     dependencies:
@@ -3896,6 +3896,9 @@ packages:
   '@types/statuses@2.0.6':
     resolution: {integrity: sha512-xMAgYwceFhRA2zY+XbEA7mxYbA093wdiW8Vu6gZPGWy9cmOyU9XesH1tNcEWsKFd5Vzrqx5T3D38PWx1FIIXkA==}
 
+  '@types/whatwg-mimetype@3.0.2':
+    resolution: {integrity: sha512-c2AKvDT8ToxLIOUlN51gTiHXflsfIFisS4pO7pDPoKouJCESkhZnEy623gwP9laCy5lnLDAw1vAzu2vM2YLOrA==}
+
   '@types/yauzl@2.10.3':
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
 
@@ -5541,6 +5544,10 @@ packages:
   graphql@16.12.0:
     resolution: {integrity: sha512-DKKrynuQRne0PNpEbzuEdHlYOMksHSUI8Zc9Unei5gTsMNA2/vMpoMz/yKba50pejK56qj98qM0SjYxAKi13gQ==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
+
+  happy-dom@20.0.10:
+    resolution: {integrity: sha512-6umCCHcjQrhP5oXhrHQQvLB0bwb1UzHAHdsXy+FjtKoYjUhmNZsQL8NivwM1vDvNEChJabVrUYxUnp/ZdYmy2g==}
+    engines: {node: '>=20.0.0'}
 
   has-bigints@1.1.0:
     resolution: {integrity: sha512-R3pbpkcIqv2Pm3dUwgjclDRVmWpTJW2DcMzcIhEXEx1oh/CEMObMm3KLmRJOdvhM7o4uQBnwr8pzRK2sJWIqfg==}
@@ -8256,6 +8263,10 @@ packages:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
 
+  whatwg-mimetype@3.0.0:
+    resolution: {integrity: sha512-nt+N2dzIutVRxARx1nghPKGv1xHikU7HKdfafKkLNLindmPU/ch3U31NOCGGA/dmPcmb1VlofO0vnKAcsm0o/Q==}
+    engines: {node: '>=12'}
+
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
     engines: {node: '>=18'}
@@ -8404,19 +8415,20 @@ packages:
 
 snapshots:
 
-  '@acemir/cssom@0.9.19': {}
+  '@acemir/cssom@0.9.19':
+    optional: true
 
-  '@adobe/aep-rules-engine@3.1.1(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))':
+  '@adobe/aep-rules-engine@3.1.1(vitest@4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))':
     dependencies:
-      '@vitest/coverage-v8': 3.2.4(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))
+      '@vitest/coverage-v8': 3.2.4(vitest@4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))
     transitivePeerDependencies:
       - '@vitest/browser'
       - supports-color
       - vitest
 
-  '@adobe/alloy@2.30.1-beta.9(@types/babel__core@7.20.5)(@types/node@24.5.0)(picomatch@4.0.3)(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))':
+  '@adobe/alloy@2.30.1-beta.9(@types/babel__core@7.20.5)(@types/node@24.5.0)(picomatch@4.0.3)(vitest@4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))':
     dependencies:
-      '@adobe/aep-rules-engine': 3.1.1(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))
+      '@adobe/aep-rules-engine': 3.1.1(vitest@4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))
       '@adobe/reactor-query-string': 2.0.0
       '@babel/core': 7.28.5
       '@babel/plugin-transform-template-literals': 7.27.1(@babel/core@7.28.5)
@@ -8876,6 +8888,7 @@ snapshots:
       '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-tokenizer': 3.0.4
       lru-cache: 11.2.1
+    optional: true
 
   '@asamuzakjp/dom-selector@6.7.4':
     dependencies:
@@ -8884,8 +8897,10 @@ snapshots:
       css-tree: 3.1.0
       is-potential-custom-element-name: 1.0.1
       lru-cache: 11.2.2
+    optional: true
 
-  '@asamuzakjp/nwsapi@2.3.9': {}
+  '@asamuzakjp/nwsapi@2.3.9':
+    optional: true
 
   '@babel/cli@7.28.3(@babel/core@7.28.5)':
     dependencies:
@@ -9878,12 +9893,14 @@ snapshots:
       style-mod: 4.1.2
       w3c-keyname: 2.2.8
 
-  '@csstools/color-helpers@5.1.0': {}
+  '@csstools/color-helpers@5.1.0':
+    optional: true
 
   '@csstools/css-calc@2.1.4(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)':
     dependencies:
       '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-tokenizer': 3.0.4
+    optional: true
 
   '@csstools/css-color-parser@3.1.0(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)':
     dependencies:
@@ -9891,14 +9908,18 @@ snapshots:
       '@csstools/css-calc': 2.1.4(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-tokenizer': 3.0.4
+    optional: true
 
   '@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4)':
     dependencies:
       '@csstools/css-tokenizer': 3.0.4
+    optional: true
 
-  '@csstools/css-syntax-patches-for-csstree@1.0.15': {}
+  '@csstools/css-syntax-patches-for-csstree@1.0.15':
+    optional: true
 
-  '@csstools/css-tokenizer@3.0.4': {}
+  '@csstools/css-tokenizer@3.0.4':
+    optional: true
 
   '@devexpress/bin-v8-flags-filter@1.3.0': {}
 
@@ -17972,7 +17993,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 6.0.0
-      '@types/node': 20.14.5
+      '@types/node': 24.5.0
 
   '@types/hoist-non-react-statics@3.3.7(@types/react@19.1.13)':
     dependencies:
@@ -17996,7 +18017,6 @@ snapshots:
   '@types/node@24.5.0':
     dependencies:
       undici-types: 7.12.0
-    optional: true
 
   '@types/react-redux@7.1.34':
     dependencies:
@@ -18012,6 +18032,8 @@ snapshots:
   '@types/resolve@1.20.2': {}
 
   '@types/statuses@2.0.6': {}
+
+  '@types/whatwg-mimetype@3.0.2': {}
 
   '@types/yauzl@2.10.3':
     dependencies:
@@ -18120,7 +18142,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@3.2.4(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))':
+  '@vitest/coverage-v8@3.2.4(vitest@4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 1.0.2
@@ -18135,11 +18157,11 @@ snapshots:
       std-env: 3.9.0
       test-exclude: 7.0.1
       tinyrainbow: 2.0.0
-      vitest: 4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1)
+      vitest: 4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-v8@4.0.6(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))':
+  '@vitest/coverage-v8@4.0.6(vitest@4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1))':
     dependencies:
       '@bcoe/v8-coverage': 1.0.2
       '@vitest/utils': 4.0.6
@@ -18152,7 +18174,7 @@ snapshots:
       magicast: 0.3.5
       std-env: 3.9.0
       tinyrainbow: 3.0.3
-      vitest: 4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1)
+      vitest: 4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -18588,6 +18610,7 @@ snapshots:
   bidi-js@1.0.3:
     dependencies:
       require-from-string: 2.0.2
+    optional: true
 
   binary-extensions@2.3.0:
     optional: true
@@ -18937,6 +18960,7 @@ snapshots:
     dependencies:
       mdn-data: 2.12.2
       source-map-js: 1.2.1
+    optional: true
 
   css.escape@1.5.1: {}
 
@@ -18945,6 +18969,7 @@ snapshots:
       '@asamuzakjp/css-color': 4.0.5
       '@csstools/css-syntax-patches-for-csstree': 1.0.15
       css-tree: 3.1.0
+    optional: true
 
   csstype@3.1.3: {}
 
@@ -18958,6 +18983,7 @@ snapshots:
     dependencies:
       whatwg-mimetype: 4.0.0
       whatwg-url: 15.1.0
+    optional: true
 
   data-view-buffer@1.0.2:
     dependencies:
@@ -19508,12 +19534,12 @@ snapshots:
     dependencies:
       eslint: 9.35.0
 
-  eslint-plugin-vitest@0.5.4(eslint@9.35.0)(typescript@4.7.4)(vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1)):
+  eslint-plugin-vitest@0.5.4(eslint@9.35.0)(typescript@4.7.4)(vitest@4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1)):
     dependencies:
       '@typescript-eslint/utils': 7.18.0(eslint@9.35.0)(typescript@4.7.4)
       eslint: 9.35.0
     optionalDependencies:
-      vitest: 4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1)
+      vitest: 4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1)
     transitivePeerDependencies:
       - supports-color
       - typescript
@@ -20017,6 +20043,12 @@ snapshots:
 
   graphql@16.12.0: {}
 
+  happy-dom@20.0.10:
+    dependencies:
+      '@types/node': 20.14.5
+      '@types/whatwg-mimetype': 3.0.2
+      whatwg-mimetype: 3.0.0
+
   has-bigints@1.1.0: {}
 
   has-flag@3.0.0: {}
@@ -20065,6 +20097,7 @@ snapshots:
   html-encoding-sniffer@4.0.0:
     dependencies:
       whatwg-encoding: 3.1.1
+    optional: true
 
   html-escaper@2.0.2: {}
 
@@ -20130,6 +20163,7 @@ snapshots:
   iconv-lite@0.6.3:
     dependencies:
       safer-buffer: 2.1.2
+    optional: true
 
   iconv-lite@0.7.0:
     dependencies:
@@ -20329,7 +20363,8 @@ snapshots:
 
   is-port-reachable@4.0.0: {}
 
-  is-potential-custom-element-name@1.0.1: {}
+  is-potential-custom-element-name@1.0.1:
+    optional: true
 
   is-reference@1.2.1:
     dependencies:
@@ -20492,6 +20527,7 @@ snapshots:
       - bufferutil
       - supports-color
       - utf-8-validate
+    optional: true
 
   jsesc@3.0.2: {}
 
@@ -20699,7 +20735,8 @@ snapshots:
 
   lru-cache@11.2.1: {}
 
-  lru-cache@11.2.2: {}
+  lru-cache@11.2.2:
+    optional: true
 
   lru-cache@5.1.1:
     dependencies:
@@ -20749,7 +20786,8 @@ snapshots:
 
   math-intrinsics@1.1.0: {}
 
-  mdn-data@2.12.2: {}
+  mdn-data@2.12.2:
+    optional: true
 
   media-typer@0.3.0: {}
 
@@ -21136,6 +21174,7 @@ snapshots:
   parse5@8.0.0:
     dependencies:
       entities: 6.0.1
+    optional: true
 
   parseurl@1.3.3: {}
 
@@ -22466,6 +22505,7 @@ snapshots:
   saxes@6.0.0:
     dependencies:
       xmlchars: 2.2.0
+    optional: true
 
   scheduler@0.20.2:
     dependencies:
@@ -22850,7 +22890,8 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  symbol-tree@3.2.4: {}
+  symbol-tree@3.2.4:
+    optional: true
 
   synckit@0.11.11:
     dependencies:
@@ -23149,6 +23190,7 @@ snapshots:
   tr46@6.0.0:
     dependencies:
       punycode: 2.3.1
+    optional: true
 
   tree-kill@1.2.2: {}
 
@@ -23248,8 +23290,7 @@ snapshots:
 
   undici-types@5.26.5: {}
 
-  undici-types@7.12.0:
-    optional: true
+  undici-types@7.12.0: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 
@@ -23354,7 +23395,7 @@ snapshots:
       terser: 5.44.0
       yaml: 2.8.1
 
-  vitest@4.0.6(@types/node@24.5.0)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1):
+  vitest@4.0.6(@types/node@24.5.0)(happy-dom@20.0.10)(jsdom@27.1.0)(lightningcss@1.30.1)(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(terser@5.44.0)(yaml@2.8.1):
     dependencies:
       '@vitest/expect': 4.0.6
       '@vitest/mocker': 4.0.6(msw@2.12.0(@types/node@24.5.0)(typescript@4.7.4))(vite@7.1.5(@types/node@24.5.0)(lightningcss@1.30.1)(terser@5.44.0)(yaml@2.8.1))
@@ -23378,6 +23419,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 24.5.0
+      happy-dom: 20.0.10
       jsdom: 27.1.0
     transitivePeerDependencies:
       - jiti
@@ -23398,6 +23440,7 @@ snapshots:
   w3c-xmlserializer@5.0.0:
     dependencies:
       xml-name-validator: 5.0.0
+    optional: true
 
   wcwidth@1.0.1:
     dependencies:
@@ -23411,18 +23454,24 @@ snapshots:
 
   webidl-conversions@3.0.1: {}
 
-  webidl-conversions@8.0.0: {}
+  webidl-conversions@8.0.0:
+    optional: true
 
   whatwg-encoding@3.1.1:
     dependencies:
       iconv-lite: 0.6.3
+    optional: true
 
-  whatwg-mimetype@4.0.0: {}
+  whatwg-mimetype@3.0.0: {}
+
+  whatwg-mimetype@4.0.0:
+    optional: true
 
   whatwg-url@15.1.0:
     dependencies:
       tr46: 6.0.0
       webidl-conversions: 8.0.0
+    optional: true
 
   whatwg-url@5.0.0:
     dependencies:
@@ -23529,9 +23578,11 @@ snapshots:
 
   ws@8.18.3: {}
 
-  xml-name-validator@5.0.0: {}
+  xml-name-validator@5.0.0:
+    optional: true
 
-  xmlchars@2.2.0: {}
+  xmlchars@2.2.0:
+    optional: true
 
   y18n@5.0.8: {}
 

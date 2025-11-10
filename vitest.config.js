@@ -23,7 +23,7 @@ export default defineProject({
           name: "unit",
           include: ["test/unit/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
           isolate: false,
-          environment: "jsdom",
+          environment: "happy-dom",
         },
       },
       {
@@ -44,7 +44,7 @@ export default defineProject({
           name: "integration",
           include: ["test/integration/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
           isolate: false,
-          environment: "jsdom",
+          environment: "happy-dom",
           setupFiles: ["test/integration/helpers/setup.js"],
         },
       },

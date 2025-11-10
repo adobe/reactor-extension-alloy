@@ -11,9 +11,11 @@ governing permissions and limitations under the License.
 */
 
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
+import { Button, Flex, Heading, Text, View } from "@adobe/react-spectrum";
+import renderView from "./helpers/renderView";
 
 // Simple hardcoded React component for testing
 const Counter = () => {
@@ -40,30 +42,32 @@ const Counter = () => {
   };
 
   return (
-    <div>
-      <h1>Counter Example</h1>
-      <p data-testid="count-display">Count: {count}</p>
+    <View padding="size-200">
+      <Heading level={1}>Counter Example</Heading>
+      <Text data-testid="count-display">Count: {count}</Text>
       {message && (
-        <p data-testid="message" role="alert">
+        <Text data-testid="message" UNSAFE_style={{ marginTop: "10px" }}>
           {message}
-        </p>
+        </Text>
       )}
-      <button type="button" onClick={handleIncrement}>
-        Increment
-      </button>
-      <button type="button" onClick={handleDecrement}>
-        Decrement
-      </button>
-      <button type="button" onClick={handleReset}>
-        Reset
-      </button>
-    </div>
+      <Flex gap="size-100" marginTop="size-200">
+        <Button variant="primary" onPress={handleIncrement}>
+          Increment
+        </Button>
+        <Button variant="secondary" onPress={handleDecrement}>
+          Decrement
+        </Button>
+        <Button variant="negative" onPress={handleReset}>
+          Reset
+        </Button>
+      </Flex>
+    </View>
   );
 };
 
 describe("Integration Test Example - Counter Component", () => {
   it("renders the counter with initial state", () => {
-    render(<Counter />);
+    renderView(Counter);
 
     expect(screen.getByText("Counter Example")).toBeInTheDocument();
     expect(screen.getByTestId("count-display")).toHaveTextContent("Count: 0");
@@ -72,7 +76,7 @@ describe("Integration Test Example - Counter Component", () => {
 
   it("increments and decrements the counter", async () => {
     const user = userEvent.setup();
-    render(<Counter />);
+    renderView(Counter);
 
     const incrementButton = screen.getByRole("button", { name: "Increment" });
     const decrementButton = screen.getByRole("button", { name: "Decrement" });
@@ -91,7 +95,7 @@ describe("Integration Test Example - Counter Component", () => {
 
   it("shows message when count reaches 5", async () => {
     const user = userEvent.setup();
-    render(<Counter />);
+    renderView(Counter);
 
     const incrementButton = screen.getByRole("button", { name: "Increment" });
 
@@ -107,14 +111,14 @@ describe("Integration Test Example - Counter Component", () => {
 
     // Message should now be visible
     expect(screen.getByTestId("message")).toBeInTheDocument();
-    expect(screen.getByRole("alert")).toHaveTextContent(
+    expect(screen.getByTestId("message")).toHaveTextContent(
       "You've clicked 5 or more times!",
     );
   });
 
   it("hides message when count drops below 5", async () => {
     const user = userEvent.setup();
-    render(<Counter />);
+    renderView(Counter);
 
     const incrementButton = screen.getByRole("button", { name: "Increment" });
     const decrementButton = screen.getByRole("button", { name: "Decrement" });
@@ -136,7 +140,7 @@ describe("Integration Test Example - Counter Component", () => {
 
   it("resets counter and message to initial state", async () => {
     const user = userEvent.setup();
-    render(<Counter />);
+    renderView(Counter);
 
     const incrementButton = screen.getByRole("button", { name: "Increment" });
     const resetButton = screen.getByRole("button", { name: "Reset" });
@@ -162,7 +166,7 @@ describe("Integration Test Example - Counter Component", () => {
 
   it("handles multiple button interactions correctly", async () => {
     const user = userEvent.setup();
-    render(<Counter />);
+    renderView(Counter);
 
     const incrementButton = screen.getByRole("button", { name: "Increment" });
     const decrementButton = screen.getByRole("button", { name: "Decrement" });
