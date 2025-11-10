@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 /* eslint-disable import/no-unresolved */
-
 import { defineProject } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
@@ -29,6 +28,7 @@ export default defineProject({
       },
       {
         extends: false,
+
         plugins: [
           react({
             jsxRuntime: "automatic", // This enables automatic JSX
@@ -36,11 +36,16 @@ export default defineProject({
         ],
 
         test: {
+          server: {
+            deps: {
+              inline: [/react-spectrum/],
+            },
+          },
           name: "integration",
           include: ["test/integration/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
           isolate: false,
           environment: "jsdom",
-          setupFiles: ["test/integration/setup.js"],
+          setupFiles: ["test/integration/helpers/setup.js"],
         },
       },
     ],
