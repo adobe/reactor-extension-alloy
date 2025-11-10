@@ -5,4 +5,20 @@ changelog:
     labels:
       - ignore-for-release
     authors:
-      - dependabot
+      - dependabot[bot]
+  categories:
+    - title: Breaking changes
+      labels:
+        - breaking-change
+    - title: New features
+      labels:
+        - "*"
+      exclude:
+        labels:
+          - bug-fix
+          - improvement
+    - title: Fixes and improvements
+      labels:
+        - bug-fix
+        - improvement
+

@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { object, array } from "yup";
 import { FieldArray, useField } from "formik";
 import {

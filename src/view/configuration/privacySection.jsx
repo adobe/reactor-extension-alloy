@@ -17,7 +17,6 @@ import {
   Heading,
   Content,
 } from "@adobe/react-spectrum";
-import React from "react";
 import PropTypes from "prop-types";
 import { object, string } from "yup";
 import { useField } from "formik";

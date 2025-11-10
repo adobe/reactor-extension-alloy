@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 import { ActionButton, Flex } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
-import React from "react";
 import { ENVIRONMENTS as OVERRIDE_ENVIRONMENTS } from "../../configuration/constants/environmentType";
 import { capitialize } from "./utils";
 

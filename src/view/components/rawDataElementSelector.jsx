@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import PropTypes from "prop-types";
 import Data from "@spectrum-icons/workflow/Data";
 import { ActionButton, Flex } from "@adobe/react-spectrum";

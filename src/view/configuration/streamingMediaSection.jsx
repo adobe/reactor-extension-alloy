@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import PropTypes from "prop-types";
 import { number, object, string, lazy } from "yup";
 import { useField } from "formik";

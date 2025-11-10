@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
+import { Children } from "react";
 import PropTypes from "prop-types";
 import { useField } from "formik";
 import RawDataElementSelector from "./rawDataElementSelector";
@@ -25,7 +25,7 @@ const DataElementSelector = ({
   // We have to vertically nudge down the data element selector
   // button if the field has a label so the button aligns
   // with the input box.
-  const inputChild = React.Children.toArray(children).find(
+  const inputChild = Children.toArray(children).find(
     (child) => child.props.name,
   );
 

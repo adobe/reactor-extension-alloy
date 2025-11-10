@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import PropTypes from "prop-types";
 import { InlineAlert, Content, Heading } from "@adobe/react-spectrum";
 import camelCaseToTitleCase from "../utils/camelCaseToTitleCase";

@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 import { Picker, Flex, TextField, Item } from "@adobe/react-spectrum";
 import PropTypes from "prop-types";
-import React from "react";
 import DataElementSelector from "../dataElementSelector";
 import FormikComboBox from "../formikReactSpectrum3/formikComboBox";
 import FormikPicker from "../formikReactSpectrum3/formikPicker";

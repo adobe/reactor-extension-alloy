@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 import { FieldArray, useField } from "formik";
-import React, { useState } from "react";
+import { useState } from "react";
 import DeleteIcon from "@spectrum-icons/workflow/Delete";
 import {
   Button,
