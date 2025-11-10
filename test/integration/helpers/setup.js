@@ -11,11 +11,13 @@ governing permissions and limitations under the License.
 */
 
 // eslint-disable-next-line testing-library/no-manual-cleanup -- Vitest requires manual cleanup
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
 import { afterEach, beforeAll, afterAll, expect } from "vitest";
 import * as matchers from "@testing-library/jest-dom/matchers";
 
 import { server } from "./mocks/server";
+
+configure({ testIdAttribute: "data-test-id" });
 
 // Extend Vitest's expect with jest-dom matchers
 expect.extend(matchers);
