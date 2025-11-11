@@ -96,10 +96,12 @@ describe("Streaming media component", () => {
 
     // Get settings and verify
     const settings = await extensionBridge.getSettings();
-    expect(settings.instances[0].streamingMedia.channel).toBe("test-channel");
-    expect(settings.instances[0].streamingMedia.playerName).toBe("test-player");
-    expect(settings.instances[0].streamingMedia.appVersion).toBe("2.0");
-    expect(settings.instances[0].streamingMedia.adPingInterval).toBe(5);
-    expect(settings.instances[0].streamingMedia.mainPingInterval).toBe(30);
+    expect(settings.instances[0].streamingMedia).toMatchObject({
+      channel: "test-channel",
+      playerName: "test-player",
+      appVersion: "2.0",
+      adPingInterval: 5,
+      mainPingInterval: 30,
+    });
   });
 });
