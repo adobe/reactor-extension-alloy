@@ -10,16 +10,16 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+// eslint-disable-next-line import/no-unresolved
+import { page, userEvent } from "vitest/browser";
 
 /**
  * Click on an accordion/disclosure button to expand it
  * @param {string} name - The accessible name of the button (text or regex)
  */
 export const clickAccordion = async (name) => {
-  const button = await screen.findByRole("button", { name });
-  await userEvent.click(button);
+  const button = page.getByRole("button", { name });
+  await button.click();
 };
 
 /**
@@ -28,7 +28,7 @@ export const clickAccordion = async (name) => {
  * @returns {Object} Helper methods for TextField interaction
  */
 export const spectrumTextField = (testId) => {
-  const getInput = () => screen.getByTestId(testId);
+  const getInput = () => page.getByTestId(testId);
 
   return {
     /**
@@ -37,7 +37,7 @@ export const spectrumTextField = (testId) => {
      */
     type: async (text) => {
       const input = getInput();
-      await userEvent.type(input, text);
+      await input.type(text);
     },
 
     /**
@@ -46,10 +46,10 @@ export const spectrumTextField = (testId) => {
      */
     fill: async (text) => {
       const input = getInput();
-      await userEvent.clear(input);
-      await userEvent.type(input, text);
+      await input.clear();
+      await input.fill(text);
       // Tab away to trigger blur and ensure all handlers complete
-      await userEvent.tab();
+      await userEvent.keyboard("{Tab}");
     },
 
     /**
@@ -57,38 +57,39 @@ export const spectrumTextField = (testId) => {
      */
     clear: async () => {
       const input = getInput();
-      await userEvent.clear(input);
+      await input.clear();
     },
 
     /**
      * Get the current value of the text field
      * @returns {string} The current value
      */
-    getValue: () => {
+    getValue: async () => {
       const input = getInput();
-      return input.value;
+      const element = input.element();
+      return element.value;
     },
 
     /**
      * Check if the text field has an error
      * @returns {boolean} True if field has error
      */
-    hasError: () => {
+    hasError: async () => {
       const input = getInput();
-      return input.getAttribute("aria-invalid") === "true";
+      const element = input.element();
+      return element.getAttribute("aria-invalid") === "true";
     },
 
     /**
      * Get the error message if present
      * @returns {string|null} The error message or null
      */
-    getErrorMessage: () => {
+    getErrorMessage: async () => {
       const input = getInput();
-      const errorId = input.getAttribute("aria-describedby");
+      const element = input.element();
+      const errorId = element.getAttribute("aria-describedby");
       if (!errorId) return null;
-      const errorElement = screen.queryByText((content, element) => {
-        return element.id === errorId;
-      });
+      const errorElement = document.getElementById(errorId);
       return errorElement ? errorElement.textContent : null;
     },
 
@@ -96,16 +97,20 @@ export const spectrumTextField = (testId) => {
      * Check if the text field is disabled
      * @returns {boolean} True if field is disabled
      */
-    isDisabled: () => {
+    isDisabled: async () => {
       const input = getInput();
-      return input.disabled;
+      const element = input.element();
+      return element.disabled;
     },
 
     /**
      * Get the raw input element
      * @returns {HTMLElement} The input element
      */
-    getElement: () => getInput(),
+    getElement: async () => {
+      const input = getInput();
+      return input.element();
+    },
   };
 };
 
@@ -115,7 +120,7 @@ export const spectrumTextField = (testId) => {
  * @returns {Object} Helper methods for NumberField interaction
  */
 export const spectrumNumberField = (testId) => {
-  const getInput = () => screen.getByTestId(testId);
+  const getInput = () => page.getByTestId(testId);
 
   return {
     /**
@@ -124,7 +129,7 @@ export const spectrumNumberField = (testId) => {
      */
     type: async (value) => {
       const input = getInput();
-      await userEvent.type(input, String(value));
+      await input.type(String(value));
     },
 
     /**
@@ -133,10 +138,10 @@ export const spectrumNumberField = (testId) => {
      */
     fill: async (value) => {
       const input = getInput();
-      await userEvent.clear(input);
-      await userEvent.type(input, String(value));
+      await input.clear();
+      await input.fill(String(value));
       // Tab away to trigger blur and ensure all handlers complete
-      await userEvent.tab();
+      await userEvent.keyboard("{Tab}");
     },
 
     /**
@@ -144,90 +149,72 @@ export const spectrumNumberField = (testId) => {
      */
     clear: async () => {
       const input = getInput();
-      await userEvent.clear(input);
+      await input.clear();
     },
 
     /**
      * Get the current value of the number field
      * @returns {string} The current value
      */
-    getValue: () => {
+    getValue: async () => {
       const input = getInput();
-      return input.value;
+      const element = input.element();
+      return element.value;
     },
 
     /**
      * Get the current value as a number
      * @returns {number|null} The current value as a number, or null if empty
      */
-    getNumericValue: () => {
+    getNumericValue: async () => {
       const input = getInput();
-      const value = input.value;
+      const element = input.element();
+      const value = element.value;
       return value === "" ? null : Number(value);
     },
 
     /**
-     * Increment the value using the up arrow button
+     * Increment the value using the up arrow key
      */
     increment: async () => {
       const input = getInput();
-      // Find the stepper buttons by their accessible names
-      // The buttons are siblings of the input within the number field
-      const incrementButton = screen
-        .getAllByRole("button", {
-          name: /increase/i,
-        })
-        .find((button) => {
-          // eslint-disable-next-line testing-library/no-node-access
-          const container = button.parentElement;
-          return container && container.contains(input);
-        });
-      if (incrementButton) {
-        await userEvent.click(incrementButton);
-      }
+      await input.click();
+      await userEvent.keyboard("{ArrowUp}");
+      // Tab away to trigger blur and ensure all handlers complete
+      await userEvent.keyboard("{Tab}");
     },
 
     /**
-     * Decrement the value using the down arrow button
+     * Decrement the value using the down arrow key
      */
     decrement: async () => {
       const input = getInput();
-      // Find the stepper buttons by their accessible names
-      // The buttons are siblings of the input within the number field
-      const decrementButton = screen
-        .getAllByRole("button", {
-          name: /decrease/i,
-        })
-        .find((button) => {
-          // eslint-disable-next-line testing-library/no-node-access
-          const container = button.parentElement;
-          return container && container.contains(input);
-        });
-      if (decrementButton) {
-        await userEvent.click(decrementButton);
-      }
+      await input.click();
+      await userEvent.keyboard("{ArrowDown}");
+      // Tab away to trigger blur and ensure all handlers complete
+      await userEvent.keyboard("{Tab}");
     },
 
     /**
      * Check if the number field has an error
      * @returns {boolean} True if field has error
      */
-    hasError: () => {
+    hasError: async () => {
       const input = getInput();
-      return input.getAttribute("aria-invalid") === "true";
+      const element = input.element();
+      return element.getAttribute("aria-invalid") === "true";
     },
 
     /**
      * Get the error message if present
      * @returns {string|null} The error message or null
      */
-    getErrorMessage: () => {
+    getErrorMessage: async () => {
       const input = getInput();
-      const errorId = input.getAttribute("aria-describedby");
+      const element = input.element();
+      const errorId = element.getAttribute("aria-describedby");
       if (!errorId) return null;
-      const errorElement = screen.queryByText((content, element) => {
-        return element.id === errorId;
-      });
+      const errorElement = document.getElementById(errorId);
       return errorElement ? errorElement.textContent : null;
     },
 
@@ -235,15 +222,19 @@ export const spectrumNumberField = (testId) => {
      * Check if the number field is disabled
      * @returns {boolean} True if field is disabled
      */
-    isDisabled: () => {
+    isDisabled: async () => {
       const input = getInput();
-      return input.disabled;
+      const element = input.element();
+      return element.disabled;
     },
 
     /**
      * Get the raw input element
      * @returns {HTMLElement} The input element
      */
-    getElement: () => getInput(),
+    getElement: async () => {
+      const input = getInput();
+      return input.element();
+    },
   };
 };

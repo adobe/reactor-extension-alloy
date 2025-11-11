@@ -32,35 +32,13 @@ export default defineProject({
 
         plugins: [
           react({
-            jsxRuntime: "automatic", // This enables automatic JSX
-          }),
-        ],
-
-        test: {
-          server: {
-            deps: {
-              inline: [/react-spectrum/],
-            },
-          },
-          name: "integration",
-          include: ["test/integration/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
-          isolate: false,
-          environment: "happy-dom",
-          setupFiles: ["test/integration/helpers/setup.js"],
-        },
-      },
-      {
-        extends: false,
-
-        plugins: [
-          react({
             jsxRuntime: "automatic",
           }),
         ],
 
         test: {
-          name: "integration2",
-          include: ["test/integration2/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+          name: "integration",
+          include: ["test/integration/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
           isolate: false,
           browser: {
             enabled: true,
@@ -76,7 +54,7 @@ export default defineProject({
               testIdAttribute: "data-test-id",
             },
           },
-          setupFiles: ["test/integration2/helpers/setup.js"],
+          setupFiles: ["test/integration/helpers/setup.js"],
         },
       },
     ],

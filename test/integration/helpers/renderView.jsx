@@ -9,12 +9,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { render } from "@testing-library/react";
+import { render } from "vitest-browser-react";
 import { Provider, lightTheme } from "@adobe/react-spectrum";
 import ErrorBoundary from "../../../src/view/components/errorBoundary";
 
-export default (View) => {
-  render(
+export default async (View) => {
+  return render(
     <Provider
       theme={lightTheme}
       colorScheme="light"

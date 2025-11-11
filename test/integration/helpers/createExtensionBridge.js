@@ -27,16 +27,13 @@ export default () => {
         ...initInfo,
       };
 
-      registeredOptions.init.apply(this, [initInfo]);
+      act(() => {
+        registeredOptions.init.apply(this, [initInfo]);
+      });
     },
 
     async validate(...args) {
-      let validationResult;
-
-      await act(async () => {
-        validationResult = registeredOptions.validate.apply(this, args);
-      });
-
+      const validationResult = registeredOptions.validate.apply(this, args);
       return validationResult;
     },
 

@@ -10,10 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { screen } from "@testing-library/react";
+import { expect } from "vitest";
 
-export const waitForConfigurationViewToLoad = async () => {
-  await screen.findByRole("button", {
-    name: /SDK instances/i,
-  });
+export const waitForConfigurationViewToLoad = async (screen) => {
+  await expect.element(screen.getByText("SDK instances")).toBeVisible();
 };

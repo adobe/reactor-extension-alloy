@@ -9,16 +9,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-// src/mocks/handlers.js
 import { http, HttpResponse } from "msw";
 
 export const handlers = [
-  http.get("/api/users", () => {
-    return HttpResponse.json([
-      { id: 1, name: "John" },
-      { id: 2, name: "Jane" },
-    ]);
-  }),
   http.get(
     "https://platform.adobe.io/data/foundation/sandbox-management/",
     async () => {

@@ -10,28 +10,19 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-// eslint-disable-next-line testing-library/no-manual-cleanup -- Vitest requires manual cleanup
-import { cleanup, configure } from "@testing-library/react";
-import { afterEach, beforeAll, afterAll, expect } from "vitest";
-import * as matchers from "@testing-library/jest-dom/matchers";
-import { server } from "./mocks/server";
-import { screenCapture } from "./debug";
+import { afterEach, afterAll } from "vitest";
+import { worker } from "./mocks/browser";
 
-global.screenCapture = screenCapture;
-
-configure({ testIdAttribute: "data-test-id" });
-
-// Extend Vitest's expect with jest-dom matchers
-expect.extend(matchers);
-
-// Start server before all tests
-beforeAll(() => server.listen());
+worker.start({
+  onUnhandledRequest: "bypass",
+});
 
 // Reset handlers after each test (important for test isolation)
 afterEach(() => {
-  cleanup();
-  return server.resetHandlers();
+  worker.resetHandlers();
 });
 
 // Clean up after all tests
-afterAll(() => server.close());
+afterAll(() => {
+  worker.stop();
+});
