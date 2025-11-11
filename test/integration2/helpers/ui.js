@@ -10,11 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-// eslint-disable-next-line import/no-unresolved
-import { page } from "vitest/browser";
+import { waitFor } from "@testing-library/react";
 
 export const waitForConfigurationViewToLoad = async () => {
-  await page.getByRole("button", {
-    name: /SDK instances/i,
-  });
+  await waitFor(
+    () => {
+      const button = document.querySelector('button[aria-label*="SDK"]');
+      if (!button) {
+        throw new Error("There is a problem loading the configuration view");
+      }
+      return button;
+    },
+    { timeout: 3000 },
+  );
 };
