@@ -81,7 +81,7 @@ export default defineProject({
       },
     ],
     coverage: {
-      include: ["src/**/*"],
+      include: ["src/**/*.{js,jsx}"],
       reporter: ["lcov", "html", "text"],
     },
   },
