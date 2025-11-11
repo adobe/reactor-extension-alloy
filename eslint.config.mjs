@@ -181,6 +181,11 @@ export default [
   {
     files: ["test/integration/**/*.{js,jsx}"],
     ...testingLibrary.configs["flat/react"],
+    rules: {
+      ...testingLibrary.configs["flat/react"].rules,
+      // page from vitest/browser is equivalent to screen, not a render result
+      "testing-library/prefer-screen-queries": "off",
+    },
   },
 
   eslintPluginPrettierRecommended,

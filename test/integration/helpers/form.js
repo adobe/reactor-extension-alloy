@@ -18,8 +18,7 @@ import { page, userEvent } from "vitest/browser";
  * @param {string} name - The accessible name of the button (text or regex)
  */
 export const clickAccordion = async (name) => {
-  const button = page.getByRole("button", { name });
-  await button.click();
+  await page.getByRole("button", { name }).click();
 };
 
 /**
@@ -28,16 +27,13 @@ export const clickAccordion = async (name) => {
  * @returns {Object} Helper methods for TextField interaction
  */
 export const spectrumTextField = (testId) => {
-  const getInput = () => page.getByTestId(testId);
-
   return {
     /**
      * Type text into the text field
      * @param {string} text - Text to type
      */
     type: async (text) => {
-      const input = getInput();
-      await input.type(text);
+      await page.getByTestId(testId).type(text);
     },
 
     /**
@@ -45,9 +41,8 @@ export const spectrumTextField = (testId) => {
      * @param {string} text - Text to type
      */
     fill: async (text) => {
-      const input = getInput();
-      await input.clear();
-      await input.fill(text);
+      await page.getByTestId(testId).clear();
+      await page.getByTestId(testId).fill(text);
       // Tab away to trigger blur and ensure all handlers complete
       await userEvent.keyboard("{Tab}");
     },
@@ -56,8 +51,7 @@ export const spectrumTextField = (testId) => {
      * Clear the text field
      */
     clear: async () => {
-      const input = getInput();
-      await input.clear();
+      await page.getByTestId(testId).clear();
     },
 
     /**
@@ -65,9 +59,7 @@ export const spectrumTextField = (testId) => {
      * @returns {string} The current value
      */
     getValue: async () => {
-      const input = getInput();
-      const element = input.element();
-      return element.value;
+      return page.getByTestId(testId).element().value;
     },
 
     /**
@@ -75,9 +67,10 @@ export const spectrumTextField = (testId) => {
      * @returns {boolean} True if field has error
      */
     hasError: async () => {
-      const input = getInput();
-      const element = input.element();
-      return element.getAttribute("aria-invalid") === "true";
+      return (
+        page.getByTestId(testId).element().getAttribute("aria-invalid") ===
+        "true"
+      );
     },
 
     /**
@@ -85,8 +78,7 @@ export const spectrumTextField = (testId) => {
      * @returns {string|null} The error message or null
      */
     getErrorMessage: async () => {
-      const input = getInput();
-      const element = input.element();
+      const element = page.getByTestId(testId).element();
       const errorId = element.getAttribute("aria-describedby");
       if (!errorId) return null;
       const errorElement = document.getElementById(errorId);
@@ -98,9 +90,7 @@ export const spectrumTextField = (testId) => {
      * @returns {boolean} True if field is disabled
      */
     isDisabled: async () => {
-      const input = getInput();
-      const element = input.element();
-      return element.disabled;
+      return page.getByTestId(testId).element().disabled;
     },
 
     /**
@@ -108,8 +98,7 @@ export const spectrumTextField = (testId) => {
      * @returns {HTMLElement} The input element
      */
     getElement: async () => {
-      const input = getInput();
-      return input.element();
+      return page.getByTestId(testId).element();
     },
   };
 };
@@ -120,16 +109,13 @@ export const spectrumTextField = (testId) => {
  * @returns {Object} Helper methods for NumberField interaction
  */
 export const spectrumNumberField = (testId) => {
-  const getInput = () => page.getByTestId(testId);
-
   return {
     /**
      * Type a number into the number field
      * @param {string|number} value - Number to type
      */
     type: async (value) => {
-      const input = getInput();
-      await input.type(String(value));
+      await page.getByTestId(testId).type(String(value));
     },
 
     /**
@@ -137,9 +123,8 @@ export const spectrumNumberField = (testId) => {
      * @param {string|number} value - Number to type
      */
     fill: async (value) => {
-      const input = getInput();
-      await input.clear();
-      await input.fill(String(value));
+      await page.getByTestId(testId).clear();
+      await page.getByTestId(testId).fill(String(value));
       // Tab away to trigger blur and ensure all handlers complete
       await userEvent.keyboard("{Tab}");
     },
@@ -148,8 +133,7 @@ export const spectrumNumberField = (testId) => {
      * Clear the number field
      */
     clear: async () => {
-      const input = getInput();
-      await input.clear();
+      await page.getByTestId(testId).clear();
     },
 
     /**
@@ -157,9 +141,7 @@ export const spectrumNumberField = (testId) => {
      * @returns {string} The current value
      */
     getValue: async () => {
-      const input = getInput();
-      const element = input.element();
-      return element.value;
+      return page.getByTestId(testId).element().value;
     },
 
     /**
@@ -167,8 +149,7 @@ export const spectrumNumberField = (testId) => {
      * @returns {number|null} The current value as a number, or null if empty
      */
     getNumericValue: async () => {
-      const input = getInput();
-      const element = input.element();
+      const element = page.getByTestId(testId).element();
       const value = element.value;
       return value === "" ? null : Number(value);
     },
@@ -177,8 +158,7 @@ export const spectrumNumberField = (testId) => {
      * Increment the value using the up arrow key
      */
     increment: async () => {
-      const input = getInput();
-      await input.click();
+      await page.getByTestId(testId).click();
       await userEvent.keyboard("{ArrowUp}");
       // Tab away to trigger blur and ensure all handlers complete
       await userEvent.keyboard("{Tab}");
@@ -188,8 +168,7 @@ export const spectrumNumberField = (testId) => {
      * Decrement the value using the down arrow key
      */
     decrement: async () => {
-      const input = getInput();
-      await input.click();
+      await page.getByTestId(testId).click();
       await userEvent.keyboard("{ArrowDown}");
       // Tab away to trigger blur and ensure all handlers complete
       await userEvent.keyboard("{Tab}");
@@ -200,9 +179,10 @@ export const spectrumNumberField = (testId) => {
      * @returns {boolean} True if field has error
      */
     hasError: async () => {
-      const input = getInput();
-      const element = input.element();
-      return element.getAttribute("aria-invalid") === "true";
+      return (
+        page.getByTestId(testId).element().getAttribute("aria-invalid") ===
+        "true"
+      );
     },
 
     /**
@@ -210,8 +190,7 @@ export const spectrumNumberField = (testId) => {
      * @returns {string|null} The error message or null
      */
     getErrorMessage: async () => {
-      const input = getInput();
-      const element = input.element();
+      const element = page.getByTestId(testId).element();
       const errorId = element.getAttribute("aria-describedby");
       if (!errorId) return null;
       const errorElement = document.getElementById(errorId);
@@ -223,9 +202,7 @@ export const spectrumNumberField = (testId) => {
      * @returns {boolean} True if field is disabled
      */
     isDisabled: async () => {
-      const input = getInput();
-      const element = input.element();
-      return element.disabled;
+      return page.getByTestId(testId).element().disabled;
     },
 
     /**
@@ -233,8 +210,7 @@ export const spectrumNumberField = (testId) => {
      * @returns {HTMLElement} The input element
      */
     getElement: async () => {
-      const input = getInput();
-      return input.element();
+      return page.getByTestId(testId).element();
     },
   };
 };

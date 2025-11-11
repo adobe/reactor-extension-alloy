@@ -31,7 +31,7 @@ describe("Streaming media component", () => {
   });
 
   it("sets form values from settings", async () => {
-    const screen = await renderView(ConfigurationView);
+    const view = await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -50,7 +50,7 @@ describe("Streaming media component", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad(screen);
+    await waitForConfigurationViewToLoad(view);
 
     const channelField = spectrumTextField("mediaChannelField");
     expect(await channelField.getValue()).toBe("channel");
@@ -71,11 +71,11 @@ describe("Streaming media component", () => {
   });
 
   it("updates form values and saves to settings", async () => {
-    const screen = await renderView(ConfigurationView);
+    const view = await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad(screen);
+    await waitForConfigurationViewToLoad(view);
 
     const channelField = spectrumTextField("mediaChannelField");
     await channelField.fill("test-channel");
@@ -105,11 +105,32 @@ describe("Streaming media component", () => {
     });
   });
 
+  it("saves settings with only channel and player name provided", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(buildSettings());
+
+    await waitForConfigurationViewToLoad(view);
+
+    const channelField = spectrumTextField("mediaChannelField");
+    await channelField.fill("test-channel");
+
+    const playerNameField = spectrumTextField("mediaPlayerNameField");
+    await playerNameField.fill("test-player");
+
+    // Get settings and verify
+    const settings = await extensionBridge.getSettings();
+    expect(settings.instances[0].streamingMedia).toMatchObject({
+      channel: "test-channel",
+      playerName: "test-player",
+    });
+  });
+
   describe("validation", () => {
     it("requires channel when player name is provided", async () => {
-      const screen = await renderView(ConfigurationView);
+      const view = await renderView(ConfigurationView);
       extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad(screen);
+      await waitForConfigurationViewToLoad(view);
 
       const playerNameField = spectrumTextField("mediaPlayerNameField");
       await playerNameField.fill("test-player");
@@ -125,9 +146,9 @@ describe("Streaming media component", () => {
     });
 
     it("requires player name when channel is provided", async () => {
-      const screen = await renderView(ConfigurationView);
+      const view = await renderView(ConfigurationView);
       extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad(screen);
+      await waitForConfigurationViewToLoad(view);
 
       const channelField = spectrumTextField("mediaChannelField");
       await channelField.fill("test-channel");
@@ -143,9 +164,9 @@ describe("Streaming media component", () => {
     });
 
     it("validates ad ping interval minimum value", async () => {
-      const screen = await renderView(ConfigurationView);
+      const view = await renderView(ConfigurationView);
       extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad(screen);
+      await waitForConfigurationViewToLoad(view);
 
       const channelField = spectrumTextField("mediaChannelField");
       await channelField.fill("test-channel");
@@ -165,9 +186,9 @@ describe("Streaming media component", () => {
     });
 
     it("validates ad ping interval maximum value", async () => {
-      const screen = await renderView(ConfigurationView);
+      const view = await renderView(ConfigurationView);
       extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad(screen);
+      await waitForConfigurationViewToLoad(view);
 
       const channelField = spectrumTextField("mediaChannelField");
       await channelField.fill("test-channel");
@@ -187,9 +208,9 @@ describe("Streaming media component", () => {
     });
 
     it("validates main ping interval minimum value", async () => {
-      const screen = await renderView(ConfigurationView);
+      const view = await renderView(ConfigurationView);
       extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad(screen);
+      await waitForConfigurationViewToLoad(view);
 
       const channelField = spectrumTextField("mediaChannelField");
       await channelField.fill("test-channel");
@@ -209,9 +230,9 @@ describe("Streaming media component", () => {
     });
 
     it("validates main ping interval maximum value", async () => {
-      const screen = await renderView(ConfigurationView);
+      const view = await renderView(ConfigurationView);
       extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad(screen);
+      await waitForConfigurationViewToLoad(view);
 
       const channelField = spectrumTextField("mediaChannelField");
       await channelField.fill("test-channel");
@@ -231,9 +252,9 @@ describe("Streaming media component", () => {
     });
 
     it("accepts valid ad ping interval values", async () => {
-      const screen = await renderView(ConfigurationView);
+      const view = await renderView(ConfigurationView);
       extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad(screen);
+      await waitForConfigurationViewToLoad(view);
 
       const channelField = spectrumTextField("mediaChannelField");
       await channelField.fill("test-channel");
@@ -250,9 +271,9 @@ describe("Streaming media component", () => {
     });
 
     it("accepts valid main ping interval values", async () => {
-      const screen = await renderView(ConfigurationView);
+      const view = await renderView(ConfigurationView);
       extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad(screen);
+      await waitForConfigurationViewToLoad(view);
 
       const channelField = spectrumTextField("mediaChannelField");
       await channelField.fill("test-channel");
@@ -269,9 +290,9 @@ describe("Streaming media component", () => {
     });
 
     it("disables interval fields when channel and player name are not provided", async () => {
-      const screen = await renderView(ConfigurationView);
+      const view = await renderView(ConfigurationView);
       extensionBridge.init(buildSettings());
-      await waitForConfigurationViewToLoad(screen);
+      await waitForConfigurationViewToLoad(view);
 
       const adPingIntervalField = spectrumNumberField(
         "mediaAdPingIntervalField",
