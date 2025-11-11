@@ -10,3 +10,4 @@ coverage
 extension.json
 package-adobe-alloy-*.zip
 benchmark*
+debug-output.html

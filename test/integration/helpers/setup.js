@@ -14,8 +14,10 @@ governing permissions and limitations under the License.
 import { cleanup, configure } from "@testing-library/react";
 import { afterEach, beforeAll, afterAll, expect } from "vitest";
 import * as matchers from "@testing-library/jest-dom/matchers";
-
 import { server } from "./mocks/server";
+import { screenCapture } from "./debug";
+
+global.screenCapture = screenCapture;
 
 configure({ testIdAttribute: "data-test-id" });
 
