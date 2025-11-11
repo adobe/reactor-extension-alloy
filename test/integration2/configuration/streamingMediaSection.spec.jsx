@@ -104,4 +104,184 @@ describe("Streaming media component", () => {
       mainPingInterval: 30,
     });
   });
+
+  describe("validation", () => {
+    it("requires channel when player name is provided", async () => {
+      const screen = await renderView(ConfigurationView);
+      extensionBridge.init(buildSettings());
+      await waitForConfigurationViewToLoad(screen);
+
+      const playerNameField = spectrumTextField("mediaPlayerNameField");
+      await playerNameField.fill("test-player");
+
+      const channelField = spectrumTextField("mediaChannelField");
+      // Touch the channel field to trigger validation
+      await channelField.fill("");
+
+      expect(await channelField.hasError()).toBe(true);
+      expect(await channelField.getErrorMessage()).toBe(
+        "Please provide a channel name for streaming media.",
+      );
+    });
+
+    it("requires player name when channel is provided", async () => {
+      const screen = await renderView(ConfigurationView);
+      extensionBridge.init(buildSettings());
+      await waitForConfigurationViewToLoad(screen);
+
+      const channelField = spectrumTextField("mediaChannelField");
+      await channelField.fill("test-channel");
+
+      const playerNameField = spectrumTextField("mediaPlayerNameField");
+      // Touch the player name field to trigger validation
+      await playerNameField.fill("");
+
+      expect(await playerNameField.hasError()).toBe(true);
+      expect(await playerNameField.getErrorMessage()).toBe(
+        "Please provide a player name for streaming media.",
+      );
+    });
+
+    it("validates ad ping interval minimum value", async () => {
+      const screen = await renderView(ConfigurationView);
+      extensionBridge.init(buildSettings());
+      await waitForConfigurationViewToLoad(screen);
+
+      const channelField = spectrumTextField("mediaChannelField");
+      await channelField.fill("test-channel");
+
+      const playerNameField = spectrumTextField("mediaPlayerNameField");
+      await playerNameField.fill("test-player");
+
+      const adPingIntervalField = spectrumNumberField(
+        "mediaAdPingIntervalField",
+      );
+      await adPingIntervalField.fill("0");
+
+      expect(await adPingIntervalField.hasError()).toBe(true);
+      expect(await adPingIntervalField.getErrorMessage()).toBe(
+        "The Ad Ping Interval must be greater than 1 second.",
+      );
+    });
+
+    it("validates ad ping interval maximum value", async () => {
+      const screen = await renderView(ConfigurationView);
+      extensionBridge.init(buildSettings());
+      await waitForConfigurationViewToLoad(screen);
+
+      const channelField = spectrumTextField("mediaChannelField");
+      await channelField.fill("test-channel");
+
+      const playerNameField = spectrumTextField("mediaPlayerNameField");
+      await playerNameField.fill("test-player");
+
+      const adPingIntervalField = spectrumNumberField(
+        "mediaAdPingIntervalField",
+      );
+      await adPingIntervalField.fill("11");
+
+      expect(await adPingIntervalField.hasError()).toBe(true);
+      expect(await adPingIntervalField.getErrorMessage()).toBe(
+        "The Ad Ping Interval must be less than 10 seconds.",
+      );
+    });
+
+    it("validates main ping interval minimum value", async () => {
+      const screen = await renderView(ConfigurationView);
+      extensionBridge.init(buildSettings());
+      await waitForConfigurationViewToLoad(screen);
+
+      const channelField = spectrumTextField("mediaChannelField");
+      await channelField.fill("test-channel");
+
+      const playerNameField = spectrumTextField("mediaPlayerNameField");
+      await playerNameField.fill("test-player");
+
+      const mainPingIntervalField = spectrumNumberField(
+        "mediaMainPingIntervalField",
+      );
+      await mainPingIntervalField.fill("9");
+
+      expect(await mainPingIntervalField.hasError()).toBe(true);
+      expect(await mainPingIntervalField.getErrorMessage()).toBe(
+        "The Main Ping Interval must be greater than 10 seconds.",
+      );
+    });
+
+    it("validates main ping interval maximum value", async () => {
+      const screen = await renderView(ConfigurationView);
+      extensionBridge.init(buildSettings());
+      await waitForConfigurationViewToLoad(screen);
+
+      const channelField = spectrumTextField("mediaChannelField");
+      await channelField.fill("test-channel");
+
+      const playerNameField = spectrumTextField("mediaPlayerNameField");
+      await playerNameField.fill("test-player");
+
+      const mainPingIntervalField = spectrumNumberField(
+        "mediaMainPingIntervalField",
+      );
+      await mainPingIntervalField.fill("61");
+
+      expect(await mainPingIntervalField.hasError()).toBe(true);
+      expect(await mainPingIntervalField.getErrorMessage()).toBe(
+        "The Main Ping Interval must be less than 60 seconds.",
+      );
+    });
+
+    it("accepts valid ad ping interval values", async () => {
+      const screen = await renderView(ConfigurationView);
+      extensionBridge.init(buildSettings());
+      await waitForConfigurationViewToLoad(screen);
+
+      const channelField = spectrumTextField("mediaChannelField");
+      await channelField.fill("test-channel");
+
+      const playerNameField = spectrumTextField("mediaPlayerNameField");
+      await playerNameField.fill("test-player");
+
+      const adPingIntervalField = spectrumNumberField(
+        "mediaAdPingIntervalField",
+      );
+      await adPingIntervalField.fill("5");
+
+      expect(await adPingIntervalField.hasError()).toBe(false);
+    });
+
+    it("accepts valid main ping interval values", async () => {
+      const screen = await renderView(ConfigurationView);
+      extensionBridge.init(buildSettings());
+      await waitForConfigurationViewToLoad(screen);
+
+      const channelField = spectrumTextField("mediaChannelField");
+      await channelField.fill("test-channel");
+
+      const playerNameField = spectrumTextField("mediaPlayerNameField");
+      await playerNameField.fill("test-player");
+
+      const mainPingIntervalField = spectrumNumberField(
+        "mediaMainPingIntervalField",
+      );
+      await mainPingIntervalField.fill("30");
+
+      expect(await mainPingIntervalField.hasError()).toBe(false);
+    });
+
+    it("disables interval fields when channel and player name are not provided", async () => {
+      const screen = await renderView(ConfigurationView);
+      extensionBridge.init(buildSettings());
+      await waitForConfigurationViewToLoad(screen);
+
+      const adPingIntervalField = spectrumNumberField(
+        "mediaAdPingIntervalField",
+      );
+      const mainPingIntervalField = spectrumNumberField(
+        "mediaMainPingIntervalField",
+      );
+
+      expect(await adPingIntervalField.isDisabled()).toBe(true);
+      expect(await mainPingIntervalField.isDisabled()).toBe(true);
+    });
+  });
 });
