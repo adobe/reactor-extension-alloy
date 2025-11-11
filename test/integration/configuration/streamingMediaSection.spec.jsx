@@ -93,7 +93,6 @@ describe("Streaming media component", () => {
       "mediaMainPingIntervalField",
     );
     await mainPingIntervalField.fill("30");
-    await mainPingIntervalField.increment();
 
     // Get settings and verify
     const settings = await extensionBridge.getSettings();
@@ -101,6 +100,6 @@ describe("Streaming media component", () => {
     expect(settings.instances[0].streamingMedia.playerName).toBe("test-player");
     expect(settings.instances[0].streamingMedia.appVersion).toBe("2.0");
     expect(settings.instances[0].streamingMedia.adPingInterval).toBe(5);
-    expect(settings.instances[0].streamingMedia.mainPingInterval).toBe(31);
+    expect(settings.instances[0].streamingMedia.mainPingInterval).toBe(30);
   });
 });

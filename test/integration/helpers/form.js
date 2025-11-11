@@ -178,7 +178,7 @@ export const spectrumNumberField = (testId) => {
           name: /increase/i,
         })
         .find((button) => {
-          // Use Testing Library's within to check if this button is related to our input
+          // eslint-disable-next-line testing-library/no-node-access
           const container = button.parentElement;
           return container && container.contains(input);
         });
@@ -199,7 +199,7 @@ export const spectrumNumberField = (testId) => {
           name: /decrease/i,
         })
         .find((button) => {
-          // Use Testing Library's within to check if this button is related to our input
+          // eslint-disable-next-line testing-library/no-node-access
           const container = button.parentElement;
           return container && container.contains(input);
         });
