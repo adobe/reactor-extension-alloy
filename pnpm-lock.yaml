@@ -142,6 +142,9 @@ importers:
       babel-plugin-jsx-remove-data-test-id:
         specifier: ^3.0.0
         version: 3.0.0(@babel/core@7.28.5)
+      babel-plugin-version:
+        specifier: ^0.2.3
+        version: 0.2.3
       concurrently:
         specifier: ^9.2.1
         version: 9.2.1
@@ -3915,6 +3918,9 @@ packages:
 
   babel-plugin-syntax-trailing-function-commas@6.22.0:
     resolution: {integrity: sha512-Gx9CH3Q/3GKbhs07Bszw5fPTlU+ygrOGfAhEt7W2JICwufpC4SuO0mG0+4NykPBSYPMJhqvVlDBU17qB1D+hMQ==}
+
+  babel-plugin-version@0.2.3:
+    resolution: {integrity: sha512-YylmpgfdYrCiLGLtR7tLa+VYXJAadBSeH7asYvVLQPlooyQYQ1YFemiGZcryWsIyoj8w6P20qW0y7y6+AiDFbQ==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -17640,6 +17646,8 @@ snapshots:
       - supports-color
 
   babel-plugin-syntax-trailing-function-commas@6.22.0: {}
+
+  babel-plugin-version@0.2.3: {}
 
   balanced-match@1.0.2: {}
 
