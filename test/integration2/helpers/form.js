@@ -174,41 +174,25 @@ export const spectrumNumberField = (testId) => {
     },
 
     /**
-     * Increment the value using the up arrow button
+     * Increment the value using the up arrow key
      */
     increment: async () => {
       const input = getInput();
-      const element = input.element();
-      // Find the stepper buttons by their accessible names
-      const buttons = Array.from(
-        document.querySelectorAll('button[aria-label*="increase"]'),
-      );
-      const button = buttons.find((btn) => {
-        const container = btn.parentElement;
-        return container && container.contains(element);
-      });
-      if (button) {
-        await button.click();
-      }
+      await input.click();
+      await userEvent.keyboard("{ArrowUp}");
+      // Tab away to trigger blur and ensure all handlers complete
+      await userEvent.keyboard("{Tab}");
     },
 
     /**
-     * Decrement the value using the down arrow button
+     * Decrement the value using the down arrow key
      */
     decrement: async () => {
       const input = getInput();
-      const element = input.element();
-      // Find the stepper buttons by their accessible names
-      const buttons = Array.from(
-        document.querySelectorAll('button[aria-label*="decrease"]'),
-      );
-      const button = buttons.find((btn) => {
-        const container = btn.parentElement;
-        return container && container.contains(element);
-      });
-      if (button) {
-        await button.click();
-      }
+      await input.click();
+      await userEvent.keyboard("{ArrowDown}");
+      // Tab away to trigger blur and ensure all handlers complete
+      await userEvent.keyboard("{Tab}");
     },
 
     /**
