@@ -14,11 +14,8 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import {
-  waitForConfigurationViewToLoad,
-  spectrumTextField,
-  spectrumNumberField,
-} from "../helpers/ui";
+import { waitForConfigurationViewToLoad } from "../helpers/ui";
+import { spectrumTextField, spectrumNumberField } from "../helpers/form";
 import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
@@ -55,7 +52,6 @@ describe("Streaming media component", () => {
 
     await waitForConfigurationViewToLoad();
 
-    // Verify text fields are populated correctly
     const channelField = spectrumTextField("mediaChannelField");
     expect(channelField.getValue()).toBe("channel");
 
@@ -65,7 +61,6 @@ describe("Streaming media component", () => {
     const appVersionField = spectrumTextField("mediaVersionField");
     expect(appVersionField.getValue()).toBe("1.0");
 
-    // Verify number fields are populated correctly
     const adPingIntervalField = spectrumNumberField("mediaAdPingIntervalField");
     expect(adPingIntervalField.getNumericValue()).toBe(8);
 
@@ -82,7 +77,6 @@ describe("Streaming media component", () => {
 
     await waitForConfigurationViewToLoad();
 
-    // Fill in text fields
     const channelField = spectrumTextField("mediaChannelField");
     await channelField.fill("test-channel");
 
@@ -92,7 +86,6 @@ describe("Streaming media component", () => {
     const appVersionField = spectrumTextField("mediaVersionField");
     await appVersionField.fill("2.0");
 
-    // Fill in number fields
     const adPingIntervalField = spectrumNumberField("mediaAdPingIntervalField");
     await adPingIntervalField.fill("5");
 
@@ -100,6 +93,7 @@ describe("Streaming media component", () => {
       "mediaMainPingIntervalField",
     );
     await mainPingIntervalField.fill("30");
+    await mainPingIntervalField.increment();
 
     // Get settings and verify
     const settings = await extensionBridge.getSettings();
@@ -107,6 +101,6 @@ describe("Streaming media component", () => {
     expect(settings.instances[0].streamingMedia.playerName).toBe("test-player");
     expect(settings.instances[0].streamingMedia.appVersion).toBe("2.0");
     expect(settings.instances[0].streamingMedia.adPingInterval).toBe(5);
-    expect(settings.instances[0].streamingMedia.mainPingInterval).toBe(30);
+    expect(settings.instances[0].streamingMedia.mainPingInterval).toBe(31);
   });
 });
