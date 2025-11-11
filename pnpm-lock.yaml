@@ -118,9 +118,6 @@ importers:
       '@testing-library/react':
         specifier: ^16.3.0
         version: 16.3.0(@testing-library/dom@10.4.1)(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@testing-library/user-event':
-        specifier: ^14.6.1
-        version: 14.6.1(@testing-library/dom@10.4.1)
       '@vitejs/plugin-react':
         specifier: ^5.1.0
         version: 5.1.0(vite@7.1.5(@types/node@24.5.0)(lightningcss@1.30.1)(terser@5.44.0)(yaml@2.8.1))
@@ -145,9 +142,6 @@ importers:
       babel-plugin-jsx-remove-data-test-id:
         specifier: ^3.0.0
         version: 3.0.0(@babel/core@7.28.5)
-      babel-plugin-version:
-        specifier: ^0.2.3
-        version: 0.2.3
       concurrently:
         specifier: ^9.2.1
         version: 9.2.1
@@ -3827,12 +3821,6 @@ packages:
       '@types/react-dom':
         optional: true
 
-  '@testing-library/user-event@14.6.1':
-    resolution: {integrity: sha512-vq7fv0rnt+QTXgPxr5Hjc210p6YKq2kmdziLgnsZGgLJ9e6VAShx1pACLuRjd/AS/sr7phAR58OIIpf0LlmQNw==}
-    engines: {node: '>=12', npm: '>=6'}
-    peerDependencies:
-      '@testing-library/dom': '>=7.21.4'
-
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
 
@@ -4316,9 +4304,6 @@ packages:
 
   babel-plugin-syntax-trailing-function-commas@6.22.0:
     resolution: {integrity: sha512-Gx9CH3Q/3GKbhs07Bszw5fPTlU+ygrOGfAhEt7W2JICwufpC4SuO0mG0+4NykPBSYPMJhqvVlDBU17qB1D+hMQ==}
-
-  babel-plugin-version@0.2.3:
-    resolution: {integrity: sha512-YylmpgfdYrCiLGLtR7tLa+VYXJAadBSeH7asYvVLQPlooyQYQ1YFemiGZcryWsIyoj8w6P20qW0y7y6+AiDFbQ==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -17996,10 +17981,6 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.1.13
 
-  '@testing-library/user-event@14.6.1(@testing-library/dom@10.4.1)':
-    dependencies:
-      '@testing-library/dom': 10.4.1
-
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
   '@types/aria-query@5.0.4': {}
@@ -18635,8 +18616,6 @@ snapshots:
       - supports-color
 
   babel-plugin-syntax-trailing-function-commas@6.22.0: {}
-
-  babel-plugin-version@0.2.3: {}
 
   balanced-match@1.0.2: {}
 
