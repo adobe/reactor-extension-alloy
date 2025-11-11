@@ -1,4 +1,3 @@
-/* eslint-disable testing-library/no-node-access */
 /*
 Copyright 2025 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -55,6 +54,8 @@ export const spectrumTextField = (testId) => {
       const input = getInput();
       await userEvent.clear(input);
       await userEvent.type(input, text);
+      // Tab away to trigger blur and ensure all handlers complete
+      await userEvent.tab();
     },
 
     /**
@@ -138,6 +139,8 @@ export const spectrumNumberField = (testId) => {
       const input = getInput();
       await userEvent.clear(input);
       await userEvent.type(input, String(value));
+      // Tab away to trigger blur and ensure all handlers complete
+      await userEvent.tab();
     },
 
     /**
