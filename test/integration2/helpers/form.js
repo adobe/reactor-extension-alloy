@@ -66,7 +66,7 @@ export const spectrumTextField = (testId) => {
      */
     getValue: async () => {
       const input = getInput();
-      const element = await input.element();
+      const element = input.element();
       return element.value;
     },
 
@@ -76,7 +76,7 @@ export const spectrumTextField = (testId) => {
      */
     hasError: async () => {
       const input = getInput();
-      const element = await input.element();
+      const element = input.element();
       return element.getAttribute("aria-invalid") === "true";
     },
 
@@ -86,7 +86,7 @@ export const spectrumTextField = (testId) => {
      */
     getErrorMessage: async () => {
       const input = getInput();
-      const element = await input.element();
+      const element = input.element();
       const errorId = element.getAttribute("aria-describedby");
       if (!errorId) return null;
       const errorElement = document.getElementById(errorId);
@@ -99,7 +99,7 @@ export const spectrumTextField = (testId) => {
      */
     isDisabled: async () => {
       const input = getInput();
-      const element = await input.element();
+      const element = input.element();
       return element.disabled;
     },
 
@@ -158,7 +158,7 @@ export const spectrumNumberField = (testId) => {
      */
     getValue: async () => {
       const input = getInput();
-      const element = await input.element();
+      const element = input.element();
       return element.value;
     },
 
@@ -168,7 +168,7 @@ export const spectrumNumberField = (testId) => {
      */
     getNumericValue: async () => {
       const input = getInput();
-      const element = await input.element();
+      const element = input.element();
       const value = element.value;
       return value === "" ? null : Number(value);
     },
@@ -178,7 +178,7 @@ export const spectrumNumberField = (testId) => {
      */
     increment: async () => {
       const input = getInput();
-      const element = await input.element();
+      const element = input.element();
       // Find the stepper buttons by their accessible names
       const buttons = Array.from(
         document.querySelectorAll('button[aria-label*="increase"]'),
@@ -197,7 +197,7 @@ export const spectrumNumberField = (testId) => {
      */
     decrement: async () => {
       const input = getInput();
-      const element = await input.element();
+      const element = input.element();
       // Find the stepper buttons by their accessible names
       const buttons = Array.from(
         document.querySelectorAll('button[aria-label*="decrease"]'),
@@ -217,7 +217,7 @@ export const spectrumNumberField = (testId) => {
      */
     hasError: async () => {
       const input = getInput();
-      const element = await input.element();
+      const element = input.element();
       return element.getAttribute("aria-invalid") === "true";
     },
 
@@ -227,7 +227,7 @@ export const spectrumNumberField = (testId) => {
      */
     getErrorMessage: async () => {
       const input = getInput();
-      const element = await input.element();
+      const element = input.element();
       const errorId = element.getAttribute("aria-describedby");
       if (!errorId) return null;
       const errorElement = document.getElementById(errorId);
@@ -240,7 +240,7 @@ export const spectrumNumberField = (testId) => {
      */
     isDisabled: async () => {
       const input = getInput();
-      const element = await input.element();
+      const element = input.element();
       return element.disabled;
     },
 
