@@ -53,6 +53,7 @@ export default function comboBox({
   allowsCustomValue = false,
   width = "size-5000",
   defaultValue = "",
+  disabledText = "",
   Component = FormikKeyedComboBox,
   validationSchemaBase = string(),
   isDisabled = false,
@@ -64,6 +65,7 @@ export default function comboBox({
     name: innerName,
     label: innerLabel,
     description: innerDescription,
+    resolvedItems,
     "aria-label": ariaLabel,
     ...otherProps
   }) => {
@@ -77,11 +79,12 @@ export default function comboBox({
         isRequired={isRequired}
         description={innerDescription}
         width={width}
-        items={items}
+        items={resolvedItems}
         allowsCustomValue={allowsCustomValue || dataElementSupported}
         getKey={(item) => item.value}
         getLabel={(item) => item.label}
         isDisabled={isDisabled}
+        disabledText={disabledText}
       >
         {(item) => (
           <Item key={item.value} data-test-id={item.value}>
@@ -106,12 +109,9 @@ export default function comboBox({
   }
 
   const part = {
-    getInitialValues({ initInfo, context }) {
+    getInitialValues({ initInfo }) {
       const { [name]: value = defaultValue } = initInfo.settings || {};
-      const item = getItems(context).find(({ value: v }) => v === value);
-      const result = { [name]: item ? item.value : value };
-      console.log("getInitialValues", result);
-      return result;
+      return { [name]: value };
     },
     getSettings({ values, context }) {
       const settings = {};
@@ -119,12 +119,13 @@ export default function comboBox({
         values[name] !== defaultValue &&
         (defaultValue !== "" || values[name] !== undefined)
       ) {
-        const item = getItems(context).find(({ label: l }) => l === values[name]);
-        settings[name] = item ? item.value : values[name];
+        const item = getItems(context).map(getKey).find((v) => v === values[name]);
+        settings[name] = item || values[name];
       }
       return settings;
     },
     getValidationShape: ({ context }) => {
+      console.log("getValidationShape ComboBox", name, context);
       let fieldSchema = validationSchemaBase;
       if (!allowsCustomValue) {
         fieldSchema = fieldSchema.test(
@@ -134,6 +135,7 @@ export default function comboBox({
           } from the list or specify a single data element.`,
           (value) =>
             !value ||
+            !getItems(context) ||
             getItems(context).find((item) => item.value === value) ||
             value.match(singleDataElementRegex),
         );
@@ -145,7 +147,9 @@ export default function comboBox({
       }
       return { [name]: fieldSchema };
     },
-    Component: ({ namePrefix = "", hideLabel = false }) => {
+    Component: ({ namePrefix = "", hideLabel = false, context }) => {
+      const resolvedItems = getItems(context);
+
       if (dataElementSupported) {
         const [{ value = "" }] = useField(`${namePrefix}${name}`);
         return (
@@ -159,6 +163,7 @@ export default function comboBox({
                   ? dataElementDescription
                   : description
               }
+              resolvedItems={resolvedItems}
             />
           </DataElementSelector>
         );
@@ -171,6 +176,7 @@ export default function comboBox({
             aria-label={label}
             description={description}
             marginEnd={fillDataElementIconSpace ? "size-25" : ""}
+            resolvedItems={resolvedItems}
           />
           {fillDataElementIconSpace && (
             <Data UNSAFE_style={{ visibility: "hidden" }} />
@@ -182,6 +188,7 @@ export default function comboBox({
   part.Component.propTypes = {
     namePrefix: PropTypes.string,
     hideLabel: PropTypes.bool,
+    context: PropTypes.object,
   };
   return part;
 }

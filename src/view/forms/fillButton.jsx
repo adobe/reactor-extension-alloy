@@ -21,7 +21,6 @@ export default function fillButton({ destName, sourceName, label, fieldHasLabel 
       return <ActionButton
         data-test-id={`${namePrefix}${sourceName}-fillButton`}
         onPress={() => {
-          console.log("fillButton onPress", sourceValue, `${namePrefix}${destName}`);
           setDestValue(sourceValue);
         }}
         marginTop={fieldHasLabel ? "size-300" : undefined}

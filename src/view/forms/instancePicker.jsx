@@ -24,7 +24,6 @@ import InstanceNamePicker from "../components/instanceNamePicker";
 export default function instancePicker({ name, onInstanceChange }) {
   const form = {
     getInitialValues({ initInfo }) {
-      console.log("instancePicker initInfo", initInfo);
       const { [name]: value = initInfo.extensionSettings.instances[0].name } =
         initInfo.settings || {};
       return { [name]: value };

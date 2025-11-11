@@ -38,8 +38,8 @@ export default function nestedObject({ name, label = "", ...formOptions }, child
     },
     getSettings({ values, context }) {
       const settings = getSettings({ values: values[name], context: context?.[name] });
-      if (Object.keys(settings || {}).filter(key => settings[key] !== undefined).length === 0) {
-        return {};
+      if (settings === undefined) {
+        return undefined;
       }
       return { [name]: settings };
     },
@@ -51,19 +51,20 @@ export default function nestedObject({ name, label = "", ...formOptions }, child
       });
       return { ...existingValidationShape, [name]: object().shape(validationShape) };
     },
-    Component: (props) => {
+    Component: ({ context, ...props }) => {
       const { namePrefix = "" } = props;
+      console.log("nestedObject", `${namePrefix}${name}`, context);
       if (label) {
         return (
           <View>
             <LabeledValue label={label} />
             <Well alignSelf="flex-start" direction="column" marginTop="0">
-              <Component {...props} namePrefix={`${namePrefix}${name}.`} />
+              <Component {...props} namePrefix={`${namePrefix}${name}.`} context={context?.[name]} />
             </Well>
           </View>
         )
       } else {
-        return <Component {...props} namePrefix={`${namePrefix}${name}.`} />;
+        return <Component {...props} namePrefix={`${namePrefix}${name}.`} context={context?.[name]} />;
       }
     },
     ...innerParts,

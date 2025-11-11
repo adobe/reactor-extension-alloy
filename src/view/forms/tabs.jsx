@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 import React from "react";
 import PropTypes from "prop-types";
 import form from "./form";
-import { Tabs, TabList, TabPanels, Item } from "@adobe/react-spectrum";
+import { Tabs, TabList, TabPanels, Item, Flex } from "@adobe/react-spectrum";
 
 /** @typedef {import("./form").Form} Form */
 /**
@@ -49,7 +49,9 @@ export default function tabs({label, tabLabels, ...formOptions}, children) {
           <TabPanels>
             {children.map(({ Component }, i) => (
               <Item key={`tab-${i}`}>
-                <Component {...props} />
+                <Flex direction="column" marginTop="size-100">
+                  <Component {...props} />
+                </Flex>
               </Item>
             ))}
           </TabPanels>

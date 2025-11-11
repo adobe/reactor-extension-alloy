@@ -38,6 +38,75 @@ const actionServiceItems = [
 
 const actionServiceItemsNoDisable = actionServiceItems.filter(item => item.value !== "disable");
 
+// Action service override:
+//   "match" - undefined, (only show if extension overrides are present)
+//   "override" - {xxx: yyy}, (only show if children)
+//   "disable" - {enabled: false},
+//   "matchDatastream" - {},
+
+// Extension service override:
+//   "override" - {xxx: yyy}, (only show if children)
+//   "disable" - {enabled: false},
+//   "match" - undefined,
+/*
+const buildComboBoxAction = ({ label, serverEnabled, hasExtension, hasChildren, disableAllowed }) => {
+  if (!serverEnabled) {
+    return disabledTextField({
+      name: "enabled",
+      label,
+      value: "This service is not configured on the datastream.",
+    });
+  }
+
+  const baseParams = {
+    label: label ? label : "Override behavior",
+    allowsCustomValue: true,
+    dataElementSupported: true,
+    description: "Select the override behavior for this service.",
+    validationSchemaBase: string().required("Please select an option."),
+  }
+  const baseItems = disableAllowed ? [{value: "disable", label: "Disable service", dataElementDescription: "false to disable the service"}] : [];
+  const matchExtensionItem = {value: "match", label: "Use extension configuration", dataElementDescription: "'extension' to use the extension overrides"};
+  const overrideItem = {value: "override", label: "Provide overrides for this service", dataElementDescription: "true to provide overrides for this service"};
+  const matchDatastreamItem = {value: "matchDatastream", label: "Use datastream configuration", dataElementDescription: "'datastream' to match the datastream configuration"};
+
+  if (hasExtension && hasChildren) {
+    return comboBox({
+      ...baseParams,
+      name: "overrideExtensionAndChildren",
+      items: [ overrideItem, ...baseItems, matchExtensionItem, matchDatastreamItem ],
+      defaultValue: "match",
+      dataElementDescription: "The data element should resolve to the override behavior for this service: true to use the following overrides, false to disable the service, undefined to use the extension overrides, {} to match the datastream configuration",
+    });
+  }
+
+  if (hasExtension && !hasChildren) {
+    return comboBox({
+      ...baseParams,
+      name: "overrideExtension",
+      items: [ ...baseItems, matchExtensionItem, matchDatastreamItem ],
+      defaultValue: "match",
+      dataElementDescription: "The data element should resolve to the override behavior for this service: false to disable the service, undefined to use the extension overrides, {} to match the datastream configuration",
+    })
+  }
+
+  if (!hasExtension && hasChildren) {
+    return comboBox({
+      ...baseParams,
+      name: "overrideChildren",
+      items: [ overrideItem, ...baseItems, matchDatastreamItem ],
+      defaultValue: "match",
+      dataElementDescription: "The data element should resolve to the override behavior for this service: true to use the following overrides, false to disable the service, undefined to use the extension overrides",
+    })
+  }
+
+  if (hasExtension && !hasChildren) {
+    return comboBox({
+      ...baseParams,
+    })
+}
+*/
+
 const extensionServiceOverride = ({
   name,
   label,
@@ -94,7 +163,6 @@ const extensionServiceOverride = ({
       });
     },
     wrapGetSettings: (getSettings) => ({ values }) => {
-      console.log("extensionOverride getSettings", name, values, getSettings({ values }));
       const { enabled, ...otherSettings } = getSettings({ values }) || {};
       if (enabled === "disable") {
         return {
@@ -164,7 +232,6 @@ const actionServiceOverride = ({
       });
     },
     wrapGetSettings: (getSettings) => ({ values }) => {
-      console.log("serviceOverridegetSettings", values, getSettings({ values }));
       const { enabled, ...otherSettings } = getSettings({ values }) || {};
       if (enabled === undefined) { // match
         return undefined;

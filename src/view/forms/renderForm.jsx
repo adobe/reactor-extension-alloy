@@ -14,6 +14,7 @@ import { object } from "yup";
 import PropTypes from "prop-types";
 import ExtensionView from "../components/extensionView";
 import render from "../render";
+import deepAssign from "../utils/deepAssign";
 
 const FormExtensionView = ({
   getInitialValues,
@@ -28,9 +29,12 @@ const FormExtensionView = ({
   return (
     <ExtensionView
       getInitialValues={async (params) => {
-        const values = getInitialValues(params)
-        await initializeContext({ ...params, values, context })
-        return values;
+        const values = getInitialValues(params);
+        const values2 = await initializeContext({ ...params, values, context });
+        const values3 = deepAssign(values, values2);
+        console.log("getInitialValues Values", values3);
+        console.log("getInitialValues Context", context);
+        return values3;
       }}
       getSettings={params => getSettings({ ...params, context })}
       getFormikStateValidationSchema={params => getValidationSchema({ ...params, context })}
@@ -52,8 +56,9 @@ FormExtensionView.propTypes = {
  * @param {Form} form - The form to render.
  */
 export default ({ getValidationShape, ...formPart }) => {
-  formPart.getValidationSchema = ({ initInfo }) => {
-    const shape = getValidationShape({ initInfo, existingValidationShape: {} });
+  formPart.getValidationSchema = ({ initInfo, context }) => {
+    console.log("top level getValidationSchema", context);
+    const shape = getValidationShape({ initInfo, existingValidationShape: {}, context });
     return object().shape(shape);
   };
   render(() => <FormExtensionView {...formPart} />);

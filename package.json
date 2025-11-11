@@ -12,7 +12,7 @@
     "add-license": "./scripts/add-license.mjs",
     "build:alloy": "mkdir -p dist/lib && node ./scripts/buildAlloy.mjs -i src/lib/alloy.js -o dist/lib",
     "build:componentFixtures": "./scripts/buildComponentFixtures.mjs",
-    "build:extensionManifest": "./scripts/buildExtensionManifest.mjs",
+    "build:extensionManifest": "./scripts/buildExtensionManifest.mjs --verbose=true",
     "build:lib": "./scripts/buildLib.mjs",
     "build:views": "./scripts/buildViews.mjs",
     "build": "conc --pad-prefix --names \"alloy,fixtures,manifest,lib,views\" \"pnpm run build:alloy\" \"pnpm run build:componentFixtures\" \"pnpm run build:extensionManifest\" \"pnpm run build:lib\" \"pnpm run build:views\"",

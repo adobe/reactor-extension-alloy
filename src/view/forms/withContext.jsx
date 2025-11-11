@@ -26,9 +26,8 @@ export default function withContext({
           return acc?.[part];
         }, values);
       });
-      console.log("initializeContext", values, dependencies, dependencyValues);
-      await updateContext({ signal: null, dependencies: dependencyValues, initInfo, context });
-      console.log("initializeContext done", context);
+      const newValues = await updateContext({ signal: null, dependencies: dependencyValues, initInfo, context });
+      return newValues;
     },
     Component: ({ namePrefix = "", initInfo, context, forceRender }) => {
       const dependencyValues = dependencies.map(name => {
@@ -42,7 +41,7 @@ export default function withContext({
           const signal = abortPreviousRequestsAndCreateSignal();
 
           try {
-            await updateContext({ signal, values: dependencyValues, initInfo, context });
+            await updateContext({ signal, dependencies: dependencyValues, initInfo, context });
             forceRender();
           } catch (error) {
             if (error.name === "AbortError") {

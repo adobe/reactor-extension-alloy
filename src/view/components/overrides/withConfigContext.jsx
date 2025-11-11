@@ -52,7 +52,7 @@ const updateContext = (context, settings) => {
   if (settings.com_adobe_experience_platform?.datasets?.event) {
     context.com_adobe_experience_platform.eventDatasets =
       settings.com_adobe_experience_platform.datasets.event
-        .map(dataset => dataset.datasetId);
+        .map(dataset => ({ value: dataset.datasetId, label: dataset.datasetId }));
   }
 }
 
@@ -60,98 +60,98 @@ const getFormikValuesFromDatastreamConfig = (settings) => {
 
   const values = {
     com_adobe_experience_platform: {
-      server: {
+      datastream: {
         enabled: true,
         datasetId: "",
       },
       com_adobe_edge_ode: {
-        server: {
+        datastream: {
           enabled: true,
         }
       },
       com_adobe_edge_segmentation: {
-        server: {
+        datastream: {
           enabled: true,
         }
       },
       com_adobe_edge_destinations: {
-        server: {
+        datastream: {
           enabled: true,
         }
       },
       com_adobe_edge_ajo: {
-        server: {
+        datastream: {
           enabled: true,
         }
       },
     },
     com_adobe_analytics: {
-      server: {
+      datastream: {
         enabled: true,
         reportSuites: [],
       },
     },
     com_adobe_identity: {
-      server: {
+      datastream: {
         enabled: true,
         idSyncContainerId: "",
       },
     },
     com_adobe_target: {
-      server: {
+      datastream: {
         enabled: true,
         propertyTokens: "",
       },
     },
     com_adobe_audiencemanager: {
-      server: {
+      datastream: {
         enabled: true,
       }
     },
     com_adobe_launch_ssf: {
-      server: {
+      datastream: {
         enabled: true,
       }
     },
   };
   if (settings.com_adobe_experience_platform) {
-    values.com_adobe_experience_platform.server.enabled = settings.com_adobe_experience_platform.enabled;
+    values.com_adobe_experience_platform.datastream.enabled = settings.com_adobe_experience_platform.enabled;
     if (settings.com_adobe_experience_platform.datasets?.event) {
       const primaryDataset = settings.com_adobe_experience_platform.datasets.event.find(dataset => dataset.primary);
       if (primaryDataset) {
-        values.com_adobe_experience_platform.server.eventDatasetId = primaryDataset.datasetId;
+        values.com_adobe_experience_platform.datastream.eventDatasetId = primaryDataset.datasetId;
       }
     }
   }
   if (settings.com_adobe_experience_platform_ode) {
-    values.com_adobe_experience_platform.com_adobe_edge_ode.server.enabled = settings.com_adobe_experience_platform_ode.enabled;
+    values.com_adobe_experience_platform.com_adobe_edge_ode.datastream.enabled = settings.com_adobe_experience_platform_ode.enabled;
   }
   if (settings.com_adobe_experience_platform_edge_segmentation) {
-    values.com_adobe_experience_platform.com_adobe_edge_segmentation.server.enabled = settings.com_adobe_experience_platform_edge_segmentation.enabled;
+    values.com_adobe_experience_platform.com_adobe_edge_segmentation.datastream.enabled = settings.com_adobe_experience_platform_edge_segmentation.enabled;
   }
   if (settings.com_adobe_experience_platform_edge_destinations) {
-    values.com_adobe_experience_platform.com_adobe_edge_destinations.server.enabled = settings.com_adobe_experience_platform_edge_destinations.enabled;
+    values.com_adobe_experience_platform.com_adobe_edge_destinations.datastream.enabled = settings.com_adobe_experience_platform_edge_destinations.enabled;
   }
   if (settings.com_adobe_experience_platform_ajo) {
-    values.com_adobe_experience_platform.com_adobe_edge_ajo.server.enabled = settings.com_adobe_experience_platform_ajo.enabled;
+    values.com_adobe_experience_platform.com_adobe_edge_ajo.datastream.enabled = settings.com_adobe_experience_platform_ajo.enabled;
   }
   if (settings.com_adobe_analytics) {
-    values.com_adobe_analytics.server.enabled = settings.com_adobe_analytics.enabled;
-    values.com_adobe_analytics.server.reportSuites = settings.com_adobe_analytics.reportSuites;
+    values.com_adobe_analytics.datastream.enabled = settings.com_adobe_analytics.enabled;
+    values.com_adobe_analytics.datastream.reportSuites = settings.com_adobe_analytics.reportSuites;
   }
   if (settings.com_adobe_target) {
-    values.com_adobe_target.server.enabled = settings.com_adobe_target.enabled;
-    values.com_adobe_target.server.propertyToken = settings.com_adobe_target.propertyToken;
+    values.com_adobe_target.datastream.enabled = settings.com_adobe_target.enabled;
+    values.com_adobe_target.datastream.propertyToken = settings.com_adobe_target.propertyToken;
   }
   if (settings.com_adobe_identity) {
-    values.com_adobe_identity.server.enabled = settings.com_adobe_identity.idSyncEnabled;
-    values.com_adobe_identity.server.idSyncContainerId = settings.com_adobe_identity.idSyncContainerId;
+    values.com_adobe_identity.datastream.enabled = settings.com_adobe_identity.idSyncEnabled;
+    values.com_adobe_identity.datastream.idSyncContainerId = settings.com_adobe_identity.idSyncContainerId;
   }
   if (settings.com_adobe_audiencemanager) {
-    values.com_adobe_audiencemanager.server.enabled = settings.com_adobe_audiencemanager.enabled;
+    values.com_adobe_audiencemanager.datastream.enabled = settings.com_adobe_audiencemanager.enabled;
   }
   if (settings.com_adobe_launch_ssf) {
-    values.com_adobe_launch_ssf.server.enabled = settings.com_adobe_launch_ssf.enabled;
+    values.com_adobe_launch_ssf.datastream.enabled = settings.com_adobe_launch_ssf.enabled;
   }
 
   return values;
@@ -234,12 +234,10 @@ const fetchConfigWithDefault = async ({
   requestCache
 }) => {
   if (imsAccessOrgId !== orgId || !edgeConfigId || !sandbox) {
-    console.log("fetchConfigWithDefault no orgId, sandbox, or edgeConfigId", imsAccessOrgId, orgId, edgeConfigId, sandbox);
     return {};
   };
 
   const key = `${orgId}-${sandbox}-${edgeConfigId}`;
-  console.log("fetchConfigWithDefault", key);
 
   return requestCache(key, signal, async (innerSignal) => {
     const { data: { settings = {} } = {} } = await fetchConfig({
@@ -269,8 +267,7 @@ const runEnvironment = async ({
   }
 
   const values2 = getFormikValuesFromExtensionConfig(extensionOverrides);
-  deepAssign(values1, values2);
-  return values1;
+  return deepAssign({}, values1, values2);
 }
 
 export const getActionDependencies = (env) => {
@@ -284,8 +281,6 @@ export const runFromAction = (env, requestCache) => async ({ initInfo, dependenc
 
   context.edgeConfigOverrides ||= {};
   context.edgeConfigOverrides[env] ||= {};
-
-  console.log("runFromAction", initInfo, instanceName, edgeConfigId, sandbox);
 
   const extensionInstance = (initInfo.extensionSettings?.instances || []).find(instance => instance.name === instanceName);
   const instanceOrgId = extensionInstance?.orgId;

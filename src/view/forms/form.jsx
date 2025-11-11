@@ -13,6 +13,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import FormElementContainer from "../components/formElementContainer";
 import useForceRender from "../utils/useForceRender";
+import deepAssign from "../utils/deepAssign";
 
 /**
  * @typedef {object} Form
@@ -54,6 +55,7 @@ export default function Form(
     wrapInitializeContext = Identity,
     wrapGetSettings = Identity,
     wrapGetValidationShape = Identity,
+    horizontal = false,
   } = {},
   children = [],
 ) {
@@ -67,16 +69,18 @@ export default function Form(
             ...child.getInitialValues(params),
           };
         }, {});
-      console.log("getInitialValues", initialValues, new Error().stack);
       return initialValues;
     },
-    async initializeContext(params) {
-      return Promise.all(children
+    async initializeContext({ values, ...params }) {
+      const additionalValues = await Promise.all(children
         .filter((child) => child.initializeContext)
-        .map((child) => child.initializeContext(params)));
+        .map((child) => child.initializeContext({ values, ...params })));
+      return additionalValues.reduce((acc, childValues) => {
+        return deepAssign(acc, childValues);
+      }, deepAssign({}, values));
     },
     getSettings(params) {
-      return children
+      const settings = children
         .filter((child) => child.getSettings)
         .reduce((settings, child) => {
           return {
@@ -84,6 +88,10 @@ export default function Form(
             ...child.getSettings(params),
           };
         }, {});
+      if (Object.keys(settings || {}).filter(key => settings[key] !== undefined).length === 0) {
+        return undefined;
+      }
+      return settings;
     },
     getValidationShape({ existingValidationShape, ...params }) {
       return children
@@ -120,9 +128,9 @@ export default function Form(
     },
     Component(props) {
       const forceRender = useForceRender();
-      const { horizontal } = props;
+      const { horizontal: horizontalProp } = props;
       return (
-        <FormElementContainer direction={horizontal ? "row" : "column"}>
+        <FormElementContainer direction={horizontal || horizontalProp ? "row" : "column"}>
           {children.map(({ Component }, index) => {
             if (Component) {
               return <Component key={`${index}`} {...props} forceRender={forceRender} />;

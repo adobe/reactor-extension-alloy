@@ -42,7 +42,12 @@ const DataElementSelector = ({
     <RawDataElementSelector
       augmentValue={augmentValue}
       value={value}
-      onChange={setValue}
+      onChange={(value) => {
+        console.log("data element selector onChange", value);
+        if (value) {
+          setValue(value);
+        }
+      }}
       adjustForLabel={adjustForLabel}
       isDisabled={isDisabled}
       tokenize={tokenize}

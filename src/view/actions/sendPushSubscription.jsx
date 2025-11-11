@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-import serviceOverride from "../forms/serviceOverride";
+import configOverrides2 from "../forms/configOverrides2";
 import renderForm from "../forms/renderForm";
 import form from "../forms/form";
 
@@ -17,4 +17,4 @@ renderForm(form({ wrapGetInitialValues: (getInitialValues) => params => {
   const initialValues = getInitialValues(params);
   console.log("sendPushSubscription getInitialValues", params, initialValues);
   return initialValues;
-},}, serviceOverride({isExtension: false})));
+},}, configOverrides2({isAction: true})));
