@@ -155,6 +155,7 @@ export default [
       "src/view/**/*.{js,jsx}",
       "test/functional/**/*.{js,jsx}",
       "test/integration/**/*.{js,jsx}",
+      "test/integration2/**/*.{js,jsx}",
     ],
     rules: {
       ...react.configs.recommended.rules,

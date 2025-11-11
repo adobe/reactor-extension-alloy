@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 /* eslint-disable import/no-unresolved */
 import { defineProject } from "vitest/config";
+import { playwright } from "@vitest/browser-playwright";
 import react from "@vitejs/plugin-react";
 
 export default defineProject({
@@ -46,6 +47,36 @@ export default defineProject({
           isolate: false,
           environment: "happy-dom",
           setupFiles: ["test/integration/helpers/setup.js"],
+        },
+      },
+      {
+        extends: false,
+
+        plugins: [
+          react({
+            jsxRuntime: "automatic",
+          }),
+        ],
+
+        test: {
+          name: "integration2",
+          include: ["test/integration2/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+          isolate: false,
+          browser: {
+            enabled: true,
+            instances: [
+              {
+                browser: "chromium",
+              },
+            ],
+            provider: playwright(),
+            headless: true,
+            screenshotFailures: false,
+            locators: {
+              testIdAttribute: "data-test-id",
+            },
+          },
+          setupFiles: ["test/integration2/helpers/setup.js"],
         },
       },
     ],
