@@ -92,7 +92,9 @@ export const spectrumTextField = (testId) => {
       const input = getInput();
       const errorId = input.getAttribute("aria-describedby");
       if (!errorId) return null;
-      const errorElement = document.getElementById(errorId);
+      const errorElement = screen.queryByText((content, element) => {
+        return element.id === errorId;
+      });
       return errorElement ? errorElement.textContent : null;
     },
 
@@ -175,8 +177,10 @@ export const spectrumNumberField = (testId) => {
      */
     increment: async () => {
       const input = getInput();
-      const container = input.closest('[role="group"]');
-      const incrementButton = within(container).getByRole("button", {
+      const group = screen.getByRole("group", {
+        name: (name, element) => element.contains(input),
+      });
+      const incrementButton = within(group).getByRole("button", {
         name: /increase/i,
       });
       await userEvent.click(incrementButton);
@@ -187,8 +191,10 @@ export const spectrumNumberField = (testId) => {
      */
     decrement: async () => {
       const input = getInput();
-      const container = input.closest('[role="group"]');
-      const decrementButton = within(container).getByRole("button", {
+      const group = screen.getByRole("group", {
+        name: (name, element) => element.contains(input),
+      });
+      const decrementButton = within(group).getByRole("button", {
         name: /decrease/i,
       });
       await userEvent.click(decrementButton);
@@ -211,7 +217,9 @@ export const spectrumNumberField = (testId) => {
       const input = getInput();
       const errorId = input.getAttribute("aria-describedby");
       if (!errorId) return null;
-      const errorElement = document.getElementById(errorId);
+      const errorElement = screen.queryByText((content, element) => {
+        return element.id === errorId;
+      });
       return errorElement ? errorElement.textContent : null;
     },
 
