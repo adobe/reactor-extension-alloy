@@ -13,8 +13,8 @@ import { render } from "vitest-browser-react";
 import { Provider, lightTheme } from "@adobe/react-spectrum";
 import ErrorBoundary from "../../../src/view/components/errorBoundary";
 
-export default (View) => {
-  render(
+export default async (View) => {
+  return render(
     <Provider
       theme={lightTheme}
       colorScheme="light"

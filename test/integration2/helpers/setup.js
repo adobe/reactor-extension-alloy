@@ -10,15 +10,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { beforeAll, afterEach, afterAll } from "vitest";
+import { afterEach, afterAll } from "vitest";
 import { worker } from "./mocks/browser";
 
-// Start worker before all tests
-beforeAll(async () => {
-  await worker.start({
-    onUnhandledRequest: "bypass",
-  });
-});
+worker.start();
 
 // Reset handlers after each test (important for test isolation)
 afterEach(() => {

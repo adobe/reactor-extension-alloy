@@ -10,17 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { waitFor } from "@testing-library/react";
+import { expect } from "vitest";
 
-export const waitForConfigurationViewToLoad = async () => {
-  await waitFor(
-    () => {
-      const button = document.querySelector('button[aria-label*="SDK"]');
-      if (!button) {
-        throw new Error("There is a problem loading the configuration view");
-      }
-      return button;
-    },
-    { timeout: 3000 },
-  );
+export const waitForConfigurationViewToLoad = async (screen) => {
+  await expect.element(screen.getByText("SDK instances")).toBeVisible();
 };

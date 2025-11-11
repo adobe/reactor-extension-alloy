@@ -31,7 +31,7 @@ describe("Streaming media component", () => {
   });
 
   it("sets form values from settings", async () => {
-    renderView(ConfigurationView);
+    const screen = await renderView(ConfigurationView);
 
     extensionBridge.init(
       buildSettings({
@@ -50,8 +50,7 @@ describe("Streaming media component", () => {
       }),
     );
 
-    await waitForConfigurationViewToLoad();
-    await waitForConfigurationViewToLoad();
+    await waitForConfigurationViewToLoad(screen);
 
     const channelField = spectrumTextField("mediaChannelField");
     expect(await channelField.getValue()).toBe("channel");
@@ -72,11 +71,11 @@ describe("Streaming media component", () => {
   });
 
   it("updates form values and saves to settings", async () => {
-    renderView(ConfigurationView);
+    const screen = await renderView(ConfigurationView);
 
     extensionBridge.init(buildSettings());
 
-    await waitForConfigurationViewToLoad();
+    await waitForConfigurationViewToLoad(screen);
 
     const channelField = spectrumTextField("mediaChannelField");
     await channelField.fill("test-channel");

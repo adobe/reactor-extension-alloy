@@ -180,15 +180,15 @@ export const spectrumNumberField = (testId) => {
       const input = getInput();
       const element = await input.element();
       // Find the stepper buttons by their accessible names
-      const buttons = document.querySelectorAll(
-        'button[aria-label*="increase"]',
+      const buttons = Array.from(
+        document.querySelectorAll('button[aria-label*="increase"]'),
       );
-      for (const button of buttons) {
-        const container = button.parentElement;
-        if (container && container.contains(element)) {
-          await button.click();
-          break;
-        }
+      const button = buttons.find((btn) => {
+        const container = btn.parentElement;
+        return container && container.contains(element);
+      });
+      if (button) {
+        await button.click();
       }
     },
 
@@ -199,15 +199,15 @@ export const spectrumNumberField = (testId) => {
       const input = getInput();
       const element = await input.element();
       // Find the stepper buttons by their accessible names
-      const buttons = document.querySelectorAll(
-        'button[aria-label*="decrease"]',
+      const buttons = Array.from(
+        document.querySelectorAll('button[aria-label*="decrease"]'),
       );
-      for (const button of buttons) {
-        const container = button.parentElement;
-        if (container && container.contains(element)) {
-          await button.click();
-          break;
-        }
+      const button = buttons.find((btn) => {
+        const container = btn.parentElement;
+        return container && container.contains(element);
+      });
+      if (button) {
+        await button.click();
       }
     },
 
