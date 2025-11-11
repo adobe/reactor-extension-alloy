@@ -54,7 +54,13 @@ const RawDataElementSelector = ({
       >
         <Data />
       </ActionButton>
-      {clearable && <ClearButton value={value} setValue={onChange} />}
+      {clearable && (
+        <ClearButton
+          value={value}
+          setValue={onChange}
+          marginTop={adjustForLabel ? "size-300" : 0}
+        />
+      )}
     </Flex>
   );
 };

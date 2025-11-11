@@ -32,7 +32,11 @@ const getEmptyItem = () => ({ key: "", value: "" });
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
  */
-const WholePopulationStrategyForm = ({ displayName, fieldName }) => {
+const WholePopulationStrategyForm = ({
+  displayName,
+  fieldName,
+  contextualHelp,
+}) => {
   return (
     <DataElementSelector clearable>
       <FormikTextArea
@@ -46,6 +50,7 @@ const WholePopulationStrategyForm = ({ displayName, fieldName }) => {
         }
         width="size-6000"
         marginStart="size-300"
+        contextualHelp={contextualHelp}
       />
     </DataElementSelector>
   );
@@ -54,6 +59,7 @@ const WholePopulationStrategyForm = ({ displayName, fieldName }) => {
 WholePopulationStrategyForm.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  contextualHelp: PropTypes.node,
 };
 
 /**
@@ -191,7 +197,7 @@ const updateRows = ({
  */
 const ObjectJsonEdit = (props) => {
   const { submitForm } = useFormikContext();
-  const { displayName, fieldName } = props;
+  const { displayName, fieldName, contextualHelp } = props;
   const [{ value: formStateNode }] = useField(fieldName);
   const [, , { setValue }] = useField(`${fieldName}.value`);
   const [, , { setValue: setItemsValue }] = useField(`${fieldName}.items`);
@@ -215,8 +221,10 @@ const ObjectJsonEdit = (props) => {
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
           aria-label="Population strategy"
+          label={displayName}
           name={`${fieldName}.populationStrategy`}
           orientation="horizontal"
+          contextualHelp={contextualHelp}
           onChange={strategyOnChange}
         >
           <Radio data-test-id="partsPopulationStrategyField" value={PARTS}>
@@ -229,8 +237,11 @@ const ObjectJsonEdit = (props) => {
       )}
       {populationStrategy === WHOLE ? (
         <WholePopulationStrategyForm
-          displayName={displayName}
+          displayName={isPartsPopulationStrategySupported ? "" : displayName}
           fieldName={fieldName}
+          contextualHelp={
+            isPartsPopulationStrategySupported ? undefined : contextualHelp
+          }
         />
       ) : (
         <PartsPopulationStrategyForm fieldName={fieldName} items={items} />
@@ -242,6 +253,7 @@ const ObjectJsonEdit = (props) => {
 ObjectJsonEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  contextualHelp: PropTypes.node,
 };
 
 export default ObjectJsonEdit;

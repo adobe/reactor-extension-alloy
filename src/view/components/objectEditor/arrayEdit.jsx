@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 import PropTypes from "prop-types";
 import { FieldArray, useField } from "formik";
-import { Radio, Button, ActionButton, Flex, Text } from "@adobe/react-spectrum";
+import { Radio, Button, ActionButton, Flex } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
 import FormikRadioGroup from "../formikReactSpectrum3/formikRadioGroup";
 import FormikTextField from "../formikReactSpectrum3/formikTextField";
@@ -28,13 +28,12 @@ import FormElementContainer from "../formElementContainer";
  * Displayed when the WHOLE population strategy is selected.
  * Allows the user to provide a value for the whole array.
  */
-const WholePopulationStrategyForm = ({ displayName, fieldName }) => {
+const WholePopulationStrategyForm = ({ fieldName }) => {
   return (
     <DataElementSelector clearable>
       <FormikTextField
         data-test-id="valueField"
         name={`${fieldName}.value`}
-        label={displayName}
         description="This data element should resolve to an array."
         width="size-5000"
       />
@@ -43,7 +42,6 @@ const WholePopulationStrategyForm = ({ displayName, fieldName }) => {
 };
 
 WholePopulationStrategyForm.propTypes = {
-  displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
 };
 
@@ -63,12 +61,7 @@ const PartsPopulationStrategyForm = ({
       name={`${fieldName}.items`}
       render={(arrayHelpers) => {
         return (
-          <Flex
-            gap="size-200"
-            marginTop="size-200"
-            direction="column"
-            alignItems="start"
-          >
+          <Flex gap="size-200" direction="column" alignItems="start">
             {items.map((itemNode, index) => {
               return (
                 <Flex gap="size-200" key={`${fieldName}.${index}`}>
@@ -142,7 +135,7 @@ PartsPopulationStrategyForm.propTypes = {
  * The form for editing a node that is an array type.
  */
 const ArrayEdit = (props) => {
-  const { displayName, fieldName, onNodeSelect, description } = props;
+  const { displayName, fieldName, onNodeSelect, contextualHelp } = props;
   const [{ value: formStateNode }] = useField(fieldName);
 
   const {
@@ -155,12 +148,12 @@ const ArrayEdit = (props) => {
 
   return (
     <FormElementContainer>
-      <Text>{description}</Text>
       {isPartsPopulationStrategySupported && (
         <FormikRadioGroup
-          label="Population strategy"
+          label={displayName}
           name={`${fieldName}.populationStrategy`}
           orientation="horizontal"
+          contextualHelp={contextualHelp}
         >
           <Radio data-test-id="partsPopulationStrategyField" value={PARTS}>
             Provide individual items
@@ -172,10 +165,7 @@ const ArrayEdit = (props) => {
       )}
       <div>
         {populationStrategy === WHOLE ? (
-          <WholePopulationStrategyForm
-            displayName={displayName}
-            fieldName={fieldName}
-          />
+          <WholePopulationStrategyForm fieldName={fieldName} />
         ) : (
           <PartsPopulationStrategyForm
             fieldName={fieldName}
@@ -194,7 +184,7 @@ ArrayEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   onNodeSelect: PropTypes.func.isRequired,
-  description: PropTypes.string,
+  contextualHelp: PropTypes.node,
 };
 
 export default ArrayEdit;

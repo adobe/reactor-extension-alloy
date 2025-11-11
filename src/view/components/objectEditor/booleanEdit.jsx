@@ -19,7 +19,7 @@ import DataElementSelector from "../dataElementSelector";
  * The form for editing a boolean field.
  */
 const BooleanEdit = (props) => {
-  const { displayName, fieldName } = props;
+  const { displayName, fieldName, contextualHelp } = props;
 
   const constantValues = [
     { value: "true", label: "True" },
@@ -38,6 +38,7 @@ const BooleanEdit = (props) => {
         getLabel={(item) => item.label}
         allowsCustomValue
         description="Data element should resolve to true or false."
+        contextualHelp={contextualHelp}
       >
         {(item) => (
           <Item key={item.value} data-test-id={item.value}>
@@ -52,6 +53,7 @@ const BooleanEdit = (props) => {
 BooleanEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
+  contextualHelp: PropTypes.node,
 };
 
 export default BooleanEdit;

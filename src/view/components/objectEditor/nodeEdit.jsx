@@ -12,17 +12,7 @@ governing permissions and limitations under the License.
 
 import PropTypes from "prop-types";
 import { useFormikContext } from "formik";
-import {
-  Breadcrumbs,
-  Checkbox,
-  Content,
-  ContextualHelp,
-  Heading,
-  Item,
-  Flex,
-  Text,
-  View,
-} from "@adobe/react-spectrum";
+import { Breadcrumbs, Checkbox, Item, Flex, View } from "@adobe/react-spectrum";
 import getNodeEditData from "./helpers/getNodeEditData";
 import AutoPopulationAlert from "./autoPopulationAlert";
 import { ALWAYS, NONE } from "./constants/autoPopulationSource";
@@ -30,6 +20,7 @@ import "./nodeEdit.css";
 import FormikCheckbox from "../formikReactSpectrum3/formikCheckbox";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 import getTypeSpecificView from "./helpers/getTypeSpecificView";
+import ContextualHelpForNode from "./contextualHelpForNode";
 
 /**
  * The form for editing a node in the XDM object. The form fields
@@ -44,6 +35,7 @@ const NodeEdit = (props) => {
     fieldName,
     breadcrumb,
     displayName,
+    description,
     hasClearedAncestor,
   } = getNodeEditData({
     formState,
@@ -52,9 +44,17 @@ const NodeEdit = (props) => {
 
   const TypeSpecificNodeEdit = getTypeSpecificView(formStateNode.schema);
 
+  const contextualHelp = (
+    <ContextualHelpForNode
+      title={displayName || fieldName}
+      description={description}
+    />
+  );
+
   const typeSpecificNodeEditProps = {
-    displayName,
+    displayName: displayName || fieldName,
     fieldName,
+    contextualHelp,
     onNodeSelect,
     verticalLayout,
   };
@@ -81,27 +81,8 @@ const NodeEdit = (props) => {
           }
           {breadcrumb.length > 1 && (
             <Breadcrumbs onAction={(nodeId) => onNodeSelect(nodeId)}>
-              {breadcrumb.map((item, index) => (
-                <Item key={item.nodeId}>
-                  {item.label}
-                  {
-                    // The ContextualHelp for the node is added to the last item
-                    // because trying to place it next to the Breadcrumbs component
-                    // results in the Breadcrumbs component being unable to judge the
-                    // width of its container and truncating inconsistently.
-                  }
-                  {index === breadcrumb.length - 1 &&
-                    formStateNode.schema.description && (
-                      <View UNSAFE_className="NodeEdit-contextualHelp">
-                        <ContextualHelp variant="info">
-                          <Heading>{formStateNode.schema.title}</Heading>
-                          <Content>
-                            <Text>{formStateNode.schema.description}</Text>
-                          </Content>
-                        </ContextualHelp>
-                      </View>
-                    )}
-                </Item>
+              {breadcrumb.map((item) => (
+                <Item key={item.nodeId}>{item.label}</Item>
               ))}
             </Breadcrumbs>
           )}

@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import React from "react";
 import PropTypes from "prop-types";
 import { Item } from "@adobe/react-spectrum";
 import FormikKeyedComboBox from "../formikReactSpectrum3/formikKeyedComboBox";
@@ -20,7 +19,7 @@ import DataElementSelector from "../dataElementSelector";
  * The form for editing a node that is a string type with an enum property.
  */
 const EnumEdit = (props) => {
-  const { displayName, fieldName, possibleValues } = props;
+  const { displayName, fieldName, possibleValues, contextualHelp } = props;
 
   return (
     <div>
@@ -35,6 +34,7 @@ const EnumEdit = (props) => {
           getLabel={(item) => item.label}
           allowsCustomValue
           description="Type to search or select from the list. Data element should resolve to one of the listed values."
+          contextualHelp={contextualHelp}
         >
           {(item) => (
             <Item key={item.value} data-test-id={item.value}>
@@ -52,6 +52,7 @@ EnumEdit.propTypes = {
   fieldName: PropTypes.string.isRequired,
   possibleValues: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string))
     .isRequired,
+  contextualHelp: PropTypes.node,
 };
 
 export default EnumEdit;

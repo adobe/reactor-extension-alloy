@@ -17,7 +17,7 @@ import FormikKeyedComboBox from "../formikReactSpectrum3/formikKeyedComboBox";
 import DataElementSelector from "../dataElementSelector";
 
 const StringEdit = (props) => {
-  const { displayName, fieldName, possibleValues } = props;
+  const { displayName, fieldName, possibleValues, contextualHelp } = props;
 
   return (
     <div>
@@ -33,6 +33,7 @@ const StringEdit = (props) => {
             getLabel={(item) => item.label}
             allowsCustomValue
             description="Begin typing or open the menu to see suggested values. Custom values are allowed."
+            contextualHelp={contextualHelp}
           >
             {(item) => (
               <Item key={item.value} data-test-id={item.value}>
@@ -46,6 +47,7 @@ const StringEdit = (props) => {
             name={`${fieldName}.value`}
             label={displayName}
             width="size-5000"
+            contextualHelp={contextualHelp}
           />
         )}
       </DataElementSelector>
@@ -57,6 +59,7 @@ StringEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   possibleValues: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string)),
+  contextualHelp: PropTypes.node,
 };
 
 export default StringEdit;

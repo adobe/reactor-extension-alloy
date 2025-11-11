@@ -12,14 +12,13 @@ governing permissions and limitations under the License.
 
 import { TooltipTrigger, ActionButton, Tooltip } from "@adobe/react-spectrum";
 import Delete from "@spectrum-icons/workflow/Delete";
-import React from "react";
 import PropTypes from "prop-types";
 
-const ClearButton = ({ value, setValue }) => {
+const ClearButton = ({ value, setValue, marginTop }) => {
   return (
     <TooltipTrigger>
       <ActionButton
-        marginTop="size-300"
+        marginTop={marginTop}
         isQuiet
         onPress={() => {
           setValue("");
@@ -37,6 +36,7 @@ const ClearButton = ({ value, setValue }) => {
 ClearButton.propTypes = {
   value: PropTypes.string.isRequired,
   setValue: PropTypes.func.isRequired,
+  marginTop: PropTypes.string,
 };
 
 export default ClearButton;
