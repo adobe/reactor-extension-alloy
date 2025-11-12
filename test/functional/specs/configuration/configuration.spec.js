@@ -865,12 +865,24 @@ test("restores default edge domain value when restore button is clicked", async 
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
 });
 
+test("restores default edge domain to tenant-specific domain when restore button is clicked on new instance with tenant ID", async () => {
+  await extensionViewController.init({
+    company: {
+      orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
+      tenantId: "mytenant",
+    },
+  });
+  await instances[0].edgeDomainField.typeText("foo");
+  await instances[0].edgeDomainRestoreButton.click();
+  await instances[0].edgeDomainField.expectValue("mytenant.data.adobedc.net");
+});
+
 test("sets default edge domain to edge.adobedc.net when no tenant ID is provided", async () => {
   await extensionViewController.init();
   await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
 });
 
-test("sets default edge domain to tenant-specific domain when tenant ID is provided", async () => {
+test("sets default edge domain to tenant-specific domain when tenant ID is provided on new instance", async () => {
   await extensionViewController.init({
     company: {
       orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
@@ -878,6 +890,24 @@ test("sets default edge domain to tenant-specific domain when tenant ID is provi
     },
   });
   await instances[0].edgeDomainField.expectValue("mytenant.data.adobedc.net");
+});
+
+test("sets default edge domain to edge.adobedc.net when editing existing instance", async () => {
+  await extensionViewController.init({
+    settings: {
+      instances: [
+        {
+          name: "alloy",
+          edgeConfigId: "PR123",
+        },
+      ],
+    },
+    company: {
+      orgId: "5BFE274A5F6980A50A495C08@AdobeOrg",
+      tenantId: "mytenant",
+    },
+  });
+  await instances[0].edgeDomainField.expectValue(defaultEdgeDomain);
 });
 
 test("restores default edge base path value when restore button is clicked", async () => {
