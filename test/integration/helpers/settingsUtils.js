@@ -13,6 +13,7 @@ export const buildSettings = (o = {}) => {
   const defaultInstances = [
     {
       name: "alloy",
+      edgeConfigId: "1234",
     },
   ];
 

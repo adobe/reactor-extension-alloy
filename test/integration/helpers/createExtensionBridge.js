@@ -33,7 +33,10 @@ export default () => {
     },
 
     async validate(...args) {
-      const validationResult = registeredOptions.validate.apply(this, args);
+      const validationResult = await registeredOptions.validate.apply(
+        this,
+        args,
+      );
       return validationResult;
     },
 
