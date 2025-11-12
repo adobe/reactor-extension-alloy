@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
 
@@ -313,7 +313,6 @@ describe("Instance Manager", () => {
 
   describe("when libraryCode.type is preinstalled", () => {
     beforeEach(() => {
-      vi.useFakeTimers();
       alloy3 = vi.fn();
       extensionSettings.libraryCode = { type: "preinstalled" };
       extensionSettings.instances = [
@@ -323,109 +322,101 @@ describe("Instance Manager", () => {
       ];
     });
 
-    afterEach(() => {
-      vi.useRealTimers();
-    });
-
-    it("uses the existing configured instance and latches", async () => {
-      // Instance doesn't exist at first
+    it("creates instance using createCustomInstance", () => {
       build();
-      const instance = instanceManager.getInstance("alloy3");
-      expect(instance).not.toBe(alloy3); // It should be the proxy
 
-      const commandPromise = instance("test", "command");
-
-      // Now we make the instance available on the window
-      mockWindow.alloy3 = alloy3;
-      alloy3.mockReturnValue(Promise.resolve("result"));
-
-      // Make getLibraryInfo resolve immediately
-      alloy3.mockImplementation((command) => {
-        if (command === "getLibraryInfo") {
-          return Promise.resolve();
-        }
-        return Promise.resolve("result");
+      // In preinstalled mode, createCustomInstance should be called
+      expect(createCustomInstance).toHaveBeenCalledWith({
+        name: "alloy3",
+        components: undefined,
       });
 
-      await vi.runAllTimersAsync();
-      const result = await commandPromise;
-
-      expect(result).toBe("result");
-      expect(alloy3).toHaveBeenCalledWith("test", "command");
-      expect(alloy3).toHaveBeenCalledWith("getLibraryInfo");
-      // Test that it latched
-      expect(instanceManager.getInstance("alloy3")).toBe(alloy3);
-    });
-
-    it("logs a warning if the instance does not appear", async () => {
-      build();
+      // The instance should be registered
       const instance = instanceManager.getInstance("alloy3");
-      const commandPromise = instance("test", "command").catch((err) => err);
-      await vi.runAllTimersAsync();
-      const result = await commandPromise;
-
-      expect(result).toBeInstanceOf(Error);
-      expect(result.message).toBe('Alloy instance "alloy3" not available');
-      expect(turbine.logger.warn).toHaveBeenCalledWith(
-        'Alloy instance "alloy3" not found on window after 1000ms. Make sure the instance is loaded before the Launch library.',
-      );
-      expect(turbine.logger.error).toHaveBeenCalledWith(
-        expect.stringContaining('Cannot execute command on "alloy3"'),
-      );
+      expect(instance).toBe(alloy3);
     });
 
-    it("logs a warning if the instance is not configured", async () => {
-      mockWindow.alloy3 = alloy3;
-      // Make getLibraryInfo reject (instance exists but not configured)
-      alloy3.mockImplementation((command) => {
-        if (command === "getLibraryInfo") {
-          return Promise.reject(new Error("Not configured"));
-        }
-        return Promise.resolve("result");
-      });
+    it("does not configure the instance in preinstalled mode", () => {
       build();
+
+      // createCustomInstance returns the proxy/instance
       const instance = instanceManager.getInstance("alloy3");
-      const commandPromise = instance("test", "command").catch(() => {});
-      await vi.runAllTimersAsync();
-      await commandPromise;
-      expect(turbine.logger.warn).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'Alloy instance "alloy3" failed configuration check',
-        ),
-      );
+      expect(instance).toBe(alloy3);
+
+      // Should NOT call configure since it's preinstalled
+      expect(alloy3).not.toHaveBeenCalledWith("configure", expect.any(Object));
     });
 
-    it("creates managed instances when libraryCode.type is managed", () => {
+    it("does not add instance to window.__alloyNS in preinstalled mode", () => {
+      build();
+
+      // In preinstalled mode, we don't add instance name to __alloyNS
+      // The external instance already exists on window
+      // eslint-disable-next-line no-underscore-dangle
+      expect(mockWindow.__alloyNS).toBeDefined();
+      // eslint-disable-next-line no-underscore-dangle
+      expect(mockWindow.__alloyNS).not.toContain("alloy3");
+    });
+
+    it("does not set instance on window in preinstalled mode", () => {
+      build();
+
+      // In preinstalled mode, we don't overwrite window[name]
+      // The external instance should already be there
+      expect(mockWindow.alloy3).toBeUndefined();
+    });
+
+    it("handles command queue in preinstalled mode", () => {
+      // Setup pre-existing queue
+      const resolve1 = vi.fn();
+      const reject1 = vi.fn();
+      mockWindow.alloy3 = {
+        q: [[resolve1, reject1, ["sendEvent", { xdm: {} }]]],
+      };
+
+      alloy3.mockResolvedValue("result");
+
+      build();
+
+      // Queue should be processed
+      expect(alloy3).toHaveBeenCalledWith("sendEvent", { xdm: {} });
+    });
+  });
+
+  describe("when libraryCode.type is managed", () => {
+    beforeEach(() => {
+      alloy3 = vi.fn();
       extensionSettings.libraryCode = { type: "managed" };
-      extensionSettings.instances = [
-        {
-          name: "alloy3",
-          edgeConfigId: "PR789",
-        },
-      ];
+      extensionSettings.instances.push({
+        name: "alloy3",
+        edgeConfigId: "PR789",
+      });
+    });
+
+    it("creates and configures instance in managed mode", () => {
       build();
+
       expect(createCustomInstance).toHaveBeenCalledWith({
         name: "alloy3",
         components: undefined,
       });
       expect(alloy3).toHaveBeenCalledWith("configure", expect.any(Object));
+
       const instance = instanceManager.getInstance("alloy3");
       expect(instance).toBe(alloy3);
     });
 
-    it("logs an error when command fails on unavailable instance", async () => {
+    it("adds instance to window.__alloyNS in managed mode", () => {
       build();
-      const instance = instanceManager.getInstance("alloy3");
-      const commandPromise = instance("test").catch((err) => err);
-      await vi.runAllTimersAsync();
-      const result = await commandPromise;
-      expect(result).toBeInstanceOf(Error);
-      expect(result.message).toBe('Alloy instance "alloy3" not available');
-      expect(turbine.logger.error).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'Cannot execute command on "alloy3" - instance not available',
-        ),
-      );
+
+      // eslint-disable-next-line no-underscore-dangle
+      expect(mockWindow.__alloyNS).toContain("alloy3");
+    });
+
+    it("sets instance on window in managed mode", () => {
+      build();
+
+      expect(mockWindow.alloy3).toBe(alloy3);
     });
   });
 });

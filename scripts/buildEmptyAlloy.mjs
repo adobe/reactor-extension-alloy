@@ -15,8 +15,15 @@ governing permissions and limitations under the License.
 
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
 import { Command, Option, InvalidOptionArgumentError } from "commander";
-import babel from "@babel/core";
+import { rollup } from "rollup";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import { babel as rollupBabel } from "@rollup/plugin-babel";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const program = new Command();
 
@@ -42,47 +49,120 @@ program.addOption(
     }),
 );
 
-program.action(({ outputDir }) => {
-  // Create stub content that uses the actual @adobe/alloy/utils
-  const proxyContent = `
-// Import the utility functions from @adobe/alloy/utils
-const { createEventMergeId, deepAssign } = require("@adobe/alloy/utils");
+program.action(async ({ outputDir }) => {
+  const outputFile = path.join(outputDir, "alloy.js");
 
-// Create a proxy function for createCustomInstance that looks for window instances
-const createCustomInstance = (name) => {
-  if (typeof window !== 'undefined' && typeof window[name] === 'function') {
-    return window[name];
-  }
-  console.warn(\`Alloy instance "\${name}" not found on window. Please ensure it is loaded before the Launch library.\`);
-  return () => Promise.resolve({});
+  try {
+    // Bundle the createPreinstalledProxy module with its dependencies
+    const inputFile = path.resolve(
+      __dirname,
+      "../src/lib/utils/createPreinstalledProxy.js",
+    );
+
+    // eslint-disable-next-line no-console
+    console.log("Building empty alloy.js for preinstalled mode...");
+    // eslint-disable-next-line no-console
+    console.log(`Input: ${inputFile}`);
+    // eslint-disable-next-line no-console
+    console.log(`Output: ${outputFile}`);
+
+    const bundle = await rollup({
+      input: inputFile,
+      plugins: [
+        nodeResolve({
+          preferBuiltins: false,
+        }),
+        commonjs(),
+        rollupBabel({
+          babelHelpers: "bundled",
+          presets: [
+            [
+              "@babel/preset-env",
+              {
+                targets: "> 0.25%, not dead",
+              },
+            ],
+          ],
+          exclude: "node_modules/**",
+        }),
+      ],
+    });
+
+    const { output } = await bundle.generate({
+      format: "iife",
+      name: "AlloyPreinstalledUtils",
+    });
+
+    const bundledCode = output[0].code;
+
+    // Wrap the bundled code with the createCustomInstance implementation
+    const alloyContent = `/*
+Copyright 2025 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+// This is a generated file for preinstalled library mode.
+// It provides a proxy implementation that waits for external alloy instances.
+
+${bundledCode}
+
+// Create the createCustomInstance implementation for preinstalled mode
+const createCustomInstance = ({ name }) => {
+  return AlloyPreinstalledUtils.createPreinstalledProxy(name, {
+    timeout: 1000,
+    interval: 100,
+    configTimeout: 5000,
+    onWarn: console.warn,
+    onError: console.error,
+  });
 };
 
 // Empty components object for preinstalled mode
 const components = {};
 
-// Export the implementations
-if (typeof module !== 'undefined' && module.exports) {
-  // CommonJS exports
-  module.exports = { createCustomInstance, components, createEventMergeId, deepAssign };
-} else {
-  // ES module exports
-  if (typeof exports !== 'undefined') {
-    exports.createCustomInstance = createCustomInstance;
-    exports.components = components;
-    exports.createEventMergeId = createEventMergeId;
-    exports.deepAssign = deepAssign;
-  }
+// Stub utilities - not used in preinstalled mode but required for API compatibility
+const createEventMergeId = () => {
+  throw new Error(
+    "createEventMergeId should not be called directly in preinstalled mode"
+  );
+};
+
+const deepAssign = () => {
+  throw new Error(
+    "deepAssign should not be called directly in preinstalled mode"
+  );
+};
+
+// Export for CommonJS (used by the extension runtime)
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    createCustomInstance,
+    components,
+    createEventMergeId,
+    deepAssign,
+  };
 }
 `;
 
-  const outputFile = path.join(outputDir, "alloy.js");
+    fs.writeFileSync(outputFile, alloyContent);
 
-  // Transform the proxy content with Babel
-  const output = babel.transform(proxyContent, {
-    presets: [["@babel/preset-env"]],
-  }).code;
-
-  fs.writeFileSync(outputFile, output);
+    // eslint-disable-next-line no-console
+    console.log("✅ Successfully built empty alloy.js for preinstalled mode");
+    // eslint-disable-next-line no-console
+    console.log(
+      `   File size: ${(fs.statSync(outputFile).size / 1024).toFixed(2)} KB`,
+    );
+  } catch (error) {
+    console.error("❌ Error building empty alloy.js:", error);
+    process.exit(1);
+  }
 });
 
 program.parse();
