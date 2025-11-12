@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const { poll } = require("../utils/poll");
+
 module.exports = ({
   turbine,
   window,
@@ -55,6 +57,7 @@ module.exports = ({
       stagingEdgeConfigId,
       developmentEdgeConfigId,
       onBeforeEventSend,
+      useExistingAlloy,
       ...options
     }) => {
       // Create instance - works for both managed and preinstalled modes
