@@ -42,6 +42,9 @@ describe("Instance Manager", () => {
 
   beforeEach(() => {
     extensionSettings = {
+      libraryCode: {
+        type: "managed",
+      },
       instances: [
         {
           name: "alloy1",
@@ -63,6 +66,7 @@ describe("Instance Manager", () => {
       debugEnabled: false,
       logger: {
         warn: vi.fn(),
+        error: vi.fn(),
       },
     };
     mockWindow = {};
@@ -307,14 +311,16 @@ describe("Instance Manager", () => {
     expect(alloy1).toHaveBeenCalledTimes(1);
   });
 
-  describe("when useExistingAlloy is true", () => {
+  describe("when libraryCode.type is preinstalled", () => {
     beforeEach(() => {
       vi.useFakeTimers();
       alloy3 = vi.fn();
-      extensionSettings.instances.push({
-        name: "alloy3",
-        useExistingAlloy: true,
-      });
+      extensionSettings.libraryCode = { type: "preinstalled" };
+      extensionSettings.instances = [
+        {
+          name: "alloy3",
+        },
+      ];
     });
 
     afterEach(() => {
@@ -354,36 +360,49 @@ describe("Instance Manager", () => {
     it("logs a warning if the instance does not appear", async () => {
       build();
       const instance = instanceManager.getInstance("alloy3");
-      const commandPromise = instance("test", "command");
+      const commandPromise = instance("test", "command").catch((err) => err);
       await vi.runAllTimersAsync();
-      await commandPromise;
+      const result = await commandPromise;
 
+      expect(result).toBeInstanceOf(Error);
+      expect(result.message).toBe('Alloy instance "alloy3" not available');
       expect(turbine.logger.warn).toHaveBeenCalledWith(
         'Alloy instance "alloy3" not found on window after 1000ms. Make sure the instance is loaded before the Launch library.',
+      );
+      expect(turbine.logger.error).toHaveBeenCalledWith(
+        expect.stringContaining('Cannot execute command on "alloy3"'),
       );
     });
 
     it("logs a warning if the instance is not configured", async () => {
       mockWindow.alloy3 = alloy3;
-      // Make getLibraryInfo never resolve
+      // Make getLibraryInfo reject (instance exists but not configured)
       alloy3.mockImplementation((command) => {
         if (command === "getLibraryInfo") {
-          return new Promise(() => {});
+          return Promise.reject(new Error("Not configured"));
         }
         return Promise.resolve("result");
       });
       build();
       const instance = instanceManager.getInstance("alloy3");
-      const commandPromise = instance("test", "command");
+      const commandPromise = instance("test", "command").catch(() => {});
       await vi.runAllTimersAsync();
       await commandPromise;
       expect(turbine.logger.warn).toHaveBeenCalledWith(
-        'Alloy instance "alloy3" was not configured after 1000ms. Make sure the instance is configured before loading the Launch library.',
+        expect.stringContaining(
+          'Alloy instance "alloy3" failed configuration check',
+        ),
       );
     });
 
-    it("creates a new instance if useExistingAlloy is false", () => {
-      extensionSettings.instances[2].useExistingAlloy = false;
+    it("creates managed instances when libraryCode.type is managed", () => {
+      extensionSettings.libraryCode = { type: "managed" };
+      extensionSettings.instances = [
+        {
+          name: "alloy3",
+          edgeConfigId: "PR789",
+        },
+      ];
       build();
       expect(createCustomInstance).toHaveBeenCalledWith({
         name: "alloy3",
@@ -392,6 +411,21 @@ describe("Instance Manager", () => {
       expect(alloy3).toHaveBeenCalledWith("configure", expect.any(Object));
       const instance = instanceManager.getInstance("alloy3");
       expect(instance).toBe(alloy3);
+    });
+
+    it("logs an error when command fails on unavailable instance", async () => {
+      build();
+      const instance = instanceManager.getInstance("alloy3");
+      const commandPromise = instance("test").catch((err) => err);
+      await vi.runAllTimersAsync();
+      const result = await commandPromise;
+      expect(result).toBeInstanceOf(Error);
+      expect(result.message).toBe('Alloy instance "alloy3" not available');
+      expect(turbine.logger.error).toHaveBeenCalledWith(
+        expect.stringContaining(
+          'Cannot execute command on "alloy3" - instance not available',
+        ),
+      );
     });
   });
 });
