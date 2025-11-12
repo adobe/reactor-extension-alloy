@@ -107,7 +107,6 @@ module.exports = ({
         window.__alloyNS.push(name);
         window[name] = instance;
       }
-
       instanceByName[name] = instance;
     },
   );
