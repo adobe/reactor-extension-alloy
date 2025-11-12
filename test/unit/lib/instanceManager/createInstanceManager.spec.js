@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
 
@@ -19,11 +19,11 @@ describe("Instance Manager", () => {
   let turbine;
   let mockWindow;
   let createCustomInstance;
-  let createEventMergeId;
   let wrapOnBeforeEventSend;
   let onBeforeEventSend;
   let alloy1;
   let alloy2;
+  let alloy3;
   let extensionSettings;
   let getConfigOverrides;
 
@@ -33,7 +33,6 @@ describe("Instance Manager", () => {
       window: mockWindow,
       createCustomInstance,
       orgId: "ABC@AdobeOrg",
-      createEventMergeId,
       wrapOnBeforeEventSend,
       getConfigOverrides,
     });
@@ -60,6 +59,9 @@ describe("Instance Manager", () => {
       onDebugChanged: vi.fn(),
       environment: { stage: "production" },
       debugEnabled: false,
+      logger: {
+        warn: vi.fn(),
+      },
     };
     mockWindow = {};
     getConfigOverrides = vi.fn();
@@ -71,6 +73,9 @@ describe("Instance Manager", () => {
       }
       if (name === "alloy2") {
         return alloy2;
+      }
+      if (name === "alloy3") {
+        return alloy3;
       }
       return undefined;
     });
@@ -183,13 +188,6 @@ describe("Instance Manager", () => {
     expect(instance).toBe(alloy2);
   });
 
-  it("creates an event merge ID", () => {
-    createEventMergeId = vi.fn().mockReturnValue("randomEventMergeId");
-    build();
-    const eventMergeId = instanceManager.createEventMergeId();
-    expect(eventMergeId).toBe("randomEventMergeId");
-  });
-
   it("handles a staging environment", () => {
     turbine.environment.stage = "staging";
     build();
@@ -298,5 +296,93 @@ describe("Instance Manager", () => {
 
     expect(alloy1).toHaveBeenCalledWith("configure", expect.any(Object));
     expect(alloy1).toHaveBeenCalledTimes(1);
+  });
+
+  describe("when useExistingAlloy is true", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      alloy3 = vi.fn();
+      extensionSettings.instances.push({
+        name: "alloy3",
+        useExistingAlloy: true,
+      });
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("uses the existing configured instance and latches", async () => {
+      // Instance doesn't exist at first
+      build();
+      const instance = instanceManager.getInstance("alloy3");
+      expect(instance).not.toBe(alloy3); // It should be the proxy
+
+      const commandPromise = instance("test", "command");
+
+      // Now we make the instance available on the window
+      mockWindow.alloy3 = alloy3;
+      alloy3.mockReturnValue(Promise.resolve("result"));
+
+      // Make getLibraryInfo resolve immediately
+      alloy3.mockImplementation((command) => {
+        if (command === "getLibraryInfo") {
+          return Promise.resolve();
+        }
+        return Promise.resolve("result");
+      });
+
+      await vi.runAllTimersAsync();
+      const result = await commandPromise;
+
+      expect(result).toBe("result");
+      expect(alloy3).toHaveBeenCalledWith("test", "command");
+      expect(alloy3).toHaveBeenCalledWith("getLibraryInfo");
+      // Test that it latched
+      expect(instanceManager.getInstance("alloy3")).toBe(alloy3);
+    });
+
+    it("logs a warning if the instance does not appear", async () => {
+      build();
+      const instance = instanceManager.getInstance("alloy3");
+      const commandPromise = instance("test", "command");
+      await vi.runAllTimersAsync();
+      await commandPromise;
+
+      expect(turbine.logger.warn).toHaveBeenCalledWith(
+        'Alloy instance "alloy3" not found on window after 1000ms. Make sure the instance is loaded before the Launch library.',
+      );
+    });
+
+    it("logs a warning if the instance is not configured", async () => {
+      mockWindow.alloy3 = alloy3;
+      // Make getLibraryInfo never resolve
+      alloy3.mockImplementation((command) => {
+        if (command === "getLibraryInfo") {
+          return new Promise(() => {});
+        }
+        return Promise.resolve("result");
+      });
+      build();
+      const instance = instanceManager.getInstance("alloy3");
+      const commandPromise = instance("test", "command");
+      await vi.runAllTimersAsync();
+      await commandPromise;
+      expect(turbine.logger.warn).toHaveBeenCalledWith(
+        'Alloy instance "alloy3" was not configured after 1000ms. Make sure the instance is configured before loading the Launch library.',
+      );
+    });
+
+    it("creates a new instance if useExistingAlloy is false", () => {
+      extensionSettings.instances[2].useExistingAlloy = false;
+      build();
+      expect(createCustomInstance).toHaveBeenCalledWith({
+        name: "alloy3",
+        components: undefined,
+      });
+      expect(alloy3).toHaveBeenCalledWith("configure", expect.any(Object));
+      const instance = instanceManager.getInstance("alloy3");
+      expect(instance).toBe(alloy3);
+    });
   });
 });
