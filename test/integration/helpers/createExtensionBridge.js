@@ -9,8 +9,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { act } from "@testing-library/react";
-
 export default () => {
   let registeredOptions;
 
@@ -27,9 +25,7 @@ export default () => {
         ...initInfo,
       };
 
-      act(() => {
-        registeredOptions.init.apply(this, [initInfo]);
-      });
+      registeredOptions.init.apply(this, [initInfo]);
     },
 
     async validate(...args) {
