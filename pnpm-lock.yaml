@@ -13,8 +13,8 @@ importers:
   .:
     dependencies:
       '@adobe/alloy':
-        specifier: 2.30.1-beta.9
-        version: 2.30.1-beta.9(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)
+        specifier: 2.30.1-beta.11
+        version: 2.30.1-beta.11(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)
       '@adobe/react-spectrum':
         specifier: ^3.45.0
         version: 3.45.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -253,8 +253,8 @@ packages:
   '@adobe/aep-rules-engine@3.1.1':
     resolution: {integrity: sha512-YeFDDSEM4wjwTNM4drKTIbYvfSdYS3DmeOgb1SxZfSXTcVg8vdxcd5blE2wKO42Qa4KUJK+ziK7ABvbHoO7T8Q==}
 
-  '@adobe/alloy@2.30.1-beta.9':
-    resolution: {integrity: sha512-PrM1ggQNrHh/YWWrWrYEmR34CND7qFUOvHR70xvlEHptNHEp0EflUFzvXiBtym51yctfw1dpQpNS2ZiHnJzCHA==}
+  '@adobe/alloy@2.30.1-beta.11':
+    resolution: {integrity: sha512-asAVwYzMCx22oFSa8G1Fz/6/zOXHLK67KIb81r8tfw56CY3qkYdtBuqjWFRqxPdO43uzwtVzrGbw9pQVr+Rsng==}
     hasBin: true
 
   '@adobe/auth-token@1.0.1':
@@ -7945,7 +7945,7 @@ snapshots:
       - supports-color
       - vitest
 
-  '@adobe/alloy@2.30.1-beta.9(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)':
+  '@adobe/alloy@2.30.1-beta.11(@types/babel__core@7.20.5)(@types/node@24.10.0)(picomatch@4.0.3)(vitest@4.0.8)':
     dependencies:
       '@adobe/aep-rules-engine': 3.1.1(vitest@4.0.8)
       '@adobe/reactor-query-string': 2.0.0
