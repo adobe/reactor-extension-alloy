@@ -9,17 +9,57 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-// eslint-disable-next-line import/no-unresolved
+
+/* eslint-disable import/no-unresolved */
 import { defineProject } from "vitest/config";
+import { playwright } from "@vitest/browser-playwright";
+import react from "@vitejs/plugin-react";
 
 export default defineProject({
   test: {
-    name: "unit-tests",
-    include: ["test/unit/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
-    isolate: false,
-    environment: "jsdom",
+    projects: [
+      {
+        extends: false,
+        test: {
+          name: "unit",
+          include: ["test/unit/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+          isolate: false,
+          environment: "happy-dom",
+        },
+      },
+      {
+        extends: false,
+
+        plugins: [
+          react({
+            jsxRuntime: "automatic",
+          }),
+        ],
+
+        test: {
+          name: "integration",
+          include: ["test/integration/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+          isolate: false,
+          browser: {
+            enabled: true,
+            instances: [
+              {
+                browser: "chromium",
+              },
+            ],
+            provider: playwright(),
+            headless: true,
+            screenshotFailures: false,
+            locators: {
+              testIdAttribute: "data-test-id",
+            },
+          },
+          setupFiles: ["test/integration/helpers/setup.js"],
+        },
+      },
+    ],
     coverage: {
-      include: ["src/**/*"],
+      include: ["src/**/*.{js,jsx}"],
       reporter: ["lcov", "html", "text"],
     },
   },
