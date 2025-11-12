@@ -22,7 +22,10 @@ module.exports = ({
   wrapOnBeforeEventSend,
   getConfigOverrides,
 }) => {
-  const { instances: instancesSettings } = turbine.getExtensionSettings();
+  const { instances: instancesSettings, libraryCode } =
+    turbine.getExtensionSettings();
+  const isPreinstalled = libraryCode?.type === "preinstalled";
+
   const instanceByName = {};
 
   const calledMonitors = {};
@@ -54,17 +57,16 @@ module.exports = ({
       stagingEdgeConfigId,
       developmentEdgeConfigId,
       onBeforeEventSend,
-      useExistingAlloy,
       ...options
     }) => {
-      // If the instance is using a self-hosted alloy.js instance, we need to verify that the
-      // instance is properly loaded and configured.
-      if (useExistingAlloy) {
+      // If using preinstalled mode, we need to verify that the external
+      // instance is properly loaded and configured before using it.
+      if (isPreinstalled) {
         let realInstancePromise;
 
         // Polling for the real instance asynchronously.
         const getRealInstance = async () => {
-          // Verify that the instance is loaded.
+          // Verify that the instance is loaded on the window.
           try {
             await poll(() => typeof window[name] === "function");
             // eslint-disable-next-line no-unused-vars, unused-imports/no-unused-vars
@@ -75,20 +77,13 @@ module.exports = ({
             return undefined;
           }
 
-          // Verify that the instance is also configured.
+          // Verify that the instance is configured by calling getLibraryInfo.
           const instance = window[name];
-          let configured = false;
-          // getLibraryInfo only resolves after the instance is configured.
-          instance("getLibraryInfo").then(() => {
-            configured = true;
-          });
-
           try {
-            await poll(() => configured);
-            // eslint-disable-next-line no-unused-vars, unused-imports/no-unused-vars
-          } catch (err) {
+            await instance("getLibraryInfo");
+          } catch {
             turbine.logger.warn(
-              `Alloy instance "${name}" was not configured after 1000ms. Make sure the instance is configured before loading the Launch library.`,
+              `Alloy instance "${name}" failed configuration check. Make sure the instance is configured before loading the Launch library.`,
             );
             return undefined;
           }
@@ -108,7 +103,12 @@ module.exports = ({
             if (instance) {
               return instance(...args);
             }
-            return undefined;
+            turbine.logger.error(
+              `Cannot execute command on "${name}" - instance not available. Make sure alloy.js is loaded and configured before the Launch library.`,
+            );
+            return Promise.reject(
+              new Error(`Alloy instance "${name}" not available`),
+            );
           });
         };
 
