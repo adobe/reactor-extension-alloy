@@ -15,6 +15,7 @@ import { worker } from "./mocks/browser";
 
 worker.start({
   onUnhandledRequest: "bypass",
+  quiet: true,
 });
 
 // Reset handlers after each test (important for test isolation)

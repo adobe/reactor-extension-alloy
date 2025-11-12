@@ -58,7 +58,7 @@ export const handlers = [
     },
   ),
   http.get(
-    "https://edge.adobe.io/metadata/namespaces/edge/datasets/datastreams/records/?orderby=title&limit=1000",
+    "https://edge.adobe.io/metadata/namespaces/edge/datasets/datastreams/records/",
     async () => {
       return HttpResponse.json({
         _embedded: {
