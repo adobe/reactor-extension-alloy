@@ -28,6 +28,12 @@ const components = {
       "This component supports Audience Manager integration including running URL and cookie destination and id syncs.",
   },
 
+  brandConcierge: {
+    beta: true,
+    default: false,
+    description: "This component enables Brand Concierge integration.",
+  },
+
   consent: {
     default: true,
     description:
@@ -67,7 +73,8 @@ const components = {
 
   pushNotifications: {
     beta: true,
-    description: "This component enables web push notifications for AJO.",
+    description:
+      "This component enables web push notifications for Adobe Journey Optimizer.",
   },
 };
 
