@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 import createInstanceManager from "../../../../src/lib/instanceManager/createInstanceManager";
 
@@ -19,6 +19,7 @@ describe("Instance Manager", () => {
   let turbine;
   let mockWindow;
   let createCustomInstance;
+  let createEventMergeId;
   let wrapOnBeforeEventSend;
   let onBeforeEventSend;
   let alloy1;
@@ -33,6 +34,7 @@ describe("Instance Manager", () => {
       window: mockWindow,
       createCustomInstance,
       orgId: "ABC@AdobeOrg",
+      createEventMergeId,
       wrapOnBeforeEventSend,
       getConfigOverrides,
     });
@@ -190,6 +192,13 @@ describe("Instance Manager", () => {
     build();
     const instance = instanceManager.getInstance("alloy2");
     expect(instance).toBe(alloy2);
+  });
+
+  it("creates an event merge ID", () => {
+    createEventMergeId = vi.fn().mockReturnValue("randomEventMergeId");
+    build();
+    const eventMergeId = instanceManager.createEventMergeId();
+    expect(eventMergeId).toBe("randomEventMergeId");
   });
 
   it("handles a staging environment", () => {
