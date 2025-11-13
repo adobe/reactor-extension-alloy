@@ -9,12 +9,13 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const createEventMergeIdCache = require("./createEventMergeIdCache");
-const createSendEventCallbackStorage = require("./createSendEventCallbackStorage");
-const createMediaCollectionSessionStorage = require("./createMediaCollectionSessionStorage");
-const createVariableStore = require("./createVariableStore");
+import createEventMergeIdCache from "./createEventMergeIdCache";
+import createSendEventCallbackStorage from "./createSendEventCallbackStorage";
+import createMediaCollectionSessionStorage from "./createMediaCollectionSessionStorage";
+import createVariableStore from "./createVariableStore";
 
-exports.eventMergeIdCache = createEventMergeIdCache();
-exports.sendEventCallbackStorage = createSendEventCallbackStorage();
-exports.mediaCollectionSessionStorage = createMediaCollectionSessionStorage();
-exports.variableStore = createVariableStore();
+export const eventMergeIdCache = createEventMergeIdCache();
+export const sendEventCallbackStorage = createSendEventCallbackStorage();
+export const mediaCollectionSessionStorage =
+  createMediaCollectionSessionStorage();
+export const variableStore = createVariableStore();

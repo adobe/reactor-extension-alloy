@@ -1,17 +1,16 @@
 {
-  "plugins": [
-    "version",
-    [
-      "@babel/plugin-transform-modules-commonjs",
-      {
-        "noInterop": true
-      }
-    ]
-  ],
+  "plugins": ["version"],
   "overrides": [
     {
       "test": "./src/lib/**/*.js",
-      "plugins": ["./babel-plugin-commonjs-turbine-adapter.js"]
+      "plugins": [
+        [
+          "@babel/plugin-transform-modules-commonjs",
+          {
+            "importInterop": "babel"
+          }
+        ]
+      ]
     }
   ],
   "env": {
