@@ -135,7 +135,7 @@ PartsPopulationStrategyForm.propTypes = {
  * The form for editing a node that is an array type.
  */
 const ArrayEdit = (props) => {
-  const { displayName, fieldName, onNodeSelect, contextualHelp } = props;
+  const { displayName, fieldName, onNodeSelect, nodeDescription } = props;
   const [{ value: formStateNode }] = useField(fieldName);
 
   const {
@@ -153,7 +153,7 @@ const ArrayEdit = (props) => {
           label={displayName}
           name={`${fieldName}.populationStrategy`}
           orientation="horizontal"
-          contextualHelp={contextualHelp}
+          contextualHelp={nodeDescription}
         >
           <Radio data-test-id="partsPopulationStrategyField" value={PARTS}>
             Provide individual items
@@ -184,7 +184,7 @@ ArrayEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   onNodeSelect: PropTypes.func.isRequired,
-  contextualHelp: PropTypes.node,
+  nodeDescription: PropTypes.node,
 };
 
 export default ArrayEdit;

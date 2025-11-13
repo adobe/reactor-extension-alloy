@@ -13,13 +13,17 @@ governing permissions and limitations under the License.
 import PropTypes from "prop-types";
 import { ContextualHelp, Heading, Content, Text } from "@adobe/react-spectrum";
 
-const ContextualHelpForNode = ({ title, description }) => {
+const NodeDescription = ({ title, description }) => {
   if (!description) {
     return null;
   }
 
   return (
-    <ContextualHelp variant="info">
+    <ContextualHelp
+      variant="info"
+      data-test-id="nodeDescription"
+      aria-label="Click to view additional information about this field"
+    >
       <Heading>{title}</Heading>
       <Content>
         <Text>{description}</Text>
@@ -28,9 +32,9 @@ const ContextualHelpForNode = ({ title, description }) => {
   );
 };
 
-ContextualHelpForNode.propTypes = {
+NodeDescription.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
 };
 
-export default ContextualHelpForNode;
+export default NodeDescription;

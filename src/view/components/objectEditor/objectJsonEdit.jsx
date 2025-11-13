@@ -35,7 +35,7 @@ const getEmptyItem = () => ({ key: "", value: "" });
 const WholePopulationStrategyForm = ({
   displayName,
   fieldName,
-  contextualHelp,
+  nodeDescription,
 }) => {
   return (
     <DataElementSelector clearable>
@@ -50,7 +50,7 @@ const WholePopulationStrategyForm = ({
         }
         width="size-6000"
         marginStart="size-300"
-        contextualHelp={contextualHelp}
+        contextualHelp={nodeDescription}
       />
     </DataElementSelector>
   );
@@ -59,7 +59,7 @@ const WholePopulationStrategyForm = ({
 WholePopulationStrategyForm.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
-  contextualHelp: PropTypes.node,
+  nodeDescription: PropTypes.node,
 };
 
 /**
@@ -197,7 +197,7 @@ const updateRows = ({
  */
 const ObjectJsonEdit = (props) => {
   const { submitForm } = useFormikContext();
-  const { displayName, fieldName, contextualHelp } = props;
+  const { displayName, fieldName, nodeDescription } = props;
   const [{ value: formStateNode }] = useField(fieldName);
   const [, , { setValue }] = useField(`${fieldName}.value`);
   const [, , { setValue: setItemsValue }] = useField(`${fieldName}.items`);
@@ -224,7 +224,7 @@ const ObjectJsonEdit = (props) => {
           label={displayName}
           name={`${fieldName}.populationStrategy`}
           orientation="horizontal"
-          contextualHelp={contextualHelp}
+          contextualHelp={nodeDescription}
           onChange={strategyOnChange}
         >
           <Radio data-test-id="partsPopulationStrategyField" value={PARTS}>
@@ -239,8 +239,8 @@ const ObjectJsonEdit = (props) => {
         <WholePopulationStrategyForm
           displayName={isPartsPopulationStrategySupported ? "" : displayName}
           fieldName={fieldName}
-          contextualHelp={
-            isPartsPopulationStrategySupported ? undefined : contextualHelp
+          nodeDescription={
+            isPartsPopulationStrategySupported ? undefined : nodeDescription
           }
         />
       ) : (
@@ -253,7 +253,7 @@ const ObjectJsonEdit = (props) => {
 ObjectJsonEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
-  contextualHelp: PropTypes.node,
+  nodeDescription: PropTypes.node,
 };
 
 export default ObjectJsonEdit;

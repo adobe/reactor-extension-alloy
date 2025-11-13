@@ -26,7 +26,7 @@ const ObjectEdit = ({
   displayName,
   fieldName,
   verticalLayout = false,
-  contextualHelp,
+  nodeDescription,
 }) => {
   const [{ value: formStateNode }] = useField(fieldName);
 
@@ -40,7 +40,7 @@ const ObjectEdit = ({
           label={displayName}
           name={`${fieldName}.populationStrategy`}
           orientation="horizontal"
-          contextualHelp={contextualHelp}
+          contextualHelp={nodeDescription}
         >
           <Radio data-test-id="partsPopulationStrategyField" value={PARTS}>
             Provide individual attributes
@@ -59,7 +59,7 @@ const ObjectEdit = ({
             description="This data element should resolve to an object."
             width="size-5000"
             contextualHelp={
-              isPartsPopulationStrategySupported ? undefined : contextualHelp
+              isPartsPopulationStrategySupported ? undefined : nodeDescription
             }
           />
         </DataElementSelector>
@@ -77,7 +77,7 @@ ObjectEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
   verticalLayout: PropTypes.bool,
-  contextualHelp: PropTypes.node,
+  nodeDescription: PropTypes.node,
 };
 
 export default ObjectEdit;

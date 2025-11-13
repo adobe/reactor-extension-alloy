@@ -19,7 +19,7 @@ import DataElementSelector from "../dataElementSelector";
  * The form for editing a node that is a string type with an enum property.
  */
 const EnumEdit = (props) => {
-  const { displayName, fieldName, possibleValues, contextualHelp } = props;
+  const { displayName, fieldName, possibleValues, nodeDescription } = props;
 
   return (
     <div>
@@ -34,7 +34,7 @@ const EnumEdit = (props) => {
           getLabel={(item) => item.label}
           allowsCustomValue
           description="Type to search or select from the list. Data element should resolve to one of the listed values."
-          contextualHelp={contextualHelp}
+          contextualHelp={nodeDescription}
         >
           {(item) => (
             <Item key={item.value} data-test-id={item.value}>
@@ -52,7 +52,7 @@ EnumEdit.propTypes = {
   fieldName: PropTypes.string.isRequired,
   possibleValues: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string))
     .isRequired,
-  contextualHelp: PropTypes.node,
+  nodeDescription: PropTypes.node,
 };
 
 export default EnumEdit;

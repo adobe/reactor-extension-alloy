@@ -18,7 +18,7 @@ import DataElementSelector from "../dataElementSelector";
  * The form for editing a number or integer field.
  */
 const NumberOrIntegerEdit = (props) => {
-  const { displayName, fieldName, contextualHelp } = props;
+  const { displayName, fieldName, nodeDescription } = props;
 
   return (
     <div>
@@ -29,7 +29,7 @@ const NumberOrIntegerEdit = (props) => {
           label={displayName}
           width="size-5000"
           description="Data element should resolve to a number."
-          contextualHelp={contextualHelp}
+          contextualHelp={nodeDescription}
         />
       </DataElementSelector>
     </div>
@@ -39,7 +39,7 @@ const NumberOrIntegerEdit = (props) => {
 NumberOrIntegerEdit.propTypes = {
   displayName: PropTypes.string.isRequired,
   fieldName: PropTypes.string.isRequired,
-  contextualHelp: PropTypes.node,
+  nodeDescription: PropTypes.node,
 };
 
 export default NumberOrIntegerEdit;

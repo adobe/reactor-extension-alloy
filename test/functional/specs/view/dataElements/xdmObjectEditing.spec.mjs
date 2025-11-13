@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-import { t } from "testcafe";
+import { t, Selector } from "testcafe";
 import xdmTree from "../../../helpers/objectEditor/xdmTree.mjs";
 import arrayEdit from "../../../helpers/objectEditor/arrayEdit.mjs";
 import booleanEdit from "../../../helpers/objectEditor/booleanEdit.mjs";
@@ -501,18 +501,29 @@ test("initializes form fields with enum value", async () => {
   await enumEdit.expectEnumValue("Application");
 });
 
-test("allows user to enter custom value for property with enum type", async () => {
+test("invalidates enum property with custom value", async () => {
   const extensionViewController = await initializeExtensionView();
   await schemaField.openMenu();
   await schemaField.selectMenuOption("XDM Object Data Element Tests");
   await xdmTree.node("environment").toggleExpansion();
   await xdmTree.node("type").click();
-  await enumEdit.enterCustomValue("%customType%");
+  await enumEdit.enterCustomValue("custom type");
+
+  await extensionViewController.expectIsNotValid();
+});
+
+test("allows user to enter data element for enum property", async () => {
+  const extensionViewController = await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("environment").toggleExpansion();
+  await xdmTree.node("type").click();
+  await enumEdit.enterCustomValue("%dataElement%");
 
   await extensionViewController.expectIsValid();
   await extensionViewController.expectSettingsToContainData({
     environment: {
-      type: "%customType%",
+      type: "%dataElement%",
     },
   });
 });
@@ -596,4 +607,84 @@ test("eVars are ordered numerically", async () => {
   await xdmTree.node("eVars").toggleExpansion();
   // before fixing the sorting function, eVar10 followed eVar1
   await xdmTree.node("eVar1").next().expectTitleEquals("eVar2");
+});
+
+test("shows information icon for fields with descriptions", async () => {
+  await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("device").toggleExpansion();
+  await xdmTree.node("colorDepth").click();
+
+  const informationIcon = spectrum.button("nodeDescription");
+  await informationIcon.expectExists();
+  await informationIcon.click();
+
+  const popover = Selector('[role="dialog"]');
+  await t.expect(popover.exists).ok("Expected popover to appear");
+  await t
+    .expect(popover.withText("Color depth").exists)
+    .ok("Expected popover to contain field title");
+  await t
+    .expect(
+      popover.withText("The number of colors the display is able to represent.")
+        .exists,
+    )
+    .ok("Expected popover to contain field description");
+
+  await t.pressKey("esc");
+  await t.expect(popover.exists).notOk("Expected popover to close");
+});
+
+test("node description popver shows field name when no display name is provided", async () => {
+  await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("_experience").toggleExpansion();
+  await xdmTree.node("decisioning").toggleExpansion();
+  await xdmTree.node("propositionAction").toggleExpansion();
+  await xdmTree.node("label").click();
+
+  const informationIcon = spectrum.button("nodeDescription");
+  await informationIcon.expectExists();
+  await informationIcon.click();
+
+  const popover = Selector('[role="dialog"]');
+  await t.expect(popover.exists).ok("Expected popover to appear");
+  await t
+    .expect(popover.withText("label").exists)
+    .ok("Expected popover to contain field title");
+});
+
+test("does not show information icon for fields without descriptions", async () => {
+  await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await xdmTree.node("vendor").toggleExpansion();
+  await xdmTree.node("name").click();
+
+  const informationIcon = spectrum.button("nodeDescription");
+  await informationIcon.expectNotExists();
+});
+
+test("shows clear button for string input fields and clears value when clicked", async () => {
+  await initializeExtensionView();
+  await schemaField.openMenu();
+  await schemaField.selectMenuOption("XDM Object Data Element Tests");
+  await xdmTree.node("_unifiedjsqeonly").toggleExpansion();
+  await xdmTree.node("vendor").toggleExpansion();
+  await xdmTree.node("name").click();
+
+  await stringEdit.enterValue("Adobe");
+  await stringEdit.expectValue("Adobe");
+
+  const clearButton = spectrum.button("clearButton");
+  await clearButton.expectExists();
+  await clearButton.expectEnabled();
+  await clearButton.click();
+
+  await stringEdit.expectValue("");
+
+  await clearButton.expectDisabled();
 });

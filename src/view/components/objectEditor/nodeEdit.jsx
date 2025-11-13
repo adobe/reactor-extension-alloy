@@ -20,7 +20,7 @@ import "./nodeEdit.css";
 import FormikCheckbox from "../formikReactSpectrum3/formikCheckbox";
 import FieldDescriptionAndError from "../fieldDescriptionAndError";
 import getTypeSpecificView from "./helpers/getTypeSpecificView";
-import ContextualHelpForNode from "./contextualHelpForNode";
+import NodeDescription from "./nodeDescriptionPopover";
 
 /**
  * The form for editing a node in the XDM object. The form fields
@@ -44,8 +44,8 @@ const NodeEdit = (props) => {
 
   const TypeSpecificNodeEdit = getTypeSpecificView(formStateNode.schema);
 
-  const contextualHelp = (
-    <ContextualHelpForNode
+  const nodeDescription = (
+    <NodeDescription
       title={displayName || fieldName}
       description={description}
     />
@@ -54,7 +54,7 @@ const NodeEdit = (props) => {
   const typeSpecificNodeEditProps = {
     displayName: displayName || fieldName,
     fieldName,
-    contextualHelp,
+    nodeDescription,
     onNodeSelect,
     verticalLayout,
   };

@@ -18,6 +18,7 @@ const ClearButton = ({ value, setValue, marginTop }) => {
   return (
     <TooltipTrigger>
       <ActionButton
+        data-test-id="clearButton"
         marginTop={marginTop}
         isQuiet
         onPress={() => {
