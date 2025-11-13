@@ -14,7 +14,7 @@ import { describe, it, beforeEach, afterEach, expect } from "vitest";
 import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
-import { waitForConfigurationViewToLoad } from "../helpers/ui";
+import { waitForConfigurationViewToLoad, toggleComponent } from "../helpers/ui";
 import { spectrumTextField, spectrumNumberField } from "../helpers/form";
 import { buildSettings } from "../helpers/settingsUtils";
 
@@ -124,6 +124,45 @@ describe("Streaming media component", () => {
       channel: "test-channel",
       playerName: "test-player",
     });
+  });
+
+  it("shows alert panel when component is disabled", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(
+      buildSettings({
+        components: {
+          streamingMedia: false,
+        },
+      }),
+    );
+
+    await waitForConfigurationViewToLoad(view);
+
+    await expect
+      .element(
+        view.getByRole("heading", {
+          name: /streaming media component disabled/i,
+        }),
+      )
+      .toBeVisible();
+  });
+
+  it("hides form fields and shows alert when component is toggled off", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(buildSettings());
+    await waitForConfigurationViewToLoad(view);
+    await toggleComponent("streamingMedia");
+
+    // Should now show alert panel
+    await expect
+      .element(
+        view.getByRole("heading", {
+          name: /streaming media component disabled/i,
+        }),
+      )
+      .toBeVisible();
   });
 
   describe("validation", () => {

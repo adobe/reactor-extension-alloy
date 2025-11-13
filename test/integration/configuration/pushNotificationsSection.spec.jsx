@@ -130,6 +130,45 @@ describe("Push notifications component", () => {
     expect(settings.instances[0].pushNotifications).toBeUndefined();
   });
 
+  it("shows alert panel when push notifications component is disabled", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(buildSettings());
+    await waitForConfigurationViewToLoad(view);
+
+    await expect
+      .element(
+        view.getByRole("heading", {
+          name: /push notifications component disabled/i,
+        }),
+      )
+      .toBeVisible();
+  });
+
+  it("hides form fields and shows alert when component is toggled off", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(
+      buildSettings({
+        components: {
+          pushNotifications: true,
+        },
+      }),
+    );
+
+    await waitForConfigurationViewToLoad(view);
+    await toggleComponent("pushNotifications");
+
+    // Should now show alert panel
+    await expect
+      .element(
+        view.getByRole("heading", {
+          name: /push notifications component disabled/i,
+        }),
+      )
+      .toBeVisible();
+  });
+
   describe("validation", () => {
     it("requires VAPID public key", async () => {
       const view = await renderView(ConfigurationView);
