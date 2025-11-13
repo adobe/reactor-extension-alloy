@@ -39,7 +39,7 @@ export default defineProject({
         test: {
           name: "integration",
           include: ["test/integration/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
-          isolate: false,
+          isolate: true,
           browser: {
             enabled: true,
             instances: [

@@ -214,3 +214,86 @@ export const spectrumNumberField = (testId) => {
     },
   };
 };
+
+/**
+ * Helper to interact with Spectrum Checkbox components
+ * @param {string} testId - The data-test-id attribute value
+ * @returns {Object} Helper methods for Checkbox interaction
+ */
+export const spectrumCheckbox = (testId) => {
+  return {
+    /**
+     * Click the checkbox to toggle its state
+     */
+    click: async () => {
+      await page.getByTestId(testId).click();
+    },
+
+    /**
+     * Check (select) the checkbox if it's not already checked
+     */
+    check: async () => {
+      const element = page.getByTestId(testId).element();
+      if (!element.checked) {
+        await page.getByTestId(testId).click();
+      }
+    },
+
+    /**
+     * Uncheck (deselect) the checkbox if it's currently checked
+     */
+    uncheck: async () => {
+      const element = page.getByTestId(testId).element();
+      if (element.checked) {
+        await page.getByTestId(testId).click();
+      }
+    },
+
+    /**
+     * Check if the checkbox is checked
+     * @returns {boolean} True if checkbox is checked
+     */
+    isChecked: async () => {
+      return page.getByTestId(testId).element().checked;
+    },
+
+    /**
+     * Check if the checkbox has an error
+     * @returns {boolean} True if checkbox has error
+     */
+    hasError: async () => {
+      return (
+        page.getByTestId(testId).element().getAttribute("aria-invalid") ===
+        "true"
+      );
+    },
+
+    /**
+     * Get the error message if present
+     * @returns {string|null} The error message or null
+     */
+    getErrorMessage: async () => {
+      const element = page.getByTestId(testId).element();
+      const errorId = element.getAttribute("aria-describedby");
+      if (!errorId) return null;
+      const errorElement = document.getElementById(errorId);
+      return errorElement ? errorElement.textContent : null;
+    },
+
+    /**
+     * Check if the checkbox is disabled
+     * @returns {boolean} True if checkbox is disabled
+     */
+    isDisabled: async () => {
+      return page.getByTestId(testId).element().disabled;
+    },
+
+    /**
+     * Get the raw input element
+     * @returns {HTMLElement} The input element
+     */
+    getElement: async () => {
+      return page.getByTestId(testId).element();
+    },
+  };
+};
