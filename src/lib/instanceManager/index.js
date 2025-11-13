@@ -14,13 +14,13 @@ governing permissions and limitations under the License.
 // equivalent to require("@adobe/alloy"). We could run our own bundler to do this,
 // but this works. If Alloy changed the location of its cjs entry point we would
 // need to change the path here.
-import { createCustomInstance, createEventMergeId, components } from "../alloy";
+import alloy from "../alloy";
 import createInstanceManager from "./createInstanceManager";
 import injectWrapOnBeforeEventSend from "./injectWrapOnBeforeEventSend";
 import createGetConfigOverrides from "../utils/createGetConfigOverrides";
 
 const version = "__VERSION__";
-
+const { createCustomInstance, createEventMergeId, components } = alloy;
 const wrapOnBeforeEventSend = injectWrapOnBeforeEventSend({ version });
 
 export default createInstanceManager({
