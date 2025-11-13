@@ -51,12 +51,12 @@ describe("Generated alloy.js (preinstalled mode)", () => {
     fs.mkdirSync(distPath, { recursive: true });
 
     // Build using the build script (force preinstalled mode)
-    // Change to repo root so relative paths work correctly
+    // Use cwd option instead of cd command to avoid shell injection risks
     const repoRoot = path.resolve(__dirname, "../../..");
-    execSync(
-      `cd ${repoRoot} && node ./scripts/buildEmptyAlloy.mjs -o test-dist`,
-      { encoding: "utf-8" },
-    );
+    execSync("node ./scripts/buildEmptyAlloy.mjs -o test-dist", {
+      cwd: repoRoot,
+      encoding: "utf-8",
+    });
 
     const alloyPath = path.join(distPath, "alloy.js");
     expect(fs.existsSync(alloyPath)).toBe(true);
