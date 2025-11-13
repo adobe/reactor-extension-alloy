@@ -40,19 +40,27 @@ import { bridge } from "./overridesBridge";
 import ReportSuitesOverride from "./reportSuiteOverrides";
 import SettingsCopySection from "./settingsCopySection";
 import {
-  ENABLED_FIELD_VALUES,
+  ENABLED_DISABLED_MATCH_FIELD_VALUES,
+  ENABLED_DISABLED_FIELD_VALUES,
   ENABLED_MATCH_FIELD_VALUES,
   FIELD_NAMES,
   capitialize,
   combineValidatorWithContainsDataElements,
   createValidateItemIsInArray,
+  enabledDisabledMatchOrDataElementRegex,
   enabledDisabledOrDataElementRegex,
   enabledMatchOrDataElementRegex,
 } from "./utils";
 
 const defaults = Object.freeze(bridge.getInstanceDefaults());
+const EnabledDisabledMatchOptions = Object.freeze(
+  Object.entries(ENABLED_DISABLED_MATCH_FIELD_VALUES).map(([key, label]) => (
+    <Item key={key}>{label}</Item>
+  )),
+);
+
 const EnabledDisabledOptions = Object.freeze(
-  Object.entries(ENABLED_FIELD_VALUES).map(([key, label]) => (
+  Object.entries(ENABLED_DISABLED_FIELD_VALUES).map(([key, label]) => (
     <Item key={key}>{label}</Item>
   )),
 );
@@ -206,11 +214,20 @@ const Overrides = ({
 
               const envEdgeConfigIds = edgeConfigIds[`${env}Environment`];
 
+              const validateEnabledDisabledMatchOrDataElement =
+                combineValidatorWithContainsDataElements(
+                  createValidateItemIsInArray(
+                    Object.values(ENABLED_DISABLED_MATCH_FIELD_VALUES),
+                    "The value must be 'Enabled', 'Disabled', 'No override' or a single data element.",
+                  ),
+                  false,
+                );
+
               const validateEnabledDisabledOrDataElement =
                 combineValidatorWithContainsDataElements(
                   createValidateItemIsInArray(
-                    Object.values(ENABLED_FIELD_VALUES),
-                    "The value must be either 'Enabled' or 'Disabled' or a single data element.",
+                    Object.values(ENABLED_DISABLED_FIELD_VALUES),
+                    "The value must be 'Enabled', 'Disabled', or a single data element.",
                   ),
                   false,
                 );
@@ -218,7 +235,7 @@ const Overrides = ({
                 combineValidatorWithContainsDataElements(
                   createValidateItemIsInArray(
                     Object.values(ENABLED_MATCH_FIELD_VALUES),
-                    "The value must be either 'Enabled' or 'Match datastream configuration' or a single data element.",
+                    "The value must be 'Enabled', 'No override' or a single data element.",
                   ),
                   false,
                 );
@@ -341,6 +358,8 @@ const Overrides = ({
                   .filter((v) => Boolean(v))[0];
               const sandboxFieldName = `${prefix}.${env}.${FIELD_NAMES.sandbox}`;
               const [{ value: sandbox }] = useField(sandboxFieldName);
+              const dataElementDescription =
+                "When providing a data element, it should resolve to true to enable the service, false to disable the service, or null to provide no overrides.";
 
               return (
                 <Item key={env}>
@@ -348,14 +367,14 @@ const Overrides = ({
                     <SettingsCopySection currentEnv={env} onPress={onCopy} />
                     {visibleFields.has(FIELD_NAMES.overridesEnabled) && (
                       <OverrideInput
-                        aria-label="Enable or disable datastream configuration overrides"
+                        aria-label="Enable or provide no datastream configuration overrides"
                         data-test-id={FIELD_NAMES.overridesEnabled}
                         allowsCustomValue
                         validate={validateEnabledMatchOrDataElement}
                         name={`${prefix}.${env}.enabled`}
                         width="size-5000"
                         pattern={enabledMatchOrDataElementRegex}
-                        description={`Enable or disable datastream configuration overrides for the ${env} environment.`}
+                        description="When providing a data element, it should resolve to true to enable overrides, and false to provide no overrides."
                         onBlur={onDisable}
                       >
                         {...EnabledMatchOptions}
@@ -395,21 +414,23 @@ const Overrides = ({
                               FIELD_NAMES.analyticsEnabled,
                             ) && (
                               <OverrideInput
-                                aria-label="Enable or disable Adobe Analytics"
+                                aria-label="Enable, disable, or provide no overrides for Adobe Analytics"
                                 data-test-id={FIELD_NAMES.analyticsEnabled}
                                 allowsCustomValue
-                                validate={validateEnabledDisabledOrDataElement}
+                                validate={
+                                  validateEnabledDisabledMatchOrDataElement
+                                }
                                 name={`${prefix}.${env}.com_adobe_analytics.enabled`}
                                 width="size-5000"
-                                pattern={enabledDisabledOrDataElementRegex}
+                                pattern={enabledDisabledMatchOrDataElementRegex}
                                 isDisabled={
                                   !serviceStatus.com_adobe_analytics.value
                                 }
                                 disabledDisplayValue="Disabled"
-                                description="Enable or disable the Adobe Analytics destination."
+                                description={dataElementDescription}
                                 onBlur={onDisable}
                               >
-                                {...EnabledDisabledOptions}
+                                {...EnabledDisabledMatchOptions}
                               </OverrideInput>
                             )}
                             {visibleFields.has(
@@ -440,23 +461,25 @@ const Overrides = ({
                               FIELD_NAMES.audienceManagerEnabled,
                             ) && (
                               <OverrideInput
-                                aria-label="Enable or disable Adobe Audience Manager"
+                                aria-label="Enable, disable, or provide no overrides for Adobe Audience Manager"
                                 data-test-id={
                                   FIELD_NAMES.audienceManagerEnabled
                                 }
                                 allowsCustomValue
-                                validate={validateEnabledDisabledOrDataElement}
+                                validate={
+                                  validateEnabledDisabledMatchOrDataElement
+                                }
                                 name={`${prefix}.${env}.com_adobe_audiencemanager.enabled`}
                                 width="size-5000"
-                                pattern={enabledDisabledOrDataElementRegex}
+                                pattern={enabledDisabledMatchOrDataElementRegex}
                                 isDisabled={
                                   !serviceStatus.com_adobe_audiencemanager.value
                                 }
                                 disabledDisplayValue="Disabled"
                                 onBlur={onDisable}
-                                description="Enable or disable the Adobe Audience Manager destination."
+                                description={dataElementDescription}
                               >
-                                {...EnabledDisabledOptions}
+                                {...EnabledDisabledMatchOptions}
                               </OverrideInput>
                             )}
                           </ProductSubsection>
@@ -500,24 +523,26 @@ const Overrides = ({
                               FIELD_NAMES.experiencePlatformEnabled,
                             ) && (
                               <OverrideInput
-                                aria-label="Enable or disable Adobe Experience Platform"
+                                aria-label="Enable, disable, or provide no overrides for Adobe Experience Platform"
                                 data-test-id={
                                   FIELD_NAMES.experiencePlatformEnabled
                                 }
                                 allowsCustomValue
-                                validate={validateEnabledDisabledOrDataElement}
+                                validate={
+                                  validateEnabledDisabledMatchOrDataElement
+                                }
                                 name={`${prefix}.${env}.com_adobe_experience_platform.enabled`}
                                 width="size-5000"
-                                pattern={enabledDisabledOrDataElementRegex}
+                                pattern={enabledDisabledMatchOrDataElementRegex}
                                 isDisabled={
                                   !serviceStatus.com_adobe_experience_platform
                                     .value
                                 }
                                 onBlur={onDisable}
                                 disabledDisplayValue="Disabled"
-                                description="Enable or disable the Adobe Experience Platform destination."
+                                description={dataElementDescription}
                               >
-                                {...EnabledDisabledOptions}
+                                {...EnabledDisabledMatchOptions}
                               </OverrideInput>
                             )}
                             {visibleFields.has(
@@ -677,21 +702,23 @@ const Overrides = ({
                         {visibleFields.has(FIELD_NAMES.ssefEnabled) && (
                           <ProductSubsection name="Adobe Server-Side Event Forwarding">
                             <OverrideInput
-                              aria-label="Enable or disable Adobe Server-Side Event Forwarding"
+                              aria-label="Enable, disable, or provide no overrides for Adobe Server-Side Event Forwarding"
                               data-test-id={FIELD_NAMES.ssefEnabled}
                               allowsCustomValue
-                              validate={validateEnabledDisabledOrDataElement}
+                              validate={
+                                validateEnabledDisabledMatchOrDataElement
+                              }
                               name={`${prefix}.${env}.com_adobe_launch_ssf.enabled`}
                               width="size-5000"
-                              pattern={enabledDisabledOrDataElementRegex}
+                              pattern={enabledDisabledMatchOrDataElementRegex}
                               onBlur={onDisable}
                               isDisabled={
                                 !serviceStatus.com_adobe_launch_ssf.value
                               }
                               disabledDisplayValue="Disabled"
-                              description="Enable or disable Adobe Server-Side Event Forwarding."
+                              description={dataElementDescription}
                             >
-                              {...EnabledDisabledOptions}
+                              {...EnabledDisabledMatchOptions}
                             </OverrideInput>
                           </ProductSubsection>
                         )}
@@ -702,21 +729,23 @@ const Overrides = ({
                           <ProductSubsection name="Adobe Target">
                             {visibleFields.has(FIELD_NAMES.targetEnabled) && (
                               <OverrideInput
-                                aria-label="Enable or disable the Adobe Target destination"
+                                aria-label="Enable, disable, or provide no overrides for Adobe Target"
                                 data-test-id={FIELD_NAMES.targetEnabled}
                                 allowsCustomValue
-                                validate={validateEnabledDisabledOrDataElement}
+                                validate={
+                                  validateEnabledDisabledMatchOrDataElement
+                                }
                                 name={`${prefix}.${env}.com_adobe_target.enabled`}
                                 width="size-5000"
-                                pattern={enabledDisabledOrDataElementRegex}
+                                pattern={enabledDisabledMatchOrDataElementRegex}
                                 onBlur={onDisable}
                                 isDisabled={
                                   !serviceStatus.com_adobe_target.value
                                 }
                                 disabledDisplayValue="Disabled"
-                                description="Enable or disable the Adobe Target destination."
+                                description={dataElementDescription}
                               >
-                                {...EnabledDisabledOptions}
+                                {...EnabledDisabledMatchOptions}
                               </OverrideInput>
                             )}
                             {visibleFields.has(

@@ -32,6 +32,7 @@ createExtensionViewFixture({
   title: "Extension Configuration View",
   viewPath: "configuration/configuration.html",
   requiresAdobeIOIntegration: true,
+  only: true,
 });
 
 const defaultDisabledComponents = {

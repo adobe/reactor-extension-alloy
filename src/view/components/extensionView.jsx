@@ -103,6 +103,7 @@ const ExtensionView = ({
 
       // validate the formik state
       const formikErrors = await formikPropsRef.current.validateForm();
+      console.log("formikErrors", formikErrors);
       return Object.keys(formikErrors).length === 0;
     } catch {
       return false;
