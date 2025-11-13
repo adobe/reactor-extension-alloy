@@ -20,7 +20,10 @@ module.exports = ({
   wrapOnBeforeEventSend,
   getConfigOverrides,
 }) => {
-  const { instances: instancesSettings } = turbine.getExtensionSettings();
+  const { instances: instancesSettings, libraryCode } =
+    turbine.getExtensionSettings();
+  const isPreinstalled = libraryCode?.type === "preinstalled";
+
   const instanceByName = {};
 
   const calledMonitors = {};
@@ -54,30 +57,41 @@ module.exports = ({
       onBeforeEventSend,
       ...options
     }) => {
+      // Create instance - works for both managed and preinstalled modes
+      // In preinstalled mode, createCustomInstance returns a proxy that waits for external instance
+      // In managed mode, createCustomInstance creates and returns a real Alloy instance
       const instance = createCustomInstance({ name, components });
+
       if (!window.__alloyNS) {
         window.__alloyNS = [];
       }
-      const environment = turbine.environment && turbine.environment.stage;
 
-      const computedEdgeConfigId =
-        (environment === "development" && developmentEdgeConfigId) ||
-        (environment === "staging" && stagingEdgeConfigId) ||
-        edgeConfigId;
+      // Only configure if NOT using preinstalled mode
+      // In preinstalled mode, the external instance is already configured by user code
+      if (!isPreinstalled) {
+        const environment = turbine.environment && turbine.environment.stage;
 
-      options.edgeConfigOverrides = getConfigOverrides(options);
+        const computedEdgeConfigId =
+          (environment === "development" && developmentEdgeConfigId) ||
+          (environment === "staging" && stagingEdgeConfigId) ||
+          edgeConfigId;
 
-      instance("configure", {
-        ...options,
-        datastreamId: computedEdgeConfigId,
-        debugEnabled: turbine.debugEnabled,
-        orgId: options.orgId || orgId,
-        onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend),
-      });
-      turbine.onDebugChanged((enabled) => {
-        instance("setDebug", { enabled });
-      });
+        options.edgeConfigOverrides = getConfigOverrides(options);
 
+        instance("configure", {
+          ...options,
+          datastreamId: computedEdgeConfigId,
+          debugEnabled: turbine.debugEnabled,
+          orgId: options.orgId || orgId,
+          onBeforeEventSend: wrapOnBeforeEventSend(onBeforeEventSend),
+        });
+
+        turbine.onDebugChanged((enabled) => {
+          instance("setDebug", { enabled });
+        });
+      }
+
+      // Handle pre-existing command queue - same for both modes
       if (window[name] && window[name].q) {
         const instanceFunction = ([resolve, reject, args]) => {
           instance(...args)
@@ -87,7 +101,9 @@ module.exports = ({
         const queue = window[name].q;
         queue.push = instanceFunction;
         queue.forEach(instanceFunction);
-      } else {
+      } else if (!isPreinstalled) {
+        // Only add to __alloyNS and window if managed mode
+        // In preinstalled mode, the external instance already exists on window
         window.__alloyNS.push(name);
         window[name] = instance;
       }
