@@ -15,11 +15,20 @@ governing permissions and limitations under the License.
  * This ensures the bundled proxy logic works correctly.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  vi,
+} from "vitest";
 import { execSync } from "child_process";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import vm from "vm";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,6 +37,33 @@ describe("Generated alloy.js (preinstalled mode)", () => {
   let mockWindow;
   let alloyExports;
   let mockAlloyInstance;
+  let alloyCode;
+
+  // Build the alloy.js file once before all tests
+  beforeAll(() => {
+    // Use a test-specific directory to avoid conflicts
+    const distPath = path.resolve(__dirname, "../../../test-dist");
+
+    // Clean and recreate dist directory
+    if (fs.existsSync(distPath)) {
+      fs.rmSync(distPath, { recursive: true, force: true });
+    }
+    fs.mkdirSync(distPath, { recursive: true });
+
+    // Build using the build script (force preinstalled mode)
+    // Change to repo root so relative paths work correctly
+    const repoRoot = path.resolve(__dirname, "../../..");
+    execSync(
+      `cd ${repoRoot} && node ./scripts/buildEmptyAlloy.mjs -o test-dist`,
+      { encoding: "utf-8" },
+    );
+
+    const alloyPath = path.join(distPath, "alloy.js");
+    expect(fs.existsSync(alloyPath)).toBe(true);
+
+    // Load the generated code once
+    alloyCode = fs.readFileSync(alloyPath, "utf-8");
+  });
 
   beforeEach(async () => {
     vi.useFakeTimers();
@@ -41,53 +77,23 @@ describe("Generated alloy.js (preinstalled mode)", () => {
     };
     mockAlloyInstance = vi.fn();
 
-    // Build the empty alloy.js
-    const distPath = path.resolve(__dirname, "../../../dist/lib");
-    const alloyPath = path.join(distPath, "alloy.js");
+    // Execute the generated code to get exports (use preloaded code)
+    // Create an isolated VM context to avoid variable collisions
+    const context = vm.createContext({
+      module: { exports: {} },
+      console: global.console,
+      window: mockWindow,
+      setTimeout: global.setTimeout,
+      Date: global.Date,
+      Promise: global.Promise,
+      Error: global.Error,
+      exports: {},
+    });
 
-    // Only build if file doesn't exist
-    if (!fs.existsSync(alloyPath)) {
-      // Ensure dist directory exists
-      if (!fs.existsSync(distPath)) {
-        fs.mkdirSync(distPath, { recursive: true });
-      }
+    // Execute the code in the isolated context
+    vm.runInContext(alloyCode, context);
 
-      // Build using the build script
-      execSync(
-        `node ${path.resolve(__dirname, "../../../scripts/buildEmptyAlloy.mjs")} -o ${distPath}`,
-        { encoding: "utf-8" },
-      );
-    }
-
-    // Load the generated alloy.js
-    expect(fs.existsSync(alloyPath)).toBe(true);
-
-    // Execute the generated code to get exports
-    const alloyCode = fs.readFileSync(alloyPath, "utf-8");
-    const moduleObj = { exports: {} };
-
-    // Create a proper evaluation context
-    // eslint-disable-next-line no-new-func
-    const execute = new Function(
-      "module",
-      "console",
-      "window",
-      "setTimeout",
-      "Date",
-      "Promise",
-      "Error",
-      `${alloyCode}\nreturn module.exports;`,
-    );
-
-    alloyExports = execute(
-      moduleObj,
-      global.console,
-      mockWindow,
-      global.setTimeout,
-      global.Date,
-      global.Promise,
-      global.Error,
-    );
+    alloyExports = context.module.exports;
   });
 
   afterEach(() => {
@@ -98,10 +104,10 @@ describe("Generated alloy.js (preinstalled mode)", () => {
   describe("exports", () => {
     it("exports required functions and objects", () => {
       expect(alloyExports).toBeDefined();
-      expect(alloyExports.createCustomInstance).toBeInstanceOf(Function);
+      expect(typeof alloyExports.createCustomInstance).toBe("function");
       expect(alloyExports.components).toEqual({});
-      expect(alloyExports.createEventMergeId).toBeInstanceOf(Function);
-      expect(alloyExports.deepAssign).toBeInstanceOf(Function);
+      expect(typeof alloyExports.createEventMergeId).toBe("function");
+      expect(typeof alloyExports.deepAssign).toBe("function");
     });
 
     it("throws error when calling createEventMergeId directly", () => {
@@ -120,7 +126,7 @@ describe("Generated alloy.js (preinstalled mode)", () => {
   describe("createCustomInstance", () => {
     it("returns a proxy function", () => {
       const proxy = alloyExports.createCustomInstance({ name: "testAlloy" });
-      expect(proxy).toBeInstanceOf(Function);
+      expect(typeof proxy).toBe("function");
     });
 
     it("proxy waits for external instance to load", async () => {
@@ -279,7 +285,7 @@ describe("Generated alloy.js (preinstalled mode)", () => {
 
   describe("file size", () => {
     it("generated alloy.js is reasonably sized", () => {
-      const alloyPath = path.resolve(__dirname, "../../../dist/lib/alloy.js");
+      const alloyPath = path.resolve(__dirname, "../../../test-dist/alloy.js");
       const stats = fs.statSync(alloyPath);
       const sizeKB = stats.size / 1024;
 
