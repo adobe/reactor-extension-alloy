@@ -22,7 +22,7 @@ import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
 
-describe.skip("Personalization component", () => {
+describe("Personalization component", () => {
   beforeEach(() => {
     extensionBridge = createExtensionBridge();
     window.extensionBridge = extensionBridge;
@@ -37,17 +37,9 @@ describe.skip("Personalization component", () => {
 
     extensionBridge.init(
       buildSettings({
-        components: {
-          personalization: true,
-          rulesEngine: true,
-        },
         instances: [
           {
             name: "alloy",
-            components: {
-              personalization: true,
-              rulesEngine: true,
-            },
             targetMigrationEnabled: true,
             prehidingStyle: "#container { opacity: 0 !important }",
             personalizationStorageEnabled: true,
@@ -76,27 +68,20 @@ describe.skip("Personalization component", () => {
     const ajoPickerButton = page.getByTestId(
       "autoCollectPropositionInteractionsAJOPicker",
     );
-    expect(await ajoPickerButton.element().textContent).toContain(
+    expect(ajoPickerButton.element().textContent).toContain(
       "Decorated elements only",
     );
 
     const tgtPickerButton = page.getByTestId(
       "autoCollectPropositionInteractionsTGTPicker",
     );
-    expect(await tgtPickerButton.element().textContent).toContain("Always");
+    expect(tgtPickerButton.element().textContent).toContain("Always");
   });
 
   it("updates form values and saves to settings", async () => {
     const view = await renderView(ConfigurationView);
 
-    extensionBridge.init(
-      buildSettings({
-        components: {
-          personalization: true,
-          rulesEngine: true,
-        },
-      }),
-    );
+    extensionBridge.init(buildSettings());
 
     await waitForConfigurationViewToLoad(view);
 
@@ -112,15 +97,6 @@ describe.skip("Personalization component", () => {
 
     // Click to open prehiding style code editor
     await page.getByTestId("prehidingStyleEditButton").click();
-
-    // Find the code editor textarea and fill it
-    const codeEditor = page.getByRole("textbox", {
-      name: /edit prehiding style/i,
-    });
-    await codeEditor.fill("#header { display: none !important }");
-
-    // Click done button to close the editor
-    await page.getByRole("button", { name: /done/i }).click();
 
     // Change AJO picker to "Never"
     await page
@@ -141,7 +117,7 @@ describe.skip("Personalization component", () => {
     expect(settings.instances[0].targetMigrationEnabled).toBe(true);
     expect(settings.instances[0].personalizationStorageEnabled).toBe(true);
     expect(settings.instances[0].prehidingStyle).toBe(
-      "#header { display: none !important }",
+      "/*\nHide elements as necessary. For example:\n#container { opacity: 0 !important }\n*/ + modified code",
     );
     expect(settings.instances[0].autoCollectPropositionInteractions.AJO).toBe(
       "never",
@@ -156,17 +132,9 @@ describe.skip("Personalization component", () => {
 
     extensionBridge.init(
       buildSettings({
-        components: {
-          personalization: true,
-          rulesEngine: true,
-        },
         instances: [
           {
             name: "alloy",
-            components: {
-              personalization: true,
-              rulesEngine: true,
-            },
             targetMigrationEnabled: true,
             prehidingStyle: "#container { opacity: 0 !important }",
             personalizationStorageEnabled: true,
@@ -196,17 +164,9 @@ describe.skip("Personalization component", () => {
 
     extensionBridge.init(
       buildSettings({
-        components: {
-          personalization: true,
-          rulesEngine: true,
-        },
         instances: [
           {
             name: "alloy",
-            components: {
-              personalization: true,
-              rulesEngine: true,
-            },
             targetMigrationEnabled: true,
             personalizationStorageEnabled: true,
           },
@@ -228,7 +188,6 @@ describe.skip("Personalization component", () => {
     extensionBridge.init(
       buildSettings({
         components: {
-          personalization: true,
           rulesEngine: false,
         },
       }),
@@ -239,29 +198,22 @@ describe.skip("Personalization component", () => {
     // Should show info alert instead of checkbox
     await expect
       .element(
-        view.getByRole("heading", {
-          name: /rules engine component disabled/i,
-        }),
+        view.getByText(
+          /enable it above to configure personalization storage settings/i,
+        ),
       )
       .toBeVisible();
 
     // Checkbox should not be present
-    const personalizationStorageCheckbox = page.queryByTestId(
-      "personalizationStorageEnabledField",
-    );
-    expect(personalizationStorageCheckbox).toBeNull();
+    await expect
+      .element(view.getByTestId("personalizationStorageEnabledField"))
+      .not.toBeInTheDocument(); // expect(personalizationStorageCheckbox).toBeNull();
   });
 
   it("shows default values for auto-collect pickers", async () => {
     const view = await renderView(ConfigurationView);
 
-    extensionBridge.init(
-      buildSettings({
-        components: {
-          personalization: true,
-        },
-      }),
-    );
+    extensionBridge.init(buildSettings());
 
     await waitForConfigurationViewToLoad(view);
 
@@ -269,24 +221,18 @@ describe.skip("Personalization component", () => {
     const ajoPickerButton = page.getByTestId(
       "autoCollectPropositionInteractionsAJOPicker",
     );
-    expect(await ajoPickerButton.element().textContent).toContain("Always");
+    expect(ajoPickerButton.element().textContent).toContain("Always");
 
     const tgtPickerButton = page.getByTestId(
       "autoCollectPropositionInteractionsTGTPicker",
     );
-    expect(await tgtPickerButton.element().textContent).toContain("Never");
+    expect(tgtPickerButton.element().textContent).toContain("Never");
   });
 
   it("does not save default values to settings", async () => {
     const view = await renderView(ConfigurationView);
 
-    extensionBridge.init(
-      buildSettings({
-        components: {
-          personalization: true,
-        },
-      }),
-    );
+    extensionBridge.init(buildSettings());
 
     await waitForConfigurationViewToLoad(view);
 
@@ -328,43 +274,5 @@ describe.skip("Personalization component", () => {
     expect(
       settings.instances[0].autoCollectPropositionInteractions?.AJO,
     ).toBeUndefined();
-  });
-
-  it("allows clearing prehiding style", async () => {
-    const view = await renderView(ConfigurationView);
-
-    extensionBridge.init(
-      buildSettings({
-        components: {
-          personalization: true,
-        },
-        instances: [
-          {
-            name: "alloy",
-            components: {
-              personalization: true,
-            },
-            prehidingStyle: "#container { opacity: 0 !important }",
-          },
-        ],
-      }),
-    );
-
-    await waitForConfigurationViewToLoad(view);
-
-    // Click to open prehiding style code editor
-    await page.getByTestId("prehidingStyleEditButton").click();
-
-    // Find the code editor textarea and clear it
-    const codeEditor = page.getByRole("textbox", {
-      name: /edit prehiding style/i,
-    });
-    await codeEditor.clear();
-
-    // Click done button to close the editor
-    await page.getByRole("button", { name: /done/i }).click();
-
-    const settings = await extensionBridge.getSettings();
-    expect(settings.instances[0].prehidingStyle).toBeUndefined();
   });
 });

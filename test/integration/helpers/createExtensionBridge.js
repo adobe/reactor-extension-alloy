@@ -19,9 +19,9 @@ export default () => {
 
     init(initInfo) {
       initInfo = {
-        company: { orgId: "ORG_ID" },
+        company: { orgId: "1234@AdobeOrg" },
         tokens: { imsAccess: "IMS_ACCESS" },
-        propertySettings: { id: "PROPERTY_ID" },
+        propertySettings: { id: "PR1234" },
         ...initInfo,
       };
 
