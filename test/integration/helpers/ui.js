@@ -11,14 +11,29 @@ governing permissions and limitations under the License.
 */
 
 import { expect } from "vitest";
-import { clickAccordion, spectrumCheckbox } from "./form";
+// eslint-disable-next-line import/no-unresolved
+import { page } from "vitest/browser";
+import { spectrumCheckbox } from "./form";
 
 export const waitForConfigurationViewToLoad = async (screen) => {
   await expect.element(screen.getByText("SDK instances")).toBeVisible();
 };
 
+/**
+ * Click on an accordion/disclosure button to expand it, only if not already expanded
+ * @param {string} name - The accessible name of the button (text or regex)
+ */
+export const expandAccordion = async (name) => {
+  const button = page.getByRole("button", { name });
+  const isExpanded = await button.element().getAttribute("aria-expanded");
+
+  if (isExpanded !== "true") {
+    await button.click();
+  }
+};
+
 export const toggleComponent = async (component) => {
-  await clickAccordion("Custom build components");
+  await expandAccordion("Custom build components");
   const pushNotificationsCheckbox = spectrumCheckbox(
     `${component}ComponentCheckbox`,
   );
