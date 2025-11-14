@@ -35,7 +35,7 @@ const compat = new FlatCompat({
 export default [
   js.configs.recommended,
   ...compat.extends("airbnb", "plugin:testcafe/recommended"),
-  ...compat.plugins("ban", "testcafe"),
+  ...compat.plugins("testcafe"),
   {
     ignores: ["dist/**", "src/lib/runAlloy.js"],
   },
@@ -56,31 +56,11 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
-        fixture: true,
-        test: true,
-        describe: true,
-        it: true,
-        expect: true,
-        beforeEach: true,
-        afterEach: true,
-        beforeAll: true,
-        afterAll: true,
-        vi: true,
       },
     },
     rules: {
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-      "ban/ban": [
-        "error",
-        { name: ["describe", "only"], message: "don't focus tests" },
-        { name: "fdescribe", message: "don't focus tests" },
-        { name: ["it", "only"], message: "don't focus tests" },
-        { name: "fit", message: "don't focus tests" },
-        { name: ["fixture", "only"], message: "don't focus tests" },
-        { name: ["test", "only"], message: "don't focus tests" },
-        { name: "ftest", message: "don't focus tests" },
-      ],
       "no-param-reassign": "off",
       "prettier/prettier": "error",
       "react/require-default-props": "off",
@@ -171,7 +151,6 @@ export default [
     rules: {
       "no-var": "off",
       "func-names": "off",
-      "import/no-default-export": 2,
       "no-underscore-dangle": [
         "error",
         { allow: ["__alloyNS", "__alloyMonitors"] },

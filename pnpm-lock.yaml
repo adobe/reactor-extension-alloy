@@ -157,9 +157,6 @@ importers:
       eslint-import-resolver-alias:
         specifier: ^1.1.2
         version: 1.1.2(eslint-plugin-import@2.32.0(eslint@9.39.1))
-      eslint-plugin-ban:
-        specifier: ^2.0.0
-        version: 2.0.0
       eslint-plugin-import:
         specifier: ^2.32.0
         version: 2.32.0(eslint@9.39.1)
@@ -4670,10 +4667,6 @@ packages:
       eslint-import-resolver-webpack:
         optional: true
 
-  eslint-plugin-ban@2.0.0:
-    resolution: {integrity: sha512-eAIwnbYN+oOc8REHqCd3OWg6Of5uovwyVWNmI0mCkgpfceFkqzzGfKwjqSP9OZOt12wT148wVvRu78H1b6zdOQ==}
-    engines: {node: '>=0.10.0'}
-
   eslint-plugin-import@2.32.0:
     resolution: {integrity: sha512-whOE1HFo/qJDyX4SnXzP4N6zOWn79WhnCUY/iDR0mPfQZO8wcYE4JClzI2oZrhBnnMUCBCHZhO6VQyoBU95mZA==}
     engines: {node: '>=4'}
@@ -6885,10 +6878,6 @@ packages:
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
-
-  requireindex@1.2.0:
-    resolution: {integrity: sha512-L9jEkOi3ASd9PYit2cwRfyppc9NoABujTP8/5gFcbERmo5jUoAKovIC3fsF17pkTnGsrByysqX+Kxd2OTNI1ww==}
-    engines: {node: '>=0.10.5'}
 
   requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
@@ -18420,10 +18409,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-ban@2.0.0:
-    dependencies:
-      requireindex: 1.2.0
-
   eslint-plugin-import@2.32.0(eslint@9.39.1):
     dependencies:
       '@rtsao/scc': 1.1.0
@@ -21265,8 +21250,6 @@ snapshots:
   require-directory@2.1.1: {}
 
   require-from-string@2.0.2: {}
-
-  requireindex@1.2.0: {}
 
   requires-port@1.0.0: {}
 
