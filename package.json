@@ -30,7 +30,7 @@
     "prepush-msg": "echo 'Running pre-push scripts...' && exit 0",
     "sandbox": "./scripts/buildExtensionManifest.mjs && reactor-sandbox",
     "test": "pnpm exec playwright install chromium && vitest run && pnpm run test:functional",
-    "test:coverage": "rimraf coverage && npx playwright install chromium && vitest run --coverage",
+    "test:coverage": "rimraf coverage && pnpm exec playwright install chromium && vitest run --coverage",
     "test:unit": "pnpm exec playwright install chromium && vitest run --project=unit",
     "test:unit:watch": "pnpm exec playwright install chromium && vitest --project=unit",
     "test:integration": "pnpm exec playwright install chromium && vitest run --project=integration",
