@@ -18,6 +18,14 @@ worker.start({
   quiet: true,
 });
 
+// Some components from react-specturm rely on process.env to exists.
+// VIRT_ON is used to determine if we are in a test environment for selects and comboboxes.
+window.process = {
+  env: {
+    VIRT_ON: true,
+  },
+};
+
 // Reset handlers after each test (important for test isolation)
 afterEach(() => {
   worker.resetHandlers();
