@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+// All the places we have an enabled key
 export const overridesKeys = Object.freeze([
   "com_adobe_experience_platform",
   "com_adobe_experience_platform.com_adobe_edge_ode",
@@ -20,7 +21,6 @@ export const overridesKeys = Object.freeze([
   "com_adobe_target",
   "com_adobe_audiencemanager",
   "com_adobe_launch_ssf",
-  "com_adobe_identity",
 ]);
 
 /**
@@ -53,14 +53,20 @@ export const FIELD_NAMES = Object.freeze({
   targetPropertyTokenOverride: "targetPropertyTokenOverride",
 });
 
-export const ENABLED_FIELD_VALUES = Object.freeze({
+export const ENABLED_DISABLED_MATCH_FIELD_VALUES = Object.freeze({
+  enabled: "Enabled",
+  disabled: "Disabled",
+  match: "No override",
+});
+
+export const ENABLED_DISABLED_FIELD_VALUES = Object.freeze({
   enabled: "Enabled",
   disabled: "Disabled",
 });
 
 export const ENABLED_MATCH_FIELD_VALUES = Object.freeze({
   enabled: "Enabled",
-  disabled: "Match datastream configuration",
+  match: "No override",
 });
 
 /**
@@ -116,10 +122,12 @@ export const createIsItemInArray = (
   };
 };
 
+export const enabledDisabledMatchOrDataElementRegex =
+  /^\s*(Enabled|Disabled|No override|%[^%\n]+%)\s*$/i;
 export const enabledDisabledOrDataElementRegex =
   /^\s*(Enabled|Disabled|%[^%\n]+%)\s*$/i;
 export const enabledMatchOrDataElementRegex =
-  /^\s*(Enabled|Match datastream configuration|%[^%\n]+%)\s*$/i;
+  /^\s*(Enabled|No override|%[^%\n]+%)\s*$/i;
 export const isDataElementRegex = /^\s*%[^%\n]+%\s*$/i;
 export const containsDataElementsRegex = /^([^%\n]*%[^%\n]+%)+[^%\n]*$/i;
 
