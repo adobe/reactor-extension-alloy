@@ -17,7 +17,7 @@ import renderView from "../helpers/renderView";
 import createExtensionBridge from "../helpers/createExtensionBridge";
 import ConfigurationView from "../../../src/view/configuration/configurationView";
 import { waitForConfigurationViewToLoad } from "../helpers/ui";
-import { spectrumTextField } from "../helpers/form";
+import { spectrumPicker, spectrumTextField } from "../helpers/form";
 import { buildSettings } from "../helpers/settingsUtils";
 
 let extensionBridge;
@@ -98,8 +98,8 @@ describe("Config general settings and datastream section", () => {
             orgId: "123456@AdobeOrg",
             edgeDomain: "custom.example.com",
             edgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
-            // stagingEdgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
-            // developmentEdgeConfigId: "77469821-5ead-4045-97b6-acfd889ded6b",
+            stagingEdgeConfigId: "0a106b4d-1937-4196-a64d-4a324e972459",
+            developmentEdgeConfigId: "77469821-5ead-4045-97b6-acfd889ded6b",
           },
         ],
       },
@@ -108,16 +108,17 @@ describe("Config general settings and datastream section", () => {
     await waitForConfigurationViewToLoad(view);
 
     // Verify datastream fields
-    const productionField = page.getByTestId("productionSandboxField");
-    expect(productionField.element().value).toBe("analytics enabled ");
+    const productionField = spectrumPicker("productionDatastreamField");
+    await productionField.waitForLoad();
+    expect(await productionField.getSelectedText()).toBe("analytics enabled");
 
-    // const stagingField = page.getByTestId("stagingEnvironmentTextfield");
-    // expect(stagingField.element().value).toBe("staging-datastream-id");
-    //
-    // const developmentField = page.getByTestId(
-    //   "developmentEnvironmentTextfield",
-    // );
-    // expect(developmentField.element().value).toBe("dev-datastream-id");
+    const stagingField = spectrumPicker("stagingDatastreamField");
+    await stagingField.waitForLoad();
+    expect(await stagingField.getSelectedText()).toBe("aep-edge-samples");
+
+    const developmentField = spectrumPicker("developmentDatastreamField");
+    await developmentField.waitForLoad();
+    expect(await developmentField.getSelectedText()).toBe("datastream enabled");
   });
 
   it("updates free form values and saves to settings", async () => {
@@ -164,6 +165,46 @@ describe("Config general settings and datastream section", () => {
       edgeConfigId: "new-prod-datastream",
       stagingEdgeConfigId: "new-staging-datastream",
       developmentEdgeConfigId: "new-dev-datastream",
+    });
+  });
+
+  it("updates list form values and saves to settings", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init(
+      buildSettings({
+        instances: [
+          {
+            name: "alloy",
+            edgeConfigId: "0a106b4d-1937-4196-a64d-4a324e972459",
+            sandbox: "prod",
+            stagingEdgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
+            stagingSandbox: "prod",
+            developmentEdgeConfigId: "77469821-5ead-4045-97b6-acfd889ded6b",
+            developmentSandbox: "prod",
+          },
+        ],
+      }),
+    );
+
+    await waitForConfigurationViewToLoad(view);
+
+    // Update datastream fields
+    const productionField = spectrumPicker("productionDatastreamField");
+    await productionField.selectOption("analytics enabled");
+
+    const stagingField = spectrumPicker("stagingDatastreamField");
+    await stagingField.selectOption("datastream enabled");
+
+    const developmentField = spectrumPicker("developmentDatastreamField");
+    await developmentField.selectOption("aep-edge-samples");
+
+    // Get settings and verify all fields
+    const settings = await extensionBridge.getSettings();
+    expect(settings.instances[0]).toMatchObject({
+      edgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
+      stagingEdgeConfigId: "77469821-5ead-4045-97b6-acfd889ded6b",
+      developmentEdgeConfigId: "0a106b4d-1937-4196-a64d-4a324e972459",
     });
   });
 
