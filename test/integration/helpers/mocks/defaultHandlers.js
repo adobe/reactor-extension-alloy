@@ -125,7 +125,7 @@ export const handlers = [
                 id: "0a106b4d-1937-4196-a64d-4a324e972459",
                 revision: 10,
                 createdAt: "2022-06-15T20:28:15Z",
-                createdBy: "waters@adobe.com",
+                createdBy: "exeg_config_service@AdobeID",
                 updatedAt: "2024-02-05T17:35:26Z",
                 updatedBy: "EE-Gateway-Flow@AdobeID",
               },

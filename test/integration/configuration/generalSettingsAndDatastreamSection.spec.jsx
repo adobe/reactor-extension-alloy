@@ -84,6 +84,42 @@ describe("Config general settings and datastream section", () => {
     expect(developmentField.element().value).toBe("dev-datastream-id");
   });
 
+  it("sets list form values from settings", async () => {
+    const view = await renderView(ConfigurationView);
+
+    extensionBridge.init({
+      settings: {
+        components: {
+          eventMerge: false,
+        },
+        instances: [
+          {
+            name: "alloy",
+            orgId: "123456@AdobeOrg",
+            edgeDomain: "custom.example.com",
+            edgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
+            // stagingEdgeConfigId: "2fdb3763-0507-42ea-8856-e91bf3b64faa",
+            // developmentEdgeConfigId: "77469821-5ead-4045-97b6-acfd889ded6b",
+          },
+        ],
+      },
+    });
+
+    await waitForConfigurationViewToLoad(view);
+
+    // Verify datastream fields
+    const productionField = page.getByTestId("productionSandboxField");
+    expect(productionField.element().value).toBe("analytics enabled ");
+
+    // const stagingField = page.getByTestId("stagingEnvironmentTextfield");
+    // expect(stagingField.element().value).toBe("staging-datastream-id");
+    //
+    // const developmentField = page.getByTestId(
+    //   "developmentEnvironmentTextfield",
+    // );
+    // expect(developmentField.element().value).toBe("dev-datastream-id");
+  });
+
   it("updates free form values and saves to settings", async () => {
     const view = await renderView(ConfigurationView);
 
